@@ -23,9 +23,9 @@ package org.squashtest.tm.service.statistics.campaign;
 import java.util.List;
 
 
-public final class CampaignStatisticsBundle {
+public final class ManyCampaignStatisticsBundle {
 
-	private List<IterationTestInventoryStatistics> iterationTestInventoryStatisticsList;
+	private List<CampaignTestInventoryStatistics> campaignTestInventoryStatisticsList;
 
 	private CampaignProgressionStatistics campaignProgressionStatistics;
 
@@ -36,13 +36,13 @@ public final class CampaignStatisticsBundle {
 	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics;
 
 
-	public List<IterationTestInventoryStatistics> getIterationTestInventoryStatisticsList() {
-		return iterationTestInventoryStatisticsList;
+	public List<CampaignTestInventoryStatistics> getIterationTestInventoryStatisticsList() {
+		return campaignTestInventoryStatisticsList;
 	}
 
 	public void setIterationTestInventoryStatisticsList(
-			List<IterationTestInventoryStatistics> iterationTestInventoryStatisticsList) {
-		this.iterationTestInventoryStatisticsList = iterationTestInventoryStatisticsList;
+			List<CampaignTestInventoryStatistics> campaignTestInventoryStatisticsList) {
+		this.campaignTestInventoryStatisticsList = campaignTestInventoryStatisticsList;
 	}
 
 

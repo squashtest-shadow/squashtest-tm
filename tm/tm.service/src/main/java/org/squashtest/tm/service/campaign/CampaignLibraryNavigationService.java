@@ -180,12 +180,4 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 
 	List<String> getParentNodesAsStringList(Long elementId);
 
-	/**
-	 * Given the selection on the tree, return the collection of the campaign Ids if they exist
-	 * 
-	 * @param libraryIds
-	 * @param nodeIds
-	 * @return
-	 */
-	public Collection<Campaign> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
 }

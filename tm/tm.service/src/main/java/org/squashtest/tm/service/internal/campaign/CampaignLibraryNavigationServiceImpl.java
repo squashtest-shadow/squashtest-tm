@@ -25,8 +25,10 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -288,6 +290,8 @@ CampaignLibraryNavigationService {
 
 	}
 
+
+
 	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
 		for (String name : names) {
@@ -376,20 +380,26 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	public Collection<Campaign> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
+	public Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
 		// get all the campaigns
+		Collection<Long> cIds = new ArrayList<Long>();
 
-		Collection<Campaign> campaignList = new ArrayList<Campaign>();
 		if (!libraryIds.isEmpty()) {
-			campaignList.addAll(campaignDao.findAllByIds(libraryIds));
+			cIds.addAll(campaignDao.findAllCampaignIdsByLibraries(libraryIds));
 		}
 		if (!nodeIds.isEmpty()) {
-			campaignList.addAll(campaignDao.findAllByIds(nodeIds));
+			cIds.addAll(campaignDao.findAllCampaignIdsByNodeIds(nodeIds));
 		}
 
-		// Don't care about duplicates and stuff
+		// filter out duplicates
+		Set<Long> set = new HashSet<Long>(cIds);
+		cIds = new ArrayList<Long>(set);
 
-		return campaignList;
+		// sec check
+		cIds = securityFilterIds(cIds, "org.squashtest.tm.domain.campaign.Campaign", "READ");
+
+		return cIds;
+
 	}
 
 }

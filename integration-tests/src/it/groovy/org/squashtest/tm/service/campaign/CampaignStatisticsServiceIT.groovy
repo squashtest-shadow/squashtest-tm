@@ -66,7 +66,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		given :
 		def campId = -10L
 		when :
-		def result = service.gatherCampaignTestCaseStatusStatistics(campId)
+		def result = service.gatherTestCaseStatusStatistics(campId)
 		then :
 		notThrown(Exception)
 

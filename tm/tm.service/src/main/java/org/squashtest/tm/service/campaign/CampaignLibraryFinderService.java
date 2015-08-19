@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 
 public interface CampaignLibraryFinderService {
@@ -41,4 +43,18 @@ public interface CampaignLibraryFinderService {
 	 * @return
 	 */
 	List<CampaignLibrary> findLinkableCampaignLibraries();
+
+
+	/**
+	 * Passing the ids of some selected CampaignLibrary and CampaignLibraryNode (in separate collections), will return
+	 * the ids of the Campaign encompassed by this selection.
+	 * 
+	 * The campaign ids that cannot be accessed for security reason will be filtered out.
+	 * 
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @return
+	 */
+	Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+
 }

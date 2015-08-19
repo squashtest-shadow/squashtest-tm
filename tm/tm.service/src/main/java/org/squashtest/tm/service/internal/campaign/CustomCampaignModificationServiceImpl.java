@@ -104,7 +104,7 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 
 	@Override
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
-		return statisticsService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
+		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
 	}
 
 

@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,6 +115,65 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return c;
 	}
 
+
+
+	@Override
+	public List<Long> findAllCampaignIdsByLibraries(Collection<Long> libraryIds) {
+		if (! libraryIds.isEmpty()){
+			Query query = currentSession().getNamedQuery("campaign.findAllCampaignIdsByLibraries");
+			query.setParameterList("libraryIds", libraryIds, LongType.INSTANCE);
+			return query.list();
+		}
+		else{
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<Long> findAllCampaignIdsByNodeIds(Collection<Long> nodeIds) {
+		if (! nodeIds.isEmpty()){
+			Query query = currentSession().getNamedQuery("campaign.findAllCampaignIdsByNodeIds");
+			query.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+			return query.list();		}
+		else{
+			return Collections.emptyList();
+		}
+	}
+
+	@Override
+	public List<Long> filterByMilestone(Collection<Long> campaignIds, Long milestoneId) {
+		List<Long> res = null;
+
+		if (milestoneId == null){
+			res  = new ArrayList(campaignIds);
+		}
+		else if (! campaignIds.isEmpty()){
+			Query query = currentSession().getNamedQuery("campaign.filterByMilestone");
+			query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
+			query.setParameter("milestoneId", milestoneId, LongType.INSTANCE);
+			res = query.list();
+		}
+		else {
+			res = Collections.emptyList();
+		}
+
+		return res;
+	}
+
+	@Override
+	public List<Long> findAllIdsByMilestone(Long milestoneId) {
+
+		if (milestoneId != null){
+			Query query = currentSession().getNamedQuery("campaign.findAllIdsByMilestoneId");
+			query.setParameter("milestoneId", milestoneId, LongType.INSTANCE);
+			return query.list();
+		}
+		else{
+			throw new IllegalArgumentException("milestoneId should not be null");
+		}
+	}
+
+
 	@Override
 	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId, final PagingAndSorting filter) {
 
@@ -146,6 +206,15 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	public List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndSorting sorting) {
 		return findIndexedTestPlan(campaignId, new SingleToMultiSortingAdapter(sorting));
 	}
+
+
+	@Override
+	public List<IndexedCampaignTestPlanItem> findFilteredIndexedTestPlan(long campaignId,
+			PagingAndMultiSorting sorting, ColumnFiltering filtering) {
+		List<Object[]> tuples = findIndexedTestPlanAsTuples(campaignId, sorting, filtering);
+		return buildIndexedItems(tuples);
+	}
+
 
 	@SuppressWarnings("unchecked")
 	private List<Object[]> findIndexedTestPlanAsTuples(final long campaignId, PagingAndMultiSorting sorting) {
@@ -393,6 +462,32 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return q.list();
 	}
 
+	@Override
+	public List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone) {
+		List<Campaign> campaignList = new ArrayList<Campaign>();
+		if (milestone != null) {
+			for (Project project : projectList) {
+				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectIdWithMilestone");
+				q.setParameter("projectId", project.getId());
+				q.setParameter("milestoneId", milestone.getId());
+				for (Object campaign : q.list()) {
+					campaignList.add((Campaign) campaign);
+				}
+			}
+		} else {
+			for (Project project : projectList) {
+				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectId");
+				q.setParameter("projectId", project.getId());
+				for (Object campaign : q.list()) {
+					campaignList.add((Campaign) campaign);
+				}
+			}
+		}
+
+		return campaignList;
+
+	}
+
 	// ******************** utils ***************************
 
 	private List<CampaignTestPlanItem> buildItems(List<Object[]> tuples) {
@@ -419,37 +514,5 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return indexedItems;
 	}
 
-	@Override
-	public List<IndexedCampaignTestPlanItem> findFilteredIndexedTestPlan(long campaignId,
-			PagingAndMultiSorting sorting, ColumnFiltering filtering) {
-		List<Object[]> tuples = findIndexedTestPlanAsTuples(campaignId, sorting, filtering);
-		return buildIndexedItems(tuples);
-	}
-
-	@Override
-	public List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone) {
-		List<Campaign> campaignList = new ArrayList<Campaign>();
-		if (milestone != null) {
-			for (Project project : projectList) {
-				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectIdWithMilestone");
-				q.setParameter("projectId", project.getId());
-				q.setParameter("milestoneId", milestone.getId());
-				for (Object campaign : q.list()) {
-					campaignList.add((Campaign) campaign);
-				}
-			}
-		} else {
-			for (Project project : projectList) {
-				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectId");
-				q.setParameter("projectId", project.getId());
-				for (Object campaign : q.list()) {
-					campaignList.add((Campaign) campaign);
-				}
-			}
-		}
-
-		return campaignList;
-
-	}
 
 }

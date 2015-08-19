@@ -527,16 +527,6 @@ TestCaseLibraryNavigationService {
 
 	}
 
-	private Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
-		Collection<Long> effective = new ArrayList<Long>();
-		for (Long id : original) {
-			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)) {
-				effective.add(id);
-			}
-		}
-		return effective;
-	}
-
 	@Override
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		List<Long> ids = testCaseLibraryNodeDao.getParentsIds(nodeId);

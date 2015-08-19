@@ -33,57 +33,57 @@ class CampaignStatisticsServiceImplTest extends Specification {
 
 	CampaignStatisticsServiceImpl service = new CampaignStatisticsServiceImpl()
 	SessionFactory sessionFactory = Mock()
-	
+
 	def sessionMocks = []
-	
-	
+
+
 	def setup(){
-		service.sessionFactory = sessionFactory				
+		service.sessionFactory = sessionFactory
 	}
-	
-	
-	
+
+
+
 	//def "should say that campaign progression statistics cannot be computed because some dates are "
-	
-	
+
+
 	def "should return test inventory"(){
-		
+
 		given :
-			addMockQuery([
-				[1l, "bob", READY, 2l] as Object[],	
-				[1l, "bob", BLOCKED, 5l] as Object[],
-				[2l, "mike", READY, 2l] as Object[],
-				[2l, "mike", FAILURE, 1l] as Object[],
-				[3l, "robert", SUCCESS, 8l] as Object[]
-			])
-			
-			sessionFactory.getCurrentSession() >>> sessionMocks
-		
+		addMockQuery([
+			[1l, "bob", READY, 2l] as Object[],
+			[1l, "bob", BLOCKED, 5l] as Object[],
+			[2l, "mike", READY, 2l] as Object[],
+			[2l, "mike", FAILURE, 1l] as Object[],
+			[3l, "robert", SUCCESS, 8l] as Object[]
+		])
+
+		sessionFactory.getCurrentSession() >>> sessionMocks
+
 		when :
-			List<IterationTestInventoryStatistics> res = service.gatherIterationTestInventoryStatistics(1l)
-		
+		List<IterationTestInventoryStatistics> res = service.gatherCampaignTestInventoryStatistics([1l])
+
 		then :
-			res.size() == 3
-			res*.iterationName == ["bob", "mike", "robert"]
-			res*.nbReady == [2, 2, 0]
-			res*.nbRunning == [0, 0, 0]
-			res*.nbSuccess == [0, 0, 8]
-			res*.nbFailure == [0, 1, 0]
-			res*.nbBlocked == [5, 0, 0]
-			res*.nbUntestable == [0, 0, 0]
-			res*.nbWarning == [0, 0, 0]
-			res*.nbError == [0, 0, 0]
-		
+		res.size() == 3
+		res*.iterationName == ["bob", "mike", "robert"]
+		res*.nbReady == [2, 2, 0]
+		res*.nbRunning == [0, 0, 0]
+		res*.nbSuccess == [0, 0, 8]
+		res*.nbFailure == [0, 1, 0]
+		res*.nbBlocked == [5, 0, 0]
+		res*.nbUntestable == [0, 0, 0]
+		res*.nbWarning == [0, 0, 0]
+		res*.nbError == [0, 0, 0]
+
 	}
-	
-	
+
+
 	def addMockQuery(result){
-		Session session = Mock() 
+		Session session = Mock()
 		Query q = Mock()
-		
+
 		q.list() >> result
 		session.getNamedQuery(_) >> q
-		
+
 		sessionMocks << session
 	}
 }

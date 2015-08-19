@@ -38,6 +38,24 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface CampaignDao extends EntityDao<Campaign> {
 
+
+	List<Long> findAllCampaignIdsByLibraries(Collection<Long> libraryIds);
+
+	List<Long> findAllCampaignIdsByNodeIds(Collection<Long> nodeIds);
+
+	/**
+	 * For a given collection of campaign ids, will return only those that belong
+	 * to a milestone (given its id). If milestoneId is null, the initial list
+	 * will be returned.
+	 * 
+	 * @param campaignIds
+	 * @param milestoneId
+	 * @return
+	 */
+	List<Long> filterByMilestone(Collection<Long> campaignIds, Long milestoneId);
+
+	List<Long> findAllIdsByMilestone(Long milestoneId);
+
 	List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone);
 
 	Campaign findByIdWithInitializedIterations(long campaignId);
@@ -76,8 +94,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<String> findNamesInCampaignStartingWith(long campaignId, String nameStart);
 
 	List<String> findAllNamesInCampaign(long campaignId);
-
-
 	/**
 	 * Finds all {@link CampaignLibraryNode} which name contains the given token.
 	 * 

@@ -310,6 +310,8 @@
 	@NamedQuery(name = "requirementVersion.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where req in (:versionIds)"),	
 	
 	//Campaign
+	@NamedQuery(name = "campaign.findAllCampaignIdsByLibraries", query = "select c.id from Campaign c join c.project p join p.campaignLibrary cl where cl.id in (:libraryIds)"),
+	@NamedQuery(name = "campaign.findAllCampaignIdsByNodeIds", query = "select c.id from Campaign c where c.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId in (:nodeIds))"),
 	@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 	@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
 	@NamedQuery(name = "campaign.findNamesInFolderStartingWith", query = "select c.name from CampaignFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
@@ -325,13 +327,15 @@
 	@NamedQuery(name = "campaign.countRunningOrDoneExecutions", query = "select count(tps) from Campaign camp join camp.iterations iter join iter.testPlans tps join tps.executions exes where camp.id =:campaignId and exes.executionStatus <> 'READY'"),
 	@NamedQuery(name = "campaign.remove", query = "delete Campaign c where c.id in (:nodeIds)"),
 	@NamedQuery(name = "campaign.findCampaignByProjectId", query = "select c from Campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "campaign.findAllIdsByMilestoneId", query = "select c.id from Campaign c join c.milestones stones where stones.id = :milestoneId"),
 	@NamedQuery(name = "campaign.findCampaignByProjectIdWithMilestone", query = "select c from Campaign c join c.milestones m where c.project.id = :projectId and m.id = :milestoneId"),
 	@NamedQuery(name = "campaign.findCampaignIdsHavingMultipleMilestones", query = "select c.id from Campaign c join c.milestones stones where c.id in (:nodeIds) group by c.id having count(stones) > 1 "),
 	@NamedQuery(name = "campaign.findNonBoundCampaign", query = "select c.id from Campaign c where c.id in (:nodeIds) and c.id not in (select cs.id from Milestone m join m.campaigns cs where m.id = :milestoneId)"),
 	@NamedQuery(name = "Campaign.findAllWithMilestones", query = "from Campaign c where c.milestones is empty"),
 	@NamedQuery(name = "campaign.findCampaignsWhichMilestonesForbidsDeletion",
 	query="select distinct c.id from Campaign c inner join c.milestones milestones where c.id in (:campaignIds) and milestones.status in (:lockedStatuses)"),
-
+	@NamedQuery(name = "campaign.filterByMilestone", query = "select c.id from Campaign c join c.milestones stones where c.id in (:campaignIds) and stones.id = milestoneId"),
+	
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 	@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
@@ -644,31 +648,17 @@
 	@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
 	@NamedQuery(name = "TestCaseStatistics.statusesStatistics", query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
 
-	//Campaign Statistics
-	@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num "
-	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
-
-	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (max(c.name),' ',iter.name) as name, itp.executionStatus as status, count(tc) as num "
-	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by iter"),
-
+	//Campaign Statistics : common methods
 	@NamedQuery(name = "CampaignStatistics.globaltestinventory", query = "select itp.executionStatus, count(itp.executionStatus) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
-
-	@NamedQuery(name = "CampaignStatistics.globaltestinventorybymilestone", query = "select itp.executionStatus, count(itp.executionStatus) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join c.milestones mil where mil.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
+	+ "from Campaign c join c.iterations iter join iter.testPlans itp where c.id in (:campaignIds) and itp.referencedTestCase is not null group by itp.executionStatus"),
 
 	@NamedQuery(name = "CampaignStatistics.successRate", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id group by tc.importance, itp.executionStatus"),
-
-	@NamedQuery(name = "CampaignStatistics.successRateByMilestone", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by tc.importance, itp.executionStatus"),
+	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id in (:campaignIds) group by tc.importance, itp.executionStatus"),
 
 	@NamedQuery(name = "CampaignStatistics.nonexecutedTestcaseImportance", query = "select tc.importance, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
+	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id in (:campaignIds) and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
 
-	@NamedQuery(name = "CampaignStatistics.nonexecutedTestcaseImportanceByMilestone", query = "select tc.importance, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc join c.milestones mil where mil.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
-
+	//Campaign Statistics : execution progression
 	@NamedQuery(name = "CampaignStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "
 	+ "(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, "
 	+ "iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) "
@@ -677,6 +667,17 @@
 	@NamedQuery(name = "CampaignStatistics.findExecutionsHistory", query = "select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id "
 	+ "and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
 
+	
+	//Campaign Statistics : test inventories are special because it depends on who's asking
+	@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num "
+	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
+
+	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (max(c.name),' ',iter.name) as name, itp.executionStatus as status, count(tc) as num "
+	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by iter"),
+
+	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, c.name as name, itp.executionStatus as status, count(tc) as num "
+			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignids) group by c, itp.executionStatus order by c"),
+	
 	//Iteration Statistics
 
 	@NamedQuery(name = "IterationStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "

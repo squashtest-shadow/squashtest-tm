@@ -33,7 +33,6 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
-import org.squashtest.tm.service.internal.testcase.TestCaseLibraryNavigationServiceImpl;
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 
@@ -42,7 +41,7 @@ import spock.lang.Specification
 
 class TestCaseLibraryNavigationServiceImplTest extends Specification {
 
-	TestCaseLibraryNavigationServiceImpl service = new TestCaseLibraryNavigationServiceImpl()
+	AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> service = new TestCaseLibraryNavigationServiceImpl()
 	TestCaseLibraryDao testCaseLibraryDao = Mock()
 	TestCaseFolderDao testCaseFolderDao = Mock()
 	TestCaseDao testCaseDao = Mock()
