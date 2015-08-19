@@ -1472,7 +1472,6 @@ public class FacilityImpl implements Facility {
 				if (instruction instanceof RequirementVersionInstruction) {
 				RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
 					if (!rvi.isFatalError()) {
-						renameRequirementVersion(rvi);
 						changeRequirementVersionStatus(rvi);
 					}
 				}

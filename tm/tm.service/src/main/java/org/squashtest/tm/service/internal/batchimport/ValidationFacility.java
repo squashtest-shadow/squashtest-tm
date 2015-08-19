@@ -947,8 +947,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		checkAndFixRequirementVersionNumber(target, reqVersion, logs);
 
 		// 5 - Check and fix name consistency between path and req name version
-		//  	-> ReqVersion name will be changed in post process as we don't want to modify the top version name
-		// 			used by Squash to get requirement by path
 		checkAndFixNameConsistency(target, reqVersion);
 
 		// 6 - Check milestone validity
