@@ -59,6 +59,34 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		ImportLog summary = importer.performImport(file)
 		return summary
 	}
+	
+	def simulateImportFile = {
+		fileName ->
+		URL url = RequirementExcelBatchImporter.class.getClassLoader().getResource(fileName)
+		File file = new File(url.toURI())
+		ImportLog summary = importer.simulateImport(file)
+		return summary
+	}
+	
+	def findVersion = {
+		id -> findEntity(RequirementVersion.class, id)
+	}
+	def findReq = {
+		id -> findEntity(Requirement.class, id)
+	}
+	
+	def attachRequirementVersionMap(reqVersionMap){
+		
+		def attachVersionToReq = { reqId, vId ->
+			Requirement req = findReq(reqId); req.addVersion(findVersion(vId))
+		}
+
+		reqVersionMap.each{ reqId, versionIds ->
+			versionIds.each{
+				attachVersionToReq(-reqId, -it)
+			}
+		}
+	}
 
 	
 	
@@ -96,8 +124,6 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def requirements = findAll("Requirement");
 		
 		then:
-//		summary.findAllFor(EntityType.REQUIREMENT_VERSION)*.errorArgs == []
-//		summary.findAllFor(EntityType.REQUIREMENT_VERSION)*.i18nError == []
 		summary.requirementVersionSuccesses == 19
 		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
@@ -260,4 +286,209 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		"/Projet1/Exigence"		|	2			 ||	"CAT_UNDEFINED"
 	}
 	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "shouldn't import requirement because milestone isn't binded to project"(){
+		given:
+		def path = "/Projet1/Exigence"
+		
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_failed_milestone_not_exist.xls")
+		summary.recompute()
+		def id = navService.findNodeIdByPath(path)
+		
+		then:
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 1
+		id == null
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "simulate : shouldn't import requirement because milestone isn't binded to project"(){
+		given:
+		def path = "/Projet1/Exigence"
+		def expectedErrors = [Messages.ERROR_UNKNOWN_MILESTONE]
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_failed_milestone_not_exist.xls")
+		summary.recompute()
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+		
+		then:
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 1
+		errors*.i18nError == expectedErrors
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "should import requirement and bind milestone"(){
+		given:
+		def path = "/Projet1/Exigence"
+		
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_milestone_ok.xls")
+		summary.recompute()
+		def id = navService.findNodeIdByPath(path)
+		def requirementVersion = navService.findRequirement(id).findRequirementVersion(1);
+		
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 0
+		id != null
+		requirementVersion.getMilestones().size()==1
+		requirementVersion.getMilestones()*.id == [-3]
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "simulate : should import requirement and bind milestone"(){
+		given:
+		def path = "/Projet1/Exigence"
+
+		when:
+		ImportLog summary = simulateImportFile("import/requirements/requirement_milestone_ok.xls")
+		summary.recompute()
+		def id = navService.findNodeIdByPath(path)
+
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 0
+		id == null
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "should import 2 requirement version and bind only one time the same milestone"(){
+		given:
+		def path = "/Projet1/Exigence"
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_milestone_multi_bind.xls")
+		summary.recompute()
+		def id = navService.findNodeIdByPath(path)
+		def requirementVersionWithMilestoneBinded = navService.findRequirement(id).findRequirementVersion(1);
+		def requirementVersionWithoutMilestone = navService.findRequirement(id).findRequirementVersion(2);
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+		
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 1
+		summary.requirementVersionFailures == 0
+		requirementVersionWithMilestoneBinded != null
+		requirementVersionWithMilestoneBinded.getMilestones().size()==1
+		requirementVersionWithoutMilestone != null
+		requirementVersionWithoutMilestone.getMilestones().size()==0
+		errors*.i18nError == [null,Messages.WARN_MILESTONE_USED]
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "simulate : should import 2 requirement version and bind only one time the same milestone"(){
+		given:
+		def path = "/Projet1/Exigence"
+
+		when:
+		ImportLog summary = simulateImportFile("import/requirements/requirement_milestone_multi_bind.xls")
+		summary.recompute()
+		def id = navService.findNodeIdByPath(path)
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+		
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 1
+		summary.requirementVersionFailures == 0
+		
+		id == null
+		
+		errors*.i18nError == [null,Messages.WARN_MILESTONE_USED]
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "shouldn't import requirement because milestone status"(){
+		given:
+		def paths = ["/Projet1/Exigence","/Projet1/Exigence1","/Projet1/Exigence2","/Projet1/Exigence3"]
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_milestone_failed_status.xls")
+		summary.recompute()
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+
+		then:
+
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 4
+		paths.collect {
+			navService.findNodeIdByPath(it)==null
+		}
+		errors*.i18nError == [Messages.ERROR_WRONG_MILESTONE_STATUS,
+			Messages.ERROR_WRONG_MILESTONE_STATUS,
+			Messages.ERROR_WRONG_MILESTONE_STATUS,
+			Messages.ERROR_WRONG_MILESTONE_STATUS]
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
+	def "simulate : shouldn't import requirement because milestone status"(){
+		given:
+		def paths = ["/Projet1/Exigence", "/Projet1/Exigence1", "/Projet1/Exigence2", "/Projet1/Exigence3"]
+
+		when:
+		ImportLog summary = simulateImportFile("import/requirements/requirement_milestone_failed_status.xls")
+		summary.recompute()
+		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
+
+		then:
+
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 4
+		paths.collect {
+			navService.findNodeIdByPath(it)==null
+		}
+		errors*.i18nError == [Messages.ERROR_WRONG_MILESTONE_STATUS, Messages.ERROR_WRONG_MILESTONE_STATUS, Messages.ERROR_WRONG_MILESTONE_STATUS, Messages.ERROR_WRONG_MILESTONE_STATUS]
+	}
+	
+	//************************ UPDATE MODE ************************//
+	
+	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
+	def "should modify core attribute"(){
+		given:
+		def paths = ["/project/req2"]
+		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
+		attachRequirementVersionMap(reqVersionMap)
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_update_core_attribute.xls")
+		summary.recompute()
+		def requirement = navService.findRequirement(-21)
+		def requirementVersion = requirement.findRequirementVersion(1)
+
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 0
+		requirementVersion.getReference()=="ref_modif"
+		requirementVersion.getDescription()=="description_modif"
+		
+	}
+	
+	@DataSet("RequirementExcelBatchImportIT.should clear milestone binding from requirement.xml")
+	def "should clear milestone binding from requirement"(){
+		given:
+		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
+		attachRequirementVersionMap(reqVersionMap)
+
+		when:
+		ImportLog summary = importFile("import/requirements/requirement_update_core_attribute.xls")
+		summary.recompute()
+		def requirement = navService.findRequirement(-21)
+		def requirementVersion = requirement.findRequirementVersion(1)
+
+		then:
+		summary.requirementVersionSuccesses == 1
+		summary.requirementVersionWarnings == 0
+		summary.requirementVersionFailures == 0
+		requirementVersion.getMilestones().size()==0
+									
+	}
 }
