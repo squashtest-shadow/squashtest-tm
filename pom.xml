@@ -303,6 +303,7 @@
             <exclude>**/*.wsdl</exclude>
 						<!-- misc system / ide files -->
             <exclude>**/build.properties</exclude>
+            <exclude>build.*</exclude>
 						<!-- felix configuration files -->
             <exclude>**/felix.*.properties</exclude>
 						<!-- SQL files used by liquibase, breaks on mysql import when licensed -->
