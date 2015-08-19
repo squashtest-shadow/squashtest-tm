@@ -34,6 +34,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -822,7 +823,15 @@ public class FacilityImpl implements Facility {
 
 		doUpdateRequirementCoreAttributes(reqVersion, orig);
 		doUpdateRequirementCategory(reqVersion, orig);
-		bindRequirementVersionToMilestones(orig, boundMilestonesIds(instruction));
+		
+		//Feat 5169, unbind all milestones if cell is empty in import file.
+		//Else, bind milestones if possible
+		if (CollectionUtils.isEmpty(instruction.getMilestones())) {
+			orig.getMilestones().clear();
+		}
+		else {
+			bindRequirementVersionToMilestones(orig, boundMilestonesIds(instruction));
+		}
 		doUpdateCustomFields(cufValues,orig);
 		doUpdateRequirementMetadata((AuditableMixin)reqVersion,(AuditableMixin)orig);
 		moveRequirement(target.getRequirement(), req, target.getRequirement().getOrder());
@@ -1374,10 +1383,9 @@ public class FacilityImpl implements Facility {
 		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
 
 		InfoListItem category = requirementVersion.getCategory();
-		if (category!=null) {
-			if (!listItemFinderService.isCategoryConsistent(projectStatus.getId(), category.getCode())) {
+		//if category is null or inconsistent for project, setting to default project category
+		if (category==null||!listItemFinderService.isCategoryConsistent(projectStatus.getId(), category.getCode())) {
 				requirementVersion.setCategory(listItemFinderService.findDefaultRequirementCategory(projectStatus.getId()));
-			}
 		}
 	}
 
@@ -1444,6 +1452,10 @@ public class FacilityImpl implements Facility {
 			List<Milestone> ms = milestoneHelper.findBindable(instr.getMilestones());
 			persistentSource.getMilestones().clear();
 			persistentSource.bindAllMilsetones(ms);
+		}
+		//feat 5169 if milestone cell is empty in xls import file, unbind all milestones
+		else {
+			persistentSource.getMilestones().clear();
 		}
 
 	}

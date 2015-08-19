@@ -91,7 +91,7 @@ RequirementLibraryFinderService {
 	List<String> getParentNodesAsStringList(Long elementId);
 	
 	/**
-	 * Genrate a xls file to export requirements
+	 * Generate a xls file to export requirements
 	 * @param libraryIds List of libraryIds (ie project ids) selected for export
 	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
 	 * @param keepRteFormat

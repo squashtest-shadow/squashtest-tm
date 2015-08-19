@@ -501,8 +501,7 @@ class EntityValidator {
 
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() == Existence.EXISTS) {
-
-				// 2-1 category, if specified, must be consistent with the categories of the target project
+				//category, if specified, must be consistent with the categories of the target project
 				if (! categoryDefinedAndConsistent(projectStatus, reqVersion)){
 					logs.addEntry(
 							LogEntry.warning().forTarget(target)
