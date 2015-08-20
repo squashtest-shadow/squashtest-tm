@@ -106,6 +106,25 @@ public final class PathUtils {
 		}
 	}
 
+	/**
+	 * Will build a valid path from splits. Throw {@link IllegalArgumentException} if
+	 * names concatenation lead to an ill formed path
+	 * @param names
+	 * @return
+	 */
+	public static String buildPathFromParts(String[] names) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < names.length; i++) {
+			String name = names[i];
+			builder.append("/");
+			builder.append(name);
+		}
+		String path = builder.toString();
+		if (!isPathWellFormed(path)) {
+			throw new IllegalArgumentException();
+		}
+		return path;
+	}
 
 	/**
 	 * Just an alias for {@link #extractName(String)}.
