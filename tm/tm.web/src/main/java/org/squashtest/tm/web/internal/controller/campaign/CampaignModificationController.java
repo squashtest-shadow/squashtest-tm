@@ -410,16 +410,19 @@ public class CampaignModificationController {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	public ModelAndView getDashboard(Model model,
+			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+			@RequestParam(value="printmode", defaultValue="false") Boolean printmode ) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
 
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
 
-		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-dashboard");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-dashboard");
 		mav.addObject("campaign", campaign);
 		mav.addObject("dashboardModel", bundle);
+		mav.addObject("printmode", printmode);
 
 		populateOptionalExecutionStatuses(campaign, model);
 

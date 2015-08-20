@@ -29,6 +29,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
@@ -107,17 +108,22 @@ public class CampaignFolderModificationController extends FolderModificationCont
 		return campaignModificationService.gatherFolderStatisticsBundle(folderId, milestoneId);
 	}
 
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @PathVariable(RequestParams.FOLDER_ID) long folderId, @CurrentMilestone Milestone activeMilestone) {
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	public ModelAndView getDashboard(
+			Model model,
+			@PathVariable(RequestParams.FOLDER_ID) long folderId,
+			@CurrentMilestone Milestone activeMilestone,
+			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
 
 		CampaignFolder folder= folderModificationService.findFolder(folderId);
 
 		Long milestoneId = (activeMilestone != null) ? activeMilestone.getId() : null;
 		ManyCampaignStatisticsBundle bundle = campaignModificationService.gatherFolderStatisticsBundle(folderId, milestoneId);
 
-		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-folder-dashboard");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-folder-dashboard");
 		mav.addObject("folder", folder);
 		mav.addObject("dashboardModel", bundle);
+		mav.addObject("printmode", printmode);
 
 		populateOptionalExecutionStatuses(folder, model);
 

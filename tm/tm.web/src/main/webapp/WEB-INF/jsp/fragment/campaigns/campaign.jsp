@@ -47,8 +47,8 @@
 <c:url var="campaignInfoUrl" value="/campaigns/${campaign.id}/general" />
 <c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
+<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard?printmode=true" />
 <c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics" />
-<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard" />
 
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />

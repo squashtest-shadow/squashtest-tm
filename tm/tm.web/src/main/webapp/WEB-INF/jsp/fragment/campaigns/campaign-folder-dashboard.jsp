@@ -37,58 +37,32 @@
 
 
 <c:url var="folderStatisticsUrl" value="/campaign-folders/${folder.id}/dashboard-statistics" />
-<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard" />
+<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard?printmode=true" />
 
 
-<html xmlns="http://www.w3.org/1999/xhtml">
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 			
-		
-		<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
-		<comp:sq-css name="squash.core.css" />
-    <comp:sq-css name="squash.print.css" />
+<div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
+	<h2><span>${folder.name}</span></h2>			
+</div>
 
-		<script type="text/javascript">
-		var require = require || {};
-		require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
-		var squashtm = {};
-		squashtm.app = {
-			contextRoot: "${pageContext.servletContext.contextPath}",
-			locale : "<f:message key='squashtm.locale'/>"
-		}
-		<layout:_common-lang/>
-		</script>
-		<script type="text/javascript" src="${pageContext.servletContext.contextPath}/scripts/require-min.js"></script>
+<div class="fragment-body">
+	<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}" 
+                                                  printUrl="${folderStatisticsPrintUrl}" 
+                                                  printmode="${printmode}" 
+                                                  allowsSettled="${allowsSettled}" 
+                                                  allowsUntestable="${allowsUntestable}" />
+</div>
 
-	</head>
-	
-	<body >
-		<div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
-			<h2><span>${folder.name}</span></h2>			
-		</div>
-		
-		<div class="fragment-body">
-			<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}" 
-                                                      printUrl="${folderStatisticsPrintUrl}" 
-                                                      printmode="${true}" 
-                                                      allowsSettled="${allowsSettled}" 
-                                                      allowsUntestable="${allowsUntestable}" />
-		</div>
-		
-		<script type="text/javascript">
-		
-			require(["common"], function(){
-				require(["domReady","campaign-folder-management"], function(domReady, campmanager){
-					domReady(function(){
-						campmanager.initDashboardPanel({
-							master : '#dashboard-master',
-							model : ${json:serialize(dashboardModel)}
-						});	
-					});
-				});
+<script type="text/javascript">
+
+	require(["common"], function(){
+		require(["domReady","campaign-folder-management"], function(domReady, campmanager){
+			domReady(function(){
+				campmanager.initDashboardPanel({
+					master : '#dashboard-master',
+					model : ${json:serialize(dashboardModel)}
+				});	
 			});
-		
-		</script>
-	
-	</body>
-</html>
+		});
+	});
+
+</script>

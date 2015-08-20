@@ -40,7 +40,7 @@
 </s:url>
 
 <c:url var="folderStatisticsUrl" value="/campaign-folders/${folder.id}/dashboard-statistics" />
-<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard" />
+<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard?printmode=true" />
 
 
 <c:set var="hasBugtracker" value="${folder.project.bugtrackerConnected}"/>

@@ -290,10 +290,10 @@
 								<th title="${ToExecuteLabel}" class="status-color-ready std-border light-border"><f:message key="shortLabel.Ready"/></th>
 								<th title="${RunningLabel}" class="status-color-running std-border light-border"><f:message key="shortLabel.Running"/></th>															    								
 								<th title="${SuccessLabel}" class="status-color-success std-border light-border"><f:message key="shortLabel.Success"/></th>
-								<th class="${allowsSettled ? 'status-color-settled' : 'status-color-settled not-displayed' }" title="${SettledLabel}"><f:message key="shortLabel.Settled"/></th>
+								<th class="${allowsSettled ? 'status-color-settled' : 'not-displayed' }" title="${SettledLabel}"><f:message key="shortLabel.Settled"/></th>
 								<th title="${FailureLabel}" class="status-color-failure std-border light-border"><f:message key="shortLabel.Failure"/></th>
 								<th title="${BlockedLabel}" class="status-color-blocked std-border light-border"><f:message key="shortLabel.Blocked"/></th>								
-								<th class="${allowsUntestable ? 'status-color-untestable std-border light-border' : 'status-color-untestable not-displayed std-border light-border' }" title="${NonExecutableLabel}"><f:message key="shortLabel.NonExecutable"/></th>
+								<th class="${allowsUntestable ? 'status-color-untestable std-border light-border' : 'not-displayed' }" title="${NonExecutableLabel}"><f:message key="shortLabel.NonExecutable"/></th>
 								<th style="border:none;"></th>
 								<th title="${ProgressLabel}" class="std-border light-border" ><f:message key="shortLabel.ExecutionProgress"/></th>								
 								<th title="${SuccessRateLabel}" class="std-border light-border" ><f:message key="shortLabel.SuccessRate"/></th>
@@ -313,19 +313,19 @@
 							</tr>
 							<tr class="dashboard-table-template-datarow status-color-untestable">
 								<!--  the following columns displays conditional style and content, for the tests belonging to no test suite -->
-								<td class="std-border light-border {{#unless this.[0]}}nota-bene{{/unless}}">{{this.[0]}}{{#unless this.[0]}}${testsWithoutSuite}{{/unless}} </td>
+								<td class="iteration-dashbord-test-suite-col std-border light-border {{#unless this.[0]}}nota-bene{{/unless}}">{{this.[0]}}{{#unless this.[0]}}${testsWithoutSuite}{{/unless}} </td>
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[1]}}</td>
+								<td class="std-border light-border iteration-dashbord-total-col">{{this.[1]}}</td>
 								<td class="std-border light-border" style="color:blue;">{{this.[2]}}</td>
 								<td class="std-border light-border" style="color:purple;">{{this.[3]}}</td>								
 								<td style="border:none;"></td>
-								<td class="std-border light-border">{{this.[4]}}</td>
-								<td class="std-border light-border">{{this.[5]}}</td>
-								<td class="std-border light-border">{{this.[6]}}</td>
-								<td class="${allowsSettled ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[7]}}</td>
-								<td class="std-border light-border">{{this.[8]}}</td>
-								<td class="std-border light-border">{{this.[9]}}</td>
-								<td class="${allowsUntestable ? 'std-border light-border' : 'std-border light-border not-displayed' }">{{this.[10]}}</td>
+								<td class="std-border light-border iteration-dashbord-ready-col">{{this.[4]}}</td>
+								<td class="std-border light-border iteration-dashbord-running-col">{{this.[5]}}</td>
+								<td class="std-border light-border iteration-dashbord-passed-col">{{this.[6]}}</td>
+								<td class="${allowsSettled ? 'std-border light-border' : 'not-displayed' }">{{this.[7]}}</td>
+								<td class="std-border light-border iteration-dashbord-failed-col">{{this.[8]}}</td>
+								<td class="std-border light-border iteration-dashbord-blocked-col">{{this.[9]}}</td>
+								<td class="${allowsUntestable ? 'std-border light-border iteration-dashbord-untestable-col' : 'not-displayed' }">{{this.[10]}}</td>
 								<td style="border:none;"></td>
 								<td class="std-border light-border">{{this.[11]}}%</td>								
 								<td class="std-border light-border">{{this.[12]}}%</td>

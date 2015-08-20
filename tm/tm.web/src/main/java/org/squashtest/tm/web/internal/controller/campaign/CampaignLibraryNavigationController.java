@@ -433,6 +433,17 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return mav;
 	}
 
+	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	public ModelAndView getDashboard(Model model, @CurrentMilestone Milestone activeMilestone,
+			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
+
+		ModelAndView mav = getDashboard(model, activeMilestone);
+		mav.setViewName("page/campaign-workspace/show-campaign-milestone-dashboard");
+		mav.addObject("printmode", printmode);
+
+		return mav;
+	}
+
 	private File exportToFile(CampaignExportCSVModel model) {
 
 		File file;
