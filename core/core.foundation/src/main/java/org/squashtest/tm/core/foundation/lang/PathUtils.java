@@ -117,6 +117,25 @@ public final class PathUtils {
 		return extractName(path);
 	}
 
+	/**
+	 * Will build a valid path from splits. Throw {@link IllegalArgumentException} if
+	 * names concatenation lead to an ill formed path
+	 * @param names
+	 * @return
+	 */
+	public static String buildPathFromParts(String[] names) {
+		StringBuilder builder = new StringBuilder();
+		for (int i = 0; i < names.length; i++) {
+			String name = names[i];
+			builder.append("/");
+			builder.append(name);
+		}
+		String path = builder.toString();
+		if (!isPathWellFormed(path)) {
+			throw new IllegalArgumentException();
+		}
+		return path;
+	}
 
 
 	public static boolean arePathsAndNameConsistents(String path, String name) {

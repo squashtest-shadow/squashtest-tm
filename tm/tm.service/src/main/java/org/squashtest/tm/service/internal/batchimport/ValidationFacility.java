@@ -186,6 +186,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			for (String name : rejected) {
 				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
 						.build());
+				target.rejectedMilestone();
 			}
 			return logs;
 		}
@@ -199,6 +200,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			for (String name : rejected) {
 				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name)
 						.build());
+				target.rejectedMilestone();
 			}
 			return logs;
 		}
@@ -1001,6 +1003,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	}
 
+	/**
+	 * Check if an existing requirement version has a status which forbid modifications.
+	 * Used for update
+	 * @param target
+	 * @param logs
+	 */
 	private void checkExistingRequirementVersionStatus(
 			RequirementVersionTarget target, LogTrain logs) {
 

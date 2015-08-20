@@ -620,7 +620,7 @@ public class FacilityImpl implements Facility {
 			//update the instruction, needed for postProcess.
 			instruction.setRequirementVersion(newVersion);
 
-			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
+			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Requirement version \t'" + target + "'");
 
 		} catch (Exception ex) {
 			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
@@ -844,7 +844,7 @@ public class FacilityImpl implements Facility {
 			orig.getMilestones().clear();
 		}
 		else {
-			bindRequirementVersionToMilestones(orig, boundMilestonesIds(instruction));
+			updateRequirementVersionToMilestones(target.isRejectedMilestone(),orig, boundMilestonesIds(instruction));
 		}
 		doUpdateCustomFields(cufValues,orig);
 		doUpdateRequirementMetadata((AuditableMixin)reqVersion,(AuditableMixin)orig);
@@ -925,6 +925,12 @@ public class FacilityImpl implements Facility {
 		reqLibNavigationService.changeCurrentVersionNumber(requirement, version);
 	}
 
+	private void updateRequirementVersionToMilestones(boolean corruptedMilestones,RequirementVersion requirementVersionPersisted,
+			List<Long> boundMilestonesIds){
+		if (!corruptedMilestones) {
+			bindRequirementVersionToMilestones(requirementVersionPersisted,boundMilestonesIds);
+		}
+	}
 
 	/**
 	 * This method ensure that multiple milestone binding to several {@link RequirementVersion} of
@@ -954,8 +960,10 @@ public class FacilityImpl implements Facility {
 			}
 		}
 
-		requirementVersionManagerService.bindMilestones(requirementVersionPersisted.getId(), checkedMilestones);
-
+		if (checkedMilestones.size() > 0) {
+			requirementVersionPersisted.getMilestones().clear();
+			requirementVersionManagerService.bindMilestones(requirementVersionPersisted.getId(), checkedMilestones);
+		}
 	}
 
 

@@ -38,7 +38,7 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	 * postprocess on this instruction should not be performed
 	 */
 	private boolean fatalError = false;
-
+	
 	
 
 	public RequirementVersionInstruction(RequirementVersionTarget target, RequirementVersion requirementVersion) {
@@ -92,5 +92,7 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	public void fatalError() {
 		this.fatalError = true;
 	}
+
+	
 	
 }

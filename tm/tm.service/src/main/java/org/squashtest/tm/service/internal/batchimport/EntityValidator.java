@@ -24,6 +24,7 @@ import static org.squashtest.tm.service.internal.batchimport.Model.Existence.NOT
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_DELETED;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NAME;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_REFERENCE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_PATH;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 
@@ -31,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -282,7 +284,11 @@ class EntityValidator {
 			RequirementVersion reqVersion){
 		LogTrain logs = new LogTrain();
 		checkMalformedPath(target,logs);
+		if (logs.hasCriticalErrors()) {
+			return logs;
+		}
 		checkProjectExists(target,logs);
+		checkVersionPath(target,logs);
 		checkVersionName(target,reqVersion, logs);
 		checkVersionReference(target,reqVersion, logs);
 		logs.append(checkCategoryAndFixIfNeeded(target, reqVersion));
@@ -290,6 +296,40 @@ class EntityValidator {
 
 	}
 
+	/**
+	 * Check path to ensure that all element in path are not too long. Truncate if needed...
+	 * @param target
+	 * @param logs
+	 */
+	private void checkVersionPath(RequirementVersionTarget target, LogTrain logs) {
+		if (!target.isWellFormed()){
+			return;
+		}
+		
+		boolean hasTruncate = false;
+		
+		String path = target.getRequirement().getPath();
+		String[] names = PathUtils.splitPath(path);
+		for (int i = 1; i < names.length; i++) {//begin to 1 as first split is project name
+			String name = names[i];
+			if (name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
+				names[i] = StringUtils.abbreviate(name, RequirementLibraryNode.MAX_NAME_SIZE);
+				hasTruncate = true;
+			}
+		}
+		
+		if (hasTruncate) {
+			logs.addEntry(LogEntry.warning().forTarget(target)
+					.withMessage(Messages.ERROR_MAX_SIZE, REQ_PATH.header).build());
+			rebuildPathAfterTrucate(target, names);
+		}
+		
+	}
+
+	private void rebuildPathAfterTrucate(RequirementVersionTarget target,
+			String[] names) {
+		target.getRequirement().setPath(PathUtils.buildPathFromParts(names));
+	}
 
 	private void checkVersionReference(RequirementVersionTarget target,
 			RequirementVersion reqVersion, LogTrain logs) {
@@ -304,6 +344,7 @@ class EntityValidator {
 	private void checkVersionName(RequirementVersionTarget target, RequirementVersion reqVersion, LogTrain logs) {
 		String name = reqVersion.getName();
 		if (name != null && name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
+			reqVersion.setName(StringUtils.abbreviate(name, RequirementLibraryNode.MAX_NAME_SIZE));
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_NAME.header)
 					.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
@@ -529,6 +570,9 @@ class EntityValidator {
 		InfoListItem category = reqVersion.getCategory();
 		if (category!=null) {
 			isConsistent = getInfoListItemService().isCategoryConsistent(projectStatus.getId(), category.getCode());
+		}
+		else {
+			isConsistent = false;
 		}
 		return isConsistent;
 	}

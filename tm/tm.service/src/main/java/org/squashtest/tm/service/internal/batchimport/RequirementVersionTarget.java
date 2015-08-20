@@ -32,6 +32,14 @@ public class RequirementVersionTarget extends Target {
 	
 	private String unconsistentName;
 	
+	/**
+	 * Used for update. Convenient boolean which store the fact that one of the
+	 * milestone label present in import file isn't valid. Spec 5085 specify
+	 * that in update mode if one of the milestone is unknown the milestone
+	 * binding isn't modified.
+	 */
+	private boolean rejectedMilestone = false;
+	
 	private RequirementStatus importedRequirementStatus = RequirementStatus.WORK_IN_PROGRESS;
 	
 	public RequirementVersionTarget(RequirementTarget requirement, Integer version) {
@@ -96,6 +104,17 @@ public class RequirementVersionTarget extends Target {
 	public void setImportedRequirementStatus(
 			RequirementStatus importedRequirementStatus) {
 		this.importedRequirementStatus = importedRequirementStatus;
+	}
+	
+
+
+	public boolean isRejectedMilestone() {
+		return rejectedMilestone;
+	}
+
+
+	public void rejectedMilestone() {
+		this.rejectedMilestone = true;
 	}
 
 
