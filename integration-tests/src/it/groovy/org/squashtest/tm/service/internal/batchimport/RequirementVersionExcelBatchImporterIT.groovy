@@ -250,25 +250,6 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		}
 	}
 	
-
-	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
-	def "should import requirement and truncate long path"(){
-		given:
-
-		when:
-		ImportLog summary = importFile("import/requirements/requirement_test_truncate.xls")
-		summary.recompute()
-		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		
-		then:
-		summary.requirementVersionSuccesses == 0
-		summary.requirementVersionWarnings == 2
-		summary.requirementVersionFailures == 0
-		errors.each {
-			it.i18nError==Messages.ERROR_MAX_SIZE;
-		}
-	}
-	
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement crit and status test"(){
 		given:
@@ -301,24 +282,6 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		"/Projet1/Exigence"		|	5			 ||	RequirementCriticality.MAJOR		|RequirementStatus.APPROVED
 		"/Projet1/Exigence"		|	6			 ||	RequirementCriticality.MAJOR		|RequirementStatus.OBSOLETE
 		"/Projet1/Exigence"		|	7			 ||	RequirementCriticality.MAJOR		|RequirementStatus.WORK_IN_PROGRESS
-	}
-	
-	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
-	def "simulate : should import requirement crit and status test"(){
-		given:
-
-		when:
-		ImportLog summary = simulateImportFile("import/requirements/requirement_status_crit.xls")
-		summary.recompute()
-		def id = navService.findNodeIdByPath("/Projet1/Exigence")
-
-		then:
-
-		summary.requirementVersionSuccesses == 5
-		summary.requirementVersionWarnings == 2
-		summary.requirementVersionFailures == 0
-		id == null
-
 	}
 	
 	
@@ -356,24 +319,6 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionFailures == 0
 		errors*.i18nError == [null,Messages.ERROR_REQ_USER_NOT_FOUND]
 
-	}
-	
-	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
-	def "simulate : should import requirement with inconsistent createdby"(){
-		given:
-
-		when:
-		ImportLog summary = simulateImportFile("import/requirements/requirement_test_created_by.xls")
-		summary.recompute()
-		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		def id = navService.findNodeIdByPath("/Projet1/Exigence")
-
-		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 1
-		summary.requirementVersionFailures == 0
-		errors*.i18nError == [null, Messages.ERROR_REQ_USER_NOT_FOUND]
-		id == null
 	}
 	
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
@@ -785,75 +730,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		
 	}
 	
-	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
-	def "simulate : should modify core attribute"(){
-		given:
-		def paths = ["/project/req2"]
-		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
-		attachRequirementVersionMap(reqVersionMap)
-
-		when:
-		ImportLog summary = simulateImportFile("import/requirements/requirement_update_core_attribute.xls")
-		summary.recompute()
-		def requirement = navService.findRequirement(-21)
-		def requirementVersion = requirement.findRequirementVersion(1)
-
-		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 0
-		summary.requirementVersionFailures == 0
-		requirementVersion.getReference()!="ref_modif"
-		requirementVersion.getDescription()!="description_modif"
-
-	}
 	
-	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
-	def "should modify status and criticality"(){
-		given:
-		def paths = ["/project/req2"]
-		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
-		attachRequirementVersionMap(reqVersionMap)
-
-		when:
-		ImportLog summary = importFile("import/requirements/requirement_update_status_crit.xls")
-		summary.recompute()
-		def requirement = navService.findRequirement(-21)
-		def requirementVersion = requirement.findRequirementVersion(1)
-
-		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 0
-		summary.requirementVersionFailures == 0
-		requirementVersion.getReference()=="ref"
-		requirementVersion.getDescription()=="description"
-		requirementVersion.getCriticality()==RequirementCriticality.CRITICAL
-		requirementVersion.getStatus()==RequirementStatus.APPROVED
-
-	}
 	
-	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
-	def "simulate : should modify status and criticality"(){
-		given:
-		def paths = ["/project/req2"]
-		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
-		attachRequirementVersionMap(reqVersionMap)
-
-		when:
-		ImportLog summary = simulateImportFile("import/requirements/requirement_update_status_crit.xls")
-		summary.recompute()
-		def requirement = navService.findRequirement(-21)
-		def requirementVersion = requirement.findRequirementVersion(1)
-
-		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 0
-		summary.requirementVersionFailures == 0
-		requirementVersion.getReference() != "ref_modif"
-		requirementVersion.getDescription() != "description_modif"
-		requirementVersion.getCriticality() != RequirementCriticality.MAJOR
-		requirementVersion.getStatus() != RequirementStatus.APPROVED
-
-	}
 	
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "simulate : should modify core attribute"(){
@@ -945,49 +823,6 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 									
 	}
 	
-	@DataSet("RequirementExcelBatchImportIT.should update milestone binding.xml")
-	def "should update milestone binding from requirement"(){
-		given:
-		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
-		attachRequirementVersionMap(reqVersionMap)
-
-		when:
-		ImportLog summary = importFile("import/requirements/requirement_update_milestone_binding.xls")
-		summary.recompute()
-		def requirement = navService.findRequirement(-21)
-		def requirementVersion = requirement.findRequirementVersion(1)
-		def milestones = requirementVersion.getMilestones();
-
-		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 0
-		summary.requirementVersionFailures == 0
-		milestones.size()==2
-		milestones*.label as Set==["My milestone","My milestone 3"] as Set
-
-	}
-	
-	@DataSet("RequirementExcelBatchImportIT.should update milestone binding.xml")
-	def "shouldn't update milestone binding from requirement because unknown milestone"(){
-		given:
-		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
-		attachRequirementVersionMap(reqVersionMap)
-
-		when:
-		ImportLog summary = importFile("import/requirements/requirement_update_ko_unknown_milestone.xls")
-		summary.recompute()
-		def requirement = navService.findRequirement(-21)
-		def requirementVersion = requirement.findRequirementVersion(1)
-		def milestones = requirementVersion.getMilestones();
-
-		then:
-		summary.requirementVersionSuccesses == 0
-		summary.requirementVersionWarnings == 1
-		summary.requirementVersionFailures == 0
-		milestones.size()==1
-		milestones*.label==["My milestone 2"]
-
-	}
 	
 	@DataSet("RequirementExcelBatchImportIT.should update milestone binding.xml")
 	def "should update milestone binding from requirement"(){
