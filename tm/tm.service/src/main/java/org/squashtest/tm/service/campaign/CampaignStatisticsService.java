@@ -92,7 +92,7 @@ public interface CampaignStatisticsService {
 	// functional FIXME : ask a spec writer why statistics vary so subtly depending on
 	// whether we ask a dashboard for a bunch of campaigns belonging to the same milestone,
 	// or a bunch of campaigns belonging to the same folder
-	ManyCampaignStatisticsBundle gatherFolderStatisticsBundleByMilestone(Long folderId, Long milestoneId);
+	ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId);
 
 
 	/* *********************************** common statistics methods ************************************ */

@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 public interface CampaignLibraryFinderService {
 
@@ -56,5 +57,14 @@ public interface CampaignLibraryFinderService {
 	 * @return
 	 */
 	Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+
+
+	/**
+	 * Returns all dashboard data for a milestone dashboard (ie about all campaigns that belong to that milestone)
+	 * 
+	 * @param milestoneId
+	 * @return
+	 */
+	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId);
 
 }

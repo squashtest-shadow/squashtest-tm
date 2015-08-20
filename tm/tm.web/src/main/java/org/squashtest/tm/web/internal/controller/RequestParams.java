@@ -40,6 +40,11 @@ public final class RequestParams {
 	public static final String FOLDER_IDS = "folderIds[]";
 
 	/**
+	 * simple folder id post param
+	 */
+	public static final String FOLDER_ID = "folderId";
+
+	/**
 	 * multiple ids post param
 	 */
 	public static final String IDS = "ids[]";

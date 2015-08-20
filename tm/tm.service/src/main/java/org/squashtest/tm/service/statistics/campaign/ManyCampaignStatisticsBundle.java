@@ -36,11 +36,11 @@ public final class ManyCampaignStatisticsBundle {
 	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics;
 
 
-	public List<CampaignTestInventoryStatistics> getIterationTestInventoryStatisticsList() {
+	public List<CampaignTestInventoryStatistics> getCampaignTestInventoryStatisticsList() {
 		return campaignTestInventoryStatisticsList;
 	}
 
-	public void setIterationTestInventoryStatisticsList(
+	public void setCampaignTestInventoryStatisticsList(
 			List<CampaignTestInventoryStatistics> campaignTestInventoryStatisticsList) {
 		this.campaignTestInventoryStatisticsList = campaignTestInventoryStatisticsList;
 	}

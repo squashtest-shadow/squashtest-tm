@@ -35,7 +35,7 @@
 
 
 <f:message var="statisticsTitle" key="title.CampaignStatistics"/>
-<f:message var="inventoryTitle" key="title.TestInventoryByIteration"/>
+<f:message var="inventoryTitle" key="title.TestInventoryByCampaign"/>
 <f:message var="refreshLabel" key="label.Refresh" />			
 <f:message var="buttonOK" key="label.Ok"/>	
 <f:message var="testWeightHelper" key="dashboard.campaigns.importance.helper"/>
@@ -215,7 +215,7 @@
 					<table id="dashboard-test-inventory" class="dashboard-table" data-def="model-attribute=campaignTestInventoryStatisticsList">
 						<thead>
 							<tr >				
-								<th style="width:25%"><span><f:message key="label.campaign"/></span></th>
+								<th style="width:25%"><span><f:message key="label.Campaign"/></span></th>
 								<th class="status-color-ready std-border"><span><f:message key="label.Ready"/></span></th>
 								<th class="status-color-running"><span><f:message key="label.Running"/></span></th>
 								<th class="status-color-success"><span><f:message key="label.Success"/></span></th>

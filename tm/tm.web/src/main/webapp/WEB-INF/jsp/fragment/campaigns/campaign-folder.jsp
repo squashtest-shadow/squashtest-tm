@@ -29,6 +29,7 @@
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="csst" uri="http://org.squashtest.tm/taglib/css-transform"%>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="dashboard" tagdir="/WEB-INF/tags/dashboard" %>
 
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
@@ -37,6 +38,10 @@
 <s:url var="folderUrl" value="/${ updateUrl }/{folderId}">
   <s:param name="folderId" value="${folder.id}" />
 </s:url>
+
+<c:url var="folderStatisticsUrl" value="/campaign-folders/${folder.id}/dashboard-statistics" />
+<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard" />
+
 
 <c:set var="hasBugtracker" value="${folder.project.bugtrackerConnected}"/>
 
@@ -88,7 +93,10 @@
       </ul>
       
       <div id="folder-dashboard">
-        <h1>TODO</h1>
+			<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}" 
+                                                      printUrl="${folderStatisticsPrintUrl}" 
+                                                      allowsSettled="${allowsSettled}" 
+                                                      allowsUntestable="${allowsUntestable}" />
       </div>
       
       <%-- ----------------------- bugtracker (if present)----------------------------------------%> 

@@ -410,7 +410,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	public @ResponseBody
 	CampaignStatisticsBundle getStatisticsAsJson(@CurrentMilestone Milestone activeMilestone) {
 
-		return campaignModService.gatherCampaignStatisticsBundleByMilestone(activeMilestone.getId());
+		return campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone(activeMilestone.getId());
 	}
 
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
@@ -419,7 +419,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
 		long milestoneId = activeMilestone.getId();
-		CampaignStatisticsBundle csbundle = campaignModService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
+		CampaignStatisticsBundle csbundle = campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
 
 		mav.addObject("milestone", milestoneFinder.findById(milestoneId));
 		mav.addObject("dashboardModel", csbundle);

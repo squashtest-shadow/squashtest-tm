@@ -138,7 +138,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	// TODO : security ? If never exposed through OSGI it might not be necessary
-	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundleByMilestone(Long folderId, Long milestoneId) {
+	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId) {
 
 		ManyCampaignStatisticsBundle bundle = new ManyCampaignStatisticsBundle();
 
@@ -156,7 +156,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics(); // not used in the by-milestone dashboard
 
 		// stuff it all
-		bundle.setIterationTestInventoryStatisticsList(inventory);
+		bundle.setCampaignTestInventoryStatisticsList(inventory);
 		bundle.setCampaignProgressionStatistics(progression);
 		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
@@ -284,7 +284,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Override
 	public List<CampaignTestInventoryStatistics> gatherFolderTestInventoryStatistics(Collection<Long> campaignIds) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignFolderStatistics.testinventory");
-		query.setParameter("campaignIds", campaignIds, LongType.INSTANCE);
+		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 		List<Object[]> tuples = query.list();
 
 		return processCampaignTestInventory(tuples);
@@ -305,7 +305,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	 */
 	private List<Object[]> fetchCommonTuples(String queryName, List<Long> campaignIds){
 		Query query = sessionFactory.getCurrentSession().getNamedQuery(queryName);
-		query.setParameter("campaignIds", campaignIds);
+		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 		List<Object[]> res = query.list();
 		return res;
 	}

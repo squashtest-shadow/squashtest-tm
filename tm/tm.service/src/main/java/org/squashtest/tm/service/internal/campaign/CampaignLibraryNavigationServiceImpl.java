@@ -50,6 +50,7 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
+import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -66,6 +67,7 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
@@ -109,6 +111,9 @@ CampaignLibraryNavigationService {
 
 	@Inject
 	private Provider<CampaignExportCSVFullModelImpl> fullCampaignExportCSVModelProvider;
+
+	@Inject
+	private CampaignStatisticsService statisticsService;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.CampaignLibrarySelectionStrategy")
@@ -401,5 +406,12 @@ CampaignLibraryNavigationService {
 		return cIds;
 
 	}
+
+
+	@Override
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
+		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
+	}
+
 
 }

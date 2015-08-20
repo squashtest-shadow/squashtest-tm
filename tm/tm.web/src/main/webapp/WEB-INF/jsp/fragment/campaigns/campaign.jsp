@@ -50,8 +50,6 @@
 <c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics" />
 <c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard" />
 
-<c:url var="campaignMilestoneStatisticsPrintUrl" value="/campaign-browser/dashboard-milestones" />
-<c:url var="campaignMilestoneInfoStatisticsUrl" value="/campaign-browser/dashboard-milestones-statistics" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="btEntityUrl" value="/bugtracker/campaign/${campaign.id}" />

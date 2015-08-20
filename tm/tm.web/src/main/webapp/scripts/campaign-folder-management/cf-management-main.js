@@ -20,8 +20,9 @@
  */
 
 
-define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel"], 
-		function($, basic, ContentHandlers, Frag, Bugtracker){
+define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel",
+        'dashboard/campaigns-dashboard/campaigns-dashboard-main'], 
+		function($, basic, ContentHandlers, Frag, Bugtracker, dashboard){
 	
 	
 	function init(conf){
@@ -42,10 +43,19 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 			Bugtracker.load(conf.bugtracker);
 		}
 		
+		// dashboard
+		dashboard.init({
+			master : '#dashboard-master',
+			cacheKey : 'dashboard-cfold'+conf.basic.identity.resid
+		});
+		
 	}
 	
 	return {
-		init : init		
+		init : init,
+		initDashboardPanel : function(conf){
+			dashboard.init(conf);
+		}
 	}
 	
 });

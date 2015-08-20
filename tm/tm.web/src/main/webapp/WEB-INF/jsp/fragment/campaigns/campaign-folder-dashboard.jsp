@@ -36,8 +36,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 
 
-<c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
-<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard" />
+<c:url var="folderStatisticsUrl" value="/campaign-folders/${folder.id}/dashboard-statistics" />
+<c:url var="folderStatisticsPrintUrl" value="/campaign-folders/${folder.id}/dashboard" />
+
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -45,7 +46,7 @@
 		
 		<link type="image/x-icon" rel="shortcut icon" href="${ pageContext.servletContext.contextPath }/images/favicon.ico"/>
 		<comp:sq-css name="squash.core.css" />
-        <comp:sq-css name="squash.print.css" />
+    <comp:sq-css name="squash.print.css" />
 
 		<script type="text/javascript">
 		var require = require || {};
@@ -63,17 +64,21 @@
 	
 	<body >
 		<div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
-			<h2><span><f:message key="label.Campaign"/> : ${campaign.name}</span></h2>			
+			<h2><span>${folder.name}</span></h2>			
 		</div>
 		
 		<div class="fragment-body">
-			<dashboard:campaign-dashboard-panel url="${campaignStatisticsUrl}"  printUrl="${campaignStatisticsPrintUrl}" printmode="${true}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
+			<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}" 
+                                                      printUrl="${folderStatisticsPrintUrl}" 
+                                                      printmode="${true}" 
+                                                      allowsSettled="${allowsSettled}" 
+                                                      allowsUntestable="${allowsUntestable}" />
 		</div>
 		
 		<script type="text/javascript">
 		
 			require(["common"], function(){
-				require(["domReady","campaign-management"], function(domReady, campmanager){
+				require(["domReady","campaign-folder-management"], function(domReady, campmanager){
 					domReady(function(){
 						campmanager.initDashboardPanel({
 							master : '#dashboard-master',

@@ -334,7 +334,7 @@
 	@NamedQuery(name = "Campaign.findAllWithMilestones", query = "from Campaign c where c.milestones is empty"),
 	@NamedQuery(name = "campaign.findCampaignsWhichMilestonesForbidsDeletion",
 	query="select distinct c.id from Campaign c inner join c.milestones milestones where c.id in (:campaignIds) and milestones.status in (:lockedStatuses)"),
-	@NamedQuery(name = "campaign.filterByMilestone", query = "select c.id from Campaign c join c.milestones stones where c.id in (:campaignIds) and stones.id = milestoneId"),
+	@NamedQuery(name = "campaign.filterByMilestone", query = "select c.id from Campaign c join c.milestones stones where c.id in (:campaignIds) and stones.id = :milestoneId"),
 	
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
@@ -676,7 +676,7 @@
 	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by iter"),
 
 	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, c.name as name, itp.executionStatus as status, count(tc) as num "
-			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignids) group by c, itp.executionStatus order by c"),
+			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by c"),
 	
 	//Iteration Statistics
 
