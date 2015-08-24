@@ -87,6 +87,15 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	long countTestPlanById(long campaignId);
 
+
+	/**
+	 * Returns how many iterations this campaign have
+	 * 
+	 * @param campaignIds
+	 * @return
+	 */
+	int countIterations(long campaignId);
+
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
 
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
@@ -127,4 +136,5 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<Long> findCampaignIdsHavingMultipleMilestones(List<Long> nodeIds);
 
 	List<Long> findNonBoundCampaign(Collection<Long> nodeIds, Long milestoneId);
+
 }

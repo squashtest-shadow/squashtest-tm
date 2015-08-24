@@ -356,6 +356,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		case CAMPAIGN_FOLDER:
 		case REQUIREMENT_FOLDER:
 		case TEST_CASE_FOLDER:
+		case CAMPAIGN:
 		case REQUIREMENT:
 			lnDao = collaboratorsByType.get(destType).nodeDao;
 			break;
@@ -378,7 +379,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	@Override
 	public void reindexAfterCopy() {
 		// do nothing
-		
+
 	}
 
 }

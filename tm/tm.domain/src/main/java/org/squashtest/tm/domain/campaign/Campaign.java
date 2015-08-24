@@ -252,6 +252,13 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 		getIterations().remove(iteration);
 	}
 
+	public void moveIterations(int newIndex, List<Iteration> moved){
+		if (! iterations.isEmpty()){
+			iterations.removeAll(moved);
+			iterations.addAll(newIndex, moved);
+		}
+	}
+
 	public List<Iteration> getIterations() {
 		return iterations;
 	}

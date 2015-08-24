@@ -187,6 +187,26 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.campaign.Campaign', 'WRITE') "+OR_HAS_ROLE_ADMIN)
+	public void moveIterationsWithinCampaign(long destinationId, Long[] nodeIds, int position) {
+		/*
+		 * because :
+		 * 1 - iteration is not a campaign library node
+		 * 2 - an iteration will move only within the same campaign,
+		 * 
+		 * we can't use the TreeNodeMover and we don't need it anyway.
+		 */
+
+		List<Long> iterationIds = Arrays.asList(nodeIds);
+
+		Campaign c= campaignDao.findById(destinationId);
+		List<Iteration> iterations = iterationDao.findAllByIds(iterationIds);
+
+		c.moveIterations(position, iterations);
+
+	}
+
+	@Override
 	protected final CampaignLibraryDao getLibraryDao() {
 		return campaignLibraryDao;
 	}

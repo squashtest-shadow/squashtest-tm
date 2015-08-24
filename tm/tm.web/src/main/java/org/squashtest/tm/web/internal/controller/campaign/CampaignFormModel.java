@@ -46,6 +46,8 @@ public class CampaignFormModel {
 	@NotNull*/
 	private String name;
 
+	private String reference;
+
 	private String description;
 
 
@@ -62,6 +64,16 @@ public class CampaignFormModel {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+
+	public String getReference() {
+		return reference;
+	}
+
+
+	public void setReference(String reference) {
+		this.reference = reference;
 	}
 
 
@@ -89,6 +101,7 @@ public class CampaignFormModel {
 		Campaign newCampaign = new Campaign();
 		newCampaign.setName(name);
 		newCampaign.setDescription(description);
+		newCampaign.setReference(reference);
 		return newCampaign;
 	}
 

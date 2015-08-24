@@ -65,6 +65,7 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -388,12 +389,21 @@ public class CampaignModificationController {
 
 	}
 
+
 	@RequestMapping(value = "/iterations", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
 	@ResponseBody
 	public List<JsonIteration> getIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		List<Iteration> iterations = campaignModService.findIterationsByCampaignId(campaignId);
 		return createJsonIterations(iterations);
 	}
+
+
+	@RequestMapping(value = "/iterations/count", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
+	@ResponseBody
+	public Integer getNbIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId){
+		return campaignModService.countIterations(campaignId);
+	}
+
 
 	// for now, handles the scheduled dates only
 	@RequestMapping(value = "/iterations/planning", consumes = ContentTypes.APPLICATION_JSON, method = RequestMethod.POST)

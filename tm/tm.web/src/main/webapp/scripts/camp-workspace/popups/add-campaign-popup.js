@@ -22,9 +22,10 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		function($, zetree, cufValuesManager, projects, rules){
 	
 	function postNode(dialog, tree){
-		
+
 		var params = {
 			name : dialog.find('#add-campaign-name').val(),
+			reference : dialog.find('#add-campaign-reference').val(),
 			description : dialog.find('#add-campaign-description').val()
 		};
 		

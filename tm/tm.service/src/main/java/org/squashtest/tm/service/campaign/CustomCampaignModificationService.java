@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
@@ -39,6 +40,10 @@ public interface CustomCampaignModificationService {
 	Collection<Campaign> findCampaignsByMilestoneId(long milestoneId);
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
+
+
+	Integer countIterations(@QueryParam("campaignId") Long campaignId);
+
 
 	/**
 	 * 

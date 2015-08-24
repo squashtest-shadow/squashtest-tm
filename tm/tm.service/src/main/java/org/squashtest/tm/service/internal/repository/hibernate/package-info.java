@@ -319,6 +319,7 @@
 	@NamedQuery(name = "campaign.findLastCopy", query = "select camp.name from Campaign camp where camp.name like :campaignName"),
 	@NamedQuery(name = "campaign.findAllTestCasesById", query = "select tc.referencedTestCase from Campaign c join c.testPlan tc fetch all properties where c.id = :campaignId order by tc.referencedTestCase.name asc"),
 	@NamedQuery(name = "campaign.countTestCasesById", query = "select count(tp) from Campaign c join c.testPlan tp where c.id = :campaignId"),
+	@NamedQuery(name = "campaign.countIterations", query = "select count(it) from Campaign c join c.iterations it where c.id = :campaignId"),
 	@NamedQuery(name = "campaign.countIterationsTestPlanItems", query = "select count(tp) from Campaign c join c.iterations it join it.testPlans tp where c.id = :campaignId"),
 	@NamedQuery(name = "campaign.countStatuses", query = "select tp.executionStatus, count(tp) from Campaign c join c.iterations it join it.testPlans tp where c.id = :campaignId group by tp.executionStatus"),
 	@NamedQuery(name = "campaign.findCampaignByName", query = "from CampaignLibraryNode c where c.name like :campaignName order by c.name asc"),
@@ -662,7 +663,7 @@
 	@NamedQuery(name = "CampaignStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "
 	+ "(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, "
 	+ "iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) "
-	+ "from Campaign c join c.iterations iter where c.id = :id group by iter, index(iter) order by index(iter)"),
+	+ "from Campaign c join c.iterations iter where c.id = :id group by iter, index(iter) order by scheduledStart"),
 
 	@NamedQuery(name = "CampaignStatistics.findExecutionsHistory", query = "select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id "
 	+ "and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),

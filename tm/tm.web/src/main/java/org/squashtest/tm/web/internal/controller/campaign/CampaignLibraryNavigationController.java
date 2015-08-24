@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -62,6 +63,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
@@ -235,8 +237,43 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
 
 		return createIterationTestSuitesModel(testSuites);
+	}
+
+
+	/*
+	 * Special implementation of moveNodes(...) when the destination type is "campaigns"
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController#moveNodes(java.lang.Long[], long, java.lang.String)
+	 */
+	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId) {
+
+		/*
+		 * Evolution 5169.
+		 * 
+		 * One can move iterations within a same campaign. But it makes sense only if an index is supplied too.
+		 * So, this version of moveNodes - that uses no index - is of no interest for us : we just do nothing.
+		 * 
+		 * For other destination types though we can proceed with the super implementation.
+		 */
+
 
 	}
+
+	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId,
+			@PathVariable("position") int position) {
+
+		try {
+			campaignLibraryNavigationService.moveIterationsWithinCampaign(destinationId, nodeIds, position);
+		} catch (AccessDeniedException ade) {
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+
+	}
+
 
 	private @ResponseBody
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {

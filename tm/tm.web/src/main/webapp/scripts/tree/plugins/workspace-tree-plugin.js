@@ -275,13 +275,12 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 		if (nodeData.o.length === 0) {
 			return;
 		}
-
-		// we also reject iterations and testsuite
+		
+		// we also reject testsuites
 		var firstNode = nodeData.o[0];
-		if ($(firstNode).is(":iteration, :test-suite")) {
+		if ($(firstNode).is(":test-suite")) {
 			return;
 		}
-
 
 		var rawurl = targetTreeNode.getMoveUrl();
 		var nodeIds = $(nodes).treeNode().all('getResId').join(',');

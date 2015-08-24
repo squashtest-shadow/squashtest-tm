@@ -357,6 +357,13 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return (Long) executeEntityNamedQuery("campaign.countTestCasesById", idParameter(campaignId));
 	}
 
+	@Override
+	public int countIterations(long campaignId) {
+		Long count = executeEntityNamedQuery("campaign.countIterations", idParameter(campaignId));
+		return count.intValue();
+	}
+
+
 	private SetQueryParametersCallback idParameter(long campaignId) {
 		return new SetIdParameter(ParameterNames.CAMPAIGN_ID, campaignId);
 	}

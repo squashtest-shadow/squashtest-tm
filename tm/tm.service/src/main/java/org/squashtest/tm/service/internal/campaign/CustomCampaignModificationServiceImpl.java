@@ -50,9 +50,6 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 @Transactional
 public class CustomCampaignModificationServiceImpl implements CustomCampaignModificationService {
 
-
-
-
 	private static final String READ_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ')" + OR_HAS_ROLE_ADMIN;
 
 	private static final String READ_FOLDER_OR_ADMIN = "hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'READ')" + OR_HAS_ROLE_ADMIN;
@@ -98,6 +95,12 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	public List<Iteration> findIterationsByCampaignId(long campaignId) {
 		return iterationDao.findAllByCampaignId(campaignId);
 	}
+
+
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
+	public Integer countIterations(Long campaignId) {
+		return campaignDao.countIterations(campaignId);
+	};
 
 
 	@Override

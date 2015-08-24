@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.campaign;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -81,6 +80,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 */
 	void addCampaignToCampaignFolder(long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId);
 
+	void moveIterationsWithinCampaign(long destinationId, Long[] nodeIds, int position);
 
 	/**
 	 * @deprecated use {@linkplain CampaignFinder#findById(long)} instead
