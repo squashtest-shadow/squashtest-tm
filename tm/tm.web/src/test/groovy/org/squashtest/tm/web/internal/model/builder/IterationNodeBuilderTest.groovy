@@ -41,7 +41,7 @@ class IterationNodeBuilderTest extends Specification {
 		c.getMilestones() >> []
 		c.doMilestonesAllowCreation() >> Boolean.TRUE
 		c.doMilestonesAllowEdition() >> Boolean.TRUE
-		Iteration iter = new Iteration(name: "it", campaign : c)
+		Iteration iter = new Iteration(name: "it", campaign : c, reference : "ref")
 		def id = 10L
 		use(ReflectionCategory) {
 			Iteration.set(field: "id", of:iter, to: id)
@@ -56,7 +56,7 @@ class IterationNodeBuilderTest extends Specification {
 		res.attr['resId'] == "10"
 		res.state == State.leaf.name()
 		res.attr['resType'] == "iterations"
-		res.title == "5 - it"
+		res.title == "ref - it"
 	}
 
 	def "should expand itreration"() {

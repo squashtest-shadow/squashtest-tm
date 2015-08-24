@@ -178,13 +178,13 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 		this.currentProjectId = settings.currentProjectId;
 		
 		var projectPrefs = storage.get("bugtracker.projects-preferences") || {};
-        this.selectedProject = (projectPrefs[this.currentProjectId] == undefined) ? 
-        					this.projectNames[0] : 
-        					projectPrefs[this.currentProjectId];
+		this.selectedProject = (projectPrefs[this.currentProjectId] === undefined) ? 
+					this.projectNames[0] : 
+					projectPrefs[this.currentProjectId];
         
         //check if the preference still exist, if not use the first project
         if (! _.contains(this.projectNames, this.selectedProject)){
-        	this.selectedProject = this.projectNames[0];
+        this.selectedProject = this.projectNames[0];
         }
         
 		//main panels of the popup
