@@ -38,10 +38,10 @@
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
         "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "./test-plan-panel",
-        "custom-field-values",
+        "custom-field-values", "squash.configmanager",
         "jqueryui", "jquery.squash.formdialog"],
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-        dashboard, planning, testplan, cufvalues){
+        dashboard, planning, testplan, cufvalues, confman){
 
 
 	function init(conf){
@@ -49,6 +49,8 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		basicwidg.init();
 
 		initTabs(conf);
+		
+		initDescription(conf);
 
 		initCufs(conf);
 
@@ -62,9 +64,26 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 		initTestplan(conf);
 
-
 		initBugtracker(conf);
 
+	}
+	
+	// initialize the description bloc (not just the attribute)
+	function initDescription(conf){
+		if (conf.features.writable){
+			var refEditable = $("#campaign-reference").addClass('editable');
+			var url = conf.data.campaignUrl;
+			var cfg = confman.getStdJeditable();
+			cfg = $.extend(cfg, {
+				maxLength : 50,
+				callback : function(value, settings){
+					var escaped = $("<span/>").html(value).text();
+					eventBus.trigger('node.update-reference', {identity : conf.data.identity, newRef : escaped});					
+				}
+			});
+			
+			refEditable.editable(url, cfg);
+		}
 	}
 
 	function initCufs(conf){
@@ -80,9 +99,11 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 	}
 
 	function initRenameHandler(conf){
-		var nameHandler = contentHandlers.getSimpleNameHandler();
+		var nameHandler = contentHandlers.getNameAndReferenceHandler();
 		nameHandler.identity = conf.data.identity;
 		nameHandler.nameDisplay = "#campaign-name";
+		nameHandler.nameHidden = "#campaign-raw-name";
+		nameHandler.referenceHidden = "#campaign-raw-reference";
 	}
 
 	function initTabs(conf){
@@ -130,7 +151,7 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 		dialog.formDialog();
 
 		dialog.on("formdialogopen", function(){
-			var name = $('#campaign-name').text();
+			var name = $('#campaign-raw-name').text();
 			var trimmed = $.trim(name);
 			$("#rename-campaign-name").val(trimmed);
 		});

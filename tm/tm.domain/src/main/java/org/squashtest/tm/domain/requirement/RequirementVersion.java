@@ -42,6 +42,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
@@ -84,17 +85,17 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @ClassBridges({
 	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionAttachmentBridge.class),
 	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
+		@Parameter(name = "type", value = "requirement"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "requirement"),
-				@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
-		@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
-		@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
+			@Parameter(name = "type", value = "requirement"),
+			@Parameter(name = "inputType", value = "DROPDOWN_LIST") }),
+			@ClassBridge(name = "isCurrentVersion", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionIsCurrentBridge.class),
+			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
 	public static final int MAX_REF_SIZE = 50;
-	
-	
+
+
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
 	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
@@ -203,6 +204,18 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	public void setReference(String reference) {
 		checkModifiable();
 		this.reference = reference;
+	}
+
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 * 
+	 */
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
+		}
 	}
 
 	/***

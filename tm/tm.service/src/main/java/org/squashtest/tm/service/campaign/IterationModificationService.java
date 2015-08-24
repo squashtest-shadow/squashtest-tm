@@ -39,6 +39,9 @@ public interface IterationModificationService extends CustomIterationModificatio
 	void changeDescription(long iterationId, String newDescription);
 
 	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
+	void changeReference(long iterationId, String newReference);
+
+	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)
 	void changeScheduledStartDate(long iterationId, Date scheduledStart);
 
 	@PreAuthorize(WRITE_ITERATION_OR_ADMIN)

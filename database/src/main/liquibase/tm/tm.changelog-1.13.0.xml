@@ -21,47 +21,83 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-  <changeSet id="tm-1.13.0" author="bsiri">
-    <comment>Update TM database version number</comment>
-    <update tableName="CORE_CONFIG">
-      <column name="VALUE" value="1.13.0" />
-      <where>STR_KEY = 'squashtest.tm.database.version'</where>
-    </update>
-  </changeSet>
+	<changeSet id="tm-1.13.0" author="bsiri">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.13.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
 
 
-  <changeSet id="tm-1.13.0-feature-5155-1" author="jsimon">
-  <createTable tableName="BUGTRACKER_PROJECT">
-			<column name="BUGTRACKER_PROJECT_ID" type="BIGINT" autoIncrement="true">
+	<changeSet id="tm-1.13.0-feature-5155-1" author="jsimon">
+		<createTable tableName="BUGTRACKER_PROJECT">
+			<column name="BUGTRACKER_PROJECT_ID" type="BIGINT"
+				autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
-      <column name="BUGTRACKER_BINDING_ID" type="BIGINT" >
-        <constraints nullable="false" foreignKeyName="fk_bugtracker_project_bugtracker_binding" references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)" />
-      </column>
+			<column name="BUGTRACKER_BINDING_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_bugtracker_project_bugtracker_binding"
+					references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)" />
+			</column>
 
-<column name="BUGTRACKER_PROJECT_NAME" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="BUGTRACKER_PROJECT_NAME" type="java.sql.Types.VARCHAR(255)"></column>
 
-      <column name="BUGTRACKER_PROJECT_ORDER" type="int">
-        <constraints nullable="false" />
-      </column>
-    </createTable>
+			<column name="BUGTRACKER_PROJECT_ORDER" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
 
-    <createIndex tableName="BUGTRACKER_PROJECT" indexName="idx_bugtracker_project">
-      <column name="BUGTRACKER_PROJECT_ID" />
-    </createIndex>
+		<createIndex tableName="BUGTRACKER_PROJECT" indexName="idx_bugtracker_project">
+			<column name="BUGTRACKER_PROJECT_ID" />
+		</createIndex>
 
-  
 
- <sql>
-insert into BUGTRACKER_PROJECT(BUGTRACKER_BINDING_ID, BUGTRACKER_PROJECT_NAME, BUGTRACKER_PROJECT_ORDER) select BUGTRACKER_BINDING_ID, PROJECT_NAME, 0 from BUGTRACKER_BINDING;
- </sql>
 
-<dropColumn tableName="BUGTRACKER_BINDING" columnName="PROJECT_NAME"/>
- 	
-  </changeSet>
+		<sql>
+			insert into BUGTRACKER_PROJECT(BUGTRACKER_BINDING_ID,
+			BUGTRACKER_PROJECT_NAME, BUGTRACKER_PROJECT_ORDER) select
+			BUGTRACKER_BINDING_ID, PROJECT_NAME, 0 from BUGTRACKER_BINDING;
+		</sql>
+
+		<dropColumn tableName="BUGTRACKER_BINDING" columnName="PROJECT_NAME" />
+
+	</changeSet>
+	
+	<changeSet id="tm-1.13.0-feature-5162-1" author="bsiri">
+		<comment>Now campaigns and iterations have a reference too</comment>
+		
+		<addColumn tableName="CAMPAIGN">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)" 
+					defaultValue="" remarks="a reference lavel for a campaign" />
+		</addColumn>
+		
+		<addColumn tableName="ITERATION">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)" 
+					defaultValue="" remarks="a reference lavel for an iteration" />
+		</addColumn>		
+		
+		<!-- I thought that scripting Squash TA was a bitch but wait to see this -->
+		<!--		
+			For iterations that existed prior to 1.13.0, here we assign iteration_order as their default reference. 
+			Luckily it seems that databases accept that you can affect a numeric type to a varchar column and that they 
+			coerce them implicitly.
+			
+			If a DBMS doesn't accept it, put the following instruction in a dedicated changeset :
+			
+			update ITERATION i
+			set reference = (select CAST ( ((ci.iteration_order) + 1) as varchar) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id );
+		-->
+		<sql>	
+			update ITERATION i
+			set reference = (select (ci.iteration_order + 1) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id );		
+		</sql>
+	</changeSet>
 
 </databaseChangeLog>
 

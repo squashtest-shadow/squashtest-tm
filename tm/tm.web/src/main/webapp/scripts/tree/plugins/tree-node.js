@@ -127,6 +127,8 @@ define(['jquery'], function($){
 		
 		case 'requirements' :
 		case 'test-cases' : 
+		case 'campaigns' :
+		case 'iterations' :
 			name = this.getName();
 			var reference = this.getReference() || "";
 			
@@ -135,15 +137,6 @@ define(['jquery'], function($){
 			}
 			
 			label = reference + name;
-			break;
-		
-		case 'iterations' : 
-			name = this.getName();
-			var index = this.getIndex() || "";
-			if (index.length > 0) {
-				index += " - ";
-			}
-			label = index + name;
 			break;
 		
 		default : 

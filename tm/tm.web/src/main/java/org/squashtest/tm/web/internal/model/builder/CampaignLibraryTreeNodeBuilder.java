@@ -68,8 +68,16 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		 */
 		@Override
 		public void visit(Campaign campaign) {
+
+			// name and title
+			builtNode.addAttr("name", campaign.getName());
+			builtNode.addAttr("reference", campaign.getReference());
+			builtNode.setTitle(campaign.getFullName());
+
+			// other attributes
 			builtNode.addAttr("rel", "campaign");
 			builtNode.addAttr("resType", "campaigns");
+			builtNode.addAttr("reference", campaign.getReference());
 			State state = (campaign.hasIterations() ? State.closed : State.leaf);
 			builtNode.setState(state);
 

@@ -38,8 +38,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -54,6 +59,10 @@ import org.squashtest.tm.exception.DuplicateNameException;
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
 public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder {
+
+
+	public static final int MAX_REF_SIZE = 50;
+
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -72,6 +81,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();
+
+
+	@NotNull
+	@Size(min = 0, max = MAX_REF_SIZE)
+	private String reference = "";
+
 
 
 	public Campaign() {
@@ -149,6 +164,27 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 			autoSetActualEndDate();
 		}
 
+	}
+
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 * 
+	 */
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
+		}
 	}
 
 	/**

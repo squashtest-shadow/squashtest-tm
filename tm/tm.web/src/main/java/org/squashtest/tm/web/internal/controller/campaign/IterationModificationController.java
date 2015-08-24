@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -243,6 +244,17 @@ public class IterationModificationController {
 		iterationModService.changeDescription(iterationId, newDescription);
 		LOGGER.trace("Iteration " + iterationId + ": updated description to " + newDescription);
 		return newDescription;
+
+	}
+
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-reference", VALUE })
+	@ResponseBody
+	public String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long iterationId) {
+
+		iterationModService.changeReference(iterationId, newReference);
+		LOGGER.trace("Iteration " + iterationId + ": updated reference to " + newReference);
+		return HtmlUtils.htmlEscape(newReference);
 
 	}
 

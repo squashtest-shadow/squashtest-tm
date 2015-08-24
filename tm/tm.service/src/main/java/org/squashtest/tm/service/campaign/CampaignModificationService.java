@@ -38,6 +38,9 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 	void changeDescription(long campaignId, String newDescription);
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
+	void changeReference(long campaignId, String newReference);
+
+	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeScheduledStartDate(long campaignId, Date scheduledStart);
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
@@ -54,6 +57,7 @@ public interface CampaignModificationService extends CustomCampaignModificationS
 
 	@PreAuthorize(WRITE_CAMAIGN_OR_ADMIN)
 	void changeActualEndAuto(long campaignId, boolean isAuto);
+
 
 
 }

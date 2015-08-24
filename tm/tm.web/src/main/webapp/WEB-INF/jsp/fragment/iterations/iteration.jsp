@@ -131,8 +131,18 @@
     <h2>
 
       <a id="iteration-name" href="${ iterationUrl }/info">
-        <c:out value="${ iteration.name }" escapeXml="true" />
+        <c:out value="${ iteration.fullName }" escapeXml="true" />
       </a>
+
+      <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
+      <span id="iteration-raw-reference" style="display: none">
+        <c:out value="${ iteration.reference }" escapeXml="true" /> 
+      </span> 
+      
+      <span id="iteration-raw-name" style="display: none">
+        <c:out value="${ iteration.name }" escapeXml="true" /> 
+      </span>      
+      
     </h2>
   </div>
 
@@ -213,8 +223,16 @@
 
       <comp:toggle-panel id="iteration-description-panel" titleKey="label.Description" open="true">
         <jsp:attribute name="body">
-			<div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
-			</jsp:attribute>
+              <div class="display-table-row">
+                <label class="display-table-cell" for="iteration-reference"><f:message key="label.Reference" /></label>
+                <div class="display-table-cell" id="iteration-reference">${ iteration.reference }</div>
+              </div>
+              
+              <div class="display-table-row">
+                <label for="iteration-description" class="display-table-cell"><f:message key="label.Description" /></label>
+                <div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
+              </div>  
+		</jsp:attribute>
       </comp:toggle-panel>
 
 

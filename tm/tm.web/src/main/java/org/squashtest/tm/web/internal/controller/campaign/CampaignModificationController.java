@@ -54,6 +54,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
@@ -233,8 +234,18 @@ public class CampaignModificationController {
 		campaignModService.changeDescription(campaignId, newDescription);
 		LOGGER.trace("Campaign " + campaignId + ": updated description to " + newDescription);
 		return newDescription;
-
 	}
+
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-reference", VALUE })
+	public @ResponseBody
+	String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long campaignId) {
+
+		campaignModService.changeReference(campaignId, newReference);
+		LOGGER.trace("Campaign " + campaignId + ": updated reference to " + newReference);
+		return HtmlUtils.htmlEscape(newReference);
+	}
+
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody

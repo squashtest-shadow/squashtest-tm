@@ -25,53 +25,9 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
-
-
-	<!--  include the test data -->
-   
-   	<include file="tm.data-1.12.0-feat-5162.xml" relativeToChangelogFile="true"  />
-   	
-   	<!-- ========================================INCLUDE CHANGELOG================================================ -->
 	
-	<include file="../../../main/liquibase/tm/tm.changelog-1.13.0.xml"	relativeToChangelogFile="true" />
-		 
- 	<!--  now we can test them -->  
-
-	<changeSet id="tm-1.13.0.feat-5162-test01" author="bsiri">
-		<preConditions>
-			<sqlCheck expectedResult="3">
-				select count(*)
-				from ITERATION it
-				inner join CAMPAIGN_ITERATION ci on it.iteration_id = ci.iteration_id
-				inner join CAMPAIGN_LIBRARY_NODE cln on cln.cln_id = ci.campaign_id
-				where cln.name = 'feat-5162-campaign' and (
-					(it.name = 'feat-5162-iteration-1' and it.reference = '1' and ci.iteration_order = 0) or
-					(it.name = 'feat-5162-iteration-2' and it.reference = '2' and ci.iteration_order = 1) or
-					(it.name = 'feat-5162-iteration-3' and it.reference = '3' and ci.iteration_order = 2) 
-				)
-			</sqlCheck>
-		</preConditions>
+	<changeSet id="tm.data-1.12.0-feat-5162" author="bsiri">
+			<sqlFile path="tm.data-1.12.0-feat-5162.sql" relativeToChangelogFile="true" endDelimiter=";"/>
 	</changeSet>
 
 </databaseChangeLog>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -52,6 +52,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.NullArgumentException;
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
@@ -81,6 +82,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 BoundEntity, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
+	public static final int MAX_REF_SIZE = 50;
 
 	@Id
 	@Column(name = ITERATION_ID)
@@ -95,6 +97,10 @@ BoundEntity, MilestoneMember {
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
+
+	@NotNull
+	@Size(min = 0, max = MAX_REF_SIZE)
+	private String reference = "";
 
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
@@ -161,6 +167,26 @@ BoundEntity, MilestoneMember {
 	@NotBlank
 	public String getName() {
 		return this.name;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 * 
+	 */
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
+		}
 	}
 
 	public Campaign getCampaign() {

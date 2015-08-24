@@ -83,10 +83,12 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			}
 
 
-			// the name, usually treated as a common attributes, must be overriden in this case
-			String name = version.getName();
-			builtNode.addAttr("name", name);
+			// the name and title, usually treated as a common attributes, must be overriden in this case
+			builtNode.addAttr("name", version.getName());
+			builtNode.addAttr("reference", version.getReference());
+			builtNode.setTitle(version.getFullName());
 
+			// for-display instructions
 			addLeafAttributes("requirement", "requirements");
 
 			State state = (requirement.hasContent() ? State.closed : State.leaf);
@@ -104,12 +106,6 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			builtNode.addAttr("milestone-creatable-deletable", version.doMilestonesAllowCreation().toString());
 			builtNode.addAttr("milestone-editable", version.doMilestonesAllowEdition().toString());
 
-			if (version.getReference() != null && version.getReference().length() > 0) {
-				builtNode.setTitle(version.getReference() + " - " + version.getName());
-				builtNode.addAttr("reference", version.getReference());
-			} else {
-				builtNode.setTitle(version.getName());
-			}
 		}
 
 	}
