@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squashtest-csp-core</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.6.RELEASE</version>
+    <version>1.11.7.RC1-SNAPSHOT</version>
   </parent>
   <artifactId>core.bugtracker.api</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
