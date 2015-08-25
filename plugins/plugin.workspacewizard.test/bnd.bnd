@@ -1,0 +1,3 @@
+-include: pom.xml
+-nouses
+Import-Package: org.squashtest.tm.api.workspace, *

@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:util="http://www.springframework.org/schema/util" xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+  	http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
+
+  <tx:annotation-driven transaction-manager="squashtest.tm.hibernate.TransactionManager" order="1"
+    mode="proxy" proxy-target-class="false" />
+    
+	<!-- ====== RDBMS / ORM INTEGRATION ====== -->
+  <bean id="defaultLobHandler" class="org.springframework.jdbc.support.lob.DefaultLobHandler" />
+
+  <!-- 
+    SesionFactory instanciates @Configurable objects so we need to enforce init of @Configurable manager aspect 
+    through the "depends-on" explicit dependency 
+  -->
+  <bean id="squashtest.tm.persistence.hibernate.SessionFactory" class="org.squashtest.tm.service.internal.hibernate.SquashSessionFactoryBean"
+    depends-on="org.springframework.context.config.internalBeanConfigurerAspect">
+
+    <property name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
+
+    <property name="annotatedPackages">
+      <list>
+        <value>org.squashtest.tm.service.internal.repository.hibernate</value>
+        <value>org.squashtest.tm.service.internal.hibernate</value>
+        <value>org.squashtest.tm.infrastructure.hibernate</value>
+        <value>org.squashtest.tm.domain.search</value>
+      </list>
+    </property>
+
+    <property name="annotatedClasses">
+      <list>
+        <value>org.squashtest.tm.domain.testcase.TestCaseLibrary</value>
+        <value>org.squashtest.tm.domain.testcase.TestCaseLibraryNode</value>
+        <value>org.squashtest.tm.domain.testcase.TestCaseFolder</value>
+        <value>org.squashtest.tm.domain.testcase.TestCase</value>
+        <value>org.squashtest.tm.domain.testcase.TestStep</value>
+        <value>org.squashtest.tm.domain.testcase.ActionTestStep</value>
+        <value>org.squashtest.tm.domain.testcase.CallTestStep</value>
+        <value>org.squashtest.tm.domain.testcase.RequirementVersionCoverage</value>
+        <value>org.squashtest.tm.domain.testcase.Parameter</value>
+        <value>org.squashtest.tm.domain.testcase.Dataset</value>
+        <value>org.squashtest.tm.domain.testcase.DatasetParamValue</value>
+        <value>org.squashtest.tm.domain.testcase.TestCasePathEdge</value>
+
+        <value>org.squashtest.tm.domain.requirement.RequirementLibrary</value>
+        <value>org.squashtest.tm.domain.requirement.Requirement</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementLibraryNode</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementFolder</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementPathEdge</value>
+
+        <value>org.squashtest.tm.domain.resource.Resource</value>
+        <value>org.squashtest.tm.domain.resource.SimpleResource</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementVersion</value>
+
+        <value>org.squashtest.tm.domain.campaign.CampaignLibrary</value>
+        <value>org.squashtest.tm.domain.campaign.Campaign</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignLibraryNode</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignPathEdge</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignFolder</value>
+        <value>org.squashtest.tm.domain.campaign.Iteration</value>
+        <value>org.squashtest.tm.domain.campaign.IterationTestPlanItem</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignTestPlanItem</value>
+        <value>org.squashtest.tm.domain.campaign.TestSuite</value>
+
+        <value>org.squashtest.tm.domain.execution.Execution</value>
+        <value>org.squashtest.tm.domain.execution.ExecutionStep</value>
+
+        <value>org.squashtest.tm.domain.projectfilter.ProjectFilter</value>
+
+        <value>org.squashtest.tm.domain.audit.AuditableSupport</value>
+
+        <value>org.squashtest.tm.domain.project.GenericProject</value>
+        <value>org.squashtest.tm.domain.project.Project</value>
+        <value>org.squashtest.tm.domain.project.ProjectTemplate</value>
+
+
+        <value>org.squashtest.tm.domain.attachment.AttachmentList</value>
+        <value>org.squashtest.tm.domain.attachment.Attachment</value>
+        <value>org.squashtest.tm.domain.attachment.AttachmentContent</value>
+
+        <value>org.squashtest.csp.core.bugtracker.domain.BugTracker</value>
+        <value>org.squashtest.tm.domain.bugtracker.BugTrackerBinding</value>
+
+        <value>org.squashtest.tm.domain.bugtracker.IssueList</value>
+        <value>org.squashtest.tm.domain.bugtracker.Issue</value>
+
+        <value>org.squashtest.tm.domain.users.User</value>
+        <value>org.squashtest.tm.domain.users.UsersGroup</value>
+        <value>org.squashtest.tm.domain.users.Team</value>
+        <value>org.squashtest.tm.domain.users.Party</value>
+
+
+        <value>org.squashtest.tm.domain.event.RequirementAuditEvent</value>
+        <value>org.squashtest.tm.domain.event.RequirementCreation</value>
+        <value>org.squashtest.tm.domain.event.RequirementPropertyChange</value>
+        <value>org.squashtest.tm.domain.event.RequirementLargePropertyChange</value>
+        
+
+        <!-- Test Automation -->
+        <value>org.squashtest.tm.domain.testautomation.TestAutomationServer</value>
+        <value>org.squashtest.tm.domain.testautomation.TestAutomationProject</value>
+        <value>org.squashtest.tm.domain.testautomation.AutomatedTest</value>
+        <value>org.squashtest.tm.domain.testautomation.AutomatedSuite</value>
+        <value>org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender</value>
+
+        <!-- Custom Fields -->
+        <value>org.squashtest.tm.domain.customfield.CustomField</value>
+        <value>org.squashtest.tm.domain.customfield.SingleSelectField</value>
+        <value>org.squashtest.tm.domain.customfield.RichTextField</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldOption</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldBinding</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldValue</value>
+        <value>org.squashtest.tm.domain.customfield.RichTextValue</value>
+        <value>org.squashtest.tm.domain.customfield.MultiSelectField</value>
+        <value>org.squashtest.tm.domain.customfield.CustomFieldValueOption</value>
+        <value>org.squashtest.tm.domain.customfield.TagsValue</value>
+		        
+		 <!-- Denormalized Fields -->
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue</value>
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField</value>
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue</value>
+        <value>org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField</value>
+                
+        <!--  library plugins -->
+        <value>org.squashtest.tm.domain.project.LibraryPluginBinding</value>
+        <value>org.squashtest.tm.domain.campaign.CampaignLibraryPluginBinding</value>
+        <value>org.squashtest.tm.domain.testcase.TestCaseLibraryPluginBinding</value>
+        <value>org.squashtest.tm.domain.requirement.RequirementLibraryPluginBinding</value>
+        
+        <!--  info lists  -->
+        <value>org.squashtest.tm.domain.infolist.InfoList</value>
+        <value>org.squashtest.tm.domain.infolist.InfoListItem</value>
+        <value>org.squashtest.tm.domain.infolist.SystemListItem</value>
+        <value>org.squashtest.tm.domain.infolist.UserListItem</value>
+                
+        <!--  milestones -->
+        <value>org.squashtest.tm.domain.milestone.Milestone</value>
+     
+      </list>
+    </property>
+
+    <property name="namingStrategy">
+      <bean class="org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy" />
+    </property>
+
+    <property name="entityInterceptor">
+      <bean class="org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor" />
+    </property>
+
+    <property name="hibernateProperties" ref="squashtest.tm.hibernate.config" />
+
+    <property name="dialectsSupportingGroupConcat">
+      <list>
+        <value>org.hibernate.dialect.H2Dialect</value>
+        <value>org.hibernate.dialect.MySQLDialect</value>
+      </list>
+    </property>
+    <property name="dialectsSupportingStringAgg">
+      <list>
+        <value>org.hibernate.dialect.PostgreSQLDialect</value>
+      </list>
+    </property>
+
+	<property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
+
+  </bean>
+
+  <bean id="squashtest.tm.hibernate.TransactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+    <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
+  </bean>
+	<!-- ====== / RDBMS / ORM INTEGRATION ====== -->
+
+</beans>
+
