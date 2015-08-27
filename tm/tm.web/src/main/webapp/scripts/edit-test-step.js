@@ -52,9 +52,7 @@ require([ "common" ], function(common) {
 						var url = routing.buildURL('execute.stepbyindex', fromExec, index) + "?optimized=" +  isIEO;
 						
 						if(isIEO){
-					
-								var winDef = {};
-				
+								
 								window.open(url, {}, {});
 							
 						} else {
