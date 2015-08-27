@@ -26,30 +26,34 @@ package org.squashtest.tm.service.project;
  *
  */
 public class GenericProjectCopyParameter {
-	
+
 	private boolean copyPermissions;
 	private boolean copyCUF;
 	private boolean copyBugtrackerBinding;
 	private boolean copyAutomatedProjects;
 	private boolean copyInfolists;
 	private boolean copyMilestone;
-	
+	private boolean copyAllowTcModifFromExec;
+
 	public GenericProjectCopyParameter() {
 	}
-	
-	
-	
+
+
+
 	public GenericProjectCopyParameter(boolean copyPermissions,
 			boolean copyCUF, boolean copyBugtrackerBinding,
 			boolean copyAutomatedProjects, boolean copyInfolists,
-			boolean copyMilestone) {
+			boolean copyMilestone, boolean copyAllowTcModifFromExec) {
 		this.copyPermissions = copyPermissions;
 		this.copyCUF = copyCUF;
 		this.copyBugtrackerBinding = copyBugtrackerBinding;
 		this.copyAutomatedProjects = copyAutomatedProjects;
 		this.copyInfolists = copyInfolists;
 		this.copyMilestone = copyMilestone;
+		this.copyAllowTcModifFromExec = copyAllowTcModifFromExec;
 	}
+
+
 
 	public boolean isCopyPermissions() {
 		return copyPermissions;
@@ -87,5 +91,12 @@ public class GenericProjectCopyParameter {
 	public void setCopyMilestone(boolean copyMilestone) {
 		this.copyMilestone = copyMilestone;
 	}
-	
+
+	public boolean isCopyAllowTcModifFromExec() {
+		return copyAllowTcModifFromExec;
+	}
+
+	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
+		this.copyAllowTcModifFromExec = copyAllowTcModifFromExec;
+	}
 }

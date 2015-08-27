@@ -861,8 +861,13 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			copyMilestone(target, source);
 		}
 
+		if (params.isCopyAllowTcModifFromExec()) {
+			target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
+		}
+
 		return target;
 	}
+
 
 	@Override
 	public void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames) {

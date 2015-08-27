@@ -25,25 +25,24 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 
 /**
- * @author Julien Thébault
- * This class is used to deserialize the request body of "/project-templates/new"
+ * @author Julien Thébault This class is used to deserialize the request body of "/project-templates/new"
  */
 
 public class JsonProjectFromTemplate {
 
 	private Project project;
-	
+
 	private long templateId;
-	
+
 	private GenericProjectCopyParameter params;
-	
+
 	private boolean fromTemplate;
-	
+
 	public JsonProjectFromTemplate() {
 		project = new Project();
 		params = new GenericProjectCopyParameter();
 	}
-	
+
 	//Wrapping projectTemplate getter and setter to deserialize correctly the request json
 	public String getLabel() {
 		return project.getLabel();
@@ -69,7 +68,7 @@ public class JsonProjectFromTemplate {
 	public void setName(String name) {
 		project.setName(name.trim());
 	}
-	
+
 	public Project getProject() {
 		return project;
 	}
@@ -77,7 +76,7 @@ public class JsonProjectFromTemplate {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
+
 	public long getTemplateId() {
 		return templateId;
 	}
@@ -85,7 +84,7 @@ public class JsonProjectFromTemplate {
 	public void setTemplateId(long templateId) {
 		this.templateId = templateId;
 	}
-	
+
 	public boolean isCopyPermissions() {
 		return params.isCopyPermissions();
 	}
@@ -137,5 +136,13 @@ public class JsonProjectFromTemplate {
 
 	public void setFromTemplate(boolean fromTemplate) {
 		this.fromTemplate = fromTemplate;
+	}
+
+	public boolean isCopyAllowTcModifFromExec() {
+		return params.isCopyAllowTcModifFromExec();
+	}
+
+	public void setCopyAllowTcModifFromExec(boolean copyAllowTcModifFromExec) {
+		params.setCopyAllowTcModifFromExec(copyAllowTcModifFromExec);
 	}
 }

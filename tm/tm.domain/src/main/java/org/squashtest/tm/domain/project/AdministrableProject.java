@@ -88,4 +88,8 @@ public class AdministrableProject {
 	public void setTemplate(boolean template) {
 		this.template = template;
 	}
+
+	public boolean allowTcModifDuringExec() {
+		return project.allowTcModifDuringExec();
+	}
 }

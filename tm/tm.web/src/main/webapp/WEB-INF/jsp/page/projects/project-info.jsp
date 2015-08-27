@@ -290,6 +290,36 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
+			
+			
+			<%----------------------------------------EXEC OPTIONS PANEL----------------------------------------------------%>
+			<f:message var="active" key="label.active" />
+			<f:message var="inactive" key="label.inactive" />
+			<comp:toggle-panel id="exec-option-panel" titleKey="label.execution.option" open="true">
+				<jsp:attribute name="body">
+				
+				<div id="project-exec-option-table" class="display-table">
+						<div class="display-table-row">
+							<div class="display-table-cell">  
+								<label for="toggle-EXECUTION-checkbox" class="display-table-cell">
+									<f:message key="label.execution.modification" />
+								</label>
+							</div>
+				
+							<div class="display-table-cell">                  		
+	                  			<input id="toggle-EXECUTION-checkbox" type="checkbox" 
+	                  				data-def="width=35, on_label=${inactive}, off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;"/>
+	                  		</div>
+						</div>
+				
+				</div>
+				</jsp:attribute>
+		    </comp:toggle-panel>
+			
+			
+			<%----------------------------------------END EXEC OPTIONS PANEL----------------------------------------------------%>
+			
+			
 			<%----------------------------------------STATUS----------------------------------------------------%>
 			<f:message var="statusAllowedLabel" key="label.status.options.allowed" />
 			<f:message var="statusForbiddenLabel" key="label.status.options.forbidden" />
@@ -570,18 +600,38 @@ require(["common"], function() {
 		 		init(projectsManager, Frag);	
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
+		 		configureActivation("EXECUTION");
+		 		
+		 		$("#toggle-EXECUTION-checkbox").change(function(){
+		 			toogleExec();
+		 		}); 
+		 		
 		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
 		 			toggleStatusActivation("UNTESTABLE");
 		 		}); 
 		 		$("#toggle-SETTLED-checkbox").change(function(){
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
+		 		
 		 		initBugtrackerProjectEditable();
 		 		if (${adminproject.project.bugtrackerConnected}) {
 		 		initBugTrackerTag();
 		 		}
 		 		new ProjectToolbar();
 	});
+	
+	function toogleExec(){
+		var shouldActivate = ! $("#toggle-EXECUTION-checkbox").prop('checked');
+	
+			$.ajax({
+				type: 'POST',
+				url: "${projectUrl}",
+				data : {
+					value : shouldActivate
+				}
+			});
+		
+	}
 	
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();		
