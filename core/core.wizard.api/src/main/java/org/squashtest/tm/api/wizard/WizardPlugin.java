@@ -34,5 +34,10 @@ public interface WizardPlugin extends Plugin {
 	 */
 	String getName();
 
+	/**
+	 *  returns the name of the javascript module that must be loaded and executed
+	 */
+	String getModule();
+
 
 }

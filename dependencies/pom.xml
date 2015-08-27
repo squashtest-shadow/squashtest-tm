@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.13.0.IT97-SNAPSHOT</version>
+    <version>1.13.0.testadvisor</version>
   </parent>
   <artifactId>squashtest-csp-dependencies</artifactId>
   <packaging>pom</packaging>

@@ -27,18 +27,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
 
 <s:url var="attachmentsURL" value="/attach-list/${executionStep.attachmentList.id}/attachments"/>
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+ <%-- Wizard initialization --%>
 
 <c:set var="editable" value="${false}" />
 
@@ -94,6 +95,11 @@
             	requirejs.config({
             		config : {
             			'execution-dialog-main' : {
+            				model : {
+            					id : ${executionStep.id},
+            					type : 'execution-step',
+            					index : ${stIndex}
+            				},
             				basic : {
             					id : ${executionStep.id},
             					index : ${stIndex},
@@ -297,7 +303,12 @@ publish('reload.executedialog.attachments');
 publish("reload.executedialog.complete");
 </script>
 
+
+
 			</div>
+      
+<comp:init-wizards workspace="campaign"/>
+
 		</body>
 	</c:otherwise>
 </c:choose>
