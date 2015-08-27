@@ -18,28 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
+package org.squashtest.tm.exception.execution;
 
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+public class ExecutionWasDeleted extends RunExecutionException{
 
-/**
- * @author Gregory Fouquet
- *
- */
-@Service
-public interface IterationTestPlanManager {
+	/**
+	 *
+	 */
+	private static final long serialVersionUID = -4109869390982087009L;
+	private static final String EXECUTION_WAS_DELETED = "squashtm.action.exception.execution.was.deleted";
 
-	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;
+	public ExecutionWasDeleted() {
+		super("exec was deleted");
+	}
 
-	void addTestSuite(Iteration iteration, TestSuite suite);
-
-	Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException ;
-
-	Execution updateExecutionFromTc(long executionId);
+	@Override
+	public String getI18nKey() {
+		return EXECUTION_WAS_DELETED;
+	}
 
 }

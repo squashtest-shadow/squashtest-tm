@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.users.User;
 
 /**
  * Service that aims at managing the test cases of a campaign (i.e. its test plan)
- * 
+ *
  * @author Agnes Durand
  */
 public interface IterationTestPlanManagerService extends IterationTestPlanFinder {
@@ -43,7 +43,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	/**
 	 * Returns an iteration filtered for a specific user. It returns an iteration with a test plan containing only the
 	 * items that are assigned to that user or have been executed by that user.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return the test plan of given iteration filtered by the current user
 	 */
@@ -52,7 +52,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Adds a list of test cases to an iteration.
-	 * 
+	 *
 	 * @param testCaseIds
 	 * @param iterationId
 	 */
@@ -60,7 +60,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Adds a list of test cases to an iteration.
-	 * 
+	 *
 	 * @param testCaseIds
 	 * @param iteration
 	 */
@@ -72,7 +72,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Removes a list of test cases from a campaign excepted the test plans which were executed
-	 * 
+	 *
 	 * @param testPlanIds
 	 *            the ids of the test plan managing that test case for that iteration
 	 * @param iterationId
@@ -83,7 +83,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Removes a list of test cases from an iteration excepted the test plans which were executed
-	 * 
+	 *
 	 * @param testPlanIds
 	 *            the ids of the test plan managing that test case for that iteration
 	 * @param iteration
@@ -94,7 +94,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Removes a test case from an iteration except if the test plans was executed
-	 * 
+	 *
 	 * @param testPlanId
 	 *            the id of the test plan managing that test case for that iteration
 	 * @param iterationId
@@ -104,14 +104,14 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Will update the item test plan execution metadata using the last execution data.
-	 * 
+	 *
 	 * @param execution
 	 */
 	void updateMetadata(IterationTestPlanItem item);
 
 	/**
 	 * Assign User with Execute Access to a TestPlan item.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param campaignId
 	 */
@@ -119,7 +119,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 
 	/**
 	 * Assign User with Execute Access to a multiple TestPlan items.
-	 * 
+	 *
 	 * @param testPlanIds
 	 * @param campaignId
 	 */
@@ -129,14 +129,14 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * <p>
 	 * persist each iteration_test_plan_item and add it to iteration
 	 * </p>
-	 * 
+	 *
 	 * @param testPlan
 	 * @param iterationId
 	 */
 	void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId);
 
 	/**
-	 * 
+	 *
 	 * @return the list of defined execution statuses
 	 */
 	List<ExecutionStatus> getExecutionStatusList();
@@ -145,7 +145,7 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	/**
 	 * Assigns an execution status to each test plan item matching the given ids. Override the current itp execution
 	 * status and other itp execution metadatas.
-	 * 
+	 *
 	 * @param testPlanIds
 	 * @param statusName
 	 */
@@ -157,11 +157,11 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	 * <li>a unique item when the test case is not parameterized</li>
 	 * <li>one item per dataset when the test case is parameterized</li>
 	 * </ul>
-	 * 
+	 *
 	 * <strong>Note :</strong> The returned test plan fragment is in a transient state.
-	 * 
+	 *
 	 * Also assigns each item to the given user.
-	 * 
+	 *
 	 * @param referenced
 	 * @param assignee
 	 * @return
@@ -171,11 +171,13 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 	/**
 	 * Attach a dataset to an item. If the ID of the dataset is null the item will reference
 	 * no dataset instead.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param itemId
 	 * @param datasetId (may be null)
 	 */
 	void changeDataset(long itemId, Long datasetId);
+
+
 
 }

@@ -34,6 +34,8 @@
 		locale : /*[[#{squashtm.locale}]]*/,
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		stepURL : /*[[ @{/test-steps/} + ${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/1",
+		isIEO :  /*[[ ${isIEO} ]]*/ false,
+		fromExec :  /*[[ ${fromExec} ]]*/ false,
 		editTCS : {
 			testStepURL : /*[[ @{/test-steps/}+${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/50",
 			hasCUF : /*[[ ${hasCUF} ]]*/false,
@@ -124,8 +126,9 @@
 				<input type="button" id="save-test-step-button" class="sq-btn" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
           	  </div>
 		    </div>		
-			        
-            <div id="test-step-info-panel" class="information-panel tg-body" >
+			       
+			       
+            <div id="test-step-info-panel" class="information-panel tg-body"  th:classappend="${stepIsDelete} ? disabled-transparent : ''" >
               <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
                     <label for="test-step-id" >Id</label>

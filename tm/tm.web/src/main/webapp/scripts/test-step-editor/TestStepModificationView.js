@@ -20,14 +20,16 @@
  */
 define([ "jquery", "backbone", "./TestStepInfoModel", 
          "../verified-requirements/TestStepVerifiedRequirementsPanel",
-		"app/lnf/Forms", "custom-field-values", "squash.configmanager",
+		"app/lnf/Forms", "custom-field-values", "squash.configmanager", "workspace.routing",
 		"app/ws/squashtm.notification",
 		"jquery.squash", "jqueryui", "jquery.ckeditor", "jeditable",
 		"ckeditor", "jeditable.ckeditor", "jquery.squash.jeditable", "jquery.squash.squashbutton",
 		"datepicker/jquery.squash.datepicker-locales" ], function($, Backbone, TestStepInfoModel,
-		VerifiedRequirementsPanel, Forms, cufValues, confman) {
+		VerifiedRequirementsPanel, Forms, cufValues, confman, routing) {
 	
 	var editTCS = squashtm.app.editTCS;
+	var isIEO = squashtm.app.isIEO;
+	var fromExec = squashtm.app.fromExec;
 	/*
 	 * Defines the controller for the custom fields table.
 	 */
@@ -103,7 +105,7 @@ define([ "jquery", "backbone", "./TestStepInfoModel",
 				cufDefinitions = editTCS.cufDefinitions,
 				editable = editTCS.writable;
 			
-			if (cufDefinitions.length>0){
+			if (cufDefinitions && cufDefinitions.length>0){
 				var mode = (editable) ? "editable" : "static";
 				cufValues.infoSupport.init("#test-step-infos-table", cufDefinitions, mode);
 			}
@@ -149,11 +151,13 @@ define([ "jquery", "backbone", "./TestStepInfoModel",
 		},
 
 		goPrevious : function(event) {
-			document.location.href = squashtm.app.contextRoot + "test-steps/" + editTCS.previousId;
-		},
+				document.location.href = this.getUrl(editTCS.previousId);
+			},
 		goNext : function(event) {
-			document.location.href = squashtm.app.contextRoot + "test-steps/" + editTCS.nextId;
-
+			document.location.href = this.getUrl(editTCS.nextId);
+		},
+		getUrl : function(id){
+			return fromExec ? routing.buildURL('teststeps.fromExec',  id, isIEO) : squashtm.app.contextRoot + "test-steps/" + id;
 		},
 		updateCKEModelAttr : function(event) {
 			var attrInput = event.sender;

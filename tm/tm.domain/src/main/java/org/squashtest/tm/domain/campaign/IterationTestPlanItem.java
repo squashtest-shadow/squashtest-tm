@@ -172,7 +172,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * the IterationTestPlanItem will fetch the ExecutionStatus of the last "live" Execution in his execution list
-	 * 
+	 *
 	 */
 	public void updateExecutionStatus() {
 		if (executions.isEmpty()) {
@@ -192,6 +192,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		this.referencedTestCase = referencedTestCase;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -252,13 +253,13 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * Creates an execution of this item and returns it.
-	 * 
+	 *
 	 * <h3>WARNING</h3>
 	 * <p>
 	 * Will not check cyclic calls between the referenced test cases anymore (eg A calls B calls C calls A). You have
 	 * been warned
 	 * </p>
-	 * 
+	 *
 	 * @return the new execution
 	 */
 	public Execution createExecution() throws TestPlanItemNotExecutableException {
@@ -347,7 +348,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * Factory method. Creates a copy of this object according to copy / paste rules.
-	 * 
+	 *
 	 * @return the copy, never <code>null</code>
 	 */
 	public IterationTestPlanItem createCopy() {
@@ -403,7 +404,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * One should use {@link #isExecutableThroughIteration()} in favor of this method.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean isTestCaseDeleted() {
@@ -478,7 +479,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the last {@linkplain Execution} or null if there is none
 	 */
 	public Execution getLatestExecution() {
@@ -505,7 +506,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	/**
 	 * Creates a collection of test plan items for the given test case and datasets. If datasets is an empty collection,
 	 * will create an "unparameterized" item. Otherwise, this will create 1 item per dataset.
-	 * 
+	 *
 	 * @param testCase
 	 * @param datasets
 	 *            collection of datasets, can be empty or null.
@@ -527,7 +528,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * Creates a test plan item for the given test case. the test plan item won't be parameterized (ie no dataset).
-	 * 
+	 *
 	 * @param testCase
 	 * @return
 	 */
@@ -537,7 +538,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	/**
 	 * Return true if the item is assigned to the given user.
-	 * 
+	 *
 	 * @param userLogin
 	 *            : the login of the concerned user (may not be null)
 	 * @return true if the assigned user is not <code>null</code> and matches the given login.
@@ -545,4 +546,10 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	public boolean isAssignedToUser(@NotNull String userLogin) {
 		return this.user != null && this.user.getLogin().equals(userLogin);
 	}
+
+	public void addExecutionAtPos(Execution execution, int order) {
+		executions.add(order, execution);
+		execution.notifyAddedTo(this);
+	}
+
 }

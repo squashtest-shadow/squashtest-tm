@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,28 +18,49 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
 
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-
-/**
- * @author Gregory Fouquet
- *
- */
-@Service
-public interface IterationTestPlanManager {
-
-	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;
-
-	void addTestSuite(Iteration iteration, TestSuite suite);
-
-	Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException ;
-
-	Execution updateExecutionFromTc(long executionId);
-
-}
+	define([], function() {	
+		
+		var dryRunStart = function(runnerUrl) {
+			return $.ajax({
+				url : runnerUrl,
+				method : 'get',
+				data : {
+					'dry-run' : ''
+				}
+			});
+		};
+		
+		var startResumeClassic = function(runnerUrl) {
+			var data = {
+				'optimized' : 'false'
+			};
+			var winDef = {
+				name : "classicExecutionRunner",
+				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+			};
+			$.open(runnerUrl, data, winDef);
+		};
+		
+		var startResumeIEO = function(runnerUrl) {
+			var data = {
+				'optimized' : 'true'
+			};
+			var winDef = {};
+			$.open(runnerUrl, data, winDef);
+		};
+		
+		
+		
+	return {
+	
+		start : function(runnerUrl, isIEO){
+			if (isIEO){
+				dryRunStart(runnerUrl).done(startResumeIEO(runnerUrl));			
+			} 
+			else {
+			dryRunStart(runnerUrl).done(startResumeClassic(runnerUrl));
+			}}
+		
+	};
+	});

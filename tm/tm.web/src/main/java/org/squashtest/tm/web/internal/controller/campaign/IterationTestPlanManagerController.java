@@ -53,7 +53,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -78,13 +77,17 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
- * 
+ *
  * @author R.A
  */
 @Controller
 public class IterationTestPlanManagerController {
 
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
+
+
+
+
 
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
@@ -101,9 +104,6 @@ public class IterationTestPlanManagerController {
 
 	@Inject
 	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
-
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 
 	@Inject
@@ -168,11 +168,11 @@ public class IterationTestPlanManagerController {
 
 	/**
 	 * Fetches and returns a list of json test cases from an iteration id
-	 * 
+	 *
 	 * @param iterationId
 	 *            : the id of an {@link Iteration}
 	 * @return the list of {@link JsonTestCase} representing the iteration's planned test-cases
-	 * 
+	 *
 	 */
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON)
 	public @ResponseBody
@@ -183,13 +183,13 @@ public class IterationTestPlanManagerController {
 
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
-	 * 
+	 *
 	 * @param testPlanId
 	 *            : the iteration owning the moving test plan items
-	 * 
+	 *
 	 * @param itemIds
 	 *            the ids of the items we are trying to move
-	 * 
+	 *
 	 * @param newIndex
 	 *            the new position of the first of them
 	 */
@@ -203,7 +203,7 @@ public class IterationTestPlanManagerController {
 
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return
 	 */
@@ -288,6 +288,14 @@ public class IterationTestPlanManagerController {
 		Execution exec = item.getLatestExecution();
 		return "redirect:/executions/"+exec.getId();
 	}
+
+
+
+
+
+
+
+
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);

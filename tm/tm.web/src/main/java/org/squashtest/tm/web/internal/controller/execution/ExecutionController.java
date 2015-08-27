@@ -23,7 +23,6 @@ package org.squashtest.tm.web.internal.controller.execution;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -34,13 +33,10 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -55,7 +51,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -63,7 +58,6 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.library.WorkspaceService;
-import org.squashtest.tm.service.project.CustomProjectFinder;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
@@ -112,8 +106,6 @@ public class ExecutionController extends
 	@Named("squashtest.tm.service.CampaignsWorkspaceService")
 	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
 
-	@Inject
-	private CustomProjectFinder customProjectFinder;
 
 	@Inject
 	@Named("campaign.driveNodeBuilder")

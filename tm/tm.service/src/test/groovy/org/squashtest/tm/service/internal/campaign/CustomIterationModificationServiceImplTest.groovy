@@ -24,15 +24,17 @@ import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseNature
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService
@@ -44,7 +46,7 @@ import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
-
+import spock.lang.Unroll
 import spock.lang.Specification
 
 class CustomIterationModificationServiceImplTest extends Specification {
@@ -218,6 +220,56 @@ class CustomIterationModificationServiceImplTest extends Specification {
 	 iteration.getTestPlans().size()==1
 	 }*/
 
+	@Unroll("for id #id should get executions ids  #execsIds")
+	def "should replace execution with new exec with correct order" (){
+		
+		given :
+		def iteration = new MockIteration()
+		TestCase testCase = Mock()
+		testCase.getId()>> 1
+		testCase.getSteps() >> []
+		testCase.getExecutionMode() >> TestCaseExecutionMode.AUTOMATED
+		testCase.getName() >> "test case"
+		testCase.getAllAttachments() >> new HashSet<Attachment>()
+		testCase.getPrerequisite() >> "prerequisite"
+		testCase.getImportance() >> TestCaseImportance.LOW
+		testCase.getNature() >> new UserListItem(code:"SOME_NATURE", infoList:Mock(InfoList))
+		testCase.getType() >> new UserListItem(code:"SOME_TYPE", infoList:Mock(InfoList))
+		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+		testCase.getDatasets() >> []
+		IterationTestPlanItem testPlan = new IterationTestPlanItem(id:1L, iteration : iteration)
+		
+		def execs = (1..4).collect{def exec = Mock(Execution)
+			exec.getProject() >> new Project()
+			exec.getExecutionOrder() >> it - 1
+			exec.getId() >> it
+			exec.getTestPlan() >> testPlan
+			execDao.findById(it) >> exec
+			testPlan.addExecution exec
+			return exec
+		}
+				
+		testPlan.setReferencedTestCase(testCase)
+		iteration.addTestPlan testPlan
+	
+
+		when :
+		Execution res = service.updateExecutionFromTc(id)
+		
+		then :
+		res.testPlan.executions*.id == execsIds
+		
+		where :
+		id || execsIds
+		1L || [null, 2, 3, 4]
+		2L || [1, null, 3, 4]
+		3L || [1, 2, null, 4]
+		4L || [1, 2, 3, null]
+	}
+	
+	
+	
+	
 	class  MockIteration extends Iteration{
 
 		MockIteration(){

@@ -95,6 +95,8 @@
             		config : {
             			'execution-dialog-main' : {
             				basic : {
+            					stepId : ${executionStep.id},
+            					execId : ${execution.id},
             					id : ${executionStep.id},
             					index : ${stIndex},
             					status : "${executionStep.executionStatus}",
@@ -202,6 +204,10 @@
                                     data-status="SUCCESS" title="${passedTitle}">
                                     <span class="ui-icon exec-status-success"></span>
     							</button>
+    							
+    							 <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+                                 <span class="ui-icon ui-icon-pencil"/>
+                                 </button> 
 							</c:when>
 							<c:otherwise>
                                 <%-- 

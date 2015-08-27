@@ -31,15 +31,15 @@ import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 
 /**
  * Iteration modification services which cannot be dynamically generated.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface CustomIterationModificationService extends IterationFinder {
 
 	/**
 	 * Adds an iteration to the list of iterations of a campaign.
-	 * 
+	 *
 	 * @param iteration
 	 * @param campaignId
 	 * @return the index of the added iteration.
@@ -55,7 +55,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
 	 * happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -64,8 +64,8 @@ public interface CustomIterationModificationService extends IterationFinder {
 	/**
 	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
 	 * filter out the ids who can't be deleted.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -79,7 +79,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * <p>
 	 * That method will remove each test suite, leaving it's test plan items linked to no test_suite
 	 * </p>
-	 * 
+	 *
 	 * @param suitesIds
 	 * @return
 	 */
@@ -90,7 +90,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * Will create a copy of the test suite and it's test plan , then associate it to the given iteration<br>
 	 * will rename test suite if there is name conflict at destination
 	 * </p>
-	 * 
+	 *
 	 * @param testSuiteId
 	 *            = test suite to copy
 	 * @param iterationId
@@ -104,7 +104,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * will create a copy of the test suites and their test plan , then associate them to the given iteration<br>
 	 * will rename test suites if there is name conflict at destination
 	 * </p>
-	 * 
+	 *
 	 * @param testSuiteIds
 	 *            = list of test suites to copy
 	 * @param iterationId
@@ -116,5 +116,6 @@ public interface CustomIterationModificationService extends IterationFinder {
 
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 
+	Execution updateExecutionFromTc(long executionId);
 
 }

@@ -30,9 +30,9 @@
 	description="an object holding the labels for the interface"%>
 <%@ attribute name="bugTrackerId" required="true"
 	description="id of the entity's project bug-tracker"%>
-<%@ attribute name="projectId" required="true"
+<%@ attribute name="projectId" required="false"
 	description="id the project (on squash)"%>
-<%@ attribute name="projectNames" required="true"
+<%@ attribute name="projectNames" required="false"
   description="names of the remote project (hosted on the bugtracker)"%>
 
   

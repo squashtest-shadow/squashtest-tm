@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,28 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
+	define(['module', "jquery","workspace.routing", "./executionHelper"], function(module, $, routing, execHelper) {
+		
+		$("#back-to-exec").click(backToExec);
+		var config = module.config();
+	
+		
+		var isIEO = config.isIEO;
+		
+		
+		function backToExec() {
+		
+			$.ajax({
+			method: 'POST',
+			url : routing.buildURL('execution.update-from-tc', config.execId),
+			}).success(function(id){
+				var runnerUrl = routing.buildURL('executions.runner', id); 
+				
+				execHelper.start(runnerUrl, isIEO);
 
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
+			});
+			
+		}
+		
 
-/**
- * @author Gregory Fouquet
- *
- */
-@Service
-public interface IterationTestPlanManager {
+			});
 
-	Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException;
-
-	void addTestSuite(Iteration iteration, TestSuite suite);
-
-	Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException ;
-
-	Execution updateExecutionFromTc(long executionId);
-
-}

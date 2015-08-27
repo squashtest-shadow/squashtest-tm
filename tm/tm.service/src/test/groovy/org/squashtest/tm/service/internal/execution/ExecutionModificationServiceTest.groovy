@@ -20,10 +20,17 @@
  */
 package org.squashtest.tm.service.internal.execution
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.attachment.Attachment
+import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -36,15 +43,23 @@ import org.squashtest.tm.domain.testcase.TestCaseNature
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.advancedsearch.IndexationService
+import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
+import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao
+import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
+import org.squashtest.tm.service.internal.execution.ExecutionStepModificationHelper
+
+
+
+
 
 import spock.lang.Specification
 
@@ -54,10 +69,15 @@ public class ExecutionModificationServiceTest extends Specification {
 	ExecutionProcessingServiceImpl procservice = new ExecutionProcessingServiceImpl()
 	CustomIterationModificationServiceImpl iterService = new CustomIterationModificationServiceImpl()
 	IndexationService indexationService = Mock()
+	ExecutionStepModificationHelper executionStepModifHelper = new ExecutionStepModificationHelper()
 
 	ExecutionDao execDao = Mock()
 	ExecutionStepDao execStepDao = Mock()
 
+    DenormalizedFieldValueManager denormalizedFieldValueManager = Mock()
+    CustomFieldValueDao customFieldValueDao = Mock()
+	
+	AttachmentDao attachmentDao = Mock()
 	IterationTestPlanDao testPlanDao = Mock()
 	CampaignDao campaignDao = Mock()
 	IterationDao iterationDao = Mock()
@@ -65,11 +85,19 @@ public class ExecutionModificationServiceTest extends Specification {
 
 	TestCaseCyclicCallChecker checker = Mock()
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
+	PrivateDenormalizedFieldValueService privateDenormalizedFieldValueService = Mock()
 
 	def setup(){
 		service.executionDao = execDao
 		service.executionStepDao = execStepDao
+		service.executionStepModifHelper = executionStepModifHelper
 
+		executionStepModifHelper.denormalizedFieldValueManager = denormalizedFieldValueManager
+		executionStepModifHelper.customFieldValueDao = customFieldValueDao
+		executionStepModifHelper.executionStepDao = execStepDao
+		executionStepModifHelper.attachmentDao = attachmentDao
+		executionStepModifHelper.privateDenormalizedFieldValueService = privateDenormalizedFieldValueService
+		
 		procservice.executionDao = execDao
 		procservice.executionStepDao = execStepDao
 
@@ -81,6 +109,14 @@ public class ExecutionModificationServiceTest extends Specification {
 
 		iterService.testCaseCyclicCallChecker = checker
 		iterService.denormalizedFieldValueService = denormalizedFieldValueService
+		
+		
+	/*The CUF are ignored here because mocking CUF/denorm CUF will result
+	 * in lot of awfull code. So let's ignore that part for unit testing and test the CUF part 
+	 * in integration tests.
+	 */
+		denormalizedFieldValueManager.findAllForEntity(_) >> []	
+		customFieldValueDao.findAllCustomValues(_, _) >> []
 	}
 
 	/*
@@ -209,6 +245,136 @@ public class ExecutionModificationServiceTest extends Specification {
 		thrown(IndexOutOfBoundsException)
 	}
 
+	def "should not update steps when no change"(){
+		given :
+		
+		def attachList = createAttachments()
+		
+		List<ActionTestStep> actionSteps = createMockedActionSteps(attachList)
+		
+		TestCase testCase = createMockedTc(actionSteps)
+		
+		Execution execution = new Execution()
+		execution.referencedTestCase = testCase
+			
+		actionSteps.each{ExecutionStep ex = Mock(ExecutionStep)
+			ex.referencedTestStep >> it
+			ex.id >> it.id
+			ex.action >> it.action
+			ex.expectedResult >> it.expectedResult
+			ex.attachmentList >> createAttachmentList()
+			execution.addStep(ex)
+			}
+		
+			execDao.findById (1) >> execution
+
+		when :
+		def firstChanged = service.updateSteps(1);
+		then :
+		firstChanged == -1
+		
+		actionSteps.eachWithIndex { item, index ->
+
+			execution.steps[index].with {
+				action == item.action
+				expectedResult == item.expectedResult
+			}
+		}		
+	}
+	
+	def "should update step when action or result is changed"(){
+		
+		given :
+		
+		def attachList = createAttachments()
+		
+		List<ActionTestStep> actionSteps = createMockedActionSteps(attachList)
+		
+		TestCase testCase = createMockedTc(actionSteps)
+		
+		Execution execution = new Execution()
+		execution.referencedTestCase = testCase
+
+			
+		def executionSteps = actionSteps.collect{ExecutionStep ex = Mock(ExecutionStep)
+			ex.referencedTestStep >> it
+			ex.id >> it.id
+			def action = it.id == modifiedActionId ? "changed" : it.action 
+			def result = it.id == modifiedResultId ? "changed" : it.expectedResult
+			ex.action >> action
+			ex.expectedResult >> result
+			ex.attachmentList >> createAttachmentList()
+			execution.addStep(ex)
+			return ex
+			}
+		
+			execDao.findById (1) >> execution
+
+		when :
+		def firstChanged = service.updateSteps(1);
+		then :
+		firstChanged == firstChangeId
+		
+		executionSteps*.action == (1..5).collect{it != modifiedActionId ? "action " + it : "changed"}
+		executionSteps*.expectedResult == (1..5).collect{it != modifiedResultId ? "result " + it : "changed"}
+			
+	
+		
+		where :
+		modifiedActionId | modifiedResultId || firstChangeId
+			   1         |          3       ||     0
+			   4         |          3       ||     2
+			   1         |        null      ||     0
+			   null      |         5        ||     4
+		
+	}
+	
+
+	
+	def createMockedActionSteps = {	attachments ->
+		return (1..5).collect{ActionTestStep actionStep = Mock(ActionTestStep)
+			actionStep.id >> it
+			actionStep.action >> "action " + it
+			actionStep.expectedResult >> "result " + it
+			actionStep.getAllAttachments() >> attachments
+			return actionStep
+		}
+	}
+	
+	def createMockedTc = { actionSteps ->
+		def testCase = Mock(TestCase)
+		testCase.getId()>> 1
+		testCase.getSteps() >> actionSteps
+		testCase.getName() >> "test case"
+		testCase.getAllAttachments() >> new HashSet<Attachment>()
+		testCase.getImportance() >> TestCaseImportance.LOW
+		testCase.getNature() >> new ListItemReference(code:"SOME_NATURE", infoList:Mock(InfoList))
+		testCase.getType() >> new ListItemReference(code:"SOME_TYPE", infoList:Mock(InfoList))
+		testCase.getStatus() >> TestCaseStatus.WORK_IN_PROGRESS
+		testCase.getDatasets() >> []
+		return testCase
+		
+	}
+	
+	def createAttachments = {
+		
+		return  (1..3).collect{
+			Attachment attach = Mock(Attachment)
+			attach.size >> it * 1000
+			attach.name >> "attachment " + it
+			return attach
+		}
+
+	}
+	
+	
+	def createAttachmentList = {
+		
+		AttachmentList attachList = Mock(AttachmentList)
+		attachList.getAllAttachments() >> createAttachments()
+		return attachList
+	}
+	
 	class MockIteration extends Iteration{
 
 		MockIteration(){

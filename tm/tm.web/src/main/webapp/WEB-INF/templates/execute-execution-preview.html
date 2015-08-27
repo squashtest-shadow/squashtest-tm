@@ -95,7 +95,16 @@ documentation :
 	<div id="execute-body" class="execute-fragment-body">
 
     <div id="execute-title-div" class="ui-widget-header ui-state-default ui-corner-all fragment-header">
-      <h2 th:text="${title}">Exec #3 : test interface</h2>
+      <table>
+      <tr>
+      <td>   <h2 th:text="${title}">Exec #3 : test interface</h2></td>
+    <td> 
+    <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+    <span class="ui-icon ui-icon-pencil"/>
+    </button> 
+    </td>
+      </tr>
+      </table>
     </div>
 
     <div class="sq-tg expand">
@@ -272,9 +281,20 @@ documentation :
   					status.attr("class", ""); // reset
   					status.addClass("test-case-importance-" + value);
   				};
+  				$("#edit-tc").click(function(){
+  					window.close();
+  					
+  				var tcId = /*[[${execution.referencedTestCase.id} ]]*/;
+  				var execId = /*[[${execution.id}]]*/;
   				
-  				
-
+  				var currentUrl = window.location.href;
+  				var myRegexp = /optimized=([a-zA-Z]*)/;
+  				var match = myRegexp.exec(currentUrl);
+  				var optimized = match[1]
+  				var winDef = {}
+  				var url = squashtm.app.contextRoot + "/test-cases/" + tcId + "/edit-from-exec/" + execId;
+  				$.open(url, {"optimized":optimized}, winDef);
+  				});
 					
     			/* we dont append in parent because order would not be guaranteed
     			 * we dont append in placeholder because it breaks layout aux petits oignons

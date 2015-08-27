@@ -48,6 +48,8 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
+import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
@@ -113,8 +115,7 @@ IterationTestPlanManager {
 	@Inject
 	private IterationStatisticsService statisticsService;
 
-	@Inject
-	private PrivateCustomFieldValueService customFieldValuesService;
+
 
 	@Inject
 	private MilestoneMembershipFinder milestoneService;
@@ -125,7 +126,6 @@ IterationTestPlanManager {
 
 	@Inject
 	private ObjectFactory<TreeNodeCopier> treeNodeCopierFactory;
-
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
@@ -148,7 +148,7 @@ IterationTestPlanManager {
 
 	/**
 	 * populates an iteration's test plan from a campaign's test plan.
-	 * 
+	 *
 	 * @param iteration
 	 * @param campaignTestPlan
 	 */
@@ -206,7 +206,7 @@ IterationTestPlanManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#addExecution(long)
 	 */
 	@Override
@@ -309,6 +309,13 @@ IterationTestPlanManager {
 	@Override
 	public Execution addExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException {
 
+		Execution execution = createExec(item);
+		item.addExecution(execution);
+		operationsAfterAddingExec(item, execution);
+		return execution;
+	}
+
+	private Execution createExec(IterationTestPlanItem item) {
 		TestCase testCase = item.getReferencedTestCase();
 		testCaseCyclicCallChecker.checkNoCyclicCall(testCase);
 
@@ -318,19 +325,19 @@ IterationTestPlanManager {
 		// if we don't persist before we add, add will trigger an update of item.testPlan which fail because execution
 		// has no id yet. this is caused by weird mapping (https://hibernate.onjira.com/browse/HHH-5732)
 		executionDao.persist(execution);
-
-		item.addExecution(execution);
-		createCustomFieldsForExecutionAndExecutionSteps(execution);
-		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
-
-		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
-
 		return execution;
 	}
 
+	private void operationsAfterAddingExec(IterationTestPlanItem item, Execution execution) {
+		createCustomFieldsForExecutionAndExecutionSteps(execution);
+		createDenormalizedFieldsForExecutionAndExecutionSteps(execution);
+		indexationService.reindexTestCase(item.getReferencedTestCase().getId());
+	}
+
+
 	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
-		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
-		customFieldValuesService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
+		customFieldValueService.createAllCustomFieldValues(execution, execution.getProject());
+		customFieldValueService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
 	}
 
 	private void createDenormalizedFieldsForExecutionAndExecutionSteps(Execution execution) {
@@ -390,4 +397,26 @@ IterationTestPlanManager {
 	public Collection<Milestone> findAllMilestones(long iterationId) {
 		return milestoneService.findMilestonesForIteration(iterationId);
 	}
+
+	@Override
+	public Execution updateExecutionFromTc(long executionId) {
+
+		Execution exec = executionDao.findById(executionId);
+		if (exec == null) {
+			throw new ExecutionWasDeleted();
+		}
+		if (exec.getReferencedTestCase().getSteps().size() == 0) {
+			throw new ExecutionHasNoStepsException();
+
+		}
+		int order = exec.getExecutionOrder();
+		IterationTestPlanItem itpi = exec.getTestPlan();
+		itpi.removeExecution(exec);
+		executionDao.remove(exec);
+		Execution execution = createExec(itpi);
+		itpi.addExecutionAtPos(execution, order);
+		operationsAfterAddingExec(itpi, execution);
+		return execution;
+	}
+
 }
