@@ -405,10 +405,11 @@ IterationTestPlanManager {
 		if (exec == null) {
 			throw new ExecutionWasDeleted();
 		}
-		if (exec.getReferencedTestCase().getSteps().size() == 0) {
-			throw new ExecutionHasNoStepsException();
 
+		if (exec.getReferencedTestCase() != null && exec.getReferencedTestCase().getSteps().size() == 0) {
+			throw new ExecutionHasNoStepsException();
 		}
+
 		int order = exec.getExecutionOrder();
 		IterationTestPlanItem itpi = exec.getTestPlan();
 		itpi.removeExecution(exec);

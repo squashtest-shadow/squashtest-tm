@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
