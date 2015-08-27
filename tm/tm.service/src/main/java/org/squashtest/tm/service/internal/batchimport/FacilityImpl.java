@@ -163,7 +163,7 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private RequirementVersionCoverageDao coverageDao;
-	
+
 	@Inject
 	private HibernateRequirementLibraryNodeDao rlnDao;
 
@@ -685,7 +685,7 @@ public class FacilityImpl implements Facility {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private RequirementVersion doCreateRequirementAndVersion(
 			final RequirementVersionInstruction instruction) {
-		
+
 		//convenient references as the process is complex...
 		final RequirementVersionTarget target = instruction.getTarget();
 		String projectName = PathUtils.extractProjectName(target.getPath());
@@ -699,11 +699,11 @@ public class FacilityImpl implements Facility {
 		//making arrays to avoid immutable problem in visitor inner class
 		final Requirement[] finalRequirement = new Requirement[1];
 		final Long[] finalParentId = new Long[1];
-		
+
 		//now creating the visitor to requirementLibrairyNode
 		//this visitor will invoke the good method as parent can be Requirement or RequirementFolder
 		RequirementLibraryNodeVisitor visitor = new RequirementLibraryNodeVisitor() {
-			
+
 			@Override
 			public void visit(Requirement requirement) {
 				Integer finalPosition = target.getRequirement().getOrder();
@@ -713,7 +713,7 @@ public class FacilityImpl implements Facility {
 					reqLibNavigationService.moveNodesToRequirement(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
 				}
 			}
-			
+
 			@Override
 			public void visit(RequirementFolder folder) {
 				Integer finalPosition = target.getRequirement().getOrder();
@@ -726,16 +726,16 @@ public class FacilityImpl implements Facility {
 		};
 
 		//now creating requirement with following logic :
-		//	If requirement is root requirement 
+		//	If requirement is root requirement
 		//		-> addRequirementToRequirementLibrary
 		//	Else
-		//		If parent doesn't exist in database 
+		//		If parent doesn't exist in database
 		//			-> Create it and needed hierarchy
 		//		-> Now create the imported requirement using visitor polymorphism
 		//	-> Do postCreation stuff
 		if (target.getRequirement().isRootRequirement()) {
 			Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
-			
+
 			finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementLibrary(
 					requirementLibrairyId,dto,Collections.EMPTY_LIST);
 			moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
@@ -752,16 +752,16 @@ public class FacilityImpl implements Facility {
 				RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(finalParentId[0]);
 				parent.accept(visitor);
 		}
-		
+
 		return doAfterCreationProcess(finalRequirement[0], instruction, requirementVersion);
 	}
-	
+
 	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
 			Integer order) {
 		if (order!=null && order > 0) {
 			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, longs, order);
 		}
-		
+
 	}
 
 
@@ -837,7 +837,7 @@ public class FacilityImpl implements Facility {
 
 		doUpdateRequirementCoreAttributes(reqVersion, orig);
 		doUpdateRequirementCategory(reqVersion, orig);
-		
+
 		//Feat 5169, unbind all milestones if cell is empty in import file.
 		//Else, bind milestones if possible
 		if (CollectionUtils.isEmpty(instruction.getMilestones())) {
@@ -852,7 +852,7 @@ public class FacilityImpl implements Facility {
 		//we return the persisted RequirementVersion for post process
 		return orig;
 	}
-	
+
 	@SuppressWarnings("rawtypes")
 	private void moveRequirement(RequirementTarget target, final Requirement req, final int newPosition){
 		if (newPosition <= 0) {
@@ -865,15 +865,15 @@ public class FacilityImpl implements Facility {
 			List<Long> ids = rlnDao.getParentsIds(req.getId());
 			Long firstParentId = ids.get(ids.size()-2);
 			final RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(firstParentId);
-			
+
 			//creating addhoc visitor
 			RequirementLibraryNodeVisitor visitor = new RequirementLibraryNodeVisitor() {
-				
+
 				@Override
 				public void visit(Requirement requirement) {
 					reqLibNavigationService.moveNodesToRequirement(parent.getId(),new Long[]{req.getId()}, newPosition);
 				}
-				
+
 				@Override
 				public void visit(RequirementFolder folder) {
 					reqLibNavigationService.moveNodesToFolder(parent.getId(),new Long[]{req.getId()}, newPosition);
@@ -914,7 +914,7 @@ public class FacilityImpl implements Facility {
 		if (newCriticality!=null && !newCriticality.equals(orig.getCriticality())) {
 			requirementVersionManagerService.changeCriticality(idOrig, newCriticality);
 		}
-		
+
 		InfoListItem newCategory = reqVersion.getCategory();
 		if (newCategory!=null&&!newCategory.equals(orig.getCategory())) {
 			requirementVersionManagerService.changeCategory(idOrig, newCategory.getCode());
@@ -1509,11 +1509,13 @@ public class FacilityImpl implements Facility {
 		@Override
 		public void doPostProcess(List<Instruction<?>> instructions) {
 			for (Instruction<?> instruction : instructions) {
+				if (instruction instanceof RequirementVersionInstruction) {
 				RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
 				if (!rvi.isFatalError()) {
 					renameRequirementVersion(rvi);
 					changeRequirementVersionStatus(rvi);
 				}
+			}
 			}
 		}
 	}
@@ -1568,6 +1570,6 @@ public class FacilityImpl implements Facility {
 
 		return train;
 	}
-	
+
 }
 
