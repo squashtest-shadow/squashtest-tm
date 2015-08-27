@@ -33,7 +33,8 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbo
 public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
 
 	private static final List<EntityType> TC_ENTITIES_ORDERED_BY_INSTRUCTION_ORDER = Arrays.asList(EntityType.TEST_CASE,
-			EntityType.PARAMETER, EntityType.DATASET, EntityType.TEST_STEP, EntityType.DATASET_PARAM_VALUES);
+			EntityType.PARAMETER, EntityType.DATASET, EntityType.TEST_STEP, EntityType.DATASET_PARAM_VALUES,
+			EntityType.COVERAGE);
 
 	@Override
 	public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
