@@ -42,7 +42,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign progression statistics"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
 		def result = service.gatherCampaignProgressionStatistics(campId)
 		then :
@@ -53,7 +53,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign statistics bundle"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
 		def result = service.gatherCampaignStatisticsBundle(campId)
 		then :
@@ -64,7 +64,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign test case status statistics"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
 		def result = service.gatherTestCaseStatusStatistics(campId)
 		then :
@@ -74,9 +74,9 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign test case succes rate stat"(){
 		given :
-		def campId = -10L
-		when :
-		def result = service.gatherCampaignTestCaseSuccessRateStatistics(campId)
+		def campId = [-10L]
+		when : 
+		def result = service.gatherTestCaseSuccessRateStatistics(campId)
 		then :
 		notThrown(Exception)
 	}
@@ -85,7 +85,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		given :
 		def campId = -10L
 		when :
-		def result = service.gatherIterationTestInventoryStatistics(campId)
+		def result = service.gatherCampaignTestInventoryStatistics(campId)
 		then :
 		notThrown(Exception)
 	}
@@ -93,9 +93,9 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign  non executed test case importance stat"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
-		def result = service.gatherCampaignNonExecutedTestCaseImportanceStatistics(campId)
+		def result = service.gatherNonExecutedTestCaseImportanceStatistics(campId)
 		then :
 		notThrown(Exception)
 	}
