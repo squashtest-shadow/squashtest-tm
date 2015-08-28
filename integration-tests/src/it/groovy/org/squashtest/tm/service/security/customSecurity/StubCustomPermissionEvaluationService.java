@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.security.customSecurity;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import org.springframework.security.acls.model.Permission;
 import org.squashtest.it.infrastructure.Stub;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Stub
 public class StubCustomPermissionEvaluationService implements PermissionEvaluationService {
@@ -51,7 +51,12 @@ public class StubCustomPermissionEvaluationService implements PermissionEvaluati
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
 		Identified identified = (Identified) object;
-		return hasPermissionOnObject(permission, identified.getId(),  object.getClass().getName() );
+		return hasPermissionOnObject(permission, identified.getId(), object.getClass().getName());
+	}
+
+	@Override
+	public boolean hasPermissionOnObject(String permission, Object entity) {
+		return false;
 	}
 
 	@Override
@@ -80,17 +85,17 @@ public class StubCustomPermissionEvaluationService implements PermissionEvaluati
 		if (permissionsToRefuse.contains(permissionString)) {
 			return false;
 		}
-		
+
 		//Simulate project manager for odd project only. 
-		if (entityId % 2 == 0){
+		if (entityId % 2 == 0) {
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
-	public Map<Permission, Boolean> listPermissionsOnObject(Object object) {
-		return new HashMap<Permission, Boolean>(0);
+	public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+		return null;
 	}
 
 }

@@ -224,6 +224,13 @@
     <!-- ====== SQUASHTEST ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>tm.service</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
@@ -616,6 +623,7 @@
     </profile>
 
     <profile>
+      <id>database.nocreate</id>
       <activation>
         <property>
           <name>!database.nocreate</name>
@@ -631,7 +639,7 @@
               <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
               <source>${jdk.version}</source>
               <target>${jdk.version}</target>
-              <compatibilityLevel>${jdk.version}</compatibilityLevel>
+              <complianceLevel>${jdk.version}</complianceLevel>
               <aspectLibraries>
                 <aspectLibrary>
                   <!-- For @Configurable. Not sure we need it in this module -->
