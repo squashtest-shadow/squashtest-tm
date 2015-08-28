@@ -304,7 +304,7 @@
 
           <properties>
             <license.yearSpan>${project.inceptionYear} - 2015</license.yearSpan>
-            <license.copyrightOwner>${project.organization.Name}</license.copyrightOwner>
+            <license.copyrightOwner>${project.organization.name}</license.copyrightOwner>
           </properties>
           <excludes>
             <!-- license files -->
@@ -330,7 +330,18 @@
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
             <exclude>**/.hgignore</exclude>
+            <exclude>**/.idea/**/*.*</exclude>
+            <exclude>**/.groovy/**/*.*</exclude>
+            <exclude>**/.profiler/**/*.*</exclude>
+            <exclude>**/.mvn/**/*.*</exclude>
+            <exclude>**/*.xlsx</exclude>
+            <exclude>**/*.versionsBackup</exclude>
+            <exclude>**/*.bak</exclude>
+            <exclude>**/*.swp</exclude>
+            <exclude>**/*.log</exclude>
             <!-- third-party javascript libraries -->
+            <exclude>**/node_modules/**/*.*</exclude>
+            <exclude>**/node_modules/**/*</exclude>
             <exclude>**/js/**/*.*</exclude>
             <exclude>**/scripts/ckeditor/**/*.*</exclude>
             <exclude>**/scripts/datatables/**/*.*</exclude>
