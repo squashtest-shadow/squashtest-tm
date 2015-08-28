@@ -40,8 +40,6 @@
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
  
-<%-- Wizard initialization --%> 
-<comp:init-wizards workspace="campaign"/>
 
 <c:set var="editable" value="${false}" />
 
@@ -140,6 +138,9 @@
             	
             
             </script>
+
+<%-- Wizard initialization --%> 
+<comp:init-wizards workspace="campaign"/>
 
 
   <f:message var="stopTitle"            key="execute.header.button.stop.title" />

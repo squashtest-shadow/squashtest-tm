@@ -28,12 +28,20 @@
  *
  *	'url name' : returns the URL template mapped to the 'url name' (see the list right below)
  *
- *	buildURL : function(urlName, placeholders ) : builds an URL based on a template and values for its placeholders.
+ *	buildURL : function(urlName, parameters) : builds an URL based on a template and values for its placeholders.
  *				The first argument is an 'url name' and the rest are arbitrary additional arguments.
  *				The placeholders will be filled with the arguments in the order they are those additional arguments are supplied.
  *				NB : the placeholders values won't be tested against the regular expression so
  *
- *	matches : function(urlName, candidate) : tests the candidate url against the template named 'urlName'
+ *	unbuildURL : function(urlName, url, [withQueryString]) : if "url" matches the template "urlName", will return an array containing the actual values
+ *	from the url that corresponds to the placedholders in the template. Returns an empty array if there is nothing to deconstruct. 
+ *	will throw an error if url doesn't match the template.
+ *	By default, the matching is performed including the whole querystring in both the url and the template. If you don't want to 
+ *	take the query string into account, you may pass 'false' as a third parameter.
+ *
+ *	matches : function(urlName, candidate) : tests the candidate url against the template named 'urlName'.
+ *	By default, the matching is performed including the whole querystring in both the url and the template. If you don't want to 
+ *	take the query string into account, you may pass 'false' as a third parameter.
  */
 define([], function(){
 
@@ -43,24 +51,81 @@ define([], function(){
 
 
 
-	// returns the template as a RegExp object.
-	// it is done by escaping the static part of the template,
-	// and inlining the regex embedded in the placeholders.
-	function templateToRegex(template){
+	/*
+	 * returns the template as a RegExp object.
+	 * it is done by escaping the static part of the template,
+	 * and inlining the regex embedded in the placeholders.
+	 * 
+	 * if parameter 'capture' is true, the generated regex 
+	 * will 
+	 */
+	
+	/*
+	 * Tech note : here is how it works
+	 *
+	 * 1 - break down the template, using a delimiter that match the placeholders {expr}. The 'expr' within a placeholder 
+	 * is itself captured and returned as part of the breakdown.
+	 * 
+	 * 2 - the breakdown is an array. At event indexes (i%2===0), you'll find the litteral (ie, invariant) parts of the template.
+	 * At odd indexes (i%2===1), you'll get the expressions
+	 * 
+	 * 3 - escape all litteral parts if they contain special characters we want litteraly as is
+	 * 
+	 * 4 - if the 'capture' parameter is true, the expr parts will be rewritten as capturing group in the output regex
+	 * 
+	 * 5 - join the array. This is the final output regex.
+	 * 
+	 */
+	function templateToRegex(template, cap){
+		
+		var capture = (cap !== undefined) ? cap : false;
+		
+		var mPholder = /\{([^\}]+)\}/g;
+		
+		var breakdown = template.split(mPholder);
 
-		var exprNoCapture = /\{[^\}]+\}/g,
-			exprCapture = /\{([^\}]+)\}/g;
+		// here we use a boolean switch instead of 
+		// testing a modulo at each iteration of the loop
+		var litteral = true;
+		for (var i=0; i<breakdown.length; i++){
+			// litteral case (see step 3 in the doc)
+			if (litteral){
+				breakdown[i]=breakdown[i].replace(/[\-\[\\\]\{\}\(\)\*\+\?\.\,\\\^\$\|\#\s\/]/g, "\\$&");
+			}
+			else if (capture){
+				breakdown[i] = '(' + breakdown[i] + ')';
+			}
+			// flip the switch
+			litteral = !litteral;
+		}
+		
+		var expression = breakdown.join(''); 
+		
+		return new RegExp("^"+expression+"$");
+	}
+	
+	
+	/*
+	 * left here as legacy, in case the implementation above proves itself buggy 
+	 * 
+	function templateToRegex(template, cap){
+
+		var capture = (cap !== undefined) ? cap : false;
+		var pholdNoCapture = /\{[^\}]+\}/g,
+			pholdCapture = /\{([^\}]+)\}/g;
 
 
 		// let's break down the template, we separate the static parts from the placeholder parts. By construction
-		// we'll normally have the relation placeholders.length <= staticparts.length <= placeholders.length + 1
+		// we'll normally have the relation placeholders.length <= staticparts.length <= placeholders.length + 1.
+		// we do so because later on we'll need to escape the non-placeholder sequences (static parts) that contain 
+		// special characters
 		var staticparts,
 			placeholders = [],
 			buf;
 
-		staticparts = template.split(exprNoCapture);
+		staticparts = template.split(pholdNoCapture);
 
-		while ((buf = exprCapture.exec(template))!== null){
+		while ((buf = pholdCapture.exec(template))!== null){
 			placeholders.push(buf[1]);
 		}
 
@@ -72,6 +137,10 @@ define([], function(){
 
 			var escapedStatik =
 				statik.replace(/[\-\[\\\]\{\}\(\)\*\+\?\.\,\\\^\$\|\#\s\/]/g, "\\$&");
+			
+			if (capture){
+				placeholdexpr = '(' + placeholdexpr + ')';
+			}
 
 			expression += escapedStatik + placeholdexpr;
 		}
@@ -79,7 +148,7 @@ define([], function(){
 		return new RegExp("^"+expression+"$");
 
 	}
-
+*/
 	return {
 
 		// url names mapping
@@ -128,6 +197,7 @@ define([], function(){
 		'execute' :							root + '/execute',
 		'execute.stepbyid' :				root + '/execute/{\\d+}/step/{\\d+}',
 		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
+		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
 
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
@@ -180,12 +250,50 @@ define([], function(){
 
 			return res;
 		},
-
-		matches : function(urlName, candidate){
+		
+		unbuildURL : function(urlName, urlp, withQuery){
+			
 			var template = this[urlName];
-			var tplExp = templateToRegex(template);
-			window.ex = tplExp;
-			return tplExp.test(candidate.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes
+			var url = urlp;
+			
+			// remove the query strings if asked to
+			withQuery = (withQuery !== undefined) ? withQuery : true;
+			
+			if (! withQuery){
+				template = template.split(/[?#]/)[0];
+				url = url.split(/[?#]/)[0];
+			}
+			
+			// process		
+			var tplExp = templateToRegex(template, true);
+			var matches = tplExp.exec(url.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes				
+			
+			if (matches !== null){
+				return matches.slice(1);
+			}
+			else{
+				throw "workspace.routing : cannot unbuildURL('"+url+"', '"+urlName+"') because they do not match";
+			}
+			
+		},
+
+		// equivalent - but faster - to  { try{ return (this.unbuildURL(candidate, urlName) !== null); }catch(e){return false) }
+		matches : function(urlName, candidate, withQuery){
+			
+			var template = this[urlName];
+			var url = candidate;
+			
+			// remove the query strings if asked to
+			withQuery = (withQuery !== undefined) ? withQuery : true;
+			
+			if (! withQuery){
+				template = template.split(/[?#]/)[0];
+				url = url.split(/[?#]/)[0];
+			}
+			
+			// process
+			var tplExp = templateToRegex(template, false);
+			return tplExp.test(url.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes
 		}
 
 	};

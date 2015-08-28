@@ -41,10 +41,15 @@ USAGE :
       },
       wizz=${#workspace.wizardPlugins(wkpTypeName).?[module!=null].![module]}">
 
-    <script type="test/javascript" th:inline="javascript">
+    <script type="text/javascript" th:inline="javascript">
 	/*<![CDATA[*/
 		var tmwizardmodules = /*[[${wizz}]]*/[];
-
+		 	
+ 	require(tmwizardmodules, function(){
+ 		for (var i=0; i<arguments.length; i++){
+ 			arguments[i].init();
+ 		}
+ 	});
 	/*]]>*/
 	</script>
 

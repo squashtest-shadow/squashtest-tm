@@ -35,16 +35,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
 
-<%--
-<c:set var="wkpTypeName" value="${ (workspace=='test-case') ? 
-                                      'TEST_CASE_WORKSPACE' : (workspace=='requirement') ? 
-                                      'REQUIREMENT_WORKSPACE : 
-                                      'CAMPAIGN_WORKSPACE'  }"/>
- --%>
-<c:set var="wkpTypeName" value="${ (workspace=='test-case') ? 
-                                      'TEST_CASE_WORKSPACE' :  
-                                      'CAMPAIGN_WORKSPACE'  }"/> 
- 
+
+<c:set var="wkpTypeName" value="${ (workspace=='test-case') ? 'TEST_CASE_WORKSPACE' :                                 
+                                    (workspace=='requirement') ?  'REQUIREMENT_WORKSPACE' : 
+                                    'CAMPAIGN_WORKSPACE'  }"/>
+
 <c:set var="wizz" value="${wu:getWizardPlugins(pageContext.servletContext, wkpTypeName)}"/>
 
 <c:if test="${not empty wizz}">
@@ -58,7 +53,7 @@
  	
  	require(tmwizardmodules, function(){
  		for (var i=0; i<arguments.length; i++){
- 			//arguments[i].init();
+ 			arguments[i].init();
  		}
  	});
  
