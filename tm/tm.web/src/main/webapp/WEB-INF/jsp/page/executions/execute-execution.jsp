@@ -39,7 +39,9 @@
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
- <%-- Wizard initialization --%>
+ 
+<%-- Wizard initialization --%> 
+<comp:init-wizards workspace="campaign"/>
 
 <c:set var="editable" value="${false}" />
 
@@ -307,7 +309,6 @@ publish("reload.executedialog.complete");
 
 			</div>
       
-<comp:init-wizards workspace="campaign"/>
 
 		</body>
 	</c:otherwise>

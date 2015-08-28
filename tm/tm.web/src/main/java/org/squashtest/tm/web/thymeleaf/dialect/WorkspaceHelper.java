@@ -29,6 +29,7 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
+import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
@@ -38,6 +39,7 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
+import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 
 
@@ -89,6 +91,16 @@ public class WorkspaceHelper {
 
 		ExportPluginManager manager = wac.getBean(ExportPluginManager.class);
 		return manager.findAllByWorkspace(workspace);
+	}
+
+
+
+	public Collection<WorkspaceWizard> wizardPlugins(String workspaceName){
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+		WorkspaceWizardManager wizardManager = wac.getBean(WorkspaceWizardManager.class);
+
+		WorkspaceType type = WorkspaceType.valueOf(workspaceName);
+		return wizardManager.findAllByWorkspace(type);
 	}
 
 

@@ -75,6 +75,9 @@ documentation :
 
 <body class="execute-html-body">
 
+  <!--  initialize the wizards --> 
+  <div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='campaign')"/>
+
   <div id="execute-header">
     <div class="snap-left">
       <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>

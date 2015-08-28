@@ -39,7 +39,7 @@ import org.squashtest.tm.core.foundation.lang.Assert;
  * 
  */
 public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized implements WorkspaceWizard,
-		BeanNameAware, BundleContextAware {
+BeanNameAware, BundleContextAware {
 
 	private WorkspaceType displayWorkspace;
 	private MenuItem wizardMenu;
@@ -47,6 +47,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 
 	private String filename;
 	private String version;
+	private String module;
 
 	public void setBundleContext(BundleContext bundleContext) {
 		version = bundleContext.getBundle().getVersion().toString();
@@ -58,12 +59,12 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 */
 	private String nameKey;
 
-	
+
 	@Override
 	public Map<String, String> getProperties(){
 		return new HashMap<String, String>();
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getDisplayWorkspace()
 	 */
@@ -115,6 +116,15 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		return version;
 	}
 
+	public void setModule(String module){
+		this.module = module;
+	}
+
+	@Override
+	public String getModule(){
+		return module;
+	}
+
 	/**
 	 * @param nameKey
 	 *            the nameKey to set
@@ -139,11 +149,11 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		this.displayWorkspace = displayWorkspace;
 	}
 
-	
+
 	public void validate(EntityReference reference){
 		// defaults : allways passes
 	}
-	
+
 	/**
 	 * This default validation always passes.
 	 * 

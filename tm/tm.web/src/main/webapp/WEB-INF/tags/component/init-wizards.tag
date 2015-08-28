@@ -35,25 +35,30 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
 
+<%--
 <c:set var="wkpTypeName" value="${ (workspace=='test-case') ? 
                                       'TEST_CASE_WORKSPACE' : (workspace=='requirement') ? 
                                       'REQUIREMENT_WORKSPACE : 
                                       'CAMPAIGN_WORKSPACE'  }"/>
-
+ --%>
+<c:set var="wkpTypeName" value="${ (workspace=='test-case') ? 
+                                      'TEST_CASE_WORKSPACE' :  
+                                      'CAMPAIGN_WORKSPACE'  }"/> 
+ 
 <c:set var="wizz" value="${wu:getWizardPlugins(pageContext.servletContext, wkpTypeName)}"/>
 
-<c:if test="${not wizz.empty()}">
+<c:if test="${not empty wizz}">
 
  <script type="text/javascript">
  	var tmwizardmodules = [
  	<c:forEach items="${wizz}" var="item" varStatus="stats">
- 		'${item.jsmodule}'<c:if test="not stats.last">,</c:if>
+ 		'${item.module}'<c:if test="(not stats.last) and (it.module not null)">,</c:if>
  	</c:forEach>
  	];
  	
  	require(tmwizardmodules, function(){
  		for (var i=0; i<arguments.length; i++){
- 			arguments[i].init();
+ 			//arguments[i].init();
  		}
  	});
  
