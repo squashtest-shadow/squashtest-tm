@@ -65,18 +65,6 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 */
 	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
 
-	/**
-	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
-	 * filter out the ids who can't be deleted.
-	 *
-	 *
-	 * @param targetIds
-	 * @return
-	 * @deprecated not used anymore
-	 */
-	@Deprecated
-	OperationReport deleteNodes(List<Long> targetIds);
-
 	void addTestSuite(long iterationId, TestSuite suite);
 
 	List<TestSuite> findAllTestSuites(long iterationId);

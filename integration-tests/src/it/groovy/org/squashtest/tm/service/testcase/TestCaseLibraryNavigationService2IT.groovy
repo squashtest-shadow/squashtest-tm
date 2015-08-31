@@ -20,16 +20,14 @@
  */
 package org.squashtest.tm.service.testcase
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.service.HibernateServiceSpecification;
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
+
+import javax.inject.Inject
 
 @NotThreadSafe
 class TestCaseLibraryNavigationService2IT extends HibernateServiceSpecification {
@@ -37,9 +35,6 @@ class TestCaseLibraryNavigationService2IT extends HibernateServiceSpecification 
 
 	@Inject
 	private TestCaseLibraryNavigationService navService
-
-	@Inject
-	private TestCaseLibrariesCrudService libcrud
 
 	private int testCaseId=-1;
 	private int folderId = -1;
@@ -49,7 +44,7 @@ class TestCaseLibraryNavigationService2IT extends HibernateServiceSpecification 
 	def setup(){
 		projectService.persist(createProject())
 
-		def libList= libcrud.findAllLibraries()
+		def libList= currentSession.createQuery("from TestCaseLibrary").list()
 
 
 		def lib = libList.get(libList.size()-1);

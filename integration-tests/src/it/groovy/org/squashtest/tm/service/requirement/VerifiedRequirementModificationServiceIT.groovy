@@ -20,18 +20,16 @@
  */
 package org.squashtest.tm.service.requirement
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.ProjectManagerService
-import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 
+import javax.inject.Inject
 
 @NotThreadSafe
 class VerifiedRequirementModificationServiceIT extends HibernateServiceSpecification {
@@ -41,10 +39,6 @@ class VerifiedRequirementModificationServiceIT extends HibernateServiceSpecifica
 
 	@Inject
 	private TestCaseLibraryNavigationService tcNavService
-
-	@Inject
-	private TestCaseLibrariesCrudService tcCrudService
-
 
 	@Inject
 	RequirementLibraryNavigationService reqNavService;
@@ -69,7 +63,7 @@ class VerifiedRequirementModificationServiceIT extends HibernateServiceSpecifica
 
 
 
-		def libList= tcCrudService.findAllLibraries()
+		def libList= currentSession.createQuery("from TestCaseLibrary").list()
 		tcLib = libList.get(libList.size()-1);
 
 		def folder =  new TestCaseFolder(name:"folder")

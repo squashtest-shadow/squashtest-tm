@@ -60,15 +60,6 @@ public class User implements Identifiable<User>, RemoteUser {
 		return name;
 	}
 
-	/**
-	 * @deprecated not used. to be removed
-	 * @param permissions
-	 */
-	@Deprecated
-	public void setPermissions(List<Permission> permissions) {
-		this.permissions = permissions;
-	}
-
 	public List<Permission> getPermissions() {
 		return permissions;
 	}

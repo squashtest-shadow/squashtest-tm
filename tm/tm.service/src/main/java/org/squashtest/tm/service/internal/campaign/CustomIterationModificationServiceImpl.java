@@ -256,17 +256,6 @@ IterationTestPlanManager {
 		return deletionHandler.simulateIterationDeletion(targetIds);
 	}
 
-	/**
-	 * @deprecated not used anymore
-	 * @param targetIds
-	 * @return
-	 */
-	@Override
-	@Deprecated
-	public OperationReport deleteNodes(List<Long> targetIds) {
-		return deletionHandler.deleteIterations(targetIds);
-	}
-
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
