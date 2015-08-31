@@ -25,6 +25,7 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -170,10 +171,11 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	/**
 	 * Given a list of campaign id, gathers and returns the number of test cases grouped by execution status.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @return
 	 */
+	@Override
 	public CampaignTestCaseStatusStatistics gatherTestCaseStatusStatistics(List<Long> campaignIds){
 
 		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.globaltestinventory", campaignIds);
@@ -184,10 +186,11 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	/**
 	 * Given a list of campaign id, gathers and returns the number of passed and failed test cases grouped by weight.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @return
 	 */
+	@Override
 	public CampaignTestCaseSuccessRateStatistics gatherTestCaseSuccessRateStatistics(List<Long> campaignIds){
 		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.successRate", campaignIds);
 
@@ -196,10 +199,11 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	/**
 	 * Given a list of campaign id, gathers and returns the number of non-executed test cases grouped by weight.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @return
 	 */
+	@Override
 	public CampaignNonExecutedTestCaseImportanceStatistics gatherNonExecutedTestCaseImportanceStatistics(List<Long> campaignIds){
 		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.nonexecutedTestcaseImportance", campaignIds);
 
@@ -283,10 +287,13 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	public List<CampaignTestInventoryStatistics> gatherFolderTestInventoryStatistics(Collection<Long> campaignIds) {
+
+		List<Object[]> tuples = Collections.emptyList();
+		if (campaignIds.size() > 0) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignFolderStatistics.testinventory");
 		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
-		List<Object[]> tuples = query.list();
-
+			tuples = query.list();
+		}
 		return processCampaignTestInventory(tuples);
 	}
 
@@ -298,15 +305,21 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	/**
 	 * Execute a named query that accepts as argument a parameter of type List&lt;Long&gt; named "campaignIds", and that
 	 * returns a list of tuples (namely Object[])
-	 * 
+	 *
 	 * @param queryName
 	 * @param idParameter
 	 * @return
 	 */
 	private List<Object[]> fetchCommonTuples(String queryName, List<Long> campaignIds){
+
+		List<Object[]> res = Collections.emptyList();
+
+		if (campaignIds.size() > 0) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery(queryName);
 		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
-		List<Object[]> res = query.list();
+			res = query.list();
+		}
+
 		return res;
 	}
 

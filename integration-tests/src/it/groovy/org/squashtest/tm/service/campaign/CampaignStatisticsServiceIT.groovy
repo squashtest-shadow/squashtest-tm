@@ -50,6 +50,8 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 
 	}
 
+	
+	
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign statistics bundle"(){
 		given :
@@ -99,4 +101,22 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		then :
 		notThrown(Exception)
 	}
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should not explode when no campaign are present"(){
+		//test for Issue 5267
+		given :
+		def campId = []
+		when :
+		service.gatherFolderTestInventoryStatistics(campId)
+		service.gatherTestCaseStatusStatistics(campId)
+
+		then :
+		notThrown(Exception)
+	}
+	
+	
+	
+	
+
 }
