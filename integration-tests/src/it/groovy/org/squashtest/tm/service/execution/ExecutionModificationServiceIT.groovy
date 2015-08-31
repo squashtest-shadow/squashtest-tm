@@ -42,7 +42,66 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private ExecutionModificationService execService
 
+	
+	
+	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
+	def "should update action and expected result"(){
+		
+		given :
+		
+		when :
+		execService.updateSteps(-1L)
+		def steps = findAll("ExecutionStep")
+		
+		then :
+		steps.action as Set == (1..5).collect{"action " + it} as Set
+		steps.expectedResult.each {assert it == ""} 
+		
+	}
+	
+	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
+	def "denormalization was merely a setback"(){
+		
+		given :
+		
+		when : 
+		execService.updateSteps(-1L)
+		def denoCufs = findAll("DenormalizedFieldValue")
+		
+		then :
+		denoCufs.value.each {assert it == "cuf 1"} 
+		
+	}
+	
+	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
+	def "should find index of first modif"(){
+		given :
+		
+		when :
+		def indexOfFirstModif = execService.updateSteps(-1L)
+			
+		then :
+		indexOfFirstModif == 2
+	
+	}
 
+	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
+	def "should update attachment"(){
+		
+		given :
+		
+		when :
+		execService.updateSteps(-1L)
+		def steps = findAll("ExecutionStep")
+		
+		then :
+		steps.attachmentList.inject([]){result, val -> result.addAll(val.attachments); result}.each {
+			assert it.size == 1
+			assert it.name == "lol"
+		}
+	}
+	
+	
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should update execution description"(){
 

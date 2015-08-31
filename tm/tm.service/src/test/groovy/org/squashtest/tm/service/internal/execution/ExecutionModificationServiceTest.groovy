@@ -276,9 +276,9 @@ public class ExecutionModificationServiceTest extends Specification {
 		actionSteps.eachWithIndex { item, index ->
 
 			execution.steps[index].with {
-				action == item.action
-				expectedResult == item.expectedResult
-			}
+				assert action == item.action 
+				assert expectedResult == item.expectedResult
+			} 
 		}		
 	}
 	
