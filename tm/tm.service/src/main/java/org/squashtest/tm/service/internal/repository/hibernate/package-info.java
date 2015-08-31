@@ -676,7 +676,7 @@
 	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (max(c.name),' ',iter.name) as name, itp.executionStatus as status, count(tc) as num "
 	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by iter"),
 
-	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, c.name as name, itp.executionStatus as status, count(tc) as num "
+	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, max(c.name) as name, itp.executionStatus as status, count(tc) as num "
 			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by c"),
 	
 	//Iteration Statistics

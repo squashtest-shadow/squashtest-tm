@@ -118,5 +118,17 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	
 	
 	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should gather folder data"(){
+		//test for Issue 5270
+		given :
+		def campId = [-10L]
+		when :
+		service.gatherFolderTestInventoryStatistics(campId)
+
+		then :
+		notThrown(Exception)
+	}
+	
 
 }
