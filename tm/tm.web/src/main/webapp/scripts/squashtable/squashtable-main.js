@@ -1194,6 +1194,7 @@ define(["jquery",
 	 *
 	 * some bits are taken from jquery.datatable.js, sorry for the copy pasta.
 	 */
+	// TODO : some bits of it are now in squash.attributeparser (signatures may change though)
 	function _createObjectDOMInitFixer(property) {
 
 		function exists(data, property) {

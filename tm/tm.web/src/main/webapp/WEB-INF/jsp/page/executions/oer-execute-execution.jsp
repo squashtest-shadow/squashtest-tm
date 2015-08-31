@@ -78,6 +78,7 @@
 </s:url>
 
 
+
 <body class="execute-html-body ieo-body">
 	<f:message var="completedMessage" key="execute.alert.test.complete" />
 	<c:if test="${ execution.project.bugtrackerConnected }">
@@ -170,6 +171,11 @@
 		});
 	});
 	</script> 
+  
+  
+<%-- Wizard initialization --%> 
+<comp:init-wizards workspace="campaign"/>
+  
 	<div id="execute-header" >
 			<table style="width: 100%; table-layout: fixed; white-space: nowrap;">
 			<tr>

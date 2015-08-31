@@ -188,6 +188,9 @@ define([], function(){
 		'iterations.testplan.lastexec' :	root + '/iterations/{\\d+}/test-plan/{\\d+}/last-execution',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
+		'testsuites.execute.stepbyindex' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/executions/{\\d+}/steps/index/{\\d+}',
+		'testsuites.execute.prologue' : 	root + '/test-suites/{\\d+}/test-plan/{\\d+}/executions/{\\d+}/steps/prologue',
+		'testsuites.runner'				:	root + '/test-suites/{\\d+}/test-plan/execution/runner',
 
 		'executions' :						root + '/executions/{\\d+}',
 		'executions.generalinfos' :			root + '/executions/{\\d+}/general',
@@ -198,6 +201,7 @@ define([], function(){
 		'execute.stepbyid' :				root + '/execute/{\\d+}/step/{\\d+}',
 		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
 		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
+		
 
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
@@ -226,6 +230,7 @@ define([], function(){
 		'docxtemplate'							: root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
 		'ie9sucks'								: root + '/reports/0/0/ie9',
 		'milestone.synchronize'					: root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
+		
 		'search-tc.mass-change.associable-milestone'  : root + '/advanced-search/milestones/tc-mass-modif-associables/{\\d+}',
 		'search-tc.mass-change.data'  : root + '/advanced-search/milestones/tc-mass-modif-data/{\\d+}',
 		'search-tc.mass-change.bindmilestones' : root + '/advanced-search/tcs/{\\d+}/milestones',

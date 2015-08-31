@@ -51,10 +51,12 @@
  	</c:forEach>
  	];
  	
- 	require(tmwizardmodules, function(){
- 		for (var i=0; i<arguments.length; i++){
- 			arguments[i].init();
- 		}
+ 	require(['common'], function(){
+ 	 	require(tmwizardmodules, function(){
+ 	 		for (var i=0; i<arguments.length; i++){
+ 	 			arguments[i].init();
+ 	 		}
+ 	 	});
  	});
  
  </script>

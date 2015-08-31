@@ -25,7 +25,7 @@ import java.util.List;
 import org.squashtest.tm.domain.testcase.Dataset;
 /**
  * 
- * @author flaurens, mpagnon
+ * @author flaurens, mpagnon, bsiri
  *
  */
 public interface CustomDatasetDao {

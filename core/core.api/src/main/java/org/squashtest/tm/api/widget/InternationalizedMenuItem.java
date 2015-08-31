@@ -81,7 +81,11 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	}
 
 	private void checkBeanState() {
+		/*
+		 * URL can now be null
+		 * 
 		Assert.propertyNotBlank(url, "url property should not be blank");
+		 */
 		Assert.propertyNotBlank(tooltipKey, "tooltipKey property should not be null");
 		initializeAccessRule();
 		Assert.propertyNotNull(accessRule, "accessRule property should not be null");

@@ -28,6 +28,21 @@ define([ "jquery" ], function($) {
 
 			//Issue 4998 IE don't put / at the start of the url so the match fail. Add / at first if it not the first char
 			return url.pathname.charAt(0) != '/' ? '/' + url.pathname : url.pathname;			
+		},
+		
+		extractParameters : function(rawurl){
+			var url = document.createElement('a');
+			url.href = rawurl;
+			
+			var querystr = url.search;
+			var pairs = querystr.replace(/^\?/,'').split('&').map(function(e){return e.split('=');});
+			
+			var ret = {};
+			pairs.forEach(function(p){
+				ret[p[0]]=p[1];
+			});
+			
+			return ret;
 		}
 	}
 	

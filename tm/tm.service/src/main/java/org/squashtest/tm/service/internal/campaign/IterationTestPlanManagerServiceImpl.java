@@ -73,6 +73,7 @@ import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
@@ -108,6 +109,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Inject
 	private UserAccountService userService;
+
+	@Inject
+	private TestCaseDao testCaseDao;
 
 	@Inject
 	private DatasetDao datasetDao;
@@ -186,6 +190,23 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Iteration iteration = iterationDao.findById(iterationId);
 
 		addTestPlanItemsToIteration(objectsIds, iteration);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void addTestCaseToIteration(Long testcaseId, Long datasetId, long iterationId) {
+		Iteration iteration = iterationDao.findById(iterationId);
+
+		TestCase testCase = testCaseDao.findById(testcaseId);
+
+		Dataset ds = (datasetId!=null) ? datasetDao.findById(datasetId) : null;
+
+		IterationTestPlanItem itp = new IterationTestPlanItem(testCase, ds);
+		iterationTestPlanDao.persist(itp);
+		iteration.addTestPlan(itp);
+
+		// and frack the reindexation
 	}
 
 	@Override

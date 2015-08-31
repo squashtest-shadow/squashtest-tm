@@ -21,8 +21,8 @@
 /**
  * This is a template for a backbone module
  */
-define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.squash.squashbutton" ], function($,
-		Backbone, Handlebars, _) {
+define([ "jquery", "backbone", "handlebars", "underscore", "app/util/StringUtil", "jqueryui", "jquery.squash.squashbutton" ], function($,
+		Backbone, Handlebars, _, util) {
 	var View = Backbone.View.extend({
 		el : "#wizard-tree-pane",
 
@@ -153,22 +153,29 @@ define([ "jquery", "backbone", "handlebars", "underscore", "jqueryui", "jquery.s
 			var wizard = _.find(this.collection, function(wizard) {
 				return wizard.name === event.currentTarget.id;
 			});
+			
+			if (! util.isBlank(wizard.url)){
 
-			var postData = {
-				url : squashtm.app.contextRoot + "/" + wizard.url
-			};
-			postData.nodes = _.map(this.selectedNodes, function(node) {
-				var $node = $(node).treeNode();
-				return {
-					type : $node.getResType(),
-					id : $node.getResId()
+				var postData = {
+					url : squashtm.app.contextRoot + "/" + wizard.url
 				};
-			});
-
-			var source = this.$("#start-ws-wizard-form-template").html();
-			var template = Handlebars.compile(source);
-			this.formContainer.html(template(postData));
-			this.formContainer.find("form").submit();
+				postData.nodes = _.map(this.selectedNodes, function(node) {
+					var $node = $(node).treeNode();
+					return {
+						type : $node.getResType(),
+						id : $node.getResId()
+					};
+				});
+	
+				var source = this.$("#start-ws-wizard-form-template").html();
+				var template = Handlebars.compile(source);
+				this.formContainer.html(template(postData));
+				this.formContainer.find("form").submit();
+				
+			}
+			else{
+				return true;
+			}
 		}
 	});
 

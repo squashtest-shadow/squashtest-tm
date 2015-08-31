@@ -51,15 +51,23 @@ public interface IterationTestPlanManagerService extends IterationTestPlanFinder
 			PagingAndMultiSorting sorting, ColumnFiltering filtering);
 
 	/**
-	 * Adds a list of test cases to an iteration.
-	 * 
-	 * @param testCaseIds
-	 * @param iterationId
+	 * Adds a list of test cases to an iteration. If a test case have one or several datasets, that test case will be planned
+	 * as many time with a different dataset.
 	 */
 	void addTestCasesToIteration(List<Long> testCaseIds, long iterationId);
 
 	/**
-	 * Adds a list of test cases to an iteration.
+	 * Will add the given test case, with the given test plan, to the test plan of the given iteration.
+	 * 
+	 * @param testCaseId
+	 * @param datasetId, may be null
+	 * @param campaignId
+	 */
+	void addTestCaseToIteration(Long testcaseId, Long datasetId, long iterationId);
+
+	/**
+	 * Adds a list of test cases to an iteration. If a test case have one or several datasets, that test case will be planned
+	 * as many time with a different dataset.
 	 * 
 	 * @param testCaseIds
 	 * @param iteration

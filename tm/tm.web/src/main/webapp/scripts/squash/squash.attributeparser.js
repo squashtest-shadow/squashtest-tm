@@ -37,6 +37,8 @@
  */
 define(['jquery'], function($) {
 	
+	// ****************** properties-as-string parsing ***********************
+	
 	/*it is written that way so that only the first '=' will match 
 	as a separator, allowing '=' to be a valid part of the value as well.
 	It could have been written as 'atom.split(/\s*=(.+)?/,2);' but IE8 definitely 
@@ -89,11 +91,49 @@ define(['jquery'], function($) {
 		return result;
 	}
 	
+	// ************************* properties-in-object utilities *******************
+
+	/**
+	 * Given an 'object', will set its property 'property' to 'value'.
+	 * The point of using this is that it can set nested properties, 
+	 * provided that 'property' uses a dot separator.
+	 * 
+	 */
+	function setValue(object, property, value) {
+		var localO = object;
+		var a = property.split('.');
+		for ( var i = 0, iLen = a.length - 1; i < iLen; i++) {
+			var ppt = a[i];
+			if (localO[ppt] === undefined) {
+				localO[ppt] = {};
+			}
+			localO = localO[ppt];
+		}
+		localO[a[a.length - 1]] = value;
+	}
+
+	/** 
+	 * Given an 'object', will retrieve the value of 'property'. 
+	 * The point of using this is that you can retrieve nested properties, 
+	 * provided that 'property' uses a dot separator. 
+	 * 
+	 */
+	function getValue(object, property) {
+		var localO = object;
+		var a = property.split('.');
+		for ( var i = 0, iLen = a.length; i < iLen; i++) {
+			localO = localO[a[i]];
+		}
+		return localO;
+	}
+	
 	
 	return {
 		parse : function(seq){
 			return _parseSequence({}, seq);
-		}
+		},
+		setValue : setValue,
+		getValue : getValue
 	};
 	
 });

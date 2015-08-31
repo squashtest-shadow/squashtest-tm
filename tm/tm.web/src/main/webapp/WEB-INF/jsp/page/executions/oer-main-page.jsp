@@ -47,21 +47,28 @@
 	<layout:common-head />		
 	<comp:sq-css name="squash.purple.css" />
 	<layout:_common-script-import highlightedWorkspace="" />
-</head>
-
-<script type="text/javascript">
-  
-  requirejs.config({
-      config : {
-        'oer-main-page' : ${json:serialize(config)}
-      }
+   
+   
+    <script type="text/javascript">
+    
+    requirejs.config({
+        config : {
+          'oer-main-page' : ${json:serialize(config)}
+        }
+      });
+    
+    require(["common"], function(){   
+      require(["oer-main-page"], function(){})
     });
   
-  require(["common"], function(){	  
-  	require(["oer-main-page"], function(){})
-  });
+  </script>
+  
+  <%-- Wizard initialization --%> 
+  <comp:init-wizards workspace="campaign"/>
+  
+</head>
 
-</script>
+
 
 <body id="ieo-body">
 
@@ -100,7 +107,7 @@ publish("reload.oer.panelsready");
                   </button>
                 </td>
 				<td class="right-aligned">
-					<label class="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
+					<label id="evaluation-label-status"><f:message key="execute.header.status.label" /></label>
 					<comp:execution-status-combo name="executionStatus" id="step-status-combo" allowsUntestable="${config.allowsUntestable}" 
                                                   allowsSettled="${config.allowsSettled}" selected="${config.currentStepStatus }"/>
 					<c:if test="${config.allowsUntestable}">
@@ -166,7 +173,12 @@ publish("reload.oer.urldialog");
 
 	
 	<c:if test="${not empty bugTracker}">
-	<is:issue-add-popup id="issue-report-dialog" interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>		
+	<is:issue-add-popup 
+  id="issue-report-dialog" 
+  interfaceDescriptor="${interfaceDescriptor}"  
+  bugTrackerId="${bugTracker.id}"
+  projectId="${projectId}"
+  projectNames="${projectNames}"/>		
 	</c:if>
 	
   <%-- 

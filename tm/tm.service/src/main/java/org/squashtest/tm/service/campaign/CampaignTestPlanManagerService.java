@@ -64,12 +64,22 @@ public interface CampaignTestPlanManagerService {
 	boolean findCampaignByProjectId(List<Project> projectList, Milestone activeMilestone);
 
 	/**
-	 * Adds a list of test cases to a campaign.
+	 * Adds a list of test cases to a campaign. If a test case have one or several datasets, that test case will be planned
+	 * as many time with a different dataset.
 	 * 
 	 * @param testCaseIds
 	 * @param campaignId
 	 */
 	void addTestCasesToCampaignTestPlan(List<Long> testCaseIds, long campaignId);
+
+	/**
+	 * Will add the given test case, with the given test plan, to the test plan of the given campaign.
+	 * 
+	 * @param testCaseId
+	 * @param datasetId, may be null
+	 * @param campaignId
+	 */
+	void addTestCaseToCampaignTestPlan(Long testCaseId, Long datasetId, long campaignId);
 
 	/**
 	 * Get Users with Execute Access for a campaign and his test plans.
