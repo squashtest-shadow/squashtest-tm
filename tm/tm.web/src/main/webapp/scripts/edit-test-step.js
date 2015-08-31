@@ -52,8 +52,8 @@ require([ "common" ], function(common) {
 						var url = routing.buildURL('execute.stepbyindex', fromExec, index) + "?optimized=" +  isIEO;
 						
 						if(isIEO){
-								
-								window.open(url, {}, {});
+							url = routing.buildURL('executions.runner', fromExec) + "/" + index + "?optimized=" +  isIEO; 
+								window.open(url);
 							
 						} else {
 						
@@ -64,6 +64,8 @@ require([ "common" ], function(common) {
 						
 						window.open(url, winDef.name, winDef.features);
 						}
+						
+						window.close();
 					});
 					
 				};

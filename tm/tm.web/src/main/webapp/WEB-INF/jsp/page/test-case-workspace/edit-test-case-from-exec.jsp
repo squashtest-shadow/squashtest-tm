@@ -42,7 +42,7 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
-		<f:message var="backButtonLabel" key="label.Back" />
+		<f:message var="backButtonLabel" key="label.return.exec" />
 		<input type="button" id="back-to-exec" class="sq-btn" value="${backButtonLabel}">
 	</jsp:attribute>
 	

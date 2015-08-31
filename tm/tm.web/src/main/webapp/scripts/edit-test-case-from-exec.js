@@ -36,7 +36,7 @@
 				var runnerUrl = routing.buildURL('executions.runner', id); 
 				
 				execHelper.start(runnerUrl, isIEO);
-
+				window.close();
 			});
 			
 		}

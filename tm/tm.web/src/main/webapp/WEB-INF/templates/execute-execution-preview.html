@@ -99,7 +99,7 @@ documentation :
       <tr>
       <td>   <h2 th:text="${title}">Exec #3 : test interface</h2></td>
     <td> 
-    <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+    <button th:if="${execution.project.allowTcModifDuringExec()}" id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
     <span class="ui-icon ui-icon-pencil"/>
     </button> 
     </td>
@@ -282,7 +282,6 @@ documentation :
   					status.addClass("test-case-importance-" + value);
   				};
   				$("#edit-tc").click(function(){
-  					window.close();
   					
   				var tcId = /*[[${execution.referencedTestCase.id} ]]*/;
   				var execId = /*[[${execution.id}]]*/;
@@ -294,6 +293,8 @@ documentation :
   				var winDef = {}
   				var url = squashtm.app.contextRoot + "/test-cases/" + tcId + "/edit-from-exec/" + execId;
   				$.open(url, {"optimized":optimized}, winDef);
+  				window.close();
+					parent.squashtm.ieomanager.closeWindow();
   				});
 					
     			/* we dont append in parent because order would not be guaranteed

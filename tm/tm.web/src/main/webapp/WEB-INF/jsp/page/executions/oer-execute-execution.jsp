@@ -93,12 +93,19 @@
 
 	<script type="text/javascript">
 	require(["common"], function() {
-		require(["jquery", "squash.basicwidgets",'custom-field-values',
+		require(["jquery", "squash.basicwidgets",'custom-field-values', 'workspace.routing',
 
-		         "jqueryui"], function($, basicwidg, cufValues){
+		         "jqueryui"], function($, basicwidg, cufValues, routing){
 			$(function(){
 				"use strict"
 				basicwidg.init();
+				
+				$("#edit-tc").on('click', function(){
+			          var url = routing.buildURL('teststeps.fromExec', "${executionStep.id}", true);	
+					  localStorage.setItem("squashtm.execModification.index", "${executionStep.executionStepOrder}");
+					  parent.squashtm.ieomanager.closeWindow();    
+			          window.open(url);
+				});
 				
 				$("#execute-next-button").button({
 					'text': false,
@@ -186,6 +193,11 @@
 				</td>
 				</c:if>
 				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
+		<c:if test="${execution.project.allowTcModifDuringExec()}">
+		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+                                 <span class="ui-icon ui-icon-pencil"/>
+                                 </button> </td>
+                                 </c:if>
 			</tr>
 			</table>
 	</div>
