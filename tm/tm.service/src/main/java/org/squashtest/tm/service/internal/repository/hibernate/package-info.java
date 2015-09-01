@@ -670,14 +670,14 @@
 
 	
 	//Campaign Statistics : test inventories are special because it depends on who's asking
-	@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num "
-	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
+	@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, case trim(iter.reference) when '' then max(iter.name) else concat(iter.reference, ' - ', iter.name) end as name, itp.executionStatus as status, count(tc) as num "
+	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by name"),
 
-	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (max(c.name),' ',iter.name) as name, itp.executionStatus as status, count(tc) as num "
-	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by iter"),
+	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (case trim(max(c.reference)) when '' then max(c.name) else concat(max(c.reference), ' - ', max(c.name)) end ,' / ', case trim(iter.reference) when '' then max(iter.name) else concat(max(iter.reference), ' - ', max(iter.name)) end) as name, itp.executionStatus as status, count(tc) as num "
+	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by name"),
 
-	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, max(c.name) as name, itp.executionStatus as status, count(tc) as num "
-			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by c"),
+	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, case trim(c.reference) when '' then max(c.name) else concat(max(c.reference), ' - ', max(c.name)) end as name, itp.executionStatus as status, count(tc) as num "
+			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by name"),
 	
 	//Iteration Statistics
 
@@ -700,10 +700,10 @@
 	@NamedQuery(name = "IterationStatistics.successRate", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
 	+ "from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id group by tc.importance, itp.executionStatus"),
 
-	@NamedQuery(name = "IterationStatistics.testSuiteStatistics", query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
+	@NamedQuery(name = "IterationStatistics.testSuiteStatistics", query = "select case trim(max(ts.reference)) when '' then max(ts.name) else concat(max(ts.reference), ' - ', max(ts.name)) end as name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
 	+ "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc "
 	+ "where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
-	+ "order by ts.name, tp.executionStatus, tc.importance"),
+	+ "order by name, tp.executionStatus, tc.importance"),
 
 	// that query is complementary of the one above, and will bring the tests that belongs to no test suite.
 	// note : the first occurent of 'tp.executionStatus' is actually a placeholder for 'null', because HQL doesn't support select NULL

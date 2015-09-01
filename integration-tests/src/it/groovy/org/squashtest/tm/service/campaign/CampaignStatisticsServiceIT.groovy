@@ -46,7 +46,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		when :
 		def result = service.gatherCampaignProgressionStatistics(campId)
 		then :
-		result.scheduledIterations.size() == 2
+		result.scheduledIterations.size() == 3
 
 	}
 
@@ -59,7 +59,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		when :
 		def result = service.gatherCampaignStatisticsBundle(campId)
 		then :
-		notThrown(Exception)
+		result.iterationTestInventoryStatisticsList.iterationName == ['iter - 3', 'ref A - iter - tc1', 'ref B - iter - tc1 -2']
 
 	}
 
@@ -124,11 +124,35 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		given :
 		def campId = [-10L]
 		when :
-		service.gatherFolderTestInventoryStatistics(campId)
+	    service.gatherFolderTestInventoryStatistics(campId)
 
 		then :
 		notThrown(Exception)
 	}
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should gather folder data 2"(){
+		given :
+		def campId = [-10L, -12L, -13L]
+		when :
+		def result = service.gatherFolderTestInventoryStatistics(campId)
+
+		then :
+		result.campaignName == ['bar', 'ref B - bar', 'ref Z - foo']
+	}
+	
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should gather milestone data "(){
+		given :
+		def milId = -1L
+		when :
+		def result = service.gatherMilestoneStatisticsBundle(milId)
+
+		then :
+		result.iterationTestInventoryStatisticsList.iterationName == ['bar / iter', 'ref B - bar / iter', 'ref Z - foo / iter - 3', 'ref Z - foo / ref A - iter - tc1', 'ref Z - foo / ref B - iter - tc1 -2']
+	}
+	
 	
 
 }
