@@ -188,22 +188,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	/**
-	 * @deprecated use {@link #findTestPlanItem(TestCase)}
-	 * @param testCaseId
-	 * @return
-	 * @deprecated does not seem to be used - candidate for removal ?
-	 */
-	@Deprecated
-	public CampaignTestPlanItem getTestPlanForTestPlanItemId(Long testCaseId) {
-		for (CampaignTestPlanItem campTestPlan : this.getTestPlan()) {
-			if (campTestPlan.getReferencedTestCase().getId().equals(testCaseId)) {
-				return campTestPlan;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * 
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.

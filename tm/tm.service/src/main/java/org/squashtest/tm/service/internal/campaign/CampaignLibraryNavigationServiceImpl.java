@@ -23,12 +23,10 @@ package org.squashtest.tm.service.internal.campaign;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.*;
-import java.util.concurrent.locks.Lock;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +53,6 @@ import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
-import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
@@ -72,7 +69,6 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
@@ -166,12 +162,6 @@ CampaignLibraryNavigationService {
 		PasteStrategy<Campaign, Iteration> pasteStrategy = pasteToCampaignStrategyProvider.get();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(campaignId, Arrays.asList(iterationsIds));
-	}
-
-	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') " + OR_HAS_ROLE_ADMIN)
-	public Campaign findCampaign(long reqId) {
-		return campaignDao.findById(reqId);
 	}
 
 	@Override

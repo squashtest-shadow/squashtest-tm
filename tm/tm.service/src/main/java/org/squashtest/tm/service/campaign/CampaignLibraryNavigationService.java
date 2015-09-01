@@ -86,14 +86,6 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	void moveIterationsWithinCampaign(long destinationId, Long[] nodeIds, int position);
 
 	/**
-	 * @deprecated use {@linkplain CampaignFinder#findById(long)} instead
-	 * @param campaignId
-	 * @return
-	 */
-	@Deprecated
-	Campaign findCampaign(long campaignId);
-
-	/**
 	 * Adds a new iteration to a campaign. Returns the index of the new iteration.
 	 * 
 	 * @param iteration

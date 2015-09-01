@@ -112,7 +112,7 @@ public class SearchServiceImpl implements SearchService {
 			if (className.endsWith("Folder")) {
 				node = campaignLibraryNavigationService.findFolder(id);
 			} else {
-				node = campaignLibraryNavigationService.findCampaign(id);
+				node = campaignDao.findById(id);
 			}
 			result = findBreadCrumbOfCampaignNode(node, campaignLibraryNavigationService, rejex);
 		}
