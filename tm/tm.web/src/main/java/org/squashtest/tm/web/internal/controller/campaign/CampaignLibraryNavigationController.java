@@ -360,11 +360,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
-		PermissionEvaluationService permissionEvaluator = new ShortCutPermissionEvaluator();
+		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
 
 		for (int i = 0; i < iterations.size(); i++) {
 			Iteration iteration = iterations.get(i);
-			res.add(createBatchedIterationTreeNode(iteration, i, permissionEvaluator));
+			res.add(createBatchedIterationTreeNode(iteration, i, pev));
 		}
 
 		return res;
@@ -383,10 +383,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
-		PermissionEvaluationService permissionEvaluator = new ShortCutPermissionEvaluator();
+		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
 
 		for (Iteration iteration : newIterations) {
-			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, permissionEvaluator));
+			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev));
 			iterationIndex++;
 		}
 

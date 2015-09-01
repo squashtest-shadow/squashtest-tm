@@ -20,14 +20,16 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import org.hibernate.*;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdsCoercer;
 
 import javax.inject.Inject;
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * @author Gregory Fouquet

@@ -22,8 +22,6 @@ package org.squashtest.tm.service.security;
 
 import java.util.Map;
 
-import org.springframework.security.acls.model.Permission;
-
 
 /**
  * This service evaluates permissions of the current user.

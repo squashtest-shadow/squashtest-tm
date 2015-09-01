@@ -49,7 +49,7 @@ public final class EntityLockManager {
 		super();
 	}
 
-	private static class EntityRef {
+	private static final class EntityRef {
 		private final Class type;
 		private final Serializable id;
 
@@ -66,6 +66,7 @@ public final class EntityLockManager {
 			this.id = id;
 		}
 
+		// GENERATED:START
 		@Override
 		public boolean equals(Object o) {
 			if (this == o) return true;
@@ -77,6 +78,7 @@ public final class EntityLockManager {
 			return id.equals(entityRef.id);
 
 		}
+		// GENERATED:END
 
 		@Override
 		public int hashCode() {

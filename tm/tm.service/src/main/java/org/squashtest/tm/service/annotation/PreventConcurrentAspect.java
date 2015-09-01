@@ -59,7 +59,7 @@ public class PreventConcurrentAspect implements Ordered {
 //	}
 
 	@Around(value = "execution(@org.squashtest.tm.service.annotation.PreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
-	public Object lockEntity(ProceedingJoinPoint pjp, PreventConcurrent pc) throws Throwable {
+	public Object lockEntity(ProceedingJoinPoint pjp, PreventConcurrent pc) throws Throwable { // NOSONAR propagated exception
 		ReentrantLock lock = EntityLockManager.getLock(pc.entityType(), findEntityId(pjp));
 		lock.lock();
 		LOGGER.warn("Acquired lock on {}", lock);
@@ -79,7 +79,7 @@ public class PreventConcurrentAspect implements Ordered {
 	}
 
 	@Around(value = "execution(@org.squashtest.tm.service.annotation.BatchPreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
-	public Object lockEntities(ProceedingJoinPoint pjp, BatchPreventConcurrent pc) throws Throwable {
+	public Object lockEntities(ProceedingJoinPoint pjp, BatchPreventConcurrent pc) throws Throwable { // NOSONAR propagated exception
 		Collection<? extends Serializable> sourceIds = findEntityIds(pjp);
 		IdsCoercer coercer = pc.coercer().newInstance();
 		Collection<Lock> locks = EntityLockManager.lock(pc.entityType(), coercer.coerce(sourceIds));
