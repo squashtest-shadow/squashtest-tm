@@ -527,6 +527,14 @@
               </execution>
             </executions>
           </plugin>
+
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <!-- There are no junit tests -->
+              <skip>true</skip>
+            </configuration>
+          </plugin>
         </plugins>
       </build>
     </profile>

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -33,9 +32,7 @@
     <groovy.version>2.0.7</groovy.version>
     <hibernate.version>4.2.2.Final</hibernate.version>
 
-    <org.osgi.framework.system.packages.extra>
-      com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects
-    </org.osgi.framework.system.packages.extra>
+    <org.osgi.framework.system.packages.extra>com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</org.osgi.framework.system.packages.extra>
 
     <org.osgi.service.http.port>9090</org.osgi.service.http.port>
     <org.osgi.service.http.port.secure>9443</org.osgi.service.http.port.secure>
@@ -291,9 +288,7 @@
           <runner>1.4.0</runner>
           <provision>
             <param>--platform=equinox</param>
-            <param>
-              --system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects
-            </param>
+            <param>--system-packages=com.sun.org.apache.xalan.internal.res,com.sun.org.apache.xml.internal.utils,com.sun.org.apache.xpath.internal,com.sun.org.apache.xpath.internal.jaxp,com.sun.org.apache.xpath.internal.objects</param>
             <param>--vmOptions="-Dbundles.configuration.location=${project.basedir}/provision/target/config"</param>
           </provision>
         </configuration>
@@ -643,7 +638,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute/>
+                        <execute />
                       </action>
                     </pluginExecution>
 
@@ -657,7 +652,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute/>
+                        <execute />
                       </action>
                     </pluginExecution>
 
