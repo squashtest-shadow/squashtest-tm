@@ -21,9 +21,9 @@
 require([ "common" ], function() {
 	require(["jquery", "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus",
 	         "app/ws/squashtm.workspace", "contextual-content-handlers", "jquery.squash.fragmenttabs",
-	         "bugtracker/bugtracker-panel", "test-suite-management", "custom-field-values", "test-suite/execution-buttons-panel",
+	         "bugtracker/bugtracker-panel", "test-suite-management", "custom-field-values", "squash.configmanager", "test-suite/execution-buttons-panel",
 	         "test-automation/auto-execution-buttons-panel", "jquery.cookie"],
-			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement, cufvalues){
+			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement, cufvalues, confman){
 		"use strict";
 
 		$(document).on("click", "#duplicate-test-suite-button", function() {
@@ -51,7 +51,7 @@ require([ "common" ], function() {
 			renameDialog.formDialog();
 			
 			renameDialog.on('formdialogopen', function(){
-				var name = $.trim($("#test-suite-name").text());
+				var name = $.trim($("#test-suite-raw-name").text());
 				$("#rename-test-suite-name").val(name);			
 			});
 			
@@ -138,11 +138,28 @@ require([ "common" ], function() {
 			});
 
 			// some other pre-whichever-refactor event handling
-			var nameHandler = contentHandlers.getSimpleNameHandler();
+			var nameHandler = contentHandlers.getNameAndReferenceHandler();
 
 			nameHandler.identity = squashtm.page.identity;
 			nameHandler.nameDisplay = "#test-suite-name";
-
+			nameHandler.nameHidden = "#test-suite-raw-name";
+			nameHandler.referenceHidden = "#test-suite-raw-reference";
+			
+			// init reference
+						if (config.writable){
+							var refEditable = $("#test-suite-reference").addClass('editable');
+							var url = config.testSuiteURL;
+							var cfg = confman.getStdJeditable();
+							cfg = $.extend(cfg, {
+								maxLength : 50,
+								callback : function(value, settings){
+									var escaped = $("<span/>").html(value).text();
+									eventBus.trigger('node.update-reference', {identity : config.identity, newRef : escaped});					
+								}
+							});
+							
+							refEditable.editable(url, cfg);
+						}
 			// ****** tabs configuration *******
 
 			var fragConf = {

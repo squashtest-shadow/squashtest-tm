@@ -108,5 +108,17 @@
 </addColumn>
  </changeSet>
 
+
+<changeSet id="tm-1.13.0-feature-5166-1" author="jsimon">
+		<comment>Hey test suite want a reference too </comment>
+		
+
+		
+		<addColumn tableName="TEST_SUITE">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)" 
+					defaultValue="" remarks="a reference lavel for an testsuite" />
+		</addColumn>	
+</changeSet>
+
 </databaseChangeLog>
 

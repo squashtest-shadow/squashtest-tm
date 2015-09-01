@@ -139,8 +139,20 @@
   <div class="small-margin-left">
     <h2>
       <a id="test-suite-name" href="${ testSuiteUrl }/info">
-        <c:out value="${ testSuite.name }" escapeXml="true" />
+        <c:out value="${ testSuite.fullName }" escapeXml="true" />
       </a>
+      
+     <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
+      <span id="test-suite-raw-reference" style="display: none">
+        <c:out value="${ testSuite.reference }" escapeXml="true" /> 
+      </span> 
+      
+      <span id="test-suite-raw-name" style="display: none">
+        <c:out value="${ testSuite.name }" escapeXml="true" /> 
+      </span>      
+         
+      
+      
     </h2>
   </div>
 
@@ -215,10 +227,20 @@
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${testSuiteUrl}'" />
       </c:if>
 
-      <comp:toggle-panel id="test-suite-description-panel" titleKey="label.Description"
-        open="${ not empty testSuite.description }">
+      <comp:toggle-panel id="test-suite-description-panel" titleKey="label.Description">
         <jsp:attribute name="body">
-				<div id="test-suite-description" ${descrRicheditAttributes}>${ testSuite.description }</div>
+				
+		  <div class="display-table-row">
+                <label class="display-table-cell" for="test-suite-reference"><f:message key="label.Reference" /></label>
+                <div class="display-table-cell" id="test-suite-reference">${ testSuite.reference }</div>
+              </div>
+              
+             <div class="display-table-row">
+                <label for="test-suite-description" class="display-table-cell"><f:message key="label.Description" /></label>
+                <div id="test-suite-description" ${descrRicheditAttributes}>${ testSuite.description }</div>
+              </div>  	
+			
+			
 			</jsp:attribute>
       </comp:toggle-panel>
 

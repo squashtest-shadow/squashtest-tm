@@ -41,6 +41,7 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
@@ -67,6 +68,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
 public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 100;
+	public static final int MAX_REF_SIZE = 50;
 	public TestSuite() {
 		super();
 	}
@@ -80,6 +82,10 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
+
+	@NotNull
+	@Size(min = 0, max = MAX_REF_SIZE)
+	private String reference = "";
 
 	@Lob
 	@Type(type="org.hibernate.type.StringClobType")
@@ -130,10 +136,30 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		this.description = description;
 	}
 
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 *
+	 */
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
+		}
+	}
+
 	/**
 	 * When one needs to create a suite in the scope of an iteration, it should use
 	 * {@link Iteration#addTestSuite(TestSuite)}. This method is for internal use only.
-	 * 
+	 *
 	 * @param iteration
 	 */
 	/* package */void setIteration(@NotNull Iteration iteration) {
@@ -157,7 +183,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Compares 2 suites, for internal use.
-	 * 
+	 *
 	 * @param that
 	 * @return
 	 */
@@ -204,7 +230,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Binds the test plan items to this test suite
-	 * 
+	 *
 	 * @param items
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
@@ -235,7 +261,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
-	 * 
+	 *
 	 * @param itemIds
 	 */
 	public void bindTestPlanItemsById(List<Long> itemIds) {
@@ -268,7 +294,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * -test plans items that are not linked to a test case are not copied<br>
 	 * -the copy of a test plan item is done using {@linkplain IterationTestPlanItem#createCopy()}
 	 * </p>
-	 * 
+	 *
 	 * @return an ordered copy of the test-suite test plan
 	 */
 	public List<IterationTestPlanItem> createPastableCopyOfTestPlan() {
@@ -291,7 +317,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * returns a copy of a test Suite without it's test plan. <br>
 	 * a copy of the test plan can be found at {@linkplain TestSuite#createPastableCopyOfTestPlan()}
 	 * </p>
-	 * 
+	 *
 	 * @return returns a copy of a test Suite
 	 */
 	@Override
@@ -355,7 +381,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Determines if the item is the first of the test plan of the test suite
-	 * 
+	 *
 	 * @param itemId
 	 *            : the id of the item to determine if it is the first executable test plan item
 	 * @param testerlogin
@@ -377,7 +403,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
 	 * <em>can return item linked to test-case with no step</em>
-	 * 
+	 *
 	 * @throws TestPlanItemNotExecutableException
 	 *             if no item is found
 	 * @throws IllegalArgumentException
@@ -392,7 +418,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted) and that is assigned to the current user if he is a tester.<br>
 	 * <em>NB: can return item linked to test-case with no step</em>
-	 * 
+	 *
 	 * @throws TestPlanItemNotExecutableException
 	 *             if no item is found
 	 * @throws IllegalArgumentException
