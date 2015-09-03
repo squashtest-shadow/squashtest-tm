@@ -700,10 +700,10 @@
 	@NamedQuery(name = "IterationStatistics.successRate", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
 	+ "from Iteration iter join iter.testPlans itp join itp.referencedTestCase tc where iter.id = :id group by tc.importance, itp.executionStatus"),
 
-	@NamedQuery(name = "IterationStatistics.testSuiteStatistics", query = "select case trim(max(ts.reference)) when '' then max(ts.name) else concat(max(ts.reference), ' - ', max(ts.name)) end as name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
+	@NamedQuery(name = "IterationStatistics.testSuiteStatistics", query = "select ts.name, tp.executionStatus, tc.importance, count(tc.importance), iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
 	+ "from Iteration iter join iter.testSuites ts left join ts.testPlan tp left join tp.referencedTestCase tc "
 	+ "where iter.id = :id group by ts.name, tp.executionStatus, tc.importance, iter.scheduledPeriod.scheduledStartDate, iter.scheduledPeriod.scheduledEndDate "
-	+ "order by name, tp.executionStatus, tc.importance"),
+	+ "order by ts.name, tp.executionStatus, tc.importance"),
 
 	// that query is complementary of the one above, and will bring the tests that belongs to no test suite.
 	// note : the first occurent of 'tp.executionStatus' is actually a placeholder for 'null', because HQL doesn't support select NULL

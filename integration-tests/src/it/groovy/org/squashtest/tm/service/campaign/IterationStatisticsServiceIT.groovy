@@ -41,7 +41,7 @@ class IterationStatisticsServiceIT extends DbunitServiceSpecification {
 		
 		given :
 		def iterationId = -1L
-		def nameAndRef = (1..5).collect{if (it < 4) ("ref " + it + " - " + "ts " + it) else ("ts " + it)}
+		def nameAndRef = (1..5).collect{"ts " + it}
 
 		when :
 		def result = service.gatherTestSuiteTestInventoryStatistics(iterationId)
