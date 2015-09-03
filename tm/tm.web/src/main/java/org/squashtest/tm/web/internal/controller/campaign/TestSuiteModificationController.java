@@ -45,7 +45,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -155,7 +154,7 @@ public class TestSuiteModificationController {
 
 	/**
 	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
-	 *
+	 * 
 	 * @param projectId
 	 *            : the id of the concerned {@link Project}
 	 * @return a map representing the active statuses for the given project with :
@@ -243,15 +242,6 @@ public class TestSuiteModificationController {
 		LOGGER.trace("Test-suite " + suiteId + ": updated description to " + newDescription);
 		return newDescription;
 
-	}
-
-	@RequestMapping(method = RequestMethod.POST, params = { "id=test-suite-reference", VALUE })
-	public @ResponseBody String updateReference(@RequestParam(VALUE) String newReference,
-			@PathVariable("suiteId") long suiteId) {
-
-		service.changeReference(suiteId, newReference);
-
-		return HtmlUtils.htmlEscape(newReference);
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })

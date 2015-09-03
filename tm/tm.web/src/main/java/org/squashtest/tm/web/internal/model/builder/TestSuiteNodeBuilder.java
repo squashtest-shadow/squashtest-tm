@@ -65,8 +65,7 @@ public class TestSuiteNodeBuilder extends GenericJsTreeNodeBuilder<TestSuite, Te
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "test-suites");
 		node.setState(State.leaf);
-		node.setTitle(model.getFullName());
-		node.addAttr("reference", model.getReference());
+		node.setTitle(model.getName());
 		node.addAttr("name", model.getName());
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
 

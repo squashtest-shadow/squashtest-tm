@@ -130,7 +130,6 @@ define(['jquery'], function($){
 		case 'test-cases' : 
 		case 'campaigns' :
 		case 'iterations' :
-		case 'test-suites' :
 			name = this.getName();
 			var reference = this.getReference() || "";
 			
