@@ -339,22 +339,13 @@ public class AdvancedSearchController {
 			searchDomain = REQUIREMENT;
 		}
  else if (CAMPAIGN.equals(searchDomain)) {
-			searchDomain = CAMPAIGN;
 
 			List<Library<CampaignLibraryNode>> libraries = getWorkspaceService().findAllLibraries();
 
-			String[] nodesToOpen = null;
+				model.addAttribute("selectedNode", cookieValueSelect);
+				model.addAttribute("openedNode", cookieValueOpen);
 
-			if (elementId == null || "".equals(elementId)) {
-				nodesToOpen = cookieValueOpen;
-				model.addAttribute("selectedNode", cookieValueSelect);
-				model.addAttribute("openedNode", cookieValueOpen);
-			} else {
-				nodesToOpen = cookieValueOpen;
-				model.addAttribute("selectedNode", cookieValueSelect);
-				model.addAttribute("openedNode", cookieValueOpen);
-			}
-			MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
+			MultiMap expansionCandidates = mapIdsByType(cookieValueOpen);
 
 			DriveNodeBuilder<LibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
 			if (activeMilestone != null) {
