@@ -22,14 +22,17 @@ package org.squashtest.tm.service.internal.campaign;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -76,10 +79,6 @@ public class CampaignLibraryNavigationServiceImpl extends
 AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 CampaignLibraryNavigationService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationServiceImpl.class);
-
-	@Inject 
-	private SessionFactory sessionFactory;
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -196,7 +195,7 @@ CampaignLibraryNavigationService {
 		 * because :
 		 * 1 - iteration is not a campaign library node
 		 * 2 - an iteration will move only within the same campaign,
-		 * 
+		 *
 		 * we can't use the TreeNodeMover and we don't need it anyway.
 		 */
 
@@ -351,11 +350,6 @@ CampaignLibraryNavigationService {
 		return deletionHandler.simulateSuiteDeletion(targetIds);
 	}
 
-	@Override
-	public OperationReport deleteSuites(List<Long> targetIds) {
-		return deletionHandler.deleteSuites(targetIds);
-	}
-
 
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'EXPORT')" + OR_HAS_ROLE_ADMIN)
@@ -433,5 +427,10 @@ CampaignLibraryNavigationService {
 		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
 	}
 
+	@Override
+	public OperationReport deleteSuites(List<Long> suiteIds, boolean removeFromIter) {
+
+		return deletionHandler.deleteSuites(suiteIds, removeFromIter);
+	}
 
 }

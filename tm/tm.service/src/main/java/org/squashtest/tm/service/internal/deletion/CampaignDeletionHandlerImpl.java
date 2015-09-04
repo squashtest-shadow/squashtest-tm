@@ -23,11 +23,15 @@ package org.squashtest.tm.service.internal.deletion;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -41,8 +45,10 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
 import org.squashtest.tm.service.deletion.BoundToMultipleMilestonesReport;
+import org.squashtest.tm.service.deletion.BoundToNotSelectedTestSuite;
 import org.squashtest.tm.service.deletion.MilestoneModeNoFolderDeletion;
 import org.squashtest.tm.service.deletion.NotDeletableCampaignsPreviewReport;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -94,6 +100,9 @@ implements CampaignNodeDeletionHandler {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
@@ -235,8 +244,78 @@ implements CampaignNodeDeletionHandler {
 	@Override
 	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds) {
 
-		// TODO : implement the specs when they are ready. Default is "nothing special".
-		return Collections.emptyList();
+		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
+
+		List<TestSuite> suites = suiteDao.findAllByIds(targetIds);
+
+		// Check that test case do not belong to other suite that is not in the selection
+
+		if (containTestPlanItemThatBelongToOtherTestSuite(suites, targetIds)) {
+			reportList.add(new BoundToNotSelectedTestSuite());
+		}
+
+		// check test case execution
+		addTcExecutionErrorToReport(reportList, suites);
+
+		return reportList;
+	}
+
+	private void addTcExecutionErrorToReport(List<SuppressionPreviewReport> reportList, List<TestSuite> suites) {
+
+		NotDeletableCampaignsPreviewReport report;
+		for (TestSuite suite : suites) {
+			if (containExecutedTc(suite)) {
+				try {
+					PermissionsUtils.checkPermission(permissionEvaluationService,
+							new SecurityCheckableObject(suite, "EXTENDED_DELETE"));
+
+					// The user is allowed to delete the campaign but must be warned
+					report = new NotDeletableCampaignsPreviewReport();
+					report.addName(suite.getName());
+					report.setHasRights(true);
+					reportList.add(report);
+				} catch (AccessDeniedException exception) {
+
+					// The user is not allowed to delete the campaign
+					report = new NotDeletableCampaignsPreviewReport();
+					report.addName(suite.getName());
+					report.setHasRights(false);
+					reportList.add(report);
+				}
+
+			}
+
+		}
+
+	}
+	private boolean containExecutedTc(TestSuite suite) {
+
+			for (IterationTestPlanItem itpi : suite.getTestPlan()) {
+
+				if (itpi.getExecutions().size() > 0) {
+					return true;
+				}
+
+			}
+
+		return false;
+	}
+
+	private boolean containTestPlanItemThatBelongToOtherTestSuite(List<TestSuite> suites, List<Long> targetIds) {
+
+		for (TestSuite suite : suites) {
+
+			for (IterationTestPlanItem itpi : suite.getTestPlan()) {
+
+				for (TestSuite ts : itpi.getTestSuites()) {
+
+					if (!targetIds.contains(ts.getId())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/* *************************locked entities detection section ******************* */
@@ -291,13 +370,13 @@ implements CampaignNodeDeletionHandler {
 
 	/* *********************************************************************************
 	 * deletion section
-	 * 
+	 *
 	 * Sorry, no time to implement something smarter. Maybe in future releases ?
-	 * 
-	 * 
+	 *
+	 *
 	 * TODO : - implement a careful deletion procedure once the policies and rules are defined. - improve code
 	 * efficiency.
-	 * 
+	 *
 	 * ******************************************************************************
 	 */
 
@@ -408,18 +487,6 @@ implements CampaignNodeDeletionHandler {
 		deletedTargetIds.add(iteration.getId());
 	}
 
-	@Override
-	public OperationReport deleteSuites(List<Long> testSuites) {
-		List<TestSuite> suites = suiteDao.findAllByIds(testSuites);
-
-		doDeleteSuites(suites);
-
-		OperationReport report = new OperationReport();
-		report.addRemoved(testSuites, "test-suite");
-		return report;
-
-	}
-
 	private void doDeleteSuites(Collection<TestSuite> testSuites) {
 		List<Long> attachmentListIds = new ArrayList<Long>();
 
@@ -456,9 +523,9 @@ implements CampaignNodeDeletionHandler {
 	/*
 	 * we just remove the content of a campaign here. The actual removal of the campaign will be processed in the
 	 * calling methods.
-	 * 
+	 *
 	 * The operations carried over a campaign are : - removal of all its iterations, - removal its attachment list,
-	 * 
+	 *
 	 * the rest is supposed to cascade normally (node hierarchy, campaign test plans).
 	 */
 
@@ -507,7 +574,7 @@ implements CampaignNodeDeletionHandler {
 
 	/*
 	 * removing a test plan :
-	 * 
+	 *
 	 * - remove the executions - remove itself.
 	 */
 	private void deleteIterationTestPlan(List<IterationTestPlanItem> testPlan) {
@@ -524,7 +591,7 @@ implements CampaignNodeDeletionHandler {
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	@Override
 	public void deleteExecutions(List<Execution> executions) {
@@ -558,6 +625,54 @@ implements CampaignNodeDeletionHandler {
 			deletionDao.removeEntity(extender);
 			execution.setAutomatedExecutionExtender(null);
 		}
+	}
+
+	@Override
+	public OperationReport deleteSuites(List<Long> suiteIds, boolean removeFromIter) {
+		List<TestSuite> suites = suiteDao.findAllByIds(suiteIds);
+
+		if (removeFromIter) {
+			removeItpiFromIteration(suites, suiteIds);
+		}
+
+		doDeleteSuites(suites);
+
+		OperationReport report = new OperationReport();
+		report.addRemoved(suiteIds, "test-suite");
+		return report;
+
+	}
+
+	private void removeItpiFromIteration(List<TestSuite> suites, final List<Long> targetIds) {
+
+		Set<Long> idsToRemove = new HashSet<Long>();
+
+		for (TestSuite suite : suites) {
+
+			for (IterationTestPlanItem itpi : suite.getTestPlan()) {
+
+				// Try to find one test suite in the IterationTestPlanItem that is not in the list of selected Iteration
+				Object result = CollectionUtils.find(itpi.getTestSuites(), new Predicate() {
+					@Override
+					public boolean evaluate(Object ts) {
+						TestSuite testSuite = (TestSuite) ts;
+						return !targetIds.contains(testSuite.getId());
+					}
+				});
+
+				// If nothing if found (ie : the iteration test plan item only belong to test suite that are selected)
+				// we want to remove it from the iteration.
+				if (result == null) {
+					idsToRemove.add(itpi.getId());
+				}
+
+			}
+		}
+
+		for (Long id : idsToRemove) {
+			iterationTestPlanManagerService.removeTestPlanFromIteration(id);
+		}
+
 	}
 
 }

@@ -60,8 +60,6 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -118,13 +116,6 @@ public class TestSuiteTestPlanManagerController {
 
 	@Inject
 	private IterationFinder iterationFinder;
-
-	@Inject
-	private PermissionEvaluationService permissionService;
-
-	@Inject
-	private MilestoneFinderService milestoneFinder;
-
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;

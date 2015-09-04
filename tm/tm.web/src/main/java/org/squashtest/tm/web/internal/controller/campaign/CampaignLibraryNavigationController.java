@@ -24,7 +24,13 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -61,7 +67,6 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
-import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -86,9 +91,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
@@ -96,6 +101,8 @@ public class CampaignLibraryNavigationController extends
 LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
+
+	private static final String REMOVE_FROM_ITER = "remove_from_iter";
 
 	/**
 	 * This PermissionEvaluationService should only be used when batch-creating iteration tree nodes from the same campaign,
@@ -178,9 +185,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
-
-	@Inject
-	private CampaignModificationService campaignModService;
 
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
@@ -332,10 +336,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		/*
 		 * Evolution 5169.
-		 * 
+		 *
 		 * One can move iterations within a same campaign. But it makes sense only if an index is supplied too.
 		 * So, this version of moveNodes - that uses no index - is of no interest for us : we just do nothing.
-		 * 
+		 *
 		 * For other destination types though we can proceed with the super implementation.
 		 */
 
@@ -455,11 +459,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteIds}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-suites/{suiteIds}", params = { REMOVE_FROM_ITER }, method = RequestMethod.DELETE)
 	public @ResponseBody
-	OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
+ OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds,
+			@RequestParam(REMOVE_FROM_ITER) boolean removeFromIter) {
 
-		return campaignLibraryNavigationService.deleteSuites(suiteIds);
+		return campaignLibraryNavigationService.deleteSuites(suiteIds, removeFromIter);
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {

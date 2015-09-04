@@ -46,7 +46,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 
 	/**
 	 * Adds a Campaign to the root of the library. The custom fields will be created with their default value.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param campaign
 	 */
@@ -56,7 +56,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * Adds a Campaign to the root of the Library, and its initial custom field values. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param campaign
 	 * @param customFieldValues
@@ -66,7 +66,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 
 	/**
 	 * Adds a campaign to a folder. The custom fields will be created with their default value.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param campaign
 	 */
@@ -76,7 +76,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * Adds a campaign to a folder, and its initial custom field values. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param campaign
 	 * @param customFieldValues
@@ -87,7 +87,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 
 	/**
 	 * Adds a new iteration to a campaign. Returns the index of the new iteration.
-	 * 
+	 *
 	 * @param iteration
 	 * @param campaignId
 	 * @return
@@ -100,8 +100,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * Adds a new iteration to a campaign. Returns the index of the new iteration. The initial custom field values
 	 * are passed as a Map<Long, String>, that maps the id of the {@link CustomField} to the values of the corresponding {@link CustomFieldValue}.
 	 * Read that last sentence again.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param iteration
 	 * @param campaignId
 	 * @param customFieldValues
@@ -130,12 +130,13 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param
 	 * @return
 	 */
+	@Override
 	List<CampaignLibrary> findLinkableCampaignLibraries();
 
 	/**
 	 * that method should investigate the consequences of the deletion request of iterations, and return a report about
 	 * what will happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -144,8 +145,8 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	/**
 	 * that method should delete the iterations. It still takes care of non deletable iterations so the implementation
 	 * should filter out the ids who can't be deleted.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -154,7 +155,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	/**
 	 * that method should investigate the consequences of the deletion request of tes suites, and return a report about
 	 * what will happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -163,15 +164,17 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	/**
 	 * that method should delete test suites, and remove its references in iteration and iteration test plan item
 	 * 
+	 * @param removeFromIter
+	 *
 	 * @param testSuites
 	 * @return
 	 */
-	OperationReport deleteSuites(List<Long> suiteIds);
+	OperationReport deleteSuites(List<Long> suiteIds, boolean removeFromIter);
 
 	/**
 	 * given a campaign Id, returns a model. It's made of rows and cell, and have a row header, check the relevant methods.
 	 * Note that the actual model will differ according to the export type : "L" (light), "S" (standard), "F" (full).
-	 * 
+	 *
 	 * @param campaignId
 	 * @return
 	 */

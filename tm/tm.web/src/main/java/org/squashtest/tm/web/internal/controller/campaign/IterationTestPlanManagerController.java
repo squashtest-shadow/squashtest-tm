@@ -85,10 +85,6 @@ public class IterationTestPlanManagerController {
 
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
-
-
-
-
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
@@ -288,14 +284,6 @@ public class IterationTestPlanManagerController {
 		Execution exec = item.getLatestExecution();
 		return "redirect:/executions/"+exec.getId();
 	}
-
-
-
-
-
-
-
-
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);
