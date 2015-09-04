@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -134,9 +135,9 @@ public abstract class ImportLogHelper {
 
 		Map<String, EntityType> entityTypeByTab = getEntityTypeByTab();
 
-		for (String tabName : entityTypeByTab.keySet()) {
-			Collection<LogEntry> logEntries = importLog.findAllFor(entityTypeByTab.get(tabName));
-			writeToTab(logEntries, workbook, tabName, locale);
+		for (Entry<String, EntityType> entry : entityTypeByTab.entrySet()) {
+			Collection<LogEntry> logEntries = importLog.findAllFor(entry.getValue());
+			writeToTab(logEntries, workbook, entry.getKey(), locale);
 			getLogger().debug(getImportLogPrefix() + logEntries);
 		}
 		return workbook;

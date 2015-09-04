@@ -60,7 +60,7 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 		List<ExecutionStep> execSteps = getNonDeletedSteps(execStep);
 		int size = execSteps.size();
 		testCase = execStep.getReferencedTestStep().getTestCase();
-		if (testCase.getId() != exec.getReferencedTestCase().getId()) {
+		if (!testCase.getId().equals(exec.getReferencedTestCase().getId())) {
 			isCallStep = true;
 		}
 		setTotalNumberOfSteps(size);
@@ -84,7 +84,7 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 	private int getStepIndex(List<ExecutionStep> steps, Long stepId) {
 
 		for (ExecutionStep step : steps) {
-			if (step.getId() == stepId) {
+			if (step.getId().equals(stepId)) {
 				return steps.indexOf(step);
 			}
 		}

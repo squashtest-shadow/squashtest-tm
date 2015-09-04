@@ -57,8 +57,7 @@ public class CoverageInstruction extends Instruction<CoverageTarget> {
 
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		LogTrain logTrain = facility.createCoverage(this);
-		return logTrain;
+		return facility.createCoverage(this);
 	}
 
 }

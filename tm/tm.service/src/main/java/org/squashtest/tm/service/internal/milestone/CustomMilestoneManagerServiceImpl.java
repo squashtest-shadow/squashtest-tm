@@ -53,6 +53,8 @@ import org.squashtest.tm.service.user.UserAccountService;
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomMilestoneManagerServiceImpl.class);
 
+	private static final String ADMIN_ROLE = "ROLE_ADMIN";
+
 	@Inject
 	private ProjectFinder projectFinder;
 
@@ -143,7 +145,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Override
 	public void verifyCanEditMilestoneRange() {
 		// only admin can edit range
-		if (!permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (!permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			throw new IllegalAccessError("What are you doing here ?! You are not allowed. Go away");
 		}
 
@@ -153,7 +155,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	public boolean canEditMilestone(long milestoneId) {
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		// admin can edit all milestones
-		if (!permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (!permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			// project manager can't edit global milestone or milestone they don't own
 			if (isGlobal(milestone) || !isCreatedBySelf(milestone)) {
 				return false;
@@ -180,7 +182,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 		List<Milestone> allMilestones = findAll();
 		List<Milestone> milestones = new ArrayList<Milestone>();
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			milestones.addAll(allMilestones);
 		} else {
 			for (Milestone milestone : allMilestones) {
@@ -248,7 +250,8 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	@Override
 	public void cloneMilestone(long motherId, Milestone milestone, boolean bindToRequirements, boolean bindToTestCases) {
 		Milestone mother = findById(motherId);
-		boolean copyAllPerimeter = permissionEvaluationService.hasRole("ROLE_ADMIN") || !isGlobal(mother)
+		boolean copyAllPerimeter = permissionEvaluationService.hasRole(ADMIN_ROLE)
+				|| !isGlobal(mother)
 				&& isCreatedBySelf(mother);
 
 		bindProjectsAndPerimeter(mother, milestone, copyAllPerimeter);
@@ -329,13 +332,15 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private void verifyCanSynchronize(Milestone source, Milestone target, boolean isUnion) {
 
 		if (isUnion
-				&& (!source.getStatus().isBindableToObject() || !permissionEvaluationService.hasRole("ROLE_ADMIN")
+ && (!source.getStatus().isBindableToObject()
+				|| !permissionEvaluationService.hasRole(ADMIN_ROLE)
 						&& isGlobal(source))) {
 			throw new IllegalArgumentException(
 					"milestone can't be synchronized because it's status or range don't allow it");
 		}
 
-		if (!target.getStatus().isBindableToObject() || !permissionEvaluationService.hasRole("ROLE_ADMIN")
+		if (!target.getStatus().isBindableToObject()
+				|| !permissionEvaluationService.hasRole(ADMIN_ROLE)
 				&& isGlobal(target)) {
 			throw new IllegalArgumentException(
 					"milestone can't be synchronized because it's status or range don't allow it");
@@ -382,7 +387,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 
 		Set<GenericProject> result = new HashSet<GenericProject>(source.getPerimeter());
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 
 			result = getProjectsToSynchronizeForProjectForAdmin(result, source, target, isUnion);
 
@@ -446,7 +451,7 @@ public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager
 	private void synchronizePerimeterAndProjects(Milestone source, Milestone target, boolean extendPerimeter,
 			boolean isUnion) {
 
-		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
+		if (permissionEvaluationService.hasRole(ADMIN_ROLE)) {
 			adminSynchronizePerimeterAndProjects(source, target, isUnion);
 		} else {
 			projectManagerSynchronizePerimeterAndProjects(source, target, extendPerimeter);
