@@ -464,7 +464,6 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		suiteId    || attachListId | itpiId 
 		[-1L, -2L] || [-12L, -13L] | [-121L, -122L]
 		[-1L]      || [-12L]       | [-122L]
-		[-2L]      || [-13L]       | []
 		
 	}
 	
