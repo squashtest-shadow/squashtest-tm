@@ -27,7 +27,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
-import org.jgroups.protocols.MFC;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
