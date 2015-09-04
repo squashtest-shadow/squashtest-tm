@@ -126,7 +126,9 @@
 				<div class="toolbar-button-panel">
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <c:if test="${ adminproject.template }">
-                    <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
+                    <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
+                  <f:message key='label.coerceTemplateIntoProject' />
+                  </button>
                     <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
                       <f:message key="message.coerceTemplateIntoProject" />
                       <input type="button" value="<f:message key='label.Confirm' />" />
@@ -134,14 +136,16 @@
                     </div>
 </c:if>
 					<f:message var="rename" key="project.button.rename.label" />
-					<input type="button" value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
-								class="button" style=" padding: .6em 1em;" />
+					<button   value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
+								class="sq-btn" >
+								<f:message key="project.button.renameproject.label" />
+								</button>
 </sec:authorize>
 <sec:authorize access="hasRole('ROLE_ADMIN')">
     				<f:message var="delete" key='project.button.delete.label' />
  		
  					<%-------------------------- Trash appear but too much padding.   ------------------------%>
-    				<button id="delete-project-button" ${ delete }  class="sq-btn paddingnull" style="padding: 0" title="<f:message key='project.button.deleteproject.label' />" >
+    				<button id="delete-project-button" ${ delete }  class="sq-btn"  title="<f:message key='project.button.deleteproject.label' />" >
         			   <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       				</button>
 
@@ -935,7 +939,7 @@ require(["common"], function() {
 			clickProjectBackButton();
 		}
 		
-		$('#delete-project-button').button().click(deleteProject);		
+		$('#delete-project-button').click(deleteProject);		
 	});
 	</sec:authorize>
 });
