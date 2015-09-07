@@ -56,7 +56,7 @@
     <%----------------------------------- Projects Table -----------------------------------------------%>
 <div class="fragment-body">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
-   <div class="toolbar">
+   <div class="btn-toolbar right">
     <button id="add-template-button" role="buttonmenu" class="buttonmenu sq-btn buttonmenu-button ">
     <span class="ui-icon ui-icon-plusthick" >+</span>
     <span>
