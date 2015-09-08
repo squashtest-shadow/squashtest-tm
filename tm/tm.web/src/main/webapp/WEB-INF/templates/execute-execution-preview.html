@@ -23,288 +23,298 @@
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
-	xmlns:th="http://www.thymeleaf.org"
-	th:with=
-	   "titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
-		title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})}">
+      xmlns:th="http://www.thymeleaf.org"
+      th:with=
+          "titleWindow = #{title.ExecutionPopupPreview(${execution.executionOrder + 1 }, ${execution.name})},
+    title = #{title.ExecutionPopup(${execution.executionOrder + 1 }, ${execution.name})}">
 
 <head>
 
-<style th:remove="all" type="text/css">
-/**
-documentation : 
-			Parameters :
-				- execution : the execution object of which we display the preview
+  <style th:remove="all" type="text/css">
+    /**
+    documentation :
+    Parameters :
+    - execution : the execution object of which we display the preview
 
-*/
-</style>
+    */
+  </style>
 
-<title th:text="${titleWindow}">Exec #3 : test interface
-	(preview)</title>
+  <title th:text="${titleWindow}">Exec #3 : test interface
+    (preview)</title>
 
-<link rel="stylesheet" type="text/css"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css"
-	sq:css="squash.purple.css" />
+  <link rel="stylesheet" type="text/css"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css"
+        sq:css="squash.purple.css"/>
 
-<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
-	sq:css="squash.core.css" />
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+        sq:css="squash.core.css"/>
 
-<script type="text/javascript" th:inline="javascript">
+  <script type="text/javascript" th:inline="javascript">
 //<![CDATA[
-	var require = {
-		baseUrl : /*[[@{/scripts/}]]*/'../../scripts/'
-	};
-	
-	var squashtm = squashtm || {};
-	squashtm.app = squashtm.app || {};
-	squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
-	squashtm.page = squashtm.page || {};
-	squashtm.page.hasFields = /*[[${hasCustomFields}]]*/ false;
-	squashtm.page.hasDenormFields = /*[[${hasDenormFields}]]*/ false;
+  var require = {
+    baseUrl : /*[[@{/scripts/}]]*/'../../scripts/'
+  };
+  
+  var squashtm = squashtm || {};
+  squashtm.app = squashtm.app || {};
+  squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
+  squashtm.page = squashtm.page || {};
+  squashtm.page.hasFields = /*[[${hasCustomFields}]]*/ false;
+  squashtm.page.hasDenormFields = /*[[${hasDenormFields}]]*/ false;
 //]]>
-</script>
-<script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
-<script type="text/javascript" th:src="@{/scripts/common.js}"></script>
+
+  </script>
+  <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
+  <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
 
 
-<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
-<script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
-<script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
+  <script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
 </head>
 
 <body class="execute-html-body">
 
-  <div id="execute-header">
-    <div class="snap-left">
-      <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
+<div id="execute-header">
+  <div class="snap-left">
+    <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop
+    </button>
+  </div>
+  <div style="margin-left:25%;" class="snap-left">
+    <span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
+  </div>
+  <div class="snap-right">
+    <a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
+       th:href="@{__${currentStepsUrl}__/index/0(optimized=${config.optimized})}" href="#">
+      begin
+    </a>
+  </div>
+</div>
+
+
+<div id="execute-body" class="execute-fragment-body">
+
+  <div id="execute-title-div" class="ui-widget-header ui-state-default ui-corner-all fragment-header">
+    <h2 th:text="${title}">Exec #3 : test interface</h2>
+  </div>
+
+  <div class="sq-tg expand">
+    <div class="tg-head">
+      <h3 th:text="#{label.Description}"></h3>
     </div>
-    <div style="margin-left:25%;" class="snap-left">
-      <span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
-    </div>
-    <div class="snap-right">
-      <a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
-        th:href="@{__${currentStepsUrl}__/index/0(optimized=${config.optimized})}" href="#">
-        begin
-      </a>
+    <div id="execute-informations-panel" class="tg-body is-contextual load-links-right-frame"
+         title="Informations">
+
+      <div class="display-table">
+
+        <div class="display-table-row">
+
+          <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
+
+          <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
+        </div>
+
+
+        <div class="display-table-row">
+
+          <label class="display-table-cell" th:text="#{label.Description}">description</label>
+
+          <div id="testcase-description" class="display-table-cell" sq:unsafe-html="${execution.tcdescription}">
+
+            <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
+              laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
+              vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+              sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
+              qui dolorem ipsum quia dolor sit amet,</p>
+
+            <p th:remove="all">consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
+              labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
+              ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure
+              reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum
+              fugiat quo voluptas nulla pariatur?</p>
+          </div>
+        </div>
+
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
+
+          <div class="display-table-cell">
+            <span id="test-case-status-icon" th:class="'test-case-status-'+${execution.status}">  &nbsp; &nbsp; </span>
+            <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
+          </div>
+        </div>
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
+
+          <div id="execute-dataset" class="display-table-cell"
+               th:text="${execution.datasetLabel}">dataset name
+          </div>
+        </div>
+
+        <div class="display-table-row">
+          <input type="hidden" id="TC_SOURCE_ID" th:value="${execution.referencedTestCase.id}"/>
+          <input type="hidden" id="TC_SOURCE_NAME" th:value="${execution.referencedTestCase.name}"/>
+          <input type="hidden" id="EXEC_ID" th:value="${execution.id}"/>
+        </div>
+
+      </div>
     </div>
   </div>
 
 
-
-	<div id="execute-body" class="execute-fragment-body">
-
-    <div id="execute-title-div" class="ui-widget-header ui-state-default ui-corner-all fragment-header">
-      <h2 th:text="${title}">Exec #3 : test interface</h2>
+  <div class="sq-tg expand">
+    <div class="tg-head">
+      <h3 th:text="#{label.Attributes}"></h3>
     </div>
+    <div id="test-case-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Attribute">
+      <div class="display-table">
 
-    <div class="sq-tg expand">
-        <div class="tg-head">
-          <h3 th:text="#{label.Description}"></h3>
-        </div>
-        <div id="execute-informations-panel" class="tg-body is-contextual load-links-right-frame"
-         title="Informations" >
-    
-          <div class="display-table">
-          
-                  <div class="display-table-row">
-    
-              <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
-    
-              <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
-            </div>
-          
-          
-            <div class="display-table-row">
-    
-              <label class="display-table-cell" th:text="#{label.Description}">description</label>
-    
-              <div id="testcase-description" class="display-table-cell" sq:unsafe-html="${execution.tcdescription}">
-    
-                <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
-                  laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
-                  vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
-                  sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
-                  qui dolorem ipsum quia dolor sit amet,</p>
-    
-                <p th:remove="all">consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
-                  labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
-                  ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure
-                  reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum
-                  fugiat quo voluptas nulla pariatur?</p>
-              </div>
-            </div>
-    
-            <div class="display-table-row">
-              <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
-         	  <div  class="display-table-cell">
-                <span id="test-case-status-icon" th:class="'test-case-status-'+${execution.status}">  &nbsp; &nbsp; </span>
-                <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
-              </div>
-            </div>
-             <div class="display-table-row">
-              <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
-              <div id="execute-dataset" class="display-table-cell"
-                th:text="${execution.datasetLabel}">dataset name</div>
-            </div>
-            
-            <div class="display-table-row">
-            	<input type="hidden" id="TC_SOURCE_ID" th:value="${execution.referencedTestCase.id}" />
-             	<input type="hidden" id="TC_SOURCE_NAME" th:value="${execution.referencedTestCase.name}" />
-                <input type="hidden" id="EXEC_ID" th:value="${execution.id}" />
-            </div>     
-            
+        <div class="display-table-row">
+          <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
+
+          <div class="display-table-cell">
+            <span id="test-case-importance-icon"
+                  th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
+              <span id="testcase-importance"
+                    th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
           </div>
         </div>
-    </div>
-    
-    
-    <div class="sq-tg expand">
-      <div class="tg-head">
-        <h3 th:text="#{label.Attributes}"></h3>
+
+        <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
+          <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
+
+          <div id="testcase-nature" class="display-table-cell"
+               th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural
+          </div>
+        </div>
+
+        <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
+          <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
+
+          <div id="testcase-type" class="display-table-cell"
+               th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R
+          </div>
+        </div>
+
+        <div class="display-table-row">
+          <div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">
+            <p th:remove="all">
+              consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam
+              aliquam
+              quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit
+              laboriosam,
+              nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit
+              esse
+              quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+            </p>
+          </div>
+        </div>
       </div>
-      <div id="test-case-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Attribute">
-  			<div class="display-table">
-  			
-  		<div class="display-table-row">
-            <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
-  			<div class="display-table-cell">
-  				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
-  	          <span id="testcase-importance" 
-  	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
-  	        </div>
+    </div>
+  </div>
+
+
+  <div class="sq-tg expand">
+    <div class="tg-head">
+      <h3 th:text="#{generics.prerequisite.title}"></h3>
+    </div>
+    <div id="execute-prerequisite-panel" class="tg-body is-contextual load-links-right-frame">
+      <div class="display-table">
+        <div class="display-table-row">
+          <div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">
+            <p th:remove="all">
+              consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam
+              aliquam
+              quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit
+              laboriosam,
+              nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit
+              esse
+              quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+            </p>
           </div>
-  
-          <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
-            <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
-            <div id="testcase-nature" class="display-table-cell"
-              th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
-          </div>
-  
-          <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
-            <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
-            <div id="testcase-type" class="display-table-cell"
-              th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
-          </div>
-          
-  			<div class="display-table-row">			
-  				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
-  					<p th:remove="all"> 
-  						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
-  						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
-  						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
-  						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
-  					</p>	
-  				</div>				
-  			</div>
-  			</div>
-  	</div>
-	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
-    <div class="sq-tg expand">
-        <div class="tg-head">
-          <h3 th:text="#{generics.prerequisite.title}"></h3>
         </div>
-        <div id="execute-prerequisite-panel" class="tg-body is-contextual load-links-right-frame" >
-    			<div class="display-table">
-    			<div class="display-table-row">			
-    				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
-    					<p th:remove="all"> 
-    						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
-    						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
-    						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
-    						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
-    					</p>	
-    				</div>				
-    			</div>
-    			</div>
-    	</div>
-	</div>	
-	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
-		
-	</div>
-	
-	<script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-	require(["common"], function() {
-    	require(["jquery", 'squash.basicwidgets', 'custom-field-values'], 
-    			function($, basic, cufValues){
-  			
-    		requirejs.config({
-  				config : {
-  					"unfinished-execution-preview-page" : /*[[${config}]]*/{}
-  				}
-  			});
-    		
-  			
-    		$(function(){
+      </div>
+    </div>
+  </div>
+  <div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}"
+       id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC
+  </div>
 
-        		require(["unfinished-execution-preview-page"], function(){/*noop*/});
-        		
-    			basic.init();
-    			
-    			/* Allow the status icon to exist : InTree may be useless */
-    			
-    			_updateStatusIcon = function (value){
-  					var statusIcon = $("#test-case-status-icon");
-  					statusIcon.attr("class", ""); //reset
-  					statusIcon.addClass("test-case-status-" + value);
-  				};
-    			_updateStatusInTree = function(value){
-  					var self = this;
-  					self._updateStatusIcon(value);
-  					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
-  				};
-  			 	this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
-  				
-    			/* Allow the importance icon to exist */
-    			
-  				_updateImportanceIcon = function (value){
-  					var status = $("#test-case-importance-icon");
-  					status.attr("class", ""); // reset
-  					status.addClass("test-case-importance-" + value);
-  				};
-  				
-  				
+</div>
 
-					
-    			/* we dont append in parent because order would not be guaranteed
-    			 * we dont append in placeholder because it breaks layout aux petits oignons
-    			 * hence the replaceWith
-    			 */ 
-    			 
-    			var selector = "#test-case-attribute-panel > div.display-table";
-    			if (squashtm.page.hasFields) {
-    				var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
-    				$.getJSON(fieldsUrl)
-    				.success(function(jsonCufs) {
-    					cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
-    				});
-    				
-    			}
-    			if (squashtm.page.hasDenormFields) {
-    				var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
-        			$.getJSON(denormsUrl)
-        			.success(function(jsonDenorm) {
-        				cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
-        			});
-    			}
-    			
-    		});		
-    	});
-	});
-	//]]>
-	</script>
+<script type="text/javascript" th:inline="javascript">
+  //<![CDATA[
+  require(["common"], function() {
+      require(["jquery", 'squash.basicwidgets', 'custom-field-values'], 
+          function($, basic, cufValues){
+        
+        requirejs.config({
+          config : {
+            "unfinished-execution-preview-page" : /*[[${config}]]*/{}
+          }
+        });
+        
+        
+        $(function(){
 
-	
+            require(["unfinished-execution-preview-page"], function(){/*noop*/});
+            
+          basic.init();
+          
+          /* Allow the status icon to exist : InTree may be useless */
+          
+          _updateStatusIcon = function (value){
+            var statusIcon = $("#test-case-status-icon");
+            statusIcon.attr("class", ""); //reset
+            statusIcon.addClass("test-case-status-" + value);
+          };
+          _updateStatusInTree = function(value){
+            var self = this;
+            self._updateStatusIcon(value);
+            eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
+          };
+           this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
+          
+          /* Allow the importance icon to exist */
+          
+          _updateImportanceIcon = function (value){
+            var status = $("#test-case-importance-icon");
+            status.attr("class", ""); // reset
+            status.addClass("test-case-importance-" + value);
+          };
+
+          /* we dont append in parent because order would not be guaranteed
+           * we dont append in placeholder because it breaks layout aux petits oignons
+           * hence the replaceWith
+           */ 
+           
+          var selector = "#test-case-attribute-panel > div.display-table";
+          if (squashtm.page.hasFields) {
+            var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
+            $.getJSON(fieldsUrl)
+            .success(function(jsonCufs) {
+              cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
+            });
+            
+          }
+          if (squashtm.page.hasDenormFields) {
+            var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
+              $.getJSON(denormsUrl)
+              .success(function(jsonDenorm) {
+                cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
+              });
+          }
+          
+        });    
+      });
+  });
+  //]]>
+  
+</script>
+
+
 </body>
 
 </html>
