@@ -46,7 +46,8 @@ documentation :
 	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css"
 	sq:css="squash.purple.css" />
 
-<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+  <link rel="stylesheet" type="text/css" media="all"
+        href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
 	sq:css="squash.core.css" />
 
 <script type="text/javascript" th:inline="javascript">
@@ -77,7 +78,8 @@ documentation :
 
   <div id="execute-header">
     <div class="snap-left">
-      <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
+    <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop
+    </button>
     </div>
     <div style="margin-left:25%;" class="snap-left">
       <span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
@@ -89,7 +91,6 @@ documentation :
       </a>
     </div>
   </div>
-
 
 
 	<div id="execute-body" class="execute-fragment-body">
@@ -146,6 +147,7 @@ documentation :
     
             <div class="display-table-row">
               <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
+
          	  <div  class="display-table-cell">
                 <span id="test-case-status-icon" th:class="'test-case-status-'+${execution.status}">  &nbsp; &nbsp; </span>
                 <span id="testcase-status" th:text="${execution.status.level}+'-'+#{${execution.status.getI18nKey()}}">0 - a specifier</span>
@@ -153,8 +155,10 @@ documentation :
             </div>
              <div class="display-table-row">
               <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
-              <div id="execute-dataset" class="display-table-cell"
-                th:text="${execution.datasetLabel}">dataset name</div>
+
+          <div id="execute-dataset" class="display-table-cell"
+               th:text="${execution.datasetLabel}">dataset name
+          </div>
             </div>
             
             <div class="display-table-row">
@@ -177,8 +181,10 @@ documentation :
   			
   		<div class="display-table-row">
             <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
+
   			<div class="display-table-cell">
-  				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
+            <span id="test-case-importance-icon"
+                  th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
   	          <span id="testcase-importance" 
   	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
   	        </div>
@@ -186,14 +192,17 @@ documentation :
   
           <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
             <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
+
             <div id="testcase-nature" class="display-table-cell"
-              th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
+               th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural
+          </div>
           </div>
   
           <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
             <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
             <div id="testcase-type" class="display-table-cell"
-              th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
+               th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R
+          </div>
           </div>
           
   			<div class="display-table-row">			
@@ -209,13 +218,6 @@ documentation :
   			</div>
   	</div>
 	</div>
-	
-	
-	
-	
-	
-	
-	
 	
 	
     <div class="sq-tg expand">
@@ -237,7 +239,9 @@ documentation :
     			</div>
     	</div>
 	</div>	
-	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
+  <div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}"
+       id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC
+  </div>
 		
 	</div>
 	
