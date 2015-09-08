@@ -20,26 +20,23 @@
  */
 package org.squashtest.tm.api.wizard;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.BeanNameAware;
-import org.springframework.osgi.context.BundleContextAware;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 import org.squashtest.tm.core.foundation.lang.Assert;
 
+import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Gregory Fouquet
- * 
+ * FIXME NOSGI filename / version no longer inited
  */
 public class InternationalizedWorkspaceWizard extends ContextBasedInternationalized implements WorkspaceWizard,
-		BeanNameAware, BundleContextAware {
+		BeanNameAware {
 
 	private WorkspaceType displayWorkspace;
 	private MenuItem wizardMenu;
@@ -47,11 +44,6 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 
 	private String filename;
 	private String version;
-
-	public void setBundleContext(BundleContext bundleContext) {
-		version = bundleContext.getBundle().getVersion().toString();
-		filename = bundleContext.getBundle().getSymbolicName(); // TODO : make better than this
-	}
 
 	/**
 	 * i18n key of this wizard's name
