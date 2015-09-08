@@ -25,69 +25,54 @@
  * Some code was left behind, do that when time 
  */
 
-define([ "jquery", "module", "jquery.squash.squashbutton", 
-		"jquery.squash" ], 
-		function($, module) {
-		
-			var conf = module.config();
-		
-			var clickHandlers = {
-				stop : function() {
-					if (conf.optimized) {
-						parent.squashtm.ieomanager.closeWindow();
-					} else {
-						window.close();
-					}
-				},
-		
-				begin : function(event) {
-					if (conf.optimized) {
-						event.preventDefault();
-						parent.squashtm.ieomanager.navigateNext();
-						return false;
-					} else {
-						// nothing special
-					}
-				},
-		
-				links : function(event) {
-					if (conf.optimized) {
-						event.preventDefault();
-						var url = $(this).attr('href');
-						parent.squashtm.ieomanager.fillRightPane(url);
-						return false;
-					} else {
-						// nothing special
-					}
+define(["jquery", "module",
+		"jquery.squash"],
+	function ($, module) {
+
+		var conf = module.config();
+
+		var clickHandlers = {
+			stop: function () {
+				if (conf.optimized) {
+					parent.squashtm.ieomanager.closeWindow();
+				} else {
+					window.close();
 				}
-			};
-		
-			var stopButton = $("#execute-stop-button");
-			var stopIcon = stopButton.data('icon');
-			stopButton.removeAttr('data-icon');
-			stopButton.squashButton({
-				'text' : false,
-				'icons' : {
-					'primary' : stopIcon
+			},
+
+			begin: function (event) {
+				if (conf.optimized) {
+					event.preventDefault();
+					parent.squashtm.ieomanager.navigateNext();
+					return false;
+				} else {
+					// nothing special
 				}
-			}).click(clickHandlers.stop);
-		
-			var beginButton = $("#execute-begin-button");
-			var beginIcon = beginButton.data('icon');
-			beginButton.removeAttr('data-icon');
-			beginButton.squashButton({
-				'icons' : {
-					'secondary' : beginIcon
+			},
+
+			links: function (event) {
+				if (conf.optimized) {
+					event.preventDefault();
+					var url = $(this).attr('href');
+					parent.squashtm.ieomanager.fillRightPane(url);
+					return false;
+				} else {
+					// nothing special
 				}
-			}).click(clickHandlers.begin);
-		
-		
-			// when OER
-			$(".load-links-right-frame a").click(clickHandlers.links);
-		
-			// issue #2069
-			$.noBackspaceNavigation();
-		
+			}
+		};
+
+		var stopButton = $("#execute-stop-button");
+		stopButton.click(clickHandlers.stop);
+
+		var beginButton = $("#execute-begin-button");
+		beginButton.click(clickHandlers.begin);
 
 
-});
+		// when OER
+		$(".load-links-right-frame a").click(clickHandlers.links);
+
+		// issue #2069
+		$.noBackspaceNavigation();
+
+	});
