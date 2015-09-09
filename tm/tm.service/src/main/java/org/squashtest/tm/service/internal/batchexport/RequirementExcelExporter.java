@@ -95,7 +95,7 @@ public class RequirementExcelExporter {
 
 	private Workbook workbook;
 
-	private boolean milestonesEnabled;
+	protected boolean milestonesEnabled;
 
 	private MessageSource messageSource;
 

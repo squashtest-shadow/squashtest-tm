@@ -69,15 +69,15 @@ class ExcelExporter {
 	private static final String DS_SHEET = TemplateWorksheet.DATASETS_SHEET.sheetName;
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
 	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
-	private static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
+	protected static final String TC_SHEET = TemplateWorksheet.TEST_CASES_SHEET.sheetName;
 
 	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
 	// that map will remember which column index is
 	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
 
-	private Workbook workbook;
+	protected Workbook workbook;
 
-	private boolean milestonesEnabled;
+	protected boolean milestonesEnabled;
 
 	private MessageSource messageSource;
 
@@ -254,6 +254,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
+				doOptionnalAppendTestCases(r,cIdx,tcm);
 			}
 			catch(IllegalArgumentException wtf){
 
@@ -266,6 +267,11 @@ class ExcelExporter {
 			rIdx++;
 			cIdx = 0;
 		}
+	}
+
+	protected void doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
+		//extension point for optional columns
+		
 	}
 
 	private void appendTestSteps(ExportModel model) {
@@ -496,8 +502,11 @@ class ExcelExporter {
 		
 		List<TestCaseSheetColumn> columns = milestonesEnabled ? TC_COLUMNS_MILESTONES : TC_COLUMNS;
 		createSheetHeaders(TC_SHEET, columns);
-		
+		createOptionalTestCaseSheetHeaders();
 	}
-		
+
+	protected void createOptionalTestCaseSheetHeaders() {
+		//extension point for optionnal columns
+	}
 
 }

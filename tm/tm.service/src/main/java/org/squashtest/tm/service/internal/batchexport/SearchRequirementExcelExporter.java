@@ -49,6 +49,9 @@ public class SearchRequirementExcelExporter extends RequirementExcelExporter{
 	
 	private static final RequirementSheetColumn[] SEARCH_REQ_COLUMNS = {
 		RequirementSheetColumn.REQ_VERSIONS,
+	};
+	
+	private static final RequirementSheetColumn[] MILESTONE_SEARCH_REQ_COLUMNS = {
 		RequirementSheetColumn.REQ_VERSION_NB_MILESTONE
 	};
 	
@@ -60,6 +63,11 @@ public class SearchRequirementExcelExporter extends RequirementExcelExporter{
 	
 	@Override
 	protected void doOptionalCreateSheetHeader(Row h, int cIdx) {
+		if (milestonesEnabled) {
+			for (TemplateColumn t : MILESTONE_SEARCH_REQ_COLUMNS){
+				h.createCell(cIdx++).setCellValue(t.getHeader());
+			}
+		}
 		for (TemplateColumn t : SEARCH_REQ_COLUMNS){
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
@@ -70,9 +78,12 @@ public class SearchRequirementExcelExporter extends RequirementExcelExporter{
 			RequirementModel reqModel) {
 		Requirement req = nav.findRequirement(reqModel.getRequirementId());
 		List<RequirementVersion> requirementVersions = req.getRequirementVersions();
-		RequirementVersion requirementVersion = requirementVersionManagerService.findById(reqModel.getId());
+		
+		if (milestonesEnabled) {
+			RequirementVersion requirementVersion = requirementVersionManagerService.findById(reqModel.getId());
+			row.createCell(colIndex++).setCellValue(requirementVersion.getMilestones().size());
+		}
 		
 		row.createCell(colIndex++).setCellValue(requirementVersions.size());
-		row.createCell(colIndex++).setCellValue(requirementVersion.getMilestones().size());
 	}
 }

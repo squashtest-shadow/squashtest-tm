@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -51,20 +52,31 @@ public class TestCaseExcelExporterService {
 
 	@Inject private PathService pathService;
 
-
 	@Inject
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private TestCaseLibraryNodeDao nodeDao;
 
-	@Inject private Provider<ExcelExporter> exporterProvider;
+	@Inject 
+	@Named("excelExporter")
+	private Provider<ExcelExporter> exporterProvider;
+	
+	@Inject 
+	private Provider<SearchTestCaseExcelExporter> searchExporterProvider;
 
 	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
+		return doExportAsExcel(testCaseIds, keepRteFormat, messageSource, exporterProvider.get());
+	}
+	
+	public File searchExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
+		return doExportAsExcel(testCaseIds, keepRteFormat, messageSource, searchExporterProvider.get());
+	}
+	
+	private File doExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, ExcelExporter exporter){
 
 		// let's chunk the job by batches of 20 test cases
 		List<Long> ids;
 		int idx=0;
 		int max = Math.min(idx+20, testCaseIds.size());
-		ExcelExporter exporter = exporterProvider.get();
 		exporter.setMessageSource(messageSource);
 
 		Map<Long, String> pathById = new HashMap<Long, String>(testCaseIds.size());
@@ -85,7 +97,7 @@ public class TestCaseExcelExporterService {
 		}
 
 		return exporter.print();
-
+	
 	}
 
 

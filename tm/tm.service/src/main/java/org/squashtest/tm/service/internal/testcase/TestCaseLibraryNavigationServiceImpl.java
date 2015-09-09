@@ -472,6 +472,19 @@ TestCaseLibraryNavigationService {
 
 		return excelService.exportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public File searchExportTestCaseAsExcel(List<Long> nodeIds,
+			boolean includeCalledTests, boolean keepRteFormat,
+			MessageSource messageSource) {
+		
+		Collection<Long> allIds = findTestCaseIdsFromSelection(CollectionUtils.EMPTY_COLLECTION, nodeIds, includeCalledTests);
+		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
+
+		return excelService.searchExportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
+
+	}
 
 	@Override
 	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
@@ -684,5 +697,7 @@ TestCaseLibraryNavigationService {
 		List<Long> tcInMilestone = findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 		return CollectionUtils.retainAll(tcIds, tcInMilestone);
 	}
+
+
 
 }

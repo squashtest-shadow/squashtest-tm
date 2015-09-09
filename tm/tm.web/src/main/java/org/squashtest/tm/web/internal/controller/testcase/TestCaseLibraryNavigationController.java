@@ -224,6 +224,22 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return new FileSystemResource(export);
 
 	}
+	
+	@RequestMapping(value = "/searchExports", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+			FILENAME, NODES, CALLS, RequestParams.RTEFORMAT })
+	@ResponseBody
+	public FileSystemResource searchExportAsExcel(@RequestParam(FILENAME) String filename,
+			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
+			HttpServletResponse response) throws FileNotFoundException {
+		
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		
+		File export = testCaseLibraryNavigationService.searchExportTestCaseAsExcel( nodeIds, includeCalledTests,
+				keepRteFormat, getMessageSource());
+		return new FileSystemResource(export);
+		
+	}
 
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
 		for (ExportTestCaseData data : dataSource) {

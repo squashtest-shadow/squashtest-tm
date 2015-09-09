@@ -198,10 +198,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 
     exportResults : function(){
-
       this.reqExport.open();
-      // document.location.href= squashtm.app.contextRoot +"/advanced-search?requirement&export=csv&searchModel="+ encodeURIComponent(JSON.stringify(this.model));
-
     },
 
 		editResults : function(){

@@ -62,7 +62,7 @@
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 <script data-main="../../scripts/test-case-search-result.js" th:attr="data-main=@{/scripts/test-case-search-result.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
-	
+
 </script>
 </head>
 <body>
@@ -140,7 +140,7 @@
             <div id="search-results-panel" class="table-tab-wrap">
               <table id="test-case-search-result-table" th:attr="data-def='filter, hover, datakeys-id=test-case-id'"
                 class="unstyled-table" th:with="milestoneColVisible=${application.milestoneFeatureEnabled and not isMilestoneMode}">
-                <thead> 
+                <thead>
                   <tr>
                     <th th:attr="data-def='select, map=user-index'">#</th>
                     <th th:if="${associateResult}" th:attr="data-def='map=is-associated'"
@@ -157,7 +157,7 @@
                     <th th:attr="data-def='map=test-case-status'" th:text="#{test-case.status.label}">test-case
                       status</th>
                     <th  th:attr="data-def='map=test-case-milestone-nb' + (${(not milestoneColVisible)} ?',invisible':'')"
-                    th:text="#{label.milestoneNb}" th:title="#{label.long.numberOfAssociatedMilestones}">milestone nb</th>	
+                    th:text="#{label.milestoneNb}" th:title="#{label.long.numberOfAssociatedMilestones}">milestone nb</th>
                     <th th:attr="data-def='map=test-case-requirement-nb'"
                       th:text="#{label.numberOfAssociatedRequirements}"
                       th:title="#{label.long.numberOfAssociatedRequirements}">nb of covered requirements</th>
@@ -190,13 +190,13 @@
 
 
       	<div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestonesOrNot}">
-            <div data-def="state=selection">          
-                <div>            
-                <span class="red-warning-message" id="warning-mass-modif" ></span>            
+            <div data-def="state=selection">
+                <div>
+                <span class="red-warning-message" id="warning-mass-modif" ></span>
               </div>
                    <br />
               <table class="bind-milestone-dialog-table" data-def="filter, pre-sort=3-asc">
-                <thead> 
+                <thead>
                   <th data-def="sClass=bind-milestone-dialog-check, map=checkbox"></th>
                   <th data-def="map=label, sortable" th:text="#{label.Label}">label</th>
                   <th data-def="map=status, sortable" th:text="#{label.Status}">status</th>
@@ -204,45 +204,84 @@
                   <th data-def="map=description, sortable" th:text="#{label.Description}">description</th>
                 </thead>
                 <tbody>
-        
+
                 </tbody>
               </table>
-            
+
               <ul style="list-style-type: none;">
                 <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    th:text="#{label.selectAllForSelection}">select all</span></li>
                 <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   th:text="#{label.selectNoneForSelection}">select none</span></li>
                 <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" th:text="#{label.invertSelect}">invert selection</span></li>
-              </ul>       
+              </ul>
             </div>
-            
-            
+
+
             <div data-def="state=confirm" class="centered std-padding">
               <span th:text="#{message.WarningMassMilestoneModif.testcases}">WARNING : YOU'RE TILTING THE AXIS OF EARTH ROTATION. THIS COULD INDUCE LONGER WINTERS AND HORNS MAY GROW IN YOUR BACK. PROCEED ?</span>
             </div>
-      
-      
+
+
             <div class="popup-dialog-buttonpane">
               <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=selection, state=selection, mainbtn=selection" th:value="#{label.Confirm}"/>
               <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, state=confirm, mainbtn=confirm" th:value="#{label.Confirm}"/>
               <input type="button" class="bind-milestone-dialog-cancel"  data-def="evt=cancel, mainbtn=default" value="cancel"  th:value="#{label.Cancel}"  />
             </div>
-            
-         </div>		
-		
+
+         </div>
+
+         <!--  ================= EXPORT TC POPUP ======================= -->
+
+        <div class="export-test-case-dialog popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+          th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+          data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+          <div data-def="state=main" class="std-margin-top">
+
+            <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+            <div class="std-margin-top">
+              <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+              <input type="text" id="export-test-case-filename" size="255" style="width: 350px" />
+            </div>
+
+            <div class="std-margin-top">
+              <input type="checkbox" id="export-test-case-includecalls" />
+              <span th:text="#{test-case.export.dialog.includecall}"></span>
+              <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}"></div>
+            </div>
 
 
+            <div class="std-margin-top">
+              <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked" />
+              <span th:text="#{test-case.export.dialog.keeprteformat}">keep rte format</span>
+              <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}">keep rte format
+                description</div>
+            </div>
+
+
+          </div>
+
+          <div class="popup-dialog-buttonpane">
+              <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main" />
+              <input type="button" th:value="#{label.Cancel}" value="cancel"
+                data-def="evt=cancel" />
+          </div>
+        </div>
+
+
+          <!--  ================= //EXPORT TC POPUP ======================= -->
 
 
         <div id="modify-search-result-dialog" class="not-displayed popup-dialog" th:title="#{label.Modify}">
           <div class="main">
-            
+
             <div id="modify-search-result-dialog-project-conf-warning"
-                 class="not-displayed" 
+                 class="not-displayed"
                  th:text="#{message.search.modify.differentInfolists}">
-                 
+
               Warning : hey, something's wrong !
             </div>
-          
+
             <table id="modify-search-result-dialog-table">
               <tr>
                 <td>
@@ -294,4 +333,3 @@
   </div>
 </body>
 </html>
-
