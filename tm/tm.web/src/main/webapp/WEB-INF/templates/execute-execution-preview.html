@@ -62,9 +62,14 @@
     squashtm.page = squashtm.page || {};
     squashtm.page.hasFields = /*[[${hasCustomFields}]]*/ false;
     squashtm.page.hasDenormFields = /*[[${hasDenormFields}]]*/ false;
+    squashtm.page.denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
+    squashtm.page.fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
+    squashtm.page.refTestCaseId = /*[[${execution.referencedTestCase.id} ]]*/;
+    squashtm.page.executionId = /*[[${execution.id}]]*/;
+    squashtm.page.config = /*[[${config}]]*/ {};
     //]]>
   </script>
-  <script type="text/javascript" th:src="@{/scripts/require-min.js}" src="../../scripts/require.js"></script>
+  <script type="text/javascript" th:src="@{/scripts/require-min.js}" src="../../scripts/require.js" data-main="execution-preview-page"></script>
 
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
@@ -243,98 +248,6 @@
     ATTACHMENT-BLOC
   </div>
 </div>
-
-<script type="text/javascript" th:inline="javascript">
-  //<![CDATA[
-  require(["common"], function () {
-    require(["jquery", 'squash.basicwidgets', 'custom-field-values'],
-      function ($, basic, cufValues) {
-
-        requirejs.config({
-          config: {
-            "unfinished-execution-preview-page": /*[[${config}]]*/{}
-          }
-        });
-
-
-        $(function () {
-
-          require(["unfinished-execution-preview-page"], function () {/*noop*/
-          });
-
-          basic.init();
-
-          /* Allow the status icon to exist : InTree may be useless */
-
-          _updateStatusIcon = function (value) {
-            var statusIcon = $("#test-case-status-icon");
-            statusIcon.attr("class", ""); //reset
-            statusIcon.addClass("test-case-status-" + value);
-          };
-          _updateStatusInTree = function (value) {
-            var self = this;
-            self._updateStatusIcon(value);
-            eventBus.trigger('node.attribute-changed', {
-              identity: self.identity,
-              attribute: 'status',
-              value: value.toLowerCase()
-            });
-          };
-          this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
-
-          /* Allow the importance icon to exist */
-
-          _updateImportanceIcon = function (value) {
-            var status = $("#test-case-importance-icon");
-            status.attr("class", ""); // reset
-            status.addClass("test-case-importance-" + value);
-          };
-          $("#edit-tc").click(function () {
-
-            var tcId = /*[[${execution.referencedTestCase.id} ]]*/;
-            var execId = /*[[${execution.id}]]*/;
-
-            var currentUrl = window.location.href;
-            var myRegexp = /optimized=([a-zA-Z]*)/;
-            var match = myRegexp.exec(currentUrl);
-            var optimized = match[1]
-            var winDef = {}
-            var url = squashtm.app.contextRoot + "/test-cases/" + tcId + "/edit-from-exec/" + execId;
-            $.open(url, {"optimized": optimized}, winDef);
-            window.close();
-            parent.squashtm.ieomanager.closeWindow();
-          });
-
-          /* we dont append in parent because order would not be guaranteed
-           * we dont append in placeholder because it breaks layout aux petits oignons
-           * hence the replaceWith
-           */
-
-          var selector = "#test-case-attribute-panel > div.display-table";
-          if (squashtm.page.hasFields) {
-            var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
-            $.getJSON(fieldsUrl)
-              .success(function (jsonCufs) {
-                cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
-              });
-
-          }
-          if (squashtm.page.hasDenormFields) {
-            var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
-            $.getJSON(denormsUrl)
-              .success(function (jsonDenorm) {
-                cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
-              });
-          }
-
-        });
-      });
-  });
-  //]]>
-
-</script>
-
-
 </body>
 
 </html>

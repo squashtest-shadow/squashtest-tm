@@ -98,6 +98,11 @@
 				exclude : [ "common" ]
 			},
 			{
+				name : "execution-preview-page",
+				include : [ "jquery", "squash.basicwidgets", "custom-field-values", "jquery.squash" ],
+				exclude : [ "common" ]
+			},
+			{
 				name : "home-workspace",
 				include : [ "app/ws/squashtm.workspace" ],
 				exclude : [ "common" ]
