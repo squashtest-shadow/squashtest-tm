@@ -98,11 +98,19 @@ RequirementLibraryFinderService {
 	 * @param messageSource
 	 * @return
 	 */
-	File exportRequirementAsExcel(
-			List<Long> libraryIds,
-			List<Long> nodeIds,
-			boolean keepRteFormat,
-			MessageSource messageSource);
+	File exportRequirementAsExcel(List<Long> libraryIds, List<Long> nodeIds,
+			boolean keepRteFormat, MessageSource messageSource);
+	
+	/**
+	 * Generate a xls file to export requirements
+	 * @param libraryIds List of libraryIds (ie project ids) selected for export
+	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
+	 * @param keepRteFormat
+	 * @param messageSource
+	 * @return
+	 */
+	File searchExportRequirementAsExcel(List<Long> nodeIds,
+			boolean keepRteFormat, MessageSource messageSource);
 
 	ImportLog simulateImportExcelRequirement(File xls);
 

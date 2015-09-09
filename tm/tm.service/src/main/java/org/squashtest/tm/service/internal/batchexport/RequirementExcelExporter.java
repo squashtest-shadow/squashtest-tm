@@ -86,7 +86,7 @@ public class RequirementExcelExporter {
 		RequirementSheetColumn.REQ_VERSION_CREATED_BY,
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_ON,
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_BY};
-
+	
 	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList((RequirementSheetColumn[])ArrayUtils.add(BASIC_REQ_COLUMNS,  RequirementSheetColumn.REQ_VERSION_MILESTONE));
 
 	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS = Arrays.asList(BASIC_REQ_COLUMNS);
@@ -179,6 +179,12 @@ public class RequirementExcelExporter {
 		for (TemplateColumn t : cols){
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
+		doOptionalCreateSheetHeader(h,cIdx);
+	}
+
+	protected void doOptionalCreateSheetHeader(Row h, int cIdx) {
+		// Extension point for additional export columns (example : search columns)
+		
 	}
 
 	private void createRequirementHeaders() {
@@ -213,11 +219,17 @@ public class RequirementExcelExporter {
 				row.createCell(colIndex++).setCellValue(reqModel.getMilestonesLabels());
 				}
 			appendCustomFields(row, "REQ_VERSION_CUF_", reqModel.getCufs());
+			doOptionnalAppendRequirement(row, colIndex, reqModel);
 		} catch (IllegalArgumentException wtf) {
 			reqSheet.removeRow(row);
 			row = reqSheet.createRow(rowIndex);
 			row.createCell(0).setCellValue(errorCellTooLargeMessage);
 		}
+	}
+
+	protected void doOptionnalAppendRequirement(Row row, int colIndex,
+			RequirementModel reqModel) {
+		// Extension point for additional export columns (example : search columns)
 	}
 
 	private void removeRteFormat(RequirementExportModel model) {

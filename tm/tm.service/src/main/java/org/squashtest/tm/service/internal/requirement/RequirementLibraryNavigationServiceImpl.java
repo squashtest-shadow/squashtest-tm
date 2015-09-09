@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
@@ -73,6 +74,7 @@ import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.ExportDao;
 import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
+import org.squashtest.tm.service.internal.batchexport.SearchRequirementExcelExporter;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
@@ -137,7 +139,11 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	private ExportDao exportDao;
 
 	@Inject
+	@Named(value="requirementExcelExporter")
 	private Provider<RequirementExcelExporter> exporterProvider;
+	
+	@Inject
+	private Provider<SearchRequirementExcelExporter> searchExporterProvider;
 
 	@Inject
 	private RequirementExcelBatchImporter batchImporter;
@@ -611,6 +617,24 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		exporter.appendToWorkbook(exportModel, keepRteFormat);
 		return exporter.print();
 	}
+	
+	@Override
+	public File searchExportRequirementAsExcel(List<Long> nodeIds,
+			boolean keepRteFormat, MessageSource messageSource) {
+		
+		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
+
+		Set<Long> reqIds = new HashSet<Long>();
+		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
+
+		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
+
+		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+
+		RequirementExcelExporter exporter = searchExporterProvider.get();
+		exporter.appendToWorkbook(exportModel, keepRteFormat);
+		return exporter.print();
+	}
 
 	@Override
 	public ImportLog simulateImportExcelRequirement(File xls) {
@@ -780,5 +804,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	public RequirementLibraryNode findRequirementLibraryNodeById(Long id) {
 		return requirementLibraryNodeDao.findById(id);
 	}
+
+
 
 }

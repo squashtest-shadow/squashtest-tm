@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.requirement;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +30,8 @@ import javax.inject.Named;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
@@ -55,6 +58,7 @@ import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.C
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.requirement.RequirementFormModel.RequirementFormModelValidator;
+import org.squashtest.tm.web.internal.controller.search.AdvancedSearchExportController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
@@ -230,6 +234,18 @@ public class RequirementLibraryNavigationController extends
 		
 		return new FileSystemResource(export);
 	}
+	
+	@RequestMapping(value = "/searchExports", method = RequestMethod.GET)
+	public @ResponseBody FileSystemResource searchExportRequirementExcel(@RequestParam(FILENAME) String filename,
+			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat, HttpServletResponse response){
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+
+		File export = requirementLibraryNavigationService.searchExportRequirementAsExcel( nodeIds, keepRteFormat, getMessageSource());
+		
+		return new FileSystemResource(export);
+	}
+	
 
 
 	/*

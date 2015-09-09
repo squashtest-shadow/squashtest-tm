@@ -289,7 +289,47 @@
 						type="button" value="cancel" th:value="#{label.Cancel}" />
 				</div>
 			</div>
-			</div>
+			
+			 <!--  ================= EXPORT REQ POPUP =======================  -->
+
+		    <div class="export-requirement-dialog popup-dialog not-displayed" th:title="#{label.Export}"
+		      th:attr="data-def='nameprefix='+#{label.lower.dash.exportRequirements}+', dateformat='+#{export.dateformat}"
+		      data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+		
+		      <div data-def="state=main">
+		
+		        <div class="display-table" style="width: 100%">
+		          <div style="display: table-column-group">
+		            <div style="display: table-column"></div>
+		            <div style="display: table-column; width: 70%"></div>
+		          </div>
+		          <div class="display-table-row">
+		            <label th:text="#{requirement.export.dialog.filename}"> rename </label>
+		            <div class="display-table-cell">
+		              <input type="text" id="export-name-input" style="width: 100%" />
+		            </div>
+		          </div>
+		  
+		        </div>
+		
+		        <div class="std-margin-top">
+		          <input type="checkbox" id="export-keepRteFormat" checked="checked" />
+		          <span th:text="#{test-case.export.dialog.keeprteformat}"> keep rte format </span>
+		          <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}"></div>
+		        </div>
+		      </div>
+		
+		      <div class="popup-dialog-buttonpane">
+		        <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm" />
+		        <input type="button" th:value="#{label.Close}" value="cancel"
+		          data-def="evt=cancel" />  
+		      </div>
+		      
+		    </div>
+		
+		
+		    <!--  ================= /EXPORT REQ POPUP ======================= -->
+		</div>
       </div>
     </div>
 </body>

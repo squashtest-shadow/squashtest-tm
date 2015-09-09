@@ -53,7 +53,9 @@ public enum RequirementSheetColumn implements TemplateColumn {
 	REQ_VERSION_CREATED_BY,
 	REQ_VERSION_LAST_MODIFIED_ON(IGNORED),
 	REQ_VERSION_LAST_MODIFIED_BY(IGNORED),
-	REQ_VERSION_MILESTONE;
+	REQ_VERSION_MILESTONE,
+	REQ_VERSIONS("#_VERSIONS",IGNORED),
+	REQ_VERSION_NB_MILESTONE("#_MIL",IGNORED);
 	
 
 	public final String header; ; // NOSONAR immutable public field

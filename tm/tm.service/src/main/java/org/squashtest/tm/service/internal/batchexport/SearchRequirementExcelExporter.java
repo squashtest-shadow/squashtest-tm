@@ -1,0 +1,78 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.batchexport;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.apache.poi.ss.usermodel.Row;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.feature.FeatureManager;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementModel;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
+import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+
+@Component
+@Scope("prototype")
+public class SearchRequirementExcelExporter extends RequirementExcelExporter{
+
+	@Inject
+	RequirementLibraryNavigationService nav;
+	
+	@Inject
+	RequirementVersionManagerService requirementVersionManagerService;
+	
+	private static final RequirementSheetColumn[] SEARCH_REQ_COLUMNS = {
+		RequirementSheetColumn.REQ_VERSIONS,
+		RequirementSheetColumn.REQ_VERSION_NB_MILESTONE
+	};
+	
+	@Inject
+	public SearchRequirementExcelExporter(FeatureManager featureManager,
+			MessageSource messageSource) {
+		super(featureManager, messageSource);
+	}
+	
+	@Override
+	protected void doOptionalCreateSheetHeader(Row h, int cIdx) {
+		for (TemplateColumn t : SEARCH_REQ_COLUMNS){
+			h.createCell(cIdx++).setCellValue(t.getHeader());
+		}
+	}
+
+	@Override
+	protected void doOptionnalAppendRequirement(Row row, int colIndex,
+			RequirementModel reqModel) {
+		Requirement req = nav.findRequirement(reqModel.getRequirementId());
+		List<RequirementVersion> requirementVersions = req.getRequirementVersions();
+		RequirementVersion requirementVersion = requirementVersionManagerService.findById(reqModel.getId());
+		
+		row.createCell(colIndex++).setCellValue(requirementVersions.size());
+		row.createCell(colIndex++).setCellValue(requirementVersion.getMilestones().size());
+	}
+}
