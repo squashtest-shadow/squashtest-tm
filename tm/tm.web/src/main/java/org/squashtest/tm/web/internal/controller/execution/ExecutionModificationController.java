@@ -39,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -59,14 +58,12 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
-import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -93,8 +90,10 @@ public class ExecutionModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
 
-	@Inject
-	private InfoListItemFinderService infoListItemService;
+
+
+
+
 
 	@Inject
 	private ExecutionModificationService executionModService;
@@ -273,8 +272,6 @@ public class ExecutionModificationController {
 
 	static String createBugList(ExecutionStep item) {
 
-
-
 		StringBuffer toReturn = new StringBuffer();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
 		if (issueList.size() > 0) {
@@ -371,6 +368,11 @@ public class ExecutionModificationController {
 		return new StartEndDate(reNewStartDate, reNewEndDate);
 	}
 
+	@RequestMapping(value = "updateSteps", method = RequestMethod.POST)
+	@ResponseBody
+	public Long updateSteps(@PathVariable("executionId") long executionId) {
+		return executionModService.updateSteps(executionId);
+	}
 
 	// ************* private stuffs *************
 

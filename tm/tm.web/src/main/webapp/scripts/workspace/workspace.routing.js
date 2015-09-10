@@ -165,6 +165,7 @@ define([], function(){
 		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
 
 		'teststeps.info' :					root + '/test-steps/{\\d+}',
+		'teststeps.fromExec' :              root + '/test-steps/{\\d+}/from-exec?optimized={true|false}',
 		'teststeps.requirements.manager' :	root + '/test-steps/{\\d+}/verified-requirement-versions/manager',
 
 		'requirements.workspace':			root + '/requirement-workspace/',
@@ -242,7 +243,8 @@ define([], function(){
 		'generic.template.new'					: root + '/generic-projects/new-template',
 		'template.new'							: root + '/project-templates/new',
 		'template'								: root + '/project-templates?dropdownList',
-
+		'execution.update-from-tc'              : root + '/execute/{\\d+}/update-from-tc',
+		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

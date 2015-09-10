@@ -107,15 +107,16 @@ define(['jquery'], function($){
 	
 	function getDeleteUrl(){
 		var specific = "";
+		var options = "";
 		switch (this.getDomType()){
 			case "folder" :
 			case "test-case" :
 			case "requirement" :
 			case "campaign"		: specific = "/content"; break;
 			case "iteration"	: specific = "/iterations"; break;
-			case "test-suite"	: specific = '/test-suites'; break;
+			case "test-suite"	: specific = '/test-suites'; options="?remove_from_iter={remove_from_iter}"; break;
 		}
-		return this.getBrowserUrl()+specific+"/{nodeIds}";
+		return this.getBrowserUrl()+specific+"/{nodeIds}" + options;
 	}
 	
 	function refreshLabel(){

@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.campaign
 
-import javax.inject.Inject
-import javax.validation.ConstraintViolation
-import javax.validation.ConstraintViolationException
-import javax.validation.Path
-
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
@@ -32,15 +27,13 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.HibernateServiceSpecification;
-import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
-import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
-import org.squashtest.tm.service.campaign.CampaignModificationService
-import org.squashtest.tm.service.campaign.IterationModificationService
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 
-
-
+import javax.inject.Inject
+import javax.validation.ConstraintViolation
+import javax.validation.ConstraintViolationException
+import javax.validation.Path
 
 @Transactional
 class CampaignModificationServiceIT extends HibernateServiceSpecification {
@@ -49,9 +42,6 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 
 	@Inject
 	private CampaignLibraryNavigationService navService
-
-	@Inject
-	private CampaignLibrariesCrudService libcrud
 
 	@Inject
 	private IterationModificationService iterService
@@ -65,7 +55,7 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 	def setup(){
 		projectService.persist(createProject())
 
-		def libList= libcrud.findAllLibraries()
+		def libList= currentSession.createQuery("from CampaignLibrary").list()
 
 
 		def lib = libList.get(libList.size()-1);

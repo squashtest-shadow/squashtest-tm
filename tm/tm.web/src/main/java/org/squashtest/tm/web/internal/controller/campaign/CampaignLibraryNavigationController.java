@@ -26,6 +26,7 @@ import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -66,13 +67,13 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
-import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -90,9 +91,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
@@ -101,12 +102,89 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 
+	private static final String REMOVE_FROM_ITER = "remove_from_iter";
+
+	/**
+	 * This PermissionEvaluationService should only be used when batch-creating iteration tree nodes from the same campaign,
+	 * ie nodes which which have the same permissions
+	 * <p/>
+	 * It will only query the real PES once per permission  / role.
+	 * <p/>
+	 * Otherwise, it would create many short lived DB transaction in a single web request, which has measurable effects on performance.
+	 * <p/>
+	 * Objects of this class should be discarded immediately after creating the iterations.
+	 *
+	 * @author Gregory Fouquet
+	 * @since 1.11.6
+	 * @since 1.12.1
+	 */
+	private class ShortCutPermissionEvaluator implements PermissionEvaluationService {
+		private Boolean hasRole;
+		private Map<String, Boolean> perms = new HashMap<String, Boolean>();
+		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<String[], Map<String, Boolean>>();
+
+		@Override
+		public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
+			return this.hasRole(role) || this.hasPermissionOnObject(permission, object);
+		}
+
+		@Override
+		public boolean hasPermissionOnObject(String permission, Object entity) {
+			Boolean res = perms.get(permission);
+			if (res == null) {
+				res = permissionEvaluator.hasPermissionOnObject(permission, entity);
+				perms.put(permission, res);
+
+			}
+
+			return res;
+		}
+
+		@Override
+		public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
+			return permissionEvaluator.hasRoleOrPermissionOnObject(role, permission, entityId, entityClassName);
+		}
+
+		@Override
+		public boolean canRead(Object object) {
+			return permissionEvaluator.canRead(object);
+		}
+
+		@Override
+		public boolean hasMoreThanRead(Object object) {
+			return permissionEvaluator.hasMoreThanRead(object);
+		}
+
+		@Override
+		public boolean hasRole(String role) {
+			if (hasRole == null) {
+				hasRole = permissionEvaluator.hasRole(role);
+			}
+			return hasRole;
+		}
+
+		@Override
+		public boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName) {
+			return permissionEvaluator.hasPermissionOnObject(permission, entityId, entityClassName);
+		}
+
+		@Override
+		public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+			Map<String, Boolean> res = hasRolePerms.get(permissions);
+			if (res == null) {
+				res = permissionEvaluator.hasRoleOrPermissionsOnObject(role, permissions, entity);
+				hasRolePerms.put(permissions, res);
+			}
+			return res;
+		}
+
+	}
+
+	;
+
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
-
-	@Inject
-	private CampaignModificationService campaignModService;
 
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
@@ -122,6 +200,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private ExecutionFinder executionFinder;
 	@Inject
 	private IterationModificationService iterationModificationService;
+	@Inject
+	private PermissionEvaluationService permissionEvaluator;
+
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
@@ -219,6 +300,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
+	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService) {
+		return new IterationNodeBuilder(permissionEvaluationService).setModel(iteration).setIndex(iterationIndex).build();
+	}
+
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
 		return suiteNodeBuilder.get().setModel(testSuite).build();
 	}
@@ -251,10 +336,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 		/*
 		 * Evolution 5169.
-		 * 
+		 *
 		 * One can move iterations within a same campaign. But it makes sense only if an index is supplied too.
 		 * So, this version of moveNodes - that uses no index - is of no interest for us : we just do nothing.
-		 * 
+		 *
 		 * For other destination types though we can proceed with the super implementation.
 		 */
 
@@ -279,9 +364,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
+		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
+
 		for (int i = 0; i < iterations.size(); i++) {
 			Iteration iteration = iterations.get(i);
-			res.add(createIterationTreeNode(iteration, i));
+			res.add(createBatchedIterationTreeNode(iteration, i, pev));
 		}
 
 		return res;
@@ -300,8 +387,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
+		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
+
 		for (Iteration iteration : newIterations) {
-			res.add(createIterationTreeNode(iteration, iterationIndex));
+			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev));
 			iterationIndex++;
 		}
 
@@ -370,11 +459,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteIds}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-suites/{suiteIds}", params = { REMOVE_FROM_ITER }, method = RequestMethod.DELETE)
 	public @ResponseBody
-	OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
+ OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds,
+			@RequestParam(REMOVE_FROM_ITER) boolean removeFromIter) {
 
-		return campaignLibraryNavigationService.deleteSuites(suiteIds);
+		return campaignLibraryNavigationService.deleteSuites(suiteIds, removeFromIter);
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {

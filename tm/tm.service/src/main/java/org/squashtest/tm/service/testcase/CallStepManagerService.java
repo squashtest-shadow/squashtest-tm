@@ -37,6 +37,15 @@ public interface CallStepManagerService {
 	 * @param calledTestCaseId being called
 	 */
 	void addCallTestStep(long parentTestCaseId, long calledTestCaseId);
+	
+	/**
+	 * will add a call test step, at the required index
+	 * 
+	 * @param parentTestCaseId that calls a step
+	 * @param calledTestCaseId being called
+	 * @param index where call should be inserted
+	 */
+	void addCallTestStep(long parentTestCaseId, long calledTestCaseId, int index);
 
 
 	/**

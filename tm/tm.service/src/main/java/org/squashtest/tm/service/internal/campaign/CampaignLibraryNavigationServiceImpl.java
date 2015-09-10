@@ -49,6 +49,10 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -74,6 +78,7 @@ import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 public class CampaignLibraryNavigationServiceImpl extends
 AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 CampaignLibraryNavigationService {
+
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -159,15 +164,11 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') " + OR_HAS_ROLE_ADMIN)
-	public Campaign findCampaign(long reqId) {
-		return campaignDao.findById(reqId);
-	}
-
-	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
+	public int
+	addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
@@ -177,9 +178,10 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan,
+	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan,
 			Map<Long, RawValue> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
 		initCustomFieldValues(iteration, customFieldValues);
@@ -193,7 +195,7 @@ CampaignLibraryNavigationService {
 		 * because :
 		 * 1 - iteration is not a campaign library node
 		 * 2 - an iteration will move only within the same campaign,
-		 * 
+		 *
 		 * we can't use the TreeNodeMover and we don't need it anyway.
 		 */
 
@@ -315,8 +317,6 @@ CampaignLibraryNavigationService {
 
 	}
 
-
-
 	private String formatPath(List<String> names) {
 		StringBuilder builder = new StringBuilder();
 		for (String name : names) {
@@ -340,18 +340,14 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	public OperationReport deleteIterations(List<Long> targetIds) {
+	@BatchPreventConcurrent(entityType = Campaign.class, coercer = IterationToCampaignIdsCoercer.class)
+	public OperationReport deleteIterations(@Ids List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
 
 	@Override
 	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds) {
 		return deletionHandler.simulateSuiteDeletion(targetIds);
-	}
-
-	@Override
-	public OperationReport deleteSuites(List<Long> targetIds) {
-		return deletionHandler.deleteSuites(targetIds);
 	}
 
 
@@ -365,11 +361,9 @@ CampaignLibraryNavigationService {
 
 		if ("L".equals(exportType)){
 			model = simpleCampaignExportCSVModelProvider.get();
-		}
-		else if ("F".equals(exportType)){
+		} else if ("F".equals(exportType)) {
 			model = fullCampaignExportCSVModelProvider.get();
-		}
-		else{
+		} else {
 			model = standardCampaignExportCSVModelProvider.get();
 		}
 
@@ -433,5 +427,10 @@ CampaignLibraryNavigationService {
 		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
 	}
 
+	@Override
+	public OperationReport deleteSuites(List<Long> suiteIds, boolean removeFromIter) {
+
+		return deletionHandler.deleteSuites(suiteIds, removeFromIter);
+	}
 
 }

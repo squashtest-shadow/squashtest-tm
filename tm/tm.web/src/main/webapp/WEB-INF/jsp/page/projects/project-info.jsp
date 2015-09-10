@@ -126,7 +126,9 @@
 				<div class="toolbar-button-panel">
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <c:if test="${ adminproject.template }">
-                    <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
+                    <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
+                  <f:message key='label.coerceTemplateIntoProject' />
+                  </button>
                     <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
                       <f:message key="message.coerceTemplateIntoProject" />
                       <input type="button" value="<f:message key='label.Confirm' />" />
@@ -134,14 +136,16 @@
                     </div>
 </c:if>
 					<f:message var="rename" key="project.button.rename.label" />
-					<input type="button" value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
-								class="button" style=" padding: .6em 1em;" />
+					<button   value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
+								class="sq-btn" >
+								<f:message key="project.button.renameproject.label" />
+								</button>
 </sec:authorize>
 <sec:authorize access="hasRole('ROLE_ADMIN')">
     				<f:message var="delete" key='project.button.delete.label' />
  		
  					<%-------------------------- Trash appear but too much padding.   ------------------------%>
-    				<button id="delete-project-button" ${ delete }  class="sq-btn paddingnull" style="padding: 0" title="<f:message key='project.button.deleteproject.label' />" >
+    				<button id="delete-project-button" ${ delete }  class="sq-btn"  title="<f:message key='project.button.deleteproject.label' />" >
         			   <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       				</button>
 
@@ -290,6 +294,36 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
+			
+			
+			<%----------------------------------------EXEC OPTIONS PANEL----------------------------------------------------%>
+			<f:message var="active" key="label.active" />
+			<f:message var="inactive" key="label.inactive" />
+			<comp:toggle-panel id="exec-option-panel" titleKey="label.execution.option" open="true">
+				<jsp:attribute name="body">
+				
+				<div id="project-exec-option-table" class="display-table">
+						<div class="display-table-row">
+							<div class="display-table-cell">  
+								<label for="toggle-EXECUTION-checkbox" class="display-table-cell">
+									<f:message key="label.execution.modification" />
+								</label>
+							</div>
+				
+							<div class="display-table-cell">                  		
+	                  			<input id="toggle-EXECUTION-checkbox" type="checkbox" 
+	                  				data-def="width=35, on_label=${inactive}, off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;"/>
+	                  		</div>
+						</div>
+				
+				</div>
+				</jsp:attribute>
+		    </comp:toggle-panel>
+			
+			
+			<%----------------------------------------END EXEC OPTIONS PANEL----------------------------------------------------%>
+			
+			
 			<%----------------------------------------STATUS----------------------------------------------------%>
 			<f:message var="statusAllowedLabel" key="label.status.options.allowed" />
 			<f:message var="statusForbiddenLabel" key="label.status.options.forbidden" />
@@ -570,18 +604,38 @@ require(["common"], function() {
 		 		init(projectsManager, Frag);	
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
+		 		configureActivation("EXECUTION");
+		 		
+		 		$("#toggle-EXECUTION-checkbox").change(function(){
+		 			toogleExec();
+		 		}); 
+		 		
 		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
 		 			toggleStatusActivation("UNTESTABLE");
 		 		}); 
 		 		$("#toggle-SETTLED-checkbox").change(function(){
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
+		 		
 		 		initBugtrackerProjectEditable();
 		 		if (${adminproject.project.bugtrackerConnected}) {
 		 		initBugTrackerTag();
 		 		}
 		 		new ProjectToolbar();
 	});
+	
+	function toogleExec(){
+		var shouldActivate = ! $("#toggle-EXECUTION-checkbox").prop('checked');
+	
+			$.ajax({
+				type: 'POST',
+				url: "${projectUrl}",
+				data : {
+					value : shouldActivate
+				}
+			});
+		
+	}
 	
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();		
@@ -885,7 +939,7 @@ require(["common"], function() {
 			clickProjectBackButton();
 		}
 		
-		$('#delete-project-button').button().click(deleteProject);		
+		$('#delete-project-button').click(deleteProject);		
 	});
 	</sec:authorize>
 });

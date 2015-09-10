@@ -21,8 +21,6 @@
 package org.squashtest.tm.web.internal.controller.execution;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Enumeration;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,9 +29,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
-import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.model.builder.ListJeditableComboDataBuilder;
 
 /**
@@ -50,8 +46,6 @@ import org.squashtest.tm.web.internal.model.builder.ListJeditableComboDataBuilde
 public class ExecutionAssignmentComboDataBuilder extends
 		ListJeditableComboDataBuilder<List<User>, ExecutionAssignmentComboDataBuilder> {
 
-	@Inject
-	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
 	public ExecutionAssignmentComboDataBuilder() {
 		super();
@@ -66,6 +60,7 @@ public class ExecutionAssignmentComboDataBuilder extends
 		setModelComparator(LevelComparator.getInstance());
 	}
 
+	@Override
 	@Inject
 	public void setLabelFormatter(LevelLabelFormatter formatter) {
 		super.setLabelFormatter(formatter);

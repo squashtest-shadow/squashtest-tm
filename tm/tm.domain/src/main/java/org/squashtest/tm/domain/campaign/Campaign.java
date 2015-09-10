@@ -42,9 +42,6 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -188,21 +185,6 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	/**
-	 * @deprecated use {@link #findTestPlanItem(TestCase)}
-	 * @param testCaseId
-	 * @return
-	 */
-	@Deprecated
-	public CampaignTestPlanItem getTestPlanForTestPlanItemId(Long testCaseId) {
-		for (CampaignTestPlanItem campTestPlan : this.getTestPlan()) {
-			if (campTestPlan.getReferencedTestCase().getId().equals(testCaseId)) {
-				return campTestPlan;
-			}
-		}
-		return null;
-	}
-
-	/**
 	 * 
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.
@@ -335,7 +317,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
 	 * 
-	 * @param newItemTestPlanDate
+	 * @param newIterationStartDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
 

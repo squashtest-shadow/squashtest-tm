@@ -262,15 +262,14 @@ public class SimulationFacility implements Facility {
 
 	@Override
 	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
-		LogTrain train = validator.createRequirementVersion(instr);
 		//no need to update model as the validator do it after all checks.
-		return train;
+		return validator.createRequirementVersion(instr);
 	}
 
 	@Override
 	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
-		LogTrain train = validator.updateRequirementVersion(instr);
-		return train;
+
+		return validator.updateRequirementVersion(instr);
 	}
 
 	@Override

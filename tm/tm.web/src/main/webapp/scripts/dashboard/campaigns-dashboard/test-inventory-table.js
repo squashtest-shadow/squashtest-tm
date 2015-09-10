@@ -54,7 +54,7 @@ define(["../basic-objects/table-view", "squash.translator", "squash.attributepar
 					var total = _nbterm + m.nbReady + m.nbRunning;
 					var progress = (total>0) ? (_nbterm * 100 / total).toFixed(0) + ' %' : '0%';
 					var rowdata = [
-					               '#'+(i+1)+' - '+(m.iterationName || m.campaignName),	// sorry, too lazy to make it right -_-
+					              (m.iterationName || m.campaignName),	// sorry, too lazy to make it right -_-
 					               m.nbReady,
 					               m.nbRunning,
 					               m.nbSuccess + m.nbWarning,

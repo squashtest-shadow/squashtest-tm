@@ -18,33 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
+package org.squashtest.tm.service.annotation;
 
-import java.util.List;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService;
-import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
-
-@Service("squashtest.tm.service.CampaignLibrariesCrudService")
-public class CampaignLibrariesCrudServiceImpl implements CampaignLibrariesCrudService {
-
-	@Inject
-	private CampaignLibraryDao campaignLibraryDao;
-
-	@Override
-	public List<CampaignLibrary> findAllLibraries() {
-
-		return campaignLibraryDao.findAll();
-	}
-
-	@Override
-	public void addLibrary() {
-		campaignLibraryDao.persist(new CampaignLibrary());
-	}
-
-
+/**
+ * @author Gregory Fouquet
+ * @since 1.11.6
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface BatchPreventConcurrent {
+	/**
+	 * Type of the entity which should be locked
+	 */
+	Class<?> entityType();
+	Class<? extends IdsCoercer> coercer() default PassThroughIdsCoercer.class;
 }

@@ -18,23 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.service.deletion;
 
-import java.util.List;
+import java.util.Locale;
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.springframework.context.MessageSource;
 
-/**
- * @deprecated not used anymore
- * @author Gregory
- * 
- */
-@Deprecated
-@Transactional
-public interface CampaignLibrariesCrudService {
-	List<CampaignLibrary> findAllLibraries();
+public class BoundToNotSelectedTestSuite implements SuppressionPreviewReport {
 
-	void addLibrary();
+	private static final String BOUND_TO_NOT_SELECTED_SUITE_MESSAGE_KEY = "message.deletionWarning.testsuite.testcase-bound-to-other-suite";
+
+	@Override
+	public String toString(MessageSource source, Locale locale) {
+		return source.getMessage(BOUND_TO_NOT_SELECTED_SUITE_MESSAGE_KEY, null, locale);
+	}
+
 
 }

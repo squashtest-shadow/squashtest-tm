@@ -20,15 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
-import javax.inject.Provider
-
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementLibrary
-import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
@@ -37,24 +35,24 @@ import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.squashtest.tm.service.testcase.TestStepModificationService
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
-import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration
+import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService
 import org.squashtest.tm.web.internal.controller.testcase.requirement.VerifiedRequirementsManagerController
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 
-import spock.lang.Specification
+import javax.inject.Provider
 
-
-class VerifiedRequirementsManagerControllerTest extends Specification{
+class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecification {
 	VerifiedRequirementsManagerController controller = new VerifiedRequirementsManagerController()
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	Provider driveNodeBuilder = Mock()
 	TestCaseModificationService testCaseFinder = Mock()
 	RequirementLibraryFinderService requirementLibraryFinder = Mock()
 	TestStepModificationService testStepService = Mock()
-	PermissionEvaluationService permissionService = Mock();
 	MilestoneUIConfigurationService milestoneConfService = Mock()
+	PermissionEvaluationService permissionService = permissionEvaluator()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
@@ -65,7 +63,7 @@ class VerifiedRequirementsManagerControllerTest extends Specification{
 		controller.milestoneConfService = milestoneConfService
 		milestoneConfService.configure(_,_) >> new MilestoneFeatureConfiguration()
 
-		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
+        driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)
 		controller.permissionService = permissionService;
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}

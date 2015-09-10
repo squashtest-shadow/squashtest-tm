@@ -142,17 +142,18 @@ public class ProjectAdministrationController {
 		mav.addObject("availablePermissions", availablePermissions);
 		mav.addObject("attachments", attachmentsHelper.findAttachments(adminProject.getProject()));
 		mav.addObject("allowedStatuses", allowedStatuses);
+		mav.addObject("allowTcModifDuringExec", adminProject.allowTcModifDuringExec());
 
 
 		return mav;
 	}
 
-	
 
-	
+
+
 	// ********************** Wizard administration section ************
 
-	
+
 	@RequestMapping(value = "{projectId}/wizards")
 	public String getWizardsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model) {
 

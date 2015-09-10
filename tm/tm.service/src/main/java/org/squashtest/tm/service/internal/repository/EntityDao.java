@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.hibernate.LockOptions;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -27,6 +29,8 @@ import java.util.List;
 public interface EntityDao<ENTITY_TYPE> extends GenericDao<ENTITY_TYPE>{
 	
 	ENTITY_TYPE findById(long id);
+
+	ENTITY_TYPE findById(long id, LockOptions lockOptions);
 
 	List<ENTITY_TYPE> findAll();
 	

@@ -18,16 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.viewmapping;
+package org.squashtest.tm.service.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author Gregory Fouquet
+ * @since
+ */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@Deprecated
-public @interface AtViews {
-	AtView[] values();
+@Target(ElementType.PARAMETER)
+public @interface Ids {
 }

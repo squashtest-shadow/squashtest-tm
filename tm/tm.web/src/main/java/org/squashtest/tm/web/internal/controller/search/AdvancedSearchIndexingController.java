@@ -26,9 +26,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.lang.MathsUtils;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
-
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForCampaigns;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
 import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;

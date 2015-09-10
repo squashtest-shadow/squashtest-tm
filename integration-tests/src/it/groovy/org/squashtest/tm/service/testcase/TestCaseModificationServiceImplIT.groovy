@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.testcase
 
-import javax.inject.Inject
-
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
@@ -34,8 +32,9 @@ import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @RunWith(Sputnik)
@@ -48,9 +47,6 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	@Inject
 	private TestCaseLibraryNavigationService navService
 
-	@Inject
-	private TestCaseLibrariesCrudService libcrud
-
 	@Inject GenericProjectManagerService projectService
 
 	private int testCaseId=-1;
@@ -59,7 +55,7 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 	def setup(){
 		projectService.persist(createProject())
 
-		def libList= libcrud.findAllLibraries()
+		def libList= session.createQuery("from TestCaseLibrary").list()
 
 
 		def lib = libList.get(libList.size()-1);

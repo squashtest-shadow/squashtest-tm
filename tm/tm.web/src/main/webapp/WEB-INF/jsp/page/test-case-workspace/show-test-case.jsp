@@ -27,7 +27,7 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 
-<layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true">
+<layout:info-page-layout titleKey="workspace.test-case.title" highlightedWorkspace="test-case" isSubPaged="true" >
 
 	<jsp:attribute name="head">	
 		<comp:sq-css name="squash.green.css" />
@@ -43,8 +43,7 @@
 	
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}" 
-            onClick="document.location.href=squashtm.workspace.backurl"/>	
+		<input type="button" id="back" class="sq-btn" value="${backButtonLabel}"/>	
 	</jsp:attribute>
 	
 	<jsp:attribute name="informationContent">	

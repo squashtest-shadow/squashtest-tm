@@ -74,7 +74,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	var COOKIE_NAME = "testcase-tab-cookie";
 
-  var addedTestStepId = 0;
+	var addedTestStepId = 0;
 
 	function makeTableUrls(conf) {
 		var tcUrl = conf.basic.testCaseUrl;
@@ -504,13 +504,16 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var params = {};
 		params.action = $("#add-test-step-action").val();
 		params.expectedResult = $("#add-test-step-result").val();
-		var idSelected = $(".test-steps-table").squashTable().getSelectedIds()[0];
+		var selectedIds = $(".test-steps-table").squashTable().getSelectedIds();
 		if (addedTestStepId!==0) {
       params.index = $(".test-steps-table").squashTable().getDataById(addedTestStepId)["step-index"];
       addedTestStepId=0;
 		}
-    else if (idSelected!==undefined&&idSelected!==null) {
-			params.index = $(".test-steps-table").squashTable().getDataById(idSelected)["step-index"];
+		//multiselection -> as spec 5208 : Insert the new TestCase under the last selection
+    // ie the testCase with the greater index as datatable can't track user input
+		else if (selectedIds!==undefined&&selectedIds!==null&&selectedIds.length>0) {
+			var idTargetStep = selectedIds[selectedIds.length-1];
+			params.index = $(".test-steps-table").squashTable().getDataById(idTargetStep)["step-index"];
 		}
 		$.extend(params, cufSupport.readValues());
 
@@ -568,6 +571,37 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		dialog.on("formdialogopen", function() {
 			cufValuesSupport.reset();
+		});
+	}
+
+
+
+
+	// ************************* Call Other Test Case
+	// **********************************
+
+  function callTestCase(settings) {
+    var testStepId = settings.basic.testCaseId;
+    var stepIdSelected =  $(".test-steps-table").squashTable().getSelectedIds();
+    var stepTargetIndex = 0;
+
+    //now selecting the last selected row in squashTable and retrieve index
+    if (stepIdSelected!==undefined&&stepIdSelected!==null&&stepIdSelected.length>0) {
+      var idTargetStep = stepIdSelected[stepIdSelected.length-1];
+      stepTargetIndex = $(".test-steps-table").squashTable().getDataById(idTargetStep)["step-index"];
+    }
+
+    //redirect to level 2 interface Calling Test Case with proper url formatting
+    var ctxUrl = settings.basic.testCaseUrl;
+    var url = ctxUrl + "/call/" + stepTargetIndex;
+    document.location.href = url;
+	}
+
+	function initCallTestCaseLink(settings) {
+    //setting an eventhandler for the anchor "add-call-step-button" (For evol 5208)
+		$("#add-call-step-button").on("click", function() {
+			//closure on callTestCase to bake testCaseId, urls... in init phase
+			return callTestCase(settings);
 		});
 	}
 
@@ -815,6 +849,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable,  settings.basic.testCaseId);
 
+    //init the link for calling a test case
+    initCallTestCaseLink(settings);
 	}
 
 	return {

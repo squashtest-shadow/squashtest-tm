@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-core</artifactId>
-    <version>1.13.0.testadvisor</version>
+    <version>1.13.0.IT98-SNAPSHOT</version>
   </parent>
   <groupId>org.squashtest.tm</groupId>
   <artifactId>org.squashtest.csp.core.log4j</artifactId>
@@ -56,6 +56,13 @@
           <archive>
             <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
           </archive>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- There are no tests -->
+          <skip>true</skip>
         </configuration>
       </plugin>
     </plugins>

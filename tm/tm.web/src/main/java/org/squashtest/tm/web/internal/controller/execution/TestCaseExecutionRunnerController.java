@@ -40,7 +40,7 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/executions/{executionId}/runner")
@@ -68,14 +68,23 @@ public class TestCaseExecutionRunnerController {
 		return "/execute/" + executionId + "?optimized=" + optimized;
 	}
 
-	@RequestMapping(params = { "optimized=true" })
-	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model,
-			HttpServletRequest context, Locale locale) {
+	@RequestMapping(value = "/{stepIndex}", params = { "optimized=true" })
+	public String startResumeExecutionAtSpecifiedStepInOptimizedRunner(@PathVariable long executionId, Model model,
+			HttpServletRequest context, Locale locale, @PathVariable int stepIndex) {
 
 		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
+
+		state.setCurrentStepIndex(stepIndex + 1);
+		state.setPrologue(false);
 		model.addAttribute("config", state);
 
-		try{
+		addBugtrackerToModel(executionId, model);
+
+		return OPTIMIZED_RUNNER_MAIN;
+	}
+
+	private void addBugtrackerToModel(long executionId, Model model) {
+		try {
 			Project project = executionProcessingService.findExecution(executionId).getProject();
 			BugTracker bugtracker = project.findBugTracker();
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(bugtracker);
@@ -84,11 +93,20 @@ public class TestCaseExecutionRunnerController {
 			model.addAttribute("projectId", project.getId());
 			model.addAttribute("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
 
+			// well, no bugtracker then. It's fine.
 		}
 		catch(NoBugTrackerBindingException ex){
 			//well, no bugtracker then. It's fine.
 		}
+	}
 
+	@RequestMapping(params = { "optimized=true" })
+	public String startResumeExecutionInOptimizedRunner(@PathVariable long executionId, Model model,
+			HttpServletRequest context, Locale locale) {
+
+		RunnerState state = helper.initOptimizedSingleContext(executionId, context.getContextPath(), locale);
+		model.addAttribute("config", state);
+		addBugtrackerToModel(executionId, model);
 
 		return OPTIMIZED_RUNNER_MAIN;
 

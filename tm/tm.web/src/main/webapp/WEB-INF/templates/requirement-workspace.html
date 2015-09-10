@@ -586,20 +586,12 @@
             <div style="display: table-column; width: 70%"></div>
           </div>
           <div class="display-table-row">
-            <label th:text="#{dialog.rename.label}"> rename </label>
+            <label th:text="#{requirement.export.dialog.filename}"> rename </label>
             <div class="display-table-cell">
               <input type="text" id="export-name-input" style="width: 100%" />
             </div>
           </div>
-          <div class="display-table-row">
-            <label th:text="#{label.ExportFormat}"> export format </label>
-            <div class="display-table-cell">
-              <select id="export-option">
-                <option value="csv">csv</option>
-                <option value="xls">xls</option>
-              </select>
-            </div>
-          </div>
+  
         </div>
 
         <div class="std-margin-top">
@@ -619,7 +611,7 @@
 
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel"
+        <input type="button" th:value="#{label.Close}" value="cancel"
           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
          <input type="button" th:value="#{label.Close}" value="cancel"
           data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  

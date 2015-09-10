@@ -44,7 +44,7 @@ define(['jquery', './jstree-dnd-override', './continuous-shift-select-plugin','.
 				
 			case 'simple-tree' : 
 				applySquashPlugin();
-				applyContinuousShiftSelectPlugin();
+
 				break;
 				
 			default :

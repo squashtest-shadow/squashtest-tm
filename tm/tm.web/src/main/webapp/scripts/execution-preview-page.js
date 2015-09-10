@@ -25,22 +25,23 @@
  * Some code was left behind, do that when time 
  */
 
-define([ "jquery", "module", "jquery.squash.squashbutton", 
-		"jquery.squash" ], 
-		function($, module) {
-		
-			var conf = module.config();
-		
+require(["common"], function () {
+	require(["jquery", "squash.basicwidgets", "custom-field-values", "jquery.squash"],
+		function ($, basic, cfieldVal) {
+			var squashtm = window.squashtm;
+			var page = window.squashtm.page;
+			var conf = squashtm.page.config;
+
 			var clickHandlers = {
-				stop : function() {
+				stop: function () {
 					if (conf.optimized) {
 						parent.squashtm.ieomanager.closeWindow();
 					} else {
 						window.close();
 					}
 				},
-		
-				begin : function(event) {
+
+				begin: function (event) {
 					if (conf.optimized) {
 						event.preventDefault();
 						parent.squashtm.ieomanager.navigateNext();
@@ -49,8 +50,8 @@ define([ "jquery", "module", "jquery.squash.squashbutton",
 						// nothing special
 					}
 				},
-		
-				links : function(event) {
+
+				links: function (event) {
 					if (conf.optimized) {
 						event.preventDefault();
 						var url = $(this).attr('href');
@@ -61,33 +62,47 @@ define([ "jquery", "module", "jquery.squash.squashbutton",
 					}
 				}
 			};
-		
-			var stopButton = $("#execute-stop-button");
-			var stopIcon = stopButton.data('icon');
-			stopButton.removeAttr('data-icon');
-			stopButton.squashButton({
-				'text' : false,
-				'icons' : {
-					'primary' : stopIcon
-				}
-			}).click(clickHandlers.stop);
-		
-			var beginButton = $("#execute-begin-button");
-			var beginIcon = beginButton.data('icon');
-			beginButton.removeAttr('data-icon');
-			beginButton.squashButton({
-				'icons' : {
-					'secondary' : beginIcon
-				}
-			}).click(clickHandlers.begin);
-		
-		
+
+			var $doc = $(document);
+			$doc.on("click", "#execute-stop-button", clickHandlers.stop);
+			$doc.on("click", "#execute-begin-button", clickHandlers.begin);
+
 			// when OER
-			$(".load-links-right-frame a").click(clickHandlers.links);
-		
+			$doc.on("click", ".load-links-right-frame a", clickHandlers.links);
+
 			// issue #2069
 			$.noBackspaceNavigation();
-		
 
+			$doc.on("click", "#edit-tc", function () {
+				var currentUrl = window.location.href;
+				var myRegexp = /optimized=([a-zA-Z]*)/;
+				var match = myRegexp.exec(currentUrl);
+				var optimized = match[1];
+				var winDef = {};
+				var url = squashtm.app.contextRoot + "/test-cases/" + page.refTestCaseId + "/edit-from-exec/" + page.executionId;
+				$.open(url, { "optimized": optimized }, winDef);
+				window.close();
+				parent.squashtm.ieomanager.closeWindow();
+			});
 
+			$(function () {
+				basic.init();
+
+				var selector = "#test-case-attribute-panel > div.display-table";
+
+				if (squashtm.page.hasFields) {
+					$.getJSON(page.fieldsUrl)
+						.success(function (jsonCufs) {
+							cfieldVal.infoSupport.init(selector, jsonCufs, "jeditable");
+						});
+				}
+
+				if (squashtm.page.hasDenormFields) {
+					$.getJSON(page.denormsUrl).success(function (jsonDenorm) {
+						cfieldVal.infoSupport.init(selector, jsonDenorm, "jeditable");
+					});
+				}
+
+			});
+		});
 });

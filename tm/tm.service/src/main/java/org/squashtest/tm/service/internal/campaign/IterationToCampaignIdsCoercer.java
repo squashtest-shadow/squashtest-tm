@@ -18,42 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.testcase;
+package org.squashtest.tm.service.internal.campaign;
 
-import java.util.List;
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.StatelessSession;
+import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Configurable;
+import org.squashtest.tm.service.annotation.IdsCoercer;
 
 import javax.inject.Inject;
-
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
-import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService;
+import java.io.Serializable;
+import java.util.Collection;
 
 /**
- * Temporary service.
- * 
  * @author Gregory Fouquet
- * @deprecated not used anymore
+ * @since 1.11.6
  */
-@Deprecated
-@Transactional
-@Service("squashtest.tm.service.TestCasetLibrariesCrudService")
-public class TestCaseLibrariesCrudServiceImpl implements TestCaseLibrariesCrudService {
+@Configurable
+public class IterationToCampaignIdsCoercer implements IdsCoercer {
 	@Inject
-	private TestCaseLibraryDao testCaseLibraryDao;
-
-	@Transactional(readOnly=true)
-	@Override
-	public List<TestCaseLibrary> findAllLibraries() {
-		return testCaseLibraryDao.findAll();
-	}
+	private SessionFactory sessionFactory;
 
 	@Override
-	public void addLibrary() {
-		testCaseLibraryDao.persist(new TestCaseLibrary());
+	public Collection<? extends Serializable> coerce(Collection<? extends Serializable> ids) {
+		StatelessSession s = sessionFactory.openStatelessSession();
+		Transaction tx = s.beginTransaction();
+
+		try {
+			Query q = sessionFactory.getCurrentSession().createQuery("select distinct c.id from Iteration i join i.campaign c where i.id in (:iterIds)");
+			q.setParameterList("iterIds", ids);
+			return q.list();
+
+		} finally {
+			tx.commit();
+			s.close();
+		}
 	}
-
-
-
 }

@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-tm</artifactId>
-    <version>1.13.0.testadvisor</version>
+    <version>1.13.0.IT98-SNAPSHOT</version>
   </parent>
 
   <artifactId>tm.domain</artifactId>
@@ -203,7 +203,7 @@
           <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
-          <compatibilityLevel>${jdk.version}</compatibilityLevel>
+          <complianceLevel>${jdk.version}</complianceLevel>
           <aspectLibraries>
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>

@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -255,7 +256,7 @@ DenormalizedFieldHolder, BoundEntity {
 	/**
 	 * Creates an execution for the test case references by the given tess plan item. Should be used by
 	 * {@link IterationTestPlanItem} only.
-	 * 
+	 *
 	 * @param testPlanItem
 	 */
 	public Execution(TestCase testCase) {
@@ -268,6 +269,19 @@ DenormalizedFieldHolder, BoundEntity {
 		populateAttachments();
 		setDatasetLabel(testCase, dataset);
 	}
+
+	public void removeStep(long executionStepId) {
+
+		Iterator<ExecutionStep> it = steps.iterator();
+		while (it.hasNext()) {
+			if (it.next().getId() == executionStepId) {
+				it.remove();
+				return;
+			}
+		}
+
+	}
+
 
 	private void setDatasetLabel(TestCase testCase, Dataset dataset){
 		String label = null;
@@ -469,6 +483,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 
 
+
 	public String getDatasetLabel() {
 		return datasetLabel;
 	}
@@ -479,7 +494,7 @@ DenormalizedFieldHolder, BoundEntity {
 	 * return the first step with a running or a ready state.<br>
 	 * Or null if there is none or the execution has no steps
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public ExecutionStep findFirstUnexecutedStep() {
@@ -685,7 +700,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/**
 	 * returns the index of the step matching the given id or <code>-1</code> if step is not found.
-	 * 
+	 *
 	 * @param stepId
 	 * @return index of step or -1
 	 */
@@ -712,11 +727,11 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/**
 	 * will compute from scratch a status using a complete report.
-	 * 
+	 *
 	 * @param report
 	 *            : ExecutionStatusReport.
 	 * @return : ExecutionStatus.
-	 * 
+	 *
 	 */
 	public static ExecutionStatus computeNewStatus(ExecutionStatusReport report) {
 

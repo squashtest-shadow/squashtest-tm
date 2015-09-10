@@ -57,6 +57,7 @@ define(['module',
 	function initToolbar(){
 
 		var config = module.config();
+		
 
 		var cbox = $("#execution-status-combo");
 		if (cbox.length>0){
@@ -140,6 +141,14 @@ define(['module',
 			$(".status-button").on('click', statusButtonClick);
 			
 		}
+		
+		
+		$("#edit-tc").on('click', function(){
+	          var url = routing.buildURL('teststeps.fromExec', config.basic.stepId, false);	
+			  localStorage.setItem("squashtm.execModification.index", config.basic.index);
+	          window.close();      
+	          window.open(url);
+		});
 		
 		$("#execute-next-button").on('click', navigateNext);
 		

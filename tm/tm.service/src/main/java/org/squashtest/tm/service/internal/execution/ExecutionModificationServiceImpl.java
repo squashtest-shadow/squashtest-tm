@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -41,7 +43,6 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -57,6 +58,10 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Inject
 	private IndexationService indexationService;
+
+	@Inject
+	private ExecutionStepModificationHelper executionStepModifHelper;
+
 
 	@Override
 	public Execution findAndInitExecution(Long executionId) {
@@ -162,5 +167,14 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 		execution.setExecutionStatus(status);
 
 	}
+
+	@Override
+	public long updateSteps(long executionId) {
+		Execution execution = executionDao.findById(executionId);
+		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);
+
+		return executionStepModifHelper.doUpdateStep(toBeUpdated, execution);
+	}
+
 
 }

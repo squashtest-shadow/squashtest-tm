@@ -22,8 +22,6 @@ package org.squashtest.tm.web.internal.controller.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -35,15 +33,11 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
-import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionBuilder;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
@@ -55,8 +49,6 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	@Inject
 	private ProjectFinder projectFinder;
 
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();

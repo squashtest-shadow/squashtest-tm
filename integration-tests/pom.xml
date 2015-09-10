@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squash-tm</artifactId>
-    <version>1.13.0.testadvisor</version>
+    <version>1.13.0.IT98-SNAPSHOT</version>
   </parent>
 
   <artifactId>squashtest-integration-tests</artifactId>
@@ -222,6 +222,13 @@
       <scope>test</scope>
     </dependency>
     <!-- ====== SQUASHTEST ====== -->
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>tm.domain</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>tm.service</artifactId>
@@ -616,6 +623,7 @@
     </profile>
 
     <profile>
+      <id>database.nocreate</id>
       <activation>
         <property>
           <name>!database.nocreate</name>
@@ -631,7 +639,7 @@
               <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
               <source>${jdk.version}</source>
               <target>${jdk.version}</target>
-              <compatibilityLevel>${jdk.version}</compatibilityLevel>
+              <complianceLevel>${jdk.version}</complianceLevel>
               <aspectLibraries>
                 <aspectLibrary>
                   <!-- For @Configurable. Not sure we need it in this module -->

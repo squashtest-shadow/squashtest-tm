@@ -30,7 +30,7 @@
 	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
 	http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd">
 
-  <tx:annotation-driven transaction-manager="squashtest.tm.hibernate.TransactionManager" order="1"
+  <tx:annotation-driven transaction-manager="squashtest.tm.hibernate.TransactionManager" order="5"
     mode="proxy" proxy-target-class="false" />
     
 	<!-- ====== RDBMS / ORM INTEGRATION ====== -->

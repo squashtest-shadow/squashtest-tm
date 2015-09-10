@@ -20,26 +20,21 @@
  */
 package org.squashtest.tm.service.attachment
 
-import javax.inject.Inject
-
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
-import org.hibernate.SessionFactory;
-import org.spockframework.util.NotThreadSafe
-import org.springframework.core.io.ClassPathResource;
+import org.apache.commons.io.FileUtils
+import org.apache.commons.io.IOUtils
+import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.attachment.Attachment
-import org.squashtest.tm.domain.attachment.AttachmentContent
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.service.HibernateServiceSpecification;
-import org.squashtest.tm.service.attachment.AttachmentManagerService
+import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
+
+import javax.inject.Inject
 
 @Transactional
 class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {

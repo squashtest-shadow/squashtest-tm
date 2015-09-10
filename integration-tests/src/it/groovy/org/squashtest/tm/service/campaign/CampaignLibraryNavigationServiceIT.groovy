@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.campaign
 
+import org.hibernate.SessionFactory
+
 import javax.inject.Inject
 
 import org.junit.runner.RunWith
@@ -36,8 +38,6 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.campaign.CampaignLibrariesCrudService
-import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
@@ -56,9 +56,6 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	private CampaignLibraryNavigationService navService
 
 	@Inject
-	private CampaignLibrariesCrudService libcrud
-
-	@Inject
 	private CampaignFolderDao folderDao
 
 	@Inject GenericProjectManagerService genericProjectManager
@@ -72,10 +69,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 	def setup(){
 
-		//libcrud.addLibrary();
 		genericProjectManager.persist(createProject())
 
-		def libList= libcrud.findAllLibraries()
+		def libList= session.createQuery("from CampaignLibrary").list()
 
 		def lib = libList.get(libList.size()-1)
 
@@ -211,11 +207,15 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		when :
 		navService.addCampaignToCampaignFolder(folderId, campaign)
-		def obj = navService.findCampaign(campaign.id)
+		def obj = findCampaign(campaign.id)
 		then :
 		obj != null
 		obj.name == "new campaign"
 		obj.description == "test campaign"
+	}
+
+	def findCampaign(id) {
+		session.load(Campaign, id)
 	}
 
 	def "should not add campaign to campaign folder"(){
@@ -235,7 +235,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		def campaign = new Campaign(name:"test campaign", description:"test campaign")
 		when :
 		navService.addCampaignToCampaignLibrary(libId, campaign)
-		def obj = navService.findCampaign(campaign.id)
+		def obj = findCampaign(campaign.id)
 		then :
 		obj !=null
 		obj.name=="test campaign"
@@ -260,7 +260,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		true
 
 		when :
-		def obj = navService.findCampaign(campId)
+		def obj = findCampaign(campId)
 
 		then :
 		obj!=null

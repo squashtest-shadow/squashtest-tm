@@ -18,17 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.viewmapping;
+package org.squashtest.tm.service.campaign
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import javax.inject.Inject;
 
-@Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
-@Deprecated
-public @interface AtView {
-	String view();
-	String column();
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport;
+
+
+@UnitilsSupport
+@Transactional
+class IterationStatisticsServiceIT extends DbunitServiceSpecification {
+
+	
+	@Inject
+	private IterationStatisticsService service
+	
+	@DataSet("IterationStatisticsServiceIT.xml")
+	def "should gather iteration statistics" (){
+		
+		given :
+		def iterationId = -1L
+		def nameAndRef = (1..5).collect{"ts " + it}
+
+		when :
+		def result = service.gatherTestSuiteTestInventoryStatistics(iterationId)
+		then :
+	    result.testsuiteName == nameAndRef
+		
+	}
+	
+	
+	
 }

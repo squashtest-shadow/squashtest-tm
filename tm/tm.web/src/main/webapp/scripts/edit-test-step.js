@@ -19,9 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function(common) {
-	require([ "domReady", "jquery", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace" ],
-			function(domReady, $, basic, TestStepModificationView, WS) {
+	require([ "domReady", "jquery", "workspace.routing", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
+			"app/ws/squashtm.workspace",  "./executionHelper" ],
+			function(domReady, $, routing, basic, TestStepModificationView, WS, execHelper) {
+		
+		        var fromExec = squashtm.app.fromExec;
+		        var isIEO = squashtm.app.isIEO;
 		
 				var closeWindow = function() {
 					/* Allow the parent to be refreshed */
@@ -31,12 +34,48 @@ require([ "common" ], function(common) {
 					}
 					window.close(); 
 				};
+				
+				var returnToExec = function (){
+					
+					$.ajax({
+						method:"POST",
+						url: routing.buildURL('execution.updateExecStep', fromExec)					
+					}).done(function(result){
+				
+						var index;
+						
+						if (result > 0){
+							 index = result;	
+						} else {
+							index = localStorage.getItem("squashtm.execModification.index") || 0;
+						}
+						var url = routing.buildURL('execute.stepbyindex', fromExec, index) + "?optimized=" +  isIEO;
+						
+						if(isIEO){
+							url = routing.buildURL('executions.runner', fromExec) + "/" + index + "?optimized=" +  isIEO; 
+								window.open(url);
+							
+						} else {
+						
+						var winDef = {
+								name : "classicExecutionRunner",
+								features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
+							};
+						
+						window.open(url, winDef.name, winDef.features);
+						}
+						
+						window.close();
+					});
+					
+				};
 
 				domReady(function() {
 					basic.init();
 					WS.init();
 					new TestStepModificationView();
-					$("#close").button().on("click", closeWindow);
+					var returnFn = fromExec ? returnToExec : closeWindow;
+					$("#close").button().on("click", returnFn);
 
 				});
 

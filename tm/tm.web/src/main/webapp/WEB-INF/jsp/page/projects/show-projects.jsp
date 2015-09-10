@@ -56,7 +56,7 @@
     <%----------------------------------- Projects Table -----------------------------------------------%>
 <div class="fragment-body">
   <sec:authorize access=" hasRole('ROLE_ADMIN')">
-   <div class="toolbar">
+   <div class="btn-toolbar right">
     <button id="add-template-button" role="buttonmenu" class="buttonmenu sq-btn buttonmenu-button ">
     <span class="ui-icon ui-icon-plusthick" >+</span>
     <span>
@@ -214,6 +214,9 @@
                 <br/>
          <input id="copyMilestone" name="copyMilestone" type="checkbox" data-prop="copyMilestone"/>
          <label class=" afterDisabled" for="copyMilestone"><f:message key="label.copyMilestone" /></label>
+ 		<br/>
+		<input id="copyAllowTcModifFromExec" name="copyAllowTcModifFromExec" type="checkbox" data-prop="copyAllowTcModifFromExec"/>
+         <label class=" afterDisabled" for="copyAllowTcModifFromExec"><f:message key="label.copyAllowTcModifFromExec" /></label>
         </td>
       </table>
 
@@ -286,7 +289,12 @@
           <br/>
           <input id="add-template-from-project-copyMilestone" name="add-template-from-project-copyMilestone" type="checkbox" data-prop="copyMilestone"/>
           <label class=" afterDisabled" for="add-template-from-project-copyMilestone"><f:message key="label.copyMilestone" /></label>
-        </td>
+          <br/>
+	  <input id="add-template-from-project-copyAllowTcModifFromExec" name="add-template-from-project-copyAllowTcModifFromExec" type="checkbox" data-prop="copyAllowTcModifFromExec"/>
+         <label class=" afterDisabled" for="add-template-from-project-copyAllowTcModifFromExec"><f:message key="label.copyAllowTcModifFromExec" /></label>
+         </td>
+
+ </td>
       </table>
 
     <div class="popup-dialog-buttonpane">

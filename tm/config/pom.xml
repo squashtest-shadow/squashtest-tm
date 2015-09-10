@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-tm</artifactId>
-    <version>1.13.0.testadvisor</version>
+    <version>1.13.0.IT98-SNAPSHOT</version>
   </parent>
 
   <artifactId>squash-tm-config</artifactId>
@@ -29,6 +29,14 @@
             </configuration>
           </execution>
         </executions>
+      </plugin>
+
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <!-- There are no tests -->
+          <skip>true</skip>
+        </configuration>
       </plugin>
     </plugins>
   </build>

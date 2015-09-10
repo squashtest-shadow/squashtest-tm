@@ -51,7 +51,7 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	/**
 	 * that method should investigate the consequences of the deletion of the given executions, and return a report
 	 * about what will happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -60,12 +60,20 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	/**
 	 * that method should delete the execution. It still takes care of non deletable executions so the implementation
 	 * should abort if the execution can't be deleted.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param targetIds
 	 * @throws RuntimeException
 	 *             if the execution should not be deleted.
 	 */
 	void deleteExecution(Execution execution);
+
+	/**
+	 *
+	 * @param executionId
+	 *            the execution to be updated
+	 * @return the index of the first modified (not deleted) step in the new execution or -1
+	 */
+	long updateSteps(long executionId);
 
 }

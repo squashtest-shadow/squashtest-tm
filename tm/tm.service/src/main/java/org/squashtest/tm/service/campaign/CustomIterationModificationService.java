@@ -22,29 +22,33 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 
 /**
  * Iteration modification services which cannot be dynamically generated.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface CustomIterationModificationService extends IterationFinder {
 
 	/**
 	 * Adds an iteration to the list of iterations of a campaign.
-	 * 
+	 *
 	 * @param iteration
 	 * @param campaignId
 	 * @return the index of the added iteration.
 	 */
-	int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan);
+	@PreventConcurrent(entityType = Campaign.class)
+	int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan);
 
 	String delete(long iterationId);
 
@@ -55,21 +59,11 @@ public interface CustomIterationModificationService extends IterationFinder {
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
 	 * happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @return
 	 */
 	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
-
-	/**
-	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
-	 * filter out the ids who can't be deleted.
-	 * 
-	 * 
-	 * @param targetIds
-	 * @return
-	 */
-	OperationReport deleteNodes(List<Long> targetIds);
 
 	void addTestSuite(long iterationId, TestSuite suite);
 
@@ -79,7 +73,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * <p>
 	 * That method will remove each test suite, leaving it's test plan items linked to no test_suite
 	 * </p>
-	 * 
+	 *
 	 * @param suitesIds
 	 * @return
 	 */
@@ -90,7 +84,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * Will create a copy of the test suite and it's test plan , then associate it to the given iteration<br>
 	 * will rename test suite if there is name conflict at destination
 	 * </p>
-	 * 
+	 *
 	 * @param testSuiteId
 	 *            = test suite to copy
 	 * @param iterationId
@@ -104,7 +98,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * will create a copy of the test suites and their test plan , then associate them to the given iteration<br>
 	 * will rename test suites if there is name conflict at destination
 	 * </p>
-	 * 
+	 *
 	 * @param testSuiteIds
 	 *            = list of test suites to copy
 	 * @param iterationId
@@ -113,8 +107,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 */
 	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
 
-
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 
-
+	Execution updateExecutionFromTc(long executionId);
 }

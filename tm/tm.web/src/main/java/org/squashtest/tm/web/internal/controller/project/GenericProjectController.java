@@ -96,7 +96,7 @@ import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/generic-projects")
@@ -177,7 +177,7 @@ public class GenericProjectController {
 		}
 		return getUrlToProjectInfoPage(template);
 	}
-	
+
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
@@ -515,7 +515,11 @@ public class GenericProjectController {
 		}
 	}
 
-
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = VALUE)
+	@ResponseBody
+	public void changeEx(@PathVariable long projectId, @RequestParam(VALUE) boolean active) {
+		projectManager.changeAllowTcModifDuringExec(projectId, active);
+	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
@@ -565,7 +569,7 @@ public class GenericProjectController {
 		Runnable replacer = new AsynchronousReplaceExecutionStatus(projectId, source, target);
 		taskExecutor.execute(replacer);
 	}
-	
+
 	private class AsynchronousReplaceExecutionStatus implements Runnable {
 
 		private Long projectId;
@@ -585,7 +589,7 @@ public class GenericProjectController {
 			projectManager.replaceExecutionStepStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
 		}
 	}
-	
+
 	private HttpHeaders getUrlToProjectInfoPage(GenericProject project){
 		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
 				.buildAndExpand(project.getId());

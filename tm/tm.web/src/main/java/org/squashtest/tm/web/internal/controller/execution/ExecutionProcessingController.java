@@ -36,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
@@ -58,6 +59,8 @@ public class ExecutionProcessingController {
 	@Inject
 	private ExecutionProcessingService executionProcService;
 
+	@Inject
+	private CustomIterationModificationService itpService;
 
 
 	private void addCurrentStepUrl(long executionId, Model model) {
@@ -140,6 +143,9 @@ public class ExecutionProcessingController {
 
 	}
 
+
+
+
 	// ************************* other stuffs ********************************************
 
 	@RequestMapping(value = "/step/index/{stepIndex}/general", method = RequestMethod.GET)
@@ -168,6 +174,15 @@ public class ExecutionProcessingController {
 	public void updateExecutionMode(@RequestParam String executionStatus, @PathVariable long stepId) {
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		executionProcService.changeExecutionStepStatus(stepId, status);
+	}
+
+	@RequestMapping(value = "/update-from-tc", method = RequestMethod.POST)
+	@ResponseBody
+	public Long updateExecutionFromTc(@PathVariable long executionId) {
+
+		Execution exec = itpService.updateExecutionFromTc(executionId);
+
+		return exec.getId();
 	}
 
 }

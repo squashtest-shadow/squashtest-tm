@@ -32,14 +32,14 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	private RequirementVersion requirementVersion;
 	private final Map<String, String> customFields = new HashMap<>();
 	private final String[] milestones = {};
-	
+
 	/**
-	 * Used to avoid exception during postprocess. If something went wrong in import process, 
+	 * Used to avoid exception during postprocess. If something went wrong in import process,
 	 * postprocess on this instruction should not be performed
 	 */
 	private boolean fatalError = false;
-	
-	
+
+
 
 	public RequirementVersionInstruction(RequirementVersionTarget target, RequirementVersion requirementVersion) {
 		super(target);
@@ -48,20 +48,17 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 
 	@Override
 	protected LogTrain executeUpdate(Facility facility) {
-		LogTrain logTrain = facility.updateRequirementVersion(this);
-		return logTrain;
+		return facility.updateRequirementVersion(this);
 	}
 
 	@Override
 	protected LogTrain executeDelete(Facility facility) {
-		LogTrain logTrain = facility.deleteRequirementVersion(this);
-		return logTrain;
+		return facility.deleteRequirementVersion(this);
 	}
 
 	@Override
 	protected LogTrain executeCreate(Facility facility) {
-		LogTrain logTrain = facility.createRequirementVersion(this);
-		return logTrain;
+		return facility.createRequirementVersion(this);
 	}
 
 	@Override
@@ -76,7 +73,7 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	public void setRequirementVersion(RequirementVersion requirementVersion) {
 		this.requirementVersion = requirementVersion;
 	}
-	
+
 	public Map<String, String> getCustomFields() {
 		return customFields;
 	}
@@ -84,7 +81,7 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 	public List<String> getMilestones() {
 		return Arrays.asList(milestones);
 	}
-	
+
 	public boolean isFatalError() {
 		return fatalError;
 	}
@@ -93,6 +90,6 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 		this.fatalError = true;
 	}
 
-	
-	
+
+
 }
