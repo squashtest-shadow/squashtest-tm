@@ -92,8 +92,6 @@ public class TestCaseExecutionRunnerController {
 			model.addAttribute("bugTracker", bugtracker);
 			model.addAttribute("projectId", project.getId());
 			model.addAttribute("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
-
-			// well, no bugtracker then. It's fine.
 		}
 		catch(NoBugTrackerBindingException ex){
 			//well, no bugtracker then. It's fine.
