@@ -37,7 +37,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 		events : {
 			"formdialogcancel" : "cancel",
-			"formdialogconfirm" : "confirm",
+			"formdialogconfirm" : "confirm"
 		},
 
 		open : function(options){
@@ -77,7 +77,7 @@ define([ "jquery", "backbone", "underscore", "workspace.routing", "squash.transl
 
 		//REQUIREMENT EXPORT URL
 		_createUrl : function(nodes){
-			var url = squashtm.app.contextRoot+'/requirement-browser/searchExports';
+			var url = window.squashtm.app.contextRoot+'/requirement-browser/searchExports';
 			var filename = this.$el.find("#export-name-input").val();
 			var keepRte = this.$el.find("#export-keepRteFormat").prop('checked');
 

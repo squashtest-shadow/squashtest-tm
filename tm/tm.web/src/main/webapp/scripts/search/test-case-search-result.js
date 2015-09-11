@@ -168,7 +168,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil", "workspace.r
 
 		exportResults : function(){
       this.tcExport.open();
-  	},
+      },
 
 		editResults : function(){
 			this.addModifyResultDialog.confirmDialog("open");
