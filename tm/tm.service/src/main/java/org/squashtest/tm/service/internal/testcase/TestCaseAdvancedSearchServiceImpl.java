@@ -30,7 +30,6 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
@@ -54,9 +53,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
@@ -81,9 +78,6 @@ TestCaseAdvancedSearchService {
 	private TestCaseDao testCaseDao;
 
 	@Inject
-	private IterationModificationService iterationService;
-
-	@Inject
 	private RequirementVersionAdvancedSearchService requirementSearchService;
 
 	@Inject
@@ -91,9 +85,6 @@ TestCaseAdvancedSearchService {
 
 	@Inject
 	private TestCaseCallTreeFinder testCaseCallTreeFinder;
-
-	@Inject
-	private Provider<TestCaseSearchExportCSVModelImpl> testCaseSearchExportCSVModelProvider;
 
 	@Inject
 	private MessageSource source;
@@ -305,19 +296,6 @@ TestCaseAdvancedSearchService {
 		}
 		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, result);
 	}
-
-	@Override
-	public SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel searchModel, Locale locale) {
-
-		TestCaseSearchExportCSVModelImpl model = testCaseSearchExportCSVModelProvider.get();
-
-		List<TestCase> testCases = this.searchForTestCases(searchModel, locale);
-		model.setTestCases(testCases);
-		model.setIterationService(iterationService);
-		return model;
-	}
-
-
 
 	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale){
 

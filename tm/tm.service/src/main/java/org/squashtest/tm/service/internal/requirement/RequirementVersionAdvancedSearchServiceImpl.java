@@ -27,7 +27,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
@@ -47,7 +46,6 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
@@ -62,9 +60,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@Inject
 	private ProjectDao projectDao;
-
-	@Inject
-	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
 
 	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
 			new SortField("requirement.project.name", SortField.STRING, false),
@@ -187,15 +182,4 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	}
 	
 	
-	@Override
-	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel,
-			Locale locale) {
-
-		RequirementVersionSearchExportCSVModelImpl model = requirementVersionSearchExportCSVModelProvider.get();
-
-		List<RequirementVersion> requirementVersions = this.searchForRequirementVersions(searchModel, locale);
-		model.setRequirementVersions(requirementVersions);
-		return model;
-	}
-
 }

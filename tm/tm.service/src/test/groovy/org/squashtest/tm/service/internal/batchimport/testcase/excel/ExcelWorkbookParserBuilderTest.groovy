@@ -40,7 +40,7 @@ class ExcelWorkbookParserBuilderTest extends Specification {
 		def builder = new ExcelWorkbookParserBuilder()
 
 		and:
-		Resource xls = new ClassPathResource("batchimport/testcase/import-2269.xlsx")
+		Resource xls = new ClassPathResource("batchimport/testcase/import-columns.xlsx")
 		println xls.file.absolutePath
 		InputStream is = new BufferedInputStream(new FileInputStream(xls.file))
 		println is

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
@@ -33,13 +34,16 @@ import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.unitils.dbunit.annotation.DataSet
 import org.squashtest.tm.domain.requirement.Requirement
+
 import spock.unitils.UnitilsSupport;
 
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 class RequirementExcelExporterIT extends DbunitServiceSpecification{
+	
 	@Inject
+	@Named("requirementExcelExporter")
 	RequirementExcelExporter exporter
 	@Inject
 	ExportDao exportDao
