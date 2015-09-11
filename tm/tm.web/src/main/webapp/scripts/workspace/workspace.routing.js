@@ -190,7 +190,7 @@ define([], function(){
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
 		'testsuites.execute.stepbyindex' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/executions/{\\d+}/steps/index/{\\d+}',
-		'testsuites.execute.prologue' : 	root + '/test-suites/{\\d+}/test-plan/{\\d+}/executions/{\\d+}/steps/prologue',
+		'testsuites.execute.prologue' :		root + '/test-suites/{\\d+}/test-plan/{\\d+}/executions/{\\d+}/steps/prologue',
 		'testsuites.runner'				:	root + '/test-suites/{\\d+}/test-plan/execution/runner',
 
 		'executions' :						root + '/executions/{\\d+}',
