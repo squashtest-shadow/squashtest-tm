@@ -179,12 +179,13 @@ public class RequirementExcelExporter {
 		for (TemplateColumn t : cols){
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
-		doOptionalCreateSheetHeader(h,cIdx);
+		//call extension point and get the new column index in return
+		cIdx = doOptionalCreateSheetHeader(h,cIdx);
 	}
 
-	protected void doOptionalCreateSheetHeader(Row h, int cIdx) {
+	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {
 		// Extension point for additional export columns (example : search columns)
-		
+		return cIdx;
 	}
 
 	private void createRequirementHeaders() {
@@ -219,7 +220,8 @@ public class RequirementExcelExporter {
 				row.createCell(colIndex++).setCellValue(reqModel.getMilestonesLabels());
 				}
 			appendCustomFields(row, "REQ_VERSION_CUF_", reqModel.getCufs());
-			doOptionnalAppendRequirement(row, colIndex, reqModel);
+			//call extension point and get the new column index in return
+			colIndex = doOptionnalAppendRequirement(row, colIndex, reqModel);
 		} catch (IllegalArgumentException wtf) {
 			reqSheet.removeRow(row);
 			row = reqSheet.createRow(rowIndex);
@@ -227,9 +229,10 @@ public class RequirementExcelExporter {
 		}
 	}
 
-	protected void doOptionnalAppendRequirement(Row row, int colIndex,
+	protected int doOptionnalAppendRequirement(Row row, int colIndex,
 			RequirementModel reqModel) {
 		// Extension point for additional export columns (example : search columns)
+		return colIndex;
 	}
 
 	private void removeRteFormat(RequirementExportModel model) {

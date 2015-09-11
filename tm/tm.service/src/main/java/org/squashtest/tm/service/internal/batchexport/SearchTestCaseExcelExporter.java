@@ -34,17 +34,13 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 @Component
 @Scope("prototype")
 public class SearchTestCaseExcelExporter extends ExcelExporter{
 
 	@Inject
-	TestCaseLibraryNavigationService testCaseLibraryNavigationService;
-	
-	@Inject
-	TestCaseFinder testCaseFinder;
+	private TestCaseFinder testCaseFinder;
 	
 	@Inject
 	IterationModificationService iterationFinder;
@@ -79,17 +75,18 @@ public class SearchTestCaseExcelExporter extends ExcelExporter{
 	}
 	
 	@Override
-	protected void doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
+	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
 		TestCase tc = testCaseFinder.findById(tcm.getId());
 		int nbMilestone = tc.getMilestones().size();
 		int nbSteps = tc.getSteps().size();
 		int nbIteration = iterationFinder.findIterationContainingTestCase(tcm.getId()).size();
+		int cIdxOptional = cIdx;
 		if (milestonesEnabled) {
-			r.createCell(cIdx++).setCellValue(nbMilestone);
+			r.createCell(cIdxOptional++).setCellValue(nbMilestone);
 		}
-		r.createCell(cIdx++).setCellValue(nbSteps);
-		r.createCell(cIdx++).setCellValue(nbIteration);
-		
+		r.createCell(cIdxOptional++).setCellValue(nbSteps);
+		r.createCell(cIdxOptional++).setCellValue(nbIteration);
+		return cIdxOptional;
 	}
 
 }

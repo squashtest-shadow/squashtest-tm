@@ -42,10 +42,10 @@ import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 public class SearchRequirementExcelExporter extends RequirementExcelExporter{
 
 	@Inject
-	RequirementLibraryNavigationService nav;
+	private RequirementLibraryNavigationService nav;
 	
 	@Inject
-	RequirementVersionManagerService requirementVersionManagerService;
+	private RequirementVersionManagerService requirementVersionManagerService;
 	
 	private static final RequirementSheetColumn[] SEARCH_REQ_COLUMNS = {
 		RequirementSheetColumn.REQ_VERSIONS,
@@ -62,28 +62,32 @@ public class SearchRequirementExcelExporter extends RequirementExcelExporter{
 	}
 	
 	@Override
-	protected void doOptionalCreateSheetHeader(Row h, int cIdx) {
+	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {
+		int columnIndexOptional = cIdx;
 		if (milestonesEnabled) {
 			for (TemplateColumn t : MILESTONE_SEARCH_REQ_COLUMNS){
-				h.createCell(cIdx++).setCellValue(t.getHeader());
+				h.createCell(columnIndexOptional++).setCellValue(t.getHeader());
 			}
 		}
 		for (TemplateColumn t : SEARCH_REQ_COLUMNS){
-			h.createCell(cIdx++).setCellValue(t.getHeader());
+			h.createCell(columnIndexOptional++).setCellValue(t.getHeader());
 		}
+		return columnIndexOptional;
 	}
 
 	@Override
-	protected void doOptionnalAppendRequirement(Row row, int colIndex,
+	protected int doOptionnalAppendRequirement(Row row, int colIndex,
 			RequirementModel reqModel) {
+		int columnIndexOptional = colIndex;
 		Requirement req = nav.findRequirement(reqModel.getRequirementId());
 		List<RequirementVersion> requirementVersions = req.getRequirementVersions();
 		
 		if (milestonesEnabled) {
 			RequirementVersion requirementVersion = requirementVersionManagerService.findById(reqModel.getId());
-			row.createCell(colIndex++).setCellValue(requirementVersion.getMilestones().size());
+			row.createCell(columnIndexOptional++).setCellValue(requirementVersion.getMilestones().size());
 		}
 		
-		row.createCell(colIndex++).setCellValue(requirementVersions.size());
+		row.createCell(columnIndexOptional++).setCellValue(requirementVersions.size());
+		return columnIndexOptional;
 	}
 }

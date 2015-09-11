@@ -254,7 +254,8 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
-				doOptionnalAppendTestCases(r,cIdx,tcm);
+				cIdx = doOptionnalAppendTestCases(r,cIdx,tcm);
+				
 			}
 			catch(IllegalArgumentException wtf){
 
@@ -269,9 +270,9 @@ class ExcelExporter {
 		}
 	}
 
-	protected void doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
+	protected int doOptionnalAppendTestCases(Row r, int cIdx, TestCaseModel tcm) {
 		//extension point for optional columns
-		
+		return cIdx;
 	}
 
 	private void appendTestSteps(ExportModel model) {
