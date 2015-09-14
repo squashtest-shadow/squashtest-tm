@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -48,47 +70,27 @@
     <wro4j.skip>false</wro4j.skip>
   </properties>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
-    <!-- ====== /JEE API ====== -->
 
-    <!-- ====== JSE DI API ====== -->
-    <dependency>
-      <groupId>javax.inject</groupId>
-      <artifactId>com.springsource.javax.inject</artifactId>
-    </dependency>
-    <!-- ====== /URL REWRITING ====== -->
+    <!-- ====== /THYMELEAF ====== -->
 
-    <!-- ====== VALIDATION ====== -->
+    <!-- ====== JASPER REPORTS ====== -->
+    <!-- We need this to compile the reports. Our OSGi wrapped artifact wont work and plugin dependency wont be the one picked -->
     <dependency>
-      <groupId>javax.validation</groupId>
-      <artifactId>com.springsource.javax.validation</artifactId>
-    </dependency>
-    <!-- ====== /VALIDATION ====== -->
-
-    <!-- ===== ASPECTJ ===== -->
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>com.springsource.org.aspectj.runtime</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>com.springsource.org.aspectj.weaver</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>com.springsource.org.hibernate.validator</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.joda</groupId>
-      <artifactId>com.springsource.org.joda.time</artifactId>
-
-    </dependency>
-    <!-- ====== /SPRING MVC ====== -->
-
-    <!-- ====== URL REWRITING ====== -->
-    <dependency>
-      <groupId>org.tuckey</groupId>
-      <artifactId>com.springsource.org.tuckey.web.filters.urlrewrite</artifactId>
+      <groupId>org.beanshell</groupId>
+      <artifactId>bsh</artifactId>
     </dependency>
     <!-- ===== / JACKSON ===== -->
 
@@ -127,17 +129,11 @@
       <artifactId>core.wizard.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-validator</artifactId>
+    </dependency>
 
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-annotations</artifactId>
-      <version>${fasterxml.jackson.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-core</artifactId>
-      <version>${fasterxml.jackson.version}</version>
-    </dependency>
     <!--     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-core-asl</artifactId>
@@ -147,6 +143,18 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
       <version>${fasterxml.jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.glassfish</groupId>
+      <artifactId>javax.el</artifactId>
+    </dependency>
+    <!-- ====== /JEE API ====== -->
+
+    <!-- ====== JSE DI API ====== -->
+    <dependency>
+      <groupId>javax.inject</groupId>
+      <artifactId>javax.inject</artifactId>
     </dependency>
 
     <!-- ===== / ASPECTJ ===== -->
@@ -159,128 +167,38 @@
     </dependency>
  -->
     <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.el</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>javax.servlet-api</artifactId>
     </dependency>
 
-    <!-- ====== /SQUASHTEST ====== -->
-    <!-- ====== JEE API ====== -->
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.eclipse.jetty.orbit</groupId>
       <artifactId>javax.servlet.jsp</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet.jsp.jstl</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>jcl-over-slf4j</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>net.htmlparser.jericho</groupId>
+      <artifactId>jericho-html</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.beans</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.context</artifactId>
-    </dependency>
-    <!-- ====== /LOGGING ====== -->
-
-    <!-- ====== SPRING DI ====== -->
-    <!-- Required by Spring MVC -->
-
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.context.support</artifactId>
-    </dependency>
-    <!-- ====== /SPRING SECURITY ====== -->
-
-    <!-- ====== FOR AUTH PURPOSES - should be moved afterwards ====== -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.jdbc</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.acls</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.taglibs</artifactId>
-    </dependency>
-    <!-- ====== /SPRING DM WEB CONTEXT ====== -->
-
-    <!-- ====== SPRING SECURITY ====== -->
-    <dependency>
-      <groupId>org.springframework.security</groupId>
-      <artifactId>org.springframework.security.web</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.test</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.transaction</artifactId>
-      <scope>compile</scope>
-    </dependency>
-    <!-- ====== /FOR AUTH PURPOSES - should be moved afterwards ====== -->
-
-    <!-- ====== SPRING MVC ====== -->
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.web</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.web.servlet</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>net.htmlparser.jericho</groupId>
-      <artifactId>org.squashtest.net.htmlparser.jericho</artifactId>
-      <version>3.1</version>
-    </dependency>
-    <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
-      <artifactId>org.squashtest.net.sourceforge.nekohtml</artifactId>
+      <artifactId>nekohtml</artifactId>
     </dependency>
-    <!-- ====== /FILE UPLOAD ====== -->
 
-    <!-- ====== THYMELEAF ====== -->
-    <dependency>
-      <groupId>org.thymeleaf</groupId>
-      <artifactId>org.squashtest.org.thymeleaf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.thymeleaf.extras</groupId>
-      <artifactId>org.squashtest.org.thymeleaf.extras.springsecurity3</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.thymeleaf</groupId>
-      <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId>
-    </dependency>
-    <!-- ====== /JSE DI API ====== -->
-
-    <!-- ====== LOGGING ====== -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -301,16 +219,44 @@
       <artifactId>spock-unitils</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <!-- ====== /VALIDATION ====== -->
+
+    <!-- ===== ASPECTJ ===== -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-aop</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-jdbc</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.springframework.security.oauth</groupId>
       <artifactId>spring-security-oauth2</artifactId>
     </dependency>
-    <!-- ====== SQUASHTEST ====== -->
+    <!-- ====== /FILE UPLOAD ====== -->
+
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>springdm-bundle-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
+      <groupId>org.thymeleaf.extras</groupId>
+      <artifactId>thymeleaf-extras-springsecurity4</artifactId>
     </dependency>
+    <!-- ====== SQUASHTEST ====== -->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -322,55 +268,36 @@
       <artifactId>tm.service</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <!--
+        <dependency>
+          <groupId>org.joda</groupId>
+          <artifactId>com.springsource.org.joda.time</artifactId>
+        </dependency>
+    -->
+    <!-- ====== /SPRING MVC ====== -->
 
-    <!-- ====== /THYMELEAF ====== -->
-
-    <!-- ====== JASPER REPORTS ====== -->
-    <!-- We need this to compile the reports. Our OSGi wrapped artifact wont work and plugin dependency wont be the one picked -->
+    <!-- ====== URL REWRITING ====== -->
     <dependency>
-      <groupId>net.sf.jasperreports</groupId>
-      <artifactId>jasperreports</artifactId>
-      <scope>provided</scope>
-      <optional>true</optional>
+      <groupId>org.tuckey</groupId>
+      <artifactId>urlrewritefilter</artifactId>
+    </dependency>
+    <!-- ====== /URL REWRITING ====== -->
+
+    <!-- ====== VALIDATION ====== -->
+    <dependency>
+      <groupId>javax.validation</groupId>
+      <artifactId>validation-api</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.beanshell</groupId>
-      <artifactId>com.springsource.bsh</artifactId>
-      <version>2.0.0.b4</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.xml</groupId>
-      <artifactId>com.springsource.org.apache.xml.resolver</artifactId>
-      <version>1.2.0</version>
-      <scope>runtime</scope>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
     </dependency>
 
     <!-- We need this at runtime (OSGi bundle) -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
-      <artifactId>org.squashtest.net.sf.jasperreports</artifactId>
+      <artifactId>jasperreports</artifactId>
       <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>org.apache.commons</groupId>
-          <artifactId>com.springsource.org.apache.commons.logging</artifactId>
-        </exclusion>
-      </exclusions>
-    </dependency>
-    <!-- ====== /SPRING DI ====== -->
-
-    <!-- ====== SPRING DM WEB CONTEXT ====== -->
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-web</artifactId>
-      <scope>runtime</scope>
-      <exclusions>
-        <exclusion>
-          <groupId>javax.servlet</groupId>
-          <artifactId>com.springsource.javax.servlet</artifactId>
-        </exclusion>
-      </exclusions>
     </dependency>
 
     <dependency>
@@ -388,7 +315,6 @@
       <scope>test</scope>
     </dependency>
     <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
-
 
   </dependencies>
   <build>

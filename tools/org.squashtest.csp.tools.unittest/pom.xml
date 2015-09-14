@@ -1,4 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -10,28 +32,35 @@
   <name>Squashtest CSP - Tools module - Unit tests library</name>
   <description>Library  of classes used for unit-testing other Squashtest components</description>
 
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
   <dependencies>
-    <!-- ====== GROOVY ====== -->
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <scope>compile</scope>
     </dependency>
-    <!-- ====== /GROOVY ====== -->
+
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>org.squashtest.org.hibernate.core</artifactId>
-      <version>${hibernate.version}</version>
-      <scope>compile</scope>
-      <optional>true</optional>
+      <artifactId>hibernate-entitymanager</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.hibernate</groupId>
-      <artifactId>org.squashtest.org.hibernate.search</artifactId>
-      <version>${hibernate.search.version}</version>
-      <scope>compile</scope>
+      <artifactId>hibernate-search-orm</artifactId>
       <optional>true</optional>
     </dependency>
+
     <dependency>
       <groupId>org.unitils</groupId>
       <artifactId>unitils-database</artifactId>
@@ -53,16 +82,13 @@
   <build>
     <sourceDirectory>src/main/groovy</sourceDirectory>
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-          <compilerId>groovy-eclipse-compiler</compilerId>
-        </configuration>
       </plugin>
     </plugins>
+
   </build>
 </project>
