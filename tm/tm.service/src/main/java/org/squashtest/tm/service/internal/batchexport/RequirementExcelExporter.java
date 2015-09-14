@@ -180,7 +180,7 @@ public class RequirementExcelExporter {
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
 		//call extension point and get the new column index in return
-		cIdx = doOptionalCreateSheetHeader(h,cIdx);
+		doOptionalCreateSheetHeader(h,cIdx);
 	}
 
 	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {
