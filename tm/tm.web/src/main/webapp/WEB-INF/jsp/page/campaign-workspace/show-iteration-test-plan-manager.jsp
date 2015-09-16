@@ -27,12 +27,55 @@
 <%@ taglib prefix="tree" tagdir="/WEB-INF/tags/jstree"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <c:url var="testPlanUrl" value="/iterations/${iteration.id}/test-plan/" />
 <c:url var="iterationUrl" value="/iterations/${iteration.id}/" />
 <c:url var="iterationTestPlanUrl" value="/iterations/${iteration.id}/info" />
+
+<%-- ----------------------------------- Authorization ----------------------------------------------%>
+
+<%-- should be programmatically stuffed into page context --%>
+
+<c:set var="writable"         value="${false}" />
+<c:set var="moreThanReadOnly" value="${false}" />
+<c:set var="attachable"       value="${false}" />
+<c:set var="linkable"         value="${false}" />  
+<c:set var="deletable"        value="${false}" />
+<c:set var="extendedDeletable"value="${false}" />
+  
+  
+<c:if test="${not milestoneConf.locked}">
+  
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
+  <c:set var="moreThanReadOnly" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
+  <c:set var="writable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ iteration }">
+  <c:set var="attachable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
+  <c:set var="deletable" value="${true}" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXTENDED_DELETE" domainObject="${ iteration }">
+  <c:set var="extendedDeletable" value="${true}" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ iteration }">
+  <c:set var="linkable" value="${ true }" />
+</authz:authorized>
+
+<c:set var="moreThanReadOnly" value="${moreThanReadOnly or writable or attachable or deletable or extendedDeletable or linkable}" />
+
+</c:if>
+
+<%-- ----------------------------------- /Authorization ----------------------------------------------%>
+
+
+
 
 <layout:tree-picker-layout  workspaceTitleKey="workspace.campaign.title"
                             i18nLibraryTabTitle="squashtm.library.test-case.title" 
@@ -72,7 +115,15 @@
   
   <jsp:attribute name="tablePane">
     <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ iterationUrl }" />
-    <it:iteration-test-plan-manager-table iteration="${iteration}" milestoneConf="${milestoneConf}"/>      
+    <it:iteration-test-plan-manager-table 
+        iteration="${iteration}" 
+        milestoneConf="${milestoneConf}"
+        editable="${editable}"
+        linkable="${linkable}"
+        reorderable="${reorderable}"
+        deletable="${deletable}"
+        extendedDeletable="${extendedDeletable}"
+        />      
     <it:test-suite-managment  iteration="${iteration}"/>  
   </jsp:attribute>
 

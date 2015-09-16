@@ -91,7 +91,6 @@ public class TestSuiteTestPlanManagerController {
 	private static final String UNBOUND_SUITE_IDS = "unboundSuiteIds[]";
 	private static final String BOUND_SUITE_IDS = "boundSuiteIds[]";
 	private static final String BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES = "bind test plan items to test suites";
-	private static final String FALSE = "false";
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TEST_SUITE = "testSuite";
 	private static final String TEST_SUITE_ID = "suiteId";
@@ -272,10 +271,10 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = { "detach=true" })
 	public @ResponseBody
-	String detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
+	Boolean detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, suiteId);
-		return FALSE;
+		return Boolean.FALSE;
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = { ITEM_IDS })

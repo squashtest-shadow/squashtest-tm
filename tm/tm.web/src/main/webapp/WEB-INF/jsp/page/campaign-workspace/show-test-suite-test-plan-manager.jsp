@@ -28,6 +28,8 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="tsuites" tagdir="/WEB-INF/tags/test-suites-components"%>
 <%@ taglib prefix="it" tagdir="/WEB-INF/tags/iterations-components"%>
+<%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
+
 
 
 <c:url var="testSuiteUrl" value="/test-suites/${ testSuite.id }" />
@@ -35,6 +37,51 @@
 <c:url var="testSuiteTestPlanUrl" value="/test-suites/${testSuite.id}/info" />
 
 <f:message var="unauthorizedDeletion" key="dialog.remove-testcase-association.unauthorized-deletion.message"  />
+
+
+<%-- ----------------------------------- Authorization ----------------------------------------------%>
+
+<%-- should be programmatically stuffed into page context --%>
+
+<c:set var="writable"         value="${false}" />
+<c:set var="moreThanReadOnly" value="${false}" />
+<c:set var="attachable"       value="${false}" />
+<c:set var="linkable"         value="${false}" />  
+<c:set var="deletable"        value="${false}" />
+<c:set var="extendedDeletable"value="${false}" />
+  
+  
+<c:if test="${not milestoneConf.locked}">
+  
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ testSuite }">
+  <c:set var="moreThanReadOnly" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ testSuite }">
+  <c:set var="writable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ testSuite }">
+  <c:set var="attachable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ testSuite }">
+  <c:set var="deletable" value="${true}" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXTENDED_DELETE" domainObject="${ testSuite }">
+  <c:set var="extendedDeletable" value="${true}" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ testSuite }">
+  <c:set var="linkable" value="${ true }" />
+</authz:authorized>
+
+<c:set var="moreThanReadOnly" value="${moreThanReadOnly or writable or attachable or deletable or extendedDeletable or linkable}" />
+
+</c:if>
+
+<%-- ----------------------------------- /Authorization ----------------------------------------------%>
+
+
+
+
+
 <%-- TODO : why is that no tree-picker-layout like the rest of association interface  ? --%>
 
 <layout:tree-picker-layout workspaceTitleKey="workspace.campaign.title" 
@@ -76,7 +123,15 @@
     
     <jsp:attribute name="tablePane">
         <comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testSuiteUrl }"/>
-        <tsuites:test-suite-test-plan-manager-table testSuite="${testSuite}" milestoneConf="${milestoneConf}" />  
+        <tsuites:test-suite-test-plan-manager-table 
+            testSuite="${testSuite}" 
+            milestoneConf="${milestoneConf}" 
+            editable="${editable}"
+            linkable="${linkable}"
+            reorderable="${reorderable}"
+            deletable="${deletable}"
+            extendedDeletable="${extendedDeletable}"
+            />  
     </jsp:attribute>
 
   <jsp:attribute name="foot">

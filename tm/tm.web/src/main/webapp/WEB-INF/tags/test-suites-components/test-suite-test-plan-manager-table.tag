@@ -29,6 +29,12 @@
  --%>
 <%@ tag body-content="empty" description="the test plan panel of an iteration when displayed in the test plan manager" %>
 
+<%@ attribute name="linkable" type="java.lang.Boolean" description="can the user link this iteration to test cases ?"%>
+<%@ attribute name="editable" type="java.lang.Boolean" description="can the user modify the existing test plan items ?"%>
+<%@ attribute name="reorderable" type="java.lang.Boolean" description="can the user reorder the test plan en masse ?"%>
+<%@ attribute name="deletable" type="java.lang.Boolean" description="can the user remove an item which has not been executed yet ?"%>
+<%@ attribute name="extendedDeletable" type="java.lang.Boolean" description="can the user remove an item which has been executed ?"%>
+
 <%@ attribute name="testSuite" type="java.lang.Object" description="the instance of test suite"%>
 <%@ attribute name="milestoneConf" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration" %>
 
@@ -221,13 +227,13 @@
     	
       domReady(function(){
         var conf = {
-        	// permissions are hard coded because a user accessing that page 
-        	// should have this following profile
             permissions : {
-              linkable : true,
-              editable : true,
-              executable : false,
-              reorderable : true
+				linkable : ${linkable},
+				editable : ${editable},
+				executable : false,
+				reorderable : ${reorderable},
+				deletable : ${deletable},
+				extendedDeletable : ${extendedDeletable}
             },
             basic : {
               testsuiteId : ${testSuite.id},

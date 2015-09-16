@@ -100,11 +100,17 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 				url : url,
 				type : 'delete',
 				dataType : 'json'
-			}).done(function(unauthorized) {
-				/* Why ? If done, it shouldn't show this message after (also in test-suite-management)
-				if (unauthorized) {
-					squashtm.notification.showInfo(conf.messages.unauthorizedTestplanRemoval);
-				}*/
+			}).done(function(partiallyUnauthorized) {
+				/*
+				 * When a user can delete a planned test case unless executed, 
+				 * and that a multiple selection encompassed both cases, 
+				 * the server performs the operation only on the item it is allowed to. 
+				 * 
+				 *  When this happens, the used must be notified.
+				 */
+				if (partiallyUnauthorized) {
+					squashtm.notification.showWarning(conf.messages.unauthorizedTestplanRemoval);
+				}
 				eventBus.trigger('context.content-modified');
 			});
 

@@ -369,8 +369,29 @@ define(
 						tdSelector : '>tbody>tr>td.unbind-or-delete',
 						jquery : true,
 						tooltip : translator.get('dialog.unbind-testcase.tooltip'),
+						
+						/*
+						 * icon trash may appear if :
+						 * - the item was executed and the user can extended delete
+						 * 
+						 * otherwhise the minus icon appear.
+						 */
 						uiIcon : function(row, data){
-							return (!! data['last-exec-on']) ? 'ui-icon-trash' : 'ui-icon-minus';
+							return (data['last-exec-on'] !== null && initconf.permissions.extendedDeletable) ? 
+									'ui-icon-trash' : 
+									'ui-icon-minus';
+						},
+						/*
+						 * Because one can disasocciate a test case from a test suite while not necessarily 
+						 * removing it from an iteration (which can potentially destroy execution history), 
+						 * the rules regarding displaying a delete button or not differ slightly from the
+						 * test plan of an iteration. 
+						 *  
+						 * the delete button must be drawn if 
+						 * - the user can delete, period
+						 */
+						condition : function(row, data){
+							return initconf.permissions.deletable;					
 						},
 						onClick : function(table, cell){
 							var dialog = $('#ts-test-plan-delete-dialog');

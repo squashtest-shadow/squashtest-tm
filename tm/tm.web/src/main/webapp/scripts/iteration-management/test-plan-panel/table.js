@@ -397,7 +397,17 @@ define(
 						jquery : true,
 						tooltip : translator.get('dialog.unbind-testcase.tooltip'),
 						uiIcon : function(row, data){
-							return (!! data['last-exec-on']) ? 'ui-icon-trash' : 'ui-icon-minus';
+							return (data['last-exec-on'] !== null) ? 'ui-icon-trash' : 'ui-icon-minus';
+						},
+						/*
+						 * the delete button must be drawn if 
+						 * - the user can delete and the item was not executed or
+						 * - the user can extended delete and item was executed
+						 */
+						condition : function(row, data){
+							return (data['last-exec-on'] === null) ? 
+									initconf.permissions.deletable :
+									initconf.permissions.extendedDeletable;					
 						},
 						onClick : function(table, cell){
 							var dialog = $('#iter-test-plan-delete-dialog');

@@ -27,6 +27,8 @@
 <%@ attribute name="editable" type="java.lang.Boolean" description="can the user modify the existing test plan items ?"%>
 <%@ attribute name="executable" type="java.lang.Boolean" description="can the user execute the test plan ?"%>
 <%@ attribute name="reorderable" type="java.lang.Boolean" description="can the user reorder the test plan en masse ?"%>
+<%@ attribute name="deletable" type="java.lang.Boolean" description="can the user remove an item which has not been executed yet ?"%>
+<%@ attribute name="extendedDeletable" type="java.lang.Boolean" description="can the user remove an item which has been executed ?"%>
 
 <%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
 <%@ attribute name="weights" type="java.lang.Object" description="a map of weights paired by id -> internationalized text. The id must be a string."%>
@@ -171,9 +173,6 @@
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
 
   <div class="table-tab-wrap">
-    <c:if test="${editable}">
-      <c:set var="deleteBtnClause" value=", sClass=unbind-or-delete" />
-    </c:if>
     <table id="iteration-test-plans-table" class="test-plan-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${iteration.id}" data-entity-type="iteration">
       <thead>
@@ -218,7 +217,7 @@
             <f:message key="label.LastExecutionOn" />
           </th>
           <th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
-          <th class="no-user-select" data-def="sClass=delete, map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
+          <th class="no-user-select" data-def="sClass=delete, map=empty-delete-holder, sClass=unbind-or-delete">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -349,7 +348,9 @@
 							linkable : ${linkable},
 							editable : ${editable},
 							executable : ${executable},
-							reorderable : ${reorderable}
+							reorderable : ${reorderable},
+							deletable : ${deletable},
+							extendedDeletable : ${extendedDeletable}
 						},
 						basic : {
 							iterationId : ${iteration.id},
