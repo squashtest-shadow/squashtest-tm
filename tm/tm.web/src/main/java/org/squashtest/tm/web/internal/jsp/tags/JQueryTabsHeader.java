@@ -111,7 +111,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 	private OutputDocument output;
 
 
-	private int activeContentIndex=-1; 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
+	private int activeContentIndex=0; 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
 
 
 	// UNUSED OR MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning
@@ -144,7 +144,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 		JspFragment body = getJspBody();
 		JspContext context = getJspContext();
 
-		readCookies(context);
+		// readCookies(context);
 
 		StringWriter writer = new StringWriter();
 

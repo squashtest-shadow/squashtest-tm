@@ -80,10 +80,11 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
-					cookie : {
+					active : 2,
+					/*cookie : {
 						name : "iteration-tab-cookie",
 						path : routing.buildURL('iterations.base')
-					},
+					},*/
 					activate : function(event, ui) {
 						if (ui.newPanel.is("#dashboard-iteration")) {
 							eventBus.trigger("dashboard.appear");

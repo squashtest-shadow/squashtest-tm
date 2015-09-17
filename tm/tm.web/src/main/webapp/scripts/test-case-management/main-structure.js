@@ -151,10 +151,10 @@ define(["jquery",
 	function initFragmentTab(){
 
 		var fragConf = {
-			cookie : {
+			/*cookie : {
 				name : "testcase-tab-cookie",
 				path : routing.buildURL('testcases.base')
-			}
+			}*/
 		};
 		Frag.init(fragConf);
 	}

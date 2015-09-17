@@ -147,10 +147,10 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
-				cookie : {
+				/*cookie : {
 					name : "suite-tab-cookie",
 					path : routing.buildURL('testsuites.base')
-				}
+				}*/
 			};
 			Frag.init(fragConf);
 
