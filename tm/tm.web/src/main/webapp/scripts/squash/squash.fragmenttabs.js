@@ -33,9 +33,9 @@ define(["jquery", "jqueryui", "jquery.cookie"], function($){
 	return {
 		init : function() {
 
-			var cookieName;
+			var cookieConf
 			if (arguments.length > 0){
-				cookieName = arguments[0].cookie;
+				cookieConf = arguments[0].cookie;
 			}
 
 				
@@ -44,10 +44,10 @@ define(["jquery", "jqueryui", "jquery.cookie"], function($){
 					active: 0
 				};
 			
-			if(!!cookieName){
-			var cookie = $.cookie(cookieName);
-				if (cookie){
-					args.active = parseInt(cookie,10);
+			if(!!cookieConf){		
+				var cookieVal = $.cookie(cookieConf.name);
+				if (cookieVal){
+					args.active = parseInt(cookieVal,10);
 				}
 			} 
 

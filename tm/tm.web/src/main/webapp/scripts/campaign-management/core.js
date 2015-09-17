@@ -108,7 +108,6 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 	function initTabs(conf){
 		var fragConf = {
-			cookie : "iteration-tab-cookie",	// FIXME : was that a copy pasta ?
 			activate : function(event, ui){
 				if (ui.newPanel.is("#campaign-dashboard")){
 					eventBus.trigger('dashboard.appear');

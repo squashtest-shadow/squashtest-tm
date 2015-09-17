@@ -19,11 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require(["jquery", "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus",
+	require(["jquery", "app/pubsub", "squash.translator", "squash.basicwidgets", "workspace.event-bus", 
+	         "workspace.routing",
 	         "app/ws/squashtm.workspace", "contextual-content-handlers", "jquery.squash.fragmenttabs",
 	         "bugtracker/bugtracker-panel", "test-suite-management", "custom-field-values", "test-suite/execution-buttons-panel",
 	         "test-automation/auto-execution-buttons-panel", "jquery.cookie"],
-			function($, ps, messages, basicwidg, eventBus, WS, contentHandlers, Frag, bugtracker, tsmanagement, cufvalues){
+			function($, ps, messages, basicwidg, eventBus, routing, WS, contentHandlers, Frag, bugtracker, tsmanagement, cufvalues){
 		"use strict";
 
 		$(document).on("click", "#duplicate-test-suite-button", function() {
@@ -146,7 +147,10 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
-				cookie : "iteration-tab-cookie"
+				cookie : {
+					name : "suite-tab-cookie",
+					path : routing.buildURL('testsuites.base')
+				}
 			};
 			Frag.init(fragConf);
 

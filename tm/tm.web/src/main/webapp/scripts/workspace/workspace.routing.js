@@ -104,51 +104,6 @@ define([], function(){
 		return new RegExp("^"+expression+"$");
 	}
 	
-	
-	/*
-	 * left here as legacy, in case the implementation above proves itself buggy 
-	 * 
-	function templateToRegex(template, cap){
-
-		var capture = (cap !== undefined) ? cap : false;
-		var pholdNoCapture = /\{[^\}]+\}/g,
-			pholdCapture = /\{([^\}]+)\}/g;
-
-
-		// let's break down the template, we separate the static parts from the placeholder parts. By construction
-		// we'll normally have the relation placeholders.length <= staticparts.length <= placeholders.length + 1.
-		// we do so because later on we'll need to escape the non-placeholder sequences (static parts) that contain 
-		// special characters
-		var staticparts,
-			placeholders = [],
-			buf;
-
-		staticparts = template.split(pholdNoCapture);
-
-		while ((buf = pholdCapture.exec(template))!== null){
-			placeholders.push(buf[1]);
-		}
-
-		// now we can build our regexp
-		var expression = "";
-		while (staticparts.length>0){
-			var statik = staticparts.shift() || "",
-				placeholdexpr = placeholders.shift() || "";
-
-			var escapedStatik =
-				statik.replace(/[\-\[\\\]\{\}\(\)\*\+\?\.\,\\\^\$\|\#\s\/]/g, "\\$&");
-			
-			if (capture){
-				placeholdexpr = '(' + placeholdexpr + ')';
-			}
-
-			expression += escapedStatik + placeholdexpr;
-		}
-
-		return new RegExp("^"+expression+"$");
-
-	}
-*/
 	return {
 
 		// url names mapping
@@ -161,6 +116,7 @@ define([], function(){
 		'bugtracker.execsteps.new' :		root + '/bugtracker/execution-step/{\\d+}/new-issue',
 
 		'testcases.workspace' :				root + '/test-case-workspace/',
+		'testcases.base' :					root + '/test-cases',
 		'testcases.info' :					root + '/test-cases/{\\d+}/info',
 		'testcases.requirements.manager' :	root + '/test-cases/{\\d+}/verified-requirement-versions/manager',
 
@@ -185,8 +141,11 @@ define([], function(){
 		'campaigns.workspace' :				root + '/campaign-workspace/',
 		'campaigns.testplan.manager' :		root + '/campaigns/{\\d+}/test-plan//manager',
 		'campaigns.countIterations'	:		root + '/campaigns/{\\d+}/iterations/count',
+		'iterations.base' : 				root + '/iterations',
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'iterations.testplan.lastexec' :	root + '/iterations/{\\d+}/test-plan/{\\d+}/last-execution',
+		
+		'testsuites.base' :					root + '/test-suites',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
 		'testsuites.execute.stepbyindex' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/executions/{\\d+}/steps/index/{\\d+}',

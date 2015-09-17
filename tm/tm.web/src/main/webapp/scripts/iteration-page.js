@@ -22,9 +22,9 @@ require([ "common" ], function() {
 	"use strict";
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
-			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
+			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "workspace.routing", "iteration-management",
 			"app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
-			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS, cufvalues, confman) {
+			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues, confman) {
 
 		// *********** event handler ***************
 
@@ -80,8 +80,10 @@ require([ "common" ], function() {
 			// ****** tabs configuration *******
 
 			var fragConf = {
-					active : 2,
-					cookie : "iteration-tab-cookie",
+					cookie : {
+						name : "iteration-tab-cookie",
+						path : routing.buildURL('iterations.base')
+					},
 					activate : function(event, ui) {
 						if (ui.newPanel.is("#dashboard-iteration")) {
 							eventBus.trigger("dashboard.appear");

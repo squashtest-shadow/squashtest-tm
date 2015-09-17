@@ -122,7 +122,8 @@ require(["common"], function() {
                       milestoneConf="${milestoneConf}"/>
 
 <%-- --------------------------------------- Test Case body --------------------------------------- --%>
-<csst:jq-tab>
+
+<csst:jq-tab >
 <div class="fragment-tabs fragment-body">
 
 	<%--  ------------------ main tab panel --------------------------------- --%>
