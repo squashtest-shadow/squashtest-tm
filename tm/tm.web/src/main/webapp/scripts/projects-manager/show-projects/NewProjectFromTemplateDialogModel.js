@@ -31,7 +31,8 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 			copyBugtrackerBinding: true,
 			copyAutomatedProjects: true,
 			copyInfolists:true,
-			copyMilestone:true
+			copyMilestone:true,
+			copyAllowTcModifFromExec:true
 		},
 		url : router.buildURL("project.new")
 	});
