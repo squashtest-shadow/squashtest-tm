@@ -29,6 +29,7 @@ define([ "jquery.squash.bindviewformdialog","./NewTemplateDialogModel", "jquery.
 
 		//overriding callConfirm method of BindViewFormDialog to have redirection after the save success
 		callConfirm : function(){
+			this.updateModelFromCKEditor();
 			this.model.save().success(function(response, status, options){
 				document.location.href = response.Location[0];
 			});
