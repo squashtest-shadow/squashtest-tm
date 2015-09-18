@@ -417,9 +417,8 @@ class ExcelExporter {
 		for (CoverageModel cm : models) {
 			r = covSheet.createRow(rIdx);
 
-
 				r.createCell(cIdx++).setCellValue(cm.getReqPath());
-				r.createCell(cIdx++).setCellValue(cm.getRequirementId());
+				r.createCell(cIdx++).setCellValue(cm.getReqVersion());
 				r.createCell(cIdx++).setCellValue(cm.getTcPath());
 		
 			rIdx++;

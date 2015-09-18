@@ -102,7 +102,7 @@ RequirementLibraryFinderService {
 			boolean keepRteFormat, MessageSource messageSource);
 	
 	/**
-	 * Generate a xls file to export requirements
+	 * Generate a xls file to export requirements from research screen
 	 * @param libraryIds List of libraryIds (ie project ids) selected for export
 	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
 	 * @param keepRteFormat
