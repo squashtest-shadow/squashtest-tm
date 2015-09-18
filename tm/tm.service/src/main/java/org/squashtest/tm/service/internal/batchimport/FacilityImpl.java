@@ -848,13 +848,17 @@ public class FacilityImpl implements Facility {
 		}
 		doUpdateCustomFields(cufValues,orig);
 		doUpdateRequirementMetadata((AuditableMixin)reqVersion,(AuditableMixin)orig);
-		moveRequirement(target.getRequirement(), req, target.getRequirement().getOrder());
+		moveRequirement(target.getRequirement(), req);
 		//we return the persisted RequirementVersion for post process
 		return orig;
 	}
 
 	@SuppressWarnings("rawtypes")
-	private void moveRequirement(RequirementTarget target, final Requirement req, final int newPosition){
+	private void moveRequirement(RequirementTarget target, final Requirement req){
+		final Integer newPosition = target.getOrder();
+		if (newPosition==null) {
+			return;
+		}
 		if (newPosition <= 0) {
 			return;
 		}
@@ -1524,7 +1528,10 @@ public class FacilityImpl implements Facility {
 		String unconsistentName = rvi.getTarget().getUnconsistentName();
 		if (unconsistentName!=null && !StringUtils.isEmpty(unconsistentName)) {
 			String newName = PathUtils.unescapePathPartSlashes(unconsistentName);
-			requirementVersionManagerService.rename(rvi.getRequirementVersion().getId(), newName);
+			RequirementVersionTarget target = rvi.getTarget();
+			Requirement req = reqLibNavigationService.findRequirement(target.getRequirement().getId());
+			RequirementVersion orig = req.findRequirementVersion(target.getVersion());
+			orig.setName(newName);
 		}
 	}
 
