@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.poi.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -228,7 +229,7 @@ class ExcelWorkbookParserBuilder {
 		try {
 			return WorkbookFactory.create(is);
 
-		} catch (InvalidFormatException | IOException | IllegalArgumentException e ) {
+		} catch (InvalidFormatException | IOException | IllegalArgumentException | POIXMLException e) {
 			LOGGER.info(e.getMessage());
 			IOUtils.closeQuietly(is);
 			throw new SheetCorruptedException(e);

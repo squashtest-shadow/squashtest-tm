@@ -25,7 +25,7 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 
 	/**
 	 * builds recap for xls import
-	 * 
+	 *
 	 * @param json
 	 * @returns recap as an html string
 	 */
@@ -37,13 +37,14 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 	$.widget("squash.reqImportDialog", $.squash.importDialog, {
 
 		importType : 'xls',
-		
+
 		createSummary : function(json) {
 			this.element.find(".import-summary").html(recapBuilder[this.importType].call(this, json));
 		},
 		createFormatErrorsSummary : function(json){
 			this.templateKoMiss = Handlebars.compile($("#xls-import-recap-ko").html());
-			this.element.find(".error-format").html(this.templateKoMiss(json));
+			var htmlTpl = this.templateKoMiss(json);
+			this.element.find(".error-format").html(htmlTpl);
 		},
 
 		bindEvents : function() {

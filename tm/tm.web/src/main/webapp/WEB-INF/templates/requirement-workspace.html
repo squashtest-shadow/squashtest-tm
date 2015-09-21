@@ -515,14 +515,18 @@
         </script>
 
       <script id="xls-import-recap-ko" type="text/x-handlebars-template">
-         <p th:text="#{message.import.error.format}"><ul>
+		<p th:text="#{message.import.error.format}"></p>
+		<ul>
            {{#if missingMandatoryColumns.length}}
              <li><span th:remove="tag" th:text="#{message.import.log.error.mandatoryColumns}"></span>{{missingMandatoryColumns}}.</li>
            {{/if}}
            {{#if duplicateColumns.length}}
              <li th:text="#{message.import.log.error.duplicateColumns}"></li>
            {{/if}}
-         </ul></p>
+		   {{#if actionValidationError}}
+             <li th:text="#{squashtm.action.exception.sheetcorrupted.label }"></li>
+           {{/if}}
+         </ul>
          </script>
 
       <div data-def="state=error-size"> 
