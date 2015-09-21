@@ -44,7 +44,7 @@ require([ "common" ], function(common) {
 				
 						var index;
 						
-						if (result > 0){
+						if (result >= 0){
 							 index = result;	
 						} else {
 							index = localStorage.getItem("squashtm.execModification.index") || 0;
