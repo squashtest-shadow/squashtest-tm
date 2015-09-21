@@ -358,6 +358,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 				case TEST_CASE:
 					warningMessage = Messages.ERROR_TC_USER_NOT_FOUND;
 					break;
+				default:
+					break;
 				}
 				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING,warningMessage,
 						impactMessage);
@@ -1065,7 +1067,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
-		fixMetadatas(reqTarget, (AuditableMixin) reqVersion, ImportMode.UPDATE, EntityType.REQUIREMENT_VERSION);
+		logs.addEntries(fixMetadatas(target, (AuditableMixin) reqVersion, ImportMode.UPDATE, EntityType.REQUIREMENT_VERSION));
 
 		if (logs.hasCriticalErrors()) {
 			instr.fatalError();
