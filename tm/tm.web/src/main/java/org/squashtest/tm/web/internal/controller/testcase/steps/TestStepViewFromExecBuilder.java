@@ -44,6 +44,8 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 	public TestStepViewFromExec buildTestStepViewFromExec(ExecutionStep execStep) {
 
 		this.execStep = findExistingStep(execStep);
+
+
 		TestStep testStep = this.execStep.getReferencedTestStep();
 
 		testStep.accept(this);
@@ -84,6 +86,7 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 			Collections.reverse(before);
 			result = (ExecutionStep) CollectionUtils.find(before, TestStepViewFromExec.NOT_DELETED);
 		}
+
 
 		return result;
 	}

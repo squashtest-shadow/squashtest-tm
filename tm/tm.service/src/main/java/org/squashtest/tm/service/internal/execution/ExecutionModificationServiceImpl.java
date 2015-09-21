@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
@@ -173,7 +174,12 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 		Execution execution = executionDao.findById(executionId);
 		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);
 
-		return executionStepModifHelper.doUpdateStep(toBeUpdated, execution);
+		long result = executionStepModifHelper.doUpdateStep(toBeUpdated, execution);
+
+		if (execution.getSteps().size() == 0) {
+			throw new ExecutionHasNoStepsException();
+		}
+		return result;
 	}
 
 
