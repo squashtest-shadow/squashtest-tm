@@ -65,7 +65,7 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 
 	@Override
 	public void visit(CallTestStep visited) {
-		testStepView = new TestStepViewFromExec(visited, execStep);
+		// not possible. The step is an ActionTestStep even if it's in fact a call step.
 
 	}
 

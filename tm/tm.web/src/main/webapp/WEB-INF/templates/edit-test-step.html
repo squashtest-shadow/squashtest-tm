@@ -112,7 +112,7 @@
               </h2>
             </div>
             
-            <div style="float: left; height: 3em" class="entity-edit-general-warning"><p th:if= "${fromExec} and ${testStepView.isCallStep()}" th:text="#{label.callstep} + ' ' + ${testStepView.testCase.name}" /></div>
+            <div style="float: left; height: 3em" class="entity-edit-general-warning"><p th:if= "${fromExec} and ${testStepView.isCallStep()}" th:text="#{label.callstep} + ' ' + ${testStepView.callStepName}" /></div>
             
             <div class="snap-right">  <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "  href="#" id="previous-test-step-button" >Previous</a>
                 <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#" id="next-test-step-button">Next</a></div>

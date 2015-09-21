@@ -28,7 +28,6 @@ import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
 
 public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 
@@ -40,6 +39,11 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 	};
 	private boolean isCallStep = false;
 
+	private String callStepName;
+
+	public String getCallStepName() {
+		return callStepName;
+	}
 
 	public boolean isCallStep() {
 		return isCallStep;
@@ -50,18 +54,15 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 		actionStep = visited;
 	}
 
-	public TestStepViewFromExec(CallTestStep visited, ExecutionStep execStep) {
-		genericSettings(execStep);
-		callStep = visited;
-	}
 
 	private void genericSettings(ExecutionStep execStep) {
 		Execution exec = execStep.getExecution();
 		List<ExecutionStep> execSteps = getNonDeletedSteps(execStep);
 		int size = execSteps.size();
-		testCase = execStep.getReferencedTestStep().getTestCase();
-		if (!testCase.getId().equals(exec.getReferencedTestCase().getId())) {
+		testCase = exec.getReferencedTestCase();
+		if (!testCase.getId().equals(execStep.getReferencedTestStep().getTestCase().getId())) {
 			isCallStep = true;
+			callStepName = execStep.getReferencedTestStep().getTestCase().getName();
 		}
 		setTotalNumberOfSteps(size);
 		int stepIndex = getStepIndex(execSteps, execStep.getId());
