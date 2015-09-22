@@ -816,8 +816,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def requirementVersion = requirement.findRequirementVersion(1)
 
 		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 0
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
 		requirementVersion.getMilestones().size()==0
 									
@@ -838,8 +838,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def milestones = requirementVersion.getMilestones();
 
 		then:
-		summary.requirementVersionSuccesses == 1
-		summary.requirementVersionWarnings == 0
+		summary.requirementVersionSuccesses == 0
+		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
 		milestones.size()==2
 		milestones*.label as Set==["My milestone","My milestone 3"] as Set

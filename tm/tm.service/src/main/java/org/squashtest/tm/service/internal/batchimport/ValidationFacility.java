@@ -40,6 +40,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -61,8 +62,10 @@ import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
@@ -229,11 +232,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final String PERM_CREATE = "CREATE";
-	private static final String PERM_WRITE = "WRITE";
-	private static final String PERM_DELETE = "DELETE";
 	private static final String PERM_READ = "READ";
-	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
+	private static final String PERM_IMPORT = "IMPORT";
+	private static final String TEST_CASE_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
 	private static final String REQUIREMENT_VERSION_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.requirement.RequirementLibrary";
 
 
@@ -273,6 +274,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private RequirementVersionCoverageDao coverageDao;
+	
+	@Inject
+	private ProjectDao projectDao;
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
@@ -390,7 +394,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 2 - can the user actually do it ?
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -420,7 +424,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues, model.getTestStepCufs(target)));
 
 		// 3 - the user must be approved
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -460,7 +464,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 3 - cufs : call steps have no cufs -> skip
 
 		// 4.1 - the user must be approved on the source test case
-		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntOwnerPermission != null) {
 			logs.addEntry(hasntOwnerPermission);
 		}
@@ -499,7 +503,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestStepCufs(target)));
 
 		// 3 - the user must be approved
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -545,7 +549,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 3 - cufs : call steps have no cufs -> skip
 
 		// 4.1 - the user must be approved on the source test case
-		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntOwnerPermission != null) {
 			logs.addEntry(hasntOwnerPermission);
 		}
@@ -592,7 +596,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - can the user do it
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -626,7 +630,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -648,7 +652,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -668,7 +672,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 2 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -710,7 +714,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			}
 
 			// 3 - is the user allowed to do so ?
-			LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+			LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, dataset.getTestCase(), dataset);
 			if (hasNoPermission != null) {
 				logs.addEntry(hasNoPermission);
 			}
@@ -727,7 +731,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.basicDatasetCheck(dataset);
 
 		// 2 - is the user allowed to do so ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, dataset.getTestCase(), dataset);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -749,7 +753,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - has the user the required privilege ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, dataset.getTestCase(), dataset);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -772,7 +776,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		Long libid = model.getProjectStatus(target.getProject()).getTestCaseLibraryId();
 		if ((libid != null)
-				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, LIBRARY_CLASSNAME))) {
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, TEST_CASE_LIBRARY_CLASSNAME))) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
 					permission, target.getPath() });
 		}
@@ -793,6 +797,35 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		return entry;
 	}
+	
+	private LogEntry checkPermissionOnProject(String permission, CoverageTarget target, Target checkedTarget) {
+		
+		LogEntry entry = null;
+		
+		String tcPath = target.getTcPath();
+		Project tcProject = projectDao.findByName(PathUtils.extractProjectName(tcPath));
+		Long tcLibid = tcProject.getTestCaseLibrary().getId();
+		
+		if ((tcLibid != null)
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
+					permission, target.getPath() });
+		}
+		
+		String reqPath = target.getReqPath();
+		Project reqProject = projectDao.findByName(PathUtils.extractProjectName(reqPath));
+		Long reqLibid = reqProject.getRequirementLibrary().getId();
+		
+		if ((reqLibid != null)
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
+					permission, target.getPath() });
+		}
+		
+		return entry;
+	}
+	
+	
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
 			String optionalImpact) {
@@ -845,7 +878,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3-2 : permissions.
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -902,7 +935,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			// 3-2 : permissions. note about the following 'if' : the case where
 			// the project doesn't exist (and thus has
 			// no id) is already covered in the basic checks.
-			LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
+			LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 			if (hasntPermission != null) {
 				logs.addEntry(hasntPermission);
 			}
@@ -951,7 +984,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 				model.getRequirementVersionCufs(target)));
 
 		// 3 - Check permissions
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -1031,7 +1064,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	@Override
 	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
 		RequirementVersionTarget target = instr.getTarget();
-		RequirementTarget reqTarget = target.getRequirement();
 		RequirementVersion reqVersion = instr.getRequirementVersion();
 		Map<String, String> cufValues = instr.getCustomFields();
 
@@ -1056,7 +1088,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		checkExistingRequirementVersionStatus(target,logs);
 
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -1211,7 +1243,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Long tcId = checkTcForCoverage(target, logs);
 		Long reqVersionId = checkRequirementVersionForCoverage(target, logs);
 		checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
-
+		
+		//if something is wrong here, the coverage isn't valid so 
+		//return to avoid nasty exception in nexts checks
+		if (logs.hasCriticalErrors()) {
+			return logs;
+		}
+		
+		logs.addEntry(checkPermissionOnProject(PERM_IMPORT, target, target));
 
 		return logs;
 	}

@@ -74,12 +74,12 @@ public class CoverageTarget extends Target {
 
 	@Override
 	public String getProject() {
-		throw new IllegalAccessError("coverage don't have a project. Don't use this method");
+		throw new UnsupportedOperationException("coverage don't have a project. Don't use this method");
 	}
 
 	@Override
 	public String getPath() {
-		throw new IllegalAccessError("coverage don't have a path. Don't use this method");
+		throw new UnsupportedOperationException("coverage don't have a path. Don't use this method");
 	}
 
 }
