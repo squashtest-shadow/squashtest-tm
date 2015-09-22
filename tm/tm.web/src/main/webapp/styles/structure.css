@@ -1092,7 +1092,6 @@ body.execute-html-body { /*width:100%;*/
 
 div#execute-header {
 	position: absolute;
-	white-space : nowrap;
 	overflow : hidden;	
 	width : 100%;	
 }
