@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
@@ -30,12 +29,9 @@ import org.squashtest.tm.service.internal.library.GenericNodeManagementService
 import org.squashtest.tm.service.internal.repository.ParameterDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestStepDao
-import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
-import org.squashtest.tm.service.internal.testcase.CustomTestCaseModificationServiceImpl
-import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler
-import org.squashtest.tm.service.testcase.ParameterModificationService;
-import org.squashtest.tm.service.testutils.MockFactory;
-
+import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService
+import org.squashtest.tm.service.testcase.ParameterModificationService
+import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification
 
 class CustomTestCaseModificationServiceImplTest extends Specification {

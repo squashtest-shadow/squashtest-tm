@@ -18,27 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.user;
+package org.squashtest.tm.service.user
 
-import static org.junit.Assert.*
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.core.foundation.collection.Filtering
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.domain.users.Team
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+import org.unitils.dbunit.annotation.ExpectedDataSet
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import static org.squashtest.tm.core.foundation.collection.SortOrder.*;
-
-import org.squashtest.tm.domain.users.Team;
-import org.squashtest.tm.service.user.AdministrationService
-import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet
-
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport
+import static org.squashtest.tm.core.foundation.collection.SortOrder.ASCENDING
+import static org.squashtest.tm.core.foundation.collection.SortOrder.DESCENDING
 
 /**
  * @author mpagnon

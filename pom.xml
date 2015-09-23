@@ -24,12 +24,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <!--<parent>-->
-  <!--<groupId>org.squashtest.tm</groupId>-->
-  <!--<artifactId>squash-tm-parent</artifactId>-->
-  <!--<version>1.8</version>-->
-  <!--</parent>-->
-
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
   <version>1.13.0.NOSGI-SNAPSHOT</version>
@@ -58,6 +52,8 @@
     <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.3.11</groovy.version>
+
+    <jasperreports.version>6.1.1</jasperreports.version>
     <java.version>1.7</java.version>
 
     <liquibase.version>2.0.1</liquibase.version>
@@ -70,8 +66,6 @@
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
-
-    <jasperreports.version>6.1.1</jasperreports.version>
   </properties>
 
   <build>
@@ -259,14 +253,6 @@
           <groupId>com.alexnederlof</groupId>
           <artifactId>jasperreports-plugin</artifactId>
           <version>1.9</version>
-          <executions>
-            <execution>
-              <goals>
-                <goal>jasper</goal>
-              </goals>
-              <phase>process-sources</phase>
-            </execution>
-          </executions>
           <!--
           <configuration>
 -->
@@ -297,6 +283,14 @@
               <version>1.4.01</version>
             </dependency>
           </dependencies>
+          <executions>
+            <execution>
+              <goals>
+                <goal>jasper</goal>
+              </goals>
+              <phase>process-sources</phase>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
     </pluginManagement>

@@ -20,32 +20,19 @@
  */
 package org.squashtest.tm.service.internal.execution
 
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.InfoList
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseNature
-import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
-import org.squashtest.tm.service.internal.repository.CampaignDao
-import org.squashtest.tm.service.internal.repository.ExecutionDao
-import org.squashtest.tm.service.internal.repository.ExecutionStepDao
-import org.squashtest.tm.service.internal.repository.IterationDao
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
+import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker
-
 import spock.lang.Specification
 
 public class ExecutionModificationServiceTest extends Specification {

@@ -20,16 +20,12 @@
  */
 package org.squashtest.tm.hibernate.mapping.campaign
 
-import org.squashtest.tm.core.foundation.exception.NullArgumentException
-import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.Hibernate
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
 import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.testcase.TestCase
-
+import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
 class CampaignMappingIT extends HibernateMappingSpecification {
 	def "should persist ordered iterations"() {

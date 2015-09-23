@@ -20,22 +20,15 @@
  */
 package org.squashtest.tm.service.deletion
 
-
-import java.util.List;
-
-import org.apache.poi.hssf.record.formula.functions.T
 import org.springframework.context.MessageSource
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.deletion.NotDeletablePreviewReport
-import org.squashtest.tm.service.deletion.SuppressionPreviewReport
 import org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler
 import org.squashtest.tm.service.internal.repository.EntityDao
 import org.squashtest.tm.service.internal.repository.FolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
-
 import spock.lang.Specification
 
 class AbstractNodeDeletionHandlerImplTest extends Specification {

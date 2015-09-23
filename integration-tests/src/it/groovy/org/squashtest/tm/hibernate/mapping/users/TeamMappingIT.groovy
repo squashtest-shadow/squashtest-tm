@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.hibernate.mapping.users
 
-import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 
 /**
  * @author mpagnon

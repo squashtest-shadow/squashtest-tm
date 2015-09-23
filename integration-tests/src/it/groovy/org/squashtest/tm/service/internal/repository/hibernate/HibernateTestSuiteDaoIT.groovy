@@ -20,20 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.Query
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
-import org.squashtest.tm.domain.campaign.TestPlanStatus;
-import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
-import org.squashtest.tm.core.foundation.collection.Paging
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

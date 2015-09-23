@@ -50,6 +50,7 @@
     <mysql-connector-java.version>.1.35</mysql-connector-java.version>
     <nekohtml.version>1.9.22</nekohtml.version>
     <objenesis.version>2.1</objenesis.version>
+    <ooxml-schemas.version>1.1</ooxml-schemas.version>
     <poi.version>3.12</poi.version>
     <spock.version>1.0-groovy-2.0</spock.version>
     <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
@@ -144,7 +145,25 @@
 
       <dependency>
         <groupId>org.apache.poi</groupId>
+        <artifactId>ooxml-schemas</artifactId>
+        <version>${ooxml-schemas.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.poi</groupId>
         <artifactId>poi</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml</artifactId>
+        <version>${poi.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.apache.poi</groupId>
+        <artifactId>poi-ooxml-schemas</artifactId>
         <version>${poi.version}</version>
       </dependency>
 

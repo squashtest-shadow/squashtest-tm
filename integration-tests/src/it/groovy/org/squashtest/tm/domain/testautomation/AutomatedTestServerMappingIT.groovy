@@ -20,13 +20,7 @@
  */
 package org.squashtest.tm.domain.testautomation
 
-
-
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification;
-
-
+import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
 class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
 

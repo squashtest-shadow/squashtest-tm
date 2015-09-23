@@ -18,14 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.requirement;
+package org.squashtest.tm.domain.requirement
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
+import org.squashtest.tm.domain.library.TreeNode
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementLibrary
-import org.squashtest.tm.exception.DuplicateNameException;
-
+import org.squashtest.tm.exception.DuplicateNameException
 import spock.lang.Specification
 
 class RequirementLibraryTest extends Specification {
@@ -36,8 +34,9 @@ class RequirementLibraryTest extends Specification {
 	}
 	
 	def "should not add null root content"() {
-		when: 
-		requirementLibrary.addContent(null)
+		when:
+		requirementLibrary.addContent((TreeNode) null)
+
 		
 		then:
 		thrown(NullArgumentException)

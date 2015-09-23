@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.library
 
-import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
@@ -30,8 +27,9 @@ import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.testcase.TestCaseFinder
 import org.squashtest.tm.service.testcase.TestCaseModificationService
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional

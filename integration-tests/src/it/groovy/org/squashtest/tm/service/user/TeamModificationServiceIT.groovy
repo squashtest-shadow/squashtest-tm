@@ -18,26 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.user;
+package org.squashtest.tm.service.user
 
-import static org.junit.Assert.*
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.users.Team
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.exception.NameAlreadyInUseException
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
-import org.springframework.transaction.annotation.Transactional
-
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.domain.NamedReference
-import org.squashtest.tm.domain.users.Team;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.service.user.TeamModificationService;
-import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet;
-
-import spock.unitils.UnitilsSupport
 
 /**
  * @author mpagnon

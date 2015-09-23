@@ -20,19 +20,13 @@
  */
 package org.squashtest.tm.web.internal.report.services
 
-import java.text.SimpleDateFormat;
-
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.requirement.ExportRequirementData
-import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.web.internal.report.service.JasperReportsService
-
 import spock.lang.Specification
-
 
 public class JasperReportsServiceImplTest extends Specification {
 

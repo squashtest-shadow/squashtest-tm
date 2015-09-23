@@ -20,17 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.InputType
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {

@@ -20,21 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
-import org.hibernate.HibernateException;
+import org.hibernate.HibernateException
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
+import org.squashtest.tm.core.foundation.collection.Filtering
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
 import org.squashtest.tm.domain.campaign.TestPlanStatistics
 import org.squashtest.tm.domain.campaign.TestPlanStatus
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.unitils.dbunit.annotation.DataSet
-
-import spock.lang.Unroll;
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 class HibernateIterationDaoIT extends DbunitDaoSpecification {

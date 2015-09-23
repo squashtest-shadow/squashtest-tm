@@ -18,20 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.library;
+package org.squashtest.tm.service.internal.library
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.library.Folder
 import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.service.internal.library.GenericNodeManagementService;
-import org.squashtest.tm.service.internal.library.NodeManagementService;
+import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.internal.repository.FolderDao
 import org.squashtest.tm.service.internal.repository.LibraryDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
-
 import spock.lang.Specification
 
 class GenericNodeManagementServiceTest extends Specification {

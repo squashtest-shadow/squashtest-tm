@@ -20,15 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.EntityDao
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateProjectDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 class EntityDaoIT extends DbunitDaoSpecification {

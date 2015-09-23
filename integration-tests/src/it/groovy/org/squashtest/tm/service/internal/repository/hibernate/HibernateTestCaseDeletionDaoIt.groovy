@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
-import org.apache.poi.hssf.record.formula.functions.T
-import org.hibernate.Query
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
@@ -36,11 +33,11 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport

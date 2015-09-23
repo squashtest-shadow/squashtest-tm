@@ -20,22 +20,16 @@
  */
 package org.squashtest.tm.service.users
 
-import org.apache.poi.hssf.record.formula.functions.T
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.domain.users.UsersGroup;
-import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+import org.squashtest.tm.domain.users.UsersGroup
+import org.squashtest.tm.exception.user.LoginAlreadyExistsException
 import org.squashtest.tm.service.configuration.ConfigurationService
-import org.squashtest.tm.service.feature.FeatureManager;
-import org.squashtest.tm.service.internal.repository.AdministrationDao
-import org.squashtest.tm.service.internal.repository.ProjectDao
-import org.squashtest.tm.service.internal.repository.TeamDao
-import org.squashtest.tm.service.internal.repository.UserDao
-import org.squashtest.tm.service.internal.repository.UsersGroupDao
+import org.squashtest.tm.service.feature.FeatureManager
+import org.squashtest.tm.service.internal.repository.*
 import org.squashtest.tm.service.internal.user.AdministrationServiceImpl
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
 import org.squashtest.tm.service.user.UserAccountService
-
 import spock.lang.Specification
 
 class AdministrationServiceImplTest extends Specification {

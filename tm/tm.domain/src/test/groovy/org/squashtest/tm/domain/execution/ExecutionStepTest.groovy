@@ -20,18 +20,14 @@
  */
 package org.squashtest.tm.domain.execution
 
-import org.junit.Rule;
-import org.junit.rules.*;
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.testcase.ActionTestStep
 
 import spock.lang.Specification
+import spock.lang.Timeout
 
+@Timeout(1)
 class ExecutionStepTest extends Specification {
-	
-	@Rule
-	public MethodRule globalTimeout= new Timeout(2000);
-
 	
 	def "Should create an execution step for an ActionTestStep"() {
 		given:

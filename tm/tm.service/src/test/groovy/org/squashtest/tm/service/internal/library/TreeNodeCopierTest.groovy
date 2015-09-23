@@ -19,18 +19,15 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.library
-import org.apache.poi.hssf.record.formula.functions.T
-import org.squashtest.tm.domain.project.Project
+
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService
-import org.squashtest.tm.service.internal.library.TreeNodeCopier
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.testutils.MockFactory;
-
+import org.squashtest.tm.service.testutils.MockFactory
 import spock.lang.Specification
 
 public class TreeNodeCopierTest extends Specification{
