@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Build;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
@@ -29,39 +29,39 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements HttpBasedStep{
+public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements HttpBasedStep {
 
 	/* ********* technically needed for the computation ************** */
-	
+
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
-	
-	private HttpClient client;
-	
-	private HttpMethod method;
-	
+
+	private CloseableHttpClient client;
+
+	private HttpUriRequest method;
+
 	private JsonParser parser;
-	
-	
+
+
 	// **** output of the computation *** */
-	
+
 	private boolean stillBuilding = true;
-	
-	
+
+
 	// ****** accessors ********** */
-	
-	
+
+
 	@Override
-	public void setClient(HttpClient client) {
+	public void setClient(CloseableHttpClient client) {
 		this.client = client;
 	}
 
 	@Override
-	public void setMethod(HttpMethod method) {
+	public void setMethod(HttpUriRequest method) {
 		this.method = method;
 	}
 
 	@Override
-	public void setParser(JsonParser parser){
+	public void setParser(JsonParser parser) {
 		this.parser = parser;
 	}
 
@@ -71,30 +71,30 @@ public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements H
 	}
 
 	//************* constructor ******************
-	
+
 
 	public CheckBuildRunning(BuildProcessor processor) {
 		super(processor);
 	}
 
-	
+
 	// ************ code ***************** 
-	
+
 	@Override
 	public boolean needsRescheduling() {
-		return (stillBuilding == true);
+		return stillBuilding;
 	}
 
 
 	@Override
 	public void perform() throws Exception {
-		
+
 		String response = requestExecutor.execute(client, method);
-		
+
 		Build build = parser.getBuildFromJson(response);
-		
+
 		stillBuilding = build.isBuilding();
-		
+
 	}
 
 	@Override
@@ -106,7 +106,6 @@ public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements H
 	public Integer suggestedReschedulingInterval() {
 		return null;
 	}
-	
-	
-	
+
+
 }

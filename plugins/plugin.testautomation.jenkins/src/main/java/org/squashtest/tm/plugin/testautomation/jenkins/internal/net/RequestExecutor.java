@@ -20,19 +20,21 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
-import static org.apache.commons.httpclient.HttpStatus.SC_FORBIDDEN;
-import static org.apache.commons.httpclient.HttpStatus.SC_OK;
-import static org.apache.commons.httpclient.HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED;
-import static org.apache.commons.httpclient.HttpStatus.SC_UNAUTHORIZED;
 
-import java.io.IOException;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.testautomation.spi.AccessDenied;
 import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
+
+import java.io.IOException;
+
+import static org.apache.http.HttpStatus.*;
 
 public class RequestExecutor {
 
@@ -48,37 +50,34 @@ public class RequestExecutor {
 		return INSTANCE;
 	}
 
-	public String execute(HttpClient client, HttpMethod method) {
-		try {
-			int responseCode = client.executeMethod(method);
+	public String execute(CloseableHttpClient client, HttpUriRequest method) {
+		try (CloseableHttpResponse resp= client.execute(method)) {
+			checkResponseCode(resp.getStatusLine());
 
-			checkResponseCode(responseCode);
+			ResponseHandler<String> handler = new BasicResponseHandler();
 
-			String response = method.getResponseBodyAsString();
-
-			return response;
+			return handler.handleResponse(resp);
 		} catch (AccessDenied ex) {
 			throw new AccessDenied(
-					"Test automation - jenkins : operation rejected the operation because of wrong credentials");
+				"Test automation - jenkins : operation rejected the operation because of wrong credentials");
 		} catch (IOException ex) {
 			throw new ServerConnectionFailed(
-					"Test automation - jenkins : could not connect to server due to technical error : ", ex);
-		} finally {
-			method.releaseConnection();
+				"Test automation - jenkins : could not connect to server due to technical error : ", ex);
 		}
 	}
 
-	private void checkResponseCode(int responseCode) {
+	private void checkResponseCode(StatusLine statusLine) {
+		int sc = statusLine.getStatusCode();
 
-		if (responseCode == SC_OK) {
+		if (sc == SC_OK) {
 			return;
 		}
 
-		switch (responseCode) {
-		case SC_FORBIDDEN:
-		case SC_UNAUTHORIZED:
-		case SC_PROXY_AUTHENTICATION_REQUIRED:
-			throw new AccessDenied();
+		switch (sc) {
+			case SC_FORBIDDEN:
+			case SC_UNAUTHORIZED:
+			case SC_PROXY_AUTHENTICATION_REQUIRED:
+				throw new AccessDenied();
 		}
 	}
 

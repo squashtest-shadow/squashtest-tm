@@ -63,6 +63,11 @@
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -80,7 +85,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!--  ================ /Jackson dependencies ============================= -->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -91,10 +95,6 @@
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
-
-    <!--  ================ /Spring dependencies ============================== -->
-
-    <!--  ================== Spock dependencies ============================== -->
 
     <dependency>
       <groupId>${project.groupId}</groupId>

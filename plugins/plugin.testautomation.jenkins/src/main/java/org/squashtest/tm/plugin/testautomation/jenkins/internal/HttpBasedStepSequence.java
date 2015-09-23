@@ -20,18 +20,13 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildQueue;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.CheckBuildRunning;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GetBuildID;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.HttpBasedStep;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.*;
 
 public abstract class HttpBasedStepSequence {
 
@@ -44,17 +39,16 @@ public abstract class HttpBasedStepSequence {
 
 	// ********* to be configured ************
 
-	protected HttpClient client;
+	protected CloseableHttpClient client;
 
 	protected TestAutomationProject project;
 
 	protected BuildAbsoluteId absoluteId;
 
 
-
 	// ************* setters **************
 
-	void setClient(HttpClient client) {
+	void setClient(CloseableHttpClient client) {
 		this.client = client;
 	}
 
@@ -76,9 +70,9 @@ public abstract class HttpBasedStepSequence {
 	// *********** useful methods ************
 
 
-	protected CheckBuildQueue newCheckQueue(){
+	protected CheckBuildQueue newCheckQueue() {
 
-		GetMethod method = requestFactory.newCheckQueue(project);
+		HttpGet method = requestFactory.newCheckQueue(project);
 
 		CheckBuildQueue checkQueue = new CheckBuildQueue(getProcessor());
 
@@ -88,9 +82,9 @@ public abstract class HttpBasedStepSequence {
 	}
 
 
-	protected GetBuildID newGetBuildID(){
+	protected GetBuildID newGetBuildID() {
 
-		GetMethod method = requestFactory.newGetBuildsForProject(project);
+		HttpGet method = requestFactory.newGetBuildsForProject(project);
 
 		GetBuildID getBuildID = new GetBuildID(getProcessor());
 
@@ -100,9 +94,9 @@ public abstract class HttpBasedStepSequence {
 
 	}
 
-	protected CheckBuildRunning newCheckBuildRunning(){
+	protected CheckBuildRunning newCheckBuildRunning() {
 
-		GetMethod method = requestFactory.newGetBuild(project, absoluteId.getBuildId());
+		HttpGet method = requestFactory.newGetBuild(project, absoluteId.getBuildId());
 
 		CheckBuildRunning running = new CheckBuildRunning(getProcessor());
 
@@ -111,8 +105,8 @@ public abstract class HttpBasedStepSequence {
 		return running;
 	}
 
-	protected GatherTestList newGatherTestList(){
-		GetMethod method = requestFactory.newGetJsonTestList(project);
+	protected GatherTestList newGatherTestList() {
+		HttpGet method = requestFactory.newGetJsonTestList(project);
 
 		GatherTestList gatherList = new GatherTestList(getProcessor());
 
@@ -123,8 +117,7 @@ public abstract class HttpBasedStepSequence {
 	}
 
 
-
-	protected void wireHttpSteps(HttpBasedStep step, HttpMethod method){
+	protected void wireHttpSteps(HttpBasedStep step, HttpUriRequest method) {
 		step.setClient(client);
 		step.setMethod(method);
 		step.setParser(jsonParser);

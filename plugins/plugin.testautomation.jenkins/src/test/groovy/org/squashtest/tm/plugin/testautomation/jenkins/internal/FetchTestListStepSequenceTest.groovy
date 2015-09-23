@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
-import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.HttpMethod
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.impl.client.CloseableHttpClient
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor
@@ -41,12 +41,10 @@ class FetchTestListStepSequenceTest extends Specification {
 	
 	HttpRequestFactory factory
 	JsonParser parser
-	HttpClient client
+	CloseableHttpClient client
 	TestAutomationProject project
 	BuildAbsoluteId buildId
 	AbstractBuildProcessor processor
-	
-	
 	
 	def setup(){
 		
@@ -72,7 +70,7 @@ class FetchTestListStepSequenceTest extends Specification {
 		
 		given :
 			HttpBasedStep hStep = Mock()
-			HttpMethod method = Mock()
+			HttpUriRequest method = Mock()
 			
 		when :
 			sequence.wireHttpSteps(hStep, method)

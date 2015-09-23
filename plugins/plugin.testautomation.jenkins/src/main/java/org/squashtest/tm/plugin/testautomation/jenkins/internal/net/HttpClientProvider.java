@@ -20,18 +20,30 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
+import org.apache.http.HttpException;
+import org.apache.http.HttpHost;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.auth.*;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpCoreContext;
+import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+
+import java.io.IOException;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
-import org.apache.commons.httpclient.UsernamePasswordCredentials;
-import org.apache.commons.httpclient.auth.AuthScope;
-import org.springframework.http.client.ClientHttpRequestFactory;
-import org.springframework.http.client.CommonsClientHttpRequestFactory;
-import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
 /*
  * TODO : have the client shutdown and disposed of when it is not needed after a certain amount
@@ -42,20 +54,54 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 @SuppressWarnings("deprecation") // spring support of httpclient 3.1 is deprecated yet we heavily rely on httpclient 3.1
 public class HttpClientProvider {
 
-	private Set<ServerKey> knownServers = new HashSet<ServerKey>();
+	private CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
 
-	private final HttpClient client;
+	static class PreemptiveAuthInterceptor implements HttpRequestInterceptor {
+		@Override
+		public void process(HttpRequest request, HttpContext context) throws HttpException, IOException {
+			AuthState authState = (AuthState) context.getAttribute(HttpClientContext.TARGET_AUTH_STATE);
+
+			// If no auth scheme avaialble yet, try to initialize it
+			// preemptively
+			if (authState.getAuthScheme() == null) {
+				AuthScheme authScheme = (AuthScheme) context.getAttribute("preemptive-auth");
+				CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(HttpClientContext.CREDS_PROVIDER);
+				HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
+				if (authScheme != null) {
+					Credentials creds = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
+					if (creds == null) {
+						throw new HttpException("No credentials for preemptive authentication");
+					}
+					authState.setAuthScheme(authScheme);
+					authState.setCredentials(creds);
+				}
+			}
+
+		}
+	}
+	private Set<ServerKey> knownServers = new HashSet<>();
+
+	private final CloseableHttpClient client;
 
 	private final ClientHttpRequestFactory requestFactory;
 
 	public HttpClientProvider() {
-		MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
-		manager.getParams().setMaxTotalConnections(25);
+		PoolingHttpClientConnectionManager  manager = new PoolingHttpClientConnectionManager();
+		manager.setMaxTotal(25);
 
-		client = new HttpClient(manager);
-		client.getParams().setAuthenticationPreemptive(true);
+		// Pre-emptive authentication to speed things up
+		BasicHttpContext localHttpContext = new BasicHttpContext();
 
-		requestFactory = new CommonsClientHttpRequestFactory(client);
+		BasicScheme basicAuth = new BasicScheme();
+		localHttpContext.setAttribute("preemptive-auth", basicAuth);
+
+		client = HttpClients.custom()
+			.setConnectionManager(manager)
+			.addInterceptorFirst(new PreemptiveAuthInterceptor())
+			.setDefaultCredentialsProvider(credentialsProvider)
+			.build();
+
+		requestFactory = new HttpComponentsClientHttpRequestFactory(client);
 	}
 
 	/**
@@ -65,7 +111,7 @@ public class HttpClientProvider {
 	 * @param server
 	 * @return
 	 */
-	public HttpClient getClientFor(TestAutomationServer server) {
+	public CloseableHttpClient getClientFor(TestAutomationServer server) {
 
 		ServerKey key = new ServerKey(server);
 
@@ -86,10 +132,9 @@ public class HttpClientProvider {
 
 		URL baseURL = server.getBaseURL();
 
-		AuthScope authscope = new AuthScope(baseURL.getHost(), baseURL.getPort(), AuthScope.ANY_REALM);
-		UsernamePasswordCredentials creds = new UsernamePasswordCredentials(server.getLogin(), server.getPassword());
-
-		client.getState().setCredentials(authscope, creds);
+		credentialsProvider.setCredentials(
+			new AuthScope(baseURL.getHost(), baseURL.getPort(), AuthScope.ANY_REALM),
+			new UsernamePasswordCredentials(server.getLogin(), server.getPassword()));
 
 	}
 

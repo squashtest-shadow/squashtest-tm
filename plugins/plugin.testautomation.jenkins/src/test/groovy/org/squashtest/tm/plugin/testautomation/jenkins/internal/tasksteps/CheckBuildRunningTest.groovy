@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
-import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.HttpMethod
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.impl.client.CloseableHttpClient
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 
 import spock.lang.Specification
@@ -29,8 +29,8 @@ import spock.lang.Specification
 class CheckBuildRunningTest extends Specification {
 
 	CheckBuildRunning checkRun;
-	HttpClient client;
-	HttpMethod method;
+	CloseableHttpClient client;
+	HttpUriRequest method;
 	JsonParser parser;
 	
 	BuildAbsoluteId  absoluteId = new BuildAbsoluteId("CorrectJob", "CorrectExternalID")

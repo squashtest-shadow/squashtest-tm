@@ -18,11 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.plugin.testautomation.jenkins.internal;
+package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
-import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager
-import org.springframework.http.client.CommonsClientHttpRequestFactory
+import org.apache.http.client.HttpClient
+import org.apache.http.impl.client.HttpClients
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
@@ -52,18 +53,19 @@ class StartTestExecutionIT extends Specification {
 	def mockHttpClientProvider(httpClient) {
 		HttpClientProvider res = Mock()
 		res.getClientFor(_) >> httpClient
-		res.getRequestFactoryFor(_) >> new CommonsClientHttpRequestFactory(httpClient);
+		res.getRequestFactoryFor(_) >> new HttpComponentsClientHttpRequestFactory(httpClient);
 
 		return res
 	}
 
 	def "should start a new build"() {
 		given:
-		MultiThreadedHttpConnectionManager manager = new MultiThreadedHttpConnectionManager();
-		manager.getParams().setMaxTotalConnections(25);
+		PoolingHttpClientConnectionManager manager = new PoolingHttpClientConnectionManager();
+		manager.setMaxTotal(25);
 
-		HttpClient client = new HttpClient(manager);
-		client.getParams().setAuthenticationPreemptive(true);
+		HttpClient client = HttpClients.custom()
+				.setConnectionManager(manager).build();
+//		client.getParams().setAuthenticationPreemptive(true);
 
 
 		and:

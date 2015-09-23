@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 
 
 public interface HttpBasedStep {
 	
-	void setClient(HttpClient client);
+	void setClient(CloseableHttpClient client);
 	
-	void setMethod(HttpMethod method);
+	void setMethod(HttpUriRequest method);
 	
 	void setParser(JsonParser parser);
 	

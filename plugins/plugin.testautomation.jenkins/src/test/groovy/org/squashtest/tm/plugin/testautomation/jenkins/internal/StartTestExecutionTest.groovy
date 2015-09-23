@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal
 
-import org.apache.commons.httpclient.HttpClient
-import org.springframework.http.client.CommonsClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest

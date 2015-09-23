@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.Item;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.ItemList;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
@@ -30,35 +30,35 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProce
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
-public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpBasedStep{
+public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpBasedStep {
 
 	/* *** technically needed for the computation **** */
-	
+
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
-	
-	private HttpClient client;
-	
-	private HttpMethod method;
-	
+
+	private CloseableHttpClient client;
+
+	private HttpUriRequest method;
+
 	private JsonParser parser;
-	
+
 	private BuildAbsoluteId absoluteId;
-	
+
 	// **** output of the computation *** */
-		
+
 	private boolean buildIsQueued = true;
 
-	
+
 	// ****** accessors ********** */
 
 
 	@Override
-	public void setClient(HttpClient client) {
+	public void setClient(CloseableHttpClient client) {
 		this.client = client;
 	}
 
 	@Override
-	public void setMethod(HttpMethod method) {
+	public void setMethod(HttpUriRequest method) {
 		this.method = method;
 	}
 
@@ -72,14 +72,14 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		this.absoluteId = absoluteId;
 	}
-	
-	
+
+
 	//************* constructor ******************
-	
+
 	public CheckBuildQueue(BuildProcessor processor) {
 		super(processor);
 	}
-	
+
 	// *************** code ******************** */
 
 
@@ -91,20 +91,19 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 
 	@Override
 	public void perform() throws Exception {
-		
-		String result = requestExecutor.execute(client, method)	;
-	
+
+		String result = requestExecutor.execute(client, method);
+
 		ItemList queuedBuilds = parser.getQueuedListFromJson(result);
-		
+
 		Item buildOfInterest = queuedBuilds.findQueuedBuildByExtId(absoluteId.getProjectName(), absoluteId.getExternalId());
-		
-		if (buildOfInterest!=null){
+
+		if (buildOfInterest != null) {
 			buildIsQueued = true;
-		}
-		else{
+		} else {
 			buildIsQueued = false;
 		}
-		
+
 	}
 
 	@Override
@@ -116,6 +115,6 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 	public Integer suggestedReschedulingInterval() {
 		return null;
 	}
-	
+
 
 }

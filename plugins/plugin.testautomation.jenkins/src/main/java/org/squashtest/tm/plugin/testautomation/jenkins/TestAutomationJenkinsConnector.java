@@ -20,19 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.inject.Inject;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,23 +34,19 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildDef;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.FetchTestListBuildProcessor;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.OptimisticTestList;
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.StartTestExecution;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.*;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestFactory;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
-import org.squashtest.tm.service.testautomation.spi.AccessDenied;
-import org.squashtest.tm.service.testautomation.spi.BadConfiguration;
-import org.squashtest.tm.service.testautomation.spi.NotFoundException;
-import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
-import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
-import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
-import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
+import org.squashtest.tm.service.testautomation.spi.*;
+
+import javax.inject.Inject;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
 
 @Service("plugin.testautomation.jenkins.connector")
 public class TestAutomationJenkinsConnector implements TestAutomationConnector {
@@ -93,9 +78,9 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	public boolean checkCredentials(TestAutomationServer server) {
 
-		HttpClient client = clientProvider.getClientFor(server);
+		CloseableHttpClient client = clientProvider.getClientFor(server);
 
-		GetMethod credCheck = requestFactory.newCheckCredentialsMethod(server);
+		HttpGet credCheck = requestFactory.newCheckCredentialsMethod(server);
 
 		requestExecutor.execute(client, credCheck);
 
@@ -106,12 +91,12 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server)
-			throws ServerConnectionFailed, AccessDenied, UnreadableResponseException, BadConfiguration,
-			TestAutomationException {
+		throws ServerConnectionFailed, AccessDenied, UnreadableResponseException, BadConfiguration,
+		TestAutomationException {
 
-		HttpClient client = clientProvider.getClientFor(server);
+		CloseableHttpClient client = clientProvider.getClientFor(server);
 
-		GetMethod getJobsMethod = requestFactory.newGetJobsMethod(server);
+		HttpGet getJobsMethod = requestFactory.newGetJobsMethod(server);
 
 		String response = requestExecutor.execute(client, getJobsMethod);
 
@@ -119,14 +104,14 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 			return jsonParser.readJobListFromJson(response);
 		} catch (UnreadableResponseException ex) {
 			throw new UnreadableResponseException("Test automation - jenkins : server '" + server
-					+ "' returned malformed response : ", ex.getCause());
+				+ "' returned malformed response : ", ex.getCause());
 		}
 
 	}
 
 	@Override
 	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws ServerConnectionFailed,
-	AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
+		AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
 
 		// first we try an optimistic approach
 		try {
@@ -137,7 +122,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		// if the file isn't available we regenerate the file
 		catch (Exception ex) {
 
-			HttpClient client = clientProvider.getClientFor(project.getServer());
+			CloseableHttpClient client = clientProvider.getClientFor(project.getServer());
 
 			FetchTestListBuildProcessor processor = new FetchTestListBuildProcessor();
 
@@ -156,12 +141,12 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	/**
 	 * @see org.squashtest.tm.service.testautomation.spi.TestAutomationConnector#executeParameterizedTests(java.util.Collection,
-	 *      java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
+	 * java.lang.String, org.squashtest.tm.service.testautomation.TestAutomationCallbackService)
 	 */
 	@Override
 	public void executeParameterizedTests(
-			Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions,
-			String externalId, TestAutomationCallbackService callbackService) {
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions,
+		String externalId, TestAutomationCallbackService callbackService) {
 
 		MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject = reduceToParamdExecsByProject(parameterizedExecutions);
 
@@ -182,11 +167,11 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	}
 
 	private List<BuildDef> mapToJobDefs(
-			MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject) {
-		ArrayList<BuildDef> jobDefs = new ArrayList<BuildDef>(execsByProject.size());
+		MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject) {
+		ArrayList<BuildDef> jobDefs = new ArrayList<>(execsByProject.size());
 
 		for (Entry<TestAutomationProject, List<Couple<AutomatedExecutionExtender, Map<String, Object>>>> entry : execsByProject
-				.entrySet()) {
+			.entrySet()) {
 			if (entry.getValue().size() > 0) {
 				// fetch the name of the slave node if any
 				Couple<AutomatedExecutionExtender, Map<String, Object>> firstEntry = entry.getValue().get(0);
@@ -198,8 +183,8 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	}
 
 	private MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> reduceToParamdExecsByProject(
-			Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions) {
-		MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject = new LinkedMultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>>();
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> parameterizedExecutions) {
+		MultiValueMap<TestAutomationProject, Couple<AutomatedExecutionExtender, Map<String, Object>>> execsByProject = new LinkedMultiValueMap<>();
 
 		for (Couple<AutomatedExecutionExtender, Map<String, Object>> paramdExec : parameterizedExecutions) {
 			execsByProject.add(paramdExec.getA1().getAutomatedProject(), paramdExec);
@@ -227,14 +212,14 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	 */
 	@Override
 	public boolean testListIsOrderGuaranteed(Collection<AutomatedTest> tests) {
-		if(tests.isEmpty()){
+		if (tests.isEmpty()) {
 			return true;
 		}
 		Iterator<AutomatedTest> iterator = tests.iterator();
 		String firstPath = iterator.next().getPath();
-		for(AutomatedTest test : tests){
+		for (AutomatedTest test : tests) {
 			String path = test.getPath();
-			if(!firstPath.equals(path)){
+			if (!firstPath.equals(path)) {
 				return false;
 			}
 		}
@@ -244,7 +229,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 	public class TestAutomationProjectMalformedURLException extends RuntimeException {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = -4904491027261699261L;
 

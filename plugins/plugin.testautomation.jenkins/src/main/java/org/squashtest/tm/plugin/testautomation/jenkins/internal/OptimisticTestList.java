@@ -20,11 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import java.util.Collection;
-import java.util.LinkedList;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.GetMethod;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestListElement;
@@ -33,10 +30,13 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestF
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
 
 /**
  * Rip off {@link GatherTestList}
- * 
+ *
  * @author bsiri
  *
  */
@@ -54,26 +54,25 @@ public class OptimisticTestList {
 		this.project = project;
 	}
 
-	public Collection<AutomatedTest> run(){
+	public Collection<AutomatedTest> run() {
 
-		HttpClient client = clientProvider.getClientFor(project.getServer());
+		CloseableHttpClient client = clientProvider.getClientFor(project.getServer());
 
-		GetMethod method = new HttpRequestFactory().newGetJsonTestList(project);
+		HttpGet method = new HttpRequestFactory().newGetJsonTestList(project);
 
-		try{
+		try {
 			String response = executor.execute(client, method);
 			TestListElement testList = parser.getTestListFromJson(response);
 
 
-			Collection<AutomatedTest> tests = new LinkedList<AutomatedTest>();
-			for (String name : testList.collectAllTestNames()){
+			Collection<AutomatedTest> tests = new LinkedList<>();
+			for (String name : testList.collectAllTestNames()) {
 				AutomatedTest test = new AutomatedTest(name, project);
 				tests.add(test);
 			}
 
 			return tests;
-		}
-		finally{
+		} finally {
 			method.releaseConnection();
 		}
 

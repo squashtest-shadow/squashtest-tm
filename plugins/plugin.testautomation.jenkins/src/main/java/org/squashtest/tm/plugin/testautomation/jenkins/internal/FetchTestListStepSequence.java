@@ -24,8 +24,8 @@ import static org.squashtest.tm.plugin.testautomation.jenkins.internal.BuildStag
 
 import java.util.NoSuchElementException;
 
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.methods.PostMethod;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.AbstractBuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
@@ -48,7 +48,7 @@ class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSeq
 
 	// ************* setters **************
 
-	void setClient(HttpClient client) {
+	void setClient(CloseableHttpClient client) {
 		this.client = client;
 	}
 
@@ -113,7 +113,7 @@ class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSeq
 
 	protected StartBuild newStartBuild(){
 
-		PostMethod method = requestFactory.newStartFetchTestListBuild(project, absoluteId.getExternalId());
+		HttpPost method = requestFactory.newStartFetchTestListBuild(project, absoluteId.getExternalId());
 
 		StartBuild startBuild = new StartBuild(getProcessor());
 

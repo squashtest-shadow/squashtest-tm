@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
-import org.apache.commons.httpclient.HttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepSequence;
@@ -31,34 +28,37 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.Synchronou
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.GatherTestList;
 
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Collection<AutomatedTest>>{
-	
+
+public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Collection<AutomatedTest>> {
+
 	private FetchTestListStepSequence stepSequence = new FetchTestListStepSequence(this);
-	
+
 	private TestAutomationProject project;
 
 	//******* collaborators *********
-	
-	public void setClient(HttpClient client){
+
+	public void setClient(CloseableHttpClient client) {
 		stepSequence.setClient(client);
 	}
-	
-	public void setProject(TestAutomationProject project){
+
+	public void setProject(TestAutomationProject project) {
 		stepSequence.setProject(project);
 		this.project = project;
 	}
-	
-	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId){
+
+	public void setBuildAbsoluteId(BuildAbsoluteId absoluteId) {
 		stepSequence.setAbsoluteId(absoluteId);
 	}
 
-	
+
 	//******* the result we obtain once the computation is over *********
-	
-	private Collection<AutomatedTest> tests = new ArrayList<AutomatedTest>();
-	
-	
+
+	private Collection<AutomatedTest> tests = new ArrayList<>();
+
+
 	@Override
 	public Collection<AutomatedTest> getResult() {
 		return tests;
@@ -66,18 +66,17 @@ public class FetchTestListBuildProcessor extends SynchronousBuildProcessor<Colle
 
 	@Override
 	protected void buildResult() {
-		
-		if (! stepSequence.hasMoreElements()){
-			
+
+		if (!stepSequence.hasMoreElements()) {
+
 			Collection<String> names = ((GatherTestList) currentStep).getTestNames();
-			
-			for (String name : names){
+
+			for (String name : names) {
 				AutomatedTest test = new AutomatedTest(name, project);
 				tests.add(test);
 			}
-			
-		}
-		else{
+
+		} else {
 			throw new RuntimeException("tried to build the result before the computation is over, probably due to a buggy thread");
 		}
 	}

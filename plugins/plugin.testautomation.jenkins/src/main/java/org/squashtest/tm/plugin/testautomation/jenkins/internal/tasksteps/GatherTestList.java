@@ -20,27 +20,27 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 
-import java.util.Collection;
-
-import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpMethod;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.squashtest.tm.plugin.testautomation.jenkins.beans.TestListElement;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildProcessor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
+import java.util.Collection;
 
-public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep{
+
+public class GatherTestList extends BuildStep<GatherTestList> implements HttpBasedStep {
 
 
 	//* ************* collaborators ****************
 
 	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 
-	private HttpClient client;
+	private CloseableHttpClient client;
 
-	private HttpMethod method;
+	private HttpUriRequest method;
 
 	private JsonParser parser;
 
@@ -53,13 +53,13 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 	//************** accessors *****************
 
 	@Override
-	public void setClient(HttpClient client) {
+	public void setClient(CloseableHttpClient client) {
 		this.client = client;
 	}
 
 
 	@Override
-	public void setMethod(HttpMethod method) {
+	public void setMethod(HttpUriRequest method) {
 		this.method = method;
 	}
 
@@ -74,7 +74,7 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 		//not needed here
 	}
 
-	public Collection<String> getTestNames(){
+	public Collection<String> getTestNames() {
 		return testNames;
 	}
 	//************* constructor ******************
@@ -111,8 +111,6 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 	public Integer suggestedReschedulingInterval() {
 		return null;
 	}
-
-
 
 
 }

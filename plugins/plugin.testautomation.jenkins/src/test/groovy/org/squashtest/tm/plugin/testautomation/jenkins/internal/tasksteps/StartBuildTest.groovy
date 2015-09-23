@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
-import org.apache.commons.httpclient.HttpClient
-import org.apache.commons.httpclient.HttpMethod
-
+import org.apache.http.client.methods.HttpUriRequest
+import org.apache.http.impl.client.CloseableHttpClient
 import spock.lang.Specification
 
 class StartBuildTest extends Specification {
 
 	StartBuild startBuild;
-	HttpClient client;
-	HttpMethod method;
+	CloseableHttpClient client;
+	HttpUriRequest method;
 	
 	def setup(){
 		client = Mock()

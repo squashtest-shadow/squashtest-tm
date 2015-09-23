@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import static org.apache.commons.httpclient.HttpStatus.SC_PROXY_AUTHENTICATION_REQUIRED;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

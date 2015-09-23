@@ -150,9 +150,9 @@
       <plugin>
         <groupId>com.alexnederlof</groupId>
         <artifactId>jasperreports-plugin</artifactId>
-            <configuration>
-              <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
-            </configuration>
+        <configuration>
+          <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
+        </configuration>
       </plugin>
 
       <plugin>
