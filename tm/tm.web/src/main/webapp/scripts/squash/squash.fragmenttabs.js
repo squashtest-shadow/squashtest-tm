@@ -20,36 +20,36 @@
  */
 /**
  * Controller for tabs in entity tragment (test case, requirement...)
- * 
+ *
  * requires : - jquery - jqueryui - jquery cookie plugin
  */
 
 define(["jquery", "jqueryui", "jquery.cookie"], function($){
-	
-	
+
+
 	squashtm = squashtm || {};
 
 
 	return {
 		init : function() {
 
-			var cookieConf
+			var cookieConf;
 			if (arguments.length > 0){
 				cookieConf = arguments[0].cookie;
 			}
 
-				
+
 			var args = {
 					cache : true,
 					active: 0
 				};
-			
-			if(!!cookieConf){		
+
+			if(!!cookieConf){
 				var cookieVal = $.cookie(cookieConf.name);
 				if (cookieVal){
 					args.active = parseInt(cookieVal,10);
 				}
-			} 
+			}
 
 			if (arguments.length > 0) {
 				args = $.extend(args, arguments[0]);
