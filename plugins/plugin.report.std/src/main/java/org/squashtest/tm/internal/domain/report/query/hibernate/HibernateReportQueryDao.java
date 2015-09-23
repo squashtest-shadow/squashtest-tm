@@ -26,16 +26,18 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
 import org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor;
 import org.squashtest.tm.internal.domain.report.query.UnsupportedFlavorException;
 import org.squashtest.tm.internal.repository.ReportQueryDao;
 
+import javax.inject.Inject;
+
 @Repository
 public class HibernateReportQueryDao implements ReportQueryDao {
 
+	@Inject
 	private SessionFactory sessionFactory;
 
 	private Session currentSession() {
@@ -86,14 +88,6 @@ public class HibernateReportQueryDao implements ReportQueryDao {
 	public ReportQueryFlavor[] getSupportedFlavors() {
 		ReportQueryFlavor[] flavorArray = {flavor};
 		return flavorArray;
-	}
-
-	/**
-	 * @param sessionFactory the sessionFactory to set
-	 */
-	@ServiceReference
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
 	}
 
 }
