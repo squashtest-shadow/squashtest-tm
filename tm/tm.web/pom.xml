@@ -363,18 +363,11 @@
       </plugin>
 
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>jasperreports-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile-reports</goal>
-            </goals>
+        <groupId>com.alexnederlof</groupId>
+        <artifactId>jasperreports-plugin</artifactId>
             <configuration>
               <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
             </configuration>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
