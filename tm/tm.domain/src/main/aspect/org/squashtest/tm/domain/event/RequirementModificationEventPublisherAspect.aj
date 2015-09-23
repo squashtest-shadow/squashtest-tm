@@ -21,9 +21,9 @@
 package org.squashtest.tm.domain.event;
 
 import java.lang.reflect.Method;
-import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 import org.aspectj.lang.JoinPoint;
 import org.springframework.beans.BeanUtils;
 import org.springframework.util.ReflectionUtils;

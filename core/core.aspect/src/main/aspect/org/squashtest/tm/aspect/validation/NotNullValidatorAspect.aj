@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.aspect.validation;
 
-import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import javax.validation.constraints.NotNull;
 
 /**

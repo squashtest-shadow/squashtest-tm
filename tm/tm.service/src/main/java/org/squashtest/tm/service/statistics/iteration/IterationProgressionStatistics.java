@@ -27,7 +27,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
 public class IterationProgressionStatistics {

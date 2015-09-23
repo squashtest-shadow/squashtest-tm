@@ -22,7 +22,7 @@ package org.squashtest.tm.api.report.form;
 
 import javax.annotation.PostConstruct;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Option which contains another input.

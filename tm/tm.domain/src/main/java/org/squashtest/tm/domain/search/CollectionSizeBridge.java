@@ -22,7 +22,7 @@ package org.squashtest.tm.domain.search;
 
 import java.util.Collection;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.bridge.StringBridge;
 
 public class CollectionSizeBridge implements StringBridge {

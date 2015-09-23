@@ -30,7 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;

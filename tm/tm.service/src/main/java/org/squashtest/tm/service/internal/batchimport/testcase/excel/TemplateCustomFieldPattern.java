@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Enum which defines custom field pattern used in import template.

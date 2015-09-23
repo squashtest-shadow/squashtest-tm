@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.infrastructure.hibernate;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.AssertionFailure;
 import org.hibernate.cfg.DefaultNamingStrategy;
 import org.hibernate.cfg.NamingStrategy;

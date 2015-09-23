@@ -36,7 +36,7 @@ import org.squashtest.tm.api.report.form.OptionInput;
 import org.squashtest.tm.api.report.form.RadioButtonsGroup;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import spock.lang.Specification;
 

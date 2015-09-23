@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.hibernate.mapping.campaign
 
-import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.apache.poi.hssf.record.formula.functions.T
 import org.hibernate.Hibernate
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification

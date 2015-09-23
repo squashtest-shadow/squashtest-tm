@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.controller.generic;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.library.Copiable
 import org.squashtest.tm.domain.library.Folder

@@ -24,7 +24,7 @@ import java.util.Enumeration;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.web.internal.http.RequestHeaders;
 
 public final class ExceptionResolverUtils {

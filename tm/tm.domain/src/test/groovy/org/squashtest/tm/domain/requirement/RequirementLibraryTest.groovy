@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary

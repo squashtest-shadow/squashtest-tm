@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.util;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public final class PathUtils {
 	private static final String APPLICATION_PATH = "/st:test-management/";

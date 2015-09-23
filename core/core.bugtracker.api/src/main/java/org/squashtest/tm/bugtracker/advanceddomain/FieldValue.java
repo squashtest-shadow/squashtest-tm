@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.bugtracker.advanceddomain;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.bugtracker.definition.RemoteCategory;
 import org.squashtest.tm.bugtracker.definition.RemotePriority;
 import org.squashtest.tm.bugtracker.definition.RemoteStatus;

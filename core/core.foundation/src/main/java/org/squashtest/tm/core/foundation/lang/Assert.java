@@ -20,8 +20,9 @@
  */
 package org.squashtest.tm.core.foundation.lang;
 
-import org.apache.commons.lang.NullArgumentException;
-import org.apache.commons.lang.StringUtils;
+
+import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 
 /**
  * Assertion utilities to validate object state.
@@ -65,10 +66,10 @@ public final class Assert {
 	}
 
 	/**
-	 * Checks that a Strign property is not blank
+	 * Checks that a String property is not blank
 	 * 
-	 * @param url
-	 * @param string
+	 * @param property
+	 * @param message
 	 */
 	public static void propertyNotBlank(String property, String message) {
 		if (StringUtils.isBlank(property)) {

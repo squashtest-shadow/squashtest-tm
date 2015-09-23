@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.core.foundation.lang;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Utility methods for arrays not found in commons-lang

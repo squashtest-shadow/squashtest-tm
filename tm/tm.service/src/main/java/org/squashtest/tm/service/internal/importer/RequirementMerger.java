@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.library.NodeContainer;

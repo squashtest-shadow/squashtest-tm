@@ -18,42 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.core.bugtracker.service;
-
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+package org.squashtest.tm.core.foundation.exception;
 
 /**
- * Thread-local based implementation of {@link BugTrackerContext}
- *
  * @author Gregory Fouquet
- *
+ * @since 1.13.0
  */
-public class ThreadLocalBugTrackerContextHolder implements BugTrackerContextHolder {
-	private final ThreadLocal<BugTrackerContext> contextHolder = new ThreadLocal<BugTrackerContext>();
-
-	@Override
-	public BugTrackerContext getContext() {
-		BugTrackerContext context = contextHolder.get();
-
-		if (context == null) {
-			context = new BugTrackerContext();
-			contextHolder.set(context);
-		}
-
-		return context;
+public class NullArgumentException extends NullPointerException {
+	public NullArgumentException(String argName) {
+		super("Argument named '" + argName + "' was null");
 	}
-
-	@Override
-	public void setContext(BugTrackerContext context) {
-		if (context == null) {
-			throw new NullArgumentException("context");
-		}
-		this.contextHolder.set(context);
-	}
-
-	@Override
-	public void clearContext() {
-		contextHolder.remove();
-	}
-
 }

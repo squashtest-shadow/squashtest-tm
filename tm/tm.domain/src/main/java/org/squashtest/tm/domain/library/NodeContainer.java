@@ -23,7 +23,7 @@ package org.squashtest.tm.domain.library;
 import java.util.Collection;
 import java.util.List;
 
-import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.exception.DuplicateNameException;

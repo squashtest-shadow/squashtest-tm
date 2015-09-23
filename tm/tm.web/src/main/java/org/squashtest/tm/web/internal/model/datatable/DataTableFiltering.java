@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 
 public class DataTableFiltering implements Filtering{

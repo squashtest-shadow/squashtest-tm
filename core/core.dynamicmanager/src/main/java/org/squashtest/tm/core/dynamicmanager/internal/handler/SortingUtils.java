@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.criterion.Order;
 import org.squashtest.tm.core.foundation.collection.Sorting;

@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.model.customfield;
 import java.util.HashMap;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 
 import com.fasterxml.jackson.annotation.JsonCreator;

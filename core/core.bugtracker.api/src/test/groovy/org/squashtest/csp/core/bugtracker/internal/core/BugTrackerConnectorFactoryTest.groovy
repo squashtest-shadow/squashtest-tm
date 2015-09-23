@@ -20,7 +20,7 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.core
 
-import org.apache.commons.lang.NullArgumentException;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.junit.Ignore;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException;

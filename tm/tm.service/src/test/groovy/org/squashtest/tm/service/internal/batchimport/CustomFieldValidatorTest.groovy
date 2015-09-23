@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.aspectj.apache.bcel.generic.SwitchBuilder
 import org.spockframework.compiler.model.SetupBlock
 import org.squashtest.tm.domain.customfield.CustomField

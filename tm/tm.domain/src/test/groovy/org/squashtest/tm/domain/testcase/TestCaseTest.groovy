@@ -24,7 +24,7 @@ import static org.squashtest.tm.domain.testcase.TestCaseType.*
 
 import java.lang.reflect.Modifier
 
-import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.infolist.InfoList

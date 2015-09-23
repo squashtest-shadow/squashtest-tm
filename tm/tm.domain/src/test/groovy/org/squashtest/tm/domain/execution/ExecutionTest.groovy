@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import org.apache.commons.lang.NullArgumentException
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.UserListItem;

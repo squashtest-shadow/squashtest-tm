@@ -28,7 +28,7 @@ import org.spockframework.compiler.model.Spec;
 import org.squashtest.tm.api.report.criteria.Criteria;
 import org.squashtest.tm.api.report.form.InputType;
 import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
-import org.apache.commons.lang.time.DateUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
 import spock.lang.Specification;
 

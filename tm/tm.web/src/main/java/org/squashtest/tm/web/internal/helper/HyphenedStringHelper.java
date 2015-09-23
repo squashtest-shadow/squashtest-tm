@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.WordUtils;
 
 /**
  * Exposes hyphened string manipulation methods for use as el functions. An hyphened string is a string which words are

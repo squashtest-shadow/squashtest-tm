@@ -27,7 +27,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
-import org.apache.commons.lang.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateFormatUtils;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;

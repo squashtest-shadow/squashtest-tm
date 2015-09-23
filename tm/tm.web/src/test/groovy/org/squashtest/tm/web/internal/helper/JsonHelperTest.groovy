@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 
 import spock.lang.Specification;
