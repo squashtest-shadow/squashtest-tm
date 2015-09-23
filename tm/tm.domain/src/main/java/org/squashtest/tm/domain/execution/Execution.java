@@ -39,6 +39,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -55,6 +56,7 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.collections.ListUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
@@ -73,6 +75,7 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -109,11 +112,11 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Indexed
 @Entity
 @ClassBridges({
-		@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = ExecutionAttachmentBridge.class),
-		@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "ALL") }),
+	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = ExecutionAttachmentBridge.class),
+	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+		@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-				@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
+			@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
@@ -242,6 +245,23 @@ DenormalizedFieldHolder, BoundEntity {
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	@IndexedEmbedded
 	private IssueList issueList = new IssueList();
+
+
+
+	/*
+	 * TRANSITIONAL - job half done here. The full job would involve something among the lines of RequirementVersionCoverage
+	 * 
+	 * The following mapping gives all issues reported in the scope of this execution : its own issues, and
+	 * the issues reported in its steps.
+	 * 
+	 * The underlying table is actually a view. So this one is read only and might be quite slow to use.
+	 */
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
+	joinColumns=@JoinColumn(name="EXECUTION_ID", insertable=false, updatable=false ),
+	inverseJoinColumns = @JoinColumn(name="ISSUE_ID"))
+	private List<Issue> issues = new ArrayList<Issue>();
+
 
 	/* *********************** /issues attributes ************************ */
 
@@ -538,6 +558,10 @@ DenormalizedFieldHolder, BoundEntity {
 	@Override
 	public IssueList getIssueList() {
 		return issueList;
+	}
+
+	public List<Issue> getIssues(){
+		return 	ListUtils.unmodifiableList(issues);
 	}
 
 	@Override

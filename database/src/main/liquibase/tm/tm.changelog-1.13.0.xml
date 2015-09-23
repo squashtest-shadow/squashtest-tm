@@ -68,45 +68,64 @@
 		<dropColumn tableName="BUGTRACKER_BINDING" columnName="PROJECT_NAME" />
 
 	</changeSet>
-	
+
 	<changeSet id="tm-1.13.0-feature-5162-1" author="bsiri">
 		<comment>Now campaigns and iterations have a reference too</comment>
-		
+
 		<addColumn tableName="CAMPAIGN">
-			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)" 
-					defaultValue="" remarks="a reference lavel for a campaign" />
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="" remarks="a reference lavel for a campaign" />
 		</addColumn>
-		
+
 		<addColumn tableName="ITERATION">
-			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)" 
-					defaultValue="" remarks="a reference lavel for an iteration" />
-		</addColumn>		
-		
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="" remarks="a reference lavel for an iteration" />
+		</addColumn>
+
 		<!-- I thought that scripting Squash TA was a bitch but wait to see this -->
-		<!--		
-			For iterations that existed prior to 1.13.0, here we assign iteration_order as their default reference. 
-			Luckily it seems that databases accept that you can affect a numeric type to a varchar column and that they 
-			coerce them implicitly.
-			
-			If a DBMS doesn't accept it, put the following instruction in a dedicated changeset :
-			
+		<!-- For iterations that existed prior to 1.13.0, here we assign iteration_order 
+			as their default reference. Luckily it seems that databases accept that you 
+			can affect a numeric type to a varchar column and that they coerce them implicitly. 
+			If a DBMS doesn't accept it, put the following instruction in a dedicated 
+			changeset : update ITERATION i set reference = (select CAST ( ((ci.iteration_order) 
+			+ 1) as varchar) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id 
+			); -->
+		<sql>
 			update ITERATION i
-			set reference = (select CAST ( ((ci.iteration_order) + 1) as varchar) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id );
-		-->
-		<sql>	
-			update ITERATION i
-			set reference = (select (ci.iteration_order + 1) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id );		
+			set reference = (select (ci.iteration_order + 1) from
+			CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id );
 		</sql>
 	</changeSet>
 
-<changeSet id="tm-1.13.0-feature-4022-1" author="jsimon">
+	<changeSet id="tm-1.13.0-feature-4022-1" author="jsimon">
 
-<addColumn tableName="PROJECT">
- <column name="ALLOW_TC_MODIF_DURING_EXEC"  type="BOOLEAN" defaultValueBoolean="false">
-        <constraints nullable="false" />
-      </column>
-</addColumn>
- </changeSet>
+		<addColumn tableName="PROJECT">
+			<column name="ALLOW_TC_MODIF_DURING_EXEC" type="BOOLEAN"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.13.0-feature-5292-issues" author="bsiri">
+		<comment>
+			creating a view that helps querying on all the issues reported in an execution because
+			querying EXECUTION and EXECUTION_STEP separately is just a pain in the ass.
+		</comment>
+		
+		<createView viewName="EXECUTION_ISSUES_CLOSURE">
+			select exec.execution_id, issue.issue_id 
+			from EXECUTION exec 
+			inner join ISSUE issue on exec.issue_list_id = issue.issue_list_id 
+			UNION
+			select eesteps.execution_id, issue.issue_id
+			from EXECUTION_EXECUTION_STEPS eesteps 
+			inner join EXECUTION_STEP estep on eesteps.execution_step_id = estep.execution_step_id 
+			inner join ISSUE issue on estep.issue_list_id = issue.issue_list_id
+		</createView>
+	
+	</changeSet>	
 
 </databaseChangeLog>
 
