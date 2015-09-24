@@ -52,7 +52,7 @@
       <artifactId>com.springsource.org.hibernate.validator</artifactId>
     </dependency>
 
-    <!--  JODA -->
+    <!-- JODA -->
     <dependency>
       <groupId>org.joda</groupId>
       <artifactId>com.springsource.org.joda.time</artifactId>
@@ -251,6 +251,9 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
+
+    <!--======= /SQUASHTEST MODULES ======== -->
+
   </dependencies>
   <build>
 
@@ -314,10 +317,9 @@
           <source>${jdk.version}</source>
           <target>${jdk.version}</target>
           <complianceLevel>${jdk.version}</complianceLevel>
-          <!--
-            PreventConcurrentAspect must not be weaved, otherwise it cannot be ordered
-            before @Transactional and @PreAuthorize, which is needed for it to properly work
-          -->
+          <!-- PreventConcurrentAspect must not be weaved, otherwise it cannot 
+						be ordered before @Transactional and @PreAuthorize, which is needed for it 
+						to properly work -->
           <excludes>
             <exclude>**/PreventConcurrentAspect.java</exclude>
           </excludes>

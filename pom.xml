@@ -42,6 +42,7 @@
     <thymeleaf.version>2.1.4.A</thymeleaf.version>
 
     <verbose.compiler>false</verbose.compiler>
+    <querydsl.version>4.0.4</querydsl.version>
   </properties>
 
   <dependencyManagement>
@@ -95,6 +96,22 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
+      
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${querydsl.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	
+		<dependency>
+			<groupId>com.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+      
+      
+      
     </dependencies>
   </dependencyManagement>
 
