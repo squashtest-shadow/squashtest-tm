@@ -1,7 +1,8 @@
 -include: pom.xml
 Bundle-ClassPath: .,\
 	WEB-INF/classes,\
-	WEB-INF/reports
+	WEB-INF/reports,\
+	target/classes
 Include-Resource: src/main/webapp,\
 	src/main/resources
 Import-Package: com.fasterxml.jackson.databind,\
