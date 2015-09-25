@@ -74,7 +74,6 @@ import org.squashtest.tm.domain.users.User;
 @Indexed
 public class Milestone  {
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Id
 	@DocumentId
 	@Column(name = "MILESTONE_ID")

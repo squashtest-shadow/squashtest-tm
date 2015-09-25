@@ -52,7 +52,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
 	@Id
 	@Column(name = "RLN_ID")
-	@Field(analyze=Analyze.NO, store=Store.YES)
 	@DocumentId
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_library_node_rln_id_seq")
 	@SequenceGenerator(name = "requirement_library_node_rln_id_seq", sequenceName = "requirement_library_node_rln_id_seq")
