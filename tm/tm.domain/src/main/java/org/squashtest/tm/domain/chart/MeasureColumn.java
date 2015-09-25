@@ -56,7 +56,6 @@ public class MeasureColumn {
 	@Enumerated(EnumType.STRING)
 	private Operation operation;
 
-	private int displayOrder;
 
 	public ColumnPrototype getColumn() {
 		return column;
@@ -72,14 +71,6 @@ public class MeasureColumn {
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	public int getDisplayOrder() {
-		return displayOrder;
-	}
-
-	public void setDisplayOrder(int displayOrder) {
-		this.displayOrder = displayOrder;
 	}
 
 	public Operation getOperation() {

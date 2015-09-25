@@ -48,7 +48,7 @@ public class ColumnPrototype {
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 30)
+	@Size(min = 0, max = 255)
 	private String label;
 
 	@Enumerated(EnumType.STRING)
@@ -57,7 +57,24 @@ public class ColumnPrototype {
 	@Enumerated(EnumType.STRING)
 	private DataType dataType;
 
-	@CollectionTable(name = "COLUMN_ROLE", joinColumns = @JoinColumn(name = "CHART_COLUMN_ID") )
+	@Enumerated(EnumType.STRING)
+	private AttributeType attributeType;
+
+	private String attributeName;
+
+	public Long getId() {
+		return id;
+	}
+
+	public AttributeType getAttributeType() {
+		return attributeType;
+	}
+
+	public String getAttributeName() {
+		return attributeName;
+	}
+
+	@CollectionTable(name = "CHART_COLUMN_ROLE", joinColumns = @JoinColumn(name = "CHART_COLUMN_ID") )
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	private Set<ColumnRole> role;

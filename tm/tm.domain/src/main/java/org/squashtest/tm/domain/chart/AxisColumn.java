@@ -45,8 +45,6 @@ public class AxisColumn {
 	@SequenceGenerator(name = "chart_axis_id_seq", sequenceName = "chart_axis_id_seq")
 	private long Id;
 
-	private int dimension;
-
 	@NotBlank
 	@Size(min = 0, max = 30)
 	private String label;
@@ -58,13 +56,6 @@ public class AxisColumn {
 	@Enumerated(EnumType.STRING)
 	private Operation operation;
 
-	public int getDimension() {
-		return dimension;
-	}
-
-	public void setDimension(int dimension) {
-		this.dimension = dimension;
-	}
 
 	public String getLabel() {
 		return label;

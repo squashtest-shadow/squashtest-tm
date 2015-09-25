@@ -35,6 +35,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
@@ -67,6 +68,7 @@ public class ChartDefinition {
 	@Enumerated(EnumType.STRING)
 	private ChartType type;
 
+
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
@@ -77,10 +79,12 @@ public class ChartDefinition {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "CHART_AXIS", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "AXIS_ID") )
+	@OrderColumn(name = "RANK")
 	private List<AxisColumn> axis;
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "CHART_MEASURE", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "MEASURE_ID") )
+	@OrderColumn(name = "RANK")
 	private List<MeasureColumn> measure;
 
 
