@@ -37,7 +37,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "CHART_AXIS_COLUMN")
-public class AxisColumn {
+public class AxisColumn implements ColumnPrototypeInstance{
 
 	@Id
 	@Column(name = "AXIS_ID")
@@ -79,6 +79,11 @@ public class AxisColumn {
 
 	public void setOperation(Operation operation) {
 		this.operation = operation;
+	}
+
+	@Override
+	public EntityType getEntityType() {
+		return column.getEntityType();
 	}
 
 }

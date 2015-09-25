@@ -37,6 +37,23 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
+/**
+ * <p>Represents the concept of "attribute of an entity" :
+ * 	<ul>
+ * 		<li>it is pretty much like a column in a relational model (the "Column" part)</li>
+ * 		<li>it is a referential data that will "instanciated" in multiple ChartDefinition (the "Prototype" part)</li>
+ * 	</ul>
+ * </p>
+ * 
+ * <p>A ColumnPrototype may be specialized to assume on of the three {@link ColumnRole}s : it can be filtered on, or it can hold the
+ * observable value displayed in the chart, or be an axis of this chart. See {@link Filter}, {@link AxisColumn}, {@link MeasureColumn}</p>
+ * 
+ * <p>No user shall create them: only the system can do that. Typically prototypes will be inserted or removed when custom fields
+ * are bound to/ unbound from entities.</p>
+ * 
+ * @author bsiri
+ *
+ */
 @Entity
 @Table(name = "CHART_COLUMN_PROTOTYPE")
 public class ColumnPrototype {

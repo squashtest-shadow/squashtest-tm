@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -85,7 +90,78 @@ public class ChartDefinition {
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "CHART_MEASURE", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "MEASURE_ID") )
 	@OrderColumn(name = "RANK")
-	private List<MeasureColumn> measure;
+	private List<MeasureColumn> measures;
+
+	public List<Filter> getFilters() {
+		return filters;
+	}
+
+	public List<AxisColumn> getAxis() {
+		return axis;
+	}
+
+	public List<MeasureColumn> getMeasures() {
+		return measures;
+	}
+
+
+	/**
+	 * Returns which entities are covered by this chart, sorted by roles
+	 * 
+	 * @return
+	 */
+	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){
+
+		Map<ColumnRole, Set<EntityType>> result = new HashMap<ColumnRole, Set<EntityType>>(3);
+
+		if (! filters.isEmpty()){
+			Set<EntityType> filterTypes = collectTypes(filters);
+			result.put(ColumnRole.FILTER, filterTypes);
+		}
+
+		if (! axis.isEmpty()){
+			Set<EntityType> axisTypes = collectTypes(axis);
+			result.put(ColumnRole.AXIS, axisTypes);
+		}
+
+		if (! measures.isEmpty()){
+			Set<EntityType> measureTypes = collectTypes(measures);
+			result.put(ColumnRole.MEASURE, measureTypes);
+		}
+
+		return result;
+
+	}
+
+	private Set<EntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+		Set<EntityType> types = new HashSet<>();
+		for (ColumnPrototypeInstance col : columns){
+			types.add(col.getEntityType());
+		}
+		return types;
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 }

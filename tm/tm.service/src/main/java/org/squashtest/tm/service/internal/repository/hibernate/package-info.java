@@ -824,6 +824,9 @@
 	@NamedQuery(name="infoList.setProjectCategoryToDefaultItem", query= "update RequirementVersion reqV set reqV.category = :default where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :id) "),
 	@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
 	@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
+	
+	// ChartDefinition
+	
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

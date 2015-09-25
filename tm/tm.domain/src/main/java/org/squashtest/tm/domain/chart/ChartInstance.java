@@ -20,19 +20,40 @@
  */
 package org.squashtest.tm.domain.chart;
 
-public enum EntityType {
+/**
+ * This class is not an entity : it shall not be persisted.
+ * 
+ * @author bsiri
+ *
+ */
+public class ChartInstance {
 
-	// @formatter:off
-	REQUIREMENT,
-	REQUIREMENT_VERSION,
-	TEST_CASE,
-	TEST_STEP,
-	CAMPAIGN,
-	ITERATION,
-	ITEM_TEST_PLAN,
-	EXECUTION,
-	BUG;
-	// @formatter:on
+	private ChartDefinition definition;
+
+	private Object[][] resultSet;
+
+	public ChartDefinition getDefinition() {
+		return definition;
+	}
+
+	public void setDefinition(ChartDefinition definition) {
+		this.definition = definition;
+	}
+
+	public Object[][] getResultSet() {
+		return resultSet;
+	}
+
+	public void setResultSet(Object[][] resultSet) {
+		this.resultSet = resultSet;
+	}
+
+	public ChartInstance(ChartDefinition definition, Object[][] resultSet) {
+		super();
+		this.definition = definition;
+		this.resultSet = resultSet;
+	}
+
 
 
 }

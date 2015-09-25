@@ -37,7 +37,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 @Entity
 @Table(name = "CHART_MEASURE_COLUMN")
-public class MeasureColumn {
+public class MeasureColumn implements ColumnPrototypeInstance {
 
 	@Id
 	@Column(name = "MEASURE_ID")
@@ -81,4 +81,8 @@ public class MeasureColumn {
 		this.operation = operation;
 	}
 
+	@Override
+	public EntityType getEntityType() {
+		return column.getEntityType();
+	}
 }

@@ -38,7 +38,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "CHART_FILTER")
-public class Filter {
+public class Filter implements ColumnPrototypeInstance {
 
 	@Id
 	@Column(name = "FILTER_ID")
@@ -81,4 +81,8 @@ public class Filter {
 		this.values = values;
 	}
 
+	@Override
+	public EntityType getEntityType() {
+		return column.getEntityType();
+	}
 }
