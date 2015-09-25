@@ -105,7 +105,7 @@ public class ChartDataFinder {
 	 */
 	private Object createBaseQuery(ChartDefinition definition){
 
-
+		return null;
 
 	}
 
@@ -123,7 +123,7 @@ public class ChartDataFinder {
 		Map<ColumnRole, Set<EntityType>> types = definition.getInvolvedEntities();
 
 
-
+		return null;
 
 	}
 
