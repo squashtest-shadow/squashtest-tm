@@ -45,13 +45,13 @@
     <database.username>sa</database.username>
     <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
       props should be overridden with absolute paths (which don't work under windows...) -->
-    <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
+    <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
-    <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+    <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
 
@@ -64,14 +64,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-
-      <!--<dependency>-->
-      <!--<groupId>org.squashtest.tm</groupId>-->
-      <!--<artifactId>provision-bom</artifactId>-->
-      <!--<version>${provisionBom.version}</version>-->
-      <!--<type>pom</type>-->
-      <!--<scope>import</scope>-->
-      <!--</dependency>-->
     </dependencies>
   </dependencyManagement>
 
@@ -105,18 +97,14 @@
     <dependency>
       <groupId>mysql</groupId>
       <artifactId>mysql-connector-java</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
-    <!-- ====== /SPRING ====== -->
-
-    <!-- ====== DB AND CONNECTION POOL ====== -->
     <dependency>
       <groupId>commons-dbcp</groupId>
       <artifactId>commons-dbcp</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <!-- ====== FOUNDATION ====== -->
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
@@ -125,14 +113,11 @@
     <dependency>
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.ancoron.postgresql</groupId>
-      <artifactId>org.postgresql</artifactId>
-      <scope>runtime</scope>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
     </dependency>
-    <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -145,7 +130,7 @@
     <!-- ====== SPRING ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>org.springframework.expression</artifactId>
+      <artifactId>spring-expression</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -339,8 +324,8 @@
       <properties>
         <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
       props should be overridden with absolute paths (which don't work under windows...) -->
-        <dbunit-database.url>jdbc:h2:target/database/squash-it-dbunit/squash-it</dbunit-database.url>
-        <non-dbunit-database.url>jdbc:h2:target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+        <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
+        <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
       </properties>
     </profile>
 
@@ -467,6 +452,7 @@
     </profile>
 
     <profile>
+      <id>create-database</id>
       <activation>
         <property>
           <name>!database.nocreate</name>
