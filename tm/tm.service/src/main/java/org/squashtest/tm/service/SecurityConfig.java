@@ -311,7 +311,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Bean
-	private EhCacheFactoryBean ehCache() {
+	public EhCacheFactoryBean ehCache() {
 		EhCacheFactoryBean ehCache = new EhCacheFactoryBean();
 		ehCache.setOverflowToDisk(false);
 		ehCache.setTimeToIdle(600);
@@ -322,7 +322,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Bean
-	private EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
+	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
 		return new EhCacheManagerFactoryBean();
 	}
 

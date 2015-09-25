@@ -1,32 +1,26 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.hibernate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
-
-import javax.validation.ValidatorFactory;
-
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.SQLFunction;
@@ -36,12 +30,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 
+import java.util.Arrays;
+import java.util.Properties;
+
 /**
  * The purpose of this class is to add more things to the config of the session factory, when there is no other way to
  * do so.
- * 
+ *
  * @author bsiri
- * 
  */
 public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	private static final String FN_NAME_GROUP_CONCAT = "group_concat";
@@ -54,13 +50,13 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	private String[] dialectsSupportingGroupConcat = {};
 	private String[] dialectsSupportingStringAgg = {};
 
-	private ValidatorFactory validatorFactory;
+//	private ValidatorFactory validatorFactory;
 
 
 	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
 
 		// the validator factory
-		addValidatorFactory();
+//		addValidatorFactory();
 
 		// group concat
 		addGroupConcatToConfiguration();
@@ -76,20 +72,20 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	 ******************************************************************* */
 
 
-	protected void addValidatorFactory(){
-		Configuration config = getConfiguration();
-		Properties p = config.getProperties();
-		p.put(JAVAX_VALIDATION_FACTORY, validatorFactory);
-	}
+//	protected void addValidatorFactory(){
+//		Configuration config = getConfiguration();
+//		Properties p = config.getProperties();
+//		p.put(JAVAX_VALIDATION_FACTORY, validatorFactory);
+//	}
 
 
-	public ValidatorFactory getValidatorFactory() {
-		return validatorFactory;
-	}
+//	public ValidatorFactory getValidatorFactory() {
+//		return validatorFactory;
+//	}
 
-	public void setValidatorFactory(ValidatorFactory validatorFactory) {
-		this.validatorFactory = validatorFactory;
-	}
+//	public void setValidatorFactory(ValidatorFactory validatorFactory) {
+//		this.validatorFactory = validatorFactory;
+//	}
 
 
 	/* ********************************************************************
@@ -97,8 +93,7 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	 ******************************************************************* */
 
 
-
-	protected void addGroupConcatToConfiguration(){
+	protected void addGroupConcatToConfiguration() {
 
 		// check that the underlying base supports the dialect extensions : let's see what's the dialect is
 		SQLFunction sqlFunction = getSQLFunctionForDialect();
@@ -129,7 +124,6 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	}
 
 
-
 	private SQLFunction getSQLFunctionForDialect() throws IllegalArgumentException {
 
 		Properties hibernateProperties = getHibernateProperties();
@@ -155,15 +149,14 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 		}
 
 		LOGGER.error(
-				"RicherDialectSessionFactory : selected hibernate Dialect '{}' is not reputed to support the sql function 'group_concat()'. If you are sure that your dialect (and the underlying database) supports this function, please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat (see xml configuration)",
-				choosenDialect);
+			"RicherDialectSessionFactory : selected hibernate Dialect '{}' is not reputed to support the sql function 'group_concat()'. If you are sure that your dialect (and the underlying database) supports this function, please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat (see xml configuration)",
+			choosenDialect);
 
 		return null;
 	}
 
 	private boolean isPlaceholder(String str) {
-		return str.indexOf('$') == 0 && str.indexOf('{') == 1
-				&& str.indexOf('}') == str.length() - 1;
+		return StringUtils.startsWith(str, "${") && StringUtils.endsWith(str, "}");
 	}
 
 }
