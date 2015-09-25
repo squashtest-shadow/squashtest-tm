@@ -20,19 +20,16 @@
  */
 package org.squashtest.core.api.repository
 
-import javax.inject.Inject
-
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.transaction.TransactionConfiguration
-import org.springframework.transaction.annotation.Isolation
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.squashtest.tm.api.repository.SqlQueryRunner
+import org.unitils.database.annotations.Transactional
 import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 /**
  * Nore : isolation=Isolation.READ_UNCOMMITTED because SqlQueryRunner explicitely opens a tx and does not contribute to theone opened by test method. Which means it is not able to see injected data otherwise.
@@ -43,7 +40,7 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/repository-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
-@org.unitils.database.annotations.Transactional(TransactionMode.DISABLED)
+@Transactional(TransactionMode.DISABLED)
 @DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 class SqlQueryRunnerIT extends Specification {
 	@Inject SqlQueryRunner runner

@@ -30,7 +30,6 @@
 	
 	<!--  infrastructure to mock Spring DM -->
   <bean class="org.squashtest.it.infrastructure.AopSquashProxyUtil" />
-  <bean class="org.squashtest.it.infrastructure.StubBeanPostProcessor" lazy-init="false" />
 
 	<!--  stubs  -->
 	

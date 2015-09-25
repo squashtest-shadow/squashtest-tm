@@ -24,18 +24,25 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.squashtest.it.infrastructure.StubValidatorFactory
 import org.unitils.database.UnitilsDataSourceFactoryBean
+
+import javax.validation.ValidatorFactory
 
 /**
  * @author Gregory Fouquet
  * @since 1.13.0
  */
 @Configuration
-@ComponentScan
+@ComponentScan(basePackages = "org.squashtest.tm", excludeFilters = @ComponentScan.Filter(Configuration))
 @EnableSpringConfigured
 class RepositorySpecConfig {
     @Bean(name = "squashtest.core.persistence.jdbc.DataSource")
     UnitilsDataSourceFactoryBean dataSource() {
         return new UnitilsDataSourceFactoryBean()
+    }
+
+    @Bean ValidatorFactory validatorFactory() {
+        return new StubValidatorFactory();
     }
 }

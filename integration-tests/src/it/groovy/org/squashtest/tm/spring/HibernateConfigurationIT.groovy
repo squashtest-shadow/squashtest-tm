@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.spring
 
+import spock.lang.Ignore
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
@@ -33,7 +35,8 @@ import spock.lang.Specification;
 @ContextConfiguration(["classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml",
 	"classpath:repository/dependencies-scan-context.xml", "classpath:config-context.xml"])
 @TransactionConfiguration(transactionManager="squashtest.tm.hibernate.TransactionManager")
-class HibernateConfigurationIT_Disabled { // extends Specification {
+@Ignore
+class HibernateConfigurationIT  extends Specification {
 	@Inject SessionFactory sessionFactory;
 
 	def "should have injected session factory"() {

@@ -20,24 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject;
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.service.internal.repository.ProjectDao
+import org.unitils.dbunit.annotation.DataSet
+import spock.lang.IgnoreRest
+import spock.unitils.UnitilsSupport
 
-import org.hibernate.SessionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.unitils.dbunit.annotation.DataSet;
-import org.unitils.spring.annotation.SpringApplicationContext;
-
-import spock.lang.Specification;
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 @UnitilsSupport
 
@@ -45,6 +34,7 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 	@Inject
 	ProjectDao projectDao
 
+	@IgnoreRest
 	@DataSet("HibernateProjectDaoIT.xml")
 	def "should return a list of existing project" () {
 		when:

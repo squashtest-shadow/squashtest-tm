@@ -20,19 +20,16 @@
  */
 package org.squashtest.tm.service.security
 
-import java.util.List
-import java.util.Map;
-
-import org.springframework.security.acls.jdbc.LookupStrategy;
-import org.springframework.security.acls.model.Acl;
-import org.springframework.security.acls.model.ObjectIdentity;
-import org.springframework.security.acls.model.Sid;
+import org.springframework.security.acls.jdbc.LookupStrategy
+import org.springframework.security.acls.model.Acl
+import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.security.acls.model.Sid
 
 class StubLookupStrategy implements LookupStrategy {
 
-	@Override
-	public Map<ObjectIdentity, Acl> readAclsById(List<ObjectIdentity> objects, List<Sid> sids) {
-		return Collections.emptyMap();
-	}
+    @Override
+    public Map<ObjectIdentity, Acl> readAclsById(List<ObjectIdentity> objects, List<Sid> sids) {
+        return Collections.emptyMap();
+    }
 
 }
