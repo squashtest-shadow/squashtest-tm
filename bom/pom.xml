@@ -53,7 +53,7 @@
     <ooxml-schemas.version>1.1</ooxml-schemas.version>
     <poi.version>3.12</poi.version>
     <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
-    <spock.version>1.0-groovy-2.0</spock.version>
+    <spock.version>1.0-groovy-2.3</spock.version>
     <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
     <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
     <thymeleaf-extras-springsecurity4.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity4.version>
@@ -106,6 +106,12 @@
         <groupId>net.sf.ehcache</groupId>
         <artifactId>ehcache</artifactId>
         <version>${ehcache.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>${groovy.version}</version>
       </dependency>
 
       <dependency>
@@ -166,18 +172,6 @@
         <groupId>org.apache.poi</groupId>
         <artifactId>poi-ooxml-schemas</artifactId>
         <version>${poi.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${postgresql.version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.spockframework</groupId>
-        <artifactId>spock-unitils</artifactId>
-        <version>${spock.version}</version>
       </dependency>
 
       <dependency>
@@ -312,6 +306,13 @@
       </dependency>
 
       <dependency>
+        <groupId>postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgresql.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+
+      <dependency>
         <groupId>xml-resolver</groupId>
         <artifactId>xml-resolver</artifactId>
         <version>${xml-resolver.version}</version>
@@ -326,14 +327,27 @@
         <scope>import</scope>
       </dependency>
 
-      <!--
       <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>${groovy.version}</version>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-core</artifactId>
+        <version>${spock.version}</version>
         <scope>test</scope>
       </dependency>
--->
+
+      <dependency>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-spring</artifactId>
+        <version>${spock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.spockframework</groupId>
+        <artifactId>spock-unitils</artifactId>
+        <version>${spock.version}</version>
+        <scope>test</scope>
+      </dependency>
+
     </dependencies>
   </dependencyManagement>
 

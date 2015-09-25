@@ -48,7 +48,7 @@
   <properties>
     <!-- aspectj version syncd w/ spring boot version -->
     <aspectj.version>1.8.5</aspectj.version>
-    <groovy-eclipse-batch.version>2.0.4-04</groovy-eclipse-batch.version>
+    <groovy-eclipse-batch.version>2.3.7-01</groovy-eclipse-batch.version>
     <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
     <!-- groovy version syncd w/ spring boot version -->
     <groovy.version>2.3.11</groovy.version>

@@ -45,13 +45,15 @@
     <database.username>sa</database.username>
     <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
       props should be overridden with absolute paths (which don't work under windows...) -->
-    <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
+    <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it
+    </dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
-    <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+    <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it
+    </non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
 
@@ -127,7 +129,6 @@
     </dependency>
 
 
-    <!-- ====== SPRING ====== -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-expression</artifactId>
@@ -139,9 +140,6 @@
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>
-    <!-- ====== /SQUASHTEST ====== -->
-
-    <!-- ====== SPOCK TESTS SUPPORT ====== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>spock-test-dependencies</artifactId>
@@ -324,8 +322,10 @@
       <properties>
         <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
       props should be overridden with absolute paths (which don't work under windows...) -->
-        <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it</dbunit-database.url>
-        <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
+        <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it
+        </dbunit-database.url>
+        <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it
+        </non-dbunit-database.url>
       </properties>
     </profile>
 
