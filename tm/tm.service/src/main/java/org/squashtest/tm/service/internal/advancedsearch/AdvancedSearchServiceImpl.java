@@ -42,6 +42,7 @@ import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.slf4j.Logger;
@@ -69,6 +70,7 @@ import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
@@ -304,47 +306,42 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private List<String> parseInput(String textInput) {
 
 		List<String> tokens = new ArrayList<String>();
-		boolean inDoubleQuoteContext = false;
 		char[] input = textInput.toCharArray();
 
-		int start = 0;
-		// if we encounter a double quote at the very start
-		if (input[0] == '"') {
-			inDoubleQuoteContext = true;
-			start = 1;
-		}
+		char startChar = input[0];
 
-		// if we encounter a simple quote at the very start
-		if (input[0] == '\'') {
-			start = 1;
-		}
+		// init the starting position
+		int start = (startChar == '"' || startChar == '\'') ? 1 : 0;
 
+		// init the double quote context
+		boolean inDoubleQuoteContext = (startChar == '"');
+
+
+		// iterate over each characters
 		for (int i = 1; i < input.length; i++) {
+
 			char charAtPosition = input[i];
 			char charBeforePosition = input[i - 1];
 
-			// if we encounter a blank while NOT in the context of a double quote
-			if (isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)) {
+			// add a new token if the current character reached a delimiter
+			// and prepare the counter for the next token
+			if (isSimpleQuote(charAtPosition, charBeforePosition)	||
+					isDoubleQuote(charAtPosition, charBeforePosition)	||
+					isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)){
 				addToTokens(tokens, textInput.substring(start, i).trim());
 				start = i + 1;
 			}
 
-			// treat apostrophes as word separators
-			else if (isSimpleQuote(charAtPosition, charBeforePosition)) {
-				addToTokens(tokens, textInput.substring(start, i).trim());
-				start = i + 1;
-			}
-
-			// if we encounter a double quote
-			else if (isDoubleQuote(charAtPosition, charBeforePosition)) {
+			// keep track of the double quote context
+			if (isDoubleQuote(charAtPosition, charBeforePosition)) {
 				inDoubleQuoteContext = !inDoubleQuoteContext;
-				addToTokens(tokens, textInput.substring(start, i).trim());
-				start = i + 1;
 			}
 
 		}
 
-		if (input[input.length - 1] != '"' && input[input.length - 1] != ' ') {
+		// add the last bit if this is a token too
+		char lastChar = input[input.length-1];
+		if (lastChar != '"' && lastChar != ' ') {
 			addToTokens(tokens, textInput.substring(start, input.length).trim());
 		}
 
@@ -485,9 +482,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	@SuppressWarnings("unchecked")
 	protected void addMilestoneFilter(AdvancedSearchModel searchModel) {
-		Session session = sessionFactory.getCurrentSession();
-		Criteria crit = session.createCriteria(Milestone.class);
-
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields
@@ -495,67 +489,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 
-			for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
-
-				AdvancedSearchFieldModel model = entry.getValue();
-				if (model != null) {
-
-					switch (entry.getKey()) {
-
-					case "milestone.label":
-
-						List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
-
-						if (labelValues != null && !labelValues.isEmpty()) {
-
-							Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
-
-								@Override
-								public Object transform(Object val) {
-									return Long.parseLong((String) val);
-								}
-							});
-							crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
-						}
-						break;
-
-					case "milestone.status":
-						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
-						if (statusValues.isEmpty()) {
-							// We don't add crit and must not add some crit = null}
-						} else if (statusValues != null && !statusValues.isEmpty()) {
-
-							crit.add(Restrictions.in("status", convertStatus(statusValues)));
-
-						}
-						break;
-
-					case "milestone.endDate":
-						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
-						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
-
-						if (startDate != null) {
-							Calendar cal = Calendar.getInstance();
-							cal.setTime(startDate);
-							cal.set(Calendar.HOUR, 0);
-							crit.add(Restrictions.ge("endDate", cal.getTime()));
-						}
-
-						if (endDate != null) {
-							crit.add(Restrictions.le("endDate", endDate));
-
-						}
-
-						break;
-					default:
-						// do nothing
-					}
-				}
-			}
+			Criteria crit = createMilestoneHibernateCriteria(fields);
 
 			List<String> milestoneIds = new ArrayList<String>();
-			for (Milestone milestone : (List<Milestone>) crit.list()) {
-				milestoneIds.add(String.valueOf(milestone.getId()));
+			List<Long> foundIds = (List<Long>)crit.list();
+			for (Long milestoneId : foundIds) {
+				milestoneIds.add(String.valueOf(milestoneId));
 			}
 
 			//if there is no milestone id that means we didn't found any milestones
@@ -570,6 +509,73 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			fields.put("milestones.id", milestonesModel);
 		}
 
+	}
+
+	protected Criteria createMilestoneHibernateCriteria(Map<String, AdvancedSearchFieldModel> fields) {
+
+		Session session = sessionFactory.getCurrentSession();
+		Criteria crit = session.createCriteria(Milestone.class, "milestone");
+
+		for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {
+
+			AdvancedSearchFieldModel model = entry.getValue();
+			if (model != null) {
+
+				switch (entry.getKey()) {
+
+				case "milestone.label":
+
+					List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
+
+					if (labelValues != null && !labelValues.isEmpty()) {
+
+						Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
+							@Override
+							public Object transform(Object val) {
+								return Long.parseLong((String) val);
+							}
+						});
+
+						crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
+					}
+					break;
+
+				case "milestone.status":
+					List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
+
+					if ((! statusValues.isEmpty()) && statusValues != null && !statusValues.isEmpty()) {
+						crit.add(Restrictions.in("status", convertStatus(statusValues)));
+					}
+
+					break;
+
+				case "milestone.endDate":
+					Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
+					Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
+
+					if (startDate != null) {
+						Calendar cal = Calendar.getInstance();
+						cal.setTime(startDate);
+						cal.set(Calendar.HOUR, 0);
+						crit.add(Restrictions.ge("endDate", cal.getTime()));
+					}
+
+					if (endDate != null) {
+						crit.add(Restrictions.le("endDate", endDate));
+
+					}
+
+					break;
+				default:
+					// do nothing
+				}
+			}
+		}
+
+		// set the criteria projection so that we only fetch the ids
+		crit.setProjection(Projections.property("milestone.id"));
+
+		return crit;
 	}
 
 	protected void removeMilestoneSearchFields(AdvancedSearchModel model) {

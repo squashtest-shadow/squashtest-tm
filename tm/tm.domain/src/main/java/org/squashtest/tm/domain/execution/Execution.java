@@ -53,6 +53,7 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -256,6 +257,7 @@ DenormalizedFieldHolder, BoundEntity {
 	 * 
 	 * The underlying table is actually a view. So this one is read only and might be quite slow to use.
 	 */
+	@Transient
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
 	joinColumns=@JoinColumn(name="EXECUTION_ID", insertable=false, updatable=false ),
