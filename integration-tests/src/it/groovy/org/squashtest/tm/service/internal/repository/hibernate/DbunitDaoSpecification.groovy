@@ -20,27 +20,25 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.springframework.test.context.TestPropertySource
-import org.squashtest.it.config.DynamicDaoConfig
-import org.squashtest.tm.service.RepositoryConfig
-
-import javax.inject.Inject
 import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
-import org.unitils.database.util.TransactionMode
-
+import org.squashtest.it.config.DynamicDaoConfig
+import org.squashtest.tm.service.RepositoryConfig
 import spock.lang.Specification
+
+import javax.inject.Inject
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(classes = [RepositorySpecConfig, RepositoryConfig, DynamicDaoConfig])
-@TestPropertySource("classpath:no-validation-hibernate.properties")
+@ContextConfiguration(classes = [RepositorySpecConfig, DynamicDaoConfig, RepositoryConfig ])
+@TestPropertySource(["classpath:datasource.properties", "classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 @Transactional
 abstract class DbunitDaoSpecification extends Specification {

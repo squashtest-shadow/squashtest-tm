@@ -29,7 +29,6 @@ import spock.unitils.UnitilsSupport
 import javax.inject.Inject
 
 @UnitilsSupport
-
 class HibernateProjectDaoIT extends DbunitDaoSpecification {
 	@Inject
 	ProjectDao projectDao

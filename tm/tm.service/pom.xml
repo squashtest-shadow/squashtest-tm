@@ -19,7 +19,6 @@
 
         You should have received a copy of the GNU Lesser General Public License
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
@@ -35,7 +34,7 @@
   <description>Squash TM services module - Provides Test management related internal services</description>
 
   <properties>
-    <dynamicdao.outputdir>${basedir}/META-INF/spring/</dynamicdao.outputdir>
+    <dynamicdao.outputdir>${project.build.directory}/generated-resources</dynamicdao.outputdir>
   </properties>
 
   <dependencyManagement>
@@ -133,7 +132,6 @@
       <artifactId>ooxml-schemas</artifactId>
     </dependency>
 
-    <!-- ====== POI ====== -->
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
@@ -211,31 +209,10 @@
 
     <plugins>
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-resource</id>
-            <goals>
-              <goal>add-resource</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${project.build.directory}/generated-resources</directory>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <generatedSourcesDirectory>${project.build.directory}/generated-resources/META-INF</generatedSourcesDirectory>
+          <generatedSourcesDirectory>${project.build.outputDirectory}/META-INF</generatedSourcesDirectory>
         </configuration>
         <dependencies>
           <dependency>
@@ -281,13 +258,6 @@
 
   <profiles>
     <profile>
-      <id>linkMeta</id>
-      <properties>
-        <dynamicdao.outputdir>${project.build.outputDirectory}/META-INF/spring/</dynamicdao.outputdir>
-      </properties>
-    </profile>
-
-    <profile>
       <id>eclipse</id>
       <activation>
         <file>
@@ -309,9 +279,10 @@
                 <phase>package</phase>
                 <configuration>
                   <outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
+                  <outputDirectory>${basedir}/META-INF/spring/</outputDirectory>
                   <resources>
                     <resource>
-                      <directory>${project.build.directory}/generated-resources/META-INF/spring</directory>
+                      <directory>${dynamicdao.outputdir}/META-INF/spring</directory>
                       <includes>
                         <include>**/*.xml</include>
                       </includes>

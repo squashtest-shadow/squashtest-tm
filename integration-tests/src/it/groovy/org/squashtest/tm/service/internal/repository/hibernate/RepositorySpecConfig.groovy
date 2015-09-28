@@ -24,6 +24,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.squashtest.it.infrastructure.StubValidatorFactory
 import org.unitils.database.UnitilsDataSourceFactoryBean
 
@@ -43,6 +44,10 @@ class RepositorySpecConfig {
     }
 
     @Bean ValidatorFactory validatorFactory() {
-        return new StubValidatorFactory();
+        return new StubValidatorFactory()
+    }
+
+    @Bean static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
 }

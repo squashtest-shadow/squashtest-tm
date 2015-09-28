@@ -49,7 +49,6 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentIn
  * @author Gregory Fouquet
  * 
  * @param <COMPONENT>
- * @param <ENTITY>
  */
 public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements FactoryBean<COMPONENT>,
 		BeanFactoryAware, InitializingBean {

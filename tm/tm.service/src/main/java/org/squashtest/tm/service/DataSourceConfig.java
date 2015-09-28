@@ -28,7 +28,9 @@ import org.springframework.context.annotation.Configuration;
 import javax.sql.DataSource;
 
 /**
+ * TODO nosgi that's kind of ugly, have to find something better
  * @author Gregory Fouquet
+ * @since 1.13.0
  */
 @Configuration
 public class DataSourceConfig {
