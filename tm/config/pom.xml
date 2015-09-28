@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-tm</artifactId>
-    <version>1.13.0.IT100-SNAPSHOT</version>
+    <version>1.13.0.IT100</version>
   </parent>
 
   <artifactId>squash-tm-config</artifactId>

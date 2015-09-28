@@ -9,7 +9,7 @@
   </parent>
 
   <artifactId>squash-tm</artifactId>
-  <version>1.13.0.IT100-SNAPSHOT</version>
+  <version>1.13.0.IT100</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -38,11 +38,11 @@
     <org.osgi.service.http.port.secure>9443</org.osgi.service.http.port.secure>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <provisionBom.version>1.4</provisionBom.version>
+    <querydsl.version>4.0.4</querydsl.version>
 
     <thymeleaf.version>2.1.4.A</thymeleaf.version>
 
     <verbose.compiler>false</verbose.compiler>
-    <querydsl.version>4.0.4</querydsl.version>
   </properties>
 
   <dependencyManagement>
@@ -88,6 +88,19 @@
         <artifactId>org.squashtest.org.thymeleaf.spring3</artifactId>
         <version>${thymeleaf.version}</version>
       </dependency>
+
+      <dependency>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-jpa</artifactId>
+        <version>${querydsl.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>com.querydsl</groupId>
+        <artifactId>querydsl-apt</artifactId>
+        <version>${querydsl.version}</version>
+        <scope>provided</scope>
+      </dependency>
       <!-- ====== INFRASTRUCTURE DEFINITIONS === -->
       <dependency>
         <groupId>org.squashtest.tm</groupId>
@@ -96,22 +109,7 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-apt</artifactId>
-			<version>${querydsl.version}</version>
-			<scope>provided</scope>
-		</dependency>
-	
-		<dependency>
-			<groupId>com.querydsl</groupId>
-			<artifactId>querydsl-jpa</artifactId>
-			<version>${querydsl.version}</version>
-		</dependency>
-      
-      
-      
+
     </dependencies>
   </dependencyManagement>
 
