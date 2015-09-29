@@ -43,14 +43,14 @@ import java.util.List;
  * @param <T> the type of the actual subclass.
  */
 
-public abstract class TreeNode<T extends TreeNode<T>> {
+public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 
 	private final List<T> children = new ArrayList<T>();
 	private  T parent ;
-	private LibraryTree<T> tree ;
+	private LibraryTree<IDENT, T> tree ;
 
 	private int depth;
-	private Long key;
+	private IDENT key;
 
 
 	/**
@@ -66,17 +66,17 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 
 	}
 
-	public TreeNode(Long key){
+	public TreeNode(IDENT key){
 		this.key=key;
 	}
 
 
-	LibraryTree<T> getTree(){
+	LibraryTree<IDENT, T> getTree(){
 		return tree;
 	}
 
 
-	void setTree(LibraryTree<T> tree){
+	void setTree(LibraryTree<IDENT, T> tree){
 		this.tree= tree;
 	}
 
@@ -86,11 +86,11 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 	}
 
 
-	public Long getKey() {
+	public IDENT getKey() {
 		return key;
 	}
 
-	public void setKey(Long key) {
+	public void setKey(IDENT key) {
 		this.key = key;
 	}
 

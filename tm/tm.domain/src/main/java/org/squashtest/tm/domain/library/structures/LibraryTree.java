@@ -33,6 +33,7 @@ import java.util.Set;
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 
 
 
@@ -67,10 +68,14 @@ import org.apache.commons.collections.Transformer;
  * @see TreeNode
  * </p>
  * 
+ * @param T : the type of the nodes this tree is made of
+ * @param IDENT : the type of the key used by a node. As an identifier, it should be immutable and implement
+ * equality/hashcode properly. If it's good for a HashSet, it's good for the job here too.
+ * 
  *  @author bsiri
  */
 
-public class  LibraryTree<T extends TreeNode<T>>{
+public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 	protected final Map<Integer, List<T>> layers = new HashMap<Integer, List<T>>();
 
@@ -131,7 +136,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @param parentKey the key designating the parent node.
 	 * @param childNode the child we want eventually to insert.
 	 */
-	public void  addNode(Long parentKey, T childNode){
+	public void  addNode(IDENT parentKey, T childNode){
 		addNode(new TreeNodePair(parentKey, childNode));
 	}
 
@@ -154,7 +159,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		List<TreeNodePair> cleanPairs = cleanData(unsortedFlatTree);
 
 		// first pass : create all the nodes
-		Map<Long, T> newNodesByKey = new HashMap<>();
+		Map<IDENT, T> newNodesByKey = new HashMap<>();
 		Set<T> rootNodes = new HashSet<>();
 
 		for (TreeNodePair pair : cleanPairs){
@@ -220,10 +225,10 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 */
 	private List<TreeNodePair> cleanData(List<TreeNodePair> corruptData){
 
-		Map<Long, TreeNodePair> pairByChildKey = new HashMap<>();
+		Map<IDENT, TreeNodePair> pairByChildKey = new HashMap<>();
 
 		for (TreeNodePair pair : corruptData){
-			Long childKey = pair.getChild().getKey();
+			IDENT childKey = pair.getChild().getKey();
 			TreeNodePair foundPair = pairByChildKey.get(childKey);
 
 			// case one : there were no entries yet
@@ -252,7 +257,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @throws NoSuchElementException if the node was not found.
 	 * 
 	 */
-	public T getNode(Long key){
+	public T getNode(IDENT key){
 
 		if (key == null){ return null;}
 
@@ -351,7 +356,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * 
 	 * @return the list of the node keys.
 	 */
-	public List<Long> collectKeys(){
+	public List<IDENT> collectKeys(){
 		return collect(new Transformer() {
 			@Override
 			public Object transform(Object input) {
@@ -403,13 +408,13 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 *
 	 */
 	public class TreeNodePair{
-		private Long parentKey;
+		private IDENT parentKey;
 		private T child;
 
-		public Long getParentKey() {
+		public IDENT getParentKey() {
 			return parentKey;
 		}
-		public void setParentKey(Long parentKey) {
+		public void setParentKey(IDENT parentKey) {
 			this.parentKey = parentKey;
 		}
 		public T getChild() {
@@ -423,7 +428,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 
 		}
 
-		public TreeNodePair(Long parentKey, T child){
+		public TreeNodePair(IDENT parentKey, T child){
 			this.parentKey = parentKey;
 			this.child = child;
 		}
@@ -456,8 +461,30 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @param child the child node.
 	 * @return an initialized instance of TreeNodePair.
 	 */
-	public TreeNodePair newPair(Long parentKey, T child){
+	public TreeNodePair newPair(IDENT parentKey, T child){
 		return new TreeNodePair(parentKey, child);
+	}
+
+
+
+	// ********* Simple class in which a node is solely represented by its key. The key is still whatever you need. **********
+
+	public static final class SimpleNode<T> extends TreeNode<T, SimpleNode<T>>{
+
+		public SimpleNode() {
+			super();
+		}
+
+		public SimpleNode(T key) {
+			super(key);
+		}
+
+		@Override
+		protected void updateWith(SimpleNode<T> newData) {
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 
 }

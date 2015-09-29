@@ -37,7 +37,7 @@ class LibraryTreeTest extends Specification{
 		LibraryTree.metaClass.toListOfPair = { List arg -> return toListOfPair(delegate, arg)  }
 	}
 
-	protected List<TreeNodePair> toListOfPair(LibraryTree<SubTreeNode> tree, List<List<Long>> l){
+	protected List<TreeNodePair> toListOfPair(LibraryTree<Long, SubTreeNode> tree, List<List<Long>> l){
 
 		List<TreeNodePair> res = new LinkedList<TreeNodePair>();
 
@@ -401,7 +401,7 @@ class LibraryTreeTest extends Specification{
 		def tree = new LibraryTree();
 
 		and :
-		List unsortedData = tree.toListOfPair([ [12, 23], [11, 22] , [1, 12], [11, 21], [null, 1], [1, 11] ])
+		List unsortedData = tree.toListOfPair([ [12l, 23l], [11l, 22l] , [1l, 12l], [11l, 21l], [null, 1l], [1l, 11l] ])
 
 		when :
 		tree.addNodes(unsortedData)
