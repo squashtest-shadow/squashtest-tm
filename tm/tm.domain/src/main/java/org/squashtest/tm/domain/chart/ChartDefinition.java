@@ -28,7 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -82,13 +84,13 @@ public class ChartDefinition {
 	@JoinTable(name = "CHART_FILTER", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "FILTER_ID") )
 	private List<Filter> filters;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "CHART_AXIS", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "AXIS_ID") )
+	@ElementCollection
+	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@OrderColumn(name = "RANK")
 	private List<AxisColumn> axis;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "CHART_MEASURE", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "MEASURE_ID") )
+	@ElementCollection
+	@JoinTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@OrderColumn(name = "RANK")
 	private List<MeasureColumn> measures;
 
@@ -107,7 +109,7 @@ public class ChartDefinition {
 
 	/**
 	 * Returns which entities are covered by this chart, sorted by roles
-	 * 
+	 *
 	 * @return
 	 */
 	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){

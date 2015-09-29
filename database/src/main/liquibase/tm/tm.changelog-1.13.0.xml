@@ -187,18 +187,39 @@
 	</sql>
 	
 	
-
+	<createTable tableName="CHART_DEFINITION"> 
 	
-	<createTable tableName="CHART_MEASURE_COLUMN">
-			<column name="MEASURE_ID" type="BIGINT"
+	<column name="CHART_ID" type="BIGINT"
 				autoIncrement="true">
 				<constraints primaryKey="true" nullable="false" />
-			</column>
+	</column>
 	
+	  <column name="USER_ID" type="BIGINT">
+        <constraints nullable="false" foreignKeyName="fk_chart_owner" references="CORE_USER(PARTY_ID)" />
+      </column>
+		       <column name="NAME" type="java.sql.Types.VARCHAR(30)"></column>
+				<column name="VISIBILITY" type="java.sql.Types.VARCHAR(255)"></column>
+				<column name="TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+				<column name="DESCRIPTION" type="CLOB"></column>
+	
+	</createTable>
+	
+		<createIndex tableName="CHART_DEFINITION" indexName="idx_chart_definition">
+			<column name="CHART_ID" />
+		</createIndex>
+	
+	<createTable tableName="CHART_MEASURE_COLUMN">
+				
 		<column name="CHART_COLUMN_ID" type="BIGINT">
 				<constraints nullable="false"
 					foreignKeyName="fk_chart_measure_chart_column"
 					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+	
+		<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_measure_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
 			</column>
 			
 				<column name="LABEL" type="java.sql.Types.VARCHAR(30)"></column>
@@ -207,10 +228,7 @@
 				
 				
 		</createTable>	
-	
-		<createIndex tableName="CHART_MEASURE_COLUMN" indexName="idx_chart_measure_column">
-			<column name="MEASURE_ID" />
-		</createIndex>
+
 	
 	<createTable tableName="CHART_FILTER">
 			<column name="FILTER_ID" type="BIGINT"
@@ -222,6 +240,12 @@
 				<constraints nullable="false"
 					foreignKeyName="fk_chart_filter_chart_column"
 					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+	
+		<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_filter_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
 			</column>
 			
 				<column name="OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
@@ -255,27 +279,23 @@
 	
 	
 	<createTable tableName="CHART_AXIS_COLUMN">
-			<column name="AXIS_ID" type="BIGINT"
-				autoIncrement="true">
-				<constraints primaryKey="true" nullable="false" />
-			</column>
-	
+			
 		<column name="CHART_COLUMN_ID" type="BIGINT">
 				<constraints nullable="false"
 					foreignKeyName="fk_axis_column_chart_column"
 					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
 			</column>
+	
+		<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_axis_column_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
 			
 				<column name="LABEL" type="java.sql.Types.VARCHAR(30)"></column>
 				<column name="OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
-				<column name="RANK" type="java.sql.Types.INTEGER"></column>
+				<column name="RANK" type="java.sql.Types.INTEGER"> </column>
 		</createTable>	
-	
-		<createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_axis_column">
-			<column name="AXIS_ID" />
-		</createIndex>
-	
-	
 	
 	</changeSet>	
 

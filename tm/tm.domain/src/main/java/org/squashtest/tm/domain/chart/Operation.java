@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.chart;
 
 public enum Operation {
 	// @formatter:off
+	NONE,
 	GREATER,
 	GREATER_EQUALS,
 	LOWER,

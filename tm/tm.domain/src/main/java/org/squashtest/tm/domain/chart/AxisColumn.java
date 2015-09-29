@@ -20,30 +20,20 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 
-@Entity
+@Embeddable
 @Table(name = "CHART_AXIS_COLUMN")
 public class AxisColumn implements ColumnPrototypeInstance{
 
-	@Id
-	@Column(name = "AXIS_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_axis_id_seq")
-	@SequenceGenerator(name = "chart_axis_id_seq", sequenceName = "chart_axis_id_seq")
-	private long Id;
 
 	@NotBlank
 	@Size(min = 0, max = 30)
