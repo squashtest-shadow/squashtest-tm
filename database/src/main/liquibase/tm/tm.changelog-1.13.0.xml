@@ -127,5 +127,157 @@
 	
 	</changeSet>	
 
+
+<changeSet id="tm-1.13.0-feature-5375" author="jsimon">
+	
+	<createTable tableName="CHART_COLUMN_PROTOTYPE">
+			<column name="CHART_COLUMN_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+	<column name="LABEL" type="java.sql.Types.VARCHAR(255)"></column>
+	<column name="ENTITY_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+	<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+	<column name="ATTRIBUTE_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+	<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)"></column>
+	
+		</createTable>
+		
+		<createIndex tableName="CHART_COLUMN_PROTOTYPE" indexName="idx_column_prototype">
+			<column name="CHART_COLUMN_ID" />
+		</createIndex>
+
+	
+	
+	
+         <createTable tableName="CHART_COLUMN_ROLE">
+			<column name="COLUMN_ROLE_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+	
+	
+		<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_column_role_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+			
+			<column name="ROLE" type="java.sql.Types.VARCHAR(255)"></column>
+		</createTable>	
+	
+			<createIndex tableName="CHART_COLUMN_ROLE" indexName="idx_column_role">
+			<column name="COLUMN_ROLE_ID" />
+		</createIndex>
+	
+	
+	<sql>
+	
+	insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE, DATA_TYPE) VALUES (1, 'REQUIREMENT_NB_VERSION', 'REQUIREMENT', 'NUMERIC');
+	insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) VALUES (1, 'FILTER'), (1, 'MEASURE');
+	
+	insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE, DATA_TYPE) VALUES (2, 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING');
+	insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) VALUES (2, 'AXIS'), (2, 'FILTER');	
+		
+	insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE, DATA_TYPE) VALUES (3, 'REQUIREMENT_VERSION_CREATED_ON', 'REQUIREMENT_VERSION', 'DATE');
+	insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) VALUES (3, 'AXIS'), (3, 'FILTER'), (3, 'MEASURE');
+	
+	insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE, DATA_TYPE) VALUES (4, 'REQUIREMENT_VERSION_MODIFIED_ON', 'REQUIREMENT_VERSION', 'DATE');
+	insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) VALUES (4, 'AXIS'), (4, 'FILTER'), (4, 'MEASURE');
+	</sql>
+	
+	
+
+	
+	<createTable tableName="CHART_MEASURE_COLUMN">
+			<column name="MEASURE_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+	
+		<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_measure_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+			
+				<column name="LABEL" type="java.sql.Types.VARCHAR(30)"></column>
+				<column name="OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
+				<column name="RANK" type="java.sql.Types.INTEGER"></column>
+				
+				
+		</createTable>	
+	
+		<createIndex tableName="CHART_MEASURE_COLUMN" indexName="idx_chart_measure_column">
+			<column name="MEASURE_ID" />
+		</createIndex>
+	
+	<createTable tableName="CHART_FILTER">
+			<column name="FILTER_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+	
+		<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_filter_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+			
+				<column name="OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
+				
+		</createTable>	
+	
+		<createIndex tableName="CHART_FILTER" indexName="idx_chart_filter">
+			<column name="FILTER_ID" />
+		</createIndex>
+	
+	<createTable tableName="CHART_FILTER_VALUES">
+			<column name="CHART_FILTER_VALUES_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+	
+		<column name="FILTER_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_filter_value_chart_column"
+					references="CHART_FILTER(FILTER_ID)" />
+			</column>
+			
+					<column name="VALUES" type="java.sql.Types.VARCHAR(255)"></column>
+			
+				
+		</createTable>	
+	
+		<createIndex tableName="CHART_FILTER_VALUES" indexName="idx_chart_filter_values">
+			<column name="CHART_FILTER_VALUES_ID" />
+		</createIndex>
+	
+	
+	<createTable tableName="CHART_AXIS_COLUMN">
+			<column name="AXIS_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+	
+		<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_axis_column_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+			
+				<column name="LABEL" type="java.sql.Types.VARCHAR(30)"></column>
+				<column name="OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
+				<column name="RANK" type="java.sql.Types.INTEGER"></column>
+		</createTable>	
+	
+		<createIndex tableName="CHART_AXIS_COLUMN" indexName="idx_axis_column">
+			<column name="AXIS_ID" />
+		</createIndex>
+	
+	
+	
+	</changeSet>	
+
 </databaseChangeLog>
 

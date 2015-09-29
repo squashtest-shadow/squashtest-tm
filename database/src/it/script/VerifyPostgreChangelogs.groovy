@@ -32,7 +32,7 @@ def src = new File("src/main/liquibase/tm", root)
 
 def changelogPattern = /tm\.changelog-(\d+)\.(\d+)\.(\d+)(-.+)?\.xml/
 
-def forbiddenPattern = /"CHAR/
+def forbiddenPattern = /"CHAR\(/
 
 log.info("Applying syntax checks to database changelogs");
 
