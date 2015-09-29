@@ -91,9 +91,39 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
  * <h3>Domain</h3>
  * 
  * <p>
- * 	The total domain covered by any possible ChartDefinition is the following :
- * 	Requirement &lt;-&gt; RequirementVersion &lt;-&gt; (RequirementVersionCoverage) &lt;-&gt; TestCase
- *  &lt;-&gt; Execution OR IterationTestPlanItem &lt;-&gt; Iteration &lt;-&gt; Campaign.
+ * 	The total domain covered by any possible ChartDefinition is the following : </br></br>
+ *
+ * <table>
+ * 	<tr>
+ * 		<td>Campaign</td>
+ * 		<td>&lt;-&gt;</td>
+ * 		<td>Iteration</td>
+ * 		<td>&lt;-&gt;</td>
+ * 		<td>IterationTestPlanItem</td>
+ * 		<td>&lt;-&gt;</td>
+ * 		<td>TestCase</td>
+ * 		<td>&lt;-&gt;</td>
+ * 		<td>(RequirementVersionCoverage)</td>
+ * 		<td>&lt;-&gt;</td>
+ * 		<td>RequirementVersion</td>
+ * 		<td>&lt;-&gt; </td>
+ * 		<td>Requirement</td>
+ * 	</tr>
+ * 	<tr>
+ * 		<td>Issue</td>
+ * 		<td>&lt;-&gt;</td>
+ * 		<td>Execution</td>
+ * 		<td>&lt;--</td>
+ * 		<td>^</td>
+ * 		<td></td>
+ * 		<td></td>
+ * 		<td></td>
+ * 		<td></td>
+ * 		<td></td>
+ * 		<td></td>
+ * 	</tr>
+ * </table>
+ *
  *  </p>
  * 
  * 	<p>Depending on the ChartDefinition, a main query will be generated as
@@ -103,6 +133,7 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
  * 	<h3>Main query</h3>
  * 
  * <p>
+ *	see {@link MainQueryPlanner}.
  * 	The main building blocks that defines the main query are the following :
  * 
  * 	<ul>
@@ -118,16 +149,6 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
  * <p>The main query is thus defined as the minimal subset of the domain that join all the Target entities together via
  * Support Entities, starting with the Root entity. All joins in this query will be inner joins (no left nor right joins).</p>
  * 
- * 
- * <p>
- * 	The Domain defines two possible paths for the main query : TestCase &lt;-&gt; Execution and TestCase &lt;-&gt;
- * 	IterationTestPlanItem.
- * 	If this join is actually required, the path actually chosen is resolved as such :
- * 	<ul>
- * 		<li>If Execution is a Target entity but IterationTestPlanItem is not, then TestCase will join on Execution</li>
- * 		<li>In the other cases, TestCase will join on IterationTestPlanItem</li>
- * 	</ul>
- * </p>
  * 
  * <h3>Select clause generation</h3>
  * 
@@ -277,15 +298,6 @@ public class ChartDataFinder {
 
 
 
-	/*
-	 * That method initiates the query. The base query simply sets which tables will participate in the query and
-	 * formulate all the required joins.
-	 */
-	private Object createBaseQuery(ChartDefinition definition){
-
-		return null;
-
-	}
 
 
 

@@ -20,15 +20,22 @@
  */
 package org.squashtest.tm.domain.bugtracker;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NamedQueries;
@@ -69,6 +76,24 @@ public class Issue {
 	@ForeignKey(name = "FK_Issue_Bugtracker")
 	@JoinColumn(name = "BUGTRACKER_ID")
 	private BugTracker bugtracker;
+
+
+
+	/*
+	 * TRANSITIONAL - job half done here. The full job would involve something among the lines of RequirementVersionCoverage
+	 * 
+	 * The following mapping gives all issues reported in the scope of this execution : its own issues, and
+	 * the issues reported in its steps.
+	 * 
+	 * The underlying table is actually a view. So this one is read only and might be quite slow to use.
+	 */
+	@Transient
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
+	joinColumns=@JoinColumn(name="ISSUE_ID", insertable=false, updatable=false ),
+	inverseJoinColumns = @JoinColumn(name="EXECUTION_ID"))
+	private List<Issue> issues = new ArrayList<Issue>();
+
 
 	private String remoteIssueId;
 
