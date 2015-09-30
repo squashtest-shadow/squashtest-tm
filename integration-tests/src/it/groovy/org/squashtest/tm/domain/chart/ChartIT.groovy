@@ -40,8 +40,8 @@ class ChartIT extends DbunitServiceSpecification{
 		then :
 		result.name == "My chart"
 		result.owner.login == "lol"
-		result.visibility == Visibility.PUBLIC;
-		result.type == ChartType.PIE;
+		result.visibility == Visibility.PUBLIC
+		result.type == ChartType.PIE
 	}
 	
 	@DataSet("charts.xml")

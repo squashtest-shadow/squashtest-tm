@@ -92,6 +92,7 @@ Import-Package: com.fasterxml.jackson.databind,\
 	org.tuckey.web.filters.urlrewrite,\
 	org.hibernate.engine.jdbc,\
 	org.hibernate,\
+	org.hibernate.transform,\
 	org.h2;resolution:=optional,\
 	com.mysql.jdbc;resolution:=optional,\
 	org.postgresql;resolution:=optional,\

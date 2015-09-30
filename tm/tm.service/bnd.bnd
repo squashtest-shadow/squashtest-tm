@@ -26,6 +26,7 @@ Import-Package: com.mysql.jdbc;resolution:=optional,\
 	org.aspectj.lang,\
 	org.hibernate.validator,\
 	org.hibernate.search.hcore.impl, \
+	org.hibernate.transform,\
 	org.springframework.aop,\
 	org.springframework.aop.aspectj.autoproxy,\
 	org.springframework.aop.framework,\
