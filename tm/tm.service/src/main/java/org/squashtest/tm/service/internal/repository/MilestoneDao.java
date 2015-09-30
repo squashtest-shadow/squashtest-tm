@@ -38,7 +38,7 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 
 	/**
 	 * returns the milestones available for the given project
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
@@ -84,18 +84,38 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 
 	void synchronizeTestCases(long source, long target, List<Long> projectIds);
 
+	/**
+	 * Warning : This method may clear your session. Be carefull !
+	 * 
+	 * @param consumer
+	 */
 	void  performBatchUpdate(HolderConsumer consumer);
 
 	boolean isBoundToAtleastOneObject(long milestoneId);
 
+	/**
+	 * Warning : This method may clear your session. Be carefull !
+	 * 
+	 * @param consumer
+	 */
 	void unbindAllObjects(long milestoneId);
 
 	Milestone findByName(String name);
 
 	boolean isMilestoneBoundToOneObjectOfProject(Long milestoneId, Long projectId);
 
+	/**
+	 * Warning : This method may clear your session. Be carefull !
+	 * 
+	 * @param consumer
+	 */
 	void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds);
 
+	/**
+	 * Warning : This method may clear your session. Be carefull !
+	 * 
+	 * @param consumer
+	 */
 	void unbindAllObjectsForProject(Long id, Long projectId);
 
 	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);

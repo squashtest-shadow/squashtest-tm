@@ -220,7 +220,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		while (tcs.next()) {
 			TestCase tc = (TestCase) tcs.get(0);
 			milestone.bindTestCase(tc);
-			if (++count % 20 == 0) {
+			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
 				currentSession().flush();
 				currentSession().clear();
@@ -241,7 +241,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		while (reqVersions.next()) {
 			RequirementVersion reqV = (RequirementVersion) reqVersions.get(0);
 			milestone.bindRequirementVersion(reqV);
-			if (++count % 20 == 0) {
+			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
 				currentSession().flush();
 				currentSession().clear();
@@ -263,7 +263,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		while (reqVersions.next()) {
 			RequirementVersion reqV = (RequirementVersion) reqVersions.get(0);
 			milestone.bindRequirementVersion(reqV);
-			if (++count % 20 == 0) {
+			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
 				currentSession().flush();
 				currentSession().clear();
@@ -285,7 +285,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		while (tcs.next()) {
 			TestCase tc = (TestCase) tcs.get(0);
 			milestone.bindTestCase(tc);
-			if (++count % 20 == 0) {
+			if (++count % BATCH_UPDATE_SIZE == 0) {
 				// flush a batch of updates and release memory:
 				currentSession().flush();
 				currentSession().clear();
