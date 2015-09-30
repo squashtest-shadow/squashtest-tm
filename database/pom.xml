@@ -166,7 +166,7 @@
               <dropFirst>true</dropFirst>
               <changeLogFile>${migration-test.changelog}</changeLogFile>
               <driver>org.h2.Driver</driver>
-              <url>jdbc:h2:${project.build.outputDirectory}/database/data-migration</url>
+              <url>jdbc:h2:${project.build.directory}/database/data-migration</url>
               <username>sa</username>
               <password>sa</password>
             </configuration>
@@ -183,7 +183,7 @@
               <dropFirst>true</dropFirst>
               <changeLogFile>${incremental.updates.changelog}</changeLogFile>
               <driver>org.h2.Driver</driver>
-              <url>jdbc:h2:${project.build.outputDirectory}/database/data-migration</url>
+              <url>jdbc:h2:${project.build.directory}/database/data-migration</url>
               <username>sa</username>
               <password>sa</password>
             </configuration>
@@ -197,7 +197,7 @@
             <phase>prepare-package</phase>
             <configuration>
               <dropFirst>true</dropFirst>
-              <changeLogFile>${project.build.outputDirectory}/sample/sample-db.changelog.xml</changeLogFile>
+              <changeLogFile>${project.build.directory}/sample/sample-db.changelog.xml</changeLogFile>
               <driver>org.h2.Driver</driver>
               <url>jdbc:h2:mem:squash-sample</url>
               <username>sa</username>

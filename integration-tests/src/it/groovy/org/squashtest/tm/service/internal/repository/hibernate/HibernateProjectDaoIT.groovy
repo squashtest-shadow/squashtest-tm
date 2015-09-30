@@ -33,7 +33,6 @@ class HibernateProjectDaoIT extends DbunitDaoSpecification {
 	@Inject
 	ProjectDao projectDao
 
-	@IgnoreRest
 	@DataSet("HibernateProjectDaoIT.xml")
 	def "should return a list of existing project" () {
 		when:

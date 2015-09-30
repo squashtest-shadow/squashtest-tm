@@ -32,6 +32,6 @@ import org.springframework.context.annotation.ImportResource
  * @since 1.13.0
  */
 @Configuration
-@ImportResource("classpath*:META-INF/**/dynamicdao-context.xml")
+@ImportResource("classpath*:META-INF/spring/dynamicdao-context.xml")
 class DynamicDaoConfig {
 }

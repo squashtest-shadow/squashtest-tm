@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.testautomation
 
-import javax.inject.Inject
-
-import org.hibernate.context.CurrentSessionContext
-import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.execution.Execution
@@ -36,11 +32,9 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.NameAlreadyInUseException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy
-import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
-
-import spock.lang.Specification
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport

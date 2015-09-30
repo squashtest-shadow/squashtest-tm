@@ -35,7 +35,9 @@ import javax.validation.ValidatorFactory
  * @since 1.13.0
  */
 @Configuration
-@ComponentScan(basePackages = "org.squashtest.tm", excludeFilters = @ComponentScan.Filter(Configuration))
+@ComponentScan(
+        basePackages = ["org.squashtest.tm.service.internal.repository", "org.squashtest.tm.service.internal.api"],
+        excludeFilters = @ComponentScan.Filter(Configuration))
 @EnableSpringConfigured
 class RepositorySpecConfig {
     @Bean(name = "squashtest.core.persistence.jdbc.DataSource")
@@ -43,11 +45,13 @@ class RepositorySpecConfig {
         return new UnitilsDataSourceFactoryBean()
     }
 
-    @Bean ValidatorFactory validatorFactory() {
+    @Bean
+    ValidatorFactory validatorFactory() {
         return new StubValidatorFactory()
     }
 
-    @Bean static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+    @Bean
+    static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
 }

@@ -45,14 +45,14 @@
     <database.username>sa</database.username>
     <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
       props should be overridden with absolute paths (which don't work under windows...) -->
-    <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it
+    <dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-dbunit/squash-it
     </dbunit-database.url>
 
     <hibernate.dialect>org.hibernate.dialect.H2Dialect</hibernate.dialect>
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
-    <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it
+    <non-dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-non-dbunit/squash-it
     </non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
@@ -146,6 +146,12 @@
       <version>${project.version}</version>
       <type>pom</type>
       <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.hibernate</groupId>
+          <artifactId>hibernate</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <!-- ====== /HIBERNATE SUPPORT ====== -->
 
@@ -322,9 +328,9 @@
       <properties>
         <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
       props should be overridden with absolute paths (which don't work under windows...) -->
-        <dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-dbunit/squash-it
+        <dbunit-database.url>jdbc:h2:./target/database/squash-it-dbunit/squash-it
         </dbunit-database.url>
-        <non-dbunit-database.url>jdbc:h2:${project.build.outputDirectory}/database/squash-it-non-dbunit/squash-it
+        <non-dbunit-database.url>jdbc:h2:./target/database/squash-it-non-dbunit/squash-it
         </non-dbunit-database.url>
       </properties>
     </profile>

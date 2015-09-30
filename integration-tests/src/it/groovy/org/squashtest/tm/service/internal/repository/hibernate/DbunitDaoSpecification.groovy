@@ -28,6 +28,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.DynamicDaoConfig
+import org.squashtest.tm.service.DataSourceConfig
 import org.squashtest.tm.service.RepositoryConfig
 import spock.lang.Specification
 
@@ -38,7 +39,7 @@ import javax.inject.Inject
  * Subclasses should be annotated @UnitilsSupport
  */
 @ContextConfiguration(classes = [RepositorySpecConfig, DynamicDaoConfig, RepositoryConfig ])
-@TestPropertySource(["classpath:datasource.properties", "classpath:no-validation-hibernate.properties"])
+@TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 @Transactional
 abstract class DbunitDaoSpecification extends Specification {
