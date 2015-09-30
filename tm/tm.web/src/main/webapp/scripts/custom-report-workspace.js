@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,11 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+require([ "common" ], function() {
+	require([ "jquery", 'custom-report-workspace' ,"app/ws/squashtm.workspace", "domReady" , 'jquery.cookie' ], function($, CRWorkspace,  WS, domReady) {
+		domReady(function() {
+			WS.init();
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
-}
+			$.cookie("workspace-prefs", null, {
+				path : '/'
+			});
+			CRWorkspace.init(squashtm.app.customReportWorkspaceConf);
+		});
+	});
+});

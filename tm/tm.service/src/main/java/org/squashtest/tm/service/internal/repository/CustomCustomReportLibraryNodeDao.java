@@ -18,11 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+package org.squashtest.tm.service.internal.repository;
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
+import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
+
+public interface CustomCustomReportLibraryNodeDao extends EntityDao<CustomReportLibraryNode>{
+	
 }

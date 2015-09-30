@@ -452,11 +452,19 @@
 			<value>org.squashtest.tm.service.infolist.InfoListBindingManagerService</value>
 		</osgi:interfaces>
 	</osgi:service>
+	
 
 	<osgi:service ref="squashtest.tm.service.MilestoneMembershipManager">
 		<osgi:interfaces>
 			<value>org.squashtest.tm.service.milestone.MilestoneMembershipFinder</value>
 			<value>org.squashtest.tm.service.milestone.MilestoneMembershipManager</value>
+		</osgi:interfaces>
+	</osgi:service>
+	
+	<!-- Custom Report Workspace -->
+	<osgi:service ref="org.squashtest.tm.service.customreport.CustomReportWorkspaceService">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportWorkspaceService</value>
 		</osgi:interfaces>
 	</osgi:service>
 

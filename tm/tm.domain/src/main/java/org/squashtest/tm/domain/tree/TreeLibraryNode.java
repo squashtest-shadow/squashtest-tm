@@ -18,11 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+package org.squashtest.tm.domain.tree;
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
+import java.util.List;
+
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.ProjectResource;
+
+/**
+ * Interface for a tree node without data. The main goal of this API is to separate concern beetwen
+ * tree and entity referenced in this tree.
+ * By design, a tree node and an entity have a 1:1 relationship.
+ * @author jthebault
+ *
+ */
+public interface TreeLibraryNode extends TreeVisitable, Identified {
+	
+	/**
+	 * Get the binded entity name.
+	 * @return String
+	 */
+	String getEntityName ();
+	
+	long getEntityId();
+	
+	TreeEntityDefinition getEntityType();
+	
+	TreeLibraryNode getParent();
+	
+	List<TreeLibraryNode> getChildrens();
+	
+	TreeLibrary getLibrary();
 }

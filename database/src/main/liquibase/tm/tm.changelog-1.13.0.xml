@@ -315,5 +315,138 @@
 		</createTable>	
 	</changeSet>	
 
-</databaseChangeLog>
+ <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
+ 	<!-- CUSTOM_REPORT_LIBRARY TABLE -->
 
+ 	<createTable tableName="CUSTOM_REPORT_LIBRARY">
+ 		<column name="CRL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        	<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CUSTOM_REPORT_LIBRARY" />
+    	</column>
+
+		<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to ATTACHMENT_LIST">
+		</column>
+
+		<column name="TMP_PROJECT_ID" type="BIGINT" remarks="TMP REF TO PROJECT">
+		</column>
+ 	</createTable>
+
+ 	<createIndex tableName="CUSTOM_REPORT_LIBRARY" indexName="IDX_CUSTOM_REPORT_LIBRARY">
+      <column name="CRL_ID" />
+    </createIndex>
+
+ 	<!-- CUSTOM_REPORT_LIBRARY_NODE TABLE -->
+
+ 	<createTable tableName="CUSTOM_REPORT_LIBRARY_NODE">
+ 		<column name="CRLN_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+      <constraints primaryKey="true" nullable="false" primaryKeyName="PK_CUSTOM_REPORT_LIBRARY_NODE" />
+    </column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+		<column name="ENTITY_TYPE" type="VARCHAR(50)"/>
+
+		<column name="ENTITY_ID" type="BIGINT"/>
+
+		<column name="CRL_ID" type="BIGINT" remarks="fk to the containing CUSTOM_REPORT_LIBRARY">
+			<constraints nullable="false" foreignKeyName="fk_crln_custom_report_library_crl_id" references="CUSTOM_REPORT_LIBRARY(CRL_ID)" />
+		</column>
+
+	</createTable>
+
+	<!-- CUSTOM_REPORT_LIBRARY_NODE Relationship -->
+
+	<comment>This table contains the relations between two custom reports nodes. If a node is root, parent id will be null and descendant id will be itself.
+		a given node can be referenced as descendant only one time so we can map the join with hibernate</comment>
+	<createTable tableName="CRLN_RELATIONSHIP">
+
+
+		<column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+			<constraints nullable="true" foreignKeyName="fk_crln_relationship_ancestor" references="CUSTOM_REPORT_LIBRARY_NODE(CRLN_ID)" />
+		</column>
+
+		<column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+			<constraints nullable="false" foreignKeyName="fk_crln_relationship_descendant" references="CUSTOM_REPORT_LIBRARY_NODE(CRLN_ID)" />
+		</column>
+
+		<column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
+			<constraints nullable="false" />
+		</column>
+	</createTable>
+
+	<createIndex tableName="CRLN_RELATIONSHIP" indexName="idx_crln_relationship_descendant">
+		<column name="DESCENDANT_ID" />
+	</createIndex>
+
+	<createIndex tableName="CRLN_RELATIONSHIP" indexName="idx_crln_relationship_ancestor">
+		<column name="ANCESTOR_ID" />
+	</createIndex>
+
+
+	<addColumn tableName="PROJECT">
+ 		<column name="CRL_ID" type="BIGINT" remarks="FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
+      	</column>
+ 	</addColumn>
+
+ 	<addColumn tableName="ATTACHMENT_LIST">
+ 		<column name="TMP_CRL_ID" type="BIGINT" remarks="TMP FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
+      	</column>
+ 	</addColumn>
+
+	<!-- SQL CREATE A NEW CUSTOM_REPORT_LIBRARY FOR EACH PROJECT IN DB -->
+	<sql>
+		insert into CUSTOM_REPORT_LIBRARY (TMP_PROJECT_ID)
+			select p.PROJECT_ID
+			from PROJECT p;
+
+		update PROJECT p
+			set CRL_ID = (
+				select crl.CRL_ID
+				from CUSTOM_REPORT_LIBRARY crl
+				where p.PROJECT_ID = crl.TMP_PROJECT_ID
+		);
+
+	</sql>
+
+
+	<!-- SQL CREATE A NEW ATTACHEMENT_LIST FOR EACH PREVIOUSLY CUSTOM_REPORT_LIBRARY IN DB -->
+	<sql>
+		insert into ATTACHMENT_LIST (TMP_CRL_ID)
+			select CRL_ID
+			from CUSTOM_REPORT_LIBRARY crl;
+
+		update CUSTOM_REPORT_LIBRARY crl
+			set ATTACHMENT_LIST_ID = (
+				select ATTACHMENT_LIST_ID
+				from ATTACHMENT_LIST al
+				where crl.CRL_ID = al.TMP_CRL_ID
+		);
+
+	</sql>
+
+	<insert tableName="ACL_CLASS">
+		<column name="CLASSNAME" value="org.squashtest.tm.domain.customreport.tree.CustomReportLibrary" />
+	</insert>
+
+	<!-- INSERT ACL FOR EXISTING LIBRARY -->
+
+
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="1" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.tree.CustomReportLibrary')" />
+	</insert>
+
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="2" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.tree.CustomReportLibrary')" />
+	</insert>
+
+
+	<!-- REMOVE TMP COLUMNS USED FOR MIGRATION -->
+	<dropColumn tableName="ATTACHMENT_LIST" columnName="TMP_CRL_ID" />
+	<dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
+
+</changeSet>
+
+</databaseChangeLog>

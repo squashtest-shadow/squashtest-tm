@@ -61,6 +61,7 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -115,7 +116,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
-
+	
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "CRL_ID")
+	private CustomReportLibrary customReportLibrary;
 
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
@@ -229,6 +233,17 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		this.campaignLibrary = campaignLibrary;
 		notifyLibraryAssociation(campaignLibrary);
 	}
+	
+
+	public CustomReportLibrary getCustomReportLibrary() {
+		return customReportLibrary;
+	}
+
+
+	public void setCustomReportLibrary(CustomReportLibrary customReportLibrary) {
+		this.customReportLibrary = customReportLibrary;
+	}
+
 
 	public BugTrackerBinding getBugtrackerBinding() {
 		return bugtrackerBinding;

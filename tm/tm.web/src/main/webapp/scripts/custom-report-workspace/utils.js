@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,11 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
-
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
-}
+define(['jquery'], function($){
+	
+	return {
+		btnconf : function(css){
+			return {
+				text : false,
+				icons : {
+					primary : css
+				}
+			};
+		}
+	};
+});

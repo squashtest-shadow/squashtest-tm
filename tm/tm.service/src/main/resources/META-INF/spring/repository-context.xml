@@ -170,6 +170,11 @@
           <value>org.squashtest.tm.domain.chart.ColumnPrototype</value>
           <value>org.squashtest.tm.domain.chart.Filter</value>
           <value>org.squashtest.tm.domain.chart.MeasureColumn</value>
+          
+          
+        <!-- custom report -->
+        <value>org.squashtest.tm.domain.customreport.tree.CustomReportLibrary</value>
+        <value>org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode</value>     
 
       </list>
     </property>

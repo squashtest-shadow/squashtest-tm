@@ -18,11 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+package org.squashtest.tm.service.internal.customreport
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
+import javax.inject.Inject
+
+import org.hibernate.SessionFactory
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+
+import spock.unitils.UnitilsSupport
+
+@UnitilsSupport
+@Transactional
+@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
+class CustomCustomReportNodeDaoIT extends DbunitServiceSpecification {
+
+	@Inject
+	CustomReportLibraryNodeDao crdao;
+	
+	def "should find a crln by id"() {
+		when:
+		def res = crdao.findById(-1);
+
+		then:
+		res != null;
+		res.name == "Chart1";
+	}
 }

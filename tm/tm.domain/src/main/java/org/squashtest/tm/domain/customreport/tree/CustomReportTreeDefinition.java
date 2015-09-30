@@ -18,11 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+package org.squashtest.tm.domain.customreport.tree;
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
+import org.squashtest.tm.domain.tree.TreeEntityDefinition;
+
+public enum CustomReportTreeDefinition implements TreeEntityDefinition{
+	LIBRARY(true),DASHBOARD(false),CHART(false),FOLDER(true);
+	
+	private boolean container;
+
+	private CustomReportTreeDefinition(boolean container) {
+		this.container = container;
+	}
+
+	@Override
+	public String getType() {
+		return name();
+	}
+
+	@Override
+	public boolean isContainer() {
+		return container;
+	}
+
 }

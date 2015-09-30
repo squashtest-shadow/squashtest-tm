@@ -32,11 +32,11 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 			RICH_TEXT : "",
 			TAG : ""
 		};
-	
+
 	function isBlank(val) {
 		return StringUtil.isBlank(val);
 	}
-	
+
 	function validateUniqueProp(val, attr, computed) {
 		var defined = false;
 
@@ -84,9 +84,9 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 						return messages.get("message.noDefaultOption");
 					}
 				}
-			}	
+			}
 		},
-		
+
 		resetDefaultValue : function() {
 			this.set("defaultValue",
 					defaultValueByInputType[this

@@ -827,6 +827,9 @@
 	
 	// ChartDefinition
 	
+	// ChartLibraryNode
+	@NamedQuery(name="CustomReportLibraryNode.findAllByEntityType",query="from CustomReportLibraryNode crln where crln.entityType = ?1"),
+	
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

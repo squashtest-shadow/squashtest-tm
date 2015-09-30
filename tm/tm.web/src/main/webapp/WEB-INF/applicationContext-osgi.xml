@@ -533,14 +533,22 @@
 			<value>org.squashtest.tm.service.milestone.MilestoneMembershipManager</value>
 		</osgi:interfaces>
 	</osgi:reference>
-
-
+	
+<osgi:reference id="org.squashtest.tm.service.customreport.CustomReportWorkspaceService"
+		bean-name="org.squashtest.tm.service.customreport.CustomReportWorkspaceService" timeout="2000">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportWorkspaceService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+	
 <osgi:reference id="squashtest.tm.service.ChartModificationService"
 		bean-name="squashtest.tm.service.ChartModificationService">
 		<osgi:interfaces>
 			<value>org.squashtest.tm.service.chart.ChartModificationService</value>
 		</osgi:interfaces>
 	</osgi:reference>
+
+	
 
 
 

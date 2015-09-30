@@ -63,6 +63,9 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.tree.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -206,6 +209,15 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		TestCaseLibrary tcl = new TestCaseLibrary();
 		project.setTestCaseLibrary(tcl);
 		session.persist(tcl);
+		
+		CustomReportLibrary crl = new CustomReportLibrary();
+		project.setCustomReportLibrary(crl);
+		session.persist(crl);
+		
+		//add the tree node for the CustomReportLibrary as now library
+		//object and their representation in tree are distinct entities
+		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
+		session.persist(crlNode);
 
 		// hook up the default info lists
 		// TODO : extract the code lists to some meaningful place
@@ -226,6 +238,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
 		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
+		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
 
 	}
 

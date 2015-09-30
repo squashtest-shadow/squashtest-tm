@@ -18,11 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.workspace;
+package org.squashtest.tm.domain.tree;
 
-public enum WorkspaceType {
-	TEST_CASE_WORKSPACE, 
-	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE,
-	CUSTOM_REPORT_WORKSPACE
+import javax.persistence.CascadeType;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.MappedSuperclass;
+import javax.persistence.OneToOne;
+
+import org.squashtest.tm.domain.attachment.AttachmentList;
+
+@MappedSuperclass
+public abstract class GenericTreeLibrary implements TreeLibrary {
+	
+	@OneToOne(cascade={ CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
+	@JoinColumn(name="ATTACHMENT_LIST_ID")
+	private AttachmentList attachmentList;
+
+	public GenericTreeLibrary() {
+		super();
+	}
+
+	public AttachmentList getAttachmentList() {
+		return attachmentList;
+	}
+	
 }

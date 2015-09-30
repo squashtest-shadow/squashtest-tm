@@ -77,7 +77,7 @@ requirejs.config({
 				{
 					name : 'iteration-management',
 					main : 'iter-management-main'
-				}, 
+				},
 				{
 					name : 'test-suite-management',
 					main : 'ts-management-main'
@@ -103,6 +103,10 @@ requirejs.config({
 				{
 					name : 'camp-workspace',
 					main : 'camp-workspace-main'
+				},
+				{
+					name : 'custom-report-workspace',
+					main : 'custom-report-workspace-main'
 				}
 			],
 			/*
