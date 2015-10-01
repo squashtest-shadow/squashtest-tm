@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -32,8 +33,8 @@ import java.util.Set;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
-import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 
 
 
@@ -285,7 +286,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 			Integer layerIndex = Collections.max(layers.keySet());
 
 			while (layerIndex >=0){
-				List<T> layer = layers.get(layerIndex);
+				List<T> layer = new ArrayList<>(layers.get(layerIndex));
 				CollectionUtils.forAllDo(layer, closure);
 				layerIndex--;
 			}
@@ -377,6 +378,88 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 		}
 		return result;
 	}
+
+	public List<T> getRootNodes(){
+		if (layers.isEmpty()){
+			throw new IndexOutOfBoundsException("This tree has no root");
+		}
+
+		return new ArrayList<>(layers.get(0));
+	}
+
+	public List<T> getLeaves(){
+		List<T> leaves = new ArrayList<>(getAllNodes());
+		CollectionUtils.filter(leaves, new Predicate() {
+			@Override
+			public boolean evaluate(Object object) {
+				return ((T)object).getChildren().isEmpty();
+			}
+		});
+		return leaves;
+	}
+
+
+	/**
+	 * Says whether the given node may be
+	 * removed (ie it has no children)
+	 * 
+	 * @param key
+	 */
+	public boolean mayRemove(IDENT key){
+		T node = getNode(key);
+		return node.getChildren().isEmpty();
+	}
+
+	/**
+	 * Will remove the node having this key if it is childress.
+	 * If it has children, throws a RuntimeException
+	 * 
+	 * @param key
+	 */
+	public void remove(IDENT key){
+		T node = getNode(key);
+		if (node.getChildren().isEmpty()){
+
+			Collection<T> layer = layers.get(node.getDepth());
+			layer.remove(node);
+
+			T parent = node.getParent();
+			if (parent != null){
+				parent.getChildren().remove(node);
+			}
+
+		}else{
+			throw new RuntimeException("Cannot remove node '"+key+"' : it has no children");
+		}
+	}
+
+	/**
+	 * removes a node and its subtree
+	 * 
+	 * @param key
+	 */
+	public void cut(IDENT key){
+		T node = getNode(key);
+
+		T parent = node.getParent();
+		if (parent != null){
+			parent.getChildren().remove(node);
+		}
+
+		LinkedList<T> processing = new LinkedList<>();
+		processing.add(node);
+
+		while(! processing.isEmpty()){
+			T current = processing.pop();
+			List<T> layer = layers.get(current.getDepth());
+			layer.remove(current);
+			processing.addAll(current.getChildren());
+		}
+
+
+	}
+
+
 
 
 	/**

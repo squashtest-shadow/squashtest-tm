@@ -45,6 +45,10 @@ class DetailedChartDefinition extends ChartDefinition{
 
 	private List<Filter> scopeFilters;
 
+	// for testing purposees - do not use
+	DetailedChartDefinition(){
+		super();
+	}
 
 	DetailedChartDefinition(ChartDefinition parent){
 
