@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.deletion
 
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.internal.repository.DeletionDao;
@@ -51,6 +52,7 @@ class RequirementDeletionHandlerImplTest extends Specification {
 		deleted.content << renamed
 
 		NodeContainer parent = Mock()
+		parent.accept(_) >> {it[0].visit(new RequirementFolder())}
 		parent.isContentNameAvailable("clashing name") >> false
 		parent.isContentNameAvailable(_) >> true
 		parent.contentNames >> ["whatever name", "clashing name"]

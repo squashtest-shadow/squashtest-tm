@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.library;
 
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
@@ -39,92 +40,75 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
  */
 public class WhichNodeVisitor implements NodeContainerVisitor, NodeVisitor {
 
-	
-	public static enum NodeType{
-		CAMPAIGN_LIBRARY,
-		REQUIREMENT_LIBRARY,
-		TEST_CASE_LIBRARY,
-		CAMPAIGN_FOLDER,
-		REQUIREMENT_FOLDER,
-		TEST_CASE_FOLDER,
-		TEST_CASE,
-		REQUIREMENT,
-		CAMPAIGN,
-		ITERATION,
-		TEST_SUITE,
-		UNDEFINED;
-	}
-	
-		
-	private NodeType nodeType = NodeType.UNDEFINED; 
+	private EntityType nodeType = null;
 
-	public <X extends NodeContainer<?>> NodeType getTypeOf(X container ){
-		nodeType = NodeType.UNDEFINED;
+	public <X extends NodeContainer<?>> EntityType getTypeOf(X container ){
+		nodeType = null;
 		container.accept(this);
 		return nodeType;
 	}
-	
-	public <X extends TreeNode> NodeType getTypeOf(X node){
-		nodeType = NodeType.UNDEFINED;
+
+	public <X extends TreeNode> EntityType getTypeOf(X node){
+		nodeType = null;
 		node.accept(this);
 		return nodeType;
 	}
-	
+
 	@Override
 	public void visit(CampaignLibrary campaignLibrary) {
-		nodeType = NodeType.CAMPAIGN_LIBRARY;
+		nodeType = EntityType.CAMPAIGN_LIBRARY;
 	}
 
 	@Override
 	public void visit(RequirementLibrary requirementLibrary) {
-		nodeType = NodeType.REQUIREMENT_LIBRARY;
+		nodeType = EntityType.REQUIREMENT_LIBRARY;
 	}
 
 	@Override
 	public void visit(TestCaseLibrary testCaseLibrary) {
-		nodeType = NodeType.TEST_CASE_LIBRARY;
+		nodeType = EntityType.TEST_CASE_LIBRARY;
 	}
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
-		nodeType = NodeType.CAMPAIGN_FOLDER;
+		nodeType = EntityType.CAMPAIGN_FOLDER;
 	}
 
 	@Override
 	public void visit(RequirementFolder requirementFolder) {
-		nodeType = NodeType.REQUIREMENT_FOLDER;
+		nodeType = EntityType.REQUIREMENT_FOLDER;
 	}
 
 	@Override
 	public void visit(TestCaseFolder testCaseFolder) {
-		nodeType = NodeType.TEST_CASE_FOLDER;
+		nodeType = EntityType.TEST_CASE_FOLDER;
 	}
 
 	@Override
 	public void visit(Campaign campaign) {
-		nodeType = NodeType.CAMPAIGN;
+		nodeType = EntityType.CAMPAIGN;
 	}
 
 	@Override
 	public void visit(Iteration iteration) {
-		nodeType = NodeType.ITERATION;
+		nodeType = EntityType.ITERATION;
 	}
 
 	@Override
 	public void visit(Requirement requirement) {
-		nodeType = NodeType.REQUIREMENT;
+		nodeType = EntityType.REQUIREMENT;
 	}
 
 	@Override
 	public void visit(TestSuite testSuite) {
-		nodeType = NodeType.TEST_SUITE;
+		nodeType = EntityType.TEST_SUITE;
 	}
 
 	@Override
 	public void visit(TestCase testCase) {
-		nodeType = NodeType.TEST_CASE;
+		nodeType = EntityType.TEST_CASE;
 	}
 
-	
-	
+
+
 }

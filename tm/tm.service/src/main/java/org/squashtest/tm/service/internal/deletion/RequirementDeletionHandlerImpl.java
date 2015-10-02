@@ -32,10 +32,10 @@ import javax.inject.Provider;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
-import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
@@ -639,7 +639,7 @@ RequirementNodeDeletionHandler {
 		}
 
 		// fill the report
-		NodeType type = new WhichNodeVisitor().getTypeOf(newParent);
+		EntityType type = new WhichNodeVisitor().getTypeOf(newParent);
 		String strtype;
 		switch (type) {
 		case REQUIREMENT_LIBRARY:

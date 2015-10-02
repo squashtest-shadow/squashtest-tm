@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import static org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType.CAMPAIGN;
-import static org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType.CAMPAIGN_FOLDER;
-import static org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType.REQUIREMENT;
-import static org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType.REQUIREMENT_FOLDER;
-import static org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType.TEST_CASE;
-import static org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType.TEST_CASE_FOLDER;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -38,13 +38,13 @@ import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
-import org.squashtest.tm.domain.library.WhichNodeVisitor.NodeType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -124,7 +124,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private boolean projectChanged = false;
 
 	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
-	private Map<NodeType, NodeCollaborators> collaboratorsByType = new HashMap<NodeType, NodeCollaborators>();
+	private Map<EntityType, NodeCollaborators> collaboratorsByType = new HashMap<EntityType, NodeCollaborators>();
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -194,7 +194,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 	protected void processNodes(TreeNode toMove) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
 
-		NodeType visitedType = whichVisitor.getTypeOf(toMove);
+		EntityType visitedType = whichVisitor.getTypeOf(toMove);
 
 		switch (visitedType) {
 		case CAMPAIGN_FOLDER:
@@ -218,7 +218,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	}
 
 	protected void processNodes(TreeNode toMove, int position) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
-		NodeType visitedType = whichVisitor.getTypeOf(toMove);
+		EntityType visitedType = whichVisitor.getTypeOf(toMove);
 
 		switch (visitedType) {
 		case CAMPAIGN_FOLDER:
@@ -350,7 +350,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		}
 
 		LibraryNodeDao<?> lnDao = null;
-		NodeType destType = whichVisitor.getTypeOf(destination);
+		EntityType destType = whichVisitor.getTypeOf(destination);
 
 		switch (destType) {
 		case CAMPAIGN_FOLDER:
