@@ -21,7 +21,6 @@
 package org.squashtest.csp.core.security.acls.jdbc
 
 import javax.inject.Inject
-import javax.sql.DataSource
 
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.ObjectIdentity
@@ -29,8 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.security.StubAuthentication
-import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService
+import org.squashtest.it.stub.security.StubAuthentication
 import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService
 import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
 import org.squashtest.tm.service.security.acls.model.ObjectAclService

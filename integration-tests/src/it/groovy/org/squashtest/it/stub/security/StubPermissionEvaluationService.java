@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.it.stub.security;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,8 +26,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.security.acls.model.Permission;
+import org.springframework.stereotype.Component;
 import org.squashtest.it.infrastructure.Stub;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Stub
 public class StubPermissionEvaluationService implements PermissionEvaluationService {

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.execution
 
+import spock.lang.IgnoreRest
+
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
@@ -41,7 +43,6 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private ExecutionModificationService execService
-
 
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should update execution description"(){

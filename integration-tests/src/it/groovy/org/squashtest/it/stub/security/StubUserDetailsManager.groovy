@@ -18,7 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security
+package org.squashtest.it.stub.security
+
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Primary
+import org.springframework.stereotype.Component
 
 import java.util.List;
 
@@ -30,6 +34,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 
+/**
+ * Not @Component because it has to be marked as @Primary
+ */
 class StubUserDetailsManager implements SquashUserDetailsManager {
 
 	@Override

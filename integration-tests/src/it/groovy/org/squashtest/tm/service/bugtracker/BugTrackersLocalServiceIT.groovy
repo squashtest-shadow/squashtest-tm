@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.bugtracker
 
+import org.squashtest.tm.service.DbunitServiceSpecification
+import spock.lang.Ignore
 
 import javax.inject.Inject
 
@@ -73,7 +75,8 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @ContextConfiguration(["classpath:bugtracker-core-context-IT.xml"])
 @Transactional
-class BugTrackersLocalServiceIT_Disabled { // extends DbunitServiceSpecification  {
+@Ignore
+class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 
 
 	/*

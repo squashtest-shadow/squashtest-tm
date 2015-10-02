@@ -25,12 +25,13 @@ import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.squashtest.it.infrastructure.StubValidatorFactory
+import org.squashtest.it.stub.validation.StubValidatorFactory
 import org.unitils.database.UnitilsDataSourceFactoryBean
 
 import javax.validation.ValidatorFactory
 
 /**
+ * Configuration for Repository (DAO) specifications. Instanciates repository layer beans.
  * @author Gregory Fouquet
  * @since 1.13.0
  */

@@ -33,26 +33,11 @@
 
 	<!--  stubs  -->
 	
-  <bean id="javax.validation.ValidatorFactory" class="org.squashtest.it.infrastructure.StubValidatorFactory" />	
-  <bean id="bugTrackersService" class="org.squashtest.csp.core.bugtracker.service.StubBugTrackerService" primary="true"
-    lazy-init="false" />
-  <bean class="org.squashtest.tm.service.security.StubUserContextService" primary="true" lazy-init="false" />
-  <bean class="org.squashtest.tm.service.security.StubPermissionEvaluationService" primary="true" lazy-init="false" />
-  <bean class="org.squashtest.tm.service.security.StubObjectIdentityService" primary="true" lazy-init="false" />
-  <bean class="org.squashtest.tm.service.security.StubPermissionEvaluator" primary="true" lazy-init="false" />
-  <bean class="org.squashtest.tm.service.security.StubPermissionFactory" primary="true" lazy-init="false" />
-<!--   <bean class="org.squashtest.tm.service.security.StubObjectAclService" primary="true" lazy-init="false" />
- -->  
-<!--  <bean id="lookupStrategy" class="org.squashtest.tm.service.security.StubLookupStrategy" primary="true" lazy-init="false" />
- -->  <bean id="aclCache" class="org.squashtest.tm.service.security.acls.model.NullAclCache" primary="true" lazy-init="false" />
-  <bean id="squashtest.core.security.JdbcUserDetailsManager" class="org.squashtest.tm.service.security.StubUserDetailsManager" primary="true" lazy-init="false" />
  <bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
     	 <constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource"/>
     </bean>	
 	<!--  tm/ta beans -->
   <bean class="java.util.Properties" id="squashtest.tm.ta.defaults" primary="true" />
 
-  <context:component-scan base-package="org.squashtest.tm.service.internal" />
-  <context:component-scan base-package="org.squashtest.tm.service.security" />
-  
+
 </beans>

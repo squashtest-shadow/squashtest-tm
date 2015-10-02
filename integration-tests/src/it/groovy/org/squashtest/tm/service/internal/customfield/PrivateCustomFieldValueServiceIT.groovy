@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
+import spock.lang.IgnoreRest
 
 import javax.inject.Inject
 

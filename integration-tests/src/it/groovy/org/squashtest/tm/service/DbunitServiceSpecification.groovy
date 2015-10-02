@@ -20,32 +20,27 @@
  */
 package org.squashtest.tm.service
 
-
-import java.util.List
-
-import javax.inject.Inject
-
-import org.hibernate.Query
-import org.hibernate.transform.ResultTransformer
-import org.hibernate.type.LongType
 import org.hibernate.ObjectNotFoundException
+import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.springframework.test.annotation.DirtiesContext;
+import org.hibernate.transform.ResultTransformer
+import org.hibernate.type.LongType
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
-
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.ServiceSpecConfig
 import spock.lang.Specification
+
+import javax.inject.Inject
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(["classpath:service/dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml",
-	"classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml",
-	"classpath*:META-INF/**/dynamicdao-context.xml",
-	"classpath*:META-INF/**/dynamicmanager-context.xml",
-	"classpath:it-config-context.xml"])
+@ContextConfiguration(classes=  [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
+@TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 abstract class DbunitServiceSpecification extends Specification {
 

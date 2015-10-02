@@ -18,7 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security
+package org.squashtest.it.stub.security
+
+import org.springframework.stereotype.Component
 
 import java.util.List
 
@@ -28,6 +30,7 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.security.acls.PermissionGroup;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
+@Component
 class StubObjectAclService implements ObjectAclService {
 
 	@Override

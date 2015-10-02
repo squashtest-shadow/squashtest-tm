@@ -18,13 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security
+package org.squashtest.it.stub.security
+
+import org.springframework.stereotype.Component
 
 import java.util.List
 
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
 
+@Component
 class StubPermissionFactory implements PermissionFactory {
 
 	@Override

@@ -18,7 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.it.infrastructure;
+package org.squashtest.it.stub.validation;
+
+import org.springframework.stereotype.Component;
 
 import javax.validation.*;
 import javax.validation.executable.ExecutableValidator;
@@ -26,6 +28,7 @@ import javax.validation.metadata.BeanDescriptor;
 import java.util.Collections;
 import java.util.Set;
 
+@Component
 public class StubValidatorFactory implements ValidatorFactory {
 	private final Validator  validator = new Validator() {
 		@Override

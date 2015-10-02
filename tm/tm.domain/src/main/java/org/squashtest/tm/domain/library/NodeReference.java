@@ -22,11 +22,13 @@ package org.squashtest.tm.domain.library;
 
 /**
  * POJO holding basic informations regarding nodes, when one do not need the full data held in the Session cache.
- * 
- * 
+ *
+ *
  * @author bsiri
- * 
+ * TODO no longer used, to be removed
+ * @deprecated no longer used, to be removed
  */
+@Deprecated
 public class NodeReference {
 
 	private Long id;
@@ -54,7 +56,7 @@ public class NodeReference {
 
 	/**
 	 * this one accepts an object array formatted as { Long, String, Boolean }
-	 * 
+	 *
 	 * @param rawData
 	 */
 	public NodeReference(Object[] rawData) {	//NOSONAR the array is not stored as is, and its data are immutable

@@ -18,45 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.library.structures
+package org.squashtest.it.config
 
-import org.squashtest.tm.domain.library.structures.NodeData
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.annotation.ImportResource
 
-
-class TreeNodeDataTestImpl extends NodeData<Long>{
-
-	private String name;
-	private String gun;
-
-	@Override
-	public void updateWith(NodeData<Long> newData){
-		this.name=newData.name
-		this.gun=newData.gun
-	}
-
-	public TreeNodeDataTestImpl(Long key){
-		super(key);
-	}
-
-	public TreeNodeDataTestImpl(Long key, String name, String gun){
-		super(key)
-		this.name = name
-		this.gun = gun
-	}
-
-	public void setName(String name){
-		this.name = name;
-	}
-
-	public String getName(){
-		return name;
-	}
-
-	public void setGun(String gun){
-		this.gun = gun;
-	}
-
-	public String getGun(){
-		return gun;
-	}
+/**
+ * <code>@ContextConfiguration</code> is not able to load both java config and xml config, hence this indirection
+ *
+ * Source : http://stackoverflow.com/questions/27979735/cannot-process-locations-and-classes-for-context-configuration
+ *
+ * @author Gregory Fouquet
+ * @since 1.13.0
+ */
+@Configuration
+@ImportResource(["classpath*:META-INF/spring/dynamicdao-context.xml", "classpath*:META-INF/spring/dynamicmanager-context.xml"])
+class DynamicServiceConfig {
 }

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security.customSecurity
+package org.squashtest.it.stub.security
 
 import java.io.Serializable
 
@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
 
+@Component
 class StubCustomPermissionEvaluator extends AffirmativeBasedCompositePermissionEvaluator {
 
 	public StubCustomPermissionEvaluator() {

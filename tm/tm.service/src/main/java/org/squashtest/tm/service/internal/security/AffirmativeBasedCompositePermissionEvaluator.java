@@ -39,8 +39,8 @@ import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
  * <p>That class is itself a {@link PermissionEvaluator} and can register extra evaluators to check against. Those extra evaluators must be available as OSGI services.
  * Whenever requested this class will in turn test each extra evaluators, then itself, as long as the answer is false. If at least one of the evaluator grants the access,
  * granted the access will be (hence the prefix AffirmativeBased).</p>
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -51,7 +51,6 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 	// Note : I choose not to synchronize this collection because chances of things going haywire
 	// are very slim, and could happen only at boot time.
 	private Collection<ExtraPermissionEvaluator> evaluators = new ArrayList<>();
-
 
 	public AffirmativeBasedCompositePermissionEvaluator(AclService aclService) {
 		super(aclService);

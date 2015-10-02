@@ -28,9 +28,8 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.exception.execution.EmptyTestSuiteTestPlanException;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.campaign.TestSuiteExecutionProcessingService
-import org.squashtest.tm.service.security.StubPermissionEvaluationService
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.stub.security.StubPermissionEvaluationService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
