@@ -43,7 +43,6 @@ class DetailedChartDefinition extends ChartDefinition{
 
 	private List<EntityType> targetEntities;
 
-	private List<Filter> scopeFilters;
 
 	// for testing purposees - do not use
 	DetailedChartDefinition(){
@@ -87,16 +86,6 @@ class DetailedChartDefinition extends ChartDefinition{
 
 	protected void setTargetEntities(List<EntityType> targetEntities) {
 		this.targetEntities = targetEntities;
-	}
-
-
-	protected List<Filter> getScopeFilters() {
-		return scopeFilters;
-	}
-
-
-	protected void setScopeFilters(List<Filter> scopeFilters) {
-		this.scopeFilters = scopeFilters;
 	}
 
 

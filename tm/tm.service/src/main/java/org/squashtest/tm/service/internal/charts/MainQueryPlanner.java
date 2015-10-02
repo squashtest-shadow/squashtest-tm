@@ -23,7 +23,16 @@ package org.squashtest.tm.service.internal.charts;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
- * See javadoc on {@link ChartDataFinder}
+ * <p></p>
+ * 
+ * <p>
+ * 	This class will generate the main query, that is a query that joins together the sequence of tables required for the given chart.
+ * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
+ * 	is available a where clause will be used.
+ * </p>
+ * 
+ * <p>See javadoc on {@link ChartDataFinder}</p>
+ * 
  * 
  * @author bsiri
  *
@@ -34,7 +43,6 @@ class MainQueryPlanner {
 
 	private DetailedChartDefinition definition;
 
-
 	MainQueryPlanner(DetailedChartDefinition definition){
 		this.definition = definition;
 
@@ -43,15 +51,15 @@ class MainQueryPlanner {
 
 	HibernateQuery<?> createMainQuery(){
 
+		// get the query plan : the orderly set of joins this
+		// class must now put together
+		QueryPlan plan = DomainGraph.getQueryPlan(definition);
+
+		// now get the query done
+		//TraversedEntity rootNode = plan.getR
 		return null;
-	}
-
-
-	private void computeQueryPlan(){
 
 	}
-
-
 
 
 }

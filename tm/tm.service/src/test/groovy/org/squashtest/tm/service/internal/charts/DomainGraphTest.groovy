@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.charts
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.service.internal.charts.DomainGraph.QueryPlan;
+import org.squashtest.tm.service.internal.charts.QueryPlan;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
@@ -41,26 +41,6 @@ class DomainGraphTest extends Specification {
 	static def EX = EXECUTION
 
 
-	def checkTreeHierarchy(QueryPlan tree, EntityType nodetype, List<EntityType> childrenTypes ){
-		def node = tree.getNode(nodetype)
-		return node.children.collect{it.key} as Set == childrenTypes as Set
-	}
-
-	def checkAllTreeHierarchy(QueryPlan tree, Map hierarchies){
-		def checkall = true;
-
-		hierarchies.each {k,v -> checkall = checkall &&  checkTreeHierarchy(tree, EntityType.valueOf(k), v)}
-
-		return checkall
-
-	}
-
-	def checkIsDirectedEdge(DomainGraph graph, EntityType srcType, EntityType destType){
-		return (
-		graph.hasEdge(srcType, destType) &&
-		! graph.hasEdge(destType, srcType)
-		)
-	}
 
 
 	/*
@@ -117,7 +97,7 @@ class DomainGraphTest extends Specification {
 
 
 
-	def "should trim to a directed graph"(){
+	def "should morph to a directed graph and generate an oversized query plan"(){
 
 		given :
 		DetailedChartDefinition definition =
@@ -188,6 +168,28 @@ class DomainGraphTest extends Specification {
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
 		checkTreeHierarchy(plan, CAMPAIGN, [])
 
+	}
+
+
+	def checkTreeHierarchy(QueryPlan tree, EntityType nodetype, List<EntityType> childrenTypes ){
+		def node = tree.getNode(nodetype)
+		return node.children.collect{it.key} as Set == childrenTypes as Set
+	}
+
+	def checkAllTreeHierarchy(QueryPlan tree, Map hierarchies){
+		def checkall = true;
+
+		hierarchies.each {k,v -> checkall = checkall &&  checkTreeHierarchy(tree, EntityType.valueOf(k), v)}
+
+		return checkall
+
+	}
+
+	def checkIsDirectedEdge(DomainGraph graph, EntityType srcType, EntityType destType){
+		return (
+		graph.hasEdge(srcType, destType) &&
+		! graph.hasEdge(destType, srcType)
+		)
 	}
 
 }

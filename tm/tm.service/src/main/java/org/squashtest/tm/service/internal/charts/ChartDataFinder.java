@@ -291,6 +291,10 @@ public class ChartDataFinder {
 
 	Object[][] findData(ChartDefinition definition){
 
+		// ************** step 1 : scope and ACL *****************
+
+
+		// *********** step 2 : define the query plan *************
 
 
 		return null;
