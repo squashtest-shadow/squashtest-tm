@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import java.util.EnumSet;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
@@ -36,6 +37,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.EntityType;
 
 /**
  * <p>Represents the concept of "attribute of an entity" :
@@ -44,13 +46,13 @@ import org.hibernate.validator.constraints.NotBlank;
  * 		<li>it is a referential data that will "instanciated" in multiple ChartDefinition (the "Prototype" part)</li>
  * 	</ul>
  * </p>
- * 
+ *
  * <p>A ColumnPrototype may be specialized to assume on of the three {@link ColumnRole}s : it can be filtered on, or it can hold the
  * observable value displayed in the chart, or be an axis of this chart. See {@link Filter}, {@link AxisColumn}, {@link MeasureColumn}</p>
- * 
+ *
  * <p>No user shall create them: only the system can do that. Typically prototypes will be inserted or removed when custom fields
  * are bound to/ unbound from entities.</p>
- * 
+ *
  * @author bsiri
  *
  */
@@ -108,8 +110,8 @@ public class ColumnPrototype {
 		return dataType;
 	}
 
-	public Set<ColumnRole> getRole() {
-		return role;
+	public EnumSet<ColumnRole> getRole() {
+		return EnumSet.copyOf(role);
 	}
 
 }

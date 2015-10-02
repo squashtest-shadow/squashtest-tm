@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.charts
 
-import org.squashtest.tm.domain.chart.EntityType;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.service.internal.charts.DomainGraph.QueryPlan;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
-import static org.squashtest.tm.domain.chart.EntityType.*
+import static org.squashtest.tm.domain.EntityType.*
 import org.apache.commons.collections.Transformer
 
 class DomainGraphTest extends Specification {
@@ -78,7 +78,7 @@ class DomainGraphTest extends Specification {
 
 		domain.getNode(rootEntity).getInbounds().size() == 0
 		domain.getNodes().findAll{it.key != rootEntity} as Set == domain.getNodes().findAll{it.inbounds.size()==1} as Set
-		domain.getNodes().collect{it.key} as Set == [REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN, EXECUTION, BUG] as Set
+		domain.getNodes().collect{it.key} as Set == [REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN, EXECUTION, ISSUE] as Set
 
 		where :
 		rootEntity				|	definition
@@ -89,7 +89,7 @@ class DomainGraphTest extends Specification {
 		ITERATION				|	new DetailedChartDefinition(rootEntity : ITERATION)
 		CAMPAIGN				|	new DetailedChartDefinition(rootEntity : CAMPAIGN)
 		EXECUTION				|	new DetailedChartDefinition(rootEntity : EXECUTION)
-		BUG						|	new DetailedChartDefinition(rootEntity : BUG)
+		ISSUE						|	new DetailedChartDefinition(rootEntity : ISSUE)
 
 	}
 
@@ -109,10 +109,10 @@ class DomainGraphTest extends Specification {
 		// let's use the abbreviations
 		rootEntity	|	targets				|	hierarchy
 		REQ			|	[REQ, TC]			|	[ REQUIREMENT : [RV] , REQUIREMENT_VERSION : [TC], TEST_CASE : [] ]
-		BUG			|	[BUG, TC, IT]		|	[ BUG : [EX], EXECUTION : [ITP], ITEM_TEST_PLAN : [TC, IT], TEST_CASE : [], ITERATION : []]
-		IT			|	[IT, BUG]			|	[ITERATION : [ITP], ITEM_TEST_PLAN : [EX], EXECUTION : [BUG], BUG : []]
-		CP			|	[REQ, BUG]			|	[CAMPAIGN : [IT], ITERATION : [ITP], ITEM_TEST_PLAN : [TC, EX], TEST_CASE : [RV], REQUIREMENT_VERSION : [REQ], REQUIREMENT : [], EXECUTION : [BUG], BUG : []]
-		ITP			|	[REQ, CP, BUG]		|	[ITEM_TEST_PLAN : [TC, IT, EX], TEST_CASE : [RV], REQUIREMENT_VERSION : [REQ], REQUIREMENT : [], ITERATION : [CP], CAMPAIGN : [], EXECUTION : [BUG], BUG : []]
+		ISSUE			|	[ISSUE, TC, IT]		|	[ ISSUE : [EX], EXECUTION : [ITP], ITEM_TEST_PLAN : [TC, IT], TEST_CASE : [], ITERATION : []]
+		IT			|	[IT, ISSUE]			|	[ITERATION : [ITP], ITEM_TEST_PLAN : [EX], EXECUTION : [ISSUE], ISSUE : []]
+		CP			|	[REQ, ISSUE]			|	[CAMPAIGN : [IT], ITERATION : [ITP], ITEM_TEST_PLAN : [TC, EX], TEST_CASE : [RV], REQUIREMENT_VERSION : [REQ], REQUIREMENT : [], EXECUTION : [ISSUE], ISSUE : []]
+		ITP			|	[REQ, CP, ISSUE]		|	[ITEM_TEST_PLAN : [TC, IT, EX], TEST_CASE : [RV], REQUIREMENT_VERSION : [REQ], REQUIREMENT : [], ITERATION : [CP], CAMPAIGN : [], EXECUTION : [ISSUE], ISSUE : []]
 	}
 
 
@@ -139,7 +139,7 @@ class DomainGraphTest extends Specification {
 		checkIsDirectedEdge domain, ITEM_TEST_PLAN, ITERATION
 		checkIsDirectedEdge domain, ITERATION, CAMPAIGN
 		checkIsDirectedEdge domain, ITEM_TEST_PLAN, EXECUTION
-		checkIsDirectedEdge domain, EXECUTION, BUG
+		checkIsDirectedEdge domain, EXECUTION, ISSUE
 
 
 		// check the resulting tree
@@ -153,8 +153,8 @@ class DomainGraphTest extends Specification {
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
 		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION])
-		checkTreeHierarchy(plan, EXECUTION, [BUG])
-		checkTreeHierarchy(plan, BUG, [])
+		checkTreeHierarchy(plan, EXECUTION, [ISSUE])
+		checkTreeHierarchy(plan, ISSUE, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
 		checkTreeHierarchy(plan, CAMPAIGN, [])
 

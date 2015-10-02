@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.service.internal.charts;
 
-import java.util.List;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.set;
+
 import java.util.Map;
 import java.util.Set;
 
@@ -29,14 +31,13 @@ import javax.inject.Inject;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.EntityType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.service.charts.ChartModificationService;
 
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
-import static com.querydsl.core.group.GroupBy.*;
 
 @Service("squashtest.tm.service.ChartModificationService")
 public class ChartModificationServiceImpl implements ChartModificationService {

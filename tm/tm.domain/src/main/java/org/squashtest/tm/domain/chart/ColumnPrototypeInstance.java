@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import org.squashtest.tm.domain.EntityType;
+
 public interface ColumnPrototypeInstance {
 
 	EntityType getEntityType();

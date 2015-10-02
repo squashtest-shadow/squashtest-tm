@@ -29,6 +29,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.EntityType;
 
 @Embeddable
 @Table(name = "CHART_MEASURE_COLUMN")

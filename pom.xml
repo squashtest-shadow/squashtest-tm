@@ -480,6 +480,14 @@
       <url>http://repo.squashtest.org/maven2/releases</url>
     </repository>
     <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>squash-external-repo</id>
+      <url>http://repo.squashtest.org/maven2/external</url>
+    </repository>
+
+    <repository>
       <releases>
         <enabled>false</enabled>
       </releases>

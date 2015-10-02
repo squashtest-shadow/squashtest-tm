@@ -20,26 +20,47 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.EXECUTION;
+import static org.squashtest.tm.domain.EntityType.ISSUE;
+import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
+import static org.squashtest.tm.domain.EntityType.ITERATION;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION;
+
+import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.EntityType;
-
 
 public class JsonChartWizardData {
 
 	private Map<EntityType, Set<ColumnPrototype>> columnPrototypes;
 
-	private ChartType[] chartTypes = ChartType.values();
+	private EnumSet<ChartType> chartTypes = EnumSet.allOf(ChartType.class);
 
-	private EntityType[] entityTypes = EntityType.values();
+	private EnumSet<EntityType> entityTypes = EnumSet.of(CAMPAIGN, EXECUTION, ISSUE, ITEM_TEST_PLAN, ITERATION,
+			REQUIREMENT, REQUIREMENT, REQUIREMENT_VERSION);
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes) {
 
 		this.columnPrototypes = columnPrototypes;
 
+	}
+
+	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
+		return columnPrototypes;
+	}
+
+	public EnumSet<ChartType> getChartTypes() {
+		return chartTypes;
+	}
+
+	public EnumSet<EntityType> getEntityTypes() {
+		return entityTypes;
 	}
 
 }

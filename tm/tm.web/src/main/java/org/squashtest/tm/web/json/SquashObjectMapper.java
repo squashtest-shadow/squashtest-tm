@@ -31,9 +31,9 @@ import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 /**
  * Custom implementation of Json deserializer to suit our needs.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class SquashObjectMapper extends ObjectMapper {
 
@@ -47,8 +47,7 @@ public class SquashObjectMapper extends ObjectMapper {
 		// configures various domain objects (un)marshalling w/O the use of DTOs or jackson annotations
 		addMixInAnnotations(InfoList.class, InfoListMixin.class);
 		addMixInAnnotations(InfoListItem.class, InfoListItemMixin.class);
-		
-		
+
 	}
 
 }

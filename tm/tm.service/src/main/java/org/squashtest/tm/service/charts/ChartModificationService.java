@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.EntityType;
 
 @Transactional
 public interface ChartModificationService {
@@ -37,7 +37,7 @@ public interface ChartModificationService {
 
 	/**
 	 * Returns all the ColumnPrototypes known in the database, indexed by EntityType.
-	 * 
+	 *
 	 * @return
 	 */
 	Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes();
@@ -46,7 +46,7 @@ public interface ChartModificationService {
 	/**
 	 * Will update the chart definition in the persistence layer. The detached ChartDefinition argument must have a persisted
 	 * counterpart (ie a non null ID that reference something in the database).
-	 * 
+	 *
 	 * @param chartDef a detached instance of a ChartDefinition
 	 */
 	void update(ChartDefinition chartDef);

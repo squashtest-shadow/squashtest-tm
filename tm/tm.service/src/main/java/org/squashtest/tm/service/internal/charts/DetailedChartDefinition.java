@@ -25,15 +25,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ColumnRole;
-import org.squashtest.tm.domain.chart.EntityType;
 import org.squashtest.tm.domain.chart.Filter;
 
 
 /**
  * see javadoc on {@link ChartDataFinder}
- * 
+ *
  * @author bsiri
  *
  */

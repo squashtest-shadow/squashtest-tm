@@ -49,6 +49,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.users.User;
 
 @Entity
@@ -93,6 +94,7 @@ public class ChartDefinition {
 	@JoinTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@OrderColumn(name = "RANK")
 	private List<MeasureColumn> measures;
+
 
 	public List<Filter> getFilters() {
 		return filters;

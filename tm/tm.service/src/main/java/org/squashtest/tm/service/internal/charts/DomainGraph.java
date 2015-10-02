@@ -20,25 +20,20 @@
  */
 package org.squashtest.tm.service.internal.charts;
 
-import static org.squashtest.tm.domain.chart.EntityType.BUG;
-import static org.squashtest.tm.domain.chart.EntityType.CAMPAIGN;
-import static org.squashtest.tm.domain.chart.EntityType.EXECUTION;
-import static org.squashtest.tm.domain.chart.EntityType.ITEM_TEST_PLAN;
-import static org.squashtest.tm.domain.chart.EntityType.ITERATION;
-import static org.squashtest.tm.domain.chart.EntityType.REQUIREMENT;
-import static org.squashtest.tm.domain.chart.EntityType.REQUIREMENT_VERSION;
-import static org.squashtest.tm.domain.chart.EntityType.TEST_CASE;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.EXECUTION;
+import static org.squashtest.tm.domain.EntityType.ISSUE;
+import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
+import static org.squashtest.tm.domain.EntityType.ITERATION;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
 
-import org.apache.commons.collections.Closure;
-import org.squashtest.tm.domain.chart.EntityType;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
@@ -54,7 +49,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
  * 	every target entity is reached.
  * </p>
  * <p>See javadoc on ChartDataFinder for details on this. Excerpt pasted below for convenience.</p>
- * 
+ *
  * <p>
  *  <table>
  * 	<tr>
@@ -100,13 +95,13 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 
 	/*
 	 * The creation of a query plan is a two step process :
-	 * 
+	 *
 	 * 1/ transform the undirected domain graph in a directed graph (a tree), radiating from the node representing the root entity,
 	 * 2/ on the result, prune the leaves until a target entity node is encountered
-	 * 
+	 *
 	 * The result is a tree with the root entity as root node, and by walking it top-down one will find
 	 * which entities are traversed from which (indicating which join should be made).
-	 * 
+	 *
 	 */
 
 	static QueryPlan getQueryPlan(DetailedChartDefinition definition){
@@ -136,7 +131,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 		TraversableEntity iterationNode = new TraversableEntity(ITERATION);
 		TraversableEntity itemNode = new TraversableEntity(ITEM_TEST_PLAN);
 		TraversableEntity executionNode = new TraversableEntity(EXECUTION);
-		TraversableEntity issueNode = new TraversableEntity(BUG);
+		TraversableEntity issueNode = new TraversableEntity(ISSUE);
 		TraversableEntity testcaseNode = new TraversableEntity(TEST_CASE);
 		TraversableEntity rversionNode = new TraversableEntity(REQUIREMENT_VERSION);
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
@@ -168,7 +163,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 	/**
 	 * This method should decide whether navigating from parent to child should
 	 * be allowed.
-	 * 
+	 *
 	 * @param parent
 	 * @param child
 	 * @return
@@ -180,22 +175,22 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 	/**
 	 *	<p>returns an exhaustive QueryPlan (it still needs to be pruned afterward)</p>
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
-	 * 
+	 *
 	 */
 	/*
 	 * Developper from the Future, read this !
-	 * 
+	 *
 	 * Step 1 details :
 	 * 	by default any outbound node from the root entity (and thereafter) is legit for joining. However
 	 * 	in some cases it might not be acceptable in the future : the domain graph could contain loops,
 	 *  which means that many directed paths are possible between two nodes.
-	 * 
+	 *
 	 *  For instance in the future one could join TestCase with Execution and/or TestCase with Item and/or Item with
 	 *  Execution : we don't want all three happen at the same time. Thus, we need an additional validation step
 	 *  to prevent this.
-	 * 
+	 *
 	 *  This step is included in the process, and returns always true for now.
-	 * 
+	 *
 	 */
 	private QueryPlan morphToQueryPlan(){
 
@@ -258,7 +253,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 
 	/**
 	 * A node in the Domain graph : it represents an entity type (table) that can potentially be traversed
-	 * 
+	 *
 	 * @author bsiri
 	 *
 	 */
@@ -271,6 +266,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 			return new TraversedEntity(key);
 		}
 
+		@Override
 		public String toString(){
 			return key.toString();
 		}
@@ -316,7 +312,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 
 	/**
 	 * A node in the QueryPlan : it represents an entity type that WILL be traversed.
-	 * 
+	 *
 	 * @author bsiri
 	 *
 	 */
@@ -332,6 +328,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 		}
 
 
+		@Override
 		public String toString(){
 			return getKey().toString();
 		}

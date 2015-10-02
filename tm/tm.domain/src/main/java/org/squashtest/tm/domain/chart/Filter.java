@@ -36,6 +36,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
+import org.squashtest.tm.domain.EntityType;
+
 @Entity
 @Table(name = "CHART_FILTER")
 public class Filter implements ColumnPrototypeInstance {

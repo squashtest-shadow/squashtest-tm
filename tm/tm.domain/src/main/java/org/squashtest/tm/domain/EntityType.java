@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain;
 
 public enum EntityType {
+	// @formatter:off
 	PROJECT,
 	TEST_CASE_LIBRARY,
 	TEST_CASE_FOLDER,
@@ -37,5 +38,7 @@ public enum EntityType {
 	EXECUTION,
 	TEST_SUITE,
 	EXECUTION_STEP,
-	ISSUE
+	ISSUE,
+	ITEM_TEST_PLAN
+	// @formatter:on
 }
