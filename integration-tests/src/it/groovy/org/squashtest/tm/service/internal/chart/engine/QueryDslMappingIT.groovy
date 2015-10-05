@@ -18,60 +18,61 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine;
+package org.squashtest.tm.service.internal.chart.engine
 
+import javax.inject.Inject;
+
+import org.spockframework.util.NotThreadSafe;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
+import org.unitils.dbunit.annotation.DataSet;
 
-import com.querydsl.core.types.Path;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
-/**
- * <p></p>
- * 
- * <p>
- * 	This class will generate the main query, that is a query that joins together the sequence of tables required for the given chart.
- * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
- * 	is available a where clause will be used.
- * </p>
- * 
- * <p>See javadoc on {@link ChartDataFinder}</p>
- * 
- * 
- * @author bsiri
- *
- */
-
-class MainQueryPlanner {
+import spock.unitils.UnitilsSupport;
 
 
-	private DetailedChartDefinition definition;
+@NotThreadSafe
+@UnitilsSupport
+@Transactional
+class QueryDslMappingIT extends DbunitDaoSpecification {
 
+	@DataSet("MainQueryPlanner.dataset.xml")
+	def "should fetch test step ids using querydsl Qtypes"(){
 
-	MainQueryPlanner(DetailedChartDefinition definition){
-		this.definition = definition;
-	}
+		given :
+		HibernateQuery q = new HibernateQuery()
 
+		QTestCase testCase = QTestCase.testCase
+		QTestStep allsteps = QTestStep.testStep
 
-	HibernateQuery<?> createMainQuery(){
+		q.select(allsteps.id).from(testCase).join(testCase.steps, allsteps).where(testCase.id.eq(-1l))
 
-		// get the query plan : the orderly set of joins this
-		// class must now put together
-		QueryPlan plan = DomainGraph.getQueryPlan(definition);
+		when :
+		HibernateQuery attached = q.clone(getSession())
+		def res = attached.fetch();
 
-		// now get the query done
-		//TraversedEntity rootNode = plan.getR
-		return null;
+		then :
+		res as Set == [-11l, -12l, -13l] as Set
 
 	}
 
 
-	private void test(){
+
+	@DataSet("MainQueryPlanner.dataset.xml")
+	def "should fetch test step ids using join over dynamic path (instead of the natural way)"(){
+
+		given : "the building parts"
 
 		String tcAlias = "tc";
 		String stepAlias = "st";
@@ -88,6 +89,8 @@ class MainQueryPlanner {
 
 		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
 
+		and : "the assembly"
+
 		HibernateQuery q = new HibernateQuery();
 
 		q.from(testcase);
@@ -95,6 +98,13 @@ class MainQueryPlanner {
 		q.join(stepjoin, tcsteps);
 		q.select(stepid);
 		q.where(tcid.eq(-1l));
+
+		when :
+		HibernateQuery attached = q.clone(getSession())
+		def res = attached.fetch();
+
+		then :
+		res as Set == [-11l, -12l, -13l] as Set
 
 	}
 

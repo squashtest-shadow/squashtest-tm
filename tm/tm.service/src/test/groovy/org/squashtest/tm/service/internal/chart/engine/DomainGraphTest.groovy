@@ -65,6 +65,7 @@ class DomainGraphTest extends Specification {
 		domain.getNodes().findAll{it.key != rootEntity} as Set == domain.getNodes().findAll{it.inbounds.size()==1} as Set
 		domain.getNodes().collect{it.key} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS] as Set
 
+
 		where :
 		rootEntity				|	definition
 		REQUIREMENT				|	new DetailedChartDefinition(rootEntity : REQ)
@@ -101,7 +102,25 @@ class DomainGraphTest extends Specification {
 		ITP			|	[REQ, CP, ISS]		|	[ ITP : [TC, IT, EX], TC : [COV], COV : [RV], RV: [REQ], REQ : [], IT : [CP], CP : [], EX : [ISS], ISS : []]
 	}
 
+	@Unroll
+	def "should convey the correct join metadata when creating the tree"(){
 
+		expect :
+		def plan = DomainGraph.getQueryPlan(new DetailedChartDefinition(rootEntity : rootEntity, targetEntities : targets))
+
+		checkAllTreeJoins(plan, joinInfos)
+
+		where :
+
+		// let's use the abbreviations
+		rootEntity	|	targets				|	joinInfos
+		REQ			|	[REQ, TC]			|	[ REQ : [RV:"versions"], RV : [COV : "requirementVersionCoverages"], COV : [TC:"verifyingTestCase"]]
+		ISS			|	[ISS, TC, IT]		|	[ ISS : [EX : "execution"], EX : [ITP : "testPlan"], ITP : [TC:"referencedTestCase", IT:"iteration"]]
+		IT			|	[IT, ISS]			|	[ IT : [ITP:"testPlans"], ITP : [EX:"executions"], EX : [ISS:"issues"]]
+		CP			|	[REQ, ISS]			|	[ CP : [IT:"iterations"], IT : [ITP:"testPlans"], ITP : [TC:"referencedTestCase", EX:"executions"], TC : [COV:"requirementVersionCoverages"], COV : [RV:"verifiedRequirementVersion"], EX : [ISS:"issues"]]
+		ITP			|	[REQ, CP, ISS]		|	[ ITP : [TC:"referencedTestCase", IT:"iteration", EX:"executions"], TC : [COV:"requirementVersionCoverages"], COV : [RV:"verifiedRequirementVersion"], RV: [REQ:"requirement"], IT : [CP :"campaign"], EX : [ISS:"issues"]]
+
+	}
 
 	def "should morph to a directed graph and generate an oversized query plan"(){
 
@@ -194,6 +213,19 @@ class DomainGraphTest extends Specification {
 
 		return checkall
 
+	}
+
+	def checkAllTreeJoins(QueryPlan tree, Map metas){
+		def checkall = true
+
+		metas.each {src, meta ->
+			def node = tree.getNode(expand(src))
+			meta.each { type, joinName ->
+				checkall = checkall && (node.joinInfos[expand(type)].relationName == joinName)
+			}
+		}
+
+		return checkall
 	}
 
 	def checkIsDirectedEdge(DomainGraph graph, InternalEntityType srcType, InternalEntityType destType){

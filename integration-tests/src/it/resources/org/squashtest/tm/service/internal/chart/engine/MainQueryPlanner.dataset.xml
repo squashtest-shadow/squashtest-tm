@@ -1,0 +1,78 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2013 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<!DOCTYPE dataset SYSTEM "../../../../../../../dtd/squash-tm.1.13.0.dtd">
+<dataset>
+
+	<!--  dummy attachment list, the same for everyone that need one. -->
+	
+	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
+
+
+	<!--  the test case library nodes -->
+
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-1" NAME="testcase1" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	<TEST_CASE_LIBRARY_NODE TCLN_ID="-2" NAME="testcase2" CREATED_BY="IT" CREATED_ON="2011-07-26" ATTACHMENT_LIST_ID="-1"/>
+	
+	<!--  the test cases now -->
+	
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-1"  VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-2" VERSION="1" />
+		
+	<!--  the test steps -->
+	
+	<TEST_STEP TEST_STEP_ID="-11" />
+	<TEST_STEP TEST_STEP_ID="-12" />
+	<TEST_STEP TEST_STEP_ID="-13" />
+	<TEST_STEP TEST_STEP_ID="-21" />
+	<TEST_STEP TEST_STEP_ID="-22" />
+	
+	<!--  action test step -->
+	<ACTION_TEST_STEP TEST_STEP_ID="-11" ACTION="action"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-12" ACTION="action"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-13" ACTION="action"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-21" ACTION="action"/>
+	<ACTION_TEST_STEP TEST_STEP_ID="-22" ACTION="action"/>
+	
+	
+	<!--  associate them to the test cases -->
+	
+	<TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-11" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-12" STEP_ORDER="2"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-1" STEP_ID="-13" STEP_ORDER="3"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-2" STEP_ID="-21" STEP_ORDER="1"/>
+	<TEST_CASE_STEPS TEST_CASE_ID="-2" STEP_ID="-22" STEP_ORDER="2"/>
+	
+	
+	<!-- executions -->
+	<EXECUTION CREATED_BY="IT" NAME="exe1" EXECUTION_ID="-1" CREATED_ON="2015-10-05" PREREQUISITE="none" TCLN_ID="-1"/>
+	<EXECUTION CREATED_BY="IT" NAME="deleted" EXECUTION_ID="-100" CREATED_ON="2015-10-05" PREREQUISITE="none" />
+	
+	<!--  cleanup of previously entered data -->
+	
+	<test_case_folder/>
+	<tcln_relationship/>
+	<test_case_library_content/>
+
+</dataset>

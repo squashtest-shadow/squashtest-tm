@@ -22,14 +22,25 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 
 
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.CAMPAIGN;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.EXECUTION;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ISSUE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITEM_TEST_PLAN;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITERATION;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
+
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import org.squashtest.tm.domain.chart.EntityType;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
 
 /**
  * <p>
@@ -131,29 +142,44 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
 
 		// this graph consider that each relation is navigable both ways.
-		addEdge(campaignNode, iterationNode);
-		addEdge(iterationNode, campaignNode);
+		addEdge(campaignNode, iterationNode, "iterations");
+		addEdge(iterationNode, campaignNode, "campaign");
 
-		addEdge(iterationNode, itemNode);
-		addEdge(itemNode, iterationNode);
+		addEdge(iterationNode, itemNode, "testPlans");
+		addEdge(itemNode, iterationNode, "iteration");
 
-		addEdge(itemNode, executionNode);
-		addEdge(executionNode, itemNode);
+		addEdge(itemNode, executionNode, "executions");
+		addEdge(executionNode, itemNode, "testPlan");
 
-		addEdge(executionNode, issueNode);
-		addEdge(issueNode, executionNode);
+		addEdge(executionNode, issueNode, "issues");
+		addEdge(issueNode, executionNode, "execution");
 
-		addEdge(itemNode, testcaseNode);
-		addEdge(testcaseNode, itemNode);
+		addEdge(itemNode, testcaseNode, "referencedTestCase");
+		addEdge(testcaseNode, itemNode,  null); // that one is undefined
 
-		addEdge(testcaseNode, reqcoverageNode);
-		addEdge(reqcoverageNode, testcaseNode);
+		addEdge(testcaseNode, reqcoverageNode, "requirementVersionCoverages");
+		addEdge(reqcoverageNode, testcaseNode, "verifyingTestCase");
 
-		addEdge(reqcoverageNode, rversionNode);
-		addEdge(rversionNode, reqcoverageNode);
+		addEdge(reqcoverageNode, rversionNode, "verifiedRequirementVersion");
+		addEdge(rversionNode, reqcoverageNode, "requirementVersionCoverages");
 
-		addEdge(rversionNode, requirementNode);
-		addEdge(requirementNode, rversionNode);
+		addEdge(rversionNode, requirementNode, "requirement");
+		addEdge(requirementNode, rversionNode, "versions");
+	}
+
+
+	private void addEdge(TraversableEntity src, TraversableEntity dest, String relationName){
+		addEdge(src, dest);
+
+		PlannedJoin join = new PlannedJoin(src.getKey(), dest.getKey(), relationName);
+		src.addJoinInfo(dest.getKey(), join);
+	}
+
+	@Override
+	public void removeEdge(InternalEntityType src, InternalEntityType dest) {
+		super.removeEdge(src, dest);
+		TraversableEntity srcNode = getNode(src);
+		srcNode.removeJoinInfo(dest);
 	}
 
 
@@ -218,7 +244,8 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 
 					// add the path to the plan
 					TraversedEntity outTree = outNode.toTraversedEntity();
-					plan.addNode(currentEntity, outTree);
+					PlannedJoin join = currentNode.getJoinInfo(outNode.getKey());
+					plan.addNode(currentEntity, outTree, join);
 
 					// update the graph : make the path one-way by removing the other way
 					removeEdge(outNode.getKey(), currentNode.getKey());
@@ -248,6 +275,9 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	 *
 	 */
 	static final class TraversableEntity extends GraphNode<InternalEntityType, TraversableEntity>{
+
+		private Map<InternalEntityType, PlannedJoin> joinInfos = new HashMap<>();
+
 		private TraversableEntity(InternalEntityType type){
 			super(type);
 		}
@@ -260,8 +290,19 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 			return key.toString();
 		}
 
-	}
+		void addJoinInfo(InternalEntityType outboundType, PlannedJoin joininfo){
+			joinInfos.put(outboundType, joininfo);
+		}
 
+		void removeJoinInfo(InternalEntityType outboundType){
+			joinInfos.remove(outboundType);
+		}
+
+		PlannedJoin getJoinInfo(InternalEntityType outboundType){
+			return joinInfos.get(outboundType);
+		}
+
+	}
 
 
 }

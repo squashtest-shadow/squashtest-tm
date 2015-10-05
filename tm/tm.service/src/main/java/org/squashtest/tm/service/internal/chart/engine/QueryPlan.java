@@ -21,15 +21,14 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Queue;
-import java.util.Set;
 
-import org.squashtest.tm.core.foundation.lang.Couple;
-import org.squashtest.tm.domain.chart.EntityType;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
@@ -52,6 +51,11 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 		return getRootNodes().get(0);
 	}
 
+	void addNode(InternalEntityType parentKey, TraversedEntity childNode, PlannedJoin joinMeta){
+		addNode(parentKey, childNode);
+		TraversedEntity parent = getNode(parentKey);
+		parent.addJoinInfo(childNode.getKey(), joinMeta);
+	}
 
 	public Iterator<PlannedJoin> joinIterator() {
 		return new QueryPlanJoinIterator(this);
@@ -96,6 +100,8 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 	 */
 	static final class TraversedEntity extends TreeNode<InternalEntityType, TraversedEntity>{
 
+		private Map<InternalEntityType, PlannedJoin> joinInfos = new HashMap<>();
+
 		TraversedEntity(InternalEntityType type) {
 			super(type);
 		}
@@ -109,20 +115,17 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 		public String toString(){
 			return getKey().toString();
 		}
-	}
 
-	static final class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
-
-		public PlannedJoin(InternalEntityType a1, InternalEntityType a2) {
-			super(a1, a2);
+		void addJoinInfo(InternalEntityType outboundType, PlannedJoin joininfo){
+			joinInfos.put(outboundType, joininfo);
 		}
 
-		InternalEntityType getSrc(){
-			return getA1();
+		void removeJoinInfo(InternalEntityType outboundType){
+			joinInfos.remove(outboundType);
 		}
 
-		InternalEntityType getDest(){
-			return getA2();
+		PlannedJoin getJoinInfo(InternalEntityType outboundType){
+			return joinInfos.get(outboundType);
 		}
 	}
 
@@ -156,7 +159,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 			if (hasNext()){
 
 				// create the next pair
-				PlannedJoin res = new PlannedJoin(currentParent.getKey(), currentChild.getKey());
+				PlannedJoin res = currentParent.getJoinInfo(currentChild.getKey());
 
 				// move to next
 				armNext();

@@ -41,6 +41,7 @@ import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.domain.execution.Execution;
 
 @Entity
 @NamedQueries(value = {
@@ -92,7 +93,7 @@ public class Issue {
 	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
 	joinColumns=@JoinColumn(name="ISSUE_ID", insertable=false, updatable=false ),
 	inverseJoinColumns = @JoinColumn(name="EXECUTION_ID"))
-	private List<Issue> issues = new ArrayList<Issue>();
+	private Execution execution;
 
 
 	private String remoteIssueId;
