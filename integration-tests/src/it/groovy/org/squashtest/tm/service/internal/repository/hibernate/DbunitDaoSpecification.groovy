@@ -28,6 +28,8 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.DynamicDaoConfig
+import org.squashtest.it.config.RepositorySpecConfig
+import org.squashtest.it.config.UnitilsConfig
 import org.squashtest.tm.service.DataSourceConfig
 import org.squashtest.tm.service.RepositoryConfig
 import spock.lang.Specification
@@ -38,7 +40,7 @@ import javax.inject.Inject
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(classes = [RepositorySpecConfig, DynamicDaoConfig, RepositoryConfig ])
+@ContextConfiguration(classes = [ RepositorySpecConfig, UnitilsConfig, DynamicDaoConfig, RepositoryConfig ])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 @Transactional

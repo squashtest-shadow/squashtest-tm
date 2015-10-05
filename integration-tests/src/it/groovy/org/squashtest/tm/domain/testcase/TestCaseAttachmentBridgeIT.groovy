@@ -20,22 +20,19 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import javax.inject.Inject;
+import org.apache.lucene.document.Document
+import org.apache.lucene.document.Field.Index
+import org.apache.lucene.document.Field.Store
+import org.apache.lucene.document.Field.TermVector
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.hibernate.search.bridge.LuceneOptions
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.unitils.UnitilsSupport
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.Field.TermVector;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.search.bridge.LuceneOptions;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateDaoSpecification
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 /**
  * @author Gregory Fouquet

@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.hibernate.mapping
 
+import org.springframework.test.context.TestPropertySource
+import org.squashtest.it.config.DynamicDaoConfig
+import org.squashtest.it.config.RepositorySpecConfig
+import org.squashtest.tm.service.DataSourceConfig
+import org.squashtest.tm.service.RepositoryConfig
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
@@ -33,7 +39,8 @@ import spock.lang.Specification;
 /**
  * Superclass for hibernate mapping integration tests.
  */
-@ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:no-validation-config-context.xml", "classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml"])
+@ContextConfiguration(classes= [ RepositorySpecConfig, DataSourceConfig, DynamicDaoConfig, RepositoryConfig])
+@TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 abstract class HibernateMappingSpecification extends Specification {
 	@Inject SessionFactory sessionFactory;

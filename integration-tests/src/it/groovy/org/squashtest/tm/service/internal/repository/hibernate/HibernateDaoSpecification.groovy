@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import org.springframework.test.context.TestPropertySource
+import org.squashtest.it.config.DynamicDaoConfig
+import org.squashtest.it.config.RepositorySpecConfig
+import org.squashtest.tm.service.DataSourceConfig
+import org.squashtest.tm.service.RepositoryConfig
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
@@ -32,10 +38,13 @@ import spock.lang.Specification;
 
 /**
  * Superclass for hibernate DAO integration tests.
- * Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
+ *
+ * @deprecated  Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
  */
-@ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath:no-validation-config-context.xml", "classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml"])
+@ContextConfiguration(classes= [ RepositorySpecConfig, DataSourceConfig, DynamicDaoConfig, RepositoryConfig])
+@TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+@Deprecated
 abstract class HibernateDaoSpecification extends Specification {
 	@Inject SessionFactory sessionFactory;
 	/**

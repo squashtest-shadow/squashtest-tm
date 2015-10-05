@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate
+package org.squashtest.it.config
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
 import org.squashtest.it.stub.validation.StubValidatorFactory
-import org.unitils.database.UnitilsDataSourceFactoryBean
 
 import javax.validation.ValidatorFactory
 
@@ -37,22 +36,17 @@ import javax.validation.ValidatorFactory
  */
 @Configuration
 @ComponentScan(
-        basePackages = ["org.squashtest.tm.service.internal.repository", "org.squashtest.tm.service.internal.api"],
-        excludeFilters = @ComponentScan.Filter(Configuration))
+		basePackages = ["org.squashtest.tm.service.internal.repository", "org.squashtest.tm.service.internal.api"],
+		excludeFilters = @ComponentScan.Filter(Configuration))
 @EnableSpringConfigured
 class RepositorySpecConfig {
-    @Bean(name = "squashtest.core.persistence.jdbc.DataSource")
-    UnitilsDataSourceFactoryBean dataSource() {
-        return new UnitilsDataSourceFactoryBean()
-    }
+	@Bean
+	ValidatorFactory validatorFactory() {
+		return new StubValidatorFactory()
+	}
 
-    @Bean
-    ValidatorFactory validatorFactory() {
-        return new StubValidatorFactory()
-    }
-
-    @Bean
-    static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
+	@Bean
+	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
 }

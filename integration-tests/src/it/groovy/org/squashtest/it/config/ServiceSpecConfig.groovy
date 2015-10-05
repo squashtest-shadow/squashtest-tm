@@ -53,71 +53,64 @@ import org.unitils.database.UnitilsDataSourceFactoryBean
  */
 @Configuration
 @ComponentScan(
-        basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
-                "org.squashtest.it.stub.security", "org.squashtest.it.stub.validation"],
-        excludeFilters = [
-                @ComponentScan.Filter(Configuration),
-                @ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.security\\..*", type = FilterType.REGEX ),
+		basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
+				"org.squashtest.it.stub.security", "org.squashtest.it.stub.validation"],
+		excludeFilters = [
+				@ComponentScan.Filter(Configuration),
+				@ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.security\\..*", type = FilterType.REGEX),
 //                @ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.testautomation\\..*", type = FilterType.REGEX )
-        ]
+		]
 )
 @EnableSpringConfigured
 class ServiceSpecConfig {
-    @Bean @Primary
-    BugTrackersService bugTrackerService() {
-        new StubBugTrackerService();
-    }
+	@Bean
+	@Primary
+	BugTrackersService bugTrackerService() {
+		new StubBugTrackerService();
+	}
 
-    @Bean
-    AclCache aclCache() {
-        new NullAclCache();
-    }
+	@Bean
+	AclCache aclCache() {
+		new NullAclCache();
+	}
 
-    @Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
-    @Primary
-    SquashUserDetailsManager userDetailsManager() {
-        new StubUserDetailsManager();
-    }
+	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
+	@Primary
+	SquashUserDetailsManager userDetailsManager() {
+		new StubUserDetailsManager();
+	}
 
-    @Bean(name = "squashtest.core.user.UserContextService") @Primary
-    UserContextService userContextService() {
-        new StubUserContextService()
-    }
+	@Bean(name = "squashtest.core.user.UserContextService")
+	@Primary
+	UserContextService userContextService() {
+		new StubUserContextService()
+	}
 
-    @Bean(name = "squashtest.core.persistence.jdbc.DataSource")
-    UnitilsDataSourceFactoryBean dataSource() {
-        new UnitilsDataSourceFactoryBean()
-    }
+	@Bean
+	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
 
-//    @Bean @Primary
-//    ValidatorFactory validatorFactory() {
-//        return new StubValidatorFactory()
-//    }
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		new ShaPasswordEncoder()
+	}
 
-    @Bean
-    static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
+	@Bean(name = "squashtest.core.security.PermissionEvaluationService")
+	@Primary
+	PermissionEvaluationService permissionEvaluationService() {
+		new StubPermissionEvaluationService()
+	}
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        new ShaPasswordEncoder()
-    }
+	@Bean(name = "squashtest.tm.service.UserAccountService")
+	@Primary
+	UserAccountService userAccountService() {
+		new StubCustomUserAccountService()
+	}
 
-    @Bean(name = "squashtest.core.security.PermissionEvaluationService") @Primary
-    PermissionEvaluationService permissionEvaluationService() {
-        new StubPermissionEvaluationService()
-    }
+	@Bean
+	AdministratorAuthenticationService administratorAuthenticationService() {
+		new AdministratorAuthenticationServiceImpl();
+	}
 
-    @Bean(name = "squashtest.tm.service.UserAccountService") @Primary UserAccountService userAccountService() {
-        new StubCustomUserAccountService()
-    }
-
-    @Bean AdministratorAuthenticationService administratorAuthenticationService() {
-        new AdministratorAuthenticationServiceImpl();
-    }
-
-//    @Bean AffirmativeBasedCompositePermissionEvaluator permissionEvaluator() {
-//        return new StubCustomPermissionEvaluator()
-//    }
 }

@@ -20,21 +20,17 @@
  */
 package org.squashtest.tm.service.internal.importer
 
-import javax.inject.Inject
-
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.audit.AuditableMixin
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementCategory
-import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.domain.requirement.*
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-
+import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+
 /**
  * Why Disabled ?
  * If you run this test alone they work fine. But if you run it along with all the other ones it fails.
@@ -46,7 +42,8 @@ import spock.unitils.UnitilsSupport
  */
 @UnitilsSupport
 @Transactional
-class RequirementImporterITDisabled extends DbunitServiceSpecification {
+@Ignore
+class RequirementImporterIT extends DbunitServiceSpecification {
 
 	@Inject
 	RequirementLibraryNavigationService service
@@ -54,35 +51,34 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 	RequirementImporter importer = new RequirementImporter()
 
 
-
-	def setup(){
+	def setup() {
 		importer.service = service
 	}
 
 
 	@DataSet("RequirementImporterIT.setup.xml")
-	def "should import a hierarchy in an empty library"(){
+	def "should import a hierarchy in an empty library"() {
 
-		given :
+		given:
 		Class classe = this.getClass()
 		ClassLoader classLoader = classe.getClassLoader()
 		InputStream stream = classLoader.getResourceAsStream("import/import-requirement.xls")
 
-		when :
-		def summary = importer.importExcelRequirements( stream, -2L)
+		when:
+		def summary = importer.importExcelRequirements(stream, -2L)
 
 
-		then  : "all success and one renamed"
+		then: "all success and one renamed"
 		summary.getTotal() == 7
-		summary.getSuccess()  == 7
+		summary.getSuccess() == 7
 		summary.getRenamed() == 1
 		summary.getFailures() == 0
 
 		def rContent = service.findLibrary(-2l).content
 		rContent.size() == 4
 
-		and : "first requirement imported with it's older version"
-		def reqV2 = rContent.find {it.name == "Version2"}
+		and: "first requirement imported with it's older version"
+		def reqV2 = rContent.find { it.name == "Version2" }
 		reqV2 != null
 		//req
 		Requirement reqV2Req = (Requirement) reqV2
@@ -95,7 +91,7 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		AuditableMixin reqAudit = (AuditableMixin) reqV2Req
 		//	reqAudit.createdBy == "moi" TODO understand why not
 		//older version
-		RequirementVersion olderVersion =  reqV2Req.versions.get(1)
+		RequirementVersion olderVersion = reqV2Req.versions.get(1)
 		olderVersion.name == "Version1"
 		olderVersion.getReference() == "12"
 		olderVersion.category == RequirementCategory.TEST_REQUIREMENT
@@ -108,33 +104,33 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		calendar.setTime(olderCreatedOn)
 		calendar.get(Calendar.MONTH) == 5
 		calendar.get(Calendar.DAY_OF_MONTH) == 27
-		calendar.get(Calendar.YEAR)== 1984
+		calendar.get(Calendar.YEAR) == 1984
 		olderVersionAudit.createdBy == "import"
 
 
-		and : "folder name1 imported with it's content "
+		and: "folder name1 imported with it's content "
 
-		def req1 = rContent.find {it.name == "name1"}
+		def req1 = rContent.find { it.name == "name1" }
 		req1 != null
-		RequirementFolder req1folder  = (RequirementFolder) req1
+		RequirementFolder req1folder = (RequirementFolder) req1
 		req1folder.content.size() == 1
 		RequirementFolder req2 = (RequirementFolder) req1folder.content.get(0)
 		req2.name == "name2"
 		req2.content.size() == 2
 
-		def req3 = req2.content.find {it.name == "name3"}
+		def req3 = req2.content.find { it.name == "name3" }
 		req3 != null
 		RequirementFolder req3Folder = (RequirementFolder) req3
 		req3Folder.content.size() == 1
-		Requirement reqv2 = (Requirement)req3Folder.content.get(0)
+		Requirement reqv2 = (Requirement) req3Folder.content.get(0)
 		reqv2.name == "version-2"
 		reqv2.versions.size() == 2
 
-		def req3Imp = req2.content.find {it.name == "name3 - Import(1)"}
+		def req3Imp = req2.content.find { it.name == "name3 - Import(1)" }
 		Requirement req3ImpReq = (Requirement) req3Imp
 
-		and : "folder name4 is imported with it's hierarchy"
-		def req4 = rContent.find {it.name == "name4"}
+		and: "folder name4 is imported with it's hierarchy"
+		def req4 = rContent.find { it.name == "name4" }
 		req4 != null
 		RequirementFolder req4Folder = (RequirementFolder) req4
 		req4Folder.getContent().size() == 1
@@ -144,12 +140,12 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		Requirement req57 = (Requirement) req5Folder.content.get(0)
 		req57.name == "57"
 
-		and : "fodler name7/ is imported with it's hierarchy"
-		def req7 = rContent.find {it.name == "name7/"}
+		and: "fodler name7/ is imported with it's hierarchy"
+		def req7 = rContent.find { it.name == "name7/" }
 		req7 != null
 		RequirementFolder req7Folder = (RequirementFolder) req7
 		req7Folder.content.size() == 1
-		RequirementFolder req8Folder =(RequirementFolder) req7Folder.content.get(0)
+		RequirementFolder req8Folder = (RequirementFolder) req7Folder.content.get(0)
 		req8Folder.name == "name8"
 		req8Folder.content.size() == 1
 		RequirementFolder req9Folder = (RequirementFolder) req8Folder.content.get(0)
@@ -184,28 +180,28 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 	 * </ul>
 	 */
 	@DataSet("RequirementImporterIT.import req path.xml")
-	def "should import a hierarchy of requirement"(){
+	def "should import a hierarchy of requirement"() {
 
-		given :
+		given:
 		Class classe = this.getClass()
 		ClassLoader classLoader = classe.getClassLoader()
 		InputStream stream = classLoader.getResourceAsStream("import/import-requirement-into-requirement.xls")
 
-		when :
-		def summary = importer.importExcelRequirements( stream, -2L)
+		when:
+		def summary = importer.importExcelRequirements(stream, -2L)
 
 
-		then  : "all success"
+		then: "all success"
 		summary.getTotal() == 8
-		summary.getSuccess()  == 8
+		summary.getSuccess() == 8
 		summary.getRenamed() == 2
 		summary.getFailures() == 0
 
 		def rContent = service.findLibrary(-2l).content
 		rContent.size() == 3
 
-		and : "root requirements imported"
-		def req3 = rContent.find {it.name == "name3"}
+		and: "root requirements imported"
+		def req3 = rContent.find { it.name == "name3" }
 		req3 != null
 		def req3Content = req3.content
 		req3Content.size() == 1
@@ -221,8 +217,8 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		req6 != null
 		req6.name == "name6"
 
-		and : "dossier1 requirements imported"
-		def dossier1 = rContent.find {it.name == "dossier1"}
+		and: "dossier1 requirements imported"
+		def dossier1 = rContent.find { it.name == "dossier1" }
 		dossier1 != null
 		def dossier1Content = dossier1.content
 		dossier1Content.size() == 1
@@ -238,8 +234,8 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		req1111 != null
 		req1111.name == "req1111"
 
-		and : "dossier2 requirements imported"
-		def dossier2 = rContent.find {it.name == "dossier2"}
+		and: "dossier2 requirements imported"
+		def dossier2 = rContent.find { it.name == "dossier2" }
 		dossier2 != null
 		def dossier2Content = dossier2.content
 		dossier2Content.size() == 1
@@ -247,20 +243,20 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		req21.name == "req21"
 		def req21Content = req21.content
 		req21Content.size() == 4
-		def req211 = req21Content.find {it.name == "req211"}
+		def req211 = req21Content.find { it.name == "req211" }
 		req211 != null
 		req211.content.size() == 0
-		def req211imp = req21Content.find {it.name == "req211-import1"}
+		def req211imp = req21Content.find { it.name == "req211-import1" }
 		req211imp != null
 		req211imp.content.size() == 0
-		def req212 = req21Content.find {it.name == "req212"}
+		def req212 = req21Content.find { it.name == "req212" }
 		req212 != null
 		req212.content.size() == 0
-		def req212imp = req21Content.find {it.name == "req212-import1"}
+		def req212imp = req21Content.find { it.name == "req212-import1" }
 		req212imp != null
 		def req212impContent = req212imp.content
 		req212impContent.size() == 1
-		def req2121 = req212impContent.find {it.name == "req2121"}
+		def req2121 = req212impContent.find { it.name == "req2121" }
 		req2121 != null
 
 
@@ -268,20 +264,20 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 
 
 	@DataSet("RequirementImporterIT.setup.xml")
-	def "should import a hierarchy with new folder header"(){
+	def "should import a hierarchy with new folder header"() {
 
-		given :
+		given:
 		Class classe = this.getClass()
 		ClassLoader classLoader = classe.getClassLoader()
 		InputStream stream = classLoader.getResourceAsStream("import/import-requirement-with-new-folder-column.xls")
 
-		when :
-		def summary = importer.importExcelRequirements( stream, -2L)
+		when:
+		def summary = importer.importExcelRequirements(stream, -2L)
 
 
-		then  : "all success and one renamed"
+		then: "all success and one renamed"
 		summary.getTotal() == 7
-		summary.getSuccess()  == 7
+		summary.getSuccess() == 7
 		summary.getRenamed() == 1
 		summary.getFailures() == 0
 
@@ -289,11 +285,11 @@ class RequirementImporterITDisabled extends DbunitServiceSpecification {
 		rContent.size() == 4
 
 
-		and : "folder name1 imported with it's content "
+		and: "folder name1 imported with it's content "
 
-		def req1 = rContent.find {it.name == "name1"}
+		def req1 = rContent.find { it.name == "name1" }
 		req1 != null
-		RequirementFolder req1folder  = (RequirementFolder) req1
+		RequirementFolder req1folder = (RequirementFolder) req1
 		req1folder.content.size() == 1
 
 		RequirementFolder req2 = (RequirementFolder) req1folder.content.get(0)

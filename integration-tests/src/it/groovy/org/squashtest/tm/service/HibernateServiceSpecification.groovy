@@ -20,26 +20,29 @@
  */
 package org.squashtest.tm.service
 
-import javax.inject.Inject;
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.transaction.TransactionConfiguration
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.ServiceSpecConfig
+import spock.lang.Specification
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification;
-import org.unitils.dbunit.annotation.DataSet;
-
-import spock.lang.Specification;
-import spock.unitils.UnitilsSupport;
+import javax.inject.Inject
 
 /**
  * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.
+ * @deprecated Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
  */
-@ContextConfiguration(["classpath:service/dependencies-scan-context.xml", "classpath:no-validation-config-context.xml", "classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml", "classpath*:META-INF/**/dynamicmanager-context.xml"])
+@ContextConfiguration(classes = [ServiceSpecConfig, DataSourceConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
+@TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+@Deprecated
 abstract class HibernateServiceSpecification extends Specification {
-	@Inject SessionFactory sessionFactory
+	@Inject
+	SessionFactory sessionFactory
+
 	Session getCurrentSession() { sessionFactory.currentSession }
 
 }
