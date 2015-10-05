@@ -40,6 +40,8 @@ define([ "jquery",
 	squashtm.tree = squashtm.tree || undefined;
 
 	return {
+		
+		// TODO : move the extra event bindings into workspace-tree-plugin.js
 		initWorkspaceTree : function(settings) {
 			pluginsFactory.configure("workspace-tree", settings);
 			var conf = wkspConf.generate(settings);
@@ -50,15 +52,17 @@ define([ "jquery",
 				});
 			var instance = treeDiv.jstree(conf);
 			squashtm.tree = instance;
+			
 			treeDiv.bind("select_node.jstree", function (e, data) { 
-        data.rslt.obj.parents('.jstree-closed').each(function () { 
-          data.inst.open_node(this); 
-        }); 
+		        data.rslt.obj.parents('.jstree-closed').each(function () { 
+		          data.inst.open_node(this); 
+		        }); 
 			}); 
+			
 			$('#tree').bind("select_node.jstree", function (e, data) { 
-        data.rslt.obj.parents('.jstree-closed').each(function () { 
-          data.inst.open_node(this); 
-        }); 
+		        data.rslt.obj.parents('.jstree-closed').each(function () { 
+		          data.inst.open_node(this); 
+		        }); 
 			}); 
 		},
 

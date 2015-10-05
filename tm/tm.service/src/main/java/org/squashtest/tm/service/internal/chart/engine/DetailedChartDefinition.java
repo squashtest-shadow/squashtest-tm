@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts;
+package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,12 +39,12 @@ import org.squashtest.tm.domain.chart.Filter;
  */
 class DetailedChartDefinition extends ChartDefinition{
 
-	private EntityType rootEntity;
+	private InternalEntityType rootEntity;
 
-	private List<EntityType> targetEntities;
+	private List<InternalEntityType> targetEntities;
 
 
-	// for testing purposees - do not use
+	// for testing purposes - do not use
 	DetailedChartDefinition(){
 		super();
 	}
@@ -56,35 +56,37 @@ class DetailedChartDefinition extends ChartDefinition{
 		// todo : merge main attributes with the ChartDefinition
 
 		// find the root entity
-		rootEntity = parent.getMeasures().get(0).getEntityType();
+		rootEntity = InternalEntityType.fromDomainType(parent.getMeasures().get(0).getEntityType());
 
 		// find all the target entities
 		Map<ColumnRole, Set<EntityType>> entitiesByRole = parent.getInvolvedEntities();
 
 		targetEntities = new ArrayList<>();
 		for (Set<EntityType> types : entitiesByRole.values()){
-			targetEntities.addAll(types);
+			for (EntityType type : types){
+				targetEntities.add(InternalEntityType.fromDomainType(type));
+			}
 		}
 
 	}
 
 
-	protected EntityType getRootEntity() {
+	protected InternalEntityType getRootEntity() {
 		return rootEntity;
 	}
 
 
-	protected void setRootEntity(EntityType rootEntity) {
+	protected void setRootEntity(InternalEntityType rootEntity) {
 		this.rootEntity = rootEntity;
 	}
 
 
-	protected List<EntityType> getTargetEntities() {
+	protected List<InternalEntityType> getTargetEntities() {
 		return targetEntities;
 	}
 
 
-	protected void setTargetEntities(List<EntityType> targetEntities) {
+	protected void setTargetEntities(List<InternalEntityType> targetEntities) {
 		this.targetEntities = targetEntities;
 	}
 

@@ -18,27 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts
+package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.service.internal.charts.QueryPlan;
+import org.squashtest.tm.service.internal.chart.engine.InternalEntityType;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
+import org.squashtest.tm.service.internal.chart.engine.DetailedChartDefinition;
+import org.squashtest.tm.service.internal.chart.engine.DomainGraph;
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
-import static org.squashtest.tm.domain.EntityType.*
+import static org.squashtest.tm.domain.chart.EntityType.*
 import org.apache.commons.collections.Transformer
 
 class DomainGraphTest extends Specification {
 
 	// some abreviations
 
-	static def REQ = REQUIREMENT
-	static def RV = REQUIREMENT_VERSION
-	static def TC = TEST_CASE
-	static def ITP = ITEM_TEST_PLAN
-	static def IT = ITERATION
-	static def CP = CAMPAIGN
-	static def EX = EXECUTION
+	static InternalEntityType REQ = REQUIREMENT
+	static InternalEntityType RV = REQUIREMENT_VERSION
+	static InternalEntityType COV = REQUIREMENT_VERSION_COVERAGE
+	static InternalEntityType TC = TEST_CASE
+	static InternalEntityType ITP = ITEM_TEST_PLAN
+	static InternalEntityType IT = ITERATION
+	static InternalEntityType CP = CAMPAIGN
+	static InternalEntityType EX = EXECUTION
+	static InternalEntityType ISS = ISSUE
 
 
 
@@ -58,18 +63,19 @@ class DomainGraphTest extends Specification {
 
 		domain.getNode(rootEntity).getInbounds().size() == 0
 		domain.getNodes().findAll{it.key != rootEntity} as Set == domain.getNodes().findAll{it.inbounds.size()==1} as Set
-		domain.getNodes().collect{it.key} as Set == [REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN, EXECUTION, ISSUE] as Set
+		domain.getNodes().collect{it.key} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS] as Set
 
 		where :
 		rootEntity				|	definition
-		REQUIREMENT				|	new DetailedChartDefinition(rootEntity : REQUIREMENT)
-		REQUIREMENT_VERSION 	|	new DetailedChartDefinition(rootEntity : REQUIREMENT_VERSION)
-		TEST_CASE				|	new DetailedChartDefinition(rootEntity : TEST_CASE)
-		ITEM_TEST_PLAN			|	new DetailedChartDefinition(rootEntity : ITEM_TEST_PLAN)
-		ITERATION				|	new DetailedChartDefinition(rootEntity : ITERATION)
-		CAMPAIGN				|	new DetailedChartDefinition(rootEntity : CAMPAIGN)
-		EXECUTION				|	new DetailedChartDefinition(rootEntity : EXECUTION)
-		ISSUE						|	new DetailedChartDefinition(rootEntity : ISSUE)
+		REQUIREMENT				|	new DetailedChartDefinition(rootEntity : REQ)
+		REQUIREMENT_VERSION 	|	new DetailedChartDefinition(rootEntity : RV)
+		COV					 	|	new DetailedChartDefinition(rootEntity : COV)
+		TEST_CASE				|	new DetailedChartDefinition(rootEntity : TC)
+		ITEM_TEST_PLAN			|	new DetailedChartDefinition(rootEntity : ITP)
+		ITERATION				|	new DetailedChartDefinition(rootEntity : IT)
+		CAMPAIGN				|	new DetailedChartDefinition(rootEntity : CP)
+		EXECUTION				|	new DetailedChartDefinition(rootEntity : EX)
+		ISS						|	new DetailedChartDefinition(rootEntity : ISS)
 
 	}
 
@@ -88,11 +94,11 @@ class DomainGraphTest extends Specification {
 
 		// let's use the abbreviations
 		rootEntity	|	targets				|	hierarchy
-		REQ			|	[REQ, TC]			|	[ REQUIREMENT : [RV] , REQUIREMENT_VERSION : [TC], TEST_CASE : [] ]
-		ISSUE			|	[ISSUE, TC, IT]		|	[ ISSUE : [EX], EXECUTION : [ITP], ITEM_TEST_PLAN : [TC, IT], TEST_CASE : [], ITERATION : []]
-		IT			|	[IT, ISSUE]			|	[ITERATION : [ITP], ITEM_TEST_PLAN : [EX], EXECUTION : [ISSUE], ISSUE : []]
-		CP			|	[REQ, ISSUE]			|	[CAMPAIGN : [IT], ITERATION : [ITP], ITEM_TEST_PLAN : [TC, EX], TEST_CASE : [RV], REQUIREMENT_VERSION : [REQ], REQUIREMENT : [], EXECUTION : [ISSUE], ISSUE : []]
-		ITP			|	[REQ, CP, ISSUE]		|	[ITEM_TEST_PLAN : [TC, IT, EX], TEST_CASE : [RV], REQUIREMENT_VERSION : [REQ], REQUIREMENT : [], ITERATION : [CP], CAMPAIGN : [], EXECUTION : [ISSUE], ISSUE : []]
+		REQ			|	[REQ, TC]			|	[ REQ : [RV], RV : [COV], COV : [TC], TC : [] ]
+		ISS			|	[ISS, TC, IT]		|	[ ISS : [EX], EX : [ITP], ITP : [TC, IT], TC : [], IT : []]
+		IT			|	[IT, ISS]			|	[ IT : [ITP], ITP : [EX], EX : [ISS], ISS : []]
+		CP			|	[REQ, ISS]			|	[ CP : [IT], IT : [ITP], ITP : [TC, EX], TC : [COV], COV : [RV], RV : [REQ], REQ : [], EX : [ISS], ISS : []]
+		ITP			|	[REQ, CP, ISS]		|	[ ITP : [TC, IT, EX], TC : [COV], COV : [RV], RV: [REQ], REQ : [], IT : [CP], CP : [], EX : [ISS], ISS : []]
 	}
 
 
@@ -113,13 +119,14 @@ class DomainGraphTest extends Specification {
 		then :
 
 		// check how the graph has been modified
-		checkIsDirectedEdge domain, TEST_CASE, REQUIREMENT_VERSION
+		checkIsDirectedEdge domain, TEST_CASE, REQUIREMENT_VERSION_COVERAGE
+		checkIsDirectedEdge domain, REQUIREMENT_VERSION_COVERAGE, REQUIREMENT_VERSION
 		checkIsDirectedEdge domain, REQUIREMENT_VERSION, REQUIREMENT
 		checkIsDirectedEdge domain, TEST_CASE, ITEM_TEST_PLAN
 		checkIsDirectedEdge domain, ITEM_TEST_PLAN, ITERATION
 		checkIsDirectedEdge domain, ITERATION, CAMPAIGN
 		checkIsDirectedEdge domain, ITEM_TEST_PLAN, EXECUTION
-		checkIsDirectedEdge domain, EXECUTION, ISSUE
+		checkIsDirectedEdge domain, EXECUTION, ISS
 
 
 		// check the resulting tree
@@ -129,12 +136,13 @@ class DomainGraphTest extends Specification {
 		def root = allroots[0]
 		root.key == TEST_CASE
 
-		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION]);
+		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE]);
+		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
 		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION])
-		checkTreeHierarchy(plan, EXECUTION, [ISSUE])
-		checkTreeHierarchy(plan, ISSUE, [])
+		checkTreeHierarchy(plan, EXECUTION, [ISS])
+		checkTreeHierarchy(plan, ISS, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
 		checkTreeHierarchy(plan, CAMPAIGN, [])
 
@@ -156,12 +164,13 @@ class DomainGraphTest extends Specification {
 
 		def traversed = plan.collectKeys() as Set
 
-		traversed as Set == [ REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN ] as Set
+		traversed as Set == [ REQUIREMENT, REQUIREMENT_VERSION, REQUIREMENT_VERSION_COVERAGE, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN ] as Set
 
 		def root = plan.getRootNodes()[0];
 		root.key == TEST_CASE
 
-		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION]);
+		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE]);
+		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
 		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION])
@@ -171,25 +180,41 @@ class DomainGraphTest extends Specification {
 	}
 
 
-	def checkTreeHierarchy(QueryPlan tree, EntityType nodetype, List<EntityType> childrenTypes ){
+	def checkTreeHierarchy(QueryPlan tree, InternalEntityType nodetype, List<InternalEntityType> childrenTypes ){
 		def node = tree.getNode(nodetype)
 		return node.children.collect{it.key} as Set == childrenTypes as Set
 	}
 
+
+
 	def checkAllTreeHierarchy(QueryPlan tree, Map hierarchies){
 		def checkall = true;
 
-		hierarchies.each {k,v -> checkall = checkall &&  checkTreeHierarchy(tree, EntityType.valueOf(k), v)}
+		hierarchies.each {k,v -> checkall = checkall &&  checkTreeHierarchy(tree, expand(k), v)}
 
 		return checkall
 
 	}
 
-	def checkIsDirectedEdge(DomainGraph graph, EntityType srcType, EntityType destType){
+	def checkIsDirectedEdge(DomainGraph graph, InternalEntityType srcType, InternalEntityType destType){
 		return (
 		graph.hasEdge(srcType, destType) &&
 		! graph.hasEdge(destType, srcType)
 		)
+	}
+
+	def expand(String shortname){
+		switch(shortname){
+			case "REQ" : return REQUIREMENT;
+			case "RV" : return REQUIREMENT_VERSION
+			case "COV" : return REQUIREMENT_VERSION_COVERAGE
+			case "TC" : return TEST_CASE
+			case "ITP" : return ITEM_TEST_PLAN
+			case "IT" : return ITERATION
+			case "CP" : return CAMPAIGN
+			case "EX" : return EXECUTION
+			case "ISS" : return ISSUE
+		}
 	}
 
 }

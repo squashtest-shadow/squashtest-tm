@@ -18,48 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts;
-
-import com.querydsl.jpa.hibernate.HibernateQuery;
+package org.squashtest.tm.domain.chart;
 
 /**
- * <p></p>
- * 
- * <p>
- * 	This class will generate the main query, that is a query that joins together the sequence of tables required for the given chart.
- * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
- * 	is available a where clause will be used.
- * </p>
- * 
- * <p>See javadoc on {@link ChartDataFinder}</p>
- * 
+ * This enum type is a yet again list of business entities that one can build charts about.
  * 
  * @author bsiri
  *
  */
+public enum EntityType {
 
-class MainQueryPlanner {
-
-
-	private DetailedChartDefinition definition;
-
-	MainQueryPlanner(DetailedChartDefinition definition){
-		this.definition = definition;
-
-	}
-
-
-	HibernateQuery<?> createMainQuery(){
-
-		// get the query plan : the orderly set of joins this
-		// class must now put together
-		QueryPlan plan = DomainGraph.getQueryPlan(definition);
-
-		// now get the query done
-		//TraversedEntity rootNode = plan.getR
-		return null;
-
-	}
+	// @formatter:off
+	REQUIREMENT,
+	REQUIREMENT_VERSION,
+	TEST_CASE,
+	CAMPAIGN,
+	ITERATION,
+	ITEM_TEST_PLAN,
+	EXECUTION,
+	BUG;
+	// @formatter:on
 
 
 }

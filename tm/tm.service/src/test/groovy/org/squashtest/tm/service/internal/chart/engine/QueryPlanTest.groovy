@@ -18,28 +18,32 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts
+package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.service.internal.charts.QueryPlan.QueryPlanJoinIterator;
-import org.squashtest.tm.service.internal.charts.QueryPlan.TraversedEntity;
+import org.squashtest.tm.service.internal.chart.engine.DetailedChartDefinition;
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan.QueryPlanJoinIterator;
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
 import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
-import static org.squashtest.tm.domain.chart.EntityType.*
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
 
 class QueryPlanTest extends Specification {
 
 
 	// some abreviations
 
-	static def REQ = REQUIREMENT
-	static def RV = REQUIREMENT_VERSION
-	static def TC = TEST_CASE
-	static def ITP = ITEM_TEST_PLAN
-	static def IT = ITERATION
-	static def CP = CAMPAIGN
-	static def EX = EXECUTION
+	static InternalEntityType REQ = REQUIREMENT
+	static InternalEntityType RV = REQUIREMENT_VERSION
+	static InternalEntityType COV = REQUIREMENT_VERSION_COVERAGE
+	static InternalEntityType TC = TEST_CASE
+	static InternalEntityType ITP = ITEM_TEST_PLAN
+	static InternalEntityType IT = ITERATION
+	static InternalEntityType CP = CAMPAIGN
+	static InternalEntityType EX = EXECUTION
+	static InternalEntityType ISS = ISSUE
 
 	// *************** tree trim test ********************
 
@@ -58,9 +62,9 @@ class QueryPlanTest extends Specification {
 		where :
 
 		rootEntity 	|	targetEntities		| res					|	nodes
-		TC			|	[TC, CP]			| [TC, ITP, IT, CP]		|	[[TC, RV], [RV, REQ], [TC, ITP], [ITP, IT], [IT, CP], [ITP, EX], [EX, BUG]]
-		BUG			|	[BUG, ITP]			| [BUG, EX, ITP]		|	[[BUG, EX], [EX, ITP], [ITP, TC],[TC, RV], [RV, REQ], [ITP, IT], [IT, CP]]
-		ITP			|	[ITP, TC, IT, EX]	| [ITP, TC, IT, EX]		|	[[ITP, TC], [TC, RV], [RV, REQ], [ITP, EX], [EX, BUG], [ITP, IT], [IT, CP]]
+		TC			|	[TC, CP]			| [TC, ITP, IT, CP]		|	[[TC, COV], [COV, RV], [RV, REQ], [TC, ITP], [ITP, IT], [IT, CP], [ITP, EX], [EX, ISS]]
+		ISS			|	[ISS, ITP]			| [ISS, EX, ITP]		|	[[ISS, EX], [EX, ITP], [ITP, TC],[TC, COV], [COV, RV], [RV, REQ], [ITP, IT], [IT, CP]]
+		ITP			|	[ITP, TC, IT, EX]	| [ITP, TC, IT, EX]		|	[[ITP, TC], [TC, COV], [COV, RV], [RV, REQ], [ITP, EX], [EX, ISS], [ITP, IT], [IT, CP]]
 
 	}
 
@@ -71,7 +75,7 @@ class QueryPlanTest extends Specification {
 	def "should init properly (1)"(){
 
 		given :
-		def traversedTypes = [ [ITP, TC], [TC, RV], [RV, REQ], [ITP, EX], [EX, BUG]]
+		def traversedTypes = [ [ITP, TC], [TC, COV], [COV, RV], [RV, REQ], [ITP, EX], [EX, ISS]]
 		def tree = buildTree(ITP, traversedTypes)
 
 		when :
@@ -107,20 +111,20 @@ class QueryPlanTest extends Specification {
 
 	def "should move to next element (next child)"(){
 		given :
-		def traversedTypes = [ [ITP, TC], [TC, RV], [RV, REQ], [ITP, EX], [EX, BUG]]
+		def traversedTypes = [ [ITP, TC], [TC, COV], [COV, RV], [RV, REQ], [ITP, EX], [EX, ISS]]
 		def tree = buildTree(ITP, traversedTypes)
 
 		and :
 		def iter = tree.joinIterator()
-		setIteratorState(iter, EX, [BUG], [])
+		setIteratorState(iter, EX, [ISS], [])
 
 		when :
 		iter.armNext()
 
 		then :
 		iter.currentParent.key == EX
-		iter.currentChild.key == BUG
-		iter.toProcess.collect{it.key}  ==  [BUG]
+		iter.currentChild.key == ISS
+		iter.toProcess.collect{it.key}  ==  [ISS]
 		iter.remainingChildren == []
 		iter.hasNext == true
 
@@ -129,7 +133,7 @@ class QueryPlanTest extends Specification {
 
 	def "should move to next element (next parent)"(){
 		given :
-		def traversedTypes = [ [ITP, TC], [TC, RV], [RV, REQ], [ITP, EX], [EX, BUG]]
+		def traversedTypes = [ [ITP, TC], [TC, COV], [COV, RV], [RV, REQ], [ITP, EX], [EX, ISS]]
 		def tree = buildTree(ITP, traversedTypes)
 
 		and :
@@ -216,7 +220,7 @@ class QueryPlanTest extends Specification {
 
 		given :
 
-		def traversedTypes = [ [ITP, TC], [TC, RV], [RV, REQ], [ITP, EX], [EX, BUG]]
+		def traversedTypes = [ [ITP, TC], [TC, COV], [COV, RV], [RV, REQ], [ITP, EX], [EX, ISS]]
 		def expected = traversedTypes
 
 		def tree = buildTree(ITP, traversedTypes)
@@ -254,5 +258,8 @@ class QueryPlanTest extends Specification {
 		iter.toProcess = toProcess.collect { iter.plan.getNode(it) } as LinkedList
 		iter.remainingChildren = remainingChildren.collect { iter.plan.getNode(it) } as LinkedList
 	}
+
+
+
 
 }

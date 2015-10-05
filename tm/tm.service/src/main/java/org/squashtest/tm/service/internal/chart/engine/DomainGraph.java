@@ -18,16 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts;
+package org.squashtest.tm.service.internal.chart.engine;
 
-import static org.squashtest.tm.domain.chart.EntityType.BUG;
-import static org.squashtest.tm.domain.chart.EntityType.CAMPAIGN;
-import static org.squashtest.tm.domain.chart.EntityType.EXECUTION;
-import static org.squashtest.tm.domain.chart.EntityType.ITEM_TEST_PLAN;
-import static org.squashtest.tm.domain.chart.EntityType.ITERATION;
-import static org.squashtest.tm.domain.chart.EntityType.REQUIREMENT;
-import static org.squashtest.tm.domain.chart.EntityType.REQUIREMENT_VERSION;
-import static org.squashtest.tm.domain.chart.EntityType.TEST_CASE;
+
 
 import java.util.Deque;
 import java.util.LinkedList;
@@ -35,7 +28,8 @@ import java.util.LinkedList;
 import org.squashtest.tm.domain.chart.EntityType;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
-import org.squashtest.tm.service.internal.charts.QueryPlan.TraversedEntity;
+import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
 
 /**
  * <p>
@@ -46,6 +40,7 @@ import org.squashtest.tm.service.internal.charts.QueryPlan.TraversedEntity;
  * 	Its purpose is to provide a query plan. It is defined as the spanning tree that originates from a root entity and spreads until
  * 	every target entity is reached.
  * </p>
+ * <p>Please note that, for that purpose different enum is used here : {@link InternalEntityType}.</p>
  * <p>See javadoc on ChartDataFinder for details on this. Excerpt pasted below for convenience.</p>
  * 
  * <p>
@@ -86,7 +81,7 @@ import org.squashtest.tm.service.internal.charts.QueryPlan.TraversedEntity;
 /*
  * PLEASE UPDATE THE DOCUMENTATION IF THE DOMAIN CHANGES !
  */
-class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity>{
+class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.TraversableEntity>{
 
 	// **************************** main methods ******************************
 
@@ -129,8 +124,9 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 		TraversableEntity iterationNode = new TraversableEntity(ITERATION);
 		TraversableEntity itemNode = new TraversableEntity(ITEM_TEST_PLAN);
 		TraversableEntity executionNode = new TraversableEntity(EXECUTION);
-		TraversableEntity issueNode = new TraversableEntity(BUG);
+		TraversableEntity issueNode = new TraversableEntity(ISSUE);
 		TraversableEntity testcaseNode = new TraversableEntity(TEST_CASE);
+		TraversableEntity reqcoverageNode = new TraversableEntity(REQUIREMENT_VERSION_COVERAGE);
 		TraversableEntity rversionNode = new TraversableEntity(REQUIREMENT_VERSION);
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
 
@@ -150,8 +146,11 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 		addEdge(itemNode, testcaseNode);
 		addEdge(testcaseNode, itemNode);
 
-		addEdge(testcaseNode, rversionNode);
-		addEdge(rversionNode, testcaseNode);
+		addEdge(testcaseNode, reqcoverageNode);
+		addEdge(reqcoverageNode, testcaseNode);
+
+		addEdge(reqcoverageNode, rversionNode);
+		addEdge(rversionNode, reqcoverageNode);
 
 		addEdge(rversionNode, requirementNode);
 		addEdge(requirementNode, rversionNode);
@@ -194,7 +193,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 
 		QueryPlan plan = new QueryPlan();
 
-		EntityType rootType = definition.getRootEntity();
+		InternalEntityType rootType = definition.getRootEntity();
 
 		TraversableEntity rootNode = getNode(rootType);
 
@@ -210,7 +209,7 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 		while (! stack.isEmpty()){
 
 			TraversableEntity currentNode = stack.pop();
-			EntityType currentEntity = currentNode.getKey();
+			InternalEntityType currentEntity = currentNode.getKey();
 
 			for (TraversableEntity outNode : currentNode.getOutbounds()){
 
@@ -248,8 +247,8 @@ class DomainGraph extends LibraryGraph<EntityType, DomainGraph.TraversableEntity
 	 * @author bsiri
 	 *
 	 */
-	static final class TraversableEntity extends GraphNode<EntityType, TraversableEntity>{
-		private TraversableEntity(EntityType type){
+	static final class TraversableEntity extends GraphNode<InternalEntityType, TraversableEntity>{
+		private TraversableEntity(InternalEntityType type){
 			super(type);
 		}
 

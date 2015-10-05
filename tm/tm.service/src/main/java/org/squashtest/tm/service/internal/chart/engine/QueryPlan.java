@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.charts;
+package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +42,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
  * @author bsiri
  *
  */
-class QueryPlan extends LibraryTree<EntityType, QueryPlan.TraversedEntity> {
+class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntity> {
 
 	QueryPlan(){
 		super();
@@ -60,7 +60,7 @@ class QueryPlan extends LibraryTree<EntityType, QueryPlan.TraversedEntity> {
 
 	void trim(DetailedChartDefinition definition){
 
-		Collection<EntityType> targets = new HashSet<>(definition.getTargetEntities());
+		Collection<InternalEntityType> targets = new HashSet<>(definition.getTargetEntities());
 
 		Queue<TraversedEntity> fifo = new LinkedList<>(getLeaves());
 
@@ -72,7 +72,7 @@ class QueryPlan extends LibraryTree<EntityType, QueryPlan.TraversedEntity> {
 				continue;
 			}
 
-			EntityType curType = current.getKey();
+			InternalEntityType curType = current.getKey();
 
 			// 1/ if that node is not one of the targets,
 			// 2/ has no children (because not yet processed, or have a target in their own children)
@@ -94,9 +94,9 @@ class QueryPlan extends LibraryTree<EntityType, QueryPlan.TraversedEntity> {
 	 * @author bsiri
 	 *
 	 */
-	static final class TraversedEntity extends TreeNode<EntityType, TraversedEntity>{
+	static final class TraversedEntity extends TreeNode<InternalEntityType, TraversedEntity>{
 
-		TraversedEntity(EntityType type) {
+		TraversedEntity(InternalEntityType type) {
 			super(type);
 		}
 
@@ -111,17 +111,17 @@ class QueryPlan extends LibraryTree<EntityType, QueryPlan.TraversedEntity> {
 		}
 	}
 
-	static final class PlannedJoin extends Couple<EntityType, EntityType>{
+	static final class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 
-		public PlannedJoin(EntityType a1, EntityType a2) {
+		public PlannedJoin(InternalEntityType a1, InternalEntityType a2) {
 			super(a1, a2);
 		}
 
-		EntityType getSrc(){
+		InternalEntityType getSrc(){
 			return getA1();
 		}
 
-		EntityType getDest(){
+		InternalEntityType getDest(){
 			return getA2();
 		}
 	}
