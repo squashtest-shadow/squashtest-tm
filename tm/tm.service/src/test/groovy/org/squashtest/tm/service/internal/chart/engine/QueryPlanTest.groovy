@@ -247,7 +247,7 @@ class QueryPlanTest extends Specification {
 
 		tree.addNode(null, new TraversedEntity(root))
 
-		nodes.each{ tree.addNode(it[0], new TraversedEntity(it[1])) }
+		nodes.each{ tree.addNode(it[0], new TraversedEntity(it[1]), new PlannedJoin(it[0], it[1], "whatever") ) }
 
 
 		return tree

@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import org.squashtest.tm.domain.chart.EntityType;
+import org.squashtest.tm.domain.EntityType;
 
 
 /**
@@ -55,7 +55,7 @@ enum InternalEntityType {
 		case ITERATION : converted = ITERATION; break;
 		case ITEM_TEST_PLAN : converted = ITEM_TEST_PLAN; break;
 		case EXECUTION : converted = EXECUTION; break;
-		case BUG : converted = ISSUE; break;
+		case ISSUE : converted = ISSUE; break;
 		default : throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type");
 		}
 
