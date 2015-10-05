@@ -297,6 +297,22 @@
 				<column name="RANK" type="java.sql.Types.INTEGER"> </column>
 		</createTable>	
 	
+	
+		
+	
+	
+	<createTable tableName="CHART_SCOPE">
+
+		<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_scope_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+			
+				<column name="ENTITY_REFERENCE_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+				<column name="ENTITY_REFERENCE_ID" type="java.sql.Types.INTEGER"> </column>
+				
+		</createTable>	
 	</changeSet>	
 
 </databaseChangeLog>

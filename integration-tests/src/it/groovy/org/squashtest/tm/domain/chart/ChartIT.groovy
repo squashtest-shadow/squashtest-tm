@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.chart
 
 import org.junit.runner.RunWith;
+import org.squashtest.tm.domain.EntityType;
 import org.spockframework.runtime.Sputnik;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification;
@@ -76,5 +77,15 @@ class ChartIT extends DbunitServiceSpecification{
 		result.measures.operation == (0..5).collect{if (it == 1) Operation.BY_MONTH else Operation.BY_DAY }
 	}
 
+	
+	@DataSet("charts.xml")
+	def "Should find chart definition scope"(){
+		
+		when :
+		def result = findEntity(ChartDefinition.class, -1L)
+		then :
+		result.scope.type ==  (1..4).collect{ if (it == 4) EntityType.PROJECT else EntityType.TEST_CASE } 
+		result.scope.id == [-1, -2, -3, -1]
+	}
 	
 }

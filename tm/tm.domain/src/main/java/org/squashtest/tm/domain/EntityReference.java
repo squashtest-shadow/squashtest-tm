@@ -20,17 +20,27 @@
  */
 package org.squashtest.tm.domain;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+
 import org.squashtest.tm.core.foundation.lang.Assert;
+
 
 public class EntityReference {
 	/**
 	 * Type of the referenced entity.
 	 */
-	private final EntityType type;
+	@Enumerated(EnumType.STRING)
+	private EntityType type;
 	/**
 	 * identifier of the referenced entity.
 	 */
-	private final Long id;
+	private Long id;
+
+
+	private EntityReference() {
+		// for hibernate
+	}
 
 	public EntityReference(EntityType entityType, Long entityId) {
 		super();

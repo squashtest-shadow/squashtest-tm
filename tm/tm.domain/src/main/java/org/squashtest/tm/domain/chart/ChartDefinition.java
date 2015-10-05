@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.AttributeOverride;
+import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
@@ -49,6 +51,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.users.User;
 
@@ -91,10 +94,44 @@ public class ChartDefinition {
 	private List<AxisColumn> axis;
 
 	@ElementCollection
-	@JoinTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
+	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@OrderColumn(name = "RANK")
 	private List<MeasureColumn> measures;
 
+	@ElementCollection
+	@CollectionTable(name = "CHART_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
+	@AttributeOverrides({ @AttributeOverride(name = "type", column = @Column(name = "ENTITY_REFERENCE_TYPE") ),
+			@AttributeOverride(name = "id", column = @Column(name = "ENTITY_REFERENCE_ID") ) })
+	private List<EntityReference> scope;
+
+
+	public long getId() {
+		return Id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public User getOwner() {
+		return owner;
+	}
+
+	public Visibility getVisibility() {
+		return visibility;
+	}
+
+	public ChartType getType() {
+		return type;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public List<EntityReference> getScope() {
+		return scope;
+	}
 
 	public List<Filter> getFilters() {
 		return filters;
@@ -144,28 +181,5 @@ public class ChartDefinition {
 		}
 		return types;
 	}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 }
