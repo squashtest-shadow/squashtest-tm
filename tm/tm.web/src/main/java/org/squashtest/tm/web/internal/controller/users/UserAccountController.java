@@ -30,7 +30,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,11 +65,11 @@ public class UserAccountController {
 	@Inject
 	private AuthenticationProviderContext authenticationProviderContext;
 
-	@ServiceReference
+	@Inject
 	public void setProjectsPermissionFinderService(ProjectsPermissionFinder permissionFinder) {
 		this.permissionFinder = permissionFinder;
 	}
-	@ServiceReference
+	@Inject
 	public void setUserAccountService(UserAccountService service){
 		this.userService=service;
 	}

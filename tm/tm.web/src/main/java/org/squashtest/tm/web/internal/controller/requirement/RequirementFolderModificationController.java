@@ -20,12 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Controller
 @RequestMapping("/requirement-folders/{folderId}")
@@ -37,7 +40,7 @@ public class RequirementFolderModificationController extends FolderModificationC
 		return folderModificationService;
 	}
 
-	@ServiceReference(serviceBeanName = "squashtest.tm.service.RequirementFolderModificationService")
+	@Inject @Named("squashtest.tm.service.RequirementFolderModificationService")
 	public final void setFolderModificationService(FolderModificationService<RequirementFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}

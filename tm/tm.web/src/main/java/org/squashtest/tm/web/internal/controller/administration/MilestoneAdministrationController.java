@@ -116,7 +116,7 @@ public class MilestoneAdministrationController {
 		ModelAndView mav = new ModelAndView("page/milestones/show-milestones");
 		mav.addObject("milestoneStatus", statusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		mav.addObject("editableMilestoneIds", milestoneManager.findAllIdsOfEditableMilestone());
-		mav.addObject("currentUser", StringEscapeUtils.escapeJavaScript(userService.findCurrentUser().getName()));
+		mav.addObject("currentUser", StringEscapeUtils.escapeEcmaScript(userService.findCurrentUser().getName()));
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		mav.addObject("milestoneCloneStatus",  cloneStatusComboDataBuilderProvider.get().useLocale(locale).buildMap());
 		return mav;

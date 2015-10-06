@@ -18,44 +18,55 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.attachment;
-
-import javax.servlet.ServletOutputStream
-import javax.servlet.http.HttpServletResponse
+package org.squashtest.tm.web.internal.controller.attachment
 
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.service.attachment.AttachmentManagerService
-
 import spock.lang.Specification
 
+import javax.servlet.ServletOutputStream
+import javax.servlet.WriteListener
+import javax.servlet.http.HttpServletResponse
+
 class AttachmentControllerTest extends Specification {
-	AttachmentController attachmentController = new AttachmentController()
-	AttachmentManagerService service = Mock()
+    AttachmentController attachmentController = new AttachmentController()
+    AttachmentManagerService service = Mock()
 
-	def setup() {
-		attachmentController.attachmentManagerService = service
-	}
+    def setup() {
+        attachmentController.attachmentManagerService = service
+    }
 
-	def ""() {
-		given:
-		Attachment attachment = Mock()
-		attachment.getName() >> "attachment"
-		service.findAttachment(_) >> attachment
+    def ""() {
+        given:
+        Attachment attachment = Mock()
+        attachment.getName() >> "attachment"
+        service.findAttachment(_) >> attachment
 
-		and:
-		HttpServletResponse response = Mock()
-		ServletOutputStream downloadStream = new ServletOutputStream() {
-					ByteArrayOutputStream bytes = new ByteArrayOutputStream()
-					public void write(int b) throws IOException {
-						bytes.write(b)
-					}
-				}
-		response.outputStream >> downloadStream
+        and:
+        HttpServletResponse response = Mock()
+        ServletOutputStream downloadStream = new ServletOutputStream() {
+            ByteArrayOutputStream bytes = new ByteArrayOutputStream()
 
-		when:
-		attachmentController.downloadAttachment 10, response
+            public void write(int b) throws IOException {
+                bytes.write(b)
+            }
 
-		then:
-		1 * service.writeContent(10, downloadStream)
-	}
+            @Override
+            boolean isReady() {
+                return false
+            }
+
+            @Override
+            void setWriteListener(WriteListener writeListener) {
+                // NOOP
+            }
+        }
+        response.outputStream >> downloadStream
+
+        when:
+        attachmentController.downloadAttachment 10, response
+
+        then:
+        1 * service.writeContent(10, downloadStream)
+    }
 }

@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.controller.authentication;
 import javax.inject.Inject;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +39,7 @@ public class LoginLogoutController {
 	@Value("${authentication.application.welcomePage:/home-workspace}")
 	private String homeUrl;
 
-	@ServiceReference
+	@Inject
 	public void setConfigurationService(ConfigurationService confService) {
 		this.configService = confService;
 	}

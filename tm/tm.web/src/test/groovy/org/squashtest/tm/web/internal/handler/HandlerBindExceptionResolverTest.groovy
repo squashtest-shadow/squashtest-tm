@@ -18,22 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.handler;
+package org.squashtest.tm.web.internal.handler
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.collections.iterators.IteratorEnumeration
+import org.springframework.validation.BindException
+import org.springframework.validation.FieldError
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView
+import org.squashtest.tm.web.internal.exceptionresolver.HandlerBindExceptionResolver
+import spock.lang.Specification
 
-import org.apache.commons.collections.EnumerationUtils;
-import org.apache.commons.collections.iterators.IteratorEnumeration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
-import org.squashtest.tm.web.internal.exceptionresolver.HandlerBindExceptionResolver;
-
-import spock.lang.Specification;
+import javax.servlet.http.HttpServletRequest
+import javax.servlet.http.HttpServletResponse
 
 class HandlerBindExceptionResolverTest extends Specification {
 	HandlerBindExceptionResolver resolver = new HandlerBindExceptionResolver()
@@ -53,12 +48,12 @@ class HandlerBindExceptionResolverTest extends Specification {
 		res == null
 	}	
 	
-	def "should return a MappingJacksonJsonView"() {
+	def "should return a MappingJackson2JsonView"() {
 		when:
 		def res = resolver.doResolveException(jsonRequest, Mock(HttpServletResponse), Mock(Object), bindException)
 		
 		then: 
-		res.view instanceof MappingJacksonJsonView
+		res.view instanceof MappingJackson2JsonView
 	}	
 	
 	def "returned model should contain a fieldValidationErrors list"() {

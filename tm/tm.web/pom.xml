@@ -279,11 +279,9 @@
       <artifactId>xml-resolver</artifactId>
     </dependency>
 
-    <!-- We need this at runtime (OSGi bundle) -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>

@@ -73,7 +73,7 @@ public class InternationalizableLabelFormatter implements LabelFormatter<Interna
 	@Override
 	public String formatLabel(Internationalizable toFormat) {
 		String label = messageSource.getMessage(toFormat.getI18nKey(), null, locale);
-		return escapeHtml ? StringEscapeUtils.escapeHtml(label) : label;
+		return escapeHtml ? StringEscapeUtils.escapeHtml4(label) : label;
 	}
 
 	/**

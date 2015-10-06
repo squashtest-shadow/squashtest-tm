@@ -20,23 +20,18 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.ArrayList;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+import org.squashtest.tm.web.internal.http.RequestHeaders;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
-
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
-import org.squashtest.tm.web.internal.http.RequestHeaders;
+import java.util.*;
 
 @Component
 public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
@@ -58,7 +53,7 @@ public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
 			ConstraintViolationException cve = (ConstraintViolationException) ex; // NOSONAR Type was checked earlier
 			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(cve);
 
-			return new ModelAndView(new MappingJacksonJsonView(), "fieldValidationErrors", errors);
+			return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
 		}
 
 		return null;

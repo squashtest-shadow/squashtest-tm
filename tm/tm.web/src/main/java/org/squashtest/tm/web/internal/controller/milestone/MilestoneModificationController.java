@@ -93,7 +93,7 @@ public class MilestoneModificationController {
 		mav.addObject("userList", buildMarshalledUserMap(adminManager.findAllAdminOrManager()));
 		mav.addObject("canEdit", milestoneManager.canEditMilestone(milestoneId));
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
-		mav.addObject("currentUser", StringEscapeUtils.escapeJavaScript(userService.findCurrentUser().getLogin()));
+		mav.addObject("currentUser", StringEscapeUtils.escapeEcmaScript(userService.findCurrentUser().getLogin()));
 		return mav;
 	}
 

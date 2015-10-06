@@ -20,12 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 
 @Controller
 @RequestMapping("/campaign-folders/{folderId}")
@@ -37,7 +39,7 @@ public class CampaignFolderModificationController extends FolderModificationCont
 		return folderModificationService;
 	}
 
-	@ServiceReference(serviceBeanName = "squashtest.tm.service.CampaignFolderModificationService")
+	@Inject @Named("squashtest.tm.service.CampaignFolderModificationService")
 	public final void setFolderModificationService(FolderModificationService<CampaignFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}

@@ -25,7 +25,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -103,7 +103,7 @@ public class TestCaseExecutionsController {
 	 * @param executionFinder
 	 *            the executionFinder to set
 	 */
-	@ServiceReference
+	@Inject
 	public void setExecutionFinder(ExecutionFinder executionFinder) {
 		this.executionFinder = executionFinder;
 	}

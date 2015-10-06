@@ -32,7 +32,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.tm.exception.DomainException;
 
 
@@ -59,7 +59,7 @@ AbstractHandlerExceptionResolver {
 			DomainException dex = (DomainException) ex; // NOSONAR Type was checked earlier
 			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(dex, request.getLocale());
 
-			return new ModelAndView(new MappingJacksonJsonView(), "fieldValidationErrors", errors);
+			return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
 		}
 
 		return null;

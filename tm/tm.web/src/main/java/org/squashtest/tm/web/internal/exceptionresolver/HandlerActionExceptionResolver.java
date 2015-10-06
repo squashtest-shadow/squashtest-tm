@@ -20,20 +20,19 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.tm.core.foundation.exception.ActionException;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * This handler will format ActionExceptions and subclasses in order to raise a popup clientside and display an
@@ -94,7 +93,7 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 		String exception = actionEx.getClass().getSimpleName();
 		String message = getLocalizedMessage(locale, actionEx);
 		ActionValidationErrorModel error = new ActionValidationErrorModel(exception, message);
-		return new ModelAndView(new MappingJacksonJsonView(), "actionValidationError", error);
+		return new ModelAndView(new MappingJackson2JsonView(), "actionValidationError", error);
 	}
 
 	private String getLocalizedMessage(Locale locale, ActionException actionEx) {

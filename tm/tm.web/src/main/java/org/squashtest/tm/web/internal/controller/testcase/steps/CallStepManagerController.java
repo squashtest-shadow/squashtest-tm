@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -53,7 +52,7 @@ public class CallStepManagerController {
 	private CallStepManagerService callStepManagerService;
 	private TestCaseLibraryFinderService testCaseLibraryFinder;
 
-	@ServiceReference
+	@Inject
 	public void setCallStepManagerService(CallStepManagerService callStepManagerService) {
 		this.callStepManagerService = callStepManagerService;
 	}
@@ -94,7 +93,7 @@ public class CallStepManagerController {
 	 * @param testCaseLibraryFinder
 	 *            the testCaseLibraryFinder to set
 	 */
-	@ServiceReference
+	@Inject
 	public void setTestCaseLibraryFinder(TestCaseLibraryFinderService testCaseLibraryFinder) {
 		this.testCaseLibraryFinder = testCaseLibraryFinder;
 	}

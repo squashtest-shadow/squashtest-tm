@@ -119,14 +119,12 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 	}
 
 
-	@Override
 	protected JsTreeNode createJsTreeNode(DummyNode resource) {
 		return null ;
 	}
 
 
 
-	@Override
 	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 		null
 	}
@@ -138,7 +136,6 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 
 }
 class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
-	@Override
 	public void removeContent(DummyNode contentToRemove) throws NullArgumentException {}
 	@Override
 	public List<String> getContentNames() {	return null;}
@@ -150,11 +147,9 @@ class DummyFolder  extends DummyNode  implements Folder<DummyNode>{
 	public boolean isContentNameAvailable(String name) {}
 	List getContent() {}
 	Collection getOrderedContent() {}
-	@Override
 	void addContent(LibraryNode node) {}
 	void addContent(LibraryNode node, int position) {}
 	void accept(NodeContainerVisitor visitor) {}
-	@Override
 	void removeContent(LibraryNode node){}
 	@Override
 	Copiable createCopy(){}
@@ -177,17 +172,13 @@ class DummyNode implements LibraryNode {
 	AttachmentList getAttachmentList() {}
 }
 class DummyLibrary implements Library<DummyNode> {
-	@Override
 	public void removeContent(DummyNode contentToRemove) throws NullArgumentException {}
-	@Override
 	public List<String> getContentNames() {	return null;}
 	@Override
 	public Long getId() {
 		return null
 	}
-	@Override
 	public void addRootContent(DummyNode node) {}
-	@Override
 	public void removeRootContent(DummyNode node) {}
 	public boolean isContentNameAvailable(String name) {}
 	Set getRootContent() {}
@@ -225,10 +216,8 @@ class DummyLibrary implements Library<DummyNode> {
 	boolean hasContent(){
 		return true;
 	}
-	@Override
 	public void addContent(DummyNode contentToAdd) throws DuplicateNameException, NullArgumentException {
 	}
-	@Override
 	public void addContent(DummyNode contentToAdd, int position) throws DuplicateNameException, NullArgumentException {
 	}
 	@Override

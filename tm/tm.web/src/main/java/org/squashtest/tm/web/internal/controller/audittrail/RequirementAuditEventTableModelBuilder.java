@@ -140,7 +140,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private String retrieveEnumI18ndLabel(Class enumType, String stringValue) {
-		Internationalizable enumValue = Enum.valueOf(enumType, stringValue);
+		Internationalizable enumValue = (Internationalizable) Enum.valueOf(enumType, stringValue);
 		return i18nHelper.internationalize(enumValue, locale);
 	}
 

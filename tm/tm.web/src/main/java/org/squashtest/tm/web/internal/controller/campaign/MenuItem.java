@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+
 import org.squashtest.tm.api.security.acls.AccessRule;
 
 /**

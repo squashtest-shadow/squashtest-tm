@@ -38,7 +38,7 @@ import javax.inject.Provider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -363,7 +363,7 @@ public class RequirementVersionModificationController {
 	 * @param auditTrailService
 	 *            the auditTrailService to set
 	 */
-	@ServiceReference
+	@Inject
 	public void setAuditTrailService(RequirementAuditTrailService auditTrailService) {
 		this.auditTrailService = auditTrailService;
 	}

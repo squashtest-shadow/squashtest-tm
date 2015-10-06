@@ -24,7 +24,7 @@ import java.util.Collection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,13 +37,15 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder;
 
+import javax.inject.Inject;
+
 
 @Controller
 @RequestMapping("/test-cases/{testCaseId}/test-automation")
 public class TestCaseAutomationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseAutomationController.class);
 	private TestCaseModificationService testCaseModificationService;
-	@ServiceReference
+	@Inject
 	public void setTestCaseModificationService(TestCaseModificationService testCaseModificationService) {
 		this.testCaseModificationService = testCaseModificationService;
 	}

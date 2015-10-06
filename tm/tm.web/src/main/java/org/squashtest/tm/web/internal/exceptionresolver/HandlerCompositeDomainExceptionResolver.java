@@ -20,21 +20,20 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.DomainException;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
 
 @Component
 public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -56,7 +55,7 @@ public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExce
 			CompositeDomainException cdex = (CompositeDomainException) ex; // NOSONAR Type was checked earlier
 			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(cdex, request.getLocale());
 
-			return new ModelAndView(new MappingJacksonJsonView(), "fieldValidationErrors", errors);
+			return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
 		}
 
 		return null;

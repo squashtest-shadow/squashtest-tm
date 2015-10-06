@@ -30,7 +30,7 @@ import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -64,7 +64,7 @@ public abstract class PartyControllerSupport {
 		super();
 	}
 
-	@ServiceReference
+	@Inject
 	public void setProjectsPermissionManagementService(ProjectsPermissionManagementService permissionService) {
 		this.permissionService = permissionService;
 	}

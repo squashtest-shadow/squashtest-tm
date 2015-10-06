@@ -18,24 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.handler;
+package org.squashtest.tm.web.internal.handler
 
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import org.apache.commons.collections.iterators.IteratorEnumeration
+import org.squashtest.tm.web.internal.exceptionresolver.ExceptionResolverUtils
+import org.squashtest.tm.web.internal.exceptionresolver.MimeType
+import spock.lang.Specification
 
-import org.apache.commons.collections.EnumerationUtils;
-import org.apache.commons.collections.iterators.IteratorEnumeration;
-import org.springframework.http.HttpHeaders;
-import org.springframework.validation.BindException;
-import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
-import org.squashtest.tm.web.internal.exceptionresolver.ExceptionResolverUtils;
-import org.squashtest.tm.web.internal.exceptionresolver.HandlerBindExceptionResolver;
-import org.squashtest.tm.web.internal.exceptionresolver.MimeType;
-
-import spock.lang.Specification;
+import javax.servlet.http.HttpServletRequest
 
 class ExceptionResolverUtilTest extends Specification {
 	

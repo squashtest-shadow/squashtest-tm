@@ -23,9 +23,10 @@ package org.squashtest.tm.web.internal.controller.testcase;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.osgi.extensions.annotation.ServiceReference;
+
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +51,7 @@ public class TestCaseFolderModificationController extends FolderModificationCont
 		return folderModificationService;
 	}
 
-	@ServiceReference(serviceBeanName = "squashtest.tm.service.TestCaseFolderModificationService")
+	@Inject @Named("squashtest.tm.service.TestCaseFolderModificationService")
 	public final void setFolderModificationService(FolderModificationService<TestCaseFolder> folderModificationService) {
 		this.folderModificationService = folderModificationService;
 	}

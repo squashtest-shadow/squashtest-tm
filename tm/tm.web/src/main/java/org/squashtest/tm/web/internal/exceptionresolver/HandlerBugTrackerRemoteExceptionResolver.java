@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO Append something after Exception in class name
 @Component
@@ -47,7 +46,7 @@ public class HandlerBugTrackerRemoteExceptionResolver extends AbstractHandlerExc
 																						// checked
 			List<FieldValidationErrorModel> errors = buildFieldValidationErrors(remoteException);
 
-			return new ModelAndView(new MappingJacksonJsonView(), "fieldValidationErrors", errors);
+			return new ModelAndView(new MappingJackson2JsonView(), "fieldValidationErrors", errors);
 		}
 
 		return null;

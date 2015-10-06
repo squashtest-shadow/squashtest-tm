@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
-import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 @Component
 public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExceptionResolver {
@@ -65,7 +64,7 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 
 	private ModelAndView handleAsJson(MaxUploadSizeExceededException mex) {
 		MaxUploadSizeErrorModel error = new MaxUploadSizeErrorModel(mex);
-		return new ModelAndView(new MappingJacksonJsonView(), "maxUploadError", error);
+		return new ModelAndView(new MappingJackson2JsonView(), "maxUploadError", error);
 	}
 
 	private ModelAndView handleAsText(MaxUploadSizeExceededException mex) {

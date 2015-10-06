@@ -20,16 +20,15 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Level;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.Locale;
 
 /**
  * Formats {@link Level} items so that they are displayed in a combobox as
@@ -73,7 +72,7 @@ public class LevelLabelFormatter implements LabelFormatter<Level> {
 		@Override
 		public String formatLabel(Level toFormat) {
 			String label = toFormat.getLevel() + "-" + messageSource.getMessage(toFormat.getI18nKey(), null, locale); 
-			return escapeHtml ? StringEscapeUtils.escapeHtml(label) : label;
+			return escapeHtml ? StringEscapeUtils.escapeHtml4(label) : label;
 		}
 
 		/**

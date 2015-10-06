@@ -48,7 +48,7 @@ public class CustomFieldBindingManagerController {
 	private static final int DEFAULT_PAGE_SIZE = 10;
 
 	/*
-	@ServiceReference
+	@Inject
 	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
 		this.service=service;
 	}
