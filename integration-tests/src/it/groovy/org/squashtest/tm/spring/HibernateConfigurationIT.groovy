@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.spring
 
+import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.util.TestContextResourceUtils
+import org.squashtest.it.config.RepositorySpecConfig
+import org.squashtest.tm.service.DataSourceConfig
+import org.squashtest.tm.service.RepositoryConfig
+import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import spock.lang.Ignore
 
 import javax.inject.Inject;
@@ -32,10 +38,9 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 
 import spock.lang.Specification;
 
-@ContextConfiguration(["classpath*:META-INF/**/datasource-context.xml", "classpath*:META-INF/**/repository-context.xml",
-	"classpath:repository/dependencies-scan-context.xml", "classpath:config-context.xml"])
+@ContextConfiguration(classes = [ RepositorySpecConfig, DataSourceConfig, RepositoryConfig ])
+@TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @TransactionConfiguration(transactionManager="squashtest.tm.hibernate.TransactionManager")
-@Ignore
 class HibernateConfigurationIT  extends Specification {
 	@Inject SessionFactory sessionFactory;
 

@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security.customSecurity;
+package org.squashtest.it.stub.security;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,12 +30,17 @@ import org.squashtest.it.infrastructure.Stub;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
+/**
+ * Stub PermissionEvaluationService which has no role and has permission on entities with an odd identifier
+ * @author jsimon
+ * @since 1.12.0
+ */
 @Stub
-public class StubCustomPermissionEvaluationService implements PermissionEvaluationService {
+public class StubPermissionOnOddEntitiesEvaluationService implements PermissionEvaluationService {
 
 	Set<String> permissionsToRefuse = new HashSet<String>();
 
-	public StubCustomPermissionEvaluationService() {
+	public StubPermissionOnOddEntitiesEvaluationService() {
 		super();
 	}
 

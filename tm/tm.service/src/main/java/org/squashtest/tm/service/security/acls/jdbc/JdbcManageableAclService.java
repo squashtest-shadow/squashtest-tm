@@ -69,15 +69,15 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
  */
 
 /**
- * 
+ *
  * When one update the Acl of an object (ie the permissions of a user), one want to refresh the aclCache if there is
  * one. The right way to do this would have been to delegate such task to the LookupStrategy when it's relevant to do
  * so. However we cannot subclass BasicLookupStrategy because it's final and duplicating its code for a class of ours
  * would be illegal.
- * 
+ *
  * So we're bypassing the cache encapsulation and expose it right here.
- * 
- * 
+ *
+ *
  * @author bsiri
  */
 @Transactional
@@ -276,9 +276,9 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	/**
 	 * Removes all responsibilities a user might have on a entity. In other words, the given user will no longer have
 	 * any permission on the entity.
-	 * 
+	 *
 	 * @param partyId
-	 * @param objectIdentity
+	 * @param entityRef
 	 */
 	public void removeAllResponsibilities(@NotNull long partyId, @NotNull ObjectIdentity entityRef) {
 		jdbcTemplate.update(DELETE_PARTY_RESPONSABILITY_ENTRY,

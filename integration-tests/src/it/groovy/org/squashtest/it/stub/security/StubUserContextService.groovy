@@ -28,59 +28,58 @@ import java.security.Principal
 
 class StubUserContextService implements UserContextService {
 
-    @Override
-    public String getUsername() {
-        return "StubUserContextService";
-    }
+	@Override
+	public String getUsername() {
+		return "StubUserContextService";
+	}
 
-    @Override
-    public boolean hasRole(String role) {
-        return true;
-    }
+	@Override
+	public boolean hasRole(String role) {
+		return true;
+	}
 
-    @Override
-    public Authentication getPrincipal() {
-        return Principal
-    }
+	@Override
+	public Authentication getPrincipal() {
+		// TODO looks broken
+		return Principal
+	}
 }
 
 
-public class StubAuthentication implements Authentication {
+class StubAuthentication implements Authentication {
 
-    @Override
-    public String getName() {
-        return "StubAuthentication";
-    }
+	@Override
+	public String getName() {
+		return "StubAuthentication";
+	}
 
-    @Override
-    public Collection<GrantedAuthority> getAuthorities() {
-        return [];
-    }
+	@Override
+	public Collection<GrantedAuthority> getAuthorities() {
+		return [];
+	}
 
-    @Override
-    public Object getCredentials() {
-        return null;
-    }
+	@Override
+	public Object getCredentials() {
+		return null;
+	}
 
-    @Override
-    public Object getDetails() {
-        return null;
-    }
+	@Override
+	public Object getDetails() {
+		return null;
+	}
 
-    @Override
-    public Object getPrincipal() {
-        return this;
-    }
+	@Override
+	public Object getPrincipal() {
+		return this;
+	}
 
-    @Override
-    public boolean isAuthenticated() {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean isAuthenticated() {
+		return false;
+	}
 
-    @Override
-    public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-        // TODO Auto-generated method stub
-
-    }
+	@Override
+	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+		// NOOP
+	}
 }

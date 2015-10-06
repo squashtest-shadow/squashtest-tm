@@ -21,12 +21,15 @@
 
 package org.squashtest.tm.service.milestone
 
+import org.squashtest.tm.service.AsManagerDbunitServiceSpecification
+import org.squashtest.tm.service.DbunitServiceSpecification
+import spock.lang.IgnoreRest
+
 import javax.inject.Inject
 
 import org.hibernate.exception.SQLGrammarException
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.milestone.Milestone
-import org.squashtest.tm.service.CustomDbunitServiceSpecification
 
 import org.unitils.dbunit.annotation.DataSet
 
@@ -35,7 +38,7 @@ import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecification{
+class MilestoneManagerAsProjectLeaderServiceIT extends AsManagerDbunitServiceSpecification {
 	@Inject
 	MilestoneManagerService manager
 
@@ -77,7 +80,6 @@ class MilestoneManagerAsProjectLeaderServiceIT extends CustomDbunitServiceSpecif
 	 * M-1, M-6, M-8 : -1, -3, -5, -7
 	 * M-2, M-7, M-9 : -6, -8, -9, -11
 	 */
-
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerService2IT.xml")
 	def "should get all milestone i can see"(){
 		given :

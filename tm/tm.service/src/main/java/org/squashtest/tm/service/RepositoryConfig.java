@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service;
 
@@ -37,7 +37,6 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy;
@@ -96,20 +95,6 @@ public class RepositoryConfig {
 			.addSqlFunction(FN_NAME_GROUP_CONCAT, groupConcatFunction());
 
 		return builder.buildSessionFactory();
-
-//		LocalSessionFactoryBean sf = new LocalSessionFactoryBean();
-//		sf.setDataSource(dataSource);
-//		sf.setPackagesToScan("org.squashtest.tm.domain",
-//			"org.squashtest.csp.core.bugtracker.domain");
-//		sf.setAnnotatedPackages("org.squashtest.tm.service.internal.repository.hibernate",
-//			"org.squashtest.tm.service.internal.hibernate",
-//			"org.squashtest.tm.infrastructure.hibernate");
-//		sf.setNamingStrategy(new UppercaseUnderscoreNamingStrategy());
-//		sf.setEntityInterceptor(new AuditLogInterceptor());
-//		sf.setHibernateProperties(hibernateProperties());
-//		sf.afterPropertiesSet();
-//		sf.getConfiguration().addSqlFunction(FN_NAME_GROUP_CONCAT, groupConcatFunction());
-//		return sf;
 	}
 
 	@Bean(name = "squashtest.tm.hibernate.TransactionManager")
@@ -118,7 +103,6 @@ public class RepositoryConfig {
 		hibernateTransactionManager.setSessionFactory(sessionFactory());
 		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
 		hibernateTransactionManager.setDataSource(dataSource);
-		hibernateTransactionManager.afterPropertiesSet();
 		return hibernateTransactionManager;
 	}
 

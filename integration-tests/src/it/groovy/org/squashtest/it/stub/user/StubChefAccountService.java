@@ -29,50 +29,50 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
 
-public class StubCustomUserAccountService implements UserAccountService {
+public class StubChefAccountService implements UserAccountService {
 
 	@Inject
 	UserManagerService userManager;
 
 	@Override
 	public void modifyUserFirstName(long userId, String newName) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void modifyUserLastName(long userId, String newName) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void modifyUserLogin(long userId, String newLogin) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void modifyUserEmail(long userId, String newEmail) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void deactivateUser(long userId) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void activateUser(long userId) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void deleteUser(long userId) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
@@ -83,19 +83,18 @@ public class StubCustomUserAccountService implements UserAccountService {
 
 	@Override
 	public void setCurrentUserEmail(String newEmail) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public void setCurrentUserPassword(String oldPasswd, String newPasswd) {
-		// TODO Auto-generated method stub
+		// NOOP
 
 	}
 
 	@Override
 	public Collection<Milestone> findAllMilestonesForUser(long userId) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

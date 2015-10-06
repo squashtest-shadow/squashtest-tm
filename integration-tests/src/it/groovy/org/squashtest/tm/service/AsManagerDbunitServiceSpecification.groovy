@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.service
 
+import org.springframework.test.context.TestPropertySource
+import org.squashtest.it.config.AsManagerServiceSpecConfig
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.ServiceSpecConfig
+import org.squashtest.it.config.UnitilsConfig
 
 import java.util.List
 
@@ -41,13 +46,10 @@ import spock.lang.Specification
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(["classpath:service/custom-dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml",
-	"classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml",
-	"classpath*:META-INF/**/dynamicdao-context.xml",
-	"classpath*:META-INF/**/dynamicmanager-context.xml",
-	"classpath:it-config-context.xml"])
+@ContextConfiguration(classes = [AsManagerServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
+@TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
-abstract class CustomDbunitServiceSpecification extends Specification {
+abstract class AsManagerDbunitServiceSpecification extends Specification {
 
 	@Inject
 	private SessionFactory sessionFactory

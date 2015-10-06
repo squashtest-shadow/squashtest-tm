@@ -27,10 +27,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
 
-@Component
-class StubCustomPermissionEvaluator extends AffirmativeBasedCompositePermissionEvaluator {
+class StubPermissionEvaluator extends AffirmativeBasedCompositePermissionEvaluator {
 
-	public StubCustomPermissionEvaluator() {
+	public StubPermissionEvaluator() {
 		super(null);
 	}
 

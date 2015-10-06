@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security.customSecurity
+package org.squashtest.it.stub.security
 
 import java.security.Principal
 
@@ -26,8 +26,13 @@ import org.springframework.security.core.Authentication
 import org.springframework.security.core.GrantedAuthority
 import org.squashtest.tm.service.security.UserContextService
 
-
-class StubCustomUserContextService implements UserContextService {
+/**
+ * Stub UserContextService authenticated with "chef" and no role
+ *
+ * @author jsimon
+ * @since 1.12.0
+ */
+class StubChefContextService implements UserContextService {
 
 	@Override
 	public String getUsername() {
@@ -41,47 +46,7 @@ class StubCustomUserContextService implements UserContextService {
 
 	@Override
 	public Authentication getPrincipal() {
+		// TODO looks broken
 		return Principal
-	}
-}
-
-
- public class StubAuthentication implements Authentication {
-
-	@Override
-	public String getName() {
-		return "StubAuthentication";
-	}
-
-	@Override
-	public Collection<GrantedAuthority> getAuthorities() {
-		return [];
-	}
-
-	@Override
-	public Object getCredentials() {
-		return null;
-	}
-
-	@Override
-	public Object getDetails() {
-		return null;
-	}
-
-	@Override
-	public Object getPrincipal() {
-		return this;
-	}
-
-	@Override
-	public boolean isAuthenticated() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
-
 	}
 }

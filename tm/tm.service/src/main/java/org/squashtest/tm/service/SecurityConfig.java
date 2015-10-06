@@ -80,13 +80,13 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	private PermissionFactory permissionFactory;
 	@Inject
 	private SquashUserDetailsManager userDetailsManager;
-	@Inject
+	@Inject @Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy;
 	@Inject
 	private ObjectIdentityGenerator objectIdentityGenerator;
 
 	@Bean
-	public GrantedAuthority aclAdminAuthority() {
+	public static GrantedAuthority aclAdminAuthority() {
 		return new GrantedAuthorityImpl("ROLE_ADMIN");
 	}
 
@@ -202,7 +202,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	}
 
 	@Bean
-	public PasswordEncoder shaPasswordEncoder() {
+	public static PasswordEncoder shaPasswordEncoder() {
 		return new ShaPasswordEncoder();
 	}
 

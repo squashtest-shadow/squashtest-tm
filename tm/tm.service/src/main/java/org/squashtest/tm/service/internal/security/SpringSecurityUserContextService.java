@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.security;
+package org.squashtest.tm.service.internal.security;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -27,6 +27,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.security.UserContextService;
 
 /**
  * A {@link UserContextService} backed by Spring Security.

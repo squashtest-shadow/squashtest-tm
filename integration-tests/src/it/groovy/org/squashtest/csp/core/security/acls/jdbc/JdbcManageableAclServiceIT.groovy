@@ -20,6 +20,19 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
+import org.springframework.test.context.TestPropertySource
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.SecuritySpecConfig
+import org.squashtest.it.config.ServiceSpecConfig
+import org.squashtest.it.config.UnitilsConfig
+import org.squashtest.tm.service.BugTrackerConfig
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.RepositoryConfig
+import org.squashtest.tm.service.SchedulerConfig
+import org.squashtest.tm.service.SecurityConfig
+import org.squashtest.tm.service.TmServiceConfig
+import spock.lang.IgnoreRest
+
 import javax.inject.Inject
 
 import org.springframework.security.acls.domain.ObjectIdentityImpl
@@ -38,17 +51,22 @@ import org.unitils.dbunit.annotation.ExpectedDataSet
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
 
-@ContextConfiguration(["classpath:service/dependencies-scan-context.xml",
-	"classpath:unitils-datasource-context.xml",
-	"classpath*:META-INF/**/bundle-context.xml",
-	"classpath*:META-INF/**/repository-context.xml",
-	"classpath*:META-INF/**/dynamicdao-context.xml",
-	"classpath*:META-INF/**/dynamicmanager-context.xml",
-	"classpath:it-config-context.xml"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+import javax.sql.DataSource
+
+//@ContextConfiguration(classes = [ServiceSpecConfig,
+//	UnitilsConfig,
+//	TmServiceConfig,
+//	RepositoryConfig,
+//	DynamicServiceConfig])
+//@TestPropertySource(["classpath:no-validation-hibernate.properties"])
+//@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
 @Transactional
+@ContextConfiguration(classes = [ UnitilsConfig, SecurityConfig, SecuritySpecConfig ])
+@TestPropertySource(["classpath:no-validation-hibernate.properties"])
+@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 class JdbcManageableAclServiceIT extends Specification {
+	@Inject DataSource dataSource
 	@Inject ManageableAclService manageableService
 	@Inject ObjectAclService service
 
@@ -56,6 +74,7 @@ class JdbcManageableAclServiceIT extends Specification {
 		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication())
 	}
 
+	@IgnoreRest
 	@DataSet("JdbcManageableAclServiceIT.should create OID for a project.xml")
 	@ExpectedDataSet("JdbcManageableAclServiceIT.should create OID for a project.expected.xml")
 	def "should create OID for a project"() {

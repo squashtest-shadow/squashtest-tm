@@ -20,9 +20,12 @@
  */
 package org.squashtest.it.config
 
+import org.springframework.beans.factory.FactoryBean
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.unitils.database.UnitilsDataSourceFactoryBean
+
+import javax.sql.DataSource
 
 /**
  * @author Gregory Fouquet
@@ -30,9 +33,12 @@ import org.unitils.database.UnitilsDataSourceFactoryBean
  */
 @Configuration
 class UnitilsConfig {
+	UnitilsConfig() {
+		super();
+	}
 	@Bean(name = "squashtest.core.persistence.jdbc.DataSource")
-	UnitilsDataSourceFactoryBean dataSource() {
-		return new UnitilsDataSourceFactoryBean()
+	DataSource dataSource() {
+		return new UnitilsDataSourceFactoryBean().getObject()
 	}
 
 }
