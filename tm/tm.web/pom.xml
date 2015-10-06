@@ -40,7 +40,6 @@
     <!-- google says static resources should be cached 1 week -->
     <client.cache.max.age>604800</client.cache.max.age>
     <css.packageDirectory>styles</css.packageDirectory>
-    <fasterxml.jackson.version>2.0.5</fasterxml.jackson.version>
 
     <!-- Used to set jetty config props -->
     <is.dev.stage>false</is.dev.stage>
@@ -141,7 +140,6 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>${fasterxml.jackson.version}</version>
     </dependency>
 
     <dependency>
