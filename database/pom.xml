@@ -197,7 +197,7 @@
             <phase>prepare-package</phase>
             <configuration>
               <dropFirst>true</dropFirst>
-              <changeLogFile>${project.build.directory}/sample/sample-db.changelog.xml</changeLogFile>
+              <changeLogFile>${project.build.outputDirectory}/sample/sample-db.changelog.xml</changeLogFile>
               <driver>org.h2.Driver</driver>
               <url>jdbc:h2:mem:squash-sample</url>
               <username>sa</username>
