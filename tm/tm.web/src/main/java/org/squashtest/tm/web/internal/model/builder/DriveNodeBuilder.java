@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.inject.Provider;
 
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -40,11 +41,11 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 public class DriveNodeBuilder<LN extends LibraryNode> extends
 GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 
-	private final Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider;
+	private final Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider;
 
 
 	public DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
-			Provider<LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
+			Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
 		super(permissionEvaluationService);
 		this.childrenBuilderProvider = childrenBuilderProvider;
 	}
@@ -80,8 +81,7 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 	}
 
 	/**
-	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
-	 *      java.lang.Object)
+	 * @see GenericJsTreeNodeBuilder#doAddChildren(JsTreeNode, Identified)
 	 */
 	@Override
 	protected void doAddChildren(JsTreeNode node, Library<LN> model) {

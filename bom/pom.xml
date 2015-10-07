@@ -55,7 +55,6 @@
     <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
     <spock.version>1.0-groovy-2.3</spock.version>
     <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
-    <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
     <thymeleaf-extras-springsecurity4.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity4.version>
     <unitils.version>3.4.2</unitils.version>
     <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
@@ -124,6 +123,12 @@
         <groupId>net.sf.jasperreports</groupId>
         <artifactId>jasperreports</artifactId>
         <version>${jasperreports.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -142,6 +147,12 @@
         <groupId>net.sourceforge.nekohtml</groupId>
         <artifactId>nekohtml</artifactId>
         <version>${nekohtml.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -282,6 +293,13 @@
         <groupId>javax.validation</groupId>
         <artifactId>validation-api</artifactId>
         <version>${validation-api.version}</version>
+      </dependency>
+
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-tomcat</artifactId>
+        <version>${spring.boot.version}</version>
+        <scope>provided</scope>
       </dependency>
 
       <dependency>

@@ -21,7 +21,8 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -47,7 +48,8 @@
 
     <!-- DEfault webdriver for jasmine runner. One can override it -->
     <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
-    <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
+    <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled
+    </jasperreports.build.outputDirectory>
     <js.packageDirectory>scripts</js.packageDirectory>
     <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
     <project.stage>RELEASE</project.stage>
@@ -82,10 +84,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <dependency>
-      <groupId>org.apache.commons</groupId>
-      <artifactId>commons-lang3</artifactId>
-    </dependency>
 
     <!-- ====== /THYMELEAF ====== -->
 
@@ -102,9 +100,13 @@
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
     </dependency>
+    <!--<dependency>-->
+    <!--<groupId>commons-io</groupId>-->
+    <!--<artifactId>commons-io</artifactId>-->
+    <!--</dependency>-->
     <dependency>
-      <groupId>commons-io</groupId>
-      <artifactId>commons-io</artifactId>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
     </dependency>
     <dependency>
       <groupId>org.squashtest.tm</groupId>
@@ -137,26 +139,26 @@
       <artifactId>hibernate-validator</artifactId>
     </dependency>
 
+    <!--<dependency>-->
+    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
+    <!--<artifactId>jackson-databind</artifactId>-->
+    <!--</dependency>-->
+
     <dependency>
-      <groupId>com.fasterxml.jackson.core</groupId>
-      <artifactId>jackson-databind</artifactId>
+      <groupId>net.sf.jasperreports</groupId>
+      <artifactId>jasperreports</artifactId>
     </dependency>
 
     <dependency>
       <groupId>org.glassfish</groupId>
       <artifactId>javax.el</artifactId>
     </dependency>
-    <!-- ====== /JEE API ====== -->
 
-    <!-- ====== JSE DI API ====== -->
     <dependency>
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
 
-    <!-- ===== / ASPECTJ ===== -->
-
-    <!-- ===== JACKSON ===== -->
     <dependency>
       <groupId>javax.servlet</groupId>
       <artifactId>javax.servlet-api</artifactId>
@@ -165,6 +167,13 @@
     <dependency>
       <groupId>org.eclipse.jetty.orbit</groupId>
       <artifactId>javax.servlet.jsp</artifactId>
+      <exclusions>
+        <exclusion>
+          <!-- When not excluded, there is a signature clash with some other javax.servlet dep -->
+          <groupId>org.eclipse.jetty.orbit</groupId>
+          <artifactId>javax.servlet</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -177,14 +186,15 @@
       <artifactId>jericho-html</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>jstl</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>javax.servlet</groupId>-->
+    <!--<artifactId>jstl</artifactId>-->
+    <!--</dependency>-->
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
     </dependency>
+
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
@@ -194,28 +204,30 @@
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
-    <!-- ====== /JASPER REPORTS ====== -->
 
-    <!-- ====== SPRING INTEGRATION TEST SUPPORT ====== -->
+    <!--<dependency>-->
+    <!--<groupId>org.spockframework</groupId>-->
+    <!--<artifactId>spock-spring</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.spockframework</groupId>-->
+    <!--<artifactId>spock-unitils</artifactId>-->
+    <!--</dependency>-->
     <dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-spring</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-actuator</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.spockframework</groupId>
-      <artifactId>spock-unitils</artifactId>
-    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
-    <!-- ====== /VALIDATION ====== -->
 
-    <!-- ===== ASPECTJ ===== -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aop</artifactId>
@@ -235,19 +247,22 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.security.oauth</groupId>
       <artifactId>spring-security-oauth2</artifactId>
     </dependency>
-    <!-- ====== /FILE UPLOAD ====== -->
 
     <dependency>
       <groupId>org.thymeleaf.extras</groupId>
       <artifactId>thymeleaf-extras-springsecurity4</artifactId>
     </dependency>
-    <!-- ====== SQUASHTEST ====== -->
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -260,26 +275,19 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- ====== URL REWRITING ====== -->
     <dependency>
       <groupId>org.tuckey</groupId>
       <artifactId>urlrewritefilter</artifactId>
     </dependency>
-    <!-- ====== /URL REWRITING ====== -->
 
-    <!-- ====== VALIDATION ====== -->
     <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
     </dependency>
+
     <dependency>
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>net.sf.jasperreports</groupId>
-      <artifactId>jasperreports</artifactId>
     </dependency>
 
     <dependency>
@@ -296,7 +304,6 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-    <!-- ====== /SPRING INTEGRATION TEST SUPPORT ====== -->
 
   </dependencies>
   <build>
@@ -326,44 +333,17 @@
     </pluginManagement>
 
     <plugins>
-      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <!-- ====== /SPOCK TESTS ====== -->
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-          <supportedProjectTypes>
-            <supportedProjectType>jar</supportedProjectType>
-            <supportedProjectType>bundle</supportedProjectType>
-            <supportedProjectType>war</supportedProjectType>
-          </supportedProjectTypes>
-        </configuration>
-        <executions>
-          <execution>
-            <id>bundle-manifest</id>
-            <goals>
-              <goal>manifest</goal>
-            </goals>
-            <phase>process-classes</phase>
-          </execution>
-        </executions>
       </plugin>
 
       <plugin>
         <groupId>com.alexnederlof</groupId>
         <artifactId>jasperreports-plugin</artifactId>
-            <configuration>
-              <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
-            </configuration>
+        <configuration>
+          <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
+        </configuration>
       </plugin>
 
       <plugin>
@@ -396,11 +376,6 @@
               <targetPath>${css.packageDirectory}</targetPath>
             </resource>
             <resource>
-              <!-- includes MANIFEST generated by bnd -->
-              <directory>${project.build.outputDirectory}/META-INF</directory>
-              <targetPath>META-INF</targetPath>
-            </resource>
-            <resource>
               <!-- some resources in WEB-INF have to be filtered -->
               <directory>src/main/webapp/WEB-INF</directory>
               <includes>
@@ -424,10 +399,6 @@
               <filtering>false</filtering>
             </resource>
           </webResources>
-          <packagingExcludes>WEB-INF/lib/*.jar</packagingExcludes>
-          <archive>
-            <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
-          </archive>
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
           <attachClasses>true</attachClasses>
         </configuration>
@@ -503,8 +474,17 @@
         </executions>
       </plugin>
 
-      <!-- ====== /INTEGRATION TESTS ====== -->
-
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
     </plugins>
   </build>
 
@@ -634,76 +614,6 @@
                   </resources>
                 </configuration>
               </execution>
-
-              <execution>
-                <id>copy-images-to-web-inf</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>process-resources</phase>
-
-                <configuration>
-                  <outputDirectory>${sprites.packageDirectory}</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${smartprites-wro4j-exchangedir}/images</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>copy-static-to-web-inf</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>process-resources</phase>
-
-                <configuration>
-                  <outputDirectory>static</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/main/webapp/static</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>copy-processed-css</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>process-resources</phase>
-
-                <configuration>
-                  <outputDirectory>${css.packageDirectory}</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${wro4j.css.outputDirectory}</directory>
-                      <filtering>true</filtering>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-
-              <execution>
-                <id>copy-optimized-js</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>package</phase>
-
-                <configuration>
-                  <outputDirectory>${js.packageDirectory}</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${rjs.js.outputDirectory}</directory>
-                      <filtering>true</filtering>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
             </executions>
           </plugin>
         </plugins>
@@ -805,12 +715,15 @@
                 <configuration>
                   <skip>${wro4j.skip}</skip>
                   <!-- dont break line or add spaces or maven will scream in horror -->
-                  <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
+                  <targetGroups>
+                    squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print
+                  </targetGroups>
                   <minimize>true</minimize>
                   <contextFolder>${wro4j.inputDir}</contextFolder>
                   <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
                   <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
-                  <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
+                  <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory
+                  </wroManagerFactory>
                   <parallelProcessing>true</parallelProcessing>
                   <incrementalBuildEnabled>true</incrementalBuildEnabled>
                 </configuration>
@@ -887,28 +800,6 @@
                   </resources>
                 </configuration>
               </execution>
-
-              <execution>
-                <id>copy-raw-scripts</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>process-resources</phase>
-                <configuration>
-                  <outputDirectory>scripts</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/main/webapp/scripts</directory>
-                      <filtering>true</filtering>
-                    </resource>
-                  </resources>
-                  <nonFilteredFileExtensions>
-                    <nonFilteredFileExtension>ico</nonFilteredFileExtension>
-                    <nonFilteredFileExtension>zip</nonFilteredFileExtension>
-                  </nonFilteredFileExtensions>
-                </configuration>
-              </execution>
-
             </executions>
           </plugin>
         </plugins>

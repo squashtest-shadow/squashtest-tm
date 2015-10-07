@@ -22,7 +22,8 @@ package org.squashtest.tm.web.internal.interceptor.openedentity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -37,35 +38,31 @@ import javax.servlet.ServletContext;
  * @author mpagnon
  */
 public abstract class ObjectViewsInterceptor implements WebRequestInterceptor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ObjectViewsInterceptor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectViewsInterceptor.class);
 
-    @Autowired
-    protected ServletContext context;
+	@Inject
+	protected ServletContext context;
 
-    @Inject
-    public void setPermissionService(PermissionEvaluationService permissionService) {
-        this.permissionService = permissionService;
-    }
+	@Inject
+	private PermissionEvaluationService permissionService;
 
-    private PermissionEvaluationService permissionService;
+	protected final boolean addViewerToEntity(String contextAttributeName, Identified object, String userLogin) {
+		LOGGER.debug("New view added for {} = {}  Viewer = {}", new Object[]{contextAttributeName, object.getId(), userLogin});
+		boolean otherViewers = false;
+		if (permissionService.hasMoreThanRead(object)) {
+			LOGGER.debug("User has more than readonly in object = true");
 
-    public boolean addViewerToEntity(String contextAttributeName, Identified object, String userLogin) {
-        LOGGER.debug("New view added for {} = {}  Viewer = {}", new Object[]{contextAttributeName, object.getId(), userLogin});
-        boolean otherViewers = false;
-        if (permissionService.hasMoreThanRead(object)) {
-            LOGGER.debug("User has more than readonly in object = true");
+			OpenedEntities openedEntities = (OpenedEntities) context.getAttribute(contextAttributeName);
+			if (openedEntities != null) {
+				otherViewers = openedEntities.addViewerToEntity(object, userLogin);
 
-            OpenedEntities openedEntities = (OpenedEntities) context.getAttribute(contextAttributeName);
-            if (openedEntities != null) {
-                otherViewers = openedEntities.addViewerToEntity(object, userLogin);
+			}
+		} else {
+			LOGGER.debug("User has more than readonly in object = false");
+		}
 
-            }
-        } else {
-            LOGGER.debug("User has more than readonly in object = false");
-        }
-
-        return otherViewers;
-    }
+		return otherViewers;
+	}
 
 
 }

@@ -44,9 +44,9 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 /**
  * Builder for datatable model showing {@link RequirementAuditEvent} objects. Not threadsafe, should be discarded after
  * use.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilder<RequirementAuditEvent> implements
 		RequirementAuditEventVisitor {
@@ -66,6 +66,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 
 	/**
 	 * @param locale
+	 * @param  messageSource
 	 */
 	public RequirementAuditEventTableModelBuilder(@NotNull Locale locale, @NotNull InternationalizationHelper messageSource) {
 		super();
@@ -84,7 +85,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	}
 
 	/**
-	 * @see org.squashtest.tm.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.tm.domain.event.RequirementCreation)
+	 * @see org.squashtest.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.domain.event.RequirementCreation)
 	 */
 	@Override
 	public void visit(RequirementCreation event) {
@@ -94,7 +95,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	}
 
 	/**
-	 * @see org.squashtest.tm.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.tm.domain.event.RequirementPropertyChange)
+	 * @see org.squashtest.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.domain.event.RequirementPropertyChange)
 	 */
 	@Override
 	public void visit(RequirementPropertyChange event) {
@@ -145,7 +146,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	}
 
 	/**
-	 * @see org.squashtest.tm.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.tm.domain.event.RequirementLargePropertyChange)
+	 * @see org.squashtest.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.domain.event.RequirementLargePropertyChange)
 	 */
 	@Override
 	public void visit(RequirementLargePropertyChange event) {
@@ -155,19 +156,19 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	}
 
 	private void populateCurrentItemData(String message, String eventType, RequirementAuditEvent event) {
-		
+
 		String formattedDate = DateFormatUtils.format(event.getDate(), "dd/MM/yyyy HH'h'mm");
 		String escapedAuthor = HtmlUtils.htmlEscape(event.getAuthor());
 		String escapedMessage = HtmlUtils.htmlEscape(message);
-		
-		Map<String, String> row = new HashMap<String, String>(5);
-		
+
+		Map<String, String> row = new HashMap<>(5);
+
 		row.put("event-date", formattedDate);
 		row.put("event-author", escapedAuthor);
 		row.put("event-message", escapedMessage);
 		row.put("event-type", eventType);
 		row.put("event-id", String.valueOf(event.getId()));
-		
+
 		currentItemData = row;
 
 	}

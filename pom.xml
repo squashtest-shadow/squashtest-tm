@@ -63,6 +63,8 @@
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <provisionBom.version>1.4</provisionBom.version>
+    <spring-boot-maven-plugin.version>1.2.4.RELEASE</spring-boot-maven-plugin.version>
+    <spring.boot.version>1.2.4.RELEASE</spring.boot.version>
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
@@ -297,6 +299,11 @@
             </execution>
           </executions>
         </plugin>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot-maven-plugin.version}</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -354,6 +361,7 @@
             <exclude>**/*readme.*</exclude>
             <exclude>**/README*.*</exclude>
             <exclude>**/readme*.*</exclude>
+            <exclude>**/banner.txt</exclude>
             <!-- manifest templates -->
             <exclude>**/*.mf</exclude>
             <exclude>**/bnd.bnd</exclude>
@@ -528,7 +536,7 @@
       </properties>
     </profile>
 
-    <!-- This profile aims to run acceptance tests without compilation and 
+    <!-- This profile aims to run acceptance tests without compilation and
 			units tests (if possible) -->
     <profile>
       <id>acceptance-tests</id>
@@ -552,7 +560,7 @@
       </modules>
     </profile>
 
-    <!-- This profile aims to perform a build on the developper's machine before 
+    <!-- This profile aims to perform a build on the developper's machine before
 			a push. It should not run anything against mysql -->
     <profile>
       <id>private-build</id>
@@ -586,7 +594,7 @@
       <build>
         <pluginManagement>
           <plugins>
-            <!--This plugin's configuration is used to store Eclipse m2e settings 
+            <!--This plugin's configuration is used to store Eclipse m2e settings
 							only. It has no influence on the Maven build itself. -->
             <plugin>
               <groupId>org.eclipse.m2e</groupId>

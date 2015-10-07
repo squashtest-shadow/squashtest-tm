@@ -20,14 +20,13 @@
  */
 package org.squashtest.it.stub.user;
 
-import java.util.Collection;
-
-import javax.inject.Inject;
-
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
+
+import javax.inject.Inject;
+import java.util.Collection;
 
 public class StubChefAccountService implements UserAccountService {
 

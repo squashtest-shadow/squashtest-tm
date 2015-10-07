@@ -20,19 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -60,13 +50,13 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurat
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
-import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.*;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
 
 
 @Controller
@@ -117,11 +107,11 @@ public class RequirementVersionManagerController {
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
 	public void createNewVersion(@PathVariable long requirementId, @CurrentMilestone Milestone activeMilestone) {
-		
+
 		if (activeMilestone == null){
 			versionService.createNewVersion(requirementId);
 		}else{
-			ArrayList<Long> milestoneIds = new ArrayList<Long>();
+			ArrayList<Long> milestoneIds = new ArrayList<>();
 			milestoneIds.add(activeMilestone.getId());
 			versionService.createNewVersion(requirementId, milestoneIds);
 		}
@@ -136,7 +126,7 @@ public class RequirementVersionManagerController {
 
 		Requirement req = versionService.findRequirementById(requirementId);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = new SinglePageCollectionHolder<List<RequirementVersion>>(req.getUnmodifiableVersions());
+		PagedCollectionHolder<List<RequirementVersion>> holder = new SinglePageCollectionHolder<>(req.getUnmodifiableVersions());
 
 		DataTableModel tableModel = new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
 				"0");
@@ -217,7 +207,7 @@ public class RequirementVersionManagerController {
 		@Override
 		public Map<String, Object> buildItemData(RequirementVersion version) {
 
-			Map<String, Object> row = new HashMap<String, Object>(7);
+			Map<String, Object> row = new HashMap<>(7);
 
 			row.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, version.getId());
 			row.put("version-number", version.getVersionNumber());
