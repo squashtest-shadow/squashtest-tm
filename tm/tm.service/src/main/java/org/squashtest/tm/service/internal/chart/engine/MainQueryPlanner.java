@@ -20,24 +20,44 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.domain.testcase.QTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
+import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
+
+import com.querydsl.core.JoinExpression;
+import com.querydsl.core.types.Constant;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.FactoryExpression;
+import com.querydsl.core.types.Operation;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.Predicate;
+import com.querydsl.core.types.SubQueryExpression;
+import com.querydsl.core.types.TemplateExpression;
+import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
- * <p></p>
- * 
  * <p>
  * 	This class will generate the main query, that is a query that joins together the sequence of tables required for the given chart.
  * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
  * 	is available a where clause will be used.
+ * </p>
+ * 
+ * <p>
+ * 	In this query the entities are all aliased with the camel case version of the class name. Explicitly : testCase, requirementVersion etc
+ * </p>
+ * 
+ * <p>
+ * 	Remember that the query created is detached from the session, don't forget to attach it via query.clone(session)
  * </p>
  * 
  * <p>See javadoc on {@link ChartDataFinder}</p>
@@ -52,6 +72,7 @@ class MainQueryPlanner {
 
 	private DetailedChartDefinition definition;
 
+	HibernateQuery<?> query;
 
 	MainQueryPlanner(DetailedChartDefinition definition){
 		this.definition = definition;
@@ -60,44 +81,165 @@ class MainQueryPlanner {
 
 	HibernateQuery<?> createMainQuery(){
 
+		query = new HibernateQuery();
+
 		// get the query plan : the orderly set of joins this
 		// class must now put together
 		QueryPlan plan = DomainGraph.getQueryPlan(definition);
 
 		// now get the query done
-		//TraversedEntity rootNode = plan.getR
-		return null;
+		init();
+
+		for (Iterator<PlannedJoin> iter = plan.joinIterator(); iter.hasNext();) {
+
+			PlannedJoin join = iter.next();
+
+			addJoin(join);
+
+		}
+
+		return query;
+
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void init(){
+		InternalEntityType rootType = definition.getRootEntity();
+		EntityPathBase rootPath = rootType.getQBean();
+		query.from(rootPath);
+	}
+
+
+	private void addJoin(PlannedJoin joininfo){
+		if (joininfo.getType() == JoinType.NATURAL){
+			addNaturalJoin(joininfo);
+		}
+		else{
+			addWhereJoin(joininfo);
+		}
+	}
+
+	@SuppressWarnings("rawtypes")
+	private void addNaturalJoin(PlannedJoin joininfo){
+
+		PathBuilder join = makePath(joininfo.getSrc(), joininfo.getDest(), joininfo.getAttribute());
+
+		EntityPathBase dest = joininfo.getDest().getQBean();
+
+		query.innerJoin(join, dest);
+
+	}
+
+	/*
+	 * This method will check first whether the entities needs to be
+	 * added to the "from" clause. Then, a where clause will be added,
+	 * the condition being that dest.attribute = src.id
+	 */
+	private void addWhereJoin(PlannedJoin joininfo){
+
+		// check that tables are known
+		prepareFromClause(joininfo);
+
+		// now make the join
+		// remember that the join is made from the dest to the source in this case
+		PathBuilder destForeignkey = makePath(joininfo.getDest(), joininfo.getSrc(), joininfo.getAttribute());
+
+		Predicate condition  = Expressions.booleanOperation(Ops.EQ, destForeignkey, joininfo.getSrc().getQBean());
+
+		query.where(condition);
 
 	}
 
 
-	private void test(){
+	private void prepareFromClause(PlannedJoin joininfo){
 
-		String tcAlias = "tc";
-		String stepAlias = "st";
+		AliasCollector collector = new AliasCollector();
+		for (JoinExpression join : query.getMetadata().getJoins()){
+			join.getTarget().accept(collector, collector.getAliases());
+		}
 
+		Set<String> allAliases = collector.getAliases();
 
-		EntityPathBase testcase = new QTestCase(tcAlias);
-		EntityPathBase tcsteps = new QTestStep(stepAlias);
+		String srcAlias = joininfo.getSrc().getQBean().getMetadata().getName();
+		String destAlias = joininfo.getDest().getQBean().getMetadata().getName();
 
+		if (! allAliases.contains(srcAlias)){
+			query.from(joininfo.getSrc().getQBean());
+		}
 
-		PathBuilder stepjoin = new PathBuilder<>(TestCase.class, tcAlias)
-				.get("steps", TestStep.class);
-
-		PathBuilder stepid = new PathBuilder(TestStep.class, stepAlias).get("id");
-
-		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
-
-		HibernateQuery q = new HibernateQuery();
-
-		q.from(testcase);
-
-		q.join(stepjoin, tcsteps);
-		q.select(stepid);
-		q.where(tcid.eq(-1l));
-
+		if (! allAliases.contains(destAlias)){
+			query.from(joininfo.getDest().getQBean());
+		}
 	}
 
+	@SuppressWarnings("rawtypes")
+	private PathBuilder makePath(InternalEntityType src, InternalEntityType dest, String attribute){
+
+		Class<?> srcClass = src.getEntityClass();
+		Class<?> destClass = dest.getEntityClass();
+		String srcAlias = src.getQBean().getMetadata().getName();
+
+		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
+	}
+
+
+
+	private static final class AliasCollector implements Visitor<Void, Set<String>>{
+
+		private Set<String> aliases = new HashSet<>();
+
+
+		@Override
+		public Void visit(Constant<?> expr, Set<String> context) {
+			return null;
+		}
+
+		@Override
+		public Void visit(FactoryExpression<?> expr, Set<String> context) {
+			return null;
+		}
+
+		@Override
+		public Void visit(Operation<?> expr, Set<String> context) {
+			for (Expression<?> subexpr : expr.getArgs()){
+				subexpr.accept(this, context);
+			}
+			return null;
+		}
+
+		@Override
+		public Void visit(ParamExpression<?> expr, Set<String> context) {
+			return null;
+		}
+
+		@Override
+		public Void visit(Path<?> expr, Set<String> context) {
+			PathMetadata metadata = expr.getMetadata();
+			if (metadata.isRoot()){
+				context.add(expr.getMetadata().getName());
+			}
+			else{
+				metadata.getParent().accept(this, context);
+			}
+
+			return null;
+		}
+
+		@Override
+		public Void visit(SubQueryExpression<?> expr, Set<String> context) {
+			return null;
+		}
+
+		@Override
+		public Void visit(TemplateExpression<?> expr, Set<String> context) {
+			return null;
+		}
+
+		Set<String> getAliases(){
+			return aliases;
+		}
+
+	}
 
 
 }

@@ -21,6 +21,26 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.bugtracker.QIssue;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.QCampaign;
+import org.squashtest.tm.domain.campaign.QIteration;
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.QExecution;
+import org.squashtest.tm.domain.requirement.QRequirement;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
+
+import com.querydsl.core.types.dsl.EntityPathBase;
 
 
 /**
@@ -33,16 +53,162 @@ import org.squashtest.tm.domain.EntityType;
  */
 enum InternalEntityType {
 	// @formatter:off
-	REQUIREMENT,
-	REQUIREMENT_VERSION,
-	REQUIREMENT_VERSION_COVERAGE,
-	TEST_CASE,
-	CAMPAIGN,
-	ITERATION,
-	ITEM_TEST_PLAN,
-	EXECUTION,
-	ISSUE;
+	REQUIREMENT(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return Requirement.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QRequirement.requirement;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QRequirement(alias);
+		}
+
+	},
+	REQUIREMENT_VERSION(){
+		@Override
+		Class<?> getEntityClass() {
+			return RequirementVersion.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QRequirementVersion.requirementVersion;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QRequirementVersion(alias);
+		}
+	},
+	REQUIREMENT_VERSION_COVERAGE(){
+		@Override
+		Class<?> getEntityClass() {
+			return RequirementVersionCoverage.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QRequirementVersionCoverage.requirementVersionCoverage;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QRequirementVersionCoverage(alias);
+		}
+	},
+	TEST_CASE(){
+		@Override
+		Class<?> getEntityClass() {
+			return TestCase.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QTestCase.testCase;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QTestCase(alias);
+		}
+	},
+	CAMPAIGN(){
+		@Override
+		Class<?> getEntityClass() {
+			return Campaign.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QCampaign.campaign;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QCampaign(alias);
+		}
+	},
+	ITERATION(){
+		@Override
+		Class<?> getEntityClass() {
+			return Iteration.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QIteration.iteration;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QIteration(alias);
+		}
+	},
+	ITEM_TEST_PLAN(){
+		@Override
+		Class<?> getEntityClass() {
+			return IterationTestPlanItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QIterationTestPlanItem.iterationTestPlanItem;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QIterationTestPlanItem(alias);
+		}
+	},
+	EXECUTION(){
+		@Override
+		Class<?> getEntityClass() {
+			return Execution.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QExecution.execution;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QExecution(alias);
+		}
+	},
+	ISSUE(){
+		@Override
+		Class<?> getEntityClass() {
+			return Issue.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QIssue.issue;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QIssue(alias);
+		}
+	};
 	// @formatter:on
+
+
+	abstract Class<?> getEntityClass();
+
+	// fun fact : in the querydsl domain a QBean is not exactly an EntityPathBase
+	abstract EntityPathBase<?> getQBean();
+
+	abstract EntityPathBase<?> getAliasedQBean(String alias);
+
 
 	static InternalEntityType fromDomainType(EntityType domainType){
 		InternalEntityType converted;
@@ -61,4 +227,6 @@ enum InternalEntityType {
 
 		return converted;
 	}
+
+
 }

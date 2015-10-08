@@ -109,5 +109,44 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 	}
 
 
+	@DataSet("MainQueryPlanner.dataset.xml")
+	def "should fetch step ids in an even less natural way"(){
+
+		given : "the building parts"
+
+		String tcAlias = "tc";
+		String stepAlias = "st";
+
+
+		EntityPathBase testcase = new EntityPathBase(TestCase.class, tcAlias);
+		EntityPathBase tcsteps = new EntityPathBase(TestStep.class, stepAlias);
+
+
+		PathBuilder stepjoin = new PathBuilder<>(TestCase.class, tcAlias)
+				.get("steps", TestStep.class);
+
+		PathBuilder stepid = new PathBuilder(TestStep.class, stepAlias).get("id");
+
+		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
+
+		and : "the assembly"
+
+		HibernateQuery q = new HibernateQuery();
+
+		q.from(testcase);
+
+		q.join(stepjoin, tcsteps);
+		q.select(stepid);
+		q.where(tcid.eq(-1l));
+
+		when :
+		HibernateQuery attached = q.clone(getSession())
+		def res = attached.fetch();
+
+		then :
+		res as Set == [-11l, -12l, -13l] as Set
+	}
+
+
 
 }

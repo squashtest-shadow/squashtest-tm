@@ -22,13 +22,40 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 import org.squashtest.tm.core.foundation.lang.Couple;
 
-final class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
+class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 
-	private String relationName;
+	/**
+	 * Describe how the two entities should be joined.
+	 * <ul>
+	 * 	<li>Natural : used an inner join over the attribute, nothing special about it</li>
+	 * 	<li>Reversed Where : should be used when a natural join is not possible (because the relation is not mapped). </li>
+	 * </ul>
+	 * @author bsiri
+	 *
+	 */
+	enum JoinType {
+		NATURAL,
+		WHERE
+	}
 
-	public PlannedJoin(InternalEntityType a1, InternalEntityType a2, String relationName) {
+	/**
+	 * Name of the attribute of the source entity when the join type is NATURAL,
+	 * or name of the foreign key of the dest entity when the join type is WHERE
+	 */
+	private String attribute;
+
+	private JoinType type = JoinType.NATURAL;
+
+
+	public PlannedJoin(InternalEntityType a1, InternalEntityType a2, String attribute) {
 		super(a1, a2);
-		this.relationName = relationName;
+		this.attribute = attribute;
+	}
+
+	public PlannedJoin(InternalEntityType a1, InternalEntityType a2, String attribute, JoinType type) {
+		super(a1, a2);
+		this.attribute = attribute;
+		this.type = type;
 	}
 
 	InternalEntityType getSrc(){
@@ -39,7 +66,12 @@ final class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 		return getA2();
 	}
 
-	String getRelationName(){
-		return relationName;
+	String getAttribute(){
+		return attribute;
 	}
+
+	JoinType getType(){
+		return type;
+	}
+
 }

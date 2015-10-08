@@ -40,6 +40,7 @@ import java.util.Map;
 import org.squashtest.tm.domain.chart.EntityType;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
 
 /**
@@ -155,7 +156,7 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 		addEdge(issueNode, executionNode, "execution");
 
 		addEdge(itemNode, testcaseNode, "referencedTestCase");
-		addEdge(testcaseNode, itemNode,  null); // that one is undefined
+		addEdge(testcaseNode, itemNode,  "referencedTestCase", JoinType.WHERE);
 
 		addEdge(testcaseNode, reqcoverageNode, "requirementVersionCoverages");
 		addEdge(reqcoverageNode, testcaseNode, "verifyingTestCase");
@@ -168,10 +169,17 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	}
 
 
-	private void addEdge(TraversableEntity src, TraversableEntity dest, String relationName){
+	private void addEdge(TraversableEntity src, TraversableEntity dest, String attribute){
 		addEdge(src, dest);
 
-		PlannedJoin join = new PlannedJoin(src.getKey(), dest.getKey(), relationName);
+		PlannedJoin join = new PlannedJoin(src.getKey(), dest.getKey(), attribute);
+		src.addJoinInfo(dest.getKey(), join);
+	}
+
+	private void addEdge(TraversableEntity src, TraversableEntity dest, String attribute, JoinType jointype){
+		addEdge(src, dest);
+
+		PlannedJoin join = new PlannedJoin(src.getKey(), dest.getKey(), attribute, jointype);
 		src.addJoinInfo(dest.getKey(), join);
 	}
 

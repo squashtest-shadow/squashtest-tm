@@ -221,7 +221,7 @@ class DomainGraphTest extends Specification {
 		metas.each {src, meta ->
 			def node = tree.getNode(expand(src))
 			meta.each { type, joinName ->
-				checkall = checkall && (node.joinInfos[expand(type)].relationName == joinName)
+				checkall = checkall && (node.joinInfos[expand(type)].attribute == joinName)
 			}
 		}
 
