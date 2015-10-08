@@ -64,6 +64,7 @@ public class AxisColumn implements ColumnPrototypeInstance{
 		this.column = column;
 	}
 
+	@Override
 	public Operation getOperation() {
 		return operation;
 	}
@@ -75,6 +76,11 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	@Override
 	public EntityType getEntityType() {
 		return column.getEntityType();
+	}
+
+	@Override
+	public DataType getDataType() {
+		return getColumn().getDataType();
 	}
 
 }

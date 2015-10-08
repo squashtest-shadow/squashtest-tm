@@ -72,7 +72,9 @@ class MainQueryPlanner {
 
 	private DetailedChartDefinition definition;
 
-	HibernateQuery<?> query;
+	private HibernateQuery<?> query;
+
+	private QuerydslUtils utils = QuerydslUtils.INSTANCE;
 
 	MainQueryPlanner(DetailedChartDefinition definition){
 		this.definition = definition;
@@ -122,7 +124,7 @@ class MainQueryPlanner {
 	@SuppressWarnings("rawtypes")
 	private void addNaturalJoin(PlannedJoin joininfo){
 
-		PathBuilder join = makePath(joininfo.getSrc(), joininfo.getDest(), joininfo.getAttribute());
+		PathBuilder join = utils.makePath(joininfo.getSrc(), joininfo.getDest(), joininfo.getAttribute());
 
 		EntityPathBase dest = joininfo.getDest().getQBean();
 
@@ -142,7 +144,7 @@ class MainQueryPlanner {
 
 		// now make the join
 		// remember that the join is made from the dest to the source in this case
-		PathBuilder destForeignkey = makePath(joininfo.getDest(), joininfo.getSrc(), joininfo.getAttribute());
+		PathBuilder<?> destForeignkey = utils.makePath(joininfo.getDest(), joininfo.getSrc(), joininfo.getAttribute());
 
 		Predicate condition  = Expressions.booleanOperation(Ops.EQ, destForeignkey, joininfo.getSrc().getQBean());
 
@@ -153,12 +155,7 @@ class MainQueryPlanner {
 
 	private void prepareFromClause(PlannedJoin joininfo){
 
-		AliasCollector collector = new AliasCollector();
-		for (JoinExpression join : query.getMetadata().getJoins()){
-			join.getTarget().accept(collector, collector.getAliases());
-		}
-
-		Set<String> allAliases = collector.getAliases();
+		Set<String> allAliases = utils.getJoinedAliases(query);
 
 		String srcAlias = joininfo.getSrc().getQBean().getMetadata().getName();
 		String destAlias = joininfo.getDest().getQBean().getMetadata().getName();
@@ -172,74 +169,7 @@ class MainQueryPlanner {
 		}
 	}
 
-	@SuppressWarnings("rawtypes")
-	private PathBuilder makePath(InternalEntityType src, InternalEntityType dest, String attribute){
 
-		Class<?> srcClass = src.getEntityClass();
-		Class<?> destClass = dest.getEntityClass();
-		String srcAlias = src.getQBean().getMetadata().getName();
-
-		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
-	}
-
-
-
-	private static final class AliasCollector implements Visitor<Void, Set<String>>{
-
-		private Set<String> aliases = new HashSet<>();
-
-
-		@Override
-		public Void visit(Constant<?> expr, Set<String> context) {
-			return null;
-		}
-
-		@Override
-		public Void visit(FactoryExpression<?> expr, Set<String> context) {
-			return null;
-		}
-
-		@Override
-		public Void visit(Operation<?> expr, Set<String> context) {
-			for (Expression<?> subexpr : expr.getArgs()){
-				subexpr.accept(this, context);
-			}
-			return null;
-		}
-
-		@Override
-		public Void visit(ParamExpression<?> expr, Set<String> context) {
-			return null;
-		}
-
-		@Override
-		public Void visit(Path<?> expr, Set<String> context) {
-			PathMetadata metadata = expr.getMetadata();
-			if (metadata.isRoot()){
-				context.add(expr.getMetadata().getName());
-			}
-			else{
-				metadata.getParent().accept(this, context);
-			}
-
-			return null;
-		}
-
-		@Override
-		public Void visit(SubQueryExpression<?> expr, Set<String> context) {
-			return null;
-		}
-
-		@Override
-		public Void visit(TemplateExpression<?> expr, Set<String> context) {
-			return null;
-		}
-
-		Set<String> getAliases(){
-			return aliases;
-		}
-
-	}
 
 
 }

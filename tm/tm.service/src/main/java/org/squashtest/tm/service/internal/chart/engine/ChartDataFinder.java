@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 
+import com.querydsl.jpa.hibernate.HibernateQuery;
+
 
 /**
  * <p>This is the class that will find the data matching the criteria supplied as a {@link ChartDefinition}, using the Querydsl engine.</p>
@@ -267,13 +269,13 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
  * </p>
  * 
  * <p>
- * 	The Scope is treated separately because it is a filter of organizational nature (how the entities are
+ * 	The EffectiveScope is treated separately because it is a filter of organizational nature (how the entities are
  * 	organized and who may access them), whereas the other filters are more related to business attributes of
  * 	those entities.
  * </p>
  * 
  * <p>
- * 	The Scope is computed before the Main Query plan is drawn :
+ * 	The EffectiveScope is computed before the Main Query plan is drawn :
  * 	<ul>
  * 		<li>The exhaustive list depending on the selection designer selection is first determined,</li>
  * 		<li>This list is then filtered by the Acl services</li>
@@ -291,10 +293,24 @@ public class ChartDataFinder {
 
 	Object[][] findData(ChartDefinition definition){
 
-		// ************** step 1 : scope and ACL *****************
+		DetailedChartDefinition enhancedDefinition = new DetailedChartDefinition(definition);
 
+		HibernateQuery detachedQuery;
 
-		// *********** step 2 : define the query plan *************
+		// *********** step 1 : determine scope and ACL **********************
+
+		// TODO : implement
+
+		// *********** step 2 : define the query plan ************************
+
+		MainQueryPlanner mainPlanner = new MainQueryPlanner(enhancedDefinition);
+		detachedQuery = mainPlanner.createMainQuery();
+
+		// *********** step 3 : add the projection and group by clauses ******
+
+		ProjectionPlanner projectionPlanner = new ProjectionPlanner(enhancedDefinition, detachedQuery);
+		projectionPlanner.modifyQuery();
+
 
 
 		return null;

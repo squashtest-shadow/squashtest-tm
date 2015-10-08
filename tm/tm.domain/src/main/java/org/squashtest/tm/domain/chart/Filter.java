@@ -59,6 +59,7 @@ public class Filter implements ColumnPrototypeInstance {
 	@CollectionTable(name = "CHART_FILTER_VALUES", joinColumns = @JoinColumn(name = "FILTER_ID") )
 	private List<String> values;
 
+	@Override
 	public Operation getOperation() {
 		return operation;
 	}
@@ -86,5 +87,10 @@ public class Filter implements ColumnPrototypeInstance {
 	@Override
 	public EntityType getEntityType() {
 		return column.getEntityType();
+	}
+
+	@Override
+	public DataType getDataType() {
+		return getColumn().getDataType();
 	}
 }

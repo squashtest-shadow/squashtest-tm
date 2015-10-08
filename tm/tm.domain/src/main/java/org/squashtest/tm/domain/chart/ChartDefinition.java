@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -86,23 +87,23 @@ public class ChartDefinition {
 
 	@OneToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "CHART_FILTER", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "FILTER_ID") )
-	private List<Filter> filters;
+	private List<Filter> filters = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@OrderColumn(name = "RANK")
-	private List<AxisColumn> axis;
+	private List<AxisColumn> axis = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@OrderColumn(name = "RANK")
-	private List<MeasureColumn> measures;
+	private List<MeasureColumn> measures = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
 	@AttributeOverrides({ @AttributeOverride(name = "type", column = @Column(name = "ENTITY_REFERENCE_TYPE") ),
-			@AttributeOverride(name = "id", column = @Column(name = "ENTITY_REFERENCE_ID") ) })
-	private List<EntityReference> scope;
+		@AttributeOverride(name = "id", column = @Column(name = "ENTITY_REFERENCE_ID") ) })
+	private List<EntityReference> scope = new ArrayList<>();
 
 
 	public long getId() {

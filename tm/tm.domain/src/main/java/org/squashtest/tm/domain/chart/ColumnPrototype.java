@@ -43,7 +43,7 @@ import org.squashtest.tm.domain.EntityType;
  * <p>Represents the concept of "attribute of an entity" :
  * 	<ul>
  * 		<li>it is pretty much like a column in a relational model (the "Column" part)</li>
- * 		<li>it is a referential data that will "instanciated" in multiple ChartDefinition (the "Prototype" part)</li>
+ * 		<li>it is a referential data that will "instanciated" in a {@link ChartDefinition} (the "Prototype" part)</li>
  * 	</ul>
  * </p>
  *

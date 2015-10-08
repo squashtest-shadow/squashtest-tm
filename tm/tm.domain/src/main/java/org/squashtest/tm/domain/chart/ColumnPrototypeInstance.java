@@ -24,6 +24,12 @@ import org.squashtest.tm.domain.EntityType;
 
 public interface ColumnPrototypeInstance {
 
+	ColumnPrototype getColumn();
+
 	EntityType getEntityType();
+
+	DataType getDataType();
+
+	Operation getOperation();
 
 }

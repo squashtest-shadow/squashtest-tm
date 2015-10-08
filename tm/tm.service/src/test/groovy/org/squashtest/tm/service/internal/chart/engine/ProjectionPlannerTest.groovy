@@ -18,26 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.chart;
+package org.squashtest.tm.service.internal.chart.engine
 
-/**
- * This enum type is a yet again list of business entities that one can build charts about.
- * 
- * @author bsiri
- *
- */
-public enum EntityType {
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExecutionCollector;
 
-	// @formatter:off
-	REQUIREMENT,
-	REQUIREMENT_VERSION,
-	TEST_CASE,
-	CAMPAIGN,
-	ITERATION,
-	ITEM_TEST_PLAN,
-	EXECUTION,
-	BUG;
-	// @formatter:on
+import com.querydsl.core.types.dsl.DatePath;
+import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.core.types.dsl.PathBuilder;
+
+import spock.lang.Specification;
+
+class ProjectionPlannerTest extends Specification{
 
 
 }

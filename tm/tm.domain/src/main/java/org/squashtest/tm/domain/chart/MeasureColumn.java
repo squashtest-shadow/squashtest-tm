@@ -64,6 +64,7 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 		this.label = label;
 	}
 
+	@Override
 	public Operation getOperation() {
 		return operation;
 	}
@@ -76,4 +77,11 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	public EntityType getEntityType() {
 		return column.getEntityType();
 	}
+
+	@Override
+	public DataType getDataType() {
+		return getColumn().getDataType();
+	}
+
+
 }

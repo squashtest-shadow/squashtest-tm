@@ -26,9 +26,11 @@ import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 
 
 /**
@@ -53,7 +55,15 @@ class DetailedChartDefinition extends ChartDefinition{
 
 		super();
 
-		// todo : merge main attributes with the ChartDefinition
+		// todo : better merge for main attributes with the ChartDefinition
+		getAxis().addAll(parent.getAxis());
+
+		getFilters().addAll(parent.getFilters());
+
+		getMeasures().addAll(parent.getMeasures());
+
+		getScope().addAll(parent.getScope());
+
 
 		// find the root entity
 		rootEntity = InternalEntityType.fromDomainType(parent.getMeasures().get(0).getEntityType());
@@ -88,6 +98,15 @@ class DetailedChartDefinition extends ChartDefinition{
 
 	protected void setTargetEntities(List<InternalEntityType> targetEntities) {
 		this.targetEntities = targetEntities;
+	}
+
+
+	protected void setMeasures(List<MeasureColumn> measures){
+		getMeasures().addAll(measures);
+	}
+
+	protected void setAxis(List<AxisColumn> axes){
+		getAxis().addAll(axes);
 	}
 
 
