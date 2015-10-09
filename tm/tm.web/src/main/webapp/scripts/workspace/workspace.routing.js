@@ -204,6 +204,7 @@ define([], function(){
 		'template'								: root + '/project-templates?dropdownList',
 		'execution.update-from-tc'              : root + '/execute/{\\d+}/update-from-tc',
 		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
+		'chart.wizard.data'                       : root + '/charts',
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

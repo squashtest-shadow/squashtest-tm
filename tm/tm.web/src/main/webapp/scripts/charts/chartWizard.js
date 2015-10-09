@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,25 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.chart;
 
-public enum Operation {
-	// @formatter:off
-	NONE,
-	GREATER,
-	GREATER_EQUALS,
-	LOWER,
-	LOWER_EQUAL,
-	BETWEEN,
-	EQUALS,
-	LIKE,
-	MIN,
-	MAX,
-	AVG,
-	SUM,
-	COUNT,
-	BY_DAY,
-	BY_MONTH,
-	BY_YEAR;
-	// @formatter:on
-}
+	define([ "jquery", "backbone", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, router, WizardRouter, WizardView, WizardModel) {
+
+
+		
+	$.ajax({
+		url: router.buildURL('chart.wizard.data')	
+	}).done(function(data){
+		
+		var model = new WizardModel(data);
+		
+		var wizardView = new WizardView ({
+			model: model
+		});
+		
+		new WizardRouter({
+			wizardView : wizardView
+		});
+		
+		Backbone.history.start();
+	});
+
+});
+ 

@@ -28,6 +28,7 @@ import static org.squashtest.tm.domain.EntityType.ITERATION;
 import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
 import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION;
 
+import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,9 @@ import java.util.Set;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.Operation;
 
 public class JsonChartWizardData {
 
@@ -42,14 +46,35 @@ public class JsonChartWizardData {
 
 	private EnumSet<ChartType> chartTypes = EnumSet.allOf(ChartType.class);
 
+	private Map<ColumnRole, EnumSet<Operation>> columRoles = new EnumMap<ColumnRole, EnumSet<Operation>>(
+			ColumnRole.class);
+
+	private Map<DataType, EnumSet<Operation>> dataTypes = new EnumMap<DataType, EnumSet<Operation>>(DataType.class);
+
+
+
+
 	private EnumSet<EntityType> entityTypes = EnumSet.of(CAMPAIGN, EXECUTION, ISSUE, ITEM_TEST_PLAN, ITERATION,
 			REQUIREMENT, REQUIREMENT, REQUIREMENT_VERSION);
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes) {
 
 		this.columnPrototypes = columnPrototypes;
+		populate();
 
 	}
+
+	private void populate() {
+
+		for (ColumnRole cr : ColumnRole.values()) {
+			columRoles.put(cr, cr.getOperations());
+		}
+
+		for (DataType dt : DataType.values()) {
+			dataTypes.put(dt, dt.getOperations());
+		}
+	}
+
 
 	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
 		return columnPrototypes;
@@ -61,6 +86,14 @@ public class JsonChartWizardData {
 
 	public EnumSet<EntityType> getEntityTypes() {
 		return entityTypes;
+	}
+
+	public Map<ColumnRole, EnumSet<Operation>> getColumRoles() {
+		return columRoles;
+	}
+
+	public Map<DataType, EnumSet<Operation>> getDataTypes() {
+		return dataTypes;
 	}
 
 }

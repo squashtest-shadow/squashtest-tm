@@ -24,7 +24,7 @@
  * {{checked}}
  * {{oddity}}
  */
-define(["handlebars"], function(Handlebars) {
+define(["handlebars", "underscore"], function(Handlebars, _) {
 	"use strict";
 
 	function propertyHelper(propName) {
@@ -48,6 +48,35 @@ define(["handlebars"], function(Handlebars) {
 	 * Substitutes {{oddity}} with 'even' or 'odd' in 'for' loops
 	 */
 	Handlebars.registerHelper("oddity", function(index) { return (index % 2 === 0) ? "even" : "odd"; });
+	
+	
+	Handlebars.registerHelper("equal", function(lvalue, rvalue, options) {
+	    if (arguments.length < 3)
+	        throw new Error("Handlebars Helper equal needs 2 parameters");
+	    if( lvalue!=rvalue ) {
+	        return options.inverse(this);
+	    } else {
+	        return options.fn(this);
+	    }
+	});
+	
+	Handlebars.registerHelper("contains", function(collection, item){
 
+		for( var prop in collection ){
+			if( collection.hasOwnProperty( prop ) ){
+				if( collection[prop] == item ) {
+					return true;
+					}
+			}
+		}
+		return false;
+	});
+	
+	Handlebars.registerHelper("intersect", function(col1, col2){
+		return _.intersection(col1, col2);	
+	});
+	
+	
+	
 	return Handlebars;
 });

@@ -42,9 +42,13 @@ public class ChartController {
 	@ResponseBody
 	public JsonChartWizardData getWizardData() {
 
-		JsonChartWizardData data = new JsonChartWizardData(chartService.getColumnPrototypes());
-		return data;
+		return new JsonChartWizardData(chartService.getColumnPrototypes());
 
+	}
+
+	@RequestMapping(value = "/wizard", method = RequestMethod.GET)
+	public String getWizard() {
+		return "charts/wizard/wizard.html";
 	}
 
 }

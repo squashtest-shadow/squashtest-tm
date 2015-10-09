@@ -140,7 +140,7 @@ requirejs.config({
 				"jquery" : "lib/jquery/jquery-2.1.1.min",
 //				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
-				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
+				"handlebars" : "lib/handlebars/handlebars-v4.0.2",
 //				"underscore" : "lib/underscore/underscore-1.7.0",
 				"underscore" : "lib/underscore/underscore-1.7.0-min",
 //				"backbone" : "lib/backbone/backbone",

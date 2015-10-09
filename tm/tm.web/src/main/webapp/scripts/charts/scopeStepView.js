@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,25 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.chart;
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
+	function($, backbone, _, Handlebars, AbstractStepView) {
+	"use strict";
 
-public enum Operation {
-	// @formatter:off
-	NONE,
-	GREATER,
-	GREATER_EQUALS,
-	LOWER,
-	LOWER_EQUAL,
-	BETWEEN,
-	EQUALS,
-	LIKE,
-	MIN,
-	MAX,
-	AVG,
-	SUM,
-	COUNT,
-	BY_DAY,
-	BY_MONTH,
-	BY_YEAR;
-	// @formatter:on
-}
+	var scopeStepView = AbstractStepView.extend({
+		
+		initialize : function(data, wizrouter) {
+			this.tmpl = "#scope-step-tpl";
+			this.model = data;
+			data.nextStep = "filter";
+			data.prevStep = "entity";
+			this._initialize(data, wizrouter);
+
+		},
+		
+		updateModel : function() {
+			this.model.scope = "my scope";
+		}
+	});
+
+	return scopeStepView;
+
+});
