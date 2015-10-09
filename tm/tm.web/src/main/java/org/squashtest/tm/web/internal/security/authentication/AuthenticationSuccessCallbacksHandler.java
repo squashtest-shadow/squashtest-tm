@@ -20,89 +20,72 @@
  */
 package org.squashtest.tm.web.internal.security.authentication;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.squashtest.tm.annotation.SecurityComponent;
 import org.squashtest.tm.web.security.authentication.AuthenticationSuccessCallback;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
+ *
  * <p>
  * 	  That bean is plugged as a AuthenticationSuccessHandler to the web authentication filter and performs additional
  *    operations once the user successfully logged in.
  * </p>
- * <p>
- * 	  Also, it may be used as a osgi plugin registration listener 
- * </p>
- * 
+ *
  */
-
+@SecurityComponent
 public class AuthenticationSuccessCallbacksHandler extends
-		SavedRequestAwareAuthenticationSuccessHandler {
+	SavedRequestAwareAuthenticationSuccessHandler {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationSuccessCallbacksHandler.class);
-	
+
 	private String requestParamsPasswordKey = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_PASSWORD_KEY;
 	private String requestParamsUsernameKey = UsernamePasswordAuthenticationFilter.SPRING_SECURITY_FORM_USERNAME_KEY;
 
+	@Inject
 	private List<AuthenticationSuccessCallback> callbacks = new ArrayList<AuthenticationSuccessCallback>();
 
-
-	public List<AuthenticationSuccessCallback> getCallbacks() {
-		return callbacks;
-	}
-
-	public void setCallbacks(List<AuthenticationSuccessCallback> callbacks) {
-		this.callbacks = callbacks;
-	}
-
-	
-	public void registerCallback(AuthenticationSuccessCallback callback, Map serviceProperties){
-		this.callbacks.add(callback);
-	}
-	
-	public void unregisterProvider(AuthenticationSuccessCallback callback, Map serviceProperties) {
-		this.callbacks.remove(callback);		
-	}
-	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-            Authentication authentication) throws ServletException, IOException {
-		
-		
+	                                    Authentication authentication) throws ServletException, IOException {
+
+
 		String user = findLogin(request);
 		String password = findPassword(request);
 		HttpSession session = request.getSession();
-				
-		for (AuthenticationSuccessCallback action : callbacks){
-			try{
+
+		for (AuthenticationSuccessCallback action : callbacks) {
+			try {
 				action.onSuccess(user, password, session);
-			}catch(Exception ex){
+			} catch (Exception ex) {
 				LOGGER.info("Authentication success callbacks : callback class '"
-							+action.getClass().getName()+"' raised an exception : ", ex 
+						+ action.getClass().getName() + "' raised an exception : ", ex
 				);
 			}
 		}
-		
+
 		super.onAuthenticationSuccess(request, response, authentication);
 	}
-	
-	
-	
-	
+
+	@PostConstruct
+	protected void onInitialize() {
+		LOGGER.debug("AuthenticationSuccessCallbacksHandler was initialized with {} callbacks : {}", callbacks.size(), callbacks);
+	}
+
 	public void setRequestParamsPasswordKey(String requestParamsPasswordKey) {
 		this.requestParamsPasswordKey = requestParamsPasswordKey;
 	}
@@ -112,14 +95,13 @@ public class AuthenticationSuccessCallbacksHandler extends
 	}
 
 
-	private String findLogin(HttpServletRequest request){
+	private String findLogin(HttpServletRequest request) {
 		return request.getParameter(requestParamsUsernameKey);
 	}
-	
-	private String findPassword(HttpServletRequest request){
+
+	private String findPassword(HttpServletRequest request) {
 		return request.getParameter(requestParamsPasswordKey);
 	}
 
 
-	
 }

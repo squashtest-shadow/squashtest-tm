@@ -235,8 +235,19 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-hateoas</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-jdbc</artifactId>
     </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
@@ -276,11 +287,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.tuckey</groupId>
-      <artifactId>urlrewritefilter</artifactId>
-    </dependency>
-
-    <dependency>
       <groupId>javax.validation</groupId>
       <artifactId>validation-api</artifactId>
     </dependency>
@@ -288,6 +294,11 @@
     <dependency>
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
     </dependency>
 
     <dependency>
@@ -329,6 +340,19 @@
           <artifactId>wro4j-maven-plugin</artifactId>
           <version>1.7.7</version>
         </plugin>
+      <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+      <version>${spring-boot-maven-plugin.version}</version>
+            <configuration>
+              <excludeArtifactIds>hibernate-search-engine,hibernate-search-orm</excludeArtifactIds>
+            </configuration>
+      <!--<configuration>-->
+        <!--<jvmArguments>-->
+          <!--&#45;&#45;Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug-->
+        <!--</jvmArguments>-->
+      <!--</configuration>-->
+      </plugin>
       </plugins>
     </pluginManagement>
 

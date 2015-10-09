@@ -282,6 +282,13 @@
               <groupId>net.sf.jasperreports</groupId>
               <artifactId>jasperreports</artifactId>
               <version>${jasperreports.version}</version>
+              <exclusions>
+                <exclusion>
+                  <!-- without this, old 1.3 version may be pulled outta nowhere and warious problems occur -->
+                  <groupId>xml-apis</groupId>
+                  <artifactId>xml-apis</artifactId>
+                </exclusion>
+              </exclusions>
             </dependency>
             <dependency>
               <!-- without this, old 1.3 version may be pulled outta nowhere and reports wont compile -->
@@ -476,37 +483,37 @@
   </scm>
 
   <repositories>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>squash-release-repo</id>
-      <url>http://repo.squashtest.org/maven2/releases</url>
-    </repository>
-    <repository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>squash-snapshot-repo</id>
-      <url>http://repo.squashtest.org/maven2/snapshots</url>
-    </repository>
+    <!--<repository>-->
+    <!--<snapshots>-->
+    <!--<enabled>false</enabled>-->
+    <!--</snapshots>-->
+    <!--<id>squash-release-repo</id>-->
+    <!--<url>http://repo.squashtest.org/maven2/releases</url>-->
+    <!--</repository>-->
+    <!--<repository>-->
+    <!--<releases>-->
+    <!--<enabled>false</enabled>-->
+    <!--</releases>-->
+    <!--<snapshots>-->
+    <!--<enabled>true</enabled>-->
+    <!--</snapshots>-->
+    <!--<id>squash-snapshot-repo</id>-->
+    <!--<url>http://repo.squashtest.org/maven2/snapshots</url>-->
+    <!--</repository>-->
   </repositories>
 
   <pluginRepositories>
-    <pluginRepository>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <id>squashtest-snapshot</id>
-      <name>SquashTest snapshot repository</name>
-      <url>http://repo.squashtest.org/maven2/snapshots</url>
-    </pluginRepository>
+    <!--<pluginRepository>-->
+    <!--<releases>-->
+    <!--<enabled>false</enabled>-->
+    <!--</releases>-->
+    <!--<snapshots>-->
+    <!--<enabled>true</enabled>-->
+    <!--</snapshots>-->
+    <!--<id>squashtest-snapshot</id>-->
+    <!--<name>SquashTest snapshot repository</name>-->
+    <!--<url>http://repo.squashtest.org/maven2/snapshots</url>-->
+    <!--</pluginRepository>-->
   </pluginRepositories>
 
   <distributionManagement>

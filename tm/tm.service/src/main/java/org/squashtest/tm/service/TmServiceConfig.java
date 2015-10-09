@@ -112,6 +112,10 @@ public class TmServiceConfig {
 	@Inject
 	private RequirementAuditor statusBasedRequirementAuditor;
 
+	public TmServiceConfig() {
+		super();
+	}
+
 	@Bean
 	public static ConfigFileApplicationListener configFileApplicationListener() {
 		final String[] propertiesFiles = {
@@ -335,12 +339,8 @@ public class TmServiceConfig {
 		return paster;
 	}
 
-	/**
-	 * @deprecated TODO enlever quand plus d'OSGI
-	 */
-//	@Deprecated
 //	@Bean
-//	public ValidatorFactory validatorFactory() {
+//	public static ValidatorFactory validatorFactory() {
 //		return new LocalValidatorFactoryBean();
 //	}
 }

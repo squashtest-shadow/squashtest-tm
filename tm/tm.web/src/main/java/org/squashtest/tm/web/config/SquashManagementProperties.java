@@ -18,24 +18,42 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.security.authentication;
+package org.squashtest.tm.web.config;
 
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.stereotype.Component;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Component("authenticationProvider.auxiliary.noop")
-public class NoOpAuthenticationProvider implements AuthenticationProvider {
+/**
+ * @author Gregory Fouquet
+ * @since 1.13.0
+ */
+@ConfigurationProperties(prefix = "squash.management")
+public class SquashManagementProperties {
+	private int port = 9443;
+	private String channel = "https";
 
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		return null;
+	public int getPort() {
+		return port;
 	}
 
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return false;
+	public void setPort(int port) {
+		this.port = port;
 	}
 
+	/**
+	 * Do not use this getter to configure spring security. Use SquashManagementProperties#getRequiredChannel instead.
+	 *
+	 * @return
+	 */
+	public String getChannel() {
+		return channel;
+	}
+
+	public void setChannel(String channel) {
+		this.channel = channel;
+	}
+
+	public String getRequiredChannel() {
+		return StringUtils.equals(channel, "http") ? "REQUIRES_INSECURE_CHANNEL" : "REQUIRES_SECURE_CHANNEL";
+	}
 }

@@ -80,6 +80,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	private PermissionFactory permissionFactory;
 	@Inject
 	private SquashUserDetailsManager userDetailsManager;
+
 	@Inject @Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy;
 	@Inject

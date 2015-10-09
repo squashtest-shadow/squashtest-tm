@@ -27,6 +27,7 @@ import java.util.Set;
 
 import javax.servlet.ServletContext;
 
+import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashTogglePanelAttrProcessor;
@@ -44,6 +45,7 @@ import org.thymeleaf.processor.IProcessor;
  * @author Gregory Fouquet
  * 
  */
+@WebComponent("thymeleaf.dialect.squash")
 public class SquashDialect extends AbstractDialect implements IExpressionEnhancingDialect {
 
 	/**

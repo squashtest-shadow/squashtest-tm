@@ -30,6 +30,7 @@
 	<!-- DelegatingFilterProxy will look up its delegate *before* MVC context 
 		is instanciated, so we need this context -->
 	<!-- Exposes the BT Context to the application -->
+	<!-- NOSGI done -->
 	<bean id="bugTrackerContextPersister"
 		class="org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter">
 		<property name="contextHolder"

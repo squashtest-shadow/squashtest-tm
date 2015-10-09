@@ -35,6 +35,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /*
@@ -47,11 +51,12 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
  * 
  */
 public class HtmlSanitizationFilter implements Filter {
+	private static final Logger LOGGER = LoggerFactory.getLogger(HtmlSanitizationFilter.class);
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		// nothing special
-
+		LOGGER.debug("HtmlSanitizationFilter was initialized");
 	}
 
 	@Override

@@ -25,6 +25,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/jee/web-app_2_5.xsd"
 	version="2.5">
 	<!-- ====== SPRING FRONT CONTROLLER ====== -->
+	<!-- NOSGI done -->
 	<servlet>
 		<!-- CoC will lookup ${servlet-name}-servlet.xml for MVC conf -->
 		<servlet-name>squash-tm</servlet-name>
@@ -44,6 +45,7 @@
 		</description>
 	</servlet>
 
+	<!-- NOSGI done -->
 	<servlet-mapping>
 		<servlet-name>squash-tm</servlet-name>
 		<url-pattern>/app/*</url-pattern>
@@ -51,6 +53,7 @@
 	<!-- ====== /SPRING FRONT CONTROLLER ====== -->
 
 	<!-- ========================= encoding set to utf-8 =========================== -->
+	<!-- NOSGI autoconf'd -->
 	<filter>
 		<filter-name>encoding-filter</filter-name>
 		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
@@ -72,6 +75,7 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	<!-- ====== SPRING SECURITY ====== -->
+	<!-- NOSGI autoconf'd -->
 	<filter>
 		<filter-name>springSecurityFilterChain</filter-name>
 		<filter-class>
@@ -90,6 +94,7 @@
 	<!-- THIS FILTER BREAKS THE FILTER CHAIN ! EITHER PUT IT LAST OR ADD -->
 	<!-- A DISPATCHER DIRECTIVE TO THE OTHER FILTERS -->
 	<!-- For config, look at WEB-INF/urlrewrite.xml -->
+	<!-- NOSGI useless -->
 	<filter>
 		<filter-name>UrlRewriteFilter</filter-name>
 		<filter-class>
@@ -101,6 +106,7 @@
 		</init-param>
 	</filter>
 
+	<!-- NOSGI useless -->
 	<filter-mapping>
 		<filter-name>UrlRewriteFilter</filter-name>
 		<url-pattern>/*</url-pattern>
@@ -108,11 +114,13 @@
 	<!-- ====== /URL REWRITE ====== -->
 
 	<!-- ====== BUG TRACKER CONTEXT PERSISTER ====== -->
+	<!-- NOSGI done -->
 	<filter>
 		<filter-name>bugTrackerContextPersister</filter-name>
 		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
 	</filter>
 
+	<!-- NOSGI done -->
 	<filter-mapping>
 		<filter-name>bugTrackerContextPersister</filter-name>
 		<servlet-name>squash-tm</servlet-name>
@@ -121,6 +129,7 @@
 	<!-- ====== /BUG TRACKER CONTEXT PERSISTER ====== -->
 
 	<!-- ====== USER CONCURRENT REQUEST QUEUE ====== -->
+	<!-- NOSGI useless -->
 	<filter>
 		<filter-name>userConcurrentRequestLocker</filter-name>
 		<filter-class>org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter</filter-class>
@@ -130,6 +139,7 @@
 		</init-param>
 	</filter>
 
+	<!-- NOSGI useless -->
 	<filter-mapping>
 		<filter-name>userConcurrentRequestLocker</filter-name>
 		<servlet-name>squash-tm</servlet-name>
@@ -137,23 +147,27 @@
 	</filter-mapping>
 	<!-- ====== /USER CONCURRENT REQUEST QUEUE ====== -->
 
+	<!-- NOSGI done -->
 	<filter>
 		<filter-name>AjaxEmptyResponseFilter</filter-name>
 		<filter-class>org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter</filter-class>
 
 	</filter>
 
+	<!-- NOSGI done -->
 	<filter-mapping>
 		<filter-name>AjaxEmptyResponseFilter</filter-name>
 		<servlet-name>squash-tm</servlet-name>
 		<dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
+	<!-- NOSGI done -->
 	<filter>
 		<filter-name>httpPutFormContentFilter</filter-name>
 		<filter-class>org.springframework.web.filter.HttpPutFormContentFilter</filter-class>
 	</filter>
 
+	<!-- NOSGI done -->
 	<filter-mapping>
 		<filter-name>httpPutFormContentFilter</filter-name>
 		<servlet-name>squash-tm</servlet-name>
@@ -162,6 +176,7 @@
 
 
 	<!-- ====== SPRING BOOTSTRAPPER ====== -->
+	<!-- NOSGI useless -->
 	<context-param>
 		<param-name>contextClass</param-name>
 		<param-value>
@@ -173,6 +188,7 @@
 		</description>
 	</context-param>
 
+	<!-- NOSGI useless -->
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>/WEB-INF/applicationContext-*.xml</param-value>
@@ -184,6 +200,7 @@
 	</context-param>
 
 
+	<!-- NOSGI useless -->
 	<listener>
 		<listener-class>
 			org.springframework.web.context.ContextLoaderListener
@@ -191,6 +208,8 @@
 		<description>Spring application context bootstrapper</description>
 	</listener>
 
+
+	<!-- NOSGI useless -->
 	<listener>
 		<listener-class>
 			org.squashtest.tm.web.internal.listener.DelegatingServletContextListenerMulticaster
@@ -198,6 +217,7 @@
 	</listener>
 	<!-- ====== /SPRING BOOTSTRAPPER ====== -->
 
+	<!-- NOSGI done -->
 	<listener>
 		<listener-class>
 			org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger
@@ -232,6 +252,7 @@
 			are DEV or RELEASE -->
 	</context-param>
 	<!-- ================ Listener ====================== -->
+	<!-- NOSGI done -->
 	<listener>
 		<listener-class>org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener</listener-class>
 	</listener>

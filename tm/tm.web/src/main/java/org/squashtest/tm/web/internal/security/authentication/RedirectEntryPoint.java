@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.stereotype.Component;
 
 /***
  * This class is used to commence a redirect to Login Form
@@ -35,7 +36,11 @@ import org.springframework.security.web.authentication.LoginUrlAuthenticationEnt
  * @author xpetitrenaud
  *
  */
+@Component
 public class RedirectEntryPoint extends LoginUrlAuthenticationEntryPoint {
+	public RedirectEntryPoint() {
+		super("/login");
+	}
 
 	/***
 	 * This method detects if there's an ajax request and then send the appropriate response

@@ -18,24 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.security.authentication;
+package org.squashtest.tm.annotation;
 
-import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Component;
 
-@Component("authenticationProvider.auxiliary.noop")
-public class NoOpAuthenticationProvider implements AuthenticationProvider {
+import java.lang.annotation.*;
 
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		return null;
-	}
+/**
+ * Specialization of @Component which should be used to instanciate spring-security related beans.
+ * If offers nothing more than a cleaner separation of concerns when looking at a component / spring bean
+ *
+ * @author Gregory Fouquet
+ * @since 1.13.0
+ */
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Component
+public @interface SecurityComponent {
 
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return false;
-	}
+	/**
+	 * The value may indicate a suggestion for a logical component name,
+	 * to be turned into a Spring bean in case of an autodetected component.
+	 *
+	 * @return the suggested component name, if any
+	 */
+	String value() default "";
 
 }

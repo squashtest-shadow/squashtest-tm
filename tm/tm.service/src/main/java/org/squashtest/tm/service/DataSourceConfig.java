@@ -33,7 +33,7 @@ import javax.sql.DataSource;
  * @author Gregory Fouquet
  * @since 1.13.0
  */
-@Configuration
+//@Configuration
 public class DataSourceConfig {
 	@Value("${datasource.db.driverClassName}")
 	private String driverClassName;

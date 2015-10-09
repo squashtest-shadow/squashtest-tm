@@ -21,16 +21,61 @@
 package org.squashtest.tm.web.config;
 
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.filter.HttpPutFormContentFilter;
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
+import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
+import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
+import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
+
+import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import java.util.Collection;
 
 /**
  * This is required to be able to deploy Squash TM in a servlet container (as opposed to using the embedded container).
- *
- * It's not expected to contain anything.
+ * <p/>
+ * It replaces web.xml
  *
  * @author Gregory Fouquet
  * @since 1.13.0
  */
 @Configuration
 public class SquashServletInitializer extends SpringBootServletInitializer {
+	@Inject
+	private BugTrackerContextHolder bugTrackerContextHolder;
+
+	@Bean
+	public BugTrackerContextPersistenceFilter bugTrackerContextPersister() {
+		BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
+		filter.setContextHolder(bugTrackerContextHolder);
+		filter.setExcludePatterns("/isSquashAlive");
+
+		return filter;
+	}
+
+	@Bean
+	public AjaxEmptyResponseFilter ajaxEmptyResponseFilter() {
+		return new AjaxEmptyResponseFilter();
+	}
+
+	@Bean
+	public HttpPutFormContentFilter httpPutFormContentFilter() {
+		return new HttpPutFormContentFilter();
+	}
+
+	@Bean
+	public HttpSessionLifecycleLogger httpSessionLifecycleLogger() {
+		return new HttpSessionLifecycleLogger();
+	}
+
+	@Bean
+	public OpenedEntitiesLifecycleListener openedEntitiesLifecycleListener() {
+		return new OpenedEntitiesLifecycleListener();
+	}
+
 }

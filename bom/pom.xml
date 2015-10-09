@@ -262,6 +262,12 @@
         <groupId>org.unitils</groupId>
         <artifactId>unitils-core</artifactId>
         <version>${unitils.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
@@ -280,13 +286,6 @@
         <groupId>org.unitils</groupId>
         <artifactId>unitils-spring</artifactId>
         <version>${unitils.version}</version>
-      </dependency>
-
-      <dependency>
-        <!-- TODO nosgi i dont think it's required anymore -->
-        <groupId>org.tuckey</groupId>
-        <artifactId>urlrewritefilter</artifactId>
-        <version>${urlrewritefilter.version}</version>
       </dependency>
 
       <dependency>
