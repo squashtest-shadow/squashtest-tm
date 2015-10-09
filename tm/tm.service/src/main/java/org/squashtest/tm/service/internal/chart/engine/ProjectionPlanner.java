@@ -102,8 +102,8 @@ class ProjectionPlanner {
 
 			Expression columnExpr =  utils.makePath(col.getColumn());
 
-			if (col.getOperation() != Operation.NONE){
-				columnExpr = utils.addOperation(datatype, operation, columnExpr);
+			if (operation != Operation.NONE){
+				columnExpr = utils.applyOperation(datatype, operation, columnExpr);
 			}
 
 			toPopulate.add(columnExpr);

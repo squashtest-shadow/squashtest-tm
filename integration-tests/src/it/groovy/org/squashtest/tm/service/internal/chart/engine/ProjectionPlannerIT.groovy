@@ -172,7 +172,8 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		conf << [
 			configureManyQuery(1),
-			configureManyQuery(2)
+			configureManyQuery(2),
+			configureManyQuery(3)
 		]
 
 
@@ -215,6 +216,17 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 				expected = [[-11l, -1l, 3], [-12l, -1l, 1], [-12l, null, 1]]
 				break;
+
+			case 3 : // case 3 -> select count(req) group by year of creation
+
+				query = from(r)
+
+				definition = new DetailedChartDefinition(
+						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT, "id")],
+						axis : [mkAxe(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn")]
+						)
+
+				expected = [[2015, 2], [2016, 1]]
 
 		}
 

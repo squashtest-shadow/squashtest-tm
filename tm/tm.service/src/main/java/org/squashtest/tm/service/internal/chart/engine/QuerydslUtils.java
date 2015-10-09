@@ -20,12 +20,17 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -34,19 +39,20 @@ import com.querydsl.core.JoinExpression;
 import com.querydsl.core.types.Constant;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.FactoryExpression;
+import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Ops.AggOps;
-import com.querydsl.core.types.Ops.StringOps;
-import com.querydsl.core.types.Operator;
+import com.querydsl.core.types.Ops.DateTimeOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
-import com.querydsl.core.types.Ops.DateTimeOps;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.SimpleOperation;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 class QuerydslUtils {
@@ -88,7 +94,7 @@ class QuerydslUtils {
 	}
 
 
-	Expression makePath(ColumnPrototype prototype){
+	Expression<?> makePath(ColumnPrototype prototype){
 
 		PathBuilder<?> result;
 
@@ -104,7 +110,8 @@ class QuerydslUtils {
 	}
 
 
-	Expression<?> addOperation(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
+
+	SimpleOperation<?> applyOperation(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
 
 		Operator operator = getOperator(operation);
 
@@ -114,7 +121,58 @@ class QuerydslUtils {
 
 	}
 
+	BooleanExpression createPredicate(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
 
+		Operator operator = getOperator(operation);
+
+		Expression[] expressions = prepend(baseExp, operands);
+
+		return Expressions.predicate(operator, expressions);
+	}
+
+
+	BooleanExpression createPredicate(Filter filter){
+		DataType datatype = filter.getDataType();
+		Operation operation = filter.getOperation();
+
+		// make the expression on which the filter is applied
+		Expression<?> attrExpr = makePath(filter.getColumn());
+
+		// convert the operands
+		List<Expression<?>> valExpr = makeOperands(datatype, filter.getValues());
+		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
+
+		return createPredicate(datatype, operation, attrExpr, operands);
+	}
+
+
+	List<Expression<?>> makeOperands(DataType type, List<String> values ){
+		try{
+			List<Expression<?>> expressions = new ArrayList<>(values.size());
+
+			for (String val : values){
+				Object operand;
+				switch(type){
+				case STRING :
+					operand = val;
+					break;
+				case NUMERIC :
+					operand = Long.valueOf(val);
+					break;
+				case DATE :
+					operand = DateUtils.parseIso8601Date(val);
+					break;
+				default : throw new IllegalArgumentException("type '"+type+"' not yet supported");
+				}
+
+				expressions.add(Expressions.constant(operand));
+			}
+
+			return expressions;
+		}catch(ParseException ex){
+			throw new RuntimeException(ex);
+		}
+	}
 
 	// ******************************* private stuffs *********************
 
@@ -137,6 +195,7 @@ class QuerydslUtils {
 		Operator operator;
 
 		switch(operation){
+		case EQUALS : operator = Ops.EQ; break;
 		case LIKE : operator = Ops.LIKE; break;
 		case BY_YEAR : operator = DateTimeOps.YEAR; break;
 		case BY_MONTH : operator = DateTimeOps.YEAR_MONTH; break;

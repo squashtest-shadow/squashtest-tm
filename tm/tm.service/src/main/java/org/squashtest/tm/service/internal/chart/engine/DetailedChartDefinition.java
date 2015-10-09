@@ -109,6 +109,10 @@ class DetailedChartDefinition extends ChartDefinition{
 		getAxis().addAll(axes);
 	}
 
+	protected void setFilters(List<Filter> filters){
+		getFilters().addAll(filters);
+	}
+
 
 
 }
