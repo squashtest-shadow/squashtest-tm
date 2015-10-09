@@ -105,16 +105,13 @@ class QuerydslUtils {
 
 
 	Expression<?> addOperation(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
-		Expression<?> res;
 
-		switch(datatype){
-		case DATE : res = addDateOperation(operation, baseExp, operands); break;
-		case STRING : res = addStringOperation(operation, baseExp, operands); break;
-		case NUMERIC : res = addNumericOperation(operation, baseExp, operands); break;
-		default : throw new IllegalArgumentException("cannot yet apply operations on columns of type '"+datatype+"'");
-		}
+		Operator operator = getOperator(operation);
 
-		return res;
+		Expression[] expressions = prepend(baseExp, operands);
+
+		return Expressions.operation(operator.getType(), operator, expressions);
+
 	}
 
 
@@ -132,31 +129,6 @@ class QuerydslUtils {
 
 		return makePath(clazz, alias, attributeType, attribute);
 
-	}
-
-
-	private Expression<?> addDateOperation(Operation operation, Expression<?> dateCol, Expression<?>... operands){
-		Operator operator = getOperator(operation);
-
-		Expression[] expressions = prepend(dateCol, operands);
-
-		return Expressions.dateOperation(Date.class, operator, expressions);
-	}
-
-	private Expression<?> addNumericOperation(Operation operation, Expression<?> numCol, Expression<?>... operands){
-		Operator operator = getOperator(operation);
-
-		Expression[] expressions = prepend(numCol, operands);
-
-		return Expressions.numberOperation(Long.class, operator, expressions);
-	}
-
-	private Expression<?> addStringOperation(Operation operation, Expression<?> strCol, Expression<?>... operands){
-		Operator operator = getOperator(operation);
-
-		Expression[] expressions = prepend(strCol, operands);
-
-		return Expressions.stringOperation(operator, expressions);
 	}
 
 

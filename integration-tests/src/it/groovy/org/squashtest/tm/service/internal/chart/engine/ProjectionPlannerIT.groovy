@@ -20,27 +20,35 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
+import static org.squashtest.tm.domain.EntityType.*
+import static org.squashtest.tm.domain.chart.AttributeType.*
+import static org.squashtest.tm.domain.chart.DataType.*
+import static org.squashtest.tm.domain.chart.Operation.*
+
 import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.campaign.QCampaign
+import org.squashtest.tm.domain.campaign.QIteration
+import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
 import org.squashtest.tm.domain.chart.AttributeType
-import static org.squashtest.tm.domain.EntityType.*;
-import static org.squashtest.tm.domain.chart.AttributeType.*;
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.DataType;
-import static org.squashtest.tm.domain.chart.DataType.*;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
-import static org.squashtest.tm.domain.chart.Operation.*;
-import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.chart.AxisColumn
+import org.squashtest.tm.domain.chart.ColumnPrototype
+import org.squashtest.tm.domain.chart.DataType
+import org.squashtest.tm.domain.chart.MeasureColumn
+import org.squashtest.tm.domain.chart.Operation
+import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.requirement.QRequirement
+import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.QTestCase
+import org.squashtest.tm.domain.bugtracker.QIssue
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet
 
+import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
 import com.querydsl.jpa.hibernate.HibernateQuery
@@ -49,6 +57,17 @@ import com.querydsl.jpa.hibernate.HibernateQuery
 @UnitilsSupport
 @Transactional
 class ProjectionPlannerIT extends DbunitDaoSpecification{
+
+	static QTestCase tc = QTestCase.testCase
+	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
+	static QRequirementVersion v = QRequirementVersion.requirementVersion
+	static QRequirement r = QRequirement.requirement
+	static QIterationTestPlanItem itp = QIterationTestPlanItem.iterationTestPlanItem
+	static QIteration ite = QIteration.iteration
+	static QCampaign cp = QCampaign.campaign
+	static QExecution exec = QExecution.execution
+	static QIssue iss = QIssue.issue
+
 
 	// fix the requirementVersion - requirement relation
 	def setup(){
@@ -81,13 +100,9 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartDefinition definition =
-				new DetailedChartDefinition(measures : [
-					mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")
-				],
-				axis : [
-					mkAxe(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id")
-				]
+		DetailedChartDefinition definition = new DetailedChartDefinition(
+				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")],
+				axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id")]
 				)
 
 		when :
@@ -98,11 +113,115 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		def res = concrete.fetch()
 
 		then :
-		def formatedRes = res.collect{ return [ it.get(0, Object.class), it.get(1, Object.class) ] } as Set
+		def formatedRes = res.collect{it.a } as Set
 		formatedRes == [ [-1l, 3] , [-2l, 2]] as Set
 
 	}
 
+	@DataSet("MainQueryPlanner.dataset.xml")
+	def "should count executions by yearmonth"(){
+
+		given : "query"
+		HibernateQuery query = new HibernateQuery()
+		QExecution exec = QExecution.execution
+
+		query.from(exec)
+
+		and : "definition"
+
+		DetailedChartDefinition definition =
+				new DetailedChartDefinition(
+				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
+				axis : [mkAxe(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn")]
+				)
+
+		when :
+		ProjectionPlanner planner = new ProjectionPlanner(definition, query)
+		planner.modifyQuery()
+
+		HibernateQuery concrete = query.clone(getSession())
+		def res = concrete.fetch()
+
+		then :
+		def formatedRes = res.collect{ it.a } as Set
+		formatedRes == [ [201510, 3] , [201511, 2]] as Set
+
+
+	}
+
+	@Unroll
+	@DataSet("MainQueryPlanner.dataset.xml")
+	def "should perform many queries"(){
+
+		expect :
+		def q = conf.query
+		def definition = conf.definition
+		def expected = conf.expected
+
+		ProjectionPlanner planner = new ProjectionPlanner(definition, q)
+		planner.modifyQuery()
+
+		HibernateQuery query = q.clone(getSession())
+
+		def res = query.fetch()
+		def refined = res.collect{ it.a }
+
+		refined as Set == expected as Set
+
+		where :
+
+		conf << [
+			configureManyQuery(1),
+			configureManyQuery(2)
+		]
+
+
+
+	}
+
+
+	def ManyQueryPojo configureManyQuery(dsNum){
+
+		def query
+		def definition
+		def expected
+
+		switch (dsNum){
+			case 1 : // case 1 -> select count(tc) and count(rv) by requirement id
+
+				query = from(tc)
+				.join(tc.requirementVersionCoverages, cov)
+				.join(cov.verifiedRequirementVersion, v)
+				.join(v.requirement, r);
+
+				definition = new DetailedChartDefinition(
+						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, TEST_CASE, "id"),
+							mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")
+						],
+						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, REQUIREMENT, "id")]
+						)
+
+				expected = [[-1l, 2, 2],  [-2l, 1, 1], [-3l, 2, 2]]
+				break;
+
+			case 2 : // case 2 -> select count(exec) group by it id and referenced tc id
+				query = from(exec).join(exec.testPlan, itp).join(itp.iteration, ite)
+
+				definition = new DetailedChartDefinition(
+						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
+						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
+							mkAxe(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id")]
+						)
+
+				expected = [[-11l, -1l, 3], [-12l, -1l, 1], [-12l, null, 1]]
+				break;
+
+		}
+
+		return new ManyQueryPojo(query : query, definition : definition, expected : expected)
+
+
+	}
 
 	def mkMeasure(AttributeType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, attributeType : attrType, attributeName : attributeName)
@@ -118,6 +237,20 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		return meas
 
+	}
+
+
+	def HibernateQuery from(clz){
+		return new HibernateQuery().from(clz)
+	}
+
+
+
+
+	class ManyQueryPojo {
+		HibernateQuery query
+		DetailedChartDefinition definition
+		Set<?> expected
 	}
 
 }
