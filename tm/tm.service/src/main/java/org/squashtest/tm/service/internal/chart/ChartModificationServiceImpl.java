@@ -33,9 +33,12 @@ import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartInstance;
+import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.service.charts.ChartModificationService;
+import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
@@ -44,6 +47,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Inject
 	private SessionFactory sessionFactory;
+
+	@Inject
+	private ChartDataFinder dataFinder;
 
 	@Override
 	public void persist(ChartDefinition newChartDefinition) {
@@ -71,6 +77,16 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Override
 	public void update(ChartDefinition chartDef) {
 		session().saveOrUpdate(chartDef);
+	}
+
+
+	@Override
+	public ChartInstance generateChart(long chartDefId){
+		ChartDefinition def = findById(chartDefId);
+		ChartSeries series = dataFinder.findData(def);
+
+		return new ChartInstance(def, series);
+
 	}
 
 

@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.squashtest.tm.domain.chart.EntityType;
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;

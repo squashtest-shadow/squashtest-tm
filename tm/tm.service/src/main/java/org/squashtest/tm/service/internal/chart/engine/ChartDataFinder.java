@@ -20,18 +20,27 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.chart.AttributeType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
@@ -291,7 +300,8 @@ public class ChartDataFinder {
 	private SessionFactory sessionFactory;
 
 
-	Object[][] findData(ChartDefinition definition){
+	@Transactional(readOnly=true)
+	public ChartSeries findData(ChartDefinition definition){
 
 		DetailedChartDefinition enhancedDefinition = new DetailedChartDefinition(definition);
 
@@ -311,14 +321,66 @@ public class ChartDataFinder {
 		ProjectionPlanner projectionPlanner = new ProjectionPlanner(enhancedDefinition, detachedQuery);
 		projectionPlanner.modifyQuery();
 
+		// ******************* step 4 : the filters **************************
 
+		FilterPlanner filterPlanner = new FilterPlanner(enhancedDefinition, detachedQuery);
+		filterPlanner.modifyQuery();
 
-		return null;
+		// ******************* step 5 : run the query*************************
+
+		sessionFactory.getCurrentSession();
+		HibernateQuery finalQuery = (HibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
+
+		List<Tuple> tuples = finalQuery.fetch();
+
+		// ****************** step 6 : convert the data *********************
+
+		ChartSeries series = makeSeries(enhancedDefinition, tuples);
+		return series;
+
 	}
 
+	private ChartSeries makeSeries(DetailedChartDefinition definition, List<Tuple> tuples){
 
+		List<Object[]> abscissa = new ArrayList<>();
 
+		// initialize temporary structures
+		int axsize = definition.getAxis().size();
+		int measize = definition.getMeasures().size();
 
+		List[] series = new List[measize];
+
+		for (int me=0; me < measize; me++){
+			series[me] = new ArrayList<>(tuples.size());
+		}
+
+		// now (double) loop, lets hope the volume of data is not too large
+		for (Tuple tuple : tuples){
+			// create the entry for the abscissa
+			Object[] axis = new Object[axsize];
+			for (int ax = 0; ax < axsize; ax++){
+				axis[ax] = tuple.get(ax, Object.class);
+			}
+			abscissa.add(axis);
+
+			// create the entries for the series
+			for (int m = 0; m < measize; m++){
+				Object v = tuple.get(m+axsize, Object.class);
+				series[m].add(v);
+			}
+		}
+
+		// now build the serie
+		ChartSeries chartSeries = new ChartSeries();
+		chartSeries.setAbscissa(abscissa);
+
+		for (int m=0; m < measize; m++){
+			MeasureColumn measure = definition.getMeasures().get(m);
+			chartSeries.addSerie(measure.getLabel(), series[m]);
+		}
+
+		return chartSeries;
+	}
 
 
 }

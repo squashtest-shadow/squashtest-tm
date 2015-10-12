@@ -28,7 +28,7 @@ import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
 
 import spock.lang.Specification
 import spock.lang.Unroll;
-import static org.squashtest.tm.domain.chart.EntityType.*
+import static org.squashtest.tm.domain.EntityType.*
 import org.apache.commons.collections.Transformer
 
 class DomainGraphTest extends Specification {

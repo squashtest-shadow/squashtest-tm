@@ -30,7 +30,17 @@ public class ChartInstance {
 
 	private ChartDefinition definition;
 
-	private Object[][] resultSet;
+	private ChartSeries series;
+
+	public ChartInstance() {
+		super();
+	}
+
+	public ChartInstance(ChartDefinition definition, ChartSeries series) {
+		super();
+		this.definition = definition;
+		this.series = series;
+	}
 
 	public ChartDefinition getDefinition() {
 		return definition;
@@ -40,20 +50,13 @@ public class ChartInstance {
 		this.definition = definition;
 	}
 
-	public Object[][] getResultSet() {
-		return resultSet;
+	protected ChartSeries getSeries() {
+		return series;
 	}
 
-	public void setResultSet(Object[][] resultSet) {
-		this.resultSet = resultSet;
+	protected void setSeries(ChartSeries series) {
+		this.series = series;
 	}
-
-	public ChartInstance(ChartDefinition definition, Object[][] resultSet) {
-		super();
-		this.definition = definition;
-		this.resultSet = resultSet;
-	}
-
 
 
 }
