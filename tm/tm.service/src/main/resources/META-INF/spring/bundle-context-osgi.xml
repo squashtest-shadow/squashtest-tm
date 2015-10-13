@@ -413,7 +413,7 @@
 
 <osgi:service ref="squashtest.tm.service.ChartModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.tm.service.charts.ChartModificationService</value>
+			<value>org.squashtest.tm.service.chart.ChartModificationService</value>
 		</osgi:interfaces>
 	</osgi:service>
 

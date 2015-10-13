@@ -32,6 +32,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			this._initialize(data, wizrouter);
 		},
 		
+		events : {
+			"click #preview" : "preview",
+			"click #save" : "save"
+			
+		},
+		
 		updateModel : function() {
 
 		}

@@ -33,7 +33,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		},
 		
 		updateModel : function() {
-			this.model.chartType = $("input[name='chart-type']:checked").val();
+			var type = $("input[name='chart-type']:checked").val();
+			this.model.set({type : type});  
 		}
 		
 	});

@@ -28,7 +28,7 @@
 {{#each  (lookup attributes.columnPrototypes attributes.selectedEntity)   }}  
 {{#if (contains this.role ../ROLE)}}
  <option value="{{this.label}}">
- <span th:text = "#{chart.column.{{this.label}}}" />
+ {{i18n this.label prefix="chart.column."}}
  </option>
 {{/if }}
 {{/each}}     
@@ -72,12 +72,12 @@ CHOOSE AXIS
 <div th:fragment="chart-wizard-measure-operation">
  
 {{#if operations}}
- <select id="measure-operation">
+ <select id="{{role}}-operation">
  {{/if}}
   
 {{#each operations}}
  <option value="{{this}}">
- <span th:text = "#{chart.operation.{{this}}}" />
+  {{i18n this prefix="chart.operation."}}
  </option> 
 {{/each}}
   

@@ -24,7 +24,7 @@
  * {{checked}}
  * {{oddity}}
  */
-define(["handlebars", "underscore"], function(Handlebars, _) {
+define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _, translator) {
 	"use strict";
 
 	function propertyHelper(propName) {
@@ -76,7 +76,14 @@ define(["handlebars", "underscore"], function(Handlebars, _) {
 		return _.intersection(col1, col2);	
 	});
 	
-	
+	Handlebars.registerHelper("i18n", function (key, options){
+		
+		var prefix = options.hash.prefix || "";
+		var sufix = options.hash.sufix || "";
+		var result = prefix + key + sufix;
+		
+		return translator.get(result);
+	});
 	
 	return Handlebars;
 });

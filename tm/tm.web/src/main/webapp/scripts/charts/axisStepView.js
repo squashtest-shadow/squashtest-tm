@@ -42,7 +42,22 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		},
 		
 		updateModel : function() {
-
+			
+			var measure = this.getVal("MEASURE");
+			var axis = this.getVal("AXIS");
+			
+			this.model.set({measures : measure, axis : axis}); 
+		},
+		
+		getVal : function (role) {
+		
+			return {column : this.findColumnByLabel(role),
+			operation : $("#" + role + "-operation").val() };
+			
+		},
+		
+		findColumnByLabel : function (role){
+			return _.find(this.model.get("columnPrototypes")[this.model.get("selectedEntity")] , function(col){return col.label == $("#" + role).val();});
 		},
 		
 		changeMeasure : function(event) {
@@ -55,11 +70,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		}, 	
 		populateOperation : function(role){
 			var data = this.model.attributes;
-			var selectedCol = _.find(data.columnPrototypes[data.selectedEntity] , function(col){return col.label == $("#" + role).val();});
-			var operationsAllowedByType = data.dataTypes[selectedCol.dataType];
-			var operationsAllowedByRole = data.columRoles[role];
+			var selectedCol = this.findColumnByLabel(role);
+			var operationsAllowedByType = this.model.get("dataTypes")[selectedCol.dataType];
+			var operationsAllowedByRole = this.model.get("columRoles")[role];
 			var permitedOperations = _.intersection(operationsAllowedByType, operationsAllowedByRole);	
-			var operationSelector = this.measureTemplate({operations : permitedOperations});
+			var operationSelector = this.measureTemplate({operations : permitedOperations, role:role});
 			$("#" + role + "-operation-container").html(operationSelector);	
 		}
 		

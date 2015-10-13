@@ -28,7 +28,8 @@
         {{!--<![CDATA[--}}
         <input  type="radio" name="chart-type" value="{{this}}"  {{#unless @index}} checked="checked" {{/unless}}  />  
         {{!--]]>--}}	
-        <span th:text = "#{chart.chartType.{{this}}}" />          
+        
+        {{i18n this prefix="chart.chartType." }}     
         </li>
         {{/each}}     
 </ul>

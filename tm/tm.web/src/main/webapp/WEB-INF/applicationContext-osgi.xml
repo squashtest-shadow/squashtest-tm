@@ -538,7 +538,7 @@
 <osgi:reference id="squashtest.tm.service.ChartModificationService"
 		bean-name="squashtest.tm.service.ChartModificationService">
 		<osgi:interfaces>
-			<value>org.squashtest.tm.service.charts.ChartModificationService</value>
+			<value>org.squashtest.tm.service.chart.ChartModificationService</value>
 		</osgi:interfaces>
 	</osgi:reference>
 

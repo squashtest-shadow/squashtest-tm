@@ -34,7 +34,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		},
 		
 		updateModel : function() {
-			this.model.scope = "my scope";
+			this.model.set({scope : "my scope"});
 		}
 	});
 

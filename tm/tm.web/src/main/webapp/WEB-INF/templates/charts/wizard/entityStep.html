@@ -28,7 +28,9 @@
         {{!--<![CDATA[--}}
         <input  type="radio" name="entity" value="{{this}}"  {{#unless @index}} checked="checked" {{/unless}}  />  
         {{!--]]>--}}	
-        <span th:text = "#{chart.entityType.{{this}}}" />          
+        
+     {{i18n this prefix="chart.entityType."}}
+
         </li>
         {{/each}}     
 </ul>

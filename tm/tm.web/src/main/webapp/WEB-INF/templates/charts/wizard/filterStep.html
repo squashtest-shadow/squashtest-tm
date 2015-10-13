@@ -24,13 +24,12 @@
 
 {{#*inline "filter"}}
 <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
-<span th:text = "#{chart.column.{{label}}}" />
-
+    {{i18n this.label prefix="chart.column."}}
 <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}">
 {{#each  operations}}  
 
 <option value="{{this}}">
-<span th:text = "#{chart.operation.{{this}}}" />
+    {{i18n this prefix="chart.operation."}}
 </option>
 
 {{/each}}   
@@ -61,7 +60,8 @@ CHOOSE FILTER
 {{#each attributes.columnPrototypes}}
   <div class="sq-tg expand">
  <div class="tg-head">
-<h3 th:text="#{entityType.{{@key}}}"></h3>               
+{{i18n @key prefix='chart.entityType.'}} 
+            
 </div> 
 {{#each  this}}  
 {{#if (contains this.role "FILTER")}}

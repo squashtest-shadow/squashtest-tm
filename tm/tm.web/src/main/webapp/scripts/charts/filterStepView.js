@@ -55,13 +55,17 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		
 			var filters = ids.map(function (id){
 				return { 
-					columnId : id,
+					columnId : this.findColumnById(id),
 					operation : $("#filter-operation-select-" + id).val(),
 					values : [$("#first-filter-value-" + id).val(), $("#second-filter-value-" + id).val()] };
 				});
 			
 			this.model.set({ filters : filters });
 	
+		},
+		
+		findColumnById : function (id){
+			return _.find(this.model.get("columnPrototypes")[this.model.get("selectedEntity")] , function(col){return col.id == id; });
 		},
 		
 		changeOperation : function(event){				
