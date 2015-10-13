@@ -108,14 +108,6 @@ public class ChartDefinition implements TreeEntity{
 	private List<EntityReference> scope = new ArrayList<>();
 
 
-	public long getId() {
-		return Id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
 	public User getOwner() {
 		return owner;
 	}
