@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,45 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.chart;
 
-/**
- * This class is not an entity : it shall not be persisted.
- * 
- * @author bsiri
- *
- */
-public class ChartInstance {
 
-	private ChartDefinition definition;
+define(["jquery", "./chart-plotter"], function($, ChartPlotter){
 
-	private ChartSeries series;
-
-	public ChartInstance() {
-		super();
+	
+	function buildChart(divSelector, chartDef){
+		ChartPlotter.buildChart(divSelector, chartDef);
 	}
-
-	public ChartInstance(ChartDefinition definition, ChartSeries series) {
-		super();
-		this.definition = definition;
-		this.series = series;
+	
+	return {
+		buildChart : buildChart
 	}
-
-	public ChartDefinition getDefinition() {
-		return definition;
-	}
-
-	public void setDefinition(ChartDefinition definition) {
-		this.definition = definition;
-	}
-
-	public ChartSeries getSeries() {
-		return series;
-	}
-
-	public void setSeries(ChartSeries series) {
-		this.series = series;
-	}
-
-
-}
+	
+});

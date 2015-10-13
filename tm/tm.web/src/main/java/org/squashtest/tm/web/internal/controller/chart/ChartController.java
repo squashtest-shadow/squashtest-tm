@@ -23,9 +23,11 @@ package org.squashtest.tm.web.internal.controller.chart;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
@@ -49,6 +51,19 @@ public class ChartController {
 	@RequestMapping(value = "/wizard", method = RequestMethod.GET)
 	public String getWizard() {
 		return "charts/wizard/wizard.html";
+	}
+
+	@RequestMapping(value = "/{definitionId}/instance", method = RequestMethod.GET)
+	public @ResponseBody JsonChartInstance generate(@PathVariable("definitionId") Long definitionId){
+		ChartInstance instance = chartService.generateChart(definitionId);
+		return new JsonChartInstance(instance);
+	}
+
+	// ******************* TEMPORARY TEST CODE BELOW *********************
+
+	@RequestMapping(value = "/test-page", method = RequestMethod.GET)
+	public String getTestPage(){
+		return "charts-render-test.html";
 	}
 
 }

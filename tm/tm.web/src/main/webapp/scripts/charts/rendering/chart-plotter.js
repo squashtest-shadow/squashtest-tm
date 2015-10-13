@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,45 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.chart;
 
-/**
- * This class is not an entity : it shall not be persisted.
- * 
- * @author bsiri
- *
- */
-public class ChartInstance {
-
-	private ChartDefinition definition;
-
-	private ChartSeries series;
-
-	public ChartInstance() {
-		super();
+define(["handlebars", "./chart-dom-factory","./chart-instance-factory"], 
+		function(Handlebars, DOMFactory, instanceFactory){
+	
+	var chartNum = 0;
+	
+	
+	function buildChart(divSelector, jsonChart){
+		
+		var viewID = "chart-"+(chartNum++);
+		
+		var html = DOMFactory.generateViewDOM(viewID, jsonChart);
+		
+		// TODO : make the selector for the container area configurable too
+		// TODO : destroy previous charts and save memory 
+		// everytime a new chart is loaded
+		$(divSelector).html(html); 
+		
+		instanceFactory.generateChartInView("#"+viewID, jsonChart);
 	}
-
-	public ChartInstance(ChartDefinition definition, ChartSeries series) {
-		super();
-		this.definition = definition;
-		this.series = series;
-	}
-
-	public ChartDefinition getDefinition() {
-		return definition;
-	}
-
-	public void setDefinition(ChartDefinition definition) {
-		this.definition = definition;
-	}
-
-	public ChartSeries getSeries() {
-		return series;
-	}
-
-	public void setSeries(ChartSeries series) {
-		this.series = series;
-	}
-
-
-}
+	
+	return {
+		buildChart : buildChart
+	};
+});

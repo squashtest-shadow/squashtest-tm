@@ -81,6 +81,7 @@ public class ChartDefinition implements TreeEntity{
 	private Visibility visibility;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "CHART_TYPE")
 	private ChartType type;
 
 	@Lob
@@ -93,12 +94,12 @@ public class ChartDefinition implements TreeEntity{
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
-	@OrderColumn(name = "RANK")
+	@OrderColumn(name = "AXIS_RANK")
 	private List<AxisColumn> axis = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
-	@OrderColumn(name = "RANK")
+	@OrderColumn(name = "MEASURE_RANK")
 	private List<MeasureColumn> measures = new ArrayList<>();
 
 	@ElementCollection

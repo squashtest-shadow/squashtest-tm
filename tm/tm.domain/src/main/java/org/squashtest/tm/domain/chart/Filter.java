@@ -53,10 +53,12 @@ public class Filter implements ColumnPrototypeInstance {
 	private ColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "FILTER_OPERATION")
 	private Operation operation;
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_FILTER_VALUES", joinColumns = @JoinColumn(name = "FILTER_ID") )
+	@Column(name="FILTER_VALUE")
 	private List<String> values;
 
 	@Override

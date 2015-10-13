@@ -118,15 +118,15 @@ public class ChartSeries {
 	}
 
 
-	protected Map<String, List<Object>> getSeries() {
+	public Map<String, List<Object>> getSeries() {
 		return series;
 	}
 
-	protected void setSeries(LinkedHashMap<String, List<Object>> series) {
+	public void setSeries(LinkedHashMap<String, List<Object>> series) {
 		this.series = series;
 	}
 
-	protected List<Object[]> getAbscissa() {
+	public List<Object[]> getAbscissa() {
 		return abscissa;
 	}
 

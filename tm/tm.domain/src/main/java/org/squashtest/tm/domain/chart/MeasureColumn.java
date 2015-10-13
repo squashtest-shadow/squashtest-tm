@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -45,6 +46,7 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	private String label;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name = "MEASURE_OPERATION")
 	private Operation operation;
 
 

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -45,6 +46,7 @@ public class AxisColumn implements ColumnPrototypeInstance{
 	private ColumnPrototype column;
 
 	@Enumerated(EnumType.STRING)
+	@Column(name ="AXIS_OPERATION")
 	private Operation operation;
 
 
