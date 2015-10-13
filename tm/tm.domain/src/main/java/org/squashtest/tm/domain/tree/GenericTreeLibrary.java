@@ -29,7 +29,7 @@ import javax.persistence.OneToOne;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 
 @MappedSuperclass
-public abstract class GenericTreeLibrary implements TreeLibrary {
+public abstract class GenericTreeLibrary implements TreeLibrary, TreeEntity {
 	
 	@OneToOne(cascade={ CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="ATTACHMENT_LIST_ID")

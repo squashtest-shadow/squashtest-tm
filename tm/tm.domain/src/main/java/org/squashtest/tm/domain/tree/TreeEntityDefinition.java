@@ -21,6 +21,6 @@
 package org.squashtest.tm.domain.tree;
 
 public interface TreeEntityDefinition {
-	String getType();
+	String getTypeName();
 	boolean isContainer();
 }

@@ -20,41 +20,26 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import java.util.List;
-
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 
-public interface CustomReportWorkspaceService {
-	/**
-	 * Returns all the CustomReportLibrary
-	 * 
-	 * @return
-	 */
-	List<CustomReportLibrary> findAllLibraries();
+public interface CustomReportLibraryNodeService {
 
-	/**
-	 * Returns all CustomReportLibrary that the user may edit.
-	 * 
-	 * @return
-	 */
-
-	List<CustomReportLibrary> findAllEditableLibraries();
-
-	/**
-	 * Returns all CustomReportLibrary that the user may import to.
-	 * 
-	 * @return
-	 */
-	List<CustomReportLibrary> findAllImportableLibraries();
+	CustomReportLibrary findCustomReportLibraryById(Long libraryId);
+	
+	CustomReportFolder findCustomReportFolderById(Long folderId);
 	
 	/**
-	 * Find content for a {@link CustomReportLibrary} given it's id
-	 * @param libraryId
+	 * Service to add a new {@link CustomReportLibraryNode}. The caller is responsible for giving a
+	 * {@link CustomReportLibraryNode} with a not null {@link TreeEntity} linked inside.
+	 * The {@link TreeEntity} must have the same name as the {@link CustomReportLibraryNode} because the name have been voluntary denormalized,
+	 * to allow request on path and other stuff that doesn't support the polymorphic nature of {@link TreeEntity}
+	 * @param parentId Id of parent node. Can't be null.
+	 * @param node A valid {@link CustomReportLibraryNode} with it's {@link TreeEntity}.
 	 * @return
 	 */
-	List<TreeLibraryNode> findContent(Long libraryId);
-	
-	List<CustomReportLibraryNode> findRootNodes();
+	CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
 }

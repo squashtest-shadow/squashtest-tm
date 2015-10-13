@@ -120,8 +120,11 @@
                   <li id="new-folder-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{tree.button.new-folder.label}+'...'">New folder...</a>
                   </li>
-                  <li id="new-test-case-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.new-test-case.label}+'...'">New test case...</a>
+                  <li id="new-chart-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-chart.label}+'...'">New chart...</a>
+                  </li>
+                  <li id="new-dashboard-tree-button" class="ui-state-disabled cursor-pointer">
+                    <a th:text="#{tree.button.new-dashboard.label}+'...'">New dashboard...</a>
                   </li>
                 </ul>
               </div>
@@ -217,13 +220,55 @@
         </div>
       </div>
     </div>
-
-    <div id="contextual-content">
-      <!--empty -->
-    </div>
+	<div id="contextual-content-wrapper">
+	    <div id="contextual-content">
+	      <!--empty -->
+	    </div>
+	</div>
 
 
   </div>
+  
+  <!-- BACKBONE VIEWS TEMPLATES -->
+	<!-- SHOW LIBRARY -->
+	 <script id="tpl-show-library" type="text/x-handlebars-template">
+		<div class="ui-widget-header ui-corner-all ui-state-default fragment-header" >
+ 			<div id="right-frame-button">
+    			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" />
+  				</div>
+			<h2><span th:text="#{library.header.title}" />&nbsp;:&nbsp;<a id="library-name" href="#"></a></h2>
+		</div>
+		
+		<div id="description-panel-container" class="sq-tg expand">
+			<div class="tg-head">
+        		<h3 th:text="#{label.Description}">desc</h3>
+        	</div>
+			<div id="description-panel" class="tg-body">
+				{{{project-description}}}
+			</div>
+		</div>
+     </script>
+	<!-- /SHOW LIBRARY -->
+	
+	<!-- SHOW FOLDER -->
+	 <script id="tpl-show-folder" type="text/x-handlebars-template">
+		<div class="sq-tg expand">
+           <div class="tg-head">
+              <h3 th:text="#{label.Description}">desc</h3>
+            </div>
+			<div class="tg-body" id="description-panel">
+				{{{description}}}
+			</div>
+		</div>
+     </script>
+	
+	
+	<!-- /SHOW FOLDER -->
+  <!-- /BACKBONE VIEWS TEMPLATES -->
+  
+  
+  
+  
   <!-- _____________________TEST CASE TREE POPUPS______________________________ -->
   <!-- 		<wkp:tc-tree-popups/> -->
 

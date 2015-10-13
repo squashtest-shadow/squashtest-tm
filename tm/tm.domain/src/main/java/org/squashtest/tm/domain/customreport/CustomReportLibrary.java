@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customreport.tree;
+package org.squashtest.tm.domain.customreport;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,7 +29,9 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeNodeVisitor;
 
 @Entity
@@ -45,28 +47,46 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	private Long id;
 	
 	@OneToOne(mappedBy = "customReportLibrary")
-	private GenericProject project;
+	private Project project;
 
 	@Override
 	public void notifyAssociatedWithProject(GenericProject p) {
 		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
-
 	}
 
 	@Override
 	public void accept(TreeNodeVisitor visitor) {
 		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
-
 	}
 
 	@Override
-	public GenericProject getProject() {
+	public Project getProject() {
 		return project;
 	}
 
 	@Override
 	public Long getId() {
 		return id;
+	}
+
+	@Override
+	public String getName() {
+		return project.getName();
+	}
+
+	@Override
+	public void setName(String name) {
+		throw new UnsupportedOperationException("A library cannot be renammed, please rename the project instead");
+	}
+
+	@Override
+	public TreeLibraryNode getTreeNode() {
+		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
+	}
+
+	@Override
+	public void accept(TreeEntityVisitor visitor) {
+		visitor.visit(this);
 	}
 	
 

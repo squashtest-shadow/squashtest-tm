@@ -18,27 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customreport.tree;
+package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.tree.TreeEntityDefinition;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-public enum CustomReportTreeDefinition implements TreeEntityDefinition{
-	LIBRARY(true),DASHBOARD(false),CHART(false),FOLDER(true);
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+@JsonAutoDetect(fieldVisibility=Visibility.NONE, getterVisibility=Visibility.NONE)
+public abstract class GenericProjectMixin {
 	
-	private boolean container;
+	@JsonProperty
+	private Long id;
 
-	private CustomReportTreeDefinition(boolean container) {
-		this.container = container;
-	}
+	@JsonProperty
+	private String description;
 
-	@Override
-	public String getType() {
-		return name();
-	}
+	@JsonProperty
+	private String label;
 
-	@Override
-	public boolean isContainer() {
-		return container;
-	}
+	@JsonProperty
+	private String name;
 
+	@JsonProperty
+	private boolean active;
+	
 }

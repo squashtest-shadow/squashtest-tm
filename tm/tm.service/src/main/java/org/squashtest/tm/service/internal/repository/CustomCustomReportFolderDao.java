@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,15 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-require([ "common" ], function() {
-	require([ "jquery", 'tc-workspace' ,"app/ws/squashtm.workspace", "domReady" , 'jquery.cookie' ], function($, TCWorkspace,  WS, domReady) {
-		domReady(function() {
-			WS.init();
-			
-			$.cookie("workspace-prefs", null, {
-				path : '/'
-			});
-			TCWorkspace.init(squashtm.app.testCaseWorkspaceConf);
-		});
-	});
-});
+package org.squashtest.tm.service.internal.repository;
+
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+
+public interface CustomCustomReportFolderDao extends EntityDao<CustomReportFolder>{
+
+}

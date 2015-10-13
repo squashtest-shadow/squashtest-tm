@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.domain.tree;
 
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+
 public interface TreeNodeVisitor {
 	
+	void visit(CustomReportLibraryNode customReportLibraryNode);
+
 }

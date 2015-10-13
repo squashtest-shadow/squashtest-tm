@@ -54,11 +54,14 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.users.User;
 
 @Entity
 @Table(name = "CHART_DEFINITION")
-public class ChartDefinition {
+public class ChartDefinition implements TreeEntity{
 
 	@Id
 	@Column(name = "CHART_ID")
@@ -67,7 +70,7 @@ public class ChartDefinition {
 	private long Id;
 
 	@NotBlank
-	@Size(min = 0, max = 30)
+	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
 
 	@JoinColumn(name = "USER_ID")
@@ -79,7 +82,6 @@ public class ChartDefinition {
 
 	@Enumerated(EnumType.STRING)
 	private ChartType type;
-
 
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
@@ -183,4 +185,24 @@ public class ChartDefinition {
 		return types;
 	}
 
+	@Override
+	public Long getId() {
+		return Id;
+	}
+	@Override
+	public String getName() {
+		return name;
+	}
+	@Override
+	public void setName(String name) {
+		this.name = name;
+	}
+	@Override
+	public TreeLibraryNode getTreeNode() {
+		throw new UnsupportedOperationException("TO IMPLEMENT");
+	}
+	@Override
+	public void accept(TreeEntityVisitor visitor) {
+		visitor.visit(this);
+	}
 }

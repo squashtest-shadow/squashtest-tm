@@ -24,7 +24,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 	squashtm.workspace = squashtm.workspace || {};
 
 	if (squashtm.workspace.permissions_rules === undefined){
-		squashtm.workspace.permissions_rules = new TestCasePermissionsRules();
+		squashtm.workspace.permissions_rules = new CustomReportPermissionsRules();
 	}
 
 	return squashtm.workspace.permissions_rules;
@@ -80,7 +80,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 	 * Main Object
 	 *********************************************************/
 
-	function TestCasePermissionsRules(){
+	function CustomReportPermissionsRules(){
 
 		this.milestonesAllowCreation = milestonesAllowCreation;
 
@@ -88,15 +88,21 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 
 
 		this.canCreateButton = function(nodes){
-			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
+			return nodes && nodes.length>0;
+			//return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
 		};
 
 		this.canCreateFolder = function(nodes){
-			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
+			return nodes && nodes.length>0;
+			//return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 
-		this.canCreateTestCase = function(nodes){
-			return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
+		this.canCreateChart = function(nodes){
+			return nodes && nodes.length>0;
+		};
+
+		this.canCreateDashboard = function(nodes){
+			return nodes && nodes.length>0;
 		};
 
 		this.whyCantCreate = function(nodes){
@@ -255,7 +261,8 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 		this.buttonrules = {
 			'tree-create-button' : this.canCreateButton,
 			'new-folder-tree-button' : this.canCreateFolder,
-			'new-test-case-tree-button' : this.canCreateTestCase,
+			'new-chart-tree-button' : this.canCreateChart,
+			'new-dashboard-tree-button' : this.canCreateDashboard,
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,

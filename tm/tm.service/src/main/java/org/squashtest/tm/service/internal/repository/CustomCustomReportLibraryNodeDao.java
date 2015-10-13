@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
+import java.util.List;
+
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 public interface CustomCustomReportLibraryNodeDao extends EntityDao<CustomReportLibraryNode>{
-	
+	List<TreeLibraryNode> findChildren(Long parentId);
 }

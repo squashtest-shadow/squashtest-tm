@@ -467,6 +467,11 @@
 			<value>org.squashtest.tm.service.customreport.CustomReportWorkspaceService</value>
 		</osgi:interfaces>
 	</osgi:service>
+	<osgi:service ref="org.squashtest.tm.service.customreport.CustomReportLibraryNodeService">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportLibraryNodeService</value>
+		</osgi:interfaces>
+	</osgi:service>
 
   <osgi:service ref="featureManager" interface="org.squashtest.tm.service.feature.FeatureManager" />
 

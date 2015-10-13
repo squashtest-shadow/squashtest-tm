@@ -40,7 +40,7 @@ class CustomCustomReportNodeDaoIT extends DbunitServiceSpecification {
 	
 	def "should find a crln by id"() {
 		when:
-		def res = crdao.findById(-1);
+		def res = crdao.findById(-3L);
 
 		then:
 		res != null;

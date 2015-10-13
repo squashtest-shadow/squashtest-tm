@@ -27,8 +27,10 @@ import org.hibernate.Query
 import org.junit.runner.RunWith
 import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
@@ -41,10 +43,8 @@ import spock.unitils.UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 @DataSet("CustomReportLibraryNodeIT.xml")
-class CustomReportLibrayNodeIT extends DbunitServiceSpecification {
+class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 
-
-	
 	def "should find parent for not library nodes"(){
 		given :
 
@@ -82,7 +82,7 @@ class CustomReportLibrayNodeIT extends DbunitServiceSpecification {
 
 		when :
 		CustomReportLibraryNode crln = findEntity(CustomReportLibraryNode.class, nodeID)
-		def childrens = crln.getChildrens();
+		def childrens = crln.getChildren();
 		
 		then :
 		childrens.size() == expectedSize
@@ -107,12 +107,12 @@ class CustomReportLibrayNodeIT extends DbunitServiceSpecification {
 		
 		when :
 		CustomReportLibraryNode parentNode = findEntity(CustomReportLibraryNode.class, nodeID)
-		def childrens = parentNode.getChildrens();
+		def childrens = parentNode.getChildren();
 		CustomReportLibraryNode newChild = new CustomReportLibraryNode()
 		newChild.id = -6L
 		newChild.library = crl
 		newChild.parent = parentNode
-		childrens.add(newChild);
+		childrens.add(newChild)
 		
 		then :
 		childrens.size() == expectedSize
@@ -126,5 +126,28 @@ class CustomReportLibrayNodeIT extends DbunitServiceSpecification {
 		
 	}
 	
+	def "should find binded entity"(){
+		given :
+		
+		
+		when :
+		CustomReportLibraryNode node = findEntity(CustomReportLibraryNode.class, nodeID)
+		TreeEntity nodeEntity = node.getEntity();
+		
+		then :
+		nodeEntity != null
+		//checking polymorphic mapping with @any in CustomReportLibraryNode
+		nodeEntity.getId()==expectedEntityID
+		nodeEntity.getName()==expectedEntityName
+		
+		where:
+		
+		nodeID		 	|| 	 	expectedEntityID	|	expectedEntityName
+		-1L				||	 			-1L			|		"project-1"
+		-2L				||	 			-1L			|		"Folder1"
+		-3L				||	 			-1L			|		"Chart1"
+		-4L				||				-2L			|		"Chart2"
+		-5L				||				-3L			|		"Chart3"
+	}
 	
 }

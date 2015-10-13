@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
@@ -59,7 +60,7 @@ public class CustomReportWorkspaceController {
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 		
-		List<TreeLibraryNode> libraries = workspaceService.findRootNodes();
+		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
 		String[] nodesToOpen = null;
 
 		if(elementId == null || "".equals(elementId)){
@@ -78,11 +79,9 @@ public class CustomReportWorkspaceController {
 		//Placeholder with just library for the beginning
 		List<JsTreeNode> rootNodes = new ArrayList<JsTreeNode>();
 		
-		for (TreeLibraryNode crl : libraries) {
-			JsTreeNode treeNode = new JsTreeNode();
-			treeNode.setTitle(crl.getEntityName());
+		for (CustomReportLibraryNode crl : libraries) {
+			JsTreeNode treeNode = new CustomReportTreeNodeBuilder().build(crl);
 			rootNodes.add(treeNode);
-			treeNode.addAttr("rel", "drive");
 		}
 		
 		model.addAttribute("rootModel", rootNodes);
@@ -115,23 +114,4 @@ public class CustomReportWorkspaceController {
 		return WorkspaceType.CUSTOM_REPORT_WORKSPACE;
 	}
 	
-	private void getNodeParentsInWorkspace(){
-		
-	}
-	
-	/**
-	 * Build a {@link JsTreeNode} for a given {@link TreeLibraryNode}
-	 * @param model
-	 * @return
-	 */
-	private JsTreeNode buildNode(TreeLibraryNode model){
-		JsTreeNode treeNode = new JsTreeNode();
-		treeNode.setTitle(model.getEntityName());
-		return treeNode;
-	}
-	
-	private String buildResourceType(String classSimpleName) {
-		String singleResourceType = HyphenedStringHelper.camelCaseToHyphened(classSimpleName);
-		return singleResourceType.replaceAll("y$", "ies");
-	}
 }

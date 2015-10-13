@@ -63,9 +63,9 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.tree.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -217,6 +217,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		//add the tree node for the CustomReportLibrary as now library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
+		crlNode.setEntity(crl);
 		session.persist(crlNode);
 
 		// hook up the default info lists

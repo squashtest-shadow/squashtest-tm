@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 
 public interface CustomCustomReportLibraryDao extends EntityDao<CustomReportLibrary>{
 	

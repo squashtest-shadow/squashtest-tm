@@ -23,8 +23,10 @@ package org.squashtest.tm.domain.tree;
 import java.util.List;
 
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.ProjectResource;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 
 /**
  * Interface for a tree node without data. The main goal of this API is to separate concern beetwen
@@ -34,20 +36,40 @@ import org.squashtest.tm.domain.project.ProjectResource;
  *
  */
 public interface TreeLibraryNode extends TreeVisitable, Identified {
+	final int MAX_NAME_SIZE = 255;
 	
-	/**
-	 * Get the binded entity name.
-	 * @return String
-	 */
-	String getEntityName ();
+	String getName ();
+	
+	void setName(String name);
 	
 	long getEntityId();
 	
+	TreeEntity getEntity();
+	
+	void setEntity(TreeEntity treeEntity);
+	
 	TreeEntityDefinition getEntityType();
+	
+//	void setEntityType(TreeEntityDefinition definition);
 	
 	TreeLibraryNode getParent();
 	
-	List<TreeLibraryNode> getChildrens();
+	void setParent(TreeLibraryNode parent);
+	
+	List<TreeLibraryNode> getChildren();
 	
 	TreeLibrary getLibrary();
+	
+	void setLibrary(TreeLibrary treeLibrary);
+	
+	void addChild(TreeLibraryNode treeLibraryNode) throws UnsupportedOperationException,IllegalArgumentException,NameAlreadyInUseException;
+
+	/**
+	 * Check if a {@link CustomReportLibraryNode} is consistent with it's linked {@link TreeEntity}. 
+	 * Throws {@link IllegalArgumentException} if not, as user action haven't any way to create this kind of inconsistency.
+	 * @param treeLibraryNode
+	 * @return
+	 */
+	void isCoherentWithEntity();
+
 }

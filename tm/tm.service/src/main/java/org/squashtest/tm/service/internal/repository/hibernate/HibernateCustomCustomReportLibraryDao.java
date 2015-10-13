@@ -21,10 +21,10 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
-import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryDao;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.service.internal.repository.CustomCustomReportFolderDao;
 
-@Repository("CustomCustomReportLibraryDao")
-public class HibernateCustomCustomReportLibraryDao extends HibernateEntityDao<CustomReportLibrary> implements CustomCustomReportLibraryDao {
+@Repository("CustomCustomReportFolderDao")
+public class HibernateCustomCustomReportLibraryDao extends HibernateEntityDao<CustomReportFolder> implements CustomCustomReportFolderDao {
 	
 }

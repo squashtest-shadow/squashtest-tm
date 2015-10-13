@@ -18,31 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.service.internal.repository;
 
-import javax.inject.Inject
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
-
-import spock.unitils.UnitilsSupport
-
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryDao crdao;
+@DynamicDao(entity = CustomReportFolder.class)
+public interface CustomReportFolderDao extends CustomCustomReportFolderDao {
 	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
-
-		then:
-		res != null;
-	}
 }

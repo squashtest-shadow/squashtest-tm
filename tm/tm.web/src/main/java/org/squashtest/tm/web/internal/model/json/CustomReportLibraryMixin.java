@@ -18,31 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.web.internal.model.json;
 
-import javax.inject.Inject
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
-import spock.unitils.UnitilsSupport
-
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryDao crdao;
+@JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
+public abstract class CustomReportLibraryMixin {
 	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
-
-		then:
-		res != null;
-	}
+	@JsonProperty
+	private Long id;
+	
+	//we serialize the project with the library, as a library alone is nearly empty
+	@JsonProperty
+	private Project project;
+	
+	
+	@JsonIgnore
+	public abstract TreeLibraryNode getTreeNode();
 }

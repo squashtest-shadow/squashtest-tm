@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,31 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+define(["underscore","backbone","squash.translator"],
+		function(_,Backbone, translator) {
+	var View = Backbone.View.extend({
 
-import javax.inject.Inject
+    el : "#contextual-content",
+		tpl : "#tpl-show-library",
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
+		initialize : function(){
+			_.bindAll(this, "render");
+			this.model.fetch({ // call fetch() with the following options
+       success: this.render // $.ajax 'success' callback
+     });
+		},
 
-import spock.unitils.UnitilsSupport
+		events : {
+		},
 
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
+		render : function(){
+			console.log("RENDER");
+			var source = $("#tpl-show-library").html();
+			var template = Handlebars.compile(source);
+			console.log("TEAMPLATING");
+			console.log(this.model.toJSON());
+			this.$el.append(template(this.model.toJSON()));
+		},
 
-	@Inject
-	CustomReportLibraryDao crdao;
-	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
+  });
 
-		then:
-		res != null;
-	}
-}
+	return View;
+});

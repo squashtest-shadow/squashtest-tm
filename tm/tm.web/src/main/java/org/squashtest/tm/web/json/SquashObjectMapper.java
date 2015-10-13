@@ -20,14 +20,21 @@
  */
 package org.squashtest.tm.web.json;
 
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;
+import org.squashtest.tm.web.internal.model.json.CustomReportLibraryMixin;
+import org.squashtest.tm.web.internal.model.json.GenericProjectMixin;
 import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
 import org.squashtest.tm.web.internal.model.json.InfoListMixin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
+import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module.Feature;
 
 /**
  * Custom implementation of Json deserializer to suit our needs.
@@ -39,7 +46,10 @@ public class SquashObjectMapper extends ObjectMapper {
 
 	public SquashObjectMapper() {
 		super();
-		registerModule(new Hibernate4Module());
+		Hibernate4Module module = new Hibernate4Module();
+		//Setting jackson tu eager on hibernate proxy... take care to your Mixins to avoid massive request ^^
+		module.configure(Feature.FORCE_LAZY_LOADING, true);
+		registerModule(module);
 		// serializes dates as ISO timestamps in GMT timezone
 		configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
 		configure(SerializationFeature.WRITE_DATE_KEYS_AS_TIMESTAMPS, false);
@@ -47,7 +57,9 @@ public class SquashObjectMapper extends ObjectMapper {
 		// configures various domain objects (un)marshalling w/O the use of DTOs or jackson annotations
 		addMixInAnnotations(InfoList.class, InfoListMixin.class);
 		addMixInAnnotations(InfoListItem.class, InfoListItemMixin.class);
-
+		addMixInAnnotations(CustomReportLibrary.class, CustomReportLibraryMixin.class);
+		addMixInAnnotations(Project.class, GenericProjectMixin.class);
+		addMixInAnnotations(CustomReportFolder.class, CustomReportFolderMixin.class);
 	}
 
 }

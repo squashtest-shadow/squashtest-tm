@@ -34,13 +34,13 @@
  *				NB : the placeholders values won't be tested against the regular expression so
  *
  *	unbuildURL : function(urlName, url, [withQueryString]) : if "url" matches the template "urlName", will return an array containing the actual values
- *	from the url that corresponds to the placedholders in the template. Returns an empty array if there is nothing to deconstruct. 
+ *	from the url that corresponds to the placedholders in the template. Returns an empty array if there is nothing to deconstruct.
  *	will throw an error if url doesn't match the template.
- *	By default, the matching is performed including the whole querystring in both the url and the template. If you don't want to 
+ *	By default, the matching is performed including the whole querystring in both the url and the template. If you don't want to
  *	take the query string into account, you may pass 'false' as a third parameter.
  *
  *	matches : function(urlName, candidate) : tests the candidate url against the template named 'urlName'.
- *	By default, the matching is performed including the whole querystring in both the url and the template. If you don't want to 
+ *	By default, the matching is performed including the whole querystring in both the url and the template. If you don't want to
  *	take the query string into account, you may pass 'false' as a third parameter.
  */
 define([], function(){
@@ -55,36 +55,36 @@ define([], function(){
 	 * returns the template as a RegExp object.
 	 * it is done by escaping the static part of the template,
 	 * and inlining the regex embedded in the placeholders.
-	 * 
-	 * if parameter 'capture' is true, the generated regex 
-	 * will 
+	 *
+	 * if parameter 'capture' is true, the generated regex
+	 * will
 	 */
-	
+
 	/*
 	 * Tech note : here is how it works
 	 *
-	 * 1 - break down the template, using a delimiter that match the placeholders {expr}. The 'expr' within a placeholder 
+	 * 1 - break down the template, using a delimiter that match the placeholders {expr}. The 'expr' within a placeholder
 	 * is itself captured and returned as part of the breakdown.
-	 * 
+	 *
 	 * 2 - the breakdown is an array. At event indexes (i%2===0), you'll find the litteral (ie, invariant) parts of the template.
 	 * At odd indexes (i%2===1), you'll get the expressions
-	 * 
+	 *
 	 * 3 - escape all litteral parts if they contain special characters we want litteraly as is
-	 * 
+	 *
 	 * 4 - if the 'capture' parameter is true, the expr parts will be rewritten as capturing group in the output regex
-	 * 
+	 *
 	 * 5 - join the array. This is the final output regex.
-	 * 
+	 *
 	 */
 	function templateToRegex(template, cap){
-		
+
 		var capture = (cap !== undefined) ? cap : false;
-		
+
 		var mPholder = /\{([^\}]+)\}/g;
-		
+
 		var breakdown = template.split(mPholder);
 
-		// here we use a boolean switch instead of 
+		// here we use a boolean switch instead of
 		// testing a modulo at each iteration of the loop
 		var litteral = true;
 		for (var i=0; i<breakdown.length; i++){
@@ -98,12 +98,12 @@ define([], function(){
 			// flip the switch
 			litteral = !litteral;
 		}
-		
-		var expression = breakdown.join(''); 
-		
+
+		var expression = breakdown.join('');
+
 		return new RegExp("^"+expression+"$");
 	}
-	
+
 	return {
 
 		// url names mapping
@@ -111,7 +111,7 @@ define([], function(){
 		'search' :							root + '/advanced-search',
 		'search.results' :					root + '/advanced-search/results',
 
-		'bugtracker.campaignfolder' :		root + '/bugtracker/campaign-folder/{\\d+}', 
+		'bugtracker.campaignfolder' :		root + '/bugtracker/campaign-folder/{\\d+}',
 		'bugtracker.execution' :			root + '/bugtracker/execution/{\\d+}',
 		'bugtracker.execsteps.new' :		root + '/bugtracker/execution-step/{\\d+}/new-issue',
 
@@ -144,7 +144,7 @@ define([], function(){
 		'iterations.base' :					root + '/iterations',
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'iterations.testplan.lastexec' :	root + '/iterations/{\\d+}/test-plan/{\\d+}/last-execution',
-		
+
 		'testsuites.base' :					root + '/test-suites',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
@@ -161,7 +161,7 @@ define([], function(){
 		'execute.stepbyid' :				root + '/execute/{\\d+}/step/{\\d+}',
 		'execute.stepbyindex' :				root + '/execute/{\\d+}/step/index/{\\d+}',
 		'execute.prologue' :				root + '/execute/{\\d+}/step/prologue',
-		
+
 
 		'administration.bugtrackers'	:	root + '/administration/bugtrackers',
 		'customfield.values' :				root + '/custom-fields/values',
@@ -190,7 +190,7 @@ define([], function(){
 		'docxtemplate'							: root + '/reports/{\\w+}/{\\d+}/views/{\\d+}/docxtemplate',
 		'ie9sucks'								: root + '/reports/0/0/ie9',
 		'milestone.synchronize'					: root + '/administration/milestones/{\\d+}/synchronize/{\\d+}',
-		
+
 		'search-tc.mass-change.associable-milestone'  : root + '/advanced-search/milestones/tc-mass-modif-associables/{\\d+}',
 		'search-tc.mass-change.data'  : root + '/advanced-search/milestones/tc-mass-modif-data/{\\d+}',
 		'search-tc.mass-change.bindmilestones' : root + '/advanced-search/tcs/{\\d+}/milestones',
@@ -205,6 +205,13 @@ define([], function(){
 		'execution.update-from-tc'              : root + '/execute/{\\d+}/update-from-tc',
 		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
 		'chart.wizard.data'                       : root + '/charts',
+
+		//custome report workspace
+		'custom-report-library'                        : '/custom-report-library/{\\d+}',
+		'custom-report-library-server'                 : root + '/custom-report-library',
+		'custom-report-folder'                        : '/custom-report-folder/{\\d+}',
+		'custom-report-folder-server'                 : root + '/custom-report-folder',
+
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);
@@ -217,47 +224,47 @@ define([], function(){
 
 			return res;
 		},
-		
+
 		unbuildURL : function(urlName, urlp, withQuery){
-			
+
 			var template = this[urlName];
 			var url = urlp;
-			
+
 			// remove the query strings if asked to
 			withQuery = (withQuery !== undefined) ? withQuery : true;
-			
+
 			if (! withQuery){
 				template = template.split(/[?#]/)[0];
 				url = url.split(/[?#]/)[0];
 			}
-			
-			// process		
+
+			// process
 			var tplExp = templateToRegex(template, true);
-			var matches = tplExp.exec(url.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes				
-			
+			var matches = tplExp.exec(url.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes
+
 			if (matches !== null){
 				return matches.slice(1);
 			}
 			else{
 				throw "workspace.routing : cannot unbuildURL('"+url+"', '"+urlName+"') because they do not match";
 			}
-			
+
 		},
 
 		// equivalent - but faster - to  { try{ return (this.unbuildURL(candidate, urlName) !== null); }catch(e){return false) }
 		matches : function(urlName, candidate, withQuery){
-			
+
 			var template = this[urlName];
 			var url = candidate;
-			
+
 			// remove the query strings if asked to
 			withQuery = (withQuery !== undefined) ? withQuery : true;
-			
+
 			if (! withQuery){
 				template = template.split(/[?#]/)[0];
 				url = url.split(/[?#]/)[0];
 			}
-			
+
 			// process
 			var tplExp = templateToRegex(template, false);
 			return tplExp.test(url.replace(/\/\//,'/'));	// we remove the double '//' that may occur sometimes

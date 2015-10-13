@@ -26,9 +26,9 @@ import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.tree.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
@@ -61,12 +61,12 @@ public class CustomReportWorkspaceServiceImpl implements
 	}
 
 	@Override
-	public List<CustomReportLibraryNode> findContent(Long libraryId) {
-		throw new UnsupportedOperationException("IMPLEMENTS ME");
+	public List<TreeLibraryNode> findContent(Long libraryId) {
+		return crlnDao.findChildren(libraryId);
 	}
 
 	@Override
-	public List<TreeLibraryNode> findRootNodes() {
+	public List<CustomReportLibraryNode> findRootNodes() {
 		return crlnDao.findAllByEntityType(CustomReportTreeDefinition.LIBRARY);
 	}
 	

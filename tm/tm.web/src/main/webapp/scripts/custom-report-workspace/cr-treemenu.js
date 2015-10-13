@@ -20,32 +20,32 @@
  */
 define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMenu",
         "jquery.squash.buttonmenu"], function($, utils, permissions, WizardMenu){
-	
+
 
 	function createWidgets(){
 		$("#tree-create-button").buttonmenu();
 		$("#tree-import-button").buttonmenu();
 	}
-	
+
 	function decorateEnablingMethods(buttons){
 		var i=0, len = buttons.length;
-		
+
 		function cssenable(){
 			this.removeClass("disabled ui-state-disabled");
 		}
-		
+
 		function cssdisable(){
 			this.addClass("disabled ui-state-disabled");
 		}
-		
+
 		function menuenable(){
 			this.buttonmenu('enable');
 		}
-		
+
 		function menudisable(){
 			this.buttonmenu('disable');
 		}
-		
+
 		for (i=0;i<len;i++){
 			var jqbtn = buttons[i];
 			if (jqbtn.attr('role') === "buttonmenu"){
@@ -58,42 +58,43 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 			}
 		}
 	}
-	
-	
+
+
 	function bindTreeEvents(){
-		
+
 		var btnselector = [
 		  "#tree-create-button",
-			"#new-folder-tree-button", 
-			"#new-test-case-tree-button", 
+			"#new-folder-tree-button",
+			"#new-chart-tree-button",
+      "#new-dashboard-tree-button",
 			"#copy-node-tree-button", 
-			"#paste-node-tree-button", 
-			"#rename-node-tree-button", 
-			"#import-excel-tree-button", 
-			"#import-links-excel-tree-button", 
-			"#export-tree-button", 
-			"#delete-node-tree-button", 
+			"#paste-node-tree-button",
+			"#rename-node-tree-button",
+			"#import-excel-tree-button",
+			"#import-links-excel-tree-button",
+			"#export-tree-button",
+			"#delete-node-tree-button",
 			"#search-tree-button"
 		].join(", ");
-		
+
 		var buttons = [];
-		
+
 		$(btnselector).each(function(){
 			var $this = $(this);
 			buttons.push($this);
 		});
-		
+
 		decorateEnablingMethods(buttons);
 
-		var tree = $("#tree");	
-		
+		var tree = $("#tree");
+
 		function loopupdate(event, data){
-			
+
 			var rules = permissions.buttonrules;
 			var arbuttons = buttons;
-			var nodes = tree.jstree("get_selected"); 
+			var nodes = tree.jstree("get_selected");
 			var i=0,len = buttons.length;
-			
+
 			for (i=0;i<len;i++){
 				var btn = arbuttons[i];
 				var id = btn.attr("id");
@@ -102,48 +103,48 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 					btn.enable();
 				}else{
 					btn.disable();
-				}				
+				}
 			}
-			
+
 			return true;
-			
+
 		}
-		
+
 		tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", loopupdate);
-		
+
 		//init the button states immediately
 		loopupdate("", {
 			rslt : {
 				obj : tree.jstree("get_selected")
 			}
 		});
-		
+
 
 	}
 
-	
+
 	// the wizard menu is a bit different from the rest, hence the init code
 	// is put appart
 	function createWizardMenu(wizards){
-		
+
 		if (!!wizards && wizards.length>0){
-			
+
 			var wmenu = new WizardMenu({
 				collection : wizards
 			});
-			
+
 			var tree = $("#tree");
-			
+
 			//state init
 			wmenu.refreshSelection(tree.jstree("get_selected"));
-			
+
 			//evt binding
 			tree.on("select_node.jstree deselect_node.jstree deselect_all.jstree", function(evt, data){
 				wmenu.refreshSelection(data.inst.get_selected());
 			});
 		}
 	}
-	
+
 	function initExportPlugins(){
 		var plugins = $("#tree_element_menu .export-plugin");
 		var modules = plugins.map(function(idx, elt){
@@ -151,7 +152,7 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 			return require.toUrl(modulename);
 		}).get();
 		var items = plugins.get();
-		
+
 		require(modules, function(){
 			var i, len = modules.length;
 			for (i=0;i<len;i++){
@@ -161,8 +162,8 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 			}
 		});
 	}
-	
-	
+
+
 	function init(settings){
 		createWidgets();
 		bindTreeEvents();
@@ -171,13 +172,13 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 
 		$("#tree_element_menu").removeClass("unstyled-pane");
 	}
-	
-	
-	
+
+
+
 	return {
-		
+
 		init : init
-		
+
 	};
-	
+
 });

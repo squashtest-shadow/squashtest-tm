@@ -18,31 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.domain.tree;
 
-import javax.inject.Inject
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
-
-import spock.unitils.UnitilsSupport
-
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryDao crdao;
+/**
+ * Interface that every ENTITY represented in a tree by a {@link TreeLibraryNode} must implements
+ * The contract assure that the entity is identified, named and can produce a reference to the {@link TreeLibraryNode}
+ * The goal is to have a bidirectional association between a {@link TreeLibraryNode} and it's entity.
+ * @author jthebault
+ *
+ */
+public interface TreeEntity extends Identified{
 	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
+	final int MAX_NAME_SIZE = 255;
+	
+	/**
+	 * @return Name of this node.
+	 */
+	String getName();
 
-		then:
-		res != null;
-	}
+	/**
+	 *
+	 * @param name
+	 *            The name of this node. Should not be blank or null.
+	 */
+	void setName(String name);
+	
+	TreeLibraryNode getTreeNode();
+	
+	void accept(TreeEntityVisitor visitor);
+	
 }

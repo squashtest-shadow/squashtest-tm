@@ -24,7 +24,13 @@ import javax.inject.Inject
 
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
@@ -32,17 +38,38 @@ import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
+@DataSet("CustomReportLibraryNodeServiceIT.sandbox.xml")
+class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 
 	@Inject
-	CustomReportLibraryDao crdao;
+	CustomReportLibraryNodeService service;
 	
-	def "should find a crl by id"() {
+	@Inject
+	CustomReportLibraryNodeDao crlnDao;
+	
+	@Inject
+	CustomReportLibraryDao crlDao;
+	
+	def "should add new folder to library"() {
+		given :
+		def parent = crlnDao.findById(-1L);
+		def library = crlDao.findById(-1L);
+		
+		CustomReportFolder folder = new CustomReportFolder();
+		folder.setName("newFolder");
+		
 		when:
-		def res = crdao.findById(-1L);
+		def res = service.createNewCustomReportLibraryNode(-1L,folder);
+		def resId = res.getId();
+		getSession().flush();
+		getSession().clear();
+		def newChildAfterPersist = crlnDao.findById(resId);
+		def parentNode = newChildAfterPersist.getParent();
 
 		then:
-		res != null;
+		res.id != null;
+		library != null;
+		parentNode.id == parent.id;
 	}
+	
 }

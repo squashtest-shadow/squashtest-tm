@@ -19,8 +19,13 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", 'custom-report-workspace' ,"app/ws/squashtm.workspace", "domReady" , 'jquery.cookie' ], function($, CRWorkspace,  WS, domReady) {
+	require([ "jquery", './custom-report-workspace/custom-report-workspace-main' ,"app/ws/squashtm.workspace", "domReady" ,'backbone.wreqr','backbone','./custom-report-workspace/custom-report-router', 'jquery.cookie' ], function($, CRWorkspace,  WS, domReady,wreqr,Backbone,router) {
 		domReady(function() {
+			squashtm.app.router = router.init();
+			//setting the event bus at global level so it will be avaible for all objects in workspace
+			squashtm.app.wreqr = new wreqr.EventAggregator();
+			//starting the history push state router
+			Backbone.history.start();
 			WS.init();
 
 			$.cookie("workspace-prefs", null, {

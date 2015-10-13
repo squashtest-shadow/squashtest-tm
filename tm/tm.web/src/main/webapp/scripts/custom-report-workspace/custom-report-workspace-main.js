@@ -20,8 +20,8 @@
  */
 define(['tree', './cr-treemenu', './init-actions',
         'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace',
-        'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu'],
-		function(tree, treemenu, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu) {
+        'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu','./popups/init-all'],
+		function(tree, treemenu, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu,popups) {
 
 
 	function initResizer(){
@@ -31,6 +31,7 @@ define(['tree', './cr-treemenu', './init-actions',
 		};
 		resizer.init(conf);
 	}
+
 	function initTabbedPane() {
 		$("#tabbed-pane").tabs();
 	}
@@ -42,6 +43,7 @@ define(['tree', './cr-treemenu', './init-actions',
 	}
 
 
+
 	function init(settings){
 		initResizer();
 		initTabbedPane();
@@ -49,7 +51,7 @@ define(['tree', './cr-treemenu', './init-actions',
 		ToggleWorkspace.init(settings.toggleWS);
 		tree.initWorkspaceTree(settings.tree);
 		treemenu.init(settings.treemenu);
-		//popups.init();
+		popups.init();
 		actions.init();
 	}
 

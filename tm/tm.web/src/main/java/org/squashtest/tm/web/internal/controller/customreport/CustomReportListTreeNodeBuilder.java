@@ -18,31 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.web.internal.controller.customreport;
 
-import javax.inject.Inject
+import java.util.ArrayList;
+import java.util.List;
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
-import spock.unitils.UnitilsSupport
+public class CustomReportListTreeNodeBuilder {
 
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryDao crdao;
-	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
-
-		then:
-		res != null;
+	private List<JsTreeNode> builtNodes;
+	private List<TreeLibraryNode> nodes;
+	public CustomReportListTreeNodeBuilder(List<TreeLibraryNode> children) {
+		super();
+		this.nodes = children;
+		builtNodes = new ArrayList<JsTreeNode>();
 	}
+	
+	public List<JsTreeNode> build(){
+		for (TreeLibraryNode tln : nodes) {
+			CustomReportTreeNodeBuilder builder = new CustomReportTreeNodeBuilder();
+			builtNodes.add(builder.build((CustomReportLibraryNode) tln));//NOSONAR cast is safe
+		}
+		return builtNodes;
+	}
+	
 }

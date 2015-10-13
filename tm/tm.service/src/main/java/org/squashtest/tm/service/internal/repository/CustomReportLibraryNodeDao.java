@@ -23,12 +23,12 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.tree.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 
 @DynamicDao(entity = CustomReportLibraryNode.class)
 public interface CustomReportLibraryNodeDao extends CustomCustomReportLibraryNodeDao {
 	
-	List<TreeLibraryNode> findAllByEntityType(CustomReportTreeDefinition type);
+	List<CustomReportLibraryNode> findAllByEntityType(CustomReportTreeDefinition type);
+	
 }

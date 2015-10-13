@@ -18,31 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.domain.customreport;
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
-
-import spock.unitils.UnitilsSupport
-
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryDao crdao;
-	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
-
-		then:
-		res != null;
-	}
+/**
+ * This interface just define the name of custom report entity. Please make names consistent with
+ * {@link CustomReportTreeDefinition} because hibernate have mapped values on these Strings in 
+ * {@link CustomReportLibraryNode#getEntity()} AND in {@link CustomReportLibraryNode#getEntityType()}.
+ * 
+ * As these values are represented by columns data in database, PLEASE DON'T MODIFY these values.
+ * You can however freely add new types here but you have to put a corresponding type in {@link CustomReportTreeDefinition}
+ * with a consistent name
+ * @author jthebault
+ *
+ */
+public interface CustomReportNodeType {
+	final String CHART_NAME = "CHART";
+	final String DASHBOARD_NAME = "DASHBOARD";
+	final String REPORT_NAME = "REPORT";
+	final String FOLDER_NAME = "FOLDER";
+	final String LIBRARY_NAME = "LIBRARY";
 }

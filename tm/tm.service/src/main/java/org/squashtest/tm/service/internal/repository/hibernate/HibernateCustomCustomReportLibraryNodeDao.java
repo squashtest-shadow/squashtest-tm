@@ -20,11 +20,20 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.customreport.tree.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
 
 @Repository("CustomCustomReportLibraryNodeDao")
 public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDao<CustomReportLibraryNode> implements CustomCustomReportLibraryNodeDao {
+
+	@Override
+	public List<TreeLibraryNode> findChildren(Long parentId) {
+		CustomReportLibraryNode node = findById(parentId);
+		return node.getChildren();
+	}
 	
 }
