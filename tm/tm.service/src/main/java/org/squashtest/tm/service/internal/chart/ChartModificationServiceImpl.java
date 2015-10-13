@@ -37,7 +37,7 @@ import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
-import org.squashtest.tm.service.charts.ChartModificationService;
+import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;

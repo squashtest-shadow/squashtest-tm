@@ -26,6 +26,7 @@ import java.util.Set;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 
 @Transactional
@@ -50,5 +51,13 @@ public interface ChartModificationService {
 	 * @param chartDef a detached instance of a ChartDefinition
 	 */
 	void update(ChartDefinition chartDef);
+
+	/**
+	 * Instanciate a ChartDefinition given its id.
+	 * 
+	 * @param chartDefinitionId
+	 * @return
+	 */
+	ChartInstance generateChart(long chartDefinitionId);
 
 }
