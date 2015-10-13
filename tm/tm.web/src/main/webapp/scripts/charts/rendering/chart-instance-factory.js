@@ -26,9 +26,14 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 	
 	function generateBarChart(viewID, jsonChart){
 		
-		var ticks = jsonChart.resultSet.map(function(elt){
+		var ticks = jsonChart.abscissa.map(function(elt){
 			return elt[0];
+		});		
+		
+		var series = jsonChart.measures.map(function(measure){
+			return jsonChart.series[measure.label];
 		});
+		
 		
 		var Bar = BarView.extend({
 			getCategories : function(){
@@ -36,15 +41,10 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 			},
 			
 			getSeries : function(){
-				return [ this.model.get('chartmodel') ];
+				return this.model.get('chartmodel');
 			}
 		});
-		
 
-		
-		var series = jsonChart.resultSet.map(function(elt){
-			return elt[1];
-		});
 		
 		new Bar({
 			el : $(viewID),
@@ -56,6 +56,7 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 		})
 	}
 	
+	
 	function generatePieChart(viewID, jsonChart){
 
 		var Pie = PieView.extend({
@@ -66,10 +67,8 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 			
 		});
 
-		var series = [];
-		for (var i=0; i < jsonChart.resultSet.length; i++){
-			series[i] = jsonChart.resultSet[i][1];
-		}
+		var series = jsonChart.getSerie(0);
+
 		
 		new Pie({
 			el : $(viewID),
@@ -89,10 +88,10 @@ define(["backbone", "dashboard/basic-objects/model", "dashboard/basic-objects/pi
 	
 	
 	function generateChartInView(viewID, jsonChart){
-		switch(jsonChart.chartType){
-		case 'PIE_CHART' : generatePieChart(viewID, jsonChart); break;
-		case 'SINGLE_TABLE' : generateTableChart(viewID, jsonChart); break;
-		case 'BAR_CHART' : generateBarChart(viewID, jsonChart); break;
+		switch(jsonChart.type){
+		case 'PIE' : generatePieChart(viewID, jsonChart); break;
+		case 'SINGLE' : generateTableChart(viewID, jsonChart); break;
+		case 'BAR' : generateBarChart(viewID, jsonChart); break;
 		default : throw jsonChart.chartType+" not supported yet";
 		}
 		

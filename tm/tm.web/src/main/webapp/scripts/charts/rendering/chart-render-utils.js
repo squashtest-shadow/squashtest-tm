@@ -19,29 +19,27 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["handlebars", "./chart-dom-factory","./chart-instance-factory", './chart-render-utils'], 
-		function(Handlebars, DOMFactory, instanceFactory, utils){
-	
-	var chartNum = 0;
+
+define(['jquery','underscore'], function($,_){
 	
 	
-	function buildChart(divSelector, jsonChart){
+	function toChartInstance(jsonChart){
 		
-		var chart = utils.toChartInstance(jsonChart);
-		
-		var viewID = "chart-"+(chartNum++);
-		
-		var html = DOMFactory.generateViewDOM(viewID, chart);
-		
-		// TODO : make the selector for the container area configurable too
-		// TODO : destroy previous charts and save memory 
-		// everytime a new chart is loaded
-		$(divSelector).html(html); 
-		
-		instanceFactory.generateChartInView("#"+viewID, chart);
+		return $.extend(true, {}, jsonChart, {
+
+			// allows for indiscriminate reference to a serie by name or index
+			getSerie : function(nameOrIndex){
+				// first, discriminate if we reference the serie by name or index
+				// in case the argument is a number (ie an index), look for the name in the list of measures.
+				var name = (isNaN(nameOrIndex)) ? nameOrIndex : this.measures[nameOrIndex].label;
+				return this.series[name];
+
+			}			
+		});
 	}
 	
 	return {
-		buildChart : buildChart
-	};
+		toChartInstance : toChartInstance
+	}
+	
 });

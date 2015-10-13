@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["jquery", "handlebars"], function($, Handelbars){
+define(["jquery", "handlebars"], function($, Handlebars){
 	
 	var colors = ["#FF0000", "#00FF00", "#0000FF", "#880000", "#008800", "#000088", 
 	              "#F0F0F0", "#0F0F0F", "#000000", "#FFFFFF", "#123456", "#ABCDEF"];
@@ -29,8 +29,7 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		var strTemplate = $("#chart-view-barchart-template").html();
 		var template = Handlebars.compile(strTemplate);
 		
-		// TODO : make the title use an actual label for the data too
-		var title = jsonChart.data[0].column.defaultLabel+' / '+jsonChart.axes[0].actualLabel;
+		var title = jsonChart.name;
 		
 		var templateModel = {
 			id : viewID, 
@@ -42,12 +41,12 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		return html;
 	}
 	
+	
 	function generatePieViewDOM(viewID, jsonChart){
 		var strTemplate = $("#chart-view-piechart-template").html();
 		var template = Handlebars.compile(strTemplate);
 		
-		// TODO : make the title use an actual label for the data too
-		var title = jsonChart.data[0].column.defaultLabel+' / '+jsonChart.axes[0].actualLabel;
+		var title = jsonChart.name;
 		
 		var templateModel = {
 			id : viewID, 
@@ -56,12 +55,12 @@ define(["jquery", "handlebars"], function($, Handelbars){
 		};
 		
 		templateModel.legend = [];
-		var serie = jsonChart.resultSet;
+		var abscissa = jsonChart.abscissa;
 		
-		for (var i=0; i < serie.length; i++){
+		for (var i=0; i < abscissa.length; i++){
 			templateModel.legend.push({
 				color : colors[i],
-				label : serie[i][0]
+				label : abscissa[i][0]
 			});
 		}
 		
@@ -71,13 +70,15 @@ define(["jquery", "handlebars"], function($, Handelbars){
 	
 	
 	// TODO : use dashboad/basic-objects/table-view
+	// allows for indiscriminate reference to a serie by name or index
 	// for the sake of consistency
+	
+	// Also see how we can support multiple axis and/or measures
 	function generateTableViewDOM(viewID, jsonChart){
 		var strTemplate = $("#chart-view-singletablechart-template").html();
 		var template = Handlebars.compile(strTemplate);
 		
-		// TODO : make the title use an actual label for the data too
-		var title = jsonChart.data[0].column.defaultLabel+' / '+jsonChart.axes[0].actualLabel;
+		var title = jsonChart.name;
 		
 		var templateModel = {
 			id : viewID,
@@ -85,9 +86,8 @@ define(["jquery", "handlebars"], function($, Handelbars){
 			title : title
 		};
 		
-		
-
-		var serie = jsonChart.resultSet;
+		var headers = jsonChart.abscissa,
+			serie = jsonChart.series
 		templateModel.headers = [];
 		
 		for (var i=0; i< serie.length; i++){
@@ -107,10 +107,10 @@ define(["jquery", "handlebars"], function($, Handelbars){
 	function generateViewDOM(viewID, jsonChart){
 		var viewDOM = "";
 		
-		switch(jsonChart.chartType){
-		case 'PIE_CHART' : viewDOM = generatePieViewDOM(viewID, jsonChart); break;
-		case 'SINGLE_TABLE' : viewDOM = generateTableViewDOM(viewID, jsonChart); break;
-		case 'BAR_CHART' : viewDOM = generateBarViewDOM(viewID, jsonChart); break;
+		switch(jsonChart.type){
+		case 'PIE' : viewDOM = generatePieViewDOM(viewID, jsonChart); break;
+		case 'TABLE' : viewDOM = generateTableViewDOM(viewID, jsonChart); break;
+		case 'BAR' : viewDOM = generateBarViewDOM(viewID, jsonChart); break;
 		default : throw jsonChart.chartType+" not supported yet";
 		}
 		

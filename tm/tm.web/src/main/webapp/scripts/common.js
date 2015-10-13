@@ -106,7 +106,7 @@ requirejs.config({
 				},
 				// charts rendering
 				{
-					main : 'custom-report-workspace-main'
+					name : 'charts-rendering',
 					main : 'chart-render-main',
 					location : 'charts/rendering'
 				},
