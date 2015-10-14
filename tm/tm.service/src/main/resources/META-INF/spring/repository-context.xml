@@ -166,6 +166,7 @@
         <!--  charts -->
           <value>org.squashtest.tm.domain.chart.AxisColumn</value>
           <value>org.squashtest.tm.domain.chart.ChartDefinition</value>
+          <value>org.squashtest.tm.domain.chart.ChartQuery</value>
           <value>org.squashtest.tm.domain.chart.ChartInstance</value>
           <value>org.squashtest.tm.domain.chart.ColumnPrototype</value>
           <value>org.squashtest.tm.domain.chart.Filter</value>

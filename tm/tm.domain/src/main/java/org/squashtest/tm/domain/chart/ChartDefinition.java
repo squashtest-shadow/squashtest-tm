@@ -37,6 +37,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -44,6 +45,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -66,7 +68,7 @@ public class ChartDefinition implements TreeEntity{
 	@Column(name = "CHART_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_definition_chart_id_seq")
 	@SequenceGenerator(name = "chart_definition_chart_id_seq", sequenceName = "chart_definition_chart_id_seq")
-	private long Id;
+	private long id;
 
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
@@ -87,25 +89,20 @@ public class ChartDefinition implements TreeEntity{
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
 
-	@OneToMany(cascade = CascadeType.ALL)
-	@JoinColumn(name = "CHART_ID", nullable = false)
-	private List<Filter> filters = new ArrayList<>();
-
-	@ElementCollection
-	@CollectionTable(name = "CHART_AXIS_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
-	@OrderColumn(name = "AXIS_RANK")
-	private List<AxisColumn> axis = new ArrayList<>();
-
-	@ElementCollection
-	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "CHART_ID") )
-	@OrderColumn(name = "MEASURE_RANK")
-	private List<MeasureColumn> measures = new ArrayList<>();
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
-	@AttributeOverrides({ @AttributeOverride(name = "type", column = @Column(name = "ENTITY_REFERENCE_TYPE") ),
-		@AttributeOverride(name = "id", column = @Column(name = "ENTITY_REFERENCE_ID") ) })
+	@AttributeOverrides({
+		@AttributeOverride(name = "type", column = @Column(name = "ENTITY_REFERENCE_TYPE") ),
+		@AttributeOverride(name = "id", column = @Column(name = "ENTITY_REFERENCE_ID") )
+	})
 	private List<EntityReference> scope = new ArrayList<>();
+
+
+	@OneToOne
+	@JoinColumn(name="QUERY_ID")
+	private ChartQuery query = new ChartQuery();
+
 
 
 	public User getOwner() {
@@ -129,15 +126,19 @@ public class ChartDefinition implements TreeEntity{
 	}
 
 	public List<Filter> getFilters() {
-		return filters;
+		return query.getFilters();
 	}
 
 	public List<AxisColumn> getAxis() {
-		return axis;
+		return query.getAxis();
 	}
 
 	public List<MeasureColumn> getMeasures() {
-		return measures;
+		return query.getMeasures();
+	}
+
+	public ChartQuery getQuery(){
+		return query;
 	}
 
 
@@ -150,18 +151,23 @@ public class ChartDefinition implements TreeEntity{
 
 		Map<ColumnRole, Set<EntityType>> result = new HashMap<ColumnRole, Set<EntityType>>(3);
 
-		if (! filters.isEmpty()){
-			Set<EntityType> filterTypes = collectTypes(filters);
+		Collection<? extends ColumnPrototypeInstance> columns;
+
+		columns = getFilters();
+		if (! columns.isEmpty()){
+			Set<EntityType> filterTypes = collectTypes(columns);
 			result.put(ColumnRole.FILTER, filterTypes);
 		}
 
-		if (! axis.isEmpty()){
-			Set<EntityType> axisTypes = collectTypes(axis);
+		columns = getAxis();
+		if (! columns.isEmpty()){
+			Set<EntityType> axisTypes = collectTypes(columns);
 			result.put(ColumnRole.AXIS, axisTypes);
 		}
 
-		if (! measures.isEmpty()){
-			Set<EntityType> measureTypes = collectTypes(measures);
+		columns = getMeasures();
+		if (! columns.isEmpty()){
+			Set<EntityType> measureTypes = collectTypes(columns);
 			result.put(ColumnRole.MEASURE, measureTypes);
 		}
 
@@ -179,7 +185,7 @@ public class ChartDefinition implements TreeEntity{
 
 	@Override
 	public Long getId() {
-		return Id;
+		return id;
 	}
 	@Override
 	public String getName() {
