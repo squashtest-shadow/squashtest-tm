@@ -58,9 +58,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			$.ajax({
 				method : "POST",
 				contentType: "application/json",
-				url : router.buildURL("chart.new"),
+				url : router.buildURL("chart.new") + "/" + this.model.get("parentId"),
 				data : this.model.toJson()
 				
+			}).done(function(url){
+				 window.location.href = squashtm.app.contextRoot + url;
 			});
 			
 			

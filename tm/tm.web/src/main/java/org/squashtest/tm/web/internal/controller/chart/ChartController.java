@@ -29,9 +29,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.service.chart.ChartModificationService;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
@@ -46,6 +49,9 @@ public class ChartController {
 	@Inject
 	private ChartModificationService chartService;
 
+	@Inject
+	private CustomReportLibraryNodeService reportNodeService;
+
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonChartWizardData getWizardData() {
@@ -53,8 +59,10 @@ public class ChartController {
 	}
 
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
-	public String getWizard(@PathVariable Long parentId) {
-		return "charts/wizard/wizard.html";
+	public ModelAndView getWizard(@PathVariable Long parentId) {
+		ModelAndView mav = new ModelAndView("charts/wizard/wizard.html");
+		mav.addObject("parentId", parentId);
+		return mav;
 	}
 
 	@RequestMapping(value = "/{definitionId}/instance", method = RequestMethod.GET)
@@ -76,11 +84,13 @@ public class ChartController {
 		return "charts-render-test.html";
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody void createNewChartDefinition(@RequestBody @Valid ChartDefinition definition) {
+	@RequestMapping(value = "/new/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody String createNewChartDefinition(@RequestBody @Valid ChartDefinition definition,
+			@PathVariable("id") long id) {
 
 		definition.setOwner(userService.findCurrentUser());
-		chartService.persist(definition);
+		CustomReportLibraryNode node = reportNodeService.createNewCustomReportLibraryNode(id, definition);
+		return "custom-report-workspace#custom-report-chart/" + node.getId();
 	}
 
 }

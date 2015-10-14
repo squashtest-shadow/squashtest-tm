@@ -21,11 +21,12 @@
 
 	define([ "jquery", "backbone", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, router, WizardRouter, WizardView, WizardModel) {
 
-
 		
 	$.ajax({
 		url: router.buildURL('chart.wizard.data')	
 	}).done(function(data){
+		
+		data.parentId = squashtm.chart.parentId;
 		
 		var model = new WizardModel(data);
 		
@@ -39,6 +40,7 @@
 		
 		Backbone.history.start();
 	});
+
 
 });
  

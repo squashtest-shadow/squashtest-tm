@@ -51,9 +51,11 @@
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
     	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",	
+    	  	
     	};
     	squashtm.workspace = squashtm.workspace || {};
-    	
+    	squashtm.chart = {};
+    	squashtm.chart.parentId = /*[[${parentId}]]*/;
     	requirejs.config({
     		  baseUrl: /*[[@{/scripts/}]]*/,
     	});
