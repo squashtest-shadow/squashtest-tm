@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
-	function($, backbone, _, Handlebars, AbstractStepView) {
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing"],
+	function($, backbone, _, Handlebars, AbstractStepView, router) {
 	"use strict";
 
 	var previewStepView = AbstractStepView.extend({
@@ -35,6 +35,23 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		events : {
 			"click #preview" : "preview",
 			"click #save" : "save"
+			
+		},
+		
+		preview : function(){
+			
+		},
+		
+		save : function () {
+			
+			$.ajax({
+				method : "POST",
+				contentType: "application/json",
+				url : router.buildURL("chart.new"),
+				data : this.model.toJson()
+				
+			});
+			
 			
 		},
 		

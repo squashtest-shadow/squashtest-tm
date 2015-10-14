@@ -20,11 +20,13 @@
  */
 package org.squashtest.tm.web.json;
 
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportLibraryMixin;
 import org.squashtest.tm.web.internal.model.json.GenericProjectMixin;
@@ -60,6 +62,7 @@ public class SquashObjectMapper extends ObjectMapper {
 		addMixInAnnotations(CustomReportLibrary.class, CustomReportLibraryMixin.class);
 		addMixInAnnotations(Project.class, GenericProjectMixin.class);
 		addMixInAnnotations(CustomReportFolder.class, CustomReportFolderMixin.class);
+		addMixInAnnotations(ChartDefinition.class, ChartDefinitionMixin.class);
 	}
 
 }

@@ -62,8 +62,8 @@ public class ColumnPrototype {
 
 	@Id
 	@javax.persistence.Column(name = "CHART_COLUMN_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_column_id_seq")
-	@SequenceGenerator(name = "chart_column_id_seq", sequenceName = "chart_column_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_column_prototype_chart_column_id_seq")
+	@SequenceGenerator(name = "chart_column_prototype_chart_column_id_seq", sequenceName = "chart_column_prototype_chart_column_id_seq")
 	private Long id;
 
 	@NotBlank

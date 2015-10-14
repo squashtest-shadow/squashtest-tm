@@ -21,21 +21,32 @@
 package org.squashtest.tm.web.internal.controller.chart;
 
 import javax.inject.Inject;
+import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.service.chart.ChartModificationService;
+import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
+import javax.validation.Valid;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.service.user.UserAccountService;
 
 @Controller
 @RequestMapping("charts")
 public class ChartController {
 
+
+	@Inject
+	private UserAccountService userService;
 
 	@Inject
 	private ChartModificationService chartService;
@@ -64,6 +75,13 @@ public class ChartController {
 	@RequestMapping(value = "/test-page", method = RequestMethod.GET)
 	public String getTestPage(){
 		return "charts-render-test.html";
+	}
+
+	@RequestMapping(value = "/new", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody void createNewChartDefinition(@RequestBody @Valid ChartDefinition definition) {
+
+		definition.setOwner(userService.findCurrentUser());
+		chartService.persist(definition);
 	}
 
 }

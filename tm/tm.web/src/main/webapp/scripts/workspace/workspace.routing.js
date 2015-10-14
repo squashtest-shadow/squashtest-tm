@@ -205,6 +205,7 @@ define([], function(){
 		'execution.update-from-tc'              : root + '/execute/{\\d+}/update-from-tc',
 		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
 		'chart.wizard.data'                       : root + '/charts',
+		'chart.new'                               : root + '/charts/new',
 
 		//custome report workspace
 		'custom-report-library'                        : '/custom-report-library/{\\d+}',

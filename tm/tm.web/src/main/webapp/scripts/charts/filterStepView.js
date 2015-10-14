@@ -52,10 +52,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		updateModel : function() {
 			//get ids of selecteds columns
 			var ids = _.pluck($('[id^="filter-selection-"]').filter(":checked"), "name");
-		
+			var self = this;
 			var filters = ids.map(function (id){
 				return { 
-					columnId : this.findColumnById(id),
+					column : self.findColumnById(id),
 					operation : $("#filter-operation-select-" + id).val(),
 					values : [$("#first-filter-value-" + id).val(), $("#second-filter-value-" + id).val()] };
 				});
@@ -65,7 +65,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		
 		findColumnById : function (id){
-			return _.find(this.model.get("columnPrototypes")[this.model.get("selectedEntity")] , function(col){return col.id == id; });
+			return _.find(_.reduce(this.model.get("columnPrototypes"), function(memo, val){ return memo.concat(val); }, []), function(col){return col.id == id; });
 		},
 		
 		changeOperation : function(event){				

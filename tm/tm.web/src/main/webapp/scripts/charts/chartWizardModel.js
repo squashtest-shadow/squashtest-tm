@@ -23,6 +23,19 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 
 return Backbone.Model.extend({
 		
+	
+		toJson : function() {
+			
+			return JSON.stringify ({
+			name : "name",
+			axis: this.get("axis"),
+			measures : this.get("measures"),					
+			filters : this.get("filters")
+			});
+			
+		}
+	
+	
 		});
 
 

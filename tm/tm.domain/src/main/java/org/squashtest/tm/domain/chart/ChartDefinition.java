@@ -31,6 +31,7 @@ import java.util.Set;
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
 import javax.persistence.CascadeType;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -41,9 +42,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
@@ -65,8 +66,8 @@ public class ChartDefinition implements TreeEntity{
 
 	@Id
 	@Column(name = "CHART_ID")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_def_id_seq")
-	@SequenceGenerator(name = "chart_def_id_seq", sequenceName = "chart_def_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "chart_definition_chart_id_seq")
+	@SequenceGenerator(name = "chart_definition_chart_id_seq", sequenceName = "chart_definition_chart_id_seq")
 	private long Id;
 
 	@NotBlank
@@ -89,7 +90,7 @@ public class ChartDefinition implements TreeEntity{
 	private String description;
 
 	@OneToMany(cascade = CascadeType.ALL)
-	@JoinTable(name = "CHART_FILTER", joinColumns = @JoinColumn(name = "CHART_ID") , inverseJoinColumns = @JoinColumn(name = "FILTER_ID") )
+	@JoinColumn(name = "CHART_ID", nullable = false)
 	private List<Filter> filters = new ArrayList<>();
 
 	@ElementCollection
@@ -197,5 +198,10 @@ public class ChartDefinition implements TreeEntity{
 	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
+	}
+
+	public void setOwner(User user) {
+		this.owner = user;
+
 	}
 }

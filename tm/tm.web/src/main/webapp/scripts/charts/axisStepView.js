@@ -46,7 +46,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			var measure = this.getVal("MEASURE");
 			var axis = this.getVal("AXIS");
 			
-			this.model.set({measures : measure, axis : axis}); 
+			this.model.set({measures : [measure], axis : [axis]}); 
 		},
 		
 		getVal : function (role) {
