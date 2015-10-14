@@ -48,11 +48,12 @@ import org.squashtest.tm.domain.testcase.QTestCase
 import org.squashtest.tm.domain.bugtracker.QIssue
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet
-
+import com.querydsl.core.types.dsl.Expressions;
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.Projections
+import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.jpa.hibernate.HibernateQuery
 
 
@@ -83,7 +84,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 		HibernateQuery query = new HibernateQuery()
 		query.from(v).join(v.requirementVersionCoverages, cov)
 				.join(cov.verifyingTestCase, tc)
-				.select(Projections.tuple(v.id, v.name))
+				.select(Projections.tuple(v.id,  v.name.countDistinct() ))
 				.groupBy(v.id)
 
 		and : "the definition"
@@ -101,7 +102,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 		then :
 
 		def formatedRes = res.collect{ it.a } as Set
-		formatedRes == [ [-12l, "req 1 version 2"] , [-21l, "req 2 version 1"], [-31l, "req 3 version 1"]] as Set
+		formatedRes == [ [-12l, 1] , [-21l, 1], [-31l, 1]] as Set
 
 	}
 
