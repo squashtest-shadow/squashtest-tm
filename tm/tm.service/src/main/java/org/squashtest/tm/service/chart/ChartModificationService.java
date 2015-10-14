@@ -60,4 +60,6 @@ public interface ChartModificationService {
 	 */
 	ChartInstance generateChart(long chartDefinitionId);
 
+	ChartInstance generateChart(ChartDefinition definition);
+
 }

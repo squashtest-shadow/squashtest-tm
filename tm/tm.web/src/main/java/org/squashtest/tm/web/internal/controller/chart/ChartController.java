@@ -35,10 +35,6 @@ import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
-import javax.validation.Valid;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.service.user.UserAccountService;
 
 @Controller
 @RequestMapping("charts")
@@ -64,6 +60,12 @@ public class ChartController {
 	@RequestMapping(value = "/{definitionId}/instance", method = RequestMethod.GET)
 	public @ResponseBody JsonChartInstance generate(@PathVariable("definitionId") Long definitionId){
 		ChartInstance instance = chartService.generateChart(definitionId);
+		return new JsonChartInstance(instance);
+	}
+
+	@RequestMapping(value = "/instance", method = RequestMethod.POST)
+	public @ResponseBody JsonChartInstance generate(@RequestBody @Valid ChartDefinition definition) {
+		ChartInstance instance = chartService.generateChart(definition);
 		return new JsonChartInstance(instance);
 	}
 

@@ -24,6 +24,7 @@
 
 {{#*inline "columnSelector"}}
 
+
 <select id="{{ROLE}}">
 {{#each  (lookup attributes.columnPrototypes attributes.selectedEntity)   }}  
 {{#if (contains this.role ../ROLE)}}
@@ -35,22 +36,28 @@
 </select>
 <span id="{{ROLE}}-operation-container"></span>
 
+
+<span th:text="#{label.name}" />
+<input type="text" id="{{ROLE}}-name" />
+<br />
+<br />
 {{/inline}}
 
 
-CHOOSE CHART AXIS
-
+CHOOSE YOUR CHART AXIS/MEASURE
+<br />
+<br />
 CHOOSE MEASURE
+<br />
 <br />
 {{> columnSelector ROLE="MEASURE"}}
 
-<br />
-<br />
 
 CHOOSE AXIS
 <br />
 
 {{> columnSelector ROLE="AXIS"}}
+
 
 
  <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
@@ -63,9 +70,6 @@ CHOOSE AXIS
 
 
 </div>
-
-
-
 
 
 

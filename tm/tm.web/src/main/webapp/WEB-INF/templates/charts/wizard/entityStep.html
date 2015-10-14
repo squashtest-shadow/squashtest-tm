@@ -22,6 +22,11 @@
 -->
   <div th:fragment="chart-wizard-entity">
 
+
+<span th:text="#{label.name}" />
+<input type="text" id="chart-name" />
+
+<br />
  <ul style="list-style: none;">
         {{#each attributes.entityTypes}}
         <li>

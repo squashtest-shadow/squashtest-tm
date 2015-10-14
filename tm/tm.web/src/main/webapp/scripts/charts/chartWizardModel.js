@@ -27,7 +27,8 @@ return Backbone.Model.extend({
 		toJson : function() {
 			
 			return JSON.stringify ({
-			name : "name",
+			name : this.get("name"),
+			type : this.get("type"),
 			axis: this.get("axis"),
 			measures : this.get("measures"),					
 			filters : this.get("filters")

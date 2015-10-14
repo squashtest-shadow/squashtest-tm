@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.chart;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 
+
 import java.util.Map;
 import java.util.Set;
 
@@ -83,14 +84,18 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	@Override
 	public ChartInstance generateChart(long chartDefId){
 		ChartDefinition def = findById(chartDefId);
-		ChartSeries series = dataFinder.findData(def);
-
-		return new ChartInstance(def, series);
+		return generateChart(def);
 
 	}
 
 
 	private Session session(){
 		return sessionFactory.getCurrentSession();
+	}
+
+	@Override
+	public ChartInstance generateChart(ChartDefinition definition) {
+		ChartSeries series = dataFinder.findData(definition);
+		return new ChartInstance(definition, series);
 	}
 }

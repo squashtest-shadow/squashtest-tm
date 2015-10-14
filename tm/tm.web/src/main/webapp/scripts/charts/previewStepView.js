@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing"],
-	function($, backbone, _, Handlebars, AbstractStepView, router) {
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing", "charts/rendering/charts-render-main"],
+	function($, backbone, _, Handlebars, AbstractStepView, router, chart) {
 	"use strict";
 
 	var previewStepView = AbstractStepView.extend({
@@ -39,7 +39,18 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		
 		preview : function(){
-			
+		
+			$.ajax({
+				'type' : 'POST',
+				'dataType' : 'json',
+				'contentType' : 'application/json',
+				'url' : squashtm.app.contextRoot + '/charts/instance',
+				'data' : this.model.toJson()
+			})
+			.success(function(json){
+				chart.buildChart("#chart-display-area", json);
+			});
+	
 		},
 		
 		save : function () {

@@ -52,7 +52,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		getVal : function (role) {
 		
 			return {column : this.findColumnByLabel(role),
-			operation : $("#" + role + "-operation").val() };
+			operation : $("#" + role + "-operation").val() || "NONE",
+			label : $("#" + role + "-name").val() };
 			
 		},
 		

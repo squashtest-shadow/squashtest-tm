@@ -33,8 +33,10 @@ define(["jquery", "backbone", "./abstractStepView"],
 		},
 		
 		updateModel : function() {
-		    var value = $("input[name='entity']:checked").val();
-			this.model.set({selectedEntity : value});  
+		    var entity = $("input[name='entity']:checked").val();
+		    var name = $("#chart-name").val();
+			this.model.set({selectedEntity : entity, name : name });  
+
 		}
 		
 	});
