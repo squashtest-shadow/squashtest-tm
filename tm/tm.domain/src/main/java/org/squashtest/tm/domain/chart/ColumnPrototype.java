@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import javax.persistence.CollectionTable;
+import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -96,6 +97,7 @@ public class ColumnPrototype {
 	@CollectionTable(name = "CHART_COLUMN_ROLE", joinColumns = @JoinColumn(name = "CHART_COLUMN_ID") )
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
+	@Column(name="ROLE")
 	private Set<ColumnRole> role;
 
 	public String getLabel() {
