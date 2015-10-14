@@ -18,30 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars"],
-		function(_,Backbone, translator,Handlebars) {
-	var View = Backbone.View.extend({
+define(function(){
+	var baseURL = squashtm.app.contextRoot;
 
-    el : "#contextual-content",
-		tpl : "#tpl-show-library",
+	return {
+		generate : function(){
 
-		initialize : function(){
-			_.bindAll(this, "render");
-			this.model.fetch({ // call fetch() with the following options
-       success: this.render // $.ajax 'success' callback
-     });
-		},
+			return {
+				"types" : {
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+					"start_drag" : false,
+					"move_node" : true,
+					"delete_node" : false,
+					"remove" : false,
+					"types" : {
+						"chart" : {
+							"valid_children" : 'none'
+						},
+						"dashboard" : {
+							"valid_children" : ["chart"]
+						},
+						"folder" : {
+							"valid_children" : [ "test-case", "folder" ]
+						},
+						"drive" : {
+							"valid_children" : [ "test-case", "folder" ]
+						}
+					}
+				}
+			};
+		}
 
-		events : {
-		},
-
-		render : function(){
-			var source = $("#tpl-show-library").html();
-			var template = Handlebars.compile(source);
-			this.$el.append(template(this.model.toJSON()));
-		},
-
-  });
-
-	return View;
+	};
 });

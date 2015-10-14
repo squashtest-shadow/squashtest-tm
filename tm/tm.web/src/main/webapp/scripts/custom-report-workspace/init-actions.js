@@ -115,9 +115,16 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				$("#add-folder-dialog").formDialog("open");
 			});
 
-			$("#new-test-case-tree-button").on("click", function(){
-				$("#add-test-case-dialog").formDialog("open");
+			$("#new-dashboard-tree-button").on("click", function(){
+				$("#add-dashboard-dialog").formDialog("open");
 			});
+
+      $("#new-chart-tree-button").on("click", function(){
+        var selectedNode =  tree.jstree("get_selected");
+        var nodeId = selectedNode.getResId();
+        url = urlBuilder.buildURL("chart.wizard",nodeId);
+        document.location.href = url;
+      });
 
 
 			// *************** copy paste ****************

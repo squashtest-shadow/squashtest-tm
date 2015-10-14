@@ -31,7 +31,7 @@
 <link rel="shortcut icon" type="image/x-icon" media="all"
   href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.green.css" sq:css="squash.green.css" />
+  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css" sq:css="squash.wine.css" />
 <!-- rich jeditable header -->
 <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-2.1.1.min.js"></script>
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
@@ -301,6 +301,35 @@
           </td>
           <td>
             <textarea id="add-folder-description" data-def="isrich"></textarea>
+          </td>
+        </tr>
+      </table>
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm, mainbtn=confirm" />
+        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
+        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel" />
+      </div>
+     </div>
+    </div>
+    
+    <div id="add-dashboard-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-dashboard.title}"
+      title="new folder">
+      
+      <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
+      
+      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
+            
+      
+      <div data-def="state=confirm">
+      <table class="add-node-attributes">
+        <tr>
+          <td>
+            <label for="add-dashboard-name" th:text="#{label.Name}">Name</label>
+          </td>
+          <td>
+            <input id="add-dashboard-name" type="text" size="50" maxlength="255" />
+            <br />
+            <span class="error-message name-error"></span>
           </td>
         </tr>
       </table>

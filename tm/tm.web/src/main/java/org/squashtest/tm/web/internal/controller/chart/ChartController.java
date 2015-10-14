@@ -44,7 +44,6 @@ import org.squashtest.tm.service.user.UserAccountService;
 @RequestMapping("charts")
 public class ChartController {
 
-
 	@Inject
 	private UserAccountService userService;
 
@@ -54,13 +53,11 @@ public class ChartController {
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonChartWizardData getWizardData() {
-
 		return new JsonChartWizardData(chartService.getColumnPrototypes());
-
 	}
 
-	@RequestMapping(value = "/wizard", method = RequestMethod.GET)
-	public String getWizard() {
+	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
+	public String getWizard(@PathVariable Long parentId) {
 		return "charts/wizard/wizard.html";
 	}
 

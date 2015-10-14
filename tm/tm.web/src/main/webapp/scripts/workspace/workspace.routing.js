@@ -206,6 +206,7 @@ define([], function(){
 		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
 		'chart.wizard.data'                       : root + '/charts',
 		'chart.new'                               : root + '/charts/new',
+		'chart.wizard'                       : root + '/charts/wizard/{\\d+}',
 
 		//custome report workspace
 		'custom-report-library'                        : '/custom-report-library/{\\d+}',

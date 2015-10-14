@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 
 /**
  * Builder for new {@link CustomReportLibraryNode}.
- * TODO : Implement {@link TreeEntityVisitor} if type dependent process is necessary
+ * Implement {@link TreeEntityVisitor} if type dependent process is necessary
  * @author jthebault
  */
 public class CustomReportLibraryNodeBuilder {
@@ -60,7 +60,6 @@ public class CustomReportLibraryNodeBuilder {
 	
 	private void linkToParent(){
 		parentNode.addChild(builtNode);
-//		builtNode.setParent(parentNode);
 		builtNode.setLibrary(parentNode.getLibrary());
 	}
 }

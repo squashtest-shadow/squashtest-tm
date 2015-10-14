@@ -25,7 +25,6 @@ import java.util.List;
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
@@ -35,7 +34,6 @@ import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
-@Transactional
 public class CustomReportWorkspaceServiceImpl implements
 		CustomReportWorkspaceService {
 	

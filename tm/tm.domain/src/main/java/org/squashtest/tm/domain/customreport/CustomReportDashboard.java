@@ -20,28 +20,45 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.Size;
+
+import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
+@Entity
 public class CustomReportDashboard implements TreeEntity {
 
+	@Id
+	@Column(name = "CRD_ID")
+	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_dashboard_crd_id_seq")
+	@SequenceGenerator(name="custom_report_dashboard_crd_id_seq", sequenceName="custom_report_dashboard_crd_id_seq")
+	private Long id;
+	
+	@NotBlank
+	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Column
+	private String name;
+	
 	@Override
 	public Long getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return id;
 	}
 
 	@Override
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return name;
 	}
 
 	@Override
 	public void setName(String name) {
-		// TODO Auto-generated method stub
-
+		this.name=name;
 	}
 
 	@Override

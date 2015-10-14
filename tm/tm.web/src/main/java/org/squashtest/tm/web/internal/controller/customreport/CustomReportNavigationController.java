@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.library.LibraryNode;
@@ -51,7 +52,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
  * The tree send several distinct requests for the different type of node. This way had sense with the initial tree model,
  * but isn't optimized for the new tree model.
  * As we haven't the time to redefine the client tree, this controller just follow the client jstree requests... 
- * Also, no milestones for v1, but we require active milestone as it probably will be in v2 ans the tree give it anyway
+ * Also, no milestones for v1, but we require active milestone as it probably will be in v2 and the tree give it anyway
  * @author jthebault
  *
  */
@@ -72,16 +73,27 @@ public class CustomReportNavigationController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/drives/{libraryId}/content/new-folder", method=RequestMethod.POST)
 	public @ResponseBody JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId, @RequestBody CustomReportFolder customReportFolder){
-		LOGGER.debug("JTH custom-report-browser/drives/{libraryId}/content/new-folder " + libraryId);
 		return createNewCustomReportLibraryNode(libraryId, customReportFolder);
 	}
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/folders/{folderId}/content/new-folder", method=RequestMethod.POST)
 	public @ResponseBody JsTreeNode createNewFolderInFolder(@PathVariable Long folderId, @RequestBody CustomReportFolder customReportFolder){
-		LOGGER.debug("JTH custom-report-browser/folders/{libraryId}/content/new-folder " + folderId);
 		return createNewCustomReportLibraryNode(folderId, customReportFolder);
 	}
+	
+	@ResponseStatus(HttpStatus.CREATED)
+	@RequestMapping(value="/drives/{libraryId}/content/new-dashboard", method=RequestMethod.POST)
+	public @ResponseBody JsTreeNode createNewDashboardInLibrary(@PathVariable Long libraryId, @RequestBody CustomReportDashboard customReportDashboard){
+		return createNewCustomReportLibraryNode(libraryId, customReportDashboard);
+	}
+	
+	@ResponseStatus(HttpStatus.CREATED)
+	@RequestMapping(value="/folders/{folderId}/content/new-dashboard", method=RequestMethod.POST)
+	public @ResponseBody JsTreeNode createNewDashboardInFolder(@PathVariable Long folderId, @RequestBody CustomReportDashboard customReportDashboard){
+		return createNewCustomReportLibraryNode(folderId, customReportDashboard);
+	}
+	
 	
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId,
@@ -89,7 +101,7 @@ public class CustomReportNavigationController {
 		return getNodeContent(libraryId, activeMilestone);
 	}
 	
-	@RequestMapping(value = "/folders/{libraryId}/content", method = RequestMethod.GET)
+	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId,
 			@CurrentMilestone Milestone activeMilestone) {
 		return getNodeContent(folderId, activeMilestone);

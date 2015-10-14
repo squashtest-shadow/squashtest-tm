@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.customreport;
 
 import javax.inject.Inject;
 
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
@@ -40,6 +42,9 @@ public class CustomReportLibraryNodeServiceImpl implements
 	
 	@Inject 
 	CustomReportLibraryNodeDao customReportLibraryNodeDao;
+	
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Override
 	public CustomReportLibrary findCustomReportLibraryById(Long libraryId) {
@@ -61,7 +66,11 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		CustomReportLibraryNode newNode = new CustomReportLibraryNodeBuilder(parentNode, entity).build();
 		customReportLibraryNodeDao.persist(newNode);
-		return newNode;
+		Session session = sessionFactory.getCurrentSession();
+		session.flush();
+		session.clear();//needed to force hibernate to reload the persisted entities...
+		CustomReportLibraryNode persistedNode = customReportLibraryNodeDao.findById(newNode.getId());
+		return persistedNode;
 	}
 	
 	//--------------- PRIVATE METHODS --------------

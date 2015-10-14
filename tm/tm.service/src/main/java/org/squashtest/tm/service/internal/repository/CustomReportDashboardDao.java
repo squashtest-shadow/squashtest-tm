@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,30 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars"],
-		function(_,Backbone, translator,Handlebars) {
-	var View = Backbone.View.extend({
+package org.squashtest.tm.service.internal.repository;
 
-    el : "#contextual-content",
-		tpl : "#tpl-show-library",
+import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 
-		initialize : function(){
-			_.bindAll(this, "render");
-			this.model.fetch({ // call fetch() with the following options
-       success: this.render // $.ajax 'success' callback
-     });
-		},
-
-		events : {
-		},
-
-		render : function(){
-			var source = $("#tpl-show-library").html();
-			var template = Handlebars.compile(source);
-			this.$el.append(template(this.model.toJSON()));
-		},
-
-  });
-
-	return View;
-});
+@DynamicDao(entity = CustomReportDashboard.class)
+public interface CustomReportDashboardDao extends CustomCustomReportDashboardDao {
+	
+}

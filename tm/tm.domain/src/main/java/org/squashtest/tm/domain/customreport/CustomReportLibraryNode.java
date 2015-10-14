@@ -102,7 +102,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	    metaValues = {
 	        @MetaValue( value = CustomReportNodeType.CHART_NAME, targetEntity = ChartDefinition.class ),
 	        @MetaValue( value = CustomReportNodeType.FOLDER_NAME, targetEntity = CustomReportFolder.class ),
-	        @MetaValue( value = CustomReportNodeType.LIBRARY_NAME, targetEntity = CustomReportLibrary.class )
+	        @MetaValue( value = CustomReportNodeType.LIBRARY_NAME, targetEntity = CustomReportLibrary.class ),
+	        @MetaValue( value = CustomReportNodeType.DASHBOARD_NAME, targetEntity = CustomReportDashboard.class )
 	    })
 	@JoinColumn( name = "ENTITY_ID" )
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
@@ -210,7 +211,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		
 		String newChildName = treeLibraryNode.getName();
 		
-		if(this.nameAlreadyUsed(treeLibraryNode.getName())){
+		if(this.nameAlreadyUsed(newChildName)){
 			throw new NameAlreadyInUseException(newChildName,this.getEntityType().getTypeName());
 		}
 		this.getChildren().add(treeLibraryNode);

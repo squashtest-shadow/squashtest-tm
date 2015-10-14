@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator"],
-		function(_,Backbone, translator) {
+define(["underscore","backbone","squash.translator","handlebars"],
+		function(_,Backbone, translator,Handlebars) {
 	var View = Backbone.View.extend({
 
     el : "#contextual-content",
