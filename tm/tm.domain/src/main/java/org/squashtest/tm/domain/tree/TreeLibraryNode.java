@@ -21,14 +21,14 @@
 package org.squashtest.tm.domain.tree;
 
 import java.util.List;
-
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
- * Interface for a tree node without data. The main goal of this API is to separate concern beetwen
- * tree and entity referenced in this tree.
+ * Interface for a tree node without data. The main goal of this API is to separate concern between
+ * a tree node and the entity referenced by this tree node.
  * By design, a tree node and an entity have a 1:1 relationship.
  * @author jthebault
  *
@@ -47,8 +47,6 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	void setEntity(TreeEntity treeEntity);
 	
 	TreeEntityDefinition getEntityType();
-	
-//	void setEntityType(TreeEntityDefinition definition);
 	
 	TreeLibraryNode getParent();
 	
@@ -70,5 +68,7 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	 * @return
 	 */
 	void isCoherentWithEntity();
+	
+	boolean hasContent();
 
 }

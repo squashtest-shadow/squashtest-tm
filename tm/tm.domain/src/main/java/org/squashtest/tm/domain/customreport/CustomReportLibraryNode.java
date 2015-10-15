@@ -241,4 +241,12 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		}
 		children.remove(treeLibraryNode);
 	}
+
+	@Override
+	public boolean hasContent() {
+		if (!getEntityType().isContainer()) {
+			return false;
+		}
+		return children.size() > 0;
+	}
 }
