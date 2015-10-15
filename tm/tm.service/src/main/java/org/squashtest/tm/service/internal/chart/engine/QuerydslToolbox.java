@@ -46,6 +46,7 @@ import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Ops.DateTimeOps;
+import com.querydsl.core.types.Ops.MathOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
@@ -365,6 +366,7 @@ class QuerydslToolbox {
 		case BY_YEAR : operator = DateTimeOps.YEAR; break;
 		case BY_MONTH : operator = DateTimeOps.YEAR_MONTH; break;
 		case COUNT : operator = AggOps.COUNT_DISTINCT_AGG; break;
+		case GREATER : operator = Ops.GT; break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
 

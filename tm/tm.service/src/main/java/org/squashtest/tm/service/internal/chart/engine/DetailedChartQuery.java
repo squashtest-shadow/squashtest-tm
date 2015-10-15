@@ -100,15 +100,15 @@ class DetailedChartQuery extends ChartQuery{
 	}
 
 
-	protected void setMeasures(List<MeasureColumn> measures){
+	public void setMeasures(List<MeasureColumn> measures){
 		getMeasures().addAll(measures);
 	}
 
-	protected void setAxis(List<AxisColumn> axes){
+	public void setAxis(List<AxisColumn> axes){
 		getAxis().addAll(axes);
 	}
 
-	protected void setFilters(List<Filter> filters){
+	public void setFilters(List<Filter> filters){
 		getFilters().addAll(filters);
 	}
 

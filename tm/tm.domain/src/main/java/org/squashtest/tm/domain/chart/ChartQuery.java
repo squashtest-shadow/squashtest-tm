@@ -92,6 +92,18 @@ public class ChartQuery {
 		return measures;
 	}
 
+	public void setFilters(List<Filter> filters) {
+		this.filters = filters;
+	}
+
+	public void setAxis(List<AxisColumn> axis) {
+		this.axis = axis;
+	}
+
+	public void setMeasures(List<MeasureColumn> measures) {
+		this.measures = measures;
+	}
+
 	/**
 	 * Returns which entities are covered by this chart, sorted by roles
 	 *

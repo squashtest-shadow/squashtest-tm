@@ -158,7 +158,7 @@ class QueryBuilder {
 
 		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, operands.toArray(new Expression[]{}));
 
-		if (isAggregate(operation)){
+		if (isAggregate(measure.getOperation())){
 			detachedQuery.having(predicate);
 		}
 		else{
