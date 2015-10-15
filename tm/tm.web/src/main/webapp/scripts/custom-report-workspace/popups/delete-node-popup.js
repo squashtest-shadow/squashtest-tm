@@ -18,16 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup','./add-dashboard-popup','./delete-node-popup'],
-		function(folderpopup,dashboardpopup,delnodepopup){
-
-
+define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-popup'], function($, zetree, rules){
+	
 	function init(){
-		folderpopup.init();
-		dashboardpopup.init();
-		delnodepopup.init();
-	}
 
+		var tree = zetree.get();
+		var dialog = $("#delete-node-dialog").delnodeDialog({
+			tree : tree,
+			rules : rules
+		});
+
+
+		dialog.on('delnodedialogconfirm', function(){
+			dialog.delnodeDialog('performDeletion');
+		});
+		
+		dialog.on('delnodedialogcancel', function(){
+			dialog.delnodeDialog('close');
+		});
+		
+	}
+	
 	return {
 		init : init
 	};

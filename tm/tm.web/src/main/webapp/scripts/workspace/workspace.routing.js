@@ -213,6 +213,7 @@ define([], function(){
 		'custom-report-library-server'                 : root + '/custom-report-library',
 		'custom-report-folder'                        : '/custom-report-folder/{\\d+}',
 		'custom-report-folder-server'                 : root + '/custom-report-folder',
+		'custom-report-dashboard'                        : '/custom-report-dashboard/{\\d+}',
 
 		// helper methods
 		buildURL : function(){

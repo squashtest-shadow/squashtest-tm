@@ -44,27 +44,8 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 	// metaattr : 'milestone-creatable' || 'milestone-editable'
 	function milestonesAllowOperation(nodes, operation, metaattr){
 
+		//no milestone on custom report dashboard for v1 so milestones say YES ^^
 		return true;
-		/*
-		var allowed = true;
-
-		var activeMilestone = squashtm.app.testCaseWorkspaceConf.activeMilestone;
-
-		var activeAllowed = true,
-			nodesAllowed = true;
-		// no nodes -> check the active milestone
-		// no active milestone -> true
-		activeAllowed = (!! activeMilestone) ? activeMilestone[operation] : true;
-
-		if (nodes !== undefined){
-			// nodes : they must all allow the operation
-			nodesAllowed = (nodes.filter(':'+metaattr).length === nodes.length);
-		}
-
-		allowed = activeAllowed && nodesAllowed;
-
-
-		return allowed;*/
 	}
 
 	function milestonesAllowCreation(nodes){

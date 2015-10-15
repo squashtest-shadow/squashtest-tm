@@ -64,6 +64,7 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	
 	void addChild(TreeLibraryNode treeLibraryNode) throws UnsupportedOperationException,IllegalArgumentException,NameAlreadyInUseException;
 
+	void removeChild(TreeLibraryNode treeLibraryNode);
 	/**
 	 * Check if a {@link CustomReportLibraryNode} is consistent with it's linked {@link TreeEntity}. 
 	 * Throws {@link IllegalArgumentException} if not, as user action haven't any way to create this kind of inconsistency.

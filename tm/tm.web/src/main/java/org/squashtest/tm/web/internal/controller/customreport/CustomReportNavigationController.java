@@ -20,9 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,8 +48,13 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
+import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseLibraryNavigationController;
+import org.squashtest.tm.web.internal.model.builder.CustomReportListTreeNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -65,6 +75,13 @@ public class CustomReportNavigationController {
 	
 	@Inject
 	CustomReportLibraryNodeService customReportLibraryNodeService;
+	
+	@Inject
+	CustomReportListTreeNodeBuilder listBuilder;
+	
+	@Inject
+	@Named("customReport.nodeBuilder")
+	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 	
 	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
 
@@ -94,6 +111,7 @@ public class CustomReportNavigationController {
 		return createNewCustomReportLibraryNode(folderId, customReportDashboard);
 	}
 	
+	//-------------- SHOW-NODE-CHILDREN METHODS ---------------
 	
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId,
@@ -107,15 +125,70 @@ public class CustomReportNavigationController {
 		return getNodeContent(folderId, activeMilestone);
 	}
 	
+	//-------------- DELETE-SIMULATION METHODS ---------------
+	
+	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
+	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
+			@CurrentMilestone Milestone activeMilestone,
+			Locale locale) {
+
+		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
+
+		//TODO Implements delete simulation service if needed
+		//List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds, milestoneId);
+
+		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
+		
+		Messages messages = new Messages();
+		for (SuppressionPreviewReport report : reportList) {
+			//messages.addMessage(report.toString(messageSource, locale));
+		}
+
+		return messages;
+	}
+	
+	//-------------- DELETE METHOD ---------------------------
+	
+	//TODO no checks in service for prototype. Have to correct that before v1
+	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
+	public @ResponseBody void confirmNodeDeletion(
+			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
+			@CurrentMilestone Milestone activeMilestone) {
+
+		customReportLibraryNodeService.deleteCustomReportLibraryNode(nodeIds);
+	}
+	
+	
+	//-------------- PRIVATE STUFF ---------------------------
 	private JsTreeNode createNewCustomReportLibraryNode(Long libraryId, TreeEntity entity){
 		CustomReportLibraryNode newNode = customReportLibraryNodeService.createNewCustomReportLibraryNode(libraryId, entity);
-		return new CustomReportTreeNodeBuilder().build(newNode);
+		return builderProvider.get().build(newNode);
 	}
 	
 	private List<JsTreeNode> getNodeContent( long folderId,
 			@CurrentMilestone Milestone activeMilestone) {
 		List<TreeLibraryNode> children = workspaceService.findContent(folderId);
-		return new CustomReportListTreeNodeBuilder(children).build();
+		return listBuilder.build(children);
+	}
+	
+	//Class for messages
+	
+	protected static class Messages {
+
+		private Collection<String> messages = new ArrayList<String>();
+
+		public Messages() {
+			super();
+		}
+
+		public void addMessage(String msg) {
+			this.messages.add(msg);
+		}
+
+		public Collection<String> getMessages() {
+			return this.messages;
+		}
+
 	}
 	
 }

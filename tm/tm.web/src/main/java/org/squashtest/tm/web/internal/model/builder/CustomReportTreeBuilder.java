@@ -18,7 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.customreport;
+package org.squashtest.tm.web.internal.model.builder;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 
 /**
  * Class responsible for building a whole tree section. 
@@ -28,5 +32,8 @@ package org.squashtest.tm.web.internal.controller.customreport;
  */
 public class CustomReportTreeBuilder {
 
+	@Inject
+	@Named("customReport.nodeBuilder")
+	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 	
 }

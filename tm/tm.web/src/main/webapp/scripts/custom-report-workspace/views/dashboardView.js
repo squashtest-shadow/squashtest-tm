@@ -23,21 +23,25 @@ define(["underscore","backbone","squash.translator","handlebars"],
 	var View = Backbone.View.extend({
 
     el : "#contextual-content",
-		tpl : "#tpl-show-library",
+		tpl : "#tpl-show-dashboard",
 
 		initialize : function(){
 			_.bindAll(this, "render");
-			this.model.fetch({
-       success: this.render
-     });
+			this.render();
+		// 	this.model.fetch({
+    //    success: this.render
+    //  });
 		},
 
 		events : {
 		},
 
 		render : function(){
-			var source = $("#tpl-show-library").html();
+			console.log("RENDER DASHBOARD");
+			var source = $(this.tpl).html();
 			var template = Handlebars.compile(source);
+			console.log("TEAMPLATING DASHBOARD");
+			console.log(this.model.toJSON());
 			this.$el.append(template(this.model.toJSON()));
 		},
 

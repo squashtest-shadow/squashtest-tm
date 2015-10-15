@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.hibernate.Session;
@@ -49,13 +51,13 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@Override
 	public CustomReportLibrary findCustomReportLibraryById(Long libraryId) {
 		TreeEntity entity = findEntityAndCheckType(libraryId, CustomReportTreeDefinition.LIBRARY);
-		return (CustomReportLibrary) entity;//NO SONAR cast is checked by findEntityAndCheckType method
+		return (CustomReportLibrary) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 
 	@Override
 	public CustomReportFolder findCustomReportFolderById(Long folderId) {
 		TreeEntity entity = findEntityAndCheckType(folderId, CustomReportTreeDefinition.FOLDER);
-		return (CustomReportFolder) entity;//NO SONAR cast is checked by findEntityAndCheckType method
+		return (CustomReportFolder) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
@@ -71,6 +73,16 @@ public class CustomReportLibraryNodeServiceImpl implements
 		session.clear();//needed to force hibernate to reload the persisted entities...
 		CustomReportLibraryNode persistedNode = customReportLibraryNodeDao.findById(newNode.getId());
 		return persistedNode;
+	}
+	
+	@Override
+	public void deleteCustomReportLibraryNode(List<Long> nodeIds) {
+		for (Long nodeId : nodeIds) {
+			CustomReportLibraryNode targetNode = customReportLibraryNodeDao.findById(nodeId);
+			TreeLibraryNode parentNode = targetNode.getParent();
+			parentNode.removeChild(targetNode);
+			customReportLibraryNodeDao.remove(targetNode);
+		}
 	}
 	
 	//--------------- PRIVATE METHODS --------------
@@ -96,6 +108,4 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return entity;
 	}
-
-
 }

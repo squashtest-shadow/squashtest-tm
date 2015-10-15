@@ -213,7 +213,11 @@
   <bean id="campaign.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
     <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
     <constructor-arg ref="campaignLibraryTreeNodeBuilder.provider" />
-  </bean>  
+  </bean>
+  
+  <bean id="customReport.nodeBuilder" class="org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+  </bean> 
   <!--  DRIVE NODE BUILDERS -->
 
   <beans profile="eclipse">

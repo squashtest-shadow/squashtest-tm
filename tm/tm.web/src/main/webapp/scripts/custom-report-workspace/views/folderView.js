@@ -27,8 +27,8 @@ define(["underscore","backbone","squash.translator","handlebars"],
 
 		initialize : function(){
 			_.bindAll(this, "render");
-			this.model.fetch({ // call fetch() with the following options
-       success: this.render // $.ajax 'success' callback
+			this.model.fetch({
+       success: this.render 
      });
 		},
 

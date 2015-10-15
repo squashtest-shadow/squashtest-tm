@@ -18,28 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.customreport;
+package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
+@Component
 public class CustomReportListTreeNodeBuilder {
 
-	private List<JsTreeNode> builtNodes;
-	private List<TreeLibraryNode> nodes;
-	public CustomReportListTreeNodeBuilder(List<TreeLibraryNode> children) {
+	@Inject
+	@Named("customReport.nodeBuilder")
+	private Provider<CustomReportTreeNodeBuilder> builderProvider;
+	
+	public CustomReportListTreeNodeBuilder() {
 		super();
-		this.nodes = children;
-		builtNodes = new ArrayList<JsTreeNode>();
 	}
 	
-	public List<JsTreeNode> build(){
+	public List<JsTreeNode> build(List<TreeLibraryNode> nodes){
+		List<JsTreeNode> builtNodes =new ArrayList<JsTreeNode>();
+		
+		
 		for (TreeLibraryNode tln : nodes) {
-			CustomReportTreeNodeBuilder builder = new CustomReportTreeNodeBuilder();
+			CustomReportTreeNodeBuilder builder = builderProvider.get();
 			builtNodes.add(builder.build((CustomReportLibraryNode) tln));//NOSONAR cast is safe
 		}
 		return builtNodes;

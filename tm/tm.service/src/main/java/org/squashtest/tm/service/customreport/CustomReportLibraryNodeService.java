@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.customreport;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -48,4 +50,6 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
+	
+	void deleteCustomReportLibraryNode(List<Long> nodeIds);
 }

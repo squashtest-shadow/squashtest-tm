@@ -57,7 +57,6 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 @Table(appliesTo="CUSTOM_REPORT_LIBRARY_NODE")
 public class CustomReportLibraryNode  implements TreeLibraryNode {
 	
-
 	@Id
 	@Column(name = "CRLN_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_library_node_crln_id_seq")
@@ -88,7 +87,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@JoinTable(name="CRLN_RELATIONSHIP",
 			joinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName="CRLN_ID")},
 			inverseJoinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName="CRLN_ID")})
-	@OneToMany(fetch = FetchType.LAZY,
+	@OneToMany(cascade={ CascadeType.ALL },fetch = FetchType.LAZY,
 			targetEntity=CustomReportLibraryNode.class)
 	@IndexColumn(name="CONTENT_ORDER")
 	private List<TreeLibraryNode> children;
@@ -109,8 +108,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
 	private TreeEntity entity;
 	
-	@ManyToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, 
-			targetEntity=CustomReportLibrary.class)
+	@ManyToOne(fetch = FetchType.LAZY, targetEntity=CustomReportLibrary.class)
 	@JoinColumn(name = "CRL_ID")
 	private TreeLibrary library;
 	
@@ -236,4 +234,11 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		return false;
 	}
 
+	@Override
+	public void removeChild(TreeLibraryNode treeLibraryNode) {
+		if (!this.children.contains(treeLibraryNode)) {
+			throw new IllegalArgumentException("Can't suppress a node that didn't exist in this entity children");
+		}
+		children.remove(treeLibraryNode);
+	}
 }

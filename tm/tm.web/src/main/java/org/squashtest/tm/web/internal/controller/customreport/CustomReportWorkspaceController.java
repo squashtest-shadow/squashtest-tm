@@ -26,6 +26,7 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Provider;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +41,7 @@ import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
@@ -53,6 +55,10 @@ public class CustomReportWorkspaceController {
 	@Inject
 	@Named("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
 	private CustomReportWorkspaceService workspaceService;
+	
+	@Inject
+	@Named("customReport.nodeBuilder")
+	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
@@ -80,7 +86,7 @@ public class CustomReportWorkspaceController {
 		List<JsTreeNode> rootNodes = new ArrayList<JsTreeNode>();
 		
 		for (CustomReportLibraryNode crl : libraries) {
-			JsTreeNode treeNode = new CustomReportTreeNodeBuilder().build(crl);
+			JsTreeNode treeNode = builderProvider.get().build(crl);
 			rootNodes.add(treeNode);
 		}
 		

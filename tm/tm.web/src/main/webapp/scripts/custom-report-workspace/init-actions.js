@@ -61,7 +61,6 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
 	function loadFragment(tree){
 		var selected =  tree.jstree("get_selected");
-    console.log("CLICK TREE NODE");
 
 		switch (selected.length){
 
@@ -93,6 +92,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         break;
       case "folder":
         url = urlBuilder.buildURL("custom-report-folder",nodeId);
+        backboneRouter.navigate(url, {trigger: true});
+        break;
+      case "dashboard":
+        url = urlBuilder.buildURL("custom-report-dashboard",nodeId);
         backboneRouter.navigate(url, {trigger: true});
         break;
       default:
