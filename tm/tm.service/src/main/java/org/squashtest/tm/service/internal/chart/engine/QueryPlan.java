@@ -35,7 +35,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 /**
  * <p>
  * 	This class represent which entities (tables) should be traversed, and in which direction (this last detail matters when a left join occurs)
- * 	This class is meant to be created via {@link DomainGraph#getQueryPlan(DetailedChartDefinition)};
+ * 	This class is meant to be created via {@link DomainGraph#getQueryPlan(DetailedChartQuery)};
  *</p>
  * 
  * @author bsiri
@@ -62,7 +62,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 	}
 
 
-	void trim(DetailedChartDefinition definition){
+	void trim(DetailedChartQuery definition){
 
 		Collection<InternalEntityType> targets = new HashSet<>(definition.getTargetEntities());
 

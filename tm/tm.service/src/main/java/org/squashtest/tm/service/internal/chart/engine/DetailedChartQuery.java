@@ -28,6 +28,7 @@ import java.util.Set;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
@@ -39,7 +40,7 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
  * @author bsiri
  *
  */
-class DetailedChartDefinition extends ChartDefinition{
+class DetailedChartQuery extends ChartQuery{
 
 	private InternalEntityType rootEntity;
 
@@ -47,11 +48,11 @@ class DetailedChartDefinition extends ChartDefinition{
 
 
 	// for testing purposes - do not use
-	DetailedChartDefinition(){
+	DetailedChartQuery(){
 		super();
 	}
 
-	DetailedChartDefinition(ChartDefinition parent){
+	DetailedChartQuery(ChartQuery parent){
 
 		super();
 
@@ -61,8 +62,6 @@ class DetailedChartDefinition extends ChartDefinition{
 		getFilters().addAll(parent.getFilters());
 
 		getMeasures().addAll(parent.getMeasures());
-
-		getScope().addAll(parent.getScope());
 
 
 		// find the root entity

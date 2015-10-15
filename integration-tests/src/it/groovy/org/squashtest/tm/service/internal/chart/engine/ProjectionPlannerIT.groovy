@@ -100,7 +100,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartDefinition definition = new DetailedChartDefinition(
+		DetailedChartQuery definition = new DetailedChartQuery(
 				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")],
 				axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, TEST_CASE, "id")]
 				)
@@ -129,8 +129,8 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 		and : "definition"
 
-		DetailedChartDefinition definition =
-				new DetailedChartDefinition(
+		DetailedChartQuery definition =
+				new DetailedChartQuery(
 				measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
 				axis : [mkAxe(ATTRIBUTE, DATE, BY_MONTH, EXECUTION, "lastExecutedOn")]
 				)
@@ -195,7 +195,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 				.join(cov.verifiedRequirementVersion, v)
 				.join(v.requirement, r);
 
-				definition = new DetailedChartDefinition(
+				definition = new DetailedChartQuery(
 						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, TEST_CASE, "id"),
 							mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT_VERSION, "id")
 						],
@@ -208,7 +208,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 			case 2 : // case 2 -> select count(exec) group by it id and referenced tc id
 				query = from(exec).join(exec.testPlan, itp).join(itp.iteration, ite)
 
-				definition = new DetailedChartDefinition(
+				definition = new DetailedChartQuery(
 						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, EXECUTION, "id")],
 						axis : [mkAxe(ATTRIBUTE, NUMERIC, NONE, ITERATION, "id"),
 							mkAxe(ATTRIBUTE, NUMERIC, NONE, EXECUTION, "referencedTestCase.id")]
@@ -221,7 +221,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 				query = from(r)
 
-				definition = new DetailedChartDefinition(
+				definition = new DetailedChartQuery(
 						measures : [mkMeasure(ATTRIBUTE, NUMERIC, COUNT, REQUIREMENT, "id")],
 						axis : [mkAxe(ATTRIBUTE, DATE, BY_YEAR, REQUIREMENT, "audit.createdOn")]
 						)
@@ -261,7 +261,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	class ManyQueryPojo {
 		HibernateQuery query
-		DetailedChartDefinition definition
+		DetailedChartQuery definition
 		Set<?> expected
 	}
 

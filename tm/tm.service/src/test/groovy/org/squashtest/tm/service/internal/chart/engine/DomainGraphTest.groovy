@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.chart.engine
 
 import org.squashtest.tm.service.internal.chart.engine.InternalEntityType;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
-import org.squashtest.tm.service.internal.chart.engine.DetailedChartDefinition;
+import org.squashtest.tm.service.internal.chart.engine.DetailedChartQuery;
 import org.squashtest.tm.service.internal.chart.engine.DomainGraph;
 import org.squashtest.tm.service.internal.chart.engine.QueryPlan;
 
@@ -68,15 +68,15 @@ class DomainGraphTest extends Specification {
 
 		where :
 		rootEntity				|	definition
-		REQUIREMENT				|	new DetailedChartDefinition(rootEntity : REQ)
-		REQUIREMENT_VERSION 	|	new DetailedChartDefinition(rootEntity : RV)
-		COV					 	|	new DetailedChartDefinition(rootEntity : COV)
-		TEST_CASE				|	new DetailedChartDefinition(rootEntity : TC)
-		ITEM_TEST_PLAN			|	new DetailedChartDefinition(rootEntity : ITP)
-		ITERATION				|	new DetailedChartDefinition(rootEntity : IT)
-		CAMPAIGN				|	new DetailedChartDefinition(rootEntity : CP)
-		EXECUTION				|	new DetailedChartDefinition(rootEntity : EX)
-		ISS						|	new DetailedChartDefinition(rootEntity : ISS)
+		REQUIREMENT				|	new DetailedChartQuery(rootEntity : REQ)
+		REQUIREMENT_VERSION 	|	new DetailedChartQuery(rootEntity : RV)
+		COV					 	|	new DetailedChartQuery(rootEntity : COV)
+		TEST_CASE				|	new DetailedChartQuery(rootEntity : TC)
+		ITEM_TEST_PLAN			|	new DetailedChartQuery(rootEntity : ITP)
+		ITERATION				|	new DetailedChartQuery(rootEntity : IT)
+		CAMPAIGN				|	new DetailedChartQuery(rootEntity : CP)
+		EXECUTION				|	new DetailedChartQuery(rootEntity : EX)
+		ISS						|	new DetailedChartQuery(rootEntity : ISS)
 
 	}
 
@@ -87,7 +87,7 @@ class DomainGraphTest extends Specification {
 	def "should test many query plans"(){
 
 		expect :
-		def plan = DomainGraph.getQueryPlan(new DetailedChartDefinition(rootEntity : rootEntity, targetEntities : targets))
+		def plan = DomainGraph.getQueryPlan(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
 
 		checkAllTreeHierarchy(plan, hierarchy)
 
@@ -106,7 +106,7 @@ class DomainGraphTest extends Specification {
 	def "should convey the correct join metadata when creating the tree"(){
 
 		expect :
-		def plan = DomainGraph.getQueryPlan(new DetailedChartDefinition(rootEntity : rootEntity, targetEntities : targets))
+		def plan = DomainGraph.getQueryPlan(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
 
 		checkAllTreeJoins(plan, joinInfos)
 
@@ -125,8 +125,8 @@ class DomainGraphTest extends Specification {
 	def "should morph to a directed graph and generate an oversized query plan"(){
 
 		given :
-		DetailedChartDefinition definition =
-				new DetailedChartDefinition(rootEntity : TEST_CASE,
+		DetailedChartQuery definition =
+				new DetailedChartQuery(rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		and :
@@ -171,8 +171,8 @@ class DomainGraphTest extends Specification {
 	def "should find a query plan for root entity TestCase and other target entities : Requirement, Iteration"(){
 
 		given :
-		DetailedChartDefinition definition =
-				new DetailedChartDefinition(rootEntity : TEST_CASE,
+		DetailedChartQuery definition =
+				new DetailedChartQuery(rootEntity : TEST_CASE,
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		when :

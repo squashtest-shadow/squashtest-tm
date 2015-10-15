@@ -28,7 +28,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
@@ -64,11 +67,25 @@ class QuerydslToolbox {
 		super();
 	}
 
+
 	QuerydslToolbox(String subContext){
 		super();
 		this.subContext = subContext;
 	}
 
+	void setSubContext(String subContext) {
+		this.subContext = subContext;
+	}
+
+	// ************** info retrievers ***************************
+
+	/*
+	 *	The following methods ensure that the entities are aliased appropriately
+	 *	according to a context.
+	 * 
+	 * @param type
+	 * @return
+	 */
 	String getQName(InternalEntityType type){
 		EntityPathBase<?> path = type.getQBean();
 		String name = path.getMetadata().getName();
@@ -85,20 +102,16 @@ class QuerydslToolbox {
 		return type.getAliasedQBean(name);
 	}
 
-	@SuppressWarnings("rawtypes")
-	PathBuilder makePath(InternalEntityType src, InternalEntityType dest, String attribute){
-
-		Class<?> srcClass = src.getEntityClass();
-		Class<?> destClass = dest.getEntityClass();
-		String srcAlias = getQName(src);
-
-		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
+	EntityPathBase<?> getQBean(EntityType domainType){
+		InternalEntityType type = InternalEntityType.fromDomainType(domainType);
+		return getQBean(type);
 	}
 
-	@SuppressWarnings("rawtypes")
-	PathBuilder makePath(Class<?> srcClass, String srcAlias, Class<?> attributeClass, String attributeAlias){
-		return new PathBuilder<>(srcClass, srcAlias).get(attributeAlias, attributeClass);
+	EntityPathBase<?> getQBean(ColumnPrototypeInstance column){
+		InternalEntityType type = InternalEntityType.fromDomainType(column.getEntityType());
+		return getQBean(type);
 	}
+
 
 	/**
 	 * Returns the aliases registered in the "from" clause of
@@ -115,25 +128,121 @@ class QuerydslToolbox {
 		return collector.getAliases();
 	}
 
+	// ***************************** high level API ***********************
 
-	Expression<?> makePath(ColumnPrototype prototype){
 
-		PathBuilder<?> result;
+	Expression<?> createAsSelect(ColumnPrototypeInstance col){
 
-		switch(prototype.getAttributeType()){
+		Expression<?> selectElement = null;
+
+		ColumnPrototype proto = col.getColumn();
+
+		switch(proto.getAttributeType()){
 		case ATTRIBUTE :
-			result = attributePath(prototype);
+			selectElement = createAttributeSelect(col);
 			break;
 
-		default : throw new IllegalArgumentException("columns of type '"+prototype.getAttributeType()+"' are not yet supported");
+		case CALCULATED :
+			EntityPathBase<?> colBean = getQBean(col);
+			QueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
+			selectElement = qbuilder.createQuery();
+			break;
+
+		default :
+			throw new IllegalArgumentException("columns of attribute type '"+proto.getAttributeType()+"' are not yet supported");
 		}
 
-		return result;
+		return selectElement;
 	}
 
 
 
-	SimpleOperation<?> applyOperation(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
+	/**
+	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' clause
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	BooleanExpression createAsPredicate(Filter filter){
+		BooleanExpression predicate = null;
+
+		ColumnPrototype proto = filter.getColumn();
+
+		switch(proto.getAttributeType()){
+		case ATTRIBUTE :
+			predicate = createAttributePredicate(filter);
+			break;
+
+		case CALCULATED :
+
+			//create the subquery
+			QueryBuilder qbuilder = createSubquery(filter).asSubwhereQuery().filterMeasureOn(filter);
+			Expression<?> subquery = qbuilder.createQuery();
+
+			// now integrate the subquery
+			Expression<?> entityIdPath = idPath(filter);
+
+			predicate = Expressions.predicate(Ops.IN, entityIdPath, subquery);
+
+			break;
+
+		default :
+			throw new IllegalArgumentException("columns of attribute type '"+proto.getAttributeType()+"' are not yet supported");
+		}
+
+		return predicate;
+	}
+
+
+
+	// ********************* low level API *********************
+
+
+	@SuppressWarnings("rawtypes")
+	PathBuilder makePath(InternalEntityType src, InternalEntityType dest, String attribute){
+
+		Class<?> srcClass = src.getEntityClass();
+		Class<?> destClass = dest.getEntityClass();
+		String srcAlias = getQName(src);
+
+		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
+	}
+
+
+	/**
+	 * Creates an expression fit for a "select" clause
+	 * 
+	 * @param column
+	 * @return
+	 */
+	Expression<?> createAttributeSelect(ColumnPrototypeInstance column){
+		Expression attribute = attributePath(column);
+		Operation operation = column.getOperation();
+
+		if (operation != Operation.NONE){
+			attribute = applyOperation(operation, attribute);
+		}
+
+		return attribute;
+
+	}
+
+	BooleanExpression createAttributePredicate(Filter filter){
+		DataType datatype = filter.getDataType();
+		Operation operation = filter.getOperation();
+
+		// make the expression on which the filter is applied
+		Expression<?> attrExpr = attributePath(filter);
+
+		// convert the operands
+		List<Expression<?>> valExpr = makeOperands(datatype, filter.getValues());
+		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
+
+		return createPredicate(operation, attrExpr, operands);
+	}
+
+
+	SimpleOperation<?> applyOperation(Operation operation, Expression<?> baseExp, Expression... operands){
 
 		Operator operator = getOperator(operation);
 
@@ -143,14 +252,13 @@ class QuerydslToolbox {
 
 	}
 
-
 	/**
-	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' clause
+	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ...
 	 * 
 	 * @param filter
 	 * @return
 	 */
-	BooleanExpression createPredicate(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
+	BooleanExpression createPredicate(Operation operation, Expression<?> baseExp, Expression... operands){
 
 		Operator operator = getOperator(operation);
 
@@ -159,49 +267,54 @@ class QuerydslToolbox {
 		return Expressions.predicate(operator, expressions);
 	}
 
-
-
-	/**
-	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' clause
-	 * 
-	 * @param filter
-	 * @return
-	 */
-	BooleanExpression createPredicate(Filter filter){
-		DataType datatype = filter.getDataType();
-		Operation operation = filter.getOperation();
-
-		// make the expression on which the filter is applied
-		Expression<?> attrExpr = makePath(filter.getColumn());
-
-		// convert the operands
-		List<Expression<?>> valExpr = makeOperands(datatype, filter.getValues());
-		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
-
-		return createPredicate(datatype, operation, attrExpr, operands);
+	List<Expression<?>>  createOperands(Filter filter){
+		DataType type = filter.getDataType();
+		List<String> values = filter.getValues();
+		return makeOperands(type, values);
 	}
 
-	/**
-	 * creates an Expression like count('baseExp') 'operation' 'operand1', 'operand2' ... suitable for a 'having' clause
-	 * 
-	 * @param filter
-	 * @return
-	 */
-	BooleanExpression createHavingPredicate(Filter filter){
-		DataType datatype = filter.getDataType();
-		Operation operation = filter.getOperation();
 
-		// make the expression on which the filter is applied. This includes a hardcoded count()
-		// on the left-hand expression.
-		Expression<?> attrExpr = makePath(filter.getColumn());
-		Expression<?> cntExpr = applyOperation(DataType.NUMERIC, Operation.COUNT, attrExpr);
+	// ******************************* private stuffs *********************
 
-		// convert the operands
-		List<Expression<?>> valExpr = makeOperands(datatype, filter.getValues());
-		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
-		return createPredicate(datatype, operation, cntExpr, operands);
+	@SuppressWarnings("rawtypes")
+	private PathBuilder makePath(Class<?> srcClass, String srcAlias, Class<?> attributeClass, String attributeAlias){
+		return new PathBuilder<>(srcClass, srcAlias).get(attributeAlias, attributeClass);
 	}
+
+
+	/*
+	 * should be invoked only on columns of AttributeType = ATTRIBUTE
+	 * 
+	 */
+	private PathBuilder attributePath(ColumnPrototypeInstance column){
+
+		ColumnPrototype prototype = column.getColumn();
+
+		InternalEntityType type = InternalEntityType.fromDomainType(prototype.getEntityType());
+
+		String alias = getQName(type);
+		Class<?> clazz = type.getClass();
+		String attribute = prototype.getAttributeName();
+		Class<?> attributeType = classFromDatatype(prototype.getDataType());
+
+		return makePath(clazz, alias, attributeType, attribute);
+
+	}
+
+	// returns the path to the ID of the entity
+	private PathBuilder idPath(ColumnPrototypeInstance column){
+
+		ColumnPrototype prototype = column.getColumn();
+
+		InternalEntityType type = InternalEntityType.fromDomainType(prototype.getEntityType());
+
+		String alias = getQName(type);
+		Class<?> clazz = type.getClass();
+
+		return makePath(clazz, alias, Long.class, "id");
+	}
+
 
 
 	List<Expression<?>> makeOperands(DataType type, List<String> values ){
@@ -232,21 +345,15 @@ class QuerydslToolbox {
 		}
 	}
 
-	// ******************************* private stuffs *********************
 
-	private PathBuilder attributePath(ColumnPrototype prototype){
+	private QueryBuilder createSubquery(ColumnPrototypeInstance col){
 
-		InternalEntityType type = InternalEntityType.fromDomainType(prototype.getEntityType());
+		ColumnPrototype prototype = col.getColumn();
+		ChartQuery queryDef = prototype.getSubQuery();
+		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
 
-		String alias = getQName(type);
-		Class<?> clazz = type.getClass();
-		String attribute = prototype.getAttributeName();
-		Class<?> attributeType = classFromDatatype(prototype.getDataType());
-
-		return makePath(clazz, alias, attributeType, attribute);
-
+		return new QueryBuilder(detailedDef);
 	}
-
 
 
 	private Operator getOperator(Operation operation){

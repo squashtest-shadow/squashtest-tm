@@ -32,7 +32,7 @@ class ChartDataFinderTest extends Specification {
 	def "should build a ChartSeries from a result set"(){
 
 		given : "the definition"
-		DetailedChartDefinition definition = new DetailedChartDefinition(
+		DetailedChartQuery definition = new DetailedChartQuery(
 				measures : [
 					measure("total steps"),
 					measure("total requirements")

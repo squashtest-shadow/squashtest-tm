@@ -56,19 +56,19 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 
 class QueryPlanner {
 
-	private DetailedChartDefinition definition;
+	private DetailedChartQuery definition;
 
 	private HibernateQuery<?> query;
 
 	private QuerydslToolbox utils;
 
-	QueryPlanner(DetailedChartDefinition definition){
+	QueryPlanner(DetailedChartQuery definition){
 		super();
 		this.definition = definition;
 		this.utils = new QuerydslToolbox();
 	}
 
-	QueryPlanner(DetailedChartDefinition definition, QuerydslToolbox utils){
+	QueryPlanner(DetailedChartQuery definition, QuerydslToolbox utils){
 		this.definition = definition;
 		this.utils = utils;
 	}

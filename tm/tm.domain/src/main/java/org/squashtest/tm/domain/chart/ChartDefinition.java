@@ -148,40 +148,9 @@ public class ChartDefinition implements TreeEntity{
 	 * @return
 	 */
 	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){
-
-		Map<ColumnRole, Set<EntityType>> result = new HashMap<ColumnRole, Set<EntityType>>(3);
-
-		Collection<? extends ColumnPrototypeInstance> columns;
-
-		columns = getFilters();
-		if (! columns.isEmpty()){
-			Set<EntityType> filterTypes = collectTypes(columns);
-			result.put(ColumnRole.FILTER, filterTypes);
-		}
-
-		columns = getAxis();
-		if (! columns.isEmpty()){
-			Set<EntityType> axisTypes = collectTypes(columns);
-			result.put(ColumnRole.AXIS, axisTypes);
-		}
-
-		columns = getMeasures();
-		if (! columns.isEmpty()){
-			Set<EntityType> measureTypes = collectTypes(columns);
-			result.put(ColumnRole.MEASURE, measureTypes);
-		}
-
-		return result;
-
+		return query.getInvolvedEntities();
 	}
 
-	private Set<EntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
-		Set<EntityType> types = new HashSet<>();
-		for (ColumnPrototypeInstance col : columns){
-			types.add(col.getEntityType());
-		}
-		return types;
-	}
 
 	@Override
 	public Long getId() {

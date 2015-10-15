@@ -43,20 +43,20 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  */
 class FilterPlanner {
 
-	private DetailedChartDefinition definition;
+	private DetailedChartQuery definition;
 
 	private QuerydslToolbox utils;
 
 	private HibernateQuery<?> query;
 
-	FilterPlanner(DetailedChartDefinition definition, HibernateQuery<?> query){
+	FilterPlanner(DetailedChartQuery definition, HibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query= query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	FilterPlanner(DetailedChartDefinition definition, HibernateQuery<?> query, QuerydslToolbox utils){
+	FilterPlanner(DetailedChartQuery definition, HibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query= query;
@@ -86,7 +86,7 @@ class FilterPlanner {
 			for (Filter filter : entry.getValue()) {
 
 				if (filter.getOperation() != Operation.NONE){
-					BooleanExpression comparison = utils.createPredicate(filter);
+					BooleanExpression comparison = utils.createAsPredicate(filter);
 
 					orBuilder.or(comparison);
 				}

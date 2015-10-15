@@ -300,7 +300,7 @@ public class ChartDataFinder {
 	@Transactional(readOnly=true)
 	public ChartSeries findData(ChartDefinition definition){
 
-		DetailedChartDefinition enhancedDefinition = new DetailedChartDefinition(definition);
+		DetailedChartQuery enhancedDefinition = new DetailedChartQuery(definition.getQuery());
 
 		// *********** step 1 : determine scope and ACL **********************
 
@@ -308,7 +308,7 @@ public class ChartDataFinder {
 
 		// *********** step 2 : create the query ************************
 
-		HibernateQuery detachedQuery = new QueryBuilder().createQuery(enhancedDefinition);
+		HibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).asMainQuery().createQuery();
 
 		// ******************* step 3 : run the query*************************
 
@@ -323,7 +323,7 @@ public class ChartDataFinder {
 
 	}
 
-	private ChartSeries makeSeries(DetailedChartDefinition definition, List<Tuple> tuples){
+	private ChartSeries makeSeries(DetailedChartQuery definition, List<Tuple> tuples){
 
 		List<Object[]> abscissa = new ArrayList<>();
 

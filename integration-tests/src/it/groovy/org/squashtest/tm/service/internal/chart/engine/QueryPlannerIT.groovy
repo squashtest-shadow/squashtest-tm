@@ -88,7 +88,7 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
+		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
 
 		and :
 		HibernateQuery q = new QueryPlanner(definition).createQuery()
@@ -111,7 +111,7 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
+		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
 
 		and :
 		HibernateQuery q = new QueryPlanner(definition).createQuery()
@@ -135,7 +135,7 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 
 		given :
 
-		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
+		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
 
 		and :
 		HibernateQuery q = new QueryPlanner(definition).createQuery()
@@ -158,7 +158,7 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 	def "should test many possible queries"(){
 
 		expect :
-		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : rootEntity, targetEntities : targetEntities)
+		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targetEntities)
 
 		HibernateQuery q = new QueryPlanner(definition).createQuery()
 		q.where(wherePath)

@@ -21,7 +21,12 @@
 package org.squashtest.tm.domain.chart;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
@@ -36,6 +41,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+
+import org.squashtest.tm.domain.EntityType;
 
 /**
  * <p>This class represents a query. It is composed of  AxisColumn, Filter and MeasureColumns.</p>
@@ -83,6 +90,47 @@ public class ChartQuery {
 
 	public List<MeasureColumn> getMeasures() {
 		return measures;
+	}
+
+	/**
+	 * Returns which entities are covered by this chart, sorted by roles
+	 *
+	 * @return
+	 */
+	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){
+
+		Map<ColumnRole, Set<EntityType>> result = new HashMap<ColumnRole, Set<EntityType>>(3);
+
+		Collection<? extends ColumnPrototypeInstance> columns;
+
+		columns = getFilters();
+		if (! columns.isEmpty()){
+			Set<EntityType> filterTypes = collectTypes(columns);
+			result.put(ColumnRole.FILTER, filterTypes);
+		}
+
+		columns = getAxis();
+		if (! columns.isEmpty()){
+			Set<EntityType> axisTypes = collectTypes(columns);
+			result.put(ColumnRole.AXIS, axisTypes);
+		}
+
+		columns = getMeasures();
+		if (! columns.isEmpty()){
+			Set<EntityType> measureTypes = collectTypes(columns);
+			result.put(ColumnRole.MEASURE, measureTypes);
+		}
+
+		return result;
+
+	}
+
+	private Set<EntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+		Set<EntityType> types = new HashSet<>();
+		for (ColumnPrototypeInstance col : columns){
+			types.add(col.getEntityType());
+		}
+		return types;
 	}
 
 }

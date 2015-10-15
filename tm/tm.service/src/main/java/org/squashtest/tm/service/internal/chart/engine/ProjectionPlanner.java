@@ -24,17 +24,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.hibernate.HibernateQuery;
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.*;
 
 /**
  * <p>
  * 	This class is responsible for adding the "select" and "group by" clauses. See main documentation on
  * 	{@link ChartDataFinder} for more details on how it is done.
+ * </p>
+ * 
+ * <p>
+ * 	Depending on the chosen profile, the projection will be :
+ * 	<ul>
+ * 		<li>MAIN_QUERY : the full projection will be applied (that is, axis then measures)</li>
+ * 		<li>SUBSELECT_QUERY : only the measures will be projected - the axis only value is implicit because the outer query will drive it</li>
+ * 		<li>SUBWHERE_QUERY : only the axis will be projected - the measure values are implicit because the outer query will drive them  </li>
+ * 	</ul>
  * </p>
  * 
  * 
@@ -43,24 +52,30 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  */
 class ProjectionPlanner {
 
-	private DetailedChartDefinition definition;
+	private DetailedChartQuery definition;
 
 	private HibernateQuery<?> query;
 
 	private QuerydslToolbox utils;
 
-	ProjectionPlanner(DetailedChartDefinition definition, HibernateQuery<?> query){
+	private QueryProfile profile = MAIN_QUERY;
+
+	ProjectionPlanner(DetailedChartQuery definition, HibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query = query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	ProjectionPlanner(DetailedChartDefinition definition, HibernateQuery<?> query, QuerydslToolbox utils){
+	ProjectionPlanner(DetailedChartQuery definition, HibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query = query;
 		this.utils = utils;
+	}
+
+	void setProfile(QueryProfile profile){
+		this.profile = profile;
 	}
 
 	void modifyQuery(){
@@ -72,9 +87,18 @@ class ProjectionPlanner {
 
 		List<Expression<?>> selection = new ArrayList<>();
 
-		// first the axis, second the measures
-		populateExpressions(selection, definition.getAxis());
-		populateExpressions(selection, definition.getMeasures());
+		switch(profile){
+		case MAIN_QUERY :
+			populateClauses(selection, definition.getAxis());
+			populateClauses(selection, definition.getMeasures());
+			break;
+		case SUBSELECT_QUERY :
+			populateClauses(selection, definition.getMeasures());
+			break;
+		case SUBWHERE_QUERY :
+			populateClauses(selection, definition.getAxis());
+			break;
+		}
 
 		// now stuff the query
 		query.select(Projections.tuple(selection.toArray(new Expression[]{})));
@@ -87,26 +111,19 @@ class ProjectionPlanner {
 
 		List<Expression<?>> groupBy = new ArrayList<>();
 
-		populateExpressions(groupBy, definition.getAxis());
+		populateClauses(groupBy, definition.getAxis());
 
 		query.groupBy(groupBy.toArray(new Expression[]{}));
 
 	}
 
 
-	private void populateExpressions(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns){
+	private void populateClauses(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns){
 		for (ColumnPrototypeInstance col : columns){
 
-			DataType datatype = col.getDataType();
-			Operation operation = col.getOperation();
+			Expression<?> expr = utils.createAsSelect(col);
 
-			Expression columnExpr =  utils.makePath(col.getColumn());
-
-			if (operation != Operation.NONE){
-				columnExpr = utils.applyOperation(datatype, operation, columnExpr);
-			}
-
-			toPopulate.add(columnExpr);
+			toPopulate.add(expr);
 		}
 
 	}

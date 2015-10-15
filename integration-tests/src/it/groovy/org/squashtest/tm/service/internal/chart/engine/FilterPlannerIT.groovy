@@ -88,7 +88,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 				.groupBy(v.id)
 
 		and : "the definition"
-		DetailedChartDefinition definition = new DetailedChartDefinition(
+		DetailedChartQuery definition = new DetailedChartQuery(
 				filters : [mkFilter(ATTRIBUTE, NUMERIC, EQUALS, TEST_CASE, "id", ["-1"])]
 				)
 
@@ -140,7 +140,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	class ManyQueryPojo {
 		HibernateQuery query
-		DetailedChartDefinition definition
+		DetailedChartQuery definition
 		Set<?> expected
 	}
 }

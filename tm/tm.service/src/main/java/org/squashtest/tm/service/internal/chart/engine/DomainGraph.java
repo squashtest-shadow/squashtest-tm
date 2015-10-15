@@ -109,7 +109,7 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	 * 
 	 */
 
-	static QueryPlan getQueryPlan(DetailedChartDefinition definition){
+	static QueryPlan getQueryPlan(DetailedChartQuery definition){
 
 		DomainGraph domain = new DomainGraph(definition);
 
@@ -124,9 +124,9 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 
 	// **************************** under the hood ****************************
 
-	private DetailedChartDefinition definition;
+	private DetailedChartQuery definition;
 
-	private DomainGraph(DetailedChartDefinition def){
+	private DomainGraph(DetailedChartQuery def){
 		super();
 
 		this.definition = def;
@@ -204,7 +204,7 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	}
 
 	/**
-	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(DetailedChartDefinition)})</p>
+	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(DetailedChartQuery)})</p>
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
 	 * 
 	 */
