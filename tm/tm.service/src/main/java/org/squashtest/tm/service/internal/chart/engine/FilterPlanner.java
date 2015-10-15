@@ -23,16 +23,13 @@ package org.squashtest.tm.service.internal.chart.engine;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.Operation;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
@@ -73,11 +70,11 @@ class FilterPlanner {
 
 		BooleanBuilder mainBuilder = new BooleanBuilder();
 
-		for (ColumnPrototype proto : sortedFilters.keySet()){
+		for (Entry<ColumnPrototype, Collection<Filter>> entry : sortedFilters.entrySet()) {
 
 			BooleanBuilder orBuilder = new BooleanBuilder();
 
-			for (Filter filter : sortedFilters.get(proto)){
+			for (Filter filter : entry.getValue()) {
 
 				BooleanExpression comparison = utils.createPredicate(filter);
 

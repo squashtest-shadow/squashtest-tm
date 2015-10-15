@@ -48,7 +48,6 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
-import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -71,13 +70,13 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 public class CustomReportNavigationController {
 	
 	@Inject
-	CustomReportWorkspaceService workspaceService;
+	private CustomReportWorkspaceService workspaceService;
 	
 	@Inject
-	CustomReportLibraryNodeService customReportLibraryNodeService;
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
 	
 	@Inject
-	CustomReportListTreeNodeBuilder listBuilder;
+	private CustomReportListTreeNodeBuilder listBuilder;
 	
 	@Inject
 	@Named("customReport.nodeBuilder")

@@ -20,24 +20,15 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 
 import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Operator;
-import com.querydsl.core.types.Ops.DateTimeOps;
 import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.dsl.DateOperation;
-import com.querydsl.core.types.dsl.DatePath;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**

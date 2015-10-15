@@ -24,27 +24,21 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 @Controller
 public class CustomReportController {
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportController.class);
 
 	@Inject
-	CustomReportLibraryNodeService customReportLibraryNodeService;
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
 	
 	
 	
@@ -53,13 +47,11 @@ public class CustomReportController {
 	
 	@RequestMapping(value="custom-report-library/{id}", method=RequestMethod.GET)
 	public @ResponseBody CustomReportLibrary getLibraryDetails(@PathVariable Long id){
-		 CustomReportLibrary customReportLibrary = customReportLibraryNodeService.findCustomReportLibraryById(id);
-		 return customReportLibrary;
+		return customReportLibraryNodeService.findCustomReportLibraryById(id);
 	}
 	
 	@RequestMapping(value="custom-report-folder/{id}", method=RequestMethod.GET)
 	public @ResponseBody CustomReportFolder getFolderDetails(@PathVariable Long id){
-		CustomReportFolder customReportFolder = customReportLibraryNodeService.findCustomReportFolderById(id);
-		return customReportFolder;
+		return customReportLibraryNodeService.findCustomReportFolderById(id);
 	}
 }

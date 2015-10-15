@@ -20,26 +20,13 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 
-import com.querydsl.core.JoinExpression;
-import com.querydsl.core.types.Constant;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.FactoryExpression;
-import com.querydsl.core.types.Operation;
 import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.ParamExpression;
-import com.querydsl.core.types.Path;
-import com.querydsl.core.types.PathMetadata;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.SubQueryExpression;
-import com.querydsl.core.types.TemplateExpression;
-import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;

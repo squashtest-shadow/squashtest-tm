@@ -21,10 +21,7 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -335,8 +332,7 @@ public class ChartDataFinder {
 
 		// ****************** step 6 : convert the data *********************
 
-		ChartSeries series = makeSeries(enhancedDefinition, tuples);
-		return series;
+		return makeSeries(enhancedDefinition, tuples);
 
 	}
 

@@ -24,9 +24,7 @@ import java.util.List;
 
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
 
 /**
  * Interface for a tree node without data. The main goal of this API is to separate concern beetwen

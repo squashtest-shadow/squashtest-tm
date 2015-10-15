@@ -43,7 +43,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		CustomReportLibraryNodeService {
 	
 	@Inject 
-	CustomReportLibraryNodeDao customReportLibraryNodeDao;
+	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
 	
 	@Inject
 	private SessionFactory sessionFactory;
@@ -71,8 +71,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		Session session = sessionFactory.getCurrentSession();
 		session.flush();
 		session.clear();//needed to force hibernate to reload the persisted entities...
-		CustomReportLibraryNode persistedNode = customReportLibraryNodeDao.findById(newNode.getId());
-		return persistedNode;
+		return customReportLibraryNodeDao.findById(newNode.getId());
 	}
 	
 	@Override

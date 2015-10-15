@@ -38,10 +38,10 @@ public class CustomReportWorkspaceServiceImpl implements
 		CustomReportWorkspaceService {
 	
 	@Inject
-	CustomReportLibraryDao dao;
+	private CustomReportLibraryDao dao;
 	
 	@Inject
-	CustomReportLibraryNodeDao crlnDao;
+	private CustomReportLibraryNodeDao crlnDao;
 
 	@Override
 	public List<CustomReportLibrary> findAllLibraries() {
