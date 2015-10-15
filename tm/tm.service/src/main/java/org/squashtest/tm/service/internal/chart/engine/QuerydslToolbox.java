@@ -50,17 +50,39 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleOperation;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
-class QuerydslUtils {
+class QuerydslToolbox {
 
-	static QuerydslUtils INSTANCE = new QuerydslUtils();
+	String subContext;
 
-	private QuerydslUtils(){
+	QuerydslToolbox(){
 		super();
+	}
+
+	QuerydslToolbox(String subContext){
+		super();
+		this.subContext = subContext;
+	}
+
+	String getQName(InternalEntityType type){
+		EntityPathBase<?> path = type.getQBean();
+		String name = path.getMetadata().getName();
+		if (subContext == null){
+			return name;
+		}
+		else{
+			return name+"_"+subContext;
+		}
+	}
+
+	EntityPathBase<?> getQBean(InternalEntityType type){
+		String name = getQName(type);
+		return type.getAliasedQBean(name);
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -68,7 +90,7 @@ class QuerydslUtils {
 
 		Class<?> srcClass = src.getEntityClass();
 		Class<?> destClass = dest.getEntityClass();
-		String srcAlias = src.getQBean().getMetadata().getName();
+		String srcAlias = getQName(src);
 
 		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
 	}
@@ -121,6 +143,13 @@ class QuerydslUtils {
 
 	}
 
+
+	/**
+	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' clause
+	 * 
+	 * @param filter
+	 * @return
+	 */
 	BooleanExpression createPredicate(DataType datatype, Operation operation, Expression<?> baseExp, Expression... operands){
 
 		Operator operator = getOperator(operation);
@@ -131,6 +160,13 @@ class QuerydslUtils {
 	}
 
 
+
+	/**
+	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' clause
+	 * 
+	 * @param filter
+	 * @return
+	 */
 	BooleanExpression createPredicate(Filter filter){
 		DataType datatype = filter.getDataType();
 		Operation operation = filter.getOperation();
@@ -143,6 +179,28 @@ class QuerydslUtils {
 		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
 		return createPredicate(datatype, operation, attrExpr, operands);
+	}
+
+	/**
+	 * creates an Expression like count('baseExp') 'operation' 'operand1', 'operand2' ... suitable for a 'having' clause
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	BooleanExpression createHavingPredicate(Filter filter){
+		DataType datatype = filter.getDataType();
+		Operation operation = filter.getOperation();
+
+		// make the expression on which the filter is applied. This includes a hardcoded count()
+		// on the left-hand expression.
+		Expression<?> attrExpr = makePath(filter.getColumn());
+		Expression<?> cntExpr = applyOperation(DataType.NUMERIC, Operation.COUNT, attrExpr);
+
+		// convert the operands
+		List<Expression<?>> valExpr = makeOperands(datatype, filter.getValues());
+		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
+
+		return createPredicate(datatype, operation, cntExpr, operands);
 	}
 
 
@@ -180,7 +238,7 @@ class QuerydslUtils {
 
 		InternalEntityType type = InternalEntityType.fromDomainType(prototype.getEntityType());
 
-		String alias = type.getQBean().getMetadata().getName();
+		String alias = getQName(type);
 		Class<?> clazz = type.getClass();
 		String attribute = prototype.getAttributeName();
 		Class<?> attributeType = classFromDatatype(prototype.getDataType());

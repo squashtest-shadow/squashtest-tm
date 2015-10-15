@@ -47,11 +47,20 @@ class ProjectionPlanner {
 
 	private HibernateQuery<?> query;
 
-	private QuerydslUtils utils = QuerydslUtils.INSTANCE;
+	private QuerydslToolbox utils;
 
 	ProjectionPlanner(DetailedChartDefinition definition, HibernateQuery<?> query){
+		super();
 		this.definition = definition;
 		this.query = query;
+		this.utils = new QuerydslToolbox();
+	}
+
+	ProjectionPlanner(DetailedChartDefinition definition, HibernateQuery<?> query, QuerydslToolbox utils){
+		super();
+		this.definition = definition;
+		this.query = query;
+		this.utils = utils;
 	}
 
 	void modifyQuery(){

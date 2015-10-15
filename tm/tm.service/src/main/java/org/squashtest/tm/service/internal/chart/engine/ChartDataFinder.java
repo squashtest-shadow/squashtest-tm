@@ -141,7 +141,7 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  * 	<h3>Main query</h3>
  * 
  * <p>
- *	see {@link MainQueryPlanner}.
+ *	see {@link QueryPlanner}.
  * 	The main building blocks that defines the main query are the following :
  * 
  * 	<ul>
@@ -302,28 +302,15 @@ public class ChartDataFinder {
 
 		DetailedChartDefinition enhancedDefinition = new DetailedChartDefinition(definition);
 
-		HibernateQuery detachedQuery;
-
 		// *********** step 1 : determine scope and ACL **********************
 
 		// TODO : implement
 
-		// *********** step 2 : define the query plan ************************
+		// *********** step 2 : create the query ************************
 
-		MainQueryPlanner mainPlanner = new MainQueryPlanner(enhancedDefinition);
-		detachedQuery = mainPlanner.createMainQuery();
+		HibernateQuery detachedQuery = new QueryBuilder().createQuery(enhancedDefinition);
 
-		// *********** step 3 : add the projection and group by clauses ******
-
-		ProjectionPlanner projectionPlanner = new ProjectionPlanner(enhancedDefinition, detachedQuery);
-		projectionPlanner.modifyQuery();
-
-		// ******************* step 4 : the filters **************************
-
-		FilterPlanner filterPlanner = new FilterPlanner(enhancedDefinition, detachedQuery);
-		filterPlanner.modifyQuery();
-
-		// ******************* step 5 : run the query*************************
+		// ******************* step 3 : run the query*************************
 
 		sessionFactory.getCurrentSession();
 		HibernateQuery finalQuery = (HibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());

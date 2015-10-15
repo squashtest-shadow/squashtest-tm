@@ -76,7 +76,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 	// TODO : test the AND/OR mechanism
 
 
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should retain the requirement versions only for test case 1"(){
 
 		given : "the query"

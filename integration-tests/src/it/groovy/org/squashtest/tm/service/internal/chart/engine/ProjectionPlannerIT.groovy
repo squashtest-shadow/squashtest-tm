@@ -84,7 +84,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 	}
 
 
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should generate simple select and group by clauses"(){
 
 		given : "basequery"
@@ -118,7 +118,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	}
 
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should count executions by yearmonth"(){
 
 		given : "query"
@@ -150,7 +150,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 	}
 
 	@Unroll
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should perform many queries"(){
 
 		expect :

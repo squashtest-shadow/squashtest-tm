@@ -41,7 +41,7 @@ import spock.unitils.UnitilsSupport;
 
 
 /**
- * This class will test the {@link MainQueryPlanner}. It role is to create the
+ * This class will test the {@link QueryPlanner}. It role is to create the
  * bulk of the query, which is made only of the required entities joined together.
  *
  * It has no projection, filter nor group by. so
@@ -55,7 +55,7 @@ import spock.unitils.UnitilsSupport;
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class MainQueryPlannerIT extends DbunitDaoSpecification {
+class QueryPlannerIT extends DbunitDaoSpecification {
 
 	// some abreviations
 
@@ -83,7 +83,7 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 		}
 	}
 
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should fetch all requirement versions tied to test case 2"(){
 
 		given :
@@ -91,7 +91,7 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
 
 		and :
-		HibernateQuery q = new MainQueryPlanner(definition).createMainQuery()
+		HibernateQuery q = new QueryPlanner(definition).createQuery()
 
 
 		when :
@@ -106,7 +106,7 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 
 	}
 
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should find all test cases because not joining on anything"(){
 
 		given :
@@ -114,7 +114,7 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
 
 		and :
-		HibernateQuery q = new MainQueryPlanner(definition).createMainQuery()
+		HibernateQuery q = new QueryPlanner(definition).createQuery()
 
 
 		when :
@@ -130,7 +130,7 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 	}
 
 	@Unroll
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should find only test case 1 because test case 2 was never executed"(){
 
 		given :
@@ -138,7 +138,7 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
 
 		and :
-		HibernateQuery q = new MainQueryPlanner(definition).createMainQuery()
+		HibernateQuery q = new QueryPlanner(definition).createQuery()
 
 		when :
 		q.select(QTestCase.testCase.id)
@@ -154,13 +154,13 @@ class MainQueryPlannerIT extends DbunitDaoSpecification {
 
 
 	@Unroll
-	@DataSet("MainQueryPlanner.dataset.xml")
+	@DataSet("QueryPlanner.dataset.xml")
 	def "should test many possible queries"(){
 
 		expect :
 		DetailedChartDefinition definition = new DetailedChartDefinition(rootEntity : rootEntity, targetEntities : targetEntities)
 
-		HibernateQuery q = new MainQueryPlanner(definition).createMainQuery()
+		HibernateQuery q = new QueryPlanner(definition).createQuery()
 		q.where(wherePath)
 
 		def joins = q.metadata.getJoins()

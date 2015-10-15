@@ -34,7 +34,7 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * <p>
- * 	This class will generate the main query, that is a query that joins together the sequence of tables required for the given chart.
+ * 	This class will plan which table must be joined together and return the result as a HibernateQuery.
  * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
  * 	is available a where clause will be used.
  * </p>
@@ -54,21 +54,27 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  *
  */
 
-class MainQueryPlanner {
-
+class QueryPlanner {
 
 	private DetailedChartDefinition definition;
 
 	private HibernateQuery<?> query;
 
-	private QuerydslUtils utils = QuerydslUtils.INSTANCE;
+	private QuerydslToolbox utils;
 
-	MainQueryPlanner(DetailedChartDefinition definition){
+	QueryPlanner(DetailedChartDefinition definition){
+		super();
 		this.definition = definition;
+		this.utils = new QuerydslToolbox();
+	}
+
+	QueryPlanner(DetailedChartDefinition definition, QuerydslToolbox utils){
+		this.definition = definition;
+		this.utils = utils;
 	}
 
 
-	HibernateQuery<?> createMainQuery(){
+	HibernateQuery<?> createQuery(){
 
 		query = new HibernateQuery();
 
@@ -94,7 +100,7 @@ class MainQueryPlanner {
 	@SuppressWarnings("rawtypes")
 	private void init(){
 		InternalEntityType rootType = definition.getRootEntity();
-		EntityPathBase rootPath = rootType.getQBean();
+		EntityPathBase rootPath = utils.getQBean(rootType);
 		query.from(rootPath);
 	}
 
@@ -113,7 +119,7 @@ class MainQueryPlanner {
 
 		PathBuilder join = utils.makePath(joininfo.getSrc(), joininfo.getDest(), joininfo.getAttribute());
 
-		EntityPathBase dest = joininfo.getDest().getQBean();
+		EntityPathBase dest = utils.getQBean(joininfo.getDest());
 
 		query.innerJoin(join, dest);
 
@@ -133,7 +139,7 @@ class MainQueryPlanner {
 		// remember that the join is made from the dest to the source in this case
 		PathBuilder<?> destForeignkey = utils.makePath(joininfo.getDest(), joininfo.getSrc(), joininfo.getAttribute());
 
-		Predicate condition  = Expressions.booleanOperation(Ops.EQ, destForeignkey, joininfo.getSrc().getQBean());
+		Predicate condition  = Expressions.booleanOperation(Ops.EQ, destForeignkey, utils.getQBean(joininfo.getSrc()));
 
 		query.where(condition);
 
@@ -144,15 +150,18 @@ class MainQueryPlanner {
 
 		Set<String> allAliases = utils.getJoinedAliases(query);
 
-		String srcAlias = joininfo.getSrc().getQBean().getMetadata().getName();
-		String destAlias = joininfo.getDest().getQBean().getMetadata().getName();
+		InternalEntityType src = joininfo.getSrc();
+		InternalEntityType dest = joininfo.getDest();
+
+		String srcAlias = utils.getQName(src);
+		String destAlias = utils.getQName(dest);
 
 		if (! allAliases.contains(srcAlias)){
-			query.from(joininfo.getSrc().getQBean());
+			query.from(utils.getQBean(src));
 		}
 
 		if (! allAliases.contains(destAlias)){
-			query.from(joininfo.getDest().getQBean());
+			query.from(utils.getQBean(dest));
 		}
 	}
 

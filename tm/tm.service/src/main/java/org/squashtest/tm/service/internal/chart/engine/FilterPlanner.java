@@ -45,7 +45,7 @@ class FilterPlanner {
 
 	private DetailedChartDefinition definition;
 
-	private QuerydslUtils utils = QuerydslUtils.INSTANCE;
+	private QuerydslToolbox utils;
 
 	private HibernateQuery<?> query;
 
@@ -53,7 +53,16 @@ class FilterPlanner {
 		super();
 		this.definition = definition;
 		this.query= query;
+		this.utils = new QuerydslToolbox();
 	}
+
+	FilterPlanner(DetailedChartDefinition definition, HibernateQuery<?> query, QuerydslToolbox utils){
+		super();
+		this.definition = definition;
+		this.query= query;
+		this.utils = utils;
+	}
+
 
 
 	/**
@@ -76,9 +85,11 @@ class FilterPlanner {
 
 			for (Filter filter : entry.getValue()) {
 
-				BooleanExpression comparison = utils.createPredicate(filter);
+				if (filter.getOperation() != Operation.NONE){
+					BooleanExpression comparison = utils.createPredicate(filter);
 
-				orBuilder.or(comparison);
+					orBuilder.or(comparison);
+				}
 			}
 
 			mainBuilder.and(orBuilder);
