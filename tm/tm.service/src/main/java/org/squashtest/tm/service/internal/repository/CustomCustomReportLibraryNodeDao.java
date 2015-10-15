@@ -27,4 +27,5 @@ import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 public interface CustomCustomReportLibraryNodeDao extends EntityDao<CustomReportLibraryNode>{
 	List<TreeLibraryNode> findChildren(Long parentId);
+	List<Long> findAllDescendantIds(List<Long> nodesIds);
 }

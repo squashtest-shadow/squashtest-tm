@@ -64,14 +64,12 @@ public interface CustomReportLibraryNodeService {
 	
 	/**
 	 * Service to add a new {@link CustomReportLibraryNode}. The caller is responsible for giving a
-	 * {@link CustomReportLibraryNode} with a not null {@link TreeEntity} linked inside.
-	 * The {@link TreeEntity} must have the same name as the {@link CustomReportLibraryNode} because the name have been voluntary denormalized,
-	 * to allow request on path and other stuff that doesn't support the polymorphic nature of {@link TreeEntity}
+	 * a not null, named {@link TreeEntity}. The service will persist the entity, create and persist the node and make links.
 	 * <br/>
 	 * <br/>
 	 * WARNING :
 	 * This method clear the hibernate session. The @any mapping in {@link CustomReportLibraryNode}
-	 * require a proper commit and reload to have an updated node and entity
+	 * require a proper persist and reload to have an updated node and entity.
 	 * 
 	 * @param parentId Id of parent node. Can't be null.
 	 * @param node A valid {@link CustomReportLibraryNode} with it's {@link TreeEntity}.
@@ -80,4 +78,8 @@ public interface CustomReportLibraryNodeService {
 	CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
 	
 	void deleteCustomReportLibraryNode(List<Long> nodeIds);
+	
+	List<CustomReportLibraryNode> getDescendant(List<Long> nodeId);
+	
+	List<Long> getDescendantIds(List<Long> nodeId);
 }

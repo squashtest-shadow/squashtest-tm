@@ -96,6 +96,18 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 	}
 	
+	@Override
+	public List<CustomReportLibraryNode> getDescendant(List<Long> nodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Long> getDescendantIds(List<Long> nodeId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	//--------------- PRIVATE METHODS --------------
 	
 	
@@ -116,6 +128,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return entity;
 	}
+
+
 
 
 }

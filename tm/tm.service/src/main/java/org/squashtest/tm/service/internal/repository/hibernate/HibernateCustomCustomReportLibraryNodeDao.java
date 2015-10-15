@@ -22,6 +22,12 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import org.hibernate.Query;
+import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
+import org.hibernate.type.Type;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -34,6 +40,14 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 	public List<TreeLibraryNode> findChildren(Long parentId) {
 		CustomReportLibraryNode node = findById(parentId);
 		return node.getChildren();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllDescendantIds(List<Long> nodesIds) {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
+		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		return query.list();
 	}
 	
 }

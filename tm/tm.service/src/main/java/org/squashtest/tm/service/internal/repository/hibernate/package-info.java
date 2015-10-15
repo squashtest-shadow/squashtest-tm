@@ -829,6 +829,7 @@
 	
 	// ChartLibraryNode
 	@NamedQuery(name="CustomReportLibraryNode.findAllByEntityType",query="from CustomReportLibraryNode crln where crln.entityType = ?1"),
+	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendant",query="select path.descendantId from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
 	
 })
 //@formatter:on

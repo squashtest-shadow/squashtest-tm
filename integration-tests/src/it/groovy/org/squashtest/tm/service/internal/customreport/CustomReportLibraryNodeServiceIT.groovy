@@ -52,24 +52,25 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 	
 	def "should add new folder to library"() {
 		given :
-		def parent = crlnDao.findById(-1L);
-		def library = crlDao.findById(-1L);
+		def parent = crlnDao.findById(-1L)
+		def library = crlDao.findById(-1L)
 		
-		CustomReportFolder folder = new CustomReportFolder();
-		folder.setName("newFolder");
+		CustomReportFolder folder = new CustomReportFolder()
+		folder.setName("newFolder")
 		
 		when:
-		def res = service.createNewCustomReportLibraryNode(-1L,folder);
-		def resId = res.getId();
-		getSession().flush();
-		getSession().clear();
-		def newChildAfterPersist = crlnDao.findById(resId);
-		def parentNode = newChildAfterPersist.getParent();
+		def res = service.createNewCustomReportLibraryNode(-1L,folder)
+		def resId = res.getId()
+		getSession().flush()
+		getSession().clear()
+		def newChildAfterPersist = crlnDao.findById(resId)
+		def parentNode = newChildAfterPersist.getParent()
 
 		then:
-		res.id != null;
-		library != null;
-		parentNode.id == parent.id;
+		res.id != null
+		library != null
+		parentNode.id == parent.id
+		newChildAfterPersist.getName()=="newFolder"
 	}
 	
 	def "should find descendants for nodes in one library"() {
