@@ -27,6 +27,7 @@ import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
 import static org.squashtest.tm.domain.EntityType.ITERATION;
 import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
 import static org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -55,7 +56,7 @@ public class JsonChartWizardData {
 
 
 	private EnumSet<EntityType> entityTypes = EnumSet.of(CAMPAIGN, EXECUTION, ISSUE, ITEM_TEST_PLAN, ITERATION,
-			REQUIREMENT, REQUIREMENT, REQUIREMENT_VERSION);
+			REQUIREMENT, REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE);
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes) {
 

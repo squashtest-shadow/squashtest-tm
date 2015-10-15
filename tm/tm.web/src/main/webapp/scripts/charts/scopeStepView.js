@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
-	function($, backbone, _, Handlebars, AbstractStepView) {
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "tree"],
+	function($, backbone, _, Handlebars, AbstractStepView, tree) {
 	"use strict";
 
 	var scopeStepView = AbstractStepView.extend({
@@ -30,11 +30,56 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			data.nextStep = "filter";
 			data.prevStep = "entity";
 			this._initialize(data, wizrouter);
-
+			this.initTree();
 		},
 		
 		updateModel : function() {
 			this.model.set({scope : "my scope"});
+		},
+		
+		initTree : function (){
+			
+			var workspaceName;
+			
+			//TODO put selected id
+			var ids = 0;
+			
+			switch (this.model.get("selectedEntity")){
+			
+			case "REQUIREMENT": 
+			case "REQUIREMENT_VERSION":  workspaceName = "requirement";
+				break;
+				
+			case "TEST_CASE" : workspaceName = "test-case";
+				break;
+				
+			case "CAMPAIGN" :
+			case "ITERATION" :
+			case "EXECUTION" :
+			case "ITEM_TEST_PLAN" : workspaceName = "campaign";
+			
+			}
+			
+			$.ajax({
+				url : squashtm.app.contextRoot + "/" + workspaceName + '-workspace/tree/' + ids,
+				datatype : 'json' 
+				
+				
+			}).done(function(model){
+				
+				var treeConfig = {
+						model : model,
+						treeselector: "#tree",
+						workspace:"campaign"
+						
+				};
+				tree.initLinkableTree(treeConfig);
+				
+				
+			});
+			
+			
+			
 		}
 	});
 

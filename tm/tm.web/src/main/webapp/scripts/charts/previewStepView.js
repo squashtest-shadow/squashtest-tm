@@ -55,10 +55,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		
 		save : function () {
 			
+			var parentId = this.model.get("parentId");
+			
 			$.ajax({
 				method : "POST",
 				contentType: "application/json",
-				url : router.buildURL("chart.new") + "/" + this.model.get("parentId"),
+				url : router.buildURL("chart.new", parentId),
 				data : this.model.toJson()
 				
 			}).done(function(url){
