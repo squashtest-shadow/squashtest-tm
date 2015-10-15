@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryView","./views/folderView","./views/dashboardView" ],
-  function($, Backbone,domReady,urlBuilder,libraryView,folderView,dashboardView) {
+define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryView","./views/folderView","./views/dashboardView","./views/chartView" ],
+  function($, Backbone,domReady,urlBuilder,libraryView,folderView,dashboardView,chartView) {
 
       var router = Backbone.Router.extend({
 
@@ -32,7 +32,8 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
         "test":"showLibraryDetails",
         "custom-report-library/:query":"showLibraryDetails",
         "custom-report-folder/:query":"showFolderDetails",
-        "custom-report-dashboard/:query":"showDashboardDetails"
+        "custom-report-dashboard/:query":"showDashboardDetails",
+        "custom-report-chart/:query":"showChartDetails"
       },
 
       showLibraryDetails : function (id) {
@@ -100,6 +101,22 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
         var activeModel = new modelDef();
 
         this.activeView = new dashboardView({
+          model : activeModel
+        });
+      },
+
+      showChartDetails : function (id) {
+        console.log("INTERCEPTED : showChartDetails " + id);
+        this.cleanContextContent();
+        var modelDef = Backbone.Model.extend({
+          defaults: {
+            id : id
+          }
+        });
+
+        var activeModel = new modelDef();
+
+        this.activeView = new chartView({
           model : activeModel
         });
       },

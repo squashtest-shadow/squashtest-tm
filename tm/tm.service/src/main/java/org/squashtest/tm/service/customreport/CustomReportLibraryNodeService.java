@@ -22,6 +22,7 @@ package org.squashtest.tm.service.customreport;
 
 import java.util.List;
 
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -29,10 +30,37 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 public interface CustomReportLibraryNodeService {
-
-	CustomReportLibrary findCustomReportLibraryById(Long libraryId);
 	
-	CustomReportFolder findCustomReportFolderById(Long folderId);
+	/**
+	 * Return a {@link CustomReportLibraryNode} given an id
+	 * @param treeNodeId
+	 * @return
+	 */
+	CustomReportLibraryNode findCustomReportLibraryNodeById(Long treeNodeId);
+
+	/**
+	 * Return a {@link CustomReportLibrary}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity
+	 * @param treeNodeId
+	 * @return
+	 */
+	CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId);
+	
+	/**
+	 * Return a {@link CustomReportFolder}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity
+	 * @param treeNodeId
+	 * @return
+	 */
+	CustomReportFolder findFolderByTreeNodeId(Long treeNodeId);
+	
+	/**
+	 * Return a {@link ChartDefinition}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity
+	 * @param treeNodeId
+	 * @return
+	 */
+	ChartDefinition findChartDefinitionByNodeId(Long treeNodeId);
 	
 	/**
 	 * Service to add a new {@link CustomReportLibraryNode}. The caller is responsible for giving a

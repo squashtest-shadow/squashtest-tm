@@ -28,6 +28,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -47,17 +48,28 @@ public class CustomReportLibraryNodeServiceImpl implements
 	
 	@Inject
 	private SessionFactory sessionFactory;
+	
+	@Override
+	public CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
+		return customReportLibraryNodeDao.findById(id);
+	}
 
 	@Override
-	public CustomReportLibrary findCustomReportLibraryById(Long libraryId) {
-		TreeEntity entity = findEntityAndCheckType(libraryId, CustomReportTreeDefinition.LIBRARY);
+	public CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
 		return (CustomReportLibrary) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 
 	@Override
-	public CustomReportFolder findCustomReportFolderById(Long folderId) {
-		TreeEntity entity = findEntityAndCheckType(folderId, CustomReportTreeDefinition.FOLDER);
+	public CustomReportFolder findFolderByTreeNodeId(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.FOLDER);
 		return (CustomReportFolder) entity;//NOSONAR cast is checked by findEntityAndCheckType method
+	}
+	
+	@Override
+	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
+		return (ChartDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
@@ -86,10 +98,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	
 	//--------------- PRIVATE METHODS --------------
 	
-
-	private CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
-		return customReportLibraryNodeDao.findById(id);
-	}
+	
 	
 	private TreeEntity findEntityAndCheckType(Long nodeId, CustomReportTreeDefinition entityDef){
 		TreeLibraryNode node = findCustomReportLibraryNodeById(nodeId);
@@ -107,4 +116,6 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return entity;
 	}
+
+
 }

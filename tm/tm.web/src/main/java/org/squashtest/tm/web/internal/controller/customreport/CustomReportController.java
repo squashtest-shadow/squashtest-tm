@@ -29,9 +29,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
 
 @Controller
 public class CustomReportController {
@@ -40,18 +44,28 @@ public class CustomReportController {
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
 	
-	
-	
+	@Inject
+	private ChartModificationService chartService;
 	
 	//---- SHOW DETAIL METHODS -----
 	
 	@RequestMapping(value="custom-report-library/{id}", method=RequestMethod.GET)
 	public @ResponseBody CustomReportLibrary getLibraryDetails(@PathVariable Long id){
-		return customReportLibraryNodeService.findCustomReportLibraryById(id);
+		 CustomReportLibrary customReportLibrary = customReportLibraryNodeService.findLibraryByTreeNodeId(id);
+		 return customReportLibrary;
 	}
 	
 	@RequestMapping(value="custom-report-folder/{id}", method=RequestMethod.GET)
 	public @ResponseBody CustomReportFolder getFolderDetails(@PathVariable Long id){
-		return customReportLibraryNodeService.findCustomReportFolderById(id);
+		CustomReportFolder customReportFolder = customReportLibraryNodeService.findFolderByTreeNodeId(id);
+		return customReportFolder;
+	}
+	
+	@RequestMapping(value="custom-report-chart/{id}", method=RequestMethod.GET)
+	public @ResponseBody JsonChartInstance getChartDetails(@PathVariable Long id){
+		ChartDefinition chartDef = customReportLibraryNodeService.findChartDefinitionByNodeId(id);
+		ChartInstance instance = chartService.generateChart(chartDef.getId());
+		return new JsonChartInstance(instance);
+		
 	}
 }

@@ -98,6 +98,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         url = urlBuilder.buildURL("custom-report-dashboard",nodeId);
         backboneRouter.navigate(url, {trigger: true});
         break;
+      case "chart":
+        url = urlBuilder.buildURL("custom-report-chart",nodeId);
+        backboneRouter.navigate(url, {trigger: true});
+        break;
       default:
 
     }
