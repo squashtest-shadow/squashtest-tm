@@ -28,6 +28,7 @@ import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.Operation;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;

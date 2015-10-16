@@ -283,7 +283,7 @@
 			
 			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="Data type of the attribute"/>
 	
-			<column name="BUSINESS" type="BOOLEAN" remarks="tells whether this column is public or internal." />
+			<column name="BUSINESS" type="BOOLEAN" remarks="tells whether this column is public or internal." defaultValueBoolean="true"/>
 
 		</createTable>
 
@@ -441,17 +441,17 @@
 		
 		<!-- simple columns for REQUIREMENT_VERSION -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 
-				(${rvCreatOn}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn'),
-				(${rvModOn}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_MODIFIED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn'),
-				(${rvId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_VERS_ID', 'REQUIREMENT_VERSION', 'NUMERIC', 'id'),
-				(${rvVersnum}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', 'NUMERIC', 'versionNumber'),
-				(${rvCreatBy}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
-				(${rvModBy}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
-				(${rvLabel}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
-				(${rvCrit}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
-				(${rvStatus}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
+				(${rvCreatOn}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn'),
+				(${rvModOn}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn'),
+				(${rvId}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_VERS_ID', 'REQUIREMENT_VERSION', 'NUMERIC', 'id'),
+				(${rvVersnum}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', 'NUMERIC', 'versionNumber'),
+				(${rvCreatBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
+				(${rvModBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
+				(${rvLabel}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
+				(${rvCrit}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
+				(${rvStatus}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES 
@@ -468,16 +468,16 @@
 		
 		<!-- simple columns for TEST_CASE -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 	
-				(${tcCreatOn},  'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_ON','TEST_CASE', 'DATE', 'audit.createdOn'),
-				(${tcModOn}, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_ON','TEST_CASE', 'DATE', 'audit.lastModifiedOn'),
-				(${tcId}, 'ATTRIBUTE', TRUE, 'TEST_CASE_ID','TEST_CASE', 'NUMERIC', 'id'),
-				(${tcCreatBy}, 'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_BY','TEST_CASE', 'STRING', 'audit.createdBy'),
-				(${tcModBy}, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy'),
-				(${tcLabel}, 'ATTRIBUTE', TRUE, 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name'),
-				(${tcImportance}, 'ATTRIBUTE', TRUE, 'TEST_CASE_IMPORTANCE','TEST_CASE', 'LEVEL_ENUM', 'importance'),
-				(${tcStatus}, 'ATTRIBUTE', TRUE, 'TEST_CASE_STATUS','TEST_CASE', 'LEVEL_ENUM', 'status');
+				(${tcCreatOn},  'ATTRIBUTE', 'TEST_CASE_CREATED_ON','TEST_CASE', 'DATE', 'audit.createdOn'),
+				(${tcModOn}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_ON','TEST_CASE', 'DATE', 'audit.lastModifiedOn'),
+				(${tcId}, 'ATTRIBUTE', 'TEST_CASE_ID','TEST_CASE', 'NUMERIC', 'id'),
+				(${tcCreatBy}, 'ATTRIBUTE', 'TEST_CASE_CREATED_BY','TEST_CASE', 'STRING', 'audit.createdBy'),
+				(${tcModBy}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy'),
+				(${tcLabel}, 'ATTRIBUTE', 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name'),
+				(${tcImportance}, 'ATTRIBUTE', 'TEST_CASE_IMPORTANCE','TEST_CASE', 'LEVEL_ENUM', 'importance'),
+				(${tcStatus}, 'ATTRIBUTE', 'TEST_CASE_STATUS','TEST_CASE', 'LEVEL_ENUM', 'status');
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES
@@ -493,14 +493,14 @@
 		
 		<!-- simple columns for  CAMPAIGN -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 					
-				(${cId},  'ATTRIBUTE', TRUE, 'CAMPAIGN_ID','CAMPAIGN', 'NUMERIC', 'id'),
-				(${cName},  'ATTRIBUTE', TRUE, 'CAMPAIGN_LABEL','CAMPAIGN', 'STRING', 'name'),
-				(${cScheStart},  'ATTRIBUTE', TRUE, 'CAMPAIGN_SCHED_START','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledStartDate'),
-				(${cSchedEnd},  'ATTRIBUTE', TRUE, 'CAMPAIGN_SCHED_END','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledEndDate'),
-				(${cActStart},  'ATTRIBUTE', TRUE, 'CAMPAIGN_ACTUAL_START','CAMPAIGN', 'DATE', 'actualPeriod.actualStartDate'),
-				(${cActEnd},  'ATTRIBUTE', TRUE, 'CAMPAIGN_ACTUAL_END','CAMPAIGN', 'DATE', 'actualPeriod.actualEndDate');
+				(${cId},  'ATTRIBUTE', 'CAMPAIGN_ID','CAMPAIGN', 'NUMERIC', 'id'),
+				(${cName},  'ATTRIBUTE', 'CAMPAIGN_LABEL','CAMPAIGN', 'STRING', 'name'),
+				(${cScheStart},  'ATTRIBUTE', 'CAMPAIGN_SCHED_START','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledStartDate'),
+				(${cSchedEnd},  'ATTRIBUTE', 'CAMPAIGN_SCHED_END','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledEndDate'),
+				(${cActStart},  'ATTRIBUTE', 'CAMPAIGN_ACTUAL_START','CAMPAIGN', 'DATE', 'actualPeriod.actualStartDate'),
+				(${cActEnd},  'ATTRIBUTE', 'CAMPAIGN_ACTUAL_END','CAMPAIGN', 'DATE', 'actualPeriod.actualEndDate');
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES
@@ -514,14 +514,14 @@
 		
 		<!-- simple columns for  ITERATION -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 					
-				(${itId},  'ATTRIBUTE', TRUE, 'ITERATION_ID','ITERATION', 'NUMERIC', 'id'),
-				(${itName},  'ATTRIBUTE', TRUE, 'ITERATION_LABEL','ITERATION', 'STRING', 'name'),
-				(${itScheStart},  'ATTRIBUTE', TRUE, 'ITERATION_SCHED_START','ITERATION', 'DATE', 'scheduledPeriod.scheduledStartDate'),
-				(${itScheEnd},  'ATTRIBUTE', TRUE, 'ITERATION_SCHED_END','ITERATION', 'DATE', 'scheduledPeriod.scheduledEndDate'),
-				(${itActStart},  'ATTRIBUTE', TRUE, 'ITERATION_ACTUAL_START','ITERATION', 'DATE', 'actualPeriod.actualStartDate'),
-				(${itActEnd},  'ATTRIBUTE', TRUE, 'ITERATION_ACTUAL_END','ITERATION', 'DATE', 'actualPeriod.actualEndDate');
+				(${itId},  'ATTRIBUTE', 'ITERATION_ID','ITERATION', 'NUMERIC', 'id'),
+				(${itName},  'ATTRIBUTE', 'ITERATION_LABEL','ITERATION', 'STRING', 'name'),
+				(${itScheStart},  'ATTRIBUTE', 'ITERATION_SCHED_START','ITERATION', 'DATE', 'scheduledPeriod.scheduledStartDate'),
+				(${itScheEnd},  'ATTRIBUTE', 'ITERATION_SCHED_END','ITERATION', 'DATE', 'scheduledPeriod.scheduledEndDate'),
+				(${itActStart},  'ATTRIBUTE', 'ITERATION_ACTUAL_START','ITERATION', 'DATE', 'actualPeriod.actualStartDate'),
+				(${itActEnd},  'ATTRIBUTE', 'ITERATION_ACTUAL_END','ITERATION', 'DATE', 'actualPeriod.actualEndDate');
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES
