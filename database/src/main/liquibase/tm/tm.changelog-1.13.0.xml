@@ -25,6 +25,65 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
+	<!-- 
+		The following properties are used in changeset tm-1.13.0-feature-5375-2
+	 -->
+	
+	<property name="reqId" 					value="1" />
+	<property name="reqVCount" 				value="2" />
+	
+	<property name="rvId" 					value="3" />
+	<property name="rvVersnum" 				value="4" />
+	<property name="rvCreatOn"				value="5" />
+	<property name="rvModOn" 				value="6" />
+	<property name="rvCreatBy" 				value="7" />
+	<property name="rvModBy" 				value="8" />
+	<property name="rvLabel" 				value="9" />
+	<property name="rvCrit" 				value="10" />
+	<property name="rvCat" 					value="11" />
+	<property name="rvStatus"				value="12" />
+	<property name="rvMiles" 				value="13" />
+	<property name="rvVerifTCCount" 		value="14" />
+	<property name="rvMilesCount" 			value="15" />
+	
+	<property name="tcId"					value="16"/>
+	<property name="tcCreatOn"				value="17"/>
+	<property name="tcModOn"				value="18"/>
+	<property name="tcCreatBy"				value="19"/>
+	<property name="tcModBy"				value="20"/>
+	<property name="tcLabel"				value="21"/>
+	<property name="tcImportance"			value="22"/>
+	<property name="tcNat"					value="23"/>
+	<property name="tcType"					value="24"/>
+	<property name="tcStatus"				value="25"/>
+	<property name="tcVerifVersionCount"	value="26"/>
+	<property name="tcCallstepCount"		value="27"/>
+	<property name="tcStepCount"			value="28"/>
+	<property name="tcMilesCount"			value="29"/>
+	<property name="tcCpgCount"				value="30"/>
+	<property name="tcItCount"				value="31"/>
+	<property name="tcExecCount"			value="32"/>
+	<property name="tcAutomated"			value="33"/>
+
+	<property name="cId" 					value="34"/>
+	<property name="cName" 					value="35"/>
+	<property name="cScheStart" 			value="36"/>
+	<property name="cSchedEnd" 				value="37"/>
+	<property name="cActStart" 				value="38"/>
+	<property name="cActEnd" 				value="39"/>
+	<property name="cItCount" 				value="40"/>
+	<property name="cBugCount" 				value="41"/>
+	
+	<property name="itId" 					value="42" />
+	<property name="itName"					value="43" />
+	<property name="itScheStart" 			value="44" />
+	<property name="itScheEnd" 				value="45" />
+	<property name="itActStart" 			value="46" />
+	<property name="itActEnd" 				value="47" />
+	<property name="itItemCount" 			value="48" />
+	<property name="itBugCount" 			value="49" />
+	
+
 	<changeSet id="tm-1.13.0" author="bsiri">
 		<comment>Update TM database version number</comment>
 		<update tableName="CORE_CONFIG">
@@ -196,6 +255,10 @@
 			an expression. This expression is itself expressed as a CHART_QUERY. 
 			For this reason a COLUMN_PROTOTYPE may point to a CHART_QUERY via a 
 			(nullable) foreign key. 
+			
+			Last, some columns aren't supposed to be available to the user and used 
+			in a chart. The attribute 'BUSINESS' = true indicates that the user is allowed 
+			to use them.
 		</comment>
 		
 		<createTable tableName="CHART_COLUMN_PROTOTYPE" >
@@ -203,6 +266,10 @@
 			<column name="CHART_COLUMN_ID" type="BIGINT" autoIncrement="true" remarks="the column ID">
 				<constraints primaryKey="true" nullable="false" />
 			</column>
+			
+			<column name="COLUMN_TYPE" type="java.sql.Types.VARCHAR(15)" 
+				remarks="complementary information about the nature of this column : native attribute ('ATTRIBUTE'), 
+				computed field ('CALCULATED') - often as a subquery -, or custom field ('CUF')"/>
 			
 			<column name="SUBQUERY_ID" type="BIGINT" remarks="optional foreign key to a (sub) CHART_QUERY">
 				<constraints nullable="true" foreignKeyName="fk_column_query" references="CHART_QUERY(CHART_QUERY_ID)"/>
@@ -215,10 +282,8 @@
 			<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)" remarks="The name of the attribute of the entity"/>
 			
 			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="Data type of the attribute"/>
-			
-			<column name="ATTRIBUTE_TYPE" type="java.sql.Types.VARCHAR(15)" 
-				remarks="complementary information about the nature of this column : native attribute ('ATTRIBUTE'), 
-				computed field ('CALCULATED') - often as a subquery -, or custom field ('CUF')"/>
+	
+			<column name="BUSINESS" type="BOOLEAN" remarks="tells whether this column is public or internal." />
 
 		</createTable>
 
@@ -358,63 +423,115 @@
 		</createTable>
 		
 	</changeSet>
+
 	
 	<changeSet id="tm-1.13.0-feature-5375-2" author="bsiri"> 
 
 		<comment>populate the column prototype referential data</comment>
 		
+
 		<!--  ================== simple columns ====================== -->
 		
 		<!-- simple columns for REQUIREMENT -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE, SUBQUERY_ID) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 
-				(1, 'REQUIREMENT_ID', 'REQUIREMENT', 'NUMERIC', 'id', 'ATTRIBUTE', NULL);
+				(${reqId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_ID', 'REQUIREMENT', 'NUMERIC', 'id');
 		</sql>
 		
 		<!-- simple columns for REQUIREMENT_VERSION -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE, SUBQUERY_ID) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 
-				(2, 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn', 'ATTRIBUTE', NULL),
-				(3, 'REQUIREMENT_VERSION_MODIFIED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn', 'ATTRIBUTE', NULL),
-				(4, 'REQUIREMENT_VERSION_VERS_ID', 'REQUIREMENT_VERSION', 'NUMERIC', 'id', 'ATTRIBUTE', NULL),
-				(5, 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', 'NUMERIC', 'versionNumber', 'ATTRIBUTE', NULL),
-				(6, 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy', 'ATTRIBUTE', NULL),
-				(7, 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy', 'ATTRIBUTE', NULL),
-				(8, 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name', 'ATTRIBUTE', NULL);
+				(${rvCreatOn}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn'),
+				(${rvModOn}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_MODIFIED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn'),
+				(${rvId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_VERS_ID', 'REQUIREMENT_VERSION', 'NUMERIC', 'id'),
+				(${rvVersnum}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', 'NUMERIC', 'versionNumber'),
+				(${rvCreatBy}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
+				(${rvModBy}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
+				(${rvLabel}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
+				(${rvCrit}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
+				(${rvStatus}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES 
-				(2, 'AXIS'), (2, 'FILTER'), (2, 'MEASURE'),
-				(3, 'AXIS'), (3, 'FILTER'), (3, 'MEASURE'),
-				(4, 'AXIS'), (4, 'FILTER'), (4, 'MEASURE'),
-				(5, 'FILTER'), (5, 'MEASURE'),
-				(6, 'AXIS'), (6, 'FILTER'), (6, 'MEASURE'),
-				(7, 'AXIS'), (7, 'FILTER'), (7, 'MEASURE'),
-				(8, 'FILTER'), (8, 'MEASURE');
+				(${rvCreatOn}, 'AXIS'), (${rvCreatOn}, 'FILTER'),
+				(${rvModOn}, 'AXIS'), (${rvModOn}, 'FILTER'),
+				(${rvId}, 'AXIS'), (${rvId}, 'FILTER'), (${rvId}, 'MEASURE'),
+				(${rvVersnum}, 'FILTER'), (${rvVersnum}, 'MEASURE'),
+				(${rvCreatBy}, 'AXIS'), (${rvCreatBy}, 'FILTER'),
+				(${rvModBy}, 'AXIS'), (${rvModBy}, 'FILTER'),
+				(${rvLabel}, 'FILTER'), (${rvLabel}, 'MEASURE'),
+				(${rvCrit}, 'AXIS'), (${rvCrit}, 'FILTER'), (${rvCrit}, 'MEASURE'),
+				(${rvStatus}, 'FILTER'), (${rvStatus}, 'MEASURE'), (${rvStatus}, 'MEASURE');
 		</sql>
 		
 		<!-- simple columns for TEST_CASE -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE, SUBQUERY_ID) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 	
-				(9, 'TEST_CASE_CREATED_ON','TEST_CASE', 'DATE', 'audit.createdOn', 'ATTRIBUTE', NULL),
-				(10, 'TEST_CASE_MODIFIED_ON','TEST_CASE', 'DATE', 'audit.lastModifiedOn', 'ATTRIBUTE', NULL),
-				(11, 'TEST_CASE_ID','TEST_CASE', 'NUMERIC', 'id', 'ATTRIBUTE', NULL),
-				(12, 'TEST_CASE_CREATED_BY','TEST_CASE', 'STRING', 'audit.createdBy', 'ATTRIBUTE', NULL),
-				(13, 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy', 'ATTRIBUTE', NULL),
-				(14, 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name', 'ATTRIBUTE', NULL);
+				(${tcCreatOn},  'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_ON','TEST_CASE', 'DATE', 'audit.createdOn'),
+				(${tcModOn}, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_ON','TEST_CASE', 'DATE', 'audit.lastModifiedOn'),
+				(${tcId}, 'ATTRIBUTE', TRUE, 'TEST_CASE_ID','TEST_CASE', 'NUMERIC', 'id'),
+				(${tcCreatBy}, 'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_BY','TEST_CASE', 'STRING', 'audit.createdBy'),
+				(${tcModBy}, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy'),
+				(${tcLabel}, 'ATTRIBUTE', TRUE, 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name'),
+				(${tcImportance}, 'ATTRIBUTE', TRUE, 'TEST_CASE_IMPORTANCE','TEST_CASE', 'LEVEL_ENUM', 'importance'),
+				(${tcStatus}, 'ATTRIBUTE', TRUE, 'TEST_CASE_STATUS','TEST_CASE', 'LEVEL_ENUM', 'status');
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES
-				(9, 'AXIS'), (9, 'FILTER'), (9, 'MEASURE'),
-				(10, 'AXIS'), (10, 'FILTER'), (10, 'MEASURE'),
-				(11, 'AXIS'), (11, 'FILTER'), (11, 'MEASURE'),
-				(12, 'AXIS'), (12, 'FILTER'), (12, 'MEASURE'),
-				(13, 'AXIS'), (13, 'FILTER'), (13, 'MEASURE'),
-				(14, 'FILTER'), (14, 'MEASURE');				 	
+				(${tcCreatOn}, 'AXIS'), (${tcCreatOn}, 'FILTER'),
+				(${tcModOn}, 'AXIS'), (${tcModOn}, 'FILTER'),
+				(${tcId}, 'AXIS'), (${tcId}, 'FILTER'), (${tcId}, 'MEASURE'),
+				(${tcCreatBy}, 'AXIS'), (${tcCreatBy}, 'FILTER'),
+				(${tcModBy}, 'AXIS'), (${tcModBy}, 'FILTER'),
+				(${tcLabel}, 'FILTER'), (${tcLabel}, 'MEASURE'),	
+				(${tcImportance}, 'AXIS'), (${tcImportance}, 'FILTER'), (${tcImportance}, 'MEASURE'),
+				(${tcStatus}, 'AXIS'), (${tcStatus}, 'FILTER'), (${tcStatus}, 'MEASURE');			 	 	
 		</sql>
+		
+		<!-- simple columns for  CAMPAIGN -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${cId},  'ATTRIBUTE', TRUE, 'CAMPAIGN_ID','CAMPAIGN', 'NUMERIC', 'id'),
+				(${cName},  'ATTRIBUTE', TRUE, 'CAMPAIGN_LABEL','CAMPAIGN', 'STRING', 'name'),
+				(${cScheStart},  'ATTRIBUTE', TRUE, 'CAMPAIGN_SCHED_START','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledStartDate'),
+				(${cSchedEnd},  'ATTRIBUTE', TRUE, 'CAMPAIGN_SCHED_END','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledEndDate'),
+				(${cActStart},  'ATTRIBUTE', TRUE, 'CAMPAIGN_ACTUAL_START','CAMPAIGN', 'DATE', 'actualPeriod.actualStartDate'),
+				(${cActEnd},  'ATTRIBUTE', TRUE, 'CAMPAIGN_ACTUAL_END','CAMPAIGN', 'DATE', 'actualPeriod.actualEndDate');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${cId}, 'AXIS'), (${cId}, 'FILTER'), (${cId}, 'MEASURE'),
+				(${cName}, 'FILTER'), (${cName}, 'MEASURE'),
+				(${cScheStart}, 'AXIS'), (${cScheStart}, 'FILTER'),
+				(${cSchedEnd}, 'AXIS'), (${cSchedEnd}, 'FILTER'),
+				(${cActStart}, 'AXIS'), (${cActStart}, 'FILTER'),
+				(${cActEnd}, 'AXIS'), (${cActEnd}, 'FILTER');
+		</sql>	
+		
+		<!-- simple columns for  ITERATION -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${itId},  'ATTRIBUTE', TRUE, 'ITERATION_ID','ITERATION', 'NUMERIC', 'id'),
+				(${itName},  'ATTRIBUTE', TRUE, 'ITERATION_LABEL','ITERATION', 'STRING', 'name'),
+				(${itScheStart},  'ATTRIBUTE', TRUE, 'ITERATION_SCHED_START','ITERATION', 'DATE', 'scheduledPeriod.scheduledStartDate'),
+				(${itScheEnd},  'ATTRIBUTE', TRUE, 'ITERATION_SCHED_END','ITERATION', 'DATE', 'scheduledPeriod.scheduledEndDate'),
+				(${itActStart},  'ATTRIBUTE', TRUE, 'ITERATION_ACTUAL_START','ITERATION', 'DATE', 'actualPeriod.actualStartDate'),
+				(${itActEnd},  'ATTRIBUTE', TRUE, 'ITERATION_ACTUAL_END','ITERATION', 'DATE', 'actualPeriod.actualEndDate');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${itId}, 'AXIS'), (${itId}, 'FILTER'), (${itId}, 'MEASURE'),
+				(${itName}, 'FILTER'), (${itName}, 'MEASURE'),
+				(${itScheStart}, 'AXIS'), (${itScheStart}, 'FILTER'),
+				(${itScheEnd}, 'AXIS'), (${itScheEnd}, 'FILTER'),
+				(${itActStart}, 'AXIS'), (${itActStart}, 'FILTER'),
+				(${itActEnd}, 'AXIS'), (${itActEnd}, 'FILTER');
+		</sql>		
 
 		<!--  ================== calculated columns ====================== -->
 		
@@ -424,19 +541,19 @@
 			insert into CHART_QUERY(CHART_QUERY_ID, NAME) values (1, 'REQUIREMENT_NB_VERSIONS_SUBQUERY');
 			
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (4, 1, 'COUNT', 0);
+				values (${rvId}, 1, 'COUNT', 0);
 			
 			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (1, 1, 'NONE', 0);
+				values (${reqId}, 1, 'NONE', 0);
 		
 		
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE, SUBQUERY_ID) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID) 
 			VALUES 
-				(15, 'REQUIREMENT_NB_VERSION', 'REQUIREMENT', 'NUMERIC', 'count(versions)', 'CALCULATED', 1);
+				(${reqVCount}, 'CALCULATED', TRUE, 'REQUIREMENT_NB_VERSION', 'REQUIREMENT', 'NUMERIC', 'count(versions)', 1);
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES 
-				(15, 'FILTER'), (15, 'MEASURE');
+				(${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
 		
 		</sql>
 

@@ -24,7 +24,7 @@ public enum Operation {
 	// @formatter:off
 	NONE,
 	GREATER,
-	GREATER_EQUALS,
+	GREATER_EQUAL,
 	LOWER,
 	LOWER_EQUAL,
 	BETWEEN,

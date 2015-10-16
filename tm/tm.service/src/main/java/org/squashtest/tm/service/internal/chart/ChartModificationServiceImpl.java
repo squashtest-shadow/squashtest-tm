@@ -70,7 +70,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 		Map<EntityType, Set<ColumnPrototype>> prototypes;
 
-		prototypes = factory.from(prototype).transform(groupBy(prototype.entityType).as(set(prototype)));
+		prototypes = factory.from(prototype).where(prototype.business.eq(true)).transform(groupBy(prototype.entityType).as(set(prototype)));
 
 		return prototypes;
 	}

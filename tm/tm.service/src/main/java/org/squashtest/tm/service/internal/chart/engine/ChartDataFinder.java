@@ -28,7 +28,7 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.chart.AttributeType;
+import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartSeries;
@@ -181,10 +181,10 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  *  <ol>
  *  	<li>Filters are first grouped by Target Entity</li>
  *  	<li>Filters from each groups are then combined in a logical combination</li>
- *  	<li>Depending on the filters composing the group, a strategy is resolved :
+ *  	<li>For each filter happens one of theses :
  *  		<ul>
- *  			<li>either the expression is inlined as a where clause in the main query,</li>
- *  			<li>either it will be part of a subquery</li>
+ *  			<li>inlined as a where clause in the main query</li>
+ *  			<li>subquery + where or having clause</li>
  *  		 </ul>
  *  	</li>
  *  </ol>
@@ -211,15 +211,13 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  * <h4>Inlined where clause strategy</h4>
  * 
  * <p>
- * 	In the simplest cases the filters will be inlined in the main query. The decision is driven by the attribute 'attributeType' of the {@link ColumnPrototype}
- * 	referenced by the filters : if all of them are of type {@link AttributeType#ATTRIBUTE} then this strategy will be applied. If so, the main query will receive
- * 	all of them as a where clause.
+ * 	In the simplest cases the filters will be inlined in the main query, if the column is of type {@link ColumnType#ATTRIBUTE}
  * </p>
  * 
  * <h4>Subquery strategy</h4>
  * 
- * <p>In more complex cases a subquery will be required. The decision is driven by the attribute 'attributeType' of the {@link ColumnPrototype}
- * 	referenced by the filters : if at least one of them is of type {@link AttributeType#CUF} or {@link AttributeType#CALCULATED}
+ * <p>In more complex cases a subquery will be required. The decision is driven by the attribute 'columnType' of the {@link ColumnPrototype}
+ * 	referenced by the filters : if at least one of them is of type {@link ColumnType#CUF} or {@link ColumnType#CALCULATED}
  * then one/several subqueries will be used. We need them for the following reasons :
  * 
  * 	<ol>

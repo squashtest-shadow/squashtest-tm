@@ -138,7 +138,7 @@ class QuerydslToolbox {
 
 		ColumnPrototype proto = col.getColumn();
 
-		switch(proto.getAttributeType()){
+		switch(proto.getColumnType()){
 		case ATTRIBUTE :
 			selectElement = createAttributeSelect(col);
 			break;
@@ -150,7 +150,7 @@ class QuerydslToolbox {
 			break;
 
 		default :
-			throw new IllegalArgumentException("columns of attribute type '"+proto.getAttributeType()+"' are not yet supported");
+			throw new IllegalArgumentException("columns of column type '"+proto.getColumnType()+"' are not yet supported");
 		}
 
 		return selectElement;
@@ -169,7 +169,7 @@ class QuerydslToolbox {
 
 		ColumnPrototype proto = filter.getColumn();
 
-		switch(proto.getAttributeType()){
+		switch(proto.getColumnType()){
 		case ATTRIBUTE :
 			predicate = createAttributePredicate(filter);
 			break;
@@ -188,7 +188,7 @@ class QuerydslToolbox {
 			break;
 
 		default :
-			throw new IllegalArgumentException("columns of attribute type '"+proto.getAttributeType()+"' are not yet supported");
+			throw new IllegalArgumentException("columns of column type '"+proto.getColumnType()+"' are not yet supported");
 		}
 
 		return predicate;

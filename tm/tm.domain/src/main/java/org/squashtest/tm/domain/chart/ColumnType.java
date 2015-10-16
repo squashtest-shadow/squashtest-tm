@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
-public enum AttributeType {
+public enum ColumnType {
 	// @formatter:off
 	CUF,
 	ATTRIBUTE,

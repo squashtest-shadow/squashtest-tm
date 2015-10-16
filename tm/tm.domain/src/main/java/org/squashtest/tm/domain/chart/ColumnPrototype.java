@@ -48,8 +48,17 @@ import org.squashtest.tm.domain.EntityType;
  * 		<li>it is a referential data that will "instanciated" in a {@link ChartDefinition} (the "Prototype" part)</li>
  * 	</ul>
  * </p>
+ * 
+ * <p>
+ * 	<b>Taxonomy :</b> ColumnPrototypes comes in three varieties :
+ * 	<ul>
+ * 		<li>Attribute columns : these columns refer to a proper attribute of the ENTITY_TYPE.</li>
+ * 		<li>Calculated columns : these columns don't physically exist and must be calculated.</li>
+ * 		<li>Customfield columns : these columns represent custom fields of this entity (detached and configurable attributes)</li>
+ * 	</ul>
+ * </p>
  *
- * <p>A ColumnPrototype may be specialized to assume on of the three {@link ColumnRole}s : it can be filtered on, or it can hold the
+ * <p>Usage : A ColumnPrototype may be specialized to assume on of the three {@link ColumnRole}s : it can be filtered on, or it can hold the
  * observable value displayed in the chart, or be an axis of this chart. See {@link Filter}, {@link AxisColumn}, {@link MeasureColumn}</p>
  *
  * <p>No user shall create them: only the system can do that. Typically prototypes will be inserted or removed when custom fields
@@ -79,7 +88,7 @@ public class ColumnPrototype {
 	private DataType dataType;
 
 	@Enumerated(EnumType.STRING)
-	private AttributeType attributeType;
+	private ColumnType columnType;
 
 	@OneToOne
 	@JoinColumn(name="SUBQUERY_ID")
@@ -87,12 +96,14 @@ public class ColumnPrototype {
 
 	private String attributeName;
 
+	private boolean business = true;
+
 	public Long getId() {
 		return id;
 	}
 
-	public AttributeType getAttributeType() {
-		return attributeType;
+	public ColumnType getColumnType() {
+		return columnType;
 	}
 
 	public String getAttributeName() {
@@ -122,12 +133,17 @@ public class ColumnPrototype {
 	}
 
 	/**
-	 * May be null : ColumnPrototypes having {@link AttributeType#ATTRIBUTE} have no subqueries for instance.
+	 * May be null : ColumnPrototypes having {@link ColumnType#ATTRIBUTE} have no subqueries for instance.
 	 * 
 	 * @return
 	 */
 	public ChartQuery getSubQuery(){
 		return subQuery;
 	}
+
+	public boolean isBusiness() {
+		return business;
+	}
+
 
 }

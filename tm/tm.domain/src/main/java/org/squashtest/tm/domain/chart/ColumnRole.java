@@ -28,7 +28,7 @@ import static org.squashtest.tm.domain.chart.Operation.BY_YEAR;
 import static org.squashtest.tm.domain.chart.Operation.COUNT;
 import static org.squashtest.tm.domain.chart.Operation.EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.GREATER;
-import static org.squashtest.tm.domain.chart.Operation.GREATER_EQUALS;
+import static org.squashtest.tm.domain.chart.Operation.GREATER_EQUAL;
 import static org.squashtest.tm.domain.chart.Operation.LIKE;
 import static org.squashtest.tm.domain.chart.Operation.LOWER;
 import static org.squashtest.tm.domain.chart.Operation.LOWER_EQUAL;
@@ -44,7 +44,7 @@ public enum ColumnRole {
 	// @formatter:off
 	AXIS (BY_DAY, BY_MONTH, BY_YEAR),
 	MEASURE(AVG, COUNT, MIN, MAX, SUM),
-	FILTER (BETWEEN, EQUALS, GREATER, GREATER_EQUALS, LIKE, LOWER, LOWER_EQUAL);
+	FILTER (BETWEEN, EQUALS, GREATER, GREATER_EQUAL, LIKE, LOWER, LOWER_EQUAL);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;

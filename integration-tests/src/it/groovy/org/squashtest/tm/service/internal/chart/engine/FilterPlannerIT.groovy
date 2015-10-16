@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.chart.engine
 
 import static org.squashtest.tm.domain.EntityType.*
-import static org.squashtest.tm.domain.chart.AttributeType.*
+import static org.squashtest.tm.domain.chart.ColumnType.*
 import static org.squashtest.tm.domain.chart.DataType.*
 import static org.squashtest.tm.domain.chart.Operation.*
 
@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.campaign.QCampaign
 import org.squashtest.tm.domain.campaign.QIteration
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem
-import org.squashtest.tm.domain.chart.AttributeType
+import org.squashtest.tm.domain.chart.ColumnType
 import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ColumnPrototype
 import org.squashtest.tm.domain.chart.DataType
@@ -106,24 +106,24 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	}
 
-	def mkMeasure(AttributeType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, attributeType : attrType, attributeName : attributeName)
+	def mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def meas = new MeasureColumn(column : proto, operation : operation)
 
 		return meas
 
 	}
 
-	def mkAxe(AttributeType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, attributeType : attrType, attributeName : attributeName)
+	def mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
+		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def meas = new AxisColumn(column : proto, operation : operation)
 
 		return meas
 
 	}
 
-	def mkFilter(AttributeType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, attributeType : attrType, attributeName : attributeName)
+	def mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
+		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def filter = new Filter(column : proto, operation : operation, values : values)
 
 		return filter
