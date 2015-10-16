@@ -83,6 +83,43 @@
 	<property name="itItemCount" 			value="48" />
 	<property name="itBugCount" 			value="49" />
 
+	<property name="itpId" 					value="50"/>
+	<property name="itpLabel" 				value="51"/>
+	<property name="itpTcid" 				value="52"/>
+	<property name="itpDsLabel" 			value="53"/>
+	<property name="itpTcDeleted" 			value="54"/>
+	<property name="itpNbManualExec" 		value="55"/>
+	<property name="itpNbAutoExec" 			value="56"/>
+	<property name="itExecuted" 			value="57"/>
+	<property name="itpStatus" 				value="58"/>
+	<property name="itpTesterLogin" 		value="59"/>
+	<property name="itpLastExec" 			value="60"/>
+	<property name="itpBugCount" 			value="61"/>
+	
+	<property name="exId" 					value="62" />
+	<property name="exDsLabel" 				value="63" />
+	<property name="exLabel" 				value="64" />
+	<property name="exStatus" 				value="65" />
+	<property name="exLastExec" 			value="66" />
+	<property name="exTesterLogin" 			value="67" />
+	<property name="exMode" 				value="68" />
+	<property name="exBugCount" 			value="69" />
+	
+	<property name="isId"					value="70" />
+	<property name="isStatus" 				value="71" />
+	<property name="isSeverity" 			value="72" />
+	<property name="isBugtrackerLabel"		value="73" />
+	
+	<property name="tsId"					value="74" />
+	
+	<property name="infoItemId"				value="75" />
+	<property name="infoItemLabel"			value="76" />
+	
+	<property name="milesId"				value="77" />
+	<property name="milesLabel"				value="78" />
+	
+	<property name="userId"					value="79" />
+	<property name="userLogin"				value="80" />
 
 	<changeSet id="tm-1.13.0" author="bsiri">
 		<comment>Update TM database version number</comment>
@@ -540,7 +577,88 @@
 				(${itActStart}, 'AXIS'), (${itActStart}, 'FILTER'),
 				(${itActEnd}, 'AXIS'), (${itActEnd}, 'FILTER');
 		</sql>
-
+		
+		<!-- simple columns for  ITERATION_TEST_PLAN_ITEM -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${itpId},  'ATTRIBUTE', 'ITEM_TEST_PLAN_ID','ITEM_TEST_PLAN', 'NUMERIC', 'id'),
+				(${itpLabel},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LABEL','ITEM_TEST_PLAN', 'STRING', 'label'),
+				(${itpStatus},  'ATTRIBUTE', 'ITEM_TEST_PLAN_STATUS','ITEM_TEST_PLAN', 'EXECUTION_STATUS', 'executionStatus'),
+				(${itpLastExec},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LASTEXEC','ITEM_TEST_PLAN', 'DATE', 'lastExecutedOn');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${itpId}, 'AXIS'), (${itpId}, 'FILTER'), (${itpId}, 'MEASURE'),
+				(${itpLabel}, 'AXIS'), (${itpLabel}, 'FILTER'),
+				(${itpStatus}, 'AXIS'), (${itpStatus}, 'FILTER'), (${itpStatus}, 'MEASURE'),
+				(${itpLastExec}, 'AXIS'), (${itpLastExec}, 'FILTER');
+		</sql>	
+			
+		<!-- simple columns for EXECUTION -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${exId},  'ATTRIBUTE', 'EXECUTION_ID','EXECUTION', 'NUMERIC', 'id'),
+				(${exLabel},  'ATTRIBUTE', 'EXECUTION_LABEL','EXECUTION', 'STRING', 'name'),
+				(${exDsLabel},  'ATTRIBUTE', 'EXECUTION_DS_LABEL','EXECUTION', 'STRING', 'datasetLabel'),
+				(${exLastExec},  'ATTRIBUTE', 'EXECUTION_LASTEXEC','EXECUTION', 'DATE', 'lastExecutedOn'),
+				(${exTesterLogin},  'ATTRIBUTE', 'EXECUTION_TS_LOGIN','EXECUTION', 'STRING', 'lastExecutedBy'),
+				(${exStatus},  'ATTRIBUTE', 'EXECUTION_STATUS','EXECUTION', 'EXECUTION_STATUS', 'executionStatus');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${exId}, 'AXIS'), (${exId}, 'FILTER'), (${exId}, 'MEASURE'),
+				(${exLabel}, 'AXIS'), (${exLabel}, 'FILTER'),
+				(${exDsLabel}, 'AXIS'), (${exDsLabel}, 'FILTER'),
+				(${exLastExec}, 'AXIS'), (${exLastExec}, 'FILTER'),
+				(${exTesterLogin}, 'AXIS'), (${exTesterLogin}, 'FILTER'),
+				(${exStatus}, 'AXIS'), (${exStatus}, 'FILTER'), (${exStatus}, 'MEASURE');
+		</sql>	
+						
+		<!-- simple columns for ISSUE -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${isId},  'ATTRIBUTE', 'ISSUE_ID','ISSUE', 'NUMERIC', 'id'),
+				(${isStatus},  'ATTRIBUTE', 'ISSUE_STATUS','ISSUE', 'STRING', 'status'),
+				(${isSeverity},  'ATTRIBUTE', 'ISSUE_SEVERITY','ISSUE', 'STRING', 'severity'),
+				(${isBugtrackerLabel},  'ATTRIBUTE', 'ISSUE_BUGTRACKER','ISSUE', 'String', 'bugtracker');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${isId}, 'AXIS'), (${isId}, 'FILTER'), (${isId}, 'MEASURE'),
+				(${isStatus}, 'AXIS'), (${isStatus}, 'FILTER'),
+				(${isSeverity}, 'AXIS'), (${isSeverity}, 'FILTER'),
+				(${isBugtrackerLabel}, 'AXIS'), (${isBugtrackerLabel}, 'FILTER');
+		</sql>	
+		
+		<!-- simple columns for TEST_STEP (internal column only) -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${tsId}, 'ATTRIBUTE', FALSE, 'STEP__ID','TEST_STEP', 'NUMERIC', 'id');
+			
+		</sql>	
+		
+		<!-- simple columns for INFO_LIST_ITEM (internal column only) -->
+		<sql>
+			
+			
+		</sql>	
+		
+		<!-- simple columns for MILESTONES (internal column only) -->
+		<sql>
+			
+			
+		</sql>	
+		
+		<!-- simple columns for USER (internal column only) -->
+		<sql>
+			
+			
+		</sql>	
+			
 		<!--  ================== calculated columns ====================== -->
 
 		<!--  requirement version count subquery and the column prototype refering to it -->
@@ -564,6 +682,9 @@
 				(${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
 
 		</sql>
+		
+	
+		
 
 	</changeSet>
 
