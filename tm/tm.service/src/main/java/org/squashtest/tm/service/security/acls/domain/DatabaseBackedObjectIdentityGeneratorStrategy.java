@@ -84,10 +84,6 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 	@Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objectRetrievalStrategy;
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
 	/**
 	 * Creates an ObjectIdentity by : 1. fetching the entity using the given id
 	 * and type 2. delegating to <code>objectRetrivalStrategy</code>

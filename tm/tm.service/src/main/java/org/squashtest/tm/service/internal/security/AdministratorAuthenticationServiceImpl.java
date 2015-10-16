@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.util.Collection;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
@@ -32,12 +30,15 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import java.util.Collection;
 
 @Component("squashtest.core.security.AdministratorAuthenticationService")
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdministratorAuthenticationServiceImpl.class);
 
 	@Inject
+	@Named("squashtest.core.security.JdbcUserDetailsManager")
 	private SquashUserDetailsManager userManager;
 	@Inject
 	private PasswordEncoder encoder;
@@ -75,13 +76,13 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 
 	@Override
 	public void createNewUserPassword(String login, String plainTextPassword, boolean enabled,
-			boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
-			Collection<GrantedAuthority> autorities) {
+	                                  boolean accountNonExpired, boolean credentialsNonExpired, boolean accountNonLocked,
+	                                  Collection<GrantedAuthority> autorities) {
 
 		String encodedPassword = encode(plainTextPassword);
 
 		UserDetails user = new User(login, encodedPassword, enabled, accountNonExpired, credentialsNonExpired,
-				accountNonLocked, autorities);
+			accountNonLocked, autorities);
 		userManager.createUser(user);
 
 	}
@@ -91,7 +92,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		UserDetails user = userManager.loadUserByUsername(login);
 		String encodedPassword = encode(plainTextPassword);
 		UserDetails updateCommand = new User(login, encodedPassword, user.isEnabled(), true, true, true,
-				user.getAuthorities());
+			user.getAuthorities());
 		LOGGER.debug("reset password for user {}", login);
 		userManager.updateUser(updateCommand);
 
@@ -107,7 +108,7 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
 			UserDetails newUser = new User(login, oldUser.getPassword(), false, oldUser.isAccountNonExpired(),
-					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
 			LOGGER.debug("Deactivate account for user {}", login);
 			userManager.updateUser(newUser);
 
@@ -115,13 +116,13 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 			LOGGER.trace("User {} has no authentidation data, it can't be deactivated", login);
 		}
 	}
-	
+
 	@Override
 	public void activateAccount(String login) {
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
 			UserDetails newUser = new User(login, oldUser.getPassword(), true, oldUser.isAccountNonExpired(),
-					oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
+				oldUser.isCredentialsNonExpired(), oldUser.isAccountNonLocked(), oldUser.getAuthorities());
 			LOGGER.debug("Activating account for user {}", login);
 			userManager.updateUser(newUser);
 
@@ -129,18 +130,18 @@ public class AdministratorAuthenticationServiceImpl implements AdministratorAuth
 			LOGGER.trace("User {} has no authentidation data, it can't be activated", login);
 		}
 	}
-	
+
 	@Override
 	public void deleteAccount(String login) {
 		if (userManager.userExists(login)) {
 			UserDetails oldUser = userManager.loadUserByUsername(login);
-			userManager.deleteUser(login);			
-		}else{
+			userManager.deleteUser(login);
+		} else {
 			LOGGER.trace("User {} has no authentidation data, it can't be deleted", login);
 		}
-		
+
 	}
-	
+
 
 	/**
 	 * @see org.squashtest.tm.service.security.AdministratorAuthenticationService#userExists(java.lang.String)

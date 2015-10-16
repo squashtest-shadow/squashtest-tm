@@ -44,8 +44,8 @@
     <dependencies>
       <dependency>
         <groupId>org.squashtest.tm</groupId>
-        <artifactId>provision-bom</artifactId>
-        <version>${provisionBom.version}</version>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -64,15 +64,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.ancoron.postgresql</groupId>
-      <artifactId>org.postgresql</artifactId>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- <dependency>
-        <groupId>org.ancoron.postgresql</groupId>
-        <artifactId>org.postgresql.net</artifactId>
-         <scope>test</scope>
-      </dependency> -->
   </dependencies>
 
   <build>

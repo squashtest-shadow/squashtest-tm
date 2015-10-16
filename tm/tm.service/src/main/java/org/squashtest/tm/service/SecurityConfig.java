@@ -20,41 +20,35 @@
  */
 package org.squashtest.tm.service;
 
-import org.springframework.cache.CacheManager;
-import org.springframework.cache.ehcache.EhCacheCacheManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.access.AccessDecisionVoter;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.ExpressionBasedPreInvocationAdvice;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.access.prepost.PreInvocationAuthorizationAdviceVoter;
 import org.springframework.security.access.vote.AffirmativeBased;
-import org.springframework.security.acls.domain.AclAuthorizationStrategy;
-import org.springframework.security.acls.domain.AclAuthorizationStrategyImpl;
-import org.springframework.security.acls.domain.EhCacheBasedAclCache;
-import org.springframework.security.acls.domain.PermissionFactory;
+import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
-import org.springframework.security.acls.model.AclCache;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.GrantedAuthorityImpl;
-import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.squashtest.tm.security.acls.Slf4jAuditLogger;
+import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.AuthenticationManagerDelegator;
@@ -62,7 +56,6 @@ import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Qualifier;
 import javax.sql.DataSource;
 import java.util.Arrays;
 
@@ -70,32 +63,78 @@ import java.util.Arrays;
  * Partial Spring Sec config. should be with the rest of spring sec's config now that we dont have osgi bundles segregation
  *
  * @author Gregory Fouquet
+ * @since 1.13.0
  */
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, order = 2)
-public class SecurityConfig extends GlobalMethodSecurityConfiguration {
+public class SecurityConfig {
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
+
+	/**
+	 * Configures method security. It has to be annotated @EnableGlobalMethodSecurity according to
+	 * GlobalMethodSecurityConfiguration javadoc.
+	 *
+	 * We would put this in SecurityConfig if we could, but GlobalMethodSecurityConfiguration requires a PermissionEvaluator
+	 * which would induce a depencency cycle on SecurityConfig itself.
+	 */
+	@Configuration
+	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, order = 2)
+	public static class SquashMethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
+		@Override
+		protected MethodSecurityExpressionHandler createExpressionHandler() {
+			MethodSecurityExpressionHandler meh = super.createExpressionHandler();
+
+			// We want to configure the MSEH, yet we don't want to copy-pasta Spring-Sec source code, hence this instanceof test.
+			if (meh instanceof DefaultMethodSecurityExpressionHandler) {
+				((DefaultMethodSecurityExpressionHandler) meh).setParameterNameDiscoverer(new CompositeDelegatingParameterNameDiscoverer(
+					Arrays.asList(
+						new LocalVariableTableParameterNameDiscoverer(),
+						new ArgumentPositionParameterNameDiscoverer()
+					)
+				));
+			} else {
+				LOGGER.error("Programmatic error : MethodSecurityExpressionHandler is not an instance of DefaultMethodSecurityExpressionHandler ! Check Spring Security source and fix " + this.getClass().getSimpleName() + " accordingly");
+			}
+			return meh;
+		}
+
+		@Override
+		protected AccessDecisionManager accessDecisionManager() {
+			AccessDecisionManager accessDecisionManager = super.accessDecisionManager();
+
+			// We want to configure the ADM, yet we don't want to copy-pasta Spring-Sec source code, hence this instanceof test.
+			if (accessDecisionManager instanceof AffirmativeBased) {
+				((AffirmativeBased) accessDecisionManager).setAllowIfAllAbstainDecisions(true);
+			} else {
+				LOGGER.error("Programmatic error : AccesDecisionManager is not an instance of AffirmativeBased ! Check Spring Security source and fix " + this.getClass().getSimpleName() + " accordingly");
+			}
+
+			return accessDecisionManager;
+		}
+	}
+
 	@Inject
 	private DataSource dataSource;
 	@Inject
 	private PermissionFactory permissionFactory;
-	@Inject
-	private SquashUserDetailsManager userDetailsManager;
 
-	@Inject @Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
+	@Inject
+	@Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 	private ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy;
 	@Inject
 	private ObjectIdentityGenerator objectIdentityGenerator;
 
+	@Inject
+	@Lazy
+	private FeatureManager featureManager;
+
 	@Bean
-	public static GrantedAuthority aclAdminAuthority() {
-		return new GrantedAuthorityImpl("ROLE_ADMIN");
+	public GrantedAuthority aclAdminAuthority() {
+		return new SimpleGrantedAuthority("ROLE_ADMIN");
 	}
 
-	@Bean(name = "lookupStrategy")
+	@Bean
 	public BasicLookupStrategy lookupStrategy() {
-		AclAuthorizationStrategy aclAuthorizationStrategy = new AclAuthorizationStrategyImpl(aclAdminAuthority(), aclAdminAuthority(), aclAdminAuthority());
-
-		BasicLookupStrategy strategy = new BasicLookupStrategy(dataSource, aclCache(), aclAuthorizationStrategy, new Slf4jAuditLogger());
+		BasicLookupStrategy strategy = new BasicLookupStrategy(dataSource, aclCache(), aclAuthorizationStrategy(), grantingStrategy());
 		strategy.setSelectClause(
 			"select oid.IDENTITY as object_id_identity,\n" +
 				"  gp.PERMISSION_ORDER,\n" +
@@ -130,6 +169,16 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 		return strategy;
 	}
 
+	@Bean
+	public DefaultPermissionGrantingStrategy grantingStrategy() {
+		return new DefaultPermissionGrantingStrategy(new Slf4jAuditLogger());
+	}
+
+	@Bean
+	public AclAuthorizationStrategy aclAuthorizationStrategy() {
+		return new AclAuthorizationStrategyImpl(aclAdminAuthority(), aclAdminAuthority(), aclAdminAuthority());
+	}
+
 	@Bean(name = "squashtest.core.security.AclService")
 	public JdbcManageableAclService aclService() {
 		JdbcManageableAclService aclService = new JdbcManageableAclService(dataSource, lookupStrategy());
@@ -142,68 +191,27 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 		return aclService;
 	}
 
-	@Bean(name = "org.springframework.security.access.vote.AffirmativeBased")
-	public AffirmativeBased aclDecisionManager() {
-		AffirmativeBased decisionManager = new AffirmativeBased();
-		decisionManager.setDecisionVoters(Arrays.<AccessDecisionVoter>asList(preInvocationAuthorizationAdviceVoter()));
-		decisionManager.setAllowIfAllAbstainDecisions(true);
-
-		return decisionManager;
-	}
-
-	/**
-	 * TODO could be anonymous ?
-	 *
-	 * @return
-	 */
-	@Bean
-	public PreInvocationAuthorizationAdviceVoter preInvocationAuthorizationAdviceVoter() {
-		return new PreInvocationAuthorizationAdviceVoter(preInvocationAdvice());
-	}
-
-	/**
-	 * TODO could be anonymous ?
-	 *
-	 * @return
-	 */
-	@Bean
-	public ExpressionBasedPreInvocationAdvice preInvocationAdvice() {
-		ExpressionBasedPreInvocationAdvice advice = new ExpressionBasedPreInvocationAdvice();
-		advice.setExpressionHandler(expressionHandler());
-
-		return advice;
-	}
-
-	@Bean
-	public DefaultMethodSecurityExpressionHandler expressionHandler() {
-		DefaultMethodSecurityExpressionHandler handler = new DefaultMethodSecurityExpressionHandler();
-		handler.setPermissionEvaluator(permissionEvaluator());
-		handler.setParameterNameDiscoverer(new CompositeDelegatingParameterNameDiscoverer(
-			Arrays.asList(
-				new LocalVariableTableParameterNameDiscoverer(),
-				new ArgumentPositionParameterNameDiscoverer()
-			)
-		));
-
-		return handler;
-	}
-
-	@Bean
-	public JdbcClientDetailsService oAuth2ClientDetails() {
-		return new JdbcClientDetailsService(dataSource);
-	}
 
 	@Bean(name = "squash.security.authenticationProvider.internal")
 	public DaoAuthenticationProvider daoAuthenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(userDetailsManager);
+		provider.setUserDetailsService(userDetailsManager().getObject());
 		provider.setPasswordEncoder(shaPasswordEncoder());
 
 		return provider;
 	}
 
+	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
+	public SquashUserDetailsManagerProxyFactory userDetailsManager() {
+		return new SquashUserDetailsManagerProxyFactory.Builder()
+			.caseSensitiveDelegate(caseSensitiveUserDetailsManager())
+			.caseInsensitiveDelegate(caseInensitiveUserDetailsManager())
+			.featureManager(featureManager)
+			.build();
+	}
+
 	@Bean
-	public static PasswordEncoder shaPasswordEncoder() {
+	public PasswordEncoder shaPasswordEncoder() {
 		return new ShaPasswordEncoder();
 	}
 
@@ -271,6 +279,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	private SquashUserDetailsManagerImpl configure(SquashUserDetailsManagerImpl manager) {
 		// TODO AuthenticationManagerDelegator provides low coupling necessary because of chicken / egg problem induced by OSGi
 		// hopefully we can remove this turdy trick when OSGi's gone.
+		// TODO nosgi
 		manager.setAuthenticationManager(new AuthenticationManagerDelegator("squash.security.authenticationProvider.internal"));
 		manager.setDataSource(dataSource);
 		manager.setChangePasswordSql("update AUTH_USER set PASSWORD = ? where LOGIN = ?");
@@ -308,7 +317,7 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 
 	@Bean
 	public EhCacheBasedAclCache aclCache() {
-		return new EhCacheBasedAclCache(ehCache().getObject());
+		return new EhCacheBasedAclCache(ehCache().getObject(), grantingStrategy(), aclAuthorizationStrategy());
 	}
 
 	@Bean
@@ -325,16 +334,6 @@ public class SecurityConfig extends GlobalMethodSecurityConfiguration {
 	@Bean
 	public EhCacheManagerFactoryBean ehCacheManagerFactoryBean() {
 		return new EhCacheManagerFactoryBean();
-	}
-
-	@Override
-	protected MethodSecurityExpressionHandler createExpressionHandler() {
-		return expressionHandler();
-	}
-
-	@Override
-	protected AccessDecisionManager accessDecisionManager() {
-		return aclDecisionManager();
 	}
 
 	@Bean(name = "squashtest.core.security.PermissionEvaluator")

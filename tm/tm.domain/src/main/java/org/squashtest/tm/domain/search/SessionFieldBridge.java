@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.Identified;
 public abstract class SessionFieldBridge implements FieldBridge {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionFieldBridge.class);
 
+	// TODO nosgi @Inject @Lazy sessionFactory instead
 	@Inject
 	private BeanFactory beanFactory;
 

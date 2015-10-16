@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.config;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -47,8 +48,8 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_O
  * @since 1.13.0
  */
 @Configuration
-@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, order = 2)
 @EnableWebSecurity
+@EnableConfigurationProperties(SquashManagementProperties.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Inject
 	private SquashManagementProperties managementProperties;

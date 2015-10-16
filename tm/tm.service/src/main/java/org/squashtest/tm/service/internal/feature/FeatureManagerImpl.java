@@ -20,29 +20,32 @@
  */
 package org.squashtest.tm.service.internal.feature;
 
-import javax.inject.Inject;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
+import javax.inject.Inject;
+
 /**
  * @author Gregory Fouquet
  *
  */
-@Service("featureManager")
+@Service
 @Transactional
 public class FeatureManagerImpl implements FeatureManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureManagerImpl.class);
 
 	@Inject
+	@Lazy
 	private ConfigurationService configuration;
 
 	@Inject
+	@Lazy
 	private MilestoneManagerService milestoneManager;
 
 	/**
@@ -55,15 +58,15 @@ public class FeatureManagerImpl implements FeatureManager {
 		boolean enabled;
 
 		switch (feature) {
-		case MILESTONE:
-			enabled = configuration.getBoolean(ConfigurationService.MILESTONE_FEATURE_ENABLED);
-			break;
+			case MILESTONE:
+				enabled = configuration.getBoolean(ConfigurationService.MILESTONE_FEATURE_ENABLED);
+				break;
 
-		case CASE_INSENSITIVE_LOGIN:
-			enabled = configuration.getBoolean(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED);
-			break;
-		default:
-			throw new IllegalArgumentException("I don't know feature '" + feature
+			case CASE_INSENSITIVE_LOGIN:
+				enabled = configuration.getBoolean(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED);
+				break;
+			default:
+				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to tell if it's enabled or not");
 		}
 
@@ -80,16 +83,16 @@ public class FeatureManagerImpl implements FeatureManager {
 		LOGGER.trace("Setting feature {} to {}", feature, enabled);
 
 		switch (feature) {
-		case MILESTONE:
-			setMilestoneFeatureEnabled(enabled);
-			break;
+			case MILESTONE:
+				setMilestoneFeatureEnabled(enabled);
+				break;
 
-		case CASE_INSENSITIVE_LOGIN:
-			setCaseInsensitiveLoginFeatureEnabled(enabled);
-			break;
+			case CASE_INSENSITIVE_LOGIN:
+				setCaseInsensitiveLoginFeatureEnabled(enabled);
+				break;
 
-		default:
-			throw new IllegalArgumentException("I don't know feature '" + feature
+			default:
+				throw new IllegalArgumentException("I don't know feature '" + feature
 					+ "'. I am unable to switch its enabled status to " + enabled);
 		}
 	}

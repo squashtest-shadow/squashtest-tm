@@ -1,22 +1,22 @@
 /**
- * This file is part of the Squashtest platform.
- * Copyright (C) 2010 - 2015 Henix, henix.fr
- * <p/>
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- * <p/>
- * This is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p/>
- * this software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Lesser General Public License
- * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm;
 
@@ -29,6 +29,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -41,7 +42,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import org.squashtest.tm.config.ResourceResolverProperties;
+import org.squashtest.tm.web.config.ResourceResolverProperties;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver;
 import org.squashtest.tm.web.internal.interceptor.openedentity.*;
 import org.thymeleaf.templateresolver.ITemplateResolver;
@@ -60,7 +61,7 @@ import java.util.List;
 @Configuration
 @EnableAutoConfiguration(exclude = HibernateJpaAutoConfiguration.class)
 @ComponentScan
-//@ComponentScan({"org.squashtest.tm", "org.squashtest.tm.service"})
+@EnableConfigurationProperties(ResourceResolverProperties.class)
 @ImportResource({"classpath*:META-INF/spring/dynamicdao-context.xml", "classpath*:META-INF/spring/dynamicmanager-context.xml"})
 public class SquashTm extends WebMvcConfigurerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashTm.class);
@@ -69,7 +70,7 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 		new SpringApplication(SquashTm.class).run(args);
 	}
 
-	@Value("${info.app.appVersion}")
+	@Value("${info.app.version}")
 	private String appVersion;
 
 	@Inject
@@ -82,7 +83,7 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 	private ResourceProperties resourceProperties;
 
 	@Inject
-	ResourceResolverProperties resourceResolverProperties;
+	private ResourceResolverProperties resourceResolverProperties;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {

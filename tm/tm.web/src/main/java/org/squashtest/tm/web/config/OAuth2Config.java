@@ -139,4 +139,5 @@ public class OAuth2Config {
 			// @formatter:on
 		}
 	}
+
 }

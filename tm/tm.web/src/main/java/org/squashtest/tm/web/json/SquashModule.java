@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.json;
 
 import com.fasterxml.jackson.core.Version;
-import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -37,8 +36,8 @@ import org.squashtest.tm.web.internal.model.json.InfoListMixin;
  */
 @Component
 public class SquashModule extends SimpleModule {
-	public SquashModule(String name) {
-		super("SquashModule", new Version(1,13,0,"REL"));
+	public SquashModule() {
+		super("SquashModule", new Version(1, 13, 0, "REL"));
 	}
 
 	@Override

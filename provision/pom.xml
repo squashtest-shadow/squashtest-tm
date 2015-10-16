@@ -303,20 +303,11 @@
     </dependency>
     <!-- ====== /SPRING DM ====== -->
 
-    <!-- ====== SPRING DM WEB EXTENDER ====== -->
     <dependency>
       <groupId>org.springframework.osgi</groupId>
       <artifactId>spring-osgi-web</artifactId>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>provision-bom</artifactId>
-      <version>${provisionBom.version}</version>
-      <type>pom</type>
-      <scope>import</scope>
-    </dependency>
-    <!-- ====== /DATABASE ====== -->
 
   </dependencies>
 

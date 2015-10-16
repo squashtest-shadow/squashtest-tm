@@ -41,10 +41,6 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	@Inject
 	private SessionFactory sessionFactory;
 
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
 	@Override
 	public void createNewConfiguration(String key, String value) {
 		Session session = currentSession();
