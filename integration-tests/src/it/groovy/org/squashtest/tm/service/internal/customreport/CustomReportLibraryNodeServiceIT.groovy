@@ -72,4 +72,26 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		parentNode.id == parent.id;
 	}
 	
+	def "should find descendants for nodes in one library"() {
+		given :
+		
+		when:
+		def res = service.createNewCustomReportLibraryNode(-1L,folder);
+		def resId = res.getId();
+		getSession().flush();
+		getSession().clear();
+		def newChildAfterPersist = crlnDao.findById(resId);
+		def parentNode = newChildAfterPersist.getParent();
+
+		then:
+		res.id != null;
+		library != null;
+		parentNode.id == parent.id;
+		
+		where:
+		parentIds 	|| 	childrenIds
+//		-1L			||	[-2L,-3L,-3L,-4L,-5L,-7L,-10L,-20L,-30L]
+		[-20L]		||	[-40L]
+	}
+	
 }
