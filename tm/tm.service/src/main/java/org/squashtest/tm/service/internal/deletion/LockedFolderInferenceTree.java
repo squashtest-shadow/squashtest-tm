@@ -27,7 +27,7 @@ import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
-class LockedFolderInferenceTree extends LibraryTree<Long, LockedFolderInferenceTree.Node> {
+ public class LockedFolderInferenceTree extends LibraryTree<Long, LockedFolderInferenceTree.Node> {
 
 
 	/**
@@ -138,7 +138,7 @@ class LockedFolderInferenceTree extends LibraryTree<Long, LockedFolderInferenceT
 
 
 
-	static class Node extends TreeNode<Long, Node>{
+	public static class Node extends TreeNode<Long, Node>{
 
 		private Boolean deletable = null;
 

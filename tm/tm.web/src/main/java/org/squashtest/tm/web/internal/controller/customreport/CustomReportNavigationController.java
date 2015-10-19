@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -133,8 +134,6 @@ public class CustomReportNavigationController {
 
 		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 
-		//TODO Implements delete simulation service if needed
-		//List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds, milestoneId);
 
 		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
 		
@@ -148,19 +147,18 @@ public class CustomReportNavigationController {
 	
 	//-------------- DELETE METHOD ---------------------------
 	
-	//TODO no checks in service for prototype. Have to correct that before v1
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
-	public @ResponseBody void confirmNodeDeletion(
+	public @ResponseBody OperationReport confirmNodeDeletion(
 			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
 			@CurrentMilestone Milestone activeMilestone) {
 
-		customReportLibraryNodeService.deleteCustomReportLibraryNode(nodeIds);
+		return customReportLibraryNodeService.delete(nodeIds);
 	}
 	
 	
 	//-------------- PRIVATE STUFF ---------------------------
 	private JsTreeNode createNewCustomReportLibraryNode(Long libraryId, TreeEntity entity){
-		CustomReportLibraryNode newNode = customReportLibraryNodeService.createNewCustomReportLibraryNode(libraryId, entity);
+		CustomReportLibraryNode newNode = customReportLibraryNodeService.createNewNode(libraryId, entity);
 		return builderProvider.get().build(newNode);
 	}
 	

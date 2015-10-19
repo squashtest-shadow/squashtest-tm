@@ -28,6 +28,8 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 public interface CustomReportLibraryNodeService {
 	
@@ -75,11 +77,23 @@ public interface CustomReportLibraryNodeService {
 	 * @param node A valid {@link CustomReportLibraryNode} with it's {@link TreeEntity}.
 	 * @return
 	 */
-	CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
+	CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
 	
-	void deleteCustomReportLibraryNode(List<Long> nodeIds);
+	List<SuppressionPreviewReport> simulateDeletion (List<Long> nodeIds);
 	
-	List<CustomReportLibraryNode> getDescendant(List<Long> nodeId);
+	OperationReport delete(List<Long> nodeIds);
 	
-	List<Long> getDescendantIds(List<Long> nodeId);
+	/**
+	 * Find all descendant of a given list of node id's. The returned list will include the nodes witch id's are given in arguments
+	 * @param nodeIds
+	 * @return
+	 */
+	List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds);
+	
+	/**
+	 * Find all descendant id's of a given list of node id's. The returned list will include the nodes id's given in arguments
+	 * @param nodeIds
+	 * @return
+	 */
+	List<Long> findDescendantIds(List<Long> nodeIds);
 }

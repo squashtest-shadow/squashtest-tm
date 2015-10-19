@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -236,10 +237,11 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 
 	@Override
 	public void removeChild(TreeLibraryNode treeLibraryNode) {
-		if (!this.children.contains(treeLibraryNode)) {
-			throw new IllegalArgumentException("Can't suppress a node that didn't exist in this entity children");
-		}
 		children.remove(treeLibraryNode);
+		//forcing hibernate to clean it's children list, 
+		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
+		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation... 
+		children = new ArrayList<TreeLibraryNode>(children);
 	}
 
 	@Override

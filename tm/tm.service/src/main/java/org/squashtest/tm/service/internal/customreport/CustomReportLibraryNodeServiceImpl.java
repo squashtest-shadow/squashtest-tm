@@ -36,6 +36,8 @@ import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportLibraryNodeService")
@@ -48,6 +50,9 @@ public class CustomReportLibraryNodeServiceImpl implements
 	
 	@Inject
 	private SessionFactory sessionFactory;
+	
+	@Inject
+	private CRLNDeletionHandler deletionHandler;
 	
 	@Override
 	public CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
@@ -73,7 +78,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 	
 	@Override
-	public CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) {
+	public CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) {
 		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.findById(parentId);
 		if (parentNode == null) {
 			throw new IllegalArgumentException("The node designed by parentId doesn't exist, can't add new node");
@@ -86,26 +91,25 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return customReportLibraryNodeDao.findById(newNode.getId());
 	}
 	
+
 	@Override
-	public void deleteCustomReportLibraryNode(List<Long> nodeIds) {
-		for (Long nodeId : nodeIds) {
-			CustomReportLibraryNode targetNode = customReportLibraryNodeDao.findById(nodeId);
-			TreeLibraryNode parentNode = targetNode.getParent();
-			parentNode.removeChild(targetNode);
-			customReportLibraryNodeDao.remove(targetNode);
-		}
+	public List<SuppressionPreviewReport> simulateDeletion(List<Long> nodeIds) {
+		return deletionHandler.simulateDeletion(nodeIds);
 	}
 	
 	@Override
-	public List<CustomReportLibraryNode> getDescendant(List<Long> nodeId) {
-		// TODO Auto-generated method stub
-		return null;
+	public OperationReport delete(List<Long> nodeIds) {
+		return deletionHandler.deleteNodes(nodeIds);
+	}
+	
+	@Override
+	public List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds) {
+		return customReportLibraryNodeDao.findAllDescendants(nodeIds);
 	}
 
 	@Override
-	public List<Long> getDescendantIds(List<Long> nodeId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Long> findDescendantIds(List<Long> nodeIds) {
+		return customReportLibraryNodeDao.findAllDescendantIds(nodeIds);
 	}
 	
 	//--------------- PRIVATE METHODS --------------
@@ -128,6 +132,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return entity;
 	}
+
 
 
 

@@ -175,9 +175,9 @@
         <!-- custom report -->
         <value>org.squashtest.tm.domain.customreport.CustomReportLibrary</value>
         <value>org.squashtest.tm.domain.customreport.CustomReportLibraryNode</value>     
+        <value>org.squashtest.tm.domain.customreport.CustomReportLibraryNodePathEdge</value>     
         <value>org.squashtest.tm.domain.customreport.CustomReportFolder</value>     
         <value>org.squashtest.tm.domain.customreport.CustomReportDashboard</value>     
-<!--         <value>org.squashtest.tm.domain.customreport.CustomReportDashboard</value> -->
         
 
       </list>

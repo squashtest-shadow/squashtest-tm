@@ -52,32 +52,14 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 	
 	def "should add new folder to library"() {
 		given :
-		def parent = crlnDao.findById(-1L)
-		def library = crlDao.findById(-1L)
+		def parent = crlnDao.findById(-1L);
+		def library = crlDao.findById(-1L);
 		
-		CustomReportFolder folder = new CustomReportFolder()
-		folder.setName("newFolder")
-		
-		when:
-		def res = service.createNewCustomReportLibraryNode(-1L,folder)
-		def resId = res.getId()
-		getSession().flush()
-		getSession().clear()
-		def newChildAfterPersist = crlnDao.findById(resId)
-		def parentNode = newChildAfterPersist.getParent()
-
-		then:
-		res.id != null
-		library != null
-		parentNode.id == parent.id
-		newChildAfterPersist.getName()=="newFolder"
-	}
-	
-	def "should find descendants for nodes in one library"() {
-		given :
+		CustomReportFolder folder = new CustomReportFolder();
+		folder.setName("newFolder");
 		
 		when:
-		def res = service.createNewCustomReportLibraryNode(-1L,folder);
+		def res = service.createNewNode(-1L,folder);
 		def resId = res.getId();
 		getSession().flush();
 		getSession().clear();
@@ -88,11 +70,55 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		res.id != null;
 		library != null;
 		parentNode.id == parent.id;
+	}
+	
+	def "should find descendants for nodes"() {
+		given :
+		
+		when:
+		def res = service.findDescendantIds(parentIds)
+
+		then:
+		res as Set == childrenIds as Set
 		
 		where:
-		parentIds 	|| 	childrenIds
-//		-1L			||	[-2L,-3L,-3L,-4L,-5L,-7L,-10L,-20L,-30L]
-		[-20L]		||	[-40L]
+		parentIds 			|| 	childrenIds
+		[-20L]				||	[-20L,-40L]
+		[-6L]				||	[-6L,-11L,-12L,-13L,-14L,-15L]
+		[-7L]				||	[-7L]
+		[-2L]				||	[-2L,-3L,-4L,-5L]
+		[-10L]				||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
+		[-10L,-20L,-30L]	||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
+		[-10L,-7L]			||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
+		[-2L,-6L]			||	[-6L,-11L,-12L,-13L,-14L,-15L,-2L,-3L,-4L,-5L]
+	}
+	
+	def "should delete various nodes"() {
+		given :
+		
+		when:
+		service.delete(nodesIds)
+
+		then:
+		
+		for (id in deletedNodesIds) {
+			def node = crlDao.findById(id);
+			node == null;
+		}
+		
+		for (id in siblingIds) {
+			def node = crlDao.findById(id);
+			node != null;
+		}
+		
+		where:
+		nodesIds 		|| 	 		siblingIds											|	deletedNodesIds
+		[-40L]			||	[-10L,-20L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]|	[-40L]
+		[-20L]			||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]		|	[-20L,-40L]
+		[-20L,-40L]		||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]		|	[-20L,-40L]
+		[-20L,-40L,-12L]||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L]					|	[-20L,-40L,-12L,-13L,-14L]
+		[-20L,-30L]		||	[-10L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]			|	[-20L,-30L,-40L]
+		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L]|	[-11L,-15L]
 	}
 	
 }

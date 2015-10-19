@@ -89,7 +89,7 @@ public class ChartController {
 			@PathVariable("id") long id) {
 
 		definition.setOwner(userService.findCurrentUser());
-		CustomReportLibraryNode node = reportNodeService.createNewCustomReportLibraryNode(id, definition);
+		CustomReportLibraryNode node = reportNodeService.createNewNode(id, definition);
 		return "custom-report-workspace#custom-report-chart/" + node.getId();
 	}
 
