@@ -35,6 +35,78 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
+/*
+ * TODO : about the subqueries
+ * 
+ * Lets see simple examples that illustrate the mechanism, and how we could optimize this
+ * 
+ * ===========================================================
+ * 
+ * -------------------------
+ * Current mechanism
+ * -------------------------
+ * 
+ *  1/ select context :
+ * 
+ * 	Our example is "select requirement id and  their version count for all requirements covered by test case 1"
+ * 
+ *  Produced implementation is (correlated subquery) :
+ * 
+ * select requirement.id, (select count(distinct version2) from Requirement r2 join r2.versions versions2 where r2.id = requirement.id)
+ * from TestCase testCase join testCase.requirementVersionCoverages cov
+ * join cov.verifiedRequirementVersion version
+ * join version.requirement requirement
+ * group by testCase.id
+ * 
+ * 
+ * ----------------------
+ * 
+ * 2/ where context
+ * 
+ *  Our example is "select count requirement covered by test case 1 that have at least 2 versions"
+ * 
+ * Produced implementation is (using subquery) :
+ * 
+ * select count(distinct requirement.id)
+ * from TestCase testCase join testCase.requirementVersionCoverages cov
+ * join cov.verifiedRequirementVersion version
+ * join version.requirement requirement
+ * where testCase.id =1
+ * and requirement.id in (select req2.id from Requirement req2 join req2.versions version2 group by req2.id having count(distinct version2) > 1 )
+ * group by testCase.id
+ * 
+ * ====================================================
+ * 
+ * ------------------------------
+ * How to optimize this :
+ * ------------------------------
+ * 
+ * The goal is to eliminate subqueries and use left joins instead
+ * 
+ * 1/ select context :
+ * 
+ * select requirement.id, count(distinct version2)
+ * from TestCase testCase join testCase.requirementVersionCoverages cov
+ * join cov.verifiedRequirementVersion version
+ * join version.requirement requirement
+ * left join requirement.version version2
+ * group by testCase.id, requirement.id
+ * 
+ * 
+ * 2 / where context :
+ * 
+ * 
+ * select count(distinct requirement.id)
+ * from TestCase testCase join testCase.requirementVersionCoverages cov
+ * join cov.verifiedRequirementVersion version
+ * join version.requirement requirement
+ * join requirement.versions version2
+ * where testCase.id =1
+ * group by testCase.id, requirement.id
+ * having count(distinct version2) > 1
+ * 
+ * 
+ */
 class QueryBuilder {
 
 	enum QueryProfile{

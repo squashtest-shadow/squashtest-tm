@@ -210,6 +210,23 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 	}
 
-
+	/*
+	 @DataSet("QueryPlanner.dataset.xml")
+	 def "test the faster count subqueries"(){
+	 given :
+	 HibernateQuery query = new HibernateQuery()
+	 QRequirementVersion v2 = new QRequirementVersion("v2")
+	 QRequirementVersionCoverage cov2 = new QRequirementVersionCoverage("cov2")
+	 query.from(tc).join(tc.requirementVersionCoverages, cov).join(cov.verifiedRequirementVersion, v).join(v.requirement, r)
+	 query.join(tc.requirementVersionCoverages, cov2).join(r.versions, v2)
+	 query.where(tc.id.eq(-1l)).where(r.id.eq(-3l))
+	 query.select(Projections.tuple(v2.countDistinct(), cov2.countDistinct()))
+	 when :
+	 HibernateQuery actual = query.clone(getSession())
+	 def res = actual.fetch()
+	 then :
+	 true
+	 }
+	 */
 
 }

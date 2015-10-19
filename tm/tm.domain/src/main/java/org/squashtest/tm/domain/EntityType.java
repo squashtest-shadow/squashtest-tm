@@ -39,6 +39,9 @@ public enum EntityType {
 	TEST_SUITE,
 	EXECUTION_STEP,
 	ISSUE,
-	ITEM_TEST_PLAN
+	ITEM_TEST_PLAN,
+	INFO_LIST_ITEM,
+	USER,
+	MILESTONE
 	// @formatter:on
 }

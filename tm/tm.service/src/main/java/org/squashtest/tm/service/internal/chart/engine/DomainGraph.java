@@ -87,6 +87,16 @@ import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
  * 	</tr>
  * </table>
  *</p>
+ *
+ *<p>
+ *	UPDATE : now the graph also contains more hidden entities, used in subqueries only :
+ *	<ul>
+ *		<li>TEST_CASE_STEP : joinable from TestCase</li>
+ *		<li>INFO_LIST_ITEM : joinable from TestCase and RequirementVersion</li>
+ *		<li>MILESTONE : joinable from TestCase and RequirementVersion</li>
+ *		<li>USER : joinable from ItemTestPlan</li>
+ *	</ul>
+ *</p>
  * @author bsiri
  *
  */
@@ -141,6 +151,11 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 		TraversableEntity reqcoverageNode = new TraversableEntity(REQUIREMENT_VERSION_COVERAGE);
 		TraversableEntity rversionNode = new TraversableEntity(REQUIREMENT_VERSION);
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
+
+		// nodes for "hidden" entities, normally attainable from subqueries only
+
+
+
 
 		// this graph consider that each relation is navigable both ways.
 		addEdge(campaignNode, iterationNode, "iterations");

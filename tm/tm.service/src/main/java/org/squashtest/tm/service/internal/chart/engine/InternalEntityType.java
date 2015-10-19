@@ -31,14 +31,20 @@ import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.QInfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.QMilestone;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
 
@@ -198,7 +204,62 @@ enum InternalEntityType {
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QIssue(alias);
 		}
+	},
+	TEST_CASE_STEP(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return TestStep.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QTestStep.testStep;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QTestStep(alias);
+		}
+
+	},
+	MILESTONE(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return Milestone.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QMilestone.milestone;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QMilestone(alias);
+		}
+
+	},
+	INFO_LIST_ITEM(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return InfoListItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QInfoListItem.infoListItem;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
+		}
+
 	};
+
 	// @formatter:on
 
 
