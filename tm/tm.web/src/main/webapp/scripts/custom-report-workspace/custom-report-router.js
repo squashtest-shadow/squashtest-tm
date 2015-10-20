@@ -127,7 +127,7 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
           this.activeView.remove();
         }
         //recreating the context div to allow new view to target the context div as el
-        $("#contextual-content-wrapper").html("<div id='contextual-content'></div>");
+        $("#contextual-content").html("<div id='contextual-content-wrapper'></div>");
       }
     });
 

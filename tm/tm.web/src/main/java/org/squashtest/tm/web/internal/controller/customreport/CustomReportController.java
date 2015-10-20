@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 import javax.inject.Inject;
 
 import org.slf4j.Logger;
@@ -28,6 +30,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
@@ -66,4 +69,18 @@ public class CustomReportController {
 		return new JsonChartInstance(instance);
 		
 	}
+	
+	//---- rename ----
+	
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-folders/{nodeId}",params = { "newName" })
+	@ResponseBody
+	public Object changeName(@PathVariable long nodeId, @RequestParam String newName) {
+
+		customReportLibraryNodeService.renameNode(nodeId, newName);
+		LOGGER.info("TestCaseModificationController : renaming {} as {}", nodeId, newName);
+
+		return newName;
+
+	}
+	
 }

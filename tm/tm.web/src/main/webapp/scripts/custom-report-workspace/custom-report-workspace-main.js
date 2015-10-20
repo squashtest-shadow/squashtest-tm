@@ -46,7 +46,7 @@ define(['tree', './cr-treemenu', './init-actions',
 
 	function init(settings){
 		initResizer();
-		initTabbedPane();
+    initTabbedPane();
 		initMilestoneMenu();
 		ToggleWorkspace.init(settings.toggleWS);
 		tree.initWorkspaceTree(settings.tree);

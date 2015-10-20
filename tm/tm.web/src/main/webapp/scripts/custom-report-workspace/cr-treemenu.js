@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMenu",
-        "jquery.squash.buttonmenu"], function($, utils, permissions, WizardMenu){
+define(["jquery", "./utils", "./permissions-rules",
+        "jquery.squash.buttonmenu"], function($, utils, permissions){
 
 
 	function createWidgets(){
@@ -67,8 +67,6 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 			"#new-folder-tree-button",
 			"#new-chart-tree-button",
       "#new-dashboard-tree-button",
-			"#copy-node-tree-button", 
-			"#paste-node-tree-button",
 			"#rename-node-tree-button",
 			"#import-excel-tree-button",
 			"#import-links-excel-tree-button",
@@ -167,7 +165,7 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceWizardMe
 	function init(settings){
 		createWidgets();
 		bindTreeEvents();
-		createWizardMenu(settings.wizards);
+	//	createWizardMenu(settings.wizards);
 		initExportPlugins();
 
 		$("#tree_element_menu").removeClass("unstyled-pane");

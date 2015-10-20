@@ -164,8 +164,9 @@
         </div>
       </div>
     </div>
-	<div id="contextual-content-wrapper">
-	    <div id="contextual-content">
+	
+	<div id="contextual-content">
+		<div id="contextual-content-wrapper">
 	      <!--empty -->
 	    </div>
 	</div>
@@ -195,13 +196,29 @@
 	<!-- /SHOW LIBRARY -->
 	
 	<!-- SHOW FOLDER -->
-	 <script id="tpl-show-folder" type="text/x-handlebars-template">
+	<script id="tpl-show-folder" type="text/x-handlebars-template">
+		<div id="folder-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+  			<div id="right-frame-button">
+    			<f:message var="toggleButton" key="report.workspace.togglebutton.normal.label" />
+    			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" />
+  			</div>
+			<div style="float: left; height: 100%;" class="small-margin-left">
+				<h2>
+					{{name}}
+				</h2>
+			</div>
+
+			<div class="unsnap"></div>
+		</div>
+
 		<div class="sq-tg expand">
            <div class="tg-head">
               <h3 th:text="#{label.Description}">desc</h3>
             </div>
 			<div class="tg-body" id="description-panel">
-				{{{description}}}
+				<div>
+					{{{description}}}
+				</div>
 			</div>
 		</div>
      </script>

@@ -22,7 +22,7 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 		function(_,Backbone, translator,Handlebars,urlBuilder,main) {
 	var View = Backbone.View.extend({
 
-    el : "#contextual-content",
+    el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-chart",
 
 		initialize : function(){

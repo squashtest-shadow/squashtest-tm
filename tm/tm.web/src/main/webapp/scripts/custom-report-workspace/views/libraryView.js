@@ -22,7 +22,7 @@ define(["underscore","backbone","squash.translator","handlebars"],
 		function(_,Backbone, translator,Handlebars) {
 	var View = Backbone.View.extend({
 
-    el : "#contextual-content",
+    el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-library",
 
 		initialize : function(){
