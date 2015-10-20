@@ -58,12 +58,6 @@
       <artifactId>core.report.api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>hibernate-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
     <!-- ====== DEPENDENCY POMS ====== -->
     <!--======= /SQUASHTEST MODULES ======== -->
     <dependency>

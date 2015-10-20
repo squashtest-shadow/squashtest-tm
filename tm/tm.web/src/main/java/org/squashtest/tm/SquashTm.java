@@ -21,6 +21,7 @@
 package org.squashtest.tm;
 
 import org.hibernate.SessionFactory;
+import org.jhades.JHadesServletListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,6 +30,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
+import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -196,5 +198,12 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 		res.setCharacterEncoding(thymeleafProperties.getEncoding());
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
+	}
+
+	@Bean
+	public static ServletListenerRegistrationBean<JHadesServletListener> jhadesServletListener() {
+		ServletListenerRegistrationBean<JHadesServletListener> bean = new ServletListenerRegistrationBean<JHadesServletListener>(new JHadesServletListener());
+		bean.setOrder(1);
+		return bean;
 	}
 }

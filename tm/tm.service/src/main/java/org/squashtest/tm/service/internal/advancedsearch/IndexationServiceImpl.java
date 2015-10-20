@@ -32,6 +32,7 @@ import org.hibernate.CacheMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
+import org.hibernate.search.MassIndexer;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.springframework.stereotype.Service;
@@ -153,9 +154,7 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		domains.add(RequirementVersion.class);
 		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
 
-		ftSession.createIndexer(RequirementVersion.class).purgeAllOnStart(true).threadsToLoadObjects(1)
-				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
-				.progressMonitor(monitor).start();
+		configure(ftSession.createIndexer(RequirementVersion.class)).progressMonitor(monitor).start();
 	}
 
 	/* ----------------------------TEST CASES-------------------------------- */
@@ -185,9 +184,18 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		domains.add(TestCase.class);
 		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
 
-		ftSession.createIndexer(TestCase.class).purgeAllOnStart(true).threadsToLoadObjects(1)
-				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
-				.progressMonitor(monitor).start();
+		configure(ftSession.createIndexer(TestCase.class)).progressMonitor(monitor).start();
 	}
+
+	private MassIndexer configure(MassIndexer indexer) {
+		// formatter:off
+		indexer.purgeAllOnStart(true)
+			.threadsToLoadObjects(1)
+			.threadsForSubsequentFetching(1)
+			.batchSizeToLoadObjects(10)
+			.cacheMode(CacheMode.NORMAL);
+		// formatter:on
+		return indexer;
+	};
 
 }

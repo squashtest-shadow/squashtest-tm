@@ -21,8 +21,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -48,8 +47,7 @@
 
     <!-- DEfault webdriver for jasmine runner. One can override it -->
     <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
-    <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled
-    </jasperreports.build.outputDirectory>
+    <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
     <js.packageDirectory>scripts</js.packageDirectory>
     <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
     <project.stage>RELEASE</project.stage>
@@ -134,6 +132,11 @@
       <artifactId>core.wizard.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-search-orm</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
@@ -185,6 +188,11 @@
       <groupId>net.htmlparser.jericho</groupId>
       <artifactId>jericho-html</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.jhades</groupId>
+      <artifactId>jhades</artifactId>
+      <version>1.0.4</version>
+    </dependency>
 
     <!--<dependency>-->
     <!--<groupId>javax.servlet</groupId>-->
@@ -235,6 +243,11 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-hateoas</artifactId>
     </dependency>
 
@@ -245,21 +258,11 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-data-jpa</artifactId>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-security</artifactId>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-thymeleaf</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-tomcat</artifactId>
-      <scope>runtime</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
@@ -295,10 +298,10 @@
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
     </dependency>
-
     <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-search-orm</artifactId>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -340,23 +343,40 @@
           <artifactId>wro4j-maven-plugin</artifactId>
           <version>1.7.7</version>
         </plugin>
-      <plugin>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-maven-plugin</artifactId>
-      <version>${spring-boot-maven-plugin.version}</version>
-            <configuration>
-              <excludeArtifactIds>hibernate-search-engine,hibernate-search-orm</excludeArtifactIds>
-            </configuration>
-      <!--<configuration>-->
-        <!--<jvmArguments>-->
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <version>${spring-boot-maven-plugin.version}</version>
+          <!--<configuration>-->
+          <!--<excludeArtifactIds>hibernate-search-engine,hibernate-search-orm</excludeArtifactIds>-->
+          <!--</configuration>-->
+          <!--<configuration>-->
+          <!--<jvmArguments>-->
           <!--&#45;&#45;Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug-->
-        <!--</jvmArguments>-->
-      <!--</configuration>-->
-      </plugin>
+          <!--</jvmArguments>-->
+          <!--</configuration>-->
+        </plugin>
       </plugins>
     </pluginManagement>
 
     <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <configuration>
+          <rules>
+            <banDuplicateClasses />
+            <findAllDuplicate>true</findAllDuplicate>
+          </rules>
+        </configuration>
+        <dependencies>
+          <dependency>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>extra-enforcer-rules</artifactId>
+            <version>1.0-beta-3</version>
+          </dependency>
+        </dependencies>
+      </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
@@ -424,7 +444,6 @@
             </resource>
           </webResources>
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
-          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
 
@@ -739,15 +758,12 @@
                 <configuration>
                   <skip>${wro4j.skip}</skip>
                   <!-- dont break line or add spaces or maven will scream in horror -->
-                  <targetGroups>
-                    squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print
-                  </targetGroups>
+                  <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
                   <minimize>true</minimize>
                   <contextFolder>${wro4j.inputDir}</contextFolder>
                   <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
                   <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
-                  <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory
-                  </wroManagerFactory>
+                  <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
                   <parallelProcessing>true</parallelProcessing>
                   <incrementalBuildEnabled>true</incrementalBuildEnabled>
                 </configuration>

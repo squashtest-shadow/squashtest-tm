@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.config;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
+import org.springframework.boot.context.embedded.AbstractConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +30,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
 
@@ -48,8 +50,12 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_O
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Inject
 	private SquashManagementProperties managementProperties;
+
 	@Inject
 	private ServerProperties serverProperties;
+
+	@Inject
+	private AbstractConfigurableEmbeddedServletContainer servletContainer;
 
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -69,7 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().logout()
 			.invalidateHttpSession(true).logoutSuccessUrl("/home-workspace").logoutUrl("/logout")
 		.and().exceptionHandling().accessDeniedPage("/squash/accessDenied")
-		.and().addFilter(htmlSanitizationFilter())
+		.and().addFilterBefore(htmlSanitizationFilter(), SecurityContextPersistenceFilter.class)
 		.authorizeRequests()
 			.antMatchers(
 				"/administration",
@@ -112,7 +118,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.portMapper()
 				.http(80).mapsTo(managementProperties.getPort())
 				.http(8080).mapsTo(managementProperties.getPort())
-				.http(serverProperties.getPort()).mapsTo(managementProperties.getPort())
+				.http(serverProperties.getPort() == null ? 8080 : serverProperties.getPort()).mapsTo(managementProperties.getPort())
 			// all requests are secured
 			.and().requiresChannel()
 				.requestMatchers(managementRequestMatcher)

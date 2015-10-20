@@ -21,7 +21,8 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -127,6 +128,26 @@
           <exclusion>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcprov-jdk14</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>bouncycastle</groupId>
+            <artifactId>bcmail-14</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-core</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-analyzers-common</artifactId>
+          </exclusion>
+          <exclusion>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queryparser</artifactId>
           </exclusion>
         </exclusions>
       </dependency>
@@ -274,6 +295,12 @@
         <groupId>org.unitils</groupId>
         <artifactId>unitils-database</artifactId>
         <version>${unitils.version}</version>
+        <exclusions>
+          <exclusion>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate</artifactId>
+          </exclusion>
+        </exclusions>
       </dependency>
 
       <dependency>
