@@ -20,15 +20,16 @@
  */
 package org.squashtest.tm.web.internal.security.authentication;
 
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationListener;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
@@ -39,7 +40,10 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.security.authentication.AuthenticationSuccessCallback;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpSession;
+import java.util.List;
 
 /*
  * 
@@ -50,66 +54,64 @@ import org.squashtest.tm.web.security.authentication.AuthenticationSuccessCallba
  * not in the regular filter chain. So the context does not exist yet, therefore there is no place to store the 
  * credentials even if the bugtracker auto auth is a success. 
  * 
- *
+ * This class was retro-fitted as an app listener in v1.13.0
  */
-public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallback {
+@Component
+public class BugTrackerAutoconnectCallback implements ApplicationListener<AuthenticationSuccessEvent> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAutoconnectCallback.class);
 
+	@Inject
 	private BugTrackersLocalService bugTrackersLocalService;
 
+	@Inject
 	private ProjectFinder projectFinder;
 
+	@Inject
 	private BugTrackerFinderService bugTrackerFinder;
-	
+
+	@Inject
 	private TaskExecutor taskExecutor;
 
-	public void setProjectFinder(ProjectFinder projectFinder) {
-		this.projectFinder = projectFinder;
-	}
-
-	public void setBugTrackersLocalService(BugTrackersLocalService service) {
-		this.bugTrackersLocalService = service;
-	}
-	
-	public void setBugTrackerFinder(BugTrackerFinderService bugTrackerFinder){
-		this.bugTrackerFinder = bugTrackerFinder;
-	}
-	
-	
-	public void setTaskExecutor(TaskExecutor taskExecutor){
-		this.taskExecutor = taskExecutor;
-	}
-
-	@Override
-	public void onSuccess(String username, String password, HttpSession session) {
-		//skip if we cannot perform the operation asynchronously
-		if (taskExecutor == null){
+	private void onLoginSuccess(String username, String password, HttpSession session) {
+		if (taskExecutor == null) {
+			//skip if we cannot perform the operation asynchronously
 			LOGGER.info("Threadpool service not ready. Skipping autologging.");
-		}
-		//skip if the required service is not up yet
-		else if (bugTrackersLocalService == null) {
+		} else if (bugTrackersLocalService == null) {
+			//skip if the required service is not up yet
 			LOGGER.info("no bugtracker available (service not ready yet). Skipping autologging.");
-		} 
-		//let's do it.
-		else{
+		} else {
+			//let's do it.
 			LOGGER.info("Autologging against known bugtrackers...");
 			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, password, session);
 			taskExecutor.execute(autoconnector);
 		}
 	}
 
+	@Override
+	public void onApplicationEvent(AuthenticationSuccessEvent event) {
+		try {
+			String login = event.getAuthentication().getName();
+			String password = (String) event.getAuthentication().getCredentials();
+			HttpSession session = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest().getSession();
+			onLoginSuccess(login, password, session);
+		} catch (ClassCastException ex) {
+			// Such errors should not break the app flow
+			LOGGER.warn("The following exception was caught and ignored in BT autoconnector : {}. It does not prevent Squash from working, yet it is probably a bug.", ex.getMessage(), ex);
+		}
+	}
 
-	private class AsynchronousBugTrackerAutoconnect implements Runnable{
-		
+
+	private class AsynchronousBugTrackerAutoconnect implements Runnable {
+
 		private String username;
 		private String password;
 		private HttpSession session;
 		private SecurityContext secContext;
-		
+
 
 		public AsynchronousBugTrackerAutoconnect(String username,
-				String password, HttpSession session) {
+		                                         String password, HttpSession session) {
 			super();
 			this.username = username;
 			this.password = password;
@@ -118,15 +120,14 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 		}
 
 
-
 		@Override
 		public void run() {
 
 			SecurityContextHolder.setContext(secContext);
-			
+
 			BugTrackerContext newContext = new BugTrackerContext();
 			List<BugTracker> bugTrackers = findBugTrackers();
-			
+
 			for (BugTracker bugTracker : bugTrackers) {
 				try {
 					LOGGER.debug("try connexion of bug-tracker : {}", bugTracker.getName());
@@ -135,45 +136,43 @@ public class BugTrackerAutoconnectCallback implements AuthenticationSuccessCallb
 					LOGGER.debug("add credentials for bug-tracker : {}", bugTracker.getName());
 					AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
 					newContext.setCredentials(bugTracker, creds);
-					
+
 				} catch (BugTrackerRemoteException ex) {
-					LOGGER.info("failed to connect user '" + username + "' to the bugtracker " + bugTracker.getName()
-							+ " with the supplied "
-							+ "credentials. He will have to connect manually later. Exception thrown is :", ex);
+					LOGGER.info("Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", username, bugTracker.getName());
+					LOGGER.debug("Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
 				}
 			}
-			
+
 			// store context into session
 			mergeIntoSession(newContext);
-	
+
 		}
-		
+
 		private List<BugTracker> findBugTrackers() {
 			List<Project> readableProjects = projectFinder.findAllReadable();
 			List<Long> projectIds = IdentifiedUtil.extractIds(readableProjects);
 			return bugTrackerFinder.findDistinctBugTrackersForProjects(projectIds);
 		}
-		
+
 		//This method deals with the (rare) case where the operation took so long that another request had created the bugtracker context in the mean time.
 		//In this case, the data already present has precedence.
-		private void mergeIntoSession(BugTrackerContext newContext){
-			
-			BugTrackerContext existingContext = (BugTrackerContext)session.getAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY);
-			
-			if (existingContext == null){
+		private void mergeIntoSession(BugTrackerContext newContext) {
+
+			BugTrackerContext existingContext = (BugTrackerContext) session.getAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY);
+
+			if (existingContext == null) {
 				//if no existing context was found the newContext is entirely stored
 				session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
-			}
-			else{
+			} else {
 				existingContext.absorb(newContext);
 			}
-			
+
 			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
 			LOGGER.debug("BugTrackerContext stored to session");
 		}
 
-		
+
 	}
-	
+
 
 }

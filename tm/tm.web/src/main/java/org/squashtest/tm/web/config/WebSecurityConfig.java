@@ -25,17 +25,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableOAuth2Client;
-import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
-import org.squashtest.tm.web.internal.security.authentication.AuthenticationSuccessCallbacksHandler;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -56,9 +51,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Inject
 	private ServerProperties serverProperties;
 
-	@Inject
-	private AuthenticationSuccessCallbacksHandler accessGrantedHandler;
-
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		super.configure(auth);
@@ -74,7 +66,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// @formatter:off
 		http.formLogin()
 			.failureUrl("/login.jsp?login-error")
-			.successHandler(accessGrantedHandler)
 		.and().logout()
 			.invalidateHttpSession(true).logoutSuccessUrl("/home-workspace").logoutUrl("/logout")
 		.and().exceptionHandling().accessDeniedPage("/squash/accessDenied")
