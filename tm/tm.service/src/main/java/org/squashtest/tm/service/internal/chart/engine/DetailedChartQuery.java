@@ -27,7 +27,6 @@ import java.util.Set;
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.Filter;
@@ -56,13 +55,15 @@ class DetailedChartQuery extends ChartQuery{
 
 		super();
 
-		// todo : better merge for main attributes with the ChartDefinition
 		getAxis().addAll(parent.getAxis());
 
 		getFilters().addAll(parent.getFilters());
 
 		getMeasures().addAll(parent.getMeasures());
 
+		setJoinStyle(parent.getJoinStyle());
+
+		setStrategy(parent.getStrategy());
 
 		// find the root entity
 		rootEntity = InternalEntityType.fromDomainType(parent.getMeasures().get(0).getEntityType());

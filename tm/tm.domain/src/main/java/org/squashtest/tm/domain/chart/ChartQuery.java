@@ -33,6 +33,8 @@ import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -46,10 +48,21 @@ import org.squashtest.tm.domain.EntityType;
 
 /**
  * <p>This class represents a query. It is composed of  AxisColumn, Filter and MeasureColumns.</p>
+ *
+ * <p>
+ * 	When a query has a strategy = MAIN, it usually represents a ChartDefinition (ie a ChartDefinition points to them). However in other cases
+ *  they implement the business of a {@link ColumnPrototype} which has a {@link ColumnType}=CALCULATED. The query is thus a dependency of
+ *  a main query. They way it is plugged into the main query depends on a strategy :
+ *  </p>
+ * 
+ *  <ul>
+ *     	<li>SUBQUERY : this query is indeed a subquery : a subcontext is created then joined with the relevant entity of the main query</li>
+ *     	<li>BRANCH_FROM_MAIN : the extra tables will be joined within the main query.</li>
+ *  </ul>
  * 
  * <p>
- * 	Most queries belong to a chart definition, but not all of them : when a ColumnPrototype is
- * 	itself a subquery, this column prototype will reference a query.
+ * 	A main query always has a strategy = MAIN and a NaturalJoinStyle = INNER. For the other, for now these attributes are hardcoded in the
+ * database and cannot be set yet.
  * </p>
  * 
  * @author bsiri
@@ -58,6 +71,32 @@ import org.squashtest.tm.domain.EntityType;
 @Entity
 @Table(name = "CHART_QUERY")
 public class ChartQuery {
+
+	public enum NaturalJoinStyle{
+		/*
+		 * Use inner joins when a natural join is possible
+		 */
+		INNER_JOIN,
+		/*
+		 * Use left outer join when natural join is possible
+		 */
+		LEFT_JOIN;
+	}
+
+	public enum QueryStrategy{
+		/*
+		 * This query is a main query : it is the main entry point of a chart definition
+		 */
+		MAIN,
+		/*
+		 * This query corresponds to a "calculated" column prototype and will be added as a subquery
+		 */
+		SUBQUERY,
+		/*
+		 * This query can be inlined in the main query
+		 */
+		BRANCH_FROM_MAIN;
+	}
 
 	@Id
 	@Column(name = "CHART_QUERY_ID")
@@ -78,6 +117,12 @@ public class ChartQuery {
 	@CollectionTable(name = "CHART_MEASURE_COLUMN", joinColumns = @JoinColumn(name = "QUERY_ID") )
 	@OrderColumn(name = "MEASURE_RANK")
 	private List<MeasureColumn> measures = new ArrayList<>();
+
+	@Enumerated(EnumType.STRING)
+	private QueryStrategy strategy = QueryStrategy.MAIN;
+
+	@Enumerated(EnumType.STRING)
+	private NaturalJoinStyle joinStyle = NaturalJoinStyle.INNER_JOIN;
 
 
 	public List<Filter> getFilters() {
@@ -102,6 +147,23 @@ public class ChartQuery {
 
 	public void setMeasures(List<MeasureColumn> measures) {
 		this.measures = measures;
+	}
+
+	public QueryStrategy getStrategy() {
+		return strategy;
+	}
+
+	public NaturalJoinStyle getJoinStyle() {
+		return joinStyle;
+	}
+
+
+	public void setStrategy(QueryStrategy strategy) {
+		this.strategy = strategy;
+	}
+
+	public void setJoinStyle(NaturalJoinStyle joinStyle) {
+		this.joinStyle = joinStyle;
 	}
 
 	/**

@@ -45,6 +45,8 @@ import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.users.QUser;
+import org.squashtest.tm.domain.users.User;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
 
@@ -258,6 +260,23 @@ enum InternalEntityType {
 			return new QInfoListItem(alias);
 		}
 
+	},
+	USER(){
+		@Override
+		Class<?> getEntityClass() {
+			return User.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QUser.user;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QUser(alias);
+		}
+
 	};
 
 	// @formatter:on
@@ -272,21 +291,13 @@ enum InternalEntityType {
 
 
 	static InternalEntityType fromDomainType(EntityType domainType) {// NOSONAR this switch is not so complex...
-		InternalEntityType converted;
-
-		switch(domainType){
-		case REQUIREMENT : converted = REQUIREMENT; break;
-		case REQUIREMENT_VERSION : converted = REQUIREMENT_VERSION; break;
-		case TEST_CASE : converted = TEST_CASE; break;
-		case CAMPAIGN : converted = CAMPAIGN; break;
-		case ITERATION : converted = ITERATION; break;
-		case ITEM_TEST_PLAN : converted = ITEM_TEST_PLAN; break;
-		case EXECUTION : converted = EXECUTION; break;
-		case ISSUE : converted = ISSUE; break;
-		default : throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type");
+		try{
+			return InternalEntityType.valueOf(domainType.name());
+		}
+		catch(Exception ex){
+			throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type", ex);
 		}
 
-		return converted;
 	}
 
 

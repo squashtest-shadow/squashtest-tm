@@ -243,7 +243,13 @@
 
 			<column name="NAME" type="VARCHAR(100)" remarks="internal usage, when this CHART_QUERY is a
 			CHART_COLUMN_PROTOTYPE subquery the name helps identify which one" />
-
+			
+			<column name="STRATEGY" type="VARCHAR(20)" remarks="says how the query builder should integrate this query 
+			to a main query. Accepts values : MAIN, SUBQUERY or BRANCH_FROM_MAIN"/>
+			
+			<column name="JOIN_STYLE" type="VARCHAR(10)" remarks="generally indicate whether should use inner join or left join when a 
+			natural join is possible. Possible values : INNER_JOIN or LEFT_JOIN"/>
+					
 		</createTable>
 
 
@@ -676,7 +682,7 @@
 		<!--  REQUIREMENT : versions count -->
 
 		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME) values (1, 'REQUIREMENT_NB_VERSIONS_SUBQUERY');
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (1, 'REQUIREMENT_NB_VERSIONS_SUBQUERY', 'SUBQUERY', 'INNER_JOIN');
 
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
 				values (${rvId}, 1, 'COUNT', 0);
@@ -699,7 +705,7 @@
 		<!--  REQUIREMENT_VERSION : nb test cases-->
 
 		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME) values (2, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY');
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (2, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
 			
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
 				values (${tcId}, 2, 'COUNT', 0);

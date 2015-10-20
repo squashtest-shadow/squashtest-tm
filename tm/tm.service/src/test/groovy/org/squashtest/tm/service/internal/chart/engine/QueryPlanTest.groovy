@@ -50,19 +50,6 @@ class QueryPlanTest extends Specification {
 
 	// *************** tree trim test ********************
 
-	def "et"(){
-		given :
-		QTestCase tc1 = QTestCase.testCase
-		QTestCase tc2 = new QTestCase("testCase2")
-
-		HibernateQuery<?> q = new HibernateQuery<?>().from(tc1)
-		HibernateQuery<?> qs = new HibernateQuery<?>().from(tc2).select(tc2).where(tc2.eq(tc1))
-		q.select(qs)
-
-		println q
-		when : true
-		then : true
-	}
 
 	@Unroll
 	def "should trim to fit the chart definition"(){

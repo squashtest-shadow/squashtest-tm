@@ -80,7 +80,8 @@ class QueryPlanner {
 
 		// get the query plan : the orderly set of joins this
 		// class must now put together
-		QueryPlan plan = DomainGraph.getQueryPlan(definition);
+		DomainGraph domain = new DomainGraph(definition);
+		QueryPlan plan = domain.getQueryPlan();
 
 		// now get the query done
 		init();

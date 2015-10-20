@@ -44,7 +44,10 @@ class DomainGraphTest extends Specification {
 	static InternalEntityType CP = CAMPAIGN
 	static InternalEntityType EX = EXECUTION
 	static InternalEntityType ISS = ISSUE
-
+	static InternalEntityType US = USER
+	static InternalEntityType ILI = INFO_LIST_ITEM
+	static InternalEntityType MIL = MILESTONE
+	static InternalEntityType TS = TEST_CASE_STEP
 
 
 
@@ -61,9 +64,12 @@ class DomainGraphTest extends Specification {
 		def domain = new DomainGraph(definition);
 		domain.morphToQueryPlan();
 
-		domain.getNode(rootEntity).getInbounds().size() == 0
-		domain.getNodes().findAll{it.key != rootEntity} as Set == domain.getNodes().findAll{it.inbounds.size()==1} as Set
-		domain.getNodes().collect{it.key} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS] as Set
+		// root entity has no inbound connections
+		countInbounds(domain, rootEntity) == 0
+
+		// all other node have exactly one inbound connection
+		domain.nodes.findAll{it.type != rootEntity} as Set == domain.nodes.findAll{countInbounds(domain, it.type) == 1 } as Set
+		domain.nodes.collect{it.type} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS, US, ILI, MIL, TS] as Set
 
 
 		where :
@@ -87,7 +93,8 @@ class DomainGraphTest extends Specification {
 	def "should test many query plans"(){
 
 		expect :
-		def plan = DomainGraph.getQueryPlan(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def plan = domain.getQueryPlan()
 
 		checkAllTreeHierarchy(plan, hierarchy)
 
@@ -106,7 +113,8 @@ class DomainGraphTest extends Specification {
 	def "should convey the correct join metadata when creating the tree"(){
 
 		expect :
-		def plan = DomainGraph.getQueryPlan(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def domain = new DomainGraph(new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targets))
+		def plan = domain.getQueryPlan()
 
 		checkAllTreeJoins(plan, joinInfos)
 
@@ -155,15 +163,19 @@ class DomainGraphTest extends Specification {
 		def root = allroots[0]
 		root.key == TEST_CASE
 
-		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE]);
+		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, MIL, ILI, TS]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
-		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION])
+		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION, US])
 		checkTreeHierarchy(plan, EXECUTION, [ISS])
 		checkTreeHierarchy(plan, ISS, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
 		checkTreeHierarchy(plan, CAMPAIGN, [])
+		checkTreeHierarchy(plan, MIL, [])
+		checkTreeHierarchy(plan, ILI, [])
+		checkTreeHierarchy(plan, US, [])
+		checkTreeHierarchy(plan, TS, [])
 
 	}
 
@@ -176,8 +188,8 @@ class DomainGraphTest extends Specification {
 				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
 
 		when :
-
-		QueryPlan plan = DomainGraph.getQueryPlan(definition);
+		def domain = new DomainGraph(definition);
+		QueryPlan plan = domain.getQueryPlan();
 
 		then :
 
@@ -228,11 +240,37 @@ class DomainGraphTest extends Specification {
 		return checkall
 	}
 
+	// I have at heart to say that I first implemented the following
+	// with fitter groovy closure that happen not to work
+
+	// not so cool after all
+	def countInbounds(DomainGraph graph, InternalEntityType type){
+		List inbound = new ArrayList();
+		graph.nodes.each { n ->
+			n.joinInfos.each{ j ->
+				if (j.dest == type){
+					inbound.add(j.src)
+				}
+			}
+		}
+		if (inbound.size() > 1){
+			println "gotone"
+		}
+		return inbound.size()
+
+	}
+
 	def checkIsDirectedEdge(DomainGraph graph, InternalEntityType srcType, InternalEntityType destType){
 		return (
-		graph.hasEdge(srcType, destType) &&
-		! graph.hasEdge(destType, srcType)
+		hasEdge(graph, srcType, destType) &&
+		! hasEdge(graph, destType, srcType)
 		)
+	}
+
+
+	def hasEdge(DomainGraph graph, InternalEntityType srcType, InternalEntityType destType){
+		def srcNode = graph.getNode srcType
+		srcNode.joinInfos.any {it.dest == destType}
 	}
 
 	def expand(String shortname){

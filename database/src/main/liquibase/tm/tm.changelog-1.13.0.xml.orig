@@ -111,15 +111,16 @@
 	<property name="isBugtrackerLabel"		value="73" />
 	
 	<property name="tsId"					value="74" />
+	<property name="tsClass"				value="75" />
 	
-	<property name="infoItemId"				value="75" />
-	<property name="infoItemLabel"			value="76" />
+	<property name="infoItemId"				value="76" />
+	<property name="infoItemLabel"			value="77" />
 	
-	<property name="milesId"				value="77" />
-	<property name="milesLabel"				value="78" />
+	<property name="milesId"				value="78" />
+	<property name="milesLabel"				value="79" />
 	
-	<property name="userId"					value="79" />
-	<property name="userLogin"				value="80" />
+	<property name="userId"					value="80" />
+	<property name="userLogin"				value="81" />
 
 	<changeSet id="tm-1.13.0" author="bsiri">
 		<comment>Update TM database version number</comment>
@@ -633,35 +634,46 @@
 				(${isBugtrackerLabel}, 'AXIS'), (${isBugtrackerLabel}, 'FILTER');
 		</sql>	
 		
+		<!--  column defs below all have attribute business=false, hence no inserts needed for CHART_COLUMN_ROLE -->
+		
 		<!-- simple columns for TEST_STEP (internal column only) -->
 		<sql>
 			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 					
-				(${tsId}, 'ATTRIBUTE', FALSE, 'STEP__ID','TEST_STEP', 'NUMERIC', 'id');
+				(${tsId}, 'ATTRIBUTE', FALSE, 'STEP_ID','TEST_CASE_STEP', 'NUMERIC', 'id'), 					
+				(${tsClass}, 'ATTRIBUTE', FALSE, 'STEP_CLASS','TEST_CASE_STEP', 'NUMERIC', 'class');
 			
 		</sql>	
 		
 		<!-- simple columns for INFO_LIST_ITEM (internal column only) -->
 		<sql>
-			
-			
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${infoItemId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'NUMERIC', 'id'),
+				(${infoItemLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'STRING', 'label');
 		</sql>	
 		
 		<!-- simple columns for MILESTONES (internal column only) -->
 		<sql>
-			
-			
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${milesId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'NUMERIC', 'id'),
+				(${milesLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'STRING', 'label');
 		</sql>	
 		
 		<!-- simple columns for USER (internal column only) -->
 		<sql>
-			
-			
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${userId}, 'ATTRIBUTE', FALSE, 'USER_ID', 'MILESTONE', 'NUMERIC', 'id'),
+				(${userLogin}, 'ATTRIBUTE', FALSE, 'USER_LOGIN', 'MILESTONE', 'STRING', 'label');	
 		</sql>	
 			
 		<!--  ================== calculated columns ====================== -->
 
-		<!--  requirement version count subquery and the column prototype refering to it -->
+		<!--  here are the definition of subqueries and column prototype referring to it-->
+		
+		<!--  REQUIREMENT : versions count -->
 
 		<sql>
 			insert into CHART_QUERY(CHART_QUERY_ID, NAME) values (1, 'REQUIREMENT_NB_VERSIONS_SUBQUERY');
@@ -679,11 +691,32 @@
 
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
-				(${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
+				(${reqVCount}, 'AXIS'), (${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
 
 		</sql>
 		
-	
+			
+		<!--  REQUIREMENT_VERSION : nb test cases-->
+
+		<sql>
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME) values (2, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY');
+			
+			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
+				values (${tcId}, 2, 'COUNT', 0);
+			
+			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
+				values (${rvId}, 2, 'NONE', 0);
+		
+		
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID) 
+			VALUES 
+				(${rvVerifTCCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_TCCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(requirementVersionCoverages)', 2);
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES 
+				(${rvVerifTCCount}, 'AXIS'), (${rvVerifTCCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
+		
+		</sql>
 		
 
 	</changeSet>

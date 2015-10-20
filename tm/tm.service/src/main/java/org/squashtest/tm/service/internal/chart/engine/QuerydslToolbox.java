@@ -78,6 +78,10 @@ class QuerydslToolbox {
 		this.subContext = subContext;
 	}
 
+	String getSubContext(){
+		return subContext;
+	}
+
 	// ************** info retrievers ***************************
 
 	/*

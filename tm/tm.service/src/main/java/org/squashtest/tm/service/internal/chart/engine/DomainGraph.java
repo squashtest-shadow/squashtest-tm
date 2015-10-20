@@ -31,11 +31,22 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.USER;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.MILESTONE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.INFO_LIST_ITEM;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Deque;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.library.structures.GraphNode;
@@ -103,7 +114,21 @@ import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
 /*
  * PLEASE UPDATE THE DOCUMENTATION IF THE DOMAIN CHANGES !
  */
-class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.TraversableEntity>{
+
+/*
+ * Implementation note : I ditched the "extends LibraryGraph" because due to ill conception this class
+ * doesn't allow edges customization with metadata, sorry for the engineering fail.
+ */
+class DomainGraph {
+
+	private DetailedChartQuery definition;
+
+	private Set<TraversableEntity> nodes = new HashSet<>();
+
+	private Collection<PreferedJoin> preferedJoins = new ArrayList<>();
+
+	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
+	private Set<InternalEntityType> visited = new HashSet<>();
 
 	// **************************** main methods ******************************
 
@@ -119,7 +144,7 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	 * 
 	 */
 
-	static QueryPlan getQueryPlan(DetailedChartQuery definition){
+	QueryPlan getQueryPlan(){
 
 		DomainGraph domain = new DomainGraph(definition);
 
@@ -131,12 +156,25 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 
 	}
 
+	/**
+	 * 
+	 * When multiple joins exist between the same source type and destination type,
+	 * you may specify which one you intent to use.
+	 * 
+	 * @param src
+	 * @param dest
+	 * @param pathname
+	 */
+	void addPreferedJoin(EntityType src, EntityType dest, String pathname ){
+		InternalEntityType internalSrc = InternalEntityType.fromDomainType(src);
+		InternalEntityType internalDest = InternalEntityType.fromDomainType(dest);
+		preferedJoins.add(new PreferedJoin(internalSrc, internalDest, pathname));
+	}
+
 
 	// **************************** under the hood ****************************
 
-	private DetailedChartQuery definition;
-
-	private DomainGraph(DetailedChartQuery def){
+	DomainGraph(DetailedChartQuery def){
 		super();
 
 		this.definition = def;
@@ -152,12 +190,23 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 		TraversableEntity rversionNode = new TraversableEntity(REQUIREMENT_VERSION);
 		TraversableEntity requirementNode = new TraversableEntity(REQUIREMENT);
 
-		// nodes for "hidden" entities, normally attainable from subqueries only
+		// nodes for "hidden" entities, normally attainable from calculated columns only
+
+		TraversableEntity teststepNode = new TraversableEntity(TEST_CASE_STEP);
+		TraversableEntity userNode = new TraversableEntity(USER);
+		TraversableEntity infoitemNode= new TraversableEntity(INFO_LIST_ITEM);
+		TraversableEntity milestoneNode = new TraversableEntity(MILESTONE);
+
+		// add them all
+		nodes.addAll(Arrays.asList(new TraversableEntity[]{
+				campaignNode, iterationNode, itemNode, executionNode, issueNode, testcaseNode,
+				reqcoverageNode, rversionNode, requirementNode, teststepNode,
+				userNode, infoitemNode, milestoneNode
+		}));
 
 
+		// this graph consider that most relation is navigable both ways.
 
-
-		// this graph consider that each relation is navigable both ways.
 		addEdge(campaignNode, iterationNode, "iterations");
 		addEdge(iterationNode, campaignNode, "campaign");
 
@@ -181,40 +230,61 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 
 		addEdge(rversionNode, requirementNode, "requirement");
 		addEdge(requirementNode, rversionNode, "versions");
+
+
+		// the 'hidden' entities relations.
+
+		addEdge(rversionNode, milestoneNode, "milestones");
+		addEdge(milestoneNode, rversionNode, "requirementVersions");
+
+		addEdge(rversionNode, infoitemNode, "category");
+
+		addEdge(testcaseNode, milestoneNode, "milestones");
+		addEdge(milestoneNode, testcaseNode, "testCases");
+
+		addEdge(testcaseNode, teststepNode, "steps");
+
+		addEdge(testcaseNode, infoitemNode, "nature");
+		addEdge(testcaseNode, infoitemNode, "type");
+
+		addEdge(itemNode, userNode, "user");
+
+
 	}
 
 
 	private void addEdge(TraversableEntity src, TraversableEntity dest, String attribute){
-		addEdge(src, dest);
-
-		PlannedJoin join = new PlannedJoin(src.getKey(), dest.getKey(), attribute);
-		src.addJoinInfo(dest.getKey(), join);
+		PlannedJoin join = new PlannedJoin(src.type(), dest.type(), attribute);
+		src.addJoinInfo(join);
 	}
 
 	private void addEdge(TraversableEntity src, TraversableEntity dest, String attribute, JoinType jointype){
-		addEdge(src, dest);
-
-		PlannedJoin join = new PlannedJoin(src.getKey(), dest.getKey(), attribute, jointype);
-		src.addJoinInfo(dest.getKey(), join);
+		PlannedJoin join = new PlannedJoin(src.type(), dest.type(), attribute, jointype);
+		src.addJoinInfo(join);
 	}
 
-	@Override
-	public void removeEdge(InternalEntityType src, InternalEntityType dest) {
-		super.removeEdge(src, dest);
-		TraversableEntity srcNode = getNode(src);
-		srcNode.removeJoinInfo(dest);
-	}
 
+	private TraversableEntity getNode(InternalEntityType type){
+		for (TraversableEntity node : nodes){
+			if (node.type().equals(type)){
+				return node;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * This method should decide whether navigating from parent to child should
 	 * be allowed.
 	 * 
-	 * @param parent
-	 * @param child
 	 * @return
 	 */
-	boolean shouldNavigate(TraversableEntity parent, TraversableEntity child){
+	protected boolean shouldNavigate(PlannedJoin join){
+		// first : check that the end node wasn't visited already
+		InternalEntityType dest = join.getDest();
+		if (visited.contains(dest)){
+			return false;
+		}
 		return true;
 	}
 
@@ -223,6 +293,11 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
 	 * 
 	 */
+
+	/*
+	 * Implementation : breadth first, nodes can be visited only once
+	 */
+
 	/*
 	 * Developper from the Future, read this !
 	 * 
@@ -251,34 +326,38 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 		plan.addNode(null, treeRoot);
 
 		// init the loop
-		Deque<TraversableEntity> stack = new LinkedList<>();
-		stack.push(rootNode);
+		Queue<TraversableEntity> queue = new LinkedList<>();
+		queue.add(rootNode);
 
 		// main loop
-		while (! stack.isEmpty()){
+		while (! queue.isEmpty()){
 
-			TraversableEntity currentNode = stack.pop();
-			InternalEntityType currentEntity = currentNode.getKey();
+			TraversableEntity currentNode = queue.remove();
+			InternalEntityType currentEntity = currentNode.type();
 
-			for (TraversableEntity outNode : currentNode.getOutbounds()){
+			for (Iterator<PlannedJoin> iter = currentNode.getJoinInfos().iterator();  iter.hasNext();) {
 
-				// if outNode should be accessed from current :
-				if (shouldNavigate(currentNode, outNode)){
+				PlannedJoin currentJoin = iter.next();
+
+				TraversableEntity outNode = getNode(currentJoin.getDest());
+
+				// if this edge should be navigated on
+				if (shouldNavigate(currentJoin)){
 
 					// add the path to the plan
 					TraversedEntity outTree = outNode.toTraversedEntity();
-					PlannedJoin join = currentNode.getJoinInfo(outNode.getKey());
-					plan.addNode(currentEntity, outTree, join);
+					plan.addNode(currentEntity, outTree, currentJoin);
 
 					// update the graph : make the path one-way by removing the other way
-					removeEdge(outNode.getKey(), currentNode.getKey());
+					outNode.removeEdges(currentEntity);
 
 					// push the out node for further processing
-					stack.push(outNode);
+					queue.add(outNode);
+					visited.add(outNode.type());
 				}
 				else{
-					// else none can navigate to the other
-					disconnect(outNode.getKey(), currentNode.getKey());
+					// forget it then
+					iter.remove();
 				}
 			}
 
@@ -297,34 +376,93 @@ class DomainGraph extends LibraryGraph<InternalEntityType, DomainGraph.Traversab
 	 * @author bsiri
 	 *
 	 */
-	static final class TraversableEntity extends GraphNode<InternalEntityType, TraversableEntity>{
+	static final class TraversableEntity{
 
-		private Map<InternalEntityType, PlannedJoin> joinInfos = new HashMap<>();
+		private InternalEntityType type;
+
+		// define which joins are available from this entity
+		private Collection<PlannedJoin> joinInfos = new ArrayList<>();
 
 		private TraversableEntity(InternalEntityType type){
-			super(type);
+			this.type = type;
 		}
 
 		TraversedEntity toTraversedEntity(){
-			return new TraversedEntity(key);
+			return new TraversedEntity(type);
 		}
 
 		public String toString(){
-			return key.toString();
+			return type.toString();
 		}
 
-		void addJoinInfo(InternalEntityType outboundType, PlannedJoin joininfo){
-			joinInfos.put(outboundType, joininfo);
+		void addJoinInfo(PlannedJoin joininfo){
+			joinInfos.add(joininfo);
 		}
 
-		void removeJoinInfo(InternalEntityType outboundType){
-			joinInfos.remove(outboundType);
+		void removeJoinInfo(PlannedJoin joininfo){
+			joinInfos.remove(joininfo);
 		}
 
-		PlannedJoin getJoinInfo(InternalEntityType outboundType){
-			return joinInfos.get(outboundType);
+		Collection<PlannedJoin> getJoinInfos(){
+			return joinInfos;
 		}
 
+		void clearJoins(){
+			joinInfos.clear();
+		}
+
+		void removeEdges(InternalEntityType dest){
+			Iterator<PlannedJoin> iter = joinInfos.iterator();
+			while (iter.hasNext()){
+				PlannedJoin nextJoin = iter.next();
+				if (nextJoin.getDest().equals(dest)){
+					iter.remove();
+				}
+			}
+		}
+
+		InternalEntityType type(){
+			return type;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			TraversableEntity other = (TraversableEntity) obj;
+			if (type != other.type) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	private static final class PreferedJoin{
+		private final InternalEntityType src;
+		private final InternalEntityType dest;
+		private final String pathname;
+
+		private PreferedJoin(InternalEntityType src, InternalEntityType dest, String pathname){
+			this.src = src;
+			this.dest = dest;
+			this.pathname = pathname;
+		}
 	}
 
 
