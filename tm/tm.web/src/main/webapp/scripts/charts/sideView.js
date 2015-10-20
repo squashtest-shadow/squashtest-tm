@@ -22,20 +22,22 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 	function($, backbone, _, Handlebars) {
 	"use strict";
 
-	var abstractStepView = Backbone.View.extend({
-		el : "#current-step",
+	var sideView = Backbone.View.extend({
+		el : "#side-view",
+		
+		events : {
 
-	
-		updateModel : function (){
-			//do in sub class
+			
 		},
-	
-		_initialize : function(data, wizrouter) {
+
+		
+		initialize : function(data, wizrouter) {
+			this.tmpl = "#side-view-tpl";
 			this.router = wizrouter;
+			this.model = data;
 			this.render(data);
-			this.next = data.nextStep;
-			this.previous = data.prevStep;
 		},
+		
 		render : function(data, tmpl) {	
 				var src = $(this.tmpl).html();
 				this.template = Handlebars.compile(src);
@@ -55,13 +57,9 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 		
 	});
 	
-	abstractStepView.extend = function(child) {
-		var view = Backbone.View.extend.apply(this, arguments);
-		view.prototype.events = _.extend({}, this.prototype.events, child.events);
-		return view;
-	};
+
 	
 
-	return abstractStepView;
+	return sideView;
 
 });

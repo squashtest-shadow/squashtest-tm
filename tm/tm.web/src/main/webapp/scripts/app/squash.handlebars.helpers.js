@@ -86,5 +86,11 @@ define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _
 		return translator.get(result);
 	});
 	
+	
+	Handlebars.registerHelper("inc", function(value, options)
+			{
+			    return parseInt(value) + 1;
+			});
+	
 	return Handlebars;
 });

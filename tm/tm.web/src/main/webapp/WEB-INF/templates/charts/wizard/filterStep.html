@@ -65,17 +65,11 @@ CHOOSE FILTER
 </div> 
 {{#each  this}}  
 {{#if (contains this.role "FILTER")}}
-{{> filter INDEX=@index operations= (intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) }}
+{{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) }}
 {{/if }}
 {{/each}}  
  </div>  
 {{/each}}  
 
- <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
 
- <button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
-  </button>
 </div>

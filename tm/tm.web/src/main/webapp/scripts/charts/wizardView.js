@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView" ], function($, Backbone,
-		router, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView) {
+define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView" ], function($, Backbone,
+		router, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView) {
 
 	"use strict";
 
@@ -28,38 +28,47 @@ define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scope
 		initialize : function(options) {
 			this.model = options.model;
 			this.steps = options.steps;
+			this.model.set({
+				steps:["entity", "scope", "filter", "type", "axis", "preview"]		
+			});
 		},
-
-		showEntityStep : function(wizrouter) {
+		
+		showSideView : function(wizrouter){
+			this.resetSideView();
+			this.currentSideView = new SideView(this.model, wizrouter);
+		},
+		
+		showNewStepView : function (wizrouter, View){	
+			if (this.currentView !== undefined) {
+			this.currentView.updateModel();
+			}
+			
 			this.resetView();
-			this.currentView = new EntityStepView(this.model, wizrouter);
-
-
+			this.showSideView(wizrouter);
+			this.currentView = new View(this.model, wizrouter);
+		},
+		
+		showEntityStep : function(wizrouter) {			
+			this.showNewStepView(wizrouter, EntityStepView);
 		},
 		showScopeStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new ScopeStepView(this.model, wizrouter);
+			this.showNewStepView(wizrouter, ScopeStepView);
 		},
 
 		showFilterStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new FilterStepView(this.model, wizrouter);
-
+			this.showNewStepView(wizrouter, FilterStepView);
 		},
 
 		showTypeStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new TypeStepView(this.model, wizrouter);
+			this.showNewStepView(wizrouter, TypeStepView);
 		},
 		
 		showAxisStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new AxisStepView(this.model, wizrouter);
+			this.showNewStepView(wizrouter, AxisStepView);
 		},
 
 		showPreviewStep :  function(wizrouter) {
-			this.resetView();
-			this.currentView = new PreviewStepView(this.model, wizrouter);
+			this.showNewStepView(wizrouter, PreviewStepView);
 		},
 		
 		resetView : function() {
@@ -69,6 +78,14 @@ define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scope
 				$("#current-step-container").html('<span id="current-step" />');
 			}
 
+		},
+		
+		resetSideView : function() {
+		
+			if (this.currentSideView !== undefined) {
+				this.currentSideView.destroy_view();
+				$("#current-side-view-container").html('<span id="side-view" />');
+			}
 		}
 
 	});

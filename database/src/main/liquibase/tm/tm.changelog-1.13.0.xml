@@ -440,6 +440,11 @@
 			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
 			VALUES
 				(${reqId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_ID', 'REQUIREMENT', 'NUMERIC', 'id');
+				
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES 	
+					(${reqId}, 'AXIS'), (${reqId}, 'FILTER'), (${reqId}, 'MEASURE');
+				
 		</sql>
 
 		<!-- simple columns for REQUIREMENT_VERSION -->

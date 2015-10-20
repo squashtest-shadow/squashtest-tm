@@ -31,18 +31,21 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			data.prevStep = "entity";
 			this._initialize(data, wizrouter);
 			
-			//var nodes;
-			//$("#tree").on('reopen.jstree', function(event, data) {
-
-			//	nodes = data.inst.findNodes([ {resid : 1, restype : 'test-cases'}]);
-			//});	
+			var nodes = _.map(this.model.get("scope"), function(obj) {
+				return {
+					restype:obj.type.split("_").join("-").toLowerCase() + "s", //yeah that quite fucked up...change back the _ to -, lower case and add a "s" 
+					resid:obj.id};});
+			
+			
+			
+			$("#tree").on('reselect.jstree', function(event, data) {
+               data.inst.findNodes(nodes).select();
+			});	
+			
+		
 			
 			this.initTree();
-			
-			
-			
-			//nodes.select();
-			
+		
 		},
 		
 		updateModel : function() {
@@ -88,9 +91,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 						model : model,
 						treeselector: "#tree",
 						workspace:"campaign",	
-						
+						selectedNode :''
 				};
-				tree.initWorkspaceTree(treeConfig);
+				tree.initLinkableTree(treeConfig);
 					
 			});
 

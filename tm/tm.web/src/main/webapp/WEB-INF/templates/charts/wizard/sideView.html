@@ -20,18 +20,27 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-  <div th:fragment="chart-wizard-scope">
- 
-<div class="main">
+  <div th:fragment="chart-wizard-side-view">
 
-       	 	<div id="tree-pane">
-	         <div id="tree" class="tree jstree" />
-			 </div>
+{{#*inline "step"}}
 
-<div>
- 
+<a href="#{{this}}">
+ {{inc @index}}-{{i18n this prefix="chart.wizard.creation.step."}}
+</a>
+<br />
+<br />
+<br />
+<br />
+{{/inline}}
 
-</div>
-</div>
+<h2 th:text="#{chart.wizard.creation.step.label}" />
+
+{{#each attributes.steps}}
+{{> step}}
+{{/each}}
+
+			 
+			
+			 
 
  </div>

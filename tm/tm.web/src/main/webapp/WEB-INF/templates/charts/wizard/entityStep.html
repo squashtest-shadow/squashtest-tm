@@ -31,17 +31,22 @@
         {{#each attributes.entityTypes}}
         <li>
         {{!--<![CDATA[--}}
-        <input  type="radio" name="entity" value="{{this}}"  {{#unless @index}} checked="checked" {{/unless}}  />  
+        <input  type="radio" name="entity" value="{{this}}"  
+        
+        {{#if ../attributes.selectedEntity}}     
+        {{#equal this ../../attributes.selectedEntity}} checked="checked" {{/equal}} 
+        {{else}}
+        {{#unless @index}} checked="checked" {{/unless}}
+        {{/if}}
+         />  
         {{!--]]>--}}	
+        
+        
         
      {{i18n this prefix="chart.entityType."}}
 
         </li>
         {{/each}}     
 </ul>
-
- <button id="next" class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
-  </button>
 
  </div>
