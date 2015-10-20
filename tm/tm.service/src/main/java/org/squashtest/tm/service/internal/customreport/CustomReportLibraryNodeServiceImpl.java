@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -112,6 +113,14 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return customReportLibraryNodeDao.findAllDescendantIds(nodeIds);
 	}
 	
+	@Override
+	public void renameNode(Long nodeId, String newName)
+			throws DuplicateNameException {
+		CustomReportLibraryNode crln = customReportLibraryNodeDao.findById(nodeId);
+		crln.renameNode(newName);
+	}
+
+	
 	//--------------- PRIVATE METHODS --------------
 	
 	
@@ -132,6 +141,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return entity;
 	}
+
 
 
 

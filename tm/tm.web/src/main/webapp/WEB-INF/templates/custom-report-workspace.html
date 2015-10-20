@@ -130,66 +130,10 @@
               </div>
 
               <div class="button-group">
-                <a id="copy-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.copy-node.label}"
-                  title="copy node" role="button">
-                  <span class="ui-icon ui-icon-copy"></span>
-                </a>
-                <a id="paste-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.paste-node.label}"
-                  title="paste node" role="button">
-                  <span class="ui-icon ui-icon-clipboard"></span>
-                </a>
-              </div>
-
-              <div class="button-group">
                 <a id="rename-node-tree-button" class="sq-icon-btn" th:title="#{tree.button.rename-node.label} + '...'"
                   title="rename node" role="button">
                   <span class="ui-icon ui-icon-pencil"></span>
                 </a>
-
-                <a id="tree-import-button" class="buttonmenu sq-icon-btn"
-                  th:title="#{squashtm.treemenu.import.label}+'...'" title="rename node" role="buttonmenu">
-                  <span class="ui-icon ui-icon-transferthick-e-w"></span>
-                </a>
-                <ul id="tree-import-menu" class="not-displayed">
-                  <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Import}+'...'">Import ...</a>
-                  </li>
- 
-                  <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{label.Export}+'...'">full ...</a>
-                  </li>
-                  <li th:each="plugin :  ${#workspace.exportPlugins( 'TEST_CASE_WORKSPACE')}"
-                    th:id="'export-plugin-'+${pluginStat.index}" class="ui-state-disabled cursor-pointer export-plugin"
-                    th:attr="data-module=${plugin.javascriptModuleName}">
-                    <a th:text="${plugin.name}+'...'">plugin ...</a>
-                  </li>
-                </ul>
-              </div>
-              <div class="button-group">
-                <a id="search-tree-button" class="sq-icon-btn" th:title="#{tree.button.search.label}" title="search" role="button">
-                  <span class="ui-icon ui-icon-search"></span>
-                </a>
-              </div>
-              <div id="wizard-tree-pane" class="button-group" th:if="${ not #lists.isEmpty(wizards)}">
-                <a id="wizard-tree-button" class="buttonmenu sq-icon-btn" th:title="#{label.wizards}+'...'"
-                  title="wizards..." role="buttonmenu">
-                  <span class="ui-icon ui-icon-star"></span>
-                </a>
-                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
-								<ul id="ws-wizard-tree-menu">
-								{{#each wizards}}
-								<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
-								{{/each}}
-								</ul>	
-   							 </script>
-                <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
-								<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
-								{{#each nodes}}
-								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
-								{{/each}}
-							</form>
-    						</script>
-                <div id="start-ws-wizard-container" class="not-displayed"></div>
               </div>
 
               <div class="button-group snap-right">

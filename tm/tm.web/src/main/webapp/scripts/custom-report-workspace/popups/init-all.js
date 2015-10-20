@@ -18,14 +18,15 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup','./add-dashboard-popup','./delete-node-popup'],
-		function(folderpopup,dashboardpopup,delnodepopup){
+define(['./add-folder-popup','./add-dashboard-popup','./delete-node-popup','./rename-node-popup'],
+		function(folderPopup,dashboardPopup,deleteNodePopup,renameNodePopup){
 
 
 	function init(){
-		folderpopup.init();
-		dashboardpopup.init();
-		delnodepopup.init();
+		folderPopup.init();
+		dashboardPopup.init();
+		deleteNodePopup.init();
+		renameNodePopup.init();
 	}
 
 	return {

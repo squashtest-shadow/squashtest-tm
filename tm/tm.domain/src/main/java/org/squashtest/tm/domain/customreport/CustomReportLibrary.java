@@ -32,12 +32,11 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.domain.tree.TreeNodeVisitor;
 
 @Entity
 public class CustomReportLibrary extends GenericTreeLibrary {
 	
-	private static final String CLASS_NAME = "org.squashtest.tm.domain.customreport.tree.CustomReportLibrary";
+	private static final String CLASS_NAME = "org.squashtest.tm.domain.customreport.CustomReportLibrary";
 	private static final String SIMPLE_CLASS_NAME = "CustomReportLibrary";
 
 	@Id
@@ -51,11 +50,6 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 
 	@Override
 	public void notifyAssociatedWithProject(GenericProject p) {
-		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
-	}
-
-	@Override
-	public void accept(TreeNodeVisitor visitor) {
 		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
 	}
 

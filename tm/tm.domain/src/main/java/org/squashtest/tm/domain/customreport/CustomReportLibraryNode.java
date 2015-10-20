@@ -52,6 +52,7 @@ import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 import org.squashtest.tm.domain.tree.TreeLibrary;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeNodeVisitor;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 @Entity
@@ -240,7 +241,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		children.remove(treeLibraryNode);
 		//forcing hibernate to clean it's children list, 
 		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
-		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation... 
+		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation constraint... 
 		children = new ArrayList<TreeLibraryNode>(children);
 	}
 
@@ -250,5 +251,20 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 			return false;
 		}
 		return children.size() > 0;
+	}
+
+	@Override
+	public void renameNode(String newName) {
+		if (getEntityType().equals(CustomReportTreeDefinition.LIBRARY)) {
+			throw new IllegalArgumentException("Cannot rename ");
+
+		}
+		if(this.nameAlreadyUsed(newName)){
+			throw new DuplicateNameException(newName,this.getEntityType().getTypeName());
+		}
+		else {
+			setName(newName);
+			getEntity().setName(newName);
+		}
 	}
 }

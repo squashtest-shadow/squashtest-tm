@@ -121,4 +121,23 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L]|	[-11L,-15L]
 	}
 	
+	def "should rename node and entity"() {
+		given :
+		
+		when:
+		service.renameNode(nodeId, newName)
+		
+
+		then:
+		CustomReportLibraryNode node = crlnDao.findById(nodeId)
+		node.getName().equals(newName)
+		node.getEntity().getName().equals(newName)
+		
+		where:
+		nodeId 	|| newName
+		-20L	|| "newFolderName"
+		-2L		|| "newDashName"
+		
+	}
+	
 }

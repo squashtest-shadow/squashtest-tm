@@ -70,5 +70,7 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	void isCoherentWithEntity();
 	
 	boolean hasContent();
+	
+	void renameNode(String newName);
 
 }

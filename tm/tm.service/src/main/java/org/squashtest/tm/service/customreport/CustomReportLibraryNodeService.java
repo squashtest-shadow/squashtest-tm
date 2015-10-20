@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -96,4 +97,6 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	List<Long> findDescendantIds(List<Long> nodeIds);
+	
+	void renameNode(Long nodeId, String newName) throws DuplicateNameException;
 }
