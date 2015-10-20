@@ -130,6 +130,7 @@ public class AdvancedSearchController {
 		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
 	}
 
+	private static final String NAME = "name";
 	private static final String IDS = "ids[]";
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
@@ -270,7 +271,7 @@ public class AdvancedSearchController {
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(15)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
 	.mapAttribute("test-case-id", "id", TestCase.class)
 	.mapAttribute("test-case-ref", "reference", TestCase.class)
 	.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
@@ -287,7 +288,7 @@ public class AdvancedSearchController {
 	.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(14)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
 	.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
 	.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
 	.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
@@ -303,9 +304,9 @@ public class AdvancedSearchController {
 	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
 	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
-			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
 			.mapAttribute("campaign-name", "id", Execution.class)
-			.mapAttribute("iteration-name", "name", Execution.class)
+.mapAttribute("iteration-name", NAME, Execution.class)
 			.mapAttribute("execution-id", "id", Execution.class)
 			.mapAttribute("execution-mode", "lastExecutedBy", Execution.class)
 			.mapAttribute("execution-milestone-nb", "id", Execution.class)

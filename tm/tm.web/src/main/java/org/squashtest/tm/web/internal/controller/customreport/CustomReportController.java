@@ -51,14 +51,12 @@ public class CustomReportController {
 	
 	@RequestMapping(value="custom-report-library/{id}", method=RequestMethod.GET)
 	public @ResponseBody CustomReportLibrary getLibraryDetails(@PathVariable Long id){
-		 CustomReportLibrary customReportLibrary = customReportLibraryNodeService.findLibraryByTreeNodeId(id);
-		 return customReportLibrary;
+		return customReportLibraryNodeService.findLibraryByTreeNodeId(id);
 	}
 	
 	@RequestMapping(value="custom-report-folder/{id}", method=RequestMethod.GET)
 	public @ResponseBody CustomReportFolder getFolderDetails(@PathVariable Long id){
-		CustomReportFolder customReportFolder = customReportLibraryNodeService.findFolderByTreeNodeId(id);
-		return customReportFolder;
+		return customReportLibraryNodeService.findFolderByTreeNodeId(id);
 	}
 	
 	@RequestMapping(value="custom-report-chart/{id}", method=RequestMethod.GET)

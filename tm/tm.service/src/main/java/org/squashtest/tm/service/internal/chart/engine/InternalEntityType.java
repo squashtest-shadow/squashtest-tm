@@ -210,7 +210,7 @@ enum InternalEntityType {
 	abstract EntityPathBase<?> getAliasedQBean(String alias);
 
 
-	static InternalEntityType fromDomainType(EntityType domainType){
+	static InternalEntityType fromDomainType(EntityType domainType) {// NOSONAR this switch is not so complex...
 		InternalEntityType converted;
 
 		switch(domainType){

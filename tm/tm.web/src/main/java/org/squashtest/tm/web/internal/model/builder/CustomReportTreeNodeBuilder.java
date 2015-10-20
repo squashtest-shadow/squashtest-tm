@@ -75,16 +75,16 @@ public class CustomReportTreeNodeBuilder {
 		
 		switch (entityType) {
 		case LIBRARY:
-			doLibraryBuild();
+			buildNode("drive", "custom-report-libraries");
 			break;
 		case FOLDER:
-			doFolderBuild();
+			buildNode("folder", "custom-report-folders");
 			break;
 		case CHART:
-			doChartBuild();
+			buildNode("chart", "custom-report-chart");
 			break;
 		case DASHBOARD:
-			doDashboardBuild();
+			buildNode("dashboard", "custom-report-dashboard");
 			break;
 		default:
 			throw new UnsupportedOperationException("The node builder isn't implemented for node of type : " + entityType);
@@ -92,27 +92,12 @@ public class CustomReportTreeNodeBuilder {
 		
 		return builtNode;
 	} 
-	
-	private void doLibraryBuild() {
-		builtNode.addAttr("rel", "drive");
-		builtNode.addAttr("resType", "custom-report-libraries");
+
+	private void buildNode(String rel, String resType) {
+		builtNode.addAttr("rel", rel);
+		builtNode.addAttr("resType", resType);
 	}
 
-	private void doFolderBuild() {
-		builtNode.addAttr("rel", "folder");
-		builtNode.addAttr("resType", "custom-report-folders");
-	}
-
-	private void doChartBuild() {
-		builtNode.addAttr("rel", "chart");
-		builtNode.addAttr("resType", "custom-report-chart");
-	}
-
-	private void doDashboardBuild() {
-		builtNode.addAttr("rel", "dashboard");
-		builtNode.addAttr("resType", "custom-report-dashboard");
-	}
-	
 	private void doPermissionCheck(CustomReportLibraryNode crln){
 		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
 		for (Permission perm : NODE_PERMISSIONS) {

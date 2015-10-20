@@ -43,6 +43,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 @Component
 public class CampaignSearchInterfaceDescription extends SearchInterfaceDescription {
 
+	private static final String COLUMN_1 = "column1";
+
 	@Inject
 	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
@@ -54,7 +56,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.generalinfos.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("general-information-fullsize");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-information");
 
 		SearchInputFieldModel labelField = new SearchInputFieldModel("id", getMessageSource().internationalize(
@@ -78,7 +80,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("attributes");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-attributes");
 
 		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance", getMessageSource()
@@ -113,7 +115,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.association.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("association");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-associations");
 
 		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements", getMessageSource()
@@ -152,7 +154,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.execution.label", locale));
 		panel.setOpen(true);
 		panel.setId("execution");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-execution");
 
 		// Created on
@@ -213,7 +215,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.content.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("content");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-content");
 
 		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", getMessageSource().internationalize(

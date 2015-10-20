@@ -43,6 +43,8 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 @Component
 public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescription {
 
+	private static final String COLUMN_1 = "column1";
+
 	@Inject
 	private TestCaseAdvancedSearchService advancedSearchService;
 
@@ -55,7 +57,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.generalinfos.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("general-information");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-information");
 
 		SearchInputFieldModel idField = new SearchInputFieldModel("id", getMessageSource().internationalize("label.id",
@@ -82,7 +84,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.attributes.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("attributes");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-attributes");
 
 		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance", getMessageSource()
@@ -124,7 +126,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.association.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("association");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-associations");
 
 		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements", getMessageSource()
@@ -171,7 +173,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.content.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("content");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-content");
 
 		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", getMessageSource().internationalize(
@@ -224,7 +226,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setTitle(getMessageSource().internationalize("search.testcase.history.panel.title", locale));
 		panel.setOpen(true);
 		panel.setId("history");
-		panel.setLocation("column1");
+		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-history");
 
 		OptionBuilder optionBuilder = optionBuilder(locale);
