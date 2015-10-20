@@ -30,19 +30,36 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			data.nextStep = "filter";
 			data.prevStep = "entity";
 			this._initialize(data, wizrouter);
+			
+			//var nodes;
+			//$("#tree").on('reopen.jstree', function(event, data) {
+
+			//	nodes = data.inst.findNodes([ {resid : 1, restype : 'test-cases'}]);
+			//});	
+			
 			this.initTree();
+			
+			
+			
+			//nodes.select();
+			
 		},
 		
 		updateModel : function() {
-			this.model.set({scope : "my scope"});
+			
+			var scope = _.map($("#tree").jstree('get_selected'), function (sel) { return {type : $(sel).attr("restype").split("-").join("_").slice(0,-1).toUpperCase(), id:$(sel).attr("resid")}; } );
+			
+			this.model.set({scope : scope});
 		},
 		
+		
 		initTree : function (){
-			
+		
+
 			var workspaceName;
-			
-			//TODO put selected id
-			var ids = 0;
+
+			var ids = _.pluck(this.model.get("scope"), "id");
+			ids = ids.length > 0 ? ids : 0;
 			
 			switch (this.model.get("selectedEntity")){
 			
@@ -70,16 +87,13 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				var treeConfig = {
 						model : model,
 						treeselector: "#tree",
-						workspace:"campaign"
+						workspace:"campaign",	
 						
 				};
-				tree.initLinkableTree(treeConfig);
-				
-				
+				tree.initWorkspaceTree(treeConfig);
+					
 			});
-			
-			
-			
+
 		}
 	});
 
