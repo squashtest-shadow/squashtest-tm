@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,6 +41,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 /**
  * <p>Represents the concept of "attribute of an entity" :
@@ -81,8 +83,8 @@ public class ColumnPrototype {
 	@Size(min = 0, max = 255)
 	private String label;
 
-	@Enumerated(EnumType.STRING)
-	private EntityType entityType;
+	@Embedded
+	private SpecializedEntityType specializedType;
 
 	@Enumerated(EnumType.STRING)
 	private DataType dataType;
@@ -116,12 +118,21 @@ public class ColumnPrototype {
 	@Column(name="ROLE")
 	private Set<ColumnRole> role;
 
+
 	public String getLabel() {
 		return label;
 	}
 
 	public EntityType getEntityType() {
-		return entityType;
+		return specializedType.getEntityType();
+	}
+
+	public SpecializedEntityType getSpecializedType(){
+		return specializedType;
+	}
+
+	public EntityRole getEntityRole(){
+		return specializedType.getEntityRole();
 	}
 
 	public DataType getDataType() {

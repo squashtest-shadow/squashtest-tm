@@ -92,6 +92,11 @@ public class Filter implements ColumnPrototypeInstance {
 	}
 
 	@Override
+	public SpecializedEntityType getSpecializedType(){
+		return column.getSpecializedType();
+	}
+
+	@Override
 	public DataType getDataType() {
 		return getColumn().getDataType();
 	}

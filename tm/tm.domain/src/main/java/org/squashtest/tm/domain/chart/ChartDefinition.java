@@ -141,7 +141,7 @@ public class ChartDefinition implements TreeEntity{
 	 *
 	 * @return
 	 */
-	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){
+	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
 		return query.getInvolvedEntities();
 	}
 

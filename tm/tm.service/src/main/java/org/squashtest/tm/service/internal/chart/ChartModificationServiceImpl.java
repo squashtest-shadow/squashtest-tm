@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Service("squashtest.tm.service.ChartModificationService")
@@ -70,7 +71,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 		Map<EntityType, Set<ColumnPrototype>> prototypes;
 
-		prototypes = factory.from(prototype).where(prototype.business.eq(true)).transform(groupBy(prototype.entityType).as(set(prototype)));
+		prototypes = factory.from(prototype).where(prototype.business.eq(true)).transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));
 
 		return prototypes;
 	}

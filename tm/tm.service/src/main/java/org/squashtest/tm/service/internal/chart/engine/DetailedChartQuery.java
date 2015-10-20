@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 
 
 /**
@@ -66,15 +67,15 @@ class DetailedChartQuery extends ChartQuery{
 		setStrategy(parent.getStrategy());
 
 		// find the root entity
-		rootEntity = InternalEntityType.fromDomainType(parent.getMeasures().get(0).getEntityType());
+		rootEntity = InternalEntityType.fromSpecializedType(parent.getMeasures().get(0).getSpecializedType());
 
 		// find all the target entities
-		Map<ColumnRole, Set<EntityType>> entitiesByRole = parent.getInvolvedEntities();
+		Map<ColumnRole, Set<SpecializedEntityType>> entitiesByRole = parent.getInvolvedEntities();
 
 		targetEntities = new ArrayList<>();
-		for (Set<EntityType> types : entitiesByRole.values()){
-			for (EntityType type : types){
-				targetEntities.add(InternalEntityType.fromDomainType(type));
+		for (Set<SpecializedEntityType> types : entitiesByRole.values()){
+			for (SpecializedEntityType type : types){
+				targetEntities.add(InternalEntityType.fromSpecializedType(type));
 			}
 		}
 

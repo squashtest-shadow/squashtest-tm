@@ -27,30 +27,29 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ISSUE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITEM_TEST_PLAN;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITERATION;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.USER;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.MILESTONE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.INFO_LIST_ITEM;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_TYPE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_MILESTONE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Deque;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.library.structures.GraphNode;
-import org.squashtest.tm.domain.library.structures.LibraryGraph;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity;
 
@@ -100,13 +99,16 @@ import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
  *</p>
  *
  *<p>
- *	UPDATE : now the graph also contains more hidden entities, used in subqueries only :
+ *	UPDATE : now the graph also contains more hidden entities, some being built from {@link EntityRole} :
  *	<ul>
- *		<li>TEST_CASE_STEP : joinable from TestCase</li>
- *		<li>INFO_LIST_ITEM : joinable from TestCase and RequirementVersion</li>
- *		<li>MILESTONE : joinable from TestCase and RequirementVersion</li>
- *		<li>USER : joinable from ItemTestPlan</li>
- *	</ul>
+ *		<li>TEST_CASE_STEP</li>
+ *		<li>TEST_CASE_NATURE</li>
+ *		<li>TEST_CASE_TYPE</li>
+ *		<li>REQUIREMENT_VERSION_CATEGORY</li>
+ *		<li>ITERATION_TEST_PLAN_ASSIGNED_USER</li>
+ *		<li>TEST_CASE_MILESTONE</li>
+ *		<li>REQUIREMENT_VERSION_MILESTONE</li>
+ *</ul>
  *</p>
  * @author bsiri
  *
@@ -124,8 +126,6 @@ class DomainGraph {
 	private DetailedChartQuery definition;
 
 	private Set<TraversableEntity> nodes = new HashSet<>();
-
-	private Collection<PreferedJoin> preferedJoins = new ArrayList<>();
 
 	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
 	private Set<InternalEntityType> visited = new HashSet<>();
@@ -156,21 +156,6 @@ class DomainGraph {
 
 	}
 
-	/**
-	 * 
-	 * When multiple joins exist between the same source type and destination type,
-	 * you may specify which one you intent to use.
-	 * 
-	 * @param src
-	 * @param dest
-	 * @param pathname
-	 */
-	void addPreferedJoin(EntityType src, EntityType dest, String pathname ){
-		InternalEntityType internalSrc = InternalEntityType.fromDomainType(src);
-		InternalEntityType internalDest = InternalEntityType.fromDomainType(dest);
-		preferedJoins.add(new PreferedJoin(internalSrc, internalDest, pathname));
-	}
-
 
 	// **************************** under the hood ****************************
 
@@ -193,15 +178,19 @@ class DomainGraph {
 		// nodes for "hidden" entities, normally attainable from calculated columns only
 
 		TraversableEntity teststepNode = new TraversableEntity(TEST_CASE_STEP);
-		TraversableEntity userNode = new TraversableEntity(USER);
-		TraversableEntity infoitemNode= new TraversableEntity(INFO_LIST_ITEM);
-		TraversableEntity milestoneNode = new TraversableEntity(MILESTONE);
+		TraversableEntity userNode = new TraversableEntity(ITERATION_TEST_PLAN_ASSIGNED_USER);
+		TraversableEntity tcnatNode = new TraversableEntity(TEST_CASE_NATURE);
+		TraversableEntity tctypNode = new TraversableEntity(TEST_CASE_TYPE);
+		TraversableEntity rvcatNode = new TraversableEntity(REQUIREMENT_VERSION_CATEGORY);
+		TraversableEntity tcmilNode = new TraversableEntity(TEST_CASE_MILESTONE);
+		TraversableEntity rvmilNode = new TraversableEntity(REQUIREMENT_VERSION_MILESTONE);
+
 
 		// add them all
 		nodes.addAll(Arrays.asList(new TraversableEntity[]{
 				campaignNode, iterationNode, itemNode, executionNode, issueNode, testcaseNode,
-				reqcoverageNode, rversionNode, requirementNode, teststepNode,
-				userNode, infoitemNode, milestoneNode
+				reqcoverageNode, rversionNode, requirementNode, teststepNode,userNode, tcnatNode,
+				tctypNode, rvcatNode, tcmilNode, rvmilNode
 		}));
 
 
@@ -234,21 +223,15 @@ class DomainGraph {
 
 		// the 'hidden' entities relations.
 
-		addEdge(rversionNode, milestoneNode, "milestones");
-		addEdge(milestoneNode, rversionNode, "requirementVersions");
-
-		addEdge(rversionNode, infoitemNode, "category");
-
-		addEdge(testcaseNode, milestoneNode, "milestones");
-		addEdge(milestoneNode, testcaseNode, "testCases");
-
-		addEdge(testcaseNode, teststepNode, "steps");
-
-		addEdge(testcaseNode, infoitemNode, "nature");
-		addEdge(testcaseNode, infoitemNode, "type");
-
 		addEdge(itemNode, userNode, "user");
 
+		addEdge(testcaseNode, teststepNode, "steps");
+		addEdge(testcaseNode, tcnatNode, "nature");
+		addEdge(testcaseNode, tctypNode, "type");
+		addEdge(testcaseNode, tcmilNode, "milestones");
+
+		addEdge(rversionNode, rvcatNode, "category");
+		addEdge(rversionNode, rvmilNode, "milestones");
 
 	}
 

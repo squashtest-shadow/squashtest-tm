@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -225,25 +226,8 @@ enum InternalEntityType {
 		}
 
 	},
-	MILESTONE(){
 
-		@Override
-		Class<?> getEntityClass() {
-			return Milestone.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QMilestone.milestone;
-		}
-
-		@Override
-		EntityPathBase<?> getAliasedQBean(String alias) {
-			return new QMilestone(alias);
-		}
-
-	},
-	INFO_LIST_ITEM(){
+	TEST_CASE_NATURE(){
 
 		@Override
 		Class<?> getEntityClass() {
@@ -252,7 +236,7 @@ enum InternalEntityType {
 
 		@Override
 		EntityPathBase<?> getQBean() {
-			return QInfoListItem.infoListItem;
+			return new QInfoListItem("testcaseNature");
 		}
 
 		@Override
@@ -261,7 +245,44 @@ enum InternalEntityType {
 		}
 
 	},
-	USER(){
+
+	TEST_CASE_TYPE(){
+		@Override
+		Class<?> getEntityClass() {
+			return InfoListItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QInfoListItem("testcaseType");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
+		}
+
+	},
+
+	REQUIREMENT_VERSION_CATEGORY(){
+		@Override
+		Class<?> getEntityClass() {
+			return InfoListItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QInfoListItem("reqversionCategory");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
+		}
+
+	},
+	ITERATION_TEST_PLAN_ASSIGNED_USER(){
+
 		@Override
 		Class<?> getEntityClass() {
 			return User.class;
@@ -269,12 +290,48 @@ enum InternalEntityType {
 
 		@Override
 		EntityPathBase<?> getQBean() {
-			return QUser.user;
+			return new QUser("iterTestPlanAssignedUser");
 		}
 
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QUser(alias);
+		}
+
+	},
+	TEST_CASE_MILESTONE(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return Milestone.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QMilestone("testCaseMilestone");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QMilestone(alias);
+		}
+
+	},
+	REQUIREMENT_VERSION_MILESTONE(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return Milestone.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QMilestone("reqversionMilestone");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QMilestone(alias);
 		}
 
 	};
@@ -290,9 +347,13 @@ enum InternalEntityType {
 	abstract EntityPathBase<?> getAliasedQBean(String alias);
 
 
-	static InternalEntityType fromDomainType(EntityType domainType) {// NOSONAR this switch is not so complex...
+	static InternalEntityType fromSpecializedType(SpecializedEntityType domainType){
+		String name =  domainType.getEntityType().name();
+		if (domainType.getEntityRole() != null) {
+			name = domainType.getEntityRole().name();
+		}
 		try{
-			return InternalEntityType.valueOf(domainType.name());
+			return InternalEntityType.valueOf(name);
 		}
 		catch(Exception ex){
 			throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type", ex);

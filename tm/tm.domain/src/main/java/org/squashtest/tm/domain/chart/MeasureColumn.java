@@ -81,6 +81,11 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	}
 
 	@Override
+	public SpecializedEntityType getSpecializedType(){
+		return column.getSpecializedType();
+	}
+
+	@Override
 	public DataType getDataType() {
 		return getColumn().getDataType();
 	}

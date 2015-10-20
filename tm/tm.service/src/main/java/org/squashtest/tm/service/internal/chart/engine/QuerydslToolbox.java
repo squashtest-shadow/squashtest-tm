@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 
@@ -107,13 +108,13 @@ class QuerydslToolbox {
 		return type.getAliasedQBean(name);
 	}
 
-	EntityPathBase<?> getQBean(EntityType domainType){
-		InternalEntityType type = InternalEntityType.fromDomainType(domainType);
+	EntityPathBase<?> getQBean(SpecializedEntityType domainType){
+		InternalEntityType type = InternalEntityType.fromSpecializedType(domainType);
 		return getQBean(type);
 	}
 
 	EntityPathBase<?> getQBean(ColumnPrototypeInstance column){
-		InternalEntityType type = InternalEntityType.fromDomainType(column.getEntityType());
+		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
 		return getQBean(type);
 	}
 
@@ -296,7 +297,7 @@ class QuerydslToolbox {
 
 		ColumnPrototype prototype = column.getColumn();
 
-		InternalEntityType type = InternalEntityType.fromDomainType(prototype.getEntityType());
+		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
 
 		String alias = getQName(type);
 		Class<?> clazz = type.getClass();
@@ -312,7 +313,7 @@ class QuerydslToolbox {
 
 		ColumnPrototype prototype = column.getColumn();
 
-		InternalEntityType type = InternalEntityType.fromDomainType(prototype.getEntityType());
+		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
 
 		String alias = getQName(type);
 		Class<?> clazz = type.getClass();

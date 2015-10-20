@@ -28,6 +28,8 @@ public interface ColumnPrototypeInstance {
 
 	EntityType getEntityType();
 
+	SpecializedEntityType getSpecializedType();
+
 	DataType getDataType();
 
 	Operation getOperation();

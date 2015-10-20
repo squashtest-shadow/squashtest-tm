@@ -57,7 +57,7 @@ import org.squashtest.tm.domain.EntityType;
  * 
  *  <ul>
  *     	<li>SUBQUERY : this query is indeed a subquery : a subcontext is created then joined with the relevant entity of the main query</li>
- *     	<li>BRANCH_FROM_MAIN : the extra tables will be joined within the main query.</li>
+ *     	<li>INLINED : the extra tables will be joined within the main query.</li>
  *  </ul>
  * 
  * <p>
@@ -95,7 +95,7 @@ public class ChartQuery {
 		/*
 		 * This query can be inlined in the main query
 		 */
-		BRANCH_FROM_MAIN;
+		INLINED;
 	}
 
 	@Id
@@ -171,27 +171,27 @@ public class ChartQuery {
 	 *
 	 * @return
 	 */
-	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){
+	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
 
-		Map<ColumnRole, Set<EntityType>> result = new HashMap<ColumnRole, Set<EntityType>>(3);
+		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<ColumnRole, Set<SpecializedEntityType>>(3);
 
 		Collection<? extends ColumnPrototypeInstance> columns;
 
 		columns = getFilters();
 		if (! columns.isEmpty()){
-			Set<EntityType> filterTypes = collectTypes(columns);
+			Set<SpecializedEntityType> filterTypes = collectTypes(columns);
 			result.put(ColumnRole.FILTER, filterTypes);
 		}
 
 		columns = getAxis();
 		if (! columns.isEmpty()){
-			Set<EntityType> axisTypes = collectTypes(columns);
+			Set<SpecializedEntityType> axisTypes = collectTypes(columns);
 			result.put(ColumnRole.AXIS, axisTypes);
 		}
 
 		columns = getMeasures();
 		if (! columns.isEmpty()){
-			Set<EntityType> measureTypes = collectTypes(columns);
+			Set<SpecializedEntityType> measureTypes = collectTypes(columns);
 			result.put(ColumnRole.MEASURE, measureTypes);
 		}
 
@@ -199,10 +199,10 @@ public class ChartQuery {
 
 	}
 
-	private Set<EntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
-		Set<EntityType> types = new HashSet<>();
+	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){
+		Set<SpecializedEntityType> types = new HashSet<>();
 		for (ColumnPrototypeInstance col : columns){
-			types.add(col.getEntityType());
+			types.add(col.getSpecializedType());
 		}
 		return types;
 	}
