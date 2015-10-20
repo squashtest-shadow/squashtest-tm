@@ -31,7 +31,8 @@ return Backbone.Model.extend({
 			type : this.get("type"),
 			axis: this.get("axis"),
 			measures : this.get("measures"),					
-			filters : this.get("filters")
+			filters : this.get("filters"),
+			scope : this.get("scope")
 			});
 			
 		}

@@ -42,6 +42,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import java.util.List;
 
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
@@ -60,5 +61,8 @@ public abstract class ChartDefinitionMixin {
 
 	@JsonDeserialize(contentAs = MeasureColumn.class)
 	private List<MeasureColumn> measures;
+
+	@JsonDeserialize(contentAs = EntityReference.class)
+	private List<EntityReference> scope;
 
 }
