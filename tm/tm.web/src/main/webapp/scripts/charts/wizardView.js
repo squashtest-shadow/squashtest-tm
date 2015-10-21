@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView" ], function($, Backbone,
-		router, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView) {
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView" ], function($, Backbone,
+		router, translator, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView) {
 
 	"use strict";
 
@@ -27,48 +27,74 @@ define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scope
 		el : "#wizard",
 		initialize : function(options) {
 			this.model = options.model;
-			this.steps = options.steps;
 			this.model.set({
 				steps:["entity", "scope", "filter", "type", "axis", "preview"]		
 			});
+			this.loadI18n();
 		},
 		
-		showSideView : function(wizrouter){
+		loadI18n : function (){
+			
+			var chartTypes = this.addPrefix(this.model.get("chartTypes"), "chartType.");
+			var entityTypes = this.addPrefix(this.model.get("entityTypes"), "entityType.");
+			var operation = this.addPrefix(_.uniq(this.flatten(this.model.get("dataTypes"))), "operation.");
+			var column = this.addPrefix(_.pluck(this.flatten(this.model.get("columnPrototypes")), "label") ,"column.");
+			
+			var keys = chartTypes.concat(entityTypes, operation, column);
+			
+			var result = this.addPrefix(keys, "chart.");
+			
+			translator.load(result);
+			
+		},
+		
+		flatten : function (col) {		
+			return _.reduce(col, function(memo, val) {return memo.concat(val);}, []);			
+		},
+		
+		addPrefix : function(col, prefix){
+			return _.map(col, function (obj){
+				return prefix + obj;
+			});
+			
+		},
+		
+		showSideView : function(){
 			this.resetSideView();
-			this.currentSideView = new SideView(this.model, wizrouter);
+			this.currentSideView = new SideView(this.model);
 		},
 		
-		showNewStepView : function (wizrouter, View){	
+		showNewStepView : function (View){	
 			if (this.currentView !== undefined) {
 			this.currentView.updateModel();
 			}
 			
 			this.resetView();
-			this.showSideView(wizrouter);
-			this.currentView = new View(this.model, wizrouter);
+			this.showSideView();
+			this.currentView = new View(this.model);
 		},
 		
-		showEntityStep : function(wizrouter) {			
-			this.showNewStepView(wizrouter, EntityStepView);
+		showEntityStep : function() {			
+			this.showNewStepView(EntityStepView);
 		},
-		showScopeStep : function(wizrouter) {
-			this.showNewStepView(wizrouter, ScopeStepView);
-		},
-
-		showFilterStep : function(wizrouter) {
-			this.showNewStepView(wizrouter, FilterStepView);
+		showScopeStep : function() {
+			this.showNewStepView(ScopeStepView);
 		},
 
-		showTypeStep : function(wizrouter) {
-			this.showNewStepView(wizrouter, TypeStepView);
+		showFilterStep : function() {
+			this.showNewStepView(FilterStepView);
+		},
+
+		showTypeStep : function() {
+			this.showNewStepView(TypeStepView);
 		},
 		
-		showAxisStep : function(wizrouter) {
-			this.showNewStepView(wizrouter, AxisStepView);
+		showAxisStep : function() {
+			this.showNewStepView(AxisStepView);
 		},
 
 		showPreviewStep :  function(wizrouter) {
-			this.showNewStepView(wizrouter, PreviewStepView);
+			this.showNewStepView(PreviewStepView);
 		},
 		
 		resetView : function() {

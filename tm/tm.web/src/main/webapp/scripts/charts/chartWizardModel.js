@@ -29,9 +29,11 @@ return Backbone.Model.extend({
 			return JSON.stringify ({
 			name : this.get("name"),
 			type : this.get("type"),
-			axis: this.get("axis"),
-			measures : this.get("measures"),					
-			filters : this.get("filters"),
+			query : {
+				axis: this.get("axis"),
+				measures : this.get("measures"),					
+				filters : this.get("filters")	
+			},
 			scope : this.get("scope")
 			});
 			

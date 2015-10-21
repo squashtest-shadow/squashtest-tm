@@ -31,9 +31,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 		},
 
 		
-		initialize : function(data, wizrouter) {
+		initialize : function(data) {
 			this.tmpl = "#side-view-tpl";
-			this.router = wizrouter;
 			this.model = data;
 			this.render(data);
 		},

@@ -24,12 +24,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 	var scopeStepView = AbstractStepView.extend({
 		
-		initialize : function(data, wizrouter) {
+		initialize : function(data) {
 			this.tmpl = "#scope-step-tpl";
 			this.model = data;
-			data.nextStep = "filter";
-			data.prevStep = "entity";
-			this._initialize(data, wizrouter);
+			this._initialize(data);
 			
 			var nodes = _.map(this.model.get("scope"), function(obj) {
 				return {

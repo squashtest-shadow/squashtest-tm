@@ -38,23 +38,23 @@ define([ "jquery", "backbone", "workspace.routing", "./abstractStepView" ], func
 		}, 
 
 		entityStep : function() {
-			this.wizardView.showEntityStep(this);			
+			this.wizardView.showEntityStep();			
 		},
 		
 		scopeStep: function() {
-			this.wizardView.showScopeStep(this);
+			this.wizardView.showScopeStep();
 		},
 		filterStep :  function() {
-			this.wizardView.showFilterStep(this);
+			this.wizardView.showFilterStep();
 		},
 		typeStep :  function() {
-			this.wizardView.showTypeStep(this);
+			this.wizardView.showTypeStep();
 		},
 		axisStep :  function() {
-			this.wizardView.showAxisStep(this);
+			this.wizardView.showAxisStep();
 		},
 		previewStep : function(){
-			this.wizardView.showPreviewStep(this);
+			this.wizardView.showPreviewStep();
 		}
 		
 	});

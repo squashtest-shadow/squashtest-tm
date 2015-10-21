@@ -30,11 +30,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 			//do in sub class
 		},
 	
-		_initialize : function(data, wizrouter) {
-			this.router = wizrouter;
+		_initialize : function(data) {
 			this.render(data);
-			this.next = data.nextStep;
-			this.previous = data.prevStep;
 		},
 		render : function(data, tmpl) {	
 				var src = $(this.tmpl).html();

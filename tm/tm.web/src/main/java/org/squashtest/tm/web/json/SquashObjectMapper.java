@@ -20,18 +20,26 @@
  */
 package org.squashtest.tm.web.json;
 
+import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.web.internal.model.json.AxisColumnMixin;
 import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
+import org.squashtest.tm.web.internal.model.json.ChartQueryMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportLibraryMixin;
+import org.squashtest.tm.web.internal.model.json.FilterMixin;
 import org.squashtest.tm.web.internal.model.json.GenericProjectMixin;
 import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
 import org.squashtest.tm.web.internal.model.json.InfoListMixin;
+import org.squashtest.tm.web.internal.model.json.MeasureColumnMixin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -63,6 +71,10 @@ public class SquashObjectMapper extends ObjectMapper {
 		addMixInAnnotations(Project.class, GenericProjectMixin.class);
 		addMixInAnnotations(CustomReportFolder.class, CustomReportFolderMixin.class);
 		addMixInAnnotations(ChartDefinition.class, ChartDefinitionMixin.class);
+		addMixInAnnotations(ChartQuery.class, ChartQueryMixin.class);
+		addMixInAnnotations(Filter.class, FilterMixin.class);
+		addMixInAnnotations(AxisColumn.class, AxisColumnMixin.class);
+		addMixInAnnotations(MeasureColumn.class, MeasureColumnMixin.class);
 	}
 
 }

@@ -24,14 +24,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 
 	var axisStepView = AbstractStepView.extend({
 		
-		initialize : function(data, wizrouter) {
+		initialize : function(data) {
 			this.tmpl = "#axis-step-tpl";
 			this.model = data;
-			data.nextStep = "preview";
-			data.prevStep = "type";		
 			var src = $("#measure-operation-tpl").html();
 			this.measureTemplate = 	Handlebars.compile(src);
-			this._initialize(data, wizrouter);
+			this._initialize(data);
 			this.populateOperation("MEASURE");
 			this.populateOperation("AXIS");
 		},
