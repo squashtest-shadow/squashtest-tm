@@ -23,12 +23,13 @@ package org.squashtest.tm.service.internal.chart.engine;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.core.foundation.lang.DateUtils;
-import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
@@ -47,7 +48,6 @@ import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Ops.DateTimeOps;
-import com.querydsl.core.types.Ops.MathOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
@@ -63,7 +63,9 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 
 class QuerydslToolbox {
 
-	String subContext;
+	private String subContext;
+
+	private Map<InternalEntityType, String> nondefaultPath = new HashMap<InternalEntityType, String>();
 
 	QuerydslToolbox(){
 		super();
@@ -83,9 +85,19 @@ class QuerydslToolbox {
 		return subContext;
 	}
 
+	/**
+	 * his method will affect the behavior of {@link #getQName(InternalEntityType)} and {@link #getQBean(InternalEntityType)} :
+	 * the returned path will use the supplied alias instead of the default ones
+	 * 
+	 * @param type
+	 */
+	void forceAlias(InternalEntityType type, String alias){
+		nondefaultPath.put(type, alias);
+	}
+
 	// ************** info retrievers ***************************
 
-	/*
+	/**
 	 *	The following methods ensure that the entities are aliased appropriately
 	 *	according to a context.
 	 * 
@@ -93,14 +105,23 @@ class QuerydslToolbox {
 	 * @return
 	 */
 	String getQName(InternalEntityType type){
+
 		EntityPathBase<?> path = type.getQBean();
-		String name = path.getMetadata().getName();
-		if (subContext == null){
-			return name;
+
+		String name;
+
+		if (nondefaultPath.containsKey(type)){
+			name = nondefaultPath.get(type);
+		}
+		else if (subContext == null){
+			name = path.getMetadata().getName();
 		}
 		else{
-			return name+"_"+subContext;
+			name = path.getMetadata().getName()+"_"+subContext;
 		}
+
+		return name;
+
 	}
 
 	EntityPathBase<?> getQBean(InternalEntityType type){
@@ -116,6 +137,10 @@ class QuerydslToolbox {
 	EntityPathBase<?> getQBean(ColumnPrototypeInstance column){
 		InternalEntityType type = InternalEntityType.fromSpecializedType(column.getSpecializedType());
 		return getQBean(type);
+	}
+
+	String getAlias(EntityPathBase<?> path){
+		return path.getMetadata().getName();
 	}
 
 
@@ -150,7 +175,7 @@ class QuerydslToolbox {
 
 		case CALCULATED :
 			EntityPathBase<?> colBean = getQBean(col);
-			QueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
+			SubQueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
 			selectElement = qbuilder.createQuery();
 			break;
 
@@ -213,6 +238,16 @@ class QuerydslToolbox {
 
 		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
 	}
+
+	@SuppressWarnings("rawtypes")
+	PathBuilder makePath(EntityPathBase<?> src, EntityPathBase<?> dest, String attribute){
+		Class<?> srcClass = src.getType();
+		Class<?> destClass = dest.getType();
+		String srcAlias = src.getMetadata().getName();
+
+		return new PathBuilder<>(srcClass, srcAlias).get(attribute, destClass);
+	}
+
 
 
 	/**
@@ -352,13 +387,13 @@ class QuerydslToolbox {
 	}
 
 
-	private QueryBuilder createSubquery(ColumnPrototypeInstance col){
+	private SubQueryBuilder createSubquery(ColumnPrototypeInstance col){
 
 		ColumnPrototype prototype = col.getColumn();
 		ChartQuery queryDef = prototype.getSubQuery();
 		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
 
-		return new QueryBuilder(detailedDef);
+		return new SubQueryBuilder(detailedDef);
 	}
 
 
@@ -460,6 +495,5 @@ class QuerydslToolbox {
 		}
 
 	}
-
 
 }

@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnRole;
@@ -67,7 +66,7 @@ class DetailedChartQuery extends ChartQuery{
 		setStrategy(parent.getStrategy());
 
 		// find the root entity
-		rootEntity = InternalEntityType.fromSpecializedType(parent.getMeasures().get(0).getSpecializedType());
+		rootEntity = InternalEntityType.fromSpecializedType(parent.getAxis().get(0).getSpecializedType());
 
 		// find all the target entities
 		Map<ColumnRole, Set<SpecializedEntityType>> entitiesByRole = parent.getInvolvedEntities();

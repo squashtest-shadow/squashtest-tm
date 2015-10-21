@@ -31,8 +31,10 @@ import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.execution.QExecution;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
@@ -81,6 +83,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 		}
 	}
+
 
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should fetch test step ids using querydsl Qtypes"(){

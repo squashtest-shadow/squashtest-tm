@@ -33,6 +33,7 @@
 	
 	<ATTACHMENT_LIST ATTACHMENT_LIST_ID="-1" />
 	
+	
 	<!--  requirement resources -->
 	
 	<RESOURCE CREATED_BY="IT" RES_ID="-11" CREATED_ON="2015-10-06" ATTACHMENT_LIST_ID="-1" NAME="req 1 version 1" />

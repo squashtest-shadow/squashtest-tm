@@ -113,14 +113,23 @@
 	<property name="tsId"					value="74" />
 	<property name="tsClass"				value="75" />
 	
-	<property name="infoItemId"				value="76" />
-	<property name="infoItemLabel"			value="77" />
+	<property name="tcnatId"				value="76" />
+	<property name="tcnatLabel"				value="77" />
 	
-	<property name="milesId"				value="78" />
-	<property name="milesLabel"				value="79" />
+	<property name="tctypId"				value="78" />
+	<property name="tctypLabel"				value="79" />
 	
-	<property name="userId"					value="80" />
-	<property name="userLogin"				value="81" />
+	<property name="rvcatId"				value="80" />
+	<property name="rvcatLabel"				value="81" />
+
+	<property name="tcmilId"				value="82" />
+	<property name="tcmilLabel"				value="83" />
+		
+	<property name="rvmilId"				value="84" />
+	<property name="rvmilLabel"				value="85" />
+	
+	<property name="itpassignId"			value="86" />
+	<property name="itpassignLogin"			value="87" />
 
 	<changeSet id="tm-1.13.0" author="bsiri">
 		<comment>Update TM database version number</comment>
@@ -245,7 +254,7 @@
 			CHART_COLUMN_PROTOTYPE subquery the name helps identify which one" />
 			
 			<column name="STRATEGY" type="VARCHAR(20)" remarks="says how the query builder should integrate this query 
-			to a main query. Accepts values : MAIN, SUBQUERY or BRANCH_FROM_MAIN"/>
+			to a main query. Accepts values : MAIN, SUBQUERY or INLINED"/>
 			
 			<column name="JOIN_STYLE" type="VARCHAR(10)" remarks="generally indicate whether should use inner join or left join when a 
 			natural join is possible. Possible values : INNER_JOIN or LEFT_JOIN"/>
@@ -323,6 +332,11 @@
 
 			<column name="ENTITY_TYPE" type="java.sql.Types.VARCHAR(30)" remarks="The kind of entities this column belongs to"/>
 
+			<column name="ENTITY_ROLE" type="VARCHAR(40)" remarks="a complementary qualifier for ENTITY_TYPE, 
+										used when an entity has an auxialiary role regarding another entity. 
+										For instance an InfoListItem may have a role of nature for a TestCase, 
+										or category for a RequirementVersion. May be null if nothing special about it."/>
+			
 			<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)" remarks="The name of the attribute of the entity"/>
 
 			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="Data type of the attribute"/>
@@ -651,28 +665,54 @@
 			
 		</sql>	
 		
-		<!-- simple columns for INFO_LIST_ITEM (internal column only) -->
+		<!-- simple columns for TEST_CASE_NATURE -> INFO_LIST_ITEM (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 	
-				(${infoItemId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'NUMERIC', 'id'),
-				(${infoItemLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'STRING', 'label');
+				(${tcnatId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'NUMERIC', 'id'),
+				(${tcnatLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'STRING', 'label');
 		</sql>	
 		
-		<!-- simple columns for MILESTONES (internal column only) -->
+				
+		<!-- simple columns for TEST_CASE_TYPE -> INFO_LIST_ITEM (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 	
-				(${milesId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'NUMERIC', 'id'),
-				(${milesLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'STRING', 'label');
+				(${tctypId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'NUMERIC', 'id'),
+				(${tctypLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'STRING', 'label');
+		</sql>	
+						
+		<!-- simple columns for REQUIREMENT_VERSION_CATEGORY -> INFO_LIST_ITEM (internal column only) -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${rvcatId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'NUMERIC', 'id'),
+				(${rvcatLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'STRING', 'label');
 		</sql>	
 		
-		<!-- simple columns for USER (internal column only) -->
+		<!-- simple columns for TEST_CASE_MILESTONE -> MILESTONE (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
 			VALUES 	
-				(${userId}, 'ATTRIBUTE', FALSE, 'USER_ID', 'MILESTONE', 'NUMERIC', 'id'),
-				(${userLogin}, 'ATTRIBUTE', FALSE, 'USER_LOGIN', 'MILESTONE', 'STRING', 'label');	
+				(${tcmilId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'TEST_CASE_MILESTONE', 'NUMERIC', 'id'),
+				(${tcmilLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'TEST_CASE_MILESTONE', 'STRING', 'label');
+		</sql>	
+				
+		<!-- simple columns for REQUIREMENT_VERSION_MILESTONE -> MILESTONE (internal column only) -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${rvmilId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'NUMERIC', 'id'),
+				(${rvmilLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'STRING', 'label');
+		</sql>	
+		
+		
+		<!-- simple columns for ITERATION_TEST_PLAN_ASSIGNED_USER -> USER (internal column only) -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${itpassignId}, 'ATTRIBUTE', FALSE, 'USER_ID', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'NUMERIC', 'id'),
+				(${itpassignLogin}, 'ATTRIBUTE', FALSE, 'USER_LOGIN', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'STRING', 'label');	
 		</sql>	
 			
 		<!--  ================== calculated columns ====================== -->

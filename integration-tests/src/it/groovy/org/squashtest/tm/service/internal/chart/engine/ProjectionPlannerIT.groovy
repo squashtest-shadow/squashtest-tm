@@ -25,6 +25,8 @@ import static org.squashtest.tm.domain.chart.ColumnType.*
 import static org.squashtest.tm.domain.chart.DataType.*
 import static org.squashtest.tm.domain.chart.Operation.*
 
+import java.util.List;
+
 import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
@@ -37,8 +39,10 @@ import org.squashtest.tm.domain.chart.ColumnType
 import org.squashtest.tm.domain.chart.AxisColumn
 import org.squashtest.tm.domain.chart.ColumnPrototype
 import org.squashtest.tm.domain.chart.DataType
+import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.chart.Operation
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.QExecution
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
@@ -235,8 +239,10 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 
 	}
 
+
 	def mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def meas = new MeasureColumn(column : proto, operation : operation)
 
 		return meas
@@ -244,13 +250,22 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 	}
 
 	def mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def meas = new AxisColumn(column : proto, operation : operation)
 
 		return meas
 
 	}
 
+	def mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def filter = new Filter(column : proto, operation : operation, values : values)
+
+		return filter
+
+	}
 
 	def HibernateQuery from(clz){
 		return new HibernateQuery().from(clz)

@@ -30,14 +30,14 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ITERATION_TEST_PLAN_ASSIGNED_USER;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_TYPE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_CATEGORY;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_MILESTONE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_COVERAGE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.REQUIREMENT_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_MILESTONE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_TYPE;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -127,10 +127,11 @@ class DomainGraph {
 
 	private Set<TraversableEntity> nodes = new HashSet<>();
 
+
 	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
 	private Set<InternalEntityType> visited = new HashSet<>();
 
-	// **************************** main methods ******************************
+	// **************************** API methods ******************************
 
 
 	/*
@@ -270,6 +271,7 @@ class DomainGraph {
 		}
 		return true;
 	}
+
 
 	/**
 	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(DetailedChartQuery)})</p>

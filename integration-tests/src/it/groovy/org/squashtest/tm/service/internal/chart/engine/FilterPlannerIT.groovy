@@ -25,6 +25,8 @@ import static org.squashtest.tm.domain.chart.ColumnType.*
 import static org.squashtest.tm.domain.chart.DataType.*
 import static org.squashtest.tm.domain.chart.Operation.*
 
+import java.util.List;
+
 import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
@@ -40,6 +42,7 @@ import org.squashtest.tm.domain.chart.DataType
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.chart.Operation
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.QExecution
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
@@ -75,7 +78,6 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	// TODO : test the AND/OR mechanism
 
-
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should retain the requirement versions only for test case 1"(){
 
@@ -106,8 +108,10 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	}
 
+
 	def mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def meas = new MeasureColumn(column : proto, operation : operation)
 
 		return meas
@@ -115,7 +119,8 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 	}
 
 	def mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def meas = new AxisColumn(column : proto, operation : operation)
 
 		return meas
@@ -123,7 +128,8 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 	}
 
 	def mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
+		def specType = new SpecializedEntityType(entityType : eType)
+		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
 		def filter = new Filter(column : proto, operation : operation, values : values)
 
 		return filter

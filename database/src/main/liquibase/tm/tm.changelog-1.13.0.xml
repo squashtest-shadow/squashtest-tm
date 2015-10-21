@@ -516,6 +516,7 @@
 				(${rvCreatBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
 				(${rvModBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
 				(${rvLabel}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
+				(${rvCat}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CATEGORY', 'REQUIREMENT_VERSION', 'String', 'category.label'),
 				(${rvCrit}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
 				(${rvStatus}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
 
@@ -528,6 +529,7 @@
 				(${rvCreatBy}, 'AXIS'), (${rvCreatBy}, 'FILTER'),
 				(${rvModBy}, 'AXIS'), (${rvModBy}, 'FILTER'),
 				(${rvLabel}, 'FILTER'), (${rvLabel}, 'MEASURE'),
+				(${rvCat}, 'AXIS'), (${rvCat}, 'FILTER'), (${rvCat}, 'MEASURE'),
 				(${rvCrit}, 'AXIS'), (${rvCrit}, 'FILTER'), (${rvCrit}, 'MEASURE'),
 				(${rvStatus}, 'FILTER'), (${rvStatus}, 'MEASURE'), (${rvStatus}, 'MEASURE');
 		</sql>
@@ -543,6 +545,8 @@
 				(${tcModBy}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy'),
 				(${tcLabel}, 'ATTRIBUTE', 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name'),
 				(${tcImportance}, 'ATTRIBUTE', 'TEST_CASE_IMPORTANCE','TEST_CASE', 'LEVEL_ENUM', 'importance'),
+				(${tcNat}, 'ATTRIBUTE', 'TEST_CASE_NATURE','TEST_CASE', 'STRING', 'nature.label'),
+				(${tcType}, 'ATTRIBUTE', 'TEST_CASE_TYPE','TEST_CASE', 'STRING', 'type.label'),
 				(${tcStatus}, 'ATTRIBUTE', 'TEST_CASE_STATUS','TEST_CASE', 'LEVEL_ENUM', 'status');
 
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
@@ -553,6 +557,8 @@
 				(${tcCreatBy}, 'AXIS'), (${tcCreatBy}, 'FILTER'),
 				(${tcModBy}, 'AXIS'), (${tcModBy}, 'FILTER'),
 				(${tcLabel}, 'FILTER'), (${tcLabel}, 'MEASURE'),
+				(${tcNat}, 'AXIS'), (${tcNat}, 'FILTER'), (${tcNat}, 'MEASURE'),
+				(${tcType}, 'AXIS'), (${tcType}, 'FILTER'), (${tcType}, 'MEASURE'),
 				(${tcImportance}, 'AXIS'), (${tcImportance}, 'FILTER'), (${tcImportance}, 'MEASURE'),
 				(${tcStatus}, 'AXIS'), (${tcStatus}, 'FILTER'), (${tcStatus}, 'MEASURE');
 		</sql>
@@ -741,6 +747,7 @@
 
 		</sql>
 		
+					
 			
 		<!--  REQUIREMENT_VERSION : nb test cases-->
 
@@ -760,11 +767,32 @@
 			
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
 			VALUES 
-				(${rvVerifTCCount}, 'AXIS'), (${rvVerifTCCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
+				(${rvVerifTCCount}, 'AXIS'), (${rvVerifTCCount}, 'FILTER'), (${rvVerifTCCount}, 'MEASURE');
+		
+		</sql>
+			
+		<!--  REQUIREMENT_VERSION : nb milestones -->
+
+		<sql>
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (3, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'INLINED', 'LEFT_JOIN');
+			
+			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
+				values (${rvmilId}, 3, 'COUNT', 0);
+			
+			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
+				values (${rvId}, 3, 'NONE', 0);
+		
+		
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID) 
+			VALUES 
+				(${rvMilesCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_MILCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(milestones)', 3);
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES 
+				(${rvMilesCount}, 'AXIS'), (${rvMilesCount}, 'FILTER'), (${rvMilesCount}, 'MEASURE');
 		
 		</sql>
 		
-
 	</changeSet>
 
  <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">

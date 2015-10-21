@@ -20,19 +20,6 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
-import org.squashtest.tm.domain.chart.Operation;
-
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
-import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /*
@@ -75,36 +62,6 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  * and requirement.id in (select req2.id from Requirement req2 join req2.versions version2 group by req2.id having count(distinct version2) > 1 )
  * group by testCase.id
  * 
- * ====================================================
- * 
- * ------------------------------
- * How to optimize this :
- * ------------------------------
- * 
- * The goal is to eliminate subqueries and use left joins instead
- * 
- * 1/ select context :
- * 
- * select requirement.id, count(distinct version2)
- * from TestCase testCase join testCase.requirementVersionCoverages cov
- * join cov.verifiedRequirementVersion version
- * join version.requirement requirement
- * left join requirement.version version2
- * group by testCase.id, requirement.id
- * 
- * 
- * 2 / where context :
- * 
- * 
- * select count(distinct requirement.id)
- * from TestCase testCase join testCase.requirementVersionCoverages cov
- * join cov.verifiedRequirementVersion version
- * join version.requirement requirement
- * join requirement.versions version2
- * where testCase.id =1
- * group by testCase.id, requirement.id
- * having count(distinct version2) > 1
- * 
  * 
  */
 class QueryBuilder {
@@ -115,18 +72,15 @@ class QueryBuilder {
 		SUBWHERE_QUERY;		// generate uncorrelated subqueries, returning the axes only, measures must match predicates supplied by the outer query
 	}
 
-	private QuerydslToolbox utils = new QuerydslToolbox();
+	protected QuerydslToolbox utils = new QuerydslToolbox();
 
-	private DetailedChartQuery queryDefinition;
+	protected DetailedChartQuery queryDefinition;
 
-	private HibernateQuery<?> detachedQuery;
+	// the SubQueryBuilder would use a different strategy.
+	// for the QueryBuilder, it is set to MAIN_QUERY.
+	protected QueryProfile profile = QueryProfile.MAIN_QUERY;
 
-	private QueryProfile profile = QueryProfile.MAIN_QUERY;
-
-	private List<Expression<?>> subselectProfileJoinExpression;
-
-	private Filter subwhereProfileFilterExpression;
-
+	protected HibernateQuery<?> detachedQuery;
 
 	QueryBuilder(DetailedChartQuery queryDefinition){
 		super();
@@ -135,155 +89,27 @@ class QueryBuilder {
 
 
 
-	// ====================== configuration section =============
-
-	QueryBuilder asMainQuery(){
-		profile = QueryProfile.MAIN_QUERY;
-		utils.setSubContext(null);
-		return this;
-	}
-
-	QueryBuilder asSubselectQuery(){
-		profile = QueryProfile.SUBSELECT_QUERY;
-		utils.setSubContext(generateContextName());
-		return this;
-	}
-
-	QueryBuilder asSubwhereQuery(){
-		profile = QueryProfile.SUBWHERE_QUERY;
-		utils.setSubContext(generateContextName());
-		return this;
-	}
-
-	QueryBuilder joinAxesOn(List<Expression<?>> axes){
-		this.subselectProfileJoinExpression = axes;
-		return this;
-	}
-
-	QueryBuilder joinAxesOn(Expression<?>... axes) {
-		this.subselectProfileJoinExpression = Arrays.asList(axes);
-		return this;
-	}
-
-	QueryBuilder filterMeasureOn(Filter filter){
-		this.subwhereProfileFilterExpression = filter;
-		return this;
-	}
 
 	// **************** actual building ***************************
 
 	HibernateQuery<?> createQuery(){
 
-		checkConfiguration();
 
 		QueryPlanner mainPlanner = new QueryPlanner(queryDefinition, utils);
 		detachedQuery = mainPlanner.createQuery();
+
 
 		ProjectionPlanner projectionPlanner = new ProjectionPlanner(queryDefinition, detachedQuery, utils);
 		projectionPlanner.setProfile(profile);
 		projectionPlanner.modifyQuery();
 
+
 		FilterPlanner filterPlanner = new FilterPlanner(queryDefinition, detachedQuery, utils);
 		filterPlanner.modifyQuery();
-
-		if (profile == QueryProfile.SUBSELECT_QUERY){
-			addSubselectSpecifics();
-		}
-
-		if (profile == QueryProfile.SUBWHERE_QUERY){
-			addSubwhereSpecifics();
-		}
 
 		return detachedQuery;
 	}
 
 
-
-	// we must join on the axes with those of the outer query
-	private void addSubselectSpecifics(){
-		BooleanBuilder joinWhere = new BooleanBuilder();
-
-		List<AxisColumn> axes = queryDefinition.getAxis();
-
-		for (int i=0; i< axes.size(); i++){
-
-			Expression<?> outerAxis = subselectProfileJoinExpression.get(0);
-			Expression<?> subAxis = utils.getQBean(axes.get(i));
-
-			joinWhere.and(Expressions.predicate(Ops.EQ, outerAxis, subAxis));
-		}
-
-		detachedQuery.where(joinWhere);
-	}
-
-
-
-	// we must filter on the measure. Take care that if the measure has an aggregate operation, the
-	// additional filter will take the form of a having clause.
-	private void addSubwhereSpecifics(){
-
-		MeasureColumn measure = queryDefinition.getMeasures().get(0);
-
-		Expression<?> measureExpr = utils.createAsSelect(measure);
-		List<Expression<?>> operands = utils.createOperands(subwhereProfileFilterExpression);
-		Operation operation = subwhereProfileFilterExpression.getOperation();
-
-		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, operands.toArray(new Expression[]{}));
-
-		if (isAggregate(measure.getOperation())){
-			detachedQuery.having(predicate);
-		}
-		else{
-			detachedQuery.where(predicate);
-		}
-
-	}
-
-
-	private boolean isAggregate(Operation operation){
-		boolean res = false;
-		switch(operation){
-		case COUNT :
-			res = true;
-			break;
-		default :
-			res = false;
-			break;
-		}
-		return res;
-	}
-
-
-	private void checkConfiguration(){
-		switch(profile){
-		case SUBSELECT_QUERY :
-			checkSubselectConfiguration();
-			break;
-		case SUBWHERE_QUERY :
-			checkSubwhereConfiguration();
-			break;
-		default : break;
-		}
-	}
-
-	private void checkSubselectConfiguration(){
-		if (subselectProfileJoinExpression == null){
-			throw new IllegalArgumentException("subselect queries must always provide a join with the outer query, please use joinAxesOn()");
-		}
-
-		if (subselectProfileJoinExpression.size() != queryDefinition.getAxis().size()){
-			throw new IllegalArgumentException("subselect queries joined entities must match (in number and type) the axis entities of the subquery");
-		}
-	}
-
-	private void checkSubwhereConfiguration(){
-		if (subwhereProfileFilterExpression == null){
-			throw new IllegalArgumentException("subwhere queries must always provide a filter on the measure, please use filterMeasureOn()");
-		}
-	}
-
-	private String generateContextName(){
-		return Double.valueOf(Math.random()).toString().substring(2,5);
-	}
 
 }
