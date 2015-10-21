@@ -97,11 +97,6 @@ public class CustomReportTreeNodeBuilder {
 	} 
 
 	private void doLibraryBuild(CustomReportLibraryNode crln) {
-		builtNode.addAttr("rel", rel);
-		builtNode.addAttr("resType", resType);
-		setStateForNodeContainer(crln);
-	}
-	private void doLibraryBuild(CustomReportLibraryNode crln) {
 		builtNode.addAttr("rel", "drive");
 		builtNode.addAttr("resType", "custom-report-libraries");
 		setStateForNodeContainer(crln);
