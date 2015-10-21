@@ -89,7 +89,7 @@ define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _
 	
 	Handlebars.registerHelper("inc", function(value, options)
 			{
-			    return parseInt(value) + 1;
+			    return parseInt(value, 10) + 1;
 			});
 	
 	return Handlebars;
