@@ -23,68 +23,66 @@
  *  targetting the pseudo iframe, and finally remove all of them once the job is done. See http://www.ajaxf1.com/tutorial/ajax-file-upload-tutorial.html.
  */
 
-define(["jquery", "jform"], function($){
+define(["jquery", "jform"], function ($) {
 
-	
-	function _detachUnrelatedInputs(form){
-		var unrelatedInputs = form.find('input').filter(function(){
-			
+
+	function _detachUnrelatedInputs(form) {
+		var unrelatedInputs = form.find('input').filter(function () {
+
 			var unrelated = true;
 			var $this = $(this);
-			
-			if ($this.attr('type') === 'file'){
+
+			if ($this.attr('type') === 'file') {
 				var content = $this.val();
-				if (content !== ""){
+				if (content !== "") {
 					unrelated = false;	//this input is actually very relevant
 				}
 			}
-			
+
 			return unrelated;
-			
+
 		});
-		
+
 		unrelatedInputs.detach();
-		
+
 		return unrelatedInputs;
 	}
-	
-	
-	function _uploadFilesOnly(form, url){
-		
+
+
+	function _uploadFilesOnly(form, url) {
+
 		var notToBePosted = _detachUnrelatedInputs(form);
 
 		//sets the name of the remaining inputs
 		form.find('input').attr('name', 'attachment[]');
-		
+
 		//don't post if there is nothing to send
-		if (form.find('input').length>0){
+		if (form.find('input').length > 0) {
 			form.ajaxSubmit({
-				url : url,
-				iframe : true,
-				type : 'POST'
+				url: url,
+				iframe: true,
+				type: 'POST'
 			});
 		}
-		
+
 		//now reattach the detached inputs
 		form.append(notToBePosted);
 
 	}
 
 	return {
-		uploadFilesOnly : function(arg, url){
-			
+		uploadFilesOnly: function (arg, url) {
+
 			var $arg = (arg instanceof jQuery) ? arg : $(arg);
-			
-			if ($arg.is('form')){
+
+			if ($arg.is('form')) {
 				_uploadFilesOnly($arg, url);
-			}
-			
-			else {
+			} else {
 				throw "argument is neither a form nor an input file";
 			}
-			
+
 
 		}
 	};
-	
+
 });
