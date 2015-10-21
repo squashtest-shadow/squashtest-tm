@@ -71,7 +71,10 @@ class QueryPlanner {
 
 	private HibernateQuery<?> query;
 
-
+	// for test purposes
+	QueryPlanner(){
+		super();
+	}
 
 	QueryPlanner(DetailedChartQuery definition){
 		super();
@@ -220,7 +223,12 @@ class QueryPlanner {
 
 	private void addWhereJoin(EntityPathBase<?> src, EntityPathBase<?> dest, String attribute){
 
-		// check that the entities are known
+		// if both aliases are known, don't do it
+		if (isKnown(src) && isKnown(dest)){
+			return;
+		}
+
+		// else, add the missing entity(ies)
 		if (! isKnown(src)){
 			query.from(src);
 		}

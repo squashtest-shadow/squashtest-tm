@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
