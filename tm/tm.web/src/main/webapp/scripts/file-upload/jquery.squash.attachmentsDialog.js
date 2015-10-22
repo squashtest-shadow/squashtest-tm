@@ -104,7 +104,7 @@ define(
 
 				close : function() {
 					this._super();
-					if (this.options._xhr) {
+				if (this.options._xhr && this.options.preventAbortion !== true) {
 						this.options._xhr.abort();
 					}
 				},
@@ -148,7 +148,7 @@ define(
 							xhr.upload.addEventListener('progress', onprogressHandler, false);
 							xhr.addEventListener('readystatechange', function(e) {
 								if (this.readyState === 4) {
-									self.submitComplete();
+								self.submitComplete(xhr);
 								}
 							});
 
@@ -196,8 +196,8 @@ define(
 								},
 								error : function() {
 								},
-								complete : function(json) {
-									self.submitComplete(json);
+							complete: function (xhr) {
+								self.submitComplete(xhr);
 								},
 								target : "#dump"
 
@@ -212,8 +212,12 @@ define(
 				 * 
 				 * in our case, if the json response has an attribute maxSize, then we got an error.
 				 */
-				submitComplete : function() {
-					var xhr = this.options._xhr;
+			submitComplete: function (xhr) {
+				this.options._xhr = xhr;
+				// Kind of a hack to prevent the thisDialog.close hook to try and abort the xhr,
+				// which leads to an infinite loop in IE.
+				// TODO Gotta find a more elegant way
+				this.options.preventAbortion = true;
 					var text;
 
 					try {
