@@ -93,7 +93,7 @@ public class ColumnPrototype {
 	private ColumnType columnType;
 
 	@OneToOne
-	@JoinColumn(name="SUBQUERY_ID")
+	@JoinColumn(name = "SUBQUERY_ID", nullable = false, insertable = false)
 	private ChartQuery subQuery = new ChartQuery();
 
 	private String attributeName;
