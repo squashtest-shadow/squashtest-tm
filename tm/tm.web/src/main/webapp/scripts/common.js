@@ -108,6 +108,7 @@ requirejs.config({
 				//jquery
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",
+//				"jform" : "jquery/jquery.form.min",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"jquery.generateId" : "jquery/jquery.generateId",
 				"jquery.hotkeys" : "jquery/jquery.hotkeys-0.8",
@@ -209,6 +210,7 @@ requirejs.config({
 					deps : [ "jquery", "jqueryui" ],
 					exports : "DatePickerAuto" // this is a constructor
 				},
+				"jquery.timepicker": [ "jquery", "jqueryui" ],
 				"jquery.squash.togglepanel" : {
 					deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
 					exports : "jquerySquashtmTogglepanel"
