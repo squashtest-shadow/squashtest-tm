@@ -416,6 +416,12 @@
 			<value>org.squashtest.tm.service.chart.ChartModificationService</value>
 		</osgi:interfaces>
 	</osgi:service>
+	
+	<osgi:service ref="org.squashtest.tm.service.customreport.CustomReportFolderService">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportFolderService</value>
+		</osgi:interfaces>
+	</osgi:service>
 
 	<!-- ====== SERVICES CONSUMED BY THIS BUNDLE ====== -->
 

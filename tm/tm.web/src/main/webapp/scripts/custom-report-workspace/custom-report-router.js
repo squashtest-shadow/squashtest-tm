@@ -121,6 +121,27 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
         });
       },
 
+      //Only for forcing router to reload page after updates on selected node
+      //To navigate inside workspace and have a correct history please use router.navigateTo()
+      showNodeDetails : function (nodeType,nodeId) {
+        switch (nodeType) {
+          case "drive":
+            showLibraryDetails(nodeId);
+            break;
+          case "folder":
+            showFolderDetails(nodeId);
+            break;
+          case "dashboard":
+            showDashboardDetails(nodeId);
+            break;
+          case "chart":
+            showChartDetails(nodeId);
+            break;
+          default:
+
+        }
+      },
+
       //Will clean the contextual part and restore the contextual div
       cleanContextContent : function () {
         if (this.activeView!==null) {

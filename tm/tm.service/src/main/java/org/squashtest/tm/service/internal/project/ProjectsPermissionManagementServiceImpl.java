@@ -35,6 +35,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectPermission;
@@ -93,6 +94,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getId(), clibraryRef);
+		
+		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
+		aclService.removeAllResponsibilities(user.getId(), crlibraryRef);
 	}
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
@@ -126,6 +130,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	private ObjectIdentity createRequirementLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary().getId());
+	}
+	
+	private ObjectIdentity createCustomReportLibraryIdentity(GenericProject project) {
+		return new ObjectIdentityImpl(CustomReportLibrary.class, project.getCustomReportLibrary().getId());
 	}
 
 	@Override
@@ -214,6 +222,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.addNewResponsibility(party.getId(), clibraryRef, permissionName);
+		
+		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
+		aclService.addNewResponsibility(party.getId(), crlibraryRef, permissionName);
 
 	}
 
@@ -233,6 +244,9 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, clibraryRef);
+		
+		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
+		aclService.removeAllResponsibilities(partyId, crlibraryRef);
 	}
 
 	@Override

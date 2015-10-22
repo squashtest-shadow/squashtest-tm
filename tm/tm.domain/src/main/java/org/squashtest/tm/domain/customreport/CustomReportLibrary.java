@@ -31,7 +31,6 @@ import javax.persistence.SequenceGenerator;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 @Entity
 public class CustomReportLibrary extends GenericTreeLibrary {
@@ -74,14 +73,13 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	}
 
 	@Override
-	public TreeLibraryNode getTreeNode() {
-		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
-	}
-
-	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	
 
+	@Override
+	public void setProject(Project project) {
+		throw new UnsupportedOperationException("A library shouldn't have his project setted after project creation");
+	}
+	
 }

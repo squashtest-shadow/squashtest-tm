@@ -34,6 +34,7 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,10 +50,12 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(name = "CHART_DEFINITION")
@@ -82,6 +85,10 @@ public class ChartDefinition implements TreeEntity{
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROJECT_ID")
+	private Project project;
 
 
 	@ElementCollection
@@ -158,10 +165,7 @@ public class ChartDefinition implements TreeEntity{
 	public void setName(String name) {
 		this.name = name;
 	}
-	@Override
-	public TreeLibraryNode getTreeNode() {
-		throw new UnsupportedOperationException("TO IMPLEMENT");
-	}
+	
 	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
@@ -169,6 +173,21 @@ public class ChartDefinition implements TreeEntity{
 
 	public void setOwner(User user) {
 		this.owner = user;
-
 	}
+
+	@Override
+	public Project getProject() {
+		return project;
+	}
+
+	@Override
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary(){
+		return getProject().getCustomReportLibrary();
+	}
+
 }

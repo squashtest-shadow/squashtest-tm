@@ -18,32 +18,23 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.service.customreport;
 
-import javax.inject.Inject
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
 
-import spock.unitils.UnitilsSupport
-
-@UnitilsSupport
 @Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportNodeDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryNodeDao crdao;
+public interface CustomReportFolderService {
 	
-	def "should find a crln by id"() {
-		when:
-		def res = crdao.findById(-3L);
-
-		then:
-		res != null;
-		res.name == "Chart1";
-	}
+	String WRITE_CRF_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportFolder' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN;
+	
+	/**
+	 * Update description for {@link CustomReportFolder}. For v1 only folder will have an updatable description
+	 * @param folderId the entity id, not the node id...
+	 * @param newDescription
+	 */
+	void updateDescription(Long folderId, String newDescription);
 }

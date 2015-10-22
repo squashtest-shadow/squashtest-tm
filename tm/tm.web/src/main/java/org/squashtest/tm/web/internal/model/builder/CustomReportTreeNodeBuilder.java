@@ -97,29 +97,28 @@ public class CustomReportTreeNodeBuilder {
 	} 
 
 	private void doLibraryBuild(CustomReportLibraryNode crln) {
-		builtNode.addAttr("rel", "drive");
-		builtNode.addAttr("resType", "custom-report-libraries");
+		setNodeRel("drive");
+		setNodeResType("custom-report-libraries");
 		setStateForNodeContainer(crln);
 	}
 
 	private void doFolderBuild(CustomReportLibraryNode crln) {
-		builtNode.addAttr("rel", "folder");
-		builtNode.addAttr("resType", "custom-report-folders");
+		setNodeRel("folder");
+		setNodeResType("custom-report-folders");
 		setStateForNodeContainer(crln);
 	}
 
 	private void doChartBuild(CustomReportLibraryNode crln) {
-		builtNode.addAttr("rel", "chart");
-		builtNode.addAttr("resType", "custom-report-chart");
-		builtNode.setState(State.leaf);
+		setNodeRel("chart");
+		setNodeResType("custom-report-chart");
+		setNodeLeaf();
 	}
 
 	private void doDashboardBuild(CustomReportLibraryNode crln) {
-		builtNode.addAttr("rel", "dashboard");
-		builtNode.addAttr("resType", "custom-report-dashboard");
+		setNodeRel("dashboard");
+		setNodeResType("custom-report-dashboard");
 		setStateForNodeContainer(crln);
 	}
-
 
 	private void doPermissionCheck(CustomReportLibraryNode crln){
 		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
@@ -135,6 +134,18 @@ public class CustomReportTreeNodeBuilder {
 		else {
 			builtNode.setState(State.leaf);
 		}
+	}
+	
+	private void setNodeRel(String rel){
+		builtNode.addAttr("rel", rel);
+	}
+	
+	private void setNodeResType(String resType){
+		builtNode.addAttr("resType", resType);
+	}
+	
+	private void setNodeLeaf(){
+		builtNode.setState(State.leaf);
 	}
 
 }

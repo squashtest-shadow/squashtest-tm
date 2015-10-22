@@ -113,16 +113,22 @@ public class CustomReportNavigationController {
 	
 	//-------------- SHOW-NODE-CHILDREN METHODS ---------------
 	
-	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId,
+	@RequestMapping(value = "/drives/{nodeId}/content", method = RequestMethod.GET)
+	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId,
 			@CurrentMilestone Milestone activeMilestone) {
-		return getNodeContent(libraryId, activeMilestone);
+		return getNodeContent(nodeId, activeMilestone);
 	}
 	
-	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId,
+	@RequestMapping(value = "/folders/{nodeId}/content", method = RequestMethod.GET)
+	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId,
 			@CurrentMilestone Milestone activeMilestone) {
-		return getNodeContent(folderId, activeMilestone);
+		return getNodeContent(nodeId, activeMilestone);
+	}
+	
+	@RequestMapping(value = "/dashboard/{nodeId}/content", method = RequestMethod.GET)
+	public @ResponseBody List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId,
+			@CurrentMilestone Milestone activeMilestone) {
+		return getNodeContent(nodeId, activeMilestone);
 	}
 	
 	//-------------- DELETE-SIMULATION METHODS ---------------

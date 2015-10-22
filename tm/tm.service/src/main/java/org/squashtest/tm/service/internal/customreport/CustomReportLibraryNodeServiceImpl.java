@@ -20,12 +20,16 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.chart.ChartDefinition;
@@ -40,11 +44,26 @@ import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportLibraryNodeService")
 @Transactional
 public class CustomReportLibraryNodeServiceImpl implements
 		CustomReportLibraryNodeService {
+	
+	final String READ_CRLN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN;
+	
+	final String WRITE_CRLN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN;
+	
+	final String CREATE_CRLN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') "
+			+ OR_HAS_ROLE_ADMIN;
+	
+	@Inject
+	protected PermissionEvaluationService permissionService;
 	
 	@Inject 
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
@@ -61,24 +80,32 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
+	@PreAuthorize(READ_CRLN_OR_ADMIN)
+	@Transactional(readOnly = true)
 	public CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
 		return (CustomReportLibrary) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 
+	
 	@Override
+	@PreAuthorize(READ_CRLN_OR_ADMIN)
+	@Transactional(readOnly = true)
 	public CustomReportFolder findFolderByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.FOLDER);
 		return (CustomReportFolder) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
+	@PreAuthorize(READ_CRLN_OR_ADMIN)
+	@Transactional(readOnly = true)
 	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
 		return (ChartDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
+	@PreAuthorize(CREATE_CRLN_OR_ADMIN)
 	public CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) {
 		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.findById(parentId);
 		if (parentNode == null) {
@@ -92,7 +119,6 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return customReportLibraryNodeDao.findById(newNode.getId());
 	}
 	
-
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> nodeIds) {
 		return deletionHandler.simulateDeletion(nodeIds);
@@ -100,10 +126,16 @@ public class CustomReportLibraryNodeServiceImpl implements
 	
 	@Override
 	public OperationReport delete(List<Long> nodeIds) {
+		for (Long id : nodeIds) {
+			TreeLibraryNode node = customReportLibraryNodeDao.findById(id);
+			checkPermission(new SecurityCheckableObject(node, "DELETE"));
+		}
 		return deletionHandler.deleteNodes(nodeIds);
 	}
 	
+	
 	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds) {
 		return customReportLibraryNodeDao.findAllDescendants(nodeIds);
 	}
@@ -114,12 +146,14 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 	
 	@Override
+	@PreAuthorize(WRITE_CRLN_OR_ADMIN)
 	public void renameNode(Long nodeId, String newName)
 			throws DuplicateNameException {
 		CustomReportLibraryNode crln = customReportLibraryNodeDao.findById(nodeId);
 		crln.renameNode(newName);
 	}
-
+	
+	
 	
 	//--------------- PRIVATE METHODS --------------
 	
@@ -142,9 +176,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return entity;
 	}
 
-
-
-
-
+	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
+	}
 
 }

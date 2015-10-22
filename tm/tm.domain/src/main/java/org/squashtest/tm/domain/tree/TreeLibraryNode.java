@@ -21,7 +21,7 @@
 package org.squashtest.tm.domain.tree;
 
 import java.util.List;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -54,9 +54,7 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	
 	List<TreeLibraryNode> getChildren();
 	
-	TreeLibrary getLibrary();
-	
-	void setLibrary(TreeLibrary treeLibrary);
+	GenericTreeLibrary getLibrary();
 	
 	void addChild(TreeLibraryNode treeLibraryNode) throws UnsupportedOperationException,IllegalArgumentException,NameAlreadyInUseException;
 

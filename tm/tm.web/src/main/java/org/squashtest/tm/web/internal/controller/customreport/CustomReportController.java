@@ -69,17 +69,13 @@ public class CustomReportController {
 		
 	}
 	
-	//---- rename ----
+	//---- RENAME ----
 	
 	@RequestMapping(method = RequestMethod.POST, value="custom-report-folders/{nodeId}",params = { "newName" })
 	@ResponseBody
-	public Object RenameModel(@PathVariable long nodeId, @RequestParam String newName) {
-
+	public RenameModel renameCRF(@PathVariable long nodeId, @RequestParam String newName) {
 		customReportLibraryNodeService.renameNode(nodeId, newName);
-		LOGGER.info("TestCaseModificationController : renaming {} as {}", nodeId, newName);
-
 		return new RenameModel(newName);
-
 	}
 	
 }

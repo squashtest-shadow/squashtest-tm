@@ -216,9 +216,9 @@
               <h3 th:text="#{label.Description}">desc</h3>
             </div>
 			<div class="tg-body" id="description-panel">
-				<div>
-					{{{description}}}
-				</div>
+					<span id="folder-description" class="editable rich-editable" data-def='url=description/{{id}}'>
+						{{{description}}}
+					</span>
 			</div>
 		</div>
      </script>

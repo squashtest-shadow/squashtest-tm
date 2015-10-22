@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars"],
-		function(_,Backbone, translator,Handlebars) {
+define(["underscore","backbone","squash.translator","handlebars","squash.basicwidgets"],
+		function(_,Backbone, translator,Handlebars,basicWidgets) {
 	var View = Backbone.View.extend({
 
     el : "#contextual-content-wrapper",
@@ -42,6 +42,7 @@ define(["underscore","backbone","squash.translator","handlebars"],
 			console.log("TEAMPLATING");
 			console.log(this.model.toJSON());
 			this.$el.append(template(this.model.toJSON()));
+			basicWidgets.init();
 		},
 
   });

@@ -287,6 +287,10 @@
 			<column name="CHART_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="whether this chart is a 'PIE', 'BAR' etc"/>
 			<column name="DESCRIPTION" type="CLOB" remarks="additional informations about this chart"/>
 
+			<column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
+				<constraints nullable="false" foreignKeyName="fk_project_chart_definition_project_id" references="PROJECT(PROJECT_ID)" />
+			</column>
+
 		</createTable>
 
 		<createIndex tableName="CHART_DEFINITION" indexName="idx_chart_definition">
@@ -498,11 +502,11 @@
 			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
 			VALUES
 				(${reqId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_ID', 'REQUIREMENT', 'NUMERIC', 'id');
-				
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
-			VALUES 	
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+			VALUES
 					(${reqId}, 'AXIS'), (${reqId}, 'FILTER'), (${reqId}, 'MEASURE');
-				
+
 		</sql>
 
 		<!-- simple columns for REQUIREMENT_VERSION -->
@@ -808,6 +812,8 @@
 
 		<column name="TMP_PROJECT_ID" type="BIGINT" remarks="TMP REF TO PROJECT">
 		</column>
+
+
  	</createTable>
 
  	<createIndex tableName="CUSTOM_REPORT_LIBRARY" indexName="IDX_CUSTOM_REPORT_LIBRARY">
@@ -869,6 +875,10 @@
 
 		<column name="DESCRIPTION" type="CLOB"/>
 
+		<column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
+			<constraints nullable="false" foreignKeyName="fk_project_custom_report_folder_project_id" references="PROJECT(PROJECT_ID)" />
+		</column>
+
 	</createTable>
 
 	<createTable tableName="CUSTOM_REPORT_DASHBOARD">
@@ -878,8 +888,11 @@
 
 		<column name="NAME" type="VARCHAR(255)"/>
 
-	</createTable>
+		<column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
+			<constraints nullable="false" foreignKeyName="fk_project_custom_report_dashboard_project_id" references="PROJECT(PROJECT_ID)" />
+		</column>
 
+	</createTable>
 
 	<addColumn tableName="PROJECT">
  		<column name="CRL_ID" type="BIGINT" remarks="FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
@@ -890,7 +903,6 @@
  		<column name="TMP_CRL_ID" type="BIGINT" remarks="TMP FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
       	</column>
  	</addColumn>
-
 
 
 	<!-- CLOSURE -->
@@ -938,8 +950,7 @@
 		<column name="CLASSNAME" value="org.squashtest.tm.domain.customreport.CustomReportLibrary" />
 	</insert>
 
-	<!-- INSERT ACL FOR EXISTING LIBRARY -->
-
+	<!-- PROJECT MANAGER -->
 
 	<insert tableName="ACL_GROUP_PERMISSION">
 		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
@@ -953,9 +964,90 @@
 		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
 	</insert>
 
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="4" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
 
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="8" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
 
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="1024" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
 
+<!-- /PROJECT MANAGER -->
+
+<!-- TEST EDITOR (Testeur Référent) -->
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+	<column name="PERMISSION_MASK" value="1" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+	<column name="PERMISSION_MASK" value="2" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+	<column name="PERMISSION_MASK" value="4" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+	<column name="PERMISSION_MASK" value="8" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestEditor')" />
+	<column name="PERMISSION_MASK" value="1024" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<!-- /TEST EDITOR -->
+<!-- ALL OTHER PROFILES READ ONLY -->
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectViewer')" />
+	<column name="PERMISSION_MASK" value="1" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestRunner')" />
+	<column name="PERMISSION_MASK" value="1" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.TestDesigner')" />
+	<column name="PERMISSION_MASK" value="1" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.AdvanceTester')" />
+	<column name="PERMISSION_MASK" value="1" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
+
+<insert tableName="ACL_GROUP_PERMISSION">
+	<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.Validator')" />
+	<column name="PERMISSION_MASK" value="1" />
+	<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+</insert>
 
 </changeSet>
 
@@ -1149,7 +1241,7 @@
 <changeSet id="tm-1.13.0-feat-5292-3" author="jthebault">
 <comment>Migration for custom report workspace evolution. Mainly create the Library entities and their nodes, attachement list...</comment>
 
-<!-- SQL CREATE A NEW CUSTOM_REPORT_LIBRARY FOR EACH PROJECT IN DB -->
+<!-- SQL CREATE A NEW CUSTOM_REPORT_LIBRARY FOR EACH PROJECT IN DB AND CREATE ACLS ON OBJECT-->
 <sql>
 	insert into CUSTOM_REPORT_LIBRARY (TMP_PROJECT_ID)
 		select p.PROJECT_ID
@@ -1162,7 +1254,11 @@
 			where p.PROJECT_ID = crl.TMP_PROJECT_ID
 	);
 
+	insert into ACL_OBJECT_IDENTITY (IDENTITY,CLASS_ID)
+		  select CRL_ID, ID from CUSTOM_REPORT_LIBRARY,ACL_CLASS
+		  where ACL_CLASS.CLASSNAME LIKE 'org.squashtest.tm.domain.customreport.CustomReportLibrary';
 </sql>
+
 
 
 <!-- SQL CREATE A NEW ATTACHEMENT_LIST FOR EACH PREVIOUSLY CUSTOM_REPORT_LIBRARY IN DB -->
@@ -1197,9 +1293,9 @@
 
 </sql>
 
+
 <!-- REMOVE TMP COLUMNS USED FOR MIGRATION -->
 <dropColumn tableName="ATTACHMENT_LIST" columnName="TMP_CRL_ID" />
-<dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
+
 </changeSet>
-<!-- ************** /mysql triggers *************** -->
 </databaseChangeLog>

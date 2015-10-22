@@ -25,6 +25,7 @@ import javax.inject.Inject
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.tree.TreeEntity
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
@@ -52,24 +53,28 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 	
 	def "should add new folder to library"() {
 		given :
-		def parent = crlnDao.findById(-1L);
-		def library = crlDao.findById(-1L);
+		def parent = crlnDao.findById(-1L)
+		def library = crlDao.findById(-1L)
 		
-		CustomReportFolder folder = new CustomReportFolder();
-		folder.setName("newFolder");
+		CustomReportFolder folder = new CustomReportFolder()
+		folder.setName("newFolder")
 		
 		when:
-		def res = service.createNewNode(-1L,folder);
-		def resId = res.getId();
-		getSession().flush();
-		getSession().clear();
-		def newChildAfterPersist = crlnDao.findById(resId);
-		def parentNode = newChildAfterPersist.getParent();
+		def res = service.createNewNode(-1L,folder)
+		def resId = res.getId()
+		getSession().flush()
+		getSession().clear()
+		def newChildAfterPersist = crlnDao.findById(resId)
+		def parentNode = newChildAfterPersist.getParent()
+		def entityLinkedToNode = newChildAfterPersist.getEntity()
+		def projectLinked = entityLinkedToNode.getProject();
 
 		then:
-		res.id != null;
-		library != null;
-		parentNode.id == parent.id;
+		res.id != null
+		library != null
+		parentNode.id == parent.id
+		entityLinkedToNode != null
+		projectLinked.getId() == -1L
 	}
 	
 	def "should find descendants for nodes"() {

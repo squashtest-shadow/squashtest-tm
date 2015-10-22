@@ -35,7 +35,7 @@ public interface CustomReportWorkspaceService {
 	 * @return
 	 */
 	List<CustomReportLibrary> findAllLibraries();
-
+	
 	/**
 	 * Returns all CustomReportLibrary that the user may edit.
 	 * 

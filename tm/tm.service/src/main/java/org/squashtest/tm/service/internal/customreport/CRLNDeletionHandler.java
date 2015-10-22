@@ -48,8 +48,7 @@ public class CRLNDeletionHandler implements
 	 */
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
-		List<SuppressionPreviewReport> reports = new ArrayList<SuppressionPreviewReport>();
-		return reports;
+		return new ArrayList<SuppressionPreviewReport>();
 	}
 
 	/**

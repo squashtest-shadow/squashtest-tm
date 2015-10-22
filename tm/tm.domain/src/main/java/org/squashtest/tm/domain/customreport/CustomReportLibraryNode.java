@@ -47,6 +47,7 @@ import org.hibernate.annotations.Table;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 import org.squashtest.tm.domain.tree.TreeLibrary;
@@ -54,6 +55,7 @@ import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(appliesTo="CUSTOM_REPORT_LIBRARY_NODE")
@@ -110,16 +112,16 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
 	private TreeEntity entity;
 	
-	@ManyToOne(fetch = FetchType.LAZY, targetEntity=CustomReportLibrary.class)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRL_ID")
-	private TreeLibrary library;
+	private CustomReportLibrary library;
 	
 	public CustomReportLibraryNode() {
 		super();
 	}
 	
 	public CustomReportLibraryNode(CustomReportTreeDefinition entityType,
-			Long entityId, String name, TreeLibrary library) {
+			Long entityId, String name, CustomReportLibrary library) {
 		super();
 		this.entityType = entityType;
 		this.entityId = entityId;
@@ -148,12 +150,20 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	@Override
-	public TreeLibrary getLibrary() {
+	public GenericTreeLibrary getLibrary() {
+		return library;
+	}
+	
+	/**
+	 * concrete class getter for @AclConstrainedObject
+	 * @return
+	 */
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary() {
 		return library;
 	}
 
-	@Override
-	public void setLibrary(TreeLibrary library) {
+	public void setLibrary(CustomReportLibrary library) {
 		this.library = library;
 	}
 	

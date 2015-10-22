@@ -547,6 +547,13 @@
 			<value>org.squashtest.tm.service.chart.ChartModificationService</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+	<osgi:reference id="org.squashtest.tm.service.customreport.CustomReportFolderService"
+		bean-name="org.squashtest.tm.service.customreport.CustomReportFolderService">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportFolderService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 	
 

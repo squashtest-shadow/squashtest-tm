@@ -22,17 +22,21 @@ package org.squashtest.tm.domain.customreport;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 public class CustomReportFolder implements TreeEntity {
@@ -52,6 +56,10 @@ public class CustomReportFolder implements TreeEntity {
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROJECT_ID")
+	private Project project;
 	
 	@Override
 	public Long getId() {
@@ -82,14 +90,24 @@ public class CustomReportFolder implements TreeEntity {
 	}
 	
 	@Override
-	public TreeLibraryNode getTreeNode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
+	
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary() {
+		return project.getCustomReportLibrary();
+	}
 
+	@Override
+	public Project getProject() {
+		return project;
+	}
+
+	@Override
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	
 }

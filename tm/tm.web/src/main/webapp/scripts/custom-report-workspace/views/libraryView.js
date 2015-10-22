@@ -28,7 +28,7 @@ define(["underscore","backbone","squash.translator","handlebars"],
 		initialize : function(){
 			_.bindAll(this, "render");
 			this.model.fetch({
-       success: this.render
+      success: this.render
      });
 		},
 
@@ -39,6 +39,7 @@ define(["underscore","backbone","squash.translator","handlebars"],
 			var source = $("#tpl-show-library").html();
 			var template = Handlebars.compile(source);
 			this.$el.append(template(this.model.toJSON()));
+			
 		},
 
   });

@@ -34,6 +34,8 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 public interface CustomReportLibraryNodeService {
 	
+	
+	
 	/**
 	 * Return a {@link CustomReportLibraryNode} given an id
 	 * @param treeNodeId
@@ -99,4 +101,6 @@ public interface CustomReportLibraryNodeService {
 	List<Long> findDescendantIds(List<Long> nodeIds);
 	
 	void renameNode(Long nodeId, String newName) throws DuplicateNameException;
+
+
 }

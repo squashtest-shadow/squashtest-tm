@@ -18,31 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.customreport
+package org.squashtest.tm.service.internal.customreport;
 
-import javax.inject.Inject
+import javax.inject.Inject;
 
-import org.hibernate.SessionFactory
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.service.customreport.CustomReportFolderService;
+import org.squashtest.tm.service.internal.repository.CustomReportFolderDao;
 
-import spock.unitils.UnitilsSupport
-
-@UnitilsSupport
-@Transactional
-@DataSet("CustomCustomReportNodeDaoIT.sandbox.xml")
-class CustomCustomReportLibraryDaoIT extends DbunitServiceSpecification {
-
-	@Inject
-	CustomReportLibraryDao crdao;
+@Service("org.squashtest.tm.service.customreport.CustomReportFolderService")
+public class CustomReportFolderServiceImpl implements
+		CustomReportFolderService {
 	
-	def "should find a crl by id"() {
-		when:
-		def res = crdao.findById(-1L);
-
-		then:
-		res != null;
+	@Inject
+	private CustomReportFolderDao folderDao;
+	
+	@Override
+	@PreAuthorize(WRITE_CRF_OR_ADMIN)
+	public void updateDescription(Long entityId, String newDescription) {
+		CustomReportFolder crf = folderDao.findById(entityId);
+		crf.setDescription(newDescription);
 	}
 }
