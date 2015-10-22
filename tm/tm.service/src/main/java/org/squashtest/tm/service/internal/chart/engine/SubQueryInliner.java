@@ -18,10 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.chart.engine
+package org.squashtest.tm.service.internal.chart.engine;
 
-import spock.lang.Specification
+import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
-class ProjectionPlannerTest extends Specification {
+import com.querydsl.jpa.hibernate.HibernateQuery;
+
+/**
+ * This class inlines a subquery into a main query, it is used for ChartQueries having a QueryStrategy = INLINED.
+ * 
+ * @author bsiri
+ *
+ */
+class SubQueryInliner {
+
+	// obviously the profile below should be overriden
+	private QueryProfile profile = QueryProfile.MAIN_QUERY;
+
+	private HibernateQuery<?> mainquery;
+	private QuerydslToolbox utils;
+	private DetailedChartQuery definition;
+
+	// for testing purposes
+	SubQueryInliner(){
+		super();
+	}
 
 }

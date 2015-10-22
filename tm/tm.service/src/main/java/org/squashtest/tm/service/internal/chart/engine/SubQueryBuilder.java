@@ -35,6 +35,12 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
+/**
+ * This class creates a subquery, it is used for ChartQueries having a QueryStrategy = SUBQUERY.
+ * 
+ * @author bsiri
+ *
+ */
 class SubQueryBuilder extends QueryBuilder {
 
 

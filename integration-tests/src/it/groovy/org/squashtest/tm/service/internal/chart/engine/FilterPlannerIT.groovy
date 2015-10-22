@@ -58,22 +58,13 @@ import spock.unitils.UnitilsSupport
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.jpa.hibernate.HibernateQuery
-
+import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
 
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
 class FilterPlannerIT extends DbunitDaoSpecification {
 
-	static QTestCase tc = QTestCase.testCase
-	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
-	static QRequirementVersion v = QRequirementVersion.requirementVersion
-	static QRequirement r = QRequirement.requirement
-	static QIterationTestPlanItem itp = QIterationTestPlanItem.iterationTestPlanItem
-	static QIteration ite = QIteration.iteration
-	static QCampaign cp = QCampaign.campaign
-	static QExecution exec = QExecution.execution
-	static QIssue iss = QIssue.issue
 
 
 	// TODO : test the AND/OR mechanism
@@ -108,33 +99,6 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	}
 
-
-	def mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new MeasureColumn(column : proto, operation : operation)
-
-		return meas
-
-	}
-
-	def mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new AxisColumn(column : proto, operation : operation)
-
-		return meas
-
-	}
-
-	def mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
-		def specType = new SpecializedEntityType(entityType : eType)
-		def proto = new ColumnPrototype(specializedType : specType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def filter = new Filter(column : proto, operation : operation, values : values)
-
-		return filter
-
-	}
 
 
 	def HibernateQuery from(clz){

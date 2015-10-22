@@ -246,17 +246,10 @@ class QueryPlanner {
 	}
 
 
-	private boolean isKnown(InternalEntityType type){
-		return isKnown(utils.getQBean(type));
-	}
-
 	private boolean isKnown(EntityPathBase<?> path){
 		return aliases.contains(path.getMetadata().getName());
 	}
 
-	private void registerAlias(InternalEntityType type){
-		registerAlias(utils.getQBean(type));
-	}
 
 	private void registerAlias(EntityPathBase<?> path){
 		aliases.add(path.getMetadata().getName());

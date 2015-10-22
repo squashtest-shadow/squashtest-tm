@@ -32,8 +32,10 @@ import java.util.Set;
 
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ChartQuery.QueryStrategy;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
@@ -175,9 +177,7 @@ class QuerydslToolbox {
 			break;
 
 		case CALCULATED :
-			EntityPathBase<?> colBean = getQBean(col);
-			SubQueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
-			selectElement = qbuilder.createQuery();
+			selectElement = createSubquerySelect(col);
 			break;
 
 		default :
@@ -268,6 +268,34 @@ class QuerydslToolbox {
 		return attribute;
 
 	}
+
+
+	Expression<?> createSubquerySelect(ColumnPrototypeInstance col) {
+		Expression<?> expression = null;
+
+		switch(subQueryStrategy(col)){
+		case SUBQUERY :
+			EntityPathBase<?> colBean = getQBean(col);
+			SubQueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
+			expression = qbuilder.createQuery();
+			break;
+
+		case INLINED :
+			//QuerydslToolbox
+
+
+			break;
+
+
+		case MAIN : throw new IllegalArgumentException(
+				"Attempted to create a subquery for column '"+col.getColumn().getLabel()+
+				"' from what appears to be a main query. " +
+				"This is probably due to an ill-inserted entry in the database, please report this to the suppport.");
+		}
+
+		return expression;
+	}
+
 
 	BooleanExpression createAttributePredicate(Filter filter){
 		DataType datatype = filter.getDataType();
@@ -389,7 +417,6 @@ class QuerydslToolbox {
 
 
 	private SubQueryBuilder createSubquery(ColumnPrototypeInstance col){
-
 		ColumnPrototype prototype = col.getColumn();
 		ChartQuery queryDef = prototype.getSubQuery();
 		DetailedChartQuery detailedDef = new DetailedChartQuery(queryDef);
@@ -438,6 +465,14 @@ class QuerydslToolbox {
 		return result;
 	}
 
+	// warning : should be called on columns that have a ColumnType = CALCULATED only
+	private QueryStrategy subQueryStrategy(ColumnPrototypeInstance col){
+		ColumnPrototype proto = col.getColumn();
+		if (proto.getColumnType() != ColumnType.CALCULATED){
+			throw new IllegalArgumentException("column '"+proto.getLabel()+"' has a column type of '"+proto.getColumnType()+"', therefore it has no subquery");
+		}
+		return proto.getSubQuery().getStrategy();
+	}
 
 
 	private static final class AliasCollector implements Visitor<Void, Set<String>>{
