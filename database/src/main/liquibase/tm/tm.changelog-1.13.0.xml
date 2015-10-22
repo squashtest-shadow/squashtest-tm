@@ -95,7 +95,7 @@
 	<property name="itpTesterLogin" 		value="59"/>
 	<property name="itpLastExec" 			value="60"/>
 	<property name="itpBugCount" 			value="61"/>
-	
+
 	<property name="exId" 					value="62" />
 	<property name="exDsLabel" 				value="63" />
 	<property name="exLabel" 				value="64" />
@@ -104,30 +104,30 @@
 	<property name="exTesterLogin" 			value="67" />
 	<property name="exMode" 				value="68" />
 	<property name="exBugCount" 			value="69" />
-	
+
 	<property name="isId"					value="70" />
 	<property name="isStatus" 				value="71" />
 	<property name="isSeverity" 			value="72" />
 	<property name="isBugtrackerLabel"		value="73" />
-	
+
 	<property name="tsId"					value="74" />
 	<property name="tsClass"				value="75" />
-	
+
 	<property name="tcnatId"				value="76" />
 	<property name="tcnatLabel"				value="77" />
-	
+
 	<property name="tctypId"				value="78" />
 	<property name="tctypLabel"				value="79" />
-	
+
 	<property name="rvcatId"				value="80" />
 	<property name="rvcatLabel"				value="81" />
 
 	<property name="tcmilId"				value="82" />
 	<property name="tcmilLabel"				value="83" />
-		
+
 	<property name="rvmilId"				value="84" />
 	<property name="rvmilLabel"				value="85" />
-	
+
 	<property name="itpassignId"			value="86" />
 	<property name="itpassignLogin"			value="87" />
 
@@ -252,13 +252,13 @@
 
 			<column name="NAME" type="VARCHAR(100)" remarks="internal usage, when this CHART_QUERY is a
 			CHART_COLUMN_PROTOTYPE subquery the name helps identify which one" />
-			
-			<column name="STRATEGY" type="VARCHAR(20)" remarks="says how the query builder should integrate this query 
+
+			<column name="STRATEGY" type="VARCHAR(20)" remarks="says how the query builder should integrate this query
 			to a main query. Accepts values : MAIN, SUBQUERY or INLINED"/>
-			
-			<column name="JOIN_STYLE" type="VARCHAR(10)" remarks="generally indicate whether should use inner join or left join when a 
+
+			<column name="JOIN_STYLE" type="VARCHAR(10)" remarks="generally indicate whether should use inner join or left join when a
 			natural join is possible. Possible values : INNER_JOIN or LEFT_JOIN"/>
-					
+
 		</createTable>
 
 
@@ -336,11 +336,11 @@
 
 			<column name="ENTITY_TYPE" type="java.sql.Types.VARCHAR(30)" remarks="The kind of entities this column belongs to"/>
 
-			<column name="ENTITY_ROLE" type="VARCHAR(40)" remarks="a complementary qualifier for ENTITY_TYPE, 
-										used when an entity has an auxialiary role regarding another entity. 
-										For instance an InfoListItem may have a role of nature for a TestCase, 
+			<column name="ENTITY_ROLE" type="VARCHAR(40)" remarks="a complementary qualifier for ENTITY_TYPE,
+										used when an entity has an auxialiary role regarding another entity.
+										For instance an InfoListItem may have a role of nature for a TestCase,
 										or category for a RequirementVersion. May be null if nothing special about it."/>
-			
+
 			<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)" remarks="The name of the attribute of the entity"/>
 
 			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="Data type of the attribute"/>
@@ -608,36 +608,36 @@
 				(${itActStart}, 'AXIS'), (${itActStart}, 'FILTER'),
 				(${itActEnd}, 'AXIS'), (${itActEnd}, 'FILTER');
 		</sql>
-		
+
 		<!-- simple columns for  ITERATION_TEST_PLAN_ITEM -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 					
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${itpId},  'ATTRIBUTE', 'ITEM_TEST_PLAN_ID','ITEM_TEST_PLAN', 'NUMERIC', 'id'),
 				(${itpLabel},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LABEL','ITEM_TEST_PLAN', 'STRING', 'label'),
 				(${itpStatus},  'ATTRIBUTE', 'ITEM_TEST_PLAN_STATUS','ITEM_TEST_PLAN', 'EXECUTION_STATUS', 'executionStatus'),
 				(${itpLastExec},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LASTEXEC','ITEM_TEST_PLAN', 'DATE', 'lastExecutedOn');
-			
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
 				(${itpId}, 'AXIS'), (${itpId}, 'FILTER'), (${itpId}, 'MEASURE'),
 				(${itpLabel}, 'AXIS'), (${itpLabel}, 'FILTER'),
 				(${itpStatus}, 'AXIS'), (${itpStatus}, 'FILTER'), (${itpStatus}, 'MEASURE'),
 				(${itpLastExec}, 'AXIS'), (${itpLastExec}, 'FILTER');
-		</sql>	
-			
+		</sql>
+
 		<!-- simple columns for EXECUTION -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 					
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${exId},  'ATTRIBUTE', 'EXECUTION_ID','EXECUTION', 'NUMERIC', 'id'),
 				(${exLabel},  'ATTRIBUTE', 'EXECUTION_LABEL','EXECUTION', 'STRING', 'name'),
 				(${exDsLabel},  'ATTRIBUTE', 'EXECUTION_DS_LABEL','EXECUTION', 'STRING', 'datasetLabel'),
 				(${exLastExec},  'ATTRIBUTE', 'EXECUTION_LASTEXEC','EXECUTION', 'DATE', 'lastExecutedOn'),
 				(${exTesterLogin},  'ATTRIBUTE', 'EXECUTION_TS_LOGIN','EXECUTION', 'STRING', 'lastExecutedBy'),
 				(${exStatus},  'ATTRIBUTE', 'EXECUTION_STATUS','EXECUTION', 'EXECUTION_STATUS', 'executionStatus');
-			
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
 				(${exId}, 'AXIS'), (${exId}, 'FILTER'), (${exId}, 'MEASURE'),
 				(${exLabel}, 'AXIS'), (${exLabel}, 'FILTER'),
@@ -645,90 +645,90 @@
 				(${exLastExec}, 'AXIS'), (${exLastExec}, 'FILTER'),
 				(${exTesterLogin}, 'AXIS'), (${exTesterLogin}, 'FILTER'),
 				(${exStatus}, 'AXIS'), (${exStatus}, 'FILTER'), (${exStatus}, 'MEASURE');
-		</sql>	
-						
+		</sql>
+
 		<!-- simple columns for ISSUE -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 					
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${isId},  'ATTRIBUTE', 'ISSUE_ID','ISSUE', 'NUMERIC', 'id'),
 				(${isStatus},  'ATTRIBUTE', 'ISSUE_STATUS','ISSUE', 'STRING', 'status'),
 				(${isSeverity},  'ATTRIBUTE', 'ISSUE_SEVERITY','ISSUE', 'STRING', 'severity'),
 				(${isBugtrackerLabel},  'ATTRIBUTE', 'ISSUE_BUGTRACKER','ISSUE', 'String', 'bugtracker');
-			
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
 				(${isId}, 'AXIS'), (${isId}, 'FILTER'), (${isId}, 'MEASURE'),
 				(${isStatus}, 'AXIS'), (${isStatus}, 'FILTER'),
 				(${isSeverity}, 'AXIS'), (${isSeverity}, 'FILTER'),
 				(${isBugtrackerLabel}, 'AXIS'), (${isBugtrackerLabel}, 'FILTER');
-		</sql>	
-		
+		</sql>
+
 		<!--  column defs below all have attribute business=false, hence no inserts needed for CHART_COLUMN_ROLE -->
-		
+
 		<!-- simple columns for TEST_STEP (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 					
-				(${tsId}, 'ATTRIBUTE', FALSE, 'STEP_ID','TEST_CASE_STEP', 'NUMERIC', 'id'), 					
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
+				(${tsId}, 'ATTRIBUTE', FALSE, 'STEP_ID','TEST_CASE_STEP', 'NUMERIC', 'id'),
 				(${tsClass}, 'ATTRIBUTE', FALSE, 'STEP_CLASS','TEST_CASE_STEP', 'NUMERIC', 'class');
-			
-		</sql>	
-		
+
+		</sql>
+
 		<!-- simple columns for TEST_CASE_NATURE -> INFO_LIST_ITEM (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 	
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${tcnatId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'NUMERIC', 'id'),
 				(${tcnatLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'STRING', 'label');
-		</sql>	
-		
-				
+		</sql>
+
+
 		<!-- simple columns for TEST_CASE_TYPE -> INFO_LIST_ITEM (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 	
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${tctypId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'NUMERIC', 'id'),
 				(${tctypLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'STRING', 'label');
-		</sql>	
-						
+		</sql>
+
 		<!-- simple columns for REQUIREMENT_VERSION_CATEGORY -> INFO_LIST_ITEM (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 	
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${rvcatId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'NUMERIC', 'id'),
 				(${rvcatLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'STRING', 'label');
-		</sql>	
-		
+		</sql>
+
 		<!-- simple columns for TEST_CASE_MILESTONE -> MILESTONE (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 	
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${tcmilId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'TEST_CASE_MILESTONE', 'NUMERIC', 'id'),
 				(${tcmilLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'TEST_CASE_MILESTONE', 'STRING', 'label');
-		</sql>	
-				
+		</sql>
+
 		<!-- simple columns for REQUIREMENT_VERSION_MILESTONE -> MILESTONE (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 	
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${rvmilId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'NUMERIC', 'id'),
 				(${rvmilLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'STRING', 'label');
-		</sql>	
-		
-		
+		</sql>
+
+
 		<!-- simple columns for ITERATION_TEST_PLAN_ASSIGNED_USER -> USER (internal column only) -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME) 
-			VALUES 	
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
+			VALUES
 				(${itpassignId}, 'ATTRIBUTE', FALSE, 'USER_ID', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'NUMERIC', 'id'),
-				(${itpassignLogin}, 'ATTRIBUTE', FALSE, 'USER_LOGIN', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'STRING', 'label');	
-		</sql>	
-			
+				(${itpassignLogin}, 'ATTRIBUTE', FALSE, 'USER_LOGIN', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'STRING', 'label');
+		</sql>
+
 		<!--  ================== calculated columns ====================== -->
 
 		<!--  here are the definition of subqueries and column prototype referring to it-->
-		
+
 		<!--  REQUIREMENT : versions count -->
 
 		<sql>
@@ -750,53 +750,53 @@
 				(${reqVCount}, 'AXIS'), (${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
 
 		</sql>
-		
-					
-			
+
+
+
 		<!--  REQUIREMENT_VERSION : nb test cases-->
 
 		<sql>
 			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (2, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
-			
+
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
 				values (${tcId}, 2, 'COUNT', 0);
-			
+
 			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
 				values (${rvId}, 2, 'NONE', 0);
-		
-		
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID) 
-			VALUES 
+
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+			VALUES
 				(${rvVerifTCCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_TCCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(requirementVersionCoverages)', 2);
-			
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
-			VALUES 
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+			VALUES
 				(${rvVerifTCCount}, 'AXIS'), (${rvVerifTCCount}, 'FILTER'), (${rvVerifTCCount}, 'MEASURE');
-		
+
 		</sql>
-			
+
 		<!--  REQUIREMENT_VERSION : nb milestones -->
 
 		<sql>
 			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (3, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'INLINED', 'LEFT_JOIN');
-			
+
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
 				values (${rvmilId}, 3, 'COUNT', 0);
-			
+
 			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
 				values (${rvId}, 3, 'NONE', 0);
-		
-		
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID) 
-			VALUES 
+
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+			VALUES
 				(${rvMilesCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_MILCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(milestones)', 3);
-			
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
-			VALUES 
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+			VALUES
 				(${rvMilesCount}, 'AXIS'), (${rvMilesCount}, 'FILTER'), (${rvMilesCount}, 'MEASURE');
-		
+
 		</sql>
-		
+
 	</changeSet>
 
  <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
@@ -1296,6 +1296,6 @@
 
 <!-- REMOVE TMP COLUMNS USED FOR MIGRATION -->
 <dropColumn tableName="ATTACHMENT_LIST" columnName="TMP_CRL_ID" />
-
+<dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
 </changeSet>
 </databaseChangeLog>
