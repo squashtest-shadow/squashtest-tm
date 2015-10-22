@@ -185,6 +185,7 @@ define(
 
 							self.options._form.ajaxSubmit({
 								url : url + "?upload-ticket=" + ticket,
+							type: "post",
 								dataType : "text/html",
 								beforeSend : function(xhr) {
 									self.options._xhr = xhr;
