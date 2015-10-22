@@ -318,55 +318,6 @@
     </div>
 
 
-    <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
-      title="new test case">
-      
-      
-      <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-      
-      <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-       
-      <div data-def="state=confirm">     
-      <table class="add-node-attributes">
-
-        <tr>
-          <td>
-            <label for="add-test-case-name" th:text="#{label.Name}">Name</label>
-          </td>
-
-          <td>
-            <input id="add-test-case-name" type="text" size="50" maxlength="255" />
-            <br />
-            <span class="error-message name-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="add-test-case-reference" th:text="#{label.Reference}">Reference</label>
-          </td>
-
-          <td>
-            <input id="add-test-case-reference" type="text" size="20" maxlength="50" />
-            <br />
-            <span class="error-message reference-error"></span>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label for="add-test-case-description" th:text="#{label.Description}">Description</label>
-          </td>
-          <td>
-            <textarea id="add-test-case-description" data-def="isrich"></textarea>
-          </td>
-        </tr>
-      </table>
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.addAnother}" value="add another" data-def="evt=add-another, state=confirm, mainbtn=confirm" />
-        <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
-        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel" />
-      </div>
-      </div>
-    </div>
 
     <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"
       title="rename tree node">

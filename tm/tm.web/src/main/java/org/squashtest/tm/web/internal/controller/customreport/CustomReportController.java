@@ -74,6 +74,16 @@ public class CustomReportController {
 	@RequestMapping(method = RequestMethod.POST, value="custom-report-folders/{nodeId}",params = { "newName" })
 	@ResponseBody
 	public RenameModel renameCRF(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+	
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-dashboard/{nodeId}",params = { "newName" })
+	@ResponseBody
+	public RenameModel renameCRD(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+	
+	private RenameModel renameNode (long nodeId, String newName){
 		customReportLibraryNodeService.renameNode(nodeId, newName);
 		return new RenameModel(newName);
 	}
