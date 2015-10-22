@@ -520,7 +520,7 @@
 				(${rvCreatBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
 				(${rvModBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
 				(${rvLabel}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
-				(${rvCat}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CATEGORY', 'REQUIREMENT_VERSION', 'String', 'category.label'),
+				(${rvCat}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CATEGORY', 'REQUIREMENT_VERSION', 'STRING', 'category.label'),
 				(${rvCrit}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
 				(${rvStatus}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
 
@@ -654,7 +654,7 @@
 				(${isId},  'ATTRIBUTE', 'ISSUE_ID','ISSUE', 'NUMERIC', 'id'),
 				(${isStatus},  'ATTRIBUTE', 'ISSUE_STATUS','ISSUE', 'STRING', 'status'),
 				(${isSeverity},  'ATTRIBUTE', 'ISSUE_SEVERITY','ISSUE', 'STRING', 'severity'),
-				(${isBugtrackerLabel},  'ATTRIBUTE', 'ISSUE_BUGTRACKER','ISSUE', 'String', 'bugtracker');
+				(${isBugtrackerLabel},  'ATTRIBUTE', 'ISSUE_BUGTRACKER','ISSUE', 'STRING', 'bugtracker');
 
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
