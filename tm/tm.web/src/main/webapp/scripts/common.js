@@ -172,8 +172,8 @@ requirejs.config({
 				"jeditable.selectJEditableAuto" : "squashtest/classes/SelectJEditableAuto",
 				//jquery
 				"jstree" : "jquery/jquery.jstree",
-//				"jform" : "jquery/jquery.form",
-				"jform" : "jquery/jquery.form.min",
+				"jform" : "jquery/jquery.form",
+//				"jform" : "jquery/jquery.form.min",
 				"jquery.squash.milestoneDialog" : "milestones/jquery.squash.milestoneDialog",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"jquery.generateId" : "jquery/jquery.generateId",
@@ -291,6 +291,7 @@ requirejs.config({
 					deps : [ "jquery", "jqueryui" ],
 					exports : "DatePickerAuto" // this is a constructor
 				},
+				"jquery.timepicker": [ "jquery", "jqueryui" ],
 				"jquery.squash.togglepanel" : {
 					deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
 					exports : "jquerySquashtmTogglepanel"
