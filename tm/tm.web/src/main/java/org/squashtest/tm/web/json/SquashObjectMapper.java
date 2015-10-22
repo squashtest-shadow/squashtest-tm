@@ -23,6 +23,7 @@ package org.squashtest.tm.web.json;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
@@ -33,6 +34,7 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.web.internal.model.json.AxisColumnMixin;
 import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
 import org.squashtest.tm.web.internal.model.json.ChartQueryMixin;
+import org.squashtest.tm.web.internal.model.json.ColumnPrototypeMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportFolderMixin;
 import org.squashtest.tm.web.internal.model.json.CustomReportLibraryMixin;
 import org.squashtest.tm.web.internal.model.json.FilterMixin;
@@ -75,6 +77,7 @@ public class SquashObjectMapper extends ObjectMapper {
 		addMixInAnnotations(Filter.class, FilterMixin.class);
 		addMixInAnnotations(AxisColumn.class, AxisColumnMixin.class);
 		addMixInAnnotations(MeasureColumn.class, MeasureColumnMixin.class);
+		addMixInAnnotations(ColumnPrototype.class, ColumnPrototypeMixin.class);
 	}
 
 }

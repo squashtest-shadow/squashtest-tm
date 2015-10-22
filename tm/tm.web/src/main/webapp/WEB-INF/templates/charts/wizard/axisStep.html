@@ -25,10 +25,11 @@
 {{#*inline "columnSelector"}}
 
 
+
 <select id="{{ROLE}}">
 {{#each  (lookup attributes.columnPrototypes attributes.selectedEntity)   }}  
 {{#if (contains this.role ../ROLE)}}
- <option value="{{this.label}}">
+ <option value="{{this.label}}"   >
  {{i18n this.label prefix="chart.column."}}
  </option>
 {{/if }}

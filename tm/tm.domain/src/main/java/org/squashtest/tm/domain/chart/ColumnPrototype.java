@@ -140,7 +140,7 @@ public class ColumnPrototype {
 	}
 
 	public EnumSet<ColumnRole> getRole() {
-		return EnumSet.copyOf(role);
+		return role.isEmpty() ? EnumSet.noneOf(ColumnRole.class) : EnumSet.copyOf(role);
 	}
 
 	/**

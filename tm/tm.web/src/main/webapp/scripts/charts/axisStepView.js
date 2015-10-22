@@ -30,13 +30,30 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			var src = $("#measure-operation-tpl").html();
 			this.measureTemplate = 	Handlebars.compile(src);
 			this._initialize(data);
-			this.populateOperation("MEASURE");
-			this.populateOperation("AXIS");
+			this.reloadPreviousValues("MEASURE", "measures");
+			this.reloadPreviousValues("AXIS", "axis");
+		
 		},
 		
 		events : {
 			"change #MEASURE" : "changeMeasure",
 			"change #AXIS" : "changeAxis",	
+		},
+		
+		
+		reloadPreviousValues : function (role, colName){
+            var self = this;
+			var col = this.model.get(colName);	
+			
+			if (col !== undefined){
+				var elem = col[0];
+				$("#" + role).val(elem.column.label);
+				self.populateOperation(role);
+				$("#" + role +"-operation").val(elem.operation);
+				$("#" + role +"-name").val(elem.label);	
+			} else {
+				self.populateOperation(role);
+			}		
 		},
 		
 		updateModel : function() {

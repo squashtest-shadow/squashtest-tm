@@ -31,15 +31,23 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 
 public class JsonChartWizardData {
 
@@ -58,6 +66,13 @@ public class JsonChartWizardData {
 	private EnumSet<EntityType> entityTypes = EnumSet.of(CAMPAIGN, EXECUTION, ISSUE, ITEM_TEST_PLAN, ITERATION,
 			REQUIREMENT, REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE);
 
+	private Map<String, EnumSet<? extends Level>> levelEnums = new HashMap<String, EnumSet<? extends Level>>();
+
+
+	public Map<String, EnumSet<? extends Level>> getLevelEnums() {
+		return levelEnums;
+	}
+
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes) {
 
 		this.columnPrototypes = columnPrototypes;
@@ -74,6 +89,18 @@ public class JsonChartWizardData {
 		for (DataType dt : DataType.values()) {
 			dataTypes.put(dt, dt.getOperations());
 		}
+
+		addLevelEnum("test-case-status", TestCaseStatus.class);
+		addLevelEnum("test-case-execution-mode", TestCaseExecutionMode.class);
+		addLevelEnum("test-case-importance", TestCaseImportance.class);
+		addLevelEnum("requirement-criticality", RequirementCriticality.class);
+		addLevelEnum("requirement-status", RequirementStatus.class);
+		addLevelEnum("execution-status", ExecutionStatus.class);
+
+	}
+
+	private <E extends Enum<E> & Level> void addLevelEnum(String name, Class<E> clazz) {
+		levelEnums.put(name, EnumSet.allOf(clazz));
 	}
 
 

@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -35,4 +36,6 @@ public abstract class FilterMixin {
 	@JsonIgnore
 	public abstract DataType getDataType();
 
+	@JsonIgnore
+	public abstract SpecializedEntityType getSpecializedType();
 }

@@ -21,22 +21,17 @@
 package org.squashtest.tm.web.internal.model.json;
 
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @JsonAutoDetect
-public abstract class AxisColumnMixin {
+public abstract class ColumnPrototypeMixin {
 
 	@JsonIgnore
 	public abstract EntityType getEntityType();
 
 	@JsonIgnore
-	public abstract DataType getDataType();
-
-	@JsonIgnore
-	public abstract SpecializedEntityType getSpecializedType();
-
+	public abstract EntityRole getEntityRole();
 }
