@@ -50,7 +50,6 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeEntityDefinition;
-import org.squashtest.tm.domain.tree.TreeLibrary;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;

@@ -20,16 +20,11 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 
 @Transactional
 public interface CustomReportFolderService {
-	
-	String WRITE_CRF_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportFolder' ,'WRITE') "
-			+ OR_HAS_ROLE_ADMIN;
 	
 	/**
 	 * Update description for {@link CustomReportFolder}. For v1 only folder will have an updatable description

@@ -5833,5 +5833,13 @@ li[rel="requirement"][category-icon="zone_money"] > a > .jstree-icon{
 	background-image: url(../images/icon-lib/zone_money.png); /** sprite-ref: sprites-icons; */
 }
 
+li[rel="dashboard"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_dashboard.png); /** sprite-ref: sprites-icons; */
+}
+
+li[rel="chart"] > a > .jstree-icon{
+	background-image: url(../images/icon-lib/reporting_chart.png); /** sprite-ref: sprites-icons; */
+}
+
 
  

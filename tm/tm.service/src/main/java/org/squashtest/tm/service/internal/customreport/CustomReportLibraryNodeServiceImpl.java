@@ -53,15 +53,6 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 public class CustomReportLibraryNodeServiceImpl implements
 		CustomReportLibraryNodeService {
 	
-	final String READ_CRLN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
-			+ OR_HAS_ROLE_ADMIN;
-	
-	final String WRITE_CRLN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
-			+ OR_HAS_ROLE_ADMIN;
-	
-	final String CREATE_CRLN_OR_ADMIN = "hasPermission(#arg0, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') "
-			+ OR_HAS_ROLE_ADMIN;
-	
 	@Inject
 	protected PermissionEvaluationService permissionService;
 	
@@ -80,7 +71,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize(READ_CRLN_OR_ADMIN)
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
@@ -89,7 +81,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 
 	
 	@Override
-	@PreAuthorize(READ_CRLN_OR_ADMIN)
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public CustomReportFolder findFolderByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.FOLDER);
@@ -97,7 +90,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 	
 	@Override
-	@PreAuthorize(READ_CRLN_OR_ADMIN)
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
@@ -105,7 +99,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 	
 	@Override
-	@PreAuthorize(CREATE_CRLN_OR_ADMIN)
+	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) {
 		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.findById(parentId);
 		if (parentNode == null) {
@@ -146,7 +141,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 	
 	@Override
-	@PreAuthorize(WRITE_CRLN_OR_ADMIN)
+	@PreAuthorize("hasPermission(#nodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public void renameNode(Long nodeId, String newName)
 			throws DuplicateNameException {
 		CustomReportLibraryNode crln = customReportLibraryNodeDao.findById(nodeId);

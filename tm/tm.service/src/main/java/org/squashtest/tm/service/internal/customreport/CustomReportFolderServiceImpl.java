@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import javax.inject.Inject;
 
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -36,7 +38,8 @@ public class CustomReportFolderServiceImpl implements
 	private CustomReportFolderDao folderDao;
 	
 	@Override
-	@PreAuthorize(WRITE_CRF_OR_ADMIN)
+	@PreAuthorize("hasPermission(#entityId, 'org.squashtest.tm.domain.customreport.CustomReportFolder' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public void updateDescription(Long entityId, String newDescription) {
 		CustomReportFolder crf = folderDao.findById(entityId);
 		crf.setDescription(newDescription);
