@@ -49,6 +49,8 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 public class JsonChartWizardData {
 
 	private Map<EntityType, Set<ColumnPrototype>> columnPrototypes;
@@ -68,9 +70,16 @@ public class JsonChartWizardData {
 
 	private Map<String, EnumSet<? extends Level>> levelEnums = new HashMap<String, EnumSet<? extends Level>>();
 
+	private EnumSet<ExecutionStatus> executionStatus = EnumSet.allOf(ExecutionStatus.class);
 
+	@JsonSerialize(contentUsing = LevelEnumSerializer.class)
 	public Map<String, EnumSet<? extends Level>> getLevelEnums() {
 		return levelEnums;
+	}
+
+	@JsonSerialize(using = LevelEnumSerializer.class)
+	public EnumSet<ExecutionStatus> getExecutionStatus() {
+		return executionStatus;
 	}
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes) {
@@ -90,12 +99,12 @@ public class JsonChartWizardData {
 			dataTypes.put(dt, dt.getOperations());
 		}
 
-		addLevelEnum("test-case-status", TestCaseStatus.class);
+		addLevelEnum("TEST_CASE_STATUS", TestCaseStatus.class);
 		addLevelEnum("test-case-execution-mode", TestCaseExecutionMode.class);
-		addLevelEnum("test-case-importance", TestCaseImportance.class);
-		addLevelEnum("requirement-criticality", RequirementCriticality.class);
-		addLevelEnum("requirement-status", RequirementStatus.class);
-		addLevelEnum("execution-status", ExecutionStatus.class);
+		addLevelEnum("TEST_CASE_IMPORTANCE", TestCaseImportance.class);
+		addLevelEnum("REQUIREMENT_VERSION_CRITICALITY", RequirementCriticality.class);
+		addLevelEnum("REQUIREMENT_VERSION_STATUS", RequirementStatus.class);
+
 
 	}
 

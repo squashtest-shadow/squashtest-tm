@@ -49,6 +49,27 @@
 <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
 {{/equal}}
 
+
+{{#equal dataType "EXECUTION_STATUS"}}
+<select id="first-filter-value-{{id}}" name="{{id}}">
+{{#each  data.executionStatus}}  
+<option value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}   
+</select>
+{{/equal}}
+
+{{#equal dataType "LEVEL_ENUM"}}
+<select id="first-filter-value-{{id}}" name="{{id}}">
+{{#each  (lookup data.levelEnums label)}}  
+<option value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}   
+</select>
+{{/equal}}
+
 <br />
 {{/inline}}
 
@@ -65,7 +86,7 @@ CHOOSE FILTER
 </div> 
 {{#each  this}}  
 {{#if (contains this.role "FILTER")}}
-{{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) }}
+{{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
 {{/if }}
 {{/each}}  
  </div>  
