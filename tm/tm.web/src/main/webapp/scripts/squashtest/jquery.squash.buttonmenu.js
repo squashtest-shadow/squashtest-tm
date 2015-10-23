@@ -45,7 +45,7 @@
  * 
  */
 
-define([ "jquery", "jqueryui" ], function($) {
+define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 
 	// prevent double loading
 	if ($.squash && $.squash.buttonmenu){
