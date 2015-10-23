@@ -29,23 +29,22 @@
  * 
  * The form will always propose an empty Item for new inputs. When an item is not empty anymore, a new 
  * empty Item will be appended to the popup.
- * 
- * 
+ *
  * @author bsiri
  */
 
 
-define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
-	if (!! $.fn.multiFileupload){
+define(["jquery", "underscore", "jqueryui", "jform", "jquery.generateId"], function ($, _) {
+	if (!!$.fn.multiFileupload) {
 		return;
 	}
-	
+
 	/*
 	 * Here is an object wrapper for the JQuery version of an Item
 	 * 
 	 */
 
-	$.fn.uploadItem = function(jqContainer) {
+	$.fn.uploadItem = function (jqContainer) {
 
 		// init
 		this.getFile = getFile;
@@ -64,7 +63,7 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 		var myself = this;
 
 		var myfile = this.getFile();
-		myfile.change(function() {
+		myfile.change(function () {
 			inputFileOnChange(myself);
 		});
 
@@ -72,7 +71,7 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 
 		$(mybutton).squashButton();
 
-		mybutton.click(function() {
+		mybutton.click(function () {
 			myself.container.removeItem(myself);
 		});
 
@@ -100,7 +99,7 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 		jqItem.getFile().data("wasEmpty", false);
 
 	}
-	
+
 	// returns the last item of the list of files to upload
 	function findLastItem() {
 		var last = this.find(".attachment-item:last");
@@ -126,7 +125,9 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 
 	function attachementClear() {
 		this.empty();
-		this.appendItem();
+		// NOTE about the weird func call below :  appendItem needs a 'this' but we cannot call 'this.appendItem' because
+		// it might have been monkey-patched into noop func (see $.fn.multiFileupload) and here we need to call the real stuff.
+		appendItem.apply(this, arguments);
 	}
 
 	/* ************** utility code ************** */
@@ -148,7 +149,7 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 			return false;
 		}
 	}
-	
+
 
 	/*
 	 * the container is an object too. It job is to manage the various Items it contains.
@@ -156,7 +157,7 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 	 * 
 	 */
 
-	$.fn.multiFileupload = function(jqItemTemplate) {
+	$.fn.multiFileupload = function (jqItemTemplate, options) {
 
 		// init
 		if (jqItemTemplate != 'undefined') {
@@ -166,12 +167,20 @@ define(["jquery", "jqueryui", "jform", "jquery.generateId"], function($){
 		this.findLastItem = findLastItem;
 		this.removeItem = removeItem;
 		this.clear = attachementClear;
-		this.appendItem = appendItem;
+
+		// TODO to prevent SCRIPTERROR5 on IE9 we're monkey-patching the multifile into a singlefile uploader in a crude way
+		if (/MSIE *9/.test(window.navigator.userAgent)) {
+			window.console.log("[multiFileUpload] Running on IE9, downgrading myself into a single file uploader");
+			this.appendItem = function () { /* NOOP */
+			};
+		} else {
+			this.appendItem = appendItem;
+		}
+
 
 		return this;
 	};
 
 
-	
 	return $.fn.multiFileupload;
 });
