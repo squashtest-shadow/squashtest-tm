@@ -35,11 +35,8 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 
 		render : function(){
 			console.log("RENDER CHART");
-			var source = $("#tpl-show-chart").html();
-			var template = Handlebars.compile(source);
-			console.log("TEAMPLATING CHART");
-			this.$el.append(template());
 
+			var self = this;
 			var url =  urlBuilder.buildURL('custom-report-chart-server',this.model.get('id'));
 
 			$.ajax({
@@ -49,9 +46,18 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 				'url' : url
 			})
 			.success(function(json){
+				self.model.set("name",json.name);
+				self._template();
 				main.buildChart("#chart-display-area", json);
 			});
 		},
+
+		_template : function () {
+			var source = $("#tpl-show-chart").html();
+			var template = Handlebars.compile(source);
+			console.log("TEAMPLATING CHART");
+			this.$el.append(template(this.model.toJSON()));
+		}
 
   });
 

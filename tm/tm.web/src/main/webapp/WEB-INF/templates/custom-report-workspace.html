@@ -240,6 +240,21 @@
 	
 	
 	<!-- /SHOW DASHBOARD  -->
+
+	<!-- SHOW CHART-->
+	 <script id="tpl-show-chart" type="text/x-handlebars-template">
+		<div class="sq-tg expand">
+			<div class="tg-head">
+              <h3>{{name}}</h3>
+            </div>
+			<div class="tg-body">
+				<div id="chart-display-area"></div>
+			</div>
+		</div>
+     </script>
+	
+	<div th:include="charts/rendering/chart-templates :: templates"></div>
+	<!-- /SHOW CHART  -->
   <!-- /BACKBONE VIEWS TEMPLATES -->
   
   
