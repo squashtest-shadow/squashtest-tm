@@ -20,10 +20,17 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 
 import com.querydsl.core.types.Ops;
@@ -41,7 +48,11 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  * </p>
  * 
  * <p>
- * 	In this query the entities are all aliased with the camel case version of the class name. Explicitly : testCase, requirementVersion etc
+ * 	For the main query, the entities are all aliased with the camel case version of the class name. Explicitly : testCase, requirementVersion etc.
+ *  If there are any inlined subqueries, the relevant entities will also be joined and attached to the main query via their respective root entity.
+ *  To do so a new instance of QueryPlanner will be created and invoked in "append mode" using a subquery.
+ *  The extra entities joined that way will be aliased with a deterministic suffix that depend on the ColumnPrototype id that stands for the
+ *  inlined subquery.
  * </p>
  * 
  * <p>
@@ -134,14 +145,14 @@ class QueryPlanner {
 
 
 	/**
-	 * Will append to the query (configured with {@link #appendToQuery(HibernateQuery)})
+	 * Used when there are inlined subqueries. Will append to the query (configured with {@link #appendToQuery(HibernateQuery)})
 	 * the joins defined in the ChartQuery. This new set of joins will be attached to the
 	 * main query on the root entity of this ChartQuery.
 	 * 
 	 * 
 	 */
 
-	void modifyQuery(){
+	private void modifyQuery(){
 		doTheJob();
 	}
 
@@ -165,6 +176,21 @@ class QueryPlanner {
 
 			addJoin(join);
 
+		}
+
+		// now process the inlined subqueries and append their table to the
+		// join clauses as well.
+		for (ColumnPrototypeInstance column : definition.getInlinedColumns()){
+
+			EntityPathBase<?> subRootpath = utils.getQBean(column.getColumn().getSpecializedType());
+
+			DetailedChartQuery detailedSub = new DetailedChartQuery(column);
+
+			QuerydslToolbox toolbox = new QuerydslToolbox(column);
+
+			QueryPlanner subPlanner = new QueryPlanner(detailedSub, toolbox).appendToQuery(query).joinRootEntityOn(subRootpath);
+
+			subPlanner.modifyQuery();
 		}
 	}
 
@@ -244,6 +270,8 @@ class QueryPlanner {
 
 		query.where(condition);
 	}
+
+
 
 
 	private boolean isKnown(EntityPathBase<?> path){

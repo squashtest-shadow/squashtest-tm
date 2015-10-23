@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -51,6 +52,7 @@ import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Ops.DateTimeOps;
+import com.querydsl.core.types.Ops.MathOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
@@ -70,14 +72,31 @@ class QuerydslToolbox {
 
 	private Map<InternalEntityType, String> nondefaultPath = new HashMap<InternalEntityType, String>();
 
+	/**
+	 * Default constructor with default context
+	 */
 	QuerydslToolbox(){
 		super();
 	}
 
-
+	/**
+	 * Constructor with explicit context name
+	 * 
+	 * @param subContext
+	 */
 	QuerydslToolbox(String subContext){
 		super();
 		this.subContext = subContext;
+	}
+
+	/**
+	 * Constructor with context name driven by the given column
+	 * 
+	 * @param column
+	 */
+	QuerydslToolbox(ColumnPrototypeInstance column ){
+		super();
+		this.subContext = "subcolumn_"+column.getColumn().getId();
 	}
 
 	void setSubContext(String subContext) {
@@ -162,6 +181,60 @@ class QuerydslToolbox {
 		return collector.getAliases();
 	}
 
+
+	boolean isAggregate(Operation operation){
+		boolean res = false;
+		switch(operation){
+		case COUNT :
+		case SUM :
+			res = true;
+			break;
+		default :
+			res = false;
+			break;
+		}
+		return res;
+	}
+
+	/**
+	 * Tells whether the given filter is part of a where clause - or a having component
+	 * 
+	 * @param filter
+	 * @return
+	 */
+	/*
+	 * technically a filter is a 'having' component only if :
+	 * 
+	 * 1 - this this filter applies to a column of of type CALCULATED,
+	 * 2 - that happens to have a subquery of strategy INLINED,
+	 * 3 - and the measure of that subquery has an aggregate operation
+	 * 
+	 * Indeed :
+	 * 
+	 * - if the column is an ATTRIBUTE, per construction the data is scalar (therefore no aggregate)
+	 * - if the column is a calculated of subquery, the filter will be handled from within the subquery, then
+	 * 	the whole subquery will be converted to a where clause for the outerquery. see #createAsPredicate()
+	 * to see how it's done.
+	 * - if the column is a custom field, the said custom field is likely a scalar too (unless one day we
+	 * want to count how many tags a given cuf taglist contains).
+	 * 
+	 */
+	boolean isWhereClauseComponent(Filter filter){
+		ColumnPrototypeInstance column = filter;
+
+		while (column.getColumn().getColumnType() == ColumnType.CALCULATED &&
+				subQueryStrategy(column) == QueryStrategy.INLINED
+				){
+			column = column.getColumn().getSubQuery().getMeasures().get(0);
+		}
+
+		return ! isAggregate(column.getOperation());
+	}
+
+	boolean isHavingClauseComponent(Filter filter){
+		return ! isWhereClauseComponent(filter);
+	}
+
 	// ***************************** high level API ***********************
 
 
@@ -190,7 +263,8 @@ class QuerydslToolbox {
 
 
 	/**
-	 * creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' clause
+	 * Creates an Expression like 'baseExp' 'operation' 'operand1', 'operand2' ... suitable for a 'where' or 'having' clause.
+	 * Note that  the caller is responsible of the usage of this expression - 'where' or 'having'.
 	 * 
 	 * @param filter
 	 * @return
@@ -206,16 +280,7 @@ class QuerydslToolbox {
 			break;
 
 		case CALCULATED :
-
-			//create the subquery
-			QueryBuilder qbuilder = createSubquery(filter).asSubwhereQuery().filterMeasureOn(filter);
-			Expression<?> subquery = qbuilder.createQuery();
-
-			// now integrate the subquery
-			Expression<?> entityIdPath = idPath(filter);
-
-			predicate = Expressions.predicate(Ops.IN, entityIdPath, subquery);
-
+			predicate = createSubqueryPredicate(filter);
 			break;
 
 		default :
@@ -252,7 +317,7 @@ class QuerydslToolbox {
 
 
 	/**
-	 * Creates an expression fit for a "select" clause
+	 * Creates an expression fit for a "select" clause,  for columns of ColumnType = ATTRIBUTE
 	 * 
 	 * @param column
 	 * @return
@@ -270,20 +335,29 @@ class QuerydslToolbox {
 	}
 
 
+	/**
+	 * Creates an expression fit for a "select" clause,  for columns of ColumnType = CALCULATED
+	 * 
+	 * @param column
+	 * @return
+	 */
 	Expression<?> createSubquerySelect(ColumnPrototypeInstance col) {
 		Expression<?> expression = null;
 
 		switch(subQueryStrategy(col)){
+
+		// create a subselect statement
 		case SUBQUERY :
 			EntityPathBase<?> colBean = getQBean(col);
 			SubQueryBuilder qbuilder = createSubquery(col).asSubselectQuery().joinAxesOn(colBean);
 			expression = qbuilder.createQuery();
 			break;
 
+			// fetches the measure from the subquery
 		case INLINED :
-			//QuerydslToolbox
-
-
+			QuerydslToolbox subtoolbox = new QuerydslToolbox(col);
+			MeasureColumn submeasure = col.getColumn().getSubQuery().getMeasures().get(0);	// take that Demeter !
+			expression = subtoolbox.createAsSelect(submeasure);
 			break;
 
 
@@ -297,6 +371,12 @@ class QuerydslToolbox {
 	}
 
 
+	/**
+	 * Creates an expression fit for a "where" clause,  for columns of ColumnType = ATTRIBUTE
+	 * 
+	 * @param column
+	 * @return
+	 */
 	BooleanExpression createAttributePredicate(Filter filter){
 		DataType datatype = filter.getDataType();
 		Operation operation = filter.getOperation();
@@ -309,6 +389,54 @@ class QuerydslToolbox {
 		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
 		return createPredicate(operation, attrExpr, operands);
+	}
+
+	/**
+	 * Creates an expression fit for a "where" or "having" clause. It's up to the caller to
+	 * know what to do with that.
+	 * 
+	 * @param column
+	 * @return
+	 */
+	BooleanExpression createSubqueryPredicate(Filter filter) {
+		BooleanExpression predicate = null;
+
+		switch(subQueryStrategy(filter)){
+
+		// create "where entity.id in (subquery)" expression
+		case SUBQUERY :
+			//create the subquery
+			QueryBuilder qbuilder = createSubquery(filter).asSubwhereQuery().filterMeasureOn(filter);
+			Expression<?> subquery = qbuilder.createQuery();
+
+			// now integrate the subquery
+			Expression<?> entityIdPath = idPath(filter);
+
+			predicate = Expressions.predicate(Ops.IN, entityIdPath, subquery);
+			break;
+
+		case INLINED :
+			MeasureColumn submeasure = filter.getColumn().getSubQuery().getMeasures().get(0);	// and take that again !
+			QuerydslToolbox subtoolbox = new QuerydslToolbox(filter);	// create a new toolbox configured with a proper subcontext
+
+			//ok, it is semantically sloppy. But for now the produced element is what we need :-S
+			Expression<?> subexpr = subtoolbox.createAsSelect(submeasure);
+
+			List<Expression<?>> valExpr = makeOperands(filter.getDataType(), filter.getValues());
+			Expression<?>[] operands = valExpr.toArray(new Expression[]{});
+
+			predicate = createPredicate(filter.getOperation(), subexpr, operands);
+
+			break;
+
+		case MAIN :throw new IllegalArgumentException(
+				"Attempted to create a subquery for column '"+filter.getColumn().getLabel()+
+				"' from what appears to be a main query. " +
+				"This is probably due to an ill-inserted entry in the database, please report this to the suppport.");
+		}
+
+
+		return predicate;
 	}
 
 
@@ -434,6 +562,7 @@ class QuerydslToolbox {
 		case BY_YEAR : operator = DateTimeOps.YEAR; break;
 		case BY_MONTH : operator = DateTimeOps.YEAR_MONTH; break;
 		case COUNT : operator = AggOps.COUNT_DISTINCT_AGG; break;
+		case SUM : operator = AggOps.SUM_AGG; break;
 		case GREATER : operator = Ops.GT; break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
@@ -464,6 +593,7 @@ class QuerydslToolbox {
 
 		return result;
 	}
+
 
 	// warning : should be called on columns that have a ColumnType = CALCULATED only
 	private QueryStrategy subQueryStrategy(ColumnPrototypeInstance col){

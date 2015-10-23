@@ -21,13 +21,19 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
@@ -51,6 +57,12 @@ class DetailedChartQuery extends ChartQuery{
 		super();
 	}
 
+
+	/**
+	 * Constructor for a given chartquery
+	 * 
+	 * @param parent
+	 */
 	DetailedChartQuery(ChartQuery parent){
 
 		super();
@@ -80,6 +92,25 @@ class DetailedChartQuery extends ChartQuery{
 
 	}
 
+	/**
+	 * Constructor that will build a DetailedChartQuery for the subquery of the given column
+	 * 
+	 * @param column
+	 */
+	DetailedChartQuery(ColumnPrototypeInstance column){
+		this(column.getColumn().getSubQuery());
+	}
+
+
+	Collection<? extends ColumnPrototypeInstance> getInlinedColumns(){
+		return findSubqueriesForStrategy(new PerStrategyColumnFinder(QueryStrategy.INLINED));
+
+	}
+
+	Collection<? extends ColumnPrototypeInstance> getSubqueryColumns(){
+		return findSubqueriesForStrategy(new PerStrategyColumnFinder(QueryStrategy.SUBQUERY));
+
+	}
 
 	protected InternalEntityType getRootEntity() {
 		return rootEntity;
@@ -114,5 +145,41 @@ class DetailedChartQuery extends ChartQuery{
 	}
 
 
+
+	private Collection<ColumnPrototypeInstance> findSubqueriesForStrategy(PerStrategyColumnFinder finder){
+		Collection<ColumnPrototypeInstance> found = new ArrayList<>();
+
+		Collection<? extends ColumnPrototypeInstance> measures = new ArrayList<>(getMeasures());
+		CollectionUtils.filter(measures, finder);
+		found.addAll(measures);
+
+		Collection<? extends ColumnPrototypeInstance> axes = new ArrayList<>(getAxis());
+		CollectionUtils.filter(axes, finder);
+		found.addAll(axes);
+
+		Collection<? extends ColumnPrototypeInstance> filters = new ArrayList<>(getFilters());
+		CollectionUtils.filter(filters, finder);
+		found.addAll(filters);
+
+		return found;
+	}
+
+	private static final class PerStrategyColumnFinder implements Predicate{
+		private QueryStrategy strategy;
+
+		private PerStrategyColumnFinder(QueryStrategy strategy){
+			this.strategy = strategy;
+		}
+
+		@Override
+		public boolean evaluate(Object col) {
+			ColumnPrototype proto = ((ColumnPrototypeInstance)col).getColumn();
+			return (
+					proto.getColumnType() == ColumnType.CALCULATED &&
+					proto.getSubQuery().getStrategy() == strategy
+					);
+		}
+
+	}
 
 }

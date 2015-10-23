@@ -145,7 +145,7 @@ class SubQueryBuilder extends QueryBuilder {
 
 		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, operands.toArray(new Expression[]{}));
 
-		if (isAggregate(measure.getOperation())){
+		if (utils.isAggregate(measure.getOperation())){
 			detachedQuery.having(predicate);
 		}
 		else{
@@ -154,19 +154,6 @@ class SubQueryBuilder extends QueryBuilder {
 
 	}
 
-
-	private boolean isAggregate(Operation operation){
-		boolean res = false;
-		switch(operation){
-		case COUNT :
-			res = true;
-			break;
-		default :
-			res = false;
-			break;
-		}
-		return res;
-	}
 
 
 	private void checkConfiguration(){

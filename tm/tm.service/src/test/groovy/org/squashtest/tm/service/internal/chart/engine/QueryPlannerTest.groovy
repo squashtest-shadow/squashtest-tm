@@ -21,7 +21,14 @@
 package org.squashtest.tm.service.internal.chart.engine
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ChartQuery.NaturalJoinStyle;
+import org.squashtest.tm.domain.chart.ChartQuery.QueryStrategy;
+import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import com.querydsl.core.types.Predicate;
@@ -31,6 +38,11 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 import spock.lang.Specification
 import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*;
+import static org.squashtest.tm.domain.chart.DataType.*;
+import static org.squashtest.tm.domain.chart.ColumnType.*;
+import static org.squashtest.tm.domain.chart.Operation.*;
+
+
 
 
 class QueryPlannerTest extends Specification {
@@ -294,4 +306,70 @@ from Requirement requirement
   inner join requirementVersionCoverage.verifyingTestCase as testCase
   inner join requirementVersion.category as reqversionCategory_sub"""
 	}
+
+
+	def "should build a main query and also add inlined subqueries"(){
+
+		given : " the first subquery"
+
+		MeasureColumn selectCateg = mkMeasure(ATTRIBUTE, STRING, NONE, org.squashtest.tm.domain.EntityType.INFO_LIST_ITEM, "label")
+		selectCateg.specializedType.entityRole = EntityRole.REQUIREMENT_VERSION_CATEGORY
+
+		AxisColumn axReqversion = mkAxe(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "id")
+
+		ChartQuery categQuery = new ChartQuery(
+				measures : [selectCateg],
+				axis : [axReqversion],
+				strategy : QueryStrategy.INLINED,
+				joinStyle : NaturalJoinStyle.INNER_JOIN
+				)
+
+		and : "the second subquery"
+
+		MeasureColumn selectMiles = mkMeasure(ATTRIBUTE, STRING, NONE, org.squashtest.tm.domain.EntityType.MILESTONE, "label")
+		selectMiles.specializedType.entityRole = EntityRole.TEST_CASE_MILESTONE
+
+		AxisColumn axTC = mkAxe(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
+
+		ChartQuery tcmilesQuery = new ChartQuery(
+				measures : [selectMiles],
+				axis : [axTC],
+				strategy : QueryStrategy.INLINED,
+				joinStyle : NaturalJoinStyle.LEFT_JOIN
+				)
+
+		and : "the main query"
+
+		Filter inlinedCateg = mkFilter(CALCULATED, STRING, NONE, org.squashtest.tm.domain.EntityType.REQUIREMENT_VERSION, "category", ["functional test"])
+		inlinedCateg.column.subQuery = categQuery
+		inlinedCateg.column.id = 5
+
+		MeasureColumn inlinedTCMiles = mkMeasure(CALCULATED, INFO_LIST_ITEM, COUNT, org.squashtest.tm.domain.EntityType.TEST_CASE, "milestones")
+		inlinedTCMiles.column.subQuery = tcmilesQuery
+		inlinedTCMiles.column.id = 7
+
+		AxisColumn tcid = mkAxe(ATTRIBUTE, NUMERIC, NONE, org.squashtest.tm.domain.EntityType.TEST_CASE, "id")
+
+		ChartQuery mainquery = new ChartQuery(
+				measures : [ inlinedTCMiles	],
+				filters : [inlinedCateg],
+				axis : [tcid]
+				)
+
+		when :
+		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
+		HibernateQuery res = planner.createQuery()
+		res.select(tc.id)
+
+		then :
+		res.toString() ==
+				"""select testCase.id
+from TestCase testCase
+  inner join testCase.requirementVersionCoverages as requirementVersionCoverage
+  inner join requirementVersionCoverage.verifiedRequirementVersion as requirementVersion
+  left join testCase.milestones as testCaseMilestone_subcolumn_7
+  inner join requirementVersion.category as reqversionCategory_subcolumn_5"""
+
+	}
+
 }

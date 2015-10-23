@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Predicate;
+
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
@@ -71,13 +74,32 @@ class FilterPlanner {
 	 * multiple {@link Filter} that target the same {@link ColumnPrototype}.</p>
 	 * 
 	 * <p>All filters for a given prototype are ORed together,
-	 * then the ORed expressions are ANded together.</p>
+	 * then the ORed expressions are ANDed together.</p>
 	 * 
 	 */
 	void modifyQuery(){
 
-		Map<ColumnPrototype, Collection<Filter>> sortedFilters = getSortedFilters();
+		addWhereClauses();
+		addHavingClauses();
+	}
 
+
+	private void addWhereClauses(){
+		Map<ColumnPrototype, Collection<Filter>> whereFilters = findWhereFilters();
+		BooleanBuilder wherebuilder = makeBuilder(whereFilters);
+
+		query.where(wherebuilder);
+	}
+
+	private void addHavingClauses(){
+		Map<ColumnPrototype, Collection<Filter>> havingFilters = findHavingFilters();
+
+		BooleanBuilder havingbuilder = makeBuilder(havingFilters);
+
+		query.having(havingbuilder);
+	}
+
+	private BooleanBuilder makeBuilder(Map<ColumnPrototype, Collection<Filter>> sortedFilters){
 		BooleanBuilder mainBuilder = new BooleanBuilder();
 
 		for (Entry<ColumnPrototype, Collection<Filter>> entry : sortedFilters.entrySet()) {
@@ -96,16 +118,43 @@ class FilterPlanner {
 			mainBuilder.and(orBuilder);
 		}
 
-		query.where(mainBuilder);
+		return mainBuilder;
+	}
+
+	private Map<ColumnPrototype, Collection<Filter>> findWhereFilters(){
+		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+
+		CollectionUtils.filter(filters, new Predicate() {
+			@Override
+			public boolean evaluate(Object filter) {
+				return utils.isWhereClauseComponent((Filter)filter);
+			}
+		});
+
+		return sortFilters(filters);
+	}
+
+
+	private Map<ColumnPrototype, Collection<Filter>> findHavingFilters(){
+		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+
+		CollectionUtils.filter(filters, new Predicate() {
+			@Override
+			public boolean evaluate(Object filter) {
+				return utils.isHavingClauseComponent((Filter)filter);
+			}
+		});
+
+		return sortFilters(filters);
 	}
 
 	// this will regroup filters by column prototype. Filters grouped that way will be
 	// OR'ed together.
-	private Map<ColumnPrototype, Collection<Filter>> getSortedFilters(){
+	private Map<ColumnPrototype, Collection<Filter>> sortFilters(Collection<Filter> filters){
 
 		Map<ColumnPrototype, Collection<Filter>> res = new HashMap<>();
 
-		for (Filter filter : definition.getFilters()){
+		for (Filter filter : filters){
 			ColumnPrototype prototype = filter.getColumn();
 
 			if (! res.containsKey(prototype)){

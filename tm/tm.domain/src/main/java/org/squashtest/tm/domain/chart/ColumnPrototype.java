@@ -90,7 +90,7 @@ public class ColumnPrototype {
 	private DataType dataType;
 
 	@Enumerated(EnumType.STRING)
-	private ColumnType columnType;
+	private ColumnType columnType = ColumnType.ATTRIBUTE;
 
 	@OneToOne
 	@JoinColumn(name = "SUBQUERY_ID", nullable = false, insertable = false)
