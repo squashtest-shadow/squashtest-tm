@@ -29,6 +29,8 @@
 		The following properties are used in changeset tm-1.13.0-feature-5375-2
 	 -->
 
+	<!-- column prototype ids -->
+	
 	<property name="reqId" 					value="1" />
 	<property name="reqVCount" 				value="2" />
 
@@ -130,6 +132,18 @@
 
 	<property name="itpassignId"			value="86" />
 	<property name="itpassignLogin"			value="87" />
+
+	<!-- 
+		subquery ids
+	 -->
+	<property name="reqVCountSub" 			value="1"/>
+	<property name="rvVerifTCCountSub"		value="2"/>
+	<property name="rvMilesCountSub"		value="3"/>
+	<property name="tcVerifVersionCountSub" value="4"/>
+
+	<!-- 
+	changesets at last
+	 -->
 
 	<changeSet id="tm-1.13.0" author="bsiri">
 		<comment>Update TM database version number</comment>
@@ -611,7 +625,7 @@
 
 		<!-- simple columns for  ITERATION_TEST_PLAN_ITEM -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
 			VALUES
 				(${itpId},  'ATTRIBUTE', 'ITEM_TEST_PLAN_ID','ITEM_TEST_PLAN', 'NUMERIC', 'id'),
 				(${itpLabel},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LABEL','ITEM_TEST_PLAN', 'STRING', 'label'),
@@ -732,18 +746,18 @@
 		<!--  REQUIREMENT : versions count -->
 
 		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (1, 'REQUIREMENT_NB_VERSIONS_SUBQUERY', 'SUBQUERY', 'INNER_JOIN');
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${reqVCountSub}, 'REQUIREMENT_NB_VERSIONS_SUBQUERY', 'SUBQUERY', 'INNER_JOIN');
 
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${rvId}, 1, 'COUNT', 0);
+				values (${rvId}, ${reqVCountSub}, 'COUNT', 0);
 
 			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${reqId}, 1, 'NONE', 0);
+				values (${reqId}, ${reqVCountSub}, 'NONE', 0);
 
 
 			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
 			VALUES
-				(${reqVCount}, 'CALCULATED', TRUE, 'REQUIREMENT_NB_VERSION', 'REQUIREMENT', 'NUMERIC', 'count(versions)', 1);
+				(${reqVCount}, 'CALCULATED', TRUE, 'REQUIREMENT_NB_VERSIONS', 'REQUIREMENT', 'NUMERIC', 'count(versions)', ${reqVCountSub});
 
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
@@ -756,18 +770,18 @@
 		<!--  REQUIREMENT_VERSION : nb test cases-->
 
 		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (2, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${rvVerifTCCountSub}, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
 
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${tcId}, 2, 'COUNT', 0);
+				values (${tcId}, ${rvVerifTCCountSub}, 'COUNT', 0);
 
 			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${rvId}, 2, 'NONE', 0);
+				values (${rvId}, ${rvVerifTCCountSub}, 'NONE', 0);
 
 
 			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
 			VALUES
-				(${rvVerifTCCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_TCCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(requirementVersionCoverages)', 2);
+				(${rvVerifTCCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_TCCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(requirementVersionCoverages)', ${rvVerifTCCountSub});
 
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
@@ -778,24 +792,46 @@
 		<!--  REQUIREMENT_VERSION : nb milestones -->
 
 		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (3, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'INLINED', 'LEFT_JOIN');
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${rvMilesCountSub}, 'REQUIREMENT_VERSION_MILCOUNT_SUBQUERY', 'INLINED', 'LEFT_JOIN');
 
 			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${rvmilId}, 3, 'COUNT', 0);
+				values (${rvmilId}, ${rvMilesCountSub}, 'COUNT', 0);
 
 			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${rvId}, 3, 'NONE', 0);
+				values (${rvId}, ${rvMilesCountSub}, 'NONE', 0);
 
 
 			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
 			VALUES
-				(${rvMilesCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_MILCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(milestones)', 3);
+				(${rvMilesCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_MILCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(milestones)', ${rvMilesCountSub});
 
 			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 			VALUES
 				(${rvMilesCount}, 'AXIS'), (${rvMilesCount}, 'FILTER'), (${rvMilesCount}, 'MEASURE');
 
 		</sql>
+		
+		<!--  TEST CASE : nb requirement versions -->
+
+		<sql>
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${tcVerifVersionCountSub}, 'TEST_CASE_VERSCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
+
+			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
+				values (${rvId}, ${tcVerifVersionCountSub}, 'COUNT', 0);
+
+			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
+				values (${tcId}, ${tcVerifVersionCountSub}, 'NONE', 0);
+
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+			VALUES
+				(${tcVerifVersionCount}, 'CALCULATED', TRUE, 'TEST_CASE_VERSCOUNT', 'TEST_CASE', 'NUMERIC', 'count(requirementVersionCoverages)', ${tcVerifVersionCountSub});
+
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+			VALUES
+				(${tcVerifVersionCount}, 'AXIS'), (${tcVerifVersionCount}, 'FILTER'), (${tcVerifVersionCount}, 'MEASURE');
+
+		</sql>		
 
 	</changeSet>
 
