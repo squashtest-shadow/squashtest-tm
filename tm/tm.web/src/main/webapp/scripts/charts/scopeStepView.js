@@ -90,7 +90,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 						model : model,
 						treeselector: "#tree",
 						workspace:"campaign",	
-						selectedNode :''
+						canSelectProject:true
 				};
 				tree.initLinkableTree(treeConfig);
 					

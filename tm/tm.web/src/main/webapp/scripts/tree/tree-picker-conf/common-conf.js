@@ -74,6 +74,11 @@ define(function() {
 					opened : (!!settings.selectedNode) ? [ settings.selectedNode ] : []
 				},
 				conditionalselect : function(node) {
+					
+					if (settings.canSelectProject){
+						return true;
+					}
+					
 					if($(node).is("[rel='drive']") ){
 						return false ;
 					}
