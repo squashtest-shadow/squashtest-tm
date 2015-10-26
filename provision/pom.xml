@@ -448,6 +448,7 @@
               <resources>
                 <resource>
                   <directory>src/main/resources/jettyhome</directory>
+                  <filtering>true</filtering>
                 </resource>
               </resources>
               <outputDirectory>${project.build.directory}/jettyhome</outputDirectory>
