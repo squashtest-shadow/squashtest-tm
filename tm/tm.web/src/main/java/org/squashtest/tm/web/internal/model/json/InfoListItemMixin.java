@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import org.squashtest.tm.domain.infolist.InfoList;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
@@ -34,4 +37,7 @@ public abstract class InfoListItemMixin {
 
 	@JsonProperty("isDefault")
 	public abstract boolean isDefault();
+
+	@JsonIgnore
+	private InfoList infoList;
 }

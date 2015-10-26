@@ -70,6 +70,14 @@
 </select>
 {{/equal}}
 
+
+{{#equal dataType "INFO_LIST_ITEM"}}
+<span id="info-list-filter-container-{{id}}" name="{{label}}"/>
+{{/equal}}
+
+
+
+
 <br />
 {{/inline}}
 
@@ -92,5 +100,45 @@ CHOOSE FILTER
  </div>  
 {{/each}}  
 
+</div>
+
+
+
+
+<div th:fragment="chart-wizard-info-list">
+ 
+ <select id="info-list-{{id}}" class="info-lists" name="{{id}}">
+{{#each infolists}}
+ <option value="{{this.code}}">
+ {{#if (eq this.createdBy "system")}} 
+  {{i18n this.label}}
+  {{else}}
+  {{this.label}}
+  {{/if}}
+ </option> 
+{{/each}}
+</select>
+
+<span id="info-list-item-container-{{id}}"/>
 
 </div>
+
+
+
+<div th:fragment="chart-wizard-info-list-item">
+ <select id="first-filter-value-{{id}}">
+{{#each items}}
+ <option value="{{this.code}}">  
+ {{#if ../isSystem}} 
+  {{i18n this.label}}
+  {{else}}
+  {{this.label}}
+  {{/if}}
+ </option> 
+{{/each}}
+</select>
+</div>
+
+
+
+

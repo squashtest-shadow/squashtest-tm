@@ -82,6 +82,12 @@
 <script id="preview-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/previewStep :: chart-wizard-preview" />
    
 <script id="measure-operation-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/axisStep :: chart-wizard-measure-operation " />          
+    
+    
+   <script id="info-list-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-info-list " />
+   <script id="info-list-item-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-info-list-item" /> 
+
+  
                 
 <div th:include="charts/rendering/chart-templates :: templates"></div>
 

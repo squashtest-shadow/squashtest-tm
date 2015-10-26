@@ -30,8 +30,15 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.tmpl = "#filter-step-tpl";
 			this.model = data;
 			this._initialize(data);
+			
+			var infoListSrc = $("#info-list-tpl").html();
+			this.infoListTemplate = Handlebars.compile(infoListSrc);
+			var infoListItemSrc = $("#info-list-item-tpl").html();
+			this.infoListItemTemplate = Handlebars.compile(infoListItemSrc);
+			
 			var pickerconf = confman.getStdDatepicker();
 			$(".date-picker").datepicker(pickerconf);
+			this.initInfoListValues();
 			this.reloadPreviousValues();
 			this.initOperationValues();
 			
@@ -39,6 +46,65 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 	
 		events : {
 			"change .filter-operation-select" : "changeOperation",
+			"change .info-lists" : "changeInfoList"
+		},
+		
+		initInfoListValues : function() {
+			
+			var self = this;
+			var ids =	
+			_.chain(self.model.get("columnPrototypes"))
+			.reduce(function(memo, val) {return memo.concat(val);}, [])
+			.filter(function(val) {return val.dataType == "INFO_LIST_ITEM";})
+			.pluck("id")
+			.value();
+			
+			
+			var infoLists = 
+				_.chain(self.model.get("projectInfoList"))				
+				.pick(self.model.get("projectsScope"))
+				.map(_.pairs) 
+				.reduce(function(memo, val){ return memo.concat(val);}, [])
+	            .reduce(function(memo, val) { 
+	            	if(memo[val[0]] === undefined){
+	            	memo[val[0]] = [];}  
+	            	memo[val[0]] = memo[val[0]].concat(val[1]); 
+	            	return memo;}, {})
+				.value();
+	
+		_.each(ids, function(id){
+			var container = $("#info-list-filter-container-" + id);
+			var name = container.attr("name");
+			var lists = _(infoLists[name]).uniq(false, function (val) {return val.id;});
+			var infoListHtml = self.infoListTemplate({id :id, infolists : lists});
+			container.html(infoListHtml);	
+			self.loadInfoListItems(id);
+		});
+			
+		},
+		
+		loadInfoListItems : function (id) {
+			
+			var self = this;
+			
+			var selectedList = $("#info-list-" + id).val();
+			
+			var infoList = _.chain(self.model.get("projectInfoList"))
+			.reduce(function(memo, val){ return memo.concat(_.values(val));}, [])
+			.find(function(obj) {return obj.code == selectedList;})
+			.value();
+			
+			var infoListItems = infoList["items"];
+			var isSystem = infoList["createdBy"] == "system";
+			
+			var container = $("#info-list-item-container-" + id);
+			var infoListItemHtml = self.infoListItemTemplate({items : infoListItems, isSystem : isSystem, id : id});
+			container.html(infoListItemHtml);
+			
+		}, 
+		
+		changeInfoList : function (event){
+			this.loadInfoListItems(event.target.name);
 		},
 		
 		initOperationValues : function (){
@@ -66,6 +132,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		applyPreviousValues : function (filter){
 			var self = this;
 			var id = filter.column.id;
+			
+			this.reloadInfoList(filter);
 						
 			$("#filter-selection-" + id).attr("checked", "true");
 			$("#filter-operation-select-" + id).val(filter.operation);	
@@ -82,8 +150,29 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var date = $.datepicker.parseDate(self.dateISOFormat, result);
 			result = $.datepicker.formatDate(self.datePickerFormat, date);
 			}
-			
+
 			return  result;	
+		},
+		
+		reloadInfoList : function (filter){
+			
+			var self = this;
+			var id = filter.column.id;
+			var value = filter.values[0];
+			
+			var selectedInfoList = _.chain(self.model.get("projectInfoList"))
+			.reduce(function(memo, val){ return memo.concat(_.values(val));}, [])
+			.uniq(false, function(val) {return val.id;})
+		    .reduce(function(memo, val) { 
+		    	memo[val.code] = _.map(val.items, function (item){return item.code;}) 
+		    	;return memo;}, {})
+		    .pairs()
+		    .find(function(val) {return _.contains(val[1], value);})
+		    .first()
+			.value();
+
+			$("#info-list-" + id).val(selectedInfoList);
+			self.loadInfoListItems(id);
 		},
 		
 		updateModel : function() {

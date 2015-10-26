@@ -32,6 +32,7 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,6 +44,8 @@ import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -72,6 +75,12 @@ public class JsonChartWizardData {
 
 	private EnumSet<ExecutionStatus> executionStatus = EnumSet.allOf(ExecutionStatus.class);
 
+	private Map<Long, Map<String, InfoList>> projectInfoList = new HashMap<Long, Map<String, InfoList>>();
+
+	public Map<Long, Map<String, InfoList>> getProjectInfoList() {
+		return projectInfoList;
+	}
+
 	@JsonSerialize(contentUsing = LevelEnumSerializer.class)
 	public Map<String, EnumSet<? extends Level>> getLevelEnums() {
 		return levelEnums;
@@ -82,14 +91,15 @@ public class JsonChartWizardData {
 		return executionStatus;
 	}
 
-	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes) {
+
+	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects) {
 
 		this.columnPrototypes = columnPrototypes;
-		populate();
+		populate(projects);
 
 	}
 
-	private void populate() {
+	private void populate(List<Project> projects) {
 
 		for (ColumnRole cr : ColumnRole.values()) {
 			columRoles.put(cr, cr.getOperations());
@@ -105,6 +115,19 @@ public class JsonChartWizardData {
 		addLevelEnum("REQUIREMENT_VERSION_CRITICALITY", RequirementCriticality.class);
 		addLevelEnum("REQUIREMENT_VERSION_STATUS", RequirementStatus.class);
 
+
+
+
+		for (Project project : projects) {
+
+			Map<String, InfoList> infoLists = new HashMap<String, InfoList>();
+
+			infoLists.put("REQUIREMENT_VERSION_CATEGORY", project.getRequirementCategories());
+			infoLists.put("TEST_CASE_NATURE", project.getTestCaseNatures());
+			infoLists.put("TEST_CASE_TYPE", project.getTestCaseTypes());
+			projectInfoList.put(project.getId(), infoLists);
+
+		}
 
 	}
 

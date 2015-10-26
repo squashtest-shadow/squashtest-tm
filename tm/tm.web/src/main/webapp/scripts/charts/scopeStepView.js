@@ -51,6 +51,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var scope = _.map($("#tree").jstree('get_selected'), function (sel) { return {type : $(sel).attr("restype").split("-").join("_").slice(0,-1).toUpperCase(), id:$(sel).attr("resid")}; } );
 			
 			this.model.set({scope : scope});
+			this.model.set({projectsScope : _.uniq(_.map($("#tree").jstree('get_selected'), function(obj){return $(obj.closest("[project]")).attr("project"); }))});
 		},
 		
 		

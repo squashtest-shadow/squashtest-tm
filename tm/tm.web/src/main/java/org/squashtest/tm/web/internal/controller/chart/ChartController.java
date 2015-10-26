@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.chart;
 
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.validation.Valid;
 
@@ -33,8 +35,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
@@ -52,10 +56,14 @@ public class ChartController {
 	@Inject
 	private CustomReportLibraryNodeService reportNodeService;
 
+	@Inject
+	private ProjectFinder projectFinder;
+
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonChartWizardData getWizardData() {
-		return new JsonChartWizardData(chartService.getColumnPrototypes());
+		List<Project> readableProjects = projectFinder.findAllReadable();
+		return new JsonChartWizardData(chartService.getColumnPrototypes(), readableProjects);
 	}
 
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)

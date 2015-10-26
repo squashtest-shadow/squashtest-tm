@@ -73,6 +73,11 @@ define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _
 		return false;
 	});
 	
+	
+	Handlebars.registerHelper("eq", function(a, b) {
+	 return a==b;
+	});
+	
 	Handlebars.registerHelper("intersect", function(col1, col2){
 		return _.intersection(col1, col2);	
 	});
