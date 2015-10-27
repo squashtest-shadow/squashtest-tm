@@ -31,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ChartQuery.QueryStrategy;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
@@ -47,12 +48,12 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import com.querydsl.core.JoinExpression;
 import com.querydsl.core.types.Constant;
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.FactoryExpression;
 import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Ops.DateTimeOps;
-import com.querydsl.core.types.Ops.MathOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
@@ -385,7 +386,7 @@ class QuerydslToolbox {
 		Expression<?> attrExpr = attributePath(filter);
 
 		// convert the operands
-		List<Expression<?>> valExpr = makeOperands(datatype, filter.getValues());
+		List<Expression<?>> valExpr = makeOperands(operation, datatype, filter.getValues());
 		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
 		return createPredicate(operation, attrExpr, operands);
@@ -422,7 +423,7 @@ class QuerydslToolbox {
 			//ok, it is semantically sloppy. But for now the produced element is what we need :-S
 			Expression<?> subexpr = subtoolbox.createAsSelect(submeasure);
 
-			List<Expression<?>> valExpr = makeOperands(filter.getDataType(), filter.getValues());
+			List<Expression<?>> valExpr = makeOperands(filter.getOperation(), filter.getDataType(), filter.getValues());
 			Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
 			predicate = createPredicate(filter.getOperation(), subexpr, operands);
@@ -465,10 +466,10 @@ class QuerydslToolbox {
 		return Expressions.predicate(operator, expressions);
 	}
 
-	List<Expression<?>>  createOperands(Filter filter){
+	List<Expression<?>> createOperands(Filter filter, Operation operation) {
 		DataType type = filter.getDataType();
 		List<String> values = filter.getValues();
-		return makeOperands(type, values);
+		return makeOperands(operation, type, values);
 	}
 
 
@@ -515,8 +516,9 @@ class QuerydslToolbox {
 
 
 
-	List<Expression<?>> makeOperands(DataType type, List<String> values ){
+	List<Expression<?>> makeOperands(Operation operation, DataType type, List<String> values) {
 		try{
+
 			List<Expression<?>> expressions = new ArrayList<>(values.size());
 
 			for (String val : values){
@@ -531,13 +533,25 @@ class QuerydslToolbox {
 				case DATE :
 					operand = DateUtils.parseIso8601Date(val);
 					break;
+				case EXECUTION_STATUS:
+					operand = ExecutionStatus.valueOf(val);
+					break;
+				case LEVEL_ENUM :
+					operand = LevelEnumHelper.valueOf(val); // TODO
+					break;
 				default : throw new IllegalArgumentException("type '"+type+"' not yet supported");
 				}
 
 				expressions.add(Expressions.constant(operand));
 			}
 
+			if (operation == Operation.IN) {
+				List<Expression<?>> listeExpression = new ArrayList<>(1);
+				listeExpression.add(ExpressionUtils.list(Object.class, expressions.toArray(new Expression[] {})));
+				return listeExpression;
+			}
 			return expressions;
+
 		}catch(ParseException ex){
 			throw new RuntimeException(ex);
 		}
@@ -564,6 +578,10 @@ class QuerydslToolbox {
 		case COUNT : operator = AggOps.COUNT_DISTINCT_AGG; break;
 		case SUM : operator = AggOps.SUM_AGG; break;
 		case GREATER : operator = Ops.GT; break;
+		case IN : operator = Ops.IN; break;
+		case BETWEEN:
+			operator = Ops.BETWEEN;
+			break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
 
@@ -587,6 +605,9 @@ class QuerydslToolbox {
 		case NUMERIC : result = Long.class; break;
 		case EXECUTION_STATUS : result = ExecutionStatus.class; break;
 		case INFO_LIST_ITEM : result = InfoListItem.class; break;
+		case LEVEL_ENUM:
+			result = Level.class;
+			break;
 
 		default : throw new IllegalArgumentException("datatype '"+type+"' is not yet supported");
 		}

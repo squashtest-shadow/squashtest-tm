@@ -29,6 +29,7 @@ import static org.squashtest.tm.domain.chart.Operation.COUNT;
 import static org.squashtest.tm.domain.chart.Operation.EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.GREATER;
 import static org.squashtest.tm.domain.chart.Operation.GREATER_EQUAL;
+import static org.squashtest.tm.domain.chart.Operation.IN;
 import static org.squashtest.tm.domain.chart.Operation.LIKE;
 import static org.squashtest.tm.domain.chart.Operation.LOWER;
 import static org.squashtest.tm.domain.chart.Operation.LOWER_EQUAL;
@@ -46,9 +47,9 @@ public enum DataType {
 	STRING (EQUALS, LIKE, COUNT),
 	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR),
 	CLASS (EQUALS),
-	LEVEL_ENUM(EQUALS, LOWER, LOWER_EQUAL, GREATER, GREATER_EQUAL, MAX, MIN),
-	EXECUTION_STATUS (EQUALS),
-	INFO_LIST_ITEM (EQUALS);
+	LEVEL_ENUM(EQUALS, LOWER, LOWER_EQUAL, GREATER, GREATER_EQUAL, MAX, MIN, IN, COUNT),
+	EXECUTION_STATUS (EQUALS, IN, COUNT),
+	INFO_LIST_ITEM (EQUALS, IN, COUNT);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;
