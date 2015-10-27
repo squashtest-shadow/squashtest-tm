@@ -103,22 +103,29 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 			var selectedList = $("#info-list-" + id).val();
 			
-			var infoList = _.chain(self.model.get("projectInfoList"))
+			if (!_.isArray(selectedList)){
+				selectedList = [selectedList];
+			}
+			
+			var infoListItems = _.chain(self.model.get("projectInfoList"))
 			.reduce(function(memo, val){ return memo.concat(_.values(val));}, [])
-			.find(function(obj) {return obj.code == selectedList;})
+			.filter(function(obj) {return _.contains(selectedList, obj.code);})
+			.uniq(false, function(obj){return obj.code;})
+			.reduce(function(memo, val){
+				return memo.concat(_.map(val.items, function (item){
+					item.isSystem = val.createdBy == "system";
+					return item;}));}, [])
 			.value();
-			
-			var infoListItems = infoList["items"];
-			var isSystem = infoList["createdBy"] == "system";
-			
+						
 			var container = $("#info-list-item-container-" + id);
-			var infoListItemHtml = self.infoListItemTemplate({items : infoListItems, isSystem : isSystem, id : id});
+			var infoListItemHtml = self.infoListItemTemplate({items : infoListItems, id : id});
 			container.html(infoListItemHtml);
 			
 		}, 
 		
 		changeInfoList : function (event){
 			this.loadInfoListItems(event.target.name);
+			this.initOperationValues();
 		},
 		
 		initOperationValues : function (){
@@ -146,11 +153,14 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		applyPreviousValues : function (filter){
 			var self = this;
 			var id = filter.column.id;
-			
-			this.reloadInfoList(filter);
+					
 						
 			$("#filter-selection-" + id).attr("checked", "true");
 			$("#filter-operation-select-" + id).val(filter.operation);	
+			
+			self.reloadInfoList(filter);
+			self.showFilterValues(id, filter.operation);
+			
 			$("#first-filter-value-" + id).val(self.getValueFromFilter(filter, 0));
 			$("#second-filter-value-" + id).val(self.getValueFromFilter(filter, 1));
 		},
@@ -178,6 +188,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var id = filter.column.id;
 			var value = filter.values[0];
 			
+			if (!_.isArray(value)){
+				value = [value];
+			}
+			
 			var selectedInfoList = _.chain(self.model.get("projectInfoList"))
 			.reduce(function(memo, val){ return memo.concat(_.values(val));}, [])
 			.uniq(false, function(val) {return val.id;})
@@ -185,10 +199,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		    	memo[val.code] = _.map(val.items, function (item){return item.code;}) 
 		    	;return memo;}, {})
 		    .pairs()
-		    .find(function(val) {return _.contains(val[1], value);})
-		    .first()
+		    .filter(function(val) {return !_.isEmpty(_.intersection(val[1], value));})
+		    .map(_.first)
 			.value();
-
+			self.showFilterValues(id, filter.operation);
 			$("#info-list-" + id).val(selectedInfoList);
 			self.loadInfoListItems(id);
 			}
@@ -245,6 +259,14 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			} else {
 				selector.hide();
 				selector.val('');
+			}
+			
+			var select = $("select[name=" + id + "]").not(".filter-operation-select");
+
+			if (val == "IN"){				
+				select.attr("MULTIPLE", true);			
+			} else {		
+				select.attr("MULTIPLE", false);
 			}
 			
 		}

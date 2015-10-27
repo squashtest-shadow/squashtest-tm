@@ -126,10 +126,10 @@ CHOOSE FILTER
 
 
 <div th:fragment="chart-wizard-info-list-item">
- <select id="first-filter-value-{{id}}">
+ <select id="first-filter-value-{{id}}" name="{{id}}">
 {{#each items}}
  <option value="{{this.code}}">  
- {{#if ../isSystem}} 
+ {{#if this.isSystem}} 
   {{i18n this.label}}
   {{else}}
   {{this.label}}
