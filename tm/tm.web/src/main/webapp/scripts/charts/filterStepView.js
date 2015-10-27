@@ -52,26 +52,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		initInfoListValues : function() {
 			
 			var self = this;
-			var ids =	
-			_.chain(self.model.get("columnPrototypes"))
-			.reduce(function(memo, val) {return memo.concat(val);}, [])
-			.filter(function(val) {return val.dataType == "INFO_LIST_ITEM";})
-			.pluck("id")
-			.value();
+			var ids = self.getInfoListSelectorIds();
 			
+			var scope = _.size(self.model.get("projectsScope")) > 0 ? self.model.get("projectsScope") : "default";
+			var infoLists = self.getInfoListByType(scope);
+		
 			
-			var infoLists = 
-				_.chain(self.model.get("projectInfoList"))				
-				.pick(self.model.get("projectsScope"))
-				.map(_.pairs) 
-				.reduce(function(memo, val){ return memo.concat(val);}, [])
-	            .reduce(function(memo, val) { 
-	            	if(memo[val[0]] === undefined){
-	            	memo[val[0]] = [];}  
-	            	memo[val[0]] = memo[val[0]].concat(val[1]); 
-	            	return memo;}, {})
-				.value();
-	
 		_.each(ids, function(id){
 			var container = $("#info-list-filter-container-" + id);
 			var name = container.attr("name");
@@ -81,6 +67,34 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			self.loadInfoListItems(id);
 		});
 			
+		},
+		
+		getInfoListSelectorIds : function() {
+
+			var self = this;
+			
+			return _.chain(self.model.get("columnPrototypes"))
+		.reduce(function(memo, val) {return memo.concat(val);}, [])
+		.filter(function(val) {return val.dataType == "INFO_LIST_ITEM";})
+		.pluck("id")
+		.value();
+			
+		},
+		
+		getInfoListByType : function (scope){
+
+			var self = this;
+			
+			return _.chain(self.model.get("projectInfoList"))				
+			.pick(scope)
+			.map(_.pairs) 
+			.reduce(function(memo, val){ return memo.concat(val);}, [])
+            .reduce(function(memo, val) { 
+            	if(memo[val[0]] === undefined){
+            	memo[val[0]] = [];}  
+            	memo[val[0]] = memo[val[0]].concat(val[1]); 
+            	return memo;}, {})
+			.value();
 		},
 		
 		loadInfoListItems : function (id) {
@@ -157,6 +171,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		reloadInfoList : function (filter){
 			
 			var self = this;
+			var datatype = filter.column.dataType;
+			
+			if (datatype == "INFO_LIST_ITEM") {
+			
 			var id = filter.column.id;
 			var value = filter.values[0];
 			
@@ -173,6 +191,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 			$("#info-list-" + id).val(selectedInfoList);
 			self.loadInfoListItems(id);
+			}
 		},
 		
 		updateModel : function() {

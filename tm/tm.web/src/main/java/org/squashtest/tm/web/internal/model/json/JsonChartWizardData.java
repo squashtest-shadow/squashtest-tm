@@ -45,12 +45,14 @@ import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.infolist.InfoListFinderService;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
@@ -75,9 +77,9 @@ public class JsonChartWizardData {
 
 	private EnumSet<ExecutionStatus> executionStatus = EnumSet.allOf(ExecutionStatus.class);
 
-	private Map<Long, Map<String, InfoList>> projectInfoList = new HashMap<Long, Map<String, InfoList>>();
+	private Map<String, Map<String, InfoList>> projectInfoList = new HashMap<String, Map<String, InfoList>>();
 
-	public Map<Long, Map<String, InfoList>> getProjectInfoList() {
+	public Map<String, Map<String, InfoList>> getProjectInfoList() {
 		return projectInfoList;
 	}
 
@@ -92,14 +94,15 @@ public class JsonChartWizardData {
 	}
 
 
-	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects) {
+	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects,
+			InfoListFinderService infoListFinder) {
 
 		this.columnPrototypes = columnPrototypes;
-		populate(projects);
+		populate(projects, infoListFinder);
 
 	}
 
-	private void populate(List<Project> projects) {
+	private void populate(List<Project> projects, InfoListFinderService infoListFinder) {
 
 		for (ColumnRole cr : ColumnRole.values()) {
 			columRoles.put(cr, cr.getOperations());
@@ -125,9 +128,16 @@ public class JsonChartWizardData {
 			infoLists.put("REQUIREMENT_VERSION_CATEGORY", project.getRequirementCategories());
 			infoLists.put("TEST_CASE_NATURE", project.getTestCaseNatures());
 			infoLists.put("TEST_CASE_TYPE", project.getTestCaseTypes());
-			projectInfoList.put(project.getId(), infoLists);
-
+			projectInfoList.put(project.getId().toString(), infoLists);
 		}
+
+		Map<String, InfoList> defaultList = new HashMap<String, InfoList>();
+
+		defaultList.put("REQUIREMENT_VERSION_CATEGORY",
+				infoListFinder.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode()));
+		defaultList.put("TEST_CASE_NATURE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode()));
+		defaultList.put("TEST_CASE_TYPE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode()));
+		projectInfoList.put("default", defaultList);
 
 	}
 

@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
@@ -59,11 +60,15 @@ public class ChartController {
 	@Inject
 	private ProjectFinder projectFinder;
 
+
+	@Inject
+	private InfoListFinderService infoListFinder;
+
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonChartWizardData getWizardData() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
-		return new JsonChartWizardData(chartService.getColumnPrototypes(), readableProjects);
+		return new JsonChartWizardData(chartService.getColumnPrototypes(), readableProjects, infoListFinder);
 	}
 
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
