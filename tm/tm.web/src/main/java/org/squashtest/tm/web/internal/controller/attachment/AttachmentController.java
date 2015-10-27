@@ -31,7 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil;
-import org.squashtest.tm.web.internal.fileupload.UploadProgressListenerUtils;
 import org.squashtest.tm.web.internal.fileupload.UploadSummary;
 
 @Controller
@@ -90,25 +88,11 @@ public class AttachmentController {
 
 	/* *********************************** upload ************************************** */
 
-	/*
-	 * 
-	 * Four operations are defined here :
-	 * 
-	 * - prelude : will give a Ticket to that particular upload request that'll be used to store and retrieve
-	 * informations later. - upload : will upload the files themselves - poll : while uploading the client may asks how
-	 * far the job is done - finalize : sends a summary back to the client and relieve the resources
-	 */
-
-	// prelude to the upload in order to get a ticket
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "!upload-ticket")
-	public @ResponseBody
-	String prepareUpload() {
-		return UploadProgressListenerUtils.generateUploadTicket();
-	}
 
 	// uploads the file themselves and build the upload summary on the fly
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, params = "upload-ticket")
-	public ModelAndView uploadAttachment(HttpServletRequest servletRequest,
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST)
+	@ResponseBody
+	public List<UploadSummary> uploadAttachment(HttpServletRequest servletRequest,
 			@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
 					throws IOException {
 
@@ -135,10 +119,11 @@ public class AttachmentController {
 		// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
 		summary = stripEmptySummary(summary);
 
-		// store the summary then return
-		UploadProgressListenerUtils.registerUploadSummary(servletRequest, summary);
-		return new ModelAndView("fragment/import/attachment-success");
+		// now we can return
+		return summary;
 	}
+	
+	
 
 	// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
 	private List<UploadSummary> stripEmptySummary(List<UploadSummary> summary) {
@@ -150,34 +135,6 @@ public class AttachmentController {
 	}
 
 
-
-
-	// finalize the upload and deallocate the resources.
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.DELETE, params = "upload-ticket")
-	public @ResponseBody
-	List<UploadSummary> finalizeUpload(HttpServletRequest servletRequest) {
-
-		// get the ticket
-		HttpSession session = servletRequest.getSession();
-		String uploadTicket = UploadProgressListenerUtils.getUploadTicket(servletRequest);
-
-		List<UploadSummary> summary = null;
-
-		if (uploadTicket == null) {
-			// unlikely to happen. If it does it's probably a bug, but meh
-			LOGGER.trace("AttachmentController : WARNING : completed upload request without upload ticket");
-		} else {
-			// get the summary;
-			summary = (List<UploadSummary>) UploadProgressListenerUtils.getUploadSummary(session, uploadTicket);
-
-			// unregister the ticket and all the content bound to it
-			UploadProgressListenerUtils.unregisterTicket(session, uploadTicket);
-		}
-
-		return summary;
-
-	}
 
 	/* ***************************** download ************************************* */
 

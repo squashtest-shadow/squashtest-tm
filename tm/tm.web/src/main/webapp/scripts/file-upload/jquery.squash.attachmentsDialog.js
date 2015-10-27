@@ -19,19 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * This section handles the transition between phase 1 and phase 2, ie all the operations between 
- * the moment the user presses "submit" and the end of the download :
- *   - prelude to the upload : we'll need a 'ticket' for later use (see below),
- *   - close the uploader popup, open the progress bar,
- *   - start the uploading request (still stuck to HttpRequests, no XHR for this one)
- *   - during the upload, poll the server for the upload using the ticket obtained in step 1
- *   - once it's done it will open the uploadSummary popup 
- *
- *  
- * Notes : 
- *		- tickets are like sEcho for datatable : an identifier used by the server to know which upload to watch for.	 
- *		- we need the instruction flow to run as if the Ajax calls were synchronous. Since they aren't, we put the next steps of the 
- *		code in the ajax success handlers.
+ * This dialog uploads files using xhr2 API for Chrome and FF, 
+ * and a shitty workaround for IE9
+ * 
  */
 
 define(
@@ -130,89 +120,80 @@ define(
 				var self = this;
 				var url = this.options.url;
 
-				$.post(url).done(function (ticket) {
-					function onprogressHandler(evt) {
-						var percent = evt.loaded / evt.total * 100;
-						console.log('Upload progress: ' + percent.toFixed(0) + '%');
-						self.refreshBar(percent);
-					}
 
-					self.options.ticket = ticket;
-					self.setState('uploading');
-					self.refreshBar(0);
+				function onprogressHandler(evt) {
+					var percent = evt.loaded / evt.total * 100;
+					console.log('Upload progress: ' + percent.toFixed(0) + '%');
+					self.refreshBar(percent);
+				}
 
-					if (self.supportProgressBar()) {
+				self.setState('uploading');
+				self.refreshBar(0);
 
-						url = url + "?upload-ticket=" + ticket;
-						var xhr = new XMLHttpRequest();
-						self.options._xhr = xhr;
-						xhr.upload.addEventListener('progress', onprogressHandler, false);
-						xhr.addEventListener('readystatechange', function (e) {
-							if (this.readyState === 4) {
-								self.submitComplete(xhr);
-							}
-						});
+				if (self.supportProgressBar()) {
 
-						xhr.open('POST', url, true);
-
-						var attach = $('input:file[name="attachment[]"]');
-						var formData = new FormData();
-
-						if (attach.length > 2) {
-							for (i = 1; i < attach.length - 1; i++) {
-								var file = attach[i].files[0];
-								formData.append("attachment[]", file);
-							}
-
-
-							// Catch if there's a JDBC Exception
-
-							xhr.onreadystatechange = function () {
-								if (xhr.readyState === 4) {
-									if (xhr.status !== 200) {
-										$(".attachment-progressbar").hide();
-										$(".attachment-progress-percentage").hide();
-										$(".attachment-progress-message").hide();
-									}
-								}
-							};
-							xhr.send(formData);
-						} else { //no attach
-
-							self.close();
+					var xhr = new XMLHttpRequest();
+					self.options._xhr = xhr;
+					xhr.upload.addEventListener('progress', onprogressHandler, false);
+					xhr.addEventListener('readystatechange', function (e) {
+						if (this.readyState === 4) {
+							self.submitComplete(xhr);
 						}
-					} else {
-						// for browser that don't support xhr2, like IE9.
+					});
 
-						self.options._form.ajaxSubmit({
-							url: url + "?upload-ticket=" + ticket,
-							type: "post",
-							dataType: "text/html",
-							beforeSend: function (xhr) {
-								self.options._xhr = xhr;
-								$(".attachment-progressbar").hide();
-								$(".attachment-progress-percentage").hide();
-							},
-							success: function () {
-							},
-							error: function () {
-							},
-							complete: function (xhr) {
-								self.submitComplete(xhr);
-							},
-							target: "#dump"
+					xhr.open('POST', url, true);
 
-						});
+					var attach = $('input:file[name="attachment[]"]');
+					var formData = new FormData();
+
+					if (attach.length > 2) {
+						for (i = 1; i < attach.length - 1; i++) {
+							var file = attach[i].files[0];
+							formData.append("attachment[]", file);
+						}
+
+						// Catch if there's a JDBC Exception
+
+						xhr.onreadystatechange = function () {
+							if (xhr.readyState === 4) {
+								if (xhr.status !== 200) {
+									$(".attachment-progressbar").hide();
+									$(".attachment-progress-percentage").hide();
+									$(".attachment-progress-message").hide();
+								}
+							}
+						};
+						xhr.send(formData);
+					} else { //no attach
+
+						self.close();
 					}
-				});
+				} else {
+					// for browser that don't support xhr2, like IE9.
+
+					self.options._form.ajaxSubmit({
+						url: url,
+						type: "post",
+						dataType: "text/html",
+						beforeSend: function (xhr) {
+							self.options._xhr = xhr;
+							$(".attachment-progressbar").hide();
+							$(".attachment-progress-percentage").hide();
+						},
+						success: function () {
+						},
+						error: function () {
+						},
+						complete: function (xhr) {
+							self.submitComplete(xhr);
+						},
+						target: "#dump"
+
+					});
+				}
 			},
 
-			/*
-			 * because some browsers find it clever to wrap the raw response inside html tags (no,
-			 * it's not IE for once) we need to 'unwrap' our nested json response.
-			 *
-			 * in our case, if the json response has an attribute maxSize, then we got an error.
-			 */
+
 			submitComplete: function (xhr) {
 				this.options._xhr = xhr;
 				// Kind of a hack to prevent the thisDialog.close hook to try and abort the xhr,
@@ -232,15 +213,12 @@ define(
 					this.displayErrorJDBC(text);
 				}
 
-
 				var json = $.parseJSON(text);
 
 				if (json.maxUploadError === undefined) {
-					this.displaySummary();
+					this.displaySummary(json);
 				} else {
 					this.displayError(json.maxUploadError.maxSize);
-
-
 				}
 			},
 
@@ -254,29 +232,19 @@ define(
 
 			// ******************** upload summary ********************
 
-			displaySummary: function () {
-				var ticket = this.options.ticket, url = this.options.url, self = this;
-
-				$.ajax({
-					url: url + '?upload-ticket=' + ticket,
-					type: 'DELETE',
-					dataType: 'json'
-				}).done(function (json) {
-					if (json !== null && !self.allSuccessful(json)) {
-						self.populateSummary(json);
-						self.setState('summary');
-					} else {
-						self.close();
-						self._trigger('done');
-					}
-				});
+			displaySummary: function (json) {
+				if (json !== null && !this.allSuccessful(json)) {
+					this.populateSummary(json);
+					this.setState('summary');
+				} else {
+					this.close();
+					this._trigger('done');
+				}
 
 			},
 
-			allSuccessful: function (json) {
-				var summaries = json[0];
-				var i = 0;
-				for (i = 0; i < summaries.length; i++) {
+			allSuccessful: function (summaries) {
+				for (var i = 0; i < summaries.length; i++) {
 					if (summaries[i].iStatus !== 0) {
 						return false;
 					}
@@ -284,9 +252,10 @@ define(
 				return true;
 			},
 
-			populateSummary: function (json) {
-				var summaries = json[0], i = 0, summarydiv = this.element
-					.find('.attachment-upload-summary'), summaryItemTpl = this.options.summaryitem;
+			populateSummary: function (summaries) {
+				i = 0, 
+				summarydiv = this.element.find('.attachment-upload-summary'), 
+				summaryItemTpl = this.options.summaryitem;
 
 				summarydiv.empty();
 				for (i = 0; i < summaries.length; i++) {
