@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -20,81 +20,87 @@
  */
 package org.squashtest.tm.web.internal.wizard;
 
-import java.util.Collection;
-
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface WorkspaceWizardManager {
-	
-	
+
+
 	WorkspaceWizard findById(String wizardId);
-	
-	
+
+
 	Collection<WorkspaceWizard> findAll();
-	
-	
-	Collection<WorkspaceWizard> findAllByWorkspace(WorkspaceType workspace);
-	
-	
+
+	/**
+	 * Ftches the wizards for the given workspace.
+	 *
+	 * @param workspace
+	 * @return a not null, not modifible collection of wizards
+	 */
+	Collection<WorkspaceWizard> findAllByWorkspace(@NotNull WorkspaceType workspace);
+
+
 	/**
 	 * returns all the wizards enabled for that project, regardless of the workspace type.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
-	Collection<WorkspaceWizard> findEnabledWizards(long projectId);	
-	
+	Collection<WorkspaceWizard> findEnabledWizards(long projectId);
+
 	/**
 	 * returns all the wizards enabled for that project, restricted to those of the corresponding workspace type.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType workspace);
-	
+
 	/**
 	 * returns all the wizards enabled for that project, restricted to those of the corresponding workspace types.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspaces);
-	
 
-	
+
+
 	/**
 	 * returns all the wizards disabled for that project, regardless of the workspace type.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	Collection<WorkspaceWizard> findDisabledWizards(long projectId);
-	
+
 	/**
 	 * returns all the wizards disabled for that project, restricted to those of the corresponding workspace type.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType workspace);
-	
-	
+
+
 	/**
 	 * returns all the wizards disabled for that project, restricted to those of the corresponding workspace types.
-	 * 
+	 *
 	 * @param projectId
 	 * @return
 	 */
 	Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces);
-	
-	
 
-	
+
+
+
 }
 
 
