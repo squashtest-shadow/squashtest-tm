@@ -263,11 +263,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 			var select = $("select[name=" + id + "]").not(".filter-operation-select");
 
-			if (val == "IN"){				
-				select.attr("MULTIPLE", true);			
-			} else {		
-				select.attr("MULTIPLE", false);
-			}
+			select.attr("MULTIPLE", val == "IN");	
+		
 			
 		}
 		

@@ -32,9 +32,9 @@ return Backbone.Model.extend({
 			query : {
 				axis: this.get("axis"),
 				measures : this.get("measures"),					
-				filters : this.get("filters")	
+				filters : _.each(this.get("filters"), function(filter) {filter.values = _.flatten(filter.values);})	
 			},
-			scope : this.get("scope")
+			scope : _.each(this.get("scope"), function(val) {val.type = val.type.replace("LIBRARIE", "LIBRARY"); })
 			});
 			
 		}
