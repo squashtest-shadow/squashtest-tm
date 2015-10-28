@@ -521,7 +521,7 @@ class QuerydslToolbox {
 
 			List<Expression<?>> expressions = new ArrayList<>(values.size());
 
-			for (String val : values){
+			for (String val : values) {// NOSONAR that's a fucking switch it's not complex !
 				Object operand;
 				switch(type){
 				case INFO_LIST_ITEM:
@@ -571,7 +571,7 @@ class QuerydslToolbox {
 	private Operator getOperator(Operation operation){
 		Operator operator;
 
-		switch(operation){
+		switch (operation) {// NOSONAR that's a fucking switch it's not complex !
 		case EQUALS : operator = Ops.EQ; break;
 		case LIKE : operator = Ops.LIKE; break;
 		case BY_YEAR : operator = DateTimeOps.YEAR; break;

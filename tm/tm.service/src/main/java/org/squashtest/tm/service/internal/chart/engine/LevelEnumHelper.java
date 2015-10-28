@@ -34,6 +34,10 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 
 public class LevelEnumHelper {
 
+	private LevelEnumHelper() {
+
+	}
+
 	private static final Map<String, Enum<? extends Level>> map = new HashMap<String, Enum<? extends Level>>();
 
 	private static final List<Class<? extends Enum<? extends Level>>> enums = Arrays
