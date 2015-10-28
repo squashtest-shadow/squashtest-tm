@@ -35,7 +35,7 @@
 	// you should explicitly exclude the "common" module
 	// you should explicitly include nested require directives (cf. the "login-page" example)
 	modules : [
-			/*{
+			{
 				name : "common",
 				// List common dependencies here. Only need to list
 				// top level dependencies, "include" will find
@@ -176,6 +176,6 @@
 				include : [ "jquery", "app/squash.wreqr.init", "workspace.event-bus", "workspace.tree-event-handler",
 				            "squash.translator", "jqueryui", "jquery.squash.messagedialog", "squashtable" ],
 				exclude : [ "common" ]
-			}*/
+			}
 			]
 }) // DONT ADD NO SEMICOLON!
