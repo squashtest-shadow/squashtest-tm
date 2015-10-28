@@ -59,7 +59,7 @@ class ExceptionResolverUtilTest extends Specification {
 		req.getHeaders("Accept") >> new IteratorEnumeration(['*/*'].iterator())
 
 				when:
-		def res = ExceptionResolverUtils.clientAcceptsMIME(req, MimeType.APPLICATION_JSON)
+		def res = ExceptionResolverUtils.clientAcceptsMIMEOrAnything(req, MimeType.APPLICATION_JSON)
 		
 		then:
 		res == true

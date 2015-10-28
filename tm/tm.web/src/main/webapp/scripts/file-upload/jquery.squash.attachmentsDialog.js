@@ -116,6 +116,11 @@ define(
 					return !!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
 				}
 			},
+			
+			setShowProgress : function(show){
+				var fn = (show) ? "show" : "hide";
+				$(".attachment-upload-uploading").children()[fn]();
+			},
 
 			submitAttachments: function () {
 				var self = this;
@@ -132,6 +137,8 @@ define(
 				self.refreshBar(0);
 
 				if (self.supportProgressBar()) {
+					
+					self.setShowProgress(true);
 
 					var xhr = new XMLHttpRequest();
 					self.options._xhr = xhr;
@@ -159,9 +166,7 @@ define(
 						xhr.onreadystatechange = function () {
 							if (xhr.readyState === 4) {
 								if (xhr.status !== 200) {
-									$(".attachment-progressbar").hide();
-									$(".attachment-progress-percentage").hide();
-									$(".attachment-progress-message").hide();
+									self.setShowProgress(false);
 								}
 							}
 						};
@@ -176,7 +181,7 @@ define(
 					self.options._form.ajaxSubmit({
 						url: url,
 						type: "post",
-						dataType: "text/html",
+						dataType: "application/json",
 						beforeSend: function (xhr) {
 							self.options._xhr = xhr;
 							$(".attachment-progressbar").hide();
@@ -215,12 +220,17 @@ define(
 					this.displayErrorJDBC(text);
 				}
 
-				var json = $.parseJSON(text);
+				try{	// try json
+					var json = $.parseJSON(text);
 
-				if (json.maxUploadError === undefined) {
-					this.displaySummary(json);
-				} else {
-					this.displayError(json.maxUploadError.maxSize);
+					if (json.maxUploadError === undefined) {
+						this.displaySummary(json);
+					} else {
+						this.displayError(json.maxUploadError.maxSize);
+					}
+				}
+				catch(nojson){	// try html
+					this.displayError(text);
 				}
 			},
 
@@ -270,13 +280,19 @@ define(
 
 			// ***************** errors ***********************
 
-			displayError: function (size) {
+			displayError: function (sizeOrMsg) {
 
-				var s = (size / 1048576).toFixed(3);
-
-				var errMessage = this.options._sizeexceeded.replace('#size#', s);
-				this.element.find('.attachment-upload-error-message').text(errMessage);
+				if (typeof sizeOrMsg === "string"){
+					this.element.find('.attachment-upload-error-message').text(sizeOrMsg);
+				}
+				else{
+					var s = (sizeOrMsg / 1048576).toFixed(3);
+					
+					var errMessage = this.options._sizeexceeded.replace('#size#', s);
+					this.element.find('.attachment-upload-error-message').text(errMessage);
+				}
 				this.setState('error');
+
 			},
 
 			displayErrorJDBC: function (text) {
