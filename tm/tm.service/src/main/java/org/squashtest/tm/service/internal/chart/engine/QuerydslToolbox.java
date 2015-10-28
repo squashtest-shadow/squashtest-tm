@@ -580,9 +580,14 @@ class QuerydslToolbox {
 		case SUM : operator = AggOps.SUM_AGG; break;
 		case GREATER : operator = Ops.GT; break;
 		case IN : operator = Ops.IN; break;
-		case BETWEEN:
-			operator = Ops.BETWEEN;
-			break;
+		case BETWEEN: operator = Ops.BETWEEN; break;
+		case AVG: operator = AggOps.AVG_AGG; break;
+		case BY_DAY: operator = DateTimeOps.DAY_OF_YEAR; break;
+		case GREATER_EQUAL: operator = Ops.GOE; break;
+		case LOWER: operator = Ops.LT; break;
+		case LOWER_EQUAL: operator = Ops.LOE; break;
+		case MAX: operator = AggOps.MAX_AGG; break;
+		case MIN: operator = AggOps.MIN_AGG; break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
 
