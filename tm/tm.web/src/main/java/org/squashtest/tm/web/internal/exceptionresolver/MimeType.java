@@ -35,6 +35,12 @@ enum MimeType {
 			return "text/plain";
 		}
 	},
+	TEXT_HTML(){
+		@Override
+		public String requestHeaderValue() {
+			return "text/html";
+		}
+	},
 	ANYTHING(){
 		@Override
 		public String requestHeaderValue() {

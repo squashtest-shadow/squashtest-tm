@@ -152,13 +152,19 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
 			this.options.preventAbortion = true;
 
 			var text = $(xhr.responseText).text();
-			var json = $.parseJSON(text);
-
-			if (json == null ||json.maxUploadError.maxSize === undefined){
-				this.displaySummary();
+			
+			try{	// try json
+				var json = $.parseJSON(text);
+	
+				if (json == null ||json.maxUploadError.maxSize === undefined){
+					this.displaySummary();
+				}
+				else{
+					this.displayError(json.maxUploadError.maxSize);
+				}
 			}
-			else{
-				this.displayError(json.maxUploadError.maxSize);
+			catch(ex){ // try html
+				this.displayError(text);
 			}
 		},
 		
@@ -244,12 +250,17 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
 		
 		// ***************** errors ***********************
 		
-		displayError : function(size){
+		displayError : function(sizeOrMsg){
 			
-			var s = (size / 104576).toFixed(3);
-			
-			var errMessage = this.options._sizeexceeded.replace('#size#', s);
-			this.element.find('.attachment-upload-error-message').text(errMessage);
+			if (typeof sizeOrMsg === "string"){
+				this.element.find('.attachment-upload-error-message').text(sizeOrMsg);
+			}
+			else{
+				var s = (sizeOrMsg / 1048576).toFixed(3);
+				
+				var errMessage = this.options._sizeexceeded.replace('#size#', s);
+				this.element.find('.attachment-upload-error-message').text(errMessage);
+			}
 			this.setState('error');
 		}
 		

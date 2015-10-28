@@ -44,9 +44,9 @@ define([ "jquery", "app/util/ButtonUtil",
 			var msg = "";
 			
 			if (isTimeout){
-				msg = 	"<span class='std-margin'>" +
+				msg =	"<span class='std-margin'>" +
 						translator.get('message.bugtracker.unavailable.timeout') +
-						"</span><br><hr>"
+						"</span><br><hr>";
 			}
 			
 			msg +=  errmsg;
@@ -161,7 +161,7 @@ define([ "jquery", "app/util/ButtonUtil",
 				} 
 				else {
 					 var table = $("#issue-table");
-					 if (!! table.length > 0){
+					 if (table.length > 0){
 						 var tableXhr = table.squashTable().fnSettings().jqXHR;
 						 if (!! tableXhr){
 							 tableXhr.abort();
