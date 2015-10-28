@@ -168,15 +168,7 @@ define(["jquery", "underscore", "jqueryui", "jform", "jquery.generateId"], funct
 		this.removeItem = removeItem;
 		this.clear = attachementClear;
 
-		// TODO to prevent SCRIPTERROR5 on IE9 we're monkey-patching the multifile into a singlefile uploader in a crude way
-		if (/MSIE *9/.test(window.navigator.userAgent)) {
-			window.console.log("[multiFileUpload] Running on IE9, downgrading myself into a single file uploader");
-			this.appendItem = function () { /* NOOP */
-			};
-		} else {
-			this.appendItem = appendItem;
-		}
-
+		this.appendItem = appendItem;
 
 		return this;
 	};

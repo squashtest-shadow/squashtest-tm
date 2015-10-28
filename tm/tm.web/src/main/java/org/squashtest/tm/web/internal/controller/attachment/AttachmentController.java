@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.attachment;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -36,6 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -85,19 +87,47 @@ public class AttachmentController {
 
 		return mav;
 	}
+	
+	/* ********************* IE special downgraded form ********************** */
+	
+	@RequestMapping(value="/form", method = RequestMethod.GET)
+	public String getSimpleUploadForm(Model model){
+		model.addAttribute("context", "form");
+		return "add-attachment-popup-ie.html";
+	}
+	
+	
+	// for IE - post from the downgraded form
+	@RequestMapping(value="/form", method = RequestMethod.POST)
+	public String uploadAttachmentForm(Model model, @RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
+			throws IOException {
+		List<UploadedData> nonEmpty = removeEmptyData(attachments);
+		List<UploadSummary> summaries= uploadAttachmentAsJson(nonEmpty, attachListId, locale);
+		model.addAttribute("context", "summary");
+		model.addAttribute("detail", summaries);
+		return "add-attachment-popup-ie.html";
+	}
+
+	// for IE (again), post from the regular popup : needs to return the response wrapped in some html
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces="text/html")
+	public String uploadAttachmentAsHtml(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale, Model model) throws IOException{
+		List<UploadedData> nonEmpty = removeEmptyData(attachments);
+		List<UploadSummary> summaries = uploadAttachmentAsJson(nonEmpty, attachListId, locale);
+		model.addAttribute("summary" , summaries);
+		return "fragment/import/upload-summary";
+	}
+
 
 	/* *********************************** upload ************************************** */
 
-
+	
 	// uploads the file themselves and build the upload summary on the fly
-	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST)
+	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces="application/json")
 	@ResponseBody
-	public List<UploadSummary> uploadAttachment(HttpServletRequest servletRequest,
-			@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
+	public List<UploadSummary> uploadAttachmentAsJson(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
 					throws IOException {
 
 		List<UploadSummary> summary = new LinkedList<UploadSummary>();
-
 
 		for (UploadedData upload : attachments) {
 
@@ -122,8 +152,7 @@ public class AttachmentController {
 		// now we can return
 		return summary;
 	}
-	
-	
+		
 
 	// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
 	private List<UploadSummary> stripEmptySummary(List<UploadSummary> summary) {
@@ -134,7 +163,15 @@ public class AttachmentController {
 		return summary;
 	}
 
-
+	private List<UploadedData> removeEmptyData(List<UploadedData> all){
+		List<UploadedData> nonEmpty = new ArrayList<UploadedData>();
+		for (UploadedData dat : all){
+			if (dat.getSizeInBytes() > 0){
+				nonEmpty.add(dat);
+			}
+		}
+		return nonEmpty;
+	}
 
 	/* ***************************** download ************************************* */
 

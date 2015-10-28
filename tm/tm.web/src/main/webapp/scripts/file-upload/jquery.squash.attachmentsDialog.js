@@ -102,6 +102,7 @@ define(
 			// ****************** files submission ***********************
 
 			supportProgressBar: function supportAjaxUploadWithProgress() {
+		
 				return supportFileAPI() && supportAjaxUploadProgressEvents();
 
 				function supportFileAPI() {
@@ -142,6 +143,7 @@ define(
 					});
 
 					xhr.open('POST', url, true);
+					xhr.setRequestHeader('Accept', 'application/json');
 
 					var attach = $('input:file[name="attachment[]"]');
 					var formData = new FormData();
