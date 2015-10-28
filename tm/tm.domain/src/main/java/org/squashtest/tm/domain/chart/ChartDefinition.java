@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.chart;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -108,7 +109,7 @@ public class ChartDefinition implements TreeEntity{
 
 	@NotNull
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
-	private Set<CustomReportChartBinding> chartBindings;
+	private Set<CustomReportChartBinding> chartBindings = new HashSet<CustomReportChartBinding>();
 
 	public User getOwner() {
 		return owner;
