@@ -930,6 +930,29 @@
 
 	</createTable>
 
+	<createTable tableName="CUSTOM_REPORT_CHART_BINDING">
+		<column name="CRCB_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+			<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CRCB_ID" />
+		</column>
+
+		<column name="CRD_ID" type="BIGINT" remarks="cle etrangere vers le dashboard. ">
+			<constraints nullable="false" foreignKeyName="fk_chart_bindind_custom_report_dashboard_crd_id" references="CUSTOM_REPORT_DASHBOARD(CRD_ID)" />
+		</column>
+
+		<column name="CHART_ID" type="BIGINT" remarks="cle etrangere vers le chart. ">
+			<constraints nullable="false" foreignKeyName="fk_chart_bindind_chart_definition_chart_id" references="CHART_DEFINITION(CHART_ID)" />
+		</column>
+
+		<column name="POS_X" type="INT"/>
+
+		<column name="POS_Y" type="INT"/>
+
+		<column name="SIZE_X" type="INT"/>
+
+		<column name="SIZE_Y" type="INT"/>
+
+	</createTable>
+
 	<addColumn tableName="PROJECT">
  		<column name="CRL_ID" type="BIGINT" remarks="FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
       	</column>

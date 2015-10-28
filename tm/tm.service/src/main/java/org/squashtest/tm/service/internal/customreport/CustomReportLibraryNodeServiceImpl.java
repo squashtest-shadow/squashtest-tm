@@ -33,6 +33,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -96,6 +97,15 @@ public class CustomReportLibraryNodeServiceImpl implements
 	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
 		return (ChartDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
+	public CustomReportDashboard findCustomReportDashboardById(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.DASHBOARD);
+		return (CustomReportDashboard) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
@@ -175,5 +185,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
 		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
+
+
 
 }

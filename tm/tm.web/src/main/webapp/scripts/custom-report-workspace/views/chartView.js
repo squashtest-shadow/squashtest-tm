@@ -49,6 +49,7 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 				self.model.set("name",json.name);
 				self._template();
 				main.buildChart("#chart-display-area", json);
+			
 			});
 		},
 

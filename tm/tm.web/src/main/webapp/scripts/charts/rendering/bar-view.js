@@ -22,25 +22,25 @@
 
 /*
  * Subclasses must implement
- * - method getSeries(), as per contract defined in JqplotView, 
+ * - method getSeries(), as per contract defined in JqplotView,
  * - the method getCategories (aka the labels of the axes) -> array of String
  */
 
 //TODO : move to dashboard/basic-objects when ready
-define(["jquery", "dashboard/basic-objects/jqplot-view", 
-        "jqplot-core",  "jqplot-category", "jqplot-bar"], 
+define(["jquery", "dashboard/basic-objects/jqplot-view",
+        "jqplot-core",  "jqplot-category", "jqplot-bar"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
-		
+
 		getCategories : function(){
 			throw "attempted to create an abstract BarView !";
 		},
-		
+
 		getConf : function(series){
-			
+
 			var ticks = this.getCategories();
-			
+
 			return {
 				seriesDefaults : {
 					renderer : $.jqplot.BarRenderer,
@@ -48,11 +48,11 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 						fillToZero : true
 					}
 				},
-				
+
 				legend : {
 					show : false
 				},
-				
+
 				axes : {
 					xaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
@@ -65,11 +65,10 @@ define(["jquery", "dashboard/basic-objects/jqplot-view",
 					borderColor : 'transparent',
 					shadow : false,
 					shadowColor : 'transparent'
-				},
-				
-			}
-			
+				}
+			};
+
 		}
-	
-	});	
+
+	});
 });

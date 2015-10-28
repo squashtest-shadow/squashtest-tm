@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.service.chart.ChartModificationService;
@@ -67,6 +68,12 @@ public class CustomReportController {
 		ChartInstance instance = chartService.generateChart(chartDef.getId());
 		return new JsonChartInstance(instance);
 		
+	}
+	
+	@RequestMapping(value="custom-report-dashboard/{id}", method=RequestMethod.GET)
+	public @ResponseBody CustomReportDashboard getDashboardDetails(@PathVariable Long id){
+		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
+		return dashboard;
 	}
 	
 	//---- RENAME ----

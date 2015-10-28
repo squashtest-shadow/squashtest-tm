@@ -177,7 +177,8 @@
         <value>org.squashtest.tm.domain.customreport.CustomReportLibraryNode</value>     
         <value>org.squashtest.tm.domain.customreport.CustomReportLibraryNodePathEdge</value>     
         <value>org.squashtest.tm.domain.customreport.CustomReportFolder</value>     
-        <value>org.squashtest.tm.domain.customreport.CustomReportDashboard</value>     
+        <value>org.squashtest.tm.domain.customreport.CustomReportDashboard</value>
+        <value>org.squashtest.tm.domain.customreport.CustomReportChartBinding</value>       
         
 
       </list>

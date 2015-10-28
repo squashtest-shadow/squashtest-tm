@@ -41,14 +41,17 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.project.Project;
@@ -103,7 +106,9 @@ public class ChartDefinition implements TreeEntity{
 	@JoinColumn(name = "QUERY_ID", nullable = false)
 	private ChartQuery query = new ChartQuery();
 
-
+	@NotNull
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	private Set<CustomReportChartBinding> chartBindings;
 
 	public User getOwner() {
 		return owner;

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.customreport;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -66,6 +67,14 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	ChartDefinition findChartDefinitionByNodeId(Long treeNodeId);
+	
+	/**
+	 * Return a {@link CustomReportDashboard}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity
+	 * @param treeNodeId
+	 * @return
+	 */
+	CustomReportDashboard findCustomReportDashboardById(Long treeNodeId);
 	
 	/**
 	 * Service to add a new {@link CustomReportLibraryNode}. The caller is responsible for giving a

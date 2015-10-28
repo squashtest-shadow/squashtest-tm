@@ -23,24 +23,24 @@
  * workspace : one of ['test-case', 'requirement', 'campaign']
  * treeselector : the tree selector,
  * model : the data model for that tree.
- * selectedNode : 
+ * selectedNode :
  * }
  */
 
-define([ "jquery", 
+define([ "jquery",
          "./simple-tree-conf/conf-factory",
 		"./workspace-tree-conf/conf-factory",
-		"./tree-picker-conf/conf-factory", 
+		"./tree-picker-conf/conf-factory",
 		"./plugins/plugin-factory",
-		"workspace.contextual-content", 
-		"jstree" ], function($, simpleConf, wkspConf,
+		"workspace.contextual-content",
+		"jstree"], function($, simpleConf, wkspConf,
 		pickerConf, pluginsFactory, ctxtcontent) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || undefined;
 
 	return {
-		
+
 		// TODO : move the extra event bindings into workspace-tree-plugin.js
 		initWorkspaceTree : function(settings) {
 			pluginsFactory.configure("workspace-tree", settings);
@@ -52,18 +52,18 @@ define([ "jquery",
 				});
 			var instance = treeDiv.jstree(conf);
 			squashtm.tree = instance;
-			
-			treeDiv.bind("select_node.jstree", function (e, data) { 
-		        data.rslt.obj.parents('.jstree-closed').each(function () { 
-		          data.inst.open_node(this); 
-		        }); 
-			}); 
-			
-			$('#tree').bind("select_node.jstree", function (e, data) { 
-		        data.rslt.obj.parents('.jstree-closed').each(function () { 
-		          data.inst.open_node(this); 
-		        }); 
-			}); 
+
+			treeDiv.bind("select_node.jstree", function (e, data) {
+		        data.rslt.obj.parents('.jstree-closed').each(function () {
+		          data.inst.open_node(this);
+		        });
+			});
+
+			$('#tree').bind("select_node.jstree", function (e, data) {
+		        data.rslt.obj.parents('.jstree-closed').each(function () {
+		          data.inst.open_node(this);
+		        });
+			});
 		},
 
 		initLinkableTree : function(settings) {

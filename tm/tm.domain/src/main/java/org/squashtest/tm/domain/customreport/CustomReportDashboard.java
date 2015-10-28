@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -27,8 +30,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
@@ -53,6 +58,10 @@ public class CustomReportDashboard implements TreeEntity {
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
+	
+	@NotNull
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	private Set<CustomReportChartBinding> chartBindings;
 	
 	@Override
 	public Long getId() {
@@ -88,5 +97,12 @@ public class CustomReportDashboard implements TreeEntity {
 	public CustomReportLibrary getCustomReportLibrary(){
 		return getProject().getCustomReportLibrary();
 	}
-	
+
+	public Set<CustomReportChartBinding> getChartBindings() {
+		return chartBindings;
+	}
+
+	public void setChartBindings(Set<CustomReportChartBinding> chartBindings) {
+		this.chartBindings = chartBindings;
+	}
 }
