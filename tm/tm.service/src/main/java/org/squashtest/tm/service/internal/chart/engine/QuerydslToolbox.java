@@ -524,6 +524,7 @@ class QuerydslToolbox {
 			for (String val : values){
 				Object operand;
 				switch(type){
+				case INFO_LIST_ITEM:
 				case STRING :
 					operand = val;
 					break;
@@ -537,7 +538,7 @@ class QuerydslToolbox {
 					operand = ExecutionStatus.valueOf(val);
 					break;
 				case LEVEL_ENUM :
-					operand = LevelEnumHelper.valueOf(val); // TODO
+					operand = LevelEnumHelper.valueOf(val);
 					break;
 				default : throw new IllegalArgumentException("type '"+type+"' not yet supported");
 				}
