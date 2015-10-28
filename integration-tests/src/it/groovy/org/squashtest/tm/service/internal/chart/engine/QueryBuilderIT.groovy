@@ -91,7 +91,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		// in a convoluted way of course.
 
 		given :
-		def measureProto = findByName("REQUIREMENT_NB_VERSION")
+		def measureProto = findByName("REQUIREMENT_NB_VERSIONS")
 
 		and :
 		def measure = new MeasureColumn(column : measureProto, operation : Operation.NONE)
@@ -122,7 +122,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		// but not as concisely
 
 		given :
-		def filterProto = findByName("REQUIREMENT_NB_VERSION")
+		def filterProto = findByName("REQUIREMENT_NB_VERSIONS")
 
 		and :
 		def measure = mkMeasure(ATTRIBUTE, NUMERIC, NONE, EntityType.REQUIREMENT, "id")
