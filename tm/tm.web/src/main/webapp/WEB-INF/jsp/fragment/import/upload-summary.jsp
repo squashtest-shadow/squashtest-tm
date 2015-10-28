@@ -20,6 +20,9 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 --%>
-<!-- The form.ajaxSubmit() fakes to ask for json while it needs text/html. Chrome and FF handle well a repsonse in json but not IE. -->
-<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
-<p>${'{' } "status" : "ok" ${'}'}</p>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
+
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
+
+<div>${json:serialize(summary)}</div>

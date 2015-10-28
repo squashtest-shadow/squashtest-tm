@@ -34,7 +34,8 @@
  *		code in the ajax success handlers.
  */
 
-define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdialog", "./jquery.squash.multi-fileupload"], function($, attrparser, Handlebars){
+define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdialog", "./jquery.squash.multi-fileupload"], 
+		function($, attrparser, Handlebars){
 
 	if (($.squash !== undefined) && ($.squash.attachmentsDialog !== undefined)) {
 		// plugin already loaded
@@ -99,7 +100,7 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
 
 		close : function(){
 			this._super();
-			if (this.options._xhr){
+			if (this.options._xhr && this.options.preventAbortion !== true){
 				this.stopPolling();
 				this.options._xhr.abort();
 			}
@@ -127,7 +128,7 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
 					error : function(){},
 					complete : function(json){
 						self.stopPolling();
-						self.submitComplete(json);
+						self.submitComplete();
 					},
 					target : "#dump"
 					
@@ -141,17 +142,23 @@ define(["jquery", "squash.attributeparser", "handlebars", "jquery.squash.formdia
 		because some browsers find it clever to wrap the raw response inside html tags (no, it's not IE for once) 
 		we need to 'unwrap' our nested json response.
 		
-		in our case, if the json response has an attribute maxSize, then we got an error.
+		in our case, if the json response exists and has an attribute maxSize, then we got an error.
 		*/
 		submitComplete : function(){
 			var xhr = this.options._xhr;
+			// Kind of a hack to prevent the thisDialog.close hook to try and abort the xhr,
+			// which leads to an infinite loop in IE.
+			// TODO Gotta find a more elegant way
+			this.options.preventAbortion = true;
+
 			var text = $(xhr.responseText).text();
 			var json = $.parseJSON(text);
-			if (json.maxSize === undefined){
+
+			if (json == null ||json.maxUploadError.maxSize === undefined){
 				this.displaySummary();
 			}
 			else{
-				this.displayError(json.maxSize);
+				this.displayError(json.maxUploadError.maxSize);
 			}
 		},
 		

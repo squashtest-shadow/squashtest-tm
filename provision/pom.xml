@@ -4,7 +4,7 @@
   <parent>
     <artifactId>squash-tm</artifactId>
     <groupId>org.squashtest.tm</groupId>
-    <version>1.11.6.RC2-SNAPSHOT</version>
+    <version>1.11.7.RC1-SNAPSHOT</version>
   </parent>
 
   <groupId>org.squashtest.tm</groupId>
@@ -179,6 +179,7 @@
               <resources>
                 <resource>
                   <directory>src/main/resources/jettyhome</directory>
+                  <filtering>true</filtering>
                 </resource>
               </resources>
               <outputDirectory>${project.build.directory}/jettyhome</outputDirectory>
