@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -70,9 +71,13 @@ public class AttachmentManagerController {
 	.mapAttribute("size", "size", Attachment.class)
 	.mapAttribute("added-on", "addedOn", Attachment.class);
 
+	
+
 
 	/* ********************** data display *********************************** */
 
+
+	
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId,
 			@RequestParam("workspace") String workspace) {

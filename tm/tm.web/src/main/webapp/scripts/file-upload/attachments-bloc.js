@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
+define(["jquery", "./should-downgrade-upload-dialog", "./jquery.squash.attachmentsDialog"], function($, shouldDowngrade){
 	
 	function reloadAttachments(settings){
 		var container =$("#attachment-container"); 
@@ -26,7 +26,10 @@ define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 		container.load(settings.baseURL+"/display");
 	}
 	
-	function initDialogs(settings){
+	
+	function initRegularPopup(settings){
+		
+		// init the dialog
 		var dialog = $("#add-attachments-dialog").attachmentsDialog({
 			url : settings.baseURL+"/upload"
 		});
@@ -34,19 +37,53 @@ define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 		dialog.on('attachmentsdialogdone', function(){
 			reloadAttachments(settings);
 		});
+		
+		
+		// bind the buttons
+		$("#manage-attachment-bloc-button").on('click', function(){
+			document.location.href = settings.baseURL+"/manager?workspace="+settings.workspace;
+		});
+		
+	
+		$("#upload-attachment-button").on('click', function(){
+			$("#add-attachments-dialog").attachmentsDialog('open');
+		});
+		
+		
 	}
-
-	function init(settings){
+	
+	function initDowngradedPopup(settings){
 		
-		initDialogs(settings);
+		// no attachment popup here : the downgraded upload form is downloaded from the server
 		
+		
+		// event binding now
 		$("#manage-attachment-bloc-button").on('click', function(){
 			document.location.href = settings.baseURL+"/manager?workspace="+settings.workspace;
 		});
 		
 		$("#upload-attachment-button").on('click', function(){
-			$("#add-attachments-dialog").attachmentsDialog('open');
+			window.open(settings.baseURL+'/form', 'uploader', "height=400, width=450, resizable=yes");
+			
+			// we must publish the function reloadAttachments so that the
+			// window we just opened can invoke it
+			squashtm.api = squashtm.api || {};
+			squashtm.api.reloadAttachments = function(){
+				reloadAttachments(settings);
+			};
 		});
+	}
+	
+
+
+	function init(settings){
+		if (shouldDowngrade()){
+			initDowngradedPopup(settings);
+		}
+		else{
+			initRegularPopup(settings);
+		}
+		
 	}
 	
 	return {
