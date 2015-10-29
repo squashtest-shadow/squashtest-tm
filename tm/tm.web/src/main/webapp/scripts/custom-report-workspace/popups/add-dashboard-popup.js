@@ -26,7 +26,7 @@ define(['jquery','backbone', 'tree', '../permissions-rules', 'jquery.squash.form
 			name : dialog.find('#add-dashboard-name').val()
 		};
 
-		return tree.jstree('postNewNode', 'new-dashboard', params, false);
+		return tree.jstree('postNewNode', 'new-dashboard', params, true);
 	}
 
 

@@ -21,13 +21,19 @@
 package org.squashtest.tm.web.internal.controller.customreport;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
 
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -36,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -47,12 +54,19 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 @RequestMapping("/custom-report-workspace")
 public class CustomReportWorkspaceController {
 
+	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportWorkspaceController.class);
+	
+	private final String cookieDelimiter = "#";
+	
 	@Inject
 	protected InternationalizationHelper i18nHelper;
 
 	@Inject
 	@Named("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
 	private CustomReportWorkspaceService workspaceService;
+	
+	@Inject
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
 	
 	@Inject
 	@Named("customReport.nodeBuilder")
@@ -62,29 +76,29 @@ public class CustomReportWorkspaceController {
 	public String showWorkspace(Model model, Locale locale,
 			@CurrentMilestone Milestone activeMilestone,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
+			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String elementId) {
 		
 		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
-		String[] nodesToOpen = null;
-
-		if(elementId == null || "".equals(elementId)){
-			nodesToOpen = openedNodes;
-			model.addAttribute("selectedNode", "");
-		} else {
-			Long id = Long.valueOf(elementId);
-//			nodesToOpen = getNodeParentsInWorkspace(id);
-//			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
+		
+		LOGGER.debug("JTH - selected Node " + elementId);
+		LOGGER.debug("JTH - openedNodes" + openedNodes.toString());
+		for (int i = 0; i < openedNodes.length; i++) {
+			LOGGER.debug("JTH - " + openedNodes[i]);
 		}
 		
-//		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
-//				.setModel(libraries).build();
-//		
+		Set<Long> nodeIdToOpen = new HashSet<Long>();
+		nodeIdToOpen.addAll(convertCookieIds(openedNodes));
+		//Every node above selected node should be opened and it should be not necessary to get ancestors.
+		//But we have corner cases liken when we create a new chart in different screen...
+		if (StringUtils.isNotBlank(elementId)) {
+			nodeIdToOpen.addAll(findAncestorsOfselectedNode(elementId));
+		}
 		
 		//Placeholder with just library for the beginning
 		List<JsTreeNode> rootNodes = new ArrayList<JsTreeNode>();
 		
 		for (CustomReportLibraryNode crl : libraries) {
-			JsTreeNode treeNode = builderProvider.get().build(crl);
+			JsTreeNode treeNode = builderProvider.get().buildWithOpenedNodes(crl, nodeIdToOpen);
 			rootNodes.add(treeNode);
 		}
 		
@@ -107,6 +121,15 @@ public class CustomReportWorkspaceController {
 		return getWorkspaceViewName();
 	}
 
+	private Collection<Long> findAncestorsOfselectedNode(String elementId) {
+		Long nodeId = convertCookieId(elementId);
+		List<Long> ancestorIds = customReportLibraryNodeService.findAncestorIds(nodeId);
+		//The selected node isn't opened by default (it can be a leaf node !).
+		//So it will be open ONLY if he's also in open node cookies.
+		ancestorIds.remove(nodeId);
+		return ancestorIds;
+	}
+
 	protected String getWorkspaceViewName() {
 		return "custom-report-workspace.html";
 	}
@@ -118,4 +141,16 @@ public class CustomReportWorkspaceController {
 		return WorkspaceType.CUSTOM_REPORT_WORKSPACE;
 	}
 	
+	private Long convertCookieId(String cookieValue){
+		cookieValue = cookieValue.replace(cookieDelimiter, "");
+		return Long.parseLong(cookieValue);
+	}
+	
+	private Set<Long> convertCookieIds(String[] cookieValues){
+		Set<Long> nodeIdToOpen = new HashSet<Long>();
+		for (String value : cookieValues) {
+			nodeIdToOpen.add(convertCookieId(value));
+		}
+		return nodeIdToOpen;
+	}
 }

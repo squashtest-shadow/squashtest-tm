@@ -72,14 +72,14 @@
     	squashtm.workspace.projects = /*[[${projects}]]*/ [];
     	
     /* ]]> */
-    </script>
+</script>
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
 <script data-main="../../scripts/test-case-workspace.js" th:attr="data-main=@{/scripts/custom-report-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
   
   <style type="text/css">
-  	.test-dash {
+  	.dashboard-graph {
   		background-color: white;
   		position: absolute;
   	}
@@ -324,12 +324,14 @@
 			<h2><span th:text="#{library.header.title}" />&nbsp;:&nbsp;<a id="library-name" href="#"></a></h2>
 		</div>
 		
-		<div id="description-panel-container" class="sq-tg expand">
-			<div class="tg-head">
-        		<h3 th:text="#{label.Description}">desc</h3>
-        	</div>
-			<div id="description-panel" class="tg-body">
-				{{{project-description}}}
+		<div class="fragment-body">
+			<div id="description-panel-container" class="sq-tg expand">
+				<div class="tg-head">
+        			<h3 th:text="#{label.Description}">desc</h3>
+        		</div>
+				<div id="description-panel" class="tg-body">
+					{{{project-description}}}
+				</div>
 			</div>
 		</div>
      </script>
@@ -339,7 +341,6 @@
 	<script id="tpl-show-folder" type="text/x-handlebars-template">
 		<div id="folder-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
   			<div id="right-frame-button">
-    			<f:message var="toggleButton" key="report.workspace.togglebutton.normal.label" />
     			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" />
   			</div>
 			<div style="float: left; height: 100%;" class="small-margin-left">
@@ -350,41 +351,71 @@
 
 			<div class="unsnap"></div>
 		</div>
-
-		<div class="sq-tg expand">
-           <div class="tg-head">
-              <h3 th:text="#{label.Description}">desc</h3>
-            </div>
-			<div class="tg-body" id="description-panel">
+		
+		<div class="fragment-body">
+			<div class="sq-tg expand">
+           		<div class="tg-head">
+              		<h3 th:text="#{label.Description}">desc</h3>
+            	</div>
+				<div class="tg-body" id="description-panel">
 					<span id="folder-description" class="editable rich-editable" data-def='url=description/{{id}}'>
 						{{{description}}}
 					</span>
+				</div>
 			</div>
 		</div>
      </script>
-	
-	
 	<!-- /SHOW FOLDER -->
 	
 	<!-- SHOW DASHBOARD -->
 	 <script id="tpl-show-dashboard" type="text/x-handlebars-template">
 		<div id="dashboard-grid" class="gridster jstree-drop">
-			<div class="test-dash" data-row="1" data-col="1" data-sizex="2" data-sizey="1">
-				<div id="chart-display-area" style="height:100%; width:100%;"></div>
-			</div>
-        	<div class="test-dash" data-row="2" data-col="1" data-sizex="1" data-sizey="1"> Graph 2 
-			</div>
-        	<div class="test-dash" data-row="2" data-col="2" data-sizex="1" data-sizey="1"> Graph 3
-			</div>
+			{{#each chartBindings}}
+   				{{> chart}}
+ 			{{/each}}
+		</div>
+     </script>
+     
+     <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
+		<div class="dashboard-graph" data-row="{{posX}}" data-col="{{posY}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+			<div data-chart-definition-id="{{chartDefinitionId}}" class="chart-display-area" style="height:100%; width:100%;"></div>
 		</div>
      </script>
 	<!-- /SHOW DASHBOARD  -->
 
 	<!-- SHOW CHART-->
 	 <script id="tpl-show-chart" type="text/x-handlebars-template">
+		<div id="chart-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+  			<div id="right-frame-button">
+    			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" />
+  			</div>
+			<div style="float: left; height: 100%;" class="small-margin-left">
+				<h2>
+					{{name}}
+				</h2>
+			</div>
+		</div>
+		
+		<div id="element-toolbar" class="toolbar-class ui-corner-all">
+			<div class="toolbar-information-panel">
+				<div id="general-information-panel" class="information-panel">
+					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+					<br/>
+					<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+					<br/>
+				</div>
+			</div>
+			<div class="toolbar-button-panel">
+				<input type="button" th:attr="value=#{label.Modify},title=#{label.Modify}" id="modify-chart-button" class="sq-btn" />
+			</div>
+			<div class="unsnap"></div>
+		</div>
+		
 		<div class="sq-tg expand">
 			<div class="tg-head">
-              <h3>{{name}}</h3>
+            	<h3>
+					<span th:text="#{workspace.custom-report.chart.title}">chart type</span>
+				</h3>
             </div>
 			<div class="tg-body">
 				<div id="chart-display-area" style="height:100%; width:100%;"></div>
@@ -399,8 +430,7 @@
   
   
   
-  <!-- _____________________TEST CASE TREE POPUPS______________________________ -->
-  <!-- 		<wkp:tc-tree-popups/> -->
+  <!-- _____________________TREE POPUPS______________________________ -->
 
 
   <div id="treepopups-definition" class="not-displayed">
@@ -564,9 +594,6 @@
     </div>
   </div>
 
-
-  <!--  ================= /MILESTONE POPUP =======================  -->
-  
-  <!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
+  <!--  ___________________/TREE POPUPS_______________________________ -->
 </body>
 </html>

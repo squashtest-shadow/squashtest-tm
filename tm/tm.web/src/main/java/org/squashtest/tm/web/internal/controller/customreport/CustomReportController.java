@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.customreport;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +40,9 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.web.internal.controller.chart.JsonChartInstance;
+import org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportDashboard;
 
 @Controller
 public class CustomReportController {
@@ -49,6 +53,10 @@ public class CustomReportController {
 	
 	@Inject
 	private ChartModificationService chartService;
+	
+	@Inject
+	@Named("customReport.dashboardBuilder")
+	private Provider<JsonCustomReportDashboardBuilder> builderProvider;
 	
 	//---- SHOW DETAIL METHODS -----
 	
@@ -71,9 +79,9 @@ public class CustomReportController {
 	}
 	
 	@RequestMapping(value="custom-report-dashboard/{id}", method=RequestMethod.GET)
-	public @ResponseBody CustomReportDashboard getDashboardDetails(@PathVariable Long id){
+	public @ResponseBody JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id){
 		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
-		return dashboard;
+		return builderProvider.get().build(dashboard);
 	}
 	
 	//---- RENAME ----

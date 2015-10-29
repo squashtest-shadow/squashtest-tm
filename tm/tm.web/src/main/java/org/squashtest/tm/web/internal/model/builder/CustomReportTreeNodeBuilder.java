@@ -26,7 +26,10 @@ import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
 import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
 import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -48,8 +51,6 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 @Scope("prototype")
 public class CustomReportTreeNodeBuilder {
 	
-	private final JsTreeNode builtNode = new JsTreeNode();
-	
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
 	private static final String[] PERM_NAMES = {WRITE.name(), CREATE.name(), DELETE.name(), EXECUTE.name(), EXPORT.name()};
@@ -61,16 +62,37 @@ public class CustomReportTreeNodeBuilder {
 		this.permissionEvaluationService = permissionEvaluationService;
 	}
 
+	/**
+	 * Build a {@link JsTreeNode} from a {@link CustomReportLibraryNode} with it's descendants builded inside if node is opened. Will also open and retrieve descendant at layer n+1
+	 * if one descendant at layer n is also in opened list.
+	 * @param crln
+	 * @return
+	 */
+	public JsTreeNode buildWithOpenedNodes(CustomReportLibraryNode crln,Set<Long> openedNodeIds){
+		JsTreeNode builtNode = build(crln);
+		if (openedNodeIds.contains(crln.getId())) {
+			List<TreeLibraryNode> children = crln.getChildren();
+			for (TreeLibraryNode child : children) {
+				JsTreeNode childJsTreeNode = buildWithOpenedNodes((CustomReportLibraryNode) child, openedNodeIds);//NOSONAR cast is safe, we have the child of a crln
+				builtNode.getChildren().add(childJsTreeNode);
+			}
+		setNodeOpen(builtNode);	
+		}
+		return builtNode;
+	}
+	
 	public JsTreeNode build(CustomReportLibraryNode crln){
+		JsTreeNode builtNode = new JsTreeNode();
 		builtNode.setTitle(crln.getName());
 		builtNode.addAttr("resId", String.valueOf(crln.getId()));
+		builtNode.addAttr("id", String.valueOf(crln.getId()));
 		
 		//No milestone for custom report tree in first version so yes for all perm
 		builtNode.addAttr("milestone-creatable-deletable", "true");
 		builtNode.addAttr("milestone-editable", "true");
 		
 		
-		doPermissionCheck(crln);
+		doPermissionCheck(builtNode,crln);
 		
 		//A visitor would be elegant here and allow interface type development but we don't want hibernate to fetch each linked entity
 		//for each node and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
@@ -78,56 +100,61 @@ public class CustomReportTreeNodeBuilder {
 		
 		switch (entityType) {
 		case LIBRARY:
-			doLibraryBuild(crln);
+			doLibraryBuild(builtNode,crln);
 			break;
 		case FOLDER:
-			doFolderBuild(crln);
+			doFolderBuild(builtNode,crln);
 			break;
 		case CHART:
-			doChartBuild(crln);
+			doChartBuild(builtNode,crln);
 			break;
 		case DASHBOARD:
-			doDashboardBuild(crln);
+			doDashboardBuild(builtNode,crln);
 			break;
 		default:
 			throw new UnsupportedOperationException("The node builder isn't implemented for node of type : " + entityType);
 		}
 		
 		return builtNode;
-	} 
-
-	private void doLibraryBuild(CustomReportLibraryNode crln) {
-		setNodeRel("drive");
-		setNodeResType("custom-report-libraries");
-		setStateForNodeContainer(crln);
 	}
 
-	private void doFolderBuild(CustomReportLibraryNode crln) {
-		setNodeRel("folder");
-		setNodeResType("custom-report-folders");
-		setStateForNodeContainer(crln);
+	private void buildDescendantIfOpened() {
+		// TODO Auto-generated method stub
+		
 	}
 
-	private void doChartBuild(CustomReportLibraryNode crln) {
-		setNodeRel("chart");
-		setNodeResType("custom-report-chart");
-		setNodeLeaf();
+	private void doLibraryBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode,"drive");
+		setNodeResType(builtNode,"custom-report-libraries");
+		setStateForNodeContainer(builtNode,crln);
 	}
 
-	private void doDashboardBuild(CustomReportLibraryNode crln) {
-		setNodeRel("dashboard");
-		setNodeResType("custom-report-dashboard");
-		setStateForNodeContainer(crln);
+	private void doFolderBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode, "folder");
+		setNodeResType(builtNode, "custom-report-folders");
+		setStateForNodeContainer(builtNode, crln);
 	}
 
-	private void doPermissionCheck(CustomReportLibraryNode crln){
+	private void doChartBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode, "chart");
+		setNodeResType(builtNode, "custom-report-chart");
+		setNodeLeaf(builtNode);
+	}
+
+	private void doDashboardBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode, "dashboard");
+		setNodeResType(builtNode, "custom-report-dashboard");
+		setStateForNodeContainer(builtNode, crln);
+	}
+
+	private void doPermissionCheck(JsTreeNode builtNode, CustomReportLibraryNode crln){
 		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
 		for (Permission perm : NODE_PERMISSIONS) {
 			builtNode.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());
 		}
 	}
 	
-	private void setStateForNodeContainer(TreeLibraryNode tln){
+	private void setStateForNodeContainer(JsTreeNode builtNode, TreeLibraryNode tln){
 		if (tln.hasContent()) {
 			builtNode.setState(State.closed);
 		}
@@ -136,16 +163,20 @@ public class CustomReportTreeNodeBuilder {
 		}
 	}
 	
-	private void setNodeRel(String rel){
+	private void setNodeRel(JsTreeNode builtNode, String rel){
 		builtNode.addAttr("rel", rel);
 	}
 	
-	private void setNodeResType(String resType){
+	private void setNodeResType(JsTreeNode builtNode, String resType){
 		builtNode.addAttr("resType", resType);
 	}
 	
-	private void setNodeLeaf(){
+	private void setNodeLeaf(JsTreeNode builtNode){
 		builtNode.setState(State.leaf);
 	}
-
+	
+	private void setNodeOpen(JsTreeNode builtNode){
+		builtNode.setState(State.open);
+	}
+	
 }

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -61,7 +62,7 @@ public class CustomReportDashboard implements TreeEntity {
 	
 	@NotNull
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
-	private Set<CustomReportChartBinding> chartBindings;
+	private Set<CustomReportChartBinding> chartBindings = new HashSet<CustomReportChartBinding>();
 	
 	@Override
 	public Long getId() {

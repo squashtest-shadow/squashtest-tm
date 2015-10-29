@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.chart;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -42,6 +44,8 @@ import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
 
 @Controller
@@ -60,10 +64,9 @@ public class ChartController {
 	@Inject
 	private ProjectFinder projectFinder;
 
-
 	@Inject
 	private InfoListFinderService infoListFinder;
-
+	
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonChartWizardData getWizardData() {

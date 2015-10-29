@@ -52,7 +52,6 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.testcase.TestCaseLibraryNavigationController;
 import org.squashtest.tm.web.internal.model.builder.CustomReportListTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -83,7 +82,7 @@ public class CustomReportNavigationController {
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
 	
-	public static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationController.class);
+	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 
 	//----- CREATE NODE METHODS -----
 
@@ -133,6 +132,13 @@ public class CustomReportNavigationController {
 	
 	//-------------- DELETE-SIMULATION METHODS ---------------
 	
+	/**
+	 * No return for V1, we delete all nodes inside container.
+	 * @param nodeIds
+	 * @param activeMilestone
+	 * @param locale
+	 * @return
+	 */
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
 			@CurrentMilestone Milestone activeMilestone,

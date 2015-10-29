@@ -20,9 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.hibernate.Query;
@@ -65,6 +63,14 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
 		return query.list();
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAncestorIds(Long nodeId) {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
+		query.setParameter("id", nodeId);
+		return query.list();
+	}
 
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(Long nodeId) {
@@ -72,5 +78,7 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 		ids.add(nodeId);
 		return findAllFirstLevelDescendantIds(ids);
 	}
+
+
 	
 }

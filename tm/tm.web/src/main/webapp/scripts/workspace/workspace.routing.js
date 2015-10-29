@@ -215,6 +215,7 @@ define([], function(){
 		'custom-report-folder'                        : '/custom-report-folder/{\\d+}',
 		'custom-report-folder-server'                 : root + '/custom-report-folder',
 		'custom-report-dashboard'                        : '/custom-report-dashboard/{\\d+}',
+		'custom-report-dashboard-server'                        :root + '/custom-report-dashboard/{\\d+}',
 		'custom-report-chart'                        : '/custom-report-chart/{\\d+}',
 		'custom-report-chart-server'                        : root + '/custom-report-chart/{\\d+}',
 

@@ -79,6 +79,13 @@ public class CustomReportLibraryNodeServiceImpl implements
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
 		return (CustomReportLibrary) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
+	
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
+	public List<CustomReportLibraryNode> findAllCustomReportLibraryNodeById(List<Long> treeNodeIds) {
+		return customReportLibraryNodeDao.findAllByIds(treeNodeIds);
+	}
 
 	
 	@Override
@@ -159,6 +166,12 @@ public class CustomReportLibraryNodeServiceImpl implements
 		crln.renameNode(newName);
 	}
 	
+	@Override
+	
+	public List<Long> findAncestorIds(Long nodeId) {
+		return customReportLibraryNodeDao.findAncestorIds(nodeId);
+	}
+	
 	
 	
 	//--------------- PRIVATE METHODS --------------
@@ -185,6 +198,10 @@ public class CustomReportLibraryNodeServiceImpl implements
 	private void checkPermission(SecurityCheckableObject... checkableObjects) {
 		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
+
+	
+
+	
 
 
 

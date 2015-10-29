@@ -32,10 +32,11 @@ import javax.persistence.SequenceGenerator;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.search.annotations.DocumentId;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 
 @Entity
-public class CustomReportChartBinding {
+public class CustomReportChartBinding implements Identified {
 	
 	@Id
 	@Column(name = "CRCB_ID")
@@ -107,6 +108,11 @@ public class CustomReportChartBinding {
 
 	public void setSizeY(int sizeY) {
 		this.sizeY = sizeY;
+	}
+
+	@Override
+	public Long getId() {
+		return id;
 	}
 	
 }

@@ -18,21 +18,20 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery","underscore","backbone","squash.translator","handlebars","tree","jquery.gridster"],
-		function($,_,Backbone, translator,Handlebars,tree) {
+define(["jquery","underscore","backbone","squash.translator","handlebars","tree","workspace.routing","charts/rendering/charts-render-main","jquery.gridster"],
+		function($,_,Backbone, translator,Handlebars,tree,urlBuilder,main) {
 
 	var View = Backbone.View.extend({
 
     el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-dashboard",
-		selectedChartForDrag : null,
+		dashboardData : null,
 		gridster : null,
 
 		initialize : function(){
-			_.bindAll(this, "render","initGrid","initListener");
-			this.initializeModel();
-			this.initListener();
-			this.render().initGrid();
+			_.bindAll(this, "render","initGrid","initListenerOnTree");
+			this.initializeData();
+			this.initListenerOnTree();
 		},
 
 		events : {
@@ -42,18 +41,19 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			console.log("RENDER DASHBOARD");
 			var source = $(this.tpl).html();
 			var template = Handlebars.compile(source);
+      Handlebars.registerPartial("chart", $("#tpl-chart-in-dashboard").html());
 			console.log("TEAMPLATING DASHBOARD");
-			console.log(this.model.toJSON());
-			this.$el.append(template(this.model.toJSON()));
+      console.log(this.dashboardData);
+			this.$el.append(template(this.dashboardData));
 			return this;
 		},
 
-		//init a grid for the dashboard. Scale on screen size and with resizer ?
+		//init a grid for the dashboard.
 		initGrid : function () {
 			this.gridster = this.$("#dashboard-grid").gridster({
 				widget_margins: [10, 10],
 				widget_base_dimensions: [270, 250],
-				widget_selector: ".test-dash",
+				widget_selector: ".dashboard-graph",
 				min_rows: 2,
 				min_cols: 4,
 				extra_rows: 0,
@@ -65,11 +65,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 				}
 			}).data('gridster');
 
+      return this;
 	    // var gridData = gridster.serialize();
 			// console.log(gridData);
 		},
 
-		initListener :function () {
+		initListenerOnTree :function () {
 			var wreqr = squashtm.app.wreqr;
 			var self = this;
 			wreqr.on("dropFromTree",function (data) {
@@ -90,7 +91,36 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
 		dropChartInExistingChart : function (data) {
 			console.log("dropChartInExistingChart");
-		}
+		},
+
+    initializeData : function () {
+      var url = urlBuilder.buildURL("custom-report-dashboard-server", this.model.get('id'));
+      var self = this;
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json'
+      })
+      .done(function(response) {
+        self.dashboardData = response;
+        self.render().initGrid()._buildDashBoard();
+      });
+
+    },
+
+    _buildChart : function (selector, chartInstance) {
+      main.buildChart(selector, chartInstance);
+    },
+
+    _buildDashBoard : function () {
+      var bindings = this.dashboardData.chartBindings;
+      for (var i = 0; i < bindings.length; i++) {
+        var binding = bindings[i];
+        var selector = "[data-chart-definition-id='" + binding.chartDefinitionId + "']";
+        this._buildChart(selector, binding.chartInstance);
+      }
+    }
 
   });
 

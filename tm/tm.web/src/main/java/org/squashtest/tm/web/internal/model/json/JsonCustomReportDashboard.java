@@ -18,8 +18,47 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.model;
+package org.squashtest.tm.web.internal.model.json;
 
-public class CustomReportDashboardModel {
+import java.util.HashSet;
+import java.util.Set;
+
+/**
+ * JSON used to forward to client side all the data needed to render a complete dashboard.
+ * Avoids n requests where n = number of charts in dashboard
+ * @author jthebault
+ *
+ */
+public class JsonCustomReportDashboard {
+	
+	private Long id;
+	
+	private String name;
+	
+	private Set<JsonCustomReportChartBinding> chartBindings = new HashSet<JsonCustomReportChartBinding>();
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Set<JsonCustomReportChartBinding> getChartBindings() {
+		return chartBindings;
+	}
+
+	public void setChartBindings(Set<JsonCustomReportChartBinding> chartBindings) {
+		this.chartBindings = chartBindings;
+	}
 	
 }

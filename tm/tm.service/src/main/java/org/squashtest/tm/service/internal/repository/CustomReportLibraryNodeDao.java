@@ -30,5 +30,5 @@ import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 public interface CustomReportLibraryNodeDao extends CustomCustomReportLibraryNodeDao {
 	
 	List<CustomReportLibraryNode> findAllByEntityType(CustomReportTreeDefinition type);
-	
+
 }
