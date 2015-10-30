@@ -78,18 +78,14 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 		};
 		
 		var startResumeClassic = function() {
-			var data = {
-				'optimized' : 'false'
-			};
-			var winDef = {
-				name : "classicExecutionRunner",
-				features : "height=500, width=500, resizable, scrollbars, dialog, alwaysRaised"
-			};
-			$.open(runnerUrl, data, winDef);
+			var url = runnerUrl + '?optimized=false';
+			window.open(url, "classicExecutionRunner", "height=500, width=500, resizable, scrollbars, dialog, alwaysRaised");
 		};
 		
 		var startResumeOptimized = function() {
-			$("#start-optimized-button").trigger("click");
+			var url = runnerUrl + '?optimized=true&suitemode=false';
+			var win = window.open(url, "_blank");
+			win.focus();
 		};
 		
 		$("#execute-execution-button").button().click(function() {
