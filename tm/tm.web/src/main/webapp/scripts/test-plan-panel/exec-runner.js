@@ -33,22 +33,13 @@ define(["jquery", "jquery.squash" ], function($) {
 	}
 
 	function _runInPopup(url){
-		var data = {
-			"optimized" : "false"
-		};
-		var winDef = {
-			name : "classicExecutionRunner",
-			features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-		};
-		$.open(url, data, winDef);
+		window.open(url+'?optimized=false', "classicExecutionRunner", "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised");
 	}
 
 	function _runInOER(url){
-
-		$("body form#start-optimized-form").remove();
-		$("body").append("<form id=\"start-optimized-form\" action=\""+url+"?optimized=true&suitemode=false\" method=\"post\" name=\"execute-test-case-form\" target=\"optimized-execution-runner\" class=\"not-displayed\"> <input type=\"submit\" value=\"true\" name=\"optimized\" id=\"start-optimized-button\" /><input type=\"button\" value=\"false\" name=\"suitemode\"  /></form>");
-
-		$("#start-optimized-button").trigger("click");
+		var realUrl = url + '?optimized=true&suitemode=false';
+		var win = window.open(realUrl, "_blank");
+		win.focus();
 	}
 
 	return {

@@ -44,22 +44,14 @@ define(["jquery", "../app/pubsub", "jquery.squash.buttonmenu", "jquery.squash.co
 	}
 
 	function classicExecution() {
-		console.log("classicExecution");
-		var data = {
-			'optimized' : 'false',
-			'mode' : 'start-resume'
-		};
-		var winDef = {
-			name : "classicExecutionRunner",
-			features : "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised"
-		};
-		$.open(runnerUrl(), data, winDef);
-
+		var url = runnerUrl() + '?optimized=false&mode=start-resume';
+		window.open(url, "classicExecutionRunner", "height=500, width=600, resizable, scrollbars, dialog, alwaysRaised");
 	}
 
 	function optimizedExecution() {
-		console.log("optimizedExecution");
-		$('#start-optimized-button').trigger('click');
+		var url = runnerUrl() + '?optimized=true&mode=start-resume&suitemode=true';
+		var win = window.open(url, "_blank");
+		win.focus();
 	}
 
 	$(document).on("click", "#start-suite-optimized-button", function() {
