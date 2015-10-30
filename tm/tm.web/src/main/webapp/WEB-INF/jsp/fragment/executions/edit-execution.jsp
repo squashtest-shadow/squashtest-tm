@@ -382,15 +382,8 @@
 							var row = cell.parentNode.parentNode; // hopefully, that's the
 							// 'tr' one
 							var executionStepId = table.getODataId(row);
-								var url = "${baseExecuteUrl}/"+executionId+"/step/"+executionStepId;
-								var data = {
-									'optimized' : 'false',
-								};
-								var winDef = {
-									name : "classicExecutionRunner",
-									features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-								};
-								$.open(url, data, winDef);
+								var url = "${baseExecuteUrl}/"+executionId+"/step/"+executionStepId + '?optimized=false';
+								window.open(url, "classicExecutionRunner", "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised");
 						}
 					},
 					{ tooltip : "<f:message key='issue.button.opendialog.label' />",

@@ -42,13 +42,6 @@
 
 <input type="button" value="${execIEOBtnLabel}" id="ieo-execution-button" />
 
-<form action="${ runnerUrl }?optimized=true&suitemode=false" method="post"
-	name="execute-test-case-form" target="optimized-execution-runner"
-	class="not-displayed">
-	<input type="submit" value='' name="optimized"
-		id="start-optimized-button" />
-</form>
-
 <input type="button" value="${executeBtnLabel}"
 	id="execute-execution-button" />
 
@@ -81,19 +74,14 @@ require(["common"], function() {
 		};
 		
 		var startResumeClassic = function() {
-			var url = "${ runnerUrl }";
-			var data = {
-				'optimized' : 'false'
-			};
-			var winDef = {
-				name : "classicExecutionRunner",
-				features : "height=500, width=500, resizable, scrollbars, dialog, alwaysRaised"
-			};
-			$.open(url, data, winDef);
+			var url = "${ runnerUrl }" + '?optimized=false';
+			window.open(url, "classicExecutionRunner", "height=500, width=500, resizable, scrollbars, dialog, alwaysRaised");
 		};
 		
 		var startResumeOptimized = function() {
-			$("#start-optimized-button").trigger("click");
+			var url = "${ runnerUrl }?optimized=true&suitemode=false";
+			var win = window.open(url, "_blank");
+			win.focus();
 		};
 		
 		$("#execute-execution-button").button().click(function() {
