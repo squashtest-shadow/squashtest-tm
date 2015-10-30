@@ -69,21 +69,21 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 
 
 		this.canCreateButton = function(nodes){
-			return nodes && nodes.length>0;
+			return nodes && nodes.filter(':creatable').length===1;
 			//return milestonesAllowCreation(nodes) && nodes.filter(':creatable').length === 1;
 		};
 
 		this.canCreateFolder = function(nodes){
-			return nodes && nodes.length>0;
+			return nodes && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 			//return milestonesAllowCreation(nodes) && nodes.filter(':creatable').filter(':folder, :library').length === 1;
 		};
 
 		this.canCreateChart = function(nodes){
-			return nodes && nodes.length>0;
+			return nodes && nodes.filter(':creatable').length===1;
 		};
 
 		this.canCreateDashboard = function(nodes){
-			return nodes && nodes.length>0;
+			return nodes && nodes.filter(':creatable').length===1;
 		};
 
 		this.whyCantCreate = function(nodes){

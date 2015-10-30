@@ -36,16 +36,16 @@ define(["underscore","backbone","squash.translator","handlebars","squash.basicwi
 		},
 
 		render : function(){
-			console.log("RENDER");
 			var source = $("#tpl-show-folder").html();
 			var template = Handlebars.compile(source);
-			console.log("TEAMPLATING");
-			console.log(this.model.toJSON());
 			this.$el.append(template(this.model.toJSON()));
 			basicWidgets.init();
 		},
 
   });
+
+	return View;
+});
 
 	return View;
 });

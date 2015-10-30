@@ -113,6 +113,7 @@ define(['jquery'], function($){
 			case "test-case" :
 			case "requirement" :
 			case "dashboard" :
+      case "chart":
 			case "campaign"		: specific = "/content"; break;
 			case "iteration"	: specific = "/iterations"; break;
 			case "test-suite"	: specific = '/test-suites'; options="?remove_from_iter={remove_from_iter}"; break;

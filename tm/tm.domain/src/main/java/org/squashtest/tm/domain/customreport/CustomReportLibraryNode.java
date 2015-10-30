@@ -220,7 +220,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		
 		String newChildName = treeLibraryNode.getName();
 		
-		if(this.nameAlreadyUsed(newChildName)){
+		if(this.childNameAlreadyUsed(newChildName)){
 			throw new NameAlreadyInUseException(newChildName,this.getEntityType().getTypeName());
 		}
 		this.getChildren().add(treeLibraryNode);
@@ -236,7 +236,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		}
 	}
 
-	private boolean nameAlreadyUsed(String newChildName) {
+	private boolean childNameAlreadyUsed(String newChildName) {
 		for (TreeLibraryNode child : children) {
 			if (child.getName().equals(newChildName)) {
 				return true;
@@ -265,15 +265,36 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Override
 	public void renameNode(String newName) {
 		if (getEntityType().equals(CustomReportTreeDefinition.LIBRARY)) {
-			throw new IllegalArgumentException("Cannot rename ");
-
+			throw new IllegalArgumentException("Cannot rename a library, rename project");
 		}
-		if(this.nameAlreadyUsed(newName)){
+		if(nameAlreadyUsedBySibling(newName)){
 			throw new DuplicateNameException(newName,this.getEntityType().getTypeName());
 		}
 		else {
 			setName(newName);
 			getEntity().setName(newName);
 		}
+	}
+
+	private boolean nameAlreadyUsedBySibling(String newName) {
+		List<String> siblingsNames = getSiblingsNames();
+		if (siblingsNames.contains(newName)) {
+			return true;
+		}
+		return false;
+	}
+
+	private List<String> getSiblingsNames() {
+		List<TreeLibraryNode> siblings = getSiblings();
+		List<String> siblingNames = new ArrayList<String>();
+		for (TreeLibraryNode sibling : siblings) {
+			siblingNames.add(sibling.getName());
+		}
+		return siblingNames;
+	}
+
+	private List<TreeLibraryNode> getSiblings() {
+		TreeLibraryNode parent = getParent();
+		return parent.getChildren();
 	}
 }

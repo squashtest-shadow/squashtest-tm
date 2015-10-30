@@ -39,7 +39,7 @@ define(['jquery','backbone', 'tree', '../permissions-rules', 'jquery.squash.form
 		dialog.on('formdialogopen', function(){
 			var node = tree.jstree('get_selected');
 
-			if (! rules.canCreateFolder(node)){
+			if (! rules.canCreateDashboard(node)){
 				/* Acknowledged by Safi, David and Gregory :
 				 * Inactivated buttons and item-menu should not be clickable.
 				 * No error popup should be visible despite the fact a lot of these error popup have been implemented since 1.11.

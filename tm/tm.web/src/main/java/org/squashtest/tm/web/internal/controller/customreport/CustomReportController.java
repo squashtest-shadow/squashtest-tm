@@ -98,6 +98,12 @@ public class CustomReportController {
 		return renameNode(nodeId, newName);
 	}
 	
+	@RequestMapping(method = RequestMethod.POST, value="custom-report-chart/{nodeId}",params = { "newName" })
+	@ResponseBody
+	public RenameModel renameChartDefinition(@PathVariable long nodeId, @RequestParam String newName) {
+		return renameNode(nodeId, newName);
+	}
+	
 	private RenameModel renameNode (long nodeId, String newName){
 		customReportLibraryNodeService.renameNode(nodeId, newName);
 		return new RenameModel(newName);
