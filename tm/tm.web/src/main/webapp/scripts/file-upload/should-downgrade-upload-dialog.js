@@ -29,11 +29,16 @@ define([], function(){
 		 * - the browser is IE9 and appears to run in a subwindow
 		 */ 
 		
-		return (
+		/*
+		 * [Issue 5471] not needed anymore since 5471 fixes the underlying problem
+		 */
+		
+		
+		/*return (
 				/MSIE *9/.test(window.navigator.userAgent) && 
 				!! window.opener 
 
-		);
+		);*/
 	};
 	
 });
