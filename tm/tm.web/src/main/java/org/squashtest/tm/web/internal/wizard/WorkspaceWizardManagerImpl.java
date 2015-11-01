@@ -1,5 +1,4 @@
-/*
- *
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,7 +17,6 @@
  *
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 package org.squashtest.tm.web.internal.wizard;
 

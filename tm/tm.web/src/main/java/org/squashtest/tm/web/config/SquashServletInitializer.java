@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.web.config;
 
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.filter.HttpPutFormContentFilter;
+import org.springframework.web.multipart.support.MultipartFilter;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
@@ -34,7 +36,9 @@ import javax.inject.Inject;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.descriptor.JspPropertyGroupDescriptor;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 
 /**
  * This is required to be able to deploy Squash TM in a servlet container (as opposed to using the embedded container).
@@ -46,6 +50,13 @@ import java.util.Collection;
  */
 @Configuration
 public class SquashServletInitializer extends SpringBootServletInitializer {
+	private static final String[] IMPORT_URL_PATTERNS = {
+			"**/importer",
+			"**/importer/*",
+			"**/import/upload",
+			"**/import/upload/*"
+	};
+
 	@Inject
 	private BugTrackerContextHolder bugTrackerContextHolder;
 
@@ -77,5 +88,4 @@ public class SquashServletInitializer extends SpringBootServletInitializer {
 	public OpenedEntitiesLifecycleListener openedEntitiesLifecycleListener() {
 		return new OpenedEntitiesLifecycleListener();
 	}
-
 }

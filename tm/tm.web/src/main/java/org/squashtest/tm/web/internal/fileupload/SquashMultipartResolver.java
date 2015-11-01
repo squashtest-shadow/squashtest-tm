@@ -25,49 +25,42 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
-/**
- * TODO NOSGI modifié OsgiAppEventListener à l'arrache pour que ça compile
- */
+import javax.annotation.PostConstruct;
+
 public class SquashMultipartResolver extends CommonsMultipartResolver implements ApplicationListener<ConfigUpdateEvent> {
 
+	private ConfigurationService config;
 
-//	private OsgiBundleApplicationContextEventMulticaster publisher;
+	/**
+	 * Defaults to UPLOAD_SIZE_LIMIT
+	 */
+	private String maxUploadSizeKey = ConfigurationService.Properties.UPLOAD_SIZE_LIMIT;
 
-    private ConfigurationService config;
+	@PostConstruct
+	public void init() {
+		updateConfig();
+	}
 
-    private String maxUploadSizeKey;
+	public void setConfig(ConfigurationService config) {
+		this.config = config;
+	}
 
-    public void init() {
-//		publisher.addApplicationListener(this);
-        updateConfig();
-    }
+	/**
+	 * Sets property name of max upload size which shall be fetched with configuration service.
+	 * @param maxUploadSizeKey
+	 */
+	public void setMaxUploadSizeKey(String maxUploadSizeKey) {
+		this.maxUploadSizeKey = maxUploadSizeKey;
 
-//	public void setPublisher(OsgiBundleApplicationContextEventMulticaster publisher) {
-//		this.publisher = publisher;
-//	}
+	}
 
-    public void setConfig(ConfigurationService config) {
-        this.config = config;
-    }
+	private void updateConfig() {
+		String uploadLimit = config.findConfiguration(maxUploadSizeKey);
+		setMaxUploadSize(Long.valueOf(uploadLimit));
+	}
 
-    public void setmaxUploadSizeKey(String maxUploadSizeKey) {
-        this.maxUploadSizeKey = maxUploadSizeKey;
-
-    }
-
-    private void updateConfig() {
-        String uploadLimit = config.findConfiguration(maxUploadSizeKey);
-        setMaxUploadSize(Long.valueOf(uploadLimit));
-    }
-
-
-//    @Override
-    public void onOsgiApplicationEvent(ConfigUpdateEvent event) {
-        updateConfig();
-    }
-
-    @Override
-    public void onApplicationEvent(ConfigUpdateEvent event) {
-
-    }
+	@Override
+	public void onApplicationEvent(ConfigUpdateEvent event) {
+		updateConfig();
+	}
 }

@@ -20,63 +20,35 @@
  */
 package org.squashtest.tm.web.internal.export;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Map;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import org.apache.commons.collections.map.MultiValueMap;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 
-public class ExportPluginManagerImpl implements ExportPluginManager,
-		ExportPluginRegistry {
-	
-	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	
+import javax.annotation.PostConstruct;
+import java.util.Collection;
+import java.util.Collections;
+
+public class ExportPluginManagerImpl implements ExportPluginManager {
+	@Autowired(required = false)
+	private Collection<ExportPlugin> plugins = Collections.emptyList();
 	private final MultiValueMap pluginsByWorkspace = new MultiValueMap();
 
-	@Override
-	public void registerPlugin(ExportPlugin plugin, Map<?, ?> properties) {
-		if (plugin != null){
-			try{
-				lock.writeLock().lock();
-				pluginsByWorkspace.put(plugin.getDisplayWorkspace(), plugin);
-			}
-			finally{
-				lock.writeLock().unlock();
-			}
+	@PostConstruct
+	public void registerPlugins() {
+		for (ExportPlugin plugin : plugins) {
+			pluginsByWorkspace.put(plugin.getDisplayWorkspace(), plugin);
 		}
 	}
 
-	@Override
-	public void unregisterPlugin(ExportPlugin plugin, Map<?, ?> properties) {
-		if (plugin != null){
-			try{
-				lock.writeLock().lock();
-				pluginsByWorkspace.remove(plugin.getDisplayWorkspace(), plugin);
-			}
-			finally{
-				lock.writeLock().unlock();
-			}
-		}
-	}
 
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<ExportPlugin> findAllByWorkspace(WorkspaceType workspace) {
-		try{
-			lock.readLock().lock();
-			Collection<ExportPlugin> plugins  = pluginsByWorkspace.getCollection(workspace);
-			if (plugins == null){
-				plugins = Collections.EMPTY_SET;
-			}
-			return new ArrayList<ExportPlugin>(plugins);
+		Collection<ExportPlugin> plugins = pluginsByWorkspace.getCollection(workspace);
+		if (plugins == null) {
+			plugins = Collections.emptySet();
 		}
-		finally {
-			lock.readLock().unlock();
-		}
+		return Collections.unmodifiableCollection(plugins);
 	}
-
 }

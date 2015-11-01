@@ -146,6 +146,8 @@ core/core.service/META-INF$
 tm/tm.web/images/*
 ^.*\\\.settings$
 tm/tm.web/node_modules
+.profiler
+tm/tm.web/@lucene.dir@
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp

@@ -49,10 +49,10 @@ import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("administration/config")
-public class ConfigAdministrationController implements ApplicationContextAware { //, BundleContextAware {
+public class ConfigAdministrationController implements ApplicationContextAware {
 
     private static final String WHITE_LIST = "uploadfilter.fileExtensions.whitelist";
-    private static final String UPLOAD_SIZE_LIMIT = "uploadfilter.upload.sizeLimitInBytes";
+    private static final String UPLOAD_SIZE_LIMIT = ConfigurationService.Properties.UPLOAD_SIZE_LIMIT;
     private static final String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
     @Inject
     private ConfigurationService configService;

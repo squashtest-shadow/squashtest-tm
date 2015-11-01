@@ -39,7 +39,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -265,7 +264,7 @@ public class RequirementLibraryNavigationController extends
 
 	private Map<String, Object> exportReportParams() {
 		Map<String, Object> reportParams = new HashMap<>();
-		reportParams.put(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED,
+		reportParams.put(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR,
 				featureManager.isEnabled(Feature.MILESTONE));
 		return reportParams;
 	}

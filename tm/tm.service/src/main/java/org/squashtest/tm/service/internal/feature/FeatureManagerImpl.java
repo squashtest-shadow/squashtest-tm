@@ -31,6 +31,9 @@ import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
 import javax.inject.Inject;
 
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
+
 /**
  * @author Gregory Fouquet
  *
@@ -59,11 +62,11 @@ public class FeatureManagerImpl implements FeatureManager {
 
 		switch (feature) {
 			case MILESTONE:
-				enabled = configuration.getBoolean(ConfigurationService.MILESTONE_FEATURE_ENABLED);
+				enabled = configuration.getBoolean(MILESTONE_FEATURE_ENABLED);
 				break;
 
 			case CASE_INSENSITIVE_LOGIN:
-				enabled = configuration.getBoolean(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED);
+				enabled = configuration.getBoolean(CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED);
 				break;
 			default:
 				throw new IllegalArgumentException("I don't know feature '" + feature
@@ -102,11 +105,11 @@ public class FeatureManagerImpl implements FeatureManager {
 	 */
 	private void setCaseInsensitiveLoginFeatureEnabled(boolean enabled) {
 		// TODO check if possible
-		configuration.set(ConfigurationService.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED, enabled);
+		configuration.set(CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED, enabled);
 	}
 
 	private void setMilestoneFeatureEnabled(boolean enabled) {
-		configuration.set(ConfigurationService.MILESTONE_FEATURE_ENABLED, enabled);
+		configuration.set(MILESTONE_FEATURE_ENABLED, enabled);
 		if (enabled) {
 			milestoneManager.enableFeature();
 		} else {

@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -22,67 +22,53 @@ package org.squashtest.tm.web.internal.fileupload;
 
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.context.ApplicationListener;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 
-/**
- * TODO NOSGI fait que ça compile à l'arrache
- */
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
+@Component
 public class UploadContentFilterUtil implements ApplicationListener<ConfigUpdateEvent> {
 
+	@Inject
+	private ConfigurationService config;
 
-//	private OsgiBundleApplicationContextEventMulticaster publisher;
+	public void setConfig(ConfigurationService config) {
+		this.config = config;
+	}
 
-    private ConfigurationService config;
+	private String[] allowed;
 
-    public void setConfig(ConfigurationService config) {
-        this.config = config;
-    }
-//	public void setPublisher(OsgiBundleApplicationContextEventMulticaster publisher) {
-//		this.publisher = publisher;
-//	}
+	private String whiteListKey = ConfigurationService.Properties.UPLOAD_EXTENSIONS_WHITELIST;
 
-    private String[] allowed;
+	private void updateConfig() {
+		String whiteList = config.findConfiguration(whiteListKey);
+		allowed = whiteList.split(",");
+	}
 
-    private String whiteListKey;
+	public boolean isTypeAllowed(UploadedData upload) {
 
-    public void setWhiteListKey(String whiteListKey) {
-        this.whiteListKey = whiteListKey;
-    }
+		String fileType = FilenameUtils.getExtension(upload.getName());
 
+		for (String type : allowed) {
+			if (type.trim().equalsIgnoreCase(fileType)) {
+				return true;
+			}
+		}
 
-    private void updateConfig() {
-        String whiteList = config.findConfiguration(whiteListKey);
-        allowed = whiteList.split(",");
-    }
+		return false;
+	}
 
-    public boolean isTypeAllowed(UploadedData upload) {
+	@PostConstruct
+	public void init() {
+		updateConfig();
+	}
 
-        String fileType = FilenameUtils.getExtension(upload.getName());
-
-        for (String type : allowed) {
-            if (type.trim().equalsIgnoreCase(fileType)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public void init() {
-//		publisher.addApplicationListener(this);
-        updateConfig();
-    }
-
-
-    //	@Override
-    public void onOsgiApplicationEvent(ConfigUpdateEvent event) {
-        updateConfig();
-    }
-
-    @Override
-    public void onApplicationEvent(ConfigUpdateEvent event) {
-
-    }
+	@Override
+	public void onApplicationEvent(ConfigUpdateEvent event) {
+		updateConfig();
+	}
 }

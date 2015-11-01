@@ -29,9 +29,9 @@
 		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd
 		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
 
-  <context:component-scan base-package="org.squashtest.tm" use-default-filters="false">
-    <context:include-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
-  </context:component-scan>
+  <!--<context:component-scan base-package="org.squashtest.tm" use-default-filters="false">-->
+    <!--<context:include-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />-->
+  <!--</context:component-scan>-->
 
 		<!-- we need to configure this bean here because  component-scan occurs when *-servlet.xml is read, which is later -->
   <bean name="squash.tm.report.ReportsRegistry" class="org.squashtest.tm.web.internal.report.ReportsRegistry" />
@@ -39,59 +39,67 @@
 
 	<!-- ============================== multipart files handling =============================================== -->
 
-  <bean id="multipartResolver" class="org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher">
+  <!-- NOSGi done -->
+  <!--<bean id="multipartResolver" class="org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher">-->
 
-    <property name="defaultResolver" ref="defaultMultipartResolver" />
+    <!--<property name="defaultResolver" ref="defaultMultipartResolver" />-->
 
-    <property name="resolverMap">
-      <map>
-        <entry key=".*/import/upload.*" value-ref="importMultipartResolver" />
-        <entry key=".*/importer/.*" value-ref="importMultipartResolver" />
-      </map>
-    </property>
+    <!--<property name="resolverMap">-->
+      <!--<map>-->
+        <!--<entry key=".*/import/upload.*" value-ref="importMultipartResolver" />-->
+        <!--<entry key=".*/importer/.*" value-ref="importMultipartResolver" />-->
+      <!--</map>-->
+    <!--</property>-->
 
-  </bean>
+  <!--</bean>-->
 
-  <bean id="defaultMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">
-      <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
-     <property name="publisher" ref="OsgiMultiCast" />
-    <property name="maxUploadSizeKey" value="uploadfilter.upload.sizeLimitInBytes" />
-    <property name="defaultEncoding" value="UTF-8" />
-  </bean>
-
-	
-  <bean id="importMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">
-   <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
-    <property name="publisher" ref="OsgiMultiCast" />
-    <property name="maxUploadSizeKey" value="uploadfilter.upload.import.sizeLimitInBytes" />
-    <property name="defaultEncoding" value="UTF-8" />
-  </bean>
+  <!-- NOSGi done -->
+  <!--<bean id="defaultMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">-->
+      <!--<property name="config" ref="squashtest.core.configuration.ConfigurationService" />-->
+     <!--<property name="publisher" ref="OsgiMultiCast" />-->
+    <!--<property name="maxUploadSizeKey" value="uploadfilter.upload.sizeLimitInBytes" />-->
+    <!--<property name="defaultEncoding" value="UTF-8" />-->
+  <!--</bean>-->
 
 
+  <!-- NOSGi done -->
+  <!--<bean id="importMultipartResolver" class="org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver" init-method="init">-->
+   <!--<property name="config" ref="squashtest.core.configuration.ConfigurationService" />-->
+    <!--<property name="publisher" ref="OsgiMultiCast" />-->
+    <!--<property name="maxUploadSizeKey" value="uploadfilter.upload.import.sizeLimitInBytes" />-->
+    <!--<property name="defaultEncoding" value="UTF-8" />-->
+  <!--</bean>-->
+
+
+  <!-- NOSGi done -->
     <!-- This bean is referenced by an osgi:list, so it has to be instanciated in appContext*xml (not visible when in *servlet.xml) -->
-  <bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl">
-    <property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />
-  </bean>
-	
-	<!-- same thing for this one -->
-  <bean id="squash.tm.report.ExportPluginManager" class="org.squashtest.tm.web.internal.export.ExportPluginManagerImpl" />
+  <!--<bean id="squash.tm.report.WorkspaceWizardManager" class="org.squashtest.tm.web.internal.wizard.WorkspaceWizardManagerImpl">-->
+    <!--<property name="projectFinder" ref="squashtest.tm.service.GenericProjectManagerService" />-->
+  <!--</bean>-->
 
-  <bean class="org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil" init-method="init" >
-     <property name="config" ref="squashtest.core.configuration.ConfigurationService" />
-      <property name="publisher" ref="OsgiMultiCast" />
-    <property name="whiteListKey" value="uploadfilter.fileExtensions.whitelist" />
-  </bean>
-  
+  <!-- NOSGi done -->
+	<!-- same thing for this one -->
+  <!--<bean id="squash.tm.report.ExportPluginManager" class="org.squashtest.tm.web.internal.export.ExportPluginManagerImpl" />-->
+
+  <!-- NOSGi done -->
+  <!--<bean class="org.squashtest.tm.web.internal.fileupload.UploadContentFilterUtil" init-method="init" >-->
+     <!--<property name="config" ref="squashtest.core.configuration.ConfigurationService" />-->
+      <!--<property name="publisher" ref="OsgiMultiCast" />-->
+    <!--<property name="whiteListKey" value="uploadfilter.fileExtensions.whitelist" />-->
+  <!--</bean>-->
+
+  <!-- NOSGI useless ? -->
   <!-- event publisher  -->
-<bean id="applicationEventMulticaster"  
-              class="org.springframework.context.event.SimpleApplicationEventMulticaster" >  
- </bean>
- 
+<!--<bean id="applicationEventMulticaster"  -->
+              <!--class="org.springframework.context.event.SimpleApplicationEventMulticaster" >  -->
+ <!--</bean>-->
+
+  <!-- NOSGI useless -->
    <!-- Osgi adapter for the event publisher -->
- <bean id="OsgiMultiCast"  
-              class="org.springframework.osgi.context.event.OsgiBundleApplicationContextEventMulticasterAdapter" >  
-                <constructor-arg ref="applicationEventMulticaster"/>
- </bean>
+ <!--<bean id="OsgiMultiCast"  -->
+              <!--class="org.springframework.osgi.context.event.OsgiBundleApplicationContextEventMulticasterAdapter" >  -->
+                <!--<constructor-arg ref="applicationEventMulticaster"/>-->
+ <!--</bean>-->
 
  
 	<!-- ============================== /multipart files handling =============================================== -->
@@ -113,10 +121,10 @@
     <property name="cacheSeconds" value="60" />
   </bean>
 
-  <beans profile="eclipse">
-    <context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">
-      <context:include-filter type="annotation"
-        expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
-    </context:component-scan>
-  </beans>
+  <!--<beans profile="eclipse">-->
+    <!--<context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">-->
+      <!--<context:include-filter type="annotation"-->
+        <!--expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />-->
+    <!--</context:component-scan>-->
+  <!--</beans>-->
 </beans>

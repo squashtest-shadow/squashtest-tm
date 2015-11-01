@@ -23,10 +23,14 @@ package org.squashtest.tm.web.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.web.multipart.MultipartResolver;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
+import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.RequirementLibraryTreeNodeBuilder;
@@ -34,6 +38,7 @@ import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuild
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import java.util.HashMap;
 
 import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
@@ -47,6 +52,9 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 public class TmWebConfig {
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private ConfigurationService configurationService;
 
 	@Inject
 	Provider<TestCaseLibraryTreeNodeBuilder> testCaseLibraryTreeNodeBuilderProvider;
@@ -73,5 +81,39 @@ public class TmWebConfig {
 	@Scope(SCOPE_PROTOTYPE)
 	public DriveNodeBuilder<CampaignLibraryNode> campaignDriveNodeBuilder() {
 		return new DriveNodeBuilder<CampaignLibraryNode>(permissionEvaluationService, campaignLibraryTreeNodeBuilderProvider);
+	}
+
+	/**
+	 * This overrides spring boot's default (servlet 3 based) multipart resolver.
+	 * @return
+	 */
+	@Bean
+	public MultipartResolver multipartResolver() {
+		MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
+		bean.setDefaultResolver(defaultMultipartResolver());
+		HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
+		resolverMap.put(".*/import/upload.*", importMultipartResolver());
+		resolverMap.put(".*/importer/.*", importMultipartResolver());
+		bean.setResolverMap(resolverMap);
+		return bean;
+	}
+
+	@Bean
+	public SquashMultipartResolver defaultMultipartResolver() {
+		return buildSquashMultipartResolver();
+	}
+
+	@Bean
+	public SquashMultipartResolver importMultipartResolver() {
+		SquashMultipartResolver bean = buildSquashMultipartResolver();
+		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
+		return bean;
+	}
+
+	private SquashMultipartResolver buildSquashMultipartResolver() {
+		SquashMultipartResolver bean = new SquashMultipartResolver();
+		bean.setConfig(configurationService);
+		bean.setDefaultEncoding("UTF-8");
+		return bean;
 	}
 }

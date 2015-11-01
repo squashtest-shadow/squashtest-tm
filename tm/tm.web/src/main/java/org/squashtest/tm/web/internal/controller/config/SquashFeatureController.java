@@ -66,18 +66,18 @@ public class SquashFeatureController {
 	@Secured("ROLE_ADMIN")
 	public void setMilestonesFeature(@RequestParam("enabled") boolean enabled) {
 		synchronized (monitor) {
-			Object prevState = applicationScope.getAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED);
+			Object prevState = applicationScope.getAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR);
 			// nobody should be able to use the feature while it is being turned
 			// on/off
-			applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED, false);
+			applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, false);
 
 			try {
 				featureManager.setEnabled(Feature.MILESTONE, enabled);
-				applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED, enabled);
+				applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, enabled);
 
 			} catch (RuntimeException ex) {
 				// exception occurred : we rollback the app state
-				applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED, prevState);
+				applicationScope.setAttribute(SquashConfigContextExposer.MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, prevState);
 				throw ex;
 			}
 		}

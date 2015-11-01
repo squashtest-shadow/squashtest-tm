@@ -20,20 +20,21 @@
  */
 package org.squashtest.tm.web.internal.listener;
 
-import javax.inject.Inject;
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
+import javax.inject.Inject;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
+
 /**
  * This listener exposes various application-wide configuration properties in the ServletContext (aka Application scope)
- * 
+ *
  * @author Gregory Fouquet
- * 
  */
 @ApplicationComponent
 public class SquashConfigContextExposer implements ServletContextListener {
@@ -41,7 +42,7 @@ public class SquashConfigContextExposer implements ServletContextListener {
 	/**
 	 * Attribute name of the app scope boolean property which indicates if the milestones feature is enabled.
 	 */
-	public static final String MILESTONE_FEATURE_ENABLED = "milestoneFeatureEnabled";
+	public static final String MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR = "milestoneFeatureEnabled";
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -57,11 +58,11 @@ public class SquashConfigContextExposer implements ServletContextListener {
 
 	private void exposeMilestoneFeatEnabled(ServletContextEvent sce) {
 		// NOTE: should return when there is no value
-		boolean enabled = configurationService.getBoolean(ConfigurationService.MILESTONE_FEATURE_ENABLED);
+		boolean enabled = configurationService.getBoolean(MILESTONE_FEATURE_ENABLED);
 		LOGGER.info("Read global configuration param '{}' with param '{}'",
-				ConfigurationService.MILESTONE_FEATURE_ENABLED, enabled);
+			MILESTONE_FEATURE_ENABLED, enabled);
 
-		sce.getServletContext().setAttribute(MILESTONE_FEATURE_ENABLED, enabled);
+		sce.getServletContext().setAttribute(MILESTONE_FEATURE_ENABLED_CONTEXT_ATTR, enabled);
 	}
 
 	/**

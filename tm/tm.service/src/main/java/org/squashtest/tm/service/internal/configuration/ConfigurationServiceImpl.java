@@ -34,6 +34,7 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 @Transactional
 public class ConfigurationServiceImpl implements ConfigurationService {
 
+	// TODO make these named queries
 	private static final String INSERT_KEY_SQL = "insert into CORE_CONFIG (STR_KEY, VALUE) values (?, ?)";
 	private static final String FIND_VALUE_BY_KEY_SQL = "select VALUE from CORE_CONFIG where STR_KEY = ?";
 	private static final String UPDATE_KEY_SQL = "update CORE_CONFIG set VALUE = ? where STR_KEY = ?";

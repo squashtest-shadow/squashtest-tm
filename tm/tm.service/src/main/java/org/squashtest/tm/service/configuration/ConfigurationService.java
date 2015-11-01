@@ -21,8 +21,16 @@
 package org.squashtest.tm.service.configuration;
 
 public interface ConfigurationService {
-	String MILESTONE_FEATURE_ENABLED = "feature.milestone.enabled";
-	String CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED = "feature.caseInsensitiveLogin.enabled";
+	/**
+	 * Names of properties configurable through this service.
+	 */
+	interface Properties {
+		String MILESTONE_FEATURE_ENABLED = "feature.milestone.enabled";
+		String CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED = "feature.caseInsensitiveLogin.enabled";
+		String UPLOAD_SIZE_LIMIT = "uploadfilter.upload.sizeLimitInBytes";
+		String UPLOAD_EXTENSIONS_WHITELIST = "uploadfilter.fileExtensions.whitelist";
+		String IMPORT_SIZE_LIMIT = "uploadfilter.upload.import.sizeLimitInBytes";
+	}
 
 	void createNewConfiguration(String key, String value);
 
