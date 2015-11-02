@@ -156,19 +156,13 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 				uiIcon : 'execute-arrow',
 				tooltip : translator.get('label.run'),
 				onClick : function(table, cell){
-					var row = cell.parentNode.parentNode; 
-					
+					var row = cell.parentNode.parentNode; 					
 					var executionStepId = table.getODataId(row);
-					// TODO : something's wrong with this url, we shouldn't need the executionId. Whatever.
-					var url = routing.buildURL('execute.stepbyid', executionId, executionStepId);
-					var data = {
-						'optimized' : 'false',
-					};
-					var winDef = {
-						name : "classicExecutionRunner",
-						features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
-					};
-					$.open(url, data, winDef);					
+					
+					var url = routing.buildURL('execute.stepbyid', executionId, executionStepId);					
+					url += '?optimized=false';
+					
+					window.open(url, "classicExecutionRunner", "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised");					
 				}
 			   },
 			   
