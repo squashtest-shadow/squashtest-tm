@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -19,14 +19,6 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.generic;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
@@ -57,6 +49,13 @@ import org.squashtest.tm.web.internal.model.json.JsonProject;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
 public abstract class WorkspaceController<LN extends LibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
 
@@ -78,22 +77,22 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	/**
 	 * Shows a workspace.
-	 * 
+	 *
 	 * @param model
 	 * @param locale
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-			@CurrentMilestone Milestone activeMilestone,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
+	                            @CurrentMilestone Milestone activeMilestone,
+	                            @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
+	                            @CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
-	
 
-		if(elementId == null || "".equals(elementId)){
+
+		if (elementId == null || "".equals(elementId)) {
 			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {
@@ -105,12 +104,12 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-		if (activeMilestone != null){
+		if (activeMilestone != null) {
 			nodeBuilder.filterByMilestone(activeMilestone);
 		}
 
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
-				.setModel(libraries).build();
+			.setModel(libraries).build();
 
 		model.addAttribute("rootModel", rootNodes);
 
@@ -118,24 +117,24 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		// also add meta data about projects
 		Collection<Project> projects = projectFinder.findAllReadable();
-		Collection<JsonProject> jsProjects = new ArrayList<JsonProject>(projects.size());
-		for (Project p : projects){
+		Collection<JsonProject> jsProjects = new ArrayList<>(projects.size());
+		for (Project p : projects) {
 			jsProjects.add(jsonProjectBuilder.toExtendedProject(p));
 		}
 
 		model.addAttribute("projects", jsProjects);
 
 		// also, milestones
-		if (activeMilestone != null){
+		if (activeMilestone != null) {
 			JsonMilestone jsMilestone =
-					new JsonMilestone(
-							activeMilestone.getId(),
-							activeMilestone.getLabel(),
-							activeMilestone.getStatus(),
-							activeMilestone.getRange(),
-							activeMilestone.getEndDate(),
-							activeMilestone.getOwner().getLogin()
-							);
+				new JsonMilestone(
+					activeMilestone.getId(),
+					activeMilestone.getLabel(),
+					activeMilestone.getStatus(),
+					activeMilestone.getRange(),
+					activeMilestone.getEndDate(),
+					activeMilestone.getOwner().getLogin()
+				);
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 
@@ -152,14 +151,14 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	/**
 	 * Should return a workspace service.
-	 * 
+	 *
 	 * @return
 	 */
-	protected abstract WorkspaceService<Library<LN>> getWorkspaceService();
+	protected abstract <T extends Library<LN>> WorkspaceService<T> getWorkspaceService();
 
 	/**
 	 * Returns the logical name of the page which shows the workspace.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract String getWorkspaceViewName();
@@ -167,6 +166,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	/**
 	 * Returns the list of parents of a node given the id of an element
+	 *
 	 * @param elementId
 	 * @return
 	 */
@@ -174,6 +174,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	/**
 	 * Returns the id of a node in the tree given the id of an element
+	 *
 	 * @param elementId
 	 * @return
 	 */
@@ -187,7 +188,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	/**
 	 * Returns the workspace type managed by the concrete controller.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract WorkspaceType getWorkspaceType();
@@ -236,7 +237,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 	/**
 	 * Returns the appropriate drive node builder. Should never return null.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Provider<DriveNodeBuilder<LN>> driveNodeBuilderProvider();

@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -20,23 +20,22 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.List;
+import java.util.Locale;
 
 @Controller
 @RequestMapping("/test-case-workspace")
@@ -47,14 +46,14 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Inject
 	@Named("squashtest.tm.service.TestCasesWorkspaceService")
-	private WorkspaceService<Library<TestCaseLibraryNode>> workspaceService;
+	private WorkspaceService<TestCaseLibrary> workspaceService;
 
 	@Inject
 	@Named("testCase.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<TestCaseLibraryNode>> driveNodeBuilderProvider;
 
 	@Override
-	protected WorkspaceService<Library<TestCaseLibraryNode>> getWorkspaceService() {
+	protected WorkspaceService<TestCaseLibrary> getWorkspaceService() {
 		return workspaceService;
 	}
 
@@ -72,7 +71,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 
 	@Override
 	protected void populateModel(Model model, Locale locale) {
-		List<Library<TestCaseLibraryNode>> libraries = workspaceService.findAllImportableLibraries();
+		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
 		model.addAttribute("editableLibraries", libraries);
 	}
 
@@ -85,13 +84,13 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	}
 
 	@Override
-	protected String[] getNodeParentsInWorkspace(Long elementId){
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
 		List<String> parents = testCaseLibraryNavigationService.getParentNodesAsStringList(elementId);
 		return parents.toArray(new String[parents.size()]);
 	}
 
 	@Override
-	protected String getTreeElementIdInWorkspace(Long elementId){
-		return "TestCase-"+elementId;
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "TestCase-" + elementId;
 	}
 }

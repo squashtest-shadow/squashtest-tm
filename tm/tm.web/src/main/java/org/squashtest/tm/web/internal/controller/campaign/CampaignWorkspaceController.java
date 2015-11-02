@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -31,6 +31,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
@@ -46,8 +47,8 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
 	@Inject
-	@Named("squashtest.tm.service.CampaignsWorkspaceService")
-	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
+//	@Named("squashtest.tm.service.CampaignsWorkspaceService")
+	private WorkspaceService<CampaignLibrary> workspaceService;
 
 	@Inject
 	@Named("campaign.driveNodeBuilder")
@@ -58,7 +59,7 @@ public class CampaignWorkspaceController extends WorkspaceController<CampaignLib
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceService()
 	 */
 	@Override
-	protected WorkspaceService<Library<CampaignLibraryNode>> getWorkspaceService() {
+	protected WorkspaceService<CampaignLibrary> getWorkspaceService() {
 		return workspaceService;
 	}
 
