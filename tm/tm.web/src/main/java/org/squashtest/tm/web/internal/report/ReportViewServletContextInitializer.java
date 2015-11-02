@@ -20,29 +20,42 @@
  */
 package org.squashtest.tm.web.internal.report;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
+import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.ReportPlugin;
 import org.squashtest.tm.api.report.ReportView;
 
 /**
  * This class registers / unregisters Jasper Reports view definitinos from report plugin under a view name.
+ *
+ * TODO As it is now called only once, could be replaced by a ServletContextListener
  * 
  * @author Gregory Fouquet
  * 
  */
+@WebComponent
 public class ReportViewServletContextInitializer implements ServletContextAware {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportViewServletContextInitializer.class);
 
 	private ServletContext servletContext;
 
+	@Autowired(required = false)
+	private Collection<ReportPlugin> reportPlugins = Collections.emptyList();
+
+	// TODO This is a leftover of the OSGi era. We no longer require an enum / command pattern
 	private static enum RegistrationAction {
 		BIND_CONTEXT() {
 			@Override
@@ -51,16 +64,6 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 					ServletContextAware springView = (ServletContextAware) view.getSpringView(); 
 					springView.setServletContext(servletContext);
 					LOGGER.info("Bound ServletContext to view [{}]", view);
-				}
-			}
-		},
-		UNBIND_CONTEXT() {
-			@Override
-			public void apply(ServletContext servletContext, ReportView view) {
-				if (view.getSpringView() instanceof ServletContextAware) {
-					ServletContextAware springView = (ServletContextAware) view.getSpringView(); 
-					springView.setServletContext(null);
-					LOGGER.info("Unbound ServletContext from view [{}]", view);
 				}
 			}
 		};
@@ -72,14 +75,17 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 		public abstract void apply(ServletContext servletContext, ReportView view);
 	}
 
-	public synchronized void registerViews(ReportPlugin plugin, Map<?, ?> properties) {
-		// sometimes, plugin is null
-		if (plugin != null) {
-			apply(RegistrationAction.BIND_CONTEXT, plugin, properties);
+	@PostConstruct
+	public synchronized void registerViews() {
+		for (ReportPlugin plugin : reportPlugins) {
+			// sometimes, plugin is null
+			if (plugin != null) {
+				apply(RegistrationAction.BIND_CONTEXT, plugin);
+			}
 		}
 	}
 
-	private void apply(RegistrationAction action, ReportPlugin plugin, Map<?, ?> properties) {
+	private void apply(RegistrationAction action, ReportPlugin plugin) {
 		Report[] reports = plugin.getReports();
 
 		for (int reportIndex = 0; reportIndex < reports.length; reportIndex++) {
@@ -93,13 +99,6 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 		for (int viewIndex = 0; viewIndex < report.getViews().length; viewIndex++) {
 			ReportView view = report.getViews()[viewIndex];
 			action.apply(servletContext, view);
-		}
-	}
-
-	public void unregisterViews(ReportPlugin plugin, Map<?, ?> properties) {
-		// sometimes, plugin is null
-		if (plugin != null) {
-			apply(RegistrationAction.UNBIND_CONTEXT, plugin, properties);
 		}
 	}
 

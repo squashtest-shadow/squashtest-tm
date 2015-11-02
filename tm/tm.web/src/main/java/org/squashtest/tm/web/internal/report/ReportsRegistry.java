@@ -20,104 +20,74 @@
  */
 package org.squashtest.tm.web.internal.report;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.report.BasicReport;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.ReportPlugin;
 import org.squashtest.tm.api.report.StandardReportCategory;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class registers / unregisters {@link BasicReport} and their {@link StandardReportCategory} when
  * {@link ReportPlugin} services are started / stopped.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
+@Component
 public class ReportsRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReportsRegistry.class);
 
-
-
 	private final MultiValueMap reportsByCategory = new MultiValueMap();
-	private final Map<ReportIdentifier, IdentifiedReportDecorator> reportByIdentifier = new ConcurrentHashMap<ReportIdentifier, IdentifiedReportDecorator>();
+	private final Map<ReportIdentifier, IdentifiedReportDecorator> reportByIdentifier = new ConcurrentHashMap<>();
 
+	/**
+	 * Collection of known ReportPligins. @Inject is not suitable because it doesn't handle empty collections.
+	 */
+	@Autowired(required = false)
+	private Collection<ReportPlugin> plugins = Collections.emptyList();
 
 	@Inject
 	private MessageSource i18nHelper;
 
 	/**
 	 * OSGi context should be configured to call this method when a {@link ReportPlugin} service is started.
-	 * @param plugin
-	 * @param properties
 	 */
-	public synchronized void registerReports(ReportPlugin plugin, Map<?, ?> properties) {
-		Report[] reports = plugin.getReports();
+	@PostConstruct
+	public void registerReports() {
+		for (ReportPlugin plugin : plugins) {
+			Report[] reports = plugin.getReports();
 
-		for (int i = 0; i < reports.length; i++) {
-			Report report =  reports[i];
-			StandardReportCategory category = report.getCategory();
-			IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties, i);
+			for (int i = 0; i < reports.length; i++) {
+				UUID uuid = UUID.randomUUID();
+				Report report = reports[i];
+				StandardReportCategory category = report.getCategory();
+				IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, uuid, i);
 
-			reportsByCategory.put(category, identifiedReport);
-			reportByIdentifier.put(identifiedReport.getIdentifier(), identifiedReport);
+				reportsByCategory.put(category, identifiedReport);
+				reportByIdentifier.put(identifiedReport.getIdentifier(), identifiedReport);
 
-			LOGGER.info("Registered report [{}] under Category [{}]", report, category.getI18nKey());
-			LOGGER.debug("Report plugin registered along with properties [{}]", properties);
+				LOGGER.info("Registered report [{}] under Category [{}] along with UUID [{}]", report, category.getI18nKey(), uuid);
+			}
 		}
 	}
 
-	private IdentifiedReportDecorator createIdentifiedReport(Report report, Map<?, ?> properties, int index) {
-		String pluginNamespace = (String) properties.get(OsgiServiceConstants.SERVICE_ID_KEY);
+	private IdentifiedReportDecorator createIdentifiedReport(Report report, UUID uuid, int index) {
+		String pluginNamespace = uuid.toString();
 		return new IdentifiedReportDecorator(report, pluginNamespace, index);
 	}
 
-	/**
-	 * OSGi context should be configured to call this method when a {@link ReportPlugin} service is stopped.
-	 * @param plugin
-	 * @param properties
-	 */
-	public synchronized void unregisterReports(ReportPlugin plugin, Map<?, ?> properties) {
-		// this sometimes happen
-		if (plugin == null) {
-			LOGGER.warn("Unregistered null plugin with properties {}", properties);
-			return;
-		}
-
-		Report[] reports = plugin.getReports();
-
-		for (int i = 0; i < reports.length; i++) {
-			Report report =  reports[i];
-
-			StandardReportCategory category = report.getCategory();
-			IdentifiedReportDecorator identifiedReport = createIdentifiedReport(report, properties, i);
-
-			reportsByCategory.remove(category, identifiedReport);
-			reportByIdentifier.remove(identifiedReport.getIdentifier());
-
-			LOGGER.info("Unregistered report [{}] from Category [{}]", report, category.getI18nKey());
-			LOGGER.debug("Report plugin unregistered along with properties [{}]", properties);
-		}
-	}
 
 	@SuppressWarnings("unchecked")
 	public Set<StandardReportCategory> getCategories() {
@@ -134,7 +104,7 @@ public class ReportsRegistry {
 	@SuppressWarnings("unchecked")
 	public Collection<IdentifiedReportDecorator> findReports(StandardReportCategory category) {
 		Collection<IdentifiedReportDecorator> res = (Collection<IdentifiedReportDecorator>) reportsByCategory.get(category);
-		return res == null ? Collections.<IdentifiedReportDecorator> emptyList() : res;
+		return res == null ? Collections.<IdentifiedReportDecorator>emptyList() : res;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -148,9 +118,9 @@ public class ReportsRegistry {
 		Map<StandardReportCategory, Collection<BasicReport>> sortedMap = new HashMap<StandardReportCategory, Collection<BasicReport>>(reportsByCategory.size());
 		Iterator<StandardReportCategory> categIterator = reportsByCategory.keySet().iterator();
 
-		while (categIterator.hasNext()){
+		while (categIterator.hasNext()) {
 			StandardReportCategory categ = categIterator.next();
-			List<BasicReport> sortedReports = new ArrayList<BasicReport>(reportsByCategory.getCollection(categ));
+			List<BasicReport> sortedReports = new ArrayList<>(reportsByCategory.getCollection(categ));
 			Collections.sort(sortedReports, new ReportSorter());
 			sortedMap.put(categ, sortedReports);
 		}
@@ -168,14 +138,13 @@ public class ReportsRegistry {
 	}
 
 
-
 	// ****************************** boilerplate *****************************
 
-	private static class CategorySorter implements Comparator<StandardReportCategory>{
+	private static class CategorySorter implements Comparator<StandardReportCategory> {
 
 		private MessageSource i18nHelper;
 
-		CategorySorter(MessageSource helper){
+		CategorySorter(MessageSource helper) {
 			this.i18nHelper = helper;
 		}
 
@@ -189,7 +158,7 @@ public class ReportsRegistry {
 
 	}
 
-	private static class ReportSorter implements Comparator<Report>{
+	private static class ReportSorter implements Comparator<Report> {
 		@Override
 		public int compare(Report report1, Report report2) {
 			String name1 = report1.getLabel();
