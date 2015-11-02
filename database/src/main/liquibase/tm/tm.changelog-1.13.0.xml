@@ -711,7 +711,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (4, '
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (57, 4, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (0, 58, 4, 'EQUALS');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
 	(0,'CallTestStep');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 4, 'NONE', 0);
@@ -953,9 +953,9 @@ values
 			<constraints nullable="false" foreignKeyName="fk_chart_bindind_chart_definition_chart_id" references="CHART_DEFINITION(CHART_ID)" />
 		</column>
 
-		<column name="POS_X" type="INT"/>
+		<column name="ROW" type="INT"/>
 
-		<column name="POS_Y" type="INT"/>
+		<column name="COL" type="INT"/>
 
 		<column name="SIZE_X" type="INT"/>
 
