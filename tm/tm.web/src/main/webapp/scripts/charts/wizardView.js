@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView" ], function($, Backbone,
-		router, translator, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView) {
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView" ], function($, Backbone,
+		router, translator, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
 
@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		initialize : function(options) {
 			this.model = options.model;
 			this.model.set({
-				steps:["entity", "scope", "filter", "type", "axis", "preview"]		
+				steps:["entity","attributes", "scope", "filter", "type", "axis", "preview"]		
 			});
 			this.loadI18n();
 		},
@@ -97,6 +97,9 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			this.showNewStepView(PreviewStepView);
 		},
 		
+		showAttributesStep : function(wizrouter){
+			this.showNewStepView(AttributeStepView);
+		},
 		resetView : function() {
 			console.log(this.model);
 			if (this.currentView !== undefined) {

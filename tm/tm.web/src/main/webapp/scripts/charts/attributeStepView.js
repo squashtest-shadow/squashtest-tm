@@ -18,27 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "./abstractStepView"],
-	function($, backbone, AbstractStepView) {
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
+	function($, backbone, _, Handlebars, AbstractStepView) {
 	"use strict";
 
-	var entityStepView = AbstractStepView.extend({
+	var attributesStepView = AbstractStepView.extend({
 		
 		initialize : function(data) {
-			this.tmpl = "#entity-step-tpl";
+			this.tmpl = "#attributes-step-tpl";
 			this.model = data;
 			this._initialize(data);
+
 		},
 		
-		updateModel : function() {
-		    var entity = _.map($("input[name='entity']:checked"), function(a) {return $(a).val();});
-		    var name = $("#chart-name").val();
-			this.model.set({selectedEntity : entity, name : name });  
+		events : {
 
+		},
+		
+		
+
+		
+		updateModel : function() {
+
+			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
+			
+			this.model.set({selectedAttributes : ids});
+			
 		}
+		
+	
+		
 		
 	});
 
-	return entityStepView;
+	return attributesStepView;
 
 });

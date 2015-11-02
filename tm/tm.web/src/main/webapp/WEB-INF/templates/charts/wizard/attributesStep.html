@@ -20,33 +20,36 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-  <div th:fragment="chart-wizard-entity">
+<div th:fragment="chart-wizard-attributes">
+
+ {{#each attributes.columnPrototypes}}
+ 
 
 
-<span th:text="#{label.name}" />
-<input type="text" id="chart-name" />
+  {{#if (contains ../attributes.selectedEntity @key)}}
+  
+  <div class="sq-tg expand">
+ <div class="tg-head">
+{{i18n @key prefix='chart.entityType.'}} 
+            
+</div> 
+{{#each  this}}
+  
+  {{!--<![CDATA[--}}
+<input type="checkbox" id="attributes-selection-{{id}}" name="{{id}}" 
+  {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}} 
+/>
+{{!--]]>--}}	
+{{i18n this.label prefix="chart.column."}}
 
-<br />
- <ul style="list-style: none;">
-        {{#each attributes.entityTypes}}
-        <li>
-        {{!--<![CDATA[--}}
-        <input  type="checkbox" name="entity" value="{{this}}"  
 
-        {{#if ../attributes.selectedEntity}}         
-        {{#if (contains ../attributes.selectedEntity this)}} checked="checked" {{/if}} 
-        {{else}}
-        {{#unless @index}} checked="checked" {{/unless}}
-        {{/if}}
-         />  
-        {{!--]]>--}}	
-        
-        
-        
-     {{i18n this prefix="chart.entityType."}}
 
-        </li>
-        {{/each}}     
-</ul>
+{{/each}}  
+ </div>  
+ 
+ {{/if}}
+ 
+{{/each}}  
 
- </div>
+</div>
+

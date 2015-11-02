@@ -23,6 +23,8 @@
 <div th:fragment="chart-wizard-filter">
 
 {{#*inline "filter"}}
+
+
 <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
     {{i18n this.label prefix="chart.column."}}
 <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}">
@@ -87,6 +89,8 @@ CHOOSE FILTER
 
 
 {{#each attributes.columnPrototypes}}
+
+  {{#if (contains ../attributes.selectedEntity @key)}}
   <div class="sq-tg expand">
  <div class="tg-head">
 {{i18n @key prefix='chart.entityType.'}} 
@@ -94,10 +98,16 @@ CHOOSE FILTER
 </div> 
 {{#each  this}}  
 {{#if (contains this.role "FILTER")}}
+
+{{#if (contains ../../attributes.selectedAttributes id)}} 
 {{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+{{/if}}
+
 {{/if }}
 {{/each}}  
  </div>  
+ 
+ {{/if }}
 {{/each}}  
 
 </div>
