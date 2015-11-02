@@ -24,12 +24,16 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 	var filterStepView = AbstractStepView.extend({
 		
-		initialize : function(data) {
+		initialize : function(data, wizrouter) {
 			this.dateISOFormat = $.datepicker.ISO_8601;
 			this.datePickerFormat = translator.get("squashtm.dateformatShort.datepicker");
 			this.tmpl = "#filter-step-tpl";
 			this.model = data;
-			this._initialize(data);
+		    data.nextStep = "axis";
+		    data.prevStep  = "scope";
+			this._initialize(data, wizrouter);	
+
+			
 			
 			var infoListSrc = $("#info-list-tpl").html();
 			this.infoListTemplate = Handlebars.compile(infoListSrc);

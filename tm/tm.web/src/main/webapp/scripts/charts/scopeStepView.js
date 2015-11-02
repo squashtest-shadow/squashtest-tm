@@ -24,10 +24,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 	var scopeStepView = AbstractStepView.extend({
 		
-		initialize : function(data) {
+		initialize : function(data, wizrouter) {
 			this.tmpl = "#scope-step-tpl";
 			this.model = data;
-			this._initialize(data);
+		    data.nextStep = "filter";
+		    data.prevStep  = "attributes";
+			this._initialize(data, wizrouter);
 			
 			var treePopup = $("#tree-popup-tpl").html();
 			this.treePopupTemplate = Handlebars.compile(treePopup);

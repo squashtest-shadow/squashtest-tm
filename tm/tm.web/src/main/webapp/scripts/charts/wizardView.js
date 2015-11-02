@@ -65,41 +65,41 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			this.currentSideView = new SideView(this.model);
 		},
 		
-		showNewStepView : function (View){	
+		showNewStepView : function (View, wizrouter){	
 			if (this.currentView !== undefined) {
 			this.currentView.updateModel();
 			}
 			
 			this.resetView();
 			this.showSideView();
-			this.currentView = new View(this.model);
+			this.currentView = new View(this.model, wizrouter);
 		},
 		
-		showEntityStep : function() {			
-			this.showNewStepView(EntityStepView);
+		showEntityStep : function(wizrouter) {			
+			this.showNewStepView(EntityStepView, wizrouter);
 		},
-		showScopeStep : function() {
-			this.showNewStepView(ScopeStepView);
-		},
-
-		showFilterStep : function() {
-			this.showNewStepView(FilterStepView);
+		showScopeStep : function(wizrouter) {
+			this.showNewStepView(ScopeStepView, wizrouter);
 		},
 
-		showTypeStep : function() {
-			this.showNewStepView(TypeStepView);
+		showFilterStep : function(wizrouter) {
+			this.showNewStepView(FilterStepView, wizrouter);
+		},
+
+		showTypeStep : function(wizrouter) {
+			this.showNewStepView(TypeStepView, wizrouter);
 		},
 		
-		showAxisStep : function() {
-			this.showNewStepView(AxisStepView);
+		showAxisStep : function(wizrouter) {
+			this.showNewStepView(AxisStepView, wizrouter);
 		},
 
 		showPreviewStep :  function(wizrouter) {
-			this.showNewStepView(PreviewStepView);
+			this.showNewStepView(PreviewStepView, wizrouter);
 		},
 		
 		showAttributesStep : function(wizrouter){
-			this.showNewStepView(AttributeStepView);
+			this.showNewStepView(AttributeStepView, wizrouter);
 		},
 		resetView : function() {
 			console.log(this.model);

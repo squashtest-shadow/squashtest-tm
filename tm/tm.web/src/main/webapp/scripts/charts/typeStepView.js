@@ -24,10 +24,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 	var typeStepView = AbstractStepView.extend({
 		
-		initialize : function(data) {
+		initialize : function(data, wizrouter) {
 			this.tmpl = "#type-step-tpl";
 			this.model = data;
-			this._initialize(data);
+		    data.nextStep = "preview";
+		    data.prevStep  = "axis";
+			this._initialize(data, wizrouter);
 			this.precalculateInfoListItemData();
 			this.reloadData();
 		},

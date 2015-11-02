@@ -42,6 +42,7 @@
 <span id="filter-{{name}}" />
 {{/inline}}
 
+<div>
 <div style="float:left">
 {{>axe name="axis-y" role="MEASURE"}}
 </div>
@@ -76,5 +77,18 @@
         {{/each}}     
 </ul>
 </div>
+</div>
 
+<div style=" clear: left;">
+<br />
+<br />
+<button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
+    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
+  </button>
+
+ <button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
+    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
+  </button>
+  </div>
+  
 </div>
