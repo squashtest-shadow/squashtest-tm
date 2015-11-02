@@ -36,6 +36,11 @@ public class SquashMultipartResolver extends CommonsMultipartResolver implements
 	 */
 	private String maxUploadSizeKey = ConfigurationService.Properties.UPLOAD_SIZE_LIMIT;
 
+	public SquashMultipartResolver() {
+		super();
+		this.setDefaultEncoding("UTF-8");
+	}
+
 	@PostConstruct
 	public void init() {
 		updateConfig();

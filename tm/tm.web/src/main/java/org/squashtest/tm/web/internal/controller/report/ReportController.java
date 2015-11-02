@@ -72,9 +72,6 @@ import org.squashtest.tm.web.internal.report.criteria.FormToCriteriaConverter;
 import com.lowagie.text.pdf.codec.Base64;
 
 
-
-
-
 /**
  * @author Gregory Fouquet
  * 

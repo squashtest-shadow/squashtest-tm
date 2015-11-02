@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm;
 
@@ -32,6 +32,7 @@ import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -39,19 +40,30 @@ import org.springframework.context.annotation.ImportResource;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
+import org.springframework.web.multipart.MultipartResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
+import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.web.config.MessagesProperties;
 import org.squashtest.tm.web.config.ResourceResolverProperties;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver;
+import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
+import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
+import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.interceptor.openedentity.*;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
 
 /**
  * Application bootstrapper. Uses spring boot to start a Spring MVC webapp.
@@ -63,7 +75,7 @@ import java.util.List;
 @Configuration
 @EnableAutoConfiguration(exclude = HibernateJpaAutoConfiguration.class)
 @ComponentScan
-@EnableConfigurationProperties(ResourceResolverProperties.class)
+@EnableConfigurationProperties({ResourceResolverProperties.class, MessagesProperties.class})
 @ImportResource({"classpath*:META-INF/spring/dynamicdao-context.xml", "classpath*:META-INF/spring/dynamicmanager-context.xml"})
 public class SquashTm extends WebMvcConfigurerAdapter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashTm.class);
@@ -86,6 +98,12 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 
 	@Inject
 	private ResourceResolverProperties resourceResolverProperties;
+
+	@Inject
+	private ConfigurationService configurationService;
+
+	@Inject
+	MessagesProperties messagesProperties;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -202,8 +220,55 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 
 	@Bean
 	public static ServletListenerRegistrationBean<JHadesServletListener> jhadesServletListener() {
-		ServletListenerRegistrationBean<JHadesServletListener> bean = new ServletListenerRegistrationBean<JHadesServletListener>(new JHadesServletListener());
+		ServletListenerRegistrationBean<JHadesServletListener> bean = new ServletListenerRegistrationBean<>(new JHadesServletListener());
 		bean.setOrder(1);
+		return bean;
+	}
+
+	/**
+	 * This overrides spring boot's default (servlet 3 based) multipart resolver.
+	 * @return the delegating multipart resolver
+	 */
+	@Bean
+	public MultipartResolver multipartResolver() {
+		MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
+		bean.setDefaultResolver(defaultMultipartResolver());
+		HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
+		resolverMap.put(".*/import/upload.*", importMultipartResolver());
+		resolverMap.put(".*/importer/.*", importMultipartResolver());
+		bean.setResolverMap(resolverMap);
+		return bean;
+	}
+
+	@Bean
+	public SquashMultipartResolver defaultMultipartResolver() {
+		return buildSquashMultipartResolver();
+	}
+
+	@Bean
+	public SquashMultipartResolver importMultipartResolver() {
+		SquashMultipartResolver bean = buildSquashMultipartResolver();
+		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
+		return bean;
+	}
+
+	private SquashMultipartResolver buildSquashMultipartResolver() {
+		SquashMultipartResolver bean = new SquashMultipartResolver();
+		bean.setConfig(configurationService);
+		return bean;
+	}
+
+	/**
+	 * Message source which takes into account messages from "fragments"
+	 * Overrides spring-boot default
+	 * @return the message-source
+	 */
+	@Bean
+	public MessageSource messageSource() {
+		ReloadableSquashTmMessageSource bean = new ReloadableSquashTmMessageSource();
+		bean.setBasenames(commaDelimitedListToStringArray(trimAllWhitespace(messagesProperties.getBasename())));
+		bean.setDefaultEncoding(messagesProperties.getEncoding());
+		bean.setCacheSeconds(messagesProperties.getCacheSeconds());
 		return bean;
 	}
 }

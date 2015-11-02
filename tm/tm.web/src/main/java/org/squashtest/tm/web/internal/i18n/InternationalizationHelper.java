@@ -27,10 +27,12 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
@@ -44,9 +46,14 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  * 
  */
 @Component
+@Primary
 public class InternationalizationHelper implements MessageSource {
+	private final MessageSource messageSource;
+
 	@Inject
-	private MessageSource messageSource;
+	public InternationalizationHelper(@NotNull MessageSource messageSource) {
+		this.messageSource = messageSource;
+	}
 
 	/**
 	 * Returns the internationalized message matching the given key.

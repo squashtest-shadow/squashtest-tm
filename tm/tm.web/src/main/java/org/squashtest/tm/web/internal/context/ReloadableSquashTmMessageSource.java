@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.web.internal.context;
 
-import java.io.IOException;
-import java.net.URL;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.io.Resource;
@@ -35,15 +29,20 @@ import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
+import java.net.URL;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 /**
  * This specialization of {@link ReloadableResourceBundleMessageSource} registers <strong>message.properties</strong>
  * files from fragments looking up into standardized folders "/WEB-INF/messages/<wizard-name>/"
- * 
+ *
  * @author Gregory Fouquet
- * 
  */
 public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMessageSource implements
-		ResourceLoaderAware, InitializingBean {
+	ResourceLoaderAware {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ReloadableSquashTmMessageSource.class);
 	/**
 	 * Resource pattern to scan for messages embedded into plugins / fragments
@@ -78,7 +77,8 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 		super.setBasenames(basenames);
 	}
 
-	private void registerFragmentMessageProperties() {
+	@PostConstruct
+	public void registerFragmentMessageProperties() {
 		try {
 			Set<String> consolidatedBasenames = new LinkedHashSet<String>();
 
@@ -90,7 +90,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 			LOGGER.debug("About to scan {} for additional fragment / plugin basenames", PLUGIN_MESSAGES_SCAN_PATTERN);
 			addLookedUpBasenames(consolidatedBasenames);
 
-			super.setBasenames(consolidatedBasenames.toArray(new String[] {}));
+			super.setBasenames(consolidatedBasenames.toArray(new String[]{}));
 		} catch (IOException e) {
 			LOGGER.warn("Error during bean initialization, no fragment messages will be registered.", e);
 		}
@@ -127,14 +127,5 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 		// in runtime env we do not work with file (exception) so we have to use URLs
 		URL url = resource.getURL();
 		return url.getPath().endsWith(MESSAGES_BASE_PATH + resource.getFilename() + '/');
-	}
-
-	/**
-	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
-	 */
-	@Override
-	public final void afterPropertiesSet() {
-		registerFragmentMessageProperties();
-		
 	}
 }

@@ -34,8 +34,10 @@
   <!--</context:component-scan>-->
 
 		<!-- we need to configure this bean here because  component-scan occurs when *-servlet.xml is read, which is later -->
-  <bean name="squash.tm.report.ReportsRegistry" class="org.squashtest.tm.web.internal.report.ReportsRegistry" />
-  <bean name="squash.tm.report.JasperReportsViewDefinitionsRegistry" class="org.squashtest.tm.web.internal.report.ReportViewServletContextInitializer" />
+  <!-- NOSGi done -->
+  <!--<bean name="squash.tm.report.ReportsRegistry" class="org.squashtest.tm.web.internal.report.ReportsRegistry" />-->
+  <!-- NOSGi done -->
+  <!--<bean name="squash.tm.report.JasperReportsViewDefinitionsRegistry" class="org.squashtest.tm.web.internal.report.ReportViewServletContextInitializer" />-->
 
 	<!-- ============================== multipart files handling =============================================== -->
 
@@ -108,18 +110,18 @@
     Message source for this context, loaded from localized "messages_xx" files.
     It has to be declared in app context, not in spring-mvc context, this way, it is both inherited by spring-mvc context and available outside of it (e.g. in fragments)
   -->
-  <bean id="messageSource" class="org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource">
-    <property name="basenames">
-      <list>
-    <!-- TODO merge core and tm files -->
-        <value>file:${bundles.configuration.location}/lang/core/messages</value>
-        <value>/WEB-INF/messages/core/messages</value>
-        <value>/WEB-INF/messages/tm/messages</value>
-        <value>org/springframework/security/messages</value>
-      </list>
-    </property>
-    <property name="cacheSeconds" value="60" />
-  </bean>
+  <!--<bean id="messageSource" class="org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource">-->
+    <!--<property name="basenames">-->
+      <!--<list>-->
+    <!--&lt;!&ndash; TODO merge core and tm files &ndash;&gt;-->
+        <!--<value>file:${bundles.configuration.location}/lang/core/messages</value>-->
+        <!--<value>/WEB-INF/messages/core/messages</value>-->
+        <!--<value>/WEB-INF/messages/tm/messages</value>-->
+        <!--<value>org/springframework/security/messages</value>-->
+      <!--</list>-->
+    <!--</property>-->
+    <!--<property name="cacheSeconds" value="60" />-->
+  <!--</bean>-->
 
   <!--<beans profile="eclipse">-->
     <!--<context:component-scan base-package="target/classes/org.squashtest.tm" use-default-filters="false">-->
