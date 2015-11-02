@@ -55,7 +55,7 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 
 	private static final String FILE_FOOTER = "</beans>\n";
 
-	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" class=\"{1}\">\n"
+	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {6} class=\"{1}\">\n"
 			+ "    <property name=\"componentType\" value=\"{2}\" />\n"
 			+ "    <property name=\"entityType\" value=\"{3}\" />\n"
 			+ "    <property name=\"sessionFactory\" ref=\"{4}\" />\n"
@@ -186,11 +186,14 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 
 		CharSequence sessionFactoryName = sessionFactoryName(definition, component);
 		boolean lookupCustomImplementation = lookupCustomImplementation(definition);
+		String primary = primaryAttribute(definition);
 
 		String beanDefinition = MessageFormat.format(DYNAMIC_COMPONENT_TEMPLATE, beanName, beanFactoryClass(),
-				managerClass, entityClass, sessionFactoryName, lookupCustomImplementation);
+				managerClass, entityClass, sessionFactoryName, lookupCustomImplementation, primary);
 		return beanDefinition;
 	}
+
+	protected abstract String primaryAttribute(ANNOTATION definition);
 
 	private String defaultBeanName(Element manager) {
 		return StringUtils.uncapitalize(manager.getSimpleName().toString());

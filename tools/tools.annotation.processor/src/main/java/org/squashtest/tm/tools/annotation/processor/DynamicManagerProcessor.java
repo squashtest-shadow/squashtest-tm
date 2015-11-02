@@ -78,6 +78,11 @@ public class DynamicManagerProcessor extends DynamicComponentProcessor<DynamicMa
 		return definition.hasCustomImplementation();
 	}
 
+	@Override
+	protected String primaryAttribute(DynamicManager definition) {
+		return definition.primary() ? "primary=\"true\"" : "";
+	}
+
 	/**
 	 * @see org.squashtest.tm.tools.annotation.processor.DynamicComponentProcessor#sessionFactoryName(java.lang.annotation.Annotation)
 	 */

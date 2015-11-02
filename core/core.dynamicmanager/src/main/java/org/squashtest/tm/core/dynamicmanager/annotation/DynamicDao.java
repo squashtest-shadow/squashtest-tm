@@ -29,8 +29,7 @@ package org.squashtest.tm.core.dynamicmanager.annotation;
 public @interface DynamicDao {
 	String name() default "";
 	Class<?> entity();
-//	String customDaoName() default "";
-//	boolean lookupCustomDao() default true;
 	boolean hasCustomImplementation() default true;
 	String sessionFactoryName() default "squashtest.tm.persistence.hibernate.SessionFactory";
+	boolean primary() default true;
 }

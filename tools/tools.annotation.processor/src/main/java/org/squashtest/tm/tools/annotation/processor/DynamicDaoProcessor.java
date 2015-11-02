@@ -90,6 +90,11 @@ public class DynamicDaoProcessor extends DynamicComponentProcessor<DynamicDao> {
 		return definition.hasCustomImplementation();
 	}
 
+	@Override
+	protected String primaryAttribute(DynamicDao definition) {
+		return definition.primary() ? "primary=\"true\"" : "";
+	}
+
 	/**
 	 * (non-Javadoc)
 	 * 

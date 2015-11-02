@@ -36,8 +36,7 @@ import java.lang.annotation.Target;
 public @interface DynamicManager {
 	String name() default "";
 	Class<?> entity();
-//	String customImplementationName() default "";
-//	boolean lookupCustomManager() default true;
 	boolean hasCustomImplementation() default true;
 	String sessionFactoryName() default "squashtest.tm.persistence.hibernate.SessionFactory";
+	boolean primary() default true;
 }
