@@ -86,6 +86,11 @@
   </style>
   
   <style type="text/css">
+  	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
+	.jqplot-target-wrapper{ width: 600px; margin: auto;}
+  </style>
+  
+  <style type="text/css">
   /*! gridster.js - v0.5.6 - 2014-09-25
 * http://gridster.net/
 * Copyright (c) 2014 ducksboard; Licensed MIT */
@@ -377,8 +382,8 @@
      </script>
      
      <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
-		<div class="dashboard-graph" data-row="{{posX}}" data-col="{{posY}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
-			<div data-chart-definition-id="{{chartDefinitionId}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		<div class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
 		</div>
      </script>
 	<!-- /SHOW DASHBOARD  -->
@@ -418,9 +423,12 @@
 				</h3>
             </div>
 			<div class="tg-body">
-				<div id="chart-display-area" style="height:100%; width:100%;"></div>
+				<div class="jqplot-target-wrapper">
+					<div id="chart-display-area"></div>
+				</div>
 			</div>
 		</div>
+		
      </script>
 	
 	<div th:include="charts/rendering/chart-templates :: templates"></div>

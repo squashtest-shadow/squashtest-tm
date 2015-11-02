@@ -54,9 +54,9 @@ public class CustomReportChartBinding implements Identified {
 	@JoinColumn(name = "CHART_ID", referencedColumnName = "CHART_ID")
 	private ChartDefinition chart;
 	
-	private int posX;
+	private int row;
 	
-	private int posY;
+	private int col;
 	
 	private int sizeX;
 	
@@ -78,20 +78,20 @@ public class CustomReportChartBinding implements Identified {
 		this.chart = chart;
 	}
 
-	public int getPosX() {
-		return posX;
+	public int getRow() {
+		return row;
 	}
 
-	public void setPosX(int posX) {
-		this.posX = posX;
+	public void setRow(int row) {
+		this.row = row;
 	}
 
-	public int getPosY() {
-		return posY;
+	public int getCol() {
+		return col;
 	}
 
-	public void setPosY(int posY) {
-		this.posY = posY;
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 	public int getSizeX() {

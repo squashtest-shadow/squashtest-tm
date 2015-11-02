@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery","underscore","backbone","squash.translator","handlebars","tree","workspace.routing","charts/rendering/charts-render-main","jquery.gridster"],
+define(["jquery","underscore","backbone","squash.translator","handlebars","tree","workspace.routing","../charts/chartFactory","jquery.gridster"],
 		function($,_,Backbone, translator,Handlebars,tree,urlBuilder,main) {
 
 	var View = Backbone.View.extend({
@@ -26,6 +26,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-dashboard",
 		dashboardData : null,
+    dashboardChartViews : {},
+    dashboardChartBindings : {},
 		gridster : null,
 
 		initialize : function(){
@@ -50,6 +52,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
 		//init a grid for the dashboard.
 		initGrid : function () {
+      var self = this;
 			this.gridster = this.$("#dashboard-grid").gridster({
 				widget_margins: [10, 10],
 				widget_base_dimensions: [270, 250],
@@ -61,7 +64,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     		max_cols: 4,
     		shift_larger_widgets_down: false,
 				resize : {
-					enabled : true
+					enabled : true,
+            stop: function(e, ui, $widget) {
+              console.log('RESIZE');
+              console.log($widget.find(".jqplot-target"));
+              console.log(self.oneChart);
+            },
 				}
 			}).data('gridster');
 
@@ -109,17 +117,23 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     },
 
-    _buildChart : function (selector, chartInstance) {
-      main.buildChart(selector, chartInstance);
+    _buildChart : function (binding) {
+      var id = binding.id;
+      var selector = "#chart-binding-" + id;
+      this.dashboardChartViews[id] = main.buildChart(selector, binding.chartInstance);
+      this.dashboardChartBindings[id] = binding;
     },
 
     _buildDashBoard : function () {
       var bindings = this.dashboardData.chartBindings;
       for (var i = 0; i < bindings.length; i++) {
         var binding = bindings[i];
-        var selector = "[data-chart-definition-id='" + binding.chartDefinitionId + "']";
-        this._buildChart(selector, binding.chartInstance);
+        this._buildChart(binding);
       }
+    },
+
+    _getDataBychartDefId : function (id) {
+      return _.findWhere(this.dashboardData, {chartDefinitionId: id});
     }
 
   });

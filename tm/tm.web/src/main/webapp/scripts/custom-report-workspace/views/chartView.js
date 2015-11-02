@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars","workspace.routing","charts/rendering/charts-render-main"],
-		function(_,Backbone, translator,Handlebars,urlBuilder,main) {
+define(["underscore","backbone","squash.translator","handlebars","workspace.routing","../charts/chartFactory"],
+		function(_,Backbone, translator,Handlebars,urlBuilder,chartFactory) {
 	var View = Backbone.View.extend({
 
     el : "#contextual-content-wrapper",
@@ -48,7 +48,7 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 			.success(function(json){
 				self.model.set("name",json.name);
 				self._template();
-				main.buildChart("#chart-display-area", json);
+				chartFactory.buildChart("#chart-display-area", json);
 
 			});
 		},

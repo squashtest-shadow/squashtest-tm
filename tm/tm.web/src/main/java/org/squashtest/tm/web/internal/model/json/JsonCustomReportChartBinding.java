@@ -30,9 +30,9 @@ public class JsonCustomReportChartBinding {
 	
 	private JsonChartInstance chartInstance;
 	
-	private int posX;
+	private int row;
 	
-	private int posY;
+	private int col;
 	
 	private int sizeX;
 	
@@ -62,20 +62,20 @@ public class JsonCustomReportChartBinding {
 		this.chartInstance = chartInstance;
 	}
 
-	public int getPosX() {
-		return posX;
+	public int getRow() {
+		return row;
 	}
 
-	public void setPosX(int posX) {
-		this.posX = posX;
+	public void setRow(int row) {
+		this.row = row;
 	}
 
-	public int getPosY() {
-		return posY;
+	public int getCol() {
+		return col;
 	}
 
-	public void setPosY(int posY) {
-		this.posY = posY;
+	public void setCol(int col) {
+		this.col = col;
 	}
 
 	public int getSizeX() {
