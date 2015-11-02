@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-parent-pom</artifactId>
-    <version>1.12.2.RC2-SNAPSHOT</version>
+    <version>1.12.2.RC2</version>
     <relativePath>../parent-pom</relativePath>
   </parent>
   <groupId>org.squashtest.tm</groupId>
