@@ -68,6 +68,7 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 	static InternalEntityType CP = CAMPAIGN
 	static InternalEntityType EX = EXECUTION
 	static InternalEntityType ISS = ISSUE
+	static InternalEntityType TATEST = AUTOMATED_TEST
 
 	// fix the requirementVersion - requirement relation
 	def setup(){
@@ -125,13 +126,13 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 		def res = qq.fetch()
 
 		then :
-		res as Set == [-1l, -2l] as Set
+		res as Set == [-1l, -2l, -3l] as Set
 
 	}
 
 	@Unroll
 	@DataSet("QueryPlanner.dataset.xml")
-	def "should find only test case 1 because test case 2 was never executed"(){
+	def "should find only test case 1 because test case 2 was never executed and test case 3 never planned"(){
 
 		given :
 

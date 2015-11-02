@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExecutionCollector;
@@ -60,6 +61,7 @@ public class ChartEngineTestUtils extends Specification{
 	public static QCampaign cp = QCampaign.campaign
 	public static QExecution exec = QExecution.execution
 	public static QIssue iss = QIssue.issue
+	public static QAutomatedTest tatest = QAutomatedTest.automatedTest
 
 	public static MeasureColumn mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
 		def specType = new SpecializedEntityType(entityType : eType)

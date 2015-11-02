@@ -40,6 +40,8 @@ import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
@@ -334,7 +336,25 @@ enum InternalEntityType {
 			return new QMilestone(alias);
 		}
 
-	};
+	}, AUTOMATED_TEST(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return AutomatedTest.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QAutomatedTest.automatedTest;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAutomatedTest(alias);
+		}
+
+	}
+	;
 
 	// @formatter:on
 

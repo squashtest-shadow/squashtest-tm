@@ -49,6 +49,9 @@ class DetailedChartQuery extends ChartQuery{
 
 	private InternalEntityType rootEntity;
 
+	// used when DomainGraph#reverse is true, see documenation on this property for details
+	private InternalEntityType measuredEntity;
+
 	private List<InternalEntityType> targetEntities;
 
 
@@ -79,6 +82,9 @@ class DetailedChartQuery extends ChartQuery{
 
 		// find the root entity
 		rootEntity = InternalEntityType.fromSpecializedType(parent.getAxis().get(0).getSpecializedType());
+
+		// find the measured Entity
+		measuredEntity = InternalEntityType.fromSpecializedType(parent.getMeasures().get(0).getSpecializedType());
 
 		// find all the target entities
 		Map<ColumnRole, Set<SpecializedEntityType>> entitiesByRole = parent.getInvolvedEntities();
@@ -116,6 +122,9 @@ class DetailedChartQuery extends ChartQuery{
 		return rootEntity;
 	}
 
+	protected InternalEntityType getMeasuredEntity(){
+		return measuredEntity;
+	}
 
 	protected void setRootEntity(InternalEntityType rootEntity) {
 		this.rootEntity = rootEntity;

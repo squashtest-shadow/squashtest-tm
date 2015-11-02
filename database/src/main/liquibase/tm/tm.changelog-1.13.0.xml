@@ -25,125 +25,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
 
-	<!--
-		The following properties are used in changeset tm-1.13.0-feature-5375-2
-	 -->
-
-	<!-- column prototype ids -->
-	
-	<property name="reqId" 					value="1" />
-	<property name="reqVCount" 				value="2" />
-
-	<property name="rvId" 					value="3" />
-	<property name="rvVersnum" 				value="4" />
-	<property name="rvCreatOn"				value="5" />
-	<property name="rvModOn" 				value="6" />
-	<property name="rvCreatBy" 				value="7" />
-	<property name="rvModBy" 				value="8" />
-	<property name="rvLabel" 				value="9" />
-	<property name="rvCrit" 				value="10" />
-	<property name="rvCat" 					value="11" />
-	<property name="rvStatus"				value="12" />
-	<property name="rvMiles" 				value="13" />
-	<property name="rvVerifTCCount" 		value="14" />
-	<property name="rvMilesCount" 			value="15" />
-
-	<property name="tcId"					value="16"/>
-	<property name="tcCreatOn"				value="17"/>
-	<property name="tcModOn"				value="18"/>
-	<property name="tcCreatBy"				value="19"/>
-	<property name="tcModBy"				value="20"/>
-	<property name="tcLabel"				value="21"/>
-	<property name="tcImportance"			value="22"/>
-	<property name="tcNat"					value="23"/>
-	<property name="tcType"					value="24"/>
-	<property name="tcStatus"				value="25"/>
-	<property name="tcVerifVersionCount"	value="26"/>
-	<property name="tcCallstepCount"		value="27"/>
-	<property name="tcStepCount"			value="28"/>
-	<property name="tcMilesCount"			value="29"/>
-	<property name="tcCpgCount"				value="30"/>
-	<property name="tcItCount"				value="31"/>
-	<property name="tcExecCount"			value="32"/>
-	<property name="tcAutomated"			value="33"/>
-
-	<property name="cId" 					value="34"/>
-	<property name="cName" 					value="35"/>
-	<property name="cScheStart" 			value="36"/>
-	<property name="cSchedEnd" 				value="37"/>
-	<property name="cActStart" 				value="38"/>
-	<property name="cActEnd" 				value="39"/>
-	<property name="cItCount" 				value="40"/>
-	<property name="cBugCount" 				value="41"/>
-
-	<property name="itId" 					value="42" />
-	<property name="itName"					value="43" />
-	<property name="itScheStart" 			value="44" />
-	<property name="itScheEnd" 				value="45" />
-	<property name="itActStart" 			value="46" />
-	<property name="itActEnd" 				value="47" />
-	<property name="itItemCount" 			value="48" />
-	<property name="itBugCount" 			value="49" />
-
-	<property name="itpId" 					value="50"/>
-	<property name="itpLabel" 				value="51"/>
-	<property name="itpTcid" 				value="52"/>
-	<property name="itpDsLabel" 			value="53"/>
-	<property name="itpTcDeleted" 			value="54"/>
-	<property name="itpNbManualExec" 		value="55"/>
-	<property name="itpNbAutoExec" 			value="56"/>
-	<property name="itExecuted" 			value="57"/>
-	<property name="itpStatus" 				value="58"/>
-	<property name="itpTesterLogin" 		value="59"/>
-	<property name="itpLastExec" 			value="60"/>
-	<property name="itpBugCount" 			value="61"/>
-
-	<property name="exId" 					value="62" />
-	<property name="exDsLabel" 				value="63" />
-	<property name="exLabel" 				value="64" />
-	<property name="exStatus" 				value="65" />
-	<property name="exLastExec" 			value="66" />
-	<property name="exTesterLogin" 			value="67" />
-	<property name="exMode" 				value="68" />
-	<property name="exBugCount" 			value="69" />
-
-	<property name="isId"					value="70" />
-	<property name="isStatus" 				value="71" />
-	<property name="isSeverity" 			value="72" />
-	<property name="isBugtrackerLabel"		value="73" />
-
-	<property name="tsId"					value="74" />
-	<property name="tsClass"				value="75" />
-
-	<property name="tcnatId"				value="76" />
-	<property name="tcnatLabel"				value="77" />
-
-	<property name="tctypId"				value="78" />
-	<property name="tctypLabel"				value="79" />
-
-	<property name="rvcatId"				value="80" />
-	<property name="rvcatLabel"				value="81" />
-
-	<property name="tcmilId"				value="82" />
-	<property name="tcmilLabel"				value="83" />
-
-	<property name="rvmilId"				value="84" />
-	<property name="rvmilLabel"				value="85" />
-
-	<property name="itpassignId"			value="86" />
-	<property name="itpassignLogin"			value="87" />
-
-	<!-- 
-		subquery ids
-	 -->
-	<property name="reqVCountSub" 			value="1"/>
-	<property name="rvVerifTCCountSub"		value="2"/>
-	<property name="rvMilesCountSub"		value="3"/>
-	<property name="tcVerifVersionCountSub" value="4"/>
-
-	<!-- 
-	changesets at last
-	 -->
 
 	<changeSet id="tm-1.13.0" author="bsiri">
 		<comment>Update TM database version number</comment>
@@ -357,7 +238,7 @@
 
 			<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)" remarks="The name of the attribute of the entity"/>
 
-			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="Data type of the attribute"/>
+			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(50)" remarks="Data type of the attribute"/>
 
 			<column name="BUSINESS" type="BOOLEAN" remarks="tells whether this column is public or internal." defaultValueBoolean="true"/>
 			<column name="ATTRIBUTE_TYPE" type="java.sql.Types.VARCHAR(15)"
@@ -506,332 +387,461 @@
 
 	<changeSet id="tm-1.13.0-feature-5375-2" author="bsiri">
 
-		<comment>populate the column prototype referential data</comment>
+		<comment>populate the column prototype referential data (generated from src/main/script/MakeChartColumns.groovy)</comment>
 
-
-		<!--  ================== simple columns ====================== -->
-
-		<!-- simple columns for REQUIREMENT -->
 		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${reqId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_ID', 'REQUIREMENT', 'NUMERIC', 'id');
 
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-					(${reqId}, 'AXIS'), (${reqId}, 'FILTER'), (${reqId}, 'MEASURE');
+-- --------------------------------------------
+-- Chart Column Prototype Definition --
+--
+-- generated by src/main/script/MakeChartColumns.groovy
+-- --------------------------------------------
+
+-- -------------------------------------------
+-- section 1 :  basic attribute columns
+-- -------------------------------------------
+
+
+-- columns for entity : REQUIREMENT --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(0, 'ATTRIBUTE', TRUE, 'REQUIREMENT_ID', 'REQUIREMENT', null, 'NUMERIC', 'id', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (0, 'MEASURE'), (0, 'AXIS'), (0, 'FILTER');
+
+
+
+
+-- columns for entity : REQUIREMENT_VERSION --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(2, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CREATED_ON', 'REQUIREMENT_VERSION', null, 'DATE', 'audit.createdOn', null),
+	(3, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_MODIFIED_ON', 'REQUIREMENT_VERSION', null, 'DATE', 'audit.lastModifiedOn', null),
+	(4, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_ID', 'REQUIREMENT_VERSION', null, 'NUMERIC', 'id', null),
+	(5, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', null, 'NUMERIC', 'versionNumber', null),
+	(6, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', null, 'STRING', 'audit.createdBy', null),
+	(7, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', null, 'STRING', 'audit.lastModifiedBy', null),
+	(8, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_REFERENCE', 'REQUIREMENT_VERSION', null, 'STRING', 'reference', null),
+	(9, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CATEGORY', 'REQUIREMENT_VERSION', null, 'INFO_LIST_ITEM', 'category.label', null),
+	(10, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', null, 'LEVEL_ENUM', 'criticality', null),
+	(11, 'ATTRIBUTE', TRUE, 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', null, 'LEVEL_ENUM', 'status', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (2, 'AXIS'), (2, 'FILTER'),
+	 (3, 'AXIS'), (3, 'FILTER'),
+	 (4, 'MEASURE'), (4, 'AXIS'), (4, 'FILTER'),
+	 (5, 'FILTER'), (5, 'MEASURE'),
+	 (6, 'AXIS'), (6, 'FILTER'),
+	 (7, 'AXIS'), (7, 'FILTER'),
+	 (8, 'FILTER'), (8, 'AXIS'),
+	 (9, 'MEASURE'), (9, 'AXIS'), (9, 'FILTER'),
+	 (10, 'MEASURE'), (10, 'AXIS'), (10, 'FILTER'),
+	 (11, 'MEASURE'), (11, 'AXIS'), (11, 'FILTER');
+
+
+
+
+-- columns for entity : TEST_CASE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(14, 'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_ON', 'TEST_CASE', null, 'DATE', 'audit.createdOn', null),
+	(15, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_ON', 'TEST_CASE', null, 'DATE', 'audit.lastModifiedOn', null),
+	(16, 'ATTRIBUTE', TRUE, 'TEST_CASE_ID', 'TEST_CASE', null, 'NUMERIC', 'id', null),
+	(17, 'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_BY', 'TEST_CASE', null, 'STRING', 'audit.createdBy', null),
+	(18, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_BY', 'TEST_CASE', null, 'STRING', 'audit.lastModifiedBy', null),
+	(19, 'ATTRIBUTE', TRUE, 'TEST_CASE_REFERENC', 'TEST_CASE', null, 'STRING', 'reference', null),
+	(20, 'ATTRIBUTE', TRUE, 'TEST_CASE_IMPORTANCE', 'TEST_CASE', null, 'LEVEL_ENUM', 'importance', null),
+	(21, 'ATTRIBUTE', TRUE, 'TEST_CASE_NATURE', 'TEST_CASE', null, 'INFO_LIST_ITEM', 'nature.label', null),
+	(22, 'ATTRIBUTE', TRUE, 'TEST_CASE_TYPE', 'TEST_CASE', null, 'INFO_LIST_ITEM', 'type.label', null),
+	(23, 'ATTRIBUTE', TRUE, 'TEST_CASE_STATUS', 'TEST_CASE', null, 'LEVEL_ENUM', 'status', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (14, 'AXIS'), (14, 'FILTER'),
+	 (15, 'AXIS'), (15, 'FILTER'),
+	 (16, 'MEASURE'), (16, 'AXIS'), (16, 'FILTER'),
+	 (17, 'AXIS'), (17, 'FILTER'),
+	 (18, 'AXIS'), (18, 'FILTER'),
+	 (19, 'FILTER'), (19, 'AXIS'),
+	 (20, 'MEASURE'), (20, 'AXIS'), (20, 'FILTER'),
+	 (21, 'MEASURE'), (21, 'AXIS'), (21, 'FILTER'),
+	 (22, 'MEASURE'), (22, 'AXIS'), (22, 'FILTER'),
+	 (23, 'MEASURE'), (23, 'AXIS'), (23, 'FILTER');
+
+
+
+
+-- columns for entity : CAMPAIGN --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(31, 'ATTRIBUTE', TRUE, 'CAMPAIGN_ID', 'CAMPAIGN', null, 'NUMERIC', 'id', null),
+	(32, 'ATTRIBUTE', TRUE, 'CAMPAIGN_LABEL', 'CAMPAIGN', null, 'STRING', 'name', null),
+	(33, 'ATTRIBUTE', TRUE, 'CAMPAIGN_SCHED_START', 'CAMPAIGN', null, 'DATE', 'scheduledPeriod.scheduledStartDate', null),
+	(34, 'ATTRIBUTE', TRUE, 'CAMPAIGN_SCHED_END', 'CAMPAIGN', null, 'DATE', 'scheduledPeriod.scheduledEndDate', null),
+	(35, 'ATTRIBUTE', TRUE, 'CAMPAIGN_ACTUAL_START', 'CAMPAIGN', null, 'DATE', 'actualPeriod.actualStartDate', null),
+	(36, 'ATTRIBUTE', TRUE, 'CAMPAIGN_ACTUAL_END', 'CAMPAIGN', null, 'DATE', 'actualPeriod.actualEndDate', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (31, 'MEASURE'), (31, 'AXIS'), (31, 'FILTER'),
+	 (32, 'FILTER'), (32, 'MEASURE'),
+	 (33, 'AXIS'), (33, 'FILTER'),
+	 (34, 'AXIS'), (34, 'FILTER'),
+	 (35, 'AXIS'), (35, 'FILTER'),
+	 (36, 'AXIS'), (36, 'FILTER');
+
+
+
+
+-- columns for entity : ITERATION --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(37, 'ATTRIBUTE', TRUE, 'ITERATION_ID', 'ITERATION', null, 'NUMERIC', 'id', null),
+	(38, 'ATTRIBUTE', TRUE, 'ITERATION_LABEL', 'ITERATION', null, 'STRING', 'name', null),
+	(39, 'ATTRIBUTE', TRUE, 'ITERATION_SCHED_START', 'ITERATION', null, 'DATE', 'scheduledPeriod.scheduledStartDate', null),
+	(40, 'ATTRIBUTE', TRUE, 'ITERATION_SCHED_END', 'ITERATION', null, 'DATE', 'scheduledPeriod.scheduledEndDate', null),
+	(41, 'ATTRIBUTE', TRUE, 'ITERATION_ACTUAL_START', 'ITERATION', null, 'DATE', 'actualPeriod.actualStartDate', null),
+	(42, 'ATTRIBUTE', TRUE, 'ITERATION_ACTUAL_END', 'ITERATION', null, 'DATE', 'actualPeriod.actualEndDate', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (37, 'MEASURE'), (37, 'AXIS'), (37, 'FILTER'),
+	 (38, 'FILTER'), (38, 'MEASURE'),
+	 (39, 'AXIS'), (39, 'FILTER'),
+	 (40, 'AXIS'), (40, 'FILTER'),
+	 (41, 'AXIS'), (41, 'FILTER'),
+	 (42, 'AXIS'), (42, 'FILTER');
+
+
+
+
+-- columns for entity : ITEM_TEST_PLAN --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(43, 'ATTRIBUTE', TRUE, 'ITEM_TEST_PLAN_ID', 'ITEM_TEST_PLAN', null, 'NUMERIC', 'id', null),
+	(44, 'ATTRIBUTE', TRUE, 'ITEM_TEST_PLAN_LABEL', 'ITEM_TEST_PLAN', null, 'STRING', 'label', null),
+	(45, 'ATTRIBUTE', TRUE, 'ITEM_TEST_PLAN_STATUS', 'ITEM_TEST_PLAN', null, 'EXECUTION_STATUS', 'executionStatus', null),
+	(46, 'ATTRIBUTE', TRUE, 'ITEM_TEST_PLAN_LASTEXEC', 'ITEM_TEST_PLAN', null, 'DATE', 'lastExecutedOn', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (43, 'MEASURE'), (43, 'AXIS'), (43, 'FILTER'),
+	 (44, 'FILTER'),
+	 (45, 'MEASURE'), (45, 'AXIS'), (45, 'FILTER'),
+	 (46, 'FILTER');
+
+
+
+
+-- columns for entity : EXECUTION --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(47, 'ATTRIBUTE', TRUE, 'EXECUTION_ID', 'EXECUTION', null, 'NUMERIC', 'id', null),
+	(48, 'ATTRIBUTE', TRUE, 'EXECUTION_LABEL', 'EXECUTION', null, 'STRING', 'name', null),
+	(49, 'ATTRIBUTE', TRUE, 'EXECUTION_DS_LABEL', 'EXECUTION', null, 'STRING', 'datasetLabel', null),
+	(50, 'ATTRIBUTE', TRUE, 'EXECUTION_LASTEXEC', 'EXECUTION', null, 'DATE', 'lastExecutedOn', null),
+	(51, 'ATTRIBUTE', TRUE, 'EXECUTION_TESTER_LOGIN', 'EXECUTION', null, 'STRING', 'lastExecutedBy', null),
+	(52, 'ATTRIBUTE', TRUE, 'EXECUTION_STATUS', 'EXECUTION', null, 'EXECUTION_STATUS', 'executionStatus', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (47, 'MEASURE'), (47, 'AXIS'), (47, 'FILTER'),
+	 (48, 'AXIS'), (48, 'FILTER'),
+	 (49, 'AXIS'), (49, 'FILTER'),
+	 (50, 'AXIS'), (50, 'FILTER'),
+	 (51, 'AXIS'), (51, 'FILTER'),
+	 (52, 'MEASURE'), (52, 'AXIS'), (52, 'FILTER');
+
+
+
+
+-- columns for entity : ISSUE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(53, 'ATTRIBUTE', TRUE, 'ISSUE_ID', 'ISSUE', null, 'NUMERIC', 'id', null),
+	(54, 'ATTRIBUTE', TRUE, 'ISSUE_STATUS', 'ISSUE', null, 'STRING', 'status', null),
+	(55, 'ATTRIBUTE', TRUE, 'ISSUE_SEVERITY', 'ISSUE', null, 'String', 'severity', null),
+	(56, 'ATTRIBUTE', TRUE, 'ISSUE_BUGTRACKER', 'ISSUE', null, 'STRING', 'bugtracker', null);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (53, 'MEASURE'), (53, 'AXIS'), (53, 'FILTER'),
+	 (54, 'AXIS'), (54, 'FILTER'),
+	 (55, 'AXIS'), (55, 'FILTER'),
+	 (56, 'AXIS'), (56, 'FILTER');
+
+
+
+
+-- columns for entity : TEST_STEP --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(57, 'ATTRIBUTE', FALSE, 'TEST_STEP_ID', 'TEST_STEP', null, 'NUMERIC', 'id', null),
+	(58, 'ATTRIBUTE', FALSE, 'TEST_STEP_CLASS', 'TEST_STEP', null, 'STRING', 'class', null);
+
+
+
+
+-- columns for entity : TEST_CASE_NATURE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(59, 'ATTRIBUTE', FALSE, 'TEST_CASE_NATURE_ID', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'NUMERIC', 'id', null),
+	(60, 'ATTRIBUTE', FALSE, 'TEST_CASE_NATURE_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'STRING', 'label', null);
+
+
+
+
+-- columns for entity : TEST_CASE_TYPE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(61, 'ATTRIBUTE', FALSE, 'TEST_CASE_TYPE_ID', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'NUMERIC', 'id', null),
+	(62, 'ATTRIBUTE', FALSE, 'TEST_CASE_TYPE_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'STRING', 'label', null);
+
+
+
+
+-- columns for entity : REQUIREMENT_VERSION_CATEGORY --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(63, 'ATTRIBUTE', FALSE, 'REQUIREMENT_VERSION_CATEGORY_ID', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'NUMERIC', 'id', null),
+	(64, 'ATTRIBUTE', FALSE, 'REQUIREMENT_VERSION_CATEGORY_LABEL', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'STRING', 'label', null);
+
+
+
+
+-- columns for entity : TEST_CASE_MILESTONE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(65, 'ATTRIBUTE', FALSE, 'TEST_CASE_MILESTONE_ID', 'MILESTONE', 'TEST_CASE_MILESTONE', 'NUMERIC', 'id', null),
+	(66, 'ATTRIBUTE', FALSE, 'TEST_CASE_MILESTONE_LABEL', 'MILESTONE', 'TEST_CASE_MILESTONE', 'STRING', 'label', null);
+
+
+
+
+-- columns for entity : REQUIREMENT_VERSION_MILESTONE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(67, 'ATTRIBUTE', FALSE, 'REQUIREMENT_VERSION_MILESTONE_ID', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'NUMERIC', 'id', null),
+	(68, 'ATTRIBUTE', FALSE, 'REQUIREMENT_VERSION_MILESTONE_LABEL', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'STRING', 'label', null);
+
+
+
+
+-- columns for entity : ITERATION_TEST_PLAN_ASSIGNED_USER --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(69, 'ATTRIBUTE', FALSE, 'ITERATION_TEST_PLAN_ASSIGNED_USER_ID', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'NUMERIC', 'id', null),
+	(70, 'ATTRIBUTE', FALSE, 'ITERATION_TEST_PLAN_ASSIGNED_USER_LOGIN', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'STRING', 'login', null);
+
+
+
+
+-- columns for entity : AUTOMATED_TEST --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(71, 'ATTRIBUTE', FALSE, 'AUTOMATED_TEST_ID', 'AUTOMATED_TEST', null, 'NUMERIC', 'id', null);
+
+
+
+
+-- -------------------------------------------
+-- section 2 :  subqueries
+-- -------------------------------------------
+
+-- subqueries for entity REQUIREMENT --
+
+-- subquery reqVCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (0, 'reqVCountSub', 'SUBQUERY', 'INNER_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (4, 0, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (0, 0, 'NONE', 0);
+
+
+
+-- subqueries for entity REQUIREMENT_VERSION --
+
+-- subquery rvVerifTCCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (1, 'rvVerifTCCountSub', 'SUBQUERY', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (16, 1, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (4, 1, 'NONE', 0);
+
+
+
+-- subquery rvMilesCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (2, 'rvMilesCountSub', 'INLINED', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (67, 2, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (4, 2, 'NONE', 0);
+
+
+
+-- subqueries for entity TEST_CASE --
+
+-- subquery tcVerifVersionCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (3, 'tcVerifVersionCountSub', 'SUBQUERY', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (4, 3, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 3, 'NONE', 0);
+
+
+
+-- subquery tcCallStepsCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (4, 'tcCallStepsCountSub', 'SUBQUERY', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (57, 4, 'COUNT', 0);
+insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (0, 58, 4, 'EQUALS');
+insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
+values 
+	(0,'CallTestStep');
+
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 4, 'NONE', 0);
+
+
+
+-- subquery tcStepsCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (5, 'tcStepsCountSub', 'INLINE', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (57, 5, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 5, 'NONE', 0);
+
+
+
+-- subquery tcMilesCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (6, 'tcMilesCountSub', 'INLINED', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (65, 6, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 6, 'NONE', 0);
+
+
+
+-- subquery tcIterCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (7, 'tcIterCountSub', 'SUBQUERY', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (37, 7, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 7, 'NONE', 0);
+
+
+
+-- subquery tcExeCountSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (8, 'tcExeCountSub', 'SUBQUERY', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (47, 8, 'COUNT', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 8, 'NONE', 0);
+
+
+
+-- subquery tcHasAutoScriptSub --
+
+insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (9, 'tcHasAutoScriptSub', 'SUBQUERY', 'LEFT_JOIN');
+insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (71, 9, 'NOT_NULL', 0);
+insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 9, 'NONE', 0);
+
+
+
+-- subqueries for entity CAMPAIGN --
+
+-- subqueries for entity ITERATION --
+
+-- subqueries for entity ITEM_TEST_PLAN --
+
+-- subqueries for entity EXECUTION --
+
+-- subqueries for entity ISSUE --
+
+-- subqueries for entity TEST_STEP --
+
+-- subqueries for entity TEST_CASE_NATURE --
+
+-- subqueries for entity TEST_CASE_TYPE --
+
+-- subqueries for entity REQUIREMENT_VERSION_CATEGORY --
+
+-- subqueries for entity TEST_CASE_MILESTONE --
+
+-- subqueries for entity REQUIREMENT_VERSION_MILESTONE --
+
+-- subqueries for entity ITERATION_TEST_PLAN_ASSIGNED_USER --
+
+-- subqueries for entity AUTOMATED_TEST --
+
+
+-- -------------------------------------------
+-- section 3 :  calculated columns
+-- -------------------------------------------
+
+
+-- columns for entity : REQUIREMENT --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(1, 'CALCULATED', TRUE, 'REQUIREMENT_NB_VERSIONS', 'REQUIREMENT', null, 'NUMERIC', 'count(requirementVersionCoverages)', 0);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (1, 'MEASURE'), (1, 'AXIS'), (1, 'FILTER');
+
+
+
+
+-- columns for entity : REQUIREMENT_VERSION --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(12, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_TCCOUNT', 'REQUIREMENT_VERSION', null, 'NUMERIC', 'count(requirementVersionCoverages)', 1),
+	(13, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_MILCOUNT', 'REQUIREMENT_VERSION', null, 'NUMERIC', 'count(milestones)', 2);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (12, 'MEASURE'), (12, 'AXIS'), (12, 'FILTER'),
+	 (13, 'MEASURE'), (13, 'AXIS'), (13, 'FILTER');
+
+
+
+
+-- columns for entity : TEST_CASE --
+
+insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+values
+	(24, 'CALCULATED', TRUE, 'TEST_CASE_VERSCOUNT', 'TEST_CASE', null, 'NUMERIC', 'count(requirementVersionCoverages)', 3),
+	(25, 'CALCULATED', TRUE, 'TEST_CASE_CALLSTEPCOUNT', 'TEST_CASE', null, 'NUMERIC', 'count(steps[class="CallTestStep"])', 4),
+	(26, 'CALCULATED', TRUE, 'TEST_CASE_STEPCOUNT', 'TEST_CASE', null, 'NUMERIC', 'count(steps)', 5),
+	(27, 'CALCULATED', TRUE, 'TEST_CASE_MILCOUNT', 'TEST_CASE', null, 'NUMERIC', 'count(milestones)', 6),
+	(28, 'CALCULATED', TRUE, 'TEST_CASE_ITERCOUNT', 'TEST_CASE', null, 'NUMERIC', 'count(iterations)', 7),
+	(29, 'CALCULATED', TRUE, 'TEST_CASE_EXECOUNT', 'TEST_CASE', null, 'NUMERIC', 'count(executions)', 8),
+	(30, 'CALCULATED', TRUE, 'TEST_CASE_HASAUTOSCRIPT', 'TEST_CASE', null, 'BOOLEAN', 'notnull(automatedTest)', 9);
+
+insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
+values
+	 (24, 'MEASURE'), (24, 'AXIS'), (24, 'FILTER'),
+	 (25, 'MEASURE'), (25, 'AXIS'), (25, 'FILTER'),
+	 (26, 'MEASURE'), (26, 'AXIS'), (26, 'FILTER'),
+	 (27, 'MEASURE'), (27, 'AXIS'), (27, 'FILTER'),
+	 (28, 'MEASURE'), (28, 'AXIS'), (28, 'FILTER'),
+	 (29, 'MEASURE'), (29, 'AXIS'), (29, 'FILTER'),
+	 (30, 'AXIS'), (30, 'FILTER');
+
 
 		</sql>
-
-		<!-- simple columns for REQUIREMENT_VERSION -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${rvCreatOn}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn'),
-				(${rvModOn}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn'),
-				(${rvId}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_VERS_ID', 'REQUIREMENT_VERSION', 'NUMERIC', 'id'),
-				(${rvVersnum}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', 'NUMERIC', 'versionNumber'),
-				(${rvCreatBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
-				(${rvModBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
-				(${rvLabel}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
-				(${rvCat}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CATEGORY', 'REQUIREMENT_VERSION', 'INFO_LIST_ITEM', 'category.label'),
-				(${rvCrit}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
-				(${rvStatus}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${rvCreatOn}, 'AXIS'), (${rvCreatOn}, 'FILTER'),
-				(${rvModOn}, 'AXIS'), (${rvModOn}, 'FILTER'),
-				(${rvId}, 'AXIS'), (${rvId}, 'FILTER'), (${rvId}, 'MEASURE'),
-				(${rvVersnum}, 'FILTER'), (${rvVersnum}, 'MEASURE'),
-				(${rvCreatBy}, 'AXIS'), (${rvCreatBy}, 'FILTER'),
-				(${rvModBy}, 'AXIS'), (${rvModBy}, 'FILTER'),
-				(${rvLabel}, 'FILTER'), (${rvLabel}, 'MEASURE'),
-				(${rvCat}, 'AXIS'), (${rvCat}, 'FILTER'), (${rvCat}, 'MEASURE'),
-				(${rvCrit}, 'AXIS'), (${rvCrit}, 'FILTER'), (${rvCrit}, 'MEASURE'),
-				(${rvStatus}, 'FILTER'), (${rvStatus}, 'MEASURE'), (${rvStatus}, 'MEASURE');
-		</sql>
-
-		<!-- simple columns for TEST_CASE -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${tcCreatOn},  'ATTRIBUTE', 'TEST_CASE_CREATED_ON','TEST_CASE', 'DATE', 'audit.createdOn'),
-				(${tcModOn}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_ON','TEST_CASE', 'DATE', 'audit.lastModifiedOn'),
-				(${tcId}, 'ATTRIBUTE', 'TEST_CASE_ID','TEST_CASE', 'NUMERIC', 'id'),
-				(${tcCreatBy}, 'ATTRIBUTE', 'TEST_CASE_CREATED_BY','TEST_CASE', 'STRING', 'audit.createdBy'),
-				(${tcModBy}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy'),
-				(${tcLabel}, 'ATTRIBUTE', 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name'),
-				(${tcImportance}, 'ATTRIBUTE', 'TEST_CASE_IMPORTANCE','TEST_CASE', 'LEVEL_ENUM', 'importance'),
-				(${tcNat}, 'ATTRIBUTE', 'TEST_CASE_NATURE','TEST_CASE', 'INFO_LIST_ITEM', 'nature.label'),
-				(${tcType}, 'ATTRIBUTE', 'TEST_CASE_TYPE','TEST_CASE', 'INFO_LIST_ITEM', 'type.label'),
-				(${tcStatus}, 'ATTRIBUTE', 'TEST_CASE_STATUS','TEST_CASE', 'LEVEL_ENUM', 'status');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${tcCreatOn}, 'AXIS'), (${tcCreatOn}, 'FILTER'),
-				(${tcModOn}, 'AXIS'), (${tcModOn}, 'FILTER'),
-				(${tcId}, 'AXIS'), (${tcId}, 'FILTER'), (${tcId}, 'MEASURE'),
-				(${tcCreatBy}, 'AXIS'), (${tcCreatBy}, 'FILTER'),
-				(${tcModBy}, 'AXIS'), (${tcModBy}, 'FILTER'),
-				(${tcLabel}, 'FILTER'), (${tcLabel}, 'MEASURE'),
-				(${tcNat}, 'AXIS'), (${tcNat}, 'FILTER'), (${tcNat}, 'MEASURE'),
-				(${tcType}, 'AXIS'), (${tcType}, 'FILTER'), (${tcType}, 'MEASURE'),
-				(${tcImportance}, 'AXIS'), (${tcImportance}, 'FILTER'), (${tcImportance}, 'MEASURE'),
-				(${tcStatus}, 'AXIS'), (${tcStatus}, 'FILTER'), (${tcStatus}, 'MEASURE');
-		</sql>
-
-		<!-- simple columns for  CAMPAIGN -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${cId},  'ATTRIBUTE', 'CAMPAIGN_ID','CAMPAIGN', 'NUMERIC', 'id'),
-				(${cName},  'ATTRIBUTE', 'CAMPAIGN_LABEL','CAMPAIGN', 'STRING', 'name'),
-				(${cScheStart},  'ATTRIBUTE', 'CAMPAIGN_SCHED_START','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledStartDate'),
-				(${cSchedEnd},  'ATTRIBUTE', 'CAMPAIGN_SCHED_END','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledEndDate'),
-				(${cActStart},  'ATTRIBUTE', 'CAMPAIGN_ACTUAL_START','CAMPAIGN', 'DATE', 'actualPeriod.actualStartDate'),
-				(${cActEnd},  'ATTRIBUTE', 'CAMPAIGN_ACTUAL_END','CAMPAIGN', 'DATE', 'actualPeriod.actualEndDate');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${cId}, 'AXIS'), (${cId}, 'FILTER'), (${cId}, 'MEASURE'),
-				(${cName}, 'FILTER'), (${cName}, 'MEASURE'),
-				(${cScheStart}, 'AXIS'), (${cScheStart}, 'FILTER'),
-				(${cSchedEnd}, 'AXIS'), (${cSchedEnd}, 'FILTER'),
-				(${cActStart}, 'AXIS'), (${cActStart}, 'FILTER'),
-				(${cActEnd}, 'AXIS'), (${cActEnd}, 'FILTER');
-		</sql>
-
-		<!-- simple columns for  ITERATION -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${itId},  'ATTRIBUTE', 'ITERATION_ID','ITERATION', 'NUMERIC', 'id'),
-				(${itName},  'ATTRIBUTE', 'ITERATION_LABEL','ITERATION', 'STRING', 'name'),
-				(${itScheStart},  'ATTRIBUTE', 'ITERATION_SCHED_START','ITERATION', 'DATE', 'scheduledPeriod.scheduledStartDate'),
-				(${itScheEnd},  'ATTRIBUTE', 'ITERATION_SCHED_END','ITERATION', 'DATE', 'scheduledPeriod.scheduledEndDate'),
-				(${itActStart},  'ATTRIBUTE', 'ITERATION_ACTUAL_START','ITERATION', 'DATE', 'actualPeriod.actualStartDate'),
-				(${itActEnd},  'ATTRIBUTE', 'ITERATION_ACTUAL_END','ITERATION', 'DATE', 'actualPeriod.actualEndDate');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${itId}, 'AXIS'), (${itId}, 'FILTER'), (${itId}, 'MEASURE'),
-				(${itName}, 'FILTER'), (${itName}, 'MEASURE'),
-				(${itScheStart}, 'AXIS'), (${itScheStart}, 'FILTER'),
-				(${itScheEnd}, 'AXIS'), (${itScheEnd}, 'FILTER'),
-				(${itActStart}, 'AXIS'), (${itActStart}, 'FILTER'),
-				(${itActEnd}, 'AXIS'), (${itActEnd}, 'FILTER');
-		</sql>
-
-		<!-- simple columns for  ITERATION_TEST_PLAN_ITEM -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${itpId},  'ATTRIBUTE', 'ITEM_TEST_PLAN_ID','ITEM_TEST_PLAN', 'NUMERIC', 'id'),
-				(${itpLabel},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LABEL','ITEM_TEST_PLAN', 'STRING', 'label'),
-				(${itpStatus},  'ATTRIBUTE', 'ITEM_TEST_PLAN_STATUS','ITEM_TEST_PLAN', 'EXECUTION_STATUS', 'executionStatus'),
-				(${itpLastExec},  'ATTRIBUTE', 'ITEM_TEST_PLAN_LASTEXEC','ITEM_TEST_PLAN', 'DATE', 'lastExecutedOn');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${itpId}, 'AXIS'), (${itpId}, 'FILTER'), (${itpId}, 'MEASURE'),
-				(${itpLabel}, 'AXIS'), (${itpLabel}, 'FILTER'),
-				(${itpStatus}, 'AXIS'), (${itpStatus}, 'FILTER'), (${itpStatus}, 'MEASURE'),
-				(${itpLastExec}, 'AXIS'), (${itpLastExec}, 'FILTER');
-		</sql>
-
-		<!-- simple columns for EXECUTION -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${exId},  'ATTRIBUTE', 'EXECUTION_ID','EXECUTION', 'NUMERIC', 'id'),
-				(${exLabel},  'ATTRIBUTE', 'EXECUTION_LABEL','EXECUTION', 'STRING', 'name'),
-				(${exDsLabel},  'ATTRIBUTE', 'EXECUTION_DS_LABEL','EXECUTION', 'STRING', 'datasetLabel'),
-				(${exLastExec},  'ATTRIBUTE', 'EXECUTION_LASTEXEC','EXECUTION', 'DATE', 'lastExecutedOn'),
-				(${exTesterLogin},  'ATTRIBUTE', 'EXECUTION_TESTER_LOGIN','EXECUTION', 'STRING', 'lastExecutedBy'),
-				(${exStatus},  'ATTRIBUTE', 'EXECUTION_STATUS','EXECUTION', 'EXECUTION_STATUS', 'executionStatus');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${exId}, 'AXIS'), (${exId}, 'FILTER'), (${exId}, 'MEASURE'),
-				(${exLabel}, 'AXIS'), (${exLabel}, 'FILTER'),
-				(${exDsLabel}, 'AXIS'), (${exDsLabel}, 'FILTER'),
-				(${exLastExec}, 'AXIS'), (${exLastExec}, 'FILTER'),
-				(${exTesterLogin}, 'AXIS'), (${exTesterLogin}, 'FILTER'),
-				(${exStatus}, 'AXIS'), (${exStatus}, 'FILTER'), (${exStatus}, 'MEASURE');
-		</sql>
-
-		<!-- simple columns for ISSUE -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${isId},  'ATTRIBUTE', 'ISSUE_ID','ISSUE', 'NUMERIC', 'id'),
-				(${isStatus},  'ATTRIBUTE', 'ISSUE_STATUS','ISSUE', 'STRING', 'status'),
-				(${isSeverity},  'ATTRIBUTE', 'ISSUE_SEVERITY','ISSUE', 'STRING', 'severity'),
-				(${isBugtrackerLabel},  'ATTRIBUTE', 'ISSUE_BUGTRACKER','ISSUE', 'STRING', 'bugtracker');
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${isId}, 'AXIS'), (${isId}, 'FILTER'), (${isId}, 'MEASURE'),
-				(${isStatus}, 'AXIS'), (${isStatus}, 'FILTER'),
-				(${isSeverity}, 'AXIS'), (${isSeverity}, 'FILTER'),
-				(${isBugtrackerLabel}, 'AXIS'), (${isBugtrackerLabel}, 'FILTER');
-		</sql>
-
-		<!--  column defs below all have attribute business=false, hence no inserts needed for CHART_COLUMN_ROLE -->
-
-		<!-- simple columns for TEST_STEP (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${tsId}, 'ATTRIBUTE', FALSE, 'STEP_ID','TEST_CASE_STEP', 'NUMERIC', 'id'),
-				(${tsClass}, 'ATTRIBUTE', FALSE, 'STEP_CLASS','TEST_CASE_STEP', 'NUMERIC', 'class');
-
-		</sql>
-
-		<!-- simple columns for TEST_CASE_NATURE -> INFO_LIST_ITEM (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${tcnatId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'NUMERIC', 'id'),
-				(${tcnatLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_NATURE', 'STRING', 'label');
-		</sql>
-
-
-		<!-- simple columns for TEST_CASE_TYPE -> INFO_LIST_ITEM (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${tctypId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'NUMERIC', 'id'),
-				(${tctypLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'TEST_CASE_TYPE', 'STRING', 'label');
-		</sql>
-
-		<!-- simple columns for REQUIREMENT_VERSION_CATEGORY -> INFO_LIST_ITEM (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${rvcatId}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_ID', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'NUMERIC', 'id'),
-				(${rvcatLabel}, 'ATTRIBUTE', FALSE, 'INFO_ITEM_LABEL', 'INFO_LIST_ITEM', 'REQUIREMENT_VERSION_CATEGORY', 'STRING', 'label');
-		</sql>
-
-		<!-- simple columns for TEST_CASE_MILESTONE -> MILESTONE (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${tcmilId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'TEST_CASE_MILESTONE', 'NUMERIC', 'id'),
-				(${tcmilLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'TEST_CASE_MILESTONE', 'STRING', 'label');
-		</sql>
-
-		<!-- simple columns for REQUIREMENT_VERSION_MILESTONE -> MILESTONE (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${rvmilId}, 'ATTRIBUTE', FALSE, 'MILESTONE_ID', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'NUMERIC', 'id'),
-				(${rvmilLabel}, 'ATTRIBUTE', FALSE, 'MILESTONE_LABEL', 'MILESTONE', 'REQUIREMENT_VERSION_MILESTONE', 'STRING', 'label');
-		</sql>
-
-
-		<!-- simple columns for ITERATION_TEST_PLAN_ASSIGNED_USER -> USER (internal column only) -->
-		<sql>
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME)
-			VALUES
-				(${itpassignId}, 'ATTRIBUTE', FALSE, 'USER_ID', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'NUMERIC', 'id'),
-				(${itpassignLogin}, 'ATTRIBUTE', FALSE, 'USER_LOGIN', 'USER', 'ITERATION_TEST_PLAN_ASSIGNED_USER', 'STRING', 'label');
-		</sql>
-
-		<!--  ================== calculated columns ====================== -->
-
-		<!--  here are the definition of subqueries and column prototype referring to it-->
-
-		<!--  REQUIREMENT : versions count -->
-
-		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${reqVCountSub}, 'REQUIREMENT_NB_VERSIONS_SUBQUERY', 'SUBQUERY', 'INNER_JOIN');
-
-			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${rvId}, ${reqVCountSub}, 'COUNT', 0);
-
-			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${reqId}, ${reqVCountSub}, 'NONE', 0);
-
-
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
-			VALUES
-				(${reqVCount}, 'CALCULATED', TRUE, 'REQUIREMENT_NB_VERSIONS', 'REQUIREMENT', 'NUMERIC', 'count(versions)', ${reqVCountSub});
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${reqVCount}, 'AXIS'), (${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
-
-		</sql>
-
-
-
-		<!--  REQUIREMENT_VERSION : nb test cases-->
-
-		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${rvVerifTCCountSub}, 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
-
-			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${tcId}, ${rvVerifTCCountSub}, 'COUNT', 0);
-
-			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${rvId}, ${rvVerifTCCountSub}, 'NONE', 0);
-
-
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
-			VALUES
-				(${rvVerifTCCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_TCCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(requirementVersionCoverages)', ${rvVerifTCCountSub});
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${rvVerifTCCount}, 'AXIS'), (${rvVerifTCCount}, 'FILTER'), (${rvVerifTCCount}, 'MEASURE');
-
-		</sql>
-
-		<!--  REQUIREMENT_VERSION : nb milestones -->
-
-		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${rvMilesCountSub}, 'REQUIREMENT_VERSION_MILCOUNT_SUBQUERY', 'INLINED', 'LEFT_JOIN');
-
-			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${rvmilId}, ${rvMilesCountSub}, 'COUNT', 0);
-
-			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${rvId}, ${rvMilesCountSub}, 'NONE', 0);
-
-
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
-			VALUES
-				(${rvMilesCount}, 'CALCULATED', TRUE, 'REQUIREMENT_VERSION_MILCOUNT', 'REQUIREMENT_VERSION', 'NUMERIC', 'count(milestones)', ${rvMilesCountSub});
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${rvMilesCount}, 'AXIS'), (${rvMilesCount}, 'FILTER'), (${rvMilesCount}, 'MEASURE');
-
-		</sql>
-		
-		<!--  TEST CASE : nb requirement versions -->
-
-		<sql>
-			insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (${tcVerifVersionCountSub}, 'TEST_CASE_VERSCOUNT_SUBQUERY', 'SUBQUERY', 'LEFT_JOIN');
-
-			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
-				values (${rvId}, ${tcVerifVersionCountSub}, 'COUNT', 0);
-
-			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
-				values (${tcId}, ${tcVerifVersionCountSub}, 'NONE', 0);
-
-
-			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
-			VALUES
-				(${tcVerifVersionCount}, 'CALCULATED', TRUE, 'TEST_CASE_VERSCOUNT', 'TEST_CASE', 'NUMERIC', 'count(requirementVersionCoverages)', ${tcVerifVersionCountSub});
-
-			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
-			VALUES
-				(${tcVerifVersionCount}, 'AXIS'), (${tcVerifVersionCount}, 'FILTER'), (${tcVerifVersionCount}, 'MEASURE');
-
-		</sql>		
 
 	</changeSet>
 

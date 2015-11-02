@@ -36,6 +36,7 @@ public enum Operation {
 	AVG,
 	SUM,
 	COUNT,
+	NOT_NULL,
 	BY_DAY,
 	BY_MONTH,
 	BY_YEAR;

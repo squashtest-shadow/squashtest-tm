@@ -20,17 +20,12 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.chart.ChartQuery.NaturalJoinStyle;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 
 import com.querydsl.core.types.Ops;
@@ -165,8 +160,7 @@ class QueryPlanner {
 		// get the query plan : the orderly set of joins this
 		// planner must now put together
 
-		DomainGraph domain = new DomainGraph(definition);
-		QueryPlan plan = domain.getQueryPlan();
+		QueryPlan plan = createQueryPlan();
 
 		// now get the query done
 
@@ -192,6 +186,26 @@ class QueryPlanner {
 
 			subPlanner.modifyQuery();
 		}
+	}
+
+	private QueryPlan createQueryPlan(){
+
+		// first, try a normal query plan
+		DomainGraph domain = new DomainGraph(definition);
+		QueryPlan plan = domain.getQueryPlan();
+
+		// test whether the "left where join" corner case occurs
+		// if so, generate a reverse query plan instead.
+		// for now this is enough. Later on if really we are stuck,
+		// consider mapping the missing relationships instead.
+		// (eg TestCase -> IterationTestPlanItem)
+		if (hasLeftWhereJoin(plan)){
+			domain = new DomainGraph(definition);
+			domain.reversePlan();
+			plan = domain.getQueryPlan();
+		}
+
+		return plan;
 	}
 
 	@SuppressWarnings("rawtypes")
@@ -272,7 +286,28 @@ class QueryPlanner {
 	}
 
 
+	/*
+	 * Detects whether the given plan contains a "left where join", which is impossible to
+	 * actually implement
+	 */
+	private boolean hasLeftWhereJoin(QueryPlan plan){
 
+		boolean hasLeftJoin = false;
+		boolean hasWhereJoin = false;
+
+		// condition 1
+		hasLeftJoin = (definition.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN);
+
+		for (Iterator<PlannedJoin> iter = plan.joinIterator(); iter.hasNext();) {
+			PlannedJoin join = iter.next();
+			if (join.getType() == JoinType.WHERE){
+				hasWhereJoin =true;
+				break;
+			}
+		}
+
+		return hasLeftJoin && hasWhereJoin;
+	}
 
 	private boolean isKnown(EntityPathBase<?> path){
 		return aliases.contains(path.getMetadata().getName());

@@ -131,8 +131,28 @@ class DomainGraph {
 	// this one is used only in "shouldNavigate" and "morphToQueryPlan()"
 	private Set<InternalEntityType> visited = new HashSet<>();
 
+	/**
+	 * <p>
+	 * Used in some corner case (namely : we need a query plan that requires a left join over a join accessible only
+	 * through a "where join". The solution is thus to change the RootEntity, so that the plan now originate from the
+	 * Measure entity instead of the Axis entity.
+	 * </p>
+	 * 
+	 * <p>
+	 * 	<ul>
+	 * 	<li>if reverse == false -&gt; the root entity stays the same</li>
+	 * 	<li>if reverse == true  -&gt; the root entity is the Measured entity</li>
+	 * 	</ul>
+	 * </p>
+	 */
+	private boolean reverse = false;
+
 	// **************************** API methods ******************************
 
+	DomainGraph reversePlan(){
+		this.reverse=true;
+		return this;
+	}
 
 	/*
 	 * The creation of a query plan is a two step process :
@@ -147,9 +167,7 @@ class DomainGraph {
 
 	QueryPlan getQueryPlan(){
 
-		DomainGraph domain = new DomainGraph(definition);
-
-		QueryPlan plan = domain.morphToQueryPlan();
+		QueryPlan plan = morphToQueryPlan();
 
 		plan.trim(definition);
 
@@ -185,13 +203,14 @@ class DomainGraph {
 		TraversableEntity rvcatNode = new TraversableEntity(REQUIREMENT_VERSION_CATEGORY);
 		TraversableEntity tcmilNode = new TraversableEntity(TEST_CASE_MILESTONE);
 		TraversableEntity rvmilNode = new TraversableEntity(REQUIREMENT_VERSION_MILESTONE);
+		TraversableEntity autoNode = new TraversableEntity(InternalEntityType.AUTOMATED_TEST);
 
 
 		// add them all
 		nodes.addAll(Arrays.asList(new TraversableEntity[]{
 				campaignNode, iterationNode, itemNode, executionNode, issueNode, testcaseNode,
 				reqcoverageNode, rversionNode, requirementNode, teststepNode,userNode, tcnatNode,
-				tctypNode, rvcatNode, tcmilNode, rvmilNode
+				tctypNode, rvcatNode, tcmilNode, rvmilNode, autoNode
 		}));
 
 
@@ -233,6 +252,8 @@ class DomainGraph {
 
 		addEdge(rversionNode, rvcatNode, "category");
 		addEdge(rversionNode, rvmilNode, "milestones");
+
+		addEdge(testcaseNode, autoNode, "automatedTest");
 
 	}
 
@@ -304,6 +325,16 @@ class DomainGraph {
 
 		InternalEntityType rootType = definition.getRootEntity();
 
+		if (reverse == false){
+			rootType = definition.getRootEntity();
+		}
+		else{
+			// we must start the planning from the measured entity,
+			// instead of the regular root entity (which is an axis entity)
+			rootType = definition.getMeasuredEntity();
+		}
+
+
 		TraversableEntity rootNode = getNode(rootType);
 
 		// init the query plan
@@ -352,8 +383,8 @@ class DomainGraph {
 	}
 
 
-
 	// ********************* returned types (sort of a typedef) ************************************
+
 
 	/**
 	 * A node in the Domain graph : it represents an entity type (table) that can potentially be traversed
@@ -437,18 +468,5 @@ class DomainGraph {
 		}
 
 	}
-
-	private static final class PreferedJoin{
-		private final InternalEntityType src;
-		private final InternalEntityType dest;
-		private final String pathname;
-
-		private PreferedJoin(InternalEntityType src, InternalEntityType dest, String pathname){
-			this.src = src;
-			this.dest = dest;
-			this.pathname = pathname;
-		}
-	}
-
 
 }

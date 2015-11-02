@@ -51,6 +51,7 @@ class DomainGraphTest extends Specification {
 	static InternalEntityType CAT = REQUIREMENT_VERSION_CATEGORY
 	static InternalEntityType TCMIL = TEST_CASE_MILESTONE
 	static InternalEntityType RVMIL = REQUIREMENT_VERSION_MILESTONE
+	static InternalEntityType TATEST = AUTOMATED_TEST
 
 
 
@@ -73,7 +74,7 @@ class DomainGraphTest extends Specification {
 
 		// all other node have exactly one inbound connection
 		domain.nodes.findAll{it.type != rootEntity} as Set == domain.nodes.findAll{countInbounds(domain, it.type) == 1 } as Set
-		domain.nodes.collect{it.type} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS, US, TS, NAT, TYP, CAT, TCMIL, RVMIL ] as Set
+		domain.nodes.collect{it.type} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS, US, TS, NAT, TYP, CAT, TCMIL, RVMIL, TATEST ] as Set
 
 
 		where :
@@ -112,6 +113,7 @@ class DomainGraphTest extends Specification {
 		CP			|	[REQ, ISS]			|	[ CP : [IT], IT : [ITP], ITP : [TC, EX], TC : [COV], COV : [RV], RV : [REQ], REQ : [], EX : [ISS], ISS : []]
 		ITP			|	[REQ, CP, ISS]		|	[ ITP : [TC, IT, EX], TC : [COV], COV : [RV], RV: [REQ], REQ : [], IT : [CP], CP : [], EX : [ISS], ISS : []]
 		TC			|	[TC, TCMIL, NAT]	|	[ TC : [TCMIL, NAT], TCMIL : [], NAT : []]
+		TC			|	[TC, IT, TATEST]	|	[ TC : [ITP, TATEST], ITP : [IT], TATEST : [], IT : []]
 	}
 
 	@Unroll
@@ -169,7 +171,7 @@ class DomainGraphTest extends Specification {
 		def root = allroots[0]
 		root.key == TEST_CASE
 
-		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS]);
+		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS, TATEST]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT, RVMIL, CAT ]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
@@ -215,6 +217,37 @@ class DomainGraphTest extends Specification {
 		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
 		checkTreeHierarchy(plan, CAMPAIGN, [])
+
+	}
+
+	def "when requested, should generate a reversed query plan"(){
+
+		given :
+		DetailedChartQuery definition =
+				new DetailedChartQuery(rootEntity : TEST_CASE, measuredEntity : CAMPAIGN,
+				targetEntities : [TEST_CASE, REQUIREMENT, CAMPAIGN])
+		when :
+
+		DomainGraph domain = new DomainGraph(definition);
+		domain.reversePlan();
+		QueryPlan plan = domain.getQueryPlan();
+
+		then :
+
+		def traversed = plan.collectKeys() as Set
+
+		traversed as Set == [ REQUIREMENT, REQUIREMENT_VERSION, REQUIREMENT_VERSION_COVERAGE, TEST_CASE, ITEM_TEST_PLAN, ITERATION, CAMPAIGN ] as Set
+
+		def root = plan.getRootNodes()[0];
+		root.key == CAMPAIGN
+
+		checkTreeHierarchy(plan, CAMPAIGN, [ITERATION])
+		checkTreeHierarchy(plan, ITERATION, [ITEM_TEST_PLAN])
+		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [TEST_CASE])
+		checkTreeHierarchy(plan, TEST_CASE, [REQUIREMENT_VERSION_COVERAGE])
+		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION])
+		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT])
+		checkTreeHierarchy(plan, REQUIREMENT, [])
 
 	}
 
@@ -299,6 +332,7 @@ class DomainGraphTest extends Specification {
 			case "CAT" : return CAT
 			case "US" : return US
 			case "RVMIL" : return RVMIL
+			case "TATEST" : return TATEST
 		}
 	}
 

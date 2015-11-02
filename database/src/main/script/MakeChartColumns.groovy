@@ -19,12 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+ 
 SUFFIX = 0
 DTYPE = 1
 ATTR = 2
 ROLES = 3
 QUEREF = 4
 
+filtercount = 0
 
 /*
  * Structure :
@@ -40,20 +42,29 @@ QUEREF = 4
  * 				<subquery reference 1> : [
  * 					strategy : SUBQUERY | INLINED (default SUBQUERY)
  * 					joinStyle : LEFT_JOIN | INNER_JOIN (default INNER_JOIN)
- * 					measures : ['column ref [optional operation]'],
- * 					axes : ['column ref [optional operation']]
+ * 					measures : ['column_ref [optional operation]'],
+ * 					filters : ['column_ref OPERATION value1 value2...'],
+ * 					axes : ['column_ref [optional operation']]
  * 				]
  * 			]
  * 		]
  *
  * ]
+ * ---------
+ * 
+ * About the calculated column ref :
+ * 
+ * the 3rd argument (attribute) is completely irrelevant, but you should use it as a hint of what this column means
+ * 
+ * ---------
  * 
  * About "list, of, roles" :
  * 
  * accepts either "none", "all" or explicitly "[measure, ][axis, ][filter]" in any order
  * 
+ * ---------
  * 
- *
+ * The code that processes it comes after and there's not much to say on it except that it's ugly and hopefully functional 
  *
  */
 
@@ -63,11 +74,11 @@ def definition = [
 
 		columns : [
 			reqId : ['ID', 'NUMERIC', 'id',  "all" ],
-			reqVCount : ['NB_VERSIONS', 'count(requirementVersionCoverages)', 'NUMERIC', 'all', 'reqVCountSubquery']
+			reqVCount : ['NB_VERSIONS', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'reqVCountSub']
 		],
 
 		subqueries : [
-			reqVCountSubquery : [
+			reqVCountSub : [
 				label : 'REQUIREMENT_NB_VERSIONS_SUBQUERY',
 				measures : ['rvId COUNT'],
 				axes : ['reqId']
@@ -84,22 +95,22 @@ def definition = [
 			rvVersnum : ['VERS_NUM', 'NUMERIC', 'versionNumber', 'filter, measure'],
 			rvCreatBy : ['CREATED_BY',  'STRING','audit.createdBy', 'axis, filter'],
 			rvModBy : ['MODIFIED_BY', 'STRING','audit.lastModifiedBy','axis, filter'],
-			rvLabel : ['LABEL', 'STRING', 'name', 'filter, measure'],
+			rvRef : ['REFERENCE', 'STRING', 'reference', 'filter, axis'],
 			rvCat : ['CATEGORY', 'INFO_LIST_ITEM', 'category.label', 'all'],
 			rvCrit : ['CRITICALITY', 'LEVEL_ENUM', 'criticality', 'all'],
 			rvStatus : ['STATUS', 'LEVEL_ENUM', 'status', 'all'],
-			rvVerifTcCount : ['TCCOUNT', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'rvVerifTCCountSubquery'],
-			rvMilesCount : ['MILCOUNT', 'NUMERIC', 'count(milestones)', 'all', 'rvMilesCountSubquery'],
+			rvVerifTcCount : ['TCCOUNT', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'rvVerifTCCountSub'],
+			rvMilesCount : ['MILCOUNT', 'NUMERIC', 'count(milestones)', 'all', 'rvMilesCountSub'],
 		],
 	
 		subqueries : [
-			rvVerifTCCountSubquery : [
+			rvVerifTCCountSub : [
 				label : 'REQUIREMENT_VERSION_TCCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				measures : ['tcId COUNT'],
 				axes : ['rvId']
 			],
-			rvMilesCountSubquery : [
+			rvMilesCountSub : [
 				label : 'REQUIREMENT_VERSION_MILCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'INLINED',
@@ -118,12 +129,18 @@ def definition = [
 			tcId : ['ID', 'NUMERIC', 'id', 'all'],
 			tcCreatBy : ['CREATED_BY', 'STRING', 'audit.createdBy', 'axis, filter'],
 			tcModBy : ['MODIFIED_BY', 'STRING', 'audit.lastModifiedBy', 'axis, filter'],
-			tcLabel : ['LABEL', 'STRING', 'name', 'filter, measure'],
+			tcRef : ['REFERENC', 'STRING', 'reference', 'filter, axis'],
 			tcImportance : ['IMPORTANCE', 'LEVEL_ENUM', 'importance', 'all'],
 			tcNat : ['NATURE', 'INFO_LIST_ITEM', 'nature.label', 'all'],
 			tcType : ['TYPE', 'INFO_LIST_ITEM', 'type.label', 'all'],
 			tcStatus : ['STATUS', 'LEVEL_ENUM', 'status', 'all'],
-			tcStatus : ['VERSCOUNT', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'tcVerifVersionCountSub']
+			tcVersionCount : ['VERSCOUNT', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'tcVerifVersionCountSub'],
+			tcCallStepsCount : ['CALLSTEPCOUNT', 'NUMERIC', 'count(steps[class="CallTestStep"])', 'all', 'tcCallStepsCountSub'],
+			tcStepsCount : ['STEPCOUNT', 'NUMERIC', 'count(steps)', 'all', 'tcStepsCountSub'],
+			tcMilesCount : ['MILCOUNT', 'NUMERIC', 'count(milestones)', 'all', 'tcMilesCountSub'],
+			tcIterCount : ['ITERCOUNT', 'NUMERIC', 'count(iterations)', 'all', 'tcIterCountSub'],
+			tcExeCount : ['EXECOUNT', 'NUMERIC', 'count(executions)', 'all', 'tcExeCountSub'],
+			tcHasAutoScript : ['HASAUTOSCRIPT', 'BOOLEAN', 'notnull(automatedTest)', 'axis, filter', 'tcHasAutoScriptSub']
 		], 
 	
 		subqueries : [
@@ -133,7 +150,80 @@ def definition = [
 				strategy : 'SUBQUERY',
 				measures : ['rvId COUNT'],
 				axes : ['tcId']
+			],
+			tcCallStepsCountSub : [
+				label : 'TEST_CASE_CALLSTEPCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['tsId COUNT'],
+				filters : ['tsClass EQUALS CallTestStep'],
+				axes : ['tcId']
+			],
+			tcStepsCountSub : [
+				label : 'TEST_CASE_STEPCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'INLINE',
+				measures : ['tsId COUNT'],
+				axes : ['tcId']
+			],
+			tcMilesCountSub : [
+				label : 'TEST_CASE_VERSION_MILCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'INLINED',
+				measures : ['tcmilId COUNT'],
+				axes : ['tcId']
+			],
+		
+			/*
+			 * About the iteration and execution count :
+			 * 
+			 *  According to the DomainGraph the join is performed using a where clause, from the 
+			 *  ITP side. It is so because the relation is not mapped between TC and ITP.
+			 *  
+			 *  This means that there is no way to actually have a LEFT_JOIN when navigating 
+			 *  from TC to ITP, unless one of the following solution is adopted (by increasing complexity) : 
+			 *  
+			 *  1/ the relationship TC -> ITP is mapped. 
+			 *  ->  Simple, but burdens even more the loading of a test case and improper from the business point of view  
+			 *  
+			 *  2/ QueryPlanner generates a query plan backward (from measured entity to axis entity), when 
+			 *  	it has to peform a joinstyle = "left_join" on a join which must use a "where join".
+			 *  -> Simple, should work as long as there are no 	
+			 *  
+			 *  3/ the engine searches in lucene for it (there are appropriate bridges for that)
+			 *  -> lots of boiler plate to do as a query preprocessing
+			 *  
+			 *  4/ the engine manages to leverage 'union' in subqueries when a 'where join' appears and joinstyle = 'left_join' is used
+			 *  -> slows the performance, also not sure of what must be return in the second leg of the union
+			 *  
+			 *  Until then, test cases having no iteration/execution wont be counted in the 
+			 *  subquery. It entails that  
+			 *  
+			 */
+			tcIterCountSub : [
+				label : 'TEST_CASE_ITERCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['itId COUNT'],
+				axes : ['tcId']
+			],
+		
+			tcExeCountSub : [
+				label : 'TEST_CASE_EXECOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['exId COUNT'],
+				axes : ['tcId']
+			],
+			
+			tcHasAutoScriptSub : [
+				label : 'TEST_CASE_HASAUTOSCRIPT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['autoId NOT_NULL'],
+				axes : ['tcId']
 			]
+		
 		]
 	],
 	
@@ -269,14 +359,23 @@ def definition = [
 	
 		subqueries : [:]
 			
+	],
+
+	AUTOMATED_TEST : [
+		columns : [
+			autoId : ['ID', 'NUMERIC', 'id', 'none']	
+		],
+	
+		subqueries : [:]
 	]
-
-
 
 
 	
 
 ]
+
+
+// *********************** main ************************
 
 idmap = createIDmap(definition)
 
@@ -319,7 +418,19 @@ def toSQL(definition){
 
 
 	// first, process only attribute columns
-	output.append """\n\n-- here come the basic attribute columns\n\n"""
+	output.append """
+-- --------------------------------------------
+-- Chart Column Prototype Definition --
+--
+-- generated by src/main/script/MakeChartColumns.groovy
+-- --------------------------------------------
+"""
+
+output.append """
+-- -------------------------------------------
+-- section 1 :  basic attribute columns
+-- -------------------------------------------
+\n"""
 	
 	definition.each{ entity, content ->
 		
@@ -341,8 +452,12 @@ def toSQL(definition){
 	}
 	
 	// now , insert subqueries
+	output.append """
+-- -------------------------------------------
+-- section 2 :  subqueries
+-- -------------------------------------------
+\n"""
 	
-	output.append """\n\n-- here come subqueries\n\n"""
 	definition.each { entity, content ->
 		
 		
@@ -350,13 +465,18 @@ def toSQL(definition){
 		def subqueries = content['subqueries']
 		
 		if (!subqueries.empty){
-			processSubqueries(output, subqueries)
+			processSubqueries(entity, output, subqueries)
 		}
 		
 	}
 
 	// now insert the calculated columns that reference those subqueries
-		output.append """\n\n-- here come the calculated columns referencing the subqueries attribute columns\n\n"""
+	output.append """
+-- -------------------------------------------
+-- section 3 :  calculated columns
+-- -------------------------------------------
+\n"""
+	
 	definition.each { entity, content ->
 		
 		
@@ -391,18 +511,19 @@ def haveRoles(attributeColumns){
 }
 
 def processColumns(output, entity, attributeColumns){
-	//  append all the attribute column prototypes first
 	
-		output.append  """insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
+	output.append "\n-- columns for entity : ${entity} --\n\n"
+
+	output.append  """insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, ENTITY_ROLE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID)
 values"""
 
-		def colvalues = ""
+	def colvalues = ""
 
-		attributeColumns.each{ id, coldef ->
-			colvalues += printColumn(entity, idmap[id], coldef)
-		}
+	attributeColumns.each{ id, coldef ->
+		colvalues += printColumn(entity, idmap[id], coldef)
+	}
 
-		output.append (colvalues.replaceAll(/,$/, ';\n\n'))
+	output.append (colvalues.replaceAll(/,$/, ';\n\n'))
 
 	
 }
@@ -462,17 +583,20 @@ def printRoles(id, roles){
 
 }
 
-def processSubqueries(output, subqueries){
+def processSubqueries(entity, output, subqueries){
 	
+	output.append """-- subqueries for entity $entity --\n\n"""
 
 	subqueries.each{ querid, querdef ->
+		
+		output.append """-- subquery $querid --\n\n"""
 
 		// insert the query entry
 		def basequeryid = idmap[querid]
 		def strategy = (querdef['strategy'] != null) ? querdef['strategy'] : 'SUBQUERY'
 		def joinStyle = (querdef['joinStyle'] != null) ? querdef['joinStyle'] : 'INNER_JOIN'
 		
-		output.append """insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values ($basequeryid, '$querid', '$strategy', '$joinStyle')\n"""
+		output.append """insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values ($basequeryid, '$querid', '$strategy', '$joinStyle');\n"""
 		
 		// insert the measures for it
 		querdef['measures'].eachWithIndex { item, index ->
@@ -481,8 +605,34 @@ def processSubqueries(output, subqueries){
 			def operation = (splitname.size() > 1) ? splitname[1] : 'NONE'
 			def id = idmap[colref]
 			
-			output.append """insert into CHART_MEASURE_COLUMN($id, $basequeryid, '$operation', $index)\n"""
+			output.append """insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) \
+values ($id, $basequeryid, '$operation', $index);\n"""
 		}
+		
+		
+		// insert the filters (if any)
+		querdef['filters'].eachWithIndex {item, index ->
+			def splitargs = item.split()
+			def colref = splitargs[0]
+			def operation = splitargs[1]
+			def values = splitargs[2..splitargs.size()-1]
+			def colrefid = idmap[colref]
+			def filterid = filtercount++
+			
+			// the filter
+			output.append """insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) \
+values ($filterid, $colrefid, $basequeryid, '$operation');\n"""
+			
+			// its filter values now
+			output.append """insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
+values """
+			def valuestring = ""
+			values.each{
+				valuestring += "\n\t($filterid,'$it'),"
+			}
+			output.append (valuestring.replaceAll(/,$/, ';\n\n'))
+		}
+		
 		
 		// insert the axes
 		querdef['axes'].eachWithIndex { item, index ->
@@ -491,8 +641,10 @@ def processSubqueries(output, subqueries){
 			def operation = (splitname.size() > 1) ? splitname[1] : 'NONE'
 			def id = idmap[colref]
 			
-			output.append """insert into CHART_AXIS_COLUMN($id, $basequeryid, '$operation', $index)\n\n\n"""
+			output.append """insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  \
+values ($id, $basequeryid, '$operation', $index);\n\n\n"""
 		}
+		output.append "\n"
 		
 	}  
 	
@@ -515,6 +667,7 @@ def typerole(tpname){
 		case "TEST_CASE_MILESTONE" : return ["MILESTONE", "TEST_CASE_MILESTONE"]
 		case "REQUIREMENT_VERSION_MILESTONE" : return ["MILESTONE", "REQUIREMENT_VERSION_MILESTONE"]
 		case "ITERATION_TEST_PLAN_ASSIGNED_USER" : return ["USER", "ITERATION_TEST_PLAN_ASSIGNED_USER"]
+		case "AUTOMATED_TEST" : return ["AUTOMATED_TEST", null]
 	}
 }
 
