@@ -23,7 +23,7 @@ package org.squashtest.tm.hibernate.mapping
 import org.springframework.test.context.TestPropertySource
 import org.squashtest.it.config.DynamicDaoConfig
 import org.squashtest.it.config.RepositorySpecConfig
-import org.squashtest.tm.service.DataSourceConfig
+
 import org.squashtest.tm.service.RepositoryConfig
 
 import javax.inject.Inject;

@@ -66,6 +66,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public String findConfiguration(String key) {
 		Object value = findValue(key);
 		return value == null ? null : value.toString();
@@ -85,6 +86,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 * @see org.squashtest.tm.service.configuration.ConfigurationService#getBoolean(java.lang.String)
 	 */
 	@Override
+	@Transactional(readOnly = true)
 	public boolean getBoolean(String key) {
 		return Boolean.parseBoolean(findConfiguration(key));
 	}

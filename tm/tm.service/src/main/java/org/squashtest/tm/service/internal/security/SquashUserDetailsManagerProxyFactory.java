@@ -22,8 +22,10 @@ package org.squashtest.tm.service.internal.security;
 
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 
@@ -32,6 +34,7 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.util.List;
 
 /**
  * This SquashUserDetailsManagerProxy either delegates method calls to a
@@ -40,61 +43,37 @@ import java.lang.reflect.Proxy;
  *
  * @author Gregory Fouquet
  */
-//@Service("squashtest.core.security.JdbcUserDetailsManager")
-@Transactional
 public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashUserDetailsManager>, InitializingBean {
-	/**
-	 * Builder of SquashUserDetailsManagerProxyFactory. Its aim is not to get confused by a constructor with two args
-	 * of type SquashUserDetailsManager
-	 */
-	public static class Builder {
-		private SquashUserDetailsManager caseSensitiveDelegate;
-		private SquashUserDetailsManager caseInsensitiveDelegate;
-		private FeatureManager featureManager;
 
-		public Builder() {
-			super();
-		}
+	private SquashUserDetailsManager caseSensitiveManager;
 
-		public Builder caseSensitiveDelegate(@NotNull SquashUserDetailsManager manager) {
-			caseSensitiveDelegate = manager;
-			return this;
-		}
+	private SquashUserDetailsManager caseInsensitiveManager;
 
-		public Builder caseInsensitiveDelegate(@NotNull SquashUserDetailsManager manager) {
-			caseInsensitiveDelegate = manager;
-			return this;
-		}
-
-		public Builder featureManager(@NotNull FeatureManager manager) {
-			featureManager = manager;
-			return this;
-		}
-
-		public SquashUserDetailsManagerProxyFactory build() {
-			Assert.notNull(caseSensitiveDelegate, "Case sensitive delegate should not be null. Maybe you forgot to set it ?");
-			Assert.notNull(caseInsensitiveDelegate, "Case insensitive delegate should not be null. Maybe you forgot to set it ?");
-//			Assert.notNull(featureManager, "Feature manager should not be null. Maybe you forgot to set it ?");
-			return new SquashUserDetailsManagerProxyFactory(this);
-		}
-	}
-
-	//	@Inject
-//	@Named("userDetailsManager.caseSensitive")
-	private final SquashUserDetailsManager caseSensitiveManager;
-
-	//	@Inject
-//	@Named("userDetailsManager.caseInsensitive")
-	private final SquashUserDetailsManager caseInsensitiveManager;
-
-	//	@Inject @Lazy
-	private final FeatureManager features;
+	private FeatureManager features;
 	/**
 	 * The object built by this FactoryBean.
 	 */
 	private SquashUserDetailsManager proxy;
 
-	private class ManagerDelegator implements InvocationHandler {
+	public void setCaseSensitiveManager(SquashUserDetailsManager caseSensitiveManager) {
+		this.caseSensitiveManager = caseSensitiveManager;
+	}
+
+	public void setCaseInsensitiveManager(SquashUserDetailsManager caseInsensitiveManager) {
+		this.caseInsensitiveManager = caseInsensitiveManager;
+	}
+
+	public void setFeatures(FeatureManager features) {
+		this.features = features;
+	}
+
+	private static class ManagerDelegator implements InvocationHandler {
+		private final SquashUserDetailsManagerProxyFactory context;
+
+		private ManagerDelegator(SquashUserDetailsManagerProxyFactory context) {
+			this.context = context;
+		}
+
 		/**
 		 * @see java.lang.reflect.InvocationHandler#invoke(java.lang.Object,
 		 * java.lang.reflect.Method, java.lang.Object[])
@@ -102,23 +81,11 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			try {
-				return method.invoke(getCurrentManager(), args);
+				return method.invoke(context.getCurrentManager(), args);
 			} catch (InvocationTargetException e) {
 				throw e.getCause();
 			}
 		}
-	}
-
-	/**
-	 * To create a new SquashUserDetailsManagerProxyFactory, use SquashUserDetailsManagerProxyFactory.Builder.
-	 * This constructor is for internal use only.
-	 * @param builder
-	 */
-	private SquashUserDetailsManagerProxyFactory(@NotNull Builder builder) {
-		super();
-		this.caseSensitiveManager = builder.caseSensitiveDelegate;
-		this.caseInsensitiveManager = builder.caseInsensitiveDelegate;
-		this.features = builder.featureManager;
 	}
 
 	/**
@@ -162,8 +129,50 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 	public void afterPropertiesSet() throws Exception {
 		if (proxy == null) {
 			proxy = (SquashUserDetailsManager) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
-				new Class[]{SquashUserDetailsManager.class}, new ManagerDelegator());
+					new Class[]{SquashUserDetailsManager.class}, new ManagerDelegator(this));
 		}
+
+		proxy = new SquashUserDetailsManager() {
+			@Override
+			public void createUser(UserDetails user) {
+
+			}
+
+			@Override
+			public void updateUser(UserDetails user) {
+
+			}
+
+			@Override
+			public void deleteUser(String username) {
+
+			}
+
+			@Override
+			public void changePassword(String oldPassword, String newPassword) {
+
+			}
+
+			@Override
+			public boolean userExists(String username) {
+				return false;
+			}
+
+			@Override
+			public List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username) {
+				return null;
+			}
+
+			@Override
+			public void changeUserLogin(String newLogin, String oldLogin) {
+
+			}
+
+			@Override
+			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+				return null;
+			}
+		};
 	}
 
 }

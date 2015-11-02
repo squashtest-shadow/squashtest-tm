@@ -21,12 +21,9 @@
 package org.squashtest.tm.spring
 
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.util.TestContextResourceUtils
 import org.squashtest.it.config.RepositorySpecConfig
-import org.squashtest.tm.service.DataSourceConfig
+
 import org.squashtest.tm.service.RepositoryConfig
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
-import spock.lang.Ignore
 
 import javax.inject.Inject;
 

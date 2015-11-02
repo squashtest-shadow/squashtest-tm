@@ -22,11 +22,11 @@ package org.squashtest.tm.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.*;
+import org.springframework.core.Ordered;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
@@ -36,6 +36,7 @@ import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
@@ -51,7 +52,6 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
-import org.squashtest.tm.service.security.AuthenticationManagerDelegator;
 import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 
 import javax.inject.Inject;
@@ -72,12 +72,12 @@ public class SecurityConfig {
 	/**
 	 * Configures method security. It has to be annotated @EnableGlobalMethodSecurity according to
 	 * GlobalMethodSecurityConfiguration javadoc.
-	 *
+	 * <p/>
 	 * We would put this in SecurityConfig if we could, but GlobalMethodSecurityConfiguration requires a PermissionEvaluator
 	 * which would induce a depencency cycle on SecurityConfig itself.
 	 */
 	@Configuration
-	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, order = 2)
+	@EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true, order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
 	public static class SquashMethodSecurityConfiguration extends GlobalMethodSecurityConfiguration {
 		@Override
 		protected MethodSecurityExpressionHandler createExpressionHandler() {
@@ -126,6 +126,11 @@ public class SecurityConfig {
 	@Inject
 	@Lazy
 	private FeatureManager featureManager;
+
+	@Inject
+	private AuthenticationManager authenticationManager;
+
+    @Inject private JdbcManageableAclService aclService;
 
 	@Bean
 	public GrantedAuthority aclAdminAuthority() {
@@ -179,38 +184,28 @@ public class SecurityConfig {
 		return new AclAuthorizationStrategyImpl(aclAdminAuthority(), aclAdminAuthority(), aclAdminAuthority());
 	}
 
-	@Bean(name = "squashtest.core.security.AclService")
-	public JdbcManageableAclService aclService() {
-		JdbcManageableAclService aclService = new JdbcManageableAclService(dataSource, lookupStrategy());
-		aclService.setAclCache(aclCache());
-		aclService.setFindChildrenQuery(
-			"select null as obj_id,\n" +
-				"  null as class\n" +
-				"from ACL_OBJECT_IDENTITY\n" +
-				"where 0 = 1\n");
-		return aclService;
-	}
-
-
 	@Bean(name = "squash.security.authenticationProvider.internal")
 	public DaoAuthenticationProvider daoAuthenticationProvider() {
 		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		provider.setUserDetailsService(userDetailsManager().getObject());
+		SquashUserDetailsManagerProxyFactory fact = userDetailsManager();
+		provider.setUserDetailsService(fact.getObject());
 		provider.setPasswordEncoder(shaPasswordEncoder());
 
 		return provider;
 	}
 
 	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
+	@Primary
 	public SquashUserDetailsManagerProxyFactory userDetailsManager() {
-		return new SquashUserDetailsManagerProxyFactory.Builder()
-			.caseSensitiveDelegate(caseSensitiveUserDetailsManager())
-			.caseInsensitiveDelegate(caseInensitiveUserDetailsManager())
-			.featureManager(featureManager)
-			.build();
+		SquashUserDetailsManagerProxyFactory factoryBean = new SquashUserDetailsManagerProxyFactory();
+		factoryBean.setCaseInsensitiveManager(caseInensitiveUserDetailsManager());
+		factoryBean.setCaseSensitiveManager(caseSensitiveUserDetailsManager());
+		factoryBean.setFeatures(featureManager);
+		return factoryBean;
 	}
 
 	@Bean
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public PasswordEncoder shaPasswordEncoder() {
 		return new ShaPasswordEncoder();
 	}
@@ -280,7 +275,7 @@ public class SecurityConfig {
 		// TODO AuthenticationManagerDelegator provides low coupling necessary because of chicken / egg problem induced by OSGi
 		// hopefully we can remove this turdy trick when OSGi's gone.
 		// TODO nosgi
-		manager.setAuthenticationManager(new AuthenticationManagerDelegator("squash.security.authenticationProvider.internal"));
+		manager.setAuthenticationManager(authenticationManager);
 		manager.setDataSource(dataSource);
 		manager.setChangePasswordSql("update AUTH_USER set PASSWORD = ? where LOGIN = ?");
 		manager.setUpdateUserSql("update AUTH_USER set PASSWORD = ?, ACTIVE = ? where LOGIN = ?");
@@ -338,7 +333,7 @@ public class SecurityConfig {
 
 	@Bean(name = "squashtest.core.security.PermissionEvaluator")
 	public AffirmativeBasedCompositePermissionEvaluator permissionEvaluator() {
-		AffirmativeBasedCompositePermissionEvaluator evaluator = new AffirmativeBasedCompositePermissionEvaluator(aclService());
+		AffirmativeBasedCompositePermissionEvaluator evaluator = new AffirmativeBasedCompositePermissionEvaluator(aclService);
 		evaluator.setObjectIdentityRetrievalStrategy(objectIdentityRetrievalStrategy);
 		evaluator.setObjectIdentityGenerator(objectIdentityGenerator);
 		evaluator.setPermissionFactory(permissionFactory);

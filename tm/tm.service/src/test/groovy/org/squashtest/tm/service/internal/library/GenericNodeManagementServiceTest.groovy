@@ -31,7 +31,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService
 import spock.lang.Specification
 
 class GenericNodeManagementServiceTest extends Specification {
-	NodeManagementService service = new GenericNodeManagementService()
+	NodeManagementService service = new GenericNodeManagementService(permissionService, nodeDao, folderDao, libraryDao)
 	TestCaseDao nodeDao = Mock()
 	FolderDao folderDao = Mock()
 	LibraryDao libraryDao = Mock()

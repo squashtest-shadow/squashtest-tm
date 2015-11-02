@@ -21,9 +21,7 @@
 package org.squashtest.tm.web.config;
 
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.embedded.AbstractConfigurableEmbeddedServletContainer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -54,9 +52,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Inject
 	private ServerProperties serverProperties;
 
-	@Inject
-	private AbstractConfigurableEmbeddedServletContainer servletContainer;
-
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		super.configure(auth);
@@ -75,7 +70,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().logout()
 			.invalidateHttpSession(true).logoutSuccessUrl("/home-workspace").logoutUrl("/logout")
 		.and().exceptionHandling().accessDeniedPage("/squash/accessDenied")
-		.and().addFilterBefore(htmlSanitizationFilter(), SecurityContextPersistenceFilter.class)
+		.and().addFilterBefore(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class)
 		.authorizeRequests()
 			.antMatchers(
 				"/administration",
@@ -125,10 +120,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.requires(managementProperties.getRequiredChannel())
 			.and().authorizeRequests().anyRequest().permitAll();
 		// @formatter:on
-	}
-
-	@Bean
-	public HtmlSanitizationFilter htmlSanitizationFilter() {
-		return new HtmlSanitizationFilter();
 	}
 }

@@ -25,7 +25,7 @@ import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.context.annotation.*;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
-import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.springframework.transaction.config.TransactionManagementConfigUtils;
 import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.event.RequirementModificationEventPublisherAspect;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -38,7 +38,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.event.RequirementAuditor;
 import org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect;
-import org.squashtest.tm.service.internal.event.StatusBasedRequirementAuditor;
 import org.squashtest.tm.service.internal.library.*;
 import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignLibraryNodeDao;
@@ -48,16 +47,23 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
-import javax.validation.ValidatorFactory;
 
 /**
  * Spring configuration for tm.service subsystem
+ *
+ * <b>Important note about transaction management :</b>
+ * The app uses default jdk proxy mode for transaction management. But we also weave this jar to enable @Configurable.
+ * By doing this, some classes marked @Transactional get woven with the aspectj transaction aspect.
+ *
+ *
+ * AnnotationTransactionAspect has to be initialized at some point TRANSACTION_ASPECT_BEAN_NAME because
  *
  * @author Gregory Fouquet
  * Rem : @Configurable is used in tm.domain by hibernate search bridges
  */
 @Configuration
 @EnableSpringConfigured
+@DependsOn(TransactionManagementConfigUtils.TRANSACTION_ASPECT_BEAN_NAME)
 public class TmServiceConfig {
 	@Inject
 	private PasswordEncoder passwordEncoder;
@@ -138,14 +144,14 @@ public class TmServiceConfig {
 		return listener;
 	}
 
-	@Bean
+	@Bean @Lazy
 	public RequirementCreationEventPublisherAspect requirementCreationEventPublisherAspect() {
 		RequirementCreationEventPublisherAspect aspect = RequirementCreationEventPublisherAspect.aspectOf();
 		aspect.setAuditor(statusBasedRequirementAuditor);
 		return aspect;
 	}
 
-	@Bean
+	@Bean @Lazy
 	public RequirementModificationEventPublisherAspect requirementModificationEventPublisherAspect() {
 		RequirementModificationEventPublisherAspect aspect = RequirementModificationEventPublisherAspect.aspectOf();
 		aspect.setAuditor(statusBasedRequirementAuditor);
@@ -154,95 +160,47 @@ public class TmServiceConfig {
 
 	@Bean(name = "squashtest.tm.service.TestCasesWorkspaceService")
 	public GenericWorkspaceService<TestCaseLibrary, TestCaseLibraryNode> testCaseWorkspaceManager() {
-		GenericWorkspaceService<TestCaseLibrary, TestCaseLibraryNode> manager = new GenericWorkspaceService<>();
-		manager.setLibraryDao(testCaseLibraryDao);
-		manager.setLibraryStrategy(testCaseLibrarySelector);
-		configure(manager);
-		return manager;
-	}
-
-	private void configure(GenericWorkspaceService<?, ?> manager) {
-		manager.setProjectFilterModificationService(projectFilterManager);
+		return new GenericWorkspaceService<>(projectFilterManager, testCaseLibraryDao, testCaseLibrarySelector);
 	}
 
 	@Bean(name = "squashtest.tm.service.RequirementsWorkspaceService")
 	public GenericWorkspaceService<RequirementLibrary, RequirementLibraryNode> requirementWorkspaceManager() {
-		GenericWorkspaceService<RequirementLibrary, RequirementLibraryNode> manager = new GenericWorkspaceService<>();
-		manager.setLibraryDao(requirementLibraryDao);
-		manager.setLibraryStrategy(requirementLibrarySelector);
-		configure(manager);
-		return manager;
+		return new GenericWorkspaceService<>(projectFilterManager, requirementLibraryDao, requirementLibrarySelector);
 	}
 
 	@Bean(name = "squashtest.tm.service.CampaignsWorkspaceService")
 	public GenericWorkspaceService<CampaignLibrary, CampaignLibraryNode> campaignWorkspaceManager() {
-		GenericWorkspaceService<CampaignLibrary, CampaignLibraryNode> manager = new GenericWorkspaceService<>();
-		manager.setLibraryDao(campaignLibraryDao);
-		manager.setLibraryStrategy(campaignLibrarySelector);
-		configure(manager);
-		return manager;
+		return new GenericWorkspaceService<>(projectFilterManager, campaignLibraryDao, campaignLibrarySelector);
 	}
 
 	@Bean(name = "squashtest.tm.service.TestCaseFolderModificationService")
 	public GenericFolderModificationService<TestCaseFolder, TestCaseLibraryNode> testCaseFolderManager() {
-		GenericFolderModificationService<TestCaseFolder, TestCaseLibraryNode> manager = new GenericFolderModificationService<>();
-		manager.setLibraryDao(testCaseLibraryDao);
-		manager.setFolderDao(testCaseFolderDao);
-		configure(manager);
-		return manager;
-	}
-
-	private void configure(GenericFolderModificationService<?, ?> manager) {
-		manager.setPermissionService(permissionEvaluationService);
+		return new GenericFolderModificationService<>(permissionEvaluationService, testCaseFolderDao, testCaseLibraryDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.RequirementFolderModificationService")
 	public GenericFolderModificationService<RequirementFolder, RequirementLibraryNode> requirementFolderManager() {
-		GenericFolderModificationService<RequirementFolder, RequirementLibraryNode> manager = new GenericFolderModificationService<>();
-		manager.setLibraryDao(requirementLibraryDao);
-		manager.setFolderDao(requirementFolderDao);
-		configure(manager);
-		return manager;
+		return new GenericFolderModificationService<>(permissionEvaluationService, requirementFolderDao, requirementLibraryDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.CampaignFolderModificationService")
 	public GenericFolderModificationService<CampaignFolder, CampaignLibraryNode> campaignFolderManager() {
-		GenericFolderModificationService<CampaignFolder, CampaignLibraryNode> manager = new GenericFolderModificationService<>();
-		manager.setLibraryDao(campaignLibraryDao);
-		manager.setFolderDao(campaignFolderDao);
-		configure(manager);
-		return manager;
+		return new GenericFolderModificationService<>(permissionEvaluationService, campaignFolderDao, campaignLibraryDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.internal.TestCaseManagementService")
 	public GenericNodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> testCaseManager() {
-		GenericNodeManagementService<TestCase, TestCaseLibraryNode, TestCaseFolder> manager = new GenericNodeManagementService<>();
-		manager.setLibraryDao(testCaseLibraryDao);
-		manager.setFolderDao(testCaseFolderDao);
-		configure(manager);
-		return manager;
-	}
-
-	private void configure(GenericNodeManagementService<?, ?, ?> manager) {
-		manager.setPermissionService(permissionEvaluationService);
+		return new GenericNodeManagementService<>(permissionEvaluationService, testCaseDao, testCaseFolderDao, testCaseLibraryDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.internal.RequirementManagementService")
 	public GenericNodeManagementService<Requirement, RequirementLibraryNode, RequirementFolder> requirementManager() {
-		GenericNodeManagementService<Requirement, RequirementLibraryNode, RequirementFolder> manager = new GenericNodeManagementService<>();
-		manager.setLibraryDao(requirementLibraryDao);
-		manager.setFolderDao(requirementFolderDao);
-		configure(manager);
-		return manager;
+		return new GenericNodeManagementService<>(permissionEvaluationService, requirementDao, requirementFolderDao, requirementLibraryDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.internal.CampaignManagementService")
 	public GenericNodeManagementService<Campaign, CampaignLibraryNode, CampaignFolder> campaignManager() {
-		GenericNodeManagementService<Campaign, CampaignLibraryNode, CampaignFolder> manager = new GenericNodeManagementService<>();
-		manager.setLibraryDao(campaignLibraryDao);
-		manager.setFolderDao(campaignFolderDao);
-		configure(manager);
-		return manager;
+		return new GenericNodeManagementService<>(permissionEvaluationService, campaignDao, campaignFolderDao, campaignLibraryDao);
 	}
 
 	@Bean(name = "squashtest.tm.service.internal.PasteToTestCaseFolderStrategy")

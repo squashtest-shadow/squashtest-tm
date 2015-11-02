@@ -21,28 +21,25 @@
 package org.squashtest.tm.service;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.SessionFactory;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.internal.util.config.ConfigurationHelper;
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.annotation.*;
+import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
+import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.annotation.TransactionManagementConfigurer;
+import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy;
 import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor;
-import org.squashtest.tm.service.internal.hibernate.GroupConcatFunction;
-import org.squashtest.tm.service.internal.hibernate.StringAggFunction;
 
 import javax.inject.Inject;
 import javax.sql.DataSource;
@@ -50,53 +47,18 @@ import javax.validation.ValidatorFactory;
 import java.util.Properties;
 
 /**
+ * Configuration for repository layer.
+ *
+ * "implements TransactionManagementConfigurer" seems necessary because we dont't use standard JPA. As a consequence,
+ * @EnableTransactionManagement magic don't seem to properly kick in.
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */
 @Configuration
-@EnableTransactionManagement(order = 1)
-public class RepositoryConfig {
-	/**
-	 * Specialization of LocalSessionFactoryBean which registers a "group_concat" hsl function for any known dialect.
-	 * <p/>
-	 * Note : I would have inlined this class in #sessionFactory() if I could. But Spring enhances RepositoryConfig in
-	 * a way that the product of #sessionFactory() is expected to have a null-arg constructor. Yet, the default
-	 * constructor of an inner / anonymous class is a 1-param ctor which receives the outer instance. This leads to
-	 * arcane reflection errors (NoSuchMethodException "There is no no-arg ctor") in lines that seem completely unrelated
-	 *
-	 * @author Gregory Fouquet
-	 * @since 1.13.0
-	 */
-	private static class SquashSessionFactoryBean extends LocalSessionFactoryBean {
-		@Override
-		protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
-			String dialect = sfb.getProperty("hibernate.dialect");
-			sfb.addSqlFunction(FN_NAME_GROUP_CONCAT, groupConcatFunction(dialect));
-			return super.buildSessionFactory(sfb);
-		}
-
-		/**
-		 * Creates an adapter to the underlying DB group_concat (or equivalent) function with a regular syntax which
-		 * can be used in hql regardless of the underlaying DB
-		 *
-		 * @param dialectProp value of the dialect Hibernate property
-		 * @return a group concat function which suits the dialect
-		 */
-		private SQLFunction groupConcatFunction(String dialectProp) {
-			String dialect = ConfigurationHelper.resolvePlaceHolder(StringUtils.defaultString(dialectProp)).toLowerCase();
-
-			if (StringUtils.contains(dialect, "postgresql")) {
-				return new StringAggFunction(FN_NAME_GROUP_CONCAT, new StringType());
-			}
-			if (!StringUtils.contains(dialect, "h2") && !StringUtils.contains(dialect, "mysql")) {
-				LOGGER.warn("Selected hibernate Dialect '{}' is not known to support the sql function 'group_concat()'. Application will certainly not properly work. Maybe you configured a wrong dialect ?", dialectProp);
-			}
-
-			return new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType());
-		}
-	}
-
-	private static final String FN_NAME_GROUP_CONCAT = "group_concat";
+@EnableTransactionManagement(order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
+@Import(AspectJTransactionManagementConfiguration.class)
+public class RepositoryConfig implements TransactionManagementConfigurer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
 	@Inject
@@ -118,7 +80,7 @@ public class RepositoryConfig {
 	}
 
 	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
-	@DependsOn("org.springframework.context.config.internalBeanConfigurerAspect")
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public LocalSessionFactoryBean sessionFactory() {
 		if (StringUtils.defaultString(hibernateDialect).toLowerCase().contains("h2")) {
 			LOGGER.warn("I'm configured to use the '{}' H2 dialect. H2 is not to be used as a production database !", hibernateDialect);
@@ -138,13 +100,14 @@ public class RepositoryConfig {
 		return sessionFactoryBean;
 	}
 
-//	@Bean(name = "squashtest.tm.hibernate.TransactionManager")
-//	public HibernateTransactionManager transactionManager() {
-//		HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager(sessionFactory().getObject());
-//		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
-//		hibernateTransactionManager.setDataSource(dataSource);
-//		return hibernateTransactionManager;
-//	}
+	@Bean
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public HibernateTransactionManager transactionManager() {
+		HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager(sessionFactory().getObject());
+		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
+		hibernateTransactionManager.setDataSource(dataSource);
+		return hibernateTransactionManager;
+	}
 
 	/**
 	 * TODO nosgi that's kind of ugly.. find something better
@@ -152,6 +115,7 @@ public class RepositoryConfig {
 	 * @return
 	 */
 	@Bean(name = "hibernateProperties")
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public Properties hibernateProperties() {
 		Properties props = new Properties();
 
@@ -169,7 +133,13 @@ public class RepositoryConfig {
 	}
 
 	@Bean
-	public static ValidatorFactory validatorFactory() {
+    @Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+    public static ValidatorFactory validatorFactory() {
 		return new LocalValidatorFactoryBean();
+	}
+
+	@Override
+	public PlatformTransactionManager annotationDrivenTransactionManager() {
+		return transactionManager();
 	}
 }

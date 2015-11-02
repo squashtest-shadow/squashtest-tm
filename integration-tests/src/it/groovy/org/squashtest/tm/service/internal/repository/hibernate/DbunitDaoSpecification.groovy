@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.DynamicDaoConfig
 import org.squashtest.it.config.RepositorySpecConfig
 import org.squashtest.it.config.UnitilsConfig
-import org.squashtest.tm.service.DataSourceConfig
+
 import org.squashtest.tm.service.RepositoryConfig
 import spock.lang.Specification
 

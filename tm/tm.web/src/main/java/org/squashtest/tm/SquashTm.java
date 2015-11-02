@@ -1,22 +1,22 @@
 /**
- * This file is part of the Squashtest platform.
- * Copyright (C) 2010 - 2015 Henix, henix.fr
- * <p/>
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- * <p/>
- * This is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p/>
- * this software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * <p/>
- * You should have received a copy of the GNU Lesser General Public License
- * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm;
 
@@ -25,6 +25,7 @@ import org.jhades.JHadesServletListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
@@ -33,10 +34,7 @@ import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.boot.context.embedded.ServletListenerRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
+import org.springframework.context.annotation.*;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -218,18 +216,19 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 		return res;
 	}
 
-	@Bean
-	public static ServletListenerRegistrationBean<JHadesServletListener> jhadesServletListener() {
-		ServletListenerRegistrationBean<JHadesServletListener> bean = new ServletListenerRegistrationBean<>(new JHadesServletListener());
-		bean.setOrder(1);
-		return bean;
-	}
+//	@Bean
+//	public static ServletListenerRegistrationBean<JHadesServletListener> jhadesServletListener() {
+//		ServletListenerRegistrationBean<JHadesServletListener> bean = new ServletListenerRegistrationBean<>(new JHadesServletListener());
+//		bean.setOrder(1);
+//		return bean;
+//	}
 
 	/**
 	 * This overrides spring boot's default (servlet 3 based) multipart resolver.
 	 * @return the delegating multipart resolver
 	 */
 	@Bean
+    @Role(BeanDefinition.ROLE_SUPPORT)
 	public MultipartResolver multipartResolver() {
 		MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
 		bean.setDefaultResolver(defaultMultipartResolver());
@@ -241,20 +240,16 @@ public class SquashTm extends WebMvcConfigurerAdapter {
 	}
 
 	@Bean
+    @Role(BeanDefinition.ROLE_SUPPORT)
 	public SquashMultipartResolver defaultMultipartResolver() {
-		return buildSquashMultipartResolver();
+		return new SquashMultipartResolver();
 	}
 
 	@Bean
+    @Role(BeanDefinition.ROLE_SUPPORT)
 	public SquashMultipartResolver importMultipartResolver() {
-		SquashMultipartResolver bean = buildSquashMultipartResolver();
-		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
-		return bean;
-	}
-
-	private SquashMultipartResolver buildSquashMultipartResolver() {
 		SquashMultipartResolver bean = new SquashMultipartResolver();
-		bean.setConfig(configurationService);
+		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
 		return bean;
 	}
 

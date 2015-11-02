@@ -44,11 +44,17 @@ import static org.squashtest.tm.service.security.Authorizations.*;
 public class GenericWorkspaceService<LIBRARY extends Library<NODE>, NODE extends LibraryNode> implements
 WorkspaceService<LIBRARY> {
 
-	private ProjectFilterModificationService projectFilterModificationService;
+	private final ProjectFilterModificationService projectFilterModificationService;
 
-	private LibraryDao<LIBRARY, NODE> libraryDao;
+	private final LibraryDao<LIBRARY, NODE> libraryDao;
 
-	private LibrarySelectionStrategy<LIBRARY, NODE> libraryStrategy;
+	private final LibrarySelectionStrategy<LIBRARY, NODE> libraryStrategy;
+
+	public GenericWorkspaceService(ProjectFilterModificationService projectFilterModificationService, LibraryDao<LIBRARY, NODE> libraryDao, LibrarySelectionStrategy<LIBRARY, NODE> libraryStrategy) {
+		this.projectFilterModificationService = projectFilterModificationService;
+		this.libraryDao = libraryDao;
+		this.libraryStrategy = libraryStrategy;
+	}
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
@@ -71,17 +77,4 @@ WorkspaceService<LIBRARY> {
 	public List<LIBRARY> findAllImportableLibraries() {
 		return libraryDao.findAll();
 	}
-
-	public final void setLibraryDao(LibraryDao<LIBRARY, NODE> libraryDao) {
-		this.libraryDao = libraryDao;
-	}
-
-	public void setLibraryStrategy(LibrarySelectionStrategy<LIBRARY, NODE> libraryStrategy) {
-		this.libraryStrategy = libraryStrategy;
-	}
-
-	public void setProjectFilterModificationService(ProjectFilterModificationService projectFilterModificationService) {
-		this.projectFilterModificationService = projectFilterModificationService;
-	}
-
 }

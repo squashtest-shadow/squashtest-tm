@@ -20,16 +20,26 @@
  */
 package org.squashtest.tm.web.internal.fileupload;
 
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
-import javax.annotation.PostConstruct;
+/**
+ * TODO SquashMultipartResolver both needs to be initialized early (infrastructure bean) and requires a configService to
+ * get its configuration -> quick and dodgy solution is to fetch the service from beanFactory
+ */
+public class SquashMultipartResolver extends CommonsMultipartResolver implements ApplicationListener<ApplicationEvent> {
 
-public class SquashMultipartResolver extends CommonsMultipartResolver implements ApplicationListener<ConfigUpdateEvent> {
-
-	private ConfigurationService config;
+	/**
+     * This shall be fetched from application context when a context started event is triggered.
+     */
+    private ConfigurationService configurationService;
 
 	/**
 	 * Defaults to UPLOAD_SIZE_LIMIT
@@ -39,15 +49,6 @@ public class SquashMultipartResolver extends CommonsMultipartResolver implements
 	public SquashMultipartResolver() {
 		super();
 		this.setDefaultEncoding("UTF-8");
-	}
-
-	@PostConstruct
-	public void init() {
-		updateConfig();
-	}
-
-	public void setConfig(ConfigurationService config) {
-		this.config = config;
 	}
 
 	/**
@@ -60,12 +61,19 @@ public class SquashMultipartResolver extends CommonsMultipartResolver implements
 	}
 
 	private void updateConfig() {
-		String uploadLimit = config.findConfiguration(maxUploadSizeKey);
+		String uploadLimit = configurationService.findConfiguration(maxUploadSizeKey);
 		setMaxUploadSize(Long.valueOf(uploadLimit));
 	}
 
 	@Override
-	public void onApplicationEvent(ConfigUpdateEvent event) {
-		updateConfig();
+	public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ContextStartedEvent && configurationService == null) {
+            configurationService = ((ContextStartedEvent) event).getApplicationContext().getBean(ConfigurationService.class);
+        }
+
+		if (event instanceof ConfigUpdateEvent || event instanceof ContextStartedEvent) {
+			updateConfig();
+		}
 	}
+
 }

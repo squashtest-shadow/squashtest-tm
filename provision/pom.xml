@@ -67,53 +67,64 @@
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
 
-  <dependencies>
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.squashtest.tm</groupId>
+        <artifactId>squash-tm-bom</artifactId>
+        <version>${project.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 
+  <dependencies>
     <!-- JSP engine -->
     <!-- http://www.eclipse.org/jetty/documentation/current/framework-jetty-osgi.html#d0e15744 -->
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>com.sun.el</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>com.sun.el</artifactId>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.bugtracker.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>core.api</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>core.bugtracker.api</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>core.jasper.fragment</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>core.jasper.fragment</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>core.jasperreports.fragment</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.report.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>core.testautomation.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>core.jasperreports.fragment</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>core.report.api</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>core.testautomation.api</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>database.h2.fragment</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>database.h2.fragment</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
     <!-- ====== SQUASHTEST ====== -->
 
     <!-- ====== DATABASE ====== -->
@@ -121,193 +132,193 @@
       <groupId>com.h2database</groupId>
       <artifactId>h2</artifactId>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>hibernate-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.el</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.el</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>hibernate-dependencies</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--<type>pom</type>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>javax.el</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>javax.el</artifactId>-->
+    <!--</dependency>-->
     <!-- ====== /CONFIG ADMIN COMPENDIUM SERVICE ====== -->
 
     <!-- ====== JEE API ====== -->
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet.jsp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet.jsp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>javax.servlet.jsp.jstl</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-deploy</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-http</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-io</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>javax.servlet.jsp</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>javax.servlet.jsp</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>javax.servlet.jsp.jstl</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-deploy</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-http</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-io</artifactId>-->
+    <!--</dependency>-->
 
     <!-- bootstrapper -->
-    <dependency>
-      <groupId>org.eclipse.jetty.osgi</groupId>
-      <artifactId>jetty-osgi-boot</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.osgi</groupId>-->
+    <!--<artifactId>jetty-osgi-boot</artifactId>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>org.eclipse.jetty.osgi</groupId>
-      <artifactId>jetty-osgi-boot-jsp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-security</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-server</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-servlet</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.osgi</groupId>-->
+    <!--<artifactId>jetty-osgi-boot-jsp</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-security</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-server</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-servlet</artifactId>-->
+    <!--</dependency>-->
     <!-- ====== /SPRING DM WEB EXTENDER ====== -->
 
     <!-- ====== JETTY 8 ====== -->
     <!-- Jetty server itself -->
     <!-- http://www.eclipse.org/jetty/documentation/current/framework-jetty-osgi.html#d0e15047 -->
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-util</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-webapp</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty</groupId>
-      <artifactId>jetty-xml</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-util</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-webapp</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty</groupId>-->
+    <!--<artifactId>jetty-xml</artifactId>-->
+    <!--</dependency>-->
 
     <!-- ====== /SQUASHTEST ====== -->
 
     <!-- ====== CONFIG ADMIN COMPENDIUM SERVICE ====== -->
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.configadmin</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>org.apache.jasper.glassfish</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>org.apache.taglibs.standard.glassfish</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.jetty.orbit</groupId>
-      <artifactId>org.eclipse.jdt.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.eclipse.osgi</groupId>
-      <artifactId>org.eclipse.osgi</artifactId>
-      <scope>compile</scope>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.apache.felix</groupId>-->
+    <!--<artifactId>org.apache.felix.configadmin</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>org.apache.jasper.glassfish</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>org.apache.taglibs.standard.glassfish</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.jetty.orbit</groupId>-->
+    <!--<artifactId>org.eclipse.jdt.core</artifactId>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.osgi</groupId>-->
+    <!--<artifactId>org.eclipse.osgi</artifactId>-->
+    <!--<scope>compile</scope>-->
+    <!--</dependency>-->
     <!-- h2 1.3+ has a dependency on org.osgi.service.jdbc -->
     <!-- for osgi R4 4.2 and R5, it is in the jar below. for R4 4.3 it is in org.osgi.compendium -->
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.enterprise</artifactId>
-      <version>4.2.0</version>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.osgi</groupId>-->
+    <!--<artifactId>org.osgi.enterprise</artifactId>-->
+    <!--<version>4.2.0</version>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>org.ancoron.postgresql</groupId>
-      <artifactId>org.postgresql</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.ancoron.postgresql</groupId>-->
+    <!--<artifactId>org.postgresql</artifactId>-->
+    <!--</dependency>-->
     <!-- ====== SQUASHTEST ====== -->
     <!-- Squashtest core modules -->
-    <dependency>
-      <groupId>org.ops4j.pax.confman</groupId>
-      <artifactId>pax-confman-propsloader</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.ops4j.pax.confman</groupId>-->
+    <!--<artifactId>pax-confman-propsloader</artifactId>-->
+    <!--</dependency>-->
 
     <!-- the following mantis artifact is a plugin. It could be removed, but that would also remove it's dependencies from 
       the provisioning. TODO : maybe promote mantis plugin dependencies to "first class" : 1) put them in the squash-tm-dependencies 
       pom and 2) put them here and in distro project. -->
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>plugin.bugtracker.mantis</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>plugin.report.std</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>plugin.testautomation.jenkins</artifactId>
-      <version>${project.version}</version>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>plugin.bugtracker.mantis</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>plugin.report.std</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--<dependency>-->
+    <!--<groupId>org.squashtest.tm</groupId>-->
+    <!--<artifactId>plugin.testautomation.jenkins</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
     <!-- ======= /JETTY 8 ======= -->
 
     <!-- ====== OSGI API ====== -->
-    <dependency>
-      <groupId>org.eclipse.equinox.http</groupId>
-      <artifactId>servlet</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.eclipse.equinox.http</groupId>-->
+    <!--<artifactId>servlet</artifactId>-->
+    <!--</dependency>-->
     <!-- ====== /JEE API ====== -->
 
     <!-- ====== SPRING DM ====== -->
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-extender</artifactId>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.springframework.osgi</groupId>-->
+    <!--<artifactId>spring-osgi-extender</artifactId>-->
+    <!--</dependency>-->
     <!-- ====== /OSGI API ====== -->
 
     <!-- ====== SQUASHTEST ====== -->
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tm.service</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <!-- Squashtest tm modules -->
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tm.web</artifactId>
-      <version>${project.version}</version>
-      <type>war</type>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>tm.service</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--</dependency>-->
+    <!--&lt;!&ndash; Squashtest tm modules &ndash;&gt;-->
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>tm.web</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--<type>war</type>-->
+    <!--</dependency>-->
 
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>tm.web</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>${project.groupId}</groupId>-->
+    <!--<artifactId>tm.web</artifactId>-->
+    <!--<version>${project.version}</version>-->
+    <!--<type>pom</type>-->
+    <!--</dependency>-->
     <!-- ====== /SPRING DM ====== -->
 
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-web</artifactId>
-      <scope>runtime</scope>
-    </dependency>
+    <!--<dependency>-->
+    <!--<groupId>org.springframework.osgi</groupId>-->
+    <!--<artifactId>spring-osgi-web</artifactId>-->
+    <!--<scope>runtime</scope>-->
+    <!--</dependency>-->
 
   </dependencies>
 

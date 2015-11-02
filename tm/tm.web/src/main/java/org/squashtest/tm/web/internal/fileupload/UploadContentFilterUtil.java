@@ -21,24 +21,22 @@
 package org.squashtest.tm.web.internal.fileupload;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextStartedEvent;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 @Component
-public class UploadContentFilterUtil implements ApplicationListener<ConfigUpdateEvent> {
-
-	@Inject
+public class UploadContentFilterUtil implements ApplicationListener<ApplicationEvent> {
+    /**
+     * This is fetched from app context when context started event is triggered.
+     */
 	private ConfigurationService config;
-
-	public void setConfig(ConfigurationService config) {
-		this.config = config;
-	}
 
 	private String[] allowed;
 
@@ -62,13 +60,14 @@ public class UploadContentFilterUtil implements ApplicationListener<ConfigUpdate
 		return false;
 	}
 
-	@PostConstruct
-	public void init() {
-		updateConfig();
-	}
-
 	@Override
-	public void onApplicationEvent(ConfigUpdateEvent event) {
-		updateConfig();
+	public void onApplicationEvent(ApplicationEvent event) {
+        if (event instanceof ContextStartedEvent && config == null) {
+            config = ((ContextStartedEvent) event).getApplicationContext().getBean(ConfigurationService.class);
+        }
+
+		if (event instanceof ConfigUpdateEvent || event instanceof ContextStartedEvent) {
+			updateConfig();
+		}
 	}
 }

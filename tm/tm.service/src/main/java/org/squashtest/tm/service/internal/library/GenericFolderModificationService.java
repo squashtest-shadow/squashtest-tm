@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +30,14 @@ import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import static org.squashtest.tm.service.security.Authorizations.*;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 /**
  * Generic management service for folders. It is responsible for common rename / move / copy / remove operations.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <FOLDER>
  *            Type of folders managed by this object
  * @param <NODE>
@@ -45,24 +45,18 @@ import static org.squashtest.tm.service.security.Authorizations.*;
  */
 @Transactional
 public class GenericFolderModificationService<FOLDER extends Folder<NODE>, NODE extends LibraryNode> implements
-FolderModificationService<FOLDER>, InitializingBean {
+FolderModificationService<FOLDER> {
 
-	private PermissionEvaluationService permissionService;
+	private final PermissionEvaluationService permissionService;
+	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate;
+	private final FolderDao<FOLDER, NODE> folderDao;
+	private final LibraryDao<? extends Library<NODE>, NODE> libraryDao;
 
-	private final GenericNodeManagementService<FOLDER, NODE, FOLDER> delegate = new GenericNodeManagementService<FOLDER, NODE, FOLDER>();
-
-	private FolderDao<FOLDER, NODE> folderDao;
-	private LibraryDao<? extends Library<NODE>, NODE> libraryDao;
-
-	// [Issue 2735] it seems that the @PostConstruct annotation is no longer processed. We must have fiddled with Spring
-	// too much.
-	// This class now implements InitializingBean as a workaround but the root cause is still there.
-	@Override
-	public void afterPropertiesSet() {
-		delegate.setPermissionService(permissionService);
-		delegate.setNodeDao(folderDao);
-		delegate.setFolderDao(folderDao);
-		delegate.setLibraryDao(libraryDao);
+	public GenericFolderModificationService(PermissionEvaluationService permissionService, FolderDao<FOLDER, NODE> folderDao, LibraryDao<? extends Library<NODE>, NODE> libraryDao) {
+		this.permissionService = permissionService;
+		this.folderDao = folderDao;
+		this.libraryDao = libraryDao;
+        delegate = new GenericNodeManagementService<>(permissionService, folderDao, folderDao, libraryDao);
 	}
 
 	@Transactional(readOnly = true)
@@ -70,10 +64,6 @@ FolderModificationService<FOLDER>, InitializingBean {
 	@PostAuthorize("hasPermission(returnObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public FOLDER findFolder(long folderId) {
 		return delegate.findNode(folderId);
-	}
-
-	public void setFolderDao(FolderDao<FOLDER, NODE> folderDao) {
-		this.folderDao = folderDao;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -101,10 +91,6 @@ FolderModificationService<FOLDER>, InitializingBean {
 		checkPermission(new SecurityCheckableItem(folderId, SecurityCheckableItem.FOLDER, "WRITE"));
 		// proceed
 		delegate.updateNodeDescription(folderId, newDescription);
-	}
-
-	public void setLibraryDao(LibraryDao<? extends Library<NODE>, NODE> libraryDao) {
-		this.libraryDao = libraryDao;
 	}
 
 	/* *************** private section ************************ */
@@ -163,14 +149,6 @@ FolderModificationService<FOLDER>, InitializingBean {
 				throw new AccessDeniedException("Access is denied");
 			}
 		}
-	}
-
-	/**
-	 * @param permissionService
-	 *            the permissionService to set
-	 */
-	public void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
 	}
 
 }

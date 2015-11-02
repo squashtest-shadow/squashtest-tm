@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;

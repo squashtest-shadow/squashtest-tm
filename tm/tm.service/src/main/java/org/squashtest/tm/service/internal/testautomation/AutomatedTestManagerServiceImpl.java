@@ -28,6 +28,7 @@ import javax.inject.Inject;
 
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -35,11 +36,13 @@ import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
+import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
+
 /**
- * 
- * 
+ *
+ *
  * @author bsiri
- * 
+ *
  */
 @Transactional
 @Service("squashtest.tm.service.AutomatedTestService")
@@ -62,6 +65,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 	private TestAutomationTaskExecutor executor;
 
 	@Inject
+    @Transactional(propagation = SUPPORTS) // Injection method should not trigger a tx but should not care either
 	public void setAsyncTaskExecutor(AsyncTaskExecutor executor) {
 		TestAutomationTaskExecutor taExecutor = new TestAutomationTaskExecutor(executor);
 		this.executor = taExecutor;

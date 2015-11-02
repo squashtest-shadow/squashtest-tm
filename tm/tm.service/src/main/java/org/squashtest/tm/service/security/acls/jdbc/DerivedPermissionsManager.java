@@ -25,7 +25,8 @@ import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.security.acls.model.ObjectIdentity;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransformer;
@@ -33,7 +34,8 @@ import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransf
 import javax.inject.Inject;
 import java.util.*;
 
-@Component
+@Service
+@Transactional
 class DerivedPermissionsManager {
 
 	private static final String PROJECT_CLASS_NAME = Project.class.getName();
@@ -131,7 +133,7 @@ class DerivedPermissionsManager {
 			updateAuthsForThoseUsers(userIds);
 
 		} else {
-			// corner case : the target object doesn't exist anymore so we can't find 
+			// corner case : the target object doesn't exist anymore so we can't find
 			// which users were using it. We must then update them all.
 			updateDerivedAuths();
 		}
@@ -217,7 +219,7 @@ class DerivedPermissionsManager {
 
 	}
 
-	// will find all the users 
+	// will find all the users
 	private Collection<Long> findUsers(ObjectIdentity identity) {
 
 		// first find the parties managing that thing
@@ -258,7 +260,7 @@ class DerivedPermissionsManager {
 			Set<Long> userIds = new HashSet<Long>();
 			Collection<Long> buffer;
 
-			// first, get users directly managing anything 
+			// first, get users directly managing anything
 			Query query = sessionFactory.getCurrentSession().createSQLQuery(RETAIN_USERS_MANAGING_ANYTHING);
 			query.setParameterList("ids", ids, LongType.INSTANCE);
 			query.setResultTransformer(new SqLIdResultTransformer());
