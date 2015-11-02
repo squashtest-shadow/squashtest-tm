@@ -34,7 +34,7 @@
         <input  type="checkbox" name="entity" value="{{this}}"  
 
         {{#if ../attributes.selectedEntity}}         
-        {{#if (contains ../attributes.selectedEntity this)}} checked="checked" {{/if}} 
+        {{#if (contains ../../attributes.selectedEntity this)}} checked="checked" {{/if}} 
         {{else}}
         {{#unless @index}} checked="checked" {{/unless}}
         {{/if}}

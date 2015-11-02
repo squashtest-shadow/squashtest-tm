@@ -31,6 +31,12 @@
   href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
 <link rel="stylesheet" type="text/css" media="all"
   href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css" sq:css="squash.purple.css" />
+<link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
+  	sq:css="squash.core.override.css" />
+<link rel="stylesheet" type="text/css" media="all"
+  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+  	sq:css="squash.subpage.override.css" />
 
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
@@ -76,13 +82,18 @@
   
 <script id="entity-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/entityStep :: chart-wizard-entity" />
 <script id="scope-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/scopeStep :: chart-wizard-scope" />
+
+<script id="tree-popup-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/scopeStep :: chart-wizard-tree-popup" />
+
+
+
+
 <script id="filter-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-filter " />
 <script id="type-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/typeStep :: chart-wizard-type " />
 <script id="axis-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/axisStep :: chart-wizard-axis " />
 <script id="preview-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/previewStep :: chart-wizard-preview" />
  <script id="attributes-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/attributesStep :: chart-wizard-attributes" />  
-<script id="measure-operation-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/axisStep :: chart-wizard-measure-operation " />          
-    
+
     
    <script id="info-list-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-info-list " />
    <script id="info-list-item-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-info-list-item" /> 
@@ -109,12 +120,26 @@
       <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
     </div>
     
+    <div id="sub-page" class="sub-page">
+ <div id="sub-page-header" class="sub-page-header">
+			
+				<div id="sub-page-title" class="sub-page-title">
+					<h2>Requirement details</h2>
+				</div>
+
+				<div class="unsnap"></div>
+			</div>   
+    
+  <div id="sub-page-content" class="sub-page-content">
+
+<div id="information-content" style="overflow: hidden;">
+      
     
     
-<div id="wizard">
-    <div id="panel-left" style="z-index: 1" class="left-frame">
+<div id="wizard" class="fragment-body ui-tabs ui-widget ui-widget-content ui-corner-all" style="top:0; background: 0; border: 0 none;">
+    <div id="panel-left" style="top:0" class="left-frame">
       <div class="position-layout-fix">
-		<div id="tabbed-pane">
+		<div>
 			<div id="current-side-view-container">
 			<span id="side-view" />
 			</div>
@@ -130,9 +155,9 @@
 				</div>
 				
 	</div>
-	
-</div>
-	
+	 </div>	
+</div></div>
+	 </div>
  </div>
 </body>
 </html>

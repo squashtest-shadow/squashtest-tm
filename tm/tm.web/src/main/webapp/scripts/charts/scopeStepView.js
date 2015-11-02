@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "tree"],
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "tree", "jquery.squash.confirmdialog"],
 	function($, backbone, _, Handlebars, AbstractStepView, tree) {
 	"use strict";
 
@@ -28,6 +28,12 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.tmpl = "#scope-step-tpl";
 			this.model = data;
 			this._initialize(data);
+			
+			var treePopup = $("#tree-popup-tpl").html();
+			this.treePopupTemplate = Handlebars.compile(treePopup);
+	
+			
+			/*
 			
 			var nodes = _.map(this.model.get("scope"), function(obj) {
 				return {
@@ -42,8 +48,23 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 		
 			
-			this.initTree();
+			this.initTree();*/
 		
+		},
+		
+		events : {
+			"click .perimeter-select" : "openPerimeterPopup"
+			
+		},
+		
+		openPerimeterPopup : function (event) {
+		
+			
+			$("#tree-popup-container").html(this.treePopupTemplate());
+			
+			$("#tree-dialog").confirmDialog();
+			$("#tree-dialog").confirmDialog('open');
+			this.initTree(event.target.id);
 		},
 		
 		updateModel : function() {
@@ -55,29 +76,13 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		
 		
-		initTree : function (){
+		initTree : function (workspaceName){
 		
-
-			var workspaceName;
 
 			var ids = _.pluck(this.model.get("scope"), "id");
 			ids = ids.length > 0 ? ids : 0;
 			
-			switch (this.model.get("selectedEntity")){
 			
-			case "REQUIREMENT": 
-			case "REQUIREMENT_VERSION":  workspaceName = "requirement";
-				break;
-				
-			case "TEST_CASE" : workspaceName = "test-case";
-				break;
-				
-			case "CAMPAIGN" :
-			case "ITERATION" :
-			case "EXECUTION" :
-			case "ITEM_TEST_PLAN" : workspaceName = "campaign";
-			
-			}
 			
 			$.ajax({
 				url : squashtm.app.contextRoot + "/" + workspaceName + '-workspace/tree/' + ids,
@@ -89,7 +94,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				var treeConfig = {
 						model : model,
 						treeselector: "#tree",
-						workspace:"campaign",	
+						workspace: workspaceName,	
 						canSelectProject:true
 				};
 				tree.initLinkableTree(treeConfig);

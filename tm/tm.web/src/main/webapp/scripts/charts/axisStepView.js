@@ -27,72 +27,53 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		initialize : function(data) {
 			this.tmpl = "#axis-step-tpl";
 			this.model = data;
-			var src = $("#measure-operation-tpl").html();
-			this.measureTemplate = 	Handlebars.compile(src);
 			this._initialize(data);
-			this.reloadPreviousValues("MEASURE", "measures");
-			this.reloadPreviousValues("AXIS", "axis");
+			this.reloadData();
 		
 		},
 		
-		events : {
-			"change #MEASURE" : "changeMeasure",
-			"change #AXIS" : "changeAxis",	
-		},
+	
 		
-		
-		reloadPreviousValues : function (role, colName){
-            var self = this;
-			var col = this.model.get(colName);	
+		reloadData : function() {
 			
-			if (col !== undefined){
-				var elem = col[0];
-				$("#" + role).val(elem.column.label);
-				self.populateOperation(role);
-				$("#" + role +"-operation").val(elem.operation);
-				$("#" + role +"-name").val(elem.label);	
-			} else {
-				self.populateOperation(role);
-			}		
+			var operations = this.model.get("operations");
+			
+			_.each(operations, function (op){
+				
+				$("#operations-operation-select-"+ op.column.id).val(op.operation); 
+				
+			});
+			
 		},
+		
 		
 		updateModel : function() {
 			
-			var measure = this.getVal("MEASURE");
-			var axis = this.getVal("AXIS");
+			var ids = _.pluck($(".operations-operation-select"), "name");
 			
-			this.model.set({measures : [measure], axis : [axis]}); 
+			var operations = this.getVals(ids);
+			
+			this.model.set({operations : operations}); 
 		},
 		
-		getVal : function (role) {
+		getVals : function (ids) {
 		
-			return {column : this.findColumnByLabel(role),
-			operation : $("#" + role + "-operation").val() || "NONE",
-			label : $("#" + role + "-name").val() };
+			var self = this;
+			
+			return _.map(ids, function(id){
+				return {column : self.findColumnById(id),
+					operation : $("#operations-operation-select-" + id).val() ,
+				};
+			});
+			
 			
 		},
 		
-		findColumnByLabel : function (role){
-			return _.find(this.model.get("columnPrototypes")[this.model.get("selectedEntity")] , function(col){return col.label == $("#" + role).val();});
+		findColumnById : function (id){
+			return _.find(_.reduce(this.model.get("columnPrototypes"), function(memo, val){ return memo.concat(val); }, []), function(col){return col.id == id; });
 		},
-		
-		changeMeasure : function(event) {
-			this.populateOperation("MEASURE");
-		}, 
 
-		changeAxis : function(event) {
-			this.populateOperation("AXIS");
-			
-		}, 	
-		populateOperation : function(role){
-			var data = this.model.attributes;
-			var selectedCol = this.findColumnByLabel(role);
-			var operationsAllowedByType = this.model.get("dataTypes")[selectedCol.dataType];
-			var operationsAllowedByRole = this.model.get("columRoles")[role];
-			var permitedOperations = _.intersection(operationsAllowedByType, operationsAllowedByRole);	
-			var operationSelector = this.measureTemplate({operations : permitedOperations, role:role});
-			$("#" + role + "-operation-container").html(operationSelector);	
-		}
+
 		
 		
 	});

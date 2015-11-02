@@ -22,6 +22,42 @@
 -->
 <div th:fragment="chart-wizard-type">
 
+{{#*inline "axe"}}
+
+{{i18n name prefix="chart.wizard.axis.label."}}
+<select id="axis-{{name}}" class="axis-select" name="{{name}}">
+{{#each attributes.operations}}
+
+{{#if (contains (lookup ../attributes.columRoles ../role) this.operation)}}
+<option value="{{this.column.label}}"   >
+{{i18n this.column.label prefix="chart.column."}}
+</option>
+{{/if}}
+{{/each}}
+</select>
+<br />
+
+<span th:text="#{chart.wizard.label.operation}"/> <span id="operation-{{name}}" />
+<br />
+<span id="filter-{{name}}" />
+{{/inline}}
+
+<div style="float:left">
+{{>axe name="axis-y" role="MEASURE"}}
+</div>
+
+<div style="float:left">
+<div style="width:250px; height:250px;">
+</div>
+
+<div style="float:left">
+{{>axe name="axis-x1" role="AXIS"}}
+<br />
+{{>axe name="axis-x2" role="AXIS"}}
+</div>
+</div>
+
+<div style="float:left">
  <ul style="list-style: none;">
         {{#each attributes.chartTypes}}
         <li>
@@ -32,15 +68,13 @@
         {{#equal this ../../attributes.type}} checked="checked" {{/equal}} 
         {{else}}
         {{#unless @index}} checked="checked" {{/unless}}
-        {{/if}}  
-          
+        {{/if}}            
         />   
-        {{!--]]>--}}	
-        
+        {{!--]]>--}}	       
         {{i18n this prefix="chart.chartType." }}     
         </li>
         {{/each}}     
 </ul>
-
+</div>
 
 </div>

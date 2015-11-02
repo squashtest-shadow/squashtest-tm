@@ -22,63 +22,47 @@
 -->
 <div th:fragment="chart-wizard-axis">
 
-{{#*inline "columnSelector"}}
 
 
-
-<select id="{{ROLE}}">
-{{#each  (lookup attributes.columnPrototypes attributes.selectedEntity)   }}  
-{{#if (contains this.role ../ROLE)}}
- <option value="{{this.label}}"   >
- {{i18n this.label prefix="chart.column."}}
- </option>
-{{/if }}
-{{/each}}     
-</select>
-<span id="{{ROLE}}-operation-container"></span>
-
-
-<span th:text="#{label.name}" />
-<input type="text" id="{{ROLE}}-name" />
+{{#*inline "filter"}}
 <br />
+{{i18n this.label prefix="chart.column."}}
+<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}">
+{{#each  operations}}  
+
+<option value="{{this}}">
+    {{i18n this prefix="chart.operation."}}
+</option>
+
+{{/each}}   
+</select>
+
+
 <br />
 {{/inline}}
 
 
-CHOOSE YOUR CHART AXIS/MEASURE
-<br />
-<br />
-CHOOSE MEASURE
-<br />
-<br />
-{{> columnSelector ROLE="MEASURE"}}
 
 
-CHOOSE AXIS
-<br />
+{{#each attributes.columnPrototypes}}
 
-{{> columnSelector ROLE="AXIS"}}
+  {{#if (contains ../attributes.selectedEntity @key)}}
+  <div class="sq-tg expand">
+ <div class="tg-head">
+{{i18n @key prefix='chart.entityType.'}} 
+            
+</div> 
+{{#each  this}}  
+{{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
 
+{{#if (contains ../../attributes.selectedAttributes id)}} 
+{{> filter  operations=(intersect (union (lookup ../../attributes.columRoles "MEASURE") (lookup ../../attributes.columRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+{{/if}}
 
-</div>
-
-
-
-<div th:fragment="chart-wizard-measure-operation">
+{{/if }}
+{{/each}}  
+ </div>  
  
-{{#if operations}}
- <select id="{{role}}-operation">
- {{/if}}
-  
-{{#each operations}}
- <option value="{{this}}">
-  {{i18n this prefix="chart.operation."}}
- </option> 
-{{/each}}
-  
-{{#if operations}}
-</select>
- {{/if}}
+ {{/if }}
+{{/each}}  
 </div>
-
-
