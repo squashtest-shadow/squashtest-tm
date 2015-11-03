@@ -47,5 +47,3 @@ define(["underscore","backbone","squash.translator","handlebars","squash.basicwi
 	return View;
 });
 
-	return View;
-});

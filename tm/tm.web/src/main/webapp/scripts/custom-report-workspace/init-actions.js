@@ -164,8 +164,3 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 	};
 
 });
-			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
-		}
-	};
-
-});
