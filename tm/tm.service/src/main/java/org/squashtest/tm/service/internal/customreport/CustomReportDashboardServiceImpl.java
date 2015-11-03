@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")
@@ -38,12 +39,17 @@ public class CustomReportDashboardServiceImpl implements
 	@Inject
 	CustomReportDashboardDao customReportDashboardDao;
 	
+	@Inject
+	CustomReportChartBindingDao bindingDao;
+	
 	@Override
 	public CustomReportDashboard updateGridPosition(CustomReportDashboard dashboard) {
-		CustomReportDashboard persistedDashboard = customReportDashboardDao.findById(dashboard.getId());
 		Set<CustomReportChartBinding> transientBindings = dashboard.getChartBindings();
-		for (CustomReportChartBinding customReportChartBinding : transientBindings) {
-			
+		for (CustomReportChartBinding transientBinding : transientBindings) {
+			CustomReportChartBinding persistedBinding = bindingDao.findById(transientBinding.getId());
+			if (persistedBinding.hasMoved(transientBinding)) {
+				persistedBinding.move(transientBinding);
+			}
 		}
 		// TODO Auto-generated method stub
 		return null;

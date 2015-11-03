@@ -114,5 +114,32 @@ public class CustomReportChartBinding implements Identified {
 	public Long getId() {
 		return id;
 	}
+
+	public boolean hasMoved(CustomReportChartBinding transientBinding) {
+		return hasMoveRow(transientBinding) || hasMoveCol(transientBinding) || hasMoveSizeX(transientBinding) || hasMoveSizeY(transientBinding);
+	}
+
+	public void move(CustomReportChartBinding transientBinding) {
+		setRow(transientBinding.getRow());
+		setCol(transientBinding.getCol());
+		setSizeX(transientBinding.getSizeX());
+		setSizeY(transientBinding.getSizeY());
+	}
+	
+	private boolean hasMoveSizeX(CustomReportChartBinding transientBinding) {
+		return getSizeX()!=transientBinding.getSizeX();
+	}
+
+	private boolean hasMoveSizeY(CustomReportChartBinding transientBinding) {
+		return getSizeY()!=transientBinding.getSizeY();
+	}
+
+	private boolean hasMoveCol(CustomReportChartBinding transientBinding) {
+		return getRow()!=transientBinding.getRow();
+	}
+
+	private boolean hasMoveRow(CustomReportChartBinding transientBinding) {
+		return getCol()!=transientBinding.getCol();
+	}
 	
 }
