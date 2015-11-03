@@ -26,7 +26,7 @@ ATTR = 2
 ROLES = 3
 QUEREF = 4
 
-filtercount = 0
+filtercount = 1
 
 /*
  * Structure :
@@ -162,7 +162,7 @@ def definition = [
 			tcStepsCountSub : [
 				label : 'TEST_CASE_STEPCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'INLINE',
+				strategy : 'INLINED',
 				measures : ['tsId COUNT'],
 				axes : ['tcId']
 			],
@@ -284,7 +284,7 @@ def definition = [
 		columns : [
 			isId : ['ID', 'NUMERIC', 'id', 'all'],
 			isStatus : ['STATUS', 'STRING', 'status', 'axis, filter'],
-			isSeverity : ['SEVERITY', 'String', 'severity', 'axis, filter'],
+			isSeverity : ['SEVERITY', 'STRING', 'severity', 'axis, filter'],
 			isBugtrackerLabel : ['BUGTRACKER', 'STRING', 'bugtracker', 'axis, filter']	
 		],
 	
@@ -292,7 +292,7 @@ def definition = [
 		
 	],
 
-	TEST_STEP : [
+	TEST_CASE_STEP : [
 		columns : [
 			tsId : ['ID', 'NUMERIC', 'id', 'none'],
 			tsClass : ['CLASS', 'STRING', 'class', 'none']	
@@ -386,20 +386,24 @@ toSQL(definition)
 // ********************* functions *********************
 
 
+// ids start at 1, not 0. If you try to count from 0, mysql will rant because of that
 def createIDmap(definition){
 
-	def colcount =0
-	def querycount =0
+	def colcount = 1
+	def querycount = 1
 	def idmap = [:]
 
 	definition.each { entity, content ->
+		// ids for columns
 		content['columns'].each { colid, coldef ->
 			idmap[colid] = colcount++
 		}
-
+		
+		// ids for subqueries
 		content['subqueries'].each { querid, querdef ->
 			idmap[querid] = querycount++
 		}
+		
 	}
 
 	idmap
@@ -660,7 +664,7 @@ def typerole(tpname){
 		case "ITEM_TEST_PLAN" : return ["ITEM_TEST_PLAN", null]
 		case "EXECUTION" : return ["EXECUTION", null]
 		case "ISSUE" : return ["ISSUE", null]
-		case "TEST_STEP" : return ["TEST_STEP", null]
+		case "TEST_CASE_STEP" : return ["TEST_CASE_STEP", null]
 		case "TEST_CASE_NATURE" : return ["INFO_LIST_ITEM", "TEST_CASE_NATURE"]
 		case "TEST_CASE_TYPE" : return ["INFO_LIST_ITEM", "TEST_CASE_TYPE"]
 		case "REQUIREMENT_VERSION_CATEGORY" : return ["INFO_LIST_ITEM", "REQUIREMENT_VERSION_CATEGORY"]
