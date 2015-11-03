@@ -18,17 +18,77 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers" ], function($, backbone, _, Handlebars) {
+define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "squash.translator" ], function($,
+		backbone, _, Handlebars, translator) {
 	"use strict";
+
+	var steps = [ {
+		name : "attributes",
+		prevStep : "entity",
+		nextStep : "filter",
+		viewTitle : "chart.wizard.creation.step.attributes",
+		stepNumber : 3,
+		neededStep : ["entity"]
+	}, {
+		name : "entity",
+		prevStep : "scope",
+		nextStep : "attributes",
+		viewTitle : "chart.wizard.creation.step.entity",
+		stepNumber : 2
+	},{
+		name : "axis",
+		prevStep : "filter",
+		nextStep : "type",
+		viewTitle : "chart.wizard.creation.step.axis",
+		stepNumber : 5,
+		neededStep : ["entity", "attributes"]
+	},{
+		name : "filter",
+		prevStep  : "attributes",
+	    nextStep : "axis",
+		viewTitle : "chart.wizard.creation.step.filter",
+		stepNumber : 4,
+		neededStep : ["entity", "attributes"]
+	},{
+		name : "preview",
+		prevStep : "type",
+		nextStep : "",
+		viewTitle : "chart.wizard.creation.step.preview",
+		stepNumber : 7,
+		neededStep : ["entity", "attributes", "axis"]
+	},{
+		name : "scope",
+		prevStep : "",
+		nextStep : "entity",
+		viewTitle : "chart.wizard.creation.step.scope",
+		stepNumber : 1,
+
+	},{
+		name : "type",
+		prevStep : "axis",
+		nextStep : "preview",
+		viewTitle : "chart.wizard.creation.step.type",
+		stepNumber : 6,
+		neededStep : ["entity", "attributes", "axis"]
+	
+	}
+	];
 
 	var abstractStepView = Backbone.View.extend({
 		el : "#current-step",
 
 		_initialize : function(data, wizrouter) {
 			this.router = wizrouter;
+			
+			
+			var currStep = _.findWhere(steps, {name : data.name});		
+			this.next = currStep.nextStep;
+			this.previous = currStep.prevStep;
+			this.showViewTitle(currStep.viewTitle);
+			
+			
 			this.render(data);
-			this.next = data.nextStep;
-			this.previous = data.prevStep;
+			
 		},
 
 		events : {
@@ -46,6 +106,10 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers" ], 
 
 		updateModel : function() {
 			// do in superclass
+		},
+
+		showViewTitle : function(title) {
+			$("#step-title").text(translator.get(title));
 		},
 
 		navigatePrevious : function() {

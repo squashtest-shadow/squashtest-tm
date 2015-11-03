@@ -27,8 +27,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#axis-step-tpl";
 			this.model = data;
-			data.nextStep = "type";
-			data.prevStep = "filter";
+			data.name = "axis";
 			this._initialize(data, wizrouter);
 			this.reloadData();
 

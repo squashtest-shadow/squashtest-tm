@@ -27,8 +27,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#attributes-step-tpl";
 			this.model = data;
-			data.nextStep = "scope";
-			data.prevStep = "entity";
+			data.name = "attributes";
 			this._initialize(data, wizrouter);
 			
 

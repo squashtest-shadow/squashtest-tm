@@ -27,8 +27,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#scope-step-tpl";
 			this.model = data;
-		    data.nextStep = "filter";
-		    data.prevStep  = "attributes";
+			data.name = "scope";
 			this._initialize(data, wizrouter);
 			
 			var treePopup = $("#tree-popup-tpl").html();

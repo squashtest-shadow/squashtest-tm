@@ -22,6 +22,7 @@
 -->
 <div th:fragment="chart-wizard-attributes">
 
+{{#if attributes.selectedEntity}}
  {{#each attributes.columnPrototypes}}
  
 
@@ -33,6 +34,9 @@
 {{i18n @key prefix='chart.entityType.'}} 
             
 </div> 
+
+
+
 {{#each  this}}
   
   {{!--<![CDATA[--}}
@@ -51,6 +55,15 @@
  
 {{/each}}  
 
+{{else}}
+
+<span th:text="#{wizard.steps.missing-steps}" />
+<br />
+<a href="#entity" > 
+{{i18n "entity" prefix="chart.wizard.creation.step."}}
+</a>
+<br />
+{{/if}}
 
 
  <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">

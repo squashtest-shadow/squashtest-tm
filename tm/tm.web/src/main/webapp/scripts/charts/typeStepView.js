@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.translator"],
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.translator", "jquery.squash"],
 	function($, backbone, _, Handlebars, AbstractStepView, translator) {
 	"use strict";
 
@@ -27,8 +27,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#type-step-tpl";
 			this.model = data;
-		    data.nextStep = "preview";
-		    data.prevStep  = "axis";
+		    data.name = "type";
 			this._initialize(data, wizrouter);
 			this.precalculateInfoListItemData();
 			this.reloadData();
@@ -36,10 +35,54 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		
 	events : {
 			
-			"change .axis-select" : "changeAxis"
+			"change .axis-select" : "changeAxis",
+			"change .chart-type" : "changeType"
 			
 		},
 		
+		changeType : function (event){
+			this.showAxisByType(event.target.value);
+			
+		},
+		
+		showAxisByType : function (type) {
+			
+			switch (type) {
+			
+			case "LINE" : this.showLineAxis();
+				break;
+			case "BAR" : this.showBarAxis();
+				break;
+			case "PIE" : this.showPieAxis();
+				break;
+			case "TABLE" : //no table atm
+				break;
+			}
+			
+			
+		},
+		
+		showPieAxis : function () {	
+			this.setInvisible(["axis-y", "axis-x2"]);			
+		},
+		
+		showBarAxis : function () {
+			this.setVisible(["axis-y", "axis-x2"]);
+		},
+		
+		showLineAxis : function () {
+			this.setVisible(["axis-y"]);
+			this.setInvisible(["axis-x2"]);
+		}, 
+		
+		setVisible : function (values){		
+			_.each(values, function (val) {$("#" + val).visible();});
+			
+		},
+		setInvisible : function (values){
+			_.each(values, function (val) {$("#" + val).invisible();});
+		},
+
 		precalculateInfoListItemData : function () {
 			
 			var getInfoListItems = function (infoList){
@@ -82,6 +125,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		reloadData : function () {
 			
 			var self = this;
+
+			var type = $(".chart-type").filter(":checked").attr("value");
+			this.showAxisByType(type);
+			
 			
 			_.each(this.model.get("measures"), function (val) {
 				var axisName = "y";
@@ -205,8 +252,28 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 			var measure = this.find("y");
 			var axis1 = this.find("x1");
-			var axis2  = this.find("x2");			
-			var axis = [axis1].concat(axis2);
+			var axis2  = this.find("x2");	
+			
+			switch (type) {
+			
+			case "LINE" :  axis2 = null;
+			break;
+			
+		    case "BAR" : 
+			break;
+			
+		    case "PIE" : 
+		    	measure = _.clone(axis1);
+		    	measure.operation = "COUNT";
+		    	axis2 = null;
+			break;
+			
+		    case "TABLE" : //no table atm
+			break;
+			}
+			
+					
+			var axis = axis2 === null ? [axis1]:[axis1].concat(axis2);
 			
 			this.model.set({type : type, measures : [measure], axis : axis});  
 	

@@ -27,7 +27,7 @@ define(["jquery", "backbone", "./abstractStepView"],
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#entity-step-tpl";
 			this.model = data;
-			data.nextStep = "attributes";
+			data.name = "entity";
 			this._initialize(data, wizrouter);
 
 			

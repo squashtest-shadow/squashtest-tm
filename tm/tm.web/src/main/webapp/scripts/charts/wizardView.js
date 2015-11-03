@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		initialize : function(options) {
 			this.model = options.model;
 			this.model.set({
-				steps:["entity","attributes", "scope", "filter", "axis", "type", "preview"]	,
+				steps:["scope", "entity", "attributes", "filter", "axis", "type", "preview"]	,
 			   perimSelect :[{text:"label.testCase" , name:"test-case"}, {text:"label.campaigns" , name:"campaign"}, {text:"label.requirements" , name:"requirement"}]
 			});
 			this.loadI18n();
@@ -73,6 +73,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			this.resetView();
 			this.showSideView();
 			this.currentView = new View(this.model, wizrouter);
+
 		},
 		
 		showEntityStep : function(wizrouter) {			

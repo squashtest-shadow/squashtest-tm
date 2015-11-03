@@ -27,7 +27,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#preview-step-tpl";
 			this.model = data;
-			data.prevStep  = "type";
+			data.name = "preview";
 			this._initialize(data, wizrouter);
 
 		},

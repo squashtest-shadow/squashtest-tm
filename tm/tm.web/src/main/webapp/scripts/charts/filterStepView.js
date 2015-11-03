@@ -29,12 +29,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.datePickerFormat = translator.get("squashtm.dateformatShort.datepicker");
 			this.tmpl = "#filter-step-tpl";
 			this.model = data;
-		    data.nextStep = "axis";
-		    data.prevStep  = "scope";
+			data.name = "filter";
 			this._initialize(data, wizrouter);	
-
-			
-			
+		
 			var infoListSrc = $("#info-list-tpl").html();
 			this.infoListTemplate = Handlebars.compile(infoListSrc);
 			var infoListItemSrc = $("#info-list-item-tpl").html();

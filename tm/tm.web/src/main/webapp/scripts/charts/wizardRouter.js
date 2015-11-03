@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "workspace.routing", "./abstractStepView" ], func
 		},
 		
 		routes : {
-			"" : "entityStep",
+			"" : "scopeStep",
 			"entity": "entityStep",
 			"scope" : "scopeStep",
 			"filter" : "filterStep",
