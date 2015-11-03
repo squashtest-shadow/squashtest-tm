@@ -263,8 +263,16 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			break;
 			
 		    case "PIE" : 
-		    	measure = _.clone(axis1);
-		    	measure.operation = "COUNT";
+		    	measure = {};
+		    	measure.operation = "COUNT";		    	
+		    	measure.column = _.chain(this.model.get("columnPrototypes"))
+		    	.pick(axis1.column.specializedType.entityType)
+		    	.values()
+		    	.flatten()
+		    	.find(function(col) {return col.attributeName == "id";})
+		    	.value();
+		    	measure.label = "";
+		    	
 		    	axis2 = null;
 			break;
 			
