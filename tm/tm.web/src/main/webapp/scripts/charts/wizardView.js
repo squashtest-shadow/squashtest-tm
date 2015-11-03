@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView" ], function($, Backbone,
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel" ], function($, Backbone,
 		router, translator, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
@@ -26,12 +26,35 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 	var wizardView = Backbone.View.extend({
 		el : "#wizard",
 		initialize : function(options) {
+		
 			this.model = options.model;
 			this.model.set({
 				steps:["scope", "entity", "attributes", "filter", "axis", "type", "preview"]	,
 			   perimSelect :[{text:"label.testCase" , name:"test-case"}, {text:"label.campaigns" , name:"campaign"}, {text:"label.requirements" , name:"requirement"}]
 			});
 			this.loadI18n();
+		},
+		
+		events : {
+			"click #next" : "navigateNext",
+			"click #previous" : "navigatePrevious",
+		    "click #generate" : "generate",
+			"click #save" : "save"
+		},
+		
+		navigateNext : function (){
+			this.currentView.navigateNext();
+		},
+		
+		navigatePrevious : function (){
+			this.currentView.navigatePrevious();
+		},
+		
+		generate : function (){
+			this.currentView.generate();
+		},
+		save : function() {
+			this.currentView.save();
 		},
 		
 		loadI18n : function (){

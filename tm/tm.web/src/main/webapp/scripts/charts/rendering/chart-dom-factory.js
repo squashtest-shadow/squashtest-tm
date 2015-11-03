@@ -21,9 +21,16 @@
 
 define(["jquery", "handlebars"], function($, Handlebars){
 	
-	var colors = ["#FF0000", "#00FF00", "#0000FF", "#880000", "#008800", "#000088", 
-	              "#F0F0F0", "#0F0F0F", "#000000", "#FFFFFF", "#123456", "#ABCDEF"];
-	
+	var colors = 	["#4D4D4D",
+	             	"#5DA5DA",
+	            	"#FAA43A",
+	            	"#60BD68",
+	            	"#F17CB0",
+	            	"#B2912F",
+	            	"#B276B2",
+	            	"#DECF3F",
+	            	"#F15854"];
+
 	
 	function generateBarViewDOM(viewID, jsonChart){
 		var strTemplate = $("#chart-view-barchart-template").html();

@@ -28,40 +28,46 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		nextStep : "filter",
 		viewTitle : "chart.wizard.creation.step.attributes",
 		stepNumber : 3,
-		neededStep : ["entity"]
+		neededStep : ["entity"],
+		buttons : ["previous", "next"]
 	}, {
 		name : "entity",
 		prevStep : "scope",
 		nextStep : "attributes",
 		viewTitle : "chart.wizard.creation.step.entity",
-		stepNumber : 2
+		stepNumber : 2,
+		buttons : ["previous", "next"]
 	},{
 		name : "axis",
 		prevStep : "filter",
 		nextStep : "type",
 		viewTitle : "chart.wizard.creation.step.axis",
 		stepNumber : 5,
-		neededStep : ["entity", "attributes"]
+		neededStep : ["entity", "attributes"],
+		buttons : ["previous", "next"]
 	},{
 		name : "filter",
 		prevStep  : "attributes",
 	    nextStep : "axis",
 		viewTitle : "chart.wizard.creation.step.filter",
 		stepNumber : 4,
-		neededStep : ["entity", "attributes"]
+		neededStep : ["entity", "attributes"],
+		buttons : ["previous", "next"]
 	},{
 		name : "preview",
 		prevStep : "type",
 		nextStep : "",
 		viewTitle : "chart.wizard.creation.step.preview",
 		stepNumber : 7,
-		neededStep : ["entity", "attributes", "axis"]
+		neededStep : ["entity", "attributes", "axis"],
+		buttons : ["previous", "save"]
 	},{
 		name : "scope",
 		prevStep : "",
 		nextStep : "entity",
 		viewTitle : "chart.wizard.creation.step.scope",
 		stepNumber : 1,
+		buttons : ["next"]
 
 	},{
 		name : "type",
@@ -69,7 +75,8 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		nextStep : "preview",
 		viewTitle : "chart.wizard.creation.step.type",
 		stepNumber : 6,
-		neededStep : ["entity", "attributes", "axis"]
+		neededStep : ["entity", "attributes", "axis"],
+		buttons : ["previous", "generate"]
 	
 	}
 	];
@@ -85,16 +92,29 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			this.next = currStep.nextStep;
 			this.previous = currStep.prevStep;
 			this.showViewTitle(currStep.viewTitle);
-			
+			this.initButtons(currStep.buttons);
 			
 			this.render(data);
 			
 		},
-
-		events : {
-			"click #next" : "navigateNext",
-			"click #previous" : "navigatePrevious"
+		initButtons : function (buttons){
+			
+			var allButtons = ["previous", "next", "save", "generate"];
+			
+			_.each(buttons, function(button) {
+				var select = $("#" + button);
+				select.show();
+			});
+			
+			_.chain(allButtons).difference(buttons).each(function(button) {
+				var select = $("#" + button);
+				select.hide();
+			}			
+			);
+	
 		},
+
+	
 
 		navigateNext : function() {
 			this.updateModel();

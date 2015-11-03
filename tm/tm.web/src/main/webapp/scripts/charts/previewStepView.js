@@ -29,30 +29,17 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.model = data;
 			data.name = "preview";
 			this._initialize(data, wizrouter);
+			this.initChart();
+			
 
 		},
 		
-		events : {
-			"click #preview" : "preview",
-			"click #save" : "save"
+			
+		initChart : function (){
+			var data = this.model.get("chartData");
+			chart.buildChart("#chart-display-area", data);	
 			
 		},
-		
-		preview : function(){
-		
-			$.ajax({
-				'type' : 'POST',
-				'dataType' : 'json',
-				'contentType' : 'application/json',
-				'url' : squashtm.app.contextRoot + '/charts/instance',
-				'data' : this.model.toJson()
-			})
-			.success(function(json){
-				chart.buildChart("#chart-display-area", json);
-			});
-	
-		},
-		
 		save : function () {
 			
 			var parentId = this.model.get("parentId");

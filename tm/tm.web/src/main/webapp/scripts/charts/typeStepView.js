@@ -34,12 +34,33 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		
 	events : {
-			
+
 			"change .axis-select" : "changeAxis",
 			"change .chart-type" : "changeType"
 			
 		},
 		
+		generate : function(){
+			
+		
+			
+			var self = this;
+			
+			self.updateModel();
+			
+			$.ajax({
+				'type' : 'POST',
+				'dataType' : 'json',
+				'contentType' : 'application/json',
+				'url' : squashtm.app.contextRoot + '/charts/instance',
+				'data' : this.model.toJson()
+			})
+			.success(function(json){
+				self.model.set({chartData : json});
+				self.navigateNext();
+			});
+	
+		},
 		changeType : function (event){
 			this.showAxisByType(event.target.value);
 			

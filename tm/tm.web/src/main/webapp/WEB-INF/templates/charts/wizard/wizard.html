@@ -21,36 +21,44 @@
 
 -->
 <!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 <!-- common head -->
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css"
+	sq:css="squash.core.css" />
 <link rel="shortcut icon" type="image/x-icon" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico" th:href="@{/images/favicon.ico}" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
+	th:href="@{/images/favicon.ico}" />
 <link rel="stylesheet" type="text/css" media="all"
-  href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css" sq:css="squash.purple.css" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css"
+	sq:css="squash.purple.css" />
 <link rel="stylesheet" type="text/css" media="all"
-  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
-  	sq:css="squash.core.override.css" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
+	sq:css="squash.core.override.css" />
 <link rel="stylesheet" type="text/css" media="all"
-  	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
-  	sq:css="squash.subpage.override.css" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
+	sq:css="squash.subpage.override.css" />
 
 <script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
 <script type="text/javascript" th:src="@{/scripts/common.js}"></script>
 
-<script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+<script src="../../scripts/pubsub-boot.js"
+	th:src="@{/scripts/pubsub-boot.js}"></script>
 
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 
-<script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
-<script th:remove="all" type="text/javascript" src="../../scripts/require.js"></script>
-<script th:remove="all" type="text/javascript" src="../../scripts/common.js"></script>
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/require.js"></script>
+<script th:remove="all" type="text/javascript"
+	src="../../scripts/common.js"></script>
 
-  
- <script type="text/javascript" th:inline="javascript">
+
+<script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
     	var pathname = window.location.pathname; 
@@ -71,93 +79,141 @@
     	});
     	
     /* ]]> */
-    </script> 
-  
-  
+    </script>
+
+
 </head>
 <body>
 
 
-<script id="side-view-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/sideView :: chart-wizard-side-view" />
-  
-<script id="entity-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/entityStep :: chart-wizard-entity" />
-<script id="scope-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/scopeStep :: chart-wizard-scope" />
+	<script id="side-view-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/sideView :: chart-wizard-side-view" />
 
-<script id="tree-popup-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/scopeStep :: chart-wizard-tree-popup" />
+	<script id="entity-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/entityStep :: chart-wizard-entity" />
+	<script id="scope-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/scopeStep :: chart-wizard-scope" />
+
+	<script id="tree-popup-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/scopeStep :: chart-wizard-tree-popup" />
 
 
 
 
-<script id="filter-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-filter " />
-<script id="type-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/typeStep :: chart-wizard-type " />
-<script id="axis-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/axisStep :: chart-wizard-axis " />
-<script id="preview-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/previewStep :: chart-wizard-preview" />
- <script id="attributes-step-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/attributesStep :: chart-wizard-attributes" />  
+	<script id="filter-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/filterStep :: chart-wizard-filter " />
+	<script id="type-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/typeStep :: chart-wizard-type " />
+	<script id="axis-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/axisStep :: chart-wizard-axis " />
+	<script id="preview-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/previewStep :: chart-wizard-preview" />
+	<script id="attributes-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/attributesStep :: chart-wizard-attributes" />
 
-    
-   <script id="info-list-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-info-list " />
-   <script id="info-list-item-tpl" type="text/x-handlebars-template" th:inline="text" th:include="charts/wizard/filterStep :: chart-wizard-info-list-item" /> 
 
-  
-                
-<div th:include="charts/rendering/chart-templates :: templates"></div>
+	<script id="info-list-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/filterStep :: chart-wizard-info-list " />
+	<script id="info-list-item-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/filterStep :: chart-wizard-info-list-item" />
 
-  <div id="navigation" th:include="navbar.frag :: navbar('report')">NAVBAR</div>
 
- <div id="workspace">
-    <div id="workspace-title">
-      <div class="snap-left">
-            <h2 th:text="#{chart.wizard.title}"></h2>
-      </div>
-      <div class="snap-right">
-        <div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
-        <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
-      </div>
-    </div>
-    <div th:remove="all">
-      <!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
-      <!-- 		above the stacking context of the contextual content. -->
-      <!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
-    </div>
-    
-    <div id="sub-page" class="sub-page">
- <div id="sub-page-header" class="sub-page-header">
-			
+
+	<div th:include="charts/rendering/chart-templates :: templates"></div>
+
+	<div id="navigation" th:include="navbar.frag :: navbar('report')">NAVBAR</div>
+
+	<div id="workspace">
+		<div id="workspace-title">
+			<div class="snap-left">
+				<h2 th:text="#{chart.wizard.title}"></h2>
+			</div>
+			<div class="snap-right">
+				<div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
+				<div class="unstyled-notification-pane"
+					th:include="menubar.frag :: notification">NOTIFICATION</div>
+			</div>
+		</div>
+		<div th:remove="all">
+			<!-- 		about the z-index : 1 on the tree-panel-left : this ensure that the stacking context of the tree pane will always be  -->
+			<!-- 		above the stacking context of the contextual content. -->
+			<!-- 		An interesting article on that matter : http://philipwalton.com/articles/what-no-one-told-you-about-z-index/   -->
+		</div>
+
+		<div id="sub-page" class="sub-page">
+			<div id="sub-page-header" class="sub-page-header">
+
 				<div id="sub-page-title" class="sub-page-title">
-					<h2 id="step-title" th:text="#{chart.wizard.title}"></h2>
+					<h2 th:text="#{chart.wizard.title}"></h2>
 				</div>
 
 				<div class="unsnap"></div>
-			</div>   
-    
-  <div id="sub-page-content" class="sub-page-content">
+			</div>
 
-<div id="information-content" style="overflow: hidden;">
-      
-    
-    
-<div id="wizard" class="fragment-body ui-tabs ui-widget ui-widget-content ui-corner-all" style="top:0; background: 0; border: 0 none;">
-    <div id="panel-left" style="top:0" class="left-frame">
-      <div class="position-layout-fix">
-		<div>
-			<div id="current-side-view-container">
-			<span id="side-view" />
+			<div id="sub-page-content" class="sub-page-content">
+
+				<div id="information-content" style="overflow: hidden;">
+
+
+
+					<div id="wizard"
+						class="fragment-body ui-tabs ui-widget ui-widget-content ui-corner-all"
+						style="top: 0; background: 0; border: 0 none;height: 100%;">
+					
+							
+									<div id="current-side-view-container"
+										style="border: black solid 1px; padding-left: 10px; width: 250px;height: 90%;">
+										<span id="side-view" />
+									</div>
+								
+					
+
+						<div id="contextual-content" style="margin-top:0">
+							<div id="step-title" style="height: 25px;"
+								class="ui-widget-header ui-corner-all ui-state-default fragment-header" />
+							<span id="steps-view" /> 
+							<br /> 
+							<br />
+							<div id="current-step-container" style="border-bottom: black 1px solid;height: 80%;">
+								<span id="current-step" />
+							</div>
+
+<div style="float: right;   padding: 5px;">
+						
+						 <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
+    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
+  </button>
+
+<button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
+    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
+ </button>
+ 
+<input type="button" class="sq-btn btn-sm" id="generate" value="Generate"
+           th:value="#{report.criteria.panel.button.generate.label}" />  
+                   
+<input type="button" class="sq-btn btn-sm" id="save" value="save"
+           th:value="#{label.save}" />				
+						
+					</div>
+
+
+						</div>
+				
+					</div>
+				</div>
 			</div>
 		</div>
-      </div>
-    </div>
-
-    <div id="contextual-content">
-				<span id="steps-view" />
-				
-				<div id="current-step-container">
-				<span id="current-step" />
-				</div>
-				
 	</div>
-	 </div>	
-</div></div>
-	 </div>
- </div>
 </body>
 </html>

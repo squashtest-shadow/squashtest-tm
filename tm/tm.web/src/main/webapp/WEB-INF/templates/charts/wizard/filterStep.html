@@ -91,30 +91,24 @@
   {{#if (contains ../attributes.selectedEntity @key)}}
   <div class="sq-tg expand">
  <div class="tg-head">
-{{i18n @key prefix='chart.entityType.'}} 
-            
+{{i18n @key prefix='chart.entityType.'}}          
 </div> 
-{{#each  this}}  
-{{#if (contains this.role "FILTER")}}
 
+<div class="tg-body">
+{{#each  this}}  
+
+{{#if (contains this.role "FILTER")}}
 {{#if (contains ../../attributes.selectedAttributes id)}} 
 {{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
 {{/if}}
-
 {{/if }}
 {{/each}}  
+</div>
+
  </div>  
  {{/if}}
 {{/each}}  
 
-
- <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
-
-<button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
- </button>
 
 
 </div>
