@@ -555,7 +555,12 @@
 		</osgi:interfaces>
 	</osgi:reference>
 
-	
+	<osgi:reference id="org.squashtest.tm.service.customreport.CustomReportDashboardService"
+		bean-name="org.squashtest.tm.service.customreport.CustomReportDashboardService">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportDashboardService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 
 	
