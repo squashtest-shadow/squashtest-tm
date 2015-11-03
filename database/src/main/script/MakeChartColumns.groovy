@@ -129,7 +129,7 @@ def definition = [
 			tcId : ['ID', 'NUMERIC', 'id', 'all'],
 			tcCreatBy : ['CREATED_BY', 'STRING', 'audit.createdBy', 'axis, filter'],
 			tcModBy : ['MODIFIED_BY', 'STRING', 'audit.lastModifiedBy', 'axis, filter'],
-			tcRef : ['REFERENC', 'STRING', 'reference', 'filter, axis'],
+			tcRef : ['REFERENCE', 'STRING', 'reference', 'filter, axis'],
 			tcImportance : ['IMPORTANCE', 'LEVEL_ENUM', 'importance', 'all'],
 			tcNat : ['NATURE', 'INFO_LIST_ITEM', 'nature.label', 'all'],
 			tcType : ['TYPE', 'INFO_LIST_ITEM', 'type.label', 'all'],

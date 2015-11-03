@@ -455,7 +455,7 @@ values
 	(17, 'ATTRIBUTE', TRUE, 'TEST_CASE_ID', 'TEST_CASE', null, 'NUMERIC', 'id', null),
 	(18, 'ATTRIBUTE', TRUE, 'TEST_CASE_CREATED_BY', 'TEST_CASE', null, 'STRING', 'audit.createdBy', null),
 	(19, 'ATTRIBUTE', TRUE, 'TEST_CASE_MODIFIED_BY', 'TEST_CASE', null, 'STRING', 'audit.lastModifiedBy', null),
-	(20, 'ATTRIBUTE', TRUE, 'TEST_CASE_REFERENC', 'TEST_CASE', null, 'STRING', 'reference', null),
+	(20, 'ATTRIBUTE', TRUE, 'TEST_CASE_REFERENCE', 'TEST_CASE', null, 'STRING', 'reference', null),
 	(21, 'ATTRIBUTE', TRUE, 'TEST_CASE_IMPORTANCE', 'TEST_CASE', null, 'LEVEL_ENUM', 'importance', null),
 	(22, 'ATTRIBUTE', TRUE, 'TEST_CASE_NATURE', 'TEST_CASE', null, 'INFO_LIST_ITEM', 'nature.label', null),
 	(23, 'ATTRIBUTE', TRUE, 'TEST_CASE_TYPE', 'TEST_CASE', null, 'INFO_LIST_ITEM', 'type.label', null),
@@ -711,7 +711,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (5, '
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (58, 5, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (1, 59, 5, 'EQUALS');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values
+values 
 	(1,'CallTestStep');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (17, 5, 'NONE', 0);
