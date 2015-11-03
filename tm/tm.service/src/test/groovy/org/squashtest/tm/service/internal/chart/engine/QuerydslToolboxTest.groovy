@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
@@ -44,7 +45,7 @@ class QuerydslToolboxTest extends Specification{
 	def "should collect aliases in the given query"(){
 
 		given :
-		HibernateQuery q = new HibernateQuery();
+		HibernateQuery q = new ExtendedHibernateQuery();
 		q.from(tc).innerJoin(tc.requirementVersionCoverages, cov).leftJoin(cov.verifiedRequirementVersion, v)
 				.where(v.name.like(Expressions.constant("bob")))
 

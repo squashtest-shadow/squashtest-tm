@@ -24,8 +24,9 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
 import org.squashtest.tm.domain.chart.ChartQuery.NaturalJoinStyle;
+import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.PlannedJoin.JoinType;
 
 import com.querydsl.core.types.Ops;
@@ -33,11 +34,10 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * <p>
- * 	This class will plan which table must be joined together and return the result as a HibernateQuery.
+ * 	This class will plan which table must be joined together and return the result as a ExtendedHibernateQuery.
  * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
  * 	is available a where clause will be used.
  * </p>
@@ -71,11 +71,15 @@ class QueryPlanner {
 
 	private Set<String> aliases = new HashSet<>();
 
+	// may be either the normal root entity, either the measured entity
+	// (see createQueryPlan() and comments within)
+	private InternalEntityType actualRootEntity;
+
 
 	// ***** optional argument, you may specify them if using a ChartQuery with strategy INLINED ****
 	// ***** see section "configuration builder" to check what they do *************
 
-	private HibernateQuery<?> query;
+	private ExtendedHibernateQuery<?> query;
 
 	// for test purposes
 	QueryPlanner(){
@@ -105,7 +109,7 @@ class QueryPlanner {
 	 * @param existingQuery
 	 * @return
 	 */
-	QueryPlanner appendToQuery(HibernateQuery<?> existingQuery){
+	QueryPlanner appendToQuery(ExtendedHibernateQuery<?> existingQuery){
 		this.query = existingQuery;
 		return this;
 	}
@@ -132,15 +136,15 @@ class QueryPlanner {
 	 * 
 	 * @return
 	 */
-	HibernateQuery<?> createQuery(){
-		query = new HibernateQuery();
+	ExtendedHibernateQuery<?> createQuery(){
+		query = new ExtendedHibernateQuery();
 		doTheJob();
 		return query;
 	}
 
 
 	/**
-	 * Used when there are inlined subqueries. Will append to the query (configured with {@link #appendToQuery(HibernateQuery)})
+	 * Used when there are inlined subqueries. Will append to the query (configured with {@link #appendToQuery(ExtendedHibernateQuery)})
 	 * the joins defined in the ChartQuery. This new set of joins will be attached to the
 	 * main query on the root entity of this ChartQuery.
 	 * 
@@ -155,12 +159,13 @@ class QueryPlanner {
 
 	private void doTheJob(){
 
-		init();
-
 		// get the query plan : the orderly set of joins this
 		// planner must now put together
 
 		QueryPlan plan = createQueryPlan();
+
+		// init metadata required for the query
+		init();
 
 		// now get the query done
 
@@ -191,6 +196,7 @@ class QueryPlanner {
 	private QueryPlan createQueryPlan(){
 
 		// first, try a normal query plan
+		actualRootEntity = definition.getRootEntity();
 		DomainGraph domain = new DomainGraph(definition);
 		QueryPlan plan = domain.getQueryPlan();
 
@@ -200,6 +206,7 @@ class QueryPlanner {
 		// consider mapping the missing relationships instead.
 		// (eg TestCase -> IterationTestPlanItem)
 		if (hasLeftWhereJoin(plan)){
+			actualRootEntity = definition.getMeasuredEntity();
 			domain = new DomainGraph(definition);
 			domain.reversePlan();
 			plan = domain.getQueryPlan();
@@ -216,7 +223,7 @@ class QueryPlanner {
 		aliases = utils.getJoinedAliases(query);
 
 		// initialize the query if needed
-		EntityPathBase<?> rootPath = utils.getQBean(definition.getRootEntity());
+		EntityPathBase<?> rootPath = utils.getQBean(actualRootEntity);
 		if (! isKnown(rootPath)){
 			query.from(rootPath);
 		}

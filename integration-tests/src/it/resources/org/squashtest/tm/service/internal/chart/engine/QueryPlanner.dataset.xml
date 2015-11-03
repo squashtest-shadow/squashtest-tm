@@ -76,11 +76,11 @@
 	
 	<!--  the test cases now -->
 	
-	<!--  note : test case 3 remains unplaned -->
+	<!--  note : test case 3 remains unplaned but has nature = functional testing (instead of default)-->
 	
 	<TEST_CASE PREREQUISITE="" TCLN_ID="-1"  VERSION="1" />
 	<TEST_CASE PREREQUISITE="" TCLN_ID="-2"  VERSION="1" />
-	<TEST_CASE PREREQUISITE="" TCLN_ID="-3"  VERSION="1" />
+	<TEST_CASE PREREQUISITE="" TCLN_ID="-3"  VERSION="1" TC_NATURE="4"/>
 	
 	<!-- version binding -->
 	

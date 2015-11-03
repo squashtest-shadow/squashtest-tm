@@ -28,23 +28,25 @@ import javax.validation.ValidatorFactory;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.dialect.function.SQLFunction;
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
+import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer;
+import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport;
 
 /**
- * The purpose of this class is to add more things to the config of the session factory, when there is no other way to
- * do so.
+ * <p>The purpose of this class is to add more things to the config of the session factory, when there is no other way to
+ * do so.</p>
+ * 
+ * See {@link SessionFactoryEnhancer#registerAggregateWrappers(Configuration)}
  * 
  * @author bsiri
  * 
  */
 public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
-	private static final String FN_NAME_GROUP_CONCAT = "group_concat";
 
+	// rest of internal variables
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashSessionFactoryBean.class);
 
 	private static final String HIBERNATE_PROPERTIES_DIALECT = "hibernate.dialect";
@@ -55,14 +57,29 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 
 	private ValidatorFactory validatorFactory;
 
+	public void setDialectsSupportingStringAgg(List<String> dialectsSupportingStringAgg) {
+		this.dialectsSupportingStringAgg = dialectsSupportingStringAgg;
+	}
+
+	public List<String> getDialectsSupportingStringAgg() {
+		return dialectsSupportingStringAgg;
+	}
+
+	public void setDialectsSupportingGroupConcat(List<String> dialectsSupportingGroupConcat) {
+		this.dialectsSupportingGroupConcat = dialectsSupportingGroupConcat;
+	}
+
+	public List<String> getDialectsSupportingGroupConcat() {
+		return dialectsSupportingGroupConcat;
+	}
 
 	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
 
 		// the validator factory
 		addValidatorFactory();
 
-		// group concat
-		addGroupConcatToConfiguration();
+		// extensions
+		addJPQLExtensions();
 
 		// resume normal session factory initialization
 		return super.buildSessionFactory(sfb);
@@ -91,45 +108,21 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	}
 
 
+
 	/* ********************************************************************
-	 * 		About GroupConcat
+	 * 		About JPQL extensions
 	 ******************************************************************* */
 
-
-
-	protected void addGroupConcatToConfiguration(){
-
-		// check that the underlying base supports the dialect extensions : let's see what's the dialect is
-		SQLFunction sqlFunction = getSQLFunctionForDialect();
+	protected void addJPQLExtensions(){
 		Configuration config = getConfiguration();
 
-		if (sqlFunction != null) {
-			// add the support for group concat
-			config.addSqlFunction(FN_NAME_GROUP_CONCAT, sqlFunction);
-		} else {
-			config.addSqlFunction(FN_NAME_GROUP_CONCAT, new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType()));
-		}
-	}
+		FnSupport concatSupport = findGroupConcatSupport();
 
-	public void setDialectsSupportingStringAgg(List<String> dialectsSupportingStringAgg) {
-		this.dialectsSupportingStringAgg = dialectsSupportingStringAgg;
-	}
-
-	public List<String> getDialectsSupportingStringAgg() {
-		return dialectsSupportingStringAgg;
-	}
-
-	public void setDialectsSupportingGroupConcat(List<String> dialectsSupportingGroupConcat) {
-		this.dialectsSupportingGroupConcat = dialectsSupportingGroupConcat;
-	}
-
-	public List<String> getDialectsSupportingGroupConcat() {
-		return dialectsSupportingGroupConcat;
+		SessionFactoryEnhancer.registerAggregateWrappers(config, concatSupport);
 	}
 
 
-
-	private SQLFunction getSQLFunctionForDialect() throws IllegalArgumentException {
+	private FnSupport findGroupConcatSupport() throws IllegalArgumentException{
 
 		Properties hibernateProperties = getHibernateProperties();
 		String choosenDialect = hibernateProperties.getProperty(HIBERNATE_PROPERTIES_DIALECT);
@@ -146,18 +139,23 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 
 		}
 
-		if (dialectsSupportingGroupConcat.contains(choosenDialect)) {
-			return new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType());
+		FnSupport support = null;
+		if (dialectsSupportingGroupConcat.contains(choosenDialect)){
+			support = FnSupport.GROUP_CONCAT;
 		}
-		if (dialectsSupportingStringAgg.contains(choosenDialect)) {
-			return new StringAggFunction(FN_NAME_GROUP_CONCAT, new StringType());
+		else if (dialectsSupportingStringAgg.contains(choosenDialect)){
+			support = FnSupport.STR_AGG;
+		}
+		else{
+			LOGGER.error("Hibernate dialect '{}' cannot support group_concat. If you think it can, please " +
+					"add to SquashSessionFactoryBean.dialectsSupportingGroupConcat or dialectsSupportingStringAgg "+
+					"(see xml configuration)", choosenDialect);
+
+			support = FnSupport.GROUP_CONCAT;
 		}
 
-		LOGGER.error(
-				"RicherDialectSessionFactory : selected hibernate Dialect '{}' is not reputed to support the sql function 'group_concat()'. If you are sure that your dialect (and the underlying database) supports this function, please add to RicherDialectSessionFactory.dalectsSupportingGroupConcat (see xml configuration)",
-				choosenDialect);
+		return support;
 
-		return null;
 	}
 
 	private boolean isPlaceholder(String str) {

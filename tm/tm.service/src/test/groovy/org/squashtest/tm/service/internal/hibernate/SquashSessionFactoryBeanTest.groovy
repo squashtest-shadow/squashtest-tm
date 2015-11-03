@@ -25,6 +25,8 @@ import spock.lang.Unroll;
 
 import java.util.Properties
 
+import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport;
+
 /**
  * @author Gregory Fouquet
  *
@@ -52,14 +54,14 @@ class SquashSessionFactoryBeanTest extends Specification {
 		hibernateProps.getProperty("hibernate.dialect") >> '${db.dialect}'
 
 		when:
-		def func = factoryBean.getSQLFunctionForDialect()
+		def func = factoryBean.findGroupConcatSupport()
 
 		then:
-		func.class == type
+		func == type
 
 		where:
 		dialect								| type
-		"org.hibernate.dialect.PostgreSQL"	| StringAggFunction
-		"org.hibernate.dialect.MySQL"		| GroupConcatFunction
+		"org.hibernate.dialect.PostgreSQL"	| FnSupport.STR_AGG
+		"org.hibernate.dialect.MySQL"		| FnSupport.GROUP_CONCAT
 	}
 }

@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.chart.Operation
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
@@ -56,7 +57,6 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
-import com.querydsl.jpa.hibernate.HibernateQuery
 
 @NotThreadSafe
 @UnitilsSupport
@@ -87,7 +87,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
 		QRequirementVersion versions = QRequirementVersion.requirementVersion
 
-		HibernateQuery query = new HibernateQuery().from(testCase)
+		ExtendedHibernateQuery query = new ExtendedHibernateQuery().from(testCase)
 				.join(testCase.requirementVersionCoverages, cov)
 				.join(cov.verifiedRequirementVersion, versions)
 
@@ -103,7 +103,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		ProjectionPlanner planner = new ProjectionPlanner(definition, query)
 		planner.modifyQuery()
 
-		HibernateQuery concrete = query.clone(getSession())
+		ExtendedHibernateQuery concrete = query.clone(getSession())
 		def res = concrete.fetch()
 
 		then :
@@ -116,7 +116,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 	def "should count executions by yearmonth"(){
 
 		given : "query"
-		HibernateQuery query = new HibernateQuery()
+		ExtendedHibernateQuery query = new ExtendedHibernateQuery()
 		QExecution exec = QExecution.execution
 
 		query.from(exec)
@@ -133,7 +133,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		ProjectionPlanner planner = new ProjectionPlanner(definition, query)
 		planner.modifyQuery()
 
-		HibernateQuery concrete = query.clone(getSession())
+		ExtendedHibernateQuery concrete = query.clone(getSession())
 		def res = concrete.fetch()
 
 		then :
@@ -155,7 +155,7 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 		ProjectionPlanner planner = new ProjectionPlanner(definition, q)
 		planner.modifyQuery()
 
-		HibernateQuery query = q.clone(getSession())
+		ExtendedHibernateQuery query = q.clone(getSession())
 
 		def res = query.fetch()
 		def refined = res.collect{ it.a }
@@ -230,15 +230,15 @@ class ProjectionPlannerIT extends DbunitDaoSpecification{
 	}
 
 
-	def HibernateQuery from(clz){
-		return new HibernateQuery().from(clz)
+	def ExtendedHibernateQuery from(clz){
+		return new ExtendedHibernateQuery().from(clz)
 	}
 
 
 
 
 	class ManyQueryPojo {
-		HibernateQuery query
+		ExtendedHibernateQuery query
 		DetailedChartQuery definition
 		Set<?> expected
 	}

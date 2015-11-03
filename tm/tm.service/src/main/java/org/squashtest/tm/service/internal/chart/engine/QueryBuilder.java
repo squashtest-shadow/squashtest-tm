@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 /*
  * TODO : about the subqueries
@@ -80,7 +80,7 @@ class QueryBuilder {
 	// for the QueryBuilder, it is set to MAIN_QUERY.
 	protected QueryProfile profile = QueryProfile.MAIN_QUERY;
 
-	protected HibernateQuery<?> detachedQuery;
+	protected ExtendedHibernateQuery<?> detachedQuery;
 
 	QueryBuilder(DetailedChartQuery queryDefinition){
 		super();
@@ -92,7 +92,7 @@ class QueryBuilder {
 
 	// **************** actual building ***************************
 
-	HibernateQuery<?> createQuery(){
+	ExtendedHibernateQuery<?> createQuery(){
 
 
 		QueryPlanner mainPlanner = new QueryPlanner(queryDefinition, utils);

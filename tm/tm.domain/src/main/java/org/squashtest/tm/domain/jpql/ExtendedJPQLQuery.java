@@ -18,29 +18,21 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.hibernate;
+package org.squashtest.tm.domain.jpql;
 
-import java.util.List;
+import com.querydsl.core.types.dsl.NumberExpression;
+import com.querydsl.jpa.JPQLQuery;
 
-import org.hibernate.type.Type;
+public interface ExtendedJPQLQuery<T> extends JPQLQuery<T> {
 
-/**
- * Equivalent of GroupConcatFunction for Postgresql
- * 
- */
-public final class StringAggFunction extends GroupConcatFunction {
+	public NumberExpression<Double> s_avg();
+	public NumberExpression<?> s_min();
+	public NumberExpression<?> s_max();
+	public NumberExpression<?>  s_sum();
+	/**
+	 * That one has for semantic : count(distinct)
+	 * @return
+	 */
+	public NumberExpression<Long> s_count();
 
-	public StringAggFunction(String name) {
-		super(name);
-	}
-
-	public StringAggFunction(String name, Type registeredType) {
-		super(name, registeredType);
-	}
-
-	@Override
-	public String createSqlQuery(List<?> arguments, String direction, String separator) {
-		return "string_agg( cast(" + arguments.get(0) + " as text),'" + separator + "' order by " + arguments.get(2)
-				+ " " + direction + ")";
-	}
 }

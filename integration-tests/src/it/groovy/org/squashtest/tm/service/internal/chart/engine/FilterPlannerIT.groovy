@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.chart.Operation
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
@@ -57,7 +58,6 @@ import spock.unitils.UnitilsSupport
 
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.Ops.AggOps;
-import com.querydsl.jpa.hibernate.HibernateQuery
 import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
 
 @NotThreadSafe
@@ -74,7 +74,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 		given : "the query"
 
-		HibernateQuery query = new HibernateQuery()
+		ExtendedHibernateQuery query = new ExtendedHibernateQuery()
 		query.from(v).join(v.requirementVersionCoverages, cov)
 				.join(cov.verifyingTestCase, tc)
 				.select(Projections.tuple(v.id,  v.name.countDistinct() ))
@@ -88,7 +88,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 		when :
 		FilterPlanner planner = new FilterPlanner(definition, query)
 		planner.modifyQuery()
-		HibernateQuery concrete = query.clone(getSession())
+		ExtendedHibernateQuery concrete = query.clone(getSession())
 
 		def res = concrete.fetch()
 
@@ -101,15 +101,15 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 
 
-	def HibernateQuery from(clz){
-		return new HibernateQuery().from(clz)
+	def ExtendedHibernateQuery from(clz){
+		return new ExtendedHibernateQuery().from(clz)
 	}
 
 
 
 
 	class ManyQueryPojo {
-		HibernateQuery query
+		ExtendedHibernateQuery query
 		DetailedChartQuery definition
 		Set<?> expected
 	}

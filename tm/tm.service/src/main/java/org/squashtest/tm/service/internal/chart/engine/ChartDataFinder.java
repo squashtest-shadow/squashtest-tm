@@ -28,18 +28,17 @@ import javax.inject.Inject;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.chart.ChartQuery;
-import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
 /**
@@ -307,12 +306,12 @@ public class ChartDataFinder {
 
 		// *********** step 2 : create the query ************************
 
-		HibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
+		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
 
 		// ******************* step 3 : run the query*************************
 
 		sessionFactory.getCurrentSession();
-		HibernateQuery finalQuery = (HibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
+		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
 
 		List<Tuple> tuples = finalQuery.fetch();
 

@@ -44,6 +44,7 @@ import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.QExecution;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
@@ -56,7 +57,6 @@ import static org.squashtest.tm.domain.chart.ColumnType.*
 import static org.squashtest.tm.domain.chart.DataType.*
 import static org.squashtest.tm.domain.chart.Operation.*
 
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import spock.unitils.UnitilsSupport;
 
@@ -87,7 +87,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should use a calculated column in a select clause"(){
 
-		// goal : select requiremend.id, count(requirement.versions) from Requirement
+		// goal : select requiremend.id, s_count(requirement.versions) from Requirement
 		// in a convoluted way of course.
 
 		given :
@@ -104,7 +104,9 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 		when :
 
-		def query = new QueryBuilder(new DetailedChartQuery(chartquery)).createQuery().clone(getSession())
+
+		def _q = new QueryBuilder(new DetailedChartQuery(chartquery)).createQuery()
+		def query = _q.clone(getSession())
 		def res = query.fetch();
 
 
@@ -118,7 +120,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should use a calculated column in a where clause - via subquery having  "(){
 
-		// goal : select requirement.id, requirement.id group by requirement having count(requirement.versions) > 1
+		// goal : select requirement.id, requirement.id group by requirement having s_count(requirement.versions) > 1
 		// but not as concisely
 
 		given :
@@ -143,21 +145,53 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 		then :
 		res.collect{it.a} as Set == [ [-1l,-1l], [-3l, -3l] ] as Set
-
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select requirement.id, requirement.id
+from Requirement requirement
+where requirement.id in (select requirement_sub.id
+from Requirement requirement_sub
+  inner join requirement_sub.versions as requirementVersion_sub
+group by requirement_sub.id
+having s_count(requirementVersion_sub.id) > ?1)
+group by requirement.id"""
 
 	}
 
-	/*
-	 @DataSet("QueryPlanner.dataset.xml")
-	 def "should use a calculated column in a where clause - via subquery where "(){
-	 given :
-	 false
-	 when :
-	 false
-	 then :
-	 false
-	 }
-	 */
+	@DataSet("QueryPlanner.dataset.xml")
+	// this one demonstrates the "left where join" in subqueries
+	def "should select how many times a test case appears in an iteration"(){
+		given :
+		def measureProto = findByName('TEST_CASE_ITERCOUNT');
+		def axisProto = findByName("TEST_CASE_ID");
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
+		def axe = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				axis : [axe]
+				)
+
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery().clone(getSession())
+		def res = query.fetch()
+
+		then :
+		res.collect {it.a} as Set == [[-1l, 2], [-2l, 1], [-3l, 0]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select testCase.id, s_sum((select s_count(iteration_sub.id)
+from Iteration iteration_sub
+  left join iteration_sub.testPlans as iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.referencedTestCase as testCase_sub
+where testCase = testCase_sub))
+from TestCase testCase
+group by testCase.id"""
+
+	}
+
+
 
 	ColumnPrototype findByName(name){
 		getSession().createQuery("from ColumnPrototype where label = '${name}'").uniqueResult();
@@ -165,15 +199,15 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 
 
-	def HibernateQuery from(clz){
-		return new HibernateQuery().from(clz)
+	def ExtendedHibernateQuery from(clz){
+		return new ExtendedHibernateQuery().from(clz)
 	}
 
 
 
 
 	class ManyQueryPojo {
-		HibernateQuery query
+		ExtendedHibernateQuery query
 		DetailedChartQuery definition
 		Set<?> expected
 	}

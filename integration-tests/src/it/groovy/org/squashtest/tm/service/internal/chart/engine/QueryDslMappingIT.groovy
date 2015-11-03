@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.jpql.ExtAggOps;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -45,11 +47,17 @@ import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecific
 import org.unitils.dbunit.annotation.DataSet;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.Ops.MathOps;
 import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.hibernate.HibernateQuery;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPASubQuery;
 
 import spock.unitils.UnitilsSupport;
 
@@ -61,6 +69,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 
 	static QTestCase tc = QTestCase.testCase
+	static QTestStep st = QTestStep.testStep
 	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
 	static QRequirementVersion v = QRequirementVersion.requirementVersion
 	static QRequirement r = QRequirement.requirement
@@ -89,7 +98,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 	def "should fetch test step ids using querydsl Qtypes"(){
 
 		given :
-		HibernateQuery q = new HibernateQuery()
+		ExtendedHibernateQuery q = new ExtendedHibernateQuery()
 
 		QTestCase testCase = QTestCase.testCase
 		QTestStep allsteps = QTestStep.testStep
@@ -97,7 +106,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 		q.select(allsteps.id).from(testCase).join(testCase.steps, allsteps).where(testCase.id.eq(-1l))
 
 		when :
-		HibernateQuery attached = q.clone(getSession())
+		ExtendedHibernateQuery attached = q.clone(getSession())
 		def res = attached.fetch();
 
 		then :
@@ -129,7 +138,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 		and : "the assembly"
 
-		HibernateQuery q = new HibernateQuery();
+		ExtendedHibernateQuery q = new ExtendedHibernateQuery();
 
 		q.from(testcase);
 
@@ -138,7 +147,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 		q.where(tcid.eq(-1l));
 
 		when :
-		HibernateQuery attached = q.clone(getSession())
+		ExtendedHibernateQuery attached = q.clone(getSession())
 		def res = attached.fetch();
 
 		then :
@@ -169,7 +178,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 		and : "the assembly"
 
-		HibernateQuery q = new HibernateQuery();
+		ExtendedHibernateQuery q = new ExtendedHibernateQuery();
 
 		q.from(testcase);
 
@@ -178,7 +187,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 		q.where(tcid.eq(-1l));
 
 		when :
-		HibernateQuery attached = q.clone(getSession())
+		ExtendedHibernateQuery attached = q.clone(getSession())
 		def res = attached.fetch();
 
 		then :
@@ -189,14 +198,14 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 	def "should test the subquery mechanism"(){
 
 		given :
-		HibernateQuery baseQuery = new HibernateQuery()
+		ExtendedHibernateQuery baseQuery = new ExtendedHibernateQuery()
 
 		baseQuery.from(r).distinct()
 				.join(r.versions, v)
 				.select(Projections.tuple(r.id))
 
 		and :
-		HibernateQuery subquery = new HibernateQuery()
+		ExtendedHibernateQuery subquery = new ExtendedHibernateQuery()
 
 		subquery.from(r).join(r.versions, v).select(Projections.tuple(r.id)).groupBy(r.id).having(v.countDistinct().gt(2))
 
@@ -204,7 +213,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 		baseQuery.where(r.id.in(subquery))
 
 		when :
-		HibernateQuery finalQuery = baseQuery.clone(getSession())
+		ExtendedHibernateQuery finalQuery = baseQuery.clone(getSession())
 
 		def res = finalQuery.fetch()
 		then :
@@ -213,23 +222,5 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 	}
 
-	/*
-	 @DataSet("QueryPlanner.dataset.xml")
-	 def "test the faster count subqueries"(){
-	 given :
-	 HibernateQuery query = new HibernateQuery()
-	 QRequirementVersion v2 = new QRequirementVersion("v2")
-	 QRequirementVersionCoverage cov2 = new QRequirementVersionCoverage("cov2")
-	 query.from(tc).join(tc.requirementVersionCoverages, cov).join(cov.verifiedRequirementVersion, v).join(v.requirement, r)
-	 query.join(tc.requirementVersionCoverages, cov2).join(r.versions, v2)
-	 query.where(tc.id.eq(-1l)).where(r.id.eq(-3l))
-	 query.select(Projections.tuple(v2.countDistinct(), cov2.countDistinct()))
-	 when :
-	 HibernateQuery actual = query.clone(getSession())
-	 def res = actual.fetch()
-	 then :
-	 true
-	 }
-	 */
 
 }

@@ -44,6 +44,8 @@ import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.jpql.ExtAggOps;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.JoinExpression;
 import com.querydsl.core.types.Constant;
@@ -52,7 +54,6 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.FactoryExpression;
 import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
-import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Ops.DateTimeOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
@@ -65,7 +66,6 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleOperation;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 class QuerydslToolbox {
 
@@ -174,7 +174,7 @@ class QuerydslToolbox {
 	 * @param query
 	 * @return
 	 */
-	Set<String> getJoinedAliases(HibernateQuery<?> query){
+	Set<String> getJoinedAliases(ExtendedHibernateQuery<?> query){
 		AliasCollector collector = new AliasCollector();
 		for (JoinExpression join : query.getMetadata().getJoins()){
 			join.getTarget().accept(collector, collector.getAliases());
@@ -366,6 +366,13 @@ class QuerydslToolbox {
 				"Attempted to create a subquery for column '"+col.getColumn().getLabel()+
 				"' from what appears to be a main query. " +
 				"This is probably due to an ill-inserted entry in the database, please report this to the suppport.");
+		}
+
+
+		// apply operation if any
+		Operation operation = col.getOperation();
+		if (operation != Operation.NONE){
+			expression = applyOperation(operation, expression);
 		}
 
 		return expression;
@@ -576,18 +583,18 @@ class QuerydslToolbox {
 		case LIKE : operator = Ops.LIKE; break;
 		case BY_YEAR : operator = DateTimeOps.YEAR; break;
 		case BY_MONTH : operator = DateTimeOps.YEAR_MONTH; break;
-		case COUNT : operator = AggOps.COUNT_DISTINCT_AGG; break;
-		case SUM : operator = AggOps.SUM_AGG; break;
+		case COUNT : operator = ExtAggOps.S_COUNT; break;
+		case SUM : operator = ExtAggOps.S_SUM; break;
 		case GREATER : operator = Ops.GT; break;
 		case IN : operator = Ops.IN; break;
 		case BETWEEN: operator = Ops.BETWEEN; break;
-		case AVG: operator = AggOps.AVG_AGG; break;
+		case AVG: operator = ExtAggOps.S_AVG; break;
 		case BY_DAY: operator = DateTimeOps.DAY_OF_YEAR; break;
 		case GREATER_EQUAL: operator = Ops.GOE; break;
 		case LOWER: operator = Ops.LT; break;
 		case LOWER_EQUAL: operator = Ops.LOE; break;
-		case MAX: operator = AggOps.MAX_AGG; break;
-		case MIN: operator = AggOps.MIN_AGG; break;
+		case MAX: operator = ExtAggOps.S_MAX; break;
+		case MIN: operator = ExtAggOps.S_MIN; break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
 

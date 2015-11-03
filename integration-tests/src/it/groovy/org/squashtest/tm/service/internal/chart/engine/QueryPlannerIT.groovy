@@ -24,6 +24,7 @@ import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
@@ -32,7 +33,6 @@ import org.unitils.dbunit.annotation.DataSet;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.*
 
@@ -92,13 +92,13 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : REQUIREMENT_VERSION, targetEntities : [REQUIREMENT_VERSION, TEST_CASE])
 
 		and :
-		HibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
 
 
 		when :
 		q.select(QRequirementVersion.requirementVersion.id).where(QTestCase.testCase.id.eq(-1l))
 
-		HibernateQuery qq = q.clone(getSession())
+		ExtendedHibernateQuery qq = q.clone(getSession())
 
 		def res = qq.fetch()
 
@@ -115,13 +115,13 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE])
 
 		and :
-		HibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
 
 
 		when :
 		q.select(QTestCase.testCase.id)
 
-		HibernateQuery qq = q.clone(getSession())
+		ExtendedHibernateQuery qq = q.clone(getSession())
 
 		def res = qq.fetch()
 
@@ -139,12 +139,12 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : TEST_CASE, targetEntities : [TEST_CASE, EXECUTION])
 
 		and :
-		HibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
 
 		when :
 		q.select(QTestCase.testCase.id)
 
-		HibernateQuery qq = q.clone(getSession())
+		ExtendedHibernateQuery qq = q.clone(getSession())
 
 		def res = qq.fetch()
 
@@ -161,14 +161,14 @@ class QueryPlannerIT extends DbunitDaoSpecification {
 		expect :
 		DetailedChartQuery definition = new DetailedChartQuery(rootEntity : rootEntity, targetEntities : targetEntities)
 
-		HibernateQuery q = new QueryPlanner(definition).createQuery()
+		ExtendedHibernateQuery q = new QueryPlanner(definition).createQuery()
 		q.where(wherePath)
 
 		def joins = q.metadata.getJoins()
 		def selec = q.metadata.getProjection()
 
 
-		HibernateQuery query = q.clone(getSession())
+		ExtendedHibernateQuery query = q.clone(getSession())
 		def res = query.fetch()
 
 		res.collect{it.id} as Set == expectedIds as Set

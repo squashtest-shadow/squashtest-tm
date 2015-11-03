@@ -29,11 +29,11 @@ import org.squashtest.tm.domain.chart.ChartQuery.QueryStrategy;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.PathBuilder;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import spock.lang.Specification
 import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
@@ -51,7 +51,7 @@ class QueryPlannerTest extends Specification {
 	def "should add a natural inner join, if the join doesn't exist yet"(){
 
 		given :
-		HibernateQuery hquery = Mock(HibernateQuery)
+		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		DetailedChartQuery cquery = new DetailedChartQuery(
 				rootEntity : REQUIREMENT,
@@ -83,7 +83,7 @@ class QueryPlannerTest extends Specification {
 	def "should add a natural left join, if the join doesn't exist yet"(){
 
 		given :
-		HibernateQuery hquery = Mock(HibernateQuery)
+		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		DetailedChartQuery cquery = new DetailedChartQuery(
 				rootEntity : REQUIREMENT,
@@ -115,7 +115,7 @@ class QueryPlannerTest extends Specification {
 	def "should not add a natural join if exists already"(){
 
 		given :
-		HibernateQuery hquery = Mock(HibernateQuery)
+		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		DetailedChartQuery cquery = new DetailedChartQuery(
 				rootEntity : REQUIREMENT,
@@ -147,7 +147,7 @@ class QueryPlannerTest extends Specification {
 	def "should add a where join, if the join doesn't exist yet"(){
 
 		given :
-		HibernateQuery hquery = Mock(HibernateQuery)
+		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		DetailedChartQuery cquery = new DetailedChartQuery(
 				rootEntity : TEST_CASE,
@@ -179,7 +179,7 @@ class QueryPlannerTest extends Specification {
 	def "should not add a where join, if the join doesn't exist yet"(){
 
 		given :
-		HibernateQuery hquery = Mock(HibernateQuery)
+		ExtendedHibernateQuery hquery = Mock(ExtendedHibernateQuery)
 
 		DetailedChartQuery cquery = new DetailedChartQuery(
 				rootEntity : TEST_CASE,
@@ -219,7 +219,7 @@ class QueryPlannerTest extends Specification {
 		QueryPlanner planner = new QueryPlanner(cquery)
 
 		when :
-		HibernateQuery res = planner.createQuery()
+		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(r.id)
 
 		then :
@@ -239,8 +239,8 @@ from TestCase testCase
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
 
-		HibernateQuery mainq =
-				new HibernateQuery().from(r)
+		ExtendedHibernateQuery mainq =
+				new ExtendedHibernateQuery().from(r)
 				.innerJoin(r.versions, v)
 				.innerJoin(v.requirementVersionCoverages, cov)
 				.innerJoin(cov.verifyingTestCase, tc)
@@ -276,8 +276,8 @@ from Requirement requirement
 				targetEntities : [REQUIREMENT_VERSION, REQUIREMENT_VERSION_CATEGORY]
 				)
 
-		HibernateQuery mainq =
-				new HibernateQuery().from(r)
+		ExtendedHibernateQuery mainq =
+				new ExtendedHibernateQuery().from(r)
 				.innerJoin(r.versions, v)
 				.innerJoin(v.requirementVersionCoverages, cov)
 				.innerJoin(cov.verifyingTestCase, tc)
@@ -358,7 +358,7 @@ from Requirement requirement
 
 		when :
 		QueryPlanner planner = new QueryPlanner(new DetailedChartQuery(mainquery))
-		HibernateQuery res = planner.createQuery()
+		ExtendedHibernateQuery res = planner.createQuery()
 		res.select(tc.id)
 
 		then :

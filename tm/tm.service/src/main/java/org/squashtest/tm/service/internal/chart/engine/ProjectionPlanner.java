@@ -20,16 +20,18 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.hibernate.HibernateQuery;
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.*;
 
 /**
  * <p>
@@ -54,20 +56,20 @@ class ProjectionPlanner {
 
 	private DetailedChartQuery definition;
 
-	private HibernateQuery<?> query;
+	private ExtendedHibernateQuery<?> query;
 
 	private QuerydslToolbox utils;
 
 	private QueryProfile profile = MAIN_QUERY;
 
-	ProjectionPlanner(DetailedChartQuery definition, HibernateQuery<?> query){
+	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query = query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	ProjectionPlanner(DetailedChartQuery definition, HibernateQuery<?> query, QuerydslToolbox utils){
+	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query = query;
@@ -108,13 +110,15 @@ class ProjectionPlanner {
 
 
 	private void addGroupBy(){
+		// SUBSELECT queries have no group by : this is unneeded because
+		// they are correlated subqueries
+		if ( profile != SUBSELECT_QUERY){
+			List<Expression<?>> groupBy = new ArrayList<>();
 
-		List<Expression<?>> groupBy = new ArrayList<>();
+			populateClauses(groupBy, definition.getAxis());
 
-		populateClauses(groupBy, definition.getAxis());
-
-		query.groupBy(groupBy.toArray(new Expression[]{}));
-
+			query.groupBy(groupBy.toArray(new Expression[]{}));
+		}
 	}
 
 

@@ -27,13 +27,13 @@ import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * This class creates a subquery, it is used for ChartQueries having a QueryStrategy = SUBQUERY.
@@ -96,7 +96,7 @@ class SubQueryBuilder extends QueryBuilder {
 	// **************** actual building ***************************
 
 	@Override
-	HibernateQuery<?> createQuery(){
+	ExtendedHibernateQuery<?> createQuery(){
 
 		checkConfiguration();
 

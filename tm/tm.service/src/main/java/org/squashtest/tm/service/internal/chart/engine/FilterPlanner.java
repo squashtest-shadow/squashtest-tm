@@ -32,10 +32,10 @@ import net.sf.cglib.core.Predicate;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
 /**
@@ -51,16 +51,16 @@ class FilterPlanner {
 
 	private QuerydslToolbox utils;
 
-	private HibernateQuery<?> query;
+	private ExtendedHibernateQuery<?> query;
 
-	FilterPlanner(DetailedChartQuery definition, HibernateQuery<?> query){
+	FilterPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query= query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	FilterPlanner(DetailedChartQuery definition, HibernateQuery<?> query, QuerydslToolbox utils){
+	FilterPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query= query;
