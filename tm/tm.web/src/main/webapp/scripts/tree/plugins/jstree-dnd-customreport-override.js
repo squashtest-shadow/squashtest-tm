@@ -298,7 +298,7 @@ define([],function () {
 								}, this))
 							.delegate(s.drop_target, "mouseup.jstree", $.proxy(function (e) {
 									if(this.data.dndCustomReport.active && $.vakata.dndCustomReport.helper.children("ins").hasClass("jstree-ok")) {
-										this._get_settings().dndCustomReport.drop_finish.call(this, { "o" : o, "r" : $(e.target) });
+										this._get_settings().dndCustomReport.drop_finish.call(this, { "o" : o, "r" : $(e.target), "e" : e });
 									}
 								}, this));
 					}

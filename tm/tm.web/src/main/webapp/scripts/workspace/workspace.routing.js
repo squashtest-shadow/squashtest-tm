@@ -209,7 +209,7 @@ define([], function(){
 		'chart.wizard'                       : root + '/charts/wizard/{\\d+}',
 		'chart.instance'                       : root + '/charts/{\\d+}/instance',
 
-		//custome report workspace
+		//custom report workspace
 		'custom-report-library'                        : '/custom-report-library/{\\d+}',
 		'custom-report-library-server'                 : root + '/custom-report-library',
 		'custom-report-folder'                        : '/custom-report-folder/{\\d+}',
@@ -218,6 +218,7 @@ define([], function(){
 		'custom-report-dashboard-server'                        :root + '/custom-report-dashboard/{\\d+}',
 		'custom-report-chart'                        : '/custom-report-chart/{\\d+}',
 		'custom-report-chart-server'                        : root + '/custom-report-chart/{\\d+}',
+		'custom-report-chart-binding'                        : root + '/custom-report-chart-binding',
 
 		// helper methods
 		buildURL : function(){

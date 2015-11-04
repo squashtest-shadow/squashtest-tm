@@ -199,9 +199,9 @@ requirejs.config({
 				"jquery.cookie" : "jquery/jquery.cookie",
 //				"jquery.tagit" : "jquery/tag-it",
 				"jquery.tagit" : "jquery/tag-it.min",
-				"jquery.gridster" : "jquery/jquery.gridster",
+				//"jquery.gridster" : "jquery/jquery.gridster",
+				"jquery.gridster" : "jquery/jquery.gridster.with-extras",
 				"jstree-dnd-customreport-override" : "tree/workspace-tree-conf/jstree-dnd-customreport-override",
-				//"jquery.gridster" : "jquery/jquery.gridster.with-extras",
 				//squashtest
 				"jquery.squash" : "squashtest/jquery.squash.plugin",
 				"jquery.squash.rangedatepicker" : "squashtest/jquery.squash.rangedatepicker",

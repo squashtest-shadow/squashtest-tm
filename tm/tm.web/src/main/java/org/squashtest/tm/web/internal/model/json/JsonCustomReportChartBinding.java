@@ -28,6 +28,8 @@ public class JsonCustomReportChartBinding {
 	
 	private Long chartDefinitionId;
 	
+	private Long dashboardId;
+	
 	private JsonChartInstance chartInstance;
 	
 	private int row;
@@ -52,6 +54,14 @@ public class JsonCustomReportChartBinding {
 
 	public void setChartDefinitionId(Long chartDefinitionId) {
 		this.chartDefinitionId = chartDefinitionId;
+	}
+
+	public Long getDashboardId() {
+		return dashboardId;
+	}
+
+	public void setDashboardId(Long dashboardId) {
+		this.dashboardId = dashboardId;
 	}
 
 	public JsonChartInstance getChartInstance() {

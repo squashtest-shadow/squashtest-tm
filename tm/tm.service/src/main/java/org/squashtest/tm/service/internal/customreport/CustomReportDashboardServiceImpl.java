@@ -25,6 +25,7 @@ import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
@@ -42,6 +43,9 @@ public class CustomReportDashboardServiceImpl implements
 	@Inject
 	CustomReportChartBindingDao bindingDao;
 	
+	@Inject
+	private SessionFactory sessionFactory;
+	
 	@Override
 	public CustomReportDashboard updateGridPosition(CustomReportDashboard dashboard) {
 		Set<CustomReportChartBinding> transientBindings = dashboard.getChartBindings();
@@ -53,6 +57,17 @@ public class CustomReportDashboardServiceImpl implements
 		}
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public CustomReportDashboard findById(Long id) {
+		return customReportDashboardDao.findById(id);
+	}
+
+	@Override
+	public void bindChart(CustomReportChartBinding newBinding) {
+		bindingDao.persist(newBinding);
+		sessionFactory.getCurrentSession().flush();
 	}
 	
 }

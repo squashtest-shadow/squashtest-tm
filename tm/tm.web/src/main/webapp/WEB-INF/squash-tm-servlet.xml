@@ -221,7 +221,11 @@
   
   <bean id="customReport.dashboardBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder" scope="prototype">
     <constructor-arg ref="squashtest.tm.service.ChartModificationService" />
-  </bean> 
+  </bean>
+  
+  <bean id="customReport.chartBindingBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.tm.service.ChartModificationService" />
+  </bean>  
   <!--  DRIVE NODE BUILDERS -->
 
   <beans profile="eclipse">

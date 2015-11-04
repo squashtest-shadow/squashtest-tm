@@ -25,7 +25,7 @@ import java.util.Set;
 
 /**
  * JSON used to forward to client side all the data needed to render a complete dashboard.
- * Avoids n requests where n = number of charts in dashboard
+ * Avoids n requests where n = number of charts in dashboard, as all charts datas are retrieved in on request
  * @author jthebault
  *
  */

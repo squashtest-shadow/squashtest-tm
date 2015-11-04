@@ -79,6 +79,10 @@
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
   
   <style type="text/css">
+  	.dashboard-grid {
+  		width : 100%;
+  		min-height: 100%;
+  	}
   	.dashboard-graph {
   		background-color: white;
   		position: absolute;
@@ -374,7 +378,7 @@
 	
 	<!-- SHOW DASHBOARD -->
 	 <script id="tpl-show-dashboard" type="text/x-handlebars-template">
-		<div id="dashboard-grid" class="gridster jstree-drop">
+		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
 			{{#each chartBindings}}
    				{{> chart}}
  			{{/each}}
@@ -383,6 +387,12 @@
      
      <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
 		<div class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		</div>
+     </script>
+     
+     <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
+		<div class="dashboard-graph">
 			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
 		</div>
      </script>

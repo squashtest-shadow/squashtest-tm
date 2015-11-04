@@ -36,4 +36,7 @@ public interface CustomReportDashboardService {
 	 */
 	CustomReportDashboard updateGridPosition(CustomReportDashboard dashboard);
 	
+	CustomReportDashboard findById(Long id);
+	
+	void bindChart(CustomReportChartBinding newBinding);
 }

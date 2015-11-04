@@ -62,6 +62,8 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
 			// events
 			this._bindEvents();
+
+      _.bindAll(this, "draw");
 		},
 
 

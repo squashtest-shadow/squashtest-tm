@@ -59,6 +59,7 @@ public class JsonCustomReportDashboardBuilder {
 		for (CustomReportChartBinding binding : bindings) {
 			JsonCustomReportChartBinding jsonBinding = new JsonCustomReportChartBinding();
 			jsonBinding.setId(binding.getId());
+			jsonBinding.setChartDefinitionId(dashboard.getId());
 			jsonBinding.setChartDefinitionId(binding.getChart().getId());
 			jsonBinding.setRow(binding.getRow());
 			jsonBinding.setCol(binding.getCol());
