@@ -180,7 +180,6 @@ define(["jquery", "underscore", "app/ws/squashtm.notification", "squash.translat
 
 			form.ajaxSubmit({
 				url: buildUrl(),
-				dataType: "text/html",
 				type: "POST",
 				success: function () {
 				},
