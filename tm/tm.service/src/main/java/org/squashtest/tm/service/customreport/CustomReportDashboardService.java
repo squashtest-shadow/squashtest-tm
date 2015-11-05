@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.customreport;
 
+import java.util.List;
+
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
@@ -27,14 +29,12 @@ import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 @Transactional
 public interface CustomReportDashboardService {
 	
-	/**
-	 * Check and persist the positions of all {@link CustomReportChartBinding} inside the given
-	 * {@link CustomReportDashboard}. Will throw exception if some {@link CustomReportChartBinding}
-	 * doesn't exist in db previously.
-	 * @param dashboard
-	 * @return
-	 */
-	CustomReportDashboard updateGridPosition(CustomReportDashboard dashboard);
+	void updateGridPosition(List<CustomReportChartBinding> bindings);
+	
+	CustomReportDashboard findById(Long id);
+	
+	void bindChart(CustomReportChartBinding newBinding);
+}
 	
 	CustomReportDashboard findById(Long id);
 	

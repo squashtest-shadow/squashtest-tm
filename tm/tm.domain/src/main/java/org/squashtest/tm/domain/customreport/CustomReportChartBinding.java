@@ -115,6 +115,10 @@ public class CustomReportChartBinding implements Identified {
 		return id;
 	}
 
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public boolean hasMoved(CustomReportChartBinding transientBinding) {
 		return hasMoveRow(transientBinding) || hasMoveCol(transientBinding) || hasMoveSizeX(transientBinding) || hasMoveSizeY(transientBinding);
 	}
@@ -125,9 +129,9 @@ public class CustomReportChartBinding implements Identified {
 		setSizeX(transientBinding.getSizeX());
 		setSizeY(transientBinding.getSizeY());
 	}
-	
-	private boolean hasMoveSizeX(CustomReportChartBinding transientBinding) {
-		return getSizeX()!=transientBinding.getSizeX();
+
+	private boolean hasMoveSizeY(CustomReportChartBinding transientBinding) {
+		return getSizeY()!=transientBinding.getSizeY();
 	}
 
 	private boolean hasMoveSizeY(CustomReportChartBinding transientBinding) {

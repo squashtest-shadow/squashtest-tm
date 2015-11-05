@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.customreport;
 
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -47,19 +46,6 @@ public class CustomReportDashboardServiceImpl implements
 	private SessionFactory sessionFactory;
 	
 	@Override
-	public CustomReportDashboard updateGridPosition(CustomReportDashboard dashboard) {
-		Set<CustomReportChartBinding> transientBindings = dashboard.getChartBindings();
-		for (CustomReportChartBinding transientBinding : transientBindings) {
-			CustomReportChartBinding persistedBinding = bindingDao.findById(transientBinding.getId());
-			if (persistedBinding.hasMoved(transientBinding)) {
-				persistedBinding.move(transientBinding);
-			}
-		}
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public CustomReportDashboard findById(Long id) {
 		return customReportDashboardDao.findById(id);
 	}
@@ -68,6 +54,21 @@ public class CustomReportDashboardServiceImpl implements
 	public void bindChart(CustomReportChartBinding newBinding) {
 		bindingDao.persist(newBinding);
 		sessionFactory.getCurrentSession().flush();
+	}
+
+	@Override
+	public void updateGridPosition(List<CustomReportChartBinding> transientBindings) {
+		for (CustomReportChartBinding transientBinding : transientBindings) {
+			updateBinding(transientBinding);
+		}
+		
+	}
+
+	private void updateBinding(CustomReportChartBinding transientBinding) {
+		CustomReportChartBinding persistedBinding = bindingDao.findById(transientBinding.getId());
+		if (persistedBinding.hasMoved(transientBinding)) {
+			persistedBinding.move(transientBinding);
+		}
 	}
 	
 }
