@@ -87,6 +87,20 @@
   		background-color: white;
   		position: absolute;
   	}
+  	.delete-chart-button{
+  		position: absolute;
+  		min-width: 20px;
+    	min-height: 20px;
+    	background-position: top left;
+    	background-repeat: no-repeat;
+    	z-index: 20;
+    	top: 3px;
+    	right: -1px;
+    	opacity: 0;
+  	}
+  	.gs-w:hover .delete-chart-button{
+    	opacity: 1;
+  	}
   </style>
   
   <style type="text/css">
@@ -378,6 +392,31 @@
 	
 	<!-- SHOW DASHBOARD -->
 	 <script id="tpl-show-dashboard" type="text/x-handlebars-template">
+		<div id="dashboard-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
+  			<div id="right-frame-button">
+    			<input type="button" class="sq-btn btn-sm" id="toggle-expand-left-frame-button" />
+  			</div>
+			<div style="float: left; height: 100%;" class="small-margin-left">
+				<h2>
+					{{name}}
+				</h2>
+			</div>
+
+			<div class="unsnap"></div>
+		</div>
+		<div id="element-toolbar" class="toolbar-class ui-corner-all">
+			<div class="toolbar-information-panel">
+				<div id="general-information-panel" class="information-panel">
+					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+					<br/>
+					<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+					<br/>
+				</div>
+			</div>
+			<div class="toolbar-button-panel">
+			</div>
+			<div class="unsnap"></div>
+		</div>
 		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
 			{{#each chartBindings}}
    				{{> chart}}
@@ -388,12 +427,18 @@
      <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
 		<div class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
 			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+			<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+				<span class="ui-icon ui-icon-trash"></span>
+			</div>
 		</div>
      </script>
      
      <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
 		<div class="dashboard-graph">
 			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+			<div class="delete-chart-button">
+				<span class="ui-icon ui-icon-trash"></span>
+			</div>
 		</div>
      </script>
 	<!-- /SHOW DASHBOARD  -->

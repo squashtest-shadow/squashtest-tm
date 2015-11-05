@@ -45,6 +45,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			throw "dashboard : attempted to instanciate an abstract jqplot view !";
 		},
 
+      return "<b>"+this.model.get('title')+"</b>";
 
 
 		// ************************* core functions *********************

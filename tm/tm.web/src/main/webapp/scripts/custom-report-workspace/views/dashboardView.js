@@ -43,6 +43,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		},
 
 		events : {
+      "click .delete-chart-button":"_unbindChart"
 		},
 
 		render : function(){
@@ -61,7 +62,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       var self = this;
 			this.gridster = this.$("#dashboard-grid").gridster({
 				widget_margins: [10, 10],
-				widget_base_dimensions: ["auto", 250],
+				widget_base_dimensions: ["auto", 230],
 				widget_selector: ".dashboard-graph",
 				min_rows: 3,
 				min_cols: 4,
@@ -204,8 +205,13 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this._buildChart(binding);
     },
 
-    _getCellFromDrop : function () {
+    _unbindChart : function (event) {
+      var bindingId = event.currentTarget.getAttribute("data-binding-id");
+      
+    },
 
+    //Return the first empty cell.
+    _getCellFromDrop : function () {
       for (var i = 1; i <= this.gridRow; i++) {
         for (var j = 1; j <= this.gridCol; j++) {
           if (this.gridster.is_empty ( j,i )) {
@@ -214,7 +220,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
           }
         }
       }
-
     }
 
   });
