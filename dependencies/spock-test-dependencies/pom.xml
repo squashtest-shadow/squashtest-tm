@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-dependencies</artifactId>
-    <version>1.12.2.RC3</version>
+    <version>1.12.4.RC1-SNAPSHOT</version>
   </parent>
 
   <artifactId>spock-test-dependencies</artifactId>
