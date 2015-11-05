@@ -33,6 +33,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
@@ -69,7 +70,8 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
 			ServletException {
-	    String url = ((HttpServletRequest) request).getPathInfo();
+        HttpServletRequest hsr = (HttpServletRequest) request;
+	    String url = hsr.getServletPath() + StringUtils.defaultString(hsr.getPathInfo());
         if (!matchExcludePatterns(url)) {
 		BugTrackerContext context = loadContext(request);
 
@@ -85,14 +87,14 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	}
 
 	   private boolean matchExcludePatterns(String url) {
-	       
+
 	        boolean result= false;
 	        if (excludePatterns != null){
 	            Pattern p = Pattern.compile(excludePatterns);
 	            Matcher m = p.matcher(url);
 	            result = m.matches();
 	        }
-	   
+
 	        return result;
 	}
 	private void storeContextInExistingSession(ServletRequest request, BugTrackerContext context) {
@@ -138,5 +140,5 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
     public void setExcludePatterns(String excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
-	
+
 }

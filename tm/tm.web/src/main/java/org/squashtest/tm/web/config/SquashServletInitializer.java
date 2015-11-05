@@ -20,72 +20,26 @@
  */
 package org.squashtest.tm.web.config;
 
-import org.springframework.boot.context.embedded.FilterRegistrationBean;
+import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.HttpPutFormContentFilter;
-import org.springframework.web.multipart.support.MultipartFilter;
-import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
-import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
-import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
-import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
-import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
-
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.descriptor.JspPropertyGroupDescriptor;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
+import org.springframework.stereotype.Component;
+import org.squashtest.tm.SquashTm;
 
 /**
- * This is required to be able to deploy Squash TM in a servlet container (as opposed to using the embedded container).
- * <p/>
- * It replaces web.xml
- *
  * @author Gregory Fouquet
  * @since 1.13.0
  */
-@Configuration
+@Component
 public class SquashServletInitializer extends SpringBootServletInitializer {
-	private static final String[] IMPORT_URL_PATTERNS = {
-			"**/importer",
-			"**/importer/*",
-			"**/import/upload",
-			"**/import/upload/*"
-	};
-
-	@Inject
-	private BugTrackerContextHolder bugTrackerContextHolder;
-
-	@Bean
-	public BugTrackerContextPersistenceFilter bugTrackerContextPersister() {
-		BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
-		filter.setContextHolder(bugTrackerContextHolder);
-		filter.setExcludePatterns("/isSquashAlive");
-
-		return filter;
-	}
-
-	@Bean
-	public AjaxEmptyResponseFilter ajaxEmptyResponseFilter() {
-		return new AjaxEmptyResponseFilter();
-	}
-
-	@Bean
-	public HttpPutFormContentFilter httpPutFormContentFilter() {
-		return new HttpPutFormContentFilter();
-	}
-
-	@Bean
-	public HttpSessionLifecycleLogger httpSessionLifecycleLogger() {
-		return new HttpSessionLifecycleLogger();
-	}
-
-	@Bean
-	public OpenedEntitiesLifecycleListener openedEntitiesLifecycleListener() {
-		return new OpenedEntitiesLifecycleListener();
+	/**
+	 * This is required for embedded tomcat to be able to handle JSPs.
+	 * See https://github.com/spring-projects/spring-boot/tree/v1.2.4.RELEASE/spring-boot-samples/spring-boot-sample-web-jsp
+	 *
+	 * @param application
+	 * @return
+	 */
+	@Override
+	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
+		return application.sources(SquashTm.class);
 	}
 }

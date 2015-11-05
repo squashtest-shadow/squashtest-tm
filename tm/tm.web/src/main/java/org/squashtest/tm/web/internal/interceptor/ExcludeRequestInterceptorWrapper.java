@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.functors.NotNullPredicate;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -39,11 +40,11 @@ import org.squashtest.tm.core.foundation.lang.Assert;
 /**
  * This interceptor wrapper filters out requests based on their pattern. When we use spring 3.2, this class may become
  * obsolete.
- * 
+ *
  * For the moment, only filters "extensions".
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcludeRequestInterceptorWrapper.class);
@@ -54,7 +55,7 @@ public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 	/**
 	 * Creates an interceptor wrapper which delegates to the given {@link HandlerInterceptor} any request which is not
 	 * filtered out.
-	 * 
+	 *
 	 * @param delegate the delegate interceptor. Should not be <code>null</code>.
 	 */
 	public ExcludeRequestInterceptorWrapper(HandlerInterceptor delegate) {
@@ -64,8 +65,8 @@ public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 	}
 
 	/**
-	 * Delegates non filtered-out requests to {@link #delegate} 
-	 * 
+	 * Delegates non filtered-out requests to {@link #delegate}
+	 *
 	 * @see org.springframework.web.servlet.HandlerInterceptor#preHandle(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse, java.lang.Object)
 	 */
@@ -91,7 +92,7 @@ public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 			return false;
 		}
 
-		String pathInfo = request.getPathInfo();
+		String pathInfo = request.getServletPath() + StringUtils.defaultString(request.getPathInfo());
 		int dotPos = pathInfo.lastIndexOf('.');
 
 		if (dotPos > -1) {
@@ -110,8 +111,8 @@ public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 	}
 
 	/**
-	 * Delegates any request to {@link #delegate} 
-	 * 
+	 * Delegates any request to {@link #delegate}
+	 *
 	 * @see org.springframework.web.servlet.HandlerInterceptor#postHandle(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse, java.lang.Object, org.springframework.web.servlet.ModelAndView)
 	 */
@@ -124,7 +125,7 @@ public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 
 	/**
 	 * Delegates any request to  {@link #delegate}
-	 * 
+	 *
 	 * @see org.springframework.web.servlet.HandlerInterceptor#afterCompletion(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse, java.lang.Object, java.lang.Exception)
 	 */

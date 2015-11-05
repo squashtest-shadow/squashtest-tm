@@ -1,0 +1,158 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.web.config;
+
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
+import org.springframework.web.filter.HttpPutFormContentFilter;
+import org.springframework.web.multipart.MultipartResolver;
+import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
+import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.service.configuration.ConfigurationService;
+import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
+import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
+import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
+import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
+import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
+import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
+import org.thymeleaf.templateresolver.ITemplateResolver;
+import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+
+import javax.inject.Inject;
+import java.util.HashMap;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
+import static org.springframework.util.StringUtils.trimAllWhitespace;
+
+/**
+ * @author Gregory Fouquet
+ * @since 1.13.0
+ */
+@EnableConfigurationProperties({MessagesProperties.class})
+@Configuration
+public class TmWebConfig {
+    @Inject
+    private MessagesProperties messagesProperties;
+    @Inject
+    private ThymeleafProperties thymeleafProperties;
+
+
+    /**
+     * Message source which takes into account messages from "fragments"
+     * Overrides spring-boot default
+     * @return the message-source
+     */
+    @Bean
+    public MessageSource messageSource() {
+        ReloadableSquashTmMessageSource bean = new ReloadableSquashTmMessageSource();
+        bean.setBasenames(commaDelimitedListToStringArray(trimAllWhitespace(messagesProperties.getBasename())));
+        bean.setDefaultEncoding(messagesProperties.getEncoding());
+        bean.setCacheSeconds(messagesProperties.getCacheSeconds());
+        return bean;
+    }
+
+
+    /**
+     * This overrides spring boot's default (servlet 3 based) multipart resolver.
+     * @return the delegating multipart resolver
+     */
+    @Bean
+    @Role(BeanDefinition.ROLE_SUPPORT)
+    public MultipartResolver multipartResolver() {
+        MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
+        bean.setDefaultResolver(defaultMultipartResolver());
+        HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
+        resolverMap.put(".*/import/upload.*", importMultipartResolver());
+        resolverMap.put(".*/importer/.*", importMultipartResolver());
+        bean.setResolverMap(resolverMap);
+        return bean;
+    }
+
+    @Bean
+    @Role(BeanDefinition.ROLE_SUPPORT)
+    public SquashMultipartResolver defaultMultipartResolver() {
+        return new SquashMultipartResolver();
+    }
+
+    @Bean
+    @Role(BeanDefinition.ROLE_SUPPORT)
+    public SquashMultipartResolver importMultipartResolver() {
+        SquashMultipartResolver bean = new SquashMultipartResolver();
+        bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
+        return bean;
+    }
+
+    /**
+     * This is a template resolver for fragments. Same as the std template resolver but has a ".html" suffix instead of empty suffix.
+     * Reminder : when we want a view name to be resolved as a thymeleaf view, we have to end it with ".html" already. This
+     * std view resolver is auto-configured by spring boot.
+     *
+     * @return thymeleaf template resolver for fragments
+     */
+    @Bean(name = "thymeleaf.templateResolver.fragment")
+    public ITemplateResolver fragmentTemplateResolver() {
+        ServletContextTemplateResolver res = new ServletContextTemplateResolver();
+        res.setPrefix(thymeleafProperties.getPrefix());
+        res.setSuffix(".html");
+        res.setTemplateMode(thymeleafProperties.getMode());
+        res.setCharacterEncoding(thymeleafProperties.getEncoding());
+        res.setCacheable(thymeleafProperties.isCache());
+        return res;
+    }
+
+    @Inject
+    private BugTrackerContextHolder bugTrackerContextHolder;
+
+    @Bean
+    public BugTrackerContextPersistenceFilter bugTrackerContextPersister() {
+        BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
+        filter.setContextHolder(bugTrackerContextHolder);
+        filter.setExcludePatterns("/isSquashAlive");
+
+        return filter;
+    }
+
+    @Bean
+    public AjaxEmptyResponseFilter ajaxEmptyResponseFilter() {
+        return new AjaxEmptyResponseFilter();
+    }
+
+    @Bean
+    public HttpPutFormContentFilter httpPutFormContentFilter() {
+        return new HttpPutFormContentFilter();
+    }
+
+    @Bean
+    public HttpSessionLifecycleLogger httpSessionLifecycleLogger() {
+        return new HttpSessionLifecycleLogger();
+    }
+
+    @Bean
+    public OpenedEntitiesLifecycleListener openedEntitiesLifecycleListener() {
+        return new OpenedEntitiesLifecycleListener();
+    }
+
+}

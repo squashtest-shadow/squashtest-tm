@@ -26,7 +26,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
@@ -39,11 +38,12 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 /**
+ * This configures Spring Security
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */
 @Configuration
-@EnableWebSecurity
 @EnableConfigurationProperties(SquashManagementProperties.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Inject

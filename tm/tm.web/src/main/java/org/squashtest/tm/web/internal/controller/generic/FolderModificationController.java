@@ -28,6 +28,7 @@ import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,7 +51,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 		ModelAndView mav = new ModelAndView("fragment/generics/edit-folder");
 		mav.addObject("folder", folder);
-		mav.addObject("updateUrl", getUpdateUrl(request.getPathInfo()));
+		mav.addObject("updateUrl", getUpdateUrl(request.getServletPath()  + StringUtils.defaultString(request.getPathInfo())));
 		mav.addObject("workspaceName", getWorkspaceName());
 		mav.addObject("attachments", findAttachments(folder));
 		return mav;

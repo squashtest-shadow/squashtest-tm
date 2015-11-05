@@ -29,7 +29,7 @@ import org.squashtest.tm.core.foundation.exception.NullArgumentException;
  *
  */
 public class ThreadLocalBugTrackerContextHolder implements BugTrackerContextHolder {
-	private final ThreadLocal<BugTrackerContext> contextHolder = new ThreadLocal<BugTrackerContext>();
+	private final ThreadLocal<BugTrackerContext> contextHolder = new ThreadLocal<>();
 
 	@Override
 	public BugTrackerContext getContext() {

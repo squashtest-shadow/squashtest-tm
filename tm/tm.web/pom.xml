@@ -134,8 +134,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.objenesis</groupId>
-      <artifactId>objenesis</artifactId>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
     </dependency>
 
     <dependency>
@@ -199,10 +199,17 @@
       <version>1.0.4</version>
     </dependency>
 
-    <!--<dependency>-->
-    <!--<groupId>javax.servlet</groupId>-->
-    <!--<artifactId>jstl</artifactId>-->
-    <!--</dependency>-->
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+    <groupId>javax.servlet</groupId>
+    <artifactId>jstl</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
@@ -211,6 +218,11 @@
     <dependency>
       <groupId>net.sourceforge.nekohtml</groupId>
       <artifactId>nekohtml</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
     </dependency>
 
     <dependency>
@@ -322,11 +334,6 @@
       <version>${project.version}</version>
       <type>pom</type>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>com.h2database</groupId>
-      <artifactId>h2</artifactId>
     </dependency>
   </dependencies>
   <build>

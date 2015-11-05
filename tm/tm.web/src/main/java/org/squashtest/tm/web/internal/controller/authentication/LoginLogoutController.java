@@ -54,6 +54,5 @@ public class LoginLogoutController {
 	@RequestMapping("/")
 	public String home() {
 		return "redirect:" + homeUrl;
-
 	}
 }
