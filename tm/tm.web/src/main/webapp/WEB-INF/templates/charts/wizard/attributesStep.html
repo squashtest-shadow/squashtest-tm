@@ -22,7 +22,7 @@
 -->
 <div th:fragment="chart-wizard-attributes">
 
-{{#if attributes.selectedEntity}}
+
  {{#each attributes.columnPrototypes}}
  
 
@@ -54,15 +54,6 @@
  
 {{/each}}  
 
-{{else}}
-
-<span th:text="#{wizard.steps.missing-steps}" />
-<br />
-<a href="#entity" > 
-{{i18n "entity" prefix="chart.wizard.creation.step."}}
-</a>
-<br />
-{{/if}}
 
 </div>
 

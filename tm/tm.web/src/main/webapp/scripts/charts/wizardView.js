@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel" ], function($, Backbone,
-		router, translator, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel" ], function($, Backbone,
+		router, translator, EntityStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
 
@@ -29,7 +29,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		
 			this.model = options.model;
 			this.model.set({
-				steps:["scope", "entity", "attributes", "filter", "axis", "type", "preview"]	,
+				steps:["entity", "attributes", "filter", "axis", "type", "preview"]	,
 			   perimSelect :[{text:"label.testCase" , name:"test-case"}, {text:"label.campaigns" , name:"campaign"}, {text:"label.requirements" , name:"requirement"}]
 			});
 			this.loadI18n();
@@ -102,10 +102,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		showEntityStep : function(wizrouter) {			
 			this.showNewStepView(EntityStepView, wizrouter);
 		},
-		showScopeStep : function(wizrouter) {
-			this.showNewStepView(ScopeStepView, wizrouter);
-		},
-
+		
 		showFilterStep : function(wizrouter) {
 			this.showNewStepView(FilterStepView, wizrouter);
 		},

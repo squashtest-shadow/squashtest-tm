@@ -70,6 +70,7 @@
     	squashtm.workspace = squashtm.workspace || {};
     	squashtm.chart = {};
     	squashtm.chart.parentId = /*[[${parentId}]]*/;
+    	squashtm.chart.defaultProject =  /*[[${defaultProject}]]*/;
     	requirejs.config({
     		  baseUrl: /*[[@{/scripts/}]]*/,
     	});
@@ -99,7 +100,7 @@
 
 	<script id="tree-popup-tpl" type="text/x-handlebars-template"
 		th:inline="text"
-		th:include="charts/wizard/scopeStep :: chart-wizard-tree-popup" />
+		th:include="charts/wizard/entityStep :: chart-wizard-tree-popup" />
 
 
 
@@ -128,7 +129,9 @@
 		th:inline="text"
 		th:include="charts/wizard/filterStep :: chart-wizard-info-list-item" />
 
-
+	<script id="missing-step-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/missingStep :: chart-wizard-missing-step" />
 
 	<div th:include="charts/rendering/chart-templates :: templates"></div>
 

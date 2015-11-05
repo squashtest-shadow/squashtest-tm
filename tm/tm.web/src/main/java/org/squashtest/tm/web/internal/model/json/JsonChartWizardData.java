@@ -21,8 +21,6 @@
 package org.squashtest.tm.web.internal.model.json;
 
 import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
-import static org.squashtest.tm.domain.EntityType.EXECUTION;
-import static org.squashtest.tm.domain.EntityType.ISSUE;
 import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
 import static org.squashtest.tm.domain.EntityType.ITERATION;
 import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
@@ -32,6 +30,7 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -69,9 +68,8 @@ public class JsonChartWizardData {
 
 
 
-
-	private EnumSet<EntityType> entityTypes = EnumSet.of(CAMPAIGN, EXECUTION, ISSUE, ITEM_TEST_PLAN, ITERATION,
-			REQUIREMENT, REQUIREMENT, REQUIREMENT_VERSION, TEST_CASE);
+	// don't use EnumMap here cuz the business want a custom order
+	private Map<EntityType, String> entityTypes = new LinkedHashMap<EntityType, String>();
 
 	private Map<String, EnumSet<? extends Level>> levelEnums = new HashMap<String, EnumSet<? extends Level>>();
 
@@ -119,7 +117,11 @@ public class JsonChartWizardData {
 		addLevelEnum("REQUIREMENT_VERSION_STATUS", RequirementStatus.class);
 
 
-
+		entityTypes.put(REQUIREMENT, "icon-requirement");
+		entityTypes.put(TEST_CASE, "icon-test-case");
+		entityTypes.put(CAMPAIGN, "icon-campaign");
+		entityTypes.put(ITERATION, "icon-iteration");
+		entityTypes.put(ITEM_TEST_PLAN, "sq-icon-control_play");
 
 		for (Project project : projects) {
 
@@ -138,6 +140,10 @@ public class JsonChartWizardData {
 		defaultList.put("TEST_CASE_NATURE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode()));
 		defaultList.put("TEST_CASE_TYPE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode()));
 		projectInfoList.put("default", defaultList);
+		
+		// business want to regroup requirement and requirement version attribute under requirement
+		Set<ColumnPrototype> reqVersionCol = columnPrototypes.get(REQUIREMENT_VERSION);
+		columnPrototypes.get(REQUIREMENT).addAll(reqVersionCol);
 
 	}
 
@@ -154,7 +160,7 @@ public class JsonChartWizardData {
 		return chartTypes;
 	}
 
-	public EnumSet<EntityType> getEntityTypes() {
+	public Map<EntityType, String> getEntityTypes() {
 		return entityTypes;
 	}
 

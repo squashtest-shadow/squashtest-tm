@@ -27,22 +27,22 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		prevStep : "entity",
 		nextStep : "filter",
 		viewTitle : "chart.wizard.creation.step.attributes",
-		stepNumber : 3,
+		stepNumber : 2,
 		neededStep : ["entity"],
 		buttons : ["previous", "next"]
 	}, {
 		name : "entity",
-		prevStep : "scope",
+		prevStep : "",
 		nextStep : "attributes",
 		viewTitle : "chart.wizard.creation.step.entity",
-		stepNumber : 2,
-		buttons : ["previous", "next"]
+		stepNumber : 1,
+		buttons : ["next"]
 	},{
 		name : "axis",
 		prevStep : "filter",
 		nextStep : "type",
 		viewTitle : "chart.wizard.creation.step.axis",
-		stepNumber : 5,
+		stepNumber : 4,
 		neededStep : ["entity", "attributes"],
 		buttons : ["previous", "next"]
 	},{
@@ -50,7 +50,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		prevStep  : "attributes",
 	    nextStep : "axis",
 		viewTitle : "chart.wizard.creation.step.filter",
-		stepNumber : 4,
+		stepNumber : 3,
 		neededStep : ["entity", "attributes"],
 		buttons : ["previous", "next"]
 	},{
@@ -58,29 +58,32 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		prevStep : "type",
 		nextStep : "",
 		viewTitle : "chart.wizard.creation.step.preview",
-		stepNumber : 7,
+		stepNumber : 6,
 		neededStep : ["entity", "attributes", "axis"],
 		buttons : ["previous", "save"]
-	},{
-		name : "scope",
-		prevStep : "",
-		nextStep : "entity",
-		viewTitle : "chart.wizard.creation.step.scope",
-		stepNumber : 1,
-		buttons : ["next"]
-
 	},{
 		name : "type",
 		prevStep : "axis",
 		nextStep : "preview",
 		viewTitle : "chart.wizard.creation.step.type",
-		stepNumber : 6,
+		stepNumber : 5,
 		neededStep : ["entity", "attributes", "axis"],
 		buttons : ["previous", "generate"]
 	
 	}
 	];
 
+	var validation = 
+			[{
+				name : "entity",
+				validationParam : "selectedEntity"
+			},{
+				name :"attributes",
+				validationParam : "selectedAttributes"
+			},{
+				name :"axis",
+				validationParam : "operations"
+			}];
 	var abstractStepView = Backbone.View.extend({
 		el : "#current-step",
 
@@ -94,7 +97,37 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			this.showViewTitle(currStep.viewTitle);
 			this.initButtons(currStep.buttons);
 			
-			this.render(data);
+			var missingStepNames = this.findMissingSteps(data, currStep.neededStep);
+			
+			if (_.isEmpty(missingStepNames)){
+				this.render(data, $(this.tmpl));
+			} else {
+				
+				var missingSteps = _.chain(steps)
+				.filter(function(step){
+					return _.contains(missingStepNames, step.name);
+				})
+				.sortBy("stepNumber")
+				.value();
+
+				var model = {steps : missingSteps, totalStep : steps.length};
+				this.render(model, $("#missing-step-tpl"));
+			}
+			
+			
+		},
+		
+		findMissingSteps : function (data, neededStep) {
+			
+			return  _.filter(neededStep, function (step) {	
+				var param = _.chain(validation)
+				.find(function (val) {return val.name == step;})
+				.result("validationParam")
+				.value();	
+				
+				return _.isEmpty(_.result(data.attributes, param));
+			});
+			
 			
 		},
 		initButtons : function (buttons){
@@ -139,7 +172,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		},
 
 		render : function(data, tmpl) {
-			var src = $(this.tmpl).html();
+			var src = tmpl.html();
 			this.template = Handlebars.compile(src);
 
 			this.$el.append(this.template(data));

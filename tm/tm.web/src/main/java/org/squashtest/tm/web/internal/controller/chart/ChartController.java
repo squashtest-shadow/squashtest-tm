@@ -23,8 +23,6 @@ package org.squashtest.tm.web.internal.controller.chart;
 import java.util.List;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
 import javax.validation.Valid;
 
 import org.springframework.stereotype.Controller;
@@ -37,6 +35,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
@@ -44,8 +43,6 @@ import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.http.ContentTypes;
-import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
 
 @Controller
@@ -77,7 +74,9 @@ public class ChartController {
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
 	public ModelAndView getWizard(@PathVariable Long parentId) {
 		ModelAndView mav = new ModelAndView("charts/wizard/wizard.html");
+		GenericProject project = reportNodeService.findLibraryByTreeNodeId(parentId).getProject();
 		mav.addObject("parentId", parentId);
+		mav.addObject("defaultProject", project.getId());
 		return mav;
 	}
 

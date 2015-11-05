@@ -20,28 +20,23 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-  <div th:fragment="chart-wizard-scope">
+<div th:fragment="chart-wizard-missing-step">
 
-{{#*inline "perim"}}
-{{i18n text}}
-<input type="button" class="sq-btn btn-sm perimeter-select" id="{{name}}" value="perimeter" 
-            th:value="#{chart.wizard.select.perimeter}" />  
+<span th:text="#{wizard.steps.missing-steps}" />
 <br />
 <br />
 <br />
-{{/inline}}
-
-<div id="tree-popup-container" /> 
-
-{{#each attributes.perimSelect}}
-{{>perim}}
+<br />
+{{#each steps}}
+<a href="#{{this.name}}" > 
+{{i18n this.name prefix="chart.wizard.creation.step."}} ({{i18n "wizard.steps.label"}} {{this.stepNumber}}/{{../totalStep}}) 
+</a>
+<br />
+<br />
+<br />
 {{/each}}
+<br />
 
 
 
-
- </div>
- 
- 
-
- 
+</div>

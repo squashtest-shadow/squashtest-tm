@@ -43,6 +43,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		save : function () {
 			
 			var parentId = this.model.get("parentId");
+			this.updateModel();
 			
 			$.ajax({
 				method : "POST",
@@ -58,7 +59,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		
 		updateModel : function() {
-
+			   
+		    var name = $("#chart-name").val();
+		    this.model.set({name : name });  
 		}
 		
 	});

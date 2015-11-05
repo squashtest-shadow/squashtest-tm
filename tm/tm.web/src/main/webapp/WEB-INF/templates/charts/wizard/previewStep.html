@@ -22,6 +22,10 @@
 -->
 <div th:fragment="chart-wizard-preview">
 
+
+<span th:text="#{label.name}" />
+<input type="text" id="chart-name" value="{{attributes.name}}"/>
+
   <div>
 
         <div id="chart-display-area" class="chart-display-area" />

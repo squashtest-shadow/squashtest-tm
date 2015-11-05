@@ -27,6 +27,7 @@
 	}).done(function(data){
 		
 		data.parentId = squashtm.chart.parentId;
+		data.defaultProject = squashtm.chart.defaultProject;
 		
 		var model = new WizardModel(data);
 		

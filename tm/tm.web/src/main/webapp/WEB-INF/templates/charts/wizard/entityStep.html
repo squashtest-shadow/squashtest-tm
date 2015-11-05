@@ -23,31 +23,77 @@
   <div th:fragment="chart-wizard-entity">
 
 
-<span th:text="#{label.name}" />
-<input type="text" id="chart-name" />
 
 <br />
  <ul style="list-style: none;">
-        {{#each attributes.entityTypes}}
+        {{#each attributes.entityTypes}}       
         <li>
         {{!--<![CDATA[--}}
-        <input  type="checkbox" name="entity" value="{{this}}"  
+        <input  type="checkbox" name="entity" value="{{@key}}"  
 
         {{#if ../attributes.selectedEntity}}         
-        {{#if (contains ../../attributes.selectedEntity this)}} checked="checked" {{/if}} 
-        {{else}}
-        {{#unless @index}} checked="checked" {{/unless}}
+        {{#if (contains ../../attributes.selectedEntity @key)}} checked="checked" {{/if}}    
         {{/if}}
          />  
         {{!--]]>--}}	
         
+       <span class="{{this}}">&nbsp;&nbsp;&nbsp;&nbsp;</span>
         
-        
-     {{i18n this prefix="chart.entityType."}}
+     {{i18n @key prefix="chart.entityType."}}
 
         </li>
         {{/each}}     
 </ul>
 
 
+<div style="display:inline-block; position:relative;" class="buttonmenu-wrapper">
+<a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
+                  <span th:text="#{wizard.perimeter.change}"/>
+                </a>
+                <ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget ui-widget-content ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
+                
+                {{#each attributes.perimSelect}}
+     <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
+                    <a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+                  </li>
+               {{/each}}
+  <li id="reset-perimeter" class="cursor-pointer ui-menu-item" role="presentation" aria-disabled="true">
+                    <a th:text="#{wizard.perimeter.reset}" shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" ></a>
+                  </li>
+
+
+                </ul></div>
+                
+<br />
+<br />                
+<span id="selected-perim"/>
+
+
+
+<div id="tree-dialog-container">
+ <div id="tree-dialog" style="height: 200px!important"
+				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" />
  </div>
+
+ </div>
+ 
+ 
+ 
+ 
+  <div th:fragment="chart-wizard-tree-popup">
+ 
+ 
+
+ <div class="main">
+       	 	<div id="tree-pane">
+	         <div id="tree" class="tree jstree" />
+			 </div>
+</div>
+ 
+ 
+
+
+ 
+ </div>
+ 
+ 
