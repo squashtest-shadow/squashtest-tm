@@ -27,8 +27,9 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		tpl : "#tpl-show-dashboard",
     tplChart : "#tpl-chart-in-dashboard",
     tplNewChart : "#tpl-new-chart-in-dashboard",
+    tplChartDisplay : "#tpl-chart-display-area",
     widgetPrefixSelector : "#widget-chart-binding-",
-		dashboardData : null,
+		dashboardInitialData : null,//just used for initialization. To keep trace of user action please use the two following objects
     dashboardChartViews : {},
     dashboardChartBindings : {},
 		gridster : null,
@@ -54,8 +55,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			var template = Handlebars.compile(source);
       Handlebars.registerPartial("chart", $(this.tplChart).html());
 			console.log("TEAMPLATING DASHBOARD");
-      console.log(this.dashboardData);
-			this.$el.append(template(this.dashboardData));
+      console.log(this.dashboardInitialData);
+			this.$el.append(template(this.dashboardInitialData));
 			return this;
 		},
 
@@ -100,8 +101,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			}).data('gridster');
 
       return this;
-	    // var gridData = gridster.serialize();
-			// console.log(gridData);
 		},
 
 		initListenerOnTree :function () {
@@ -157,12 +156,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		dropChartInExistingChart : function (data) {
       var chartNodeId = data.o.getResId();
       var bindingId = $(data.r).parents(".chart-display-area").attr("data-binding-id");//id of binding on wich new chart is dropped
-      var ajaxData = {
-        chartNodeId : chartNodeId,
-        bindingId : bindingId
-      };
 
-      var url = urlBuilder.buildURL("custom-report-chart-binding");
+      var url = urlBuilder.buildURL("custom-report-chart-binding-replace-chart",bindingId,chartNodeId);
       var self = this;
       $.ajax({
         headers: {
@@ -171,11 +166,10 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
           },
         url: url,
         type: 'post',
-        'data': JSON.stringify(ajaxData),
       })
       .success(function(response) {
-        console.log("Change OK !!!");
-        self.dashboardChartBindings[bindingId]=response;//update chart data
+        console.log("Change OK server side !!!");
+        self._changeBindedChart(bindingId,response);
       });
 		},
 
@@ -189,7 +183,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         dataType: 'json'
       })
       .success(function(response) {
-        self.dashboardData = response;
+        self.dashboardInitialData = response;
         self.render().initGrid()._buildDashBoard();//templating first, then init gridster, then add widgets
       });
 
@@ -209,7 +203,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     _buildDashBoard : function () {
-      var bindings = this.dashboardData.chartBindings;
+      var bindings = this.dashboardInitialData.chartBindings;
       for (var i = 0; i < bindings.length; i++) {
         var binding = bindings[i];
         this._buildChart(binding);
@@ -258,15 +252,30 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         type: 'delete',
         }).success(function(response) {
           self._removeChart(id);
+          self._removeWidget(id);
         });
 
     },
 
     _removeChart : function (bindingId) {
+      this.dashboardChartViews[bindingId].remove();//remove backbone view
       delete this.dashboardChartViews[bindingId];
-      delete this.dashboardData[bindingId];
+      delete this.dashboardChartBindings[bindingId];
+    },
+
+    _removeWidget : function (bindingId) {
       var widgetSelector = this.widgetPrefixSelector + bindingId;
       this.gridster.remove_widget(widgetSelector, this._serializeGridster);//after suppressing widget, serialize to update position on server if the grid reorganize itself after widget suppression
+    },
+
+    _changeBindedChart : function (bindingId,binding) {
+      this._removeChart(bindingId);
+      var source = $(this.tplChartDisplay).html();
+      var template = Handlebars.compile(source);
+      var html = template(binding);
+      var widgetSelector = this.widgetPrefixSelector + bindingId;
+      $(widgetSelector).html(html);
+      this._buildChart(binding);
     },
 
     //Return the first empty cell.

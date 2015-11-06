@@ -220,6 +220,7 @@ define([], function(){
 		'custom-report-chart-server'                        : root + '/custom-report-chart/{\\d+}',
 		'custom-report-chart-binding'                        : root + '/custom-report-chart-binding',
     'custom-report-chart-binding-with-id'                        : root + '/custom-report-chart-binding/{\\d+}',
+    'custom-report-chart-binding-replace-chart'                        : root + '/custom-report-chart-binding-replace-chart/{\\d+}/{\\d+}',
 
 		// helper methods
 		buildURL : function(){

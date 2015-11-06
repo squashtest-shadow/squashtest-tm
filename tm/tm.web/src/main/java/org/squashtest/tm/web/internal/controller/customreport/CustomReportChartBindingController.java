@@ -75,7 +75,7 @@ public class CustomReportChartBindingController {
 		return  builderProvider.get().build(crcb);
 	}
 	
-	@RequestMapping(value="/custom-report-chart-binding/{bindingId}/{chartNodeId}", method=RequestMethod.POST)
+	@RequestMapping(value="/custom-report-chart-binding-replace-chart/{bindingId}/{chartNodeId}", method=RequestMethod.POST)
 	public @ResponseBody JsonCustomReportChartBinding changeBindedChart(@PathVariable long bindingId,@PathVariable long chartNodeId){
 		CustomReportChartBinding crcb = dashboardService.changeBindedChart(bindingId,chartNodeId);
 		return  builderProvider.get().build(crcb);
