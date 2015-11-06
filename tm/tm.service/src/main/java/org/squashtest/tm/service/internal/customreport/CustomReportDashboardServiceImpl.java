@@ -26,9 +26,11 @@ import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
 
@@ -41,6 +43,9 @@ public class CustomReportDashboardServiceImpl implements
 	
 	@Inject
 	CustomReportChartBindingDao bindingDao;
+	
+	@Inject
+	CustomReportLibraryNodeService crlnService;
 	
 	@Inject
 	private SessionFactory sessionFactory;
@@ -69,6 +74,21 @@ public class CustomReportDashboardServiceImpl implements
 		if (persistedBinding.hasMoved(transientBinding)) {
 			persistedBinding.move(transientBinding);
 		}
+	}
+
+	@Override
+	public void unbindChart(Long id) {
+		CustomReportChartBinding chartBinding = bindingDao.findById(id);
+		bindingDao.remove(chartBinding);
+	}
+
+	@Override
+	public CustomReportChartBinding changeBindedChart(long bindingId,
+			long chartNodeId) {
+		CustomReportChartBinding chartBinding = bindingDao.findById(bindingId);
+		ChartDefinition chartDefinition = crlnService.findChartDefinitionByNodeId(chartNodeId);
+		chartBinding.setChart(chartDefinition);
+		return chartBinding;
 	}
 	
 }

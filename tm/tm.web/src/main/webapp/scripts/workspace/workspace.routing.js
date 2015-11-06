@@ -219,6 +219,7 @@ define([], function(){
 		'custom-report-chart'                        : '/custom-report-chart/{\\d+}',
 		'custom-report-chart-server'                        : root + '/custom-report-chart/{\\d+}',
 		'custom-report-chart-binding'                        : root + '/custom-report-chart-binding',
+    'custom-report-chart-binding-with-id'                        : root + '/custom-report-chart-binding/{\\d+}',
 
 		// helper methods
 		buildURL : function(){

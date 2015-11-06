@@ -45,10 +45,6 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 
 			var jqplotSeries = [_.zip(legends,series)];
 
-			console.log(series);
-			console.log(legends);
-			console.log(jqplotSeries);
-
 			this.draw(jqplotSeries, conf);
 
 		},
@@ -96,18 +92,18 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 					shadow : false,
 					shadowColor : 'transparent'
 				},
-				height: 400,
-				width: 600,
 				legend:{
-				            show:true,
-				            placement: 'inside',
-				            rendererOptions: {
-				                numberRows: pieserie.length
-				            },
-				            location:'se',
-				            marginTop: '15px',
-                    fontSize : 16,
-                    fontColor : "#000000"
+          renderer: $.jqplot.EnhancedLegendRenderer,
+				  show:true,
+				  placement: 'inside',
+				  rendererOptions: {
+				      numberRows: pieserie.length
+				  },
+				  location:'se',
+				  marginTop: '15px',
+          fontSize : 12,
+          fontColor : "#000000",
+          border: 'none'
 				}
 				//seriesColors : colorsAndLabels.colors
 			});

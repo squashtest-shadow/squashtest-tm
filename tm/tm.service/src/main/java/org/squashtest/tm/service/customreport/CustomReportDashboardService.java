@@ -23,15 +23,40 @@ package org.squashtest.tm.service.customreport;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 
 @Transactional
 public interface CustomReportDashboardService {
 	
+	/**
+	 * Update all bindings position given in argument.
+	 * @param bindings
+	 */
 	void updateGridPosition(List<CustomReportChartBinding> bindings);
 	
 	CustomReportDashboard findById(Long id);
 	
+	/**
+	 * Bind a chart to a dashboard
+	 * @param newBinding
+	 */
 	void bindChart(CustomReportChartBinding newBinding);
+	
+	/**
+	 * remove designed binding from database
+	 * @param newBinding
+	 */
+	void unbindChart(Long id);
+
+	/**
+	 * Change the chartbinded by the {@link CustomReportChartBinding} designed by bindingId.
+	 * WARNING: the chartNodeId param is the {@link CustomReportLibraryNode} id, not the {@link ChartDefinition} id.
+	 * @param bindingId
+	 * @param chartNodeId
+	 * @return
+	 */
+	CustomReportChartBinding changeBindedChart(long bindingId, long chartNodeId);
 }

@@ -27,6 +27,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		tpl : "#tpl-show-dashboard",
     tplChart : "#tpl-chart-in-dashboard",
     tplNewChart : "#tpl-new-chart-in-dashboard",
+    widgetPrefixSelector : "#widget-chart-binding-",
 		dashboardData : null,
     dashboardChartViews : {},
     dashboardChartBindings : {},
@@ -40,6 +41,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			_.bindAll(this, "render","initGrid","initListenerOnTree","dropChartInGrid");
 			this.initializeData();
 			this.initListenerOnTree();
+      this.initListenerOnResize();
 		},
 
 		events : {
@@ -117,6 +119,11 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			});
 		},
 
+    initListenerOnResize : function () {
+      // var wreqr = squashtm.app.wreqr;
+      // var self = this;
+    },
+
     //create a new customReportChartBinding in database and add it to gridster in call back
 		dropChartInGrid : function (data) {
       var cell = this._getCellFromDrop();
@@ -148,7 +155,28 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		},
 
 		dropChartInExistingChart : function (data) {
-			console.log("dropChartInExistingChart");
+      var chartNodeId = data.o.getResId();
+      var bindingId = $(data.r).parents(".chart-display-area").attr("data-binding-id");//id of binding on wich new chart is dropped
+      var ajaxData = {
+        chartNodeId : chartNodeId,
+        bindingId : bindingId
+      };
+
+      var url = urlBuilder.buildURL("custom-report-chart-binding");
+      var self = this;
+      $.ajax({
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+          },
+        url: url,
+        type: 'post',
+        'data': JSON.stringify(ajaxData),
+      })
+      .success(function(response) {
+        console.log("Change OK !!!");
+        self.dashboardChartBindings[bindingId]=response;//update chart data
+      });
 		},
 
     initializeData : function () {
@@ -220,8 +248,25 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     _unbindChart : function (event) {
-      var bindingId = event.currentTarget.getAttribute("data-binding-id");
+      //Get id of the suppressed chart
+      var id = event.currentTarget.getAttribute("data-binding-id");
+      var url = urlBuilder.buildURL("custom-report-chart-binding-with-id",id);
+      var self = this;
+      //Suppress on server and if succes, update gridster and update maps properties
+      $.ajax({
+        url: url,
+        type: 'delete',
+        }).success(function(response) {
+          self._removeChart(id);
+        });
 
+    },
+
+    _removeChart : function (bindingId) {
+      delete this.dashboardChartViews[bindingId];
+      delete this.dashboardData[bindingId];
+      var widgetSelector = this.widgetPrefixSelector + bindingId;
+      this.gridster.remove_widget(widgetSelector, this._serializeGridster);//after suppressing widget, serialize to update position on server if the grid reorganize itself after widget suppression
     },
 
     //Return the first empty cell.

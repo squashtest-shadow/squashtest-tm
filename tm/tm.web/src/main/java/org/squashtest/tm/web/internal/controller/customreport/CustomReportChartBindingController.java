@@ -29,9 +29,11 @@ import javax.inject.Provider;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.chart.ChartDefinition;
@@ -73,6 +75,12 @@ public class CustomReportChartBindingController {
 		return  builderProvider.get().build(crcb);
 	}
 	
+	@RequestMapping(value="/custom-report-chart-binding/{bindingId}/{chartNodeId}", method=RequestMethod.POST)
+	public @ResponseBody JsonCustomReportChartBinding changeBindedChart(@PathVariable long bindingId,@PathVariable long chartNodeId){
+		CustomReportChartBinding crcb = dashboardService.changeBindedChart(bindingId,chartNodeId);
+		return  builderProvider.get().build(crcb);
+	}
+	
 	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.PUT)
 	public @ResponseBody void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
 		List<CustomReportChartBinding> bindings = new ArrayList<CustomReportChartBinding>();
@@ -80,5 +88,10 @@ public class CustomReportChartBindingController {
 			bindings.add(gridElement.convertToEntity());
 		}
 		dashboardService.updateGridPosition(bindings);
+	}
+	
+	@RequestMapping(value="/custom-report-chart-binding/{id}", method=RequestMethod.DELETE)
+	public @ResponseBody void unbindChart(@PathVariable long id){
+		dashboardService.unbindChart(id);
 	}
 }

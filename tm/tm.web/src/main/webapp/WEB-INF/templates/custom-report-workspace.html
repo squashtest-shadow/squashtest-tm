@@ -237,8 +237,7 @@
   opacity:0;
 }
 */
-  
-  </style>
+</style>
   
   
 </head>
@@ -426,7 +425,7 @@
      </script>
      
      <script id="tpl-chart-in-dashboard" type="text/x-handlebars-template">
-		<div class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
+		<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-row="{{row}}" data-col="{{col}}" data-sizex="{{sizeX}}" data-sizey="{{sizeY}}">
 			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
 			<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
 				<span class="ui-icon ui-icon-trash"></span>
@@ -435,9 +434,9 @@
      </script>
      
      <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
-		<div class="dashboard-graph">
+		<div id="widget-chart-binding-{{id}}" class="dashboard-graph">
 			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-			<div class="delete-chart-button">
+			<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
 				<span class="ui-icon ui-icon-trash"></span>
 			</div>
 		</div>
