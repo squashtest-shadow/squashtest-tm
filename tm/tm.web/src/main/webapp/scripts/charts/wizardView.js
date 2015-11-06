@@ -30,7 +30,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			this.model = options.model;
 			this.model.set({
 				steps:["entity", "attributes", "filter", "axis", "type", "preview"]	,
-			   perimSelect :[{text:"label.testCase" , name:"test-case"}, {text:"label.campaigns" , name:"campaign"}, {text:"label.requirements" , name:"requirement"}]
+			   perimSelect :[{text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}, {text:"label.requirements" , name:"REQUIREMENT"}]
 			});
 			this.loadI18n();
 		},

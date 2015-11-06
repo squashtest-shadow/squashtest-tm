@@ -56,6 +56,10 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 		
 		writeDefaultPerimeter : function (){
 			$("#selected-perim").text(translator.get("wizard.perimeter.default"));	
+			var defaultId = this.model.get("defaultProject");
+			this.model.set({scope : [{type : "PROJECT", id : defaultId}] });
+			this.model.set({projectsScope : [defaultId]});
+			this.model.set({scopeEntity : "default"});
 		},
 		writePerimeter : function (name){
 			var link = "<a id='repen-perim' style='text-decoration: underline;' name= '" + name + "'>" + translator.get("wizard.perimeter." + name) + "</a>" ;
@@ -63,14 +67,8 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 			$("#selected-perim").html(message);
 			
 		},
-		resetPerimeter : function () {
-			var defaultId = this.model.get("defaultProject");
-			this.model.set({scope : {type : "PROJECT", id : defaultId} });
-			this.model.set({projectsScope : [defaultId]});
-			this.model.set({scopeEntity : "default"});
-			this.writeDefaultPerimeter();
-			
-			
+		resetPerimeter : function () {	
+			this.writeDefaultPerimeter();	
 		},
 		
 		reopenPerimeter : function (event){
@@ -117,18 +115,55 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 				self.model.set({projectsScope : _.uniq(_.map($("#tree").jstree('get_selected'), function(obj){return $(obj.closest("[project]")).attr("project"); }))});				
 				self.writePerimeter(name);
 				self.model.set({scopeEntity : name});
-				
+				self.removeInfoListFilter();
 			});
 			
 		},
 		
 		
+		removeInfoListFilter : function (){
+			this.model.set({filters : _.chain(this.model.get("filters"))
+				.filter(function(val) {return val.column.dataType != "INFO_LIST_ITEM";})
+				.value()});			
+		},
+		
 		updateModel : function() {
+			
+			var self = this;
+			
 		    var entity = _.map($("input[name='entity']:checked"), function(a) {return $(a).val();});
 
 			this.model.set({selectedEntity : entity, name : "graph" });  
+			
+			this.model.set({selectedAttributes : _.filter(this.model.get("selectedAttributes"), function(val){return _.contains(self.getIdsOfValidColumn(), val);})});
+			
+			var filtered = 	_(['filters', 'axis', 'measures', 'operations'])
+			.reduce(function(memo, val){ 
+				memo[val] = self.filterWithValidIds(self.model.get(val)); 
+				return memo; }, {});
+			
+			this.model.set(filtered);
 
-		}		
+		},	
+		
+		filterWithValidIds : function (col) {		
+			var self = this;
+			
+			return _.chain(col)
+			.filter(function(val){return _.contains(self.getIdsOfValidColumn(), val.column.id.toString());})
+			.value();
+			
+		},
+		
+		getIdsOfValidColumn : function (){
+		return	_.chain(this.model.get("columnPrototypes"))
+			.pick(this.model.get("selectedEntity"))
+			.values()
+			.flatten()
+			.pluck("id")
+			.map(function(val) {return val.toString();})
+			.value();
+		}
 	});
 
 	return entityStepView;

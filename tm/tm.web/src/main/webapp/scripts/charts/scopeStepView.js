@@ -32,25 +32,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 			var treePopup = $("#tree-popup-tpl").html();
 			this.treePopupTemplate = Handlebars.compile(treePopup);
-	
-			
-			/*
-			
-			var nodes = _.map(this.model.get("scope"), function(obj) {
-				return {
-					restype:obj.type.split("_").join("-").toLowerCase() + "s", //yeah that quite fucked up...change back the _ to -, lower case and add a "s" 
-					resid:obj.id};});
-			
-			
-			
-			$("#tree").on('reselect.jstree', function(event, data) {
-               data.inst.findNodes(nodes).select();
-			});	
-			
-		
-			
-			this.initTree();*/
-		
+
 		},
 		
 		events : {

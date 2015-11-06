@@ -144,6 +144,7 @@ public class JsonChartWizardData {
 		// business want to regroup requirement and requirement version attribute under requirement
 		Set<ColumnPrototype> reqVersionCol = columnPrototypes.get(REQUIREMENT_VERSION);
 		columnPrototypes.get(REQUIREMENT).addAll(reqVersionCol);
+		columnPrototypes.remove(REQUIREMENT_VERSION);
 
 	}
 

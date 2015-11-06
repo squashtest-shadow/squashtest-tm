@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "tree", "jquery.squash.confirmdialog"],
-	function ($, Backbone, _, Handlebars, tree) {
+define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.translator", "jquery.squash.confirmdialog"],
+	function ($, Backbone, _, Handlebars, tree, translator) {
 		"use strict";
 
 	
@@ -43,9 +43,23 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "jquery.squash
 					autoOpen: true
 				});
 		
+				this.checkFilterChangeImpact();
 			
 			},
-
+			
+			checkFilterChangeImpact : function (){			
+				if (this.hasInfoListFilter()){					
+					$("#warning-info-list").text(translator.get("wizard.perimeter.warning.info-list-filter"));		
+				}	
+			},
+			
+			hasInfoListFilter : function (){				
+				return ! _.chain(this.model.get("filters"))
+				.filter(function(val) {return val.column.dataType == "INFO_LIST_ITEM";})
+				.isEmpty()
+				.value();	
+			},
+			
 			render: function () {
 				var treePopup = $("#tree-popup-tpl").html();
 				this.treePopupTemplate = Handlebars.compile(treePopup);
@@ -71,8 +85,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "jquery.squash
 			
 			
 
-			initTree : function (workspaceName){
+			initTree : function (name){
 				
+				
+				var workspaceName = name.split("_").join("-").toLowerCase();
 
 				var ids = _.pluck(this.model.get("scope"), "id");
 				ids = ids.length > 0 ? ids : 0;

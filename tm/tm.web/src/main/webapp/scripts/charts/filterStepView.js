@@ -56,13 +56,26 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var ids = self.getInfoListSelectorIds();
 			
 			var scope = _.size(self.model.get("projectsScope")) > 0 ? self.model.get("projectsScope") : "default";
-			var infoLists = self.getInfoListByType(scope);
+			
+			var scopedInfoLists = self.getInfoListForScope(scope);
+			var infoLists = self.getAllInfoList();
 		
+			var scopedEntity = self.model.get("scopeEntity");
 			
 		_.each(ids, function(id){
 			var container = $("#info-list-filter-container-" + id);
 			var name = container.attr("name");
-			var lists = _(infoLists[name]).uniq(false, function (val) {return val.id;});
+					
+			
+			var lists;
+			if (scopedEntity == self.findTypeFromColumnId(id) || scopedEntity == "default"){
+				lists = _(scopedInfoLists[name]);
+			} else {
+				lists = _(infoLists[name]);
+			}
+			lists = lists.uniq(false, function (val) {return val.id;});
+			
+			
 			var infoListHtml = self.infoListTemplate({id :id, infolists : lists});
 			container.html(infoListHtml);	
 			self.loadInfoListItems(id);
@@ -81,13 +94,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		.value();
 			
 		},
-		
-		getInfoListByType : function (scope){
 
-			var self = this;
+		getInfoListsFromModel : function(infoLists){
 			
-			return _.chain(self.model.get("projectInfoList"))				
-			.pick(scope)
+			return _.chain(infoLists)
 			.map(_.pairs) 
 			.reduce(function(memo, val){ return memo.concat(val);}, [])
             .reduce(function(memo, val) { 
@@ -98,6 +108,14 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			.value();
 		},
 		
+		getInfoListForScope : function (scope){
+			return this.getInfoListsFromModel(_(this.model.get("projectInfoList")).pick(scope));		
+		},
+		
+		getAllInfoList : function (){
+			return this.getInfoListsFromModel(this.model.get("projectInfoList"));			
+		},
+	
 		loadInfoListItems : function (id) {
 			
 			var self = this;
@@ -250,6 +268,14 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		
 		changeOperation : function(event){				
 			this.showFilterValues(event.target.name, event.target.value);
+		},
+		
+		findTypeFromColumnId : function(id){
+			return _.chain(this.model.get("columnPrototypes"))
+			.pairs()
+			.find(function(val){ var ids =_.pluck(val[1], "id"); return _.contains(ids,id); })
+			.first()
+			.value();
 		},
 		
 		showFilterValues : function (id, val){

@@ -42,11 +42,31 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		
 		updateModel : function() {
 
+			var self = this;
+			
 			var ids = _.pluck($('[id^="attributes-selection-"]').filter(":checked"), "name");
 			
 			this.model.set({selectedAttributes : ids});
 			
-		}
+			var filtered = 	_(['filters', 'axis', 'measures', 'operations'])
+			.reduce(function(memo, val){ 
+				memo[val] = self.filterWithValidIds(self.model.get(val)); 
+				return memo; }, {});
+			
+			this.model.set(filtered);	
+			
+		},
+		
+		filterWithValidIds : function (col) {		
+			var self = this;
+			return _.chain(col)
+			.filter(function(val){return _.contains(self.model.get("selectedAttributes"), val.column.id.toString());})
+			.value();
+			
+		},
+		
+		
+		
 		
 	
 		

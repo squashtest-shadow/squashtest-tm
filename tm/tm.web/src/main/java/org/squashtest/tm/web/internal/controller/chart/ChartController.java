@@ -74,7 +74,8 @@ public class ChartController {
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
 	public ModelAndView getWizard(@PathVariable Long parentId) {
 		ModelAndView mav = new ModelAndView("charts/wizard/wizard.html");
-		GenericProject project = reportNodeService.findLibraryByTreeNodeId(parentId).getProject();
+		GenericProject project = reportNodeService.findCustomReportLibraryNodeById(parentId).getCustomReportLibrary()
+				.getProject();
 		mav.addObject("parentId", parentId);
 		mav.addObject("defaultProject", project.getId());
 		return mav;

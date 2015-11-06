@@ -304,7 +304,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 					
 			var axis = axis2 === null ? [axis1]:[axis1].concat(axis2);
 			
-			this.model.set({type : type, measures : [measure], axis : axis});  
+			var measures = measure === undefined ? [] :[measure];
+			
+			this.model.set({type : type, measures : measures, axis : axis});  
 	
 		},
 		
@@ -313,11 +315,17 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var self = this;
 			var columnLabel = $("#axis-axis-"+ name).val();
 	
-			return {
-				column : self.findColumnByLabel(columnLabel),
-				operation : self.findChoosenOperation(columnLabel),
-				label : ""
-			};
+			var result;
+			
+			if (! _.isEmpty(columnLabel)){
+				result = {
+					column : self.findColumnByLabel(columnLabel),
+					operation : self.findChoosenOperation(columnLabel),
+					label : ""
+				};
+			}
+			
+			return result;
 		},
 		
 		findChoosenOperation : function (label){
