@@ -31,11 +31,14 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import com.sun.org.apache.xml.internal.serializer.OutputPropertiesFactory;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.filter.OncePerRequestFilter;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContext;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 
@@ -48,7 +51,7 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
  * @author Gregory Fouquet
  *
  */
-public final class BugTrackerContextPersistenceFilter implements Filter {
+public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerContextPersistenceFilter.class);
 	/**
 	 * Key used do store BT context in http session.
@@ -58,20 +61,15 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 	private BugTrackerContextHolder contextHolder;
 	private String excludePatterns;
 
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-	   //NOP
-	}
-
 	/**
 	 * This callback method will try to load a previously existing {@link BugTrackerContext}, expose it to the current
 	 * thread through {@link BugTrackerContextHolder} and store it after filter chain processing.
 	 */
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-			ServletException {
-        HttpServletRequest hsr = (HttpServletRequest) request;
-	    String url = hsr.getServletPath() + StringUtils.defaultString(hsr.getPathInfo());
+	public void doFilterInternal(
+		HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+		throws ServletException, IOException {
+	    String url = request.getServletPath() + StringUtils.defaultString(request.getPathInfo());
         if (!matchExcludePatterns(url)) {
 		BugTrackerContext context = loadContext(request);
 
@@ -126,11 +124,6 @@ public final class BugTrackerContextPersistenceFilter implements Filter {
 		}
 
 		return context;
-	}
-
-	@Override
-	public void destroy() {
-		// NOOP
 	}
 
 	public void setContextHolder(BugTrackerContextHolder contextHolder) {

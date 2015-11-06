@@ -23,12 +23,16 @@ package org.squashtest.tm.web.config;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
+import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
+import org.squashtest.tm.service.security.UserDetailsService;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
 
 import javax.inject.Inject;
@@ -46,31 +50,36 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_O
 @Configuration
 @EnableConfigurationProperties(SquashManagementProperties.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+	@Inject private Environment environment;
+
 	@Inject
 	private SquashManagementProperties managementProperties;
 
 	@Inject
 	private ServerProperties serverProperties;
 
+	@Inject
+	private SquashUserDetailsManager squashUserDetailsManager;
+
+	@Inject
+	private PasswordEncoder passwordEncoder;
+
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		super.configure(auth);
+		auth.userDetailsService(squashUserDetailsManager).passwordEncoder(passwordEncoder);
+		// don't call super otherwise spring-sec will totally ignore what we just did !
 	}
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		super.configure(web);
+		boolean debug = environment.acceptsProfiles("dev", "debug");
+		web.debug(debug);
 	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// @formatter:off
-		http.formLogin()
-			.failureUrl("/login.jsp?login-error")
-		.and().logout()
-			.invalidateHttpSession(true).logoutSuccessUrl("/home-workspace").logoutUrl("/logout")
-		.and().exceptionHandling().accessDeniedPage("/squash/accessDenied")
-		.and().addFilterBefore(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class)
+		http
 		.authorizeRequests()
 			.antMatchers(
 				"/administration",
@@ -90,10 +99,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				"/configuration/**",
 				"/platform/**"
 			).access(HAS_ROLE_ADMIN)
-			.antMatchers("/login").permitAll()
+			.antMatchers("/accessDenied").permitAll()
 			.antMatchers("/management/**").denyAll()
 			.antMatchers("/resultUpdate/**").access("hasRole('ROLE_TA_API_CLIENT')")
-			.antMatchers("/**").authenticated();
+			.anyRequest().authenticated()
+
+		.and().formLogin()
+			.permitAll()
+			.loginPage("/login")
+			.failureUrl("/login?login-error")
+			.defaultSuccessUrl("/home-workspace")
+
+		.and().logout()
+			.permitAll()
+			.invalidateHttpSession(true)
+			.logoutSuccessUrl("/")
+
+		.and().exceptionHandling()
+			.accessDeniedPage("/squash/accessDenied")
+		.and().addFilterBefore(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 		// @formatter:on
 
 
@@ -108,17 +132,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// Secured namespace for the management api
 		// There is no authentication because this namespace collects system operation which cannot be done otherwise.
 		// As a consequence, is supposed to be secured at the app server / host level
-		http.antMatcher("/management/**")
-			// all http ports remapped to management port
-			.portMapper()
-				.http(80).mapsTo(managementProperties.getPort())
-				.http(8080).mapsTo(managementProperties.getPort())
-				.http(serverProperties.getPort() == null ? 8080 : serverProperties.getPort()).mapsTo(managementProperties.getPort())
-			// all requests are secured
-			.and().requiresChannel()
-				.requestMatchers(managementRequestMatcher)
-				.requires(managementProperties.getRequiredChannel())
-			.and().authorizeRequests().anyRequest().permitAll();
+//		http.antMatcher("/management/**")
+//			// all http ports remapped to management port
+//			.portMapper()
+//				.http(80).mapsTo(managementProperties.getPort())
+//				.http(8080).mapsTo(managementProperties.getPort())
+//				.http(serverProperties.getPort() == null ? 8080 : serverProperties.getPort()).mapsTo(managementProperties.getPort())
+//			// all requests are secured
+//			.and().requiresChannel()
+//				.requestMatchers(managementRequestMatcher)
+//				.requires(managementProperties.getRequiredChannel())
+//			.and().authorizeRequests().anyRequest().permitAll();
 		// @formatter:on
 	}
 }

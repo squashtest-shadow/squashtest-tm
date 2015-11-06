@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.filter;
 
+import org.springframework.web.filter.OncePerRequestFilter;
+
 import java.io.IOException;
 import java.io.Writer;
 
@@ -29,21 +31,23 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * This patches empty responses by setting them an "app/json" type + "null" content, otherwise js clients interpreting
  * the response as JSON won't be able to parse it (null is valid JSON while nothing is not).
- * 
+ *
  * Yet there are bugs because this filter accesses the response's Writer. If response.getOutpouStream() alreadyt has
  * been called somewhere in the responce processing stack, this will throw exception.
- * 
+ *
  * To work around this, one can set a "notJson" request attribute which will override the filter's behaviour.
- * 
+ *
  */
-public class AjaxEmptyResponseFilter implements Filter {
+public class AjaxEmptyResponseFilter extends OncePerRequestFilter {
 
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
-	ServletException {
+	@Override
+	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 		chain.doFilter(request, response);
 
 		if (response.getContentType() == null) {
@@ -55,17 +59,4 @@ public class AjaxEmptyResponseFilter implements Filter {
 			response.flushBuffer();
 		}
 	}
-
-	@Override
-	public void init(FilterConfig filterConfig) throws ServletException {
-		// NOOP
-
-	}
-
-	@Override
-	public void destroy() {
-		// NOOP
-
-	}
-
 }

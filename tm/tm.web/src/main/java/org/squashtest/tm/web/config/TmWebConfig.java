@@ -54,105 +54,104 @@ import static org.springframework.util.StringUtils.trimAllWhitespace;
 @EnableConfigurationProperties({MessagesProperties.class})
 @Configuration
 public class TmWebConfig {
-    @Inject
-    private MessagesProperties messagesProperties;
-    @Inject
-    private ThymeleafProperties thymeleafProperties;
+	@Inject
+	private MessagesProperties messagesProperties;
+	@Inject
+	private ThymeleafProperties thymeleafProperties;
+
+	/**
+	 * Message source which takes into account messages from "fragments"
+	 * Overrides spring-boot default
+	 * @return the message-source
+	 */
+	@Bean
+	public MessageSource messageSource() {
+		ReloadableSquashTmMessageSource bean = new ReloadableSquashTmMessageSource();
+		bean.setBasenames(commaDelimitedListToStringArray(trimAllWhitespace(messagesProperties.getBasename())));
+		bean.setDefaultEncoding(messagesProperties.getEncoding());
+		bean.setCacheSeconds(messagesProperties.getCacheSeconds());
+		return bean;
+	}
 
 
-    /**
-     * Message source which takes into account messages from "fragments"
-     * Overrides spring-boot default
-     * @return the message-source
-     */
-    @Bean
-    public MessageSource messageSource() {
-        ReloadableSquashTmMessageSource bean = new ReloadableSquashTmMessageSource();
-        bean.setBasenames(commaDelimitedListToStringArray(trimAllWhitespace(messagesProperties.getBasename())));
-        bean.setDefaultEncoding(messagesProperties.getEncoding());
-        bean.setCacheSeconds(messagesProperties.getCacheSeconds());
-        return bean;
-    }
+	/**
+	 * This overrides spring boot's default (servlet 3 based) multipart resolver.
+	 * @return the delegating multipart resolver
+	 */
+	@Bean
+	@Role(BeanDefinition.ROLE_SUPPORT)
+	public MultipartResolver multipartResolver() {
+		MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
+		bean.setDefaultResolver(defaultMultipartResolver());
+		HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
+		resolverMap.put(".*/import/upload.*", importMultipartResolver());
+		resolverMap.put(".*/importer/.*", importMultipartResolver());
+		bean.setResolverMap(resolverMap);
+		return bean;
+	}
 
+	@Bean
+	@Role(BeanDefinition.ROLE_SUPPORT)
+	public SquashMultipartResolver defaultMultipartResolver() {
+		return new SquashMultipartResolver();
+	}
 
-    /**
-     * This overrides spring boot's default (servlet 3 based) multipart resolver.
-     * @return the delegating multipart resolver
-     */
-    @Bean
-    @Role(BeanDefinition.ROLE_SUPPORT)
-    public MultipartResolver multipartResolver() {
-        MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
-        bean.setDefaultResolver(defaultMultipartResolver());
-        HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
-        resolverMap.put(".*/import/upload.*", importMultipartResolver());
-        resolverMap.put(".*/importer/.*", importMultipartResolver());
-        bean.setResolverMap(resolverMap);
-        return bean;
-    }
+	@Bean
+	@Role(BeanDefinition.ROLE_SUPPORT)
+	public SquashMultipartResolver importMultipartResolver() {
+		SquashMultipartResolver bean = new SquashMultipartResolver();
+		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
+		return bean;
+	}
 
-    @Bean
-    @Role(BeanDefinition.ROLE_SUPPORT)
-    public SquashMultipartResolver defaultMultipartResolver() {
-        return new SquashMultipartResolver();
-    }
+	/**
+	 * This is a template resolver for fragments. Same as the std template resolver but has a ".html" suffix instead of empty suffix.
+	 * Reminder : when we want a view name to be resolved as a thymeleaf view, we have to end it with ".html" already. This
+	 * std view resolver is auto-configured by spring boot.
+	 *
+	 * @return thymeleaf template resolver for fragments
+	 */
+	@Bean(name = "thymeleaf.templateResolver.fragment")
+	public ITemplateResolver fragmentTemplateResolver() {
+		ServletContextTemplateResolver res = new ServletContextTemplateResolver();
+		res.setPrefix(thymeleafProperties.getPrefix());
+		res.setSuffix(".html");
+		res.setTemplateMode(thymeleafProperties.getMode());
+		res.setCharacterEncoding(thymeleafProperties.getEncoding());
+		res.setCacheable(thymeleafProperties.isCache());
+		return res;
+	}
 
-    @Bean
-    @Role(BeanDefinition.ROLE_SUPPORT)
-    public SquashMultipartResolver importMultipartResolver() {
-        SquashMultipartResolver bean = new SquashMultipartResolver();
-        bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
-        return bean;
-    }
+	@Inject
+	private BugTrackerContextHolder bugTrackerContextHolder;
 
-    /**
-     * This is a template resolver for fragments. Same as the std template resolver but has a ".html" suffix instead of empty suffix.
-     * Reminder : when we want a view name to be resolved as a thymeleaf view, we have to end it with ".html" already. This
-     * std view resolver is auto-configured by spring boot.
-     *
-     * @return thymeleaf template resolver for fragments
-     */
-    @Bean(name = "thymeleaf.templateResolver.fragment")
-    public ITemplateResolver fragmentTemplateResolver() {
-        ServletContextTemplateResolver res = new ServletContextTemplateResolver();
-        res.setPrefix(thymeleafProperties.getPrefix());
-        res.setSuffix(".html");
-        res.setTemplateMode(thymeleafProperties.getMode());
-        res.setCharacterEncoding(thymeleafProperties.getEncoding());
-        res.setCacheable(thymeleafProperties.isCache());
-        return res;
-    }
+	@Bean
+	public BugTrackerContextPersistenceFilter bugTrackerContextPersister() {
+		BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
+		filter.setContextHolder(bugTrackerContextHolder);
+		filter.setExcludePatterns("/isSquashAlive");
 
-    @Inject
-    private BugTrackerContextHolder bugTrackerContextHolder;
+		return filter;
+	}
 
-    @Bean
-    public BugTrackerContextPersistenceFilter bugTrackerContextPersister() {
-        BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
-        filter.setContextHolder(bugTrackerContextHolder);
-        filter.setExcludePatterns("/isSquashAlive");
+	@Bean
+	public AjaxEmptyResponseFilter ajaxEmptyResponseFilter() {
+		return new AjaxEmptyResponseFilter();
+	}
 
-        return filter;
-    }
+	@Bean
+	public HttpPutFormContentFilter httpPutFormContentFilter() {
+		return new HttpPutFormContentFilter();
+	}
 
-    @Bean
-    public AjaxEmptyResponseFilter ajaxEmptyResponseFilter() {
-        return new AjaxEmptyResponseFilter();
-    }
+	@Bean
+	public HttpSessionLifecycleLogger httpSessionLifecycleLogger() {
+		return new HttpSessionLifecycleLogger();
+	}
 
-    @Bean
-    public HttpPutFormContentFilter httpPutFormContentFilter() {
-        return new HttpPutFormContentFilter();
-    }
-
-    @Bean
-    public HttpSessionLifecycleLogger httpSessionLifecycleLogger() {
-        return new HttpSessionLifecycleLogger();
-    }
-
-    @Bean
-    public OpenedEntitiesLifecycleListener openedEntitiesLifecycleListener() {
-        return new OpenedEntitiesLifecycleListener();
-    }
+	@Bean
+	public OpenedEntitiesLifecycleListener openedEntitiesLifecycleListener() {
+		return new OpenedEntitiesLifecycleListener();
+	}
 
 }

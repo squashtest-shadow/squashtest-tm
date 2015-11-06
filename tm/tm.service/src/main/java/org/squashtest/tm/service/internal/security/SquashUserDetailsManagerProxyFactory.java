@@ -131,48 +131,6 @@ public class SquashUserDetailsManagerProxyFactory implements FactoryBean<SquashU
 			proxy = (SquashUserDetailsManager) Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(),
 					new Class[]{SquashUserDetailsManager.class}, new ManagerDelegator(this));
 		}
-
-		proxy = new SquashUserDetailsManager() {
-			@Override
-			public void createUser(UserDetails user) {
-
-			}
-
-			@Override
-			public void updateUser(UserDetails user) {
-
-			}
-
-			@Override
-			public void deleteUser(String username) {
-
-			}
-
-			@Override
-			public void changePassword(String oldPassword, String newPassword) {
-
-			}
-
-			@Override
-			public boolean userExists(String username) {
-				return false;
-			}
-
-			@Override
-			public List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username) {
-				return null;
-			}
-
-			@Override
-			public void changeUserLogin(String newLogin, String oldLogin) {
-
-			}
-
-			@Override
-			public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-				return null;
-			}
-		};
 	}
 
 }

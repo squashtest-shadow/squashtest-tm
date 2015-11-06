@@ -22,4 +22,5 @@
 --%>
 <%@ tag body-content="empty" %>
 <%@ attribute name="name" required="true" rtexprvalue="true" type="java.lang.String" description="unqualified name of the stylesheet" %>
-<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles-${ initParam.squashTMVersion }/${ name }" /> 
+<%-- link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles-${ initParam.squashTMVersion }/${ name }" --%>
+<link rel="stylesheet" type="text/css" href="${ pageContext.servletContext.contextPath }/styles/${ name }" />

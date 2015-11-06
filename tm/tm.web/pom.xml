@@ -64,7 +64,7 @@
     <spring.version.range>[3,4)</spring.version.range>
     <springdm.version.range>[2,3)</springdm.version.range>
     <sprites.packageDirectory>images</sprites.packageDirectory>
-    <wro4j.css.outputDirectory>${project.build.directory}/processed-css</wro4j.css.outputDirectory>
+    <wro4j.css.outputDirectory>src/main/webapp/styles</wro4j.css.outputDirectory>
     <wro4j.inputDir>${smartprites-wro4j-exchangedir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
   </properties>
@@ -200,14 +200,8 @@
     </dependency>
 
     <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-jasper</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-    <groupId>javax.servlet</groupId>
-    <artifactId>jstl</artifactId>
+      <groupId>javax.servlet</groupId>
+      <artifactId>jstl</artifactId>
     </dependency>
 
     <dependency>
@@ -291,6 +285,11 @@
     </dependency>
 
     <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-taglibs</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.thymeleaf.extras</groupId>
       <artifactId>thymeleaf-extras-springsecurity3</artifactId>
     </dependency>
@@ -314,6 +313,12 @@
     <dependency>
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <scope>provided</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>

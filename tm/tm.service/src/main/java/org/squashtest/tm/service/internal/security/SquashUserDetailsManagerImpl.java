@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.security;
 
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,9 +47,14 @@ public class SquashUserDetailsManagerImpl extends JdbcUserDetailsManager impleme
 		super();
 	}
 
+	@Override
+	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+		return super.loadUserByUsername(username);
+	}
+
 	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.internal.security.SquashUserDetailsManager#changeUserLogin(java.lang.String, java.lang.String)
-	 */
+		 * @see org.squashtest.tm.service.internal.security.SquashUserDetailsManager#changeUserLogin(java.lang.String, java.lang.String)
+		 */
 	@Override
 	public void changeUserLogin(String newLogin, String oldLogin) {
 		getJdbcTemplate().update(CHANGE_USER_LOGIN, newLogin, oldLogin);

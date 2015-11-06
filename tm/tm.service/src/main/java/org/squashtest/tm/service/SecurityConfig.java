@@ -184,16 +184,6 @@ public class SecurityConfig {
 		return new AclAuthorizationStrategyImpl(aclAdminAuthority(), aclAdminAuthority(), aclAdminAuthority());
 	}
 
-	@Bean(name = "squash.security.authenticationProvider.internal")
-	public DaoAuthenticationProvider daoAuthenticationProvider() {
-		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-		SquashUserDetailsManagerProxyFactory fact = userDetailsManager();
-		provider.setUserDetailsService(fact.getObject());
-		provider.setPasswordEncoder(shaPasswordEncoder());
-
-		return provider;
-	}
-
 	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
 	@Primary
 	public SquashUserDetailsManagerProxyFactory userDetailsManager() {
