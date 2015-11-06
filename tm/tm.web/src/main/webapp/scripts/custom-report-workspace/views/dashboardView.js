@@ -76,8 +76,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
             id: chartBindingId,
             col: wgd.col,
             row: wgd.row,
-            size_x:  wgd.size_x,
-            size_y:  wgd.size_y
+            sizeX:  wgd.size_x,
+            sizeY:  wgd.size_y
           };
         },
         resize : {
@@ -89,7 +89,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
               self._resizeChart(e, ui, $widget);
               self._serializeGridster();
             }
-				}
+				},
+        draggable : {
+          stop: function(e, ui, $widget) {
+            self._serializeGridster();
+          }
+        }
 			}).data('gridster');
 
       return this;
@@ -194,7 +199,16 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     _serializeGridster : function () {
       var gridData = this.gridster.serialize();
-      console.log(gridData);
+      var url = urlBuilder.buildURL("custom-report-chart-binding");
+      $.ajax({
+        headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+          },
+        url: url,
+        type: 'put',
+        'data': JSON.stringify(gridData),
+      });
     },
 
     _addNewChart : function (binding) {
@@ -207,7 +221,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     _unbindChart : function (event) {
       var bindingId = event.currentTarget.getAttribute("data-binding-id");
-      
+
     },
 
     //Return the first empty cell.

@@ -130,8 +130,8 @@ public class CustomReportChartBinding implements Identified {
 		setSizeY(transientBinding.getSizeY());
 	}
 
-	private boolean hasMoveSizeY(CustomReportChartBinding transientBinding) {
-		return getSizeY()!=transientBinding.getSizeY();
+	private boolean hasMoveSizeX(CustomReportChartBinding transientBinding) {
+		return getSizeX()!=transientBinding.getSizeX();
 	}
 
 	private boolean hasMoveSizeY(CustomReportChartBinding transientBinding) {

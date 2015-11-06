@@ -37,15 +37,16 @@ define(["jquery", "./abstractCustomReportChart",
 			throw "attempted to create an abstract BarView !";
 		},
 
-		getConf : function(series){
+    getConf : function(series){
 
 			var ticks = this.getCategories();
 
-			return {
+			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					renderer : $.jqplot.BarRenderer,
 					rendererOptions : {
-						fillToZero : true
+						fillToZero : true,
+            varyBarColor : true
 					}
 				},
 
@@ -59,14 +60,16 @@ define(["jquery", "./abstractCustomReportChart",
 						ticks : ticks
 					}
 				},
+
 				grid : {
+          drawGridlines : false,
 					background : '#FFFFFF',
 					drawBorder : false,
 					borderColor : 'transparent',
 					shadow : false,
 					shadowColor : 'transparent'
 				}
-			};
+			});
 
 		}
 

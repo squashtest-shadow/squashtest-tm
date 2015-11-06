@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -36,10 +39,10 @@ import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
-import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder;
 import org.squashtest.tm.web.internal.model.json.FormCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
+import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
 
 @Controller
 public class CustomReportChartBindingController {
@@ -68,5 +71,14 @@ public class CustomReportChartBindingController {
 		//do binding and return.
 		dashboardService.bindChart(crcb);
 		return  builderProvider.get().build(crcb);
+	}
+	
+	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.PUT)
+	public @ResponseBody void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
+		List<CustomReportChartBinding> bindings = new ArrayList<CustomReportChartBinding>();
+		for (JsonCustomReportGridElement gridElement : gridElements) {
+			bindings.add(gridElement.convertToEntity());
+		}
+		dashboardService.updateGridPosition(bindings);
 	}
 }

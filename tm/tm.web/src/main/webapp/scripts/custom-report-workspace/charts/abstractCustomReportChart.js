@@ -45,7 +45,22 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			throw "dashboard : attempted to instanciate an abstract jqplot view !";
 		},
 
-      return "<b>"+this.model.get('title')+"</b>";
+    getTitle : function () {
+      return "<div><b>"+this.model.get('title')+"</b>";
+    },
+
+    getCommonConf : function () {
+      return {
+        title : {
+          textColor: "slategray",
+          fontFamily: "Verdana,Arial,Helvetica,sans-serif",
+          show : true,
+          text : this.getTitle(),
+          textAlign: "center",
+          fontSize: "14px",
+        }
+      };
+    },
 
 
 		// ************************* core functions *********************

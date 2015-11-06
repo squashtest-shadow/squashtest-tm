@@ -77,7 +77,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 				colorsAndLabels = this._getNormalConf(pieserie);
 			}
 
-			return {
+			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					renderer : jQuery.jqplot.PieRenderer,
 					rendererOptions : {
@@ -110,7 +110,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
                     fontColor : "#000000"
 				}
 				//seriesColors : colorsAndLabels.colors
-			};
+			});
 		},
 
 		_getEmptyConf : function(pieserie){

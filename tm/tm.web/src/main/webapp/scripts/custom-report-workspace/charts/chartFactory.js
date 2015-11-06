@@ -33,6 +33,8 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 			return jsonChart.series[measure.label];
 		});
 
+    var title = jsonChart.name;
+
 
 		var Bar = BarView.extend({
 			getCategories : function(){
@@ -48,7 +50,8 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 		return new Bar({
 			el : $(viewID),
 			model : new Backbone.Model({
-				chartmodel : series
+				chartmodel : series,
+        title : title
 			},{
 				url : "whatever"
 			})
@@ -72,13 +75,14 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 
 		var series = jsonChart.getSerie(0);
     var legends = jsonChart.abscissa;
-
+    var title = jsonChart.name;
 
 		return new Pie({
 			el : $(viewID),
 			model : new Backbone.Model({
 				series : series,
-        legends : legends
+        legends : legends,
+        title : title
 			},{
 				url : "whatever"
 			})

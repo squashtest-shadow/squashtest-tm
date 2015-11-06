@@ -35,8 +35,3 @@ public interface CustomReportDashboardService {
 	
 	void bindChart(CustomReportChartBinding newBinding);
 }
-	
-	CustomReportDashboard findById(Long id);
-	
-	void bindChart(CustomReportChartBinding newBinding);
-}
