@@ -107,7 +107,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.and().formLogin()
 			.permitAll()
 			.loginPage("/login")
-			.failureUrl("/login?login-error")
+			.failureUrl("/login?error")
 			.defaultSuccessUrl("/home-workspace")
 
 		.and().logout()
@@ -115,8 +115,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.invalidateHttpSession(true)
 			.logoutSuccessUrl("/")
 
-		.and().exceptionHandling()
-			.accessDeniedPage("/squash/accessDenied")
+//		.and().exceptionHandling()
+//			.accessDeniedPage("/squash/accessDenied")
 		.and().addFilterBefore(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 		// @formatter:on
 

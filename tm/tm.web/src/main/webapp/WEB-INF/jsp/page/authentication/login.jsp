@@ -68,23 +68,25 @@
     <s:message var="dialogTitle" code="dialog.authentication.title" />
     <div id="login-fom" class="ui-dialog ui-widget ui-widget-content ui-corner-all"
       style="margin-left:auto; margin-right:auto; margin-top: 5%; width: 300px; position: relative; height: auto;">
-      <sf:form action="j_spring_security_check" method="POST">
+
+      <form action="<c:url value="/login" var='log' />" method="POST">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
         <div id="login-form-body" class="ui-dialog-content ui-widget-content">
           <table class="ui-widget">
             <tr>
               <td>
-                <label for="j_username"><s:message code="dialog.authentication.login.label" /></label>
+                <label for="username"><s:message code="dialog.authentication.login.label" /></label>
               </td>
               <td>
-                <input id="j_username" name="j_username" size="20" maxlength="50" type="text" value="${ sessionScope.SPRING_SECURITY_LAST_USERNAME }" />
+                <input id="username" name="username" size="20" maxlength="50" type="text" value="${ sessionScope.SPRING_SECURITY_LAST_USERNAME }" />
               </td>
             </tr>
             <tr>
               <td>
-                <label for="j_password"><s:message code="dialog.authentication.password.label" /></label>
+                <label for="password"><s:message code="dialog.authentication.password.label" /></label>
               </td>
               <td>
-                <input id="j_password" name="j_password" size="20" maxlength="50" type="password" />
+                <input id="password" name="password" size="20" maxlength="50" type="password" />
               </td>
             </tr>
             <tr>
@@ -104,7 +106,7 @@
             <input type="submit" value="${ submitLabel }" class="sq-btn" />
           </div>
         </div>
-      </sf:form>
+      </form>
       <script type="text/javascript">
         publish("load.loginForm");
       </script>

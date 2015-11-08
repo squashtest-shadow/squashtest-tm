@@ -29,7 +29,7 @@ require([ "common" ], function() {
 				});
 
 				ps.subscribe("load.loginForm", function() {
-					$("#j_username").focus();
+					$("#username").focus();
 				});
 
 				$(document).on("keydown", "body", function(event) {
