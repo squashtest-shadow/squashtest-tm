@@ -22,8 +22,10 @@ package org.squashtest.tm.service.milestone;
 
 import java.util.List;
 
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
 
+@Transactional(readOnly = true)
 public interface MilestoneFinderService {
 
 	Milestone findById(long milestoneId);

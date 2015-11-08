@@ -20,20 +20,11 @@
  */
 package org.squashtest.tm.web.internal.argumentresolver;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.MethodParameter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -42,25 +33,35 @@ import org.springframework.web.util.WebUtils;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 
+import javax.inject.Inject;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import java.util.List;
+
 /**
  * Use this to know what current milestone instead of @CookieValue. It's check if the milestone in the cookie exist
  * and if the current user can see this milestone.  Return the milestone if ok else return null.
  * @author jsimon
  *
  */
-public class MilestoneConfigResolver   implements HandlerMethodArgumentResolver  {
-
-	@Inject
-	private MilestoneFinderService milestoneFinderService;
-
+@Component
+public class MilestoneConfigResolver implements HandlerMethodArgumentResolver  {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target(ElementType.PARAMETER)
-	public static @interface CurrentMilestone {
+	public @interface CurrentMilestone {
+
 
 	}
 
 	private static final String MILESTONE = "milestones";
+
+	@Inject
+	private MilestoneFinderService milestoneFinderService;
 
 	@Override
 	public boolean supportsParameter(MethodParameter parameter) {

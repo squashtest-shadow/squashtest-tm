@@ -30,6 +30,7 @@ import org.springframework.web.context.request.Log4jNestedDiagnosticContextInter
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
@@ -59,6 +60,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Inject
 	private ResourceResolverProperties resourceResolverProperties;
+
+	@Inject
+	private MilestoneConfigResolver milestoneConfigResolver;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -121,6 +125,12 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	}
 
 	@Override
+	public void addViewControllers(ViewControllerRegistry registry) {
+		registry.addRedirectViewController("/", "/home-workspace");
+		super.addViewControllers(registry);
+	}
+
+	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/images/**")
 			.addResourceLocations("/imgages/")
@@ -152,7 +162,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(new MilestoneConfigResolver());
+		argumentResolvers.add(milestoneConfigResolver);
 	}
 
 }
