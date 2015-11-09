@@ -29,9 +29,9 @@
  * 
  */
 
-define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./should-downgrade-upload-dialog", "./jquery.squash.attachmentsDialog",
+define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery.squash.attachmentsDialog",
 		"jquery.squash.confirmdialog", "squashtable"],
-	function ($, translator, notification, shouldDowngrade) {
+	function ($, translator, notification) {
 
 		function getMessages() {
 			return translator.get({
@@ -88,22 +88,15 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./should
 			});
 
 			// ******************* upload dialog settings **********
-			
-			// must run a test to know whether to use 
-			// the fancy dialog or not
-			// if not using the fancy dialog -> nothing to do
-			
-			if (! shouldDowngrade()){
 
-				var uploadDialog = $("#add-attachments-dialog");
-				uploadDialog.attachmentsDialog({
-					url: settings.baseURL + "/upload"
-				});
+			var uploadDialog = $("#add-attachments-dialog");
+			uploadDialog.attachmentsDialog({
+				url: settings.baseURL + "/upload"
+			});
 
-				uploadDialog.on('attachmentsdialogdone', function () {
-					table.refresh();
-				});
-			}
+			uploadDialog.on('attachmentsdialogdone', function () {
+				table.refresh();
+			});
 			
 		}
 
@@ -147,27 +140,11 @@ define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./should
 				}
 			});
 
-			// again : check whether we need to use a downgraded mode
-			if (shouldDowngrade()){
-				$("#add-attachment-button").on('click', function(){
-					window.open(settings.baseURL+'/form', 'uploader', "height=400, width=450, resizable=yes");
-					
-					// we must publish the function reloadAttachments so that the
-					// window we just opened can invoke it
-					squashtm.api = squashtm.api || {};
-					squashtm.api.reloadAttachments = function(){
-						table.refresh();
-					};
-				});
-			}
-			else{
-				uploadButton.on('click', function () {
-					$("#add-attachments-dialog").attachmentsDialog('open');
-				});
-				
-				
-			}
-
+			
+			uploadButton.on('click', function () {
+				$("#add-attachments-dialog").attachmentsDialog('open');
+			});
+			
 		}
 
 

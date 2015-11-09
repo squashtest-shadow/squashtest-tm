@@ -87,26 +87,7 @@ public class AttachmentController {
 
 		return mav;
 	}
-	
-	/* ********************* IE special downgraded form ********************** */
-	
-	@RequestMapping(value="/form", method = RequestMethod.GET)
-	public String getSimpleUploadForm(Model model){
-		model.addAttribute("context", "form");
-		return "add-attachment-popup-ie.html";
-	}
-	
-	
-	// for IE - post from the downgraded form
-	@RequestMapping(value="/form", method = RequestMethod.POST)
-	public String uploadAttachmentForm(Model model, @RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
-			throws IOException {
-		List<UploadedData> nonEmpty = removeEmptyData(attachments);
-		List<UploadSummary> summaries= uploadAttachmentAsJson(nonEmpty, attachListId, locale);
-		model.addAttribute("context", "summary");
-		model.addAttribute("detail", summaries);
-		return "add-attachment-popup-ie.html";
-	}
+
 
 	// for IE (again), post from the regular popup : needs to return the response wrapped in some html
 	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces="text/html")
@@ -120,12 +101,12 @@ public class AttachmentController {
 
 	/* *********************************** upload ************************************** */
 
-	
+
 	// uploads the file themselves and build the upload summary on the fly
 	@RequestMapping(value = UPLOAD_URL, method = RequestMethod.POST, produces="application/json")
 	@ResponseBody
 	public List<UploadSummary> uploadAttachmentAsJson(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
-					throws IOException {
+			throws IOException {
 
 		List<UploadSummary> summary = new LinkedList<UploadSummary>();
 
@@ -152,7 +133,7 @@ public class AttachmentController {
 		// now we can return
 		return summary;
 	}
-		
+
 
 	// by design the last file uploaded is empty and has no name. We'll strip that from the summary.
 	private List<UploadSummary> stripEmptySummary(List<UploadSummary> summary) {

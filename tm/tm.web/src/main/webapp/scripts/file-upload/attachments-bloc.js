@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./should-downgrade-upload-dialog", "./jquery.squash.attachmentsDialog"], function($, shouldDowngrade){
+define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 	
 	function reloadAttachments(settings){
 		var container =$("#attachment-container"); 
@@ -26,8 +26,9 @@ define(["jquery", "./should-downgrade-upload-dialog", "./jquery.squash.attachmen
 		container.load(settings.baseURL+"/display");
 	}
 	
-	
-	function initRegularPopup(settings){
+
+
+	function init(settings){
 		
 		// init the dialog
 		var dialog = $("#add-attachments-dialog").attachmentsDialog({
@@ -47,43 +48,7 @@ define(["jquery", "./should-downgrade-upload-dialog", "./jquery.squash.attachmen
 	
 		$("#upload-attachment-button").on('click', function(){
 			$("#add-attachments-dialog").attachmentsDialog('open');
-		});
-		
-		
-	}
-	
-	function initDowngradedPopup(settings){
-		
-		// no attachment popup here : the downgraded upload form is downloaded from the server
-		
-		
-		// event binding now
-		$("#manage-attachment-bloc-button").on('click', function(){
-			document.location.href = settings.baseURL+"/manager?workspace="+settings.workspace;
-		});
-		
-		$("#upload-attachment-button").on('click', function(){
-			window.open(settings.baseURL+'/form', 'uploader', "height=400, width=450, resizable=yes");
-			
-			// we must publish the function reloadAttachments so that the
-			// window we just opened can invoke it
-			squashtm.api = squashtm.api || {};
-			squashtm.api.reloadAttachments = function(){
-				reloadAttachments(settings);
-			};
-		});
-	}
-	
-
-
-	function init(settings){
-		if (shouldDowngrade()){
-			initDowngradedPopup(settings);
-		}
-		else{
-			initRegularPopup(settings);
-		}
-		
+		});	
 	}
 	
 	return {
