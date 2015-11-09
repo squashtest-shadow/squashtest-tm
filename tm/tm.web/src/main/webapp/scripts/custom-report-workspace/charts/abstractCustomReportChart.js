@@ -49,6 +49,10 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       return "<div><b>"+this.model.get('title')+"</b>";
     },
 
+    getAxis : function(){
+      return this.model.get('axis');
+    },
+
     getCommonConf : function () {
       return {
         title : {
@@ -63,7 +67,27 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
     },
 
     replaceInfoListDefaultLegend : function (legends) {
-      var i18nLegends = squashtm.app.defaultInfoList; //DefaultInfoList are loaded in custom-report-worspace by default
+      var axis = this.getAxis()[0];
+      var protoLabel = axis.columnPrototype.label;
+
+      switch (protoLabel) {
+        case "TEST_CASE_NATURE":
+          return this.getI18nLegends(legends, squashtm.app.defaultInfoList);
+        case "TEST_CASE_IMPORTANCE":
+          return this.getI18nLegends(legends, squashtm.app.testCaseImportance);
+        case "TEST_CASE_STATUS":
+          return this.getI18nLegends(legends, squashtm.app.testCaseStatus);
+        case "REQUIREMENT_VERSION_CRITICALITY":
+          return this.getI18nLegends(legends, squashtm.app.requirementCriticality);
+        case "REQUIREMENT_VERSION_STATUS":
+          return this.getI18nLegends(legends, squashtm.app.requirementStatus);
+        default:
+          return legends;
+      }
+
+    },
+
+    getI18nLegends : function (legends, i18nLegends) {
       return _.map(legends,function (legend) {
         if (i18nLegends[legend]) {
           return i18nLegends[legend];

@@ -30,6 +30,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ChartType;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 
 
@@ -154,6 +155,7 @@ public class JsonChartInstance {
 	public static final class JsonAxisColumn{
 
 		private String label;
+		private JsonColumnPrototype columnPrototype;
 
 		public String getLabel() {
 			return label;
@@ -163,6 +165,14 @@ public class JsonChartInstance {
 			this.label = label;
 		}
 
+		public JsonColumnPrototype getColumnPrototype() {
+			return columnPrototype;
+		}
+
+		public void setColumnPrototype(JsonColumnPrototype columnPrototype) {
+			this.columnPrototype = columnPrototype;
+		}
+
 		public JsonAxisColumn() {
 			super();
 		}
@@ -170,8 +180,27 @@ public class JsonChartInstance {
 		public JsonAxisColumn(AxisColumn axis){
 			super();
 			this.label = axis.getLabel();
+			this.setColumnPrototype(new JsonColumnPrototype(axis.getColumn()));
 		}
 
+	}
+	
+	public static final class JsonColumnPrototype{
+		
+		private String label;
+		
+		public JsonColumnPrototype(ColumnPrototype column) {
+			this.label = column.getLabel();
+		}
+
+		public String getLabel() {
+			return label;
+		}
+
+		public void setLabel(String label) {
+			this.label = label;
+		}
+		
 	}
 
 }

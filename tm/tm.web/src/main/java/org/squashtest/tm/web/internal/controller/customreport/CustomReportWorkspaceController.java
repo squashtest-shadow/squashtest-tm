@@ -22,8 +22,10 @@ package org.squashtest.tm.web.internal.controller.customreport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,11 +44,16 @@ import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
+import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
@@ -128,8 +135,12 @@ public class CustomReportWorkspaceController {
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 		
-		//defaults lists
+		//defaults lists and enums levels
 		model.addAttribute("defaultInfoLists", getInternationalizedDefaultList(locale));
+		model.addAttribute("testCaseImportance", getI18nLevelEnum(TestCaseImportance.class,locale));
+		model.addAttribute("testCaseStatus", getI18nLevelEnum(TestCaseStatus.class,locale));
+		model.addAttribute("requirementStatus", getI18nLevelEnum(RequirementStatus.class,locale));
+		model.addAttribute("requirementCriticality", getI18nLevelEnum(RequirementCriticality.class,locale));
 		
 		return getWorkspaceViewName();
 	}
@@ -184,5 +195,15 @@ public class CustomReportWorkspaceController {
 		
 		i18nHelper.resolve(mapItems, locale);
 		return mapItems;
+	}
+	
+	private <E extends Enum<E> & Level> MessageObject getI18nLevelEnum(Class<E> clazz, Locale locale) {
+		MessageObject i18nEnums = new MessageObject();
+		EnumSet<E> levels = EnumSet.allOf(clazz);
+		for (E level : levels) {
+			i18nEnums.put(level.name(), level.getI18nKey());
+		}
+		i18nHelper.resolve(i18nEnums, locale);
+		return i18nEnums;
 	}
 }

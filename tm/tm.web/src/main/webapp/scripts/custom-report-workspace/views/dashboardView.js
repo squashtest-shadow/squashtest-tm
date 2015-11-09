@@ -42,7 +42,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			_.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid");
 			this.initializeData();
 			this.initListenerOnTree();
-      this.initListenerOnResize();
+      //NO RESIZE FOR V1
+      //this.initListenerOnResize();
 		},
 
 		events : {
@@ -119,11 +120,11 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			});
 		},
 
+
     initListenerOnResize : function () {
       var lazyInitialize = _.debounce(this.initializeData, 1000);
       var self = this;
       $(window).on('resize', function () {
-
         lazyInitialize();
       });
     },
