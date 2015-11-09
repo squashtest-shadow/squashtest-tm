@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.authentication.AuthenticationTrustResolver;
 import org.springframework.security.authentication.AuthenticationTrustResolverImpl;
@@ -38,6 +40,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.expression.WebSecurityExpressionRoot;
+import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,12 +49,15 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 /**
  * Exposes a security expression evaluator into the model and view under the "sec" name. Inspired by
  * http://forum.thymeleaf.org/Thymeleaf-and-Spring-Security-td3205099.html
- * 
+ *
  * @author Gregory Fouquet
  * @author http://forum.thymeleaf.org/Thymeleaf-and-Spring-Security-td3205099.html
- * 
+ *
  */
+@Component
 public class SecurityExpressionResolverExposerInterceptor extends HandlerInterceptorAdapter {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(SecurityExpressionResolverExposerInterceptor.class);
 
 	@Inject
 	private PermissionEvaluator permissionEvaluator;
@@ -77,6 +83,13 @@ public class SecurityExpressionResolverExposerInterceptor extends HandlerInterce
 			FilterInvocation filterInvocation = new FilterInvocation(request, response, DUMMY_CHAIN);
 
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+			if (authentication == null) {
+				LOGGER.debug("No authentication available for '{}{}'. Thymeleaf won't have access to '#sec' in view '{}'",
+					request.getServletPath(), request.getPathInfo(), modelAndView.getViewName());
+				return;
+			}
+
 			WebSecurityExpressionRoot expressionRoot = new WebSecurityExpressionRoot(authentication, filterInvocation);
 
 			expressionRoot.setTrustResolver(trustResolver);

@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.thymeleaf.processor.attr;
 
@@ -35,9 +35,9 @@ import org.thymeleaf.util.PrefixUtils;
  * Processes <code>sq:css</code> attributes. Attribute value is expected to be the unqualified name of a stylesheet
  * (e.g. <code>squash.core.css</code>). The processor reads this value and substitutes the <code>sq:css</code> attribute
  * with a <code>href</code> pointing to the stylesheet.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashCssAttrProcessor.class);
@@ -69,7 +69,7 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 	 */
 	@Override
 	protected ModificationType getModificationType(Arguments arguments, Element element, String attributeName,
-			String newAttributeName) {
+	                                               String newAttributeName) {
 		return ModificationType.SUBSTITUTION;
 	}
 
@@ -79,7 +79,7 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 	 */
 	@Override
 	protected boolean removeAttributeIfEmpty(Arguments arguments, Element element, String attributeName,
-			String newAttributeName) {
+	                                         String newAttributeName) {
 		return false;
 	}
 
@@ -105,10 +105,10 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 
 		final String cssUrlExpression = "@{" + attributeValue + "}";
 		LOGGER.debug("Stylesheet named '{}' will be resolved using the expression '{}'", attributeValue,
-				cssUrlExpression);
+			cssUrlExpression);
 
 		final Object result = StandardExpressionProcessor.processExpression(arguments, "@{/styles"
-				+ getVersionPathToken(context) + '/' + attributeValue + "}");
+			+ getVersionPathToken(context) + '/' + attributeValue + "}");
 		LOGGER.trace("Stylesheet resolved to url '{}'", result);
 
 		return (result == null ? "" : result.toString());
@@ -125,14 +125,11 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 	}
 
 	private void initSquashVersion(IContext context) {
-		if (context instanceof IWebContext) {
+		if (versionPathToken == null && context instanceof IWebContext) {
 			IWebContext webContext = (IWebContext) context;
-			String squashVersion = webContext.getServletContext().getInitParameter(
-					ServletContextParameters.SQUASH_TM_VERSION);
+			String squashVersion = webContext.getServletContext().getInitParameter(ServletContextParameters.SQUASH_TM_VERSION);
 
-			if (squashVersion != null) {
-				versionPathToken = '-' + squashVersion;
-			}
+			versionPathToken = squashVersion != null ? '-' + squashVersion : "";
 		}
 	}
 

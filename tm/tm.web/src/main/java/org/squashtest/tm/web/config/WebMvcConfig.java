@@ -35,6 +35,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver;
+import org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor;
 import org.squashtest.tm.web.internal.interceptor.openedentity.*;
 
 import javax.inject.Inject;
@@ -64,17 +65,23 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Inject
 	private MilestoneConfigResolver milestoneConfigResolver;
 
+	@Inject private SecurityExpressionResolverExposerInterceptor securityExpressionResolverExposerInterceptor;
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
+		// Log4j output enhancement
+		Log4jNestedDiagnosticContextInterceptor ndc = new Log4jNestedDiagnosticContextInterceptor();
+		ndc.setIncludeClientInfo(true);
+		registry.addWebRequestInterceptor(ndc);
+
 		// OSIV
 		OpenSessionInViewInterceptor osiv = new OpenSessionInViewInterceptor();
 		osiv.setSessionFactory(sessionFactory);
 		registry.addWebRequestInterceptor(osiv);
 
-		// Log4j output enhancement
-		Log4jNestedDiagnosticContextInterceptor ndc = new Log4jNestedDiagnosticContextInterceptor();
-		ndc.setIncludeClientInfo(true);
-		registry.addWebRequestInterceptor(ndc);
+		// #sec in thymeleaf
+		registry.addInterceptor(securityExpressionResolverExposerInterceptor)
+			.excludePathPatterns("/", "/login");
 
 		// Opened test cases handling
 		registry.addWebRequestInterceptor(new TestCaseViewInterceptor())
