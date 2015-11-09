@@ -22,12 +22,13 @@ package org.squashtest.tm.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.cache.ehcache.EhCacheFactoryBean;
 import org.springframework.cache.ehcache.EhCacheManagerFactoryBean;
 import org.springframework.context.annotation.*;
-import org.springframework.core.Ordered;
 import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.core.Ordered;
 import org.springframework.security.access.AccessDecisionManager;
 import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
@@ -37,7 +38,6 @@ import org.springframework.security.acls.jdbc.BasicLookupStrategy;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -52,12 +52,15 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxyFactory;
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
+import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
 import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.sql.DataSource;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Partial Spring Sec config. should be with the rest of spring sec's config now that we dont have osgi bundles segregation
@@ -132,6 +135,9 @@ public class SecurityConfig {
 
     @Inject private JdbcManageableAclService aclService;
 
+	@Autowired(required = false)
+	private Collection<ExtraPermissionEvaluator> extraPermissionEvaluators = Collections.emptyList();
+
 	@Bean
 	public GrantedAuthority aclAdminAuthority() {
 		return new SimpleGrantedAuthority("ROLE_ADMIN");
@@ -170,6 +176,7 @@ public class SecurityConfig {
 		strategy.setLookupObjectIdentitiesWhereClause("(oid.IDENTITY = ? and ocl.CLASSNAME = ?)");
 		strategy.setLookupPrimaryKeysWhereClause("(oid.ID = ?)");
 		strategy.setOrderByClause(") order by oid.IDENTITY asc, gp.PERMISSION_ORDER asc");
+		strategy.setPermissionFactory(permissionFactory);
 
 		return strategy;
 	}
@@ -321,9 +328,9 @@ public class SecurityConfig {
 		return new EhCacheManagerFactoryBean();
 	}
 
-	@Bean(name = "squashtest.core.security.PermissionEvaluator")
+	@Bean
 	public AffirmativeBasedCompositePermissionEvaluator permissionEvaluator() {
-		AffirmativeBasedCompositePermissionEvaluator evaluator = new AffirmativeBasedCompositePermissionEvaluator(aclService);
+		AffirmativeBasedCompositePermissionEvaluator evaluator = new AffirmativeBasedCompositePermissionEvaluator(aclService, extraPermissionEvaluators);
 		evaluator.setObjectIdentityRetrievalStrategy(objectIdentityRetrievalStrategy);
 		evaluator.setObjectIdentityGenerator(objectIdentityGenerator);
 		evaluator.setPermissionFactory(permissionFactory);

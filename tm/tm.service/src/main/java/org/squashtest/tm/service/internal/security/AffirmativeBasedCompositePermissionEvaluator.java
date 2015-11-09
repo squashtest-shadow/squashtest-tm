@@ -21,10 +21,7 @@
 package org.squashtest.tm.service.internal.security;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +29,7 @@ import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.acls.AclPermissionEvaluator;
 import org.springframework.security.acls.model.AclService;
 import org.springframework.security.core.Authentication;
+import org.springframework.util.CollectionUtils;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
 
 
@@ -50,10 +48,19 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 
 	// Note : I choose not to synchronize this collection because chances of things going haywire
 	// are very slim, and could happen only at boot time.
-	private Collection<ExtraPermissionEvaluator> evaluators = new ArrayList<>();
+	// NOTE while nosgi, ExtraPermissionEvaluator not implemented anywhere, could be removable over-engineered stuff
+	private Collection<ExtraPermissionEvaluator> evaluators = Collections.emptyList();
 
-	public AffirmativeBasedCompositePermissionEvaluator(AclService aclService) {
+	public AffirmativeBasedCompositePermissionEvaluator(AclService aclService, Collection<ExtraPermissionEvaluator> delegates) {
 		super(aclService);
+
+		if (!CollectionUtils.isEmpty(delegates)) {
+			evaluators = delegates;
+
+			for (ExtraPermissionEvaluator evaluator : delegates) {
+					LOGGER.info("Registering permission evaluator of class {}", evaluator.getClass());
+			}
+		}
 	}
 
 	@Override
@@ -94,36 +101,5 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 
 	}
 
-
-	/**
-	 * <p>Register other PermissionEvaluators for composition.</p>
-	 * @param evaluator
-	 * @param properties
-	 */
-	public void registerPermissionEvaluator(ExtraPermissionEvaluator evaluator, Map properties ){
-
-		if (evaluator == null){
-			return;
-		}
-
-		if (LOGGER.isInfoEnabled()){
-			LOGGER.info("Registering permission evaluator of class "+evaluator.getClass());
-		}
-
-		evaluators.add(evaluator);
-	}
-
-
-	public void unregisterPermissionEvaluator(ExtraPermissionEvaluator evaluator, Map properties){
-		if (evaluator == null){
-			return;
-		}
-
-		if (LOGGER.isInfoEnabled()){
-			LOGGER.info("Unregistering permission evaluator of class "+evaluator.getClass());
-		}
-
-		evaluators.remove(evaluator);
-	}
 
 }
