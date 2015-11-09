@@ -42,7 +42,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 			var series = this.getSeries();
 			var legends = this.getLegends();
 			legends = _.flatten(legends);
-
+      legends = this.replaceInfoListDefaultLegend(legends);
 			var jqplotSeries = [_.zip(legends,series)];
 
 			this.draw(jqplotSeries, conf);

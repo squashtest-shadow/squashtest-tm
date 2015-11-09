@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
-import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 
 /**

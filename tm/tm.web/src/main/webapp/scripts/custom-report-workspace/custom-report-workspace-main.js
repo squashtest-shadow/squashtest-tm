@@ -42,8 +42,6 @@ define(['tree', './cr-treemenu', './init-actions',
 		}
 	}
 
-
-
 	function init(settings){
 		initResizer();
     initTabbedPane();

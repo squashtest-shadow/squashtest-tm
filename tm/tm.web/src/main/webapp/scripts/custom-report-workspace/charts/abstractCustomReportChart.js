@@ -62,6 +62,16 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       };
     },
 
+    replaceInfoListDefaultLegend : function (legends) {
+      var i18nLegends = squashtm.app.defaultInfoList; //DefaultInfoList are loaded in custom-report-worspace by default
+      return _.map(legends,function (legend) {
+        if (i18nLegends[legend]) {
+          return i18nLegends[legend];
+        }
+        return legend;
+      });
+    },
+
 
 		// ************************* core functions *********************
 

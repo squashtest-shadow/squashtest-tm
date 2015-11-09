@@ -39,7 +39,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     newChartSizeY :1,
 
 		initialize : function(){
-			_.bindAll(this, "render","initGrid","initListenerOnTree","dropChartInGrid");
+			_.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid");
 			this.initializeData();
 			this.initListenerOnTree();
       this.initListenerOnResize();
@@ -51,6 +51,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
 		render : function(){
 			console.log("RENDER DASHBOARD");
+      this.$el.html("");
 			var source = $(this.tpl).html();
 			var template = Handlebars.compile(source);
       Handlebars.registerPartial("chart", $(this.tplChart).html());
@@ -119,8 +120,17 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		},
 
     initListenerOnResize : function () {
-      // var wreqr = squashtm.app.wreqr;
-      // var self = this;
+      var lazyInitialize = _.debounce(this.initializeData, 1000);
+      var self = this;
+      $(window).on('resize', function () {
+
+        lazyInitialize();
+      });
+    },
+
+    reload : function () {
+      this.gridster.destroy();
+      this.initializeData();
     },
 
     //create a new customReportChartBinding in database and add it to gridster in call back

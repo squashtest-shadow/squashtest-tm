@@ -22,9 +22,11 @@ package org.squashtest.tm.web.internal.controller.customreport;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -41,11 +43,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
+import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.i18n.MessageObject;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -59,9 +66,6 @@ public class CustomReportWorkspaceController {
 	private final String cookieDelimiter = "#";
 	
 	@Inject
-	protected InternationalizationHelper i18nHelper;
-
-	@Inject
 	@Named("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
 	private CustomReportWorkspaceService workspaceService;
 	
@@ -71,6 +75,12 @@ public class CustomReportWorkspaceController {
 	@Inject
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
+	
+	@Inject
+	private InfoListFinderService infoListFinder;
+	
+	@Inject
+	protected InternationalizationHelper i18nHelper;
 	
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
@@ -118,6 +128,9 @@ public class CustomReportWorkspaceController {
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
 		
+		//defaults lists
+		model.addAttribute("defaultInfoLists", getInternationalizedDefaultList(locale));
+		
 		return getWorkspaceViewName();
 	}
 
@@ -152,5 +165,24 @@ public class CustomReportWorkspaceController {
 			nodeIdToOpen.add(convertCookieId(value));
 		}
 		return nodeIdToOpen;
+	}
+	
+	private MessageObject getInternationalizedDefaultList(Locale locale){
+		//default infolist values
+		Map<String, InfoList> listMap = new HashMap<String, InfoList>();
+		listMap.put("REQUIREMENT_VERSION_CATEGORY",infoListFinder.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode()));
+		listMap.put("TEST_CASE_NATURE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode()));
+		listMap.put("TEST_CASE_TYPE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode()));
+		
+		MessageObject mapItems = new MessageObject();
+		for (InfoList infoList : listMap.values()) {
+			List<InfoListItem> infoListItems = infoList.getItems();
+			for (InfoListItem infoListItem : infoListItems) {
+				mapItems.put(infoListItem.getLabel(), infoListItem.getLabel());
+			}
+		}
+		
+		i18nHelper.resolve(mapItems, locale);
+		return mapItems;
 	}
 }
