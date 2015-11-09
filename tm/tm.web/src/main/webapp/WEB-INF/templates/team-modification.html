@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -82,7 +82,7 @@
 <script data-main="../../scripts/team-modification.js"
 	th:attr="data-main=@{/scripts/team-modification.js}"
 	src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
-	
+
 </script>
 
 </head>
@@ -172,7 +172,7 @@
                               </button>
                               <button id="remove-permission-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemovePermission}">
                                 <span class="ui-icon ui-icon-minus squared-icons">-</span>
-                              </button>                       
+                              </button>
                             </div>
                           </div>
 							<div id="project-permission-panel" class="tg-body">
@@ -181,13 +181,13 @@
 									<thead>
 										<tr>
 											<th th:attr="data-def='select, map=project-index'">#</th>
-											
+
 											<th	th:attr="data-def='sortable, map=project-name, filter, link='+@{/administration/projects/{project-id}/info}"
 												th:text="#{projects.label}">user</th>
-												
+
 											<th	th:attr="data-def='sortable, map=empty-permission-list-holder, sClass=permission-select'"
 												th:text="#{project.permission.table.profile.label}">user</th>
-												
+
 											<th	th:attr="data-def='unbind-button, map=empty-delete-holder'"></th>
 										</tr>
 									</thead>
@@ -202,12 +202,12 @@
 											th:text="#{'user.project-rights.'+${permission.simpleName}+'.label'}">
 										</option>
 									</select>
-								</div> 
+								</div>
 							</div>
 						</div>
-						
+
 				<!-- ========================================= Members ============================================= -->
-				
+
 						<div class="sq-tg expand">
                             <div class="tg-head">
                               <h3 th:text="#{label.Members}"></h3>
@@ -217,7 +217,7 @@
                                 </button>
                                 <button id="remove-members-button" class="sq-icon-btn btn-sm" type="submit" th:title="#{title.RemoveMember}" >
                                   <span class="ui-icon ui-icon-minus squared-icons">-</span>
-                                </button>                              
+                                </button>
                               </div>
                             </div>
 
@@ -234,14 +234,14 @@
 											<th	th:attr="data-def='unbind-button=#remove-members-dialog, map=empty-delete-holder'"></th>
 										</tr>
 									</thead>
-									<tbody>	
+									<tbody>
 <!-- TODO make this prefilled but beware for [Issue 2281] -->
 									</tbody>
 								</table>
 							</div>
 						</div>
 
-				
+
 
 						<div id="rename-team-popup" class="not-displayed popup-dialog" th:title="#{title.renameTeam}">
 							<label for="rename-team-input" th:text="#{ label.Rename }">Rename</label>
@@ -249,7 +249,7 @@
 								size="50" /> <br /> <span class="error-message name-error"></span>
                             <div class="popup-dialog-buttonpane">
                               <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm" />
-                              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>                            
+                              <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
                             </div>
 						</div>
 
@@ -276,7 +276,7 @@
 
 
 						<div id="remove-members-dialog" class="popup-dialog not-displayed"	th:title="#{title.RemoveMember}">
-													
+
 							<div th:text="#{message.team.remove.user}">roundhouse-kick
 								selected users to oblivion ?</div>
 							<div th:text="#{message.permissions.confirm}"></div>
@@ -291,7 +291,7 @@
 							th:title="#{popup.title.info}" title="Info">
 							<span th:text="#{message.NoMemberSelected}"></span>
 						</div>
-						
+
 						<div id="no-selected-permissions" class="popup-dialog not-displayed"
 							th:title="#{popup.title.info}" title="Info">
 							<span th:text="#{message.NoMemberSelected}"></span>
@@ -301,7 +301,7 @@
 							th:title="#{popup.title.info}" title="Info">
 							<span th:text="#{message.InvalidMemberSelected}"></span>
 						</div>
-								
+
 						<div id="add-member-dialog" class="not-displayed popup-dialog"
 							title="Add Member" th:title="#{title.AddMember}">
 							<div class="main">
@@ -337,7 +337,7 @@
 		<div th:text="#{message.permissions.remove.permission}"></div>
 		<div th:text="#{message.permissions.confirm}"></div>
 		<div class="popup-dialog-buttonpane">
-			<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" /> 
+			<input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
 			<input class="cancel" type="button"	value="cancel" th:value="#{label.Cancel}" />
 		</div>
 	</div>
@@ -354,7 +354,7 @@
 								th:text="${myproject.name}">Nom</option>
 					</select></td>
 				</tr>
-	
+
 				<tr>
 					<td><label th:text="#{label.Permission}"></label></td>
 					<td><select id="permission-input">
@@ -367,15 +367,15 @@
 				</tr>
 			</table>
 		</div>
-		
+
 		<div class="wait" th:include="fragments-utils/static-panels :: small-please-wait" >
               zzz
         </div>
-			
+
 		<div class="no-more-projects"
 			th:text="#{message.AllProjectsAlreadyLinkedToUser}">no more teams to bind
 		</div>
-		
+
 		<div class="popup-dialog-buttonpane">
 			<input class="confirm" type="button" value="confirm"
 				th:value="#{label.Confirm}" /> <input class="cancel" type="button"

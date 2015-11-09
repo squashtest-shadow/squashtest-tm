@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{title.customField}">Espace detail champ personnalisé</title>
@@ -38,7 +38,7 @@
 		locale : /*[[#{squashtm.locale}]]*/,
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		cfMod : {
-			noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-", 
+			noDateLabel: /*[[ #{squashtm.nodata} ]]*/ "-",
 			dateFormat: /*[[ #{squashtm.dateformatShort.datepicker} ]]*/ "dd/mm/yy",
 			customFieldUrl : /*[[ @{'/custom-fields/'+${customField.id}} ]]*/"http://localhost:8080/custom-fields/1",
 			richEditPlaceHolder : /*[[#{rich-edit.placeholder}]]*/'(Click to edit ...)',
@@ -70,7 +70,7 @@
 				deleteConfirmMessageFirst : /*[[ #{message.customFieldOption.remove.first} ]]*/'Remove ?',
 				deleteConfirmMessageSecond : /*[[ #{message.customFieldOption.remove.second} ]]*/'Remove ?',
 				deleteConfirmMessageThird : /*[[ #{message.customFieldOption.remove.third} ]]*/'Remove ?',
-				deleteConfirmMessageFourth : /*[[ #{message.customFieldOption.remove.fourth} ]]*/'Remove ?',			
+				deleteConfirmMessageFourth : /*[[ #{message.customFieldOption.remove.fourth} ]]*/'Remove ?',
 				renameCufOptionTitle : /*[[#{title.renameCufOption}]]*/'Rename custom field option',
 				changeOptionCodeTitle : /*[[#{title.changeCufOptionCode}]]*/'Change custom field option code',
 				addCufOptionTitle : /*[[#{title.addCufOption}]]*/'Add custom field option',
@@ -86,7 +86,7 @@
 <script data-main="../../scripts/custom-field-modification.js"
   th:attr="data-main=@{/scripts/custom-field-modification.js}" src="../../scripts/require.js"
   th:src="@{/scripts/require-min.js}">
-	
+
 </script>
 
 </head>
@@ -141,7 +141,7 @@
               </div>
             </div>
             <br /> <br />
-            
+
             <div id="cuf-info-panel" class="information-panel sq-tg expand">
               <div class="tg-head">
                 <h3 th:text="#{label.CUFInformation}"></h3>
@@ -174,29 +174,29 @@
                   </div>
                   <div th:unless="${customField.inputType.name() == 'DROPDOWN_LIST'}" class="display-table-row">
                     <label for="cuf-default-value" th:text="#{label.defaultValue}" class="display-table-cell v-centered " >Default value</label>
-                    
+
                     <div th:if="${customField.inputType.name() == 'PLAIN_TEXT'}" id="cuf-default-value"
                       class="display-table-cell" th:text="${customField.defaultValue}">false</div>
-                      
+
                     <div th:if="${customField.inputType.name() == 'RICH_TEXT'}" id="cuf-default-value"
-                      class="display-table-cell" th:utext="${customField.defaultValue}">false</div>                      
-                      
+                      class="display-table-cell" th:utext="${customField.defaultValue}">false</div>
+
                     <div th:if="${customField.inputType.name() == 'CHECKBOX'}" id="cuf-default-value"
                       class="display-table-cell" th:text="#{'label.'+${customField.defaultValue}}">false</div>
-                    
+
                      <div th:if="${customField.inputType.name() == 'DATE_PICKER'}"
                       class="display-table-cell" >
-                     <span  id="cuf-default-value" th:text="${customField.defaultValueAsDate}? ${#dates.format(customField.defaultValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>	
+                     <span  id="cuf-default-value" th:text="${customField.defaultValueAsDate}? ${#dates.format(customField.defaultValueAsDate,'__#{squashtm.dateformatShort}__')} : #{squashtm.nodata}" data-locale="fr" th:attr="data-locale=#{squashtm.locale}">01-02-2012</span>
                       </div>
-              
+
                      <div th:if="${customField.inputType.name() == 'TAG'}"
                      class="display-table-cell" style="line-height:normal">
                         <ul id="cuf-default-value" style="margin:0">
-                          <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue, 
+                          <li th:text="${cfTag}" th:each="cfTag , iterStat: ${#strings.listSplit(customField.defaultValue,
                                                                             T(org.squashtest.tm.domain.customfield.MultiSelectField).SEPARATOR.charAt(0))}" ></li>
                         </ul>
                      </div>
-                    
+
                     <span class="error-message  defaultValue-error"></span>
                   </div>
                 </div>
@@ -314,7 +314,7 @@
     </table>
     <div class="popup-dialog-buttonpane">
    	  <input class="confirm" type="button" th:value="#{label.addAnother}" value="add another" data-def="mainbtn, evt=addanother"/>
-      <input class="confirm" type="button" th:value="#{label.Add}" value="add" data-def="mainbtn, evt=confirm"/> 
+      <input class="confirm" type="button" th:value="#{label.Add}" value="add" data-def="mainbtn, evt=confirm"/>
       <input class="cancel" type="button"  th:value="#{label.Close}" value="cancel" data-def="mainbtn, evt=cancel"/>
     </div>
   </div>
@@ -331,8 +331,8 @@
         <td class="controls">
           <input id="rename-cuf-option-label" name="rename-cuf-option-label" type="text" value="" maxlength="255"
             size="50" /> <span class="help-inline">&nbsp;</span>
-             <br /> <span class="error-message name-error"></span> 
-             <span id="nospace" class="error-message name-error"></span> 
+             <br /> <span class="error-message name-error"></span>
+             <span id="nospace" class="error-message name-error"></span>
         </td>
       </tr>
     </table>
@@ -360,7 +360,7 @@
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>
         <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel" />
-      </div>    
+      </div>
   </div>
 </body>
 </html>

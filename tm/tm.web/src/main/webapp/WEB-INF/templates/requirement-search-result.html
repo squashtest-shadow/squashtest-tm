@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="#{tabbed_panel.search.pane.result.label}">Test Case Result</title>
@@ -50,7 +50,7 @@
       title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-    }, 
+    },
     menuBarConf: {
         boxSelector: "#menu-toggle-filter-ckbox",
         url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
@@ -58,7 +58,7 @@
         enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
         disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
         enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-      }, 
+      },
      requirementSearchResultConf: {
     	 messages : {
     		 nonEditableTooltip : /*[[ #{tooltips.nonEditable}]]*/ 'non editable'
@@ -80,7 +80,7 @@
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{workspace.requirement.title}">Espace exigence</h2> 
+        <h2 th:text="#{workspace.requirement.title}">Espace exigence</h2>
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -93,12 +93,12 @@
     </div>
     <div id="sub-page" class="sub-page" >
 			<div id="sub-page-header" class="sub-page-header">
-			
+
 				<div id="sub-page-title" class="sub-page-title">
-					<h2 th:if="!${associateResult}" th:text="#{title.search.requirement.result}">Recherche des exigences</h2> 
-					<h2 th:if="${associateResult}" th:text="#{title.search.requirement.result.assoc}">Recherche des exigences</h2> 
+					<h2 th:if="!${associateResult}" th:text="#{title.search.requirement.result}">Recherche des exigences</h2>
+					<h2 th:if="${associateResult}" th:text="#{title.search.requirement.result.assoc}">Recherche des exigences</h2>
 				</div>
-				
+
 				<div id="sub-page-buttons" class="sub-page-buttons">
 				  	<input type="button" th:if="${associateResult}"
 							th:value="#{label.AssociateSelection}" id="associate-selection-button"
@@ -108,59 +108,59 @@
 							th:value="#{label.AssociateAll}" id="associate-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
-                            onclick="document.location.href=squashtm.workspace.backurl"/>	
+				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"
+                            onclick="document.location.href=squashtm.workspace.backurl"/>
 				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"
-                            onclick="document.location.href=squashtm.workspace.backurl"/>		
+                            onclick="document.location.href=squashtm.workspace.backurl"/>
 				</div>
-				
+
 				<div class="unsnap"></div>
 			</div>
-			
+
 			<div id="sub-page-content" class="sub-page-content">
     <div class="fragment-body-without-upper-margin" id="requirement-search-results">
-   
+
    <div id="search-toolbar" class="toolbar-class toolbar ui-corner-all">
 			<div class="left-buttons">
-			<input type="button" 
+			<input type="button"
 							th:value="#{label.SelectAllForSelection}" id="select-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-			<input type="button" 
+			<input type="button"
 							th:value="#{label.DeselectAll}" id="deselect-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-							
+
 			</div>
 						<input type="button" th:value="#{label.ModifySearch}"
 							id="modify-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 					
+							role="button" aria-disabled="false" />
 						<input type="button" th:value="#{label.NewSearch}"
 							id="new-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 						
+							role="button" aria-disabled="false" />
 						<input type="button" th:if="!${associateResult}" th:value="#{label.Modify}"
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 
+							role="button" aria-disabled="false" />
 						   <input type="button" th:if="!${associateResult} and ${application.milestoneFeatureEnabled} and  not ${isMilestoneMode} and (${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})" th:value="#{label.ModifyMilestone}" id="modify-search-result-milestone-button"
               class="button ui-button ui-widget ui-state-default ui-corner-all" role="button" aria-disabled="false" th:title ="#{label.search.modify-milestone.req}"/>
-						
-						
+
+
 						<input type="button" th:if="!${associateResult}"
 							th:value="#{label.Export}" id="export-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-						
+
 
 					<div class="unsnap"></div>
 				</div>
-				
+
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
 				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
 				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
-		
+
 				<div id="search-results">
 					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="requirement-search-result-table"
@@ -180,13 +180,13 @@
 										th:text="#{requirement.criticality.label}">requirement criticality</th>
 									<th th:attr="data-def='map=requirement-category'"
 										th:text="#{requirement.category.label}">requirement category</th>
-									
+
 									<th th:attr="data-def='map=requirement-status'"
 										th:text="#{label.Status}">requirement status</th>
 									<th th:attr="data-def='map=requirement-milestone-nb'  + (${(not milestoneColVisible)} ?',invisible':'')"
-										th:text="#{label.milestoneNb}" th:title="#{label.long.numberOfAssociatedMilestones}">milestone nb</th>				
+										th:text="#{label.milestoneNb}" th:title="#{label.long.numberOfAssociatedMilestones}">milestone nb</th>
 									<th th:attr="data-def='map=requirement-version'"
-										th:text="#{label.version}">requirement version</th>										
+										th:text="#{label.version}">requirement version</th>
 									<th th:attr="data-def='map=requirement-version-nb'"
 										th:text="#{label.numberOfVersions}" th:title="#{label.numberOfVersions.info}">nb of
 										versions</th>
@@ -200,8 +200,8 @@
 										th:text="#{label.modifiedBy}">last modified by</th>
 									<th th:attr="data-def='map=empty-openinterface2-holder'"></th>
 									<th th:if="!${associateResult}" th:attr="data-def='map=empty-opentree-holder'"></th>
-					
-								
+
+
 								</tr>
 							</thead>
 							<tbody>
@@ -211,14 +211,14 @@
 				</div>
 			</div>
 
-					
+
       	<div class="bind-milestone-dialog popup-dialog not-displayed" th:title="#{title.bindMilestonesOrNot}">
-            <div data-def="state=selection">          
-                <div>            
-                <span class="red-warning-message" id="warning-mass-modif" ></span>            
+            <div data-def="state=selection">
+                <div>
+                <span class="red-warning-message" id="warning-mass-modif" ></span>
               </div>
                    <br />
-                   
+
               <table class="bind-milestone-dialog-table" data-def="filter, pre-sort=3-asc">
                 <thead>
                   <th data-def="sClass=bind-milestone-dialog-check, map=checkbox"></th>
@@ -228,38 +228,38 @@
                   <th data-def="map=description, sortable" th:text="#{label.Description}">description</th>
                 </thead>
                 <tbody>
-        
+
                 </tbody>
               </table>
-            
+
               <ul style="list-style-type: none;">
                 <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectall"    th:text="#{label.selectAllForSelection}">select all</span></li>
                 <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-selectnone"   th:text="#{label.selectNoneForSelection}">select none</span></li>
                 <li class="clickable-item extra-small-margin-top"><span class="bind-milestone-dialog-invertselect" th:text="#{label.invertSelect}">invert selection</span></li>
-              </ul>       
+              </ul>
             </div>
-            
-            
+
+
             <div data-def="state=confirm" class="centered std-padding">
               <span th:text="#{message.WarningMassMilestoneModif.requirements}">WARNING : YOU'RE TILTING THE AXIS OF EARTH ROTATION. THIS COULD INDUCE LONGER WINTERS AND HORNS MAY GROW IN YOUR BACK. PROCEED ?</span>
             </div>
-      
-      
+
+
             <div class="popup-dialog-buttonpane">
               <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=selection, state=selection, mainbtn=selection" th:value="#{label.Confirm}"/>
               <input type="button" class="bind-milestone-dialog-confirm" data-def="evt=confirm, state=confirm, mainbtn=confirm" th:value="#{label.Confirm}"/>
               <input type="button" class="bind-milestone-dialog-cancel"  data-def="evt=cancel, mainbtn=default" value="cancel"  th:value="#{label.Cancel}"  />
             </div>
-            
-         </div>		
-		
+
+         </div>
+
 			<div id="modify-search-result-dialog"
 				class="not-displayed popup-dialog" th:title="#{label.Modify}">
 				<div class="main">
                     <div id="modify-search-result-dialog-project-conf-warning"
-                         class="not-displayed" 
+                         class="not-displayed"
                          th:text="#{message.search.modify.differentInfolists}">
-                         
+
                       Warning : hey, something's wrong !
                     </div>
 					<table id="modify-search-result-dialog-table">

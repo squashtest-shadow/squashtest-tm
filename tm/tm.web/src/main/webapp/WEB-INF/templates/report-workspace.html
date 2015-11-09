@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title th:text="#{workspace.report.title}">Espace rapports</title>
@@ -41,7 +41,7 @@
 			menuBarConf: {
 	    	},
 			reportWorkspaceConf: {
-				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+				expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
 				collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
 			}
     	};
@@ -49,7 +49,7 @@
     </script>
     <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
     <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
-      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>      
+      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 </head>
 <body>
 	<div id="navigation" th:include="navbar.frag :: navbar('report')">
@@ -59,7 +59,7 @@
 	<div id="workspace">
 		<div id="workspace-title">
 			<div class="snap-left">
-				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>
 			</div>
 			<div class="snap-right">
  				<div class="main-menubar unstyled" th:include="menubar.frag :: menubar">
@@ -70,7 +70,7 @@
         </div>
 			</div>
 		</div>
-		
+
 			<div id="outer-category-frame " class="left-frame">
 				<div th:each="cat : ${categories}" th:id="${#ids.seq('left-panel')}" class="report-category sq-tg expand">
                   <div class="tg-head">
@@ -78,10 +78,10 @@
                     <div class="tg-tollbar"></div>
                   </div>
                     <div class="tg-body">
-        				<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}" 
+        				<div th:each="rpt : ${reports.get(cat)}" th:id="${#ids.seq('report-item')}"
         					data-href="sample-report/0" th:attr="data-href=@{'/reports/' + ${rpt.namespace} + '/' + ${rpt.index} + '/panel'}"
         					class="report-item">
-        					<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div> 
+        					<div class="report-item-icon" th:classappend="${rpt.type.iconClass}"></div>
         					<div class="report-item-text">
         							<strong class="report-item-name">
         								<span th:text="${rpt.label}">Sample report</span>
@@ -93,8 +93,8 @@
         				</div>
                     </div>
 				</div>
-			</div> 
- 		
+			</div>
+
 		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="body">
 		</div>
 	</div>

@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <!-- common head -->
@@ -34,14 +34,14 @@
   <div th:remove="all">
     <!--  if want to use it for test steps too, use __${requirementVerifier.type}__
 	parameters are :
-		
+
 		linkable : boolean that says whether user has link right on requirementVerifier entity
 		requirementVerifier : a requirement verifier entity
 		container : if of dom container that will hold the table events
 
  -->
   </div>
-  
+
   <div id="verified-requirements-bloc-frag" th:fragment="verified-requirements-bloc">
     <script type="text/javascript" th:inline="javascript">
 			if (!squashtm) {
@@ -49,19 +49,19 @@
 			}
 			if (!squashtm.app) {
 				squashtm.app = {
-					locale : /*[[#{squashtm.locale}]]*/,		
+					locale : /*[[#{squashtm.locale}]]*/,
 					contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 				};
 			}
 			squashtm.app.verifiedRequirementsBlocSettings = {
-				linkable : /*[[ ${linkable} ]]*/ true, 
+				linkable : /*[[ ${linkable} ]]*/ true,
 				containerId : /*[[ ${containerId} ]]*/ "verified-requirements-bloc-frag",
 				url : /*[[ @{/test-cases/__${requirementVerifier.verifier.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-cases/1/verified-requirements' ,
 				stepUrl : /*[[ @{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements' ,
 			};
 			squashtm.app.verifiedRequirementsTableSettings = {
 					containerId : /*[[ ${containerId} ]]*/ "verified-requirements-bloc-frag",
-					linkable : /*[[ ${linkable} ]]*/ true, 
+					linkable : /*[[ ${linkable} ]]*/ true,
 					url : /*[[ @{/test-cases/__${requirementVerifier.verifier.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-cases/1/verified-requirements' ,
 					stepUrl : /*[[ @{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions} ]]*/'http://localhost:8080/squash/test-steps/1/verified-requirements',
 					messages : {
@@ -75,9 +75,9 @@
 			require([ "common" ], function(common) {
 			require([ "jquery",  "domReady","./verified-requirements/TestStepVerifiedRequirementsPanel" ], function($, domReady, TestStepVerifiedRequirementsPanel) {
 				domReady(function() {
-				
+
 					new TestStepVerifiedRequirementsPanel();
-					
+
 					});
 				});
 			});
@@ -98,7 +98,7 @@
             th:value="#{label.removeRequirementsAssociation.test-steps}" value="Remove from step" class="button" />
         </div>
       </div>
-      <div id="verified-requirements-panel" 
+      <div id="verified-requirements-panel"
         th:attr="data-init-open=${! requirementVerifier.verifier.verifiedRequirementVersions.empty}" class="tg-body">
         <table id="verified-requirements-table"
           th:attr="data-def='pre-filled, datakeys-id=entity-id, ajaxsource='+@{/test-steps/__${requirementVerifier.verifyingStep.id}__/verified-requirement-versions/}">

@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{label.testAutomationServersList}">Liste des serveurs d'exécution automatisée</title>
@@ -49,7 +49,7 @@
 			indicator : '<div class="processing-indicator"/>'
 		},
 		messages: {
-			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
+			"message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank",
 		},
 	};
 </script>
@@ -57,7 +57,7 @@
 <script data-main="../../scripts/test-automation-servers-manager.js"
   th:attr="data-main=@{/scripts/test-automation-servers-manager.js}" src="../../scripts/require.js"
   th:src="@{/scripts/require-min.js}">
-	
+
 </script>
 </head>
 <body>
@@ -91,13 +91,13 @@
 
       <div id="sub-page-content" class="sub-page-content">
         <div class="fragment-body unstyled">
-          <div id="test-automation-server-table-pane">       
-            <div class="toolbar">  			
-				<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}" 
+          <div id="test-automation-server-table-pane">
+            <div class="toolbar">
+				<button class="snap-right sq-btn" type="button" value="Delete a test automation server" th:value="#{label.testAutomationServer.delete}"
 	           	th:title="#{label.testAutomationServer.delete}"   id="delete-test-automation-server">
 				<span class="ui-icon ui-icon-trash">-</span><span th:text="#{label.Delete}"/>
 				</button>
-	            <button class="snap-right sq-btn" type="button" value="Add a test automation server" th:value="#{label.testAutomationServer.add}" 
+	            <button class="snap-right sq-btn" type="button" value="Add a test automation server" th:value="#{label.testAutomationServer.add}"
 	           	th:title="#{label.testAutomationServer.add}"   id="add-test-automation-server">
 				<span class="ui-icon ui-icon-plus">+</span><span th:text="#{label.Add}"/>
 				</button>
@@ -218,7 +218,7 @@
           <!-- ==================== remove popup ==================== -->
           <div id="remove-test-automation-server-confirm-dialog" class="popup-dialog not-displayed"
             th:title="#{title.removeTestAutomationServer}" title="info">
-            
+
             <div class="display-table-row">
 	            <div class="display-table-cell warning-cell">
 	                <div class="generic-error-signal"></div>

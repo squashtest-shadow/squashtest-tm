@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -39,11 +39,11 @@
 <link rel="shortcut icon" type="image/x-icon" media="all"
 	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
 	th:href="@{/images/favicon.ico}" />
-	
-	
+
+
 <script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"/>
 
-	
+
 <!-- /common head -->
 <script data-main="../../scripts/print.js"
 	th:attr="data-main=@{/scripts/print.js}" src="../../scripts/require.js"
@@ -118,7 +118,7 @@
 					<label class="display-table-cell"
 						for="requirement-version-category"
 						th:text="#{ requirement.category.combo.label }">Category</label>
-					
+
                         <div class="display-table-cell" id="requirement-version-category"
                         th:text="${(catLabel != null) ? catLabel : requirementVersion.category.label}">1</div>
 				</div>
@@ -224,7 +224,7 @@
 				</tbody>
 			</table>
 		</div>
- 		<!-- ===========================================HISTORY ===================================================--> 
+ 		<!-- ===========================================HISTORY ===================================================-->
 		<div id="history-tab" class="tab">
 			<h3 th:text="#{title.EditHistory}">Historique des modifications</h3>
 			<table id="requirement-audit-trail-table"  class="greystyle-table">

@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -55,11 +55,11 @@
   		},
   		searchFormModel : /*[[ ${formModel} ]]*/ {}
   	};
-  	
+
   	// copy the project metadata where our modules expect them to be
   	squashtm.workspace = squashtm.workspace || {};
   	squashtm.workspace.projects = squashtm.app.searchFormModel.metadata.projects;
-  	
+
   </script>
   <!-- common head -->
   <link rel="stylesheet" type="text/css" media="all"
@@ -78,7 +78,7 @@
   <link rel="stylesheet" type="text/css" media="all"
   	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.subpageoverride.css"
   	sq:css="squash.subpage.override.css" />
-  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  	
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
   <script data-main="../../scripts/advanced-search-input.js"
     th:attr="data-main=@{/scripts/advanced-search-input.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">

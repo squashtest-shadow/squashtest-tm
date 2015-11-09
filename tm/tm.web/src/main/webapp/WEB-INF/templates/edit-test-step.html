@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{workspace.test-case.title}">Espace cas de test</title>
@@ -43,7 +43,7 @@
 			writable : /*[[ ${writable} ]]*/true,
 			localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
 			cufDefinitions : /*[[${cufDefinitions}]]*/[],
-			
+
 		},
 		menuBarConf: {
     	}
@@ -52,7 +52,7 @@
 <script data-main="../../scripts/edit-test-step.js"
   th:attr="data-main=@{/scripts/edit-test-step.js}" src="../../scripts/require.js"
   th:src="@{/scripts/require-min.js}">
-	
+
 </script>
 <link rel="stylesheet" type="text/css" media="all"
   href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
@@ -99,7 +99,7 @@
 
       <div id="sub-page-content" class="sub-page-content">
 
-        <div id="information-content"> 
+        <div id="information-content">
           <div id="test-step-name-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
             <div style="float: left; height: 3em">
               <h2>
@@ -115,16 +115,16 @@
           </div>
 
           <div class="fragment-body unstyled">
-            
-            
+
+
           <div class="sq-tg expand">
 		    <div class="tg-head">
               <h3><a th:text="#{label.testStep.information}" >Informations</a></h3>
-			  <div class="tg-toolbar"> 
+			  <div class="tg-toolbar">
 				<input type="button" id="save-test-step-button" class="sq-btn" th:value="#{ label.save }" value="Save" th:if="(${testStepView.actionStep} or ${hasCUF}) and  ${writable}" ></input>
           	  </div>
-		    </div>		
-			        
+		    </div>
+
             <div id="test-step-info-panel" class="information-panel tg-body" >
               <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
@@ -153,9 +153,9 @@
                   </div>
                 </div>
               </div>
-              
+
               <div th:if="${attachableEntity}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
-             
+
               <div th:if="${requirementVerifier}" id="verified-requirements-bloc-frag" th:include="verified-requirements-bloc.frag :: verified-requirements-bloc">VERIFIED-REQUIREMENT-VERSIONS-BLOC</div>
             </div>
         </div>

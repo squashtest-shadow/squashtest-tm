@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{workspace.user.info.title}">Espace gestion utilisateur</title>
@@ -35,7 +35,7 @@
   var squashtm = {};
   squashtm.app = {
 
-        locale : /*[[#{squashtm.locale}]]*/,      
+        locale : /*[[#{squashtm.locale}]]*/,
     contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
     UMod : {
       user : {
@@ -84,8 +84,8 @@
     },
 
     menuBarConf: {
-      }, 
-      
+      },
+
 
   };
 </script>
@@ -124,11 +124,11 @@
       <div id="sub-page-content" class="sub-page-content">
         <div id="information-content">
           <div id="user-login-div" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
-            <div class="sub-page-fragment-title controls control-group" > 
+            <div class="sub-page-fragment-title controls control-group" >
             <div class="display-table-row controls control-group" >
               <h2>
                 <label for="user-login-header" th:text="#{user.header.title}">User</label>
-                <a id="user-name-header" href="#" th:text="${user.login}">Machin</a> 
+                <a id="user-name-header" href="#" th:text="${user.login}">Machin</a>
                 <span class="help-inline">&nbsp;</span>
                 <span id="user-name-deactivated-hint" th:text="'(' + #{label.Deactivated} + ')'"
                   th:class="${user.active} ? 'not-displayed'"> (deactivated) </span>
@@ -217,7 +217,7 @@
             </div>
             <!-- ============================================/User Infos ======================================= -->
             <!-- ============================================ Permissions ======================================= -->
-            
+
 		     <div class="sq-tg expand" id="permissions">
               <div class="tg-head">
                 <h3><a th:text="#{user.project-rights.title.label}">Permissions</a></h3>
@@ -230,7 +230,7 @@
                     class="sq-icon-btn btn-sm">
                     <span class="ui-icon ui-icon-minus squared-icons">-</span>
                   </button>
-                  
+
                 </div>
               </div>
 

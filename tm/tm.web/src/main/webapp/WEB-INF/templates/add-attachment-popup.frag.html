@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<!-- common head -->
@@ -44,8 +44,8 @@
 
 	<div data-def="state=selection">
 		<form class="attachment-upload-form">
-		
-		</form>	
+
+		</form>
 	</div>
 
 	<div data-def="state=uploading" class="attachment-upload-uploading centered">
@@ -53,14 +53,14 @@
  		<div 	class="attachment-progressbar"></div>
  		<span 	class="attachment-progress-percentage"></span>
  	</div>
-	
+
 	<div data-def="state=summary" class="attachment-upload-summary display-table">
-	
+
 	</div>
-	
+
 	<div data-def="state=error" >
 		<span class="attachment-upload-error-message" th:text="#{message.AttachmentUploadSizeExceeded}">
-			
+
 		</span>
 	</div>
 
@@ -73,8 +73,8 @@
 </div>
 
 <div id="dump" class="not-displayed"></div>
- 
-	
+
+
 	</div>
 </body>
 </html>

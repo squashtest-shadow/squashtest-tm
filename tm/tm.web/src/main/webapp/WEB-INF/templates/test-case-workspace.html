@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{squashtm}">Squash</title>
@@ -38,14 +38,14 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
-    	var pathname = window.location.pathname; 
+    	var pathname = window.location.pathname;
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
     	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 			menuBarConf: {
-	    	}, 
+	    	},
 	    	notificationConf: {
-    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info',
     			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
     		},
     		testCaseWorkspaceConf : {
@@ -59,18 +59,18 @@
   					wizards: /*[[${ wizards }]]*/ '',
 				},
 				toggleWS : {
-					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
 					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
 					workspace : pathname
 				},
-				activeMilestone : /*[[${activeMilestone}]]*/{}		
+				activeMilestone : /*[[${activeMilestone}]]*/{}
 			}
-			
+
     	};
-    	
+
     	squashtm.workspace = squashtm.workspace || {};
     	squashtm.workspace.projects = /*[[${projects}]]*/ [];
-    	
+
     /* ]]> */
     </script>
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
@@ -103,7 +103,7 @@
            <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
             <li class="tab">
               <a href="#tree-pane" >
-              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
+              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span>
               <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>
@@ -174,15 +174,15 @@
                   title="wizards..." role="buttonmenu">
                   <span class="ui-icon ui-icon-star"></span>
                 </a>
-                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
+                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
 								<ul id="ws-wizard-tree-menu">
 								{{#each wizards}}
 								<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
 								{{/each}}
-								</ul>	
+								</ul>
    							 </script>
                 <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
-								<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
+								<form id="start-ws-wizard-form" action="{{url}}" method="post">
 								{{#each nodes}}
 								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
 								{{/each}}
@@ -234,12 +234,12 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-      
+
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-            
-      
+
+
       <div data-def="state=confirm">
       <table class="add-node-attributes">
         <tr>
@@ -272,13 +272,13 @@
 
     <div id="add-test-case-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-test-case.title}"
       title="new test case">
-      
-      
+
+
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-       
-      <div data-def="state=confirm">     
+
+      <div data-def="state=confirm">
       <table class="add-node-attributes">
 
         <tr>
@@ -324,17 +324,17 @@
       title="rename tree node">
 
       <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-      
+
       <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
-      
+
       <div data-def="state=confirm">
-      
+
         <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
-          <span th:text="#{message.RenameTestCaseBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>        
+          <span th:text="#{message.RenameTestCaseBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>
         </div>
-      
+
         <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
         <input id="rename-tree-node-text" type="text" size="50" />
         <br />
@@ -348,7 +348,7 @@
       </div>
 
     </div>
-    
+
     <div id="delete-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.delete-tree-node.title}"
       title="delete node">
 
@@ -385,7 +385,7 @@
           </div>
         </div>
       </div>
-      
+
        <!--
       <div class="not-displayed" data-def="state=copyconfirm">        </div>
 
@@ -401,12 +401,12 @@
       <div class="popup-dialog-buttonpane">
         <input id="del-node-confirm-btn" type="button" th:value="#{label.Confirm}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
 
-        <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" /> 
+        <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" />
  <!--
-        <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" /> 
+        <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" />
         -->
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol rejected" />
-  
+
       </div>
     </div>
   </div>
@@ -489,7 +489,7 @@
         </div>
       </div>
 
-      <div data-def="state=confirm"> 
+      <div data-def="state=confirm">
         <div class="confirm-div">
           <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
           <span class="confirm-span confirm-file"></span>
@@ -518,7 +518,7 @@
         <div>
           <span th:text="#{dialog.import-excel.test-case.failed}"></span>
           <span class="failures-import span-bold {{failuresClass}}">{{notimported}} </span>
-        </div>      
+        </div>
         {{#unless createdOnly}}
         <div class="import-excel-dialog-note">
           <hr/>
@@ -597,13 +597,13 @@
          </ul></p>
          </script>
 
-      <div data-def="state=error-size"> 
+      <div data-def="state=error-size">
         <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
       </div>
 
       <div class="error-type" data-def="state=error-type">
         <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
-       
+
            <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
           <span id="import-err-filetype">xls, xlsx</span>
         </span>
@@ -618,7 +618,7 @@
           <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">no file</span>
         </span>
       </div>
-      
+
       <div class="error-format" data-def="state=error-format"></div>
       <div id="import-excel-dump" class="not-displayed dump"></div>
 
@@ -855,9 +855,9 @@
         <input type="button" th:value="#{label.Cancel}" value="cancel"
           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
          <input type="button" th:value="#{label.Close}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  
+          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
       </div>
-      
+
     </div>
 
   <!--  ================= EXPORT TC POPUP ======================= -->
@@ -919,19 +919,19 @@
         <input type="button" th:value="#{label.Cancel}" value="cancel"
           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
          <input type="button" th:value="#{label.Close}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  
+          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
     </div>
   </div>
 
 
   <!--  ================= /EXPORT TC POPUP =======================  -->
-  
+
   <!--  ================= MILESTONE POPUP =======================  -->
-  
+
   <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
-  
+
   <!--  ================= /MILESTONE POPUP =======================  -->
-  
+
   <!--  ___________________/TEST_CASE TREE POPUPS_______________________________ -->
 </body>
 </html>

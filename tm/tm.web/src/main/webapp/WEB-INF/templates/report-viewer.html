@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title th:text="#{squashtm.library.requirement.title}">Report viewer</title>
@@ -46,14 +46,14 @@
 		menuBarConf: {
     	},
       reportWorkspaceConf: {
-        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
         collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
       }
       };
       /* ]]> */
     </script>
     <script data-main="../../scripts/report-workspace.js" th:attr="data-main=@{/scripts/report-workspace.js}"
-      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>      
+      src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
 </head>
 <body>
 	<div id="navigation" th:include="navbar.frag :: navbar('report')">
@@ -63,7 +63,7 @@
 	<div id="workspace">
 		<div id="workspace-title">
 			<div class="snap-left">
-				<h2 th:text="#{squashtm.library.requirement.title}">Report viewer</h2>	
+				<h2 th:text="#{squashtm.library.requirement.title}">Report viewer</h2>
 			</div>
 			<div class="snap-right">
  				<div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
@@ -76,6 +76,6 @@
 
 	<script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
 	<div class="not-displayed" th:include="contextual-report.frag :: script">
-	</div>	
+	</div>
 </body>
 </html>

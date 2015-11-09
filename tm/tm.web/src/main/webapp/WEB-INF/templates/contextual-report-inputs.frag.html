@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{workspace.report.title}">Espace rapports</title>
@@ -41,10 +41,10 @@
       squashtm.app = {
     	locale : /*[[#{squashtm.locale}]]*/ 'fr',
       menuBarConf: {
-    }, 
-       
+    },
+
       reportWorkspaceConf: {
-        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+        expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
         collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
       }
       };
@@ -119,7 +119,7 @@
   <!--  params = input , hasLabel -->
   <div th:fragment="projectpicker">
     <!-- project picker popup -->
-    <div id="rpt-project-crit" th:id="${input.name}" class="project-picker popup-dialog not-displayed"  
+    <div id="rpt-project-crit" th:id="${input.name}" class="project-picker popup-dialog not-displayed"
       title="Projects" th:title="${projectMultiselect} ? #{report.form.project-picker.dialog.title} : #{report.form.project-picker.dialog.title.single}"
       data-multiselect="true" th:attr="data-multiselect=${projectMultiselect}, data-idresult='rpt-project-crit-result'+${input.name}">
       <div class="cf">
@@ -146,7 +146,7 @@
             </tbody>
           </table>
         </div>
-        
+
         <div th:if="${projectMultiselect}" class="project-filter-controls">
           <ul>
             <li id="dialog-settings-filter-selectall" class="project-picker-selall cursor-pointer"
@@ -167,7 +167,7 @@
     <label th:if="${hasLabel}" for="rpt-project-crit-open" th:for="${input.name} + '-open'" th:text="${input.label}">Projects</label>
     <span id="rpt-project-crit-result" th:id="'rpt-project-crit-result'+${input.name}" class="rpt-projects-crit-result small"
       th:attr="data-multiplevaluetext=#{label.multipleProjects}" data-multiplevaluetext="Multiple projects"></span>
-    <input id="rpt-project-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-projects-crit-open" 
+    <input id="rpt-project-crit-open" th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-projects-crit-open"
       th:value="#{report.form.project-picker.button.label}" value="Pick projects"
       th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" data-idopened="rpt-project-crit" />
   </div>
@@ -175,15 +175,15 @@
   <!--  MILESTONE PICKER -->
   <div th:if="${application.milestoneFeatureEnabled}" th:fragment="milestonepicker" >
     <label th:if="${hasLabel}" th:text="#{${input.labelKey}}" th:for="${input.name}+'-open'">Milestone</label>
-    
+
     <span th:id="'rpt-milestone-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
     <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-milestone-crit-open" th:value="#{report.form.project-picker.button.label}"
           th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />
-  
+
     <div class="milestone-picker popup-dialog not-displayed" th:id="${input.name}"
-      th:title="#{message.PickAMilestone}" 
+      th:title="#{message.PickAMilestone}"
       th:attr="data-idresult='rpt-milestone-crit-result-'+${input.name}">
-    
+
       <table th:attr="data-def='filter, ajaxsource='+@{/milestones(selectable=true)}">
         <thead>
             <th data-def="sClass=milestone-radio, map=empty-delete-holder"></th>
@@ -195,7 +195,7 @@
         <tbody>
         </tbody>
       </table>
-      
+
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
         <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>
@@ -207,17 +207,17 @@
  <!--  TAG PICKER -->
   <div  th:fragment="tagpicker" >
     <label th:if="${hasLabel}" th:text="#{${input.labelKey}}" th:for="${input.name}+'-open'">Tag</label>
-    
+
     <span th:id="'rpt-tag-crit-result-'+${input.name}" class="rpt-milestone-crit-result small"></span>
     <input th:id="${input.name} + '-open'" type="button" class="sq-btn btn-sm rpt-tag-crit-open" th:value="#{report.form.project-picker.button.label}"
           th:attr="data-idopened=${input.name}, data-disabledby=${input.disabledBy}" />
-  
+
     <div class="tag-picker popup-dialog not-displayed" th:id="${input.name}"
       th:title="#{message.choose-a-tag}" data-def="nocleanup"
       th:attr="data-idresult='rpt-tag-crit-result-'+${input.name}, data-url= @{/custom-fields/tags/__${input.boundEntity}__}">
-   
+
     <ul class="custom-field tagit ui-widget ui-widget-content squash-tagit" th:id="choose-tag"/>
-      
+
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Confirm}" data-def="evt=confirm, mainbtn"/>
         <input type="button" th:value="#{label.Cancel}" data-def="evt=cancel"/>

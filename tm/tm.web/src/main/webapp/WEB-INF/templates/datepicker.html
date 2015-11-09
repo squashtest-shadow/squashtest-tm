@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<title th:text="#{workspace.report.title}">Espace rapports</title>
@@ -41,7 +41,7 @@
 	<script type="text/javascript" th:inline="javascript">
 		$(function() {
 			$('#picker').editable(
-				function(value, settings) { 
+				function(value, settings) {
 				   //  console.log(this);
 				    // console.log(value);
 				     // console.log(settings);
@@ -50,10 +50,10 @@
 		        indicator :'<div class="processing-indicator"/>',
 		        type      : 'datepicker',
 		        //submit    : 'OK',
-		    // cancel: "cancel",            
+		    // cancel: "cancel",
 		        tooltip   : "Click to edit..."
 			});
-		});	
+		});
 	</script>
 </head>
 <body>

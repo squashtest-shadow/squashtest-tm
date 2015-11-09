@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{tabbed_panel.search.pane.new.label}">Test case search</title>
@@ -123,7 +123,7 @@
 					</div>
 				</div>
 			  </script>
-			  
+
 			  <script id="toggle-panel-perimeter-template" type="text/x-handlebars-template">
 				<div class="sq-tg {{toggle-panel-state}} search-perimeter-toggle-panel" style=" width: calc(30% - 4em);">
 					<div class="tg-head">
@@ -135,7 +135,7 @@
 					</div>
 				</div>
 			  </script>
-			  
+
 			  <script id="toggle-panel-informations-template" type="text/x-handlebars-template">
 				<div class="sq-tg {{toggle-panel-state}} search-informations-toggle-panel" style=" width: calc(70% - 4em);">
 					<div class="tg-head">
@@ -147,8 +147,8 @@
 					</div>
 				</div>
 			  </script>
-			  
-			  
+
+
 			   <script id="toggle-panel-informationsfull-template" type="text/x-handlebars-template">
 				<div class="sq-tg {{toggle-panel-state}} search-informations-toggle-panel" style=" width: calc(100% - 4em);">
 					<div class="tg-head">
@@ -160,7 +160,7 @@
 					</div>
 				</div>
 			  </script>
-			  
+
 
               <script id="textfield-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
@@ -170,7 +170,7 @@
                     </div>
                 </div>
 				</script>
-				
+
               <script id="textfield-id-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
                   	<label for="{{text-field-id}}" class="display-search-table-cell" >{{text-field-title}}</label>
@@ -179,7 +179,7 @@
                     </div>
                 </div>
 				</script>
-				
+
 				<script id="textfield-reference-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
                   	<label for="{{text-field-id}}" class="display-search-table-cell">{{text-field-title}}</label>
@@ -188,7 +188,7 @@
                     </div>
                 </div>
 				</script>
-				
+
 
               <script id="textarea-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
@@ -213,7 +213,7 @@
             </div>
             {{!--]]>--}}
 			</script>
-			
+
             <script id="multiselect-perimeter-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
             <div class="display-search-table-row">
@@ -226,8 +226,8 @@
               </div>
             </div>
             {{!--]]>--}}
-			</script>			
-			
+			</script>
+
 			<script id="multiautocomplete-template" type="text/x-handlebars-template">
             {{!--<![CDATA[--}}
             <div class="display-search-table-row">
@@ -238,7 +238,7 @@
             </div>
             {{!--]]>--}}
 			</script>
-      
+
             <script id="multicascadeflat-template" type="text/x-handlebars-template">
 			{{!--<![CDATA[--}}
 			<div class="display-search-table-row">
@@ -252,7 +252,7 @@
 							{{#each options}}
 							<option value="{{this.code}}" {{selected}}>{{this.value}}</option>
 							{{/each}}
-						</select>	
+						</select>
 					</td>
 					<td>
 						<span>&nbsp;&gt;&nbsp;</span>
@@ -287,9 +287,9 @@
 					</div>
 					</div>
 				</div>
-		
+
 				</script>
-				
+
 
               <script id="range-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
@@ -311,31 +311,31 @@
 					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Exists">
 						<input type="checkbox"></input>
-						<select></select>				
+						<select></select>
 						<span>{{text-exists-title}}</span>
 						</div>
 					</div>
 				</div>
 			  </script>
-        
+
               <script id="checkbox-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
 					<div id="{{text-checkbox-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Checkbox">
-							<input type="checkbox" ></input>			
+							<input type="checkbox" ></input>
 							<label style="cursor:pointer">{{text-checkbox-title}}</label>
 						</div>
 					</div>
 				</div>
               </script>
-        
+
 			   <script id="existsbefore-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
 					<div id="{{text-exists-id}}" class="search-input" style="display:inline">
 						<span><i>{{text-exists-title}}</i></span>
 						<div class="search-line" data-widgetname="Exists">
 						<input type="checkbox"></input>
-						<select></select>				
+						<select></select>
 						</div>
 					</div>
 				</div>
@@ -356,7 +356,7 @@
 					<div id="{{combomultiselect-id}}" class="search-input" style="display: inline;">
 						<div class="search-line" data-widgetname="ComboMultiSelect" >
 							<input type="checkbox" style="vertical-align:top; margin-top:6px"></input>
-							<select multiple="multiple" class="shorter-search-input"></select>	
+							<select multiple="multiple" class="shorter-search-input"></select>
 						</div>
 					</div>
                 </div>
@@ -376,11 +376,11 @@
 					</div>
 				</div>
 			</script>
-			
-			
-							
 
-			
+
+
+
+
             </div>
 
             <div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
@@ -392,12 +392,12 @@
         </div>
       </div>
     </div>
-    
-    
-    
+
+
+
   </div>
-  
-  
+
+
 
 
 </body>

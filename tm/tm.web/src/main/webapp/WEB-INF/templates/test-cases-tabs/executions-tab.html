@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
 <head th:remove="all">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -43,7 +43,7 @@
 	<div id="workspace" th:remove="tag">
 		<div id="workspace-title" th:remove="all">
 			<div class="snap-left">
-				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>	
+				<h2 th:text="#{workspace.report.title}">Espace Rapport</h2>
 			</div>
 			<div class="snap-right">
  				<div class="main-menubar">
@@ -51,10 +51,10 @@
 				</div>
 			</div>
 		</div>
-		
+
 		<div id="left-pane" th:remove="all">
  		</div>
-    
+
 		<div id="contextual-content" class="no-resizable-contextual-content" th:remove="tag">
 <!-- TAB FRAGMENT-->
           <div id="execs-pane" class="unstyled">
@@ -111,13 +111,13 @@
                 squashtm.app = squashtm.app || {};
                 squashtm.app.contextRoot = /*[[ @{/} ]]*/ "../../scripts";
                 squashtm.app.testCaseExecutionsTable = {
-                  languageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages", 
+                  languageUrl: /*[[ @{/datatables/messages} ]]*/ "http://localhost:8080/squash/datatables/messages",
                   displayLength: /*[[ ${executionsPageSize} ]]*/ 50,
                   ajaxSource: /*[[ @{'/test-cases/' + ${testCaseId} + '/executions'} ]]*/ "http://localhost:8080/squash/test-cases/1/executions",
                   deferLoading: /*[[ ${#lists.size(execs)} ]]*/ 1
                 };
                 /* ]]> */
-            </script>   
+            </script>
             <script type="text/javascript" th:inline="javascript">
             /* <![CDATA[ */
               require([ "common" ], function() {
@@ -128,7 +128,7 @@
                 });
               });
                 /* ]]> */
-            </script>   
+            </script>
   		  </div>
 <!-- /TAB FRAGMENT -->
   		</div>

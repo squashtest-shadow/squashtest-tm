@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 <title th:text="#{squashtm}">Squash</title>
@@ -38,14 +38,14 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
-    	var pathname = window.location.pathname; 
+    	var pathname = window.location.pathname;
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
     	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 			menuBarConf: {
-	    	}, 
+	    	},
 	    	notificationConf: {
-    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info',
     			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
     		},
 			campaignWorkspaceConf: {
@@ -59,15 +59,15 @@
   					wizards: /*[[${ wizards }]]*/ '',
 				},
 				toggleWS : {
-					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
+					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
 					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
 					workspace : pathname
 				},
 				activeMilestone : /*[[${activeMilestone}]]*/{}
 			},
-			
+
     	};
-    	
+
     	squashtm.workspace = squashtm.workspace || {};
     	squashtm.workspace.projects = /*[[${projects}]]*/ [];
     /* ]]> */
@@ -97,8 +97,8 @@
     </div>
     <div id="tree-panel-left" style="z-index: 1" class="left-frame">
       <div class="position-layout-fix">
-        <div id="tabbed-pane"     
-              th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">  
+        <div id="tabbed-pane"
+              th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
 
           <ul th:class="'milestones-mode'" >
 
@@ -110,12 +110,12 @@
            </li>
             <li class="tab" th:class="${(usesMilestone) ? 'tab' : 'not-displayed'}"  >
               <a href="#tree-pane">
-               <span  id="campaignDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
+               <span  id="campaignDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span>
                <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
-            </li>  
-            
-   
+            </li>
+
+
           </ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
@@ -181,15 +181,15 @@
                   title="wizards..." role="buttonmenu" >
                   <span class="ui-icon ui-icon-star"></span>
                 </a>
-                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
+                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
 								<ul id="ws-wizard-tree-menu">
 								{{#each wizards}}
 								<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
 								{{/each}}
-								</ul>	
+								</ul>
    							 </script>
                 <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
-								<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
+								<form id="start-ws-wizard-form" action="{{url}}" method="post">
 								{{#each nodes}}
 								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
 								{{/each}}
@@ -242,16 +242,16 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-      
-      
-      
+
+
+
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-            
-     
+
+
        <div data-def="state=confirm">
-	      <table class="add-node-attributes"> 
+	      <table class="add-node-attributes">
 	        <tr>
 	          <td>
 	            <label for="add-folder-name" th:text="#{label.Name}">Name</label>
@@ -281,18 +281,18 @@
 
     <div id="add-campaign-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-campaign.title}"
       title="new campaign">
-      
+
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-      
+
       <div data-def="state=confirm">
 	      <table class="add-node-attributes" >
 	        <tr>
 	          <td>
 	            <label for="add-campaign-name" th:text="#{label.Name}">Name</label>
 	          </td>
-	
+
 	          <td>
 	            <input id="add-campaign-name" type="text" size="50" maxlength="255" />
 	            <br />
@@ -315,16 +315,16 @@
 	      </div>
 	 </div>
 
-      
+
     </div>
 
     <div id="add-iteration-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-iteration.title}"
       title="new iteration">
-      
+
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-      
+
       <div data-def="state=confirm">
 		 <table class="add-node-attributes">
 	        <tr>
@@ -371,17 +371,17 @@
       title="rename tree node">
 
       <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
-      
+
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-      
+
       <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
-      
+
       <div data-def="state=confirm">
-            
+
         <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
-          <span th:text="#{message.RenameCampaignBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>        
+          <span th:text="#{message.RenameCampaignBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>
         </div>
-      
+
         <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
         <input id="rename-tree-node-text" type="text" size="50" />
         <br />
@@ -443,14 +443,14 @@
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel,  mainbtn=rejected" />
       </div>
     </div>
-    
-    
-    
-    
-    
-    
-    
-    
+
+
+
+
+
+
+
+
       <!--  ================= EXPORT CAMPAIGN ERROR POPUP ======================= -->
 
   <div id="export-campaign-error-dialog" class="popup-dialog not-displayed" th:title="#{label.Export}" title="export">
@@ -461,33 +461,33 @@
     </div>
 
     <div class="popup-dialog-buttonpane">
-          <input type="button" th:value="#{label.Close}" value="cancel"  data-def="evt=cancel"/>  
+          <input type="button" th:value="#{label.Close}" value="cancel"  data-def="evt=cancel"/>
     </div>
   </div>
 
 
   	<!--  ================= /EXPORT CAMPAIGN ERROR POPUP  =======================  -->
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
+
+
+
+
+
+
+
+
+
+
+
+
         <!--  ================= MILESTONE POPUP =======================  -->
-  
+
   <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
-  
+
   <!--  ================= /MILESTONE POPUP =======================  -->
   </div>
 
   <!-- 	___________________/CAMPAIGN TREE POPUPS_______________________________ -->
-  
+
 
 
 </body>

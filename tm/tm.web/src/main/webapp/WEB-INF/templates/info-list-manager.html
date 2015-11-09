@@ -20,14 +20,14 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="#{title.infoListManager}">User lists manager</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
+
   <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
-  
+
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
@@ -39,7 +39,7 @@
       locale : /*[[ #{squashtm.locale} ]]*/"fr",
     };
   </script>
-  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
   <script data-main="../../scripts/info-list-manager.js" th:attr="data-main=@{/scripts/info-list-manager.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
@@ -89,7 +89,7 @@
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{label.administration}" class="admin">Administration</h2> 
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -105,9 +105,9 @@
       <div id="sub-page-header" class="sub-page-header cf">
 
         <div id="sub-page-title" class="sub-page-title">
-            <h2 th:text="#{title.infoListManager}">User lists manager</h2> 
+            <h2 th:text="#{title.infoListManager}">User lists manager</h2>
         </div>
-        
+
         <div id="sub-page-buttons" class="sub-page-buttons">
           <input id="back" type="button" th:value="#{label.Back}" class="sq-btn" value="#{ label.Back }"
             th:onclick="'document.location.href=\''+@{/administration}+'\''" />
@@ -118,17 +118,17 @@
         <div class="fragment-body">
           <div id="cf-table-pane" class="cf">
             <div class="btn-toolbar right">
-              <input id="add-item" type="button" class="sq-btn" 
-                value="Add an info list" th:value="#{label.infoList.add}" 
-                title="Create new" th:title="#{tooltip.infoList.add}" 
+              <input id="add-item" type="button" class="sq-btn"
+                value="Add an info list" th:value="#{label.infoList.add}"
+                title="Create new" th:title="#{tooltip.infoList.add}"
                 th:attr="data-api-url=@{/info-lists}" />
-              <input id="remove-selected-items" type="button" class="sq-btn" 
-                value="Delete selected info lists" th:value="#{label.infoList.remove}" 
+              <input id="remove-selected-items" type="button" class="sq-btn"
+                value="Delete selected info lists" th:value="#{label.infoList.remove}"
                 title="Delete selected" th:title="#{tooltip.infoList.remove}" />
             </div>
 
             <div>
-              <table id="items-table" class="unstyled-table" 
+              <table id="items-table" class="unstyled-table"
                 th:attr="data-api-url=@{/info-lists}, data-view-url=@{/administration/info-lists}, data-language-url=@{/datatables/language}, data-page-length=${tablePageSize}">
                 <thead>
                   <tr>
@@ -172,7 +172,7 @@
 
         <div id="new-item-pane" class="not-displayed popup-dialog form-horizontal" title="New User List" th:title="#{title.infoList.new}" th:attr="data-api-url=@{/info-lists}">
         </div>
-          
+
           <script id="new-item-pane-tpl" type="text/x-handlebars-template" th:inline="text">
           <div class="control-group">
             <label class="control-label" for="label" th:text="#{label.Label}">Label</label>
@@ -229,7 +229,7 @@
             <input class="cancel" type="button" value="Cancel" th:value="#{label.Close}" />
           </div>
           </script>
-          
+
           <script id="new-option-pane-tpl" type="text/x-handlebars-template" th:inline="text">
             <div class="control-group">
               <label for="option-label" class="control-label" th:text="#{label.item}">New option</label>

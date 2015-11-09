@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org"
@@ -32,7 +32,7 @@
 
 <style th:remove="all" type="text/css">
 /**
-documentation : 
+documentation :
 			Parameters :
 				- execution : the execution object of which we display the preview
 
@@ -54,7 +54,7 @@ documentation :
 	var require = {
 		baseUrl : /*[[@{/scripts/}]]*/'../../scripts/'
 	};
-	
+
 	var squashtm = squashtm || {};
 	squashtm.app = squashtm.app || {};
 	squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";
@@ -104,29 +104,29 @@ documentation :
         </div>
         <div id="execute-informations-panel" class="tg-body is-contextual load-links-right-frame"
          title="Informations" >
-    
+
           <div class="display-table">
-          
+
                   <div class="display-table-row">
-    
+
               <label class="display-table-cell" th:text="#{test-case.reference.label}">reference</label>
-    
+
               <div id="testcase-reference" class="display-table-cell" th:text="${execution.reference}">REF01</div>
             </div>
-          
-          
+
+
             <div class="display-table-row">
-    
+
               <label class="display-table-cell" th:text="#{label.Description}">description</label>
-    
+
               <div id="testcase-description" class="display-table-cell" sq:unsafe-html="${execution.tcdescription}">
-    
+
                 <p th:remove="all">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque
                   laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae
                   vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
                   sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est,
                   qui dolorem ipsum quia dolor sit amet,</p>
-    
+
                 <p th:remove="all">consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut
                   labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem
                   ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure
@@ -134,7 +134,7 @@ documentation :
                   fugiat quo voluptas nulla pariatur?</p>
               </div>
             </div>
-    
+
             <div class="display-table-row">
               <label class="display-table-cell" th:text="#{test-case.status.label}">status</label>
          	  <div  class="display-table-cell">
@@ -147,112 +147,112 @@ documentation :
               <div id="execute-dataset" class="display-table-cell"
                 th:text="${execution.datasetLabel}">dataset name</div>
             </div>
-            
+
             <div class="display-table-row">
             	<input type="hidden" id="TC_SOURCE_ID" th:value="${execution.referencedTestCase.id}" />
              	<input type="hidden" id="TC_SOURCE_NAME" th:value="${execution.referencedTestCase.name}" />
                 <input type="hidden" id="EXEC_ID" th:value="${execution.id}" />
-            </div>     
-            
+            </div>
+
           </div>
         </div>
     </div>
-    
-    
+
+
     <div class="sq-tg expand">
       <div class="tg-head">
         <h3 th:text="#{label.Attributes}"></h3>
       </div>
       <div id="test-case-attribute-panel" class="tg-body is-contextual load-links-right-frame" title="Attribute">
   			<div class="display-table">
-  			
+
   		<div class="display-table-row">
             <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
   			<div class="display-table-cell">
   				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
-  	          <span id="testcase-importance" 
+  	          <span id="testcase-importance"
   	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
   	        </div>
           </div>
-  
+
           <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
             <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
             <div id="testcase-nature" class="display-table-cell"
               th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
           </div>
-  
+
           <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
             <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
             <div id="testcase-type" class="display-table-cell"
               th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
           </div>
-          
-  			<div class="display-table-row">			
-  				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
-  					<p th:remove="all"> 
-  						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
-  						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
-  						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
-  						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
-  					</p>	
-  				</div>				
+
+  			<div class="display-table-row">
+  				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">
+  					<p th:remove="all">
+  						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam
+  						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,
+  						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
+  						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+  					</p>
+  				</div>
   			</div>
   			</div>
   	</div>
 	</div>
-	
-	
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
     <div class="sq-tg expand">
         <div class="tg-head">
           <h3 th:text="#{generics.prerequisite.title}"></h3>
         </div>
         <div id="execute-prerequisite-panel" class="tg-body is-contextual load-links-right-frame" >
     			<div class="display-table">
-    			<div class="display-table-row">			
-    				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">					
-    					<p th:remove="all"> 
-    						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam 
-    						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, 
-    						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse 
-    						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?	
-    					</p>	
-    				</div>				
+    			<div class="display-table-row">
+    				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">
+    					<p th:remove="all">
+    						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam
+    						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,
+    						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
+    						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
+    					</p>
+    				</div>
     			</div>
     			</div>
     	</div>
-	</div>	
-	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
-		
 	</div>
-	
+	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
+
+	</div>
+
 	<script type="text/javascript" th:inline="javascript">
 	//<![CDATA[
 	require(["common"], function() {
-    	require(["jquery", 'squash.basicwidgets', 'custom-field-values'], 
+    	require(["jquery", 'squash.basicwidgets', 'custom-field-values'],
     			function($, basic, cufValues){
-  			
+
     		requirejs.config({
   				config : {
   					"unfinished-execution-preview-page" : /*[[${config}]]*/{}
   				}
   			});
-    		
-  			
+
+
     		$(function(){
 
         		require(["unfinished-execution-preview-page"], function(){/*noop*/});
-        		
+
     			basic.init();
-    			
+
     			/* Allow the status icon to exist : InTree may be useless */
-    			
+
     			_updateStatusIcon = function (value){
   					var statusIcon = $("#test-case-status-icon");
   					statusIcon.attr("class", ""); //reset
@@ -264,23 +264,23 @@ documentation :
   					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
   				};
   			 	this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
-  				
+
     			/* Allow the importance icon to exist */
-    			
+
   				_updateImportanceIcon = function (value){
   					var status = $("#test-case-importance-icon");
   					status.attr("class", ""); // reset
   					status.addClass("test-case-importance-" + value);
   				};
-  				
-  				
 
-					
+
+
+
     			/* we dont append in parent because order would not be guaranteed
     			 * we dont append in placeholder because it breaks layout aux petits oignons
     			 * hence the replaceWith
-    			 */ 
-    			 
+    			 */
+
     			var selector = "#test-case-attribute-panel > div.display-table";
     			if (squashtm.page.hasFields) {
     				var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
@@ -288,7 +288,7 @@ documentation :
     				.success(function(jsonCufs) {
     					cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
     				});
-    				
+
     			}
     			if (squashtm.page.hasDenormFields) {
     				var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
@@ -297,14 +297,14 @@ documentation :
         				cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
         			});
     			}
-    			
-    		});		
+
+    		});
     	});
 	});
 	//]]>
 	</script>
 
-	
+
 </body>
 
 </html>

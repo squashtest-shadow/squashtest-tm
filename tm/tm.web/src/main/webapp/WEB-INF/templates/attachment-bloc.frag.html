@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -35,12 +35,12 @@
 </head>
 <body>
 	<div th:remove="all">
-		<!--  
+		<!--
 	parameters are :
-		
+
 		attachable : boolean that says whether user has attach right on attachable entity
 		attachableEntity : an attachable entity
-		attachmentSet : the set of attachments to display 
+		attachmentSet : the set of attachments to display
 
  -->
 	</div>
@@ -54,22 +54,22 @@
                 <input th:if="${attachable}" id="upload-attachment-button" type="button"
                       th:value="#{label.UploadAttachment}" th:title="#{label.UploadAttachment}" value="Upload" class="button" />
                 <input th:if="${attachable}" id="manage-attachment-bloc-button"
-                      type="button" th:value="#{label.Organize}" th:title="#{label.OrganizeAttachment}" value="Organize" 
-                      class="button" />               
+                      type="button" th:value="#{label.Organize}" th:title="#{label.OrganizeAttachment}" value="Organize"
+                      class="button" />
               </div>
            </div>
-    
+
 
 			<div class="tg-body" id="attachment-panel" >
 				<div id="attachment-container" class="div-attachments" th:with="listId = ${attachableEntity.attachmentList.id}">
 					<div class="div-attachments-item" style="text-align:center;" th:each="attachment : ${attachmentSet}">
 						<div th:class="'attachment-file file-'+${#strings.toLowerCase(attachment.type)}"></div>
 						<span><a th:href="@{/attach-list/__${listId}__/attachments/download/}+'/'+${attachment.id}"
-								 th:text="${#strings.abbreviate(attachment.name, 45)}" 
+								 th:text="${#strings.abbreviate(attachment.name, 45)}"
 								target="_blank" class="breakwords"></a>
 						</span>
 					</div>
-				
+
 				</div>
 			</div>
 		</div>
@@ -87,7 +87,7 @@
 							workspace: /*[[ ${workspace}]]*/"zeworkspace"	// TODO : better than a constant
 						});
 					});
-				});			
+				});
 			});
 
 			/*]]>*/

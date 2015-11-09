@@ -38,8 +38,10 @@ import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
+import org.thymeleaf.spring4.resourceresolver.SpringResourceResourceResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
+import org.thymeleaf.templateresolver.TemplateResolver;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -112,8 +114,9 @@ public class TmWebConfig {
 	 * @return thymeleaf template resolver for fragments
 	 */
 	@Bean(name = "thymeleaf.templateResolver.fragment")
-	public ITemplateResolver fragmentTemplateResolver() {
-		ServletContextTemplateResolver res = new ServletContextTemplateResolver();
+	public ITemplateResolver fragmentTemplateResolver(SpringResourceResourceResolver resourceResolver) {
+		TemplateResolver res = new TemplateResolver();
+		res.setResourceResolver(resourceResolver);
 		res.setPrefix(thymeleafProperties.getPrefix());
 		res.setSuffix(".html");
 		res.setTemplateMode(thymeleafProperties.getMode());

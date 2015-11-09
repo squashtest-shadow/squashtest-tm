@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<link rel="stylesheet" type="text/css" media="all" href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.core.css" sq:css="squash.core.css" />
@@ -31,41 +31,41 @@
 	<!-- MAIN MENUBAR FRAGMENT -->
 	<div class="main-menubar" th:fragment="menubar" >
 		<div th:remove="tag" class="this div exists for settings only, it will never be rendered" th:with="filter = ${#workspace.projectFilter()}">
-		
+
 		<div style="display: inline-flex;">
 			<input type="checkbox" id="menu-toggle-filter-ckbox" th:checked="${filter.enabled}"></input>
 			<div class="icon iconmargin menubarmargintop"><span class="ui-icon  ui-icon-volume-off rotateright"></span></div>
-			<a id="menu-project-filter-link" style=" margin-top: 3px" href="javascript:void(0)" 
+			<a id="menu-project-filter-link" style=" margin-top: 3px" href="javascript:void(0)"
 			th:class="${filter.enabled} ? 'filter-enabled'"
-			th:text="${filter.enabled} ? #{workspace.menubar.filter.enabled.label} : #{workspace.menubar.filter.disabled.label}" >Inactif</a> 
+			th:text="${filter.enabled} ? #{workspace.menubar.filter.enabled.label} : #{workspace.menubar.filter.disabled.label}" >Inactif</a>
 		</div>
-		
+
 		<div th:if="${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')}">
 			<div class="icon"><span class="ui-icon ui-icon-wrench"></span></div>
-			<a id="menu-administration-link" 
-				href="administration.html" th:href="@{/administration}" 
+			<a id="menu-administration-link"
+				href="administration.html" th:href="@{/administration}"
 				th:text="#{workspace.menubar.administration.label}">
 				Administration
 			</a>
 		</div>
-		
+
 		<div>
 			<div class="icon"><span class="ui-icon ui-icon-person"></span></div>
 			<a id="menu-account-link" href="user-account.html" th:href="@{/user-account}">
 				<span th:text="#{workspace.menubar.account.label}">Mon compte</span>&nbsp;(<span th:text="${sec.authentication.name}">Zoltan</span>)
 			</a>
 		</div>
-		
+
 		<div th:if="${sec.isAuthenticated()}">
 			<div class="icon"><span class="ui-icon ui-icon-power"></span></div>
 			<a id="menu-logout-link" href="logout.html" th:href="@{/logout}" th:text="#{workspace.menubar.logout.label}">logout</a>
 		</div>
-		
+
 		<div id="project-filter-popup" class="project-picker popup-dialog not-displayed" style="display:none" th:title="#{dialog.settings.filter.title}" th:attr="data-url=@{/global-filter/filter}">
 			  <div id="dialog-settings-filter-maincontent">
         <div id="dialog-settings-filter-projectlist" class="project-filter-list dataTables_wrapper">
          <span class="filter-warning not-displayed" th:text="#{message.projectPicker.warnFilterOn}"></span>
-         
+
           <table>
             <thead>
               <tr>
@@ -99,18 +99,18 @@
         </div>
         <div class="unsnap not-displayed"></div>
       </div>
-			<div class="popup-dialog-buttonpane"> 
+			<div class="popup-dialog-buttonpane">
 				<input type="button" th:value="#{label.Confirm}"/>
 				<input type="button" th:value="#{label.Cancel}"/>
 			</div>
 		</div>
-		
+
       	</div>
       <script type="text/javascript" >
       	publish("load.projectFilter");
       </script>
       </div>
-      
+
       <!-- NOTIFICATION AREA FRAGMENT -->
       <div class="unstyled notification-pane" th:fragment="notification">
         <div id="ajax-processing-indicator" class="ui-corner-all snap-right not-processing">
@@ -121,18 +121,18 @@
           <span class="ui-icon ui-icon-alert icon"></span><span th:text="#{error.generic.label}">WTF ?!</span> &nbsp;
           (<a  id="show-generic-error-details" th:class="'cursor-pointer'" class="cursor-pointer" th:text="#{error.generic.button.details.label}">Details</a>)
         </div>
-                
-        
-        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">        
-          <div th:include="fragments-utils/static-panels :: error-pane"></div>        
-          <input type="button" th:value="#{label.Ok}"/>  
+
+
+        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">
+          <div th:include="fragments-utils/static-panels :: error-pane"></div>
+          <input type="button" th:value="#{label.Ok}"/>
         </div>
-        
-        <div id="generic-warning-dialog" class="not-displayed popup-dialog" th:title="#{label.warning}">        
-          <div th:include="fragments-utils/static-panels :: warning-pane"></div>     
-          <input type="button" th:value="#{label.Ok}"/>  
+
+        <div id="generic-warning-dialog" class="not-displayed popup-dialog" th:title="#{label.warning}">
+          <div th:include="fragments-utils/static-panels :: warning-pane"></div>
+          <input type="button" th:value="#{label.Ok}"/>
         </div>
-        
+
       <script type="text/javascript" >
       publish("load.notification");
       </script>

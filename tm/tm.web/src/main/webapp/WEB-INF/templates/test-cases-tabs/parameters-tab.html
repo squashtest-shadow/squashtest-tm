@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" th:remove="tag">
 <head th:remove="all">
 <title th:text="#{workspace.test-case.title}">Espace cas de test</title>
@@ -47,7 +47,7 @@
 <body th:remove="tag"
   th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable}">
   <div th:remove="all">
-    <!--  
+    <!--
 		This snippet of html describes the template for the test step panel of the tab panel of a test case.
 		Required data :
 			- testCase : the test case bean
@@ -57,12 +57,12 @@
 
 
     <!-- ==================== parameters table panel =================== -->
-    
+
     <div id="parameters-panel-container" class="sq-tg expand">
       <div class="tg-head">
         <h3 th:text="#{label.parameters}">params</h3>
         <div class="tg-toolbar">
-           <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addParameter}" 
+           <button id="add-parameter-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addParameter}"
            value="+"  type="submit" >
              <span class="ui-icon ui-icon-plus squared-icons">+</span>
           </button>
@@ -107,18 +107,18 @@
         </table>
       </div>
     </div>
-    
+
     <!-- ==================== /parameters table panel =================== -->
     <!-- ==================== datasets table panel =================== -->
-    
+
     <div id="datasets-panel-container" class="sq-tg expand">
       <div class="tg-head">
         <h3 th:text="#{label.datasets}"></h3>
         <div class="tg-toolbar">
-           <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addDataset}" 
+           <button id="add-dataset-button" th:if="${isWritable}" class="sq-icon-btn sq-btn btn-sm" title="add" th:title="#{title.addDataset}"
            value="+"  type="submit" >
              <span class="ui-icon ui-icon-plus squared-icons">+</span>
-          </button>       
+          </button>
         </div>
       </div>
       <div id="datasets-panel" class="tg-body">
@@ -143,14 +143,14 @@
     <!-- ==================== POPUPS ==================== -->
     <!-- ====================parameter popup ==================== -->
 
-     <div id="remove-parameter-confirm-dialog" class="not-displayed popup-dialog" th:title="#{title.removeParameter}">        
-      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.parameter.remove.confirm}"></div>        
+     <div id="remove-parameter-confirm-dialog" class="not-displayed popup-dialog" th:title="#{title.removeParameter}">
+      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.parameter.remove.confirm}"></div>
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
         <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
-      </div> 
-    </div>   
-    
+      </div>
+    </div>
+
     <div id="remove-parameter-used-dialog" class="popup-dialog not-displayed" th:title="#{title.removeParameter}"
       title="info">
       <span th:text="#{message.parameter.remove.used}">le paramètre est utilisé, il est impossible de le
@@ -189,13 +189,13 @@
     </div>
     <!-- ==================== dataset popup ==================== -->
 
-    <div id="remove-dataset-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeDataset}">        
-      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.dataset.remove.confirm}"></div>        
+    <div id="remove-dataset-confirm-dialog" class="popup-dialog not-displayed" th:title="#{title.removeDataset}">
+      <div th:include="fragments-utils/static-panels :: error-pane" th:with="txtcontent=#{message.dataset.remove.confirm}"></div>
       <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="confirm" th:value="#{label.Confirm}" />
         <input class="cancel" type="button" value="cancel" th:value="#{label.Cancel}" />
       </div>
-    </div>       
+    </div>
 
     <div id="add-dataset-dialog" class="control-group not-displayed popup-dialog form-horizontal" title="Add Dataset"
       th:title="#{title.addDataset}">
@@ -206,15 +206,15 @@
         <div class="help-inline">&nbsp;</div>
         </div>
 		<table id="add-dataset-dialog-table" class="unstyled-table" th:attr="data-def='ajaxsource='+@{/test-cases/__${testCase.id}__/parameters}+', pre-sort=1'">
-			<thead>			
+			<thead>
 				<th data-def="map=entity-index, select">#</th>
 				<th data-def="map=name" th:text="#{label.Name}">name</th>
 				<th data-def="map=description" th:text="#{label.Description}">description</th>
 				<th data-def="map=empty-delete-holder, sClass=add-parameter-input centered" th:text="#{label.Value}">value</th>
 			</thead>
 			<tbody>
-			
-			</tbody>	
+
+			</tbody>
 		</table>
 
       <div class="popup-dialog-buttonpane">
@@ -223,8 +223,8 @@
         <input class="cancel" type="button" value="Cancel" th:value="#{label.Cancel}"  data-def="evt=cancel"/>
       </div>
     </div>
-    
-    
+
+
   </div>
   <!-- ==================== initialisation ==================== -->
 
@@ -263,18 +263,18 @@
 									parametersPanelTitle : /*[[#{label.parameters}]]*/"Parameters",
 									datasetsPanelTitle : /*[[#{label.datasets}]]*/"Datasets",
 								},
-								
+
 								datasetsAoColumnDefs : /*[[${datasetsAoColumnDefs}]]*/ {},
-								
+
 								permissions : {
 									isWritable : /*[[${isWritable}]]*/true
-								}, 
-								
+								},
+
 								parameters: {
 									tabIndex: 2
 								}
 							};
-							
+
 				testCaseManagement.initParametersTab(settings);
 		});
   	});

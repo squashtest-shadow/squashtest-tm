@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -103,23 +103,23 @@
             <div id="info-list-info-panel" class="information-panel tg-body"
                  th:with="url=@{/info-lists/}+${infoList.id}">
                 <div class="display-table" id="info-list-infos-table">
-                
-                
+
+
                  <div class="display-table-row controls control-group">
                   <label for="info-list-label" class="control-label display-table-cell"
                          th:text="#{label.Label}">Label</label>
 
                   <div id="info-list-label" class="display-table-cell"
                        th:text="${infoList.label}"
-                       th:attr="data-def='url='+${url}">Label 
+                       th:attr="data-def='url='+${url}">Label
                   </div>
                   <span class="help-inline">&nbsp; </span>
                 </div>
-                
-      
-                  <div class="display-table-row controls control-group">   
+
+
+                  <div class="display-table-row controls control-group">
                     <label for="info-list-description"
-                      th:text="#{label.Description}" class="display-table-cell">Label</label>                 
+                      th:text="#{label.Description}" class="display-table-cell">Label</label>
 
                     <div id="info-list-description"
                       class="display-table-cell editable text-editable"
@@ -132,7 +132,7 @@
                     <span class="error-message" style="display: inline-block;">&nbsp; </span>
                 </div>
 
-                  
+
                 </div>
               </div>
             </div>
@@ -257,7 +257,7 @@
       </tr>
     </table>
         <span class="error-message label-error red-warning-message"></span>
-    
+
 
     <div class="popup-dialog-buttonpane">
       <input type="button" th:value="#{label.Confirm}"
@@ -282,7 +282,7 @@
           <span class="help-inline red-warning-message">&nbsp;</span></td>
       </tr>
     </table>
-        
+
     <br/>
 <span id="change-code-reindex-warn" class="red-warning-message"/>
 
@@ -295,9 +295,9 @@
 
   <!--   REINDEX WARN POPUP  -->
  <div id="reindex-popup" class="popup-dialog not-displayed" th:title="#{dialog.project.info-list.change.title}">
-    
+
     <div class="display-table-row">
-         
+
         <span class="red-warning-message" id="warning-index-after"
               th:text="#{dialog.info-list.warning.reindex.after}"></span>
   </div>
@@ -336,7 +336,7 @@
                 <span class="sq-icon" id="new-info-list-item-icon"
                       th:text="#{label.infoListItems.icon.none}">None</span>
         </td>
-      </tr> 
+      </tr>
 
     </table>
     <div class="popup-dialog-buttonpane">
@@ -352,31 +352,31 @@
   <div th:replace="icon-library.frag :: icon-picker-dialog(id='choose-item-icon-popup', icons=${itemListIcons})"></div>
 
   <!--   GENERIC ERROR POPUP  -->
-     
-        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">        
+
+        <div id="generic-error-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.error}">
           <div>
              <div class="display-table-row">
                 <div class="generic-error-main display-table-cell" style="padding-top:20px">
-                
+
                 </div>
               </div>
-          </div>        
-          <input type="button" th:value="#{label.Ok}"/>  
+          </div>
+          <input type="button" th:value="#{label.Ok}"/>
         </div>
 
 
 <span th:remove="all">
-  javascript below should be put into a js file. but info-list-modification uses module() 
-  which will not work anymore when the file becomes a nested dependency. it should be refactored when 
+  javascript below should be put into a js file. but info-list-modification uses module()
+  which will not work anymore when the file becomes a nested dependency. it should be refactored when
   someody has the time
 </span>
   <script type="text/javascript" th:inline="javascript">
 
 /*<![CDATA[*/
-           
+
 requirejs.config({
   baseUrl: /*[[@{/scripts/}]]*/,
-   
+
   config : {
     'info-list/info-list-modification' : {
         urls: {},
@@ -389,7 +389,7 @@ requirejs.config({
       }
 
     });
-    
+
 var squashtm = squashtm || {};
 squashtm.app = squashtm.app || {};
 squashtm.app.contextRoot = /*[[@{/}]]*/ "http://localhost:8080/squash";

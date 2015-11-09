@@ -11,7 +11,7 @@
         the Free Software Foundation, either version 3 of the License, or
         (at your option) any later version.
 
-        this software is distributed in the hope that it will be useful, 
+        this software is distributed in the hope that it will be useful,
         but WITHOUT ANY WARRANTY; without even the implied warranty of
         MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
         GNU Lesser General Public License for more details.
@@ -20,14 +20,14 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="#{squashtm.cuf.title}">Liste des champs personnalisés</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
+
   <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
-  
+
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
@@ -51,22 +51,22 @@
       deleteConfirmMessageFourth : /*[[ #{message.customField.remove.fourth} ]]*/ 'Remove',
       customFieldUrl : /*[[ @{/custom-fields} ]]*/ "http://localhost:8080/squash/custom-fields",
       removeCustomField : /*[[ #{label.CustomField.remove} ]]*/ "Remove a custom field",
-      
+
       },
     messages: {
-      "message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined", 
-      "message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined", 
+      "message.optionAlreadyDefined": /*[[ #{message.optionAlreadyDefined} ]]*/ "Option is already defined",
+      "message.optionCodeAlreadyDefined": /*[[ #{message.optionCodeAlreadyDefined} ]]*/ "Code is already defined",
       "message.optionCodeInvalidPattern" : /*[[ #{message.optionCodeInvalidPattern} ]]*/ "Code must have only letters, numbers and under-scores",
-      "message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional", 
-      "message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional", 
-      "message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank", 
-      "message.customFieldTag.add.notValid": /*[[ #{message.customFieldTag.add.notValid} ]]*/ "Tags cannot contain pipe '|'", 
+      "message.defaultOptionMandatory": /*[[ #{message.defaultOptionMandatory} ]]*/ "Default option is mandatory when field is not optional",
+      "message.defaultValueMandatory": /*[[ #{message.defaultValueMandatory} ]]*/ "Default value is mandatory when field is not optional",
+      "message.notBlank": /*[[ #{message.notBlank} ]]*/ "Value should not be blank",
+      "message.customFieldTag.add.notValid": /*[[ #{message.customFieldTag.add.notValid} ]]*/ "Tags cannot contain pipe '|'",
     },
     menuBarConf: {
       }
     };
   </script>
-  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
   <script data-main="../../scripts/custom-field-manager.js" th:attr="data-main=@{/scripts/custom-field-manager.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
@@ -79,7 +79,7 @@
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{label.administration}" class="admin">Administration</h2> 
+        <h2 th:text="#{label.administration}" class="admin">Administration</h2>
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -93,7 +93,7 @@
     <div id="sub-page" class="sub-page" >
       <div id="sub-page-header" class="sub-page-header cf">
         <div id="sub-page-title" class="sub-page-title">
-          <h2 th:text="#{title.CustomFields}">Champs personnalisés de test</h2> 
+          <h2 th:text="#{title.CustomFields}">Champs personnalisés de test</h2>
         </div>
 
         <div id="sub-page-buttons" class="sub-page-buttons">
@@ -101,7 +101,7 @@
             th:onclick="'document.location.href=\''+@{/administration}+'\''" />
         </div>
       </div>
-      
+
       <div id="sub-page-content" class="sub-page-content">
     <div class="fragment-body unstyled">
     <div id="cf-table-pane ">
@@ -152,8 +152,8 @@
         </table>
       </div>
     </div>
-    
-	<div id="delete-cf-popup" class="popup-dialog not-displayed" th:title="#{label.CustomField.remove}">		
+
+	<div id="delete-cf-popup" class="popup-dialog not-displayed" th:title="#{label.CustomField.remove}">
 		<div class="display-table-row">
             <div class="display-table-cell warning-cell">
                 <div class="generic-error-signal"></div>
@@ -167,7 +167,7 @@
 			<input type="button" class="sq-btn" th:value="#{label.Cancel}"/>
 		</div>
 	</div>
-  
+
       <div id="new-cf-pane" class="not-displayed popup-dialog form-horizontal" title="New Custom field"
         th:title="#{title.newCustomField}">
         <div class="control-group">
@@ -185,7 +185,7 @@
             <span class="help-inline">&nbsp;</span>
           </div>
         </div>
-        
+
          <div class="control-group">
           <label class="control-label" for="code" th:text="#{label.code}">Code</label>
           <div class="controls">
@@ -203,7 +203,7 @@
               <option value="CHECKBOX">Checkbox</option>
               <option value="DROPDOWN_LIST">Dropdown list</option>
               <option value="DATE_PICKER">Date</option>
-            </select> 
+            </select>
             <span class="help-inline">&nbsp;</span>
           </div>
         </div>
@@ -227,11 +227,11 @@
         <script id="PLAIN_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
           <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
           <div class="controls">
-            <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />    
+            <input name="defaultValue" class="strprop" value="" size="50" maxlength="255" type="text" />
             <span class="help-inline">&nbsp;</span>
           </div>
         </script>
-        
+
         <script id="RICH_TEXT-default-tpl" type="text/x-handlebars-template" th:inline="text">
          <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
          <div class="controls">
@@ -312,10 +312,10 @@
     <div class="controls">
       <input name="defaultValue" id="defaultValue" class="date-hidden dateprop" value="" size="10" maxlength="10" type="text" />
       <span id="defaultValue-label" style="color:#4297d7;font-weight: bold "></span>
-      <span class="help-inline">&nbsp;</span>    
+      <span class="help-inline">&nbsp;</span>
     </div>
         </script>
- 
+
         <script id="TAG-default-tpl" type="text/x-handlebars-template" th:inline="text">
           <label class="control-label" for="defaultValue" th:text="#{label.defaultValue}">Default value</label>
           <div class="controls">
@@ -323,7 +323,7 @@
             <span class="help-inline">&nbsp;</span>
           </div>
         </script>
-        
+
         <script id="remove-cell-tpl" type="text/x-handlebars-template" th:inline="text">
         <a  data-value="{{option}}" th:text="#{label.Delete}">Delete</a>
       </script>
@@ -337,7 +337,7 @@
       </script>
       </div>
     </div>
-    </div>  
+    </div>
     </div>
   </div>
 </body>
