@@ -23,8 +23,7 @@
 * The mains changes are :
 *     - No more reference to a model binded to tree. The original jqplot-view is made in a context where selection in tree
 *       can change chart.
-*     - No more reference to resize window event. In dashboard view, we are strongly linked to Gridster witch isn't reactive.
-*     And it's a very good thing, as if Gridster was reactive, the layout would be changed (and saved in database !) each time a resize occurs
+*     - No more reference to resize window event. Resize will be handled by dashboardView
 *			-	this view and derivated are meant to be instancied in callback after an ajax call for data. so series should never be undefined but can be empty...
 *
 *
@@ -72,27 +71,59 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
       switch (protoLabel) {
         case "TEST_CASE_NATURE":
-          return this.getI18nLegends(legends, squashtm.app.defaultInfoList);
+        case "TEST_CASE_TYPE":
+        case "REQUIREMENT_VERSION_CATEGORY":
+          return this._getI18nLegends(legends, squashtm.app.defaultInfoList);
         case "TEST_CASE_IMPORTANCE":
-          return this.getI18nLegends(legends, squashtm.app.testCaseImportance);
+          return this._getI18nLegends(legends, squashtm.app.testCaseImportance);
         case "TEST_CASE_STATUS":
-          return this.getI18nLegends(legends, squashtm.app.testCaseStatus);
+          return this._getI18nLegends(legends, squashtm.app.testCaseStatus);
         case "REQUIREMENT_VERSION_CRITICALITY":
-          return this.getI18nLegends(legends, squashtm.app.requirementCriticality);
+          return this._getI18nLegends(legends, squashtm.app.requirementCriticality);
         case "REQUIREMENT_VERSION_STATUS":
-          return this.getI18nLegends(legends, squashtm.app.requirementStatus);
+          return this._getI18nLegends(legends, squashtm.app.requirementStatus);
+        case "TEST_CASE_CREATED_ON":
+          return this._formatDateLegend(legends, axis);
         default:
           return legends;
       }
 
     },
 
-    getI18nLegends : function (legends, i18nLegends) {
+    _getI18nLegends : function (legends, i18nLegends) {
       return _.map(legends,function (legend) {
         if (i18nLegends[legend]) {
           return i18nLegends[legend];
         }
         return legend;
+      });
+    },
+
+    _formatDateLegend : function (legends,axis) {
+      var operation = axis.operation.name;
+      switch (operation) {
+        case "BY_DAY":
+          return legends;
+        case "BY_MONTH":
+          return this._formatDateLegendByMonth(legends);
+        case "BY_YEAR":
+          return legends;
+        default:
+          return legends;
+      }
+    },
+
+    //In chart instance date by month are returned with format YYYYMM
+    _formatDateLegendByMonth : function (legends,axis) {
+      var self = this;
+      return _.map( legends, function( legend ){
+        if (Array.isArray(legend)) {
+          return self._formatDateLegendByMonth(legend);
+        }
+        var legendString = legend.toString();
+        var year = legendString.substring(0, 4);
+        var month = legendString.substring(4, 6);
+        return month + "/" + year;
       });
     },
 
