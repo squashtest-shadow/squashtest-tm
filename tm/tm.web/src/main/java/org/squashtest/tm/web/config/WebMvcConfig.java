@@ -53,7 +53,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	private String appVersion;
 
 	@Inject
-	@Lazy
 	private SessionFactory sessionFactory;
 
 	@Inject

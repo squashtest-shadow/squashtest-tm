@@ -22,11 +22,13 @@ package org.squashtest.tm.web.config;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
+import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
+import org.springframework.core.annotation.Order;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
@@ -40,10 +42,10 @@ import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
 import org.thymeleaf.spring4.resourceresolver.SpringResourceResourceResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
-import org.thymeleaf.templateresolver.ServletContextTemplateResolver;
 import org.thymeleaf.templateresolver.TemplateResolver;
 
 import javax.inject.Inject;
+import javax.servlet.DispatcherType;
 import java.util.HashMap;
 
 import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
@@ -128,23 +130,23 @@ public class TmWebConfig {
 	@Inject
 	private BugTrackerContextHolder bugTrackerContextHolder;
 
-	@Bean
-	public BugTrackerContextPersistenceFilter bugTrackerContextPersister() {
+	@Bean @Order(0)
+	public FilterRegistrationBean bugTrackerContextPersister() {
+
 		BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();
 		filter.setContextHolder(bugTrackerContextHolder);
 		filter.setExcludePatterns("/isSquashAlive");
 
-		return filter;
+		FilterRegistrationBean bean = new FilterRegistrationBean(filter);
+		bean.setDispatcherTypes(DispatcherType.REQUEST);
+		return bean;
 	}
 
-	@Bean
-	public AjaxEmptyResponseFilter ajaxEmptyResponseFilter() {
-		return new AjaxEmptyResponseFilter();
-	}
-
-	@Bean
-	public HttpPutFormContentFilter httpPutFormContentFilter() {
-		return new HttpPutFormContentFilter();
+	@Bean @Order(1000)
+	public FilterRegistrationBean ajaxEmptyResponseFilter() {
+		FilterRegistrationBean bean = new FilterRegistrationBean(new AjaxEmptyResponseFilter());
+		bean.setDispatcherTypes(DispatcherType.REQUEST);
+		return bean;
 	}
 
 	@Bean

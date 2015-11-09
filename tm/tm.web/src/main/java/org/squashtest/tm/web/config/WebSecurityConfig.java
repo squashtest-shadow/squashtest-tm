@@ -31,6 +31,7 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
+import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.service.security.UserDetailsService;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
@@ -117,7 +118,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 //		.and().exceptionHandling()
 //			.accessDeniedPage("/squash/accessDenied")
-		.and().addFilterBefore(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
+		.and()
+			.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
+			.addFilterAfter(new HtmlSanitizationFilter(), HttpPutFormContentFilter.class);
 		// @formatter:on
 
 

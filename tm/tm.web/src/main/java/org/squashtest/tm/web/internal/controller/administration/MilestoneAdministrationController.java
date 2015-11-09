@@ -119,6 +119,7 @@ public class MilestoneAdministrationController {
 		mav.addObject("currentUser", StringEscapeUtils.escapeEcmaScript(userService.findCurrentUser().getName()));
 		mav.addObject("isAdmin", permissionEvaluationService.hasRole("ROLE_ADMIN"));
 		mav.addObject("milestoneCloneStatus",  cloneStatusComboDataBuilderProvider.get().useLocale(locale).buildMap());
+
 		return mav;
 	}
 

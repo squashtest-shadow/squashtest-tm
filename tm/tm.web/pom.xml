@@ -340,6 +340,11 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
+
+    <!--<dependency>-->
+      <!--<groupId>org.springframework.boot</groupId>-->
+      <!--<artifactId>spring-boot-configuration-processor</artifactId>-->
+    <!--</dependency>-->
   </dependencies>
   <build>
 
@@ -376,6 +381,13 @@
           <!--&#45;&#45;Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug-->
           <!--</jvmArguments>-->
           <!--</configuration>-->
+            <dependencies>
+              <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>springloaded</artifactId>
+                <version>1.2.4.RELEASE</version>
+              </dependency>
+            </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
