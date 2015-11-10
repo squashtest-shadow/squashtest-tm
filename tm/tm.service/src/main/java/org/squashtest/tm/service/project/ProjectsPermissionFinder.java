@@ -35,9 +35,8 @@ import org.squashtest.tm.security.acls.PermissionGroup;
 
 /**
  * @author mpagnon
- * 
+ *
  */
-@Transactional(readOnly = true)
 public interface ProjectsPermissionFinder {
 
 	List<PermissionGroup> findAllPossiblePermission();

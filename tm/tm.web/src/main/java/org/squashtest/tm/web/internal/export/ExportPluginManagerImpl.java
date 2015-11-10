@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.export;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 
@@ -29,6 +30,7 @@ import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.Collections;
 
+@WebComponent
 public class ExportPluginManagerImpl implements ExportPluginManager {
 	@Autowired(required = false)
 	private Collection<ExportPlugin> plugins = Collections.emptyList();
