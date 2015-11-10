@@ -116,7 +116,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
     //In chart instance date by month are returned with format YYYYMM
     _formatDateLegendByMonth : function (legends,axis) {
       var self = this;
-      return _.map( legends, function( legend ){
+      return _.map( legends, function(legend){
         if (Array.isArray(legend)) {
           return self._formatDateLegendByMonth(legend);
         }
