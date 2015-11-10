@@ -84,7 +84,7 @@
   
   <style type="text/css">
   	.dashboard-grid {
-  		width : 100%;
+  		min-width : 100%;
   		min-height: 100%;
   	}
   	.dashboard-graph {
@@ -448,6 +448,10 @@
      
     <script id="tpl-chart-display-area" type="text/x-handlebars-template"> 
 		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
+		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
+				<span class="ui-icon ui-icon-trash"></span>
+		</div>
+		<span class="gs-resize-handle gs-resize-handle-both"></span>
 	</script>
 	<!-- /SHOW DASHBOARD  -->
 
