@@ -80,7 +80,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		// @formatter:off
-		http
+		http// When CSRF is on, a CSRF token is to be included in any POST/PUT/DELETE/PATCH request. This would require
+			// massive changes, so it's deactivated for now.
+		.csrf().disable()
+
 		.authorizeRequests()
 			.antMatchers(
 				"/administration",
@@ -120,7 +123,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //			.accessDeniedPage("/squash/accessDenied")
 		.and()
 			.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
-			.addFilterAfter(new HtmlSanitizationFilter(), HttpPutFormContentFilter.class);
+			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 		// @formatter:on
 
 
