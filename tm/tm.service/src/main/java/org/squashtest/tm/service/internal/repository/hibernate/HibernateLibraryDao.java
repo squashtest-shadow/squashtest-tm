@@ -30,9 +30,9 @@ import org.squashtest.tm.service.internal.repository.LibraryDao;
 
 /**
  * Superclass for DAOs of {@link Library} objects.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <LIBRARY>
  * @param <NODE>
  */
@@ -54,7 +54,7 @@ HibernateEntityDao<LIBRARY> implements LibraryDao<LIBRARY, NODE>{
 	 * "{libraryUnquilifiedClassName}.findAllRootContentById" with a parameter named "libraryId"
 	 */
 	@Override
-	public final List<NODE> findAllRootContentById(final long libraryId) {
+	public /*final*/ List<NODE> findAllRootContentById(final long libraryId) {
 		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
 
 			@Override
@@ -65,7 +65,7 @@ HibernateEntityDao<LIBRARY> implements LibraryDao<LIBRARY, NODE>{
 
 		return executeListNamedQuery(entityClassName + ".findAllRootContentById", callback);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public LIBRARY findByRootContent(final NODE node) {
@@ -81,8 +81,8 @@ HibernateEntityDao<LIBRARY> implements LibraryDao<LIBRARY, NODE>{
 
 		return (LIBRARY) executeEntityNamedQuery(entityClassName + ".findByRootContent", callback);
 	}
-	
-	
+
+
 
 
 

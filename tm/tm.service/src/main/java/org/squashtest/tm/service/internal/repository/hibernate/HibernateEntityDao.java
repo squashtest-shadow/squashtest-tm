@@ -42,12 +42,12 @@ import org.squashtest.tm.service.internal.repository.EntityDao;
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
 
 	@Override
-	public final ENTITY_TYPE findById(long id) {
+	public /*final*/ ENTITY_TYPE findById(long id) {
 		return getEntity(id);
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a list of all entities found in the database with no restriction
 	 */
 	@SuppressWarnings("unchecked")
@@ -110,7 +110,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 
 
 	@SuppressWarnings("unchecked")
-	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting, Class<ENTITY_TYPE> classe, String alias) {
+	protected /*final*/ List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting, Class<ENTITY_TYPE> classe, String alias) {
 		Session session = currentSession();
 
 		Criteria crit = session.createCriteria(classe, alias);
@@ -130,14 +130,14 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	/**
 	 * Same as {@link #findSorted(PagingAndSorting, Class, String)} using the current entity type and its class name as
 	 * an alias.
-	 * 
+	 *
 	 * @param pagingAndSorting
 	 * @return
 	 */
-	protected final List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting) {
+	protected /*final*/ List<ENTITY_TYPE> findSorted(PagingAndSorting pagingAndSorting) {
 		return findSorted(pagingAndSorting, entityType, entityType.getSimpleName());
 	}
-	
+
 	protected <X> List<X> collectFromMapList(List<X> hibernateResult, String alias){
 		List<X> collected = new ArrayList<X>(hibernateResult.size());
 		for (Map<String, X> result : (List<Map<String, X>>) hibernateResult){
@@ -145,11 +145,11 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 		return collected;
 	}
-	
+
 	protected List<ENTITY_TYPE> collectFromMapList(Criteria crit){
 		return collectFromMapList(crit.list(), entityType.getSimpleName());
 	}
-	
+
 	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit, String alias){
 		List<Map<String, ?>> res = crit.list();
 		Set<ENTITY_TYPE> set = new HashSet<ENTITY_TYPE>(res.size());
@@ -158,11 +158,11 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 		}
 		return set;
 	}
-	
+
 	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit){
 		return collectFromMapListToSet(crit, entityType.getSimpleName());
 	}
-	
-	
-	
+
+
+
 }

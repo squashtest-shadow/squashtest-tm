@@ -36,9 +36,9 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
 /**
  * To implement an Hibernate DAO, subclass this class, annotate it with @Repository and work with the Hibernate session
  * provided by {@link #currentSession()}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYPE> {
 	protected final Class<ENTITY_TYPE> entityType;
@@ -53,7 +53,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	@Inject
 	private SessionFactory sessionFactory;
 
-	protected final Session currentSession() {
+	protected /*final*/ Session currentSession() {
 		return sessionFactory.getCurrentSession();
 	}
 
@@ -75,7 +75,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	}
 
 	@Override
-	public final void flush() {
+	public /*final*/ void flush() {
 		currentSession().flush();
 	}
 
@@ -93,36 +93,36 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	}
 
 	@SuppressWarnings("unchecked")
-	protected final ENTITY_TYPE getEntity(long objectId) {
+	protected /*final*/ ENTITY_TYPE getEntity(long objectId) {
 		return (ENTITY_TYPE) currentSession().get(entityType, objectId);
 	}
 
-	protected final void persistEntity(Object entity) {
+	protected /*final*/ void persistEntity(Object entity) {
 		currentSession().persist(entity);
 	}
 
 	/**
 	 * Executes a no-args named query which returns a list of entities.
-	 * 
+	 *
 	 * @param <R>
 	 * @param queryName
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <R> List<R> executeListNamedQuery(String queryName) {
+	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName) {
 		return currentSession().getNamedQuery(queryName).list();
 	}
 
 	/**
 	 * Executes a named query with parameters. The parameters should be set by the callback object.
-	 * 
+	 *
 	 * @param <R>
 	 * @param queryName
 	 * @param setParams
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams) {
+	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Session session = currentSession();
 
 		Query q = session.getNamedQuery(queryName);
@@ -133,7 +133,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	/**
 	 * Executes a named query with parameters. The parameters should be set by the callback object.
-	 * 
+	 *
 	 * @param <R>
 	 * @param queryName
 	 * @param queryParam
@@ -143,7 +143,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <R> List<R> executeListNamedQuery(@NotNull String queryName, @NotNull Object queryParam,
+	protected /*final*/ <R> List<R> executeListNamedQuery(@NotNull String queryName, @NotNull Object queryParam,
 			@NotNull Paging filter) {
 		Session session = currentSession();
 
@@ -160,14 +160,14 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	/**
 	 * Executes a named query with parameters. The parameters should be set by the callback object.
-	 * 
+	 *
 	 * @param <R>
 	 * @param queryName
 	 * @param setParams
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams,
+	protected /*final*/ <R> List<R> executeListNamedQuery(String queryName, SetQueryParametersCallback setParams,
 			Paging paging) {
 
 		Session session = currentSession();
@@ -185,7 +185,7 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 
 	/**
 	 * Runs a named query which returns a single entity / tuple / scalar and which accepts a unique parameter.
-	 * 
+	 *
 	 * @param <R>
 	 * @param queryName
 	 *            name of the query, should not be null
@@ -196,32 +196,32 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	protected final <R> R executeEntityNamedQuery(String queryName, String paramName, Object paramValue) {
+	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, String paramName, Object paramValue) {
 		Query q = currentSession().getNamedQuery(queryName);
 		q.setParameter(paramName, paramValue);
 		return (R) q.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
-	protected final <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {
+	protected /*final*/ <R> R executeEntityNamedQuery(String queryName, SetQueryParametersCallback setParams) {
 		Query q = currentSession().getNamedQuery(queryName);
 		setParams.setQueryParameters(q);
 		return (R) q.uniqueResult();
 	}
 
 	@SuppressWarnings("unchecked")
-	protected final <R> R executeEntityNamedQuery(String queryName) {
+	protected /*final*/ <R> R executeEntityNamedQuery(String queryName) {
 		Query q = currentSession().getNamedQuery(queryName);
 		return (R) q.uniqueResult();
 	}
 
-	protected final void executeUpdateListQuery(String queryName, SetQueryParametersCallback params) {
+	protected /*final*/ void executeUpdateListQuery(String queryName, SetQueryParametersCallback params) {
 		Query q = currentSession().getNamedQuery(queryName);
 		params.setQueryParameters(q);
 		q.executeUpdate();
 	}
 
-	protected final void removeEntity(ENTITY_TYPE entity) {
+	protected /*final*/ void removeEntity(ENTITY_TYPE entity) {
 		currentSession().delete(entity);
 	}
 
