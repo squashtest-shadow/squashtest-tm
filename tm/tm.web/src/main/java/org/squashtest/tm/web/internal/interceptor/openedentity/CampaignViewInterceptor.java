@@ -24,14 +24,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.context.request.WebRequest;
+import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.campaign.Campaign;
 
 /**
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
+@WebComponent
 public class CampaignViewInterceptor extends ObjectViewsInterceptor {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignViewInterceptor.class);

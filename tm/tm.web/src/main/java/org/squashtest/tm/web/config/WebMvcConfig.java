@@ -24,7 +24,6 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -64,7 +63,21 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Inject
 	private MilestoneConfigResolver milestoneConfigResolver;
 
-	@Inject private SecurityExpressionResolverExposerInterceptor securityExpressionResolverExposerInterceptor;
+	@Inject
+	private SecurityExpressionResolverExposerInterceptor securityExpressionResolverExposerInterceptor;
+
+	@Inject
+	private CampaignViewInterceptor campaignViewInterceptor;
+	@Inject
+	private ExecutionViewInterceptor executionViewInterceptor;
+	@Inject
+	private TestCaseViewInterceptor testCaseViewInterceptor;
+	@Inject
+	private RequirementViewInterceptor requirementViewInterceptor;
+	@Inject
+	private IterationViewInterceptor iterationViewInterceptor;
+	@Inject
+	private TestSuiteViewInterceptor testSuiteViewInterceptor;
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
@@ -83,7 +96,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			.excludePathPatterns("/", "/login");
 
 		// Opened test cases handling
-		registry.addWebRequestInterceptor(new TestCaseViewInterceptor())
+		registry.addWebRequestInterceptor(testCaseViewInterceptor)
 			.addPathPatterns(
 				"/test-cases/*",
 				"/test-cases/*/info",
@@ -91,7 +104,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			);
 
 		// Opened requirements handling
-		registry.addWebRequestInterceptor(new RequirementViewInterceptor())
+		registry.addWebRequestInterceptor(requirementViewInterceptor)
 			.addPathPatterns(
 				"/requirement-versions/*",
 				"/requirement-versions/*/info",
@@ -99,7 +112,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			);
 
 		// Opened campaigns handling
-		registry.addWebRequestInterceptor(new CampaignViewInterceptor())
+		registry.addWebRequestInterceptor(campaignViewInterceptor)
 			.addPathPatterns(
 				"/campaigns/*",
 				"/campaigns/*/info",
@@ -107,7 +120,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			);
 
 		// Opened iterations handling
-		registry.addWebRequestInterceptor(new IterationViewInterceptor())
+		registry.addWebRequestInterceptor(iterationViewInterceptor)
 			.addPathPatterns(
 				"/iterations/*",
 				"/iterations/*/info",
@@ -115,7 +128,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			);
 
 		// Opened test-suites handling
-		registry.addWebRequestInterceptor(new TestSuiteViewInterceptor())
+		registry.addWebRequestInterceptor(testSuiteViewInterceptor)
 			.addPathPatterns(
 				"/test-suites/*",
 				"/test-suites/*/info",
@@ -123,7 +136,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			);
 
 		// Opened executions handling
-		registry.addWebRequestInterceptor(new ExecutionViewInterceptor())
+		registry.addWebRequestInterceptor(executionViewInterceptor)
 			.addPathPatterns(
 				"/executions/*",
 				"/executions/*/info"

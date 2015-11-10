@@ -22,9 +22,13 @@ package org.squashtest.tm.web.internal.interceptor.openedentity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.web.context.ServletContextAware;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
@@ -35,15 +39,17 @@ import javax.servlet.ServletContext;
  * Groups mutual code to store the information of an access to the view of an entity in the OpenedEntities stored in the ServeletContext.
  * see {@linkplain OpenedEntities}
  *
+ * TODO we could probably replace the n subclasses with a sensible regexp(-like)-based configuration
+ *
  * @author mpagnon
  */
 public abstract class ObjectViewsInterceptor implements WebRequestInterceptor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectViewsInterceptor.class);
 
-	@Inject
+	@Inject @Lazy
 	protected ServletContext context;
 
-	@Inject
+	@Inject @Lazy
 	private PermissionEvaluationService permissionService;
 
 	protected final boolean addViewerToEntity(String contextAttributeName, Identified object, String userLogin) {
