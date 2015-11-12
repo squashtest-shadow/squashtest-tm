@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -32,10 +31,32 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface CampaignDao extends EntityDao<Campaign> {
+
+
+	List<Long> findAllCampaignIdsByLibraries(Collection<Long> libraryIds);
+
+	List<Long> findAllCampaignIdsByNodeIds(Collection<Long> nodeIds);
+
+	/**
+	 * For a given collection of campaign ids, will return only those that belong
+	 * to a milestone (given its id). If milestoneId is null, the initial list
+	 * will be returned.
+	 * 
+	 * @param campaignIds
+	 * @param milestoneId
+	 * @return
+	 */
+	List<Long> filterByMilestone(Collection<Long> campaignIds, Long milestoneId);
+
+	List<Long> findAllIdsByMilestone(Long milestoneId);
+
+	List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone);
 
 	Campaign findByIdWithInitializedIterations(long campaignId);
 
@@ -66,6 +87,15 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	long countTestPlanById(long campaignId);
 
+
+	/**
+	 * Returns how many iterations this campaign have
+	 * 
+	 * @param campaignIds
+	 * @return
+	 */
+	int countIterations(long campaignId);
+
 	List<String> findNamesInFolderStartingWith(long folderId, String nameStart);
 
 	List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart);
@@ -73,8 +103,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<String> findNamesInCampaignStartingWith(long campaignId, String nameStart);
 
 	List<String> findAllNamesInCampaign(long campaignId);
-
-
 	/**
 	 * Finds all {@link CampaignLibraryNode} which name contains the given token.
 	 * 
@@ -108,4 +136,5 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<Long> findCampaignIdsHavingMultipleMilestones(List<Long> nodeIds);
 
 	List<Long> findNonBoundCampaign(Collection<Long> nodeIds, Long milestoneId);
+
 }

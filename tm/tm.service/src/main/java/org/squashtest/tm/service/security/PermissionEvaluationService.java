@@ -22,11 +22,11 @@ package org.squashtest.tm.service.security;
 
 import java.util.Map;
 
-import org.springframework.security.acls.model.Permission;
-
 
 /**
  * This service evaluates permissions of the current user.
+ *
+ *
  *
  * @author Gregory Fouquet
  *
@@ -40,8 +40,15 @@ public interface PermissionEvaluationService {
 	 * @return true if the current user either has the given role or has the required permission on the given object.
 	 */
 	boolean hasRoleOrPermissionOnObject(String role, String permission, Object object);
-	
-	
+
+	/**
+	 *
+	 * @param permission String representation of the permission.
+	 * @param entity
+	 * @return true if the current user has the required permission on the given object.
+	 */
+	boolean hasPermissionOnObject(String permission, Object entity);
+
 	/**
 	 * Same as {@link #hasRoleOrPermissionOnObject(String, String, Object)}, except that Object is explicitly identified 
 	 * by its ID and classname
@@ -87,14 +94,13 @@ public interface PermissionEvaluationService {
 	 * @return <code>true</code> if the current user has the given permission on the object of the given id and classname.
 	 */
 	boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName);
-	
-	
+
 	/**
-	 * returns all existing permissions and says which of those the user is granted on the given object.
-	 * 
-	 * @param object
-	 * @return
+	 *
+	 * @param permission String representation of the permission.
+	 * @param entity
+	 * @return true if the current user has the required permission on the given object.
 	 */
-	Map<Permission, Boolean> listPermissionsOnObject(Object object);
-	
+	Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity);
+
 }

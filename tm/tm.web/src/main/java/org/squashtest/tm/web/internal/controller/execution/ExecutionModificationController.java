@@ -33,12 +33,12 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -47,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -72,6 +73,7 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfi
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.controller.widget.AoColumnDef;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
@@ -88,6 +90,11 @@ public class ExecutionModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
 
+
+
+
+
+
 	@Inject
 	private ExecutionModificationService executionModService;
 
@@ -102,6 +109,9 @@ public class ExecutionModificationController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
+
+	@Inject
+	private Provider<LevelLabelFormatter> levelFormatterProvider;
 
 	// ****** custom field services ******************
 
@@ -262,8 +272,6 @@ public class ExecutionModificationController {
 
 	static String createBugList(ExecutionStep item) {
 
-
-
 		StringBuffer toReturn = new StringBuffer();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
 		if (issueList.size() > 0) {
@@ -308,6 +316,27 @@ public class ExecutionModificationController {
 
 	}
 
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-assignment", VALUE })
+	@ResponseBody
+	public String updateAssignment(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
+
+		executionModService.setExecutionDescription(executionId, newDescription);
+		LOGGER.trace("Execution " + executionId + ": updated description to " + newDescription);
+		return newDescription;
+
+	}
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-status", VALUE })
+	@ResponseBody
+	public String updateStatus(@RequestParam(VALUE) ExecutionStatus newStatus, @PathVariable long executionId,
+			Locale locale) {
+
+		executionModService.setExecutionStatus(executionId, newStatus);
+		LOGGER.trace("Execution " + executionId + ": updated status to " + newStatus);
+		return internationalize(newStatus, locale);
+
+	}
+
 	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonExecutionInfo refreshGeneralInfos(@PathVariable long executionId) {
@@ -339,6 +368,11 @@ public class ExecutionModificationController {
 		return new StartEndDate(reNewStartDate, reNewEndDate);
 	}
 
+	@RequestMapping(value = "updateSteps", method = RequestMethod.POST)
+	@ResponseBody
+	public Long updateSteps(@PathVariable("executionId") long executionId) {
+		return executionModService.updateSteps(executionId);
+	}
 
 	// ************* private stuffs *************
 
@@ -425,6 +459,15 @@ public class ExecutionModificationController {
 		public Long getNewEndDate() {
 			return this.newEndDate;
 		}
+	}
+
+	/**
+	 * @param level
+	 * @param locale
+	 * @return
+	 */
+	private String internationalize(Level level, Locale locale) {
+		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
 
 }

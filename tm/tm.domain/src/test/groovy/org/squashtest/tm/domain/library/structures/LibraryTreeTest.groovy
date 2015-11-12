@@ -37,7 +37,7 @@ class LibraryTreeTest extends Specification{
 		LibraryTree.metaClass.toListOfPair = { List arg -> return toListOfPair(delegate, arg)  }
 	}
 
-	protected List<TreeNodePair> toListOfPair(LibraryTree<SubTreeNode> tree, List<List<Long>> l){
+	protected List<TreeNodePair> toListOfPair(LibraryTree<Long, SubTreeNode> tree, List<List<Long>> l){
 
 		List<TreeNodePair> res = new LinkedList<TreeNodePair>();
 
@@ -322,6 +322,68 @@ class LibraryTreeTest extends Specification{
 	}
 
 
+	def "should return the root of the tree"(){
+		given :
+		def tree = initBigTree();
+
+		when :
+		def res = tree.getRootNodes()
+
+		then :
+		res.collect{it.name} as Set == ["bob11", "bob12", "bob13", "bob14"] as Set
+	}
+
+	def "should return the leaves"(){
+
+		given :
+		def tree = initBigTree()
+
+		when :
+		def res = tree.getLeaves()
+
+		then :
+		res.collect{it.name} as Set == ["bob31", "bob32", "bob33", "bob34"] as Set
+
+
+	}
+
+	def "should remove a childless node"(){
+
+		given :
+		def tree = initBigTree()
+
+		when :
+		tree.remove(32l)
+
+		then :
+		tree.collectKeys() as Set == [11l, 12l, 13l, 14l, 21l, 22l, 23l, 24l, 31l, 33l, 34l] as Set
+
+	}
+
+	def "should refuse to remove a non childess node"(){
+		given :
+		def tree = initBigTree()
+
+		when :
+		tree.remove(22l)
+
+		then :
+		thrown RuntimeException
+	}
+
+	def "should cut a subtree"(){
+
+		given :
+		def tree = initBigTree()
+
+		when :
+		tree.cut(22l)
+
+		then :
+		tree.collectKeys() as Set == [11l, 12l, 13l, 14l, 21l, 23l, 24l, 31l, 32l, 34l] as Set
+	}
+
+
 	def "should merge the data for the second layer only"(){
 
 		given :
@@ -358,50 +420,13 @@ class LibraryTreeTest extends Specification{
 
 	}
 
-	/*
-	 def "should sort a list of data (see comments of LibraryTree#sortData)"(){
-	 given :
-	 def tree = initBigTree()
-	 List<TreeNodePair> sortedData = tree.toListOfPair([[null, 1], [1, 11], [11, 21], [1, 12], [12, 23],  [11, 22]])
-	 List<TreeNodePair> unsortedData = tree.toListOfPair([ [12, 23], [11, 22] , [1, 12], [11, 21], [null, 1], [1, 11] ])
-	 when :
-	 List<TreeNodePair> test = tree.sortData(unsortedData)
-	 then :
-	 test.size() == 6
-	 boolean passed = true
-	 for (int i=0;i<6;i++){
-	 def expected = sortedData[i]
-	 def actual = test[i]
-	 passed = passed && (expected.parentKey == actual.parentKey) && (expected.child.key == actual.child.key)
-	 }
-	 passed
-	 }
-	 def "should sort a list of data (2)"(){
-	 given :
-	 def tree = initBigTree()
-	 List<TreeNodePair> sortedData = tree.toListOfPair([[null, 68], [68,69], [69,70], [70,71], [71,72], [72,73], [73,74]])
-	 List<TreeNodePair> unsortedData = tree.toListOfPair([ [72,73], [71,72], [73,74], [68,69], [null, 68], [70,71], [69,70] ])
-	 when :
-	 List<TreeNodePair> test = tree.sortData(unsortedData)
-	 then :
-	 test.size() == 7
-	 boolean passed = true
-	 for (int i=0;i<7;i++){
-	 def expected = sortedData[i]
-	 def actual = test[i]
-	 passed = passed && (expected.parentKey == actual.parentKey) && (expected.child.key == actual.child.key)
-	 }
-	 passed
-	 }
-	 */
-
 
 	def "should build a tree using a list of unsorted data (see LibraryTree#sortData comments for explanation)"(){
 		given :
 		def tree = new LibraryTree();
 
 		and :
-		List unsortedData = tree.toListOfPair([ [12, 23], [11, 22] , [1, 12], [11, 21], [null, 1], [1, 11] ])
+		List unsortedData = tree.toListOfPair([ [12l, 23l], [11l, 22l] , [1l, 12l], [11l, 21l], [null, 1l], [1l, 11l] ])
 
 		when :
 		tree.addNodes(unsortedData)

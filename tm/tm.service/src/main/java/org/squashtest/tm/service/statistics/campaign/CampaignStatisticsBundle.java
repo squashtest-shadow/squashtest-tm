@@ -24,18 +24,18 @@ import java.util.List;
 
 
 public final class CampaignStatisticsBundle {
-	
+
 	private List<IterationTestInventoryStatistics> iterationTestInventoryStatisticsList;
 
 	private CampaignProgressionStatistics campaignProgressionStatistics;
 
 	private CampaignTestCaseStatusStatistics campaignTestCaseStatusStatistics;
-	
+
 	private CampaignNonExecutedTestCaseImportanceStatistics campaignNonExecutedTestCaseImportanceStatistics;
-	
-	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics; 
-	
-	
+
+	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics;
+
+
 	public List<IterationTestInventoryStatistics> getIterationTestInventoryStatisticsList() {
 		return iterationTestInventoryStatisticsList;
 	}
@@ -88,6 +88,6 @@ public final class CampaignStatisticsBundle {
 			CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics) {
 		this.campaignTestCaseSuccessRateStatistics = campaignTestCaseSuccessRateStatistics;
 	}
-	
+
 }
 

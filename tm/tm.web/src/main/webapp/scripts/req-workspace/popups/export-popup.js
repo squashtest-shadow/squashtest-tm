@@ -58,26 +58,35 @@ define(['jquery', 'tree',
 		_createName : function(){
 			return this.options.nameprefix+"_"+ dateutils.format(new Date(), this.options.dateformat);
 		},
+		
+		//REQUIREMENT EXPORT URL
+		_createUrl : function(nodes, name, keepRteFormat){
+			var url = squashtm.app.contextRoot+'/requirement-browser/exports';
+			
+			var libIds = nodes.filter(':library').map(function(){
+				return $(this).attr('resid');
+			}).get().join(',');
+			var nodeIds = nodes.not(':library').map(function(){
+				return $(this).attr('resid');
+			}).get().join(',');
+			
+			var params = {
+				'filename' : $('#export-name-input').val(),
+				'libraries' : libIds,
+				'nodes' : nodeIds,
+				'keep-rte-format' : keepRteFormat
+			};
+			
+			return url+"?"+$.param(params);
 
-		_createUrl : function(nodes, name, format, keepRteFormat){
-			var url = squashtm.app.contextRoot+'/requirement-browser/';
-			if (nodes.is(':library')){
-				url += "drives/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name + "&keep-rte-format=" + keepRteFormat;
-			}
-			else{
-				url += "nodes/"+nodes.all('getResId').join(',')+"/"+format+"?name="+name + "&keep-rte-format=" + keepRteFormat;
-			}
-
-			return url;
 		},
 
 		confirm : function(){
 			var nodes = this.options.tree.jstree('get_selected');
-			if ((nodes.length>0) && (nodes.areSameLibs())){
+			if (nodes.length>0){
 				var filename = $("#export-name-input").val();
-				var exportFormat = $("#export-option").val();
 				var keepRteFormat = $("#export-keepRteFormat").prop('checked');
-				var url = this._createUrl(nodes, filename, exportFormat, keepRteFormat);
+				var url = this._createUrl(nodes, filename, keepRteFormat);
 				document.location.href = url;
 				this.close();
 			}

@@ -20,37 +20,9 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
@@ -61,11 +33,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.Copiable;
-import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
@@ -74,12 +42,18 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.*;
+
 @Auditable
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 BoundEntity, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
+	public static final int MAX_REF_SIZE = 50;
 
 	@Id
 	@Column(name = ITERATION_ID)
@@ -94,6 +68,10 @@ BoundEntity, MilestoneMember {
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	private String name;
+
+	@NotNull
+	@Size(min = 0, max = MAX_REF_SIZE)
+	private String reference = "";
 
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
@@ -115,7 +93,7 @@ BoundEntity, MilestoneMember {
 	 * See bug HHH-5390 for a concise discussion about this.
 	 */
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = ITERATION_ID, updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "CAMPAIGN_ID", updatable = false, insertable = false))
 	private Campaign campaign;
 
@@ -129,7 +107,7 @@ BoundEntity, MilestoneMember {
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
@@ -151,13 +129,35 @@ BoundEntity, MilestoneMember {
 		return listExec;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name.trim();
 	}
 
+	@Override
 	@NotBlank
 	public String getName() {
 		return this.name;
+	}
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 * 
+	 */
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
+		}
 	}
 
 	public Campaign getCampaign() {
@@ -723,13 +723,13 @@ BoundEntity, MilestoneMember {
 
 	@Override
 	public void addContent(@NotNull TestSuite testSuite) throws DuplicateNameException, NullArgumentException {
-		this.addTestSuite((TestSuite) testSuite);
+		this.addTestSuite(testSuite);
 	}
 
 	@Override
 	public void addContent(@NotNull TestSuite testSuite, int position) throws DuplicateNameException,
 	NullArgumentException {
-		this.addTestSuite((TestSuite) testSuite, position);
+		this.addTestSuite(testSuite, position);
 
 	}
 

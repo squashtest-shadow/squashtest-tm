@@ -138,9 +138,16 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		GenericProject project = projectDao.findById(projectId);
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 		project.unbindMilestones(milestones);
+
+		// Remove the project in different for loop because milestoneDao.unbindAllObjectsForProject may clear the
+		// session
 		for (Milestone milestone : milestones) {
-			milestoneDao.unbindAllObjectsForProject(milestone.getId(), projectId);
 			milestone.removeProjectFromPerimeter(project);
+		}
+
+		for (Milestone milestone : milestones) {
+			// BE CAREFULL if you refactor here : This method may clear the session.
+			milestoneDao.unbindAllObjectsForProject(milestone.getId(), projectId);
 		}
 	}
 

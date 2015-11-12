@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.importer;
 
+import static org.squashtest.tm.service.importer.EntityType.COVERAGE;
 import static org.squashtest.tm.service.importer.EntityType.DATASET;
 import static org.squashtest.tm.service.importer.EntityType.PARAMETER;
+import static org.squashtest.tm.service.importer.EntityType.REQUIREMENT_VERSION;
 import static org.squashtest.tm.service.importer.EntityType.TEST_CASE;
 import static org.squashtest.tm.service.importer.EntityType.TEST_STEP;
 import static org.squashtest.tm.service.importer.ImportStatus.FAILURE;
@@ -37,9 +39,13 @@ import java.util.ListIterator;
 import java.util.TreeSet;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.squashtest.tm.service.internal.batchimport.LogTrain;
 
 public class ImportLog{
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ImportLog.class);
 
 	// key : EntityType, values : LogEntry
 	@SuppressWarnings("rawtypes")
@@ -60,6 +66,15 @@ public class ImportLog{
 	private int datasetSuccesses = 0;
 	private int datasetWarnings = 0;
 	private int datasetFailures = 0;
+
+	private int requirementVersionSuccesses = 0;
+	private int requirementVersionWarnings = 0;
+	private int requirementVersionFailures = 0;
+
+	private int coverageSuccesses = 0;
+	private int coverageWarnings = 0;
+	private int coverageFailures = 0;
+
 
 	private String reportUrl;
 
@@ -85,10 +100,10 @@ public class ImportLog{
 
 
 	/**
-	 * 
+	 *
 	 * <p>The logs for the datasets also contain the logs for the dataset parameter values.
 	 * Since they were inserted separately we need to purge them from redundant informations.</p>
-	 * 
+	 *
 	 * <p>To ensure consistency we need to check that, for each imported line, there can be
 	 *   a log entry with status OK if this is the unique log entry for that line.
 	 *   From a procedural point of view we need, for each imported lines, to remove a log entry
@@ -98,17 +113,17 @@ public class ImportLog{
 	 * 	<li>there is at least 1 warning or error</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 */
 
 	/*
 	 * NB : This code relies on the fact that the log entries are sorted by import line number then by status,
 	 * and that the status OK comes first.
-	 * 
+	 *
 	 * Basically the job boils down to the following rules :
-	 * 
+	 *
 	 * for each line, for each entry, if there was a previous element with status OK on this line -> remove it.
-	 * 
+	 *
 	 */
 	public void packLogs(){
 
@@ -162,10 +177,13 @@ public class ImportLog{
 
 
 	public void recompute() {
+		LOGGER.debug("ReqImport - Compute requirement import results");
 		recomputeFor(TEST_CASE);
 		recomputeFor(TEST_STEP);
 		recomputeFor(PARAMETER);
 		recomputeFor(DATASET);
+		recomputeFor(REQUIREMENT_VERSION);
+		recomputeFor(COVERAGE);
 	}
 
 
@@ -173,17 +191,17 @@ public class ImportLog{
 	 * This method will compute, for one type of data, how
 	 * many lines in the imported excel workbook were treated successfully,
 	 * partially or not at all.
-	 * 
+	 *
 	 * Each line can be the object of one or many log entry, for each of those
 	 * lines we need to know whether the entries that reference them have errors,
 	 * warning or just report a success.
-	 * 
+	 *
 	 * The entries are returned sorted by line number (thanks to the choice of a
 	 * TreeSet as the collection). All we have to do is to iterate over the
 	 * elements, record whenever a status 'warning' or 'failure' is encountered, then
 	 * when a new line is being treated we just report what statuses were found
 	 * and reset the counters.
-	 * 
+	 *
 	 */
 	private void recomputeFor(EntityType type){
 
@@ -243,9 +261,28 @@ public class ImportLog{
 		case DATASET :
 			countDataset(errors, warnings);
 			break;
+		case REQUIREMENT_VERSION :
+			countRequirementVersion(errors, warnings);
+			break;
+
+		case COVERAGE:
+			countCoverage(errors, warnings);
+			break;
 		case NONE :
 			break;
 
+		default:
+			throw new IllegalStateException(String.format("Entity type %s not yet implemented", type));
+		}
+	}
+
+	private void countCoverage(boolean errors, boolean warnings) {
+		if (errors) {
+			coverageFailures++;
+		} else if (warnings) {
+			coverageWarnings++;
+		} else {
+			coverageSuccesses++;
 		}
 	}
 
@@ -299,6 +336,19 @@ public class ImportLog{
 		}
 	}
 
+	private void countRequirementVersion(boolean errors, boolean warnings){
+		LOGGER.debug("ReqImport Compute requirements");
+		if (errors){
+			requirementVersionFailures++;
+		}
+		else if (warnings){
+			requirementVersionWarnings ++;
+		}
+		else{
+			requirementVersionSuccesses++;
+		}
+	}
+
 	public int getTestCaseSuccesses() {
 		return testCaseSuccesses;
 	}
@@ -347,6 +397,18 @@ public class ImportLog{
 		return datasetFailures;
 	}
 
+	public int getRequirementVersionSuccesses() {
+		return requirementVersionSuccesses;
+	}
+
+	public int getRequirementVersionWarnings() {
+		return requirementVersionWarnings;
+	}
+
+	public int getRequirementVersionFailures() {
+		return requirementVersionFailures;
+	}
+
 	public String getReportUrl() {
 		return reportUrl;
 	}
@@ -357,6 +419,18 @@ public class ImportLog{
 
 	public String getStatus(){
 		return "ok";
+	}
+
+	public int getCoverageSuccesses() {
+		return coverageSuccesses;
+	}
+
+	public int getCoverageWarnings() {
+		return coverageWarnings;
+	}
+
+	public int getCoverageFailures() {
+		return coverageFailures;
 	}
 
 }

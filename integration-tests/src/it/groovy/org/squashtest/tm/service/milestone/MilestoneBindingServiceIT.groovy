@@ -44,12 +44,12 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		def bindThem = manager.bindMilestonesToProject(findedIds, projectId)
 		def findBinded = manager.getAllBindedMilestoneForProject(projectId)
 		then :
-		findBinded.collect{it.id} as Set == [1, 2, 3, 4] as Set
+		findBinded.collect{it.id} as Set == [-1, -2, -3, -4, -5] as Set
 		where :
 		projectId | _
-		   1L     | _
-		   2L     | _
-		   3L     | _
+		   -1L     | _
+		   -2L     | _
+		   -3L     | _
 	}
 	
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
@@ -62,9 +62,9 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		findThem.collect{it.id} as Set == ids as Set
 		where :
 		projectId || ids
-		   1L     || []
-		   2L     || [4]
-		   3L     || [1, 2, 3, 4]
+		   -1L     || []
+		   -2L     || [-4, -5]
+		   -3L     || [-1, -2, -3, -4, -5]
 	}
 	
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
@@ -77,10 +77,10 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		findThem.collect{it.id} as Set == ids as Set
 		where :
 		milestoneId || ids
-		   1L     || [3]
-		   2L     || [3]
-		   3L     || [3]
-		   4L     || [2, 3]
+		   -1L     || [-3]
+		   -2L     || [-3]
+		   -3L     || [-3]
+		   -4L     || [-2, -3]
 	}
 	
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
@@ -93,9 +93,9 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		findThem.collect{it.id} as Set == ids as Set
 		where :
 		projectId || ids
-		   1L     || [1, 2, 3, 4]
-		   2L     || [1, 2, 3]
-		   3L     || []
+		   -1L     || [-1, -2, -3, -4, -5]
+		   -2L     || [-1, -2, -3]
+		   -3L     || []
 	}
 	
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
@@ -108,10 +108,10 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		findThem.collect{it.id} as Set == ids as Set
 		where :
 		milestoneId || ids
-		   1L     || [1, 2]
-		   2L     || [1, 2]
-		   3L     || [1, 2]
-		   4L     || [1]
+		   -1L     || [-1, -2]
+		   -2L     || [-1, -2]
+		   -3L     || [-1, -2]
+		   -4L     || [-1]
 	}
 	
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
@@ -121,14 +121,16 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		when :
 		manager.unbindMilestonesFromProject(milestoneIds, projectId)
 		def result = manager.getAllBindedMilestoneForProject(projectId)
+
 		then :
 		result.collect{it.id} as Set == ids as Set 
 		
 		where : 
-		milestoneIds       | projectId    || ids
-		[1L]               |     1L       || [2, 3 , 4]
-		[1L, 2L]           |     1L       || [3, 4]
-		[1L, 3L]           |     1L       || [2, 4]
-		[1L, 2L, 3L]       |     2L       || []
+		milestoneIds                | projectId     || ids
+		[-1L]                       |     -1L       || [-2, -3 , -4, -5]
+		[-1L, -2L]                  |    -1L        || [-3, -4, -5]
+		[-1L, -3L]                  |     -1L       || [-2, -4, -5]
+		[-1L, -2L, -3L]             |     -2L       || []
+		[-1L, -2L, -5L, -4L, -3L]   |     -1L       || []
 	}
 }

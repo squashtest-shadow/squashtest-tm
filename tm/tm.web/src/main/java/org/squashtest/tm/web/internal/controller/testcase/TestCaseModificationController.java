@@ -132,14 +132,15 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 @RequestMapping("/test-cases/{testCaseId}")
 public class TestCaseModificationController {
 	/**
-	 * 
+	 *
 	 */
 	private static final String TEST_CASE = "testCase";
+	private static final String OPTIMIZED = "optimized";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String NAME = "name";
 
@@ -217,7 +218,7 @@ public class TestCaseModificationController {
 
 	/**
 	 * Returns the fragment html view of test case
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param locale
 	 * @return
@@ -236,7 +237,7 @@ public class TestCaseModificationController {
 
 	/**
 	 * Returns the full-page html view of test case
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param locale
 	 * @return
@@ -253,6 +254,20 @@ public class TestCaseModificationController {
 
 		populateModelWithTestCaseEditionData(mav, testCase, locale, activeMilestone);
 
+		return mav;
+	}
+
+	@RequestMapping(value = "/edit-from-exec/{execId}", method = RequestMethod.POST, params = OPTIMIZED)
+	public ModelAndView editTestCaseFromExecution(@PathVariable long testCaseId, Locale locale,
+			@CurrentMilestone Milestone activeMilestone, @PathVariable long execId,
+			@RequestParam(OPTIMIZED) boolean optimized) {
+
+		ModelAndView mav = new ModelAndView("page/test-case-workspace/edit-test-case-from-exec");
+		TestCase testCase = testCaseModificationService.findTestCaseWithSteps(testCaseId);
+		populateModelWithTestCaseEditionData(mav, testCase, locale, activeMilestone);
+
+		mav.addObject("execId", execId);
+		mav.addObject("isIEO", optimized);
 		return mav;
 	}
 
@@ -531,9 +546,9 @@ public class TestCaseModificationController {
 	}
 
 	/* **********************************************************************
-	 * 
+	 *
 	 * Milestones section
-	 * 
+	 *
 	 ********************************************************************** */
 
 	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
@@ -640,7 +655,7 @@ public class TestCaseModificationController {
 
 	/**
 	 * Return view for Printable test case
-	 * 
+	 *
 	 * @param testCaseId
 	 * @return
 	 */
@@ -747,7 +762,7 @@ public class TestCaseModificationController {
 	 * Return a list of dataset's organized infos as an object with : <br>
 	 * object[0] = dataset's name object[1] = the dataset's paramValues as a map, mapping the paramValue.parameter.id to
 	 * the paramValue.value
-	 * 
+	 *
 	 * @param datasets
 	 * @return a list of Object[] with each object representing a dataset's information
 	 */
@@ -773,7 +788,7 @@ public class TestCaseModificationController {
 
 	/**
 	 * Creates a paging which shows all entries on a single page.
-	 * 
+	 *
 	 * @return
 	 */
 	private Paging createSinglePagePaging() {

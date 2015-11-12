@@ -251,6 +251,7 @@ public final class BugTrackerControllerHelper {
 			builder = new TestCaseIssuesTableModel();
 			break;
 
+		case BugTrackerController.CAMPAIGN_FOLDER_TYPE :
 		case BugTrackerController.CAMPAIGN_TYPE :
 		case BugTrackerController.ITERATION_TYPE :
 		case BugTrackerController.TEST_SUITE_TYPE :
@@ -317,6 +318,7 @@ public final class BugTrackerControllerHelper {
 			result.put("issue-assignee", findAssignee(issue));
 			result.put("issue-owner", ownerName);
 			result.put("issue-owner-url", ownerPath);
+			result.put("BtProject", issue.getProject().getName());
 
 			return result;
 
@@ -365,7 +367,7 @@ public final class BugTrackerControllerHelper {
 			row.put("assignee", findAssignee(issue));
 			row.put("execution", issueOwner);
 			row.put("execution-id", ownership.getExecution().getId());
-
+			row.put("BtProject", issue.getProject().getName());
 			return row;
 		}
 	}
@@ -412,7 +414,7 @@ public final class BugTrackerControllerHelper {
 			result.put("owner", nameBuilder.buildName(ownership.getOwner()));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
-
+			result.put("BtProject", issue.getProject().getName());
 			return result;
 		}
 	}
@@ -448,7 +450,7 @@ public final class BugTrackerControllerHelper {
 			result.put("priority", findPriority(issue));
 			result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, "");
 			result.put("local-id", issue.getIssueId());
-
+			result.put("BtProject", issue.getProject().getName());
 			return result;
 		}
 	}

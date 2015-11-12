@@ -29,6 +29,13 @@
  --%>
 <%@ tag body-content="empty" description="the test plan panel of an iteration when displayed in the test plan manager" %>
 
+
+<%@ attribute name="linkable" type="java.lang.Boolean" description="can the user link this iteration to test cases ?"%>
+<%@ attribute name="editable" type="java.lang.Boolean" description="can the user modify the existing test plan items ?"%>
+<%@ attribute name="reorderable" type="java.lang.Boolean" description="can the user reorder the test plan en masse ?"%>
+<%@ attribute name="deletable" type="java.lang.Boolean" description="can the user remove an item which has not been executed yet ?"%>
+<%@ attribute name="extendedDeletable" type="java.lang.Boolean" description="can the user remove an item which has been executed ?"%>
+
 <%@ attribute name="iteration" type="java.lang.Object" description="the instance of iteration"%>
 <%@ attribute name="milestoneConf" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration" %>
 
@@ -44,7 +51,9 @@
 <s:url var="tableModelUrl" value="/iterations/{iterId}/test-plan">
   <s:param name="iterId" value="${iteration.id}" />
 </s:url>
+
 <s:url var="testcaseUrl"  value="/test-cases/{tc-id}/info" />
+<s:url var="workspaceUrl"         value="/test-case-workspace" />
 
 
 
@@ -71,6 +80,8 @@
     <f:message var="closeLabel" key="label.Close" />
     <f:message var="assignLabel" key="label.Assign" /> 
     <f:message var="okLabel" key="label.Ok" />
+    <f:message var="tooltipReference" key="label.Reference"/>
+    <f:message var="tooltipImportance" key="label.Importance"/>
 
 
     <div class="left btn-toolbar">
@@ -147,20 +158,21 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
-            <f:message key="label.project" />
+          <th class="no-user-select tp-th-filter tp-th-project-name" 
+            data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+            <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
           </th> 
-          <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
-            <f:message key="label.Reference" />
+          <th class="no-user-select tp-th-filter tp-th-reference"  title="${tooltipReference}" data-def="map=reference, sortable, link=${testcaseUrl}">
+            <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testcaseUrl}">
-            <f:message key="iteration.executions.table.column-header.test-case.label" />
+            <f:message key="label.TestCase.short" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
-            <f:message key="iteration.executions.table.column-header.importance.label" />
+          <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
+            <f:message key="label.Importance.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
@@ -172,7 +184,7 @@
             <f:message var="stsHeader" key="iteration.executions.table.column-header.status.label" />
             ${fn:substring(stsHeader,0,2)}.
           </th>
-          <th class="no-user-select" data-def="map=empty-delete-holder, unbind-button=#iter-test-plan-delete-dialog">&nbsp;</th>
+          <th class="no-user-select" data-def="map=empty-delete-holder, sClass=unbind-or-delete">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -186,18 +198,31 @@
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="test-case.verified_requirement_item.remove.button.label" />">
-      <span data-def="state=single-tp" >
-        <span><f:message key="dialog.remove-testcase-association.message.solo" /></span>
-        <span><f:message key="message.permissions.confirm"/></span>
-      </span>
-      <span data-def="state=multiple-tp" >
-        <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
-        <span><f:message key="message.permissions.confirm"/></span>
-      </span>
+
+      <comp:notification-pane type="warning">
+        <jsp:attribute name="htmlcontent">
+         
+          <span data-def="state=unbind-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.unbind" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span>     
+        
+          <span data-def="state=delete-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.delete" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span> 
+
+        <span data-def="state=multiple-tp" >
+          <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
+          <span><f:message key="message.permissions.confirm"/></span>
+        </span>
+        
+        </jsp:attribute>      
+      </comp:notification-pane>
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
-          data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
+          data-def="mainbtn, evt=confirm" />
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
@@ -239,13 +264,13 @@
     	
       domReady(function(){
         var conf = {
-        	// permissions are hard coded because a user accessing that page 
-        	// should have this following profile
             permissions : {
-              linkable : true,
-              editable : true,
-              executable : false,
-              reorderable : true
+				linkable : ${linkable},
+				editable : ${editable},
+				executable : false,
+				reorderable : ${reorderable},
+				deletable : ${deletable},
+				extendedDeletable : ${extendedDeletable}
             },
             basic : {
               iterationId : ${iteration.id},

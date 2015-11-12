@@ -25,17 +25,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
-import java.util.SortedSet;
 
 import org.apache.commons.collections.Closure;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 
 
@@ -71,10 +69,14 @@ import org.apache.commons.collections.Transformer;
  * @see TreeNode
  * </p>
  * 
+ * @param T : the type of the nodes this tree is made of
+ * @param IDENT : the type of the key used by a node. As an identifier, it should be immutable and implement
+ * equality/hashcode properly. If it's good for a HashSet, it's good for the job here too.
+ * 
  *  @author bsiri
  */
 
-public class  LibraryTree<T extends TreeNode<T>>{
+public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 	protected final Map<Integer, List<T>> layers = new HashMap<Integer, List<T>>();
 
@@ -135,7 +137,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @param parentKey the key designating the parent node.
 	 * @param childNode the child we want eventually to insert.
 	 */
-	public void  addNode(Long parentKey, T childNode){
+	public void  addNode(IDENT parentKey, T childNode){
 		addNode(new TreeNodePair(parentKey, childNode));
 	}
 
@@ -158,7 +160,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		List<TreeNodePair> cleanPairs = cleanData(unsortedFlatTree);
 
 		// first pass : create all the nodes
-		Map<Long, T> newNodesByKey = new HashMap<>();
+		Map<IDENT, T> newNodesByKey = new HashMap<>();
 		Set<T> rootNodes = new HashSet<>();
 
 		for (TreeNodePair pair : cleanPairs){
@@ -224,10 +226,10 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 */
 	private List<TreeNodePair> cleanData(List<TreeNodePair> corruptData){
 
-		Map<Long, TreeNodePair> pairByChildKey = new HashMap<>();
+		Map<IDENT, TreeNodePair> pairByChildKey = new HashMap<>();
 
 		for (TreeNodePair pair : corruptData){
-			Long childKey = pair.getChild().getKey();
+			IDENT childKey = pair.getChild().getKey();
 			TreeNodePair foundPair = pairByChildKey.get(childKey);
 
 			// case one : there were no entries yet
@@ -256,7 +258,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @throws NoSuchElementException if the node was not found.
 	 * 
 	 */
-	public T getNode(Long key){
+	public T getNode(IDENT key){
 
 		if (key == null){ return null;}
 
@@ -284,7 +286,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 			Integer layerIndex = Collections.max(layers.keySet());
 
 			while (layerIndex >=0){
-				List<T> layer = layers.get(layerIndex);
+				List<T> layer = new ArrayList<>(layers.get(layerIndex));
 				CollectionUtils.forAllDo(layer, closure);
 				layerIndex--;
 			}
@@ -355,7 +357,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * 
 	 * @return the list of the node keys.
 	 */
-	public List<Long> collectKeys(){
+	public List<IDENT> collectKeys(){
 		return collect(new Transformer() {
 			@Override
 			public Object transform(Object input) {
@@ -376,6 +378,88 @@ public class  LibraryTree<T extends TreeNode<T>>{
 		}
 		return result;
 	}
+
+	public List<T> getRootNodes(){
+		if (layers.isEmpty()){
+			throw new IndexOutOfBoundsException("This tree has no root");
+		}
+
+		return new ArrayList<>(layers.get(0));
+	}
+
+	public List<T> getLeaves(){
+		List<T> leaves = new ArrayList<>(getAllNodes());
+		CollectionUtils.filter(leaves, new Predicate() {
+			@Override
+			public boolean evaluate(Object object) {
+				return ((T)object).getChildren().isEmpty();
+			}
+		});
+		return leaves;
+	}
+
+
+	/**
+	 * Says whether the given node may be
+	 * removed (ie it has no children)
+	 * 
+	 * @param key
+	 */
+	public boolean mayRemove(IDENT key){
+		T node = getNode(key);
+		return node.getChildren().isEmpty();
+	}
+
+	/**
+	 * Will remove the node having this key if it is childress.
+	 * If it has children, throws a RuntimeException
+	 * 
+	 * @param key
+	 */
+	public void remove(IDENT key){
+		T node = getNode(key);
+		if (node.getChildren().isEmpty()){
+
+			Collection<T> layer = layers.get(node.getDepth());
+			layer.remove(node);
+
+			T parent = node.getParent();
+			if (parent != null){
+				parent.getChildren().remove(node);
+			}
+
+		}else{
+			throw new RuntimeException("Cannot remove node '"+key+"' : it has no children");
+		}
+	}
+
+	/**
+	 * removes a node and its subtree
+	 * 
+	 * @param key
+	 */
+	public void cut(IDENT key){
+		T node = getNode(key);
+
+		T parent = node.getParent();
+		if (parent != null){
+			parent.getChildren().remove(node);
+		}
+
+		LinkedList<T> processing = new LinkedList<>();
+		processing.add(node);
+
+		while(! processing.isEmpty()){
+			T current = processing.pop();
+			List<T> layer = layers.get(current.getDepth());
+			layer.remove(current);
+			processing.addAll(current.getChildren());
+		}
+
+
+	}
+
+
 
 
 	/**
@@ -407,13 +491,13 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 *
 	 */
 	public class TreeNodePair{
-		private Long parentKey;
+		private IDENT parentKey;
 		private T child;
 
-		public Long getParentKey() {
+		public IDENT getParentKey() {
 			return parentKey;
 		}
-		public void setParentKey(Long parentKey) {
+		public void setParentKey(IDENT parentKey) {
 			this.parentKey = parentKey;
 		}
 		public T getChild() {
@@ -427,7 +511,7 @@ public class  LibraryTree<T extends TreeNode<T>>{
 
 		}
 
-		public TreeNodePair(Long parentKey, T child){
+		public TreeNodePair(IDENT parentKey, T child){
 			this.parentKey = parentKey;
 			this.child = child;
 		}
@@ -460,8 +544,30 @@ public class  LibraryTree<T extends TreeNode<T>>{
 	 * @param child the child node.
 	 * @return an initialized instance of TreeNodePair.
 	 */
-	public TreeNodePair newPair(Long parentKey, T child){
+	public TreeNodePair newPair(IDENT parentKey, T child){
 		return new TreeNodePair(parentKey, child);
+	}
+
+
+
+	// ********* Simple class in which a node is solely represented by its key. The key is still whatever you need. **********
+
+	public static final class SimpleNode<T> extends TreeNode<T, SimpleNode<T>>{
+
+		public SimpleNode() {
+			super();
+		}
+
+		public SimpleNode(T key) {
+			super(key);
+		}
+
+		@Override
+		protected void updateWith(SimpleNode<T> newData) {
+			// TODO Auto-generated method stub
+
+		}
+
 	}
 
 }

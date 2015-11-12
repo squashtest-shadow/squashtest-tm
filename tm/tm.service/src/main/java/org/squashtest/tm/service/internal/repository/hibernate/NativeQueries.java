@@ -23,6 +23,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 /**
  * thanks to the Hibernate support to pure scalar native queries, let's create another query respository.
  * 
+ * TODO 2015/09/25 : that's not true anymore with @NamedNativeQuery. Maybe move them all to this annotation
+ * when applicable ?
  * 
  * @author bsiri
  * 

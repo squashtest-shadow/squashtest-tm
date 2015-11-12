@@ -37,11 +37,12 @@ import java.util.concurrent.TimeoutException;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.i18n.LocaleContext;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
@@ -58,6 +59,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.Issue;
@@ -66,6 +68,7 @@ import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -78,6 +81,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -93,7 +97,6 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackersLocalServiceImpl.class);
 
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
@@ -120,6 +123,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private CampaignDao campaignDao;
 
 	@Inject
+	private CampaignFolderDao campaignFolderDao;
+
+	@Inject
 	private TestSuiteDao testSuiteDao;
 
 	@Inject
@@ -143,6 +149,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
 		return remoteBugTrackersService.getInterfaceDescriptor(bugTracker);
+	}
+
+	private LocaleContext getLocaleContext(){
+		return LocaleContextHolder.getLocaleContext();
 	}
 
 	@Override
@@ -211,7 +221,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public List<RemoteIssue> getIssues(List<String> issueKeyList, BugTracker bugTracker) {
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issueKeyList, bugTracker, contextHolder.getContext(), getLocaleContext());
 			return futureIssues.get(timeout, TimeUnit.SECONDS);
 		}catch(TimeoutException timex){
 			throw new BugTrackerRemoteException(timex);
@@ -352,6 +362,23 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
 	}
 
+	/* ------------------------TestSuite--------------------------------------- */
+	@Override
+	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
+			Long testSuiteId, PagingAndSorting sorter) {
+		// find bug-tracker
+		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
+		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
+
+		// Find all concerned IssueDetector
+		List<Execution> executions = testSuiteDao.findAllExecutionByTestSuite(testSuiteId);
+		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
+
+		// create filtredCollection of IssueOwnership<BTIssue>
+		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+	}
+
 	/* ------------------------Iteration--------------------------------------- */
 
 	@Override
@@ -387,22 +414,26 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
 	}
 
-	/* ------------------------TestSuite--------------------------------------- */
+	/* ------------------------- CampaignFolder ---------------------------------*/
+
 	@Override
-	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
-			Long testSuiteId, PagingAndSorting sorter) {
+	@PreAuthorize("hasPermission(#cfId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'READ')" + OR_HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForCampaignFolder(
+			Long cfId, PagingAndSorting sorter) {
+
 		// find bug-tracker
-		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
-		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
+		CampaignFolder cf = campaignFolderDao.findById(cfId);
+		BugTracker bt = cf.getProject().findBugTracker();
 
 		// Find all concerned IssueDetector
-		List<Execution> executions = testSuiteDao.findAllExecutionByTestSuite(testSuiteId);
+		List<Execution> executions = campaignFolderDao.findAllExecutionsByCampaignFolder(cfId);
 		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
 
 		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+		return createOwnershipsCollection(sorter, issueDetectors, bt);
+
 	}
+
 
 	/* ------------------------TestCase--------------------------------------- */
 
@@ -419,6 +450,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return createOwnershipsCollection(sorter, executions, executionSteps);
 	}
 
+
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<IssueOwnership<RemoteIssueDecorator>> findIssueOwnershipForTestCase(long tcId) {
@@ -429,23 +461,23 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return findSortedIssueOwnershipForTestCase(tcId, sorter).getPagedItems();
 	}
 
-	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
-		List<ExecutionStep> executionSteps = new ArrayList<ExecutionStep>();
-		for (Execution execution : executions) {
-			executionSteps.addAll(execution.getSteps());
-		}
-		return executionSteps;
-	}
 
 	/* ------------------------generic--------------------------------------- */
 
+	private List<ExecutionStep> collectExecutionStepsFromExecution(List<Execution> executions) {
+		List<Long> execIds = (List<Long>)CollectionUtils.collect(executions, new IdCollector(), new ArrayList<Long>());
+		return executionDao.findExecutionSteps(execIds);
+	}
+
 	private List<IssueDetector> collectIssueDetectorsFromExecution(List<Execution> executions) {
-		List<IssueDetector> issueDetectors = new ArrayList<IssueDetector>();
-		for (Execution execution : executions) {
-			issueDetectors.add(execution);
-			issueDetectors.addAll(execution.getSteps());
-		}
-		return issueDetectors;
+
+		List<ExecutionStep> steps = collectExecutionStepsFromExecution(executions);
+
+		List<IssueDetector> detectors = new ArrayList<>(executions.size() + steps.size());
+		detectors.addAll(executions);
+		detectors.addAll(steps);
+
+		return detectors;
 	}
 
 	/**
@@ -471,11 +503,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 		MultiMap localIdsByRemoteId = mapLocalIssuesByRemoteIssue(localIssues);
 
-		Collection<String> issuesRemoteIds = (Collection<String>)localIdsByRemoteId.keySet();
+		Collection<String> issuesRemoteIds = localIdsByRemoteId.keySet();
 
 		// Find the BT issues out of the remote ids
 		try{
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker, contextHolder.getContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(issuesRemoteIds, bugTracker, contextHolder.getContext(), getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			List<RemoteIssueDecorator> btIssueDecorators = decorateRemoteIssues(btIssues, localIdsByRemoteId);
@@ -567,7 +599,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		try{
 			for (Entry<BugTracker, List<String>> remoteIdsByBugTracker : issueRemoteIdsByBugTrackers.entrySet()) {
 				Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(
-						remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey(), contextHolder.getContext());
+						remoteIdsByBugTracker.getValue(), remoteIdsByBugTracker.getKey(), contextHolder.getContext(), getLocaleContext());
 
 				List<RemoteIssue> btIssuesOfBugTracker = futureIssues.get(timeout, TimeUnit.SECONDS);
 
@@ -639,10 +671,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		Map<Long, RemoteIssueDecorator> remoteIssueByLocalId = mapRemoteIssueByLocalId(btIssues);
 
 		for (Issue issue : issues) {
-			Long listId = (Long) issue.getIssueList().getId();
+			Long listId = issue.getIssueList().getId();
 			IssueDetector detector = issueDetectorByListId.get(listId);
 
-			Long localId = (Long) issue.getId();
+			Long localId = issue.getId();
 			RemoteIssueDecorator ish = remoteIssueByLocalId.get(localId);
 			if(ish != null){
 				bindings.add(new IssueOwnership<RemoteIssueDecorator>(ish, detector));

@@ -24,7 +24,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -42,7 +41,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,7 +56,6 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
@@ -88,8 +85,6 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
 	private static final String ADD_TEST_CASE = "add-test-case";
@@ -228,6 +223,22 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 				keepRteFormat, getMessageSource());
 		return new FileSystemResource(export);
 
+	}
+	
+	@RequestMapping(value = "/searchExports", produces = "application/octet-stream", method = RequestMethod.GET, params = {
+			FILENAME, NODES, CALLS, RequestParams.RTEFORMAT })
+	@ResponseBody
+	public FileSystemResource searchExportAsExcel(@RequestParam(FILENAME) String filename,
+			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
+			HttpServletResponse response) throws FileNotFoundException {
+		
+		response.setContentType("application/octet-stream");
+		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
+		
+		File export = testCaseLibraryNavigationService.searchExportTestCaseAsExcel( nodeIds, includeCalledTests,
+				keepRteFormat, getMessageSource());
+		return new FileSystemResource(export);
+		
 	}
 
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {

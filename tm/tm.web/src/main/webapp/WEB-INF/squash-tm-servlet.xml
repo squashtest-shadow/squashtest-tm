@@ -241,6 +241,10 @@
     <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
     <constructor-arg ref="campaignLibraryTreeNodeBuilder.provider" />
   </bean>
+  
+  <bean id="customReport.nodeBuilder" class="org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+  </bean> 
   <!--  DRIVE NODE BUILDERS -->
 
   <!-- NOSGI not required anymore -->

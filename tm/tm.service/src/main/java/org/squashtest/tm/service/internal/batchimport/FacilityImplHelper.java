@@ -24,6 +24,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -81,6 +85,33 @@ final class FacilityImplHelper {
 		}
 
 	}
+	
+	/*
+	 * Feat 1108 :
+	 * The nullity regarding the Nature and Type will be handled by
+	 * the TestCaseLibraryNavigationService itself. No need to
+	 * worry about them here and now.
+	 * 
+	 */
+	void fillNullWithDefaults(RequirementVersion reqVersion) {
+		
+		if (reqVersion.getName() == null) {
+			reqVersion.setName("");
+		}
+		
+		if (reqVersion.getReference() == null) {
+			reqVersion.setReference("");
+		}
+		
+		if (reqVersion.getCriticality()==null){
+			reqVersion.setCriticality(RequirementCriticality.MINOR);
+		}
+		
+		if (reqVersion.getStatus() == null) {
+			reqVersion.setStatus(RequirementStatus.WORK_IN_PROGRESS);
+		}
+		
+	}
 
 	void fillNullWithDefaults(ActionTestStep step) {
 		if (step.getAction() == null) {
@@ -112,6 +143,16 @@ final class FacilityImplHelper {
 		String ref = testCase.getReference();
 		testCase.setReference(truncate(ref, TestCase.MAX_REF_SIZE));
 
+		for (Entry<String, String> cuf : cufValues.entrySet()) {
+			String value = cuf.getValue();
+			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
+		}
+	}
+	
+	void truncate(RequirementVersion reqVersion, Map<String, String> cufValues) {
+		String ref = reqVersion.getReference();
+		reqVersion.setReference(truncate(ref, RequirementVersion.MAX_REF_SIZE));
+		
 		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
 			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));

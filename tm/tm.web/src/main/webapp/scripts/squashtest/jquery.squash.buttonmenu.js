@@ -45,7 +45,7 @@
  *
  */
 
-define([ "jquery", "jqueryui" ], function($) {
+define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 	"use strict";
 
 	// prevent double loading

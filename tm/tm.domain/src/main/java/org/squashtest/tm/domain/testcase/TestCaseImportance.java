@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import java.util.Arrays;
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.i18n.Abbreviated;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.LevelComparator;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -32,11 +33,13 @@ import org.squashtest.tm.domain.requirement.RequirementCriticality;
  * @author Gregory Fouquet
  * 
  */
-public enum TestCaseImportance implements Level {
+public enum TestCaseImportance implements Level, Abbreviated {
 	VERY_HIGH(1), HIGH(2), MEDIUM(3), LOW(4);
 
 	private static final String I18N_KEY_ROOT = "test-case.importance.";
 	private static final LevelComparator LEVEL_COMPARATOR = LevelComparator.getInstance();
+
+	private static final String ABBR_SUFIX = ".short";
 
 	private final int level;
 
@@ -52,6 +55,11 @@ public enum TestCaseImportance implements Level {
 	@Override
 	public String getI18nKey() {
 		return I18N_KEY_ROOT + this.name();
+	}
+
+	@Override
+	public String getAbbreviatedI18nKey() {
+		return I18N_KEY_ROOT + this.name() + ABBR_SUFIX;
 	}
 
 	/**

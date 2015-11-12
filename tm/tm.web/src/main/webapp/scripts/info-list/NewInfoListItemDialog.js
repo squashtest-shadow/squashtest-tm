@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", "squash.translator", "workspace.routing", "app/lnf/Forms",
-		"info-list-manager/InfoListOptionModel", "app/squash.backbone.validation", "app/squash.wreqr.init", "jquery.squash.confirmdialog"],
+		"info-list-manager/InfoListOptionModel", "app/squash.backbone.validation", "app/squash.wreqr.init", "jquery.squash.formdialog"],
 	function ($, Backbone, _, Handlebars, IconSelectDialog, translator, routing, Forms, InfoListOptionModel, Validation, squashtm) {
 		"use strict";
 
@@ -67,7 +67,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 					checkNotExistsHandler("label", squashtm.app.contextRoot + "/info-lists/" + this.model.listId + "/items/label"));
 				this.$el.find("input:text").val("");
 				this.render();
-				this.$el.confirmDialog({
+				this.$el.formDialog({
 					autoOpen: true
 				});
 
@@ -83,37 +83,66 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 			},
 
 			events: {
-				"confirmdialogcancel": "cancel",
-				"confirmdialogvalidate": "validate",
-				"confirmdialogconfirm": "confirm",
+				"formdialogcancel": "cancel",
+				"formdialogconfirm": "confirm",
+				"formdialogaddanother": "confirmAndReset",
 				"click .sq-icon": "openChangeIconPopup"
 			},
 
 			cancel: function (event) {
 				this.cleanup();
 				this.trigger("newOption.cancel");
+				this.$el.formDialog("close");
 			},
 
 			confirm: function (event) {
 				var self = this;
 				var url = routing.buildURL('info-list.items', this.model.listId);
 
-				var params = {
-					"label": this.model.label,
-					"code": this.model.code,
-					"iconName": this.model.icon || "noicon"
-				};
-
-				$.ajax({
-					url: url,
-					type: 'POST',
-					dataType: 'json',
-					data: params
-				})
-				.success(function(){
-					self.cleanup();
-					self.trigger("newOption.confirm");			
-				});
+				if(this.validate(event)){
+					var params = {
+						"label": this.model.label,
+						"code": this.model.code,
+						"iconName": this.model.icon || "noicon"
+					};
+					$.ajax({
+						url: url,
+						type: 'POST',
+						dataType: 'json',
+						data: params
+					})
+					.success(function(){
+						self.cleanup();
+						self.trigger("newOption.confirm");
+						self.$el.formDialog("close");
+					});
+				}
+			},
+			
+			confirmAndReset: function (event) {
+				var self = this;
+				var url = routing.buildURL('info-list.items', this.model.listId);
+				
+				if(this.validate(event)){
+					var params = {
+							"label": this.model.label,
+							"code": this.model.code,
+							"iconName": this.model.icon || "noicon"
+					};
+					
+					$.ajax({
+						url: url,
+						type: 'POST',
+						dataType: 'json',
+						data: params
+					})
+					.success(function(){
+						self.cleanup();
+						self.render();
+						self.model.icon = "noicon";
+						self.trigger("newOption.addanother");
+					});
+				}
 			},
 
 			openChangeIconPopup: function () {
@@ -180,7 +209,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./IconSelectDialog", 
 			cleanup: function () {
 				this.$el.addClass("not-displayed");
 				Forms.form(this.$el).clearState();
-				this.$el.confirmDialog("destroy");
+				this.$el.formDialog('cleanup');
 			},
 
 			populateModel: function () {

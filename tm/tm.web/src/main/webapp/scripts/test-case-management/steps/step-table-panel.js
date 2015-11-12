@@ -74,6 +74,8 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 	var COOKIE_NAME = "testcase-tab-cookie";
 
+	var addedTestStepId = 0;
+
 	function makeTableUrls(conf) {
 		var tcUrl = conf.basic.testCaseUrl;
 		var ctxUrl = conf.basic.rootContext;
@@ -417,24 +419,24 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 				popup.formDialog('open');
 			});
-			
+
 			/*
-			 * [Issue 4932] : 
-			 * 
-			 * 1 - the plugin jeditable-ckeditor creates the "input" as it should. This input is a compound of a 
-			 * a div (the actual elemeent which the user actually interact with) and a textarea 
-			 * (invisible, and backs the data of the div), both required by CKEditor 
+			 * [Issue 4932] :
+			 *
+			 * 1 - the plugin jeditable-ckeditor creates the "input" as it should. This input is a compound of a
+			 * a div (the actual elemeent which the user actually interact with) and a textarea
+			 * (invisible, and backs the data of the div), both required by CKEditor
 			 * to work properly. Note that the textarea is a regular input while the div is not.
-			 *  
-			 * 2 - jeditable at some point does the following : $(':input:visible:enabled:first', form).focus(); 
+			 *
+			 * 2 - jeditable at some point does the following : $(':input:visible:enabled:first', form).focus();
 			 * which makes it focus on the textarea while we want it to focus on the div instead.
-			 * 
-			 * The only working solution was to amend the source of jeditable and have it trigger an event 
+			 *
+			 * The only working solution was to amend the source of jeditable and have it trigger an event
 			 * (named opencomplete.editable) and make the viewport refocus on the correct element this time.
-			 * 
+			 *
 			 */
 
-			
+
 			table.on('opencomplete.editable', 'td', function(evt){
 				var td = $(evt.currentTarget);
 				var zediv = td.find('div.cke');
@@ -484,7 +486,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		refresh();
 	}
 
-	function addTestStepSuccessAnother() {
+	function addTestStepSuccessAnother(response) {
 		CKEDITOR.instances["add-test-step-action"].setData("");
 		CKEDITOR.instances["add-test-step-result"].setData("");
 
@@ -492,6 +494,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		dialog.data("cuf-values-support").reset();
 		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
+	  addedTestStepId = response;
 	}
 
 	function readAddStepParams() {
@@ -501,6 +504,17 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		var params = {};
 		params.action = $("#add-test-step-action").val();
 		params.expectedResult = $("#add-test-step-result").val();
+		var selectedIds = $(".test-steps-table").squashTable().getSelectedIds();
+		if (addedTestStepId!==0) {
+      params.index = $(".test-steps-table").squashTable().getDataById(addedTestStepId)["step-index"];
+      addedTestStepId=0;
+		}
+		//multiselection -> as spec 5208 : Insert the new TestCase under the last selection
+    // ie the testCase with the greater index as datatable can't track user input
+		else if (selectedIds!==undefined&&selectedIds!==null&&selectedIds.length>0) {
+			var idTargetStep = selectedIds[selectedIds.length-1];
+			params.index = $(".test-steps-table").squashTable().getDataById(idTargetStep)["step-index"];
+		}
 		$.extend(params, cufSupport.readValues());
 
 		return params;
@@ -520,25 +534,26 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 		}
 
 		// main popup definition
-		
+
 		var dialog = $("#add-test-step-dialog");
 		dialog.formDialog();
-		
+
 		dialog.on('formdialogaddandmore', function(){
 			var data = readAddStepParams();
-			postStep(data).success(addTestStepSuccessAnother);		
+			postStep(data).success(addTestStepSuccessAnother);
 		});
-		
+
 		dialog.on('formdialogadd', function(){
 			var data = readAddStepParams();
-			postStep(data).success(addTestStepSuccess);			
+			postStep(data).success(addTestStepSuccess);
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
 
 		$("#add-test-step-button").on('click', function(){
+      addedTestStepId = 0;
 			dialog.formDialog('open');
 		});
 
@@ -556,6 +571,37 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		dialog.on("formdialogopen", function() {
 			cufValuesSupport.reset();
+		});
+	}
+
+
+
+
+	// ************************* Call Other Test Case
+	// **********************************
+
+  function callTestCase(settings) {
+    var testStepId = settings.basic.testCaseId;
+    var stepIdSelected =  $(".test-steps-table").squashTable().getSelectedIds();
+    var stepTargetIndex = 0;
+
+    //now selecting the last selected row in squashTable and retrieve index
+    if (stepIdSelected!==undefined&&stepIdSelected!==null&&stepIdSelected.length>0) {
+      var idTargetStep = stepIdSelected[stepIdSelected.length-1];
+      stepTargetIndex = $(".test-steps-table").squashTable().getDataById(idTargetStep)["step-index"];
+    }
+
+    //redirect to level 2 interface Calling Test Case with proper url formatting
+    var ctxUrl = settings.basic.testCaseUrl;
+    var url = ctxUrl + "/call/" + stepTargetIndex;
+    document.location.href = url;
+	}
+
+	function initCallTestCaseLink(settings) {
+    //setting an eventhandler for the anchor "add-call-step-button" (For evol 5208)
+		$("#add-call-step-button").on("click", function() {
+			//closure on callTestCase to bake testCaseId, urls... in init phase
+			return callTestCase(settings);
 		});
 	}
 
@@ -802,14 +848,16 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		// table collapser
 		initCollapser(language, urls, permissions.isWritable,  settings.basic.testCaseId);
-		
+
+    //init the link for calling a test case
+    initCallTestCaseLink(settings);
 	}
 
 	return {
 		init : init,
 		refreshTable : refresh
-		
-		
+
+
 	};
 
 });

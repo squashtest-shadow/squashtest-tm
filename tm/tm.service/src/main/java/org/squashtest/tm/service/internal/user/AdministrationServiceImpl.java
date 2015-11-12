@@ -47,6 +47,7 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
@@ -61,6 +62,7 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.AuthenticatedUser;
 import org.squashtest.tm.service.user.UserAccountService;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
@@ -232,11 +234,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteUsers(Collection<Long> userIds) {
+		String activeUserName = UserContextHolder.getUsername();
 		for (Long id : userIds) {
-			userAccountService.deleteUser(id);
 			User user = userDao.findById(id);
-			adminAuthentService.deleteAccount(user.getLogin());
-			userDao.remove(user);
+			//checking if active user isn't in the list to prevent suicide...
+			if (!user.getLogin().equals(activeUserName)) {
+				userAccountService.deleteUser(id);
+				adminAuthentService.deleteAccount(user.getLogin());
+				userDao.remove(user);
+			}
 		}
 		aclService.refreshAcls();
 	}

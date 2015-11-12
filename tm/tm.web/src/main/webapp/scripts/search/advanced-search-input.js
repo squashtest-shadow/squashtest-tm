@@ -92,11 +92,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
 				$("#perimeter-multiple-custom").css('width', sizeWithoutPadding);
 				};
-				
+				 
 			resizePerimeter();
 			$( window ).on('resize', resizePerimeter);
 			window.onresize = resizePerimeter;
-			
 			
 		},
 
@@ -129,6 +128,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					}
 					else if (panelName == "general-information") {
 						source = self.$("#toggle-panel-informations-template").html();
+					}
+					else if (panelName == "general-information-fullsize") {
+						source = self.$("#toggle-panel-informationsfull-template").html();
 					}
 					else {
 						source = self.$("#toggle-panel-template").html();
@@ -193,6 +195,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 								break;
 							case "exists" :
 								self.makeExistsField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
+								break;
+							case "existsbefore" :
+								self.makeExistsBeforeField(tableid, field.id, field.title, field.possibleValues,searchModel[field.id]);
 								break;
 							case "date":
 								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
@@ -299,6 +304,14 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		makeExistsField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#exists-template", context));
+			$fieldDom.searchExistsWidget();
+			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
+			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
+		},
+		
+		makeExistsBeforeField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
+			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#existsbefore-template", context));
 			$fieldDom.searchExistsWidget();
 			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
@@ -444,23 +457,81 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		extractSearchModel : function(){
+			
 			var fields = this.$el.find("div.search-input");
-
 			var jsonVariable = {};
+			
+			// A little hack for the jstree if it exists (campaign only on july 2015)
+			// We need to get the id value and stuff from the project from the tree and put them on the jsonVariable 
+			// This method extractModel puts them in the model and it's been sent to the controller (check showResults to see the url)
 
-			for (var i = 0, $field; i < fields.length; i++) {
-				$field = $(fields[i]);
+			if( !!$("#tree").attr("id") ){
+				var key = "project.id";
+				var selectedInTree = $("#tree").jstree('get_selected');
+				
+				var arr = [];
+				for (var i = 0; i < selectedInTree.size() ; i++) {		
+					// TODO : id from campaign-libraries
+							if ( selectedInTree[i].getAttribute("restype") == "campaign-libraries" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+							/*
+					// TODO : id from campaign-folders
+							if ( selectedInTree[i].getAttribute("restype") == "campaign-folders" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+					// TODO : id from campaigns
+							if ( selectedInTree[i].getAttribute("restype") == "campaigns" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+					// TODO : id from iterations
+							if ( selectedInTree[i].getAttribute("restype") == "iterations" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}
+							
+					// TODO : id from test-suites
+							if ( selectedInTree[i].getAttribute("restype") == "test-suites" ) {
+								arr.push( selectedInTree[i].getAttribute("resid") );	
+							}				*/			
+							
+				}
+				
+				var valueForTree = Object.create( {
+				  'type' : {
+				    value: ""
+				  },
+				  'values': {
+				    value: []
+				  }
+				});
+				
+				valueForTree.type = "LIST";
+				valueForTree.values = arr;
+				
+				jsonVariable[key] = valueForTree;
+							
+			}
+			
+			
+			// Looking for informations in all the widgets to check if there's something to add to the model
+
+			for (var k = 0, $field; k < fields.length; k++) {
+				$field = $(fields[k]);
 				var type = $($field.children()[0]).attr("data-widgetname");
-				var key = $field.attr("id");
-				var escapedKey = key.replace(/\./g, "\\.");
+				var newKey = $field.attr("id");
+				var escapedKey = newKey.replace(/\./g, "\\.");
 				var field = $("#"+escapedKey).data("search"+type+"Widget");
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					if( value ) {
-						jsonVariable[key] = value;
+						jsonVariable[newKey] = value;
 					}
 				}
 			}
+
 			this.model = {fields : jsonVariable};
 		},
 
@@ -542,6 +613,8 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				typListCodes = [],
 				catListCodes = [];
 			
+			// TODO : check that 
+			if (allProjects !== null) {
 			for (var i=0; i < allProjects.length; i++){
 				var project = allProjects[i],
 					pId = project.id;
@@ -556,7 +629,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				}
 				
 			}
-			
+			}
 			// now remove the duplicates
 			natListCodes = _.uniq(natListCodes, true);
 			typListCodes = _.uniq(typListCodes, true);

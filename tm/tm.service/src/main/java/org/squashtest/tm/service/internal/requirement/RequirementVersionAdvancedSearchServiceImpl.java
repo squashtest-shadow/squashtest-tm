@@ -34,14 +34,12 @@ import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import java.util.*;
 
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
@@ -53,9 +51,6 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	@Inject
 	private ProjectDao projectDao;
-
-	@Inject
-	private Provider<RequirementVersionSearchExportCSVModelImpl> requirementVersionSearchExportCSVModelProvider;
 
 	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
 			new SortField("requirement.project.name", SortField.Type.STRING, false),
@@ -95,7 +90,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
-	
+
 		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class);
@@ -158,7 +153,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
-	
+
 		Query luceneQuery = buildLuceneQuery(qb, model, locale);
 
 		List<RequirementVersion> result = Collections.emptyList();
@@ -171,22 +166,11 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 			countAll = hibQuery.list().size();
 
 			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
-			
+
 
 		}
 		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(sorting, countAll, result);
 	}
-	
-	
-	@Override
-	public SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel searchModel,
-			Locale locale) {
 
-		RequirementVersionSearchExportCSVModelImpl model = requirementVersionSearchExportCSVModelProvider.get();
-
-		List<RequirementVersion> requirementVersions = this.searchForRequirementVersions(searchModel, locale);
-		model.setRequirementVersions(requirementVersions);
-		return model;
-	}
 
 }

@@ -118,6 +118,10 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	public void visit(TestCase testCase) {
 		testCase.notifyAssociatedWithProject((Project)destination.getProject());
 	}
-	
+	@Override
+	public void reindexAfterCopy() {
+		// do nothing
+		
+	}
 
 }

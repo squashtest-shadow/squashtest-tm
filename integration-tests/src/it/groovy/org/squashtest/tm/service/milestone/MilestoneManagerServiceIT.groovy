@@ -153,9 +153,10 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 	def "should find existing, in preogress milestones names"() {
 		given:
 		def names = ["My milestone", "My milestone 3", "Whatever"]
+		def status = MilestoneStatus.getAllStatusAllowingObjectBind()
 
 		when:
-		def res = manager.findInProgressExistingNames(names);
+		def res = manager.findBindableExistingNames(names, status);
 
 		then:
 		res == ["My milestone 3"]

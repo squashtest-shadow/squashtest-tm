@@ -20,11 +20,12 @@
  */
 package org.squashtest.tm.service.project;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.project.GenericProject;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * @author Gregory Fouquet
@@ -48,5 +49,9 @@ public interface GenericProjectManagerService extends CustomGenericProjectManage
 
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	void changeActive(long projectId, boolean isActive);
+
+	@PreAuthorize(ADMIN_OR_PROJECT_MANAGER)
+	void changeAllowTcModifDuringExec(long projectId, boolean active);
+
 
 }

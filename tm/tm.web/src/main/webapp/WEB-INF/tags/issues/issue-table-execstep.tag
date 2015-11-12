@@ -57,6 +57,7 @@
 	<thead>
 		<tr>
 			<th style="cursor:pointer" data-def="link-new-tab={issue-url}, select, map=remote-id, sortable, narrow, sClass=id-header">${interfaceDescriptor.tableIssueIDHeader}</th>
+				<th data-def="map=BtProject"><f:message key="bugtracker.project" /></th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="narrow, map=empty-delete-holder${ deleteBtnClause }"></th>

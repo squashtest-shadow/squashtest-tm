@@ -171,6 +171,15 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 				document.location.href = exportUrl(event.nodeId) + "?export=csv&exportType=F";
 			}));
 
+			// *****************  search  ********************
+			
+			$("#search-tree-button").on("click", function(){
+			  // get value of Campaign Workspace Cookie
+				var cookieValueSelect = $.cookie("jstree_select");
+				var cookieValueOpen = $.cookie("jstree_open");
+				document.location.href = window.squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign&cookieValueSelect=" + encodeURIComponent(cookieValueSelect) + "&cookieValueOpen=" + encodeURIComponent(cookieValueOpen);
+			});
+
 			// ***************** deletion ********************
 
 			function openDeleteDialogIfDeletable(){
@@ -186,6 +195,8 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
 			
 			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
+
+			
 		}
 	};
 

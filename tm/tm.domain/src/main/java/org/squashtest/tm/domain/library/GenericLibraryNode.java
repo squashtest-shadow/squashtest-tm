@@ -50,7 +50,7 @@ import org.squashtest.tm.domain.search.UpperCasedStringBridge;
  */
 @MappedSuperclass
 public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolder {
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinColumn(name = "PROJECT_ID")
 	@IndexedEmbedded
 	private Project project;
@@ -68,7 +68,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	@Field
 	private String description;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 

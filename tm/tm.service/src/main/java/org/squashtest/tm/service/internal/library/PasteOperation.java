@@ -42,5 +42,6 @@ public interface PasteOperation {
 	 */
 	boolean isOkToGoDeeper();
 	
+	void reindexAfterCopy();
 	
 }

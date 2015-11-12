@@ -30,6 +30,7 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 
 @Repository
@@ -53,7 +54,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 		SetQueryParametersCallback callback = new SetNodeContentParameter(node);
 		return executeEntityNamedQuery("campaignFolder.findByContent", callback);
 	}
-	
+
 	@Override
 	public List<String> findNamesInFolderStartingWith(final long folderId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
@@ -64,6 +65,12 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("campaignFolder.findNamesInLibraryStartingWith", newCallBack1);
+	}
+
+	@Override
+	public List<Execution> findAllExecutionsByCampaignFolder(Long cfId) {
+		SetQueryParametersCallback setID = new SetIdParameter("campaignFolderId", cfId);
+		return executeListNamedQuery("campaignFolder.findAllExecutions", setID);
 	}
 
 	/* ******************** //FIXME ******************* */
@@ -100,7 +107,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 
 		return query.list();
 	}
-	
+
 	private List<Long[]> toArrayOfLong(List<Object[]> input) {
 		List<Long[]> result = new ArrayList<Long[]>();
 

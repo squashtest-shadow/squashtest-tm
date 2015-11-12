@@ -80,7 +80,7 @@ public abstract class Resource implements AttachmentHolder, Identified {
 	private String description;
 
 	@NotNull
-	@OneToOne(cascade = {CascadeType.ALL}, orphanRemoval = true)
+	@OneToOne(cascade = { CascadeType.ALL }, orphanRemoval = true, fetch=FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 

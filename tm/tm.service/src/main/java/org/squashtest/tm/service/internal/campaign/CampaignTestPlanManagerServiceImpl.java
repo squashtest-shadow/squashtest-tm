@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -48,6 +50,8 @@ import org.squashtest.tm.core.foundation.collection.Pagings;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -61,12 +65,12 @@ import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CampaignTestPlanManagerService")
 @Transactional
@@ -106,6 +110,9 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 	@Inject
 	private UserDao userDao;
+
+	@Inject
+	private TestCaseDao testCaseDao;
 
 	@Inject
 	private DatasetDao datasetDao;
@@ -176,7 +183,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		/*
-		 * Feat 3700 campaign test plans are now popuplated the same way than iteration
+		 * Feat 3700 campaign test plans are now populated the same way than iteration
 		 * are
 		 */
 		for (TestCase testCase : testCases) {
@@ -195,6 +202,21 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 				}
 			}
 		}
+	}
+
+
+	@Override
+	@PreAuthorize(CAN_LINK_CAMPAIGN_BY_ID)
+	public void addTestCaseToCampaignTestPlan(Long testCaseId, Long datasetId, long campaignId) {
+		Campaign campaign = campaignDao.findById(campaignId);
+
+		TestCase testCase = testCaseDao.findById(testCaseId);
+
+		Dataset ds = (datasetId!=null) ? datasetDao.findById(datasetId) : null;
+
+		CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
+		campaignTestPlanItemDao.persist(itp);
+		campaign.addToTestPlan(itp);
 	}
 
 
@@ -329,7 +351,16 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 			}
 			item.setReferencedDataset(ds);
 		}
+	}
 
+	@Override
+	public boolean findCampaignByProjectId(List<Project> projectList, Milestone milestone) {
+		boolean isCampaign = false;
+		// If we have at least one campaign, boolean is going true
+		if (campaignDao.findCampaignByProject(projectList, milestone).size() > 0) {
+			isCampaign = true;
+		}
+		return isCampaign;
 	}
 
 }

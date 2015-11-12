@@ -23,6 +23,7 @@ package org.squashtest.tm.service.requirement
 import javax.inject.Inject
 
 import org.hibernate.Query
+import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.customfield.BindableEntity
@@ -41,6 +42,7 @@ import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -176,6 +178,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		destination.content.size() == 1
 	}
 
+	
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
 		given:
@@ -396,7 +399,69 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L)
 		parentFolder.content*.id.containsAll([-20L, -21L, -1L])
 	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find one requirement by path"(){
+		given :
+		
+		when:
+		Long result = navService.findNodeIdByPath(path)
+		
+		then:
+		result == id
+		
+		where:
+		path                                       	|| id
+		"/projet1/folder/subfolder/req2"			||-200L
+		"/projet1/folder/1req"						||-10L
+		"/projet1/folder"							||-3L
+		"/projet1/folder/subfolder"					||-100L
+	}
+	
+	@Unroll("Should not found requirement with path #path. Id founded #id")
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find no requirement by path"(){
+		given :
+		
+		when:
+		Long result = navService.findNodeIdByPath(path)
 
+		then:
+		result == id 
+		
+		where:
+		path                                       	|| id
+		"/projet1/folder/req2"                     	|| null
+		"/projet1/req2"                            	|| null
+		"/req2"                                    	|| null
+		"/projet1/folder/folder/req2"              	|| null
+		"/projet1/subfolder/folder/req2"			|| null
+		"/projet1"									|| null
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find RLN ids by paths"(){
+		given :
+			def path = ["/projet1","/projet1/folder","/projet1/folder/subfolder","/projet1/folder/subfolder/req2"]
+			
+			when:
+			Long[] result = navService.findNodeIdsByPath(path)
+				
+			then:
+			result == [-3,-100,-200]
+	}
+	
+	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
+	def "should find RLN ids by paths and a null at the end"(){
+		given :
+		def path = ["/projet1", "/projet1/folder", "/projet1/folder/subfolder", "/projet1/folder/subfolder/wtf"]
+
+		when:
+		Long[] result = navService.findNodeIdsByPath(path)
+
+		then:
+		result == [-3, -100, null]
+	}
 
 }
 

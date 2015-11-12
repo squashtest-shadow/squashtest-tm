@@ -76,6 +76,12 @@
 
 <script data-main="../../scripts/campaign-workspace.js" th:attr="data-main=@{/scripts/campaign-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  
+<!--  initialize the wizards --> 
+<div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='campaign')"/>
+  
+  
+  
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('campaign')">NAVBAR</div>
@@ -101,21 +107,12 @@
               th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
 
           <ul th:class="'milestones-mode'" >
-
-			<li class="tab" th:class="${(usesMilestone) ? 'not-displayed' : 'tab'}" >
-			       <a href="#tree-pane" th:text="#{library.header.title}"></a>
-			</li>
-           <li class="tab" th:class="${(usesMilestone) ? 'not-displayed' : 'tab'}" >
-             <a href="/squash/campaign-browser/search" th:href="@{'/campaign-browser/search'}" th:text="#{tabbed_panel.search.pane.label}"></a>
-           </li>
             <li class="tab" th:class="${(usesMilestone) ? 'tab' : 'not-displayed'}"  >
               <a href="#tree-pane">
                <span  id="campaignDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span>
                <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>
-
-
           </ul>
           <div id="tree-pane">
             <!-- ________________TREE MENU_______________ -->
@@ -301,6 +298,17 @@
 	        </tr>
 	        <tr>
 	          <td>
+                <label for="add-campaign-reference" th:text="#{label.Reference}">Reference</label>
+              </td>
+    
+              <td>
+                <input id="add-campaign-reference" type="text" size="50" maxlength="50" />
+                <br />
+                <span class="error-message name-error"></span>
+              </td>
+            </tr>          
+	        <tr>
+	          <td>
 	            <label for="add-campaign-description" th:text="#{label.Description}">Description</label>
 	          </td>
 	          <td>
@@ -337,6 +345,17 @@
 	            <span class="error-message name-error"></span>
 	          </td>
 	        </tr>
+	        <tr>
+	          <td>
+                <label for="add-iteration-reference" th:text="#{label.Reference}">Reference</label>
+              </td>
+    
+              <td>
+                <input id="add-iteration-reference" type="text" size="50" maxlength="50" />
+                <br />
+                <span class="error-message name-error"></span>
+              </td>
+            </tr>           
 	        <tr>
 	          <td>
 	            <label for="add-iteration-description" th:text="#{label.Description}">Description</label>
@@ -424,6 +443,12 @@
               <ul>
               </ul>
             </div>
+
+            <p>
+ 			<input type="checkbox" id="remove-tc-from-iter" /> 			
+ 			<span th:text="#{label.testsuite.remove-tc-from-iter}"></span>
+  			</p>
+
 
             <p>
               <span th:text="#{dialog.label.delete-node.label.cantbeundone}"> can't be undone </span>

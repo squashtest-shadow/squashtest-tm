@@ -22,9 +22,9 @@ require([ "common" ], function() {
 	"use strict";
 
 	require([ "jquery", "underscore", "app/pubsub", "squash.basicwidgets", "contextual-content-handlers",
-			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "iteration-management",
-			"app/ws/squashtm.workspace", "custom-field-values", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
-			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, itermanagement, WS, cufvalues) {
+			"jquery.squash.fragmenttabs", "bugtracker/bugtracker-panel", "workspace.event-bus", "workspace.routing", "iteration-management",
+			"app/ws/squashtm.workspace", "custom-field-values", "squash.configmanager", "test-automation/auto-execution-buttons-panel", "jquery.squash.formdialog" ],
+			function($, _, ps, basicwidg, contentHandlers, Frag, bugtracker, eventBus, routing, itermanagement, WS, cufvalues, confman) {
 
 		// *********** event handler ***************
 
@@ -48,26 +48,46 @@ require([ "common" ], function() {
 
 			WS.init();
 			basicwidg.init();
-
-			var nameHandler = contentHandlers.getSimpleNameHandler();
-			nameHandler.identity = squashtm.page.identity;
+			
+			var nameHandler = contentHandlers.getNameAndReferenceHandler();
+			nameHandler.identity = config.identity;
 			nameHandler.nameDisplay = "#iteration-name";
+			nameHandler.nameHidden = "#iteration-raw-name";
+			nameHandler.referenceHidden = "#iteration-raw-reference";
 
 			// todo : uniform the event handling.
 			// rem : what does it mean ?
 			itermanagement.initEvents();
+			
+			
+			// init reference
+			if (config.writable){
+				var refEditable = $("#iteration-reference").addClass('editable');
+				var url = config.iterationURL;
+				var cfg = confman.getStdJeditable();
+				cfg = $.extend(cfg, {
+					maxLength : 50,
+					callback : function(value, settings){
+						var escaped = $("<span/>").html(value).text();
+						eventBus.trigger('node.update-reference', {identity : config.identity, newRef : escaped});					
+					}
+				});
+				
+				refEditable.editable(url, cfg);
+			}
+			
 
 			// ****** tabs configuration *******
 
 			var fragConf = {
 					active : 2,
-					cookie : "iteration-tab-cookie",
+					/*cookie : {
+						name : "iteration-tab-cookie",
+						path : routing.buildURL('iterations.base')
+					},*/
 					activate : function(event, ui) {
 						if (ui.newPanel.is("#dashboard-iteration")) {
 							eventBus.trigger("dashboard.appear");
-						}
-						if (ui.newPanel.is("#iteration-test-plans-panel")) {
-							console.log("yeah");
 						}
 					}
 			};  
@@ -88,13 +108,13 @@ require([ "common" ], function() {
 			}
 			
 			
-			// ******** rename popup *************
+			// ******** rename popup **************
 			
 			var renameDialog = $("#rename-iteration-dialog");
 			renameDialog.formDialog();
 			
 			renameDialog.on('formdialogopen', function(){
-				var name = $.trim($("#iteration-name").text());
+				var name = $.trim($("#iteration-raw-name").text());
 				$("#rename-iteration-name").val(name);			
 			});
 			

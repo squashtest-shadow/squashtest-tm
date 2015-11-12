@@ -189,5 +189,10 @@ public class MantisExceptionConverter {
 		String translation = messageSource.getMessage(SquashMessageKeys.UNKNOWN_EXCEPTION, null, getLocale());
 		return new BugTrackerRemoteException(translation+remoteException.getMessage(), remoteException );
 	}
+
+	public String getIssueNotFoundMsg() {
+	
+		return messageSource.getMessage("interface.table.bug-in-error", null, getLocale());
+	}
 	
 }

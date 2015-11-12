@@ -126,7 +126,9 @@
 				<div class="toolbar-button-panel">
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <c:if test="${ adminproject.template }">
-                    <input type="button" value="<f:message key='label.coerceTemplateIntoProject' />" id="coerce" class="button" data-template-id="${ adminproject.id }" />
+                    <button   id="coerce" class="sq-btn" data-template-id="${ adminproject.id }" >
+                  <f:message key='label.coerceTemplateIntoProject' />
+                  </button>
                     <div id="coerce-warning-dialog" title="<f:message key="title.coerceTemplateIntoProject" />" class="alert not-displayed">
                       <f:message key="message.coerceTemplateIntoProject" />
                       <input type="button" value="<f:message key='label.Confirm' />" />
@@ -134,14 +136,16 @@
                     </div>
 </c:if>
 					<f:message var="rename" key="project.button.rename.label" />
-					<input type="button" value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
-								class="button" style=" padding: .6em 1em;" />
+					<button   value="${ rename }" id="rename-project-button" title="<f:message key='project.button.renameproject.label' />"
+								class="sq-btn" >
+								<f:message key="project.button.renameproject.label" />
+								</button>
 </sec:authorize>
 <sec:authorize access="hasRole('ROLE_ADMIN')">
     				<f:message var="delete" key='project.button.delete.label' />
  		
  					<%-------------------------- Trash appear but too much padding.   ------------------------%>
-    				<button id="delete-project-button" ${ delete }  class="sq-btn paddingnull" style="padding: 0" title="<f:message key='project.button.deleteproject.label' />" >
+    				<button id="delete-project-button" ${ delete }  class="sq-btn"  title="<f:message key='project.button.deleteproject.label' />" >
         			   <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       				</button>
 
@@ -211,26 +215,14 @@
 											<f:message key="project.bugtracker.name.undefined" />
 										</c:when>
 										<c:otherwise>
-											${ adminproject.project.bugtrackerBinding.bugtracker.name }						
+											${ adminproject.project.bugtrackerBinding.bugtracker.name }			 			
 										</c:otherwise>
 									</c:choose>
 								</div>
-								<script>
-								function projectBugTrackerCallBack (value, settings) {
-									
-									<c:if test="${ ! adminproject.template }">
-										  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
-								        	 $("#project-bugtracker-project-name-row").show();
-												refreshBugTrackerProjectName();
-									     }else{
-								        	 $("#project-bugtracker-project-name-row").hide();	
-								         }
-								      </c:if>
-								}
-								</script>
-								<comp:select-jeditable componentId="project-bugtracker"
-										jsonData="${bugtrackersList}" targetUrl="${projectUrl}"
-										submitCallback="projectBugTrackerCallBack" />
+						
+								
+								<span id="project-bugtracker"/>
+
 								
 							</div>
 						</div>
@@ -242,13 +234,20 @@
 								<f:message key="project.bugtracker.project.name.label" />
 							</label>
 
-							<div class="display-table-cell editable text-editable" data-def="url=${projectUrl}, width=200" 
-									id="project-bugtracker-project-name">
+<ul id="project-bugtracker-project-name"  class="tagprop tagit ui-widget ui-widget-content squash-tagit" style="margin:0;line-height:normal;" value="">
+
+					
+	
+								<!-- 
 								<c:choose>
-									<c:when test="${ adminproject.project.bugtrackerConnected }">${ adminproject.project.bugtrackerBinding.projectName }</c:when>
+									<c:when test="${ adminproject.project.bugtrackerConnected }">
+							
+									</c:when>
 									<c:otherwise>${ adminproject.project.name }</c:otherwise>
 								</c:choose>
-							</div>
+								
+								 -->
+							
 						</div>
 						</c:if>
 					</div>
@@ -295,6 +294,36 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
+			
+			
+			<%----------------------------------------EXEC OPTIONS PANEL----------------------------------------------------%>
+			<f:message var="active" key="label.active" />
+			<f:message var="inactive" key="label.inactive" />
+			<comp:toggle-panel id="exec-option-panel" titleKey="label.execution.option" open="true">
+				<jsp:attribute name="body">
+				
+				<div id="project-exec-option-table" class="display-table">
+						<div class="display-table-row">
+							<div class="display-table-cell">  
+								<label for="toggle-EXECUTION-checkbox" class="display-table-cell">
+									<f:message key="label.execution.modification" />
+								</label>
+							</div>
+				
+							<div class="display-table-cell">                  		
+	                  			<input id="toggle-EXECUTION-checkbox" type="checkbox" 
+	                  				data-def="width=35, on_label=${inactive}, off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;"/>
+	                  		</div>
+						</div>
+				
+				</div>
+				</jsp:attribute>
+		    </comp:toggle-panel>
+			
+			
+			<%----------------------------------------END EXEC OPTIONS PANEL----------------------------------------------------%>
+			
+			
 			<%----------------------------------------STATUS----------------------------------------------------%>
 			<f:message var="statusAllowedLabel" key="label.status.options.allowed" />
 			<f:message var="statusForbiddenLabel" key="label.status.options.forbidden" />
@@ -480,33 +509,107 @@ squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' 
 
 require(["common"], function() {
 
-	require(["jquery", "projects-manager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
+	require(["jquery", "projects-manager","squash.configmanager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
 	         "project/ProjectToolbar", "jquery.squash.oneshotdialog", "app/ws/squashtm.notification", "squash.translator",
 	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", 
-	         "app/ws/squashtm.workspace", "jquery.squash.formdialog"], 
-	         function($, projectsManager, Frag, attrparser, ProjectToolbar, oneshot, notification, translator){
+	         "app/ws/squashtm.workspace", "jquery.squash.formdialog",  "jquery.squash.tagit"], 
+	         function($, projectsManager, confman, Frag, attrparser, ProjectToolbar, oneshot, notification, translator){
 
 
 	
 	function clickProjectBackButton(){
 		document.location.href = "${projectsUrl}";
 	}
+
+
+	function projectBugTrackerCallBack (value) {
+		
+		<c:if test="${ ! adminproject.template }">
+			  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+	        	 $("#project-bugtracker-project-name-row").show();
+	        	 initBugTrackerTag();
+
+		     }else{
+	        	 $("#project-bugtracker-project-name-row").hide();	
+	         }
+	      </c:if> 
+	}
+
+	function initBugtrackerProjectEditable(){
 	
-	function refreshBugTrackerProjectName() {
-		$.ajax({
-			type: 'GET',
-			 url: "${projectUrl}/bugtracker/projectName",
-		}).done(function(data){
-			$( "#project-bugtracker-project-name")[0].reset();
-			$( "#project-bugtracker-project-name").text(data);
+	$('#project-bugtracker').editable( "${projectUrl}", {
+	      type: 'select',  
+	      placeholder: '<f:message key="rich-edit.placeholder" />',
+	      submit: '<f:message key="rich-edit.button.ok.label" />',
+	      cancel: '<f:message key="label.Cancel" />',  
+	      onblur : function() {},            
+	      callback : function(value, settings){projectBugTrackerCallBack(value);},
+	      data : JSON.stringify(${bugtrackersList}),
+	      indicator : '<span class="processing-indicator" />'
+	    }).addClass("editable");
+	
+	}
+	
+	function initBugTrackerTag(){
+		var tagconf = confman.getStdTagit();
+		var $tag = $("#project-bugtracker-project-name"); 
+		
+		tagconf.validate = function(){
+			var assignedTags = $tag.squashTagit('assignedTags');
+			//need at least one project name
+			return assignedTags.length > 0 ? true : false;
+		}
+	
+		$tag.squashTagit(tagconf).sortable({
+			stop: function() {
+				sendBugTrackerTag($tag.squashTagit('assignedTags'));
+				}
 		});
+	
+		$tag.on('squashtagitbeforetagremoved', function(event, ui){ 
+			var assignedTags = $tag.squashTagit('assignedTags');
+			//don't remove if there is only one
+			return assignedTags.length > 1 ? true : false; 
+		});
+
+		
+		$tag.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
+			if (! $tag.squashTagit("validate", event, ui)){
+				return;
+			}	
+			sendBugTrackerTag($tag.squashTagit('assignedTags'));
+		});
+		
+		$.ajax({type: 'GET',
+			url: "${projectUrl}/bugtracker/projectName"}).done(
+					function(data){
+						data.forEach(function(val){
+							$tag.squashTagit("createTag", val);
+						});
+						});
+	}
+	
+	function sendBugTrackerTag(tags){
+		$.ajax({type: 'POST',
+			url: "${projectUrl}",
+			data : {id:"project-bugtracker-project-name",
+				values:tags}
+	});
+
 		
 	}
 	
 	$(function() {
+
 		 		init(projectsManager, Frag);	
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
+		 		configureActivation("EXECUTION");
+		 		
+		 		$("#toggle-EXECUTION-checkbox").change(function(){
+		 			toogleExec();
+		 		}); 
+		 		
 		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
 		 			toggleStatusActivation("UNTESTABLE");
 		 		}); 
@@ -514,8 +617,25 @@ require(["common"], function() {
 		 			toggleStatusActivation("SETTLED");
 		 		}); 
 		 		
+		 		initBugtrackerProjectEditable();
+		 		if (${adminproject.project.bugtrackerConnected}) {
+		 		initBugTrackerTag();
+		 		}
 		 		new ProjectToolbar();
 	});
+	
+	function toogleExec(){
+		var shouldActivate = ! $("#toggle-EXECUTION-checkbox").prop('checked');
+	
+			$.ajax({
+				type: 'POST',
+				url: "${projectUrl}",
+				data : {
+					value : shouldActivate
+				}
+			});
+		
+	}
 	
 	function refreshTableAndPopup(){
 		$("#user-permissions-table").squashTable().refresh();		
@@ -819,7 +939,7 @@ require(["common"], function() {
 			clickProjectBackButton();
 		}
 		
-		$('#delete-project-button').button().click(deleteProject);		
+		$('#delete-project-button').click(deleteProject);		
 	});
 	</sec:authorize>
 });

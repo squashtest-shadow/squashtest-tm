@@ -37,29 +37,29 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
 
 /**
- * This version exists for the {@link DenormalizedFieldHolder}, which are structurally equivalent to 
+ * This version exists for the {@link DenormalizedFieldHolder}, which are structurally equivalent to
  * {@link BoundEntity} but with a different class domain.
- * 
+ *
  * For the API see {@link CustomFieldHelper}, except that we'll deal with {@link DenormalizedFieldValue}
  * instead of {@link CustomFieldValue}.
- * 
+ *
  * Note that for now the only adding strategy is "includeAllCustomFields" .
- * 
+ *
  * @author bsiri
  *
  * @param <X>
  */
 public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
-	
+
 	private DenormalizedFieldValueManager dcufFinder;
-	
+
 
 	// ************ attributes ******************
 
 	private Collection<RenderingLocation> locations;
 	private List<CustomField> customFields;
-	
-	private List<DenormalizedFieldValue> values;	
+
+	private List<DenormalizedFieldValue> values;
 	private final Collection<X> entities;
 
 	// ************* code ************************
@@ -72,30 +72,30 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 	public DenormalizedFieldHelper(Collection<X> entities) {
 		this.entities = entities;
 	}
-	
+
 	public void setDenormalizedFieldValueFinder(DenormalizedFieldValueManager finder){
 		this.dcufFinder = finder;
 	}
-	
+
 	// ************* API section ****************************
 
 	public DenormalizedFieldHelper<X> setRenderingLocations(RenderingLocation...locations){
 		this.locations = Arrays.asList(locations);
-		return this;		
-	}
-	
-	public DenormalizedFieldHelper<X> setRenderingLocations(Collection<RenderingLocation> locations){
-		this.locations = locations;
-		return this;	
+		return this;
 	}
 
-	
+	public DenormalizedFieldHelper<X> setRenderingLocations(Collection<RenderingLocation> locations){
+		this.locations = locations;
+		return this;
+	}
+
+
 	public List<CustomField> getCustomFieldConfiguration(){
 		if (!isInited()) {
 			init();
 		}
 
-		return customFields;		
+		return customFields;
 	}
 
 	public List<DenormalizedFieldValue> getDenormalizedFieldValues(){
@@ -104,42 +104,42 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 		}
 
 		return values;
-		
+
 	}
-	
+
 	// ******************* private stuffs ******************
-	
-	@SuppressWarnings("unchecked")
+
+
 	protected void init(){
-		
-		if (! entities.isEmpty()){	
-			
+
+		if (! entities.isEmpty()){
+
 			//get the values
 			findValues();
-			
+
 			//extract the custom fields according to the adding strategy
 			extractCustomFields();
-			
+
 		}
 		else{
 			values = Collections.emptyList();
 			customFields = Collections.emptyList();
 		}
-		
+
 	}
-	
+
 
 	private void findValues(){
 		values = dcufFinder.findAllForEntities((Collection<DenormalizedFieldHolder>)entities, locations);
 	}
-	
-	
+
+
 	// remember that for now we only care of AbstractCustomFieldHelper.CustomFieldDefinitionStrategy.UNION
 	// so we include every custom fields that exist at least in one step.
 	private void extractCustomFields(){
-		
+
 		Map<String, CustomField> cfMap = new HashMap<String, CustomField>();
-		
+
 		CustomField customField;
 		for (DenormalizedFieldValue dfv : values){
 			if ( cfMap.get(dfv.getCode()) == null){
@@ -147,14 +147,14 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 				customField.setCode(dfv.getCode());
 				customField.setLabel(dfv.getLabel());
 				cfMap.put(customField.getCode(), customField);
-			}			
+			}
 		}
-		
+
 		customFields = new ArrayList(cfMap.values());
 	}
-	
+
 	private boolean isInited() {
 		return customFields != null;
 	}
-	
+
 }

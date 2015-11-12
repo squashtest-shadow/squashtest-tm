@@ -132,14 +132,14 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	void removeBugTracker(long projectId);
 
 	/**
-	 * Will change a bugtracker connexion parameter : the name of the bugtracker's project it's associated to.
+	 * Will change a bugtracker connexion parameter : the names of the bugtracker's projects it's associated to.
 	 *
 	 * @param projectId
 	 *            the concerned project
-	 * @param projectBugTrackerName
-	 *            the name of the bugtracker's project, the Project is connected to
+	 * @param projectBugTrackerNames
+	 *            the names of the bugtracker's projects, the Project is connected to
 	 */
-	void changeBugTrackerProjectName(long projectId, String projectBugTrackerName);
+	void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames);
 
 	// ****************************** wizards management ***********************
 
@@ -225,4 +225,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
+	
+	GenericProject synchronizeGenericProject(GenericProject target,
+			GenericProject source, GenericProjectCopyParameter params);
 }

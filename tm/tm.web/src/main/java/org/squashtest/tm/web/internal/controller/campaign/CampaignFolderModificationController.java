@@ -20,19 +20,50 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.library.FolderModificationService;
+import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
+import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
+import org.squashtest.tm.web.internal.http.ContentTypes;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 @Controller
-@RequestMapping("/campaign-folders/{folderId}")
+@RequestMapping("/campaign-folders/{"+RequestParams.FOLDER_ID+"}")
 public class CampaignFolderModificationController extends FolderModificationController<CampaignFolder> {
+
+
 	private FolderModificationService<CampaignFolder> folderModificationService;
+
+	/*
+	 * We need this service to expose the statistics-provider methods for campaign folder.
+	 * 
+	 * TODO : move this method to the folder modification service, once the small problem
+	 * of having a specific method exposed in a generic class resolved.
+	 * 
+	 * OR
+	 * 
+	 * TODO : just inject the CampaignStatisticsService directly. But it is not secured yet (hence
+	 * the need to channel this via another secured service).
+	 */
+	@Inject
+	private CampaignModificationService campaignModificationService;
 
 	@Override
 	protected FolderModificationService<CampaignFolder> getFolderModificationService() {
@@ -44,9 +75,73 @@ public class CampaignFolderModificationController extends FolderModificationCont
 		this.folderModificationService = folderModificationService;
 	}
 
+
+	@Override
+	@RequestMapping(method = RequestMethod.GET)
+	public final ModelAndView showFolder(@PathVariable long folderId, HttpServletRequest request) {
+
+		CampaignFolder folder = folderModificationService.findFolder(folderId);
+
+		ModelAndView mav = super.showFolder(folderId, request);
+
+		mav.setViewName("fragment/campaigns/campaign-folder");
+
+		populateOptionalExecutionStatuses(folder, mav);
+
+		return mav;
+	}
+
+
 	@Override
 	protected String getWorkspaceName() {
 		return "campaign";
+	}
+
+	// *************************** statistics ********************************
+
+	// URL should have been /statistics, but that was already used by another method in this controller
+	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody
+	ManyCampaignStatisticsBundle getStatisticsAsJson(@PathVariable(RequestParams.FOLDER_ID) long folderId, @CurrentMilestone Milestone activeMilestone) {
+		Long milestoneId = (activeMilestone != null) ? activeMilestone.getId() : null;
+		return campaignModificationService.gatherFolderStatisticsBundle(folderId, milestoneId);
+	}
+
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	public ModelAndView getDashboard(
+			Model model,
+			@PathVariable(RequestParams.FOLDER_ID) long folderId,
+			@CurrentMilestone Milestone activeMilestone,
+			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
+
+		CampaignFolder folder= folderModificationService.findFolder(folderId);
+
+		Long milestoneId = (activeMilestone != null) ? activeMilestone.getId() : null;
+		ManyCampaignStatisticsBundle bundle = campaignModificationService.gatherFolderStatisticsBundle(folderId, milestoneId);
+
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-folder-dashboard");
+		mav.addObject("folder", folder);
+		mav.addObject("dashboardModel", bundle);
+		mav.addObject("printmode", printmode);
+
+		populateOptionalExecutionStatuses(folder, model);
+
+		return mav;
+
+	}
+
+	private void populateOptionalExecutionStatuses(CampaignFolder folder, Model model){
+		model.addAttribute("allowsSettled",
+				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addAttribute("allowsUntestable",
+				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+	}
+
+	private void populateOptionalExecutionStatuses(CampaignFolder folder, ModelAndView model){
+		model.addObject("allowsSettled",
+				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+		model.addObject("allowsUntestable",
+				folder.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
 }

@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "jquery.squash.confirmdialog",
-		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable, notification) {
+define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.notification", "squash.translator", "jquery.squash.confirmdialog",
+		"jquery.squash.messagedialog", "squashtable" ], function($, Backbone, SimpleJEditable, notification, translator) {
 	var ParametersTable = Backbone.View.extend({
 
 		el : "#parameters-table",
@@ -169,8 +169,27 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 			var self = this;
 			var urlPOST = self.settings.basic.parametersUrl + '/' + data["entity-id"] + "/name";
 			var component = $('td.parameter-name', row);
+			var validate = function(value, settings){
+				settings.oldName = settings.oldName === undefined ? data['name'] : settings.oldName;
+				var pattern = /^[A-Za-z0-9_\-]{1,255}$/ ;
+				if (!pattern.test(value)){
+					notification.showError(translator.get("message.parameterInvalidPattern"));
+					return settings.oldName;
+				
+				} else {
+					
+					$.ajax({
+						url : urlPOST,
+						data : {"value" :value },
+						method : "POST"
+					});
+					settings.oldName = value;
+					return value;
+				}
+			};
+			
 			new SimpleJEditable({
-				targetUrl : urlPOST,
+				targetUrl : validate,
 				component : component,
 				jeditableSettings : {
 					callback : function(newname){
@@ -180,6 +199,7 @@ define([ "jquery", "backbone", "jeditable.simpleJEditable", "app/ws/squashtm.not
 						});						
 					},
 					onerror : function(settings, original, xhr){
+						console.log(original);
 						xhr.errorIsHandled = true;
 						notification.showXhrInDialog(xhr);
 						original.reset(this);

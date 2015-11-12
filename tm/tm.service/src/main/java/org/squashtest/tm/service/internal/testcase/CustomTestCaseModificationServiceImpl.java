@@ -176,6 +176,20 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		parameterModificationService.createParamsForStep(newTestStep.getId());
 		return newTestStep;
 	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, int index) {
+		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
+		
+		testStepDao.persist(newTestStep);
+		// will throw a nasty NullPointerException if the parent test case can't
+		// be found
+		parentTestCase.addStep(index,newTestStep);
+		customFieldValuesService.createAllCustomFieldValues(newTestStep, newTestStep.getProject());
+		parameterModificationService.createParamsForStep(newTestStep.getId());
+		return newTestStep;
+	}
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
@@ -183,6 +197,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			Map<Long, RawValue> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
+		initCustomFieldValues((ActionTestStep) step, customFieldValues);
+		parameterModificationService.createParamsForStep(step.getId());
+		return step;
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep,
+			Map<Long, RawValue> customFieldValues, int index) {
+		
+		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep,index);
 		initCustomFieldValues((ActionTestStep) step, customFieldValues);
 		parameterModificationService.createParamsForStep(step.getId());
 		return step;

@@ -65,11 +65,19 @@ public final class Messages {
 	public static final String ERROR_ACTION_STEP_HAS_DATASET = "message.import.log.error.tc.tcStep.actionStepYetHasDataset";
 	public static final String ERROR_UNKNOWN_COLUMN_HEADER = "message.import.log.error.unknowncolumnheader";
 	public static final String ERROR_INVALID_NATURE = "message.import.log.error.natureinvalid";
+	public static final String ERROR_INVALID_CATEGORY = "message.import.log.error.categoryinvalid";
 	public static final String ERROR_INVALID_TYPE = "message.import.log.error.typeinvalid";
 	public static final String ERROR_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.error.milestoneFeatureDeactivated";
 	public static final String ERROR_UNKNOWN_MILESTONE = "message.import.log.error.milestone.unknown";
 	public static final String ERROR_WRONG_MILESTONE_STATUS = "message.import.log.error.milestone.wrongStatus";
 	public static final String ERROR_MILESTONE_LOCKED = "message.import.log.error.milestone.locked";
+	public static final String ERROR_REQUIREMENT_VERSION_COLLISION = "message.import.log.error.requirement.version.collision";
+	public static final String ERROR_REQUIREMENT_VERSION_INVALID = "message.import.log.error.requirement.version.invalidVersionNumber";
+	public static final String ERROR_REQUIREMENT_VERSION_NOT_EXISTS = "message.import.log.error.requirement.version.notExists";
+	public static final String ERROR_REQUIREMENT_VERSION_STATUS = "message.import.log.error.requirement.version.statusLocked";
+	public static final String ERROR_REQUIREMENT_NOT_EXISTS = "message.import.log.error.requirement.notExists";
+	public static final String ERROR_REQ_USER_NOT_FOUND = "message.import.log.error.requirement.userNotFound";
+	public static final String ERROR_REQUIREMENT_VERSION_NULL = "message.import.log.error.requirement.version.null";
 
 	public static final String IMPACT_MAX_SIZE = "message.import.log.impact.truncatedValue";
 	public static final String IMPACT_DEFAULT_VALUE = "message.import.log.impact.useDefaultValue";
@@ -88,10 +96,19 @@ public final class Messages {
 	public static final String IMPACT_NO_CALL_DATASET = "message.import.log.impact.callStepCallsNoDataset";
 	public static final String IMPACT_COLUMN_IGNORED = "message.import.log.impact.columnIgnored";
 	public static final String IMPACT_VALUE_IGNORED = "message.import.log.impact.valueIgnored";
+	public static final String IMPACT_VERSION_NUMBER_MODIFIED = "message.import.log.impact.versionModified";
+	public static final String IMPACT_MILESTONE_NOT_BINDED = "message.import.log.impact.milestone.notBinded";
+	public static final String IMPACT_REQ_RENAMED = "message.import.log.impact.requirement.reqRenamed";
 
 	public static final String WARN_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.warn.milestoneFeatureDeactivated";
 	public static final String WARN_UNKNOWN_MILESTONE = ERROR_UNKNOWN_MILESTONE;
 	public static final String WARN_WRONG_MILESTONE_STATUS = ERROR_WRONG_MILESTONE_STATUS;
+	public static final String WARN_MILESTONE_USED = "message.import.log.error.milestone.used";
+	public static final String WARN_REQ_PATH_IS_FOLDER = "message.import.log.warning.reqPathisFolder";
+	public static final String ERROR_COVERAGE_ALREADY_EXIST = "message.import.log.warning.coverageAlreadyExist";
+
+	public static final String REQ_RENAME_SUFFIX = "-Copie1";
+
 
 	private Messages(){
 		super();

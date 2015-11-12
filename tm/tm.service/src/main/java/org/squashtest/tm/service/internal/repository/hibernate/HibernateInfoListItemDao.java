@@ -31,6 +31,9 @@ import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 @Repository
 public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao {
 
+	private static final String ITEM_CODE = "itemCode";
+	private static final String PROJECT_ID = "projectId";
+
 	@Override
 	public SystemListItem getSystemRequirementCategory() {
 		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemRequirementCategory")
@@ -62,45 +65,45 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	@Override
 	public InfoListItem findDefaultRequirementCategory(long projectId) {
 		Query q = currentSession().getNamedQuery("infoListItem.findDefaultRequirementCategoryForProject");
-		q.setParameter("projectId", projectId);
+		q.setParameter(PROJECT_ID, projectId);
 		return (InfoListItem) q.uniqueResult();
 	}
 
 	@Override
 	public InfoListItem findDefaultTestCaseNature(long projectId) {
 		Query q = currentSession().getNamedQuery("infoListItem.findDefaultTestCaseNatureForProject");
-		q.setParameter("projectId", projectId);
+		q.setParameter(PROJECT_ID, projectId);
 		return (InfoListItem) q.uniqueResult();
 	}
 
 	@Override
 	public InfoListItem findDefaultTestCaseType(long projectId) {
 		Query q = currentSession().getNamedQuery("infoListItem.findDefaultTestCaseTypeForProject");
-		q.setParameter("projectId", projectId);
+		q.setParameter(PROJECT_ID, projectId);
 		return (InfoListItem) q.uniqueResult();
 	}
 
 	@Override
 	public boolean isCategoryConsistent(long projectId, String itemCode) {
 		Query q = currentSession().getNamedQuery("infoListItem.foundCategoryInProject");
-		q.setParameter("projectId", projectId);
-		q.setParameter("itemCode", itemCode);
+		q.setParameter(PROJECT_ID, projectId);
+		q.setParameter(ITEM_CODE, itemCode);
 		return ((Long) q.uniqueResult() == 1);
 	}
 
 	@Override
 	public boolean isNatureConsistent(long projectId, String itemCode) {
 		Query q = currentSession().getNamedQuery("infoListItem.foundNatureInProject");
-		q.setParameter("projectId", projectId);
-		q.setParameter("itemCode", itemCode);
+		q.setParameter(PROJECT_ID, projectId);
+		q.setParameter(ITEM_CODE, itemCode);
 		return ((Long) q.uniqueResult() == 1);
 	}
 
 	@Override
 	public boolean isTypeConsistent(long projectId, String itemCode) {
 		Query q = currentSession().getNamedQuery("infoListItem.foundTypeInProject");
-		q.setParameter("projectId", projectId);
-		q.setParameter("itemCode", itemCode);
+		q.setParameter(PROJECT_ID, projectId);
+		q.setParameter(ITEM_CODE, itemCode);
 		return ((Long) q.uniqueResult() == 1);
 	}
 

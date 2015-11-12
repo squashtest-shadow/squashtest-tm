@@ -30,7 +30,7 @@ import org.apache.commons.collections.Closure;
 import org.squashtest.tm.domain.library.structures.LibraryTree;
 import org.squashtest.tm.domain.library.structures.TreeNode;
 
-public class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiringTree.Node> {
+public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirementRewiringTree.Node> {
 
 	private List<Movement> movements = new ArrayList<>();
 
@@ -202,7 +202,7 @@ public class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiri
 	}
 
 
-	static class Node extends TreeNode<Node>{
+	static class Node extends TreeNode<Long, Node>{
 
 		private Boolean deletable = null;
 
@@ -258,6 +258,7 @@ public class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiri
 			return id2;
 		}
 
+		// GENERATED:START
 		@Override
 		public int hashCode() {
 			final int prime = 31;
@@ -295,7 +296,7 @@ public class SubRequirementRewiringTree extends LibraryTree<SubRequirementRewiri
 			}
 			return true;
 		}
-
+		// GENERATED:END
 
 	}
 

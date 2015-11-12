@@ -1,26 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2015 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
@@ -68,7 +46,6 @@
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
   </properties>
-
   <build>
     <!--
       This POM should only declare plugin mgt and plugins.
@@ -256,6 +233,29 @@
         </plugin>
 
         <plugin>
+          <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
+          <artifactId>nodejs-maven-plugin</artifactId>
+          <version>1.0.5-node-0.10.25</version>
+          <configuration>
+            <targetDirectory>${project.build.directory}/nodejs/</targetDirectory>
+          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>extract</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+
+        <plugin>
+          <groupId>com.mysema.maven</groupId>
+          <artifactId>apt-maven-plugin</artifactId>
+          <version>1.1.3</version>
+        </plugin>
+
+        <plugin>
           <groupId>com.alexnederlof</groupId>
           <artifactId>jasperreports-plugin</artifactId>
           <version>1.9</version>
@@ -310,6 +310,12 @@
           <artifactId>spring-boot-maven-plugin</artifactId>
           <version>${spring-boot-maven-plugin.version}</version>
         </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.gmaven</groupId>
+          <artifactId>gmaven-plugin</artifactId>
+          <version>1.5</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -345,6 +351,8 @@
         <version>2.11</version>
         <inherited>false</inherited>
         <configuration>
+          <useDefaultExcludes>true</useDefaultExcludes>
+          <useDefaultMapping>true</useDefaultMapping>
           <aggregate>true</aggregate>
           <strictCheck>true</strictCheck>
           <header>tools/tools-resources/src/main/resources/licenses/header.txt</header>
@@ -378,17 +386,22 @@
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
             <exclude>**/.hgignore</exclude>
-            <exclude>**/.idea/**/*.*</exclude>
-            <exclude>**/.groovy/**/*.*</exclude>
-            <exclude>**/.profiler/**/*.*</exclude>
-            <exclude>**/.mvn/**/*.*</exclude>
-            <exclude>**/*.xlsx</exclude>
+
+            <!-- other IDE / tools files -->
+            <exclude>**/.idea/**/*</exclude>
+            <exclude>**/.groovy/**/*</exclude>
+            <exclude>**/.profiler/**/*</exclude>
+            <exclude>**/.mvn/**/*</exclude>
             <exclude>**/*.versionsBackup</exclude>
             <exclude>**/*.bak</exclude>
             <exclude>**/*.swp</exclude>
             <exclude>**/*.log</exclude>
+            <exclude>**/Thumbs.db</exclude>
+            <exclude>**/*.swp</exclude>
+            <exclude>**/.settings/**</exclude>
+            <exclude>**/*.iml</exclude>
             <!-- third-party javascript libraries -->
-            <exclude>**/node_modules/**/*.*</exclude>
+            <exclude>**/bower_modules/**/*</exclude>
             <exclude>**/node_modules/**/*</exclude>
             <exclude>**/js/**/*.*</exclude>
             <exclude>**/scripts/ckeditor/**/*.*</exclude>
@@ -429,16 +442,16 @@
             <exclude>**/izpack/**/*.*</exclude>
             <!-- m2e generated files -->
             <exclude>**/pom.properties</exclude>
-            <exclude>**/.settings/**</exclude>
-            <exclude>**/.idea/**</exclude>
-            <exclude>**/*.iml</exclude>
-            <exclude>**/node_modules/**/*.*</exclude>
+            <exclude>**/pom.xml</exclude>
+            <exclude>**/pom.xml.tag</exclude>
+            <exclude>**/pom.xml.versionsBackup</exclude>
             <!-- webapp resources -->
             <exclude>**/webapp/images/*</exclude>
             <!-- jasper files -->
             <exclude>**/*.jasper</exclude>
             <!-- test resources -->
             <exclude>integration-tests/src/it/resources/**</exclude>
+            <exclude>**/*.xlsx</exclude>
             <!--other -->
             <exclude>**/new_report.rptdesign</exclude>
             <!-- generated xml (dev) -->

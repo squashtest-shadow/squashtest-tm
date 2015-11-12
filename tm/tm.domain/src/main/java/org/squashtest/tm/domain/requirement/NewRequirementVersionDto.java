@@ -117,6 +117,23 @@ public class NewRequirementVersionDto {
 
 		return version;
 	}
+	
+	public NewRequirementVersionDto() {
+	}
+	
+	/**
+	 * Constructor used by import requirement process. As the exel parser return a {@link RequirementVersion}
+	 * we need to convert it to DTO before persist the new requirement version
+	 * @param requirementVersion
+	 */
+	public NewRequirementVersionDto(RequirementVersion requirementVersion, Map<Long, RawValue> customFields){
+		this.name = requirementVersion.getName();
+		this.reference = requirementVersion.getReference();
+		this.description = requirementVersion.getDescription();
+		this.criticality = requirementVersion.getCriticality();
+		this.category = requirementVersion.getCategory().getCode();
+		this.customFields = customFields;
+	}
 
 
 }

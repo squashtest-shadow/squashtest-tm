@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +40,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
@@ -61,16 +62,18 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
-import org.squashtest.tm.service.campaign.CampaignModificationService;
-import org.squashtest.tm.service.campaign.CustomCampaignModificationService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -88,9 +91,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping(value = "/campaign-browser")
@@ -99,14 +102,90 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibraryNavigationController.class);
 
+	private static final String REMOVE_FROM_ITER = "remove_from_iter";
+
+	/**
+	 * This PermissionEvaluationService should only be used when batch-creating iteration tree nodes from the same campaign,
+	 * ie nodes which which have the same permissions
+	 * <p/>
+	 * It will only query the real PES once per permission  / role.
+	 * <p/>
+	 * Otherwise, it would create many short lived DB transaction in a single web request, which has measurable effects on performance.
+	 * <p/>
+	 * Objects of this class should be discarded immediately after creating the iterations.
+	 *
+	 * @author Gregory Fouquet
+	 * @since 1.11.6
+	 * @since 1.12.1
+	 */
+	private class ShortCutPermissionEvaluator implements PermissionEvaluationService {
+		private Boolean hasRole;
+		private Map<String, Boolean> perms = new HashMap<String, Boolean>();
+		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<String[], Map<String, Boolean>>();
+
+		@Override
+		public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {
+			return this.hasRole(role) || this.hasPermissionOnObject(permission, object);
+		}
+
+		@Override
+		public boolean hasPermissionOnObject(String permission, Object entity) {
+			Boolean res = perms.get(permission);
+			if (res == null) {
+				res = permissionEvaluator.hasPermissionOnObject(permission, entity);
+				perms.put(permission, res);
+
+			}
+
+			return res;
+		}
+
+		@Override
+		public boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName) {
+			return permissionEvaluator.hasRoleOrPermissionOnObject(role, permission, entityId, entityClassName);
+		}
+
+		@Override
+		public boolean canRead(Object object) {
+			return permissionEvaluator.canRead(object);
+		}
+
+		@Override
+		public boolean hasMoreThanRead(Object object) {
+			return permissionEvaluator.hasMoreThanRead(object);
+		}
+
+		@Override
+		public boolean hasRole(String role) {
+			if (hasRole == null) {
+				hasRole = permissionEvaluator.hasRole(role);
+			}
+			return hasRole;
+		}
+
+		@Override
+		public boolean hasPermissionOnObject(String permission, Long entityId, String entityClassName) {
+			return permissionEvaluator.hasPermissionOnObject(permission, entityId, entityClassName);
+		}
+
+		@Override
+		public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+			Map<String, Boolean> res = hasRolePerms.get(permissions);
+			if (res == null) {
+				res = permissionEvaluator.hasRoleOrPermissionsOnObject(role, permissions, entity);
+				hasRolePerms.put(permissions, res);
+			}
+			return res;
+		}
+
+	}
+
+	;
+
 	@Inject
 	@Named("campaign.driveNodeBuilder")
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilder;
 
-	@Inject
-	private CampaignModificationService campaignModService;
-	@Inject
-	private CustomCampaignModificationService customCampaignModService;
 	@Inject
 	private Provider<IterationNodeBuilder> iterationNodeBuilder;
 	@Inject
@@ -118,7 +197,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	private CampaignFinder campaignFinder;
 	@Inject
+	private ExecutionFinder executionFinder;
+	@Inject
 	private IterationModificationService iterationModificationService;
+	@Inject
+	private PermissionEvaluationService permissionEvaluator;
+
 	@Inject
 	private MilestoneFinderService milestoneFinder;
 
@@ -136,7 +220,6 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
-
 
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
@@ -217,6 +300,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
+	private JsTreeNode createBatchedIterationTreeNode(Iteration iteration, int iterationIndex, PermissionEvaluationService permissionEvaluationService) {
+		return new IterationNodeBuilder(permissionEvaluationService).setModel(iteration).setIndex(iterationIndex).build();
+	}
+
 	private JsTreeNode createTestSuiteTreeNode(TestSuite testSuite) {
 		return suiteNodeBuilder.get().setModel(testSuite).build();
 	}
@@ -235,16 +322,53 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
 
 		return createIterationTestSuitesModel(testSuites);
+	}
+
+
+	/*
+	 * Special implementation of moveNodes(...) when the destination type is "campaigns"
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController#moveNodes(java.lang.Long[], long, java.lang.String)
+	 */
+	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId) {
+
+		/*
+		 * Evolution 5169.
+		 *
+		 * One can move iterations within a same campaign. But it makes sense only if an index is supplied too.
+		 * So, this version of moveNodes - that uses no index - is of no interest for us : we just do nothing.
+		 *
+		 * For other destination types though we can proceed with the super implementation.
+		 */
+
 
 	}
+
+	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+			@PathVariable("destinationId") long destinationId,
+			@PathVariable("position") int position) {
+
+		try {
+			campaignLibraryNavigationService.moveIterationsWithinCampaign(destinationId, nodeIds, position);
+		} catch (AccessDeniedException ade) {
+			throw new RightsUnsuficientsForOperationException(ade);
+		}
+
+	}
+
 
 	private @ResponseBody
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
+		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
+
 		for (int i = 0; i < iterations.size(); i++) {
 			Iteration iteration = iterations.get(i);
-			res.add(createIterationTreeNode(iteration, i));
+			res.add(createBatchedIterationTreeNode(iteration, i, pev));
 		}
 
 		return res;
@@ -263,8 +387,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
 
+		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
+
 		for (Iteration iteration : newIterations) {
-			res.add(createIterationTreeNode(iteration, iterationIndex));
+			res.add(createBatchedIterationTreeNode(iteration, iterationIndex, pev));
 			iterationIndex++;
 		}
 
@@ -333,11 +459,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteIds}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/test-suites/{suiteIds}", params = { REMOVE_FROM_ITER }, method = RequestMethod.DELETE)
 	public @ResponseBody
-	OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds) {
+ OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds,
+			@RequestParam(REMOVE_FROM_ITER) boolean removeFromIter) {
 
-		return campaignLibraryNavigationService.deleteSuites(suiteIds);
+		return campaignLibraryNavigationService.deleteSuites(suiteIds, removeFromIter);
 	}
 
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {
@@ -382,13 +509,35 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return new FileSystemResource(exported);
 	}
 
+	// Export Campaign from Execution
+	@RequestMapping(value = "/export-campaign-by-execution/{executionId}", method = RequestMethod.GET, params = "export=csv")
+	public @ResponseBody
+	FileSystemResource exportCampaignByExecution(@PathVariable(RequestParams.EXECUTION_ID) long executionId,
+			@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
+
+		Execution execution = executionFinder.findById(executionId);
+		Campaign campaign = campaignFinder.findById(execution.getCampaign().getId());
+
+		CampaignExportCSVModel model = campaignLibraryNavigationService.exportCampaignToCSV(execution.getCampaign().getId(), exportType);
+
+		// prepare the response
+		response.setContentType("application/octet-stream");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+
+		response.setHeader("Content-Disposition", "attachment; filename=" + "EXPORT_CPG_" + exportType + "_"
+				+ campaign.getName().replace(" ", "_") + "_" + sdf.format(new Date()) + ".csv");
+
+		File exported = exportToFile(model);
+		return new FileSystemResource(exported);
+	}
+
 	// Milestone dashboard
 
 	@RequestMapping(value = "/dashboard-milestones-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
 	CampaignStatisticsBundle getStatisticsAsJson(@CurrentMilestone Milestone activeMilestone) {
 
-		return campaignModService.gatherCampaignStatisticsBundleByMilestone(activeMilestone.getId());
+		return campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone(activeMilestone.getId());
 	}
 
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
@@ -397,7 +546,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
 		long milestoneId = activeMilestone.getId();
-		CampaignStatisticsBundle csbundle = campaignModService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
+		CampaignStatisticsBundle csbundle = campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
 
 		mav.addObject("milestone", milestoneFinder.findById(milestoneId));
 		mav.addObject("dashboardModel", csbundle);
@@ -411,9 +560,15 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return mav;
 	}
 
-	@RequestMapping(value = "/search", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public String getSearch() {
-		return "/fragment/campaigns/campaign-search-panel";
+	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	public ModelAndView getDashboard(Model model, @CurrentMilestone Milestone activeMilestone,
+			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
+
+		ModelAndView mav = getDashboard(model, activeMilestone);
+		mav.setViewName("page/campaign-workspace/show-campaign-milestone-dashboard");
+		mav.addObject("printmode", printmode);
+
+		return mav;
 	}
 
 	private File exportToFile(CampaignExportCSVModel model) {

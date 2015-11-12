@@ -42,31 +42,33 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign progression statistics"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
 		def result = service.gatherCampaignProgressionStatistics(campId)
 		then :
-		result.scheduledIterations.size() == 2
+		result.scheduledIterations.size() == 3
 
 	}
 
+	
+	
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign statistics bundle"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
 		def result = service.gatherCampaignStatisticsBundle(campId)
 		then :
-		notThrown(Exception)
+		result.iterationTestInventoryStatisticsList.iterationName == ['iter - 3', 'ref A - iter - tc1', 'ref B - iter - tc1 -2']
 
 	}
 
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign test case status statistics"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
-		def result = service.gatherCampaignTestCaseStatusStatistics(campId)
+		def result = service.gatherTestCaseStatusStatistics(campId)
 		then :
 		notThrown(Exception)
 
@@ -74,9 +76,9 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign test case succes rate stat"(){
 		given :
-		def campId = -10L
-		when :
-		def result = service.gatherCampaignTestCaseSuccessRateStatistics(campId)
+		def campId = [-10L]
+		when : 
+		def result = service.gatherTestCaseSuccessRateStatistics(campId)
 		then :
 		notThrown(Exception)
 	}
@@ -85,7 +87,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		given :
 		def campId = -10L
 		when :
-		def result = service.gatherIterationTestInventoryStatistics(campId)
+		def result = service.gatherCampaignTestInventoryStatistics(campId)
 		then :
 		notThrown(Exception)
 	}
@@ -93,10 +95,64 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign  non executed test case importance stat"(){
 		given :
-		def campId = -10L
+		def campId = [-10L]
 		when :
-		def result = service.gatherCampaignNonExecutedTestCaseImportanceStatistics(campId)
+		def result = service.gatherNonExecutedTestCaseImportanceStatistics(campId)
 		then :
 		notThrown(Exception)
 	}
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should not explode when no campaign are present"(){
+		//test for Issue 5267
+		given :
+		def campId = []
+		when :
+		service.gatherFolderTestInventoryStatistics(campId)
+		service.gatherTestCaseStatusStatistics(campId)
+
+		then :
+		notThrown(Exception)
+	}
+	
+	
+	
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should gather folder data"(){
+		//test for Issue 5270
+		given :
+		def campId = [-10L]
+		when :
+	    service.gatherFolderTestInventoryStatistics(campId)
+
+		then :
+		notThrown(Exception)
+	}
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should gather folder data 2"(){
+		given :
+		def campId = [-10L, -12L, -13L]
+		when :
+		def result = service.gatherFolderTestInventoryStatistics(campId)
+
+		then :
+		result.campaignName == ['bar', 'ref B - bar', 'ref Z - foo']
+	}
+	
+	
+	@DataSet("CampaignStatisticsServiceIT.xml")
+	def"should gather milestone data "(){
+		given :
+		def milId = -1L
+		when :
+		def result = service.gatherMilestoneStatisticsBundle(milId)
+
+		then :
+		result.iterationTestInventoryStatisticsList.iterationName == ['bar / iter', 'ref B - bar / iter', 'ref Z - foo / iter - 3', 'ref Z - foo / ref A - iter - tc1', 'ref Z - foo / ref B - iter - tc1 -2']
+	}
+	
+	
+
 }

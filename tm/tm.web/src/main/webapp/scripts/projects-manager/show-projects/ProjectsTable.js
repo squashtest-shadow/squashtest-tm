@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "squashtable", "jqueryui" ], function($, Backbone) {
+define([ "jquery", "backbone", "underscore", "squashtable", "jqueryui" ], function($, Backbone, _) {
 
 	var View = Backbone.View.extend({
 		el : "#projects-table",
@@ -29,6 +29,7 @@ define([ "jquery", "backbone", "squashtable", "jqueryui" ], function($, Backbone
 				squashConf = {};
 
 			this.$el.squashTable(tableConf, squashConf);
+			_.bindAll(this, "refresh");
 		},
 
 		hasTemplate : function() {

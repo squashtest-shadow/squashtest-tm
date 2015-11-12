@@ -28,7 +28,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.SearchExportCSVModel;
 
 
 
@@ -47,8 +46,5 @@ public interface RequirementVersionAdvancedSearchService {
 	
 	List<String> findAllUsersWhoModifiedRequirementVersions();
 	
-	//Exporting
-	SearchExportCSVModel exportRequirementVersionSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
-
 
 }

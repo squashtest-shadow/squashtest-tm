@@ -24,11 +24,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
 
 @Transactional
 public interface CustomCampaignModificationService {
@@ -39,6 +41,10 @@ public interface CustomCampaignModificationService {
 
 	List<Iteration> findIterationsByCampaignId(long campaignId);
 
+
+	Integer countIterations(@QueryParam("campaignId") Long campaignId);
+
+
 	/**
 	 * 
 	 * @param campaignId the id of the concerned campaign
@@ -48,7 +54,12 @@ public interface CustomCampaignModificationService {
 
 	CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId);
 
-	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId);
+
+	// TODO : move this method to CampaignFolderModificationService. If it exists one day.
+	// TODO : move this to CampaignLibraryNavigationSercice. If the inconsistencies in the
+	// returned data are solved one day (see comment on CampaignStatisticsService).
+	ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId);
+
 
 	/* ********************** milestones section ******************* */
 

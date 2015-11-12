@@ -61,8 +61,9 @@ import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -73,9 +74,9 @@ import org.squashtest.tm.exception.NoBugTrackerBindingException;
  * GenericProject is the superclass of Project and ProjectTemplate. Even though there is no other structural difference
  * between an project and a template, choosing a specialization through inheritance (instead of a specialization through
  * composition) lets the app rely on polymorphism and reduce the impact upon project templates introduction.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Auditable
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -115,7 +116,10 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "CL_ID")
 	private CampaignLibrary campaignLibrary;
-
+	
+	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "CRL_ID")
+	private CustomReportLibrary customReportLibrary;
 
 	@OneToOne(cascade = { CascadeType.ALL }, fetch = FetchType.LAZY, mappedBy = "project")
 	private BugTrackerBinding bugtrackerBinding;
@@ -124,30 +128,32 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private Set<TestAutomationProject> testAutomationProjects = new HashSet<TestAutomationProject>();
 
 	@JoinColumn(name = "TA_SERVER_ID")
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	private TestAutomationServer testAutomationServer;
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", updatable = false)
 	private final AttachmentList attachmentList = new AttachmentList();
 
 
 	// the so-called information lists
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="REQ_CATEGORIES_LIST")
 	private InfoList requirementCategories;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="TC_NATURES_LIST")
 	private InfoList testCaseNatures;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="TC_TYPES_LIST")
 	private InfoList testCaseTypes;
 
 
 	@ManyToMany(mappedBy = "projects")
 	private Set<Milestone> milestones = new HashSet<Milestone>();
+
+	private boolean allowTcModifDuringExec = false;
 
 	public List<Milestone> getMilestones() {
 		return new ArrayList<Milestone>(milestones);
@@ -167,6 +173,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		this.label = label;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -226,6 +233,17 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		this.campaignLibrary = campaignLibrary;
 		notifyLibraryAssociation(campaignLibrary);
 	}
+	
+
+	public CustomReportLibrary getCustomReportLibrary() {
+		return customReportLibrary;
+	}
+
+
+	public void setCustomReportLibrary(CustomReportLibrary customReportLibrary) {
+		this.customReportLibrary = customReportLibrary;
+	}
+
 
 	public BugTrackerBinding getBugtrackerBinding() {
 		return bugtrackerBinding;
@@ -237,7 +255,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	/**
 	 * Notifies a library it was associated with this project.
-	 * 
+	 *
 	 * @param library
 	 */
 	private void notifyLibraryAssociation(GenericLibrary<?> library) {
@@ -246,6 +264,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		}
 	}
 
+	@Override
 	public AttachmentList getAttachmentList() {
 		return attachmentList;
 	}
@@ -253,7 +272,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	/**
 	 * will add a TestAutomationProject if it wasn't added already, or won't do anything if it was already bound to
 	 * this.
-	 * 
+	 *
 	 * @param project
 	 */
 	public void bindTestAutomationProject(TestAutomationProject project) {
@@ -309,7 +328,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	/**
 	 * returns true if the given TA project is indeed bound to the TM project
-	 * 
+	 *
 	 * @param p
 	 * @return
 	 */
@@ -319,7 +338,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	/**
 	 * returns a TestAutomationProject, bound to this TM project, that references the same job than the argument.
-	 * 
+	 *
 	 * @param p
 	 * @return a TestAutomationProject if an equivalent was found or null if not
 	 */
@@ -337,7 +356,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the BugTracker the Project is bound to
 	 * @throws NoBugTrackerBindingException
 	 *             if the project is not BugtrackerConnected
@@ -424,6 +443,14 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 	public boolean isBoundToMilestone(Milestone milestone) {
 		return milestones.contains(milestone);
+	}
+
+	public void setAllowTcModifDuringExec(boolean allowTcModifDuringExec) {
+		this.allowTcModifDuringExec = allowTcModifDuringExec;
+	}
+
+	public boolean allowTcModifDuringExec() {
+		return this.allowTcModifDuringExec;
 	}
 
 }

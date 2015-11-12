@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 
 import spock.unitils.UnitilsSupport
 
@@ -180,6 +181,30 @@ class HibernateTestCaseLibraryNodeDaoIT extends DbunitServiceSpecification {
 		res.size() == 3
 		res[1] == null
 		res.collect{ it?.id } == [-237L,null, -242L]
+	}
+	
+	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
+	def "should not find test case by paths"(){
+		given :
+		def paths  = ["/Test Project-1/super 1/sub1/sub 11","/Test Project-1/sub 11"]
+		
+		when  :
+		def res = service.findNodeIdsByPath(paths)
+		
+		then :
+		res.collect{ it } == [-242L,null]
+	}
+	
+	@DataSet("HibernateTestCaseLibraryNodeDaoIT.sample.xml")
+	def "should not find test case by path"(){
+		given :
+		def path  = "/autre projet/larrynio"
+					
+		when  :
+		def res = service.findNodeIdByPath(path)
+						
+		then :
+		res == null;
 	}
 
 }

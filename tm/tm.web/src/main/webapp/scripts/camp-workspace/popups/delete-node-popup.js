@@ -54,6 +54,7 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 					var ids = $.map(nodes.get(), _collectId).join(',');
 					var rawUrl = nodes.getDeleteUrl();
 					var url = rawUrl.replace('{nodeIds}', ids) + '/deletion-simulation';
+					url = url.replace('?remove_from_iter={remove_from_iter}', '');
 					aXhrs.push($.getJSON(url));
 				}
 				else{
@@ -69,6 +70,7 @@ define(['jquery', 'tree', '../permissions-rules', 'workspace/workspace.delnode-p
 					var ids = $.map(nodes.get(), _collectId).join(',');
 					var rawUrl = nodes.getDeleteUrl();
 					var url = rawUrl.replace('{nodeIds}', ids);
+					url = url.replace('{remove_from_iter}', $("#remove-tc-from-iter").prop("checked"));
 					aXhrs.push($.ajax({
 						url : url,
 						type : 'delete'

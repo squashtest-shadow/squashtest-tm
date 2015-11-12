@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -46,8 +49,6 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import static org.squashtest.tm.service.security.Authorizations.*;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.CustomFieldBindingService")
 @Transactional
@@ -197,10 +198,10 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	 */
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
-	public void copyCustomFieldsSettingsFromTemplate(Project newProject, ProjectTemplate projectTemplate) {
-		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(projectTemplate.getId());
+	public void copyCustomFieldsSettingsFromTemplate(GenericProject target, GenericProject source) {
+		List<CustomFieldBinding> templateCutomFieldBindings = findCustomFieldsForGenericProject(source.getId());
 		for (CustomFieldBinding templateCustomFieldBinding : templateCutomFieldBindings) {
-			long projectId = newProject.getId();
+			long projectId = target.getId();
 			BindableEntity entity = templateCustomFieldBinding.getBoundEntity();
 			long customFieldId = templateCustomFieldBinding.getCustomField().getId();
 			CustomFieldBinding newBinding = new CustomFieldBinding();

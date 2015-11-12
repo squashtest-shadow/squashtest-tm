@@ -265,15 +265,18 @@
 
 <script type="text/javascript">
 require([ "common" ], function() {
-  require([ "jquery", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
-      function($, basicwidg, eventBus) {
+  require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
+      function($,_,  storage, basicwidg, eventBus) {
     $(function() {    
       basicwidg.init();
       <c:if test="${executable}">
-      $("#issue-report-dialog-openbutton").click(function() {
-        $(this).removeClass("ui-state-focus ui-state-hover");
-        checkAndReportIssue( {reportUrl:"${entityUrl}/new-issue" } );
-      });
+        $("#issue-report-dialog-openbutton").click(function() {
+            $(this).removeClass("ui-state-focus ui-state-hover");
+            
+            checkAndReportIssue( {
+            		reportUrl:"${entityUrl}/new-issue/"
+            });
+          });
       </c:if>
 
       
@@ -390,7 +393,7 @@ require([ "common" ], function() {
 		</c:when>
 		
 		<c:when
-			test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'}">
+			test="${entityType == 'iteration'||entityType == 'test-suite'||entityType == 'campaign'||entityType == 'campaign-folder'}">
 			<is:issue-table-iter dataUrl="${tableUrl}" interfaceDescriptor="${interfaceDescriptor}" tableEntries="${tableEntries}"/>
 		</c:when>
 		<c:when test="${entityType == 'test-case' }">
@@ -403,7 +406,10 @@ require([ "common" ], function() {
 <%-------------------------------- add issue popup code -----------------------------------%>
 <c:if test="${executable and not useParentContextPopup}">
 	<is:issue-add-popup id="issue-report-dialog"
-		interfaceDescriptor="${interfaceDescriptor}"  bugTrackerId="${bugTracker.id}"/>
+		interfaceDescriptor="${interfaceDescriptor}"  
+        bugTrackerId="${bugTracker.id}" 
+        projectId="${projectId}" 
+        projectNames="${projectNames}"/>
 </c:if>
 <%-------------------------------- /add issue popup code -----------------------------------%>
 

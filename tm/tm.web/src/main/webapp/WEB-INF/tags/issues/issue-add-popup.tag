@@ -30,6 +30,13 @@
 	description="an object holding the labels for the interface"%>
 <%@ attribute name="bugTrackerId" required="true"
 	description="id of the entity's project bug-tracker"%>
+<%@ attribute name="projectId" required="false"
+	description="id the project (on squash)"%>
+<%@ attribute name="projectNames" required="false"
+  description="names of the remote project (hosted on the bugtracker)"%>
+
+  
+  
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -85,8 +92,15 @@
           <span class="issue-radio-label">
             <f:message key="dialog.issue.radio.new.label" />
           </span>
+            <span id="project-selector" />
          </span>
-         
+           <script id="project-selector-tpl" type="text/x-handlebars-template">         
+               <select>
+                {{#each options}}
+                  <option value="{{this.code}}">{{this.value}}</option>
+                {{/each}}
+                </select>
+           </script>
          <div class="issue-report-fields">
           <%-- populated by javascript --%>
         </div>
@@ -113,7 +127,9 @@ require( ["common"], function(){
 			var conf = {					
 				searchUrl : "${remoteIssues}",
 				bugTrackerId : "${bugTrackerId}",
-				labels : ${ json:serialize(interfaceDescriptor) }
+				labels : ${ json:serialize(interfaceDescriptor) },
+				currentProjectId : ${projectId},
+				projectNames : ${projectNames}
 			};
 			
 			

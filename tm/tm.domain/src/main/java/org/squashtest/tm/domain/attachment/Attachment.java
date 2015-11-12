@@ -57,7 +57,7 @@ public class Attachment {
 	/** attachment size in bytes */
 	private Long size = 0L;
 
-	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	@JoinColumn(name = "CONTENT_ID")
 	private AttachmentContent content;
 

@@ -23,5 +23,6 @@ package org.squashtest.tm.api.workspace;
 public enum WorkspaceType {
 	TEST_CASE_WORKSPACE, 
 	REQUIREMENT_WORKSPACE, 
-	CAMPAIGN_WORKSPACE
+	CAMPAIGN_WORKSPACE,
+	CUSTOM_REPORT_WORKSPACE
 }

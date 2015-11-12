@@ -20,10 +20,15 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -44,7 +49,12 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
+import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -61,13 +71,14 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
-import static org.squashtest.tm.service.security.Authorizations.*;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
 public class CampaignLibraryNavigationServiceImpl extends
 AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
 CampaignLibraryNavigationService {
+
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -105,6 +116,9 @@ CampaignLibraryNavigationService {
 
 	@Inject
 	private Provider<CampaignExportCSVFullModelImpl> fullCampaignExportCSVModelProvider;
+
+	@Inject
+	private CampaignStatisticsService statisticsService;
 
 	@Inject
 	@Qualifier("squashtest.tm.service.CampaignLibrarySelectionStrategy")
@@ -150,15 +164,11 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	@PostAuthorize("hasPermission(returnObject,'READ') " + OR_HAS_ROLE_ADMIN)
-	public Campaign findCampaign(long reqId) {
-		return campaignDao.findById(reqId);
-	}
-
-	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan) {
+	public int
+	addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
@@ -168,13 +178,34 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
+	@PreventConcurrent(entityType = Campaign.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int addIterationToCampaign(Iteration iteration, long campaignId, boolean copyTestPlan,
+	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan,
 			Map<Long, RawValue> customFieldValues) {
 		int iterIndex = addIterationToCampaign(iteration, campaignId, copyTestPlan);
 		initCustomFieldValues(iteration, customFieldValues);
 		return iterIndex;
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.campaign.Campaign', 'WRITE') "+OR_HAS_ROLE_ADMIN)
+	public void moveIterationsWithinCampaign(long destinationId, Long[] nodeIds, int position) {
+		/*
+		 * because :
+		 * 1 - iteration is not a campaign library node
+		 * 2 - an iteration will move only within the same campaign,
+		 *
+		 * we can't use the TreeNodeMover and we don't need it anyway.
+		 */
+
+		List<Long> iterationIds = Arrays.asList(nodeIds);
+
+		Campaign c= campaignDao.findById(destinationId);
+		List<Iteration> iterations = iterationDao.findAllByIds(iterationIds);
+
+		c.moveIterations(position, iterations);
+
 	}
 
 	@Override
@@ -195,9 +226,9 @@ CampaignLibraryNavigationService {
 	/*
 	 * refer to the comment in
 	 * org.squashtest.csp.tm.internal.service.TestCaseModificationServiceImpl#findVerifiedRequirementsByTestCaseId
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#findIterationsByCampaignId(long)
 	 */
 	@Override
@@ -309,18 +340,14 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	public OperationReport deleteIterations(List<Long> targetIds) {
+	@BatchPreventConcurrent(entityType = Campaign.class, coercer = IterationToCampaignIdsCoercer.class)
+	public OperationReport deleteIterations(@Ids List<Long> targetIds) {
 		return deletionHandler.deleteIterations(targetIds);
 	}
 
 	@Override
 	public List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds) {
 		return deletionHandler.simulateSuiteDeletion(targetIds);
-	}
-
-	@Override
-	public OperationReport deleteSuites(List<Long> targetIds) {
-		return deletionHandler.deleteSuites(targetIds);
 	}
 
 
@@ -334,11 +361,9 @@ CampaignLibraryNavigationService {
 
 		if ("L".equals(exportType)){
 			model = simpleCampaignExportCSVModelProvider.get();
-		}
-		else if ("F".equals(exportType)){
+		} else if ("F".equals(exportType)) {
 			model = fullCampaignExportCSVModelProvider.get();
-		}
-		else{
+		} else {
 			model = standardCampaignExportCSVModelProvider.get();
 		}
 
@@ -373,5 +398,39 @@ CampaignLibraryNavigationService {
 		return parents;
 	}
 
+	@Override
+	public Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
+		// get all the campaigns
+		Collection<Long> cIds = new ArrayList<Long>();
+
+		if (!libraryIds.isEmpty()) {
+			cIds.addAll(campaignDao.findAllCampaignIdsByLibraries(libraryIds));
+		}
+		if (!nodeIds.isEmpty()) {
+			cIds.addAll(campaignDao.findAllCampaignIdsByNodeIds(nodeIds));
+		}
+
+		// filter out duplicates
+		Set<Long> set = new HashSet<Long>(cIds);
+		cIds = new ArrayList<Long>(set);
+
+		// sec check
+		cIds = securityFilterIds(cIds, "org.squashtest.tm.domain.campaign.Campaign", "READ");
+
+		return cIds;
+
+	}
+
+
+	@Override
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
+		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
+	}
+
+	@Override
+	public OperationReport deleteSuites(List<Long> suiteIds, boolean removeFromIter) {
+
+		return deletionHandler.deleteSuites(suiteIds, removeFromIter);
+	}
 
 }

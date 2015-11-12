@@ -229,8 +229,47 @@
 
          </div>
 
+         <!--  ================= EXPORT TC POPUP ======================= -->
+
+        <div class="export-test-case-dialog popup-dialog not-displayed" th:title="#{label.Export}" title="export"
+          th:attr="data-def='nameprefix='+#{label.lower.dash.exportTestCase}+', dateformat='+#{export.dateformat}"
+          data-def="nameprefix=nameprefix, dateformat=dd_MM_yyyy">
+
+          <div data-def="state=main" class="std-margin-top">
+
+            <span th:text="#{test-case.export.dialog.message}">export message</span>
+
+            <div class="std-margin-top">
+              <span th:text="#{test-case.export.dialog.filename}"> test case export filename </span>
+              <input type="text" id="export-test-case-filename" size="255" style="width: 350px" />
+            </div>
+
+            <div class="std-margin-top">
+              <input type="checkbox" id="export-test-case-includecalls" />
+              <span th:text="#{test-case.export.dialog.includecall}"></span>
+              <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}"></div>
+            </div>
 
 
+            <div class="std-margin-top">
+              <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked" />
+              <span th:text="#{test-case.export.dialog.keeprteformat}">keep rte format</span>
+              <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}">keep rte format
+                description</div>
+            </div>
+
+
+          </div>
+
+          <div class="popup-dialog-buttonpane">
+              <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main" />
+              <input type="button" th:value="#{label.Cancel}" value="cancel"
+                data-def="evt=cancel" />
+          </div>
+        </div>
+
+
+          <!--  ================= //EXPORT TC POPUP ======================= -->
 
 
         <div id="modify-search-result-dialog" class="not-displayed popup-dialog" th:title="#{label.Modify}">
@@ -294,4 +333,3 @@
   </div>
 </body>
 </html>
-

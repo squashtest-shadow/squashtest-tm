@@ -40,7 +40,7 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
  * @author Gregory Fouquet
  * 
  */
-class WorksheetDef<COL extends TemplateColumn> {
+public class WorksheetDef<COL extends TemplateColumn> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorksheetDef.class);
 
 	private final TemplateWorksheet worksheetType;

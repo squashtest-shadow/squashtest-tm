@@ -34,7 +34,7 @@
 		<attribute>  
             <name>activeContentIndex</name>  
             <required>no</required>  
-            <rtexprvalue>no</rtexprvalue>
+            <rtexprvalue>yes</rtexprvalue>
             <type>java.lang.Integer</type>  
         </attribute>  
 	</tag>

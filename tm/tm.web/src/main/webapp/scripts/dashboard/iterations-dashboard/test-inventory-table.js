@@ -46,15 +46,6 @@ define([ "../basic-objects/table-view", "squash.translator" ], function(TableVie
 		},
 		applySpecificStyle : function() {
 			var table = $("#test-suite-statistics");
-
-			table.find("tr > :nth-child(1)").addClass("iteration-dashbord-test-suite-col");
-			table.find("tr > :nth-child(3)").addClass("iteration-dashbord-total-col");
-			table.find("tr > :nth-child(7)").addClass("iteration-dashbord-ready-col");
-			table.find("tr > :nth-child(8)").addClass("iteration-dashbord-running-col");
-			table.find("tr > :nth-child(9)").addClass("iteration-dashbord-passed-col");
-			table.find("tr > :nth-child(11)").addClass("iteration-dashbord-failed-col");
-			table.find("tr > :nth-child(12)").addClass("iteration-dashbord-blocked-col");
-			table.find("tr > :nth-child(13)").addClass("iteration-dashbord-untestable-col");
 			table.find("tr:last").addClass("iteration-dashbord-total-ligne");			
 		},
 		getData : function() {

@@ -26,11 +26,8 @@ import java.util.Locale;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.SearchExportCSVModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
-
-
 
 public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
@@ -49,10 +46,4 @@ public interface TestCaseAdvancedSearchService extends AdvancedSearchService{
 
 	List<String> findAllUsersWhoCreatedTestCases();
 	
-	//Exporting
-	SearchExportCSVModel exportTestCaseSearchResultsToCSV(AdvancedSearchModel model, Locale locale);
-
-	
-
-
 }

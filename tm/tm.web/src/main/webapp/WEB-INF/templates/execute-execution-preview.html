@@ -61,11 +61,14 @@ documentation :
 	squashtm.page = squashtm.page || {};
 	squashtm.page.hasFields = /*[[${hasCustomFields}]]*/ false;
 	squashtm.page.hasDenormFields = /*[[${hasDenormFields}]]*/ false;
+    squashtm.page.denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
+    squashtm.page.fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
+    squashtm.page.refTestCaseId = /*[[${execution.referencedTestCase.id} ]]*/;
+    squashtm.page.executionId = /*[[${execution.id}]]*/;
+    squashtm.page.config = /*[[${config}]]*/ {};
 //]]>
 </script>
-<script type="text/javascript" th:src="@{/scripts/require-min.js}"></script>
-<script type="text/javascript" th:src="@{/scripts/common.js}"></script>
-
+  <script type="text/javascript" th:src="@{/scripts/require-min.js}" src="../../scripts/require.js" data-main="execution-preview-page"></script>
 
 <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
 <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
@@ -75,27 +78,46 @@ documentation :
 
 <body class="execute-html-body">
 
-  <div id="execute-header">
-    <div class="snap-left">
-      <button id="execute-stop-button" th:text="#{execute.header.button.stop.title}" data-icon="ui-icon-power">stop</button>
+  <!--  initialize the wizards --> 
+  <div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='campaign')"/>
+
+<div id="execute-header" class="cf">
+  <div class="btn-toolbar left">
+    <div class="btn-group">
+      <button id="execute-stop-button" class="sq-icon-btn" th:title="#{execute.header.button.stop.title}" title="stop">
+        <span class="ui-icon ui-icon-power"></span>
+      </button>
     </div>
-    <div style="margin-left:25%;" class="snap-left">
+    <div class="btn-group">
       <span id="execute-header-numbers-label" th:text="'0 / '+${totalSteps}">0 / 3</span>
     </div>
-    <div class="snap-right">
-      <a data-icon="ui-icon-triangle-1-e" id="execute-begin-button" th:text="#{label.Begin}"
-        th:href="@{__${currentStepsUrl}__/index/0(optimized=${config.optimized})}" href="#">
-        begin
+  </div>
+  <div class="btn-toolbar right">
+    <a id="execute-begin-button" class="sq-icon-btn"
+       th:href="@{__${currentStepsUrl}__/index/0(optimized=${config.optimized})}" href="#">
+      <span th:text="#{label.Begin}">Begin</span>
+      <span class="ui-icon ui-icon-triangle-1-e"></span>
       </a>
     </div>
   </div>
 
 
-
 	<div id="execute-body" class="execute-fragment-body">
 
     <div id="execute-title-div" class="ui-widget-header ui-state-default ui-corner-all fragment-header">
-      <h2 th:text="${title}">Exec #3 : test interface</h2>
+    <table>
+      <tr>
+        <td><h2 th:text="${title}">Exec #3 : test interface</h2></td>
+        <td class="cf">
+          <div class="btn-toolbar right">
+            <button th:if="${execution.project.allowTcModifDuringExec()}" id="edit-tc"
+                    class="sq-btn std-btn control-button ">
+              <span class="ui-icon ui-icon-pencil"/>
+            </button>
+          </div>
+        </td>
+      </tr>
+    </table>
     </div>
 
     <div class="sq-tg expand">
@@ -144,8 +166,10 @@ documentation :
             </div>
              <div class="display-table-row">
               <label class="display-table-cell" th:text="#{label.Dataset}">status</label>
-              <div id="execute-dataset" class="display-table-cell"
-                th:text="${execution.datasetLabel}">dataset name</div>
+
+          <div id="execute-dataset" class="display-table-cell" th:text="${execution.datasetLabel}">
+            dataset name
+          </div>
             </div>
 
             <div class="display-table-row">
@@ -169,7 +193,8 @@ documentation :
   		<div class="display-table-row">
             <label class="display-table-cell" th:text="#{test-case.importance.label}">importance</label>
   			<div class="display-table-cell">
-  				<span id="test-case-importance-icon" th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
+            <span id="test-case-importance-icon"
+                  th:class="'test-case-importance-'+${execution.importance}">&nbsp;&nbsp;</span>
   	          <span id="testcase-importance"
   	            th:text="${execution.importance.level}+'-'+#{${execution.importance.getI18nKey()}}">0 - most important of all</span>
   	        </div>
@@ -178,35 +203,20 @@ documentation :
           <div class="display-table-row" th:with="natLabel = ${#messages.msgOrNull('__${execution.nature.label}__')}">
             <label class="display-table-cell" th:text="#{test-case.nature.label}">nature</label>
             <div id="testcase-nature" class="display-table-cell"
-              th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural</div>
+               th:text="${(natLabel != null) ? natLabel : execution.nature.label}">0 - supernatural
+          </div>
           </div>
 
           <div class="display-table-row" th:with="typLabel = ${#messages.msgOrNull('__${execution.type.label}__')}">
             <label class="display-table-cell" th:text="#{test-case.type.label}">type</label>
             <div id="testcase-type" class="display-table-cell"
-              th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R</div>
+               th:text="${(typLabel != null) ? typLabel : execution.type.label}">0 - R
+          </div>
           </div>
 
-  			<div class="display-table-row">
-  				<div class="display-table-cell" sq:unsafe-html="${execution.prerequisite}">
-  					<p th:remove="all">
-  						consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam
-  						quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam,
-  						nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse
-  						quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?
-  					</p>
   				</div>
   			</div>
   			</div>
-  	</div>
-	</div>
-
-
-
-
-
-
-
 
 
     <div class="sq-tg expand">
@@ -228,83 +238,11 @@ documentation :
     			</div>
     	</div>
 	</div>
-	<div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}" id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">ATTACHMENT-BLOC</div>
-
+  <div th:with="attachable = ${false}, attachableEntity=${execution}, attachmentSet = ${attachments}"
+       id="attachment-bloc-frag" th:include="attachment-bloc.frag :: attachment-bloc">
+    ATTACHMENT-BLOC
 	</div>
-
-	<script type="text/javascript" th:inline="javascript">
-	//<![CDATA[
-	require(["common"], function() {
-    	require(["jquery", 'squash.basicwidgets', 'custom-field-values'],
-    			function($, basic, cufValues){
-
-    		requirejs.config({
-  				config : {
-  					"unfinished-execution-preview-page" : /*[[${config}]]*/{}
-  				}
-  			});
-
-
-    		$(function(){
-
-        		require(["unfinished-execution-preview-page"], function(){/*noop*/});
-
-    			basic.init();
-
-    			/* Allow the status icon to exist : InTree may be useless */
-
-    			_updateStatusIcon = function (value){
-  					var statusIcon = $("#test-case-status-icon");
-  					statusIcon.attr("class", ""); //reset
-  					statusIcon.addClass("test-case-status-" + value);
-  				};
-    			_updateStatusInTree = function(value){
-  					var self = this;
-  					self._updateStatusIcon(value);
-  					eventBus.trigger('node.attribute-changed', {identity : self.identity, attribute : 'status', value : value.toLowerCase()});
-  				};
-  			 	this.updateStatusInTree = $.proxy(this._updateStatusInTree, this);
-
-    			/* Allow the importance icon to exist */
-
-  				_updateImportanceIcon = function (value){
-  					var status = $("#test-case-importance-icon");
-  					status.attr("class", ""); // reset
-  					status.addClass("test-case-importance-" + value);
-  				};
-
-
-
-
-    			/* we dont append in parent because order would not be guaranteed
-    			 * we dont append in placeholder because it breaks layout aux petits oignons
-    			 * hence the replaceWith
-    			 */
-
-    			var selector = "#test-case-attribute-panel > div.display-table";
-    			if (squashtm.page.hasFields) {
-    				var fieldsUrl = /*[[@{/custom-fields/values(boundEntityId=${execution.boundEntityId},boundEntityType=${execution.boundEntityType})}]]*/ "";
-    				$.getJSON(fieldsUrl)
-    				.success(function(jsonCufs) {
-    					cufValues.infoSupport.init(selector, jsonCufs, "jeditable");
-    				});
-
-    			}
-    			if (squashtm.page.hasDenormFields) {
-    				var denormsUrl = /*[[@{/denormalized-fields/values(denormalizedFieldHolderId=${execution.boundEntityId},denormalizedFieldHolderType=${execution.boundEntityType})}]]*/ "";
-        			$.getJSON(denormsUrl)
-        			.success(function(jsonDenorm) {
-        				cufValues.infoSupport.init(selector, jsonDenorm, "jeditable");
-        			});
-    			}
-
-    		});
-    	});
-	});
-	//]]>
-	</script>
-
-
+</div>
 </body>
 
 </html>

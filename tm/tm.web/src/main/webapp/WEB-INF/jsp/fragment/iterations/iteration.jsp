@@ -75,34 +75,41 @@
 <c:set var="attachable"       value="${false}" />
 <c:set var="linkable"         value="${false}" />  
 <c:set var="executable"       value="${false}" />
+<c:set var="deletable"        value="${false}" />
+<c:set var="extendedDeletable"value="${false}" />
   
   
 <c:if test="${not milestoneConf.locked}">
   
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
-  <c:set var="writable" value="${ true }" />
-  <c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ iteration }">
-  <c:set var="attachable" value="${ true }" />
-  <c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
-  <c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ iteration }">
   <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ iteration }">
+  <c:set var="writable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="ATTACH" domainObject="${ iteration }">
+  <c:set var="attachable" value="${ true }" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="DELETE" domainObject="${ iteration }">
+  <c:set var="deletable" value="${true}" />
+</authz:authorized>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXTENDED_DELETE" domainObject="${ iteration }">
+  <c:set var="extendedDeletable" value="${true}" />
+</authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ iteration }">
   <c:set var="linkable" value="${ true }" />
-  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ iteration }">
   <c:set var="executable" value="${ true }" />
-  <c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
 
+<c:set var="moreThanReadOnly" value="${moreThanReadOnly or writable or attachable or deletable or extendedDeletable or linkable or executable}" />
+
 </c:if>
+
+<%-- ----------------------------------- /Authorization ----------------------------------------------%>
+
+
 
 <f:message key="tabs.label.issues" var="tabIssueLabel" />
 <script type="text/javascript">
@@ -131,8 +138,18 @@
     <h2>
 
       <a id="iteration-name" href="${ iterationUrl }/info">
-        <c:out value="${ iteration.name }" escapeXml="true" />
+        <c:out value="${ iteration.fullName }" escapeXml="true" />
       </a>
+
+      <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
+      <span id="iteration-raw-reference" style="display: none">
+        <c:out value="${ iteration.reference }" escapeXml="true" /> 
+      </span> 
+      
+      <span id="iteration-raw-name" style="display: none">
+        <c:out value="${ iteration.name }" escapeXml="true" /> 
+      </span>      
+      
     </h2>
   </div>
 
@@ -213,8 +230,16 @@
 
       <comp:toggle-panel id="iteration-description-panel" titleKey="label.Description" open="true">
         <jsp:attribute name="body">
-			<div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
-			</jsp:attribute>
+              <div class="display-table-row">
+                <label class="display-table-cell" for="iteration-reference"><f:message key="label.Reference" /></label>
+                <div class="display-table-cell" id="iteration-reference">${ iteration.reference }</div>
+              </div>
+              
+              <div class="display-table-row">
+                <label for="iteration-description" class="display-table-cell"><f:message key="label.Description" /></label>
+                <div id="iteration-description" ${descrRicheditAttributes}>${ iteration.description }</div>
+              </div>  
+		</jsp:attribute>
       </comp:toggle-panel>
 
 
@@ -292,6 +317,8 @@
         editable="${writable}" 
         executable="${executable}"
         reorderable="${linkable}" 
+        deletable="${deletable}"
+        extendedDeletable="${extendedDeletable}"
         milestoneConf="${milestoneConf}"/>
 
     <%-- ------------------ /test plan ----------------------------- --%>

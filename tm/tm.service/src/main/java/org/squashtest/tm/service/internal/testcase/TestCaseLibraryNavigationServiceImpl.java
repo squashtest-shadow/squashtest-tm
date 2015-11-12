@@ -334,6 +334,7 @@ TestCaseLibraryNavigationService {
 	@Override
 	public Long mkdirs(String folderpath) {
 
+
 		String path = folderpath.replaceFirst("^/", "").replaceFirst("/$", "");
 
 		StringBuffer buffer = new StringBuffer();
@@ -471,6 +472,19 @@ TestCaseLibraryNavigationService {
 
 		return excelService.exportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public File searchExportTestCaseAsExcel(List<Long> nodeIds,
+			boolean includeCalledTests, boolean keepRteFormat,
+			MessageSource messageSource) {
+		
+		Collection<Long> allIds = findTestCaseIdsFromSelection(CollectionUtils.EMPTY_COLLECTION, nodeIds, includeCalledTests);
+		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
+
+		return excelService.searchExportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
+
+	}
 
 	@Override
 	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
@@ -479,16 +493,16 @@ TestCaseLibraryNavigationService {
 
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
-	
+
 	@Override
 	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,Milestone activeMilestone) {
-		
+
 		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
-		
+
 		if (activeMilestone!=null) {
 			tcIds = filterTcIdsListsByMilestone(tcIds,activeMilestone);
 		}
-		
+
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
 
@@ -524,16 +538,6 @@ TestCaseLibraryNavigationService {
 
 		return tcIds;
 
-	}
-
-	private Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
-		Collection<Long> effective = new ArrayList<Long>();
-		for (Long id : original) {
-			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)) {
-				effective.add(id);
-			}
-		}
-		return effective;
 	}
 
 	@Override
@@ -684,13 +688,16 @@ TestCaseLibraryNavigationService {
 			return new ArrayList<>();
 		}
 	}
-	
 
+
+	@SuppressWarnings("unchecked")
 	private Collection<Long> filterTcIdsListsByMilestone(
 			Collection<Long> tcIds, Milestone activeMilestone) {
-		
+
 		List<Long> tcInMilestone = findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 		return CollectionUtils.retainAll(tcIds, tcInMilestone);
 	}
+
+
 
 }

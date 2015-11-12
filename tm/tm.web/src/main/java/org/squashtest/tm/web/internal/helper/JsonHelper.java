@@ -20,25 +20,33 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Component;
 
+import javax.inject.Inject;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+@Component
 public final class JsonHelper {
-	private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+	private static JsonHelper INSTANCE;
 
-	private JsonHelper() {
+	private final ObjectMapper objectMapper;
+
+	@Inject
+	public JsonHelper(ObjectMapper objectMapper) {
 		super();
+		this.objectMapper = objectMapper;
+		INSTANCE = this;
 	}
 
 	public static String serialize(Object value) throws JsonMarshallerException {
 		try {
-			return OBJECT_MAPPER.writeValueAsString(value);
+			return INSTANCE.objectMapper.writeValueAsString(value);
 		} catch (IOException e) {
 			throw new JsonMarshallerException(e);
 		}
@@ -48,12 +56,12 @@ public final class JsonHelper {
 	IOException {
 		TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {
 		};
-		return OBJECT_MAPPER.readValue(json, typeRef);
+		return INSTANCE.objectMapper.readValue(json, typeRef);
 	}
 
 	/**
 	 * alias for {@link #serialize(Object)}
-	 * 
+	 *
 	 * @param value
 	 * @return
 	 */
@@ -63,7 +71,7 @@ public final class JsonHelper {
 
 	/**
 	 * alias for {@link #deserialize(String)}
-	 * 
+	 *
 	 * @param json
 	 * @return
 	 */

@@ -63,10 +63,14 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStatusReport;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.library.PluginReferencer;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.AdministrableProject;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.LibraryPluginBinding;
@@ -81,10 +85,10 @@ import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.exception.CompositeDomainException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.exception.NoBugTrackerBindingException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.exception.testautomation.DuplicateTMLabelException;
 import org.squashtest.tm.security.acls.PermissionGroup;
+import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
@@ -92,9 +96,9 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
+import org.squashtest.tm.service.project.GenericProjectCopyParameter;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
@@ -107,8 +111,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
-	@Inject
-	private ProjectDao projectDao;
+
 	@Inject
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
@@ -138,6 +141,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private TestAutomationProjectManagerService taProjectService;
 	@Inject
 	private InfoListFinderService infoListService;
+	@Inject
+	private CustomFieldBindingModificationService customFieldBindingModificationService;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 
@@ -204,6 +209,16 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		TestCaseLibrary tcl = new TestCaseLibrary();
 		project.setTestCaseLibrary(tcl);
 		session.persist(tcl);
+		
+		CustomReportLibrary crl = new CustomReportLibrary();
+		project.setCustomReportLibrary(crl);
+		session.persist(crl);
+		
+		//add the tree node for the CustomReportLibrary as now library
+		//object and their representation in tree are distinct entities
+		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
+		crlNode.setEntity(crl);
+		session.persist(crlNode);
 
 		// hook up the default info lists
 		// TODO : extract the code lists to some meaningful place
@@ -224,6 +239,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
 		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
 		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
+		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
 
 	}
 
@@ -301,6 +317,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	// ********************************** Test automation section
 	// *************************************
 
+	@Override
 	public void bindTestAutomationServer(long tmProjectId, Long serverId) {
 		GenericProject genericProject = genericProjectDao.findById(tmProjectId);
 		checkManageProjectOrAdmin(genericProject);
@@ -333,6 +350,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		genericProject.bindTestAutomationProject(taProject);
 	}
 
+	@Override
 	public void bindTestAutomationProjects(long projectId, Collection<TestAutomationProject> taProjects) {
 		checkTAProjectNames(taProjects, projectId);
 		for (TestAutomationProject p : taProjects) {
@@ -424,7 +442,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		checkManageProjectOrAdmin(project);
 		// the project doesn't have bug-tracker connection yet
 		if (!project.isBugtrackerConnected()) {
-			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(project.getName(), newBugtracker, project);
+			BugTrackerBinding bugTrackerBinding = new BugTrackerBinding(newBugtracker, project);
+			bugTrackerBinding.addProjectName(project.getName());
 			project.setBugtrackerBinding(bugTrackerBinding);
 		}
 		// the project has a bug-tracker connection
@@ -458,17 +477,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		}
 	}
 
-	@Override
-	public void changeBugTrackerProjectName(long projectId, String projectBugTrackerName) {
-		GenericProject project = genericProjectDao.findById(projectId);
-		checkManageProjectOrAdmin(project);
-		BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
-		if (bugtrackerBinding == null) {
-			throw new NoBugTrackerBindingException();
-		}
-		bugtrackerBinding.setProjectName(projectBugTrackerName);
 
-	}
 
 	// **************************** wizards section
 	// **********************************
@@ -667,8 +676,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject firstProject = o1.getGenericProject();
 		GenericProject secondProject = o2.getGenericProject();
 
-		AuditableMixin firstAudit = (AuditableMixin) firstProject;
-		AuditableMixin secondAudit = (AuditableMixin) secondProject;
+		AuditableMixin firstAudit = firstProject;
+		AuditableMixin secondAudit = secondProject;
 		for (final Sorting sorting : sorter.getSortings()) {
 
 			Object first = null;
@@ -782,6 +791,108 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), newName);
 		}
 		project.setName(newName);
+	}
+
+
+
+
+	private void copyMilestone(GenericProject target, GenericProject source) {
+
+		List<Milestone> milestones = getOnlyBindableMilestones(source.getMilestones());
+
+		target.bindMilestones(milestones);
+
+		for (Milestone milestone: milestones){
+			milestone.addProjectToPerimeter(target);
+		}
+	}
+
+
+
+
+	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
+		List<Milestone> bindableMilestones = new ArrayList<Milestone>();
+		for (Milestone m : milestones){
+			if (m.getStatus().isBindableToProject()){
+				bindableMilestones.add(m);
+			}
+		}
+		return bindableMilestones;
+	}
+
+	private void copyTestAutomationSettings(GenericProject target, GenericProject source) {
+
+		target.setTestAutomationServer(source.getTestAutomationServer());
+
+		for (TestAutomationProject automationProject : source.getTestAutomationProjects()) {
+			TestAutomationProject taCopy = automationProject.createCopy();
+			bindTestAutomationProject(target.getId(), taCopy);
+
+		}
+	}
+
+	private void copyBugtrackerSettings(GenericProject target, GenericProject source) {
+		if (source.isBugtrackerConnected()) {
+			changeBugTracker(target, source.getBugtrackerBinding().getBugtracker());
+		}
+	}
+
+	private void copyCustomFieldsSettings(GenericProject target, GenericProject source) {
+		customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(target, source);
+	}
+
+	private void copyAssignedUsers(GenericProject target, GenericProject source) {
+		permissionsManager.copyAssignedUsers(target, source);
+	}
+
+	private void copyInfolists(GenericProject target, GenericProject source){
+		target.setRequirementCategories(source.getRequirementCategories());
+		target.setTestCaseNatures(source.getTestCaseNatures());
+		target.setTestCaseTypes(source.getTestCaseTypes());
+	}
+
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	@Override
+	public GenericProject synchronizeGenericProject(GenericProject target,
+			GenericProject source, GenericProjectCopyParameter params) {
+
+		if (params.isCopyPermissions()) {
+			copyAssignedUsers(target, source);
+		}
+		if (params.isCopyCUF()) {
+			copyCustomFieldsSettings(target, source);
+		}
+		if (params.isCopyBugtrackerBinding()) {
+			copyBugtrackerSettings(target, source);
+		}
+		if (params.isCopyAutomatedProjects()) {
+			copyTestAutomationSettings(target, source);
+		}
+		if (params.isCopyInfolists()) {
+			copyInfolists(target, source);
+		}
+		if (params.isCopyMilestone()) {
+			copyMilestone(target, source);
+		}
+
+		if (params.isCopyAllowTcModifFromExec()) {
+			target.setAllowTcModifDuringExec(source.allowTcModifDuringExec());
+		}
+
+		return target;
+	}
+
+
+	@Override
+	public void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames) {
+
+		GenericProject project = genericProjectDao.findById(projectId);
+		checkManageProjectOrAdmin(project);
+		if (project.isBugtrackerConnected()) {
+			BugTrackerBinding bugtrackerBinding = project.getBugtrackerBinding();
+			bugtrackerBinding.setProjectNames(projectBugTrackerNames);
+		}
+
 	}
 
 }

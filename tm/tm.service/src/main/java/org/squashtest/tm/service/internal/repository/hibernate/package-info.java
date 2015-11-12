@@ -115,7 +115,33 @@
 	@NamedQuery(name = "requirement.findRequirementHavingManyVersions", query = "select r.id from Requirement r join r.versions v where r.id in (:requirementIds) group by r.id having count(v) > 1"),
 	@NamedQuery(name = "requirement.findByRequirementVersion", query = "select r.id from Requirement r join r.versions versions where versions.id in (:versionIds)"),
 	@NamedQuery(name = "requirement.findAllRequirementsWithLatestVersionByIds", query= "select r, rv from Requirement r join r.versions rv where r.id in (:requirementIds) and rv.versionNumber = (select max (rvcur.versionNumber) from RequirementVersion rvcur where rvcur.requirement = r)"),
-
+	@NamedQuery(name = "requirement.findAllRequirementIdsByLibraries", query = "select r.id from Requirement r join r.project p join p.requirementLibrary rl where rl.id in (:libraryIds)"),
+	@NamedQuery(name = "requirement.findAllRequirementIdsByNodesId", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id"),
+	@NamedQuery(name = "requirement.findVersionsIdsForAll", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:requirementIds)"),
+	@NamedQuery(name = "requirement.findVersionsModels", query = "select rv.id,r.id,p.id,p.name,rv.versionNumber,rv.reference,rv.name,rv.criticality,listItem.code,rv.status,rv.description"
+			+ ",(select count(distinct coverages) from RequirementVersion rv2 join rv2.requirementVersionCoverages coverages where rv2.id=rv.id)"
+			+ ",(select count(distinct attachments) from RequirementVersion rv3 join rv3.attachmentList attachmentList left join attachmentList.attachments attachments where rv3.id=rv.id)"
+			+ ",rv.audit.createdOn, rv.audit.createdBy, rv.audit.lastModifiedOn, rv.audit.lastModifiedBy"
+			+ ",(select group_concat(milestones.label, 'order by', milestones, 'asc', '|') from RequirementVersion rv4 join rv4.milestones milestones where rv4.id=rv.id)"
+			+ " from RequirementVersion rv"
+			+ " join rv.requirement r join r.project p join rv.category listItem"
+			+ " where rv.id in (:versionIds)"),
+	@NamedQuery(name = "requirement.findReqFolderPath", query = "select group_concat(requirementFolder.resource.name, 'order by', closure.depth, 'desc','"+HibernatePathService.PATH_SEPARATOR+"')" 
+				+ " from RequirementFolder requirementFolder,Requirement requirement2, RequirementPathEdge closure"
+				+ " where closure.ancestorId = requirementFolder.id and closure.descendantId = requirement2.id and requirement2.id=:requirementId"
+				+ " group by requirement2.id"),
+	@NamedQuery(name = "requirement.findReqParentPath", query = "select group_concat(requirement.resource.name, 'order by', closure.depth, 'desc','"+HibernatePathService.PATH_SEPARATOR+"')" 
+				+ " from Requirement requirement,Requirement requirement1, RequirementPathEdge closure"
+				+ " where closure.ancestorId = requirement.id and closure.descendantId = requirement1.id and requirement1.id=:requirementId"
+				+ " group by requirement1.id)"),
+	@NamedQuery(name = "requirement.findVersionsModelsIndexInLibrary", query = "select index(content)+1 from RequirementLibrary rl join rl.rootContent content where content.id=:requirementId"),
+	@NamedQuery(name = "requirement.findVersionsModelsIndexInFolder", query = "select index(content)+1 from RequirementFolder rf join rf.content content where content.id=:requirementId"),
+	@NamedQuery(name = "requirement.findVersionsModelsIndexChildrenRequirement", query = "select index(child)+1 from Requirement r join r.children child where child.id=:requirementId"),
+	
+	@NamedQuery(name = "requirement.excelRequirementExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
+			+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
+			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cfv.id, cf.id"),
+	
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
 	@NamedQuery(name = "campaignFolder.findByContent", query = "from CampaignFolder where :content in elements(content)"),
@@ -123,6 +149,7 @@
 	@NamedQuery(name = "campaignFolder.findNamesInLibraryStartingWith", query = "select c.name from CampaignLibrary l join l.rootContent c where l.id = :containerId and c.name like :nameStart"),
 	@NamedQuery(name = "campaignFolder.findParentOf", query = "select f from CampaignFolder f join f.content c where c.id = :contentId"),
 	@NamedQuery(name = "campaignFolder.remove", query = "delete CampaignFolder cf where cf.id in (:nodeIds)"),
+	@NamedQuery(name = "campaignFolder.findAllExecutions", query = "from Execution where testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId = :campaignFolderId)"),
 
 	//Iteration
 	@NamedQuery(name = "iterationDao.findAllByCampaignId", query = "select c.iterations from Campaign c where c.id = :campaignId"),
@@ -279,7 +306,12 @@
 	+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
 	+ "where cfv.boundEntityId in (:testCaseIds) and cfv.boundEntityType = 'TEST_CASE' group by cfv.id, cf.id"),
 
+	@NamedQuery(name = "testCase.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifiedTc in (:testCaseIds)"),
+	@NamedQuery(name = "requirementVersion.excelExportCoverage", query = "select verifedReqV.versionNumber, req.id, verifiedTc.id, proj.name from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion verifedReqV join verifedReqV.requirement req join  rvc.verifyingTestCase verifiedTc  join req.project proj where verifedReqV.id in (:versionIds)"),	
+	
 	//Campaign
+	@NamedQuery(name = "campaign.findAllCampaignIdsByLibraries", query = "select c.id from Campaign c join c.project p join p.campaignLibrary cl where cl.id in (:libraryIds)"),
+	@NamedQuery(name = "campaign.findAllCampaignIdsByNodeIds", query = "select c.id from Campaign c where c.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId in (:nodeIds))"),
 	@NamedQuery(name = "campaign.findNamesInCampaignStartingWith", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId and i.name like :nameStart"),
 	@NamedQuery(name = "campaign.findAllNamesInCampaign", query = "select i.name from Campaign c join c.iterations i where c.id = :containerId "),
 	@NamedQuery(name = "campaign.findNamesInFolderStartingWith", query = "select c.name from CampaignFolder f join f.content c where f.id = :containerId and c.name like :nameStart"),
@@ -287,6 +319,7 @@
 	@NamedQuery(name = "campaign.findLastCopy", query = "select camp.name from Campaign camp where camp.name like :campaignName"),
 	@NamedQuery(name = "campaign.findAllTestCasesById", query = "select tc.referencedTestCase from Campaign c join c.testPlan tc fetch all properties where c.id = :campaignId order by tc.referencedTestCase.name asc"),
 	@NamedQuery(name = "campaign.countTestCasesById", query = "select count(tp) from Campaign c join c.testPlan tp where c.id = :campaignId"),
+	@NamedQuery(name = "campaign.countIterations", query = "select count(it) from Campaign c join c.iterations it where c.id = :campaignId"),
 	@NamedQuery(name = "campaign.countIterationsTestPlanItems", query = "select count(tp) from Campaign c join c.iterations it join it.testPlans tp where c.id = :campaignId"),
 	@NamedQuery(name = "campaign.countStatuses", query = "select tp.executionStatus, count(tp) from Campaign c join c.iterations it join it.testPlans tp where c.id = :campaignId group by tp.executionStatus"),
 	@NamedQuery(name = "campaign.findCampaignByName", query = "from CampaignLibraryNode c where c.name like :campaignName order by c.name asc"),
@@ -294,13 +327,16 @@
 	@NamedQuery(name = "campaign.findAllExecutions", query = "select exec from Campaign camp join camp.iterations it join it.testPlans tp join tp.executions exec where camp.id = :campaignId "),
 	@NamedQuery(name = "campaign.countRunningOrDoneExecutions", query = "select count(tps) from Campaign camp join camp.iterations iter join iter.testPlans tps join tps.executions exes where camp.id =:campaignId and exes.executionStatus <> 'READY'"),
 	@NamedQuery(name = "campaign.remove", query = "delete Campaign c where c.id in (:nodeIds)"),
+	@NamedQuery(name = "campaign.findCampaignByProjectId", query = "select c from Campaign c where c.project.id = :projectId"),
+	@NamedQuery(name = "campaign.findAllIdsByMilestoneId", query = "select c.id from Campaign c join c.milestones stones where stones.id = :milestoneId"),
+	@NamedQuery(name = "campaign.findCampaignByProjectIdWithMilestone", query = "select c from Campaign c join c.milestones m where c.project.id = :projectId and m.id = :milestoneId"),
 	@NamedQuery(name = "campaign.findCampaignIdsHavingMultipleMilestones", query = "select c.id from Campaign c join c.milestones stones where c.id in (:nodeIds) group by c.id having count(stones) > 1 "),
 	@NamedQuery(name = "campaign.findNonBoundCampaign", query = "select c.id from Campaign c where c.id in (:nodeIds) and c.id not in (select cs.id from Milestone m join m.campaigns cs where m.id = :milestoneId)"),
 	@NamedQuery(name = "Campaign.findAllWithMilestones", query = "from Campaign c where c.milestones is empty"),
 	@NamedQuery(name = "campaign.findCampaignsWhichMilestonesForbidsDeletion",
 	query="select distinct c.id from Campaign c inner join c.milestones milestones where c.id in (:campaignIds) and milestones.status in (:lockedStatuses)"),
-
-
+	@NamedQuery(name = "campaign.filterByMilestone", query = "select c.id from Campaign c join c.milestones stones where c.id in (:campaignIds) and stones.id = :milestoneId"),
+	
 	//TestStep
 	@NamedQuery(name = "testStep.findParentNode", query = "select testcase from TestCase as testcase join testcase.steps tcSteps where tcSteps.id= :childId "),
 	@NamedQuery(name = "testStep.findAllByParentId", query = "select step.id from TestCase testCase join testCase.steps step where testCase.id in (:testCaseIds)"),
@@ -368,6 +404,7 @@
 
 	//Execution
 	@NamedQuery(name = "execution.findSteps", query = "select steps from Execution exec inner join exec.steps steps where exec.id = :executionId"),
+	@NamedQuery(name = "execution.findStepsForAllExecutions", query = "select steps from Execution exec inner join exec.steps steps where exec.id in (:executionIds)"),
 	@NamedQuery(name = "execution.countStatus", query = "select count(exSteps.executionStatus) from Execution as execution join execution.steps as exSteps where execution.id =:execId and exSteps.executionStatus=:status"),
 	@NamedQuery(name = "execution.countSteps", query = "select count(steps) from Execution ex join ex.steps as steps where ex.id = :executionId"),
 	@NamedQuery(name = "execution.findAllByTestCaseIdOrderByRunDate", query = "select e from Execution e inner join e.referencedTestCase tc where tc.id = :testCaseId order by e.lastExecutedOn desc"),
@@ -400,6 +437,7 @@
 	//Project
 	@NamedQuery(name = "Project.findByName", query = "from Project where name = ?1"),
 	@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),
+	@NamedQuery(name = "Project.findByExecutionId", query = "select p from Project p"),
 	@NamedQuery(name = "Project.findAllOrderedByName", query = "from Project fetch all properties order by name"),
 	@NamedQuery(name = "Project.findProjectsFiltered", query = "from Project p where p.name like :filter or p.label like :filter or p.audit.createdBy like :filter or p.audit.lastModifiedBy like :filter"),
 	@NamedQuery(name = "Project.countProjects", query = "select count(p) from Project p"),
@@ -411,7 +449,8 @@
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedTestCases", query = "select distinct tc.audit.lastModifiedBy from TestCase tc join tc.project p where p.id in :projectIds order by tc.audit.lastModifiedBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoCreatedRequirementVersions", query = "select distinct rv.audit.createdBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.createdBy asc"),
 	@NamedQuery(name = "Project.findAllUsersWhoModifiedRequirementVersions", query = "select distinct rv.audit.lastModifiedBy from RequirementVersion rv join rv.requirement r join r.project p where p.id in :projectIds order by rv.audit.lastModifiedBy asc"),
-
+	@NamedQuery(name = "Project.findAllAuthorizedUsersForProject", query = "select distinct c.audit from Campaign c join c.project p where p.id in :projectIds"),
+	
 	//Attachement et al
 	@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),
 	@NamedQuery(name = "attachment.removeContent", query = "delete from AttachmentContent where id = :contentId"),
@@ -486,6 +525,7 @@
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
+	@NamedQuery(name = "RequirementVersion.findByRequirementIdAndVersionNumber", query = "from RequirementVersion rv where rv.requirement.id=:requirementId and rv.versionNumber=:versionNumber"),
 
 	/*
 	 *  The following query uses pretty long aliases. They MUST match the
@@ -609,39 +649,36 @@
 	@NamedQuery(name = "TestCaseStatistics.importanceStatistics", query = "select tc.importance, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.importance"),
 	@NamedQuery(name = "TestCaseStatistics.statusesStatistics", query = "select tc.status, count(tc) from TestCase tc where tc.id in (:testCaseIds) group by tc.status"),
 
-	//Campaign Statistics
-	@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, iter.name as name, itp.executionStatus as status, count(tc) as num "
-	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by iter"),
-
-	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (max(c.name),' ',iter.name) as name, itp.executionStatus as status, count(tc) as num "
-	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by iter"),
-
+	//Campaign Statistics : common methods
 	@NamedQuery(name = "CampaignStatistics.globaltestinventory", query = "select itp.executionStatus, count(itp.executionStatus) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp where c.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
-
-	@NamedQuery(name = "CampaignStatistics.globaltestinventorybymilestone", query = "select itp.executionStatus, count(itp.executionStatus) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join c.milestones mil where mil.id = :id and itp.referencedTestCase is not null group by itp.executionStatus"),
+	+ "from Campaign c join c.iterations iter join iter.testPlans itp where c.id in (:campaignIds) and itp.referencedTestCase is not null group by itp.executionStatus"),
 
 	@NamedQuery(name = "CampaignStatistics.successRate", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id group by tc.importance, itp.executionStatus"),
-
-	@NamedQuery(name = "CampaignStatistics.successRateByMilestone", query = "select tc.importance, itp.executionStatus, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by tc.importance, itp.executionStatus"),
+	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id in (:campaignIds) group by tc.importance, itp.executionStatus"),
 
 	@NamedQuery(name = "CampaignStatistics.nonexecutedTestcaseImportance", query = "select tc.importance, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
+	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc where c.id in (:campaignIds) and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
 
-	@NamedQuery(name = "CampaignStatistics.nonexecutedTestcaseImportanceByMilestone", query = "select tc.importance, count(tc.importance) "
-	+ "from Campaign c join c.iterations iter join iter.testPlans itp join itp.referencedTestCase tc join c.milestones mil where mil.id = :id and (itp.executionStatus = 'READY' or itp.executionStatus = 'RUNNING') group by tc.importance"),
-
+	//Campaign Statistics : execution progression
 	@NamedQuery(name = "CampaignStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "
 	+ "(select count(itp1) from Iteration it1 join it1.testPlans itp1 where it1.id = iter.id and itp1.referencedTestCase is not null) as testplanCount, "
 	+ "iter.scheduledPeriod.scheduledStartDate as scheduledStart, iter.scheduledPeriod.scheduledEndDate as scheduledEnd) "
-	+ "from Campaign c join c.iterations iter where c.id = :id group by iter, index(iter) order by index(iter)"),
+	+ "from Campaign c join c.iterations iter where c.id = :id group by iter, index(iter) order by scheduledStart"),
 
 	@NamedQuery(name = "CampaignStatistics.findExecutionsHistory", query = "select itp.lastExecutedOn from IterationTestPlanItem itp where itp.iteration.campaign.id = :id "
 	+ "and itp.lastExecutedOn is not null and itp.executionStatus not in (:nonterminalStatuses) and itp.referencedTestCase is not null order by itp.lastExecutedOn"),
 
+	
+	//Campaign Statistics : test inventories are special because it depends on who's asking
+	@NamedQuery(name = "CampaignStatistics.testinventory", query = "select iter.id as iterid, case trim(iter.reference) when '' then max(iter.name) else concat(iter.reference, ' - ', iter.name) end as name, itp.executionStatus as status, count(tc) as num "
+	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id = :id group by iter, itp.executionStatus order by name"),
+
+	@NamedQuery(name = "CampaignStatistics.testinventorybymilestone", query = "select iter.id as iterid, concat (case trim(max(c.reference)) when '' then max(c.name) else concat(max(c.reference), ' - ', max(c.name)) end ,' / ', case trim(iter.reference) when '' then max(iter.name) else concat(max(iter.reference), ' - ', max(iter.name)) end) as name, itp.executionStatus as status, count(tc) as num "
+	+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc join c.milestones mil where mil.id = :id group by iter, itp.executionStatus order by name"),
+
+	@NamedQuery(name = "CampaignFolderStatistics.testinventory", query = "select c.id as campid, case trim(c.reference) when '' then max(c.name) else concat(max(c.reference), ' - ', max(c.name)) end as name, itp.executionStatus as status, count(tc) as num "
+			+ "from Campaign c join c.iterations iter left join iter.testPlans itp left join itp.referencedTestCase tc where c.id in (:campaignIds) group by c, itp.executionStatus order by name"),
+	
 	//Iteration Statistics
 
 	@NamedQuery(name = "IterationStatistics.findScheduledIterations", query = "select new org.squashtest.tm.service.statistics.campaign.ScheduledIteration(iter.id as id, iter.name as name, "
@@ -696,7 +733,7 @@
 	+ "where clos.ancestorId = tcln.id "
 	+ "group by  clos.descendantId, p.name "
 	+ "having concat('/', p.name, '/', group_concat(tcln.name, 'order by', clos.depth, 'desc', '/')) in :paths"),
-
+	
 	//Milestones
 	@NamedQuery(name = "milestone.count", query = "select count(milestone) from Milestone milestone"),
 	@NamedQuery(name = "milestone.countBoundObject", query = "select mil.testCases.size + mil.requirementVersions.size + mil.campaigns.size from Milestone mil where mil.id = :milestoneId"),
@@ -733,6 +770,7 @@
 	@NamedQuery(name = "Milestone.findExistingNames", query = "select m.label from Milestone m where m.label in (:names)"),
 	@NamedQuery(name = "milestone.findCampaignByMilestones", query="select c from Campaign c join c.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "Milestone.findInProgressExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status = 'IN_PROGRESS'"),
+	@NamedQuery(name = "Milestone.findBindableExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status in (:status)"),
 	@NamedQuery(name = "Milestone.findAllByNamesAndStatus", query = "from Milestone m where m.label in (:names) and m.status = :status"),
 	@NamedQuery(name = "milestone.otherRequirementVersionBindToOneMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join r.versions versions join rv.milestones m where versions.id in (:reqVIds) and rv.id not in (:reqVIds) and m.id in (:milestoneIds)"),
   @NamedQuery(name = "milestone.findProjectMilestones", query="select p.milestones from Project p where p.id = :projectId"),
@@ -786,6 +824,12 @@
 	@NamedQuery(name="infoList.setProjectCategoryToDefaultItem", query= "update RequirementVersion reqV set reqV.category = :default where reqV.id in  (select rln.resource.id from RequirementLibraryNode rln where rln.project.id = :id) "),
 	@NamedQuery(name="infoList.setProjectNatureToDefaultItem", query = "update TestCase tc set tc.nature = :default where tc.project.id = :id"),
 	@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
+	
+	// ChartDefinition
+	
+	// ChartLibraryNode
+	@NamedQuery(name="CustomReportLibraryNode.findAllByEntityType",query="from CustomReportLibraryNode crln where crln.entityType = ?1"),
+	
 })
 //@formatter:on
 package org.squashtest.tm.service.internal.repository.hibernate;

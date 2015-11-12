@@ -25,31 +25,31 @@ import org.squashtest.tm.domain.library.structures.TreeNode
 
 
 
-class SubTreeNode extends TreeNode<SubTreeNode> {
-	
+class SubTreeNode extends TreeNode<Long, SubTreeNode> {
+
 	String name;
-	
+
 	String gun;
-	
-	
+
+
 	SubTreeNode(){
-		
+
 	}
-	
+
 	SubTreeNode(Long key, String name, String gun){
 		super(key)
 		this.name=name
 		this.gun=gun
 	}
-	
+
 	@Override
 	void updateWith(SubTreeNode newData){
 		this.name=newData.name
 		this.gun=newData.gun
-		
-	}
-	
 
-	
+	}
+
+
+
 
 }

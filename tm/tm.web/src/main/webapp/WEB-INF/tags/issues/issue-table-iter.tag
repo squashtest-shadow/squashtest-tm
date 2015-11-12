@@ -55,6 +55,7 @@
 	<thead>
 		<tr>
 			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable,">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="map=BtProject"><f:message key="bugtracker.project" /></th>
 			<th data-def="map=issue-summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=issue-priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="map=issue-status">${interfaceDescriptor.tableStatusHeader}</th>
@@ -74,16 +75,16 @@ require( ["common"], function(){
 	
 			var issueTableRowCallback = function(row, data, displayIndex) {
 				var correctAssignee = (data["issue-assignee"]!=="") ? data["issue-assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
-				var td=$(row).find("td:eq(4)");
+				var td=$(row).find("td:eq(5)");
 				$(td).html(correctAssignee);
 		
-				td =  $(row).find("td:eq(5)");
-				var linkText = $(row).find("td:eq(5)").text();
+				td =  $(row).find("td:eq(6)");
+				var linkText = $(row).find("td:eq(6)").text();
 				var link = $('<a></a>');
 				link.attr('href', "${pageContext.servletContext.contextPath}"+data["issue-owner-url"]);
 				link.text(linkText);
 				$(td).html(link);
-				$(row).find("td:eq(5) a").on("click", function(){
+				$(row).find("td:eq(6) a").on("click", function(){
 					var currentTab = $(".fragment-tabs").tabs("option", "active");
 					$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
 				});

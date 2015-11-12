@@ -95,7 +95,7 @@ TestCaseLibraryNodeDao {
 				String path = (String) res[0];
 				int idx = effectiveParameters.indexOf(path);
 				if (idx>-1) {
-					toReturn[effectiveParameters.indexOf(path)] = ((Long) res[1]);
+					toReturn[idx] = ((Long) res[1]);
 				}
 			}
 

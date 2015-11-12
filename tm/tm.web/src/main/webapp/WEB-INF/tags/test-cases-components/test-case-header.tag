@@ -27,7 +27,7 @@
 
 <%@ attribute name="testCase" required="true" type="java.lang.Object"  description="the testcase" %>
 
-<c:url var="testCaseUrl" 					value="/test-cases/${testCase.id}"/>
+<c:url var="testCaseUrl"	value="/test-cases/${testCase.id}"/>
 
 
 

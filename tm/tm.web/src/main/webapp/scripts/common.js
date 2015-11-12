@@ -86,6 +86,10 @@ requirejs.config({
 					name : 'campaign-management',
 					main : 'campaign-management-main'
 				},
+				{
+					name : 'campaign-folder-management',
+					main : 'cf-management-main'
+				},
 
 				//workspaces
 				{
@@ -99,7 +103,18 @@ requirejs.config({
 				{
 					name : 'camp-workspace',
 					main : 'camp-workspace-main'
+				},
+				// charts rendering
+				{
+					name : 'charts-rendering',
+					main : 'chart-render-main',
+					location : 'charts/rendering'
+				},
+				{
+					name : 'custom-report-workspace',
+					main : 'custom-report-workspace-main'
 				}
+
 			],
 			/*
 			 * rules for paths naming:
@@ -136,7 +151,7 @@ requirejs.config({
 				"jquery" : "lib/jquery/jquery-2.1.1.min",
 //				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom",
 				"jqueryui" : "lib/jquery/jquery-ui-1.9.2.custom.min",
-				"handlebars" : "lib/handlebars/handlebars-1.0.0.rc3",
+				"handlebars" : "lib/handlebars/handlebars-v4.0.2",
 //				"underscore" : "lib/underscore/underscore-1.7.0",
 				"underscore" : "lib/underscore/underscore-1.7.0-min",
 //				"backbone" : "lib/backbone/backbone",
@@ -157,6 +172,8 @@ requirejs.config({
 				"jqplot-highlight": "lib/jqplot/plugins/jqplot.highlighter.min",
 //				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer",
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
+//				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer",
+				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer.min",
 //				"moment" : "lib/momentjs/moment-with-locales.min",
 				"moment" : "lib/momentjs/moment-with-locales.min",
 				//cke
@@ -189,6 +206,7 @@ requirejs.config({
 				"jquery.squash.confirmdialog" : "squashtest/jquery.squash.confirmdialog",
 				"jquery.squash.oneshotdialog" : "squashtest/jquery.squash.oneshotdialog",
 				"jquery.squash.formdialog" : "squashtest/jquery.squash.formdialog",
+				"jquery.squash.bindviewformdialog" : "squashtest/jquery.squash.bindviewformdialog",
 				"jquery.squash.squashbutton" : "squashtest/jquery.squash.squashbutton",
 				"jquery.squash.jedpassword" : "squashtest/jquery.squash.jedpassword",
 				"jquery.squash.jeditable" : "squashtest/jquery.squash.jeditable.ext",
@@ -332,6 +350,7 @@ requirejs.config({
 				"jqplot-donut" : ["jquery", "jqplot-core"],
 				"jqplot-dates" : ["jquery", "jqplot-core"],
 				"jqplot-category" : ["jquery", "jqplot-core"],
+				"jqplot-bar" : ["jquery", "jqplot-core"],
 				"jqplot-highlight" : {
 					deps : ["jquery", "jqplot-core"],
 					init : function($){

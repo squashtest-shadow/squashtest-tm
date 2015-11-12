@@ -152,9 +152,6 @@
                   <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Import}+'...'">Import ...</a>
                   </li>
-                  <li id="import-links-excel-tree-button" class="ui-state-disabled cursor-pointer">
-                    <a th:text="#{tree.button.import.links.label}+'...'">Import links ...</a>
-                  </li>
                   <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export}+'...'">export ...</a>
                   </li>
@@ -432,28 +429,25 @@
 
       <div data-def="state=parametrization">
 
-        <div style="margin-top: 1em; margin-bottom: 1em;">
-          <form th:action="@{/requirement-browser/import/upload}" method="POST" enctype="multipart/form-data"
-            class="display-table">
+        <div>
+          <form th:action="@{/requirements/importer}" action="http://localhost:8008/squash/requirements/importer"
+            method="POST" enctype="multipart/form-data" class="display-table">
 
-            <div class="display-table-row">
-              <div class="display-table-cell">
-                <label th:text="#{dialog.import.project.message}">import project</label>
-              </div>
-              <div class="display-table-cell">
-                <select name="projectId">
-                  <option th:each="lib : ${editableLibraries}" th:value="${lib.id}" value="1" th:selected="${libStat.first}"
-                    th:text="${lib.project.name}">projet 1</option>
-                </select>
-
-              </div>
-            </div>
-            <div class="display-table-row">
-              <div class="display-table-cell">
-                <label th:text="#{dialog.import-excel.requirement.filetype.message}">file type </label>
-              </div>
-              <div class="display-table-cell">
-                <input type="file" name="archive" size="20" accept="application/vnd.ms-excel" />
+            <div class="std-margin-top">
+              <div>
+                   <div class="display-table-row">
+                  <div class="display-table-cell">
+                    <label th:text="#{dialog.import-excel.test-case.filetype.message}">tc filetype</label>
+                  </div>
+                  <div class="display-table-cell">
+                    <input type="file" name="archive" size="20"
+                      accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" />
+                  </div>
+                </div>
+                <div class="display-table-row">
+	                <a th:href="@{/static/}+#{file.requirement.import.template.xls}"
+	                  th:text="#{test-case.import.dialog.excel.template}">excel template </a>
+             	 </div>
               </div>
             </div>
           </form>
@@ -463,73 +457,85 @@
 
       <div data-def="state=confirm">
         <div class="confirm-div">
-          <label class="confirm-label" th:text="#{dialog.import.file.confirm}">confirm file</label>
+          <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
           <span class="confirm-span confirm-file"></span>
         </div>
-        <div class="confirm-div" th:with="libs=${editableLibraries}">
-          <label class="confirm-label" th:text="#{dialog.import.project.confirm}">confirm project</label>
-          <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}">project
-            name</span>
+        <div class="confirm-div import-project-confirm not-displayed" th:with="libs=${editableLibraries}">
+          <label class="confirm-label" th:text="#{dialog.import.project.confirm}">import project confirm</label>
+          <span class="confirm-span confirm-project" th:text="${(not libs.isEmpty()) ? libs[0].project.name : ''}"></span>
         </div>
 
-        <span style="display: block" th:text="#{dialog.import.confirm.message}">comfirm</span>
+        <div th:text="#{dialog.import.confirm.message}">import confirm message</div>
       </div>
-
       <div data-def="state=progression">
         <div class="waiting-loading centered minimal-height">
           <div style="font-size: 1.5em; margin-top: 300px;" th:text="#{squashtm.processing}">processing ...</div>
         </div>
       </div>
 
-      <div class="import-summary" data-def="state=summary">
+      <div class="import-summary" data-def="state=summary"></div>
 
+      <script id="xls-import-recap-tpl" type="text/x-handlebars-template">
         <div>
-          <span th:text="#{dialog.import-excel.requirement.total}">total</span>
-          <span class="total-import span-bold"></span>
-        </div>
+          <p class="cf">
+            <span class="snap-left ui-icon ui-icon-check"></span><span th:text="#{message.import.success}" th:remove="tag">import success</span>
+          </p>
+          <p>
+          <table>
+            <thead>
+            <tr>
+              <th class="not visible"></th>
+              <th th:text="#{message.import.successRowCount}" ></th>
+              <th th:text="#{message.import.warningRowCount}" ></th>
+              <th th:text="#{message.import.failureRowCount}" ></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+              <th th:text="#{label.requirement}" ></th>
+              <th class="txt-success">{{requirementVersionSuccesses}}</th>
+              <th class="txt-warn">{{requirementVersionWarnings}}</th>
+              <th class="txt-error">{{requirementVersionFailures}}</th>
+            </tr>
 
-        <div>
-          <span th:text="#{dialog.import-excel.requirement.success}">success</span>
-          <span class="success-import span-bold span-green"></span>
+            <tr>
+              <th th:text="#{label.coverage}" ></th>
+              <th class="txt-success">{{coverageSuccesses}}</th>
+              <th class="txt-warn">{{coverageWarnings}}</th>
+              <th class="txt-error">{{coverageFailures}}</th>
+            </tr>
+            </tbody>
+          </table>
+          </p>
+          <p class="cf">
+            <span class="snap-left ui-icon ui-icon-arrowthick-1-e"></span><a href="{{reportUrl}}" th:text="#{message.import.downloadLog}" > dowload log</a>
+          </p>
         </div>
+        </script>
 
-        <div>
-          <span th:text="#{dialog.import-excel.requirement.failed}">failed</span>
-          <span class="failures-import span-bold"></span>
-        </div>
+      <script id="xls-import-recap-ko" type="text/x-handlebars-template">
+		<p th:text="#{message.import.error.format}"></p>
+		<ul>
+           {{#if missingMandatoryColumns.length}}
+             <li><span th:remove="tag" th:text="#{message.import.log.error.mandatoryColumns}"></span>{{missingMandatoryColumns}}.</li>
+           {{/if}}
+           {{#if duplicateColumns.length}}
+             <li th:text="#{message.import.log.error.duplicateColumns}"></li>
+           {{/if}}
+		   {{#if actionValidationError}}
+             <li th:text="#{squashtm.action.exception.sheetcorrupted.label }"></li>
+           {{/if}}
+         </ul>
+         </script>
 
-        <div class="import-excel-dialog-note">
-          <hr />
-          <span th:text="#{dialog.import.summary.notes.label}">label</span>
-          <ul>
-            <li class="import-excel-dialog-modified">
-              <span th:text="#{dialog.import-excel.requirement.warnings.modified}">renamed</span>
-            </li>
-            <li class="import-excel-dialog-renamed">
-              <span th:text="#{dialog.import-excel.requirement.warnings.renamed}">renamed</span>
-            </li>
-                 <li class="import-excel-dialog-milestoneFailures">
-              <span th:text="#{dialog.import-excel.requirement.warnings.milestone}">renamed</span>
-            </li>
-              <li class="import-excel-dialog-milestoneNotActivated">
-              <span th:text="#{dialog.import-excel.requirement.warnings.milestoneFeatureDesactivated}">renamed</span>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div data-def="state=error-size">
+      <div data-def="state=error-size"> 
         <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}">size exceeded</span>
       </div>
 
-      <div data-def="state=error-format">
-        <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
-      </div>
-
-
       <div class="error-type" data-def="state=error-type">
         <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
-          <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
+       
+           <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file , accepts</span>
           <span id="import-err-filetype">xls, xlsx</span>
         </span>
       </div>
@@ -539,23 +545,25 @@
           <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">no file</span>
         </span>
       </div>
-
-
+      
+      <div class="error-format" data-def="state=error-format"></div>
       <div id="import-excel-dump" class="not-displayed dump"></div>
 
       <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{label.Import}" value="import"  th:title="#{label.ImportSelectedFile}"
+        <input id="simulateButton" type="button" value="simulateLabel" th:value="#{label.Simulate}" th:title="#{label.SimulateImport}"
+          data-def="evt=simulate, state=parametrization" />
+        <input type="button" th:value="#{label.Import}" value="importLabel" th:title="#{label.ImportSelectedFile}"
           data-def="evt=import, state=parametrization, mainbtn=parametrization" />
-        <input type="button" th:value="#{label.Confirm}" value="confirm"
+        <input type="button" th:value="#{label.Confirm}" value="confirmLabel"
           data-def="evt=confirm, state=confirm, mainbtn=confirm" />
-        <input type="button" th:value="#{label.Close}" value="ok" data-def="evt=ok, state=summary, mainbtn=summary" />
-        <input type="button" th:value="#{label.Close}" value="ok"
+        <input type="button" th:value="#{label.Close}" value="okLabel" data-def="evt=ok, state=summary, mainbtn=summary" />
+        <input type="button" th:value="#{label.Close}" value="okLabel"
           data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
-        <input type="button" th:value="#{label.Close}" value="ok"
-          data-def="evt=okerrformat, state=error-format error-type, mainbtn=error-format error-type" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" th:title="#{label.CancelImport}"
+        <input type="button" th:value="#{label.Close}" value="okLabel"
+          data-def="evt=okerrformat, state=error-type error-format, mainbtn=error-type error-format" />
+        <input type="button" th:value="#{label.Cancel}" value="cancelLabel"  th:title="#{label.CancelImport}"
           data-def="evt=cancel, state=parametrization confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" th:title="#{label.CancelImport}"
+        <input type="button" th:value="#{label.Cancel}" value="cancelLabel" th:title="#{label.CancelImport}"
           data-def="evt=cancel-progression, state=progression" />
       </div>
 
@@ -564,149 +572,6 @@
     <!--  ================ /IMPORT EXCEL POPUP ======================  -->
 
 
-    <!--  ================ IMPORT LINK POPUP ======================  -->
-
-    <div id="import-links-excel-dialog" class="popup-dialog not-displayed" th:title="#{dialog.import-links-excel.title}">
-
-      <div data-def="state=parametrization">
-        <div style="margin-top: 1em; margin-bottom: 1em;">
-          <form th:action="@{/requirement-version-coverage/upload}" action="http://localhost:8080/requirement-version-coverage/upload" method="POST" enctype="multipart/form-data"
-            class="display-table">
-            <div class="display-table-row">
-              <div class="display-table-cell">
-                <label th:text="#{dialog.import-links-excel.filetype.message}" >file type </label>
-              </div>
-              <div class="display-table-cell">
-                <input type="file" name="file" size="20" accept="application/vnd.ms-excel" />
-              </div>
-            </div>
-          </form>
-        </div>
-      </div>
-
-      <div data-def="state=confirm">
-        <div class="confirm-div">
-          <label class="confirm-label" th:text="#{dialog.import.file.confirm}"> confirm import file </label>
-          <span class="confirm-span confirm-file"></span>
-        </div>
-        <span style="display: block" th:text="#{dialog.import.confirm.message}"> confirm import </span>
-      </div>
-
-      <div data-def="state=progression">
-        <div class="waiting-loading centered minimal-height">
-          <div style="font-size: 1.5em; margin-top: 300px;" th:text="#{squashtm.processing}">processing ...</div>
-        </div>
- </div>
-
-        <div class="import-summary" data-def="state=summary">
-          <br />
-          <div>
-            <span class="span-bold" th:text="#{dialog.import-links-excel.success}"> success </span>
-            <span class="success-import span-bold span-green"></span>
-          </div>
-          <div>
-            <span class="span-bold" th:text="#{dialog.import-links-excel.failed}"> </span>
-            <span class="failures-import span-bold"></span>
-          </div>
-
-
-          <div class="import-links-excel-dialog-note">
-            <br />
-            <div class="import-links-excel-dialog-normal-errors not-displayed">
-              <span>
-                <span th:remove="tag" th:text="#{dialog.import.summary.notes.label}"></span>
-                <br/>
-                <span th:remove="tag" th:text="#{dialog.import-links.summary.notes.lines}"></span>
-              </span>
-              <ul contenteditable="true" style="height: 100px; overflow: auto">
-                <li class="import-links-excel-dialog-req-not-found">
-                  <span th:text="#{dialog.import.summary.notes.req-not-found.label}">req not found label </span>
-                  <span class="req-not-found-import"></span>
-                </li>
-                <li class="import-links-excel-dialog-tc-not-found">
-                  <span th:text="#{dialog.import.summary.notes.tc-not-found.label}"> tc not fount label </span>
-                  <span class="tc-not-found-import"></span>
-                </li>
-                <li class="import-links-excel-dialog-version-not-found">
-                  <span th:text="#{dialog.import.summary.notes.version-not-found.label}"> version not fount </span>
-                  <span class="version-not-found-import"></span>
-                </li>
-                <li class="import-links-excel-dialog-link-already-exist">
-                  <span th:text="#{dialog.import.summary.notes.link-already-exist.label}"> link already exists </span>
-                  <span class="link-already-exist-import"></span>
-                </li>
-                <li class="import-links-excel-dialog-obsolete">
-                  <span th:text="#{dialog.import.summary.notes.obsolete.label}"> notes obsolete label </span>
-                  <span class="obsolete-import"></span>
-                </li>
-                <li class="import-links-excel-dialog-req-access-denied">
-                  <span th:text="#{dialog.import.summary.notes.req-access-denied.label}"> req access denied label
-                  </span>
-                  <span class="req-access-denied-import"></span>
-                </li>
-                <li class="import-links-excel-dialog-tc-access-denied">
-                  <span th:text="#{dialog.import.summary.notes.tc-access-denied.label}"> tc access denied label </span>
-                  <span class="link-already-exist-import"></span>
-                </li>
-              </ul>
-            </div>
-
-            <div class="import-links-excel-dialog-critical-errors not-displayed">
-              <span th:text="#{dialog.import.summary.errors.label}"> </span>
-              <br/>
-              <ul contenteditable="true" style="height: 100px; overflow: auto">
-                <li class="import-links-excel-dialog-missing-headers">
-                  <span th:text="#{dialog.import.summary.notes.missing-headers.label}"> </span>
-                  <span class="file-missing-headers"></span>
-                </li>
-              </ul>
-            </div>
-
-          </div>
-        </div>
-
-
-        <div data-def="state=error-size">
-          <span class="error-size" th:text="#{dialog.import.error.sizeexceeded}"> error size exceeded </span>
-        </div>
-
-        <div data-def="state=error-format">
-          <span>
-            <span th:remove="tag" th:text="#{dialog.import.wrongfile}">
-              wrong file
-              </span>xls, xlsx</span>
-        </div>
-
-
-        <div class="error-type" data-def="state=error-type">
-          <span class="import-err-filetype-text" id="import-err-filetype-text-xls">
-            <span th:remove="tag" th:text="#{dialog.import-excel.requirement.empty}">wrong file</span>
-            <span id="import-err-filetype">xls, xlsx</span>
-          </span>
-        </div>
-
-        <div id="import-links-dump" class="not-displayed dump"></div>
-
-        <div class="popup-dialog-buttonpane">
-          <input type="button" th:value="#{label.Import}" value="import"
-            data-def="evt=import, state=parametrization, mainbtn=parametrization" />
-          <input type="button" th:value="#{label.Confirm}" value="confirm"
-            data-def="evt=confirm, state=confirm, mainbtn=confirm" />
-          <input type="button" th:value="#{label.Close}" value="ok" data-def="evt=ok, state=summary, mainbtn=summary" />
-          <input type="button" th:value="#{label.Close}" value="ok"
-            data-def="evt=okerrsize, state=error-size, mainbtn=error-size" />
-          <input type="button" th:value="#{label.Close}" value="ok"
-            data-def="evt=okerrformat, state=error-format error-type, mainbtn=error-format error-type" />
-          <input type="button" th:value="#{label.Cancel}" value="cancel"
-            data-def="evt=cancel, state=parametrization confirm" />
-          <input type="button" th:value="#{label.Cancel}" value="cancel"
-            data-def="evt=cancel-progression, state=progression" />
-        </div>
-
-
-
-      <!--  ================ /IMPORT LINK POPUP ======================  -->
-    </div>
 
 </div>
 
@@ -724,20 +589,12 @@
             <div style="display: table-column; width: 70%"></div>
           </div>
           <div class="display-table-row">
-            <label th:text="#{dialog.rename.label}"> rename </label>
+            <label th:text="#{requirement.export.dialog.filename}"> rename </label>
             <div class="display-table-cell">
               <input type="text" id="export-name-input" style="width: 100%" />
             </div>
           </div>
-          <div class="display-table-row">
-            <label th:text="#{label.ExportFormat}"> export format </label>
-            <div class="display-table-cell">
-              <select id="export-option">
-                <option value="csv">csv</option>
-                <option value="xls">xls</option>
-              </select>
-            </div>
-          </div>
+  
         </div>
 
         <div class="std-margin-top">
@@ -757,21 +614,21 @@
 
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{label.Export}" value="export" data-def="evt=confirm, mainbtn=main, state=main !nonodeserror" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel"
+        <input type="button" th:value="#{label.Close}" value="cancel"
           data-def="evt=cancel, mainbtn=crossproerror, mainbtn=nonodeserror, state=main !nonodeserror" />
          <input type="button" th:value="#{label.Close}" value="cancel"
-          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />
+          data-def="evt=cancel, mainbtn=crossproerror, state=nonodeserror" />  
       </div>
-
+      
     </div>
 
 
     <!--  ================= /EXPORT REQ POPUP ======================= -->
 
     <!--  ================= MILESTONE POPUP =======================  -->
-
+  
   <div th:include="milestones/workspace-tree-milestone-popup :: tree-milestone-dialog-fragment" />
-
+  
   <!--  ================= /MILESTONE POPUP =======================  -->
 
     <!-- 	___________________/REQUIREMENT TREE POPUPS_______________________________ -->

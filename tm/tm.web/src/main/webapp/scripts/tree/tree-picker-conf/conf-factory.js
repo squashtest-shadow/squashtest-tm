@@ -20,40 +20,42 @@
  */
 /*
  * conf : {
- * 
+ *
  *  workspace : a name among ['test-case', 'requirement', 'campaign'] that will drive the rest of the configuration.
- * 
+ *
  *  controller : the controller object that manages the tree, the buttons and popups,
- *  
+ *
  *	model : model object for that tree,
- *	
+ *
  *  messages :{
  *		cannotMove : the given node(s) cannot be moved,
  *		warningMove : moving the given node(s) might result in loss of data,
- *		warningCopy : the clones of the given node(s) might not inherit all the data of the originals 
+ *		warningCopy : the clones of the given node(s) might not inherit all the data of the originals
  *  }
- *  
+ *
  * }
- * 
+ *
  */
-define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf"], function($, genCommon, genTC, genReq, genCamp){
-	
-	
+define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf","./tp-customreport-conf"],
+	function($, genCommon, genTC, genReq, genCamp, genCustomReport){
+
+
 	return {
 		generate : function(settings){
 			var commonConf = genCommon.generate(settings);
 			var specificConf;
-			
+
 			switch(settings.workspace){
 			case 'test-case'	: specificConf = genTC.generate(settings); break;
 			case 'requirement'	: specificConf = genReq.generate(settings); break;
 			case 'campaign'		: specificConf = genCamp.generate(settings); break;
+			case 'custom-report'		: specificConf = genCustomReport.generate(settings); break;
 			}
-			
+
 			return $.extend({}, commonConf, specificConf);
-			
-		}		
+
+		}
 	};
-	
-	
+
+
 });

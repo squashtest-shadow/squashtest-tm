@@ -65,7 +65,7 @@
 	function checkEmptyValues(row, data){
 		var assignee = data['assignee'];
 		var correctAssignee = (assignee!=="") ? assignee : "${interfaceDescriptor.tableNoAssigneeLabel}"; 
-		var td=$(row).find("td:eq(4)");
+		var td=$(row).find("td:eq(5)");
 		$(td).html(correctAssignee);
 	}
 	
@@ -115,6 +115,7 @@
 	<thead >
 		<tr>
 			<th data-def="map=remote-id, link-new-tab={issue-url}, center, select, double-narrow">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="map=BtProject"><f:message key="bugtracker.project" /></th>
 			<th data-def="map=summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>

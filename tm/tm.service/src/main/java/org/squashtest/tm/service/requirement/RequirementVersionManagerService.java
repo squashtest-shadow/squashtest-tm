@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import java.util.List;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import javax.validation.constraints.NotNull;
 
@@ -30,8 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Requirement Version mangement related services.

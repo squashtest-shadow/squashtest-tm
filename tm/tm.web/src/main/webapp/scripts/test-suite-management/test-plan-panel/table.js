@@ -52,8 +52,9 @@ define(
 				'squash.dateutils', 'squash.statusfactory',
 				'test-automation/automated-suite-overview',
 				'squash.configmanager',
+				'workspace.routing',
 				'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu' ],
-		function($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman) {
+		function($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing) {
 
 			// ****************** TABLE CONFIGURATION **************
 
@@ -83,12 +84,17 @@ define(
 
 				//execution date
 				var date = data['last-exec-on'],
+					iterid = _conf.testSuiteId,
+					tpid = data['entity-id'],
 					format = translator.get('squashtm.dateformat');
-
-				if(!!date){
-					$row.find('.exec-on').text(dateutils.format(date, format));
+	
+				if(!!date ){		
+					var exTxt = dateutils.format(date, format),
+						exRef = routing.buildURL('testsuites.testplan.lastexec', iterid, tpid);
+					var exLnk = $('<a>', { 'text' : exTxt, 'href' : exRef});
+					$row.find('.exec-on').empty().append(exLnk);
 				} else {
-					$row.find('.exec-on').text('-');
+					$row.find('.exec-on').empty().text('-');
 				}
 
 				// assignee (read)
@@ -202,7 +208,8 @@ define(
 				// conf objects for the row callbacks
 				var _readFeaturesConf = {
 					statuses : initconf.messages.executionStatus,
-					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip
+					autoexecutionTooltip : initconf.messages.automatedExecutionTooltip,
+					testSuiteId : initconf.basic.testsuiteId
 				};
 
 				var _writeFeaturesConf = {
@@ -358,9 +365,41 @@ define(
 
 				var squashSettings = {
 										 
-					unbindButtons : {
-							tooltip : translator.get('dialog.unbind-testcase.tooltip')
+					buttons : [{
+						tdSelector : '>tbody>tr>td.unbind-or-delete',
+						jquery : true,
+						tooltip : translator.get('dialog.unbind-testcase.tooltip'),
+						
+						/*
+						 * icon trash may appear if :
+						 * - the item was executed and the user can extended delete
+						 * 
+						 * otherwhise the minus icon appear.
+						 */
+						uiIcon : function(row, data){
+							return (data['last-exec-on'] !== null && initconf.permissions.extendedDeletable) ? 
+									'ui-icon-trash' : 
+									'ui-icon-minus';
 						},
+						/*
+						 * Because one can disasocciate a test case from a test suite while not necessarily 
+						 * removing it from an iteration (which can potentially destroy execution history), 
+						 * the rules regarding displaying a delete button or not differ slightly from the
+						 * test plan of an iteration. 
+						 *  
+						 * the delete button must be drawn if 
+						 * - the user can delete, period
+						 */
+						condition : function(row, data){
+							return initconf.permissions.deletable;					
+						},
+						onClick : function(table, cell){
+							var dialog = $('#ts-test-plan-delete-dialog');
+							var id = table.getODataId($(cell).closest('tr'));
+							dialog.data('entity-id', id);
+							dialog.formDialog('open');
+						}
+					}],
 
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {

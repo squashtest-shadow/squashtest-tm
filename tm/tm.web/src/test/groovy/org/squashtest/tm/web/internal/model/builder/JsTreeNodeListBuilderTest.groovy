@@ -23,9 +23,9 @@ package org.squashtest.tm.web.internal.model.builder
 import org.squashtest.tm.domain.Identified
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
-import spock.lang.Specification
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 
-class JsTreeNodeListBuilderTest extends Specification {
+class JsTreeNodeListBuilderTest extends NodeBuildingSpecification {
 	def "should build list of tree nodes"() {
 		given:
 		DummyBuilder nodeBuilder = new DummyBuilder(Mock(PermissionEvaluationService))

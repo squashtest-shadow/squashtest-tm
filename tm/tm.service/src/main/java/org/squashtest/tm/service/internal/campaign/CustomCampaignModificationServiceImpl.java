@@ -42,16 +42,18 @@ import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+
 import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomCampaignModificationService")
 @Transactional
 public class CustomCampaignModificationServiceImpl implements CustomCampaignModificationService {
 
-
-
-
 	private static final String READ_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'READ')" + OR_HAS_ROLE_ADMIN;
+
+	private static final String READ_FOLDER_OR_ADMIN = "hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'READ')" + OR_HAS_ROLE_ADMIN;
+
 
 	private static final String WRITE_CAMPAIGN_OR_ADMIN = "hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'WRITE')" + OR_HAS_ROLE_ADMIN;
 
@@ -95,6 +97,12 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 
+	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
+	public Integer countIterations(Long campaignId) {
+		return campaignDao.countIterations(campaignId);
+	};
+
+
 	@Override
 	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(
@@ -102,9 +110,12 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 		return statisticsService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
+
 	@Override
-	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
-		return statisticsService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
+	@PreAuthorize(READ_FOLDER_OR_ADMIN)
+	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(
+			Long folderId, Long milestoneId) {
+		return statisticsService.gatherFolderStatisticsBundle(folderId, milestoneId);
 	}
 
 

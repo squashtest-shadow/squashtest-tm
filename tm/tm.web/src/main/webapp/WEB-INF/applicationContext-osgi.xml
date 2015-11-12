@@ -252,6 +252,11 @@
 		interface="org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService"
 		availability="mandatory" />
 
+	<osgi:reference id="squashtest.tm.service.CampaignAdvancedSearchService"
+		bean-name="squashtest.tm.service.CampaignAdvancedSearchService"
+		interface="org.squashtest.tm.service.campaign.CampaignAdvancedSearchService"
+		availability="mandatory" />
+		
 
 	<osgi:reference id="squashtest.tm.service.SearchService"
 		bean-name="squashtest.tm.service.SearchService" interface="org.squashtest.tm.service.library.SearchService"
@@ -528,8 +533,31 @@
 			<value>org.squashtest.tm.service.milestone.MilestoneMembershipManager</value>
 		</osgi:interfaces>
 	</osgi:reference>
+	
+<osgi:reference id="org.squashtest.tm.service.customreport.CustomReportWorkspaceService"
+		bean-name="org.squashtest.tm.service.customreport.CustomReportWorkspaceService" timeout="2000">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportWorkspaceService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+	
+<osgi:reference id="squashtest.tm.service.ChartModificationService"
+		bean-name="squashtest.tm.service.ChartModificationService">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.chart.ChartModificationService</value>
+		</osgi:interfaces>
+	</osgi:reference>
+
+	
 
 
+	
+	<osgi:reference id="org.squashtest.tm.service.customreport.CustomReportLibraryNodeService"
+		bean-name="org.squashtest.tm.service.customreport.CustomReportLibraryNodeService" timeout="2000">
+		<osgi:interfaces>
+			<value>org.squashtest.tm.service.customreport.CustomReportLibraryNodeService</value>
+		</osgi:interfaces>
+	</osgi:reference>
 
 	<osgix:cm-properties id="squash.tm.auth.config"
 		persistent-id="org.squashtest.csp.core.auth.config" />

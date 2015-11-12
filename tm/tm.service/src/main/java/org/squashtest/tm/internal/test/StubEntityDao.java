@@ -23,6 +23,7 @@ package org.squashtest.tm.internal.test;
 import java.util.Collection;
 import java.util.List;
 
+import org.hibernate.LockOptions;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 
 /**
@@ -36,6 +37,11 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	 */
 	//@Override
 	public ENTITY findById(long id) {
+		return null;
+	}
+
+	@Override
+	public ENTITY findById(long id, LockOptions lockOptions) {
 		return null;
 	}
 

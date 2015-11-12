@@ -26,7 +26,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 @Transactional(readOnly = false)
@@ -35,6 +37,10 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	Execution findAndInitExecution(Long executionId);
 
 	void setExecutionDescription(Long executionId, String description);
+
+	void setExecutionAssignment(Long executionId, User user);
+
+	void setExecutionStatus(Long executionId, ExecutionStatus status);
 
 	/*********************************** Steps methods *****************************************/
 
@@ -45,7 +51,7 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	/**
 	 * that method should investigate the consequences of the deletion of the given executions, and return a report
 	 * about what will happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -54,12 +60,20 @@ public interface ExecutionModificationService extends ExecutionFinder {
 	/**
 	 * that method should delete the execution. It still takes care of non deletable executions so the implementation
 	 * should abort if the execution can't be deleted.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param targetIds
 	 * @throws RuntimeException
 	 *             if the execution should not be deleted.
 	 */
 	void deleteExecution(Execution execution);
+
+	/**
+	 *
+	 * @param executionId
+	 *            the execution to be updated
+	 * @return the index of the first modified (not deleted) step in the new execution or -1
+	 */
+	long updateSteps(long executionId);
 
 }

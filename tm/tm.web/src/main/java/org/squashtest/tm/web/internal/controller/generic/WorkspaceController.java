@@ -21,13 +21,11 @@
 package org.squashtest.tm.web.internal.controller.generic;
 
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
@@ -91,8 +89,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
 
-
-		if (elementId == null || "".equals(elementId)) {
+		if (StringUtils.isBlank(elementId)) {
 			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {
@@ -139,6 +136,22 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		}
 
 		return getWorkspaceViewName();
+	}
+
+	@RequestMapping(method = RequestMethod.GET, value = "/tree/{openedNodes}")
+	public @ResponseBody
+	List<JsTreeNode> getRootModel(@PathVariable String[] openedNodes) {
+		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
+
+
+		MultiMap expansionCandidates = mapIdsByType(openedNodes);
+
+		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
+		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
+				.setModel(libraries).build();
+
+
+		return rootNodes;
 	}
 
 	/**

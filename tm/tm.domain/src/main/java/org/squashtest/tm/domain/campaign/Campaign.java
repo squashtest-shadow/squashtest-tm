@@ -38,8 +38,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -54,6 +56,10 @@ import org.squashtest.tm.exception.DuplicateNameException;
 @Entity
 @PrimaryKeyJoinColumn(name = "CLN_ID")
 public class Campaign extends CampaignLibraryNode implements NodeContainer<Iteration>, BoundEntity, MilestoneHolder {
+
+
+	public static final int MAX_REF_SIZE = 50;
+
 	@Embedded
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 	@Embedded
@@ -72,6 +78,12 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();
+
+
+	@NotNull
+	@Size(min = 0, max = MAX_REF_SIZE)
+	private String reference = "";
+
 
 
 	public Campaign() {
@@ -151,19 +163,25 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	}
 
+
+	public String getReference() {
+		return reference;
+	}
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
 	/**
-	 * @deprecated use {@link #findTestPlanItem(TestCase)}
-	 * @param testCaseId
-	 * @return
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 * 
 	 */
-	@Deprecated
-	public CampaignTestPlanItem getTestPlanForTestPlanItemId(Long testCaseId) {
-		for (CampaignTestPlanItem campTestPlan : this.getTestPlan()) {
-			if (campTestPlan.getReferencedTestCase().getId().equals(testCaseId)) {
-				return campTestPlan;
-			}
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
 		}
-		return null;
 	}
 
 	/**
@@ -214,6 +232,13 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	public void removeIteration(@NotNull Iteration iteration) {
 		getIterations().remove(iteration);
+	}
+
+	public void moveIterations(int newIndex, List<Iteration> moved){
+		if (! iterations.isEmpty()){
+			iterations.removeAll(moved);
+			iterations.addAll(newIndex, moved);
+		}
 	}
 
 	public List<Iteration> getIterations() {
@@ -292,7 +317,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
 	 * 
-	 * @param newItemTestPlanDate
+	 * @param newIterationStartDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
 

@@ -31,6 +31,7 @@ import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementPathSortable;
 
 public class ExportModel {
 	private List<TestCaseModel> testCases = new LinkedList<TestCaseModel>();
@@ -40,6 +41,8 @@ public class ExportModel {
 	private List<ParameterModel> parameters = new LinkedList<ParameterModel>();
 
 	private List<DatasetModel> datasets = new LinkedList<DatasetModel>();
+
+	private List<CoverageModel> coverages = new LinkedList<CoverageModel>();
 
 	public ExportModel() {
 		super();
@@ -77,6 +80,10 @@ public class ExportModel {
 		datasets.add(model);
 	}
 
+	public void addCoverageModel(CoverageModel model){
+		coverages.add(model);
+	}
+
 	public List<TestCaseModel> getTestCases() {
 		return testCases;
 	}
@@ -91,6 +98,103 @@ public class ExportModel {
 
 	public List<DatasetModel> getDatasets() {
 		return datasets;
+	}
+
+
+
+	public List<CoverageModel> getCoverages() {
+		return coverages;
+	}
+
+	public void setCoverages(List<CoverageModel> coverages) {
+		this.coverages = coverages;
+	}
+
+
+
+	public static final class CoverageModel implements RequirementPathSortable {
+
+		private String reqPath;
+		private int reqVersion;
+		private String tcPath;
+		private String requirementProjectName;
+		private Long requirementId;
+		private Long tcId;
+
+		public static final Comparator<CoverageModel> TC_COMPARATOR = new Comparator<ExportModel.CoverageModel>() {
+			@Override
+			public int compare(CoverageModel o1, CoverageModel o2) {
+				return o1.getTcPath().compareTo(o2.getTcPath());
+
+			}
+		};
+
+		public static final Comparator<RequirementPathSortable> REQ_COMPARATOR = RequirementExportModel.RequirementModel.COMPARATOR;
+
+
+		public CoverageModel(int reqVersion, Long requirementId, Long tcId, String projectName) {
+			super();
+			this.reqVersion = reqVersion;
+			this.requirementId = requirementId;
+			this.tcId = tcId;
+			this.requirementProjectName = projectName;
+		}
+
+		public String getRequirementProjectName() {
+			return requirementProjectName;
+		}
+		public void setRequirementProjectName(String projectName) {
+			this.requirementProjectName = projectName;
+		}
+
+		public String getReqPath() {
+			return reqPath;
+		}
+		public void setReqPath(String reqPath) {
+			this.reqPath = reqPath;
+		}
+
+		public int getReqVersion() {
+			return reqVersion;
+		}
+		public void setReqVersion(int reqVersion) {
+			this.reqVersion = reqVersion;
+		}
+		public Long getRequirementId() {
+			return requirementId;
+		}
+		public void setRequirementId(Long requirementId) {
+			this.requirementId = requirementId;
+		}
+		public Long getTcId() {
+			return tcId;
+		}
+		public void setTcId(Long tcId) {
+			this.tcId = tcId;
+		}
+		public String getTcPath() {
+			return tcPath;
+		}
+		public void setTcPath(String tcPath) {
+			this.tcPath = tcPath;
+		}
+
+		@Override
+		public String getProjectName() {
+			return getRequirementProjectName();
+		}
+
+		@Override
+		public String getPath() {
+			return getReqPath();
+		}
+
+		@Override
+		public int getRequirementVersionNumber() {
+			return getReqVersion();
+		}
+
+
 	}
 
 	public static final class TestCaseModel {
@@ -686,5 +790,7 @@ public class ExportModel {
 		}
 
 	}
+
+
 
 }

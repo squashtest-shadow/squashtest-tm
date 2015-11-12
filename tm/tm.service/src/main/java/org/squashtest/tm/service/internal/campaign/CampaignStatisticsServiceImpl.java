@@ -21,6 +21,11 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,14 +44,16 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
@@ -61,6 +68,151 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Inject
 	private SessionFactory sessionFactory;
 
+	@Inject
+	private CampaignDao campaignDao;
+
+
+	// ************************************ all-in-one methods ******************************
+
+
+	@Override
+	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId) {
+
+		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
+
+		// perimeter
+		List<Long> campaignIds = Arrays.asList(campaignId);
+
+		// common methods
+		CampaignTestCaseStatusStatistics testcaseStatuses = gatherTestCaseStatusStatistics(campaignIds);
+		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherNonExecutedTestCaseImportanceStatistics(campaignIds);
+		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherTestCaseSuccessRateStatistics(campaignIds);
+
+		// specific methods
+		List<IterationTestInventoryStatistics> inventory = gatherCampaignTestInventoryStatistics(campaignId);
+		CampaignProgressionStatistics progression = gatherCampaignProgressionStatistics(campaignId);
+
+		// stuff it all
+		bundle.setIterationTestInventoryStatisticsList(inventory);
+		bundle.setCampaignProgressionStatistics(progression);
+		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
+		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
+		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
+
+		// return
+		return bundle;
+
+	}
+
+
+	@Override
+	// TODO : security ? If never exposed through OSGI it might not be necessary
+	public CampaignStatisticsBundle gatherMilestoneStatisticsBundle(long milestoneId) {
+
+		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
+
+		// perimeter
+		List<Long> campaignIds = campaignDao.findAllIdsByMilestone(milestoneId);
+
+		// common methods
+		CampaignTestCaseStatusStatistics testcaseStatuses = gatherTestCaseStatusStatistics(campaignIds);
+		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherNonExecutedTestCaseImportanceStatistics(campaignIds);
+		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherTestCaseSuccessRateStatistics(campaignIds);
+
+		// specific methods
+		List<IterationTestInventoryStatistics> inventory = gatherMilestoneTestInventoryStatistics(milestoneId);
+		CampaignProgressionStatistics progression = new CampaignProgressionStatistics(); // not used in the by-milestone dashboard
+
+		// stuff it all
+		bundle.setIterationTestInventoryStatisticsList(inventory);
+		bundle.setCampaignProgressionStatistics(progression);
+		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
+		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
+		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
+
+		// return
+		return bundle;
+
+	}
+
+
+	@Override
+	// TODO : security ? If never exposed through OSGI it might not be necessary
+	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId) {
+
+		ManyCampaignStatisticsBundle bundle = new ManyCampaignStatisticsBundle();
+
+		// perimeter
+		List<Long> campaignIds = campaignDao.findAllCampaignIdsByNodeIds(Arrays.asList(folderId));
+		campaignIds = campaignDao.filterByMilestone(campaignIds, milestoneId);
+
+		// common methods
+		CampaignTestCaseStatusStatistics testcaseStatuses = gatherTestCaseStatusStatistics(campaignIds);
+		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherNonExecutedTestCaseImportanceStatistics(campaignIds);
+		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherTestCaseSuccessRateStatistics(campaignIds);
+
+		// specific methods
+		List<CampaignTestInventoryStatistics> inventory = gatherFolderTestInventoryStatistics(campaignIds);
+		CampaignProgressionStatistics progression = new CampaignProgressionStatistics(); // not used in the by-milestone dashboard
+
+		// stuff it all
+		bundle.setCampaignTestInventoryStatisticsList(inventory);
+		bundle.setCampaignProgressionStatistics(progression);
+		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
+		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
+		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
+
+		// return
+		return bundle;
+	}
+
+	/* *********************************** common statistics methods ************************************ */
+
+	/**
+	 * Given a list of campaign id, gathers and returns the number of test cases grouped by execution status.
+	 *
+	 * @param campaignIds
+	 * @return
+	 */
+	@Override
+	public CampaignTestCaseStatusStatistics gatherTestCaseStatusStatistics(List<Long> campaignIds){
+
+		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.globaltestinventory", campaignIds);
+
+		return processTestCaseStatusStatistics(tuples);
+	}
+
+
+	/**
+	 * Given a list of campaign id, gathers and returns the number of passed and failed test cases grouped by weight.
+	 *
+	 * @param campaignIds
+	 * @return
+	 */
+	@Override
+	public CampaignTestCaseSuccessRateStatistics gatherTestCaseSuccessRateStatistics(List<Long> campaignIds){
+		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.successRate", campaignIds);
+
+		return processTestCaseSuccessRateStatistics(tuples);
+	}
+
+	/**
+	 * Given a list of campaign id, gathers and returns the number of non-executed test cases grouped by weight.
+	 *
+	 * @param campaignIds
+	 * @return
+	 */
+	@Override
+	public CampaignNonExecutedTestCaseImportanceStatistics gatherNonExecutedTestCaseImportanceStatistics(List<Long> campaignIds){
+		List<Object[]> tuples = fetchCommonTuples("CampaignStatistics.nonexecutedTestcaseImportance", campaignIds);
+
+		return processNonExecutedTestCaseImportance(tuples);
+	}
+
+
+
+	/* ************************************* statistics specific to one lone campaign************************************** */
 
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
@@ -103,30 +255,75 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	}
 
-
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatistics(long campaignId) {
-		//get the data
+	public List<IterationTestInventoryStatistics> gatherCampaignTestInventoryStatistics(long campaignId) {
+
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventory");
 		query.setParameter("id", campaignId);
-		List<Object[]> res = query.list();
+		List<Object[]> tuples = query.list();
 
-		return gatherIterationTestInventirtStatusticsByRes(res);
+
+		return processIterationTestInventory(tuples);
 	}
+
+
+
+	/* ************************ statistics specific to all campaigns of one milestone******************************** */
 
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public List<IterationTestInventoryStatistics> gatherIterationTestInventoryStatisticsByMilestone(long milestoneId) {
-		// get the data
+	public List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics(long milestoneId) {
 		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventorybymilestone");
 		query.setParameter("id", milestoneId);
-		List<Object[]> res = query.list();
-		return gatherIterationTestInventirtStatusticsByRes(res);
+		List<Object[]> tuples = query.list();
+
+		return processIterationTestInventory(tuples);
 	}
 
 
-	private List<IterationTestInventoryStatistics> gatherIterationTestInventirtStatusticsByRes(List<Object[]> res) {
+	/* ************************************ statistics specific to campaign folders ****************************** */
+
+
+	@Override
+	public List<CampaignTestInventoryStatistics> gatherFolderTestInventoryStatistics(Collection<Long> campaignIds) {
+
+		List<Object[]> tuples = Collections.emptyList();
+		if (campaignIds.size() > 0) {
+		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignFolderStatistics.testinventory");
+		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
+			tuples = query.list();
+		}
+		return processCampaignTestInventory(tuples);
+	}
+
+
+	/* *********************** processing code ***************************** */
+
+
+
+	/**
+	 * Execute a named query that accepts as argument a parameter of type List&lt;Long&gt; named "campaignIds", and that
+	 * returns a list of tuples (namely Object[])
+	 *
+	 * @param queryName
+	 * @param idParameter
+	 * @return
+	 */
+	private List<Object[]> fetchCommonTuples(String queryName, List<Long> campaignIds){
+
+		List<Object[]> res = Collections.emptyList();
+
+		if (campaignIds.size() > 0) {
+		Query query = sessionFactory.getCurrentSession().getNamedQuery(queryName);
+		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
+			res = query.list();
+		}
+
+		return res;
+	}
+
+	private List<IterationTestInventoryStatistics> processIterationTestInventory(List<Object[]> res) {
 		/*
 		 * Process. Beware that the logic is a bit awkward here. Indeed we first insert new
 		 * IterationTestInventoryStatistics in the result list, then we populate them.
@@ -160,19 +357,46 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		return result;
 	};
 
+	// copy-pasta of processIterationCampaignTestInventory. Java 8, where are you
+	// when I need you ?
+	private List<CampaignTestInventoryStatistics> processCampaignTestInventory(List<Object[]> res) {
+		/*
+		 * Process. Beware that the logic is a bit awkward here. Indeed we first insert new
+		 * IterationTestInventoryStatistics in the result list, then we populate them.
+		 */
+		CampaignTestInventoryStatistics newStatistics = new CampaignTestInventoryStatistics();
+		Long currentId = null;
 
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatistics(long campaignId){
-
-		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
-
-		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.globaltestinventory");
-		query.setParameter("id", campaignId);
-		List<Object[]> res = query.list();
+		List<CampaignTestInventoryStatistics> result = new LinkedList<CampaignTestInventoryStatistics>();
 
 		for (Object[] tuple : res){
+			Long id = (Long)tuple[0];
+
+			if (! id.equals(currentId)){
+				String name = (String) tuple[1];
+				newStatistics = new CampaignTestInventoryStatistics();
+				newStatistics.setCampaignName(name);
+				result.add(newStatistics);
+				currentId = id;
+			}
+
+			ExecutionStatus status = (ExecutionStatus)tuple[2];
+			Long howmany = (Long)tuple[3];
+
+			if (status == null){
+				continue;	// status == null iif the test plan is empty
+			}
+			newStatistics.setNumber(howmany.intValue(), status);
+
+
+		}
+		return result;
+	};
+
+	private CampaignTestCaseStatusStatistics processTestCaseStatusStatistics(List<Object[]> tuples) {
+		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
+
+		for (Object[] tuple : tuples){
 
 			ExecutionStatus status = (ExecutionStatus)tuple[0];
 			Long howmany = (Long)tuple[1];
@@ -183,41 +407,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		return result;
 	}
 
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignTestCaseStatusStatistics gatherCampaignTestCaseStatusStatisticsByMilestone(long milestoneId) {
-
-		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
-
-		// get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
-				"CampaignStatistics.globaltestinventorybymilestone");
-		query.setParameter("id", milestoneId);
-		List<Object[]> res = query.list();
-
-		for (Object[] tuple : res) {
-
-			ExecutionStatus status = (ExecutionStatus) tuple[0];
-			Long howmany = (Long) tuple[1];
-
-			result.addNumber(howmany.intValue(), status.getCanonicalStatus());
-		}
-
-		return result;
-	}
-
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatistics(long campaignId){
-
+	private CampaignNonExecutedTestCaseImportanceStatistics processNonExecutedTestCaseImportance(List<Object[]> tuples) {
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
 
-		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.nonexecutedTestcaseImportance");
-		query.setParameter("id", campaignId);
-		List<Object[]> res = query.list();
-
-		for (Object[] tuple : res){
+		for (Object[] tuple : tuples){
 
 			TestCaseImportance importance = (TestCaseImportance)tuple[0];
 			Long howmany = (Long)tuple[1];
@@ -233,55 +426,11 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		return result;
 	}
 
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignNonExecutedTestCaseImportanceStatistics gatherCampaignNonExecutedTestCaseImportanceStatisticsByMilestone(
-			long milestoneId) {
 
-		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
-
-		// get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
-				"CampaignStatistics.nonexecutedTestcaseImportanceByMilestone");
-		query.setParameter("id", milestoneId);
-		List<Object[]> res = query.list();
-
-		for (Object[] tuple : res) {
-
-			TestCaseImportance importance = (TestCaseImportance) tuple[0];
-			Long howmany = (Long) tuple[1];
-
-			switch (importance) {
-			case HIGH:
-				result.setPercentageHigh(howmany.intValue());
-				break;
-			case LOW:
-				result.setPercentageLow(howmany.intValue());
-				break;
-			case MEDIUM:
-				result.setPercentageMedium(howmany.intValue());
-				break;
-			case VERY_HIGH:
-				result.setPercentageVeryHigh(howmany.intValue());
-				break;
-			}
-		}
-
-		return result;
-	}
-
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatistics(long campaignId) {
-
+	private CampaignTestCaseSuccessRateStatistics processTestCaseSuccessRateStatistics(List<Object[]> tuples) {
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
 
-		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.successRate");
-		query.setParameter("id", campaignId);
-		List<Object[]> res = query.list();
-
-		for (Object[] tuple : res){
+		for (Object[] tuple : tuples){
 
 			TestCaseImportance importance = (TestCaseImportance)tuple[0];
 			ExecutionStatus status = (ExecutionStatus)tuple[1];
@@ -298,84 +447,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		return result;
 	}
 
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignTestCaseSuccessRateStatistics gatherCampaignTestCaseSuccessRateStatisticsByMilestone(long milestoneId) {
 
-		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
-
-		// get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.successRateByMilestone");
-		query.setParameter("id", milestoneId);
-		List<Object[]> res = query.list();
-
-		// TODO : factoriser
-		for (Object[] tuple : res) {
-
-			TestCaseImportance importance = (TestCaseImportance) tuple[0];
-			ExecutionStatus status = (ExecutionStatus) tuple[1];
-			Long howmany = (Long) tuple[2];
-
-			switch (importance) {
-			case HIGH:
-				result.addNbHigh(status, howmany.intValue());
-				break;
-			case LOW:
-				result.addNbLow(status, howmany.intValue());
-				break;
-			case MEDIUM:
-				result.addNbMedium(status, howmany.intValue());
-				break;
-			case VERY_HIGH:
-				result.addNbVeryHigh(status, howmany.intValue());
-				break;
-			}
-		}
-
-		return result;
-	}
-
-	@Override
-	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public CampaignStatisticsBundle gatherCampaignStatisticsBundle(long campaignId) {
-
-		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
-
-		List<IterationTestInventoryStatistics> inventory = gatherIterationTestInventoryStatistics(campaignId);
-		CampaignProgressionStatistics progression = gatherCampaignProgressionStatistics(campaignId);
-		CampaignTestCaseStatusStatistics testcaseStatuses = gatherCampaignTestCaseStatusStatistics(campaignId);
-		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherCampaignNonExecutedTestCaseImportanceStatistics(campaignId);
-		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherCampaignTestCaseSuccessRateStatistics(campaignId);
-
-		bundle.setIterationTestInventoryStatisticsList(inventory);
-		bundle.setCampaignProgressionStatistics(progression);
-		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
-		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
-		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
-		return bundle;
-
-	}
-
-	@Override
-	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
-
-		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
-
-		List<IterationTestInventoryStatistics> inventory = gatherIterationTestInventoryStatisticsByMilestone(milestoneId);
-		// Create one non-null and not really existing progression that doesn't exist when there are milestones
-		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
-		CampaignTestCaseStatusStatistics testcaseStatuses = gatherCampaignTestCaseStatusStatisticsByMilestone(milestoneId);
-		CampaignNonExecutedTestCaseImportanceStatistics testcaseImportance = gatherCampaignNonExecutedTestCaseImportanceStatisticsByMilestone(milestoneId);
-		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherCampaignTestCaseSuccessRateStatisticsByMilestone(milestoneId);
-
-		bundle.setIterationTestInventoryStatisticsList(inventory);
-		bundle.setCampaignProgressionStatistics(progression);
-		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
-		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
-		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
-		return bundle;
-
-	}
 
 
 }

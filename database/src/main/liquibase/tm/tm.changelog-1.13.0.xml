@@ -1,0 +1,733 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<!-- 
+		The following properties are used in changeset tm-1.13.0-feature-5375-2
+	 -->
+	
+	<property name="reqId" 					value="1" />
+	<property name="reqVCount" 				value="2" />
+	
+	<property name="rvId" 					value="3" />
+	<property name="rvVersnum" 				value="4" />
+	<property name="rvCreatOn"				value="5" />
+	<property name="rvModOn" 				value="6" />
+	<property name="rvCreatBy" 				value="7" />
+	<property name="rvModBy" 				value="8" />
+	<property name="rvLabel" 				value="9" />
+	<property name="rvCrit" 				value="10" />
+	<property name="rvCat" 					value="11" />
+	<property name="rvStatus"				value="12" />
+	<property name="rvMiles" 				value="13" />
+	<property name="rvVerifTCCount" 		value="14" />
+	<property name="rvMilesCount" 			value="15" />
+	
+	<property name="tcId"					value="16"/>
+	<property name="tcCreatOn"				value="17"/>
+	<property name="tcModOn"				value="18"/>
+	<property name="tcCreatBy"				value="19"/>
+	<property name="tcModBy"				value="20"/>
+	<property name="tcLabel"				value="21"/>
+	<property name="tcImportance"			value="22"/>
+	<property name="tcNat"					value="23"/>
+	<property name="tcType"					value="24"/>
+	<property name="tcStatus"				value="25"/>
+	<property name="tcVerifVersionCount"	value="26"/>
+	<property name="tcCallstepCount"		value="27"/>
+	<property name="tcStepCount"			value="28"/>
+	<property name="tcMilesCount"			value="29"/>
+	<property name="tcCpgCount"				value="30"/>
+	<property name="tcItCount"				value="31"/>
+	<property name="tcExecCount"			value="32"/>
+	<property name="tcAutomated"			value="33"/>
+
+	<property name="cId" 					value="34"/>
+	<property name="cName" 					value="35"/>
+	<property name="cScheStart" 			value="36"/>
+	<property name="cSchedEnd" 				value="37"/>
+	<property name="cActStart" 				value="38"/>
+	<property name="cActEnd" 				value="39"/>
+	<property name="cItCount" 				value="40"/>
+	<property name="cBugCount" 				value="41"/>
+	
+	<property name="itId" 					value="42" />
+	<property name="itName"					value="43" />
+	<property name="itScheStart" 			value="44" />
+	<property name="itScheEnd" 				value="45" />
+	<property name="itActStart" 			value="46" />
+	<property name="itActEnd" 				value="47" />
+	<property name="itItemCount" 			value="48" />
+	<property name="itBugCount" 			value="49" />
+	
+
+	<changeSet id="tm-1.13.0" author="bsiri">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.13.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+
+	<changeSet id="tm-1.13.0-feature-5155-1" author="jsimon">
+		<createTable tableName="BUGTRACKER_PROJECT">
+			<column name="BUGTRACKER_PROJECT_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BUGTRACKER_BINDING_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_bugtracker_project_bugtracker_binding"
+					references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)" />
+			</column>
+
+			<column name="BUGTRACKER_PROJECT_NAME" type="java.sql.Types.VARCHAR(255)"></column>
+
+			<column name="BUGTRACKER_PROJECT_ORDER" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createIndex tableName="BUGTRACKER_PROJECT" indexName="idx_bugtracker_project">
+			<column name="BUGTRACKER_PROJECT_ID" />
+		</createIndex>
+
+
+
+		<sql>
+			insert into BUGTRACKER_PROJECT(BUGTRACKER_BINDING_ID,
+			BUGTRACKER_PROJECT_NAME, BUGTRACKER_PROJECT_ORDER) select
+			BUGTRACKER_BINDING_ID, PROJECT_NAME, 0 from BUGTRACKER_BINDING;
+		</sql>
+
+		<dropColumn tableName="BUGTRACKER_BINDING" columnName="PROJECT_NAME" />
+
+	</changeSet>
+
+	<changeSet id="tm-1.13.0-feature-5162-1" author="bsiri">
+		<comment>Now campaigns and iterations have a reference too</comment>
+
+		<addColumn tableName="CAMPAIGN">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="" remarks="a reference lavel for a campaign" />
+		</addColumn>
+
+		<addColumn tableName="ITERATION">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="" remarks="a reference lavel for an iteration" />
+		</addColumn>
+
+		<!-- I thought that scripting Squash TA was a bitch but wait to see this -->
+		<!-- For iterations that existed prior to 1.13.0, here we assign iteration_order
+			as their default reference. Luckily it seems that databases accept that you
+			can affect a numeric type to a varchar column and that they coerce them implicitly.
+			If a DBMS doesn't accept it, put the following instruction in a dedicated
+			changeset : update ITERATION i set reference = (select CAST ( ((ci.iteration_order)
+			+ 1) as varchar) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id
+			); -->
+		<sql>
+			update ITERATION i
+			set reference = (select (ci.iteration_order +
+			1) from
+			CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id
+			);
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.13.0-feature-4022-1" author="jsimon">
+
+		<addColumn tableName="PROJECT">
+			<column name="ALLOW_TC_MODIF_DURING_EXEC" type="BOOLEAN"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="tm-1.13.0-feature-5292-issues" author="bsiri">
+		<comment>
+			creating a view that helps querying on all the issues reported in an execution because
+			querying EXECUTION and EXECUTION_STEP separately is just a pain in the ass.
+		</comment>
+
+		<createView viewName="EXECUTION_ISSUES_CLOSURE">
+			select exec.execution_id, issue.issue_id
+			from EXECUTION exec
+			inner join ISSUE issue on exec.issue_list_id = issue.issue_list_id
+			UNION
+			select eesteps.execution_id, issue.issue_id
+			from EXECUTION_EXECUTION_STEPS eesteps
+			inner join EXECUTION_STEP estep on eesteps.execution_step_id = estep.execution_step_id
+			inner join ISSUE issue on estep.issue_list_id = issue.issue_list_id
+		</createView>
+
+	</changeSet>
+
+
+	<changeSet id="tm-1.13.0-feature-5375-1" author="jsimon, bsiri">
+		
+		<comment>
+			The table CHART_QUERY aggregates 1..* CHART_MEASURE_COLUMN, 1..* CHART_AXIS_COLUMN and 0..* CHART_FILTER 
+			(see these table for more informations). It may be referenced by either a CHART_DEFINITION (as a query), 
+			either a COLUMN_PROTOTYPE (as a subquery).
+		</comment>
+	
+		<createTable tableName="CHART_QUERY">
+			
+			<column name="CHART_QUERY_ID" type="BIGINT" autoIncrement="true" remarks="autogenerated ID">
+				<constraints primaryKey="true" nullable="false"/>
+			</column> 
+			
+			<column name="NAME" type="VARCHAR(100)" remarks="internal usage, when this CHART_QUERY is a 
+			CHART_COLUMN_PROTOTYPE subquery the name helps identify which one" />
+					
+		</createTable>
+	
+	
+		<comment>
+			The table CHART_DEFINITION describes the custom charts created by the user. Along with 
+			the informations stored in this table a CHART_DEFINITION refers to a CHART_QUERY, 
+			which aggregates the unit blocks that constitute the data elligible for plotting. 
+		</comment>
+		<createTable tableName="CHART_DEFINITION">
+
+			<column name="CHART_ID" type="BIGINT" autoIncrement="true" remarks="autogenerated ID">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="USER_ID" type="BIGINT" remarks="foreign key to the owner of this chart definition">
+				<constraints nullable="false" foreignKeyName="fk_chart_owner"
+					references="CORE_USER(PARTY_ID)" />
+			</column>
+			
+			<column name="QUERY_ID" type="BIGINT" remarks="foreign key to a CHART_QUERY">
+				<constraints nullable="false" foreignKeyName="fk_chart_query" references="CHART_QUERY(CHART_QUERY_ID)"/>
+			</column>
+			
+			<column name="NAME" type="java.sql.Types.VARCHAR(50)" remarks="The name of this chart"/>
+			<column name="VISIBILITY" type="java.sql.Types.VARCHAR(20)" remarks="whether this chart is 'PRIVATE' or 'PUBLIC'"/>
+			<column name="CHART_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="whether this chart is a 'PIE', 'BAR' etc"/>
+			<column name="DESCRIPTION" type="CLOB" remarks="additional informations about this chart"/>
+
+		</createTable>
+
+		<createIndex tableName="CHART_DEFINITION" indexName="idx_chart_definition">
+			<column name="CHART_ID" />
+		</createIndex>
+
+
+		<comment>
+			This table holds referential data only (users cannot populate it) : 
+			it lists every single columns that can be used in a custom chart. 
+			Here, a column is basically an attribute from an entity. Theses columns 
+			are merely options proposed to the user. Once the user confirmed that he 
+			wants to include a particular column in a custom chart, and in which 
+			context (as a measure, an axis or applying a filter on it), the entries 
+			from this table will be referenced by entries in tables FILTER, 
+			AXIS_COLUMN or MEASURE_COLUMN.
+			
+			Some columns aren't proper attributes of an entity but rather the result of 
+			an expression. This expression is itself expressed as a CHART_QUERY. 
+			For this reason a COLUMN_PROTOTYPE may point to a CHART_QUERY via a 
+			(nullable) foreign key. 
+			
+			Last, some columns aren't supposed to be available to the user and used 
+			in a chart. The attribute 'BUSINESS' = true indicates that the user is allowed 
+			to use them.
+		</comment>
+		
+		<createTable tableName="CHART_COLUMN_PROTOTYPE" >
+		
+			<column name="CHART_COLUMN_ID" type="BIGINT" autoIncrement="true" remarks="the column ID">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			
+			<column name="COLUMN_TYPE" type="java.sql.Types.VARCHAR(15)" 
+				remarks="complementary information about the nature of this column : native attribute ('ATTRIBUTE'), 
+				computed field ('CALCULATED') - often as a subquery -, or custom field ('CUF')"/>
+			
+			<column name="SUBQUERY_ID" type="BIGINT" remarks="optional foreign key to a (sub) CHART_QUERY">
+				<constraints nullable="true" foreignKeyName="fk_column_query" references="CHART_QUERY(CHART_QUERY_ID)"/>
+			</column>
+
+			<column name="LABEL" type="java.sql.Types.VARCHAR(255)" remarks="The default label for this column." />
+				
+			<column name="ENTITY_TYPE" type="java.sql.Types.VARCHAR(30)" remarks="The kind of entities this column belongs to"/>
+			
+			<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)" remarks="The name of the attribute of the entity"/>
+			
+			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(20)" remarks="Data type of the attribute"/>
+	
+			<column name="BUSINESS" type="BOOLEAN" remarks="tells whether this column is public or internal." defaultValueBoolean="true"/>
+
+		</createTable>
+
+		<createIndex tableName="CHART_COLUMN_PROTOTYPE" indexName="idx_column_prototype">
+			<column name="CHART_COLUMN_ID" />
+		</createIndex>
+
+
+		<comment>
+			The CHART_COLUMN_ROLES precises in which roles a particular CHART_COLUMN_PROTOTYPE can 
+			be used : 'AXIS', 'FILTER' or 'MEASURE'.
+		</comment>
+		<createTable tableName="CHART_COLUMN_ROLE">
+
+			<column name="CHART_COLUMN_ID" type="BIGINT" remarks="foreign key to CHART_COLUMN_PROTOTYPE">
+				<constraints nullable="false" foreignKeyName="fk_column_role_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="ROLE" type="java.sql.Types.VARCHAR(255)" remarks="name of a role for the referenced column"></column>
+		</createTable>
+
+
+
+		<comment>
+			This table store which columns are the measures the user is interested to see. 
+			They consists of an aggregation operation applied to a CHART_COLUMN_PROTOTYPE.
+		</comment>
+		<createTable tableName="CHART_MEASURE_COLUMN">
+
+			<column name="CHART_COLUMN_ID" type="BIGINT" remarks="foreign key to the CHART_COLUMN_PROTOTYPE this measure applies to">
+				<constraints nullable="false" foreignKeyName="fk_chart_measure_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="QUERY_ID" type="BIGINT" remarks="foreign key to a CHART_QUERY">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_measure_chart_query" references="CHART_QUERY(CHART_QUERY_ID)" />
+			</column>
+
+			<column name="LABEL" type="java.sql.Types.VARCHAR(30)" 
+				remarks="a label for this measure. Will override the default label of the column prototype if non null."/>
+			
+			<column name="MEASURE_OPERATION" type="java.sql.Types.VARCHAR(20)" remarks="the measure applied to the column"/>
+			
+			<column name="MEASURE_RANK" type="java.sql.Types.INTEGER" 
+				remarks="the order in which the measure will be displayed when the chart is rendered."/>
+
+		</createTable>
+
+
+		<comment>
+			A CHART_FILTER restricts the values a CHART_COLUMN_PROTOTYPE may have for a given chart.
+			A CHART_FILTER will compare the value of a CHART_COLUMN_PROTOTYPE with one or several 
+			CHART_FILTER_VALUES using a comparison operator. 
+		</comment>
+		<createTable tableName="CHART_FILTER">
+			<column name="FILTER_ID" type="BIGINT" autoIncrement="true" remarks="autogenerated ID">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="CHART_COLUMN_ID" type="BIGINT" remarks="foreign key to a CHART_COLUMN_PROTOTYPE">
+				<constraints nullable="false" foreignKeyName="fk_chart_filter_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="QUERY_ID" type="BIGINT" remarks="foreign key to a CHART_QUERY">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_FILTER_chart_query" references="CHART_QUERY(CHART_QUERY_ID)" />
+			</column>
+
+			<column name="FILTER_OPERATION" type="java.sql.Types.VARCHAR(20)" remarks="a comparison operator"/>
+
+		</createTable>
+
+		<createIndex tableName="CHART_FILTER" indexName="idx_chart_filter">
+			<column name="FILTER_ID" />
+		</createIndex>
+
+
+		<comment>
+			This table holds the values used in a CHART_FILTER.
+		</comment>
+		<createTable tableName="CHART_FILTER_VALUES">
+
+			<column name="FILTER_ID" type="BIGINT" remarks="foreign key to CHART_FILTER" >
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_filter_value_chart_column" references="CHART_FILTER(FILTER_ID)" />
+			</column>
+
+			<column name="FILTER_VALUE" type="java.sql.Types.VARCHAR(255)" remarks="a value for this filter"/>
+
+		</createTable>
+
+
+		<comment>
+			This table holds which CHART_COLUMN_PROTOTYPE are the axes for a given chart.
+		</comment>
+		<createTable tableName="CHART_AXIS_COLUMN">
+
+			<column name="CHART_COLUMN_ID" type="BIGINT" remarks="foreign key to CHART_COLUMN_PROTOTYPE">
+				<constraints nullable="false" foreignKeyName="fk_axis_column_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="QUERY_ID" type="BIGINT" remarks="foreign key to a CHART_QUERY">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_axis_chart_query" references="CHART_QUERY(CHART_QUERY_ID)" />
+			</column>
+
+			<column name="LABEL" type="java.sql.Types.VARCHAR(100)" 
+				remarks="a label for this axis. If non null, will override the default label in the CHART_COLUMN_PROTOTYPE"/>
+				
+			<column name="AXIS_OPERATION" type="java.sql.Types.VARCHAR(20)" 
+				remarks="may define an additional operation about how data are grouped on this axis, most of the time 'NONE' is fine, however 
+				for Timestamp columns an adequate aggregation (day, month etc) may be useful"/>
+			
+			<column name="AXIS_RANK" type="java.sql.Types.INTEGER" remarks="in which order the axis are processed (if relevant)"/>
+			
+		</createTable>
+
+
+		<comment>
+			The scope is a particular filter on the data : it restrict the perimeter from which the measured entities can be chosen,
+			for example from project X and folder Y	
+		</comment>
+		<createTable tableName="CHART_SCOPE">
+
+			<column name="CHART_ID" type="BIGINT" remarks="foreign key to a CHART_DEFINITION">
+				<constraints nullable="false" foreignKeyName="fk_chart_scope_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+
+			<column name="ENTITY_REFERENCE_TYPE" type="java.sql.Types.VARCHAR(50)" remarks="the type of the referenced entity"/>
+			<column name="ENTITY_REFERENCE_ID" type="java.sql.Types.INTEGER" remarks="the id of the referenced entity"/>
+
+		</createTable>
+		
+	</changeSet>
+
+	
+	<changeSet id="tm-1.13.0-feature-5375-2" author="bsiri"> 
+
+		<comment>populate the column prototype referential data</comment>
+		
+
+		<!--  ================== simple columns ====================== -->
+		
+		<!-- simple columns for REQUIREMENT -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 
+				(${reqId}, 'ATTRIBUTE', TRUE, 'REQUIREMENT_ID', 'REQUIREMENT', 'NUMERIC', 'id');
+		</sql>
+		
+		<!-- simple columns for REQUIREMENT_VERSION -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 
+				(${rvCreatOn}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn'),
+				(${rvModOn}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn'),
+				(${rvId}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_VERS_ID', 'REQUIREMENT_VERSION', 'NUMERIC', 'id'),
+				(${rvVersnum}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_VERS_NUM', 'REQUIREMENT_VERSION', 'NUMERIC', 'versionNumber'),
+				(${rvCreatBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CREATED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.createdBy'),
+				(${rvModBy}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_MODIFIED_BY', 'REQUIREMENT_VERSION', 'STRING', 'audit.modifiedBy'),
+				(${rvLabel}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_LABEL', 'REQUIREMENT_VERSION', 'STRING', 'name'),
+				(${rvCrit}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_CRITICALITY', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'criticality'),
+				(${rvStatus}, 'ATTRIBUTE', 'REQUIREMENT_VERSION_STATUS', 'REQUIREMENT_VERSION', 'LEVEL_ENUM', 'status');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES 
+				(${rvCreatOn}, 'AXIS'), (${rvCreatOn}, 'FILTER'),
+				(${rvModOn}, 'AXIS'), (${rvModOn}, 'FILTER'),
+				(${rvId}, 'AXIS'), (${rvId}, 'FILTER'), (${rvId}, 'MEASURE'),
+				(${rvVersnum}, 'FILTER'), (${rvVersnum}, 'MEASURE'),
+				(${rvCreatBy}, 'AXIS'), (${rvCreatBy}, 'FILTER'),
+				(${rvModBy}, 'AXIS'), (${rvModBy}, 'FILTER'),
+				(${rvLabel}, 'FILTER'), (${rvLabel}, 'MEASURE'),
+				(${rvCrit}, 'AXIS'), (${rvCrit}, 'FILTER'), (${rvCrit}, 'MEASURE'),
+				(${rvStatus}, 'FILTER'), (${rvStatus}, 'MEASURE'), (${rvStatus}, 'MEASURE');
+		</sql>
+		
+		<!-- simple columns for TEST_CASE -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 	
+				(${tcCreatOn},  'ATTRIBUTE', 'TEST_CASE_CREATED_ON','TEST_CASE', 'DATE', 'audit.createdOn'),
+				(${tcModOn}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_ON','TEST_CASE', 'DATE', 'audit.lastModifiedOn'),
+				(${tcId}, 'ATTRIBUTE', 'TEST_CASE_ID','TEST_CASE', 'NUMERIC', 'id'),
+				(${tcCreatBy}, 'ATTRIBUTE', 'TEST_CASE_CREATED_BY','TEST_CASE', 'STRING', 'audit.createdBy'),
+				(${tcModBy}, 'ATTRIBUTE', 'TEST_CASE_MODIFIED_BY','TEST_CASE', 'STRING', 'audit.lastModifiedBy'),
+				(${tcLabel}, 'ATTRIBUTE', 'TEST_CASE_LABEL','TEST_CASE', 'STRING', 'name'),
+				(${tcImportance}, 'ATTRIBUTE', 'TEST_CASE_IMPORTANCE','TEST_CASE', 'LEVEL_ENUM', 'importance'),
+				(${tcStatus}, 'ATTRIBUTE', 'TEST_CASE_STATUS','TEST_CASE', 'LEVEL_ENUM', 'status');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${tcCreatOn}, 'AXIS'), (${tcCreatOn}, 'FILTER'),
+				(${tcModOn}, 'AXIS'), (${tcModOn}, 'FILTER'),
+				(${tcId}, 'AXIS'), (${tcId}, 'FILTER'), (${tcId}, 'MEASURE'),
+				(${tcCreatBy}, 'AXIS'), (${tcCreatBy}, 'FILTER'),
+				(${tcModBy}, 'AXIS'), (${tcModBy}, 'FILTER'),
+				(${tcLabel}, 'FILTER'), (${tcLabel}, 'MEASURE'),	
+				(${tcImportance}, 'AXIS'), (${tcImportance}, 'FILTER'), (${tcImportance}, 'MEASURE'),
+				(${tcStatus}, 'AXIS'), (${tcStatus}, 'FILTER'), (${tcStatus}, 'MEASURE');			 	 	
+		</sql>
+		
+		<!-- simple columns for  CAMPAIGN -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${cId},  'ATTRIBUTE', 'CAMPAIGN_ID','CAMPAIGN', 'NUMERIC', 'id'),
+				(${cName},  'ATTRIBUTE', 'CAMPAIGN_LABEL','CAMPAIGN', 'STRING', 'name'),
+				(${cScheStart},  'ATTRIBUTE', 'CAMPAIGN_SCHED_START','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledStartDate'),
+				(${cSchedEnd},  'ATTRIBUTE', 'CAMPAIGN_SCHED_END','CAMPAIGN', 'DATE', 'scheduledPeriod.scheduledEndDate'),
+				(${cActStart},  'ATTRIBUTE', 'CAMPAIGN_ACTUAL_START','CAMPAIGN', 'DATE', 'actualPeriod.actualStartDate'),
+				(${cActEnd},  'ATTRIBUTE', 'CAMPAIGN_ACTUAL_END','CAMPAIGN', 'DATE', 'actualPeriod.actualEndDate');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${cId}, 'AXIS'), (${cId}, 'FILTER'), (${cId}, 'MEASURE'),
+				(${cName}, 'FILTER'), (${cName}, 'MEASURE'),
+				(${cScheStart}, 'AXIS'), (${cScheStart}, 'FILTER'),
+				(${cSchedEnd}, 'AXIS'), (${cSchedEnd}, 'FILTER'),
+				(${cActStart}, 'AXIS'), (${cActStart}, 'FILTER'),
+				(${cActEnd}, 'AXIS'), (${cActEnd}, 'FILTER');
+		</sql>	
+		
+		<!-- simple columns for  ITERATION -->
+		<sql>
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, LABEL, ENTITY_TYPE,	DATA_TYPE, ATTRIBUTE_NAME) 
+			VALUES 					
+				(${itId},  'ATTRIBUTE', 'ITERATION_ID','ITERATION', 'NUMERIC', 'id'),
+				(${itName},  'ATTRIBUTE', 'ITERATION_LABEL','ITERATION', 'STRING', 'name'),
+				(${itScheStart},  'ATTRIBUTE', 'ITERATION_SCHED_START','ITERATION', 'DATE', 'scheduledPeriod.scheduledStartDate'),
+				(${itScheEnd},  'ATTRIBUTE', 'ITERATION_SCHED_END','ITERATION', 'DATE', 'scheduledPeriod.scheduledEndDate'),
+				(${itActStart},  'ATTRIBUTE', 'ITERATION_ACTUAL_START','ITERATION', 'DATE', 'actualPeriod.actualStartDate'),
+				(${itActEnd},  'ATTRIBUTE', 'ITERATION_ACTUAL_END','ITERATION', 'DATE', 'actualPeriod.actualEndDate');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES
+				(${itId}, 'AXIS'), (${itId}, 'FILTER'), (${itId}, 'MEASURE'),
+				(${itName}, 'FILTER'), (${itName}, 'MEASURE'),
+				(${itScheStart}, 'AXIS'), (${itScheStart}, 'FILTER'),
+				(${itScheEnd}, 'AXIS'), (${itScheEnd}, 'FILTER'),
+				(${itActStart}, 'AXIS'), (${itActStart}, 'FILTER'),
+				(${itActEnd}, 'AXIS'), (${itActEnd}, 'FILTER');
+		</sql>		
+
+		<!--  ================== calculated columns ====================== -->
+		
+		<!--  requirement version count subquery and the column prototype refering to it -->
+
+		<sql>
+			insert into CHART_QUERY(CHART_QUERY_ID, NAME) values (1, 'REQUIREMENT_NB_VERSIONS_SUBQUERY');
+			
+			insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK)
+				values (${rvId}, 1, 'COUNT', 0);
+			
+			insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)
+				values (${reqId}, 1, 'NONE', 0);
+		
+		
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, COLUMN_TYPE, BUSINESS, LABEL, ENTITY_TYPE, DATA_TYPE, ATTRIBUTE_NAME, SUBQUERY_ID) 
+			VALUES 
+				(${reqVCount}, 'CALCULATED', TRUE, 'REQUIREMENT_NB_VERSION', 'REQUIREMENT', 'NUMERIC', 'count(versions)', 1);
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES 
+				(${reqVCount}, 'FILTER'), (${reqVCount}, 'MEASURE');
+		
+		</sql>
+
+	</changeSet>
+
+ <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
+ 	<!-- CUSTOM_REPORT_LIBRARY TABLE -->
+
+ 	<createTable tableName="CUSTOM_REPORT_LIBRARY">
+ 		<column name="CRL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        	<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CUSTOM_REPORT_LIBRARY" />
+    	</column>
+
+		<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to ATTACHMENT_LIST">
+		</column>
+
+		<column name="TMP_PROJECT_ID" type="BIGINT" remarks="TMP REF TO PROJECT">
+		</column>
+ 	</createTable>
+
+ 	<createIndex tableName="CUSTOM_REPORT_LIBRARY" indexName="IDX_CUSTOM_REPORT_LIBRARY">
+      <column name="CRL_ID" />
+    </createIndex>
+
+ 	<!-- CUSTOM_REPORT_LIBRARY_NODE TABLE -->
+
+ 	<createTable tableName="CUSTOM_REPORT_LIBRARY_NODE">
+ 		<column name="CRLN_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+      <constraints primaryKey="true" nullable="false" primaryKeyName="PK_CUSTOM_REPORT_LIBRARY_NODE" />
+    </column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+		<column name="ENTITY_TYPE" type="VARCHAR(50)"/>
+
+		<column name="ENTITY_ID" type="BIGINT"/>
+
+		<column name="CRL_ID" type="BIGINT" remarks="fk to the containing CUSTOM_REPORT_LIBRARY">
+			<constraints nullable="false" foreignKeyName="fk_crln_custom_report_library_crl_id" references="CUSTOM_REPORT_LIBRARY(CRL_ID)" />
+		</column>
+
+	</createTable>
+
+
+	<!-- CUSTOM_REPORT_LIBRARY_NODE Relationship -->
+
+	<comment>This table contains the relations between two custom reports nodes. If a node is root, parent id will be null and descendant id will be itself.
+		a given node can be referenced as descendant only one time so we can map the join with hibernate</comment>
+	<createTable tableName="CRLN_RELATIONSHIP">
+
+		<column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+			<constraints nullable="true" foreignKeyName="fk_crln_relationship_ancestor" references="CUSTOM_REPORT_LIBRARY_NODE(CRLN_ID)" />
+		</column>
+
+		<column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+			<constraints nullable="false" foreignKeyName="fk_crln_relationship_descendant" references="CUSTOM_REPORT_LIBRARY_NODE(CRLN_ID)" />
+		</column>
+
+		<column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
+		</column>
+	</createTable>
+
+	<createIndex tableName="CRLN_RELATIONSHIP" indexName="idx_crln_relationship_descendant">
+		<column name="DESCENDANT_ID" />
+	</createIndex>
+
+	<createIndex tableName="CRLN_RELATIONSHIP" indexName="idx_crln_relationship_ancestor">
+		<column name="ANCESTOR_ID" />
+	</createIndex>
+
+	<createTable tableName="CUSTOM_REPORT_FOLDER">
+		<column name="CRF_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+			<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CRF_ID" />
+		</column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+		<column name="DESCRIPTION" type="CLOB"/>
+
+	</createTable>
+
+	<createTable tableName="CUSTOM_REPORT_DASHBOARD">
+		<column name="CRD_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+			<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CRD_ID" />
+		</column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+	</createTable>
+
+
+	<addColumn tableName="PROJECT">
+ 		<column name="CRL_ID" type="BIGINT" remarks="FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
+      	</column>
+ 	</addColumn>
+
+ 	<addColumn tableName="ATTACHMENT_LIST">
+ 		<column name="TMP_CRL_ID" type="BIGINT" remarks="TMP FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
+      	</column>
+ 	</addColumn>
+
+	<!-- SQL CREATE A NEW CUSTOM_REPORT_LIBRARY FOR EACH PROJECT IN DB -->
+	<sql>
+		insert into CUSTOM_REPORT_LIBRARY (TMP_PROJECT_ID)
+			select p.PROJECT_ID
+			from PROJECT p;
+
+		update PROJECT p
+			set CRL_ID = (
+				select crl.CRL_ID
+				from CUSTOM_REPORT_LIBRARY crl
+				where p.PROJECT_ID = crl.TMP_PROJECT_ID
+		);
+
+	</sql>
+
+
+	<!-- SQL CREATE A NEW ATTACHEMENT_LIST FOR EACH PREVIOUSLY CUSTOM_REPORT_LIBRARY IN DB -->
+	<sql>
+		insert into ATTACHMENT_LIST (TMP_CRL_ID)
+			select CRL_ID
+			from CUSTOM_REPORT_LIBRARY crl;
+
+		update CUSTOM_REPORT_LIBRARY crl
+			set ATTACHMENT_LIST_ID = (
+				select ATTACHMENT_LIST_ID
+				from ATTACHMENT_LIST al
+				where crl.CRL_ID = al.TMP_CRL_ID
+		);
+
+	</sql>
+	<sql>
+
+		insert into CUSTOM_REPORT_LIBRARY_NODE (ENTITY_ID,CRL_ID,ENTITY_TYPE)
+			select CRL_ID,CRL_ID,'LIBRARY'
+			from CUSTOM_REPORT_LIBRARY;
+
+	</sql>
+	<sql>
+
+		update CUSTOM_REPORT_LIBRARY_NODE
+			set NAME = (
+					select p.NAME
+					from PROJECT p
+					where ENTITY_ID = p.CRL_ID
+				);
+
+	</sql>
+
+	<insert tableName="ACL_CLASS">
+		<column name="CLASSNAME" value="org.squashtest.tm.domain.customreport.CustomReportLibrary" />
+	</insert>
+
+	<!-- INSERT ACL FOR EXISTING LIBRARY -->
+
+
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="1" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
+
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="2" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
+
+
+	<!-- REMOVE TMP COLUMNS USED FOR MIGRATION -->
+	<dropColumn tableName="ATTACHMENT_LIST" columnName="TMP_CRL_ID" />
+	<dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
+
+
+</changeSet>
+
+</databaseChangeLog>

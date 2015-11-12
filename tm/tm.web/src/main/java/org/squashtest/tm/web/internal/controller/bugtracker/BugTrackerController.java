@@ -22,12 +22,12 @@ package org.squashtest.tm.web.internal.controller.bugtracker;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNoCredentialsException;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
 import org.squashtest.csp.core.bugtracker.domain.BTIssue;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -52,6 +53,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
@@ -59,6 +61,8 @@ import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
@@ -94,18 +98,19 @@ public class BugTrackerController {
 	@Inject
 	private BugTrackerManagerService bugTrackerManagerService;
 
-	@Inject
-	private MessageSource messageSource;
+	@Inject private InternationalizationHelper messageSource;
 	@Inject
 	private BugTrackerControllerHelper helper;
+	@Inject private CampaignLibraryNavigationService clnService;
 
-
+	// TODO add *private*, plus it may already be defined someplace else
 	static final String EXECUTION_STEP_TYPE = "execution-step";
 	static final String EXECUTION_TYPE = "execution";
 	static final String ITERATION_TYPE = "iteration";
 	static final String CAMPAIGN_TYPE = "campaign";
 	static final String TEST_SUITE_TYPE = "test-suite";
 	static final String TEST_CASE_TYPE = "test-case";
+	static final String CAMPAIGN_FOLDER_TYPE = "campaign-folder";
 
 
 	private static final String BUGTRACKER_ID = "bugTrackerId";
@@ -113,7 +118,6 @@ public class BugTrackerController {
 
 	private static final String STYLE_ARG = "style";
 	private static final String STYLE_TOGGLE = "toggle";
-	private static final String STYLE_TAB = "fragment-tab";
 
 	private static final String MODEL_TABLE_ENTRIES = "tableEntries";
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
@@ -156,8 +160,6 @@ public class BugTrackerController {
 	 * <ul><li>useParentContextPopup : will tell the panel to use a delegate report issue popup (that's how the OER works)
 	 * </p>
 	 *
-	 * @param stepId
-	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}", method = RequestMethod.GET)
 	public ModelAndView getExecStepIssuePanel(@PathVariable Long stepId, Locale locale,
@@ -187,9 +189,7 @@ public class BugTrackerController {
 	 * json Data for the known issues table.
 	 */
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/known-issues", method = RequestMethod.GET)
-	public
-	@ResponseBody
-	DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
+	public @ResponseBody DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
 	                                          final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -201,19 +201,17 @@ public class BugTrackerController {
 	/**
 	 * will prepare a bug report for an execution step. The returned json infos will populate the form.
 	 *
-	 * @param stepId
-	 * @return
 	 */
 
-	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue")
+	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue/{projectName}")
 	@ResponseBody
-	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request) {
+	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request, @PathVariable String projectName) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
 		String executionUrl = BugTrackerControllerHelper.buildExecutionUrl(request, step.getExecution());
 
-		return makeReportIssueModel(step, locale, executionUrl);
+		return makeReportIssueModel(step, locale, executionUrl, projectName);
 	}
 
 	/**
@@ -254,7 +252,7 @@ public class BugTrackerController {
 	/* **************************************************************************************************************
 	 *
 	 * Execution level section
-	 * 
+	 *
 	 * ***********************************************************************************************************
 	 */
 
@@ -262,8 +260,6 @@ public class BugTrackerController {
 	 * returns the panel displaying the current bugs of that execution and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
 	 *
-	 * @param stepId
-	 * @return
 	 */
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}", method = RequestMethod.GET)
 	public ModelAndView getExecIssuePanel(@PathVariable Long execId, Locale locale,
@@ -303,15 +299,13 @@ public class BugTrackerController {
 	/**
 	 * will prepare a bug report for an execution. The returned json infos will populate the form.
 	 *
-	 * @param execId
-	 * @return
 	 */
-	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
+	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue/{projectName}")
 	@ResponseBody
-	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request) {
+	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request, @PathVariable String projectName) {
 		Execution execution = executionFinder.findById(execId);
 		String executionUrl = BugTrackerControllerHelper.buildExecutionUrl(request, execution);
-		return makeReportIssueModel(execution, locale, executionUrl);
+		return makeReportIssueModel(execution, locale, executionUrl, projectName);
 	}
 
 	/**
@@ -407,8 +401,6 @@ public class BugTrackerController {
 	 * returns the panel displaying the current bugs of that iteration and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
 	 *
-	 * @param iterId
-	 * @return
 	 */
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}", method = RequestMethod.GET)
 	public ModelAndView getIterationIssuePanel(@PathVariable Long iterId, Locale locale,
@@ -456,8 +448,6 @@ public class BugTrackerController {
 	 * returns the panel displaying the current bugs of that campaign and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
 	 *
-	 * @param iterId
-	 * @return
 	 */
 	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}", method = RequestMethod.GET)
 	public ModelAndView getCampaignIssuePanel(@PathVariable Long campId, Locale locale,
@@ -503,8 +493,6 @@ public class BugTrackerController {
 	 * returns the panel displaying the current bugs of that test-suite and the stub for the report form. Remember that
 	 * the report bug dialog will be populated later.
 	 *
-	 * @param testSuiteId
-	 * @return
 	 */
 	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}", method = RequestMethod.GET)
 	public ModelAndView getTestSuiteIssuePanel(@PathVariable Long testSuiteId, Locale locale,
@@ -542,13 +530,70 @@ public class BugTrackerController {
 
 	}
 
+	/* **************************************************************************************************************
+	 *
+	 * Campaign folder level section
+	 *
+	 * ************************************************************************************************************/
+
+	/**
+	 * returns the panel displaying the current bugs of that test-suite and the stub for the report form. Remember that
+	 * the report bug dialog will be populated later.
+	 *
+	 * @param campaignFolderId
+	 * @return
+	 */
+	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}", method = RequestMethod.GET)
+	public ModelAndView getCampaignFolderIssuePanel(@PathVariable("campaignFolderId") Long campaignFolderId, Locale locale,
+			@RequestParam(value = STYLE_ARG, required = false, defaultValue = STYLE_TOGGLE) String panelStyle) {
+
+		CampaignFolder campaignFolder = clnService.findFolder(campaignFolderId);
+		ModelAndView mav = makeIssuePanel(campaignFolder, CAMPAIGN_FOLDER_TYPE, locale, panelStyle, campaignFolder.getProject());
+
+
+		/*
+		 * issue 4178
+		 * eagerly fetch the row entries if the user is authenticated
+		 * (we need the table to be shipped along with the panel in one call)
+		 */
+		if (shouldGetTableData(mav)){
+			DataTableModel issues = getKnownIssuesData(CAMPAIGN_FOLDER_TYPE, campaignFolderId, new DefaultPagingAndSorting(SORTING_DEFAULT_ATTRIBUTE), "0");
+			mav.addObject(MODEL_TABLE_ENTRIES, issues.getAaData());
+		}
+
+		return mav;
+	}
+
+	/**
+	 * json Data for the known issues table.
+	 */
+	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}/known-issues", method = RequestMethod.GET)
+	public @ResponseBody
+	DataTableModel getCampaignFolderKnownIssuesData(@PathVariable("campaignFolderId") Long campaignFolderId,
+			final DataTableDrawParameters params, final Locale locale) {
+
+		PagingAndSorting sorter = new IssueCollectionSorting(params);
+
+		return getKnownIssuesData(CAMPAIGN_FOLDER_TYPE, campaignFolderId, sorter, params.getsEcho());
+
+	}
+
+
 	/* ************************* Generic code section ************************** */
 
-	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = {BUGTRACKER_ID})
+	@RequestMapping(value = "/find-issue/{remoteKey}", method = RequestMethod.GET, params = { BUGTRACKER_ID })
 	@ResponseBody
 	public RemoteIssue findIssue(@PathVariable("remoteKey") String remoteKey,
-	                             @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
+	                             @RequestParam(BUGTRACKER_ID) long bugTrackerId, @RequestParam("projectNames[]") List<String> projectNames, Locale locale) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugTrackerId);
+		RemoteIssue issue = bugTrackersLocalService.getIssue(remoteKey, bugTracker);
+
+		String projectName = issue.getProject().getName();
+
+		if (!projectNames.contains(projectName)){
+			throw new BugTrackerRemoteException(messageSource.internationalize("bugtracker.issue.notfoundinprojects", locale), new Throwable());
+		}
+
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}
 
@@ -560,7 +605,7 @@ public class BugTrackerController {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugTrackerId);
 		bugTrackersLocalService.setCredentials(login, password, bugTracker);
 
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 		map.put("status", "ok");
 		return map;
 
@@ -570,7 +615,7 @@ public class BugTrackerController {
 	public
 	@ResponseBody
 	Object getBugTrackerStatus(@RequestParam(RequestParams.PROJECT_ID) Long projectId) {
-		String strStatus = null;
+		String strStatus;
 
 		BugTrackerStatus status = checkStatus(projectId);
 
@@ -582,7 +627,7 @@ public class BugTrackerController {
 			strStatus = "bt_undefined";
 		}
 
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		result.put("status", strStatus);
 		return result;
 	}
@@ -592,7 +637,7 @@ public class BugTrackerController {
 		final RemoteIssue postedIssue = bugTrackersLocalService.createIssue(entity, issue);
 		final URL issueUrl = bugTrackersLocalService.getIssueUrl(postedIssue.getId(), entity.getBugTracker());
 
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		result.put("url", issueUrl.toString());
 		result.put("issueId", postedIssue.getId());
 
@@ -604,7 +649,7 @@ public class BugTrackerController {
 		bugTrackersLocalService.attachIssue(entity, issue.getId());
 		final URL issueUrl = bugTrackersLocalService.getIssueUrl(issue.getId(), entity.getBugTracker());
 
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		result.put("url", issueUrl.toString());
 		result.put("issueId", issue.getId());
 
@@ -625,7 +670,7 @@ public class BugTrackerController {
 	                               @PathVariable("remoteIssueId") String remoteIssueId,
 	                               @RequestParam("attachment[]") List<UploadedData> uploads) {
 
-		List<Attachment> issueAttachments = new ArrayList<Attachment>(uploads.size());
+		List<Attachment> issueAttachments = new ArrayList<>(uploads.size());
 		for (UploadedData upload : uploads) {
 			Attachment newAttachment = new Attachment(upload.getName(), upload.getSizeInBytes(), upload.getStream());
 			issueAttachments.add(newAttachment);
@@ -646,38 +691,35 @@ public class BugTrackerController {
 	}
 
 	@RequestMapping(value = "{btName}/command", method = RequestMethod.POST)
-	public
-	@ResponseBody
-	Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, @RequestBody DelegateCommand command) {
+	public @ResponseBody Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName, @RequestBody DelegateCommand command) {
 		return bugTrackersLocalService.forwardDelegateCommand(command, bugtrackerName);
 	}
 
 	/* ********* generates a json model for an issue ******* */
 
-	private RemoteIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl) {
+	private RemoteIssue makeReportIssueModel(Execution exec, Locale locale, String executionUrl, String projectName) {
 		String defaultDescription = BugTrackerControllerHelper.getDefaultDescription(exec, locale, messageSource,
-			executionUrl);
-		return makeReportIssueModel(exec, defaultDescription);
+				executionUrl);
+		return makeReportIssueModel(exec, defaultDescription, projectName);
 	}
 
-	private RemoteIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl) {
+	private RemoteIssue makeReportIssueModel(ExecutionStep step, Locale locale, String executionUrl, String projectName) {
 		String defaultDescription = BugTrackerControllerHelper.getDefaultDescription(step, locale, messageSource,
-			executionUrl);
+				executionUrl);
 		String defaultAdditionalInformations = BugTrackerControllerHelper.getDefaultAdditionalInformations(step,
-			locale, messageSource);
-		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale);
+				locale, messageSource);
+		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale, projectName);
 	}
 
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
-	                                         String defaultAdditionalInformations, Locale locale) {
-		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription);
+			String defaultAdditionalInformations, Locale locale, String projectName) {
+		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription, projectName);
 		String comment = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
 		emptyIssue.setComment(comment);
 		return emptyIssue;
 	}
 
-	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription) {
-		String projectName = entity.getProject().getBugtrackerBinding().getProjectName();
+	private RemoteIssue makeReportIssueModel(IssueDetector entity, String defaultDescription, String projectName) {
 
 		RemoteIssue emptyIssue = bugTrackersLocalService.createReportIssueTemplate(projectName, entity.getBugTracker());
 
@@ -689,7 +731,7 @@ public class BugTrackerController {
 
 	/*
 	 * generates the ModelAndView for the bug section.
-	 * 
+	 *
 	 * If the bugtracker isn'st defined no panel will be sent at all.
 	 */
 	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle,
@@ -710,6 +752,8 @@ public class BugTrackerController {
 			mav.addObject(MODEL_BUG_TRACKER_STATUS, status);
 			mav.addObject("project", project);
 			mav.addObject("bugTracker", project.findBugTracker());
+			mav.addObject("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
+			mav.addObject("projectId", project.getId());
 			mav.addObject("delete", "");
 
 			return mav;
@@ -747,6 +791,9 @@ public class BugTrackerController {
 				case TEST_CASE_TYPE:
 					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForTestCase(id, paging);
 					break;
+			case CAMPAIGN_FOLDER_TYPE :
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForCampaignFolder(id, paging);
+				break;
 				case CAMPAIGN_TYPE:
 					filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(id, paging);
 					break;
@@ -827,8 +874,8 @@ public class BugTrackerController {
 		String entityName, Long entityId, Exception cause, PagingAndSorting paging) {
 		LOGGER.trace("BugTrackerController : fetching known issues for  " + entityName + " " + entityId
 			+ " failed, exception : ", cause);
-		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<IssueOwnership<RemoteIssueDecorator>>();
-		return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(paging, 0, emptyList);
+		List<IssueOwnership<RemoteIssueDecorator>> emptyList = new LinkedList<>();
+		return new PagingBackedPagedCollectionHolder<>(paging, 0, emptyList);
 	}
 
 	private boolean shouldGetTableData(ModelAndView mav) {

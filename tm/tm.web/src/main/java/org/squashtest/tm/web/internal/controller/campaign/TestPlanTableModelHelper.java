@@ -79,8 +79,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		Long tcId;
 		String importance;
 		String reference;
-		String milestoneDates = "--";
-		String milestoneLabels = "--";
+		String milestoneDates = "-";
+		String milestoneLabels = "-";
 
 		if (item.isTestCaseDeleted()) {
 			projectName = formatNoData(locale);
@@ -97,21 +97,20 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			}else{
 				reference = item.getReferencedTestCase().getReference();
 			}
-			importance 		= messageSource.internationalize(item.getReferencedTestCase().getImportance(), locale);
+			importance 		= messageSource.internationalizeAbbreviation(item.getReferencedTestCase().getImportance(), locale);
 			milestoneDates 	= MilestoneModelUtils.timeIntervalToString(item.getReferencedTestCase().getMilestones(), messageSource, locale);
 			milestoneLabels = MilestoneModelUtils.milestoneLabelsOrderByDate(item.getReferencedTestCase().getMilestones());
 		}
 
 
 		//dataset
-
 		DatasetInfos dsIndos = makeDatasetInfo (item);
 
 		// test suite name
 		String testSuiteNameList = "";
 		String testSuiteNameListTot = "";
-		// test suite name
 		List<Long> testSuiteIdsList;
+
 		if (item.getTestSuites().isEmpty()) {
 			testSuiteNameList = formatNoData(locale);
 			testSuiteNameListTot = formatNoData(locale);
@@ -122,9 +121,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
 
-
-
-
+		// now stuff the map
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
 		res.put(DataTableModelConstants.PROJECT_NAME_KEY, projectName);

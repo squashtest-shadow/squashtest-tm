@@ -107,10 +107,8 @@ public class DatasetTarget extends Target {
 		return testCase.getProject();
 	}
 
-	/**
-	 * @return
-	 * @see org.squashtest.tm.service.internal.batchimport.TestCaseTarget#getPath()
-	 */
+
+	@Override
 	public String getPath() {
 		return testCase.getPath() + "/datasets/" + name;
 	}

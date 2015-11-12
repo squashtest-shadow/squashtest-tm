@@ -88,6 +88,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) ;
 
 			Boolean hasSteps = !visited.getSteps().isEmpty();
+
 			//build tooltip
 			Locale locale = LocaleContextHolder.getLocale();
 			String localizedStatus = internationalizationHelper.internationalize(status, locale);
@@ -97,8 +98,15 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			String[] args = {localizedStatus, localizedImportance, localizedIsReqCovered, localizedHasSteps};
 			String tooltip = internationalizationHelper.getMessage("label.tree.testCase.tooltip",args,visited.getId().toString(), locale);
 
-			//set test case attributes
+			// for-display instructions
 			addLeafAttributes("test-case", "test-cases");
+
+			// name and title
+			builtNode.addAttr("name", visited.getName());
+			builtNode.addAttr("reference", visited.getReference());
+			builtNode.setTitle(visited.getFullName());
+
+			// other attributes
 			builtNode.addAttr("status", status.toString().toLowerCase());
 			builtNode.addAttr("importance", importance.toString().toLowerCase());
 			builtNode.addAttr("isreqcovered", isreqcovered.toString());
@@ -111,13 +119,6 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			builtNode.addAttr("milestone-creatable-deletable", Milestone.allowsCreationOrDeletion(allMilestones).toString());
 			builtNode.addAttr("milestone-editable", Milestone.allowsEdition(allMilestones).toString());
 
-			if (visited.getReference() != null && visited.getReference().length() > 0) {
-				builtNode.setTitle(visited.getReference() + " - " + visited.getName());
-				builtNode.addAttr("reference", visited.getReference());
-
-			} else {
-				builtNode.setTitle(visited.getName());
-			}
 		}
 
 		/**

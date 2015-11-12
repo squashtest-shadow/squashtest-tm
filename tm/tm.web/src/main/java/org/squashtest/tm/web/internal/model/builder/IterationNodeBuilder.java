@@ -49,13 +49,17 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	 */
 	@Override
 	protected JsTreeNode doBuild(JsTreeNode node, Iteration model) {
+
+		node.addAttr("name", model.getName());
+		node.addAttr("reference", model.getReference());
+		node.setTitle(model.getFullName());
+
 		node.addAttr("rel", "iteration");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", "iterations");
 		node.setState(model.hasTestSuites() ? State.closed  : State.leaf);
-		node.setTitle(createTitle(model));
 		node.addAttr("iterationIndex", Integer.toString(index + 1));
-		node.addAttr("name", model.getName());
+
 		node.addAttr("id", model.getClass().getSimpleName() + '-' + model.getId());
 
 		//milestone attributes
@@ -65,9 +69,6 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 		return node;
 	}
 
-	private String createTitle(Iteration model) {
-		return (index + 1) + " - " + model.getName();
-	}
 
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doAddChildren(org.squashtest.tm.web.internal.model.jstree.JsTreeNode, java.lang.Object)

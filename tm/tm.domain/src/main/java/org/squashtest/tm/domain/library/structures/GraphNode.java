@@ -120,10 +120,15 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	}
 	//GENERATED:END
 
+	/**
+	 * Remove all outbound edges from this node to the other. One can still
+	 * navigate from the other node to this node.
+	 * @param node
+	 */
 	public void disconnect(T node){
 
-		for (Iterator<T> iter = inbounds.iterator(); iter.hasNext();){
-			if (iter.next().equals(node)){
+		for (Iterator<T> iter = node.inbounds.iterator(); iter.hasNext();){
+			if (iter.next().equals(this)){
 				iter.remove();
 			}
 		}

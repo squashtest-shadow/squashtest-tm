@@ -30,6 +30,7 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 
 
 
@@ -37,6 +38,7 @@
 <c:url var="testCaseUrl"          value="/test-cases/{tc-id}/info" />
 <c:url var="dtMessagesUrl"        value="/datatables/messages" />
 <c:url var="tablemodel"           value="/campaigns/${campaign.id}/test-plan" />
+<c:url var="workspaceUrl"         value="/test-case-workspace" />
 
 
 <f:message var="okLabel"          key="label.Ok" />
@@ -61,6 +63,8 @@
 <f:message var="tooltipAddTPI"    key="tooltips.AddTPIToTP" />
 <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
 <f:message var="tooltipAssign"    key="tooltips.AssignUserToTPI" />
+<f:message var="tooltipReference" key="label.Reference"/>
+<f:message var="tooltipImportance" key="label.Importance"/>
 
 <%-- ================== the toolbar ==================== --%>
 <div class="cf">
@@ -119,6 +123,7 @@
    --%>
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
 
+
 <div class="table-tab-wrap">
   <c:if test="${editable}">
     <c:set var="deleteBtnClause" value=", unbind-button=#delete-multiple-test-cases-dialog" />
@@ -129,8 +134,9 @@
       <tr>
         <th class="no-user-select"
           data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-        <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
-          <f:message key="label.project" />
+        <th class="no-user-select tp-th-filter tp-th-project-name" 
+            data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+          <f:message key="label.Location" />
         </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
@@ -139,14 +145,15 @@
           data-def="map=exec-mode, sortable, center, visible=${campaign.project.testAutomationEnabled}, sClass=exec-mode">
           <f:message key="label.Mode" />
         </th>
-        <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
-          <f:message key="label.Reference" />
+        <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}" 
+          data-def="map=reference, sortable, link=${testCaseUrl}">
+          <f:message key="label.Reference.short" />
         </th>
         <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testCaseUrl}">
-          <f:message key="test-case.name.label" />
+          <f:message key="label.TestCase.short" />
         </th>        
-        <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
-          <f:message key="test-case.importance.combo.label" />
+        <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
+          <f:message key="label.Importance.short" />
         </th>
         <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
@@ -199,6 +206,9 @@
   
   <script id="delete-dialog-tpl" type="text/x-handlebars-template">
   <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
+
+	<comp:notification-pane type="warning">
+	<jsp:attribute name="htmlcontent">
     <div data-def="state=confirm-deletion">
       <span><f:message key="dialog.remove-testcase-associations.message.first"/></span>
       <span><f:message key="message.permissions.confirm"/></span>
@@ -207,6 +217,8 @@
       <span><f:message key="dialog.remove-testcase-associations.message.multiple"/></span>
       <span><f:message key="message.permissions.confirm"/></span>
     </div>
+	</jsp:attribute>
+	</comp:notification-pane>
     <div class="popup-dialog-buttonpane">
       <input type="button" class="button" value="${confirmLabel}" data-def="evt=confirm, mainbtn"/>
       <input type="button" class="button" value="${cancelLabel}" data-def="evt=cancel"/>

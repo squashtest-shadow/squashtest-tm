@@ -26,6 +26,9 @@ import java.util.List;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
+import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
@@ -35,7 +38,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
  * 
  * @param <ITEM>
  */
-public class JsTreeNodeListBuilder<ITEM> {
+public class JsTreeNodeListBuilder<ITEM extends Identified> {
 	private JsTreeNodeBuilder<? super ITEM, ?> nodeBuilder;
 	private MultiMap expansionCandidates;
 
@@ -79,4 +82,11 @@ public class JsTreeNodeListBuilder<ITEM> {
 		this.expansionCandidates = expansionCandidates;
 		return this;
 	}
+
+	public JsTreeNodeListBuilder<ITEM> setModel(
+			List<Library<CampaignLibraryNode>> findAllLibraries) {
+		this.model = (Collection<ITEM>) findAllLibraries;
+		return this;
+	}
+
 }

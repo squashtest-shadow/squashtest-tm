@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,15 +33,17 @@ import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -55,6 +59,10 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Inject
 	private IndexationService indexationService;
+
+	@Inject
+	private ExecutionStepModificationHelper executionStepModifHelper;
+
 
 	@Override
 	public Execution findAndInitExecution(Long executionId) {
@@ -142,5 +150,37 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	public boolean exists(long id) {
 		return executionDao.exists(id);
 	}
+
+	@Override
+	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void setExecutionAssignment(Long executionId, User user) {
+		Execution execution = executionDao.findById(executionId);
+		// Do nothing yet 'lol'
+
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
+		Execution execution = executionDao.findById(executionId);
+		execution.setExecutionStatus(status);
+
+	}
+
+	@Override
+	public long updateSteps(long executionId) {
+		Execution execution = executionDao.findById(executionId);
+		List<ExecutionStep> toBeUpdated = executionStepModifHelper.findStepsToUpdate(execution);
+
+		long result = executionStepModifHelper.doUpdateStep(toBeUpdated, execution);
+
+		if (execution.getSteps().size() == 0) {
+			throw new ExecutionHasNoStepsException();
+		}
+		return result;
+	}
+
 
 }

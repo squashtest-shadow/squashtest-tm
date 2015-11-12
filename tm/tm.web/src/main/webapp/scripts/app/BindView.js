@@ -50,13 +50,28 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms" ], function($, Back
 			event.wasBound = true;
 		}
 	};
+	
+	/**
+	 * change event callback which sets the current model's property
+	 * only for checkboxes as they have no value attribute so generic method won't work.
+	 * model attribute setted at true if checkbox checked, false on uncheck
+	 */
+	var setPropCheckBox = function(event) {
+		if (!!this.model && !event.wasBound) {
+			var control = event.target;
+			this.model.set($(control).data("prop"), $(control).is(":checked"));
+			event.wasBound = true;
+		}
+	};
 
 	/**
 	 * events hash used for model binding
 	 */
 	var defaultBindingsEvents = {
 		"change input:text[data-prop]" : setProp,
-		"change textarea[data-prop]" : setProp
+		"change textarea[data-prop]" : setProp,
+		"change input:checkbox[data-prop]" : setPropCheckBox,
+		"change select[data-prop]" : setProp
 	};
 
 	function bindingsEvents(view) {

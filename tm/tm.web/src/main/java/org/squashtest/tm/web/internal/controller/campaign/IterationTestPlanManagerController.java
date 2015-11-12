@@ -42,6 +42,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -52,7 +53,6 @@ import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -77,7 +77,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
- * 
+ *
  * @author R.A
  */
 @Controller
@@ -100,9 +100,6 @@ public class IterationTestPlanManagerController {
 
 	@Inject
 	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
-
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 
 	@Inject
@@ -167,11 +164,11 @@ public class IterationTestPlanManagerController {
 
 	/**
 	 * Fetches and returns a list of json test cases from an iteration id
-	 * 
+	 *
 	 * @param iterationId
 	 *            : the id of an {@link Iteration}
 	 * @return the list of {@link JsonTestCase} representing the iteration's planned test-cases
-	 * 
+	 *
 	 */
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON)
 	public @ResponseBody
@@ -182,13 +179,13 @@ public class IterationTestPlanManagerController {
 
 	/***
 	 * Method called when you drag a test case and change its position in the selected iteration
-	 * 
+	 *
 	 * @param testPlanId
 	 *            : the iteration owning the moving test plan items
-	 * 
+	 *
 	 * @param itemIds
 	 *            the ids of the items we are trying to move
-	 * 
+	 *
 	 * @param newIndex
 	 *            the new position of the first of them
 	 */
@@ -202,7 +199,7 @@ public class IterationTestPlanManagerController {
 
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return
 	 */
@@ -279,6 +276,13 @@ public class IterationTestPlanManagerController {
 	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {
 		iterationTestPlanManagerService.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
+	}
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}/last-execution", method = RequestMethod.GET)
+	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId){
+		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
+		Execution exec = item.getLatestExecution();
+		return "redirect:/executions/"+exec.getId();
 	}
 
 	private String formatUnassigned(Locale locale) {

@@ -44,6 +44,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 
 	private String filename;
 	private String version;
+	private String module;
 
 	/**
 	 * i18n key of this wizard's name
@@ -105,6 +106,15 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	@Override
 	public String getVersion() {
 		return version;
+	}
+
+	public void setModule(String module){
+		this.module = module;
+	}
+
+	@Override
+	public String getModule(){
+		return module;
 	}
 
 	/**

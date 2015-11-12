@@ -171,4 +171,10 @@ class StubObjectAclService implements ObjectAclService {
 		// TODO Auto-generated method stub
 		
 	}
+
+	@Override
+	public List<Object[]> retrieveUsersFromIdentityAndClass(long entityId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

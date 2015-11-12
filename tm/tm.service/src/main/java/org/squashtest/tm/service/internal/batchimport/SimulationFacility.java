@@ -29,6 +29,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 
 /**
  *
@@ -255,6 +256,30 @@ public class SimulationFacility implements Facility {
 
 		return logs;
 
+	}
+
+
+
+	@Override
+	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
+		//no need to update model as the validator do it after all checks.
+		return validator.createRequirementVersion(instr);
+	}
+
+	@Override
+	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
+
+		return validator.updateRequirementVersion(instr);
+	}
+
+	@Override
+	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
+	}
+
+	@Override
+	public LogTrain createCoverage(CoverageInstruction instr) {
+		return validator.createCoverage(instr);
 	}
 
 }

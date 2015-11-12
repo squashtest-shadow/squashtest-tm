@@ -25,11 +25,12 @@ define(["jquery",
 		"contextual-content-handlers",
 		"jquery.squash.fragmenttabs",
 		"workspace.event-bus",
+		"workspace.routing",
 		"milestones/milestone-panel",
 		"milestones/entity-milestone-count-notifier",
 		"jqueryui",
 		"jquery.squash.formdialog"],
-		function($, pubsub, basic, contentHandlers, Frag, eventBus, milestonePanel, milestoneNotifier){
+		function($, pubsub, basic, contentHandlers, Frag, eventBus, routing, milestonePanel, milestoneNotifier){
 
 	
 	function initRenameDialog(settings){
@@ -150,7 +151,10 @@ define(["jquery",
 	function initFragmentTab(){
 
 		var fragConf = {
-			cookie : "testcase-tab-cookie"
+			/*cookie : {
+				name : "testcase-tab-cookie",
+				path : routing.buildURL('testcases.base')
+			}*/
 		};
 		Frag.init(fragConf);
 	}

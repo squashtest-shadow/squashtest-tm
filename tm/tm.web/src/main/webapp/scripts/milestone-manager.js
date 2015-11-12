@@ -19,16 +19,11 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require(["common"], function(){
-	require(["app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch", 
+	require(["app/pubsub", "app/squash.wreqr.init", "jquery", "squash.translator", "workspace.routing","squash.configmanager","squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 	         "milestone-manager/milestone-activation", "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"],
-			function(ps, Wreqr, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
+			function(ps, squashtm, $, translator, routing, confman, dateutils, MilestoneFeatureSwitch, MilestoneActivation){
 		"use strict";
 
-		squashtm = squashtm || {};
-		squashtm.vent = squashtm.vent || new Wreqr.EventAggregator();
-
-
-		
 		var trans = translator.get({
 			rangeGlobal : "milestone.range.GLOBAL",
 			statusPlanned : "milestone.status.PLANNED",
@@ -53,6 +48,15 @@ require(["common"], function(){
 
 		function setActionsEnabled(enabled) {
 			$(".milestone-dep").prop("disabled", !enabled);
+		}
+		
+		function getFormValues(){
+			return	{
+					label: $( '#add-milestone-label' ).val().trim(),
+					status: $( '#add-milestone-status' ).val(),
+					endDate: getPostDate($( '#add-milestone-end-date' ).text()),
+					description: $( '#add-milestone-description' ).val()
+			}
 		}
 
 	ps.subscribe("loaded.milestoneFeatureSwitch", function() {
@@ -210,16 +214,6 @@ require(["common"], function(){
 
 		var $textAreas = $("textarea");
 
-		function decorateArea() {
-			$(this).ckeditor(function() {}, {
-				customConfig : squashtm.app.contextRoot + "/styles/ckeditor/ckeditor-config.js",
-				language : squashtm.app.ckeditorLanguage
-			});
-		}
-
-		$textAreas.each(decorateArea);
-
-
 		$("#delete-milestone-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var $this = $(this);
 			var id = $this.data('entity-id');
@@ -236,6 +230,8 @@ require(["common"], function(){
 			});
 
 		});
+		
+		//Add milestone
 
 	var addMilestoneDialog = $("#add-milestone-dialog");
 	addMilestoneDialog.formDialog();
@@ -252,12 +248,7 @@ require(["common"], function(){
 	
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
-		var params = {
-			label: $( '#add-milestone-label' ).val().trim(),
-			status: $( '#add-milestone-status' ).val(),
-			endDate: getPostDate($( '#add-milestone-end-date' ).text()),
-			description: $( '#add-milestone-description' ).val()
-		};
+		var params = getFormValues();
 		$.ajax({
 			url : url,
 			type : 'POST',
@@ -269,6 +260,23 @@ require(["common"], function(){
 			addMilestoneDialog.formDialog('close');
 		});
 
+	});
+	
+	addMilestoneDialog.on('formdialogaddanother', function(){
+		var url = routing.buildURL('administration.milestones');
+		var params = getFormValues();
+		$.ajax({
+			url : url,
+			type : 'POST',
+			dataType : 'json',
+			data : params
+		}).success(function(id){ 
+			config.data.editableMilestoneIds.push(id);
+			$('#milestones-table').squashTable()._fnAjaxUpdate();
+			addMilestoneDialog.formDialog('cleanup');
+			$("#clone-milestone-end-date").text("");
+		});
+		
 	});
 
 	addMilestoneDialog.on('formdialogcancel', function(){

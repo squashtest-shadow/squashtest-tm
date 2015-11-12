@@ -33,7 +33,7 @@ public final class InfoListItemCoercer<T extends InfoListItem>
 extends TypeBasedCellValueCoercer<T >
 implements CellValueCoercer<T> {
 
-	public static enum ListRole { ROLE_NATURE, ROLE_TYPE };
+	public static enum ListRole { ROLE_NATURE, ROLE_TYPE, ROLE_CATEGORY };
 
 	private static final Set<String> OLD_NATURES;
 	private static final Set<String> OLD_TYPES;

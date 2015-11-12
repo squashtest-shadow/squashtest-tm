@@ -31,6 +31,8 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
 
 @Repository("CustomProjectDao")
 public class HibernateProjectDao extends HibernateEntityDao<Project> implements CustomProjectDao {
+
+
 	@Override
 	public long countNonFoldersInProject(long projectId) {
 		Long req = (Long) executeEntityNamedQuery("project.countNonFolderInRequirement", idParameter(projectId));
@@ -79,4 +81,5 @@ public class HibernateProjectDao extends HibernateEntityDao<Project> implements 
 		}
 		return executeListNamedQuery("Project.findAllUsersWhoModifiedRequirementVersions", idParameters(projectIds));
 	}
+
 }

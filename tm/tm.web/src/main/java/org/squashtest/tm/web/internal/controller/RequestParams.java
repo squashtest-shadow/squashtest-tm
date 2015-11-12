@@ -40,6 +40,11 @@ public final class RequestParams {
 	public static final String FOLDER_IDS = "folderIds[]";
 
 	/**
+	 * simple folder id post param
+	 */
+	public static final String FOLDER_ID = "folderId";
+
+	/**
 	 * multiple ids post param
 	 */
 	public static final String IDS = "ids[]";
@@ -60,5 +65,6 @@ public final class RequestParams {
 	public static final String MODEL = "model";
 	public static final String NODE_IDS = "nodeIds";
 	public static final String CAMPAIGN_ID = "campaignId";
+	public static final String EXECUTION_ID = "executionId";
 
 }

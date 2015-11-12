@@ -28,6 +28,8 @@
 	14/01/24 : pruned unused parts of the code but I'll have rest only when 
 	I can finally dump it
 	
+	15/06/15 : i get this file from an old commit, dunno if these previous comments should be still here.
+	
 --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f"%>
@@ -86,8 +88,7 @@ require(["common"], function() {
     				return;
     			}
     			
-
-    			$("#search-result-datatable td").removeClass("jstree-clicked ui-state-default");
+    			$("#search-result-datatable tr").removeClass("jstree-clicked ui-state-default");
     			$(this).addClass("jstree-clicked ui-state-default");
     			
    				var url = getEntityURL($(this));   				

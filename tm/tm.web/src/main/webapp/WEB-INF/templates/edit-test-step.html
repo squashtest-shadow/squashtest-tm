@@ -34,6 +34,8 @@
 		locale : /*[[#{squashtm.locale}]]*/,
 		contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 		stepURL : /*[[ @{/test-steps/} + ${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/1",
+		isIEO :  /*[[ ${isIEO} ]]*/ false,
+		fromExec :  /*[[ ${fromExec} ]]*/ false,
 		editTCS : {
 			testStepURL : /*[[ @{/test-steps/}+${testStepView.id} ]]*/ "http://localhost:8080/squash/test-steps/50",
 			hasCUF : /*[[ ${hasCUF} ]]*/false,
@@ -90,7 +92,7 @@
 
         <div id="sub-page-buttons" class="sub-page-buttons">
 
-          <input id="close" type="button" th:value="#{ label.Close }" value="Close" />
+          <input id="close" type="button" th:value=" ${fromExec != null} ? #{ label.return.exec } : #{ label.Close } " value="Close" />
 
         </div>
 
@@ -109,6 +111,9 @@
 				<a id="test-step-number-header" href="#" th:text="${testStepView.order}+'/'+${testStepView.totalNumberOfSteps}">12/13</a>
               </h2>
             </div>
+            
+            <div style="float: left; height: 3em" class="entity-edit-general-warning"><p th:if= "${fromExec} and ${testStepView.isCallStep()}" th:text="#{label.callstep} + ' ' + ${testStepView.callStepName}" /></div>
+            
             <div class="snap-right">  <a th:text="${writable} ? #{ label.previous.saveWarning } : #{ label.previous } "  href="#" id="previous-test-step-button" >Previous</a>
                 <a th:text="${writable} ? #{ label.next.saveWarning }  : #{ label.next }" href="#" id="next-test-step-button">Next</a></div>
             <div class="unsnap"></div>
@@ -125,7 +130,8 @@
           	  </div>
 		    </div>
 
-            <div id="test-step-info-panel" class="information-panel tg-body" >
+			       
+            <div id="test-step-info-panel" class="information-panel tg-body"  th:classappend="${stepIsDelete} ? disabled-transparent : ''" >
               <div class="display-table" id="test-step-infos-table"  th:style="${testStepView.actionStep}? 'width:100%' : ''">
                  <div class="display-table-row" >
                     <label for="test-step-id" >Id</label>

@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.EXISTS;
 import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_CREATED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,16 +33,23 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportMode;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
@@ -51,9 +60,17 @@ import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Part
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.internal.batchimport.Model.StepType;
 import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.project.ProjectFinder;
+import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
 /**
@@ -139,12 +156,90 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	}
 
+	/**
+	 * Strategy for validating milestones. Should be specialized in create and update
+	 * @author Gregory Fouquet
+	 *
+	 */
+	private abstract class RequirementMilestonesValidationStrategy {
+		public void validateMilestones(RequirementVersionInstruction instr, LogTrain logs) {
+			RequirementVersionTarget target = instr.getTarget();
+
+			if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
+				logs.addEntry(logEntry().forTarget(target)
+						.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
+			}
+
+			if (milestonesEnabled) {
+				Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
+				Partition bindables = milestoneHelper.partitionBindable(existing.passing);
+				logs.addEntries(logUnknownMilestones(target, existing.rejected));
+				logs.addEntries(logUnbindableMilestones(target, bindables.rejected));
+			}
+		}
+
+		protected abstract LogEntry.Builder logEntry();
+
+		/**
+		 * @param rejected
+		 * @return
+		 */
+		protected List<LogEntry> logUnbindableMilestones(RequirementVersionTarget target, List<String> rejected) {
+			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+			for (String name : rejected) {
+				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
+						.build());
+				target.rejectedMilestone();
+			}
+			return logs;
+		}
+
+		/**
+		 * @param rejected
+		 * @return
+		 */
+		protected List<LogEntry> logUnknownMilestones(RequirementVersionTarget target, List<String> rejected) {
+			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
+			for (String name : rejected) {
+				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name)
+						.build());
+				target.rejectedMilestone();
+			}
+			return logs;
+		}
+
+	}
+
+	private final class RequirementVersionCreationStrategy extends RequirementMilestonesValidationStrategy {
+		/**
+		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
+		 */
+		@Override
+		protected Builder logEntry() {
+			return LogEntry.failure();
+		}
+	}
+
+	private final class RequirementVersionUpdateStrategy extends RequirementMilestonesValidationStrategy {
+		/**
+		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
+		 */
+		@Override
+		protected Builder logEntry() {
+			return LogEntry.warning();
+		}
+
+	}
+
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
-	private static final String PERM_CREATE = "CREATE";
-	private static final String PERM_WRITE = "WRITE";
-	private static final String PERM_DELETE = "DELETE";
 	private static final String PERM_READ = "READ";
-	private static final String LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
+	private static final String PERM_IMPORT = "IMPORT";
+	private static final String TEST_CASE_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
+	private static final String REQUIREMENT_VERSION_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.requirement.RequirementLibrary";
+
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(ValidationFacility.class);
+
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -168,10 +263,28 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	@Inject
 	private MilestoneImportHelper milestoneHelper;
 
+	@Inject
+	private RequirementLibraryNavigationService reqLibNavigationService;
+
+	@Inject
+	private TestCaseLibraryNavigationService tcLibNavigationService;
+
+	@Inject
+	private RequirementLibraryFinderService reqFinderService;
+
+	@Inject
+	private RequirementVersionCoverageDao coverageDao;
+	
+	@Inject
+	private ProjectDao projectDao;
+
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
 	private CreationStrategy creationStrategy = new CreationStrategy();
 	private UpdateStrategy updateStrategy = new UpdateStrategy();
+	private RequirementVersionCreationStrategy requirementVersionCreationStrategy =  new RequirementVersionCreationStrategy();
+	private RequirementVersionUpdateStrategy requirementVersionUpdateStrategy =  new RequirementVersionUpdateStrategy();
+
 
 	@Override
 	public Model getModel() {
@@ -213,14 +326,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 *
 	 * @param target
 	 *
-	 * @param testCase
+	 * @param auditable
 	 * @param create
 	 * @return a list of logEntries
 	 */
-	private List<LogEntry> fixMetadatas(TestCaseTarget target, AuditableMixin testCase, ImportMode importMode) {
+	private List<LogEntry> fixMetadatas(Target target, AuditableMixin auditable, ImportMode importMode, EntityType type) {
 		// init vars
 		List<LogEntry> logEntries = new ArrayList<LogEntry>();
-		String login = testCase.getCreatedBy();
+		String login = auditable.getCreatedBy();
 		boolean fixUser = false;
 		if (StringUtils.isBlank(login)) {
 			// no value for created by
@@ -229,6 +342,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			User user = userDao.findUserByLogin(login);
 			if (user == null || !user.getActive()) {
 				// user not found or not active
+				String warningMessage = null;
 				String impactMessage = null;
 				switch (importMode) {
 				case CREATE:
@@ -241,18 +355,28 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					impactMessage = Messages.IMPACT_NO_CHANGE;
 					break;
 				}
-				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_TC_USER_NOT_FOUND,
+				switch (type) {
+				case REQUIREMENT_VERSION:
+					warningMessage = Messages.ERROR_REQ_USER_NOT_FOUND;
+					break;
+				case TEST_CASE:
+					warningMessage = Messages.ERROR_TC_USER_NOT_FOUND;
+					break;
+				default:
+					break;
+				}
+				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING,warningMessage,
 						impactMessage);
 				logEntries.add(logEntry);
 				fixUser = true;
 			}
 		}
 		if (fixUser) {
-			testCase.setCreatedBy(userAccountService.findCurrentUser().getLogin());
+			auditable.setCreatedBy(userAccountService.findCurrentUser().getLogin());
 		}
 
-		if (testCase.getCreatedOn() == null) {
-			testCase.setCreatedOn(new Date());
+		if (auditable.getCreatedOn() == null) {
+			auditable.setCreatedOn(new Date());
 		}
 		return logEntries;
 	}
@@ -270,7 +394,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 2 - can the user actually do it ?
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_DELETE, target, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -300,7 +424,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues, model.getTestStepCufs(target)));
 
 		// 3 - the user must be approved
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -340,7 +464,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 3 - cufs : call steps have no cufs -> skip
 
 		// 4.1 - the user must be approved on the source test case
-		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntOwnerPermission != null) {
 			logs.addEntry(hasntOwnerPermission);
 		}
@@ -379,7 +503,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues, model.getTestStepCufs(target)));
 
 		// 3 - the user must be approved
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -425,7 +549,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 3 - cufs : call steps have no cufs -> skip
 
 		// 4.1 - the user must be approved on the source test case
-		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntOwnerPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntOwnerPermission != null) {
 			logs.addEntry(hasntOwnerPermission);
 		}
@@ -472,7 +596,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.basicTestStepChecks(target);
 
 		// 2 - can the user do it
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target.getTestCase(), target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target.getTestCase(), target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -506,7 +630,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -528,7 +652,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -548,7 +672,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 2 - is the user approved ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, target.getOwner(), target);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, target.getOwner(), target);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -590,7 +714,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			}
 
 			// 3 - is the user allowed to do so ?
-			LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+			LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, dataset.getTestCase(), dataset);
 			if (hasNoPermission != null) {
 				logs.addEntry(hasNoPermission);
 			}
@@ -607,7 +731,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.basicDatasetCheck(dataset);
 
 		// 2 - is the user allowed to do so ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, dataset.getTestCase(), dataset);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -629,7 +753,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - has the user the required privilege ?
-		LogEntry hasNoPermission = checkPermissionOnProject(PERM_WRITE, dataset.getTestCase(), dataset);
+		LogEntry hasNoPermission = checkPermissionOnProject(PERM_IMPORT, dataset.getTestCase(), dataset);
 		if (hasNoPermission != null) {
 			logs.addEntry(hasNoPermission);
 		}
@@ -652,13 +776,56 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		Long libid = model.getProjectStatus(target.getProject()).getTestCaseLibraryId();
 		if ((libid != null)
-				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, LIBRARY_CLASSNAME))) {
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, TEST_CASE_LIBRARY_CLASSNAME))) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
 					permission, target.getPath() });
 		}
 
 		return entry;
 	}
+
+	private LogEntry checkPermissionOnProject(String permission, RequirementVersionTarget target, Target checkedTarget) {
+
+		LogEntry entry = null;
+
+		Long libid = model.getProjectStatus(target.getProject()).getRequirementLibraryId();
+		if ((libid != null)
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
+					permission, target.getPath() });
+		}
+
+		return entry;
+	}
+	
+	private LogEntry checkPermissionOnProject(String permission, CoverageTarget target, Target checkedTarget) {
+		
+		LogEntry entry = null;
+		
+		String tcPath = target.getTcPath();
+		Project tcProject = projectDao.findByName(PathUtils.extractProjectName(tcPath));
+		Long tcLibid = tcProject.getTestCaseLibrary().getId();
+		
+		if ((tcLibid != null)
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
+					permission, target.getPath() });
+		}
+		
+		String reqPath = target.getReqPath();
+		Project reqProject = projectDao.findByName(PathUtils.extractProjectName(reqPath));
+		Long reqLibid = reqProject.getRequirementLibrary().getId();
+		
+		if ((reqLibid != null)
+				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
+					permission, target.getPath() });
+		}
+		
+		return entry;
+	}
+	
+	
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
 			String optionalImpact) {
@@ -699,7 +866,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		logs = entityValidator.createTestCaseChecks(target, testCase);
 
 		// 2 - custom fields (create)
-		logs.append(cufValidator.checkCreateCustomFields(target, (Map<String, String>) cufValues,
+		logs.append(cufValidator.checkCreateCustomFields(target, cufValues,
 				model.getTestCaseCufs(target)));
 
 		// 3 - other checks
@@ -711,7 +878,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3-2 : permissions.
-		LogEntry hasntPermission = checkPermissionOnProject(PERM_CREATE, target, target);
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
 			logs.addEntry(hasntPermission);
 		}
@@ -726,7 +893,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		creationStrategy.validateMilestones(instr, logs);
 
 		// 3-5 : fix test case metadatas
-		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE);
+		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE,EntityType.TEST_CASE);
 		logs.addEntries(logEntries);
 		return logs;
 
@@ -755,7 +922,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.append(entityValidator.updateTestCaseChecks(target, testCase));
 
 			// 2 - custom fields (create)
-			logs.append(cufValidator.checkUpdateCustomFields(target, (Map<String, String>) cufValues,
+			logs.append(cufValidator.checkUpdateCustomFields(target, cufValues,
 					model.getTestCaseCufs(target)));
 
 			// 3 - other checks
@@ -768,7 +935,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			// 3-2 : permissions. note about the following 'if' : the case where
 			// the project doesn't exist (and thus has
 			// no id) is already covered in the basic checks.
-			LogEntry hasntPermission = checkPermissionOnProject(PERM_WRITE, target, target);
+			LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 			if (hasntPermission != null) {
 				logs.addEntry(hasntPermission);
 			}
@@ -780,7 +947,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 3-4 : check audit datas
 			// backup the audit log
-			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE);
+			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE, EntityType.TEST_CASE);
 			logs.addEntries(logEntries);
 
 			updateStrategy.validateMilestones(instr, logs);
@@ -790,10 +957,382 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	}
 
+	@Override
+	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
+
+		RequirementVersionTarget target = instr.getTarget();
+		RequirementTarget reqTarget = target.getRequirement();
+		RequirementVersion reqVersion = instr.getRequirementVersion();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		LogTrain logs;
+		LOGGER.debug("Req-Import - In Validation Facility for create " + target.getPath() + " version " + target.getVersion());
+
+		// 1 - basic verifications
+		logs = entityValidator.createRequirementVersionChecks(target, reqVersion);
+
+		//   - Check conflict between folder already created by previous import
+		// and the path the line we are presently importing
+		checkFolderConflict(instr,logs);
+
+		//   - Check status and put the requirement version status to WIP if needed
+		//   - The required status will be affected to requirement version in post process
+		checkImportedRequirementVersionStatus(target, reqVersion);
+
+		// 2 - custom fields (create)
+		logs.append(cufValidator.checkCreateCustomFields(target, cufValues,
+				model.getRequirementVersionCufs(target)));
+
+		// 3 - Check permissions
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
+		if (hasntPermission != null) {
+			logs.addEntry(hasntPermission);
+		}
+
+		// 4 - Check version number
+		//		-> change it to the last index +1 if problem and keep trace of the user version number
+		checkAndFixRequirementVersionNumber(target, reqVersion, logs);
+
+		// 5 - Check and fix name consistency between path and req name version
+		checkAndFixNameConsistency(target, reqVersion);
+
+		// 6 - Check milestone validity
+		requirementVersionCreationStrategy.validateMilestones(instr, logs);
+
+		// 7 - Check milestone already used by other requirement version of the same requirement
+		checkMilestonesAlreadyUsedInRequirement(instr, logs);
+
+		// 8 - Fix createdOn and createdBy
+		logs.addEntries(fixMetadatas(target, (AuditableMixin) reqVersion, ImportMode.CREATE,EntityType.REQUIREMENT_VERSION));
+
+		// 9 - Now update model if the requirement version has passed all check
+		if (!logs.hasCriticalErrors()) {
+			model.addRequirementVersion(target, new TargetStatus(TO_BE_CREATED), instr.getMilestones());
+			//if requirement not exists then pass it to status TO_BE_CREATED
+			//with actual implementation of addNode in requirement tree, parent node should already have the good status
+			if (model.getStatus(reqTarget).getStatus()==Existence.NOT_EXISTS) {
+				model.addRequirement(reqTarget, new TargetStatus(TO_BE_CREATED));
+			}
+		}
+		else {
+			//this instruction smell bad..
+			instr.fatalError();
+		}
+		return logs;
+	}
+
+	/**
+	 * Set the requirementVersionStatus to {@link RequirementStatus#WORK_IN_PROGRESS} to avoid
+	 * illegal modification exception on {@link RequirementVersion} with other status
+	 * and save the modified {@link RequirementStatus} in target to reassign it in postprocess
+	 * @param target
+	 * @param reqVersion
+	 */
+	private void checkImportedRequirementVersionStatus(RequirementVersionTarget target,
+			RequirementVersion reqVersion) {
+		RequirementStatus requirementVersionStatus = reqVersion.getStatus();
+		if (requirementVersionStatus!=null && requirementVersionStatus!=RequirementStatus.WORK_IN_PROGRESS) {
+			target.setImportedRequirementStatus(requirementVersionStatus);
+			reqVersion.setStatus(RequirementStatus.WORK_IN_PROGRESS);
+		}
+
+	}
+
+	/**
+	 * Check if an existing requirement version has a status which forbid modifications.
+	 * Used for update
+	 * @param target
+	 * @param logs
+	 */
+	private void checkExistingRequirementVersionStatus(
+			RequirementVersionTarget target, LogTrain logs) {
+
+
+		if (!logs.hasCriticalErrors()) {
+
+			Requirement requirement = reqLibNavigationService.findRequirement(target.getRequirement().getId());
+			RequirementVersion persistedReqVersion = requirement.findRequirementVersion(target.getVersion());
+			RequirementStatus persistedStatus = persistedReqVersion.getStatus();
+
+			if (!persistedStatus.isRequirementModifiable()) {
+				logs.addEntry(LogEntry.failure().forTarget(target).
+						withMessage(Messages.ERROR_REQUIREMENT_VERSION_STATUS).build());
+			}
+		}
+	}
+
+	@Override
+	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
+		RequirementVersionTarget target = instr.getTarget();
+		RequirementVersion reqVersion = instr.getRequirementVersion();
+		Map<String, String> cufValues = instr.getCustomFields();
+
+		LogTrain logs;
+
+		// 1 - basic verifications
+		logs = entityValidator.updateRequirementChecks(target, reqVersion);
+		checkImportedRequirementVersionStatus(target, reqVersion);
+
+
+		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues,
+				model.getRequirementVersionCufs(target)));
+
+		// 2 - Check if target requirement version exists in database (targetStatus == EXISTS) and id isn't null
+		checkRequirementVersionExists(target, logs);
+		// if something is wrong at this stage, either the requirement or the version are unknown or locked,
+		// return now to avoid nasty exception in next checks
+		if (logs.hasCriticalErrors()) {
+			instr.fatalError();
+			return logs;
+		}
+
+		checkExistingRequirementVersionStatus(target,logs);
+
+		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
+		if (hasntPermission != null) {
+			logs.addEntry(hasntPermission);
+		}
+
+		checkAndFixNameConsistency(target, reqVersion);
+
+		requirementVersionUpdateStrategy.validateMilestones(instr, logs);
+
+		checkMilestonesAlreadyUsedInRequirement(instr, logs);
+
+		logs.addEntries(fixMetadatas(target, (AuditableMixin) reqVersion, ImportMode.UPDATE, EntityType.REQUIREMENT_VERSION));
+
+		if (logs.hasCriticalErrors()) {
+			instr.fatalError();
+		}
+
+		return logs;
+	}
+
+
+
+	private void checkRequirementVersionExists(RequirementVersionTarget target,
+			LogTrain logs) {
+
+		TargetStatus status = model.getStatus(target);
+		TargetStatus reqStatus = model.getStatus(target.getRequirement());
+
+		//checking requirement and loading his id
+		if (reqStatus.getStatus()!=Existence.EXISTS || reqStatus.getId()==null) {
+			logs.addEntry(LogEntry.failure().forTarget(target).
+					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
+		}
+
+		//checking requirement version and loading his id
+		else if (status.getStatus()!=Existence.EXISTS || status.getId()==null) {
+			logs.addEntry(LogEntry.failure().forTarget(target).
+					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
+		}
+
+		else {
+			//setting the id also in the instruction target, more convenient for updating operations
+			target.getRequirement().setId(reqStatus.getId());
+		}
+	}
+
+	private void checkFolderConflict(RequirementVersionInstruction instr, LogTrain logs) {
+		RequirementVersionTarget target = instr.getTarget();
+		if (model.isRequirementFolder(target)) {
+			logs.addEntry(LogEntry.warning().forTarget(target).
+					withMessage(Messages.WARN_REQ_PATH_IS_FOLDER).withImpact(Messages.IMPACT_REQ_RENAMED).build());
+			//now changing the path of target
+			fixPathFolderConflict(instr);
+		}
+	}
+
+	private void fixPathFolderConflict(RequirementVersionInstruction instr) {
+		RequirementVersionTarget target = instr.getTarget();
+
+		//changing path
+		target.getRequirement().setPath(appendReqNameSuffix(target.getPath()));
+
+		//changing name to avoid further conflict when postProcessRenaming occurs
+		//so already renamed requirement for conflict will not be renamed again...
+		String name = PathUtils.extractName(target.getPath());
+		instr.getRequirementVersion().setName(name);
+	}
+
+	private String appendReqNameSuffix(String name) {
+		StringBuffer pathBuffer = new StringBuffer(name);
+		pathBuffer.append(Messages.REQ_RENAME_SUFFIX);
+		return pathBuffer.toString();
+	}
+
+	private void checkAndFixNameConsistency(RequirementVersionTarget target,
+			RequirementVersion reqVersion) {
+		String reqName = PathUtils.extractName(target.getPath());
+		String reqVersionName = reqVersion.getName();
+
+		if (!reqName.equals(reqVersionName)) {
+			target.setUnconsistentName(reqVersionName);
+			reqVersion.setName(reqName);
+		}
+	}
+
+	private void checkMilestonesAlreadyUsedInRequirement(
+			RequirementVersionInstruction instr, LogTrain logs) {
+
+		List<String> milestones = instr.getMilestones();
+		RequirementVersionTarget target = instr.getTarget();
+
+		for (String milestone : milestones) {
+			if (model.checkMilestonesAlreadyUsedInRequirement(milestone,target)) {
+				logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.WARN_MILESTONE_USED, REQ_VERSION_MILESTONE.header)
+						.withImpact(Messages.IMPACT_MILESTONE_NOT_BINDED).build());
+			}
+		}
+	}
+
+	private void checkAndFixRequirementVersionNumber(
+			RequirementVersionTarget target, RequirementVersion reqVersion, LogTrain logs) {
+		//fixing null/0 values from user -> setting versionNumber to 1 (default value for new requirement)
+		if (target.getVersion()==null||target.getVersion()<=0) {
+			target.setVersion(1);//setting to 0 as fixVersionNumber will increment this value
+			fixVersionNumber(target);
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_NULL, REQ_VERSION_NUM.header)
+					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
+		}
+		//check if requirement exist
+		Existence requirementVersionStatus = model.getStatus(target).getStatus();
+		Existence requirementStatus = model.getStatus(target.getRequirement()).getStatus();
+
+		LOGGER.debug("ReqImport Checking for version number : " + target.getVersion());
+		LOGGER.debug("ReqImport Status of version : " + target.getVersion() + " " + requirementVersionStatus);
+
+		if (requirementStatus != Existence.NOT_EXISTS
+				&& requirementVersionStatus != Existence.NOT_EXISTS) {
+			fixVersionNumber(target);
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_COLLISION, REQ_VERSION_NUM.header)
+					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
+		}
+		
+	}
+
+	private void fixVersionNumber(RequirementVersionTarget target) {
+		Existence requirementVersionStatus = model.getStatus(target).getStatus();
+		if (requirementVersionStatus == Existence.NOT_EXISTS) {
+			return;
+		}
+		target.setVersion(target.getVersion() + 1);
+		fixVersionNumber(target);
+	}
+
+
+
+	@Override
+	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
+		throw new RuntimeException("Implement me");
+	}
+
 	boolean areMilestoneValid(TestCaseInstruction instr){
 		LogTrain dummy = new LogTrain();
 		updateStrategy.validateMilestones(instr, dummy);
 		return dummy.hasNoErrorWhatsoever();
 	}
+
+	@Override
+	public LogTrain createCoverage(CoverageInstruction instr) {
+		LogTrain logs = new LogTrain();
+
+		CoverageTarget target = instr.getTarget();
+
+		Long tcId = checkTcForCoverage(target, logs);
+		Long reqVersionId = checkRequirementVersionForCoverage(target, logs);
+		checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
+		
+		//if something is wrong here, the coverage isn't valid so 
+		//return to avoid nasty exception in nexts checks
+		if (logs.hasCriticalErrors()) {
+			return logs;
+}
+		
+		logs.addEntry(checkPermissionOnProject(PERM_IMPORT, target, target));
+
+		return logs;
+	}
+
+	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
+		if (tcId != null && reqVersionId != null
+				&& coverageDao.byRequirementVersionAndTestCase(reqVersionId, tcId) != null) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_COVERAGE_ALREADY_EXIST));
+		}
+	}
+
+	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) {
+		boolean requirementPathAndVersionValid = checkRequirementVersionDataValidity(target, logs);
+
+		if (requirementPathAndVersionValid) {
+			return checkRequirementVersionExist(target, logs);
+		}
+
+		return null;
+	}
+
+	private Long checkRequirementVersionExist(CoverageTarget target, LogTrain logs) {
+
+		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
+
+		if (reqId != null) {
+			Requirement req = reqLibNavigationService.findRequirement(reqId);
+			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
+			if (reqVersion != null) {
+				if (!req.getStatus().isRequirementLinkable()) {
+					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
+				}
+				return reqVersion.getId();
+			} else {
+				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
+			}
+		} else {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
+		}
+
+
+		return null;
+	}
+
+	private boolean checkRequirementVersionDataValidity(CoverageTarget target, LogTrain logs) {
+
+		boolean reqPathValid = target.isReqPathWellFormed();
+		boolean reqVersionValid = target.getReqVersion() > 0;
+
+		if (!reqPathValid) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_MALFORMED_PATH, target.getReqPath()));
+		}
+
+		if (!reqVersionValid) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_INVALID));
+		}
+
+		return reqPathValid && reqVersionValid;
+
+	}
+
+	private Long checkTcForCoverage(CoverageTarget target, LogTrain logs) {
+		boolean tcPathValid = target.isTcPathWellFormed();
+		String tcPath = target.getTcPath();
+
+		if (!tcPathValid) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_MALFORMED_PATH, tcPath));
+
+		} else {
+			Long id = tcLibNavigationService.findNodeIdByPath(tcPath);
+			if (id == null) {
+				logs.addEntry(createLogFailure(target, Messages.ERROR_TC_NOT_FOUND, tcPath));
+			} else {
+				return id;
+			}
+		}
+		return null;
+	}
+
+	private LogEntry createLogFailure(Target target, String msg, Object... msgArgs) {
+		return LogEntry.failure().forTarget(target).withMessage(msg, msgArgs).build();
+	}
+
 
 }

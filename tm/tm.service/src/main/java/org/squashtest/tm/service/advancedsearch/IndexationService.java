@@ -22,6 +22,7 @@ package org.squashtest.tm.service.advancedsearch;
 
 import java.util.List;
 
+import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -49,5 +50,16 @@ public interface IndexationService {
 	void reindexTestCase(Long testCaseId);
 
 	void reindexTestCases(List<TestCase> testCaseList);
+
+	// Indexing Campaigns
+	void indexCampaigns();
+
+	void reindexCampaign(Long campaignId);
+
+	void reindexCampaigns(List<Execution> campaignList);
+
+	void batchReindexTc(List<Long> tcIdsToIndex);
+
+	void batchReindexReqVersion(List<Long> reqVersionIdsToIndex);
 
 }

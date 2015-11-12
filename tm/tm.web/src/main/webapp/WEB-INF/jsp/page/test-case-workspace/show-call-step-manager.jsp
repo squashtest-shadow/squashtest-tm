@@ -39,8 +39,9 @@
 
 <c:set var="resourceName" value="test-case" />
 
-<s:url var="postCallStepUrl" value="/test-cases/{id}/call">
+<s:url var="postCallStepUrl" value="/test-cases/{id}/call/{index}">
 	<s:param name="id" value="${testCase.id}"/>
+	<s:param name="index" value="${stepIndex}"/>
 </s:url>
 
 

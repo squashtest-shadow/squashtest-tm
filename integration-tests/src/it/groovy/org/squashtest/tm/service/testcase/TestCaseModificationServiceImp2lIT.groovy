@@ -20,19 +20,14 @@
  */
 package org.squashtest.tm.service.testcase
 
-import javax.inject.Inject
-
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
-import org.squashtest.tm.service.testcase.TestCaseLibrariesCrudService
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
-import org.squashtest.tm.service.testcase.TestCaseModificationService
 
+import javax.inject.Inject
 
 class TestCaseModificationServiceImp2LIT extends HibernateServiceSpecification {
 
@@ -42,8 +37,6 @@ class TestCaseModificationServiceImp2LIT extends HibernateServiceSpecification {
 	@Inject
 	private TestCaseLibraryNavigationService navService
 
-	@Inject
-	private TestCaseLibrariesCrudService libcrud
 	@Inject GenericProjectManagerService projectService
 
 	private int testCaseId=-1
@@ -52,7 +45,7 @@ class TestCaseModificationServiceImp2LIT extends HibernateServiceSpecification {
 	def setup(){
 		projectService.persist(createProject())
 
-		def libList= libcrud.findAllLibraries()
+		def libList= currentSession.createQuery("fromtestCaseLibrary").list()
 
 
 		def lib = libList.get(libList.size()-1)

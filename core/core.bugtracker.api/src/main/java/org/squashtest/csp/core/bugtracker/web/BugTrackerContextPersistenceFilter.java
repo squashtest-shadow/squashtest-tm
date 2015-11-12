@@ -108,6 +108,9 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
 	}
 
 	private void storeContext(HttpSession session, BugTrackerContext context) {
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("BugTrackerContextPersistentFilter : storing context for session #{} with btcontext #{}", session.getId(), context.toString());
+		}
 		session.setAttribute(BUG_TRACKER_CONTEXT_SESSION_KEY, context);
 	}
 
@@ -121,6 +124,10 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
 			LOGGER.info("No BugTrackerContext available, will create it and eagerly store it in session");
 			context = new BugTrackerContext();
 			storeContext(session, context);
+		}
+
+		if (LOGGER.isTraceEnabled()){
+			LOGGER.trace("BugTrackerContextPersistentFilter : loading context for session #{} with btcontext #{}", session.getId(),context.toString());
 		}
 
 		return context;

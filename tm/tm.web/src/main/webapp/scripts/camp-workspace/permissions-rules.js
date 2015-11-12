@@ -255,12 +255,16 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 				return false;
 			}
 			
-            // allow iteration or test suite copy only if one of them is selected
-            if ((movednodes.is(':iteration') || (movednodes.is(':test-suite'))) && !squashtm.keyEventListener.ctrl) {
+			// iterations can dnd only within the same parent. Copying to a different campaign is allowed though
+			if (!squashtm.keyEventListener.ctrl && movednodes.is(':iteration') && !newparent.is(oldparent)){
+				return false;
+			}
+			
+            // test suites can only be copied, not dnd'ed
+            if (!squashtm.keyEventListener.ctrl && movednodes.is(':test-suite')) {
                     return false;
             }
 
-			
 			// check that destination isn't locked by milestones
 			if (! milestonesAllowCreation(newparent)){
 				return false;

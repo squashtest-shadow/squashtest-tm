@@ -68,15 +68,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 			+ OR_HAS_ROLE_ADMIN)
 	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId) {
 
-		if (parentTestCaseId == calledTestCaseId) {
-			throw new CyclicStepCallException();
-		}
-
-		Set<Long> callTree = callTreeFinder.getTestCaseCallTree(calledTestCaseId);
-
-		if (callTree.contains(parentTestCaseId)) {
-			throw new CyclicStepCallException();
-		}
+		checkAddCallTestStep(parentTestCaseId, calledTestCaseId);
 
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		TestCase calledTestCase = testCaseDao.findById(calledTestCaseId);
@@ -93,6 +85,38 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		 *	datasetModificationService.updateDatasetParameters(parentTestCaseId);
 		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
+	}
+	
+	@Override
+	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId,
+			int index) {
+		
+		checkAddCallTestStep(parentTestCaseId, calledTestCaseId);
+		
+		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
+		TestCase calledTestCase = testCaseDao.findById(calledTestCaseId);
+
+		CallTestStep newStep = new CallTestStep();
+		newStep.setCalledTestCase(calledTestCase);
+
+		testStepDao.persist(newStep);
+
+		parentTestCase.addStep(index,newStep);
+
+		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
+		
+	}
+	
+	private void checkAddCallTestStep(long parentTestCaseId, long calledTestCaseId){
+		if (parentTestCaseId == calledTestCaseId) {
+			throw new CyclicStepCallException();
+		}
+
+		Set<Long> callTree = callTreeFinder.getTestCaseCallTree(calledTestCaseId);
+
+		if (callTree.contains(parentTestCaseId)) {
+			throw new CyclicStepCallException();
+		}
 	}
 
 
@@ -214,5 +238,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		datasetModificationService.cascadeDatasetsUpdate(callerId);
 
 	}
+
+
+
 
 }

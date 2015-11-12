@@ -52,7 +52,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	 */
 	@Override
 	public void deleteVersions(List<Long> versionIds) {
-		executeDeleteNamedQuery("requirementDeletionDao.deleteVersions", "versionIds", versionIds);
+		executeDeleteNamedQuery("requirementDeletionDao.deleteVersions", VERSION_IDS, versionIds);
 	}
 
 
@@ -217,7 +217,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	@Override
 	public void removeTestStepsCoverageByRequirementVersionIds(List<Long> requirementVersionIds) {
 		if (!requirementVersionIds.isEmpty()) {
-			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_TEST_STEP_COVERAGE_BY_REQ_VERSION_IDS, "versionIds",
+			executeDeleteSQLQuery(NativeQueries.REQUIREMENT_SQL_REMOVE_TEST_STEP_COVERAGE_BY_REQ_VERSION_IDS, VERSION_IDS,
 					requirementVersionIds);
 		}
 
@@ -346,7 +346,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		if (! requirementIds.isEmpty()){
 			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
 			Query query = getSession().getNamedQuery("requirementDeletionDao.findRequirementsWhichMilestonesForbidsDeletion");
-			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			query.setParameterList(REQUIREMENT_IDS, requirementIds, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);
 			return query.list();
 		}
@@ -361,7 +361,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		if (! versionIds.isEmpty()){
 			MilestoneStatus[] lockedStatuses = new MilestoneStatus[]{ MilestoneStatus.PLANNED, MilestoneStatus.LOCKED};
 			Query query = getSession().getNamedQuery("requirementDeletionDao.findVersionsWhichMilestonesForbidsDeletion");
-			query.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			query.setParameterList(VERSION_IDS, versionIds, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);
 			return query.list();
 		}else{
@@ -375,7 +375,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	public List<Long> filterVersionIdsHavingMultipleMilestones(List<Long> versionIds) {
 		if (! versionIds.isEmpty()){
 			Query q = getSession().getNamedQuery("requirementDeletionDao.findVersionIdsHavingMultipleMilestones");
-			q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			q.setParameterList(VERSION_IDS, versionIds, LongType.INSTANCE);
 			return q.list();
 		}
 		else{
@@ -401,7 +401,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	public void unbindFromMilestone(List<Long> requirementIds, Long milestoneId) {
 		if (! requirementIds.isEmpty()){
 			Query query = getSession().createSQLQuery(NativeQueries.REQUIREMENT_SQL_UNBIND_MILESTONE);
-			query.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			query.setParameterList(REQUIREMENT_IDS, requirementIds, LongType.INSTANCE);
 			query.setParameter("milestoneId", milestoneId);
 			query.executeUpdate();
 		}
@@ -414,7 +414,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	public void unsetRequirementCurrentVersion(List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
 			Query q = getSession().getNamedQuery("requirement.findAllById");
-			q.setParameterList("requirementIds", requirementIds);
+			q.setParameterList(REQUIREMENT_IDS, requirementIds);
 
 			List<Requirement> requirements = q.list();
 
@@ -429,7 +429,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	public void resetRequirementCurrentVersion(List<Long> requirementIds) {
 		if (! requirementIds.isEmpty()){
 			Query q = getSession().getNamedQuery("requirement.findAllRequirementsWithLatestVersionByIds" );
-			q.setParameterList("requirementIds", requirementIds);
+			q.setParameterList(REQUIREMENT_IDS, requirementIds);
 
 			List<Object[]> tuples = q.list();
 
@@ -443,7 +443,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	private List<Long> findByRequirementVersion(List<Long> versionIds){
 		if (! versionIds.isEmpty()){
 			Query q = getSession().getNamedQuery("requirement.findByRequirementVersion");
-			q.setParameterList("versionIds", versionIds, LongType.INSTANCE);
+			q.setParameterList(VERSION_IDS, versionIds, LongType.INSTANCE);
 			return q.list();
 		}
 		else{

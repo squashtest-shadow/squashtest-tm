@@ -30,8 +30,7 @@ import java.util.List;
  * 
  * <p>
  *  TreeNode is the type of node used by a LibraryTree. A TreeNode maintains informations regarding its position in the tree, ie its parent node, its layer/depth etc. Each node is identified
- *  by a key, that will be used to identify each node uniquely. While that class does not override equals/hashCode using the key as the sole criteria, it proposes instead a method
- *  ({@link #isSame(TreeNode)} for that.
+ *  by a key, that will be used to identify each node uniquely.
  * </p>
  * 
  * <p>
@@ -44,14 +43,14 @@ import java.util.List;
  * @param <T> the type of the actual subclass.
  */
 
-public abstract class TreeNode<T extends TreeNode<T>> {
+public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 
 	private final List<T> children = new ArrayList<T>();
 	private  T parent ;
-	private LibraryTree<T> tree ;
+	private LibraryTree<IDENT, T> tree ;
 
 	private int depth;
-	private Long key;
+	private IDENT key;
 
 
 	/**
@@ -67,17 +66,17 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 
 	}
 
-	public TreeNode(Long key){
+	public TreeNode(IDENT key){
 		this.key=key;
 	}
 
 
-	LibraryTree<T> getTree(){
+	LibraryTree<IDENT, T> getTree(){
 		return tree;
 	}
 
 
-	void setTree(LibraryTree<T> tree){
+	void setTree(LibraryTree<IDENT, T> tree){
 		this.tree= tree;
 	}
 
@@ -87,11 +86,11 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 	}
 
 
-	public Long getKey() {
+	public IDENT getKey() {
 		return key;
 	}
 
-	public void setKey(Long key) {
+	public void setKey(IDENT key) {
 		this.key = key;
 	}
 
@@ -148,33 +147,6 @@ public abstract class TreeNode<T extends TreeNode<T>> {
 		child.setTree(tree);
 		child.setDepth(depth+1);
 		children.add(child);
-	}
-
-
-	/**
-	 * <p>
-	 * That method tells if two nodes refer to the same node. Two nodes are considered as same if their keys are equal regardless of their
-	 * other properties. A node compared to null is considered different. Two node having null keys are considered as same, thought that feature is
-	 * not used in theory.
-	 * </p>
-	 * 
-	 * @param node
-	 * @return
-	 */
-	public boolean isSame(T node){
-		boolean result;
-
-		if (node==null){
-			result=false;
-		}
-		else if (key==null){
-			result = (node.getKey()==null);
-		}
-		else{
-			result = key.equals(node.getKey());
-		}
-
-		return result;
 	}
 
 

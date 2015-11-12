@@ -35,6 +35,10 @@
 
 	// ====== TestCase queries ======
 	@NamedQuery(name = "testCase.countAttachments", query = "select count(att) from TestCase tc join tc.attachmentList al join al.attachments att where tc.id = :id"), 
+
+		// ====== Execution queries ======
+		@NamedQuery(name = "execution.countAttachments", query = "select count(att) from Execution tc join tc.attachmentList al join al.attachments att where tc.id = :id"),
+
 })
 package org.squashtest.tm.domain.search;
 

@@ -46,6 +46,8 @@ import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.annotation.CachableType;
+import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.internal.repository.BoundEntityDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -76,7 +78,6 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 	@Inject
 	private IndexationService indexationService;
-
 
 	public void setPermissionService(PermissionEvaluationService permissionService) {
 		this.permissionService = permissionService;
@@ -402,6 +403,13 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		}
 	}
 
+	// This method is just here to use the @CacheResult annotation
+	@CacheResult(type = CachableType.CUSTOM_FIELD)
+	private List<CustomFieldBinding> optimizedFindCustomField(BoundEntity entity){
+		return customFieldBindingDao.findAllForProjectAndEntity(entity
+				.getProject().getId(), entity.getBoundEntityType());
+	}
+	
 	@Override
 	// basically it's a copypasta of createAllCustomFieldValues, with some extra code in it.
 	public void migrateCustomFieldValues(BoundEntity entity) {
@@ -409,8 +417,8 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<CustomFieldValue> valuesToUpdate = customFieldValueDao.findAllCustomValues(entity.getBoundEntityId(),
 				entity.getBoundEntityType());
 		if (entity.getProject() != null) {
-			List<CustomFieldBinding> projectBindings = customFieldBindingDao.findAllForProjectAndEntity(entity
-					.getProject().getId(), entity.getBoundEntityType());
+			List<CustomFieldBinding> projectBindings = optimizedFindCustomField(entity);
+		
 
 			for (CustomFieldBinding binding : projectBindings) {
 
@@ -427,9 +435,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 				updatedCUFValue.setBoundEntity(entity);
 				customFieldValueDao.persist(updatedCUFValue);
+
 			}
 		}
+		
 		deleteCustomFieldValues(valuesToUpdate);
+		
 
 	}
 
@@ -506,6 +517,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private void deleteCustomFieldValues(List<CustomFieldValue> values) {
 		List<Long> valueIds = IdentifiedUtil.extractIds(values);
 		customFieldValueDao.deleteAll(valueIds);
+
 	}
 
 }

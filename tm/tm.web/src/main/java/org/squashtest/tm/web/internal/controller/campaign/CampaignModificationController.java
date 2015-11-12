@@ -20,26 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
@@ -47,57 +27,49 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.controller.milestone.MetaMilestone;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestonePanelConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
-import org.squashtest.tm.web.internal.controller.milestone.TestCaseBoundMilestoneTableModelHelper;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseImportanceJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseModeJeditableComboDataBuilder;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonIteration;
-import org.squashtest.tm.web.internal.model.json.JsonMilestone;
-import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+import java.text.ParseException;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
@@ -210,13 +182,8 @@ public class CampaignModificationController {
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
-		Set<User> usersSet = new HashSet<User>();
-
 		// Looking for users depending on the campaign id
-		usersSet.addAll(testPlanManager.findAssignableUserForTestPlan(campaignId));
-
-		List<User> usersList = new ArrayList<User>(usersSet.size());
-		usersList.addAll(usersSet);
+		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
 		Collections.sort(usersList, new UserLoginComparator());
 
 		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
@@ -245,8 +212,18 @@ public class CampaignModificationController {
 		campaignModService.changeDescription(campaignId, newDescription);
 		LOGGER.trace("Campaign " + campaignId + ": updated description to " + newDescription);
 		return newDescription;
-
 	}
+
+
+	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-reference", VALUE })
+	public @ResponseBody
+	String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long campaignId) {
+
+		campaignModService.changeReference(campaignId, newReference);
+		LOGGER.trace("Campaign " + campaignId + ": updated reference to " + newReference);
+		return HtmlUtils.htmlEscape(newReference);
+	}
+
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
@@ -258,6 +235,12 @@ public class CampaignModificationController {
 
 	}
 
+	/**
+	 * @deprecated does not seem to be used, should be removed (plus it's not even atomic)
+	 * @param data
+	 * @return
+	 */
+	@Deprecated
 	@RequestMapping(value = "/remove-campaigns", method = RequestMethod.POST, params = "isIteration=1")
 	@ResponseBody
 	public String removeIterations(@RequestParam("tab[]") String[] data) {
@@ -389,12 +372,21 @@ public class CampaignModificationController {
 
 	}
 
+
 	@RequestMapping(value = "/iterations", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
 	@ResponseBody
 	public List<JsonIteration> getIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		List<Iteration> iterations = campaignModService.findIterationsByCampaignId(campaignId);
 		return createJsonIterations(iterations);
 	}
+
+
+	@RequestMapping(value = "/iterations/count", produces = ContentTypes.APPLICATION_JSON, method = RequestMethod.GET)
+	@ResponseBody
+	public Integer getNbIterations(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId){
+		return campaignModService.countIterations(campaignId);
+	}
+
 
 	// for now, handles the scheduled dates only
 	@RequestMapping(value = "/iterations/planning", consumes = ContentTypes.APPLICATION_JSON, method = RequestMethod.POST)
@@ -411,8 +403,6 @@ public class CampaignModificationController {
 		}
 	}
 
-
-
 	// *************************** statistics ********************************
 
 	// URL should have been /statistics, but that was already used by another method in this controller
@@ -422,16 +412,18 @@ public class CampaignModificationController {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
 
-	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
+	public ModelAndView getDashboard(Model model,
+			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
+			@RequestParam(value="printmode", defaultValue="false") Boolean printmode ) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
-
 		CampaignStatisticsBundle bundle = campaignModService.gatherCampaignStatisticsBundle(campaignId);
 
-		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-dashboard");
+		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-dashboard");
 		mav.addObject("campaign", campaign);
 		mav.addObject("dashboardModel", bundle);
+		mav.addObject("printmode", printmode);
 
 		populateOptionalExecutionStatuses(campaign, model);
 

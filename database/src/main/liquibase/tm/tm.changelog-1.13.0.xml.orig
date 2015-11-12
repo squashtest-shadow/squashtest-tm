@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+
+	<changeSet id="tm-1.13.0" author="bsiri">
+		<comment>Update TM database version number</comment>
+		<update tableName="CORE_CONFIG">
+			<column name="VALUE" value="1.13.0" />
+			<where>STR_KEY = 'squashtest.tm.database.version'</where>
+		</update>
+	</changeSet>
+
+
+	<changeSet id="tm-1.13.0-feature-5155-1" author="jsimon">
+		<createTable tableName="BUGTRACKER_PROJECT">
+			<column name="BUGTRACKER_PROJECT_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="BUGTRACKER_BINDING_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_bugtracker_project_bugtracker_binding"
+					references="BUGTRACKER_BINDING(BUGTRACKER_BINDING_ID)" />
+			</column>
+
+			<column name="BUGTRACKER_PROJECT_NAME" type="java.sql.Types.VARCHAR(255)"></column>
+
+			<column name="BUGTRACKER_PROJECT_ORDER" type="int">
+				<constraints nullable="false" />
+			</column>
+		</createTable>
+
+		<createIndex tableName="BUGTRACKER_PROJECT" indexName="idx_bugtracker_project">
+			<column name="BUGTRACKER_PROJECT_ID" />
+		</createIndex>
+
+
+
+		<sql>
+			insert into BUGTRACKER_PROJECT(BUGTRACKER_BINDING_ID,
+			BUGTRACKER_PROJECT_NAME, BUGTRACKER_PROJECT_ORDER) select
+			BUGTRACKER_BINDING_ID, PROJECT_NAME, 0 from BUGTRACKER_BINDING;
+		</sql>
+
+		<dropColumn tableName="BUGTRACKER_BINDING" columnName="PROJECT_NAME" />
+
+	</changeSet>
+
+	<changeSet id="tm-1.13.0-feature-5162-1" author="bsiri">
+		<comment>Now campaigns and iterations have a reference too</comment>
+
+		<addColumn tableName="CAMPAIGN">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="" remarks="a reference lavel for a campaign" />
+		</addColumn>
+
+		<addColumn tableName="ITERATION">
+			<column name="REFERENCE" type="java.sql.Types.VARCHAR(50)"
+				defaultValue="" remarks="a reference lavel for an iteration" />
+		</addColumn>
+
+		<!-- I thought that scripting Squash TA was a bitch but wait to see this -->
+		<!-- For iterations that existed prior to 1.13.0, here we assign iteration_order
+			as their default reference. Luckily it seems that databases accept that you
+			can affect a numeric type to a varchar column and that they coerce them implicitly.
+			If a DBMS doesn't accept it, put the following instruction in a dedicated
+			changeset : update ITERATION i set reference = (select CAST ( ((ci.iteration_order)
+			+ 1) as varchar) from CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id
+			); -->
+		<sql>
+			update ITERATION i
+			set reference = (select (ci.iteration_order +
+			1) from
+			CAMPAIGN_ITERATION ci where ci.iteration_id = i.iteration_id
+			);
+		</sql>
+	</changeSet>
+
+	<changeSet id="tm-1.13.0-feature-4022-1" author="jsimon">
+
+		<addColumn tableName="PROJECT">
+			<column name="ALLOW_TC_MODIF_DURING_EXEC" type="BOOLEAN"
+				defaultValueBoolean="false">
+				<constraints nullable="false" />
+			</column>
+		</addColumn>
+	</changeSet>
+
+
+	<changeSet id="tm-1.13.0-feature-5292-issues" author="bsiri">
+		<comment>
+			creating a view that helps querying on all the issues reported in an execution because
+			querying EXECUTION and EXECUTION_STEP separately is just a pain in the ass.
+		</comment>
+
+		<createView viewName="EXECUTION_ISSUES_CLOSURE">
+			select exec.execution_id, issue.issue_id
+			from EXECUTION exec
+			inner join ISSUE issue on exec.issue_list_id = issue.issue_list_id
+			UNION
+			select eesteps.execution_id, issue.issue_id
+			from EXECUTION_EXECUTION_STEPS eesteps
+			inner join EXECUTION_STEP estep on eesteps.execution_step_id = estep.execution_step_id
+			inner join ISSUE issue on estep.issue_list_id = issue.issue_list_id
+		</createView>
+
+	</changeSet>
+
+
+	<changeSet id="tm-1.13.0-feature-5375" author="jsimon">
+
+		<createTable tableName="CHART_COLUMN_PROTOTYPE">
+			<column name="CHART_COLUMN_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="LABEL" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="ENTITY_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="DATA_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="ATTRIBUTE_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="ATTRIBUTE_NAME" type="java.sql.Types.VARCHAR(255)"></column>
+
+		</createTable>
+
+		<createIndex tableName="CHART_COLUMN_PROTOTYPE" indexName="idx_column_prototype">
+			<column name="CHART_COLUMN_ID" />
+		</createIndex>
+
+
+
+
+		<createTable tableName="CHART_COLUMN_ROLE">
+			<column name="COLUMN_ROLE_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+
+			<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_column_role_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="ROLE" type="java.sql.Types.VARCHAR(255)"></column>
+		</createTable>
+
+		<createIndex tableName="CHART_COLUMN_ROLE" indexName="idx_column_role">
+			<column name="COLUMN_ROLE_ID" />
+		</createIndex>
+
+
+		<sql>
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,
+			DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE) 
+			VALUES (1, 'REQUIREMENT_NB_VERSION', 'REQUIREMENT',	'NUMERIC', 'count(versions)', 'CALCULATED');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES (1, 'FILTER'), (1, 'MEASURE');
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,
+			DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE) 
+			VALUES (2, 'REQUIREMENT_VERSION_LABEL',	'REQUIREMENT_VERSION', 'STRING', 'name', 'ATTRIBUTE');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES (2, 'AXIS'), (2, 'FILTER');
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,
+			DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE) 
+			VALUES (3, 'REQUIREMENT_VERSION_CREATED_ON','REQUIREMENT_VERSION', 'DATE', 'audit.createdOn', 'ATTRIBUTE');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES (3, 'AXIS'),	(3, 'FILTER'), (3, 'MEASURE');
+
+			insert into CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID, LABEL, ENTITY_TYPE,
+			DATA_TYPE, ATTRIBUTE_NAME, ATTRIBUTE_TYPE) 
+			VALUES (4, 'REQUIREMENT_VERSION_MODIFIED_ON', 'REQUIREMENT_VERSION', 'DATE', 'audit.lastModifiedOn', 'ATTRIBUTE');
+			
+			insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE) 
+			VALUES (4, 'AXIS'),(4, 'FILTER'), (4, 'MEASURE');
+
+
+		</sql>
+
+
+		<createTable tableName="CHART_DEFINITION">
+
+			<column name="CHART_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="USER_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_chart_owner"
+					references="CORE_USER(PARTY_ID)" />
+			</column>
+			<column name="NAME" type="java.sql.Types.VARCHAR(30)"></column>
+			<column name="VISIBILITY" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="CHART_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="DESCRIPTION" type="CLOB"></column>
+
+		</createTable>
+
+		<createIndex tableName="CHART_DEFINITION" indexName="idx_chart_definition">
+			<column name="CHART_ID" />
+		</createIndex>
+
+		<createTable tableName="CHART_MEASURE_COLUMN">
+
+			<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_chart_measure_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_measure_chart_definition" references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+
+			<column name="LABEL" type="java.sql.Types.VARCHAR(30)"></column>
+			<column name="MEASURE_OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="MEASURE_RANK" type="java.sql.Types.INTEGER"></column>
+
+
+		</createTable>
+
+
+		<createTable tableName="CHART_FILTER">
+			<column name="FILTER_ID" type="BIGINT" autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_chart_filter_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_chart_filter_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+
+			<column name="FILTER_OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
+
+		</createTable>
+
+		<createIndex tableName="CHART_FILTER" indexName="idx_chart_filter">
+			<column name="FILTER_ID" />
+		</createIndex>
+
+		<createTable tableName="CHART_FILTER_VALUES">
+
+			<column name="FILTER_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_filter_value_chart_column" references="CHART_FILTER(FILTER_ID)" />
+			</column>
+
+			<column name="FILTER_VALUE" type="java.sql.Types.VARCHAR(255)"></column>
+
+
+		</createTable>
+
+		<createTable tableName="CHART_AXIS_COLUMN">
+
+			<column name="CHART_COLUMN_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_axis_column_chart_column"
+					references="CHART_COLUMN_PROTOTYPE(CHART_COLUMN_ID)" />
+			</column>
+
+			<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_axis_column_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+
+			<column name="LABEL" type="java.sql.Types.VARCHAR(30)"></column>
+			<column name="AXIS_OPERATION" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="AXIS_RANK" type="java.sql.Types.INTEGER">
+			</column>
+		</createTable>
+
+
+
+
+
+		<createTable tableName="CHART_SCOPE">
+
+			<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false" foreignKeyName="fk_chart_scope_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+
+			<column name="ENTITY_REFERENCE_TYPE" type="java.sql.Types.VARCHAR(255)"></column>
+			<column name="ENTITY_REFERENCE_ID" type="java.sql.Types.INTEGER">
+			</column>
+
+		</createTable>
+	</changeSet>
+
+ <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
+ 	<!-- CUSTOM_REPORT_LIBRARY TABLE -->
+
+ 	<createTable tableName="CUSTOM_REPORT_LIBRARY">
+ 		<column name="CRL_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+        	<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CUSTOM_REPORT_LIBRARY" />
+    	</column>
+
+		<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to ATTACHMENT_LIST">
+		</column>
+
+		<column name="TMP_PROJECT_ID" type="BIGINT" remarks="TMP REF TO PROJECT">
+		</column>
+ 	</createTable>
+
+ 	<createIndex tableName="CUSTOM_REPORT_LIBRARY" indexName="IDX_CUSTOM_REPORT_LIBRARY">
+      <column name="CRL_ID" />
+    </createIndex>
+
+ 	<!-- CUSTOM_REPORT_LIBRARY_NODE TABLE -->
+
+ 	<createTable tableName="CUSTOM_REPORT_LIBRARY_NODE">
+ 		<column name="CRLN_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+      <constraints primaryKey="true" nullable="false" primaryKeyName="PK_CUSTOM_REPORT_LIBRARY_NODE" />
+    </column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+		<column name="ENTITY_TYPE" type="VARCHAR(50)"/>
+
+		<column name="ENTITY_ID" type="BIGINT"/>
+
+		<column name="CRL_ID" type="BIGINT" remarks="fk to the containing CUSTOM_REPORT_LIBRARY">
+			<constraints nullable="false" foreignKeyName="fk_crln_custom_report_library_crl_id" references="CUSTOM_REPORT_LIBRARY(CRL_ID)" />
+		</column>
+
+	</createTable>
+
+
+	<!-- CUSTOM_REPORT_LIBRARY_NODE Relationship -->
+
+	<comment>This table contains the relations between two custom reports nodes. If a node is root, parent id will be null and descendant id will be itself.
+		a given node can be referenced as descendant only one time so we can map the join with hibernate</comment>
+	<createTable tableName="CRLN_RELATIONSHIP">
+
+		<column name="ANCESTOR_ID" type="BIGINT" remarks="cle etrangere vers le noeud parent">
+			<constraints nullable="true" foreignKeyName="fk_crln_relationship_ancestor" references="CUSTOM_REPORT_LIBRARY_NODE(CRLN_ID)" />
+		</column>
+
+		<column name="DESCENDANT_ID" type="BIGINT" remarks="cle etrangere vers l'element fils. ">
+			<constraints nullable="false" foreignKeyName="fk_crln_relationship_descendant" references="CUSTOM_REPORT_LIBRARY_NODE(CRLN_ID)" />
+		</column>
+
+		<column name="CONTENT_ORDER" type="BIGINT" remarks="numéro d'ordre du noeud dans son parent">
+		</column>
+	</createTable>
+
+	<createIndex tableName="CRLN_RELATIONSHIP" indexName="idx_crln_relationship_descendant">
+		<column name="DESCENDANT_ID" />
+	</createIndex>
+
+	<createIndex tableName="CRLN_RELATIONSHIP" indexName="idx_crln_relationship_ancestor">
+		<column name="ANCESTOR_ID" />
+	</createIndex>
+
+	<createTable tableName="CUSTOM_REPORT_FOLDER">
+		<column name="CRF_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+			<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CRF_ID" />
+		</column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+		<column name="DESCRIPTION" type="CLOB"/>
+
+	</createTable>
+
+	<createTable tableName="CUSTOM_REPORT_DASHBOARD">
+		<column name="CRD_ID" type="BIGINT" autoIncrement="true" remarks="pk genere">
+			<constraints primaryKey="true" nullable="false" primaryKeyName="PK_CRD_ID" />
+		</column>
+
+		<column name="NAME" type="VARCHAR(255)"/>
+
+	</createTable>
+
+
+	<addColumn tableName="PROJECT">
+ 		<column name="CRL_ID" type="BIGINT" remarks="FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
+      	</column>
+ 	</addColumn>
+
+ 	<addColumn tableName="ATTACHMENT_LIST">
+ 		<column name="TMP_CRL_ID" type="BIGINT" remarks="TMP FK FOR CUSTOM_REPORT_LIBRARY.CRL_ID">
+      	</column>
+ 	</addColumn>
+
+	<!-- SQL CREATE A NEW CUSTOM_REPORT_LIBRARY FOR EACH PROJECT IN DB -->
+	<sql>
+		insert into CUSTOM_REPORT_LIBRARY (TMP_PROJECT_ID)
+			select p.PROJECT_ID
+			from PROJECT p;
+
+		update PROJECT p
+			set CRL_ID = (
+				select crl.CRL_ID
+				from CUSTOM_REPORT_LIBRARY crl
+				where p.PROJECT_ID = crl.TMP_PROJECT_ID
+		);
+
+	</sql>
+
+
+	<!-- SQL CREATE A NEW ATTACHEMENT_LIST FOR EACH PREVIOUSLY CUSTOM_REPORT_LIBRARY IN DB -->
+	<sql>
+		insert into ATTACHMENT_LIST (TMP_CRL_ID)
+			select CRL_ID
+			from CUSTOM_REPORT_LIBRARY crl;
+
+		update CUSTOM_REPORT_LIBRARY crl
+			set ATTACHMENT_LIST_ID = (
+				select ATTACHMENT_LIST_ID
+				from ATTACHMENT_LIST al
+				where crl.CRL_ID = al.TMP_CRL_ID
+		);
+
+	</sql>
+	<sql>
+
+		insert into CUSTOM_REPORT_LIBRARY_NODE (ENTITY_ID,CRL_ID,ENTITY_TYPE)
+			select CRL_ID,CRL_ID,'LIBRARY'
+			from CUSTOM_REPORT_LIBRARY;
+
+	</sql>
+	<sql>
+
+		update CUSTOM_REPORT_LIBRARY_NODE
+			set NAME = (
+					select p.NAME
+					from PROJECT p
+					where ENTITY_ID = p.CRL_ID
+				);
+
+	</sql>
+
+	<insert tableName="ACL_CLASS">
+		<column name="CLASSNAME" value="org.squashtest.tm.domain.customreport.CustomReportLibrary" />
+	</insert>
+
+	<!-- INSERT ACL FOR EXISTING LIBRARY -->
+
+
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="1" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
+
+	<insert tableName="ACL_GROUP_PERMISSION">
+		<column name="ACL_GROUP_ID" valueComputed="(select ID from ACL_GROUP where QUALIFIED_NAME = 'squashtest.acl.group.tm.ProjectManager')" />
+		<column name="PERMISSION_MASK" value="2" />
+		<column name="CLASS_ID" valueComputed="(select ID from ACL_CLASS where CLASSNAME = 'org.squashtest.tm.domain.customreport.CustomReportLibrary')" />
+	</insert>
+
+
+	<!-- REMOVE TMP COLUMNS USED FOR MIGRATION -->
+	<dropColumn tableName="ATTACHMENT_LIST" columnName="TMP_CRL_ID" />
+	<dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
+
+
+</changeSet>
+
+</databaseChangeLog>

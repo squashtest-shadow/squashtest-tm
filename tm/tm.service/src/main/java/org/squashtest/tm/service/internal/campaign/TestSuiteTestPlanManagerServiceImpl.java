@@ -214,14 +214,6 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	@PreAuthorize("hasPermission(#suiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'LINK') " + OR_HAS_ROLE_ADMIN)
 	public boolean detachTestPlanFromTestSuiteAndRemoveFromIteration(List<Long> testPlanIds, long suiteId) {
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
-		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();
-
-		for (long testPlanId : testPlanIds) {
-			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findById(testPlanId);
-			listTestPlanItems.add(iterTestPlanItem);
-		}
-
-		unbindTestPlanObj(testSuite, listTestPlanItems);
 
 		Iteration iteration = testSuite.getIteration();
 

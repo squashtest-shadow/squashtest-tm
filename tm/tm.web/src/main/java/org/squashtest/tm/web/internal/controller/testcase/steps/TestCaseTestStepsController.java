@@ -37,7 +37,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -171,7 +170,7 @@ public class TestCaseTestStepsController {
 
 	@RequestMapping(value = "/add", method = RequestMethod.POST,  consumes="application/json")
 	@ResponseBody
-	public void addActionTestStep(@RequestBody ActionStepFormModel stepModel,
+	public Long addActionTestStep(@RequestBody ActionStepFormModel stepModel,
 			@PathVariable long testCaseId) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(stepModel, "add-test-step");
@@ -182,15 +181,21 @@ public class TestCaseTestStepsController {
 			throw new BindException(validation);
 		}
 
-
 		ActionTestStep step = stepModel.getActionTestStep();
-
+		
 		Map<Long, RawValue> customFieldValues = stepModel.getCufs();
+		int index = stepModel.getIndex();
+		
+		ActionTestStep addActionTestStep;
 
-		testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
-
+		if (index!=0) {
+			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues,index);
+		} else {
+			addActionTestStep = testCaseModificationService.addActionTestStep(testCaseId, step, customFieldValues);
+		}
 		LOGGER.trace(TEST_CASE_ + testCaseId + ": step added, action : " + step.getAction() + ", expected result : "
 				+ step.getExpectedResult());
+		return addActionTestStep.getId();
 	}
 
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })

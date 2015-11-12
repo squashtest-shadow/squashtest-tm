@@ -133,7 +133,7 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			
 			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268
 			$("#import-excel-tree-button").on("click", function(){
-				$("#import-excel-dialog").reqimportDialog("open");
+				$("#import-excel-dialog").reqImportDialog("open");
 			});
 			
 			// **************** import links *****************
@@ -151,7 +151,10 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			// *****************  search  ********************
 			
 			$("#search-tree-button").on("click", function(){
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement";
+			  // get value of Campaign Workspace Cookie
+				var cookieValueSelect = $.cookie("jstree_select");
+				var cookieValueOpen = $.cookie("jstree_open");
+				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&cookieValueSelect=" + encodeURIComponent(cookieValueSelect) + "&cookieValueOpen=" + encodeURIComponent(cookieValueOpen);
 			});
 
 			// ***************** deletion ********************

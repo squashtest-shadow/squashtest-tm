@@ -18,13 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'jquery.squash.formdialog'], 
-		function($, zetree, cufValuesManager, projects, rules){
+define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permissions-rules', 'workspace.routing', 'jquery.squash.formdialog'], 
+		function($, zetree, cufValuesManager, projects, rules, routing){
 	
 	function postNode(dialog, tree){
-		
+
 		var params = {
 			name : dialog.find('#add-iteration-name').val(),
+			reference : dialog.find('#add-iteration-reference').val(),
 			description : dialog.find('#add-iteration-description').val(),
 			copyTestPlan : dialog.find("#copy-test-plan-box").is(':checked')
 		};
@@ -60,6 +61,12 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		dialog.data('cuf-values-support', cufHandler);
 	}
 	
+	function fetchIterationCount(node){
+		var cId = node.getResId();
+		var url = routing.buildURL('campaigns.countIterations', cId);
+		return $.get(url, 'json');
+	}
+	
 	function init(){
 		
 		var dialog = $("#add-iteration-dialog").formDialog();
@@ -88,13 +95,24 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 				//dialog.formDialog('setState', errorState);
 			}
 			else{
-				dialog.formDialog('setState','confirm');
-				var name = node.getName();
-				dialog.find("#new-iteration-tree-button").val(name);				
+				fetchIterationCount(node)
+				.success(function(cnt){
+					dialog.formDialog("option", 'itercount', cnt);
+					dialog.find('#add-iteration-reference').val((cnt+1));
+					
+					dialog.formDialog('setState','confirm');
+					var name = node.getName();
+					dialog.find("#new-iteration-tree-button").val(name);						
+				});			
 			}			
 		});
 
 		// end
+		
+		dialog.on('formdialogcleanup', function(){
+			var cnt = dialog.formDialog('option', 'itercount') || '--';
+			dialog.find('#add-iteration-reference').val((cnt+1));
+		});
 
 		dialog.on('formdialogadd-close', function(){
 			postNode(dialog,tree).then(function(){
@@ -104,6 +122,8 @@ define(['jquery', 'tree', 'custom-field-values', 'workspace.projects', '../permi
 		
 		dialog.on('formdialogadd-another', function(){
 			postNode(dialog, tree).then(function(){
+				var cnt = dialog.formDialog('option', 'itercount');
+				dialog.formDialog('option', 'itercount', (cnt+1));
 				dialog.formDialog('cleanup');
 			}) ;		
 		});

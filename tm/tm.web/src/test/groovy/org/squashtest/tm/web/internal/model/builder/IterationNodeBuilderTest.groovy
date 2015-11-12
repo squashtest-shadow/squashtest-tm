@@ -27,13 +27,13 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
 
-class IterationNodeBuilderTest extends Specification {
-	PermissionEvaluationService permissionEvaluationService = Mock()
-	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluationService)
+class IterationNodeBuilderTest extends NodeBuildingSpecification {
+	IterationNodeBuilder builder = new IterationNodeBuilder(permissionEvaluator())
 
 	def "should build root node of test case library"() {
 		given:
@@ -41,7 +41,7 @@ class IterationNodeBuilderTest extends Specification {
 		c.getMilestones() >> []
 		c.doMilestonesAllowCreation() >> Boolean.TRUE
 		c.doMilestonesAllowEdition() >> Boolean.TRUE
-		Iteration iter = new Iteration(name: "it", campaign : c)
+		Iteration iter = new Iteration(name: "it", campaign : c, reference : "ref")
 		def id = 10L
 		use(ReflectionCategory) {
 			Iteration.set(field: "id", of:iter, to: id)
@@ -56,7 +56,7 @@ class IterationNodeBuilderTest extends Specification {
 		res.attr['resId'] == "10"
 		res.state == State.leaf.name()
 		res.attr['resType'] == "iterations"
-		res.title == "5 - it"
+		res.title == "ref - it"
 	}
 
 	def "should expand itreration"() {

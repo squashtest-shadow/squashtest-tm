@@ -34,6 +34,7 @@ import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.core.foundation.i18n.Abbreviated;
 import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
@@ -75,6 +76,10 @@ public class InternationalizationHelper implements MessageSource {
 	 */
 	public String internationalize(Internationalizable internationalizable, Locale locale) {
 		return internationalize(internationalizable.getI18nKey(), locale);
+	}
+
+	public String internationalizeAbbreviation(Abbreviated abridged, Locale locale){
+		return internationalize(abridged.getAbbreviatedI18nKey(), locale);
 	}
 
 	/**

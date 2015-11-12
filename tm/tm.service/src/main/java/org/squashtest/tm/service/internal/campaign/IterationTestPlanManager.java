@@ -29,7 +29,7 @@ import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service
 public interface IterationTestPlanManager {
@@ -39,5 +39,7 @@ public interface IterationTestPlanManager {
 	void addTestSuite(Iteration iteration, TestSuite suite);
 
 	Execution addAutomatedExecution(IterationTestPlanItem item) throws TestPlanItemNotExecutableException ;
+
+	Execution updateExecutionFromTc(long executionId);
 
 }

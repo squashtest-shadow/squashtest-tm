@@ -35,6 +35,8 @@ public interface ProjectDao extends CustomProjectDao {
 
 	Project findById(long id);
 
+	Project findByExecutionId(@QueryParam(ParameterNames.PROJECT_ID) long id);
+
 	void persist(Project project);
 
 	List<Project> findAll();

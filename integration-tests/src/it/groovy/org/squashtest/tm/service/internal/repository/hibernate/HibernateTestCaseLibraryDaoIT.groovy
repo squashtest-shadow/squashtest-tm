@@ -34,6 +34,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
+import spock.lang.Ignore
 
 @Transactional
 class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
@@ -62,7 +63,7 @@ class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
 		content.size() == 2
 		(content.collect { it.name }).containsAll(["tc", "f"])
 	}*/
-
+  @Ignore
 	def "should find library by id"() {
 		setup:
 		TestCaseLibrary lib  = new TestCaseLibrary();

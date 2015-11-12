@@ -33,24 +33,20 @@
 <%@ attribute name="printmode" required="false" type="java.lang.Boolean" 
 			description="if set to true, renders in print mode. This means among other things that the toolbar will not be rendered." %>
 
-<f:message var="advanceTitle" key="title.CampaignCumulativeAdvancement"/>
+
 <f:message var="statisticsTitle" key="title.CampaignStatistics"/>
 <f:message var="inventoryTitle" key="title.TestInventoryByIteration"/>
 <f:message var="refreshLabel" key="label.Refresh" />			
-<f:message var="dialogTitle" key="dialog.label.iteration.scheduled_dates.label"/>
-<f:message var="buttonOK" key="label.Ok"/>
-<f:message var="dateformatSupershort" key="squashtm.dateformatSupershort" />		
-<f:message var="dateformatJs" key="squashtm.dateformatShort" />
+<f:message var="buttonOK" key="label.Ok"/>	
 <f:message var="testWeightHelper" key="dashboard.campaigns.importance.helper"/>
-<f:message var="campaignProgressHelper" key="dashboard.campaigns.progression.helper"/>
 
 <div id="dashboard-master" data-def="url=${url}">
 
 	<div class="right btn-toolbar">
 		<span class="dashboard-timestamp not-displayed"><f:message key="dashboard.meta.timestamp.label"/></span> 		
-
-		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" value="${refreshLabel}" title="${refreshLabel}"/>	
-		<c:if test="${empty printmode or (not printmode) }">
+  
+        <c:if test="${empty printmode or (not printmode) }">
+		<input type="button" class="dashboard-refresh-button sq-btn btn-sm" value="${refreshLabel}" title="${refreshLabel}"/>
 			<a id="campaign-dashboard-print" href="${printUrl}" target="_blank" class=" sq-icon-btn btn-sm aligntop" style="vertical-align: top;" role="button" title="<f:message key='label.print' />">
  		 		 <span class="ui-icon ui-icon-print"></span>
 			 </a>

@@ -20,11 +20,15 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.context.MessageSource;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -32,7 +36,8 @@ import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
@@ -83,25 +88,64 @@ RequirementLibraryFinderService {
 
 	List<Requirement> findChildrenRequirements(long requirementId);
 
-	/**
-	 * Accepts a stream to a .xls / .xlsx file info for requirement folders and requirements. Will
-	 * convert the requirements from excel to squash.
-	 * 
-	 * @param ExcelStream
-	 * @param libraryId
-	 *            the identifier of the library we are importing requirements into.
-	 * @return a summary of the operations.
-	 */
-	ImportSummary importExcel(InputStream stream, long projectId);
-
-	/**
-	 * Accepts a stream to a .xls / .xlsx file info for requirement and test-case links. Will
-	 * convert the links from excel to squash.
-	 * 
-	 * @param ExcelStream
-	 * @return a summary of the operations.
-	 */
-	ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream);
-
 	List<String> getParentNodesAsStringList(Long elementId);
+	
+	/**
+	 * Generate a xls file to export requirements
+	 * @param libraryIds List of libraryIds (ie project ids) selected for export
+	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
+	 * @param keepRteFormat
+	 * @param messageSource
+	 * @return
+	 */
+	File exportRequirementAsExcel(List<Long> libraryIds, List<Long> nodeIds,
+			boolean keepRteFormat, MessageSource messageSource);
+	
+	/**
+	 * Generate a xls file to export requirements from research screen
+	 * @param libraryIds List of libraryIds (ie project ids) selected for export
+	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
+	 * @param keepRteFormat
+	 * @param messageSource
+	 * @return
+	 */
+	File searchExportRequirementAsExcel(List<Long> nodeIds,
+			boolean keepRteFormat, MessageSource messageSource);
+
+	ImportLog simulateImportExcelRequirement(File xls);
+
+	ImportLog importExcelRequirement(File xls);
+	
+	/**
+	 * Create a hierarchy of requirement library node.
+	 * The type of node depends of the first existing node in hierarchy :
+	 * <code>
+	 * <ul>
+	 * <li>If no node exist before, all created node will be {@link RequirementFolder}</li>
+	 * <li>If the last existing node on path is a {@link RequirementFolder}, all created node will be {@link RequirementFolder} </li>
+	 * <li>If the last existing node on path is a {@link Requirement}, all created node will be {@link Requirement} </li>
+	 * </ul>
+	 * </code>
+	 * @param folderpath the complete path
+	 * @return the ID of the created node. Take care that it can be an ID corresponding to a {@link RequirementFolder} or a {@link Requirement}. See above...
+	 */
+	public Long mkdirs(String folderpath);
+	
+	/**
+	 * Change the current version number. 
+	 * Used by import to change the last created version number.
+	 * This method also modify the {@link Requirement#getCurrentVersion()} if needed. 
+	 */
+	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion);
+	
+	/**
+	 * Initialize the CUF values for a {@link RequirementVersion}
+	 * @param reqVersion
+	 * @param initialCustomFieldValues map the id of the CUF to the value. 
+	 * Beware, it's not the id of the CUFValue entry in db but the id of the CUF itself
+	 */
+	void initCUFvalues(RequirementVersion reqVersion, Map<Long, RawValue> initialCustomFieldValues);
+	
+	public RequirementLibraryNode findRequirementLibraryNodeById(Long id);
+	
 }

@@ -28,13 +28,14 @@ import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
 import spock.lang.Specification
 
-class CampaignLibraryTreeNodeBuilderTest extends Specification {
-	CampaignLibraryTreeNodeBuilder builder = new CampaignLibraryTreeNodeBuilder(Mock(PermissionEvaluationService))
+class CampaignLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
+	CampaignLibraryTreeNodeBuilder builder = new CampaignLibraryTreeNodeBuilder(permissionEvaluator())
 	def "should build a tree node for a campaign folder"() {
 		given:
 		CampaignFolder node  = new CampaignFolder(name: "f")

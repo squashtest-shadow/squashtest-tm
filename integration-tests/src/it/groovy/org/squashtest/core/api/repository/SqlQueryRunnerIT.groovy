@@ -26,6 +26,7 @@ import org.squashtest.tm.api.repository.SqlQueryRunner
 import org.unitils.database.annotations.Transactional
 import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Ignore
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
 
@@ -42,6 +43,7 @@ import javax.inject.Inject
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
 @Transactional(TransactionMode.DISABLED)
 @DataSet("SqlQueryRunnerIT.should select all active core users.xml")
+@Ignore
 class SqlQueryRunnerIT extends Specification {
 	@Inject SqlQueryRunner runner
 

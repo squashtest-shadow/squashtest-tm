@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 //the 'tree-node' plugin will be automatically applied when required
-define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './conditional-select-plugin', './tree-node', 'jstree'], function($, applyDndOverride, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin, applyConditionalSelectPlugin){
+define(['jquery', './jstree-dnd-override', './continuous-shift-select-plugin','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './conditional-select-plugin', './tree-node', 'jstree'], function($, applyDndOverride, applyContinuousShiftSelectPlugin, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin, applyConditionalSelectPlugin){
 
 	return {
 		
@@ -29,18 +29,22 @@ define(['jquery', './jstree-dnd-override','./squash-plugin', './workspace-tree-p
 			case 'workspace-tree' : 
 				applyDndOverride(settings);
 				applySquashPlugin();
+				applyContinuousShiftSelectPlugin();
 				applyWorkspacePlugin();
 				applyConditionalSelectPlugin();
+
 				break;
 				
 			case 'tree-picker' : 
 				applySquashPlugin();
+				applyContinuousShiftSelectPlugin();
 				applyTreePickerPlugin();
 				applyConditionalSelectPlugin();
 				break;
 				
 			case 'simple-tree' : 
 				applySquashPlugin();
+
 				break;
 				
 			default :

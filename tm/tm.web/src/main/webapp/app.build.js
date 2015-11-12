@@ -98,6 +98,11 @@
 				exclude : [ "common" ]
 			},
 			{
+				name : "execution-preview-page",
+				include : [ "jquery", "squash.basicwidgets", "custom-field-values", "jquery.squash" ],
+				exclude : [ "common" ]
+			},
+			{
 				name : "home-workspace",
 				include : [ "app/ws/squashtm.workspace" ],
 				exclude : [ "common" ]
@@ -123,7 +128,7 @@
 			},
 			{
 				name : "milestone-manager",
-				include : [ "app/pubsub", "backbone.wreqr", "jquery", "squash.translator", "workspace.routing", "squash.configmanager",
+				include : [ "app/pubsub", "app/squash.wreqr.init", "jquery", "squash.translator", "workspace.routing", "squash.configmanager",
 				            "squash.dateutils", "milestone-manager/MilestoneFeatureSwitch",
 				            "jeditable.datepicker",  "squashtable", "app/ws/squashtm.workspace", "jquery.squash.formdialog", "jquery.squash.confirmdialog"
 				            ],

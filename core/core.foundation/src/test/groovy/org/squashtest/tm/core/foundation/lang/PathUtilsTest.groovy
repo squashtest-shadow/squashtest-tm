@@ -118,4 +118,19 @@ class PathUtilsTest extends Specification{
 			"/bob/robert/toto"		|	"mike"			| "/bob/robert/mike"
 			"/home/couch"			|	"bed"			| "/home/bed"
 	}
+	
+	@Unroll("should return the path of all parent of the node refered to by this node #comment")
+	def "should return the path of all parent of the node refered to by this node"(){
+		
+		expect : 
+			parentpaths == PathUtils.scanPath(path)
+			
+			
+		where :
+			path					|	parentpaths										|	comment
+			
+			"/bob/robert/toto"		|	["/bob", "/bob/robert", "/bob/robert/toto"]			|	", normal case"
+			"//bob/robert/toto/"		|	["/bob", "/bob/robert", "/bob/robert/toto"]		|	", with extra slashes before"
+			"/bob/ro\\/bert/toto"	|	["/bob", "/bob/ro\\/bert", "/bob/ro\\/bert/toto"]	|	", with names having a '/' inside"
+	}
 }

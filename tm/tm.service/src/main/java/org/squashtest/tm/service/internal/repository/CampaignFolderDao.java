@@ -20,8 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.execution.Execution;
 
 public interface CampaignFolderDao extends FolderDao<CampaignFolder, CampaignLibraryNode> {
+
+	List<Execution> findAllExecutionsByCampaignFolder(Long cfId);
+
 }

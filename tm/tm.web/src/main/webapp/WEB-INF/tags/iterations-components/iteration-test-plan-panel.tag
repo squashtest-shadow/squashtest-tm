@@ -27,6 +27,8 @@
 <%@ attribute name="editable" type="java.lang.Boolean" description="can the user modify the existing test plan items ?"%>
 <%@ attribute name="executable" type="java.lang.Boolean" description="can the user execute the test plan ?"%>
 <%@ attribute name="reorderable" type="java.lang.Boolean" description="can the user reorder the test plan en masse ?"%>
+<%@ attribute name="deletable" type="java.lang.Boolean" description="can the user remove an item which has not been executed yet ?"%>
+<%@ attribute name="extendedDeletable" type="java.lang.Boolean" description="can the user remove an item which has been executed ?"%>
 
 <%@ attribute name="assignableUsers" type="java.lang.Object" description="a map of users paired by id -> login. The id must be a string."%>
 <%@ attribute name="weights" type="java.lang.Object" description="a map of weights paired by id -> internationalized text. The id must be a string."%>
@@ -47,7 +49,8 @@
   <s:param name="iterId" value="${iteration.id}" />
 </s:url>
 
-
+<s:url var="workspaceUrl"         value="/test-case-workspace" />
+<s:url var="testCaseUrl"          value="/test-cases/{tc-id}/info" />
 
 <div id="iteration-test-plans-panel" class="table-tab">
 
@@ -76,6 +79,8 @@
     <f:message var="cancelLabel" key="label.Cancel" />
     <f:message var="closeLabel" key="label.Close" />
     <f:message var="okLabel" key="label.Ok" />
+    <f:message var="tooltipReference" key="label.Reference"/>
+    <f:message var="tooltipImportance" key="label.Importance"/>
 
     
     
@@ -168,17 +173,15 @@
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
 
   <div class="table-tab-wrap">
-    <c:if test="${editable}">
-      <c:set var="deleteBtnClause" value=", unbind-button=#iter-test-plan-delete-dialog" />
-    </c:if>
     <table id="iteration-test-plans-table" class="test-plan-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${iteration.id}" data-entity-type="iteration">
       <thead>
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-filter tp-th-project-name" data-def="map=project-name, sortable">
-            <f:message key="label.project" />
+          <th class="no-user-select tp-th-filter tp-th-project-name" 
+              data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+            <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
@@ -186,14 +189,15 @@
           <th title="<f:message key='label.Mode' />" class="no-user-select tp-th-filter tp-th-exec-mode"
             data-def="map=exec-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode">   <f:message key="label.Mode" /></th>
             
-          <th class="no-user-select tp-th-filter tp-th-reference" data-def="map=reference, sortable">
-            <f:message key="label.Reference" />
+          <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
+              data-def="map=reference, sortable, link=${testCaseUrl}">
+            <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row">
-            <f:message key="iteration.executions.table.column-header.test-case.label" />
+            <f:message key="label.TestCase.short" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-importance" data-def="map=importance, sortable">
-            <f:message key="iteration.executions.table.column-header.importance.label" />
+          <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
+            <f:message key="label.Importance.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
@@ -208,11 +212,12 @@
             data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo">
             <f:message key="iteration.executions.table.column-header.user.label" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-exec-on" data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on">
-            <f:message key="iteration.executions.table.column-header.execution-date.label" />
+          <th class="no-user-select tp-th-filter tp-th-exec-on" 
+          data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on">
+            <f:message key="label.LastExecutionOn" />
           </th>
           <th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
-          <th class="no-user-select" data-def="map=empty-delete-holder${deleteBtnClause}">&nbsp;</th>
+          <th class="no-user-select" data-def="sClass=delete, map=empty-delete-holder, sClass=unbind-or-delete">&nbsp;</th>
         </tr>
       </thead>
       <tbody>
@@ -242,18 +247,31 @@
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.unbind-ta-project.tooltip" />">
-      <span data-def="state=single-tp" >
-         <span><f:message key="dialog.remove-testcase-association.message.solo" /></span>
-         <span><f:message key="message.permissions.confirm"/></span>
-      </span>
-      <span data-def="state=multiple-tp" >
-        <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
-        <span><f:message key="message.permissions.confirm"/></span>
-      </span>
+      
+      <comp:notification-pane type="warning">
+        <jsp:attribute name="htmlcontent">
+         
+          <span data-def="state=unbind-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.unbind" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span>     
+        
+          <span data-def="state=delete-single-tp" >
+             <span><f:message key="dialog.remove-testcase-association.message.delete" /></span>
+             <span><f:message key="message.permissions.confirm"/></span>
+          </span> 
 
+        <span data-def="state=multiple-tp" >
+          <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
+          <span><f:message key="message.permissions.confirm"/></span>
+        </span>
+        
+        </jsp:attribute>      
+      </comp:notification-pane>
+      
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
-          data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
+          data-def="evt=confirm, mainbtn" />
         <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
@@ -330,7 +348,9 @@
 							linkable : ${linkable},
 							editable : ${editable},
 							executable : ${executable},
-							reorderable : ${reorderable}
+							reorderable : ${reorderable},
+							deletable : ${deletable},
+							extendedDeletable : ${extendedDeletable}
 						},
 						basic : {
 							iterationId : ${iteration.id},

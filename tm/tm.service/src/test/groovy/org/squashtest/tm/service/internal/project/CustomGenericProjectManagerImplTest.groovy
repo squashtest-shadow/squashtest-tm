@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.project;
 
 import static org.junit.Assert.*;
 
+import javax.inject.Inject;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Test;
@@ -29,10 +31,22 @@ import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
 import org.squashtest.tm.service.security.ObjectIdentityService;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
+import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.domain.project.ProjectTemplate
+import org.squashtest.tm.domain.testautomation.TestAutomationProject
+import org.squashtest.tm.service.project.GenericProjectCopyParameter;
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 
 import spock.lang.Specification;
 
@@ -47,6 +61,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	ObjectIdentityService objectIdentityService = Mock()
 	GenericProjectDao genericProjectDao = Mock()
 	InfoListFinderService infoListService = Mock()
+	ProjectsPermissionManagementService permissionsManager = Mock()
+	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
+	PermissionEvaluationService permissionEvaluationService = Mock()
+	TestAutomationProjectManagerService taProjectService = Mock()
 
 	def setup() {
 		manager.sessionFactory = sessionFactory
@@ -54,6 +72,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		manager.objectIdentityService = Mock(ObjectIdentityService)
 		manager.genericProjectDao = genericProjectDao
 		manager.infoListService = infoListService
+		manager.permissionsManager = permissionsManager
+		manager.customFieldBindingModificationService = customFieldBindingModificationService
+		manager.permissionEvaluationService = permissionEvaluationService
+		manager.taProjectService = taProjectService
 	}
 
 	def "should not persist project with name in use"() {
@@ -129,5 +151,141 @@ class CustomGenericProjectManagerImplTest extends Specification {
 
 		then:
 		notThrown NameAlreadyInUseException
+	}
+	
+	def "should add projet and copy all settings from template except milestones"(){
+		given: "a template project"
+		ProjectTemplate template = Mock()
+		Project project = Mock()
+		template.isTestAutomationEnabled() >> Boolean.TRUE
+		genericProjectDao.findById(1L) >> template
+		genericProjectDao.findById(2L) >> project
+		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
+
+		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		TestAutomationServer testAutomationServer = Mock()
+		automationProject.createCopy() >> automationCopy
+		template.getTestAutomationProjects() >> [automationProject]
+		template.getTestAutomationServer() >> testAutomationServer
+
+		template.isBugtrackerConnected() >> true
+		BugTrackerBinding binding = Mock()
+		template.getBugtrackerBinding() >> binding
+		BugTracker bugtracker = Mock()
+		binding.getBugtracker() >> bugtracker
+
+		and: "a project"
+		project.getId()>> 2L
+		project.getClass()>> Project.class
+		project.getTestAutomationServer() >> testAutomationServer
+		
+		
+		and:"a conf object"
+		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
+		params.setCopyPermissions(true)
+		params.setCopyCUF(true)
+		params.setCopyBugtrackerBinding(true)
+		params.setCopyAutomatedProjects(true)
+		params.setCopyInfolists(true)
+		params.setCopyMilestone(false)
+
+		when:
+		manager.synchronizeGenericProject(project, template, params)
+
+		then:
+		1* permissionsManager.copyAssignedUsers(project,template)
+		1* project.setBugtrackerBinding(_)
+		1* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
+		1* taProjectService.persist(_)
+		1* project.setRequirementCategories(_);
+		1* project.setTestCaseNatures(_);
+		1* project.setTestCaseTypes(_);
+	}
+	
+	def "should add projet and copy all settings but custom fields binging from template"(){
+		given: "a template project"
+		ProjectTemplate template = Mock()
+		Project project = Mock()
+		template.isTestAutomationEnabled() >> Boolean.TRUE
+		genericProjectDao.findById(1L) >> template
+		genericProjectDao.findById(2L) >> project
+		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
+
+		TestAutomationProject automationProject = Mock()
+		TestAutomationProject automationCopy = Mock()
+		TestAutomationServer testAutomationServer = Mock()
+		automationProject.createCopy() >> automationCopy
+		template.getTestAutomationProjects() >> [automationProject]
+		template.getTestAutomationServer() >> testAutomationServer
+
+		template.isBugtrackerConnected() >> true
+		BugTrackerBinding binding = Mock()
+		template.getBugtrackerBinding() >> binding
+		BugTracker bugtracker = Mock()
+		binding.getBugtracker() >> bugtracker
+
+		and: "a project"
+		project.getId()>> 2L
+		project.getClass()>> Project.class
+		project.getTestAutomationServer() >> testAutomationServer
+
+
+		and:"a conf object"
+		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
+		params.setCopyPermissions(true)
+		params.setCopyCUF(false)
+		params.setCopyBugtrackerBinding(true)
+		params.setCopyAutomatedProjects(true)
+		params.setCopyInfolists(true)
+		params.setCopyMilestone(false)
+
+		when:
+		manager.synchronizeGenericProject(project, template, params)
+
+		then:
+		1* permissionsManager.copyAssignedUsers(project,template)
+		1* project.setBugtrackerBinding(_)
+		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
+		1* taProjectService.persist(_)
+		1* project.setRequirementCategories(_);
+		1* project.setTestCaseNatures(_);
+		1* project.setTestCaseTypes(_);
+	}
+	
+	def "should add projet and copy only infolists"(){
+		given: "a template project"
+		ProjectTemplate template = Mock()
+		Project project = Mock()
+		template.isTestAutomationEnabled() >> Boolean.TRUE
+		genericProjectDao.findById(1L) >> template
+		genericProjectDao.findById(2L) >> project
+		permissionEvaluationService.hasRoleOrPermissionOnObject(_,_,_) >> true
+
+		and: "a project"
+		project.getId()>> 2L
+		project.getClass()>> Project.class
+
+
+		and:"a conf object"
+		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
+		params.setCopyPermissions(false)
+		params.setCopyCUF(false)
+		params.setCopyBugtrackerBinding(false)
+		params.setCopyAutomatedProjects(false)
+		params.setCopyInfolists(true)
+		params.setCopyMilestone(false)
+
+		when:
+		manager.synchronizeGenericProject(project, template, params)
+
+		then:
+		0* permissionsManager.copyAssignedUsers(project,template)
+		0* project.setBugtrackerBinding(_)
+		0* customFieldBindingModificationService.copyCustomFieldsSettingsFromTemplate(project, template)
+		0* taProjectService.persist(_)
+		1* project.setRequirementCategories(_);
+		1* project.setTestCaseNatures(_);
+		1* project.setTestCaseTypes(_);
 	}
 }

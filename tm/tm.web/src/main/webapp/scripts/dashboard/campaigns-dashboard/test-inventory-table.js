@@ -18,12 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["../basic-objects/table-view", "squash.translator"], function(TableView, translator){
+define(["../basic-objects/table-view", "squash.translator", "squash.attributeparser"], 
+		function(TableView, translator, attrparser){
 	
 	return TableView.extend({
-		
+
 		getData : function(){
-			var inventory = this.model.get('iterationTestInventoryStatisticsList');
+			var inventory = this.model.get(this.modelAttribute);
 			
 			var data = [],
 				i = 0,
@@ -53,7 +54,7 @@ define(["../basic-objects/table-view", "squash.translator"], function(TableView,
 					var total = _nbterm + m.nbReady + m.nbRunning;
 					var progress = (total>0) ? (_nbterm * 100 / total).toFixed(0) + ' %' : '0%';
 					var rowdata = [
-					               '#'+(i+1)+' - '+m.iterationName,
+					              (m.iterationName || m.campaignName),	// sorry, too lazy to make it right -_-
 					               m.nbReady,
 					               m.nbRunning,
 					               m.nbSuccess + m.nbWarning,

@@ -20,16 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Inject;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -45,6 +41,7 @@ import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.web.importer.ImportHelper;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 
 /**
@@ -66,6 +63,9 @@ public class TestCaseImportController {
 
 	@Inject
 	private TestCaseImportLogHelper logHelper;
+	
+	@Inject
+	private ImportHelper importHelper;
 
 	/**
 	 * Will import test cases given in the form of zipped archive. The zip must contain a folder hierarchy, with
@@ -126,7 +126,7 @@ public class TestCaseImportController {
 		File xls = null;
 
 		try {
-			xls = multipartToImportFile(uploadedFile);
+			xls = importHelper.multipartToImportFile(uploadedFile,"test-case-import-", ".xls");
 			ImportLog summary = callback.execute(xls); // TODO parser may throw ex we should handle
 			summary.recompute(); // TODO why is it here ? shouldnt it be in service ?
 			generateImportLog(request, summary);
@@ -186,15 +186,6 @@ public class TestCaseImportController {
 
 	private File importLogToLogFile(ImportLog summary) throws IOException {
 		return logHelper.storeLogFile(summary);
-	}
-
-	private File multipartToImportFile(MultipartFile uploadedFile) throws IOException, FileNotFoundException {
-		InputStream is = uploadedFile.getInputStream();
-		File xls = File.createTempFile("test-case-import-", ".xls");
-		BufferedOutputStream os = new BufferedOutputStream(new FileOutputStream(xls));
-		IOUtils.copy(is, os);
-		IOUtils.closeQuietly(os);
-		return xls;
 	}
 
 	/**

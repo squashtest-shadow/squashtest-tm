@@ -63,7 +63,7 @@ class ModelIT  extends DbunitServiceSpecification {
 			def targets = createTestCaseTargets("/autre project/folder/TEST B", "/Test Project-1/dossier 2/0 test case \\/ with slash", "/nonexistant/unknown", "/Test Project-1/nonexistant")
 			
 		when :
-			model.init(targets)
+			model.mainInitTestCase(targets)
 		
 		
 		then :

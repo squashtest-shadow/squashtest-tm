@@ -174,6 +174,23 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @return
 	 */
 	File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat, MessageSource messageSource);
+	
+	/**
+	 * <p>Will export a selection of test cases as an Excel 2003 (.xls) spreadsheet.
+	 * The selection consists of :</p>
+	 * 
+	 *  <ul>
+	 *  	<li>zero to several nodes</li>
+	 *  </ul>
+	 * 
+	 *  <p>Last, if the selection have some call steps, the called test case can be included in the export
+	 *  if the parameter includeCalledTests is set to true.</p>
+	 * 
+	 * @param nodeIds
+	 * @param includeCalledTests
+	 * @return
+	 */
+	File searchExportTestCaseAsExcel( List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat, MessageSource messageSource);
 
 
 	List<String> getParentNodesAsStringList(Long nodeId);

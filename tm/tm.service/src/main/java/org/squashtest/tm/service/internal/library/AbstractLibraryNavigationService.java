@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PostFilter;
@@ -269,7 +271,6 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 				RawValue newValue = initialCustomFieldValues.get(customFieldId);
 				newValue.setValueFor(value);
 			}
-
 		}
 	}
 
@@ -418,6 +419,16 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			data.setFolderName(path.toString());
 		}
 		return dataset;
+	}
+
+	protected Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
+		Collection<Long> effective = new ArrayList<Long>();
+		for (Long id : original) {
+			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)) {
+				effective.add(id);
+			}
+		}
+		return effective;
 	}
 
 }

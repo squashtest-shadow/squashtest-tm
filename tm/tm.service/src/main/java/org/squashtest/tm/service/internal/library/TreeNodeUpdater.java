@@ -140,19 +140,21 @@ public class TreeNodeUpdater implements NodeVisitor {
 	public void visit(TestCase testCase) {
 		updateCustomFields(testCase);
 		updateMilestones(testCase);
+		
+		TestStepVisitor visitor = new TestStepVisitor() {
+
+			@Override
+			public void visit(CallTestStep visited) {// nope
+
+			}
+
+			@Override
+			public void visit(ActionTestStep visited) {
+				updateCustomFields(visited);
+			}
+		};
 		for (TestStep step : testCase.getSteps()) {
-			step.accept(new TestStepVisitor() {
-
-				@Override
-				public void visit(CallTestStep visited) {// nope
-
-				}
-
-				@Override
-				public void visit(ActionTestStep visited) {
-					updateCustomFields(visited);
-				}
-			});
+			step.accept(visitor);
 		}
 		updateAutomationParams(testCase);
 		updateNatureAndType(testCase);

@@ -27,4 +27,7 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
 @Transactional
 @DynamicManager(name="squashtest.tm.service.ProjectTemplateManagerService", entity = ProjectTemplate.class)
 public interface ProjectTemplateManagerService extends CustomProjectTemplateManagerService, ProjectTemplateFinder {
+
+
+
 }

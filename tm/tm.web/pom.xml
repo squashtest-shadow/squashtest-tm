@@ -1,26 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-
-        This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2015 Henix, henix.fr
-
-        See the NOTICE file distributed with this work for additional
-        information regarding copyright ownership.
-
-        This is free software: you can redistribute it and/or modify
-        it under the terms of the GNU Lesser General Public License as published by
-        the Free Software Foundation, either version 3 of the License, or
-        (at your option) any later version.
-
-        this software is distributed in the hope that it will be useful,
-        but WITHOUT ANY WARRANTY; without even the implied warranty of
-        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        GNU Lesser General Public License for more details.
-
-        You should have received a copy of the GNU Lesser General Public License
-        along with this software.  If not, see <http://www.gnu.org/licenses/>.
-
--->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
@@ -129,6 +107,11 @@
     </dependency>
     <dependency>
       <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.testautomation.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
       <artifactId>core.wizard.api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -145,6 +128,11 @@
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-hibernate4</artifactId>
     </dependency>
 
     <!--<dependency>-->
@@ -229,14 +217,6 @@
       <artifactId>slf4j-log4j12</artifactId>
     </dependency>
 
-    <!--<dependency>-->
-    <!--<groupId>org.spockframework</groupId>-->
-    <!--<artifactId>spock-spring</artifactId>-->
-    <!--</dependency>-->
-    <!--<dependency>-->
-    <!--<groupId>org.spockframework</groupId>-->
-    <!--<artifactId>spock-unitils</artifactId>-->
-    <!--</dependency>-->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-actuator</artifactId>
@@ -342,8 +322,8 @@
     </dependency>
 
     <!--<dependency>-->
-      <!--<groupId>org.springframework.boot</groupId>-->
-      <!--<artifactId>spring-boot-configuration-processor</artifactId>-->
+    <!--<groupId>org.springframework.boot</groupId>-->
+    <!--<artifactId>spring-boot-configuration-processor</artifactId>-->
     <!--</dependency>-->
   </dependencies>
   <build>
@@ -381,13 +361,13 @@
           <!--&#45;&#45;Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug-->
           <!--</jvmArguments>-->
           <!--</configuration>-->
-            <dependencies>
-              <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>springloaded</artifactId>
-                <version>1.2.4.RELEASE</version>
-              </dependency>
-            </dependencies>
+          <dependencies>
+            <dependency>
+              <groupId>org.springframework</groupId>
+              <artifactId>springloaded</artifactId>
+              <version>1.2.4.RELEASE</version>
+            </dependency>
+          </dependencies>
         </plugin>
       </plugins>
     </pluginManagement>
@@ -807,16 +787,6 @@
           <plugin>
             <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>
             <artifactId>nodejs-maven-plugin</artifactId>
-            <configuration>
-              <targetDirectory>${project.build.directory}/nodejs/</targetDirectory>
-            </configuration>
-            <executions>
-              <execution>
-                <goals>
-                  <goal>extract</goal>
-                </goals>
-              </execution>
-            </executions>
           </plugin>
 
           <plugin>

@@ -20,28 +20,39 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
-import java.io.InputStream;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Provider;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ReflectionUtils;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
@@ -57,16 +68,19 @@ import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationExcepti
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
-import org.squashtest.tm.service.importer.ImportRequirementTestCaseLinksSummary;
-import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
-import org.squashtest.tm.service.internal.importer.RequirementImporter;
-import org.squashtest.tm.service.internal.importer.RequirementTestCaseLinksImporter;
+import org.squashtest.tm.service.internal.batchexport.ExportDao;
+import org.squashtest.tm.service.internal.batchexport.RequirementExcelExporter;
+import org.squashtest.tm.service.internal.batchexport.RequirementExportModel;
+import org.squashtest.tm.service.internal.batchexport.SearchRequirementExcelExporter;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
@@ -99,16 +113,13 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Inject
 	private RequirementNodeDeletionHandler deletionHandler;
 	@Inject
-	private RequirementImporter requirementImporter;
-	@Inject
 	private IndexationService indexationService;
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 	@Inject
 	@Qualifier("squashtest.tm.service.RequirementLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy;
-	@Inject
-	private RequirementTestCaseLinksImporter requirementTestCaseLinksImporter;
+
 	@Inject
 	@Qualifier("squashtest.tm.service.internal.PasteToRequirementFolderStrategy")
 	private Provider<PasteStrategy<RequirementFolder, RequirementLibraryNode>> pasteToRequirementFolderStrategyProvider;
@@ -124,6 +135,22 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Inject
 	private InfoListItemFinderService infoListItemService;
+
+	@Inject
+	private ExportDao exportDao;
+
+	@Inject
+	@Named(value="requirementExcelExporter")
+	private Provider<RequirementExcelExporter> exporterProvider;
+
+	@Inject
+	private Provider<SearchRequirementExcelExporter> searchExporterProvider;
+
+	@Inject
+	private RequirementExcelBatchImporter batchImporter;
+
+	@Inject
+	private ProjectDao projectDao;
 
 	@Override
 	protected NodeDeletionHandler<RequirementLibraryNode, RequirementFolder> getDeletionHandler() {
@@ -399,14 +426,14 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
 		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
-		return (List<ExportRequirementData>) requirementDao.findRequirementToExportFromLibrary(libraryIds);
+		return requirementDao.findRequirementToExportFromLibrary(libraryIds);
 	}
 
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> nodesIds) {
 		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", RequirementLibraryNode.class.getName());
-		return (List<ExportRequirementData>) requirementDao.findRequirementToExportFromNodes(nodesIds);
+		return requirementDao.findRequirementToExportFromNodes(nodesIds);
 	}
 
 	@Override
@@ -422,16 +449,6 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : requirementLibraryDao
 				.findAll();
-	}
-
-	@Override
-	public ImportSummary importExcel(InputStream stream, long libraryId) {
-		return requirementImporter.importExcelRequirements(stream, libraryId);
-	}
-
-	@Override
-	public ImportRequirementTestCaseLinksSummary importLinksExcel(InputStream stream) {
-		return requirementTestCaseLinksImporter.importLinksExcel(stream);
 	}
 
 	@Override
@@ -576,5 +593,219 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		}
 
 	}
+
+	@Override
+	public File exportRequirementAsExcel(List<Long> libraryIds,
+			List<Long> nodeIds, boolean keepRteFormat,
+			MessageSource messageSource) {
+		//1. Check permissions for all librairies and all nodes selecteds
+		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
+		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
+
+		//2. Find the list of all req ids that belongs to library and node selection.
+		Set<Long> reqIds = new HashSet<Long>();
+		reqIds.addAll(requirementDao.findAllRequirementsIdsByLibrary(libraryIds));
+		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
+
+		//3. For each req, find all versions
+		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
+
+		//4. Get exportModel from database
+		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+
+		//5. Instantiate a fresh exporter, append model to excel file and return
+		RequirementExcelExporter exporter = exporterProvider.get();
+		exporter.appendToWorkbook(exportModel, keepRteFormat);
+		return exporter.print();
+	}
+
+	@Override
+	public File searchExportRequirementAsExcel(List<Long> nodeIds,
+			boolean keepRteFormat, MessageSource messageSource) {
+
+		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
+
+		Set<Long> reqIds = new HashSet<Long>();
+		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
+
+		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
+
+		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
+
+		RequirementExcelExporter exporter = searchExporterProvider.get();
+		exporter.appendToWorkbook(exportModel, keepRteFormat);
+		return exporter.print();
+	}
+
+	@Override
+	public ImportLog simulateImportExcelRequirement(File xls) {
+		return batchImporter.simulateImport(xls);
+	}
+
+	@Override
+	public ImportLog importExcelRequirement(File xls) {
+		return batchImporter.performImport(xls);
+	}
+
+	@Override
+	public List<Long> findNodeIdsByPath(List<String> paths) {
+		return requirementLibraryNodeDao.findNodeIdsByPath(paths);
+	}
+
+	@Override
+	public Long findNodeIdByPath(String path) {
+		return StringUtils.isBlank(path) ? null : requirementLibraryNodeDao.findNodeIdByPath(path);
+	}
+
+	@Override
+	public Long mkdirs(String folderpath) {
+		List<String> paths = PathUtils.scanPath(folderpath);
+		String[] splits = PathUtils.splitPath(folderpath);
+		Project project = projectDao.findByName(splits[0]);
+
+		if (splits.length < 2) {
+			throw new IllegalArgumentException("Folder path for mkdir must contains at least a valid /projectName/folder");
+		}
+
+		if (project == null) {
+			throw new IllegalArgumentException("Folder path for mkdir must concern an existing project");
+		}
+
+		List<Long> ids = findNodeIdsByPath(paths);
+		RequirementFolder folderTree = null;
+
+		int position = ids.indexOf(null);
+
+		switch (position) {
+			case -1 ://no null value so all node exists, returning ids of the last folder
+				return ids.get(ids.size()-1);
+			case 0 ://no member of the path exists, we must create the hierachy under the Requirement librairy
+				folderTree = makeFolderTree(project,1, splits);
+				addFolderToLibrary(project.getRequirementLibrary().getId(), folderTree);
+				break;
+			default://Something already exists... requirement or folder ?
+				Requirement requirement = findRequirement(ids.get(position-1));
+				if (requirement == null) {
+					return createFolderTree(project,position, ids.get(position-1),splits);
+				}
+				else {
+					return createRequirementTree(project,position, ids.get(position-1),splits);
+				}
+		}
+
+		//now get the last folder on path and return id
+		RequirementFolder lastfolder = folderTree;
+
+		while (lastfolder.hasContent()) {
+			lastfolder = (RequirementFolder) lastfolder.getContent().get(0);
+		}
+
+		return lastfolder.getId();
+	}
+
+	private Long createRequirementTree(Project project, int position, Long idBaseRequirement, String[] splits) {
+		Requirement requirementTree = makeRequirementTree(project,position +1, splits);
+		List<Long> emptyIds = Collections.emptyList();
+		addRequirementToRequirement(idBaseRequirement, requirementTree, emptyIds);
+
+		//now get the last requirement on path and return his id
+
+		Requirement lastRequirement = requirementTree;
+
+		while (lastRequirement.hasContent()) {
+			lastRequirement =  lastRequirement.getContent().get(0);
+		}
+
+		return lastRequirement.getId();
+	}
+
+	private Long createFolderTree(Project project, int position, Long idBaseFolder, String[] splits) {
+		RequirementFolder folderTree = makeFolderTree(project,position + 1, splits);
+		addFolderToFolder(idBaseFolder, folderTree);
+
+		//now get the last folder on path and return his id
+
+		RequirementFolder lastfolder = folderTree;
+
+		while (lastfolder.hasContent()) {
+			lastfolder = (RequirementFolder) lastfolder.getContent().get(0);
+		}
+
+		return lastfolder.getId();
+	}
+
+	private RequirementFolder makeFolderTree(Project project, int startIndex,String[] names){
+		RequirementFolder baseFolder = null;
+		RequirementFolder childFolder = null;
+		RequirementFolder parentFolder = null;
+
+		for (int i = startIndex; i < names.length; i++) {
+			childFolder = new RequirementFolder();
+			childFolder.setName(PathUtils.unescapePathPartSlashes(names[i]));
+			childFolder.setDescription("");
+			childFolder.notifyAssociatedWithProject(project);
+			if (baseFolder==null) {//if we have no folder yet, we are creating the base, witch will be also the first parent
+				baseFolder = childFolder;
+			}
+			else {
+				parentFolder.addContent(childFolder);
+			}
+			parentFolder = childFolder;
+		}
+
+		return baseFolder;
+	}
+
+	private Requirement makeRequirementTree(Project project, int startIndex,String[] names){
+		Requirement baseRequirement = null;
+		Requirement childRequirement = null;
+		Requirement parentRequirement = null;
+
+		for (int i = startIndex; i < names.length; i++) {
+			childRequirement = new Requirement(new RequirementVersion());
+			childRequirement.setName(PathUtils.unescapePathPartSlashes(names[i]));
+			childRequirement.setDescription("");
+			childRequirement.setCategory(infoListItemService.findDefaultRequirementCategory(project.getId()));
+			childRequirement.notifyAssociatedWithProject(project);
+			if (baseRequirement==null) {//if we have no folder yet, we are creating the base, witch will be also the first parent
+				baseRequirement = childRequirement;
+			}
+			else {
+				parentRequirement.addContent(childRequirement);
+			}
+			parentRequirement = childRequirement;
+		}
+
+		return baseRequirement;
+	}
+
+	@Override
+	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion) {
+		//if target noVersion = actual noVersion, nothing to change, return
+		if (requirement.getCurrentVersion().getVersionNumber() == noVersion.intValue()) {
+			return;
+		}
+		if (requirement.findRequirementVersion(noVersion)==null) {
+			RequirementVersion lastCreatedReqVersion = requirement.getCurrentVersion();
+			lastCreatedReqVersion.setVersionNumber(noVersion);
+			requirement.setCurrentVersion(requirement.findLastNonObsoleteVersionAfterImport());
+		}
+		else {
+			throw new IllegalArgumentException("RequirementVersion with version number " + noVersion + " already exist in this Requirement, id : " + requirement.getId());
+		}
+	}
+
+	@Override
+	public void initCUFvalues(RequirementVersion reqVersion,
+			Map<Long, RawValue> initialCustomFieldValues) {
+		initCustomFieldValues(reqVersion, initialCustomFieldValues);
+	}
+
+	@Override
+	public RequirementLibraryNode findRequirementLibraryNodeById(Long id) {
+		return requirementLibraryNodeDao.findById(id);
+	}
+
+
 
 }

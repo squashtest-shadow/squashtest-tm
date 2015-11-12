@@ -60,6 +60,11 @@ public class StubPermissionOnOddEntitiesEvaluationService implements PermissionE
 	}
 
 	@Override
+	public boolean hasPermissionOnObject(String permission, Object entity) {
+		return false;
+	}
+
+	@Override
 	public boolean canRead(Object object) {
 		return true;
 	}
@@ -94,8 +99,8 @@ public class StubPermissionOnOddEntitiesEvaluationService implements PermissionE
 	}
 	
 	@Override
-	public Map<Permission, Boolean> listPermissionsOnObject(Object object) {
-		return new HashMap<Permission, Boolean>(0);
+	public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+		return null;
 	}
 
 }

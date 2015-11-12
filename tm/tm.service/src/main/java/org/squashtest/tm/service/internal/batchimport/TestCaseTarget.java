@@ -63,6 +63,7 @@ public class TestCaseTarget extends Target {
 		return EntityType.TEST_CASE;
 	}
 
+	@Override
 	public String getPath() {
 		return path;
 	}

@@ -83,7 +83,7 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 			};
 			var winDef = {
 				name : "classicExecutionRunner",
-				features : "height=500, width=500, resizable, scrollbars, dialog, alwaysRaised"
+				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
 			};
 			$.open(runnerUrl, data, winDef);
 		};
@@ -190,7 +190,6 @@ define(['module', 'jquery', 'app/pubsub', 'squash.basicwidgets', 'app/ws/squasht
 					
 					// TODO : yes, that function is defined in the global scope in bugtracker-panel.jsp,
 					// refactoring would be good here too
-					
 					checkAndReportIssue( {
 						reportUrl : routing.buildURL('bugtracker.execsteps.new', executionStepId), 
 						callback : function(json){

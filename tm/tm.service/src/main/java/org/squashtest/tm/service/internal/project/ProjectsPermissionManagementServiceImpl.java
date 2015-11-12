@@ -288,8 +288,8 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		copyAssignedUsersFromTemplate(newProject, templateId);
 	}
 
-	private List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProjectTemplate(long projectId) {
-		return findPartyPermissionBeanByProjectOfGivenType(projectId, ProjectTemplate.class);
+	private List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProjectTemplate(long projectId, Class<?> genericClass) {
+		return findPartyPermissionBeanByProjectOfGivenType(projectId, genericClass);
 	}
 
 	// clearly suboptimal, on the other hand this method is seldomely invoked
@@ -305,6 +305,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		return newResult;
 
 	}
+
 
 	// clearly suboptimal, on the other hand this method is seldomely invoked
 	private PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionBeanByProjectOfGivenType(
@@ -337,7 +338,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	 */
 	@Override
 	public void copyAssignedUsersFromTemplate(Project project, long templateId) {
-		List<PartyProjectPermissionsBean> templatePartyPermissions = findPartyPermissionsBeanByProjectTemplate(templateId);
+		List<PartyProjectPermissionsBean> templatePartyPermissions = findPartyPermissionsBeanByProjectTemplate(templateId, ProjectTemplate.class);
 
 		for (PartyProjectPermissionsBean partyPermission : templatePartyPermissions) {
 			long userId = partyPermission.getParty().getId();
@@ -345,6 +346,16 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 			String permissionName = partyPermission.getPermissionGroup().getQualifiedName();
 			addNewPermissionToProject(userId, projectId, permissionName);
 		}
+	}
+	
+	/**
+	 * @see org.squashtest.tm.service.project.ProjectsPermissionManagementService#copyAssignedUsers(org.squashtest.tm.domain.project.GenricProject,
+	 *      org.squashtest.tm.domain.project.GenricProject)
+	 */
+	@Override
+	public void copyAssignedUsers(GenericProject target, GenericProject source) {
+		long sourceId = source.getId();
+		copyAssignedUsers(target, sourceId);
 	}
 
 	/**
@@ -386,5 +397,18 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		}
 
 		return isInGroup;
+	}
+	
+	//****************************************** PRIVATE METHOD *************************************************//
+	
+	private void copyAssignedUsers(GenericProject targetProject, long sourceId){
+		List<PartyProjectPermissionsBean> templatePartyPermissions = findPartyPermissionsBeanByProject(sourceId);
+
+		for (PartyProjectPermissionsBean partyPermission : templatePartyPermissions) {
+			long userId = partyPermission.getParty().getId();
+			long projectId = targetProject.getId();
+			String permissionName = partyPermission.getPermissionGroup().getQualifiedName();
+			addNewPermissionToProject(userId, projectId, permissionName);
+		}
 	}
 }

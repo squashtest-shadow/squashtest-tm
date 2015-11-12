@@ -58,7 +58,8 @@ define(function() {
 				},
 
 				ui : {
-					select_multiple_modifier : "ctrl"
+					select_multiple_modifier : "ctrl",
+					select_range_modifier : "shift"
 				},
 
 				themes : {

@@ -374,4 +374,41 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
+	@Override
+	public List<Long> findAllRequirementsIdsByLibrary(List<Long> libraryIds) {
+		if (! libraryIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findAllRequirementIdsByLibraries");
+			q.setParameterList("libraryIds", libraryIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Long> findAllRequirementsIdsByNodes(List<Long> nodeIds) {
+		if (! nodeIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findAllRequirementIdsByNodesId");
+			q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+
+	@Override
+	public List<Long> findIdsVersionsForAll(
+			List<Long> requirementIds) {
+		if (! requirementIds.isEmpty()){
+			Query q = currentSession().getNamedQuery("requirement.findVersionsIdsForAll");
+			q.setParameterList("requirementIds", requirementIds, LongType.INSTANCE);
+			return q.list();
+		}
+		else{
+			return new ArrayList<>();
+		}
+	}
+
 }

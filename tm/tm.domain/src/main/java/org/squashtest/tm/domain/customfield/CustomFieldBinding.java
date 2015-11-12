@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -59,7 +60,7 @@ public class CustomFieldBinding {
 	@SequenceGenerator(name = "custom_field_binding_cfb_id_seq", sequenceName = "custom_field_binding_cfb_id_seq")
 	private Long id;
 
-	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=CustomField.class)
+	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=CustomField.class, cascade=CascadeType.DETACH)
 	@JoinColumn(name = "CF_ID", updatable = false)
 	@NotNull
 	private CustomField customField;

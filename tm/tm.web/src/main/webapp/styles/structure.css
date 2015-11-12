@@ -102,6 +102,15 @@ label.afterDisabled:after, input + label:after {
 	right:0px;
 }
 
+#tabbed-pane-search {
+	bottom: 1cm;
+	margin-right: 0.5em;
+	position: absolute;
+	top: 0.6cm;
+	left:0px;
+	right:0px;
+}
+
 #slider {
 	position: absolute;
 	width: 95%;
@@ -109,6 +118,10 @@ label.afterDisabled:after, input + label:after {
 }
 
 #tabbed-pane .tab {
+	font-size: 10px;
+}
+
+#tabbed-pane-search .tab {
 	font-size: 10px;
 }
 
@@ -130,6 +143,10 @@ ul.ui-tabs-nav li.ui-state-default.ui-corner-top.ui-state-hover {
 }
 
 #tabbed-pane>ul,div.fragment-tabs>ul {
+	border: 0;
+	background: none;
+}
+#tabbed-pane-search>ul,div.fragment-tabs>ul {
 	border: 0;
 	background: none;
 }
@@ -233,6 +250,26 @@ div.sub-page div.table-tab-wrap .dataTables_footer{
 }
 
 #tabbed-pane>ul.library-mode {
+	position: relative;
+	top: -0.75cm;
+	padding: 0;
+	float : left;
+	visibility : visible;
+}
+
+#tabbed-pane-search>ul {
+	visibility : hidden;
+}
+
+#tabbed-pane-search>ul.milestones-mode {
+	position: relative;
+	top: -0.75cm;
+	padding: 0;
+	float : right;
+	visibility : visible;
+}
+
+#tabbed-pane-search>ul.library-mode {
 	position: relative;
 	top: -0.75cm;
 	padding: 0;
@@ -353,6 +390,10 @@ span.search-text {
 .search-panel-tc-importance .caption {
 	width: 35%;
 	display: inline-block;
+}
+
+.search-minimal-height {
+    min-height : 250px!important; 
 }
 
 .search-panel-tc-importance .options {
@@ -1051,7 +1092,6 @@ body.execute-html-body { /*width:100%;*/
 
 div#execute-header {
 	position: absolute;
-	white-space : nowrap;
 	overflow : hidden;	
 	width : 100%;	
 }

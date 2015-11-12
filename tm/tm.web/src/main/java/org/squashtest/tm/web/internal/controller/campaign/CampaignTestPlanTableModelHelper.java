@@ -136,7 +136,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 
 
 	private String formatImportance(TestCaseImportance importance, Locale locale) {
-		return messageSource.internationalize(importance, locale);
+		return messageSource.internationalizeAbbreviation(importance, locale);
 	}
 
 

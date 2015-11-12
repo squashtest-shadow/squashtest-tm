@@ -27,14 +27,14 @@ import javax.inject.Inject;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
-import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
+import org.squashtest.tm.service.annotation.CacheResult;
+import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
@@ -149,16 +149,19 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 	}
 
 	@Override
+	@CacheResult(type = CachableType.CATEGORY)
 	public boolean isCategoryConsistent(long projectId, String itemCode) {
 		return itemDao.isCategoryConsistent(projectId, itemCode);
 	}
 
 	@Override
+	@CacheResult(type = CachableType.NATURE)
 	public boolean isNatureConsistent(long projectId, String itemCode) {
 		return itemDao.isNatureConsistent(projectId, itemCode);
 	}
 
 	@Override
+	@CacheResult(type = CachableType.TYPE)
 	public boolean isTypeConsistent(long projectId, String itemCode) {
 		return itemDao.isTypeConsistent(projectId, itemCode);
 	}
@@ -174,6 +177,11 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 		InfoList infoList = infoListService.findById(infoListId);
 		InfoListItem item = findById(infoListItemId);
 		InfoListItem defaultItem = infoList.getDefaultItem();
+
+		if (item.references(defaultItem)){
+			throw new IllegalArgumentException("cannot delete this item : it is default item of its list");
+		}
+
 		infoList.removeItem(item);
 		itemDao.removeInfoListItem(infoListItemId, defaultItem);
 		itemDao.remove(item);

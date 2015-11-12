@@ -250,19 +250,6 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		thrown (DuplicateNameException)
 	}
 
-
-	def "should find test campaign"() {
-		given:
-		Campaign campaign = Mock()
-		campaignDao.findById(10) >> campaign
-
-		when:
-		def found = service.findCampaign(10)
-
-		then:
-		found == campaign
-	}
-
 	def "should find library"() {
 		given:
 		CampaignLibrary l = Mock()

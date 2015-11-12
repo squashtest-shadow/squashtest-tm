@@ -322,6 +322,15 @@ public final class MantisEntityConverter {
 		return issue;
 	}
 
+	public static BTIssue issueNotFound(String issueKey, MantisExceptionConverter conv) {
+		BTIssue issue = new BTIssue();
+		issue.setId(issueKey);
+		issue.setSummary(conv.getIssueNotFoundMsg());
+		issue.setProject(new BTProject("", ""));
+        return issue;
+	}
+
+
 
 	/* **** private utilities **** */
 

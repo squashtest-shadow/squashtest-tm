@@ -95,7 +95,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		Future future = Mock()
 		future.get(_, _) >> [ri]
 		// 1st arg is a set, hence the closure condition
-		bugTrackersService.getIssues({ it.containsAll(["10"]) }, _, _) >> future
+		bugTrackersService.getIssues({ it.containsAll(["10"]) }, _, _, _) >> future
 
 		and:
 		issueDao.countIssuesfromIssueList(_,_) >> 10
@@ -141,7 +141,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		Future future = Mock()
 		future.get(_, _) >> [ri1, ri2]
 		// 1st arg is a set, hence the closure condition
-		bugTrackersService.getIssues({ it.containsAll(["10", "20"]) }, _,_) >> future
+		bugTrackersService.getIssues({ it.containsAll(["10", "20"]) }, _,_, _) >> future
 
 		and:
 		issueDao.countIssuesfromIssueList(_,_) >> 10

@@ -20,9 +20,11 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.COVERAGE_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASETS_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.DATASET_PARAM_VALUES_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.PARAMETERS_SHEET;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.REQUIREMENT_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.STEPS_SHEET;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
 
@@ -57,10 +59,14 @@ import org.squashtest.tm.service.internal.batchimport.LogTrain;
 import org.squashtest.tm.service.internal.batchimport.Messages;
 import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
 import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementVersionInstruction;
 import org.squashtest.tm.service.internal.batchimport.StepInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
 import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
 import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementInstructionBuilder;
+import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
 
 /**
  * <p>
@@ -140,6 +146,17 @@ public class ExcelWorkbookParser {
 		instructionsByWorksheet.put(PARAMETERS_SHEET, new ArrayList<Instruction<?>>());
 		instructionsByWorksheet.put(DATASETS_SHEET, new ArrayList<Instruction<?>>());
 		instructionsByWorksheet.put(DATASET_PARAM_VALUES_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(REQUIREMENT_SHEET, new ArrayList<Instruction<?>>());
+		instructionsByWorksheet.put(COVERAGE_SHEET, new ArrayList<Instruction<?>>());
+
+		instructionBuilderFactoryByWorksheet.put(REQUIREMENT_SHEET, new Factory<RequirementSheetColumn>(){
+
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<RequirementSheetColumn> wd) {
+				return new RequirementInstructionBuilder(wd);
+			}
+
+		});
 
 		instructionBuilderFactoryByWorksheet.put(TEST_CASES_SHEET, new Factory<TestCaseSheetColumn>() {
 			@Override
@@ -175,6 +192,16 @@ public class ExcelWorkbookParser {
 			}
 
 		});
+
+		instructionBuilderFactoryByWorksheet.put(COVERAGE_SHEET, new Factory<CoverageSheetColumn>(){
+
+			@Override
+			public InstructionBuilder<?, ?> create(WorksheetDef<CoverageSheetColumn> wd) {
+				return new CoverageInstructionBuilder(wd);
+			}
+
+		});
+
 	}
 
 	public LogTrain logUnknownHeaders(){
@@ -217,6 +244,14 @@ public class ExcelWorkbookParser {
 
 		case PARAMETERS_SHEET :
 			target = new ParameterTarget();
+			break;
+
+		case REQUIREMENT_SHEET :
+			target = new RequirementTarget();
+			break;
+
+		case COVERAGE_SHEET:
+			target = new CoverageTarget();
 			break;
 
 		default : throw new IllegalArgumentException("sheet '"+def.getSheetName()+"' is unknown and contains errors in its column headers");
@@ -309,6 +344,17 @@ public class ExcelWorkbookParser {
 		// whine
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<RequirementVersionInstruction> getRequirementVersionInstructions(){
+		return (List) instructionsByWorksheet.get(REQUIREMENT_SHEET);// useless (List) cast required for compiler not to
+		// whine
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public List<RequirementVersionInstruction> getCoverageInstructions() {
+		return (List) instructionsByWorksheet.get(COVERAGE_SHEET);// useless (List) cast required for compiler not to
+		// whine
+	}
 	public boolean isEmpty(Row row) {
 		boolean isEmpty = true;
 

@@ -32,6 +32,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -41,6 +42,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ClassBridge;
 import org.hibernate.search.annotations.ClassBridges;
@@ -72,9 +74,9 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 
 /**
  * Represents a version of a requirement.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Entity
 @Indexed
@@ -91,8 +93,11 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 			@ClassBridge(name = "parent", store = Store.YES, analyze = Analyze.NO, impl = RequirementVersionHasParentBridge.class) })
 public class RequirementVersion extends Resource implements BoundEntity, MilestoneHolder {
 
+	public static final int MAX_REF_SIZE = 50;
+
+
 	@NotNull
-	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE }, mappedBy = "verifiedRequirementVersion")
+	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
 	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>();
@@ -102,7 +107,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 */
 	@NotNull
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@Size(min = 0, max = 50)
+	@Size(min = 0, max = MAX_REF_SIZE)
 	private String reference = "";
 
 	@NotNull
@@ -151,7 +156,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		 * as of Squash 1.12, because renaming is sometimes mandatory when the requirement is
 		 * moved around (see requirement deletion specs for details), we no longer fail
 		 * when renaming an requirement that normally shouldn't.
-		 * 
+		 *
 		 * //checkModifiable();
 		 *
 		 */
@@ -193,12 +198,24 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/***
 	 * Set the requirement reference
-	 * 
+	 *
 	 * @param reference
 	 */
 	public void setReference(String reference) {
 		checkModifiable();
 		this.reference = reference;
+	}
+
+	/**
+	 * @return {reference} - {name} if reference is not empty, or {name} if it is
+	 *
+	 */
+	public String getFullName() {
+		if (StringUtils.isBlank(reference)) {
+			return getName();
+		} else {
+			return getReference() + " - " + getName();
+		}
 	}
 
 	/***
@@ -210,7 +227,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/***
 	 * Set the requirement criticality
-	 * 
+	 *
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
@@ -227,7 +244,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/***
 	 * Set the requirement category
-	 * 
+	 *
 	 * @param category
 	 */
 	public void setCategory(InfoListItem category) {
@@ -237,7 +254,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/**
 	 * Sets this object's status, following status transition rules.
-	 * 
+	 *
 	 * @param status
 	 */
 	public void setStatus(RequirementStatus status) {
@@ -262,7 +279,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
 	 */
 	public boolean isLinkable() {
@@ -273,7 +290,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
 	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
 	 * {@link #status} is governed by itself.
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
@@ -294,13 +311,13 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		return versionNumber;
 	}
 
-	protected void setVersionNumber(int versionNumber) {
+	public void setVersionNumber(int versionNumber) {
 		this.versionNumber = versionNumber;
 	}
 
 	/**
 	 * Should be used once before this entity is persisted by the requirement to which this version is added.
-	 * 
+	 *
 	 * @param requirement
 	 */
 	/* package-private */void setRequirement(Requirement requirement) {
@@ -310,7 +327,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	/**
 	 * Will create a copy of the requirement version with all attributes, and attachments. Does not copy
 	 * requirementVersionCoverages.
-	 * 
+	 *
 	 * @return the requirement-version copy.
 	 */
 	public RequirementVersion createPastableCopy() {
@@ -352,7 +369,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/**
 	 * Creates a {@link RequirementVersion} to be used as the one right after this RequirementVersion.
-	 * 
+	 *
 	 * @return
 	 */
 	/* package-private */RequirementVersion createNextVersion() {
@@ -369,7 +386,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	/**
 	 * Factory methiod which creates a {@link RequirementVersion} from a memento objet which holds the new object's
 	 * target state. This method overrides any {@link RequirementStatus} workflow check.
-	 * 
+	 *
 	 * @param memento
 	 * @return
 	 */
@@ -415,10 +432,10 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/**
 	 * Simply add the coverage to this.requirementVersionCoverage
-	 * 
+	 *
 	 * THIS DOES NOT SET THE coverage->version SIDE OF THE ASSOCIATION ! ONE SHOULD RATHER CALL
 	 * coverage.setVerifiedRequirementVersion(..)
-	 * 
+	 *
 	 * @param coverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage coverage) {
@@ -436,7 +453,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
-	 * 
+	 *
 	 * @param requirementVersionCoverage
 	 *            : the entity to remove from this requirement version's {@link RequirementVersionCoverage}s list.
 	 * @throws RequirementVersionNotLinkableException
@@ -450,7 +467,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	/**
 	 * Will create a copy of this.requirementVersionCoverages. Each {@link RequirementVersionCoverage} having, instead
 	 * of this the copyVersion param as their verifiedRequirementVersion.
-	 * 
+	 *
 	 * @param copyVersion
 	 * @return the copies of {@link RequirementVersionCoverage}s
 	 * @throws RequirementVersionNotLinkableException

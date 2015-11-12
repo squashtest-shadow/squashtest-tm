@@ -21,6 +21,8 @@
 package org.squashtest.tm.web.internal.controller.search;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -31,7 +33,10 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 
+import org.apache.commons.collections.MultiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,12 +52,17 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.MultiSelectField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -62,17 +72,20 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseNature;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestCaseType;
+import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
+import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.project.CustomProjectFinder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
@@ -86,7 +99,10 @@ import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.C
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
+import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
+import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
@@ -94,6 +110,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.json.JsonProject;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.search.MilestoneMassModifData;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -112,17 +129,21 @@ public class AdvancedSearchController {
 		SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode);
 	}
 
+	private static final String NAME = "name";
 	private static final String IDS = "ids[]";
 	private static final String TEXTFIELD = "textfield";
 	private static final String DATE = "date";
 	private static final String COMBOMULTISELECT = "combomultiselect";
 	private static final String TAGS = "tags";
-
+	private static final String CAMPAIGN = "campaign";
 	private static final String TESTCASE = "test-case";
 	private static final String REQUIREMENT = "requirement";
 	private static final String SEARCH_MODEL = "searchModel";
 	private static final String SEARCH_DOMAIN = "searchDomain";
 	private static final String TESTCASE_VIA_REQUIREMENT = "testcaseViaRequirement";
+	private static final String RESULTS = "/results";
+	private static final String TABLE = "/table";
+	private static final String INPUT = "/input";
 
 	@Inject
 	private RequirementVersionManagerService versionService;
@@ -134,13 +155,23 @@ public class AdvancedSearchController {
 	private JsonProjectBuilder jsProjectBuilder;
 
 	@Inject
+	@Named("campaign.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<CampaignLibraryNode>> cammpaignDriveNodeBuilder;
+
+
+	@Inject
+	private CustomProjectFinder customProjectFinder;
+
+	@Inject
+	private CampaignLibraryNavigationService campaignLibraryNavigationService;
+
+
+	@Inject
 	private TestCaseModificationService testCaseModificationService;
 
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
 
-	@Inject
-	private MilestoneFinderService milestoneFinder;
 
 	@Inject
 	private FeatureManager featureManager;
@@ -167,6 +198,15 @@ public class AdvancedSearchController {
 			}
 		});
 
+		formModelBuilder.put(CAMPAIGN, new FormModelBuilder() {
+			@Override
+			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
+				SearchInputInterfaceModel model = getCampaignSearchInputInterfaceModel(locale, isMilestoneMode);
+				populateMetadata(model);
+				return model;
+			}
+		});
+
 		formModelBuilder.put(REQUIREMENT, new FormModelBuilder() {
 			@Override
 			public SearchInputInterfaceModel build(Locale locale, boolean isMilestoneMode) {
@@ -179,6 +219,9 @@ public class AdvancedSearchController {
 
 	@Inject
 	private TestCaseAdvancedSearchService testCaseAdvancedSearchService;
+
+	@Inject
+	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
 	@Inject
 	private RequirementVersionAdvancedSearchService requirementVersionAdvancedSearchService;
@@ -205,6 +248,9 @@ public class AdvancedSearchController {
 	private TestcaseSearchInterfaceDescription testcaseVersionSearchInterfaceDescription;
 
 	@Inject
+	private CampaignSearchInterfaceDescription campaignSearchInterfaceDescription;
+
+	@Inject
 	private CampaignTestPlanManagerService campaignTestPlanManagerService;
 
 	@Inject
@@ -213,10 +259,18 @@ public class AdvancedSearchController {
 	@Inject
 	private TestSuiteTestPlanManagerService testSuiteTestPlanManagerService;
 
+	@Inject
+	@Named("campaign.driveNodeBuilder")
+	private Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider;
+
+	@Inject
+	@Named("squashtest.tm.service.CampaignsWorkspaceService")
+	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
+
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(15)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
 	.mapAttribute("test-case-id", "id", TestCase.class)
 	.mapAttribute("test-case-ref", "reference", TestCase.class)
 	.mapAttribute("test-case-label", "labelUpperCased", TestCase.class)
@@ -233,7 +287,7 @@ public class AdvancedSearchController {
 	.mapAttribute("test-case-modified-by", "lastModifiedBy", TestCase.class);
 
 	private DatatableMapper<String> requirementSearchResultMapper = new NameBasedMapper(14)
-	.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, "name", Project.class)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
 	.mapAttribute("requirement-id", "requirement.id", RequirementVersion.class)
 	.mapAttribute("requirement-reference", "reference", RequirementVersion.class)
 	.mapAttribute("requirement-label", "labelUpperCased", RequirementVersion.class)
@@ -248,20 +302,72 @@ public class AdvancedSearchController {
 	.mapAttribute("requirement-created-by", "createdBy", RequirementVersion.class)
 	.mapAttribute("requirement-modified-by", "lastModifiedBy", RequirementVersion.class);
 
+	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
+			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
+			.mapAttribute("campaign-name", "id", Execution.class)
+.mapAttribute("iteration-name", NAME, Execution.class)
+			.mapAttribute("execution-id", "id", Execution.class)
+			.mapAttribute("execution-mode", "lastExecutedBy", Execution.class)
+			.mapAttribute("execution-milestone-nb", "id", Execution.class)
+			.mapAttribute("testsuite-execution", "id", Execution.class)
+			.mapAttribute("execution-status", "status", Execution.class)
+			.mapAttribute("execution-executed-by", "lastExecutedBy", Execution.class)
+			.mapAttribute("execution-executed-on", "lastExecutedOn", Execution.class)
+			.mapAttribute("execution-datasets", "id", Execution.class);
+
+	// Could be change and discriminate params = "searchDomain=campaign" but not necessary
 	@RequestMapping(method = RequestMethod.GET)
 	public String showSearchPage(Model model, @RequestParam String searchDomain,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
+			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
+			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
+			@RequestParam(required = false, defaultValue = "") String associateResultWithType,
+			@RequestParam(required = false, defaultValue = "") Long id,
 			Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
+
+		// Wow, so much params.
+		// workspace-prefs could be useless
+		// But those cookieValueOpen and cookieValueSelect are great. They allow to get the cookie value from the
+		// workspace to be put in the search tree
+		// Abracajava ! You get the value, you put it in the mixer, nodesToOpen or selectedNode, some go to
+		// expansionCandidates then to the rootNodes
 
 		initModelForPage(model, associateResultWithType, id, activeMilestone);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
 		}
+ else if (CAMPAIGN.equals(searchDomain)) {
+
+			List<Library<CampaignLibraryNode>> libraries = getWorkspaceService().findAllLibraries();
+
+				model.addAttribute("selectedNode", cookieValueSelect);
+				model.addAttribute("openedNode", cookieValueOpen);
+
+			MultiMap expansionCandidates = mapIdsByType(cookieValueOpen);
+
+			DriveNodeBuilder<LibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
+			if (activeMilestone != null) {
+				nodeBuilder.filterByMilestone(activeMilestone);
+			}
+
+			List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder).expand(expansionCandidates)
+					.setModel(libraries).build();
+			model.addAttribute("rootModel", rootNodes);
+			Collection<Project> numberOfCampaignsAvailable = customProjectFinder.findAllReadable();
+
+			List<Project> projectList = new ArrayList<Project>();
+			for (Project project : numberOfCampaignsAvailable) {
+				projectList.add(project);
+			}
+
+			boolean isCampaignAvailable = campaignTestPlanManagerService.findCampaignByProjectId(projectList,
+					activeMilestone);
+			model.addAttribute("isCampaignAvailable", isCampaignAvailable);
+		}
 
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
-
 		if (builder != null) {
 			model.addAttribute("formModel", builder.build(locale, (activeMilestone != null)));
 		} else {
@@ -271,6 +377,26 @@ public class AdvancedSearchController {
 		}
 
 		return searchDomain + "-search-input.html";
+	}
+
+	protected Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider() {
+		return driveNodeBuilderProvider;
+	}
+
+	protected WorkspaceService<Library<CampaignLibraryNode>> getWorkspaceService() {
+		return workspaceService;
+	}
+
+	protected String[] getNodeParentsInWorkspace(Long elementId) {
+		List<String> parents = campaignLibraryNavigationService.getParentNodesAsStringList(elementId);
+		return parents.toArray(new String[parents.size()]);
+	}
+
+	protected MultiMap mapIdsByType(String[] openedNodes) {
+		return JsTreeHelper.mapIdsByType(openedNodes);
+	}
+	protected String getTreeElementIdInWorkspace(Long elementId) {
+		return "Campaign-" + elementId;
 	}
 
 	private void initModelForPage(Model model, String associateResultWithType, Long id, Milestone activeMilestone) {
@@ -286,14 +412,19 @@ public class AdvancedSearchController {
 
 	@RequestMapping(method = RequestMethod.POST)
 	public String showSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
+			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
+			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 			@RequestParam(required = false) Long id, Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showSearchPage(model, searchDomain, associateResultWithType, id, locale, activeMilestone);
+		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, elementId,
+				associateResultWithType, id, locale,
+				activeMilestone);
 	}
 
-	@RequestMapping(value = "/results", params = TESTCASE)
+	@RequestMapping(value = RESULTS, params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			@CurrentMilestone Milestone activeMilestone) {
@@ -307,7 +438,7 @@ public class AdvancedSearchController {
 		return "test-case-search-result.html";
 	}
 
-	@RequestMapping(value = "/results", params = REQUIREMENT)
+	@RequestMapping(value = RESULTS, params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			@CurrentMilestone Milestone activeMilestone) {
@@ -321,7 +452,22 @@ public class AdvancedSearchController {
 		return "requirement-search-result.html";
 	}
 
-	@RequestMapping(value = "/results", params = TESTCASE_VIA_REQUIREMENT)
+	@RequestMapping(value = RESULTS, params = CAMPAIGN)
+	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CurrentMilestone Milestone activeMilestone) {
+
+		initModelForPage(model, associateResultWithType, id, activeMilestone);
+		model.addAttribute(SEARCH_MODEL, searchModel);
+		model.addAttribute(SEARCH_DOMAIN, CAMPAIGN);
+
+		populateMetadata(model);
+
+		return "campaign-search-result.html";
+
+	}
+
+	@RequestMapping(value = RESULTS, params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseThroughRequirementSearchResultPage(Model model, @RequestParam String searchModel,
 			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
 			@CurrentMilestone Milestone activeMilestone) {
@@ -345,7 +491,7 @@ public class AdvancedSearchController {
 		return isInAssociationContext;
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL,
+	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL,
 			TESTCASE_VIA_REQUIREMENT, RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
@@ -377,7 +523,7 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, TESTCASE,
+	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, TESTCASE,
 			RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
@@ -407,7 +553,7 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	@RequestMapping(value = "/table", method = RequestMethod.POST, params = { RequestParams.MODEL, REQUIREMENT,
+	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, REQUIREMENT,
 			RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
@@ -438,6 +584,42 @@ public class AdvancedSearchController {
 		return new RequirementSearchResultDataTableModelHelper(locale, messageSource, permissionService,
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
+
+	// TODO
+
+	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, CAMPAIGN,
+			RequestParams.S_ECHO_PARAM })
+	@ResponseBody
+	public DataTableModel getCampaignTableModel(final DataTableDrawParameters params, final Locale locale,
+			@RequestParam(value = RequestParams.MODEL) String model,
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
+			@CurrentMilestone Milestone activeMilestone) throws JsonParseException, JsonMappingException, IOException {
+
+		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
+		if (activeMilestone != null) {
+			addMilestoneToSearchModel(searchModel, activeMilestone);
+		}
+		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
+
+		PagedCollectionHolder<List<Execution>> holder = campaignAdvancedSearchService.searchForCampaign(searchModel,
+				paging, locale);
+
+		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
+
+		// TODO wtf ids is null ?!
+		Set<Long> ids = null;
+
+		if (isInAssociationContext) {
+			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
+		}
+
+		return new CampaignSearchResultDataTableModelHelper(locale, messageSource, permissionService, iterationService,
+				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
+	}
+
+	/*
+	 *
+	 */
 
 	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel, Milestone activeMilestone) {
 		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
@@ -499,7 +681,7 @@ public class AdvancedSearchController {
 		return panel;
 	}
 
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
+	@RequestMapping(value = INPUT, method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE_VIA_REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseViaRequirementSearchInputInterfaceModel(Locale locale,
 			boolean isMilestoneMode) {
@@ -507,7 +689,7 @@ public class AdvancedSearchController {
 		return getRequirementSearchInputInterfaceModel(locale, isMilestoneMode);
 	}
 
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = REQUIREMENT)
+	@RequestMapping(value = INPUT, method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = REQUIREMENT)
 	@ResponseBody
 	public SearchInputInterfaceModel getRequirementSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 		// TODO should no longer be called through HTTP, put it private
@@ -545,7 +727,7 @@ public class AdvancedSearchController {
 		return model;
 	}
 
-	@RequestMapping(value = "/input", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE)
+	@RequestMapping(value = INPUT, method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = TESTCASE)
 	@ResponseBody
 	public SearchInputInterfaceModel getTestCaseSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
 		// TODO should no longer be called through HTTP, put it private
@@ -579,6 +761,38 @@ public class AdvancedSearchController {
 
 		return model;
 	}
+
+
+	@RequestMapping(value = INPUT, method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON, params = CAMPAIGN)
+	@ResponseBody
+	public SearchInputInterfaceModel getCampaignSearchInputInterfaceModel(Locale locale, boolean isMilestoneMode) {
+
+		// TODO should no longer be called through HTTP, put it private
+		SearchInputInterfaceModel model = new SearchInputInterfaceModel();
+
+		// Information
+		model.addPanel(campaignSearchInterfaceDescription.createGeneralInfoPanel(locale));
+
+		// Attributes
+		model.addPanel(campaignSearchInterfaceDescription.createAttributePanel(locale));
+
+		// Milestones
+		if (!isMilestoneMode && featureManager.isEnabled(Feature.MILESTONE)) {
+			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
+		}
+
+		// Content
+		model.addPanel(campaignSearchInterfaceDescription.createContentPanel(locale));
+
+		// TODO : executions there
+		model.addPanel(campaignSearchInterfaceDescription.createExecutionPanel(locale));
+
+		// CUF
+		model.addPanel(createCUFPanel(locale, BindableEntity.CAMPAIGN));
+
+		return model;
+	}
+
 
 	@RequestMapping(value = "/milestones/tc-mass-modif-associables/{testCaseIds}", method = RequestMethod.GET)
 	@ResponseBody
@@ -775,14 +989,6 @@ public class AdvancedSearchController {
 			return status.getLevel() + "-" + messageSource.internationalize(status, locale);
 		}
 
-		private String formatNature(TestCaseNature nature, Locale locale) {
-			return messageSource.internationalize(nature, locale);
-		}
-
-		private String formatType(TestCaseType type, Locale locale) {
-			return messageSource.internationalize(type, locale);
-		}
-
 		private boolean isTestCaseEditable(TestCase item) {
 			if (item.isModifiable()) {
 				return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
@@ -829,6 +1035,99 @@ public class AdvancedSearchController {
 
 		private String formatInfoItem(InfoListItem item, Locale locale) {
 			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
+		}
+	}
+
+	/* Execution */
+
+	private static final class CampaignSearchResultDataTableModelHelper extends DataTableModelBuilder<Execution> {
+		private InternationalizationHelper messageSource;
+		private Locale locale;
+		private PermissionEvaluationService permissionService;
+		private IterationModificationService iterationService;
+		private boolean isInAssociationContext;
+		private Set<Long> associatedTestCaseIds;
+
+		private CampaignSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
+				PermissionEvaluationService permissionService, IterationModificationService iterationService,
+				boolean isInAssociationContext, Set<Long> associatedTestCaseIds) {
+			this.locale = locale;
+			this.messageSource = messageSource;
+			this.permissionService = permissionService;
+			this.iterationService = iterationService;
+			this.isInAssociationContext = isInAssociationContext;
+			this.associatedTestCaseIds = associatedTestCaseIds;
+		}
+
+		private boolean isInAssociationContext() {
+			return this.isInAssociationContext;
+		}
+
+		private boolean isExecutionEditable(Execution item) {
+			// Milestone dependent ? Not for now.
+			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
+		}
+
+		@Override
+		public Map<String, Object> buildItemData(Execution item) {
+			final AuditableMixin auditable = (AuditableMixin) item;
+			Map<String, Object> res = new HashMap<String, Object>();
+			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
+			res.put("project-id", item.getProject().getId());
+			if (isInAssociationContext()) {
+				res.put("empty-is-associated-holder", " ");
+				res.put("is-associated", associatedTestCaseIds.contains(item.getId()));
+			}
+			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
+			res.put("campaign-name", item.getCampaign().getName().toString());
+			res.put("iteration-name", item.getIteration().getName().toString());
+			res.put("editable", isExecutionEditable(item));
+			res.put("execution-id", item.getId().toString());
+			res.put("execution-mode", formatMode(item.getExecutionMode(), locale));
+			res.put("execution-milestone-nb", item.getCampaign().getMilestones().toString());
+			res.put("testsuite-execution", item.getTestPlan().getLabel());
+			res.put("execution-status", formatExecutionStatus(item.getExecutionStatus(), locale));
+			res.put("execution-executed-by", formatUsername(item.getLastExecutedBy()));
+			res.put("execution-executed-on", formatDateItem(item));
+			res.put("execution-datasets", formatDatasetsItem(item));
+			res.put("execution-suiteId", item.getTestPlan().getId());
+			res.put("empty-openinterface2-holder", " ");
+			res.put("empty-opentree-holder", " ");
+			return res;
+		}
+
+		private String formatExecutionStatus(ExecutionStatus status, Locale locale) {
+			return status.getLevel() + "-" + messageSource.internationalize(status, locale);
+		}
+
+		private String formatMode(TestCaseExecutionMode mode, Locale locale) {
+			return messageSource.internationalize(mode, locale);
+		}
+
+		private String formatType(TestCaseType type, Locale locale) {
+			return messageSource.internationalize(type, locale);
+		}
+
+		private String formatInfoItem(InfoListItem item, Locale locale) {
+			return messageSource.getMessage(item.getLabel(), null, item.getLabel(), locale);
+		}
+
+		private String formatDatasetsItem(Execution item) {
+			String dataset = "-";
+			if (item.getDatasetLabel() != null) {
+				dataset = item.getDatasetLabel();
+			}
+			return dataset;
+		}
+
+		private String formatDateItem(Execution item) {
+			String reportDate = "-";
+			// Get the i18n thing
+			DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+			if (item.getLastExecutedOn() != null) {
+				reportDate = df.format(item.getLastExecutedOn());
+			}
+			return reportDate;
 		}
 	}
 

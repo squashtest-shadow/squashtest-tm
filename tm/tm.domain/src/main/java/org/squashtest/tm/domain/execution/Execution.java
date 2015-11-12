@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -38,6 +39,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -51,11 +53,22 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import org.apache.commons.collections.ListUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.ClassBridge;
+import org.hibernate.search.annotations.ClassBridges;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Parameter;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -63,6 +76,7 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.campaign.Campaign;
@@ -78,6 +92,8 @@ import org.squashtest.tm.domain.infolist.DenormalizedType;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.CUFBridge;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -94,7 +110,14 @@ import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
+@Indexed
 @Entity
+@ClassBridges({
+	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = ExecutionAttachmentBridge.class),
+	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
+		@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "ALL") }),
+		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
+			@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
@@ -117,34 +140,45 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@Id
 	@Column(name = "EXECUTION_ID")
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "execution_execution_id_seq")
 	@SequenceGenerator(name = "execution_execution_id_seq", sequenceName = "execution_execution_id_seq")
 	private Long id;
 
+	// Not Null & Column missed comparing to requirementStatus
 	@Enumerated(EnumType.STRING)
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Enumerated(EnumType.STRING)
 	protected TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@Lob
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@Lob
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	private String prerequisite = "";
 
 	@NotNull
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String reference = "";
 
 	@Lob
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	@Column(name = "TC_DESCRIPTION")
 	private String tcdescription;
 
 	@Enumerated(EnumType.STRING)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Basic(optional = false)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@Embedded
@@ -156,13 +190,16 @@ DenormalizedFieldHolder, BoundEntity {
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String name;
 
 	@Column
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String datasetLabel;
 
 	// TODO rename as testPlanItem
@@ -172,6 +209,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@ManyToOne
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
+	// @IndexedEmbedded
 	private TestCase referencedTestCase;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
@@ -183,9 +221,11 @@ DenormalizedFieldHolder, BoundEntity {
 	private Integer executionOrder;
 
 	@Column(insertable = false)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String lastExecutedBy;
 
 	@Column(insertable = false)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
 
@@ -204,7 +244,26 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
+	@IndexedEmbedded
 	private IssueList issueList = new IssueList();
+
+
+
+	/*
+	 * TRANSITIONAL - job half done here. The full job would involve something among the lines of RequirementVersionCoverage
+	 * 
+	 * The following mapping gives all issues reported in the scope of this execution : its own issues, and
+	 * the issues reported in its steps.
+	 * 
+	 * The underlying table is actually a view. So this one is read only and might be quite slow to use.
+	 */
+	@Transient
+	@OneToMany(fetch=FetchType.LAZY)
+	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
+	joinColumns=@JoinColumn(name="EXECUTION_ID", insertable=false, updatable=false ),
+	inverseJoinColumns = @JoinColumn(name="ISSUE_ID"))
+	private List<Issue> issues = new ArrayList<Issue>();
+
 
 	/* *********************** /issues attributes ************************ */
 
@@ -219,7 +278,7 @@ DenormalizedFieldHolder, BoundEntity {
 	/**
 	 * Creates an execution for the test case references by the given tess plan item. Should be used by
 	 * {@link IterationTestPlanItem} only.
-	 * 
+	 *
 	 * @param testPlanItem
 	 */
 	public Execution(TestCase testCase) {
@@ -232,6 +291,19 @@ DenormalizedFieldHolder, BoundEntity {
 		populateAttachments();
 		setDatasetLabel(testCase, dataset);
 	}
+
+	public void removeStep(long executionStepId) {
+
+		Iterator<ExecutionStep> it = steps.iterator();
+		while (it.hasNext()) {
+			if (it.next().getId() == executionStepId) {
+				it.remove();
+				return;
+			}
+		}
+
+	}
+
 
 	private void setDatasetLabel(TestCase testCase, Dataset dataset){
 		String label = null;
@@ -433,6 +505,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 
 
+
 	public String getDatasetLabel() {
 		return datasetLabel;
 	}
@@ -443,7 +516,7 @@ DenormalizedFieldHolder, BoundEntity {
 	 * return the first step with a running or a ready state.<br>
 	 * Or null if there is none or the execution has no steps
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public ExecutionStep findFirstUnexecutedStep() {
@@ -477,6 +550,8 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	/* ***************** Bugged implementation *********************** */
+
+	@IndexedEmbedded
 	@Override
 	public Project getProject() {
 		return testPlan.getProject();
@@ -485,6 +560,10 @@ DenormalizedFieldHolder, BoundEntity {
 	@Override
 	public IssueList getIssueList() {
 		return issueList;
+	}
+
+	public List<Issue> getIssues(){
+		return 	ListUtils.unmodifiableList(issues);
 	}
 
 	@Override
@@ -647,7 +726,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/**
 	 * returns the index of the step matching the given id or <code>-1</code> if step is not found.
-	 * 
+	 *
 	 * @param stepId
 	 * @return index of step or -1
 	 */
@@ -674,11 +753,11 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/**
 	 * will compute from scratch a status using a complete report.
-	 * 
+	 *
 	 * @param report
 	 *            : ExecutionStatusReport.
 	 * @return : ExecutionStatus.
-	 * 
+	 *
 	 */
 	public static ExecutionStatus computeNewStatus(ExecutionStatusReport report) {
 
@@ -711,6 +790,7 @@ DenormalizedFieldHolder, BoundEntity {
 		return testPlan.getIteration();
 	}
 
+	@IndexedEmbedded
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}

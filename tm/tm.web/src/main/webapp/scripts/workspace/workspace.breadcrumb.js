@@ -122,8 +122,8 @@
  *  get() : returns the current breadcrumb.
  *
  */
-define(["jquery", "workspace.routing", "workspace.storage"],
-		function($, routing, storage) {
+define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils'],
+		function($, routing, storage, Urls) {
 	"use strict";
 
 	var storekey = 'squashtm.workspace.breadcrumb';
@@ -151,15 +151,6 @@ define(["jquery", "workspace.routing", "workspace.storage"],
 	/* ****************************************************************
 	 *							Library code
 	 **************************************************************** */
-
-	// uses a well known trick on the internet
-	function extractPath(rawurl){
-		var url = document.createElement('a');
-		url.href = rawurl;
-
-		//Issue 4998 IE don't put / at the start of the url so the match fail. Add / at first if it not the first char
-		return url.pathname.charAt(0) != '/' ? '/' + url.pathname : url.pathname;
-	}
 
 	// removes the current url from the breadcrumb if
 	// we navigated back to it.
@@ -247,8 +238,8 @@ define(["jquery", "workspace.routing", "workspace.storage"],
 			var location = document.location.href,
 				referrer = document.referrer;
 
-			var locationPath = extractPath(location),
-				referrerPath = extractPath(referrer);
+			var locationPath = Urls.extractPath(location),
+				referrerPath = Urls.extractPath(referrer);
 
 			var locationMapped = false,
 				referrerMapped = false;

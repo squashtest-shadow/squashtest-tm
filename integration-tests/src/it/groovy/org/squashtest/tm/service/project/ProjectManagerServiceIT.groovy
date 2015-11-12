@@ -43,9 +43,18 @@ class ProjectManagerServiceIT extends DbunitServiceSpecification {
 		given : "a new project to persit"
 		Project project = new Project();
 		project.setName("name");
+		
+		and:"a conf object"
+		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
+		params.setCopyPermissions(true)
+		params.setCopyCUF(true)
+		params.setCopyBugtrackerBinding(true)
+		params.setCopyAutomatedProjects(true)
+		params.setCopyInfolists(true)
+		params.setCopyMilestone(false)
 
 		when :
-		service.addProjectAndCopySettingsFromTemplate(project, -1000L, true, true, true, true, true, false)
+		service.addProjectFromtemplate(project, -1000L, params)
 
 		then:
 		project.isTestAutomationEnabled() == true

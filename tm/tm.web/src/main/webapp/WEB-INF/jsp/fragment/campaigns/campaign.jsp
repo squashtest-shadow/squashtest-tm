@@ -47,11 +47,9 @@
 <c:url var="campaignInfoUrl" value="/campaigns/${campaign.id}/general" />
 <c:url var="campaignPlanningUrl" value="/campaigns/${campaign.id}/planning" />
 <c:url var="campaignStatisticsUrl" value="/campaigns/${campaign.id}/dashboard-statistics" />
+<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard?printmode=true" />
 <c:url var="campaignInfoStatisticsUrl" value="/campaigns/${campaign.id}/statistics" />
-<c:url var="campaignStatisticsPrintUrl" value="/campaigns/${campaign.id}/dashboard" />
 
-<c:url var="campaignMilestoneStatisticsPrintUrl" value="/campaign-browser/dashboard-milestones" />
-<c:url var="campaignMilestoneInfoStatisticsUrl" value="/campaign-browser/dashboard-milestones-statistics" />
 
 <c:url var="workspaceUrl" value="/campaign-workspace/#" />
 <c:url var="btEntityUrl" value="/bugtracker/campaign/${campaign.id}" />
@@ -106,8 +104,16 @@
   <div class="snap-left" style="height: 100%;" class="small-margin-left">
     <h2>
       <a id="campaign-name" href="${ campaignUrl }/info">
-        <c:out value="${ campaign.name }" escapeXml="true" />
+        <c:out value="${ campaign.fullName }" escapeXml="true" />
       </a>
+      <%-- raw reference and name because we need to get the name and only the name for modification, and then re-compose the title with the reference  --%>
+      <span id="campaign-raw-reference" style="display: none">
+        <c:out value="${ campaign.reference }" escapeXml="true" /> 
+      </span> 
+      
+      <span id="campaign-raw-name" style="display: none">
+        <c:out value="${ campaign.name }" escapeXml="true" /> 
+      </span>      
     </h2>
   </div>
 
@@ -207,8 +213,16 @@
 
       <comp:toggle-panel id="campaign-description-panel" titleKey="label.Description" open="true">
         <jsp:attribute name="body">
-				<div id="campaign-description" ${descrRichAttributes}>${ campaign.description }</div>
-			</jsp:attribute>
+              <div class="display-table-row">
+                <label class="display-table-cell" for="campaign-reference"><f:message key="label.Reference" /></label>
+                <div class="display-table-cell" id="campaign-reference">${ campaign.reference }</div>
+              </div>
+              
+              <div class="display-table-row">
+                <label for="campaign-description" class="display-table-cell"><f:message key="label.Description" /></label>
+		        <div id="campaign-description" ${descrRichAttributes}>${ campaign.description }</div>
+              </div> 
+	    </jsp:attribute>
       </comp:toggle-panel>
 
 

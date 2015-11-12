@@ -33,28 +33,35 @@
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 
 <s:url var="statsUrl" value="/campaign-browser/dashboard-milestones-statistics"/>
+<s:url var="printUrl" value="/campaign-browser/dashboard-milestones?printmode=true"/>
+
 <f:message var="dateFormat" key="squashtm.dateformat" />
 
 
-		<div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
-			<h2><span><f:message key="label.Milestone"/>  ${milestone.label} </span></h2>			
-		</div>
+<div class="ui-widget-header ui-state-default ui-corner-all fragment-header purple">
+	<h2><span><f:message key="label.Milestone"/>  ${milestone.label} </span></h2>			
+</div>
 
-		<div class="fragment-body">
-			<dashboard:campaign-milestones-dashboard-panel url="${statsUrl}"  printUrl="${statsUrl}" printmode="${true}" allowsSettled="${allowsSettled}" allowsUntestable="${allowsUntestable}" />
-		</div>
-	
-		<script type="text/javascript">
-		
-			require(["common"], function(){
-				require(["domReady","campaign-management"], function(domReady, campmanager){
-					domReady(function(){
-						campmanager.initDashboardPanel({
-							master : '#dashboard-master',
-							model : ${json:serialize(dashboardModel)}
-						});	
-					});
-				});
+<div class="fragment-body">
+	<dashboard:campaign-milestones-dashboard-panel 
+    url="${statsUrl}"  
+    printUrl="${printUrl}" 
+    printmode="${printmode}" 
+    allowsSettled="${allowsSettled}" 
+    allowsUntestable="${allowsUntestable}" />
+</div>
+
+<script type="text/javascript">
+
+	require(["common"], function(){
+		require(["domReady","campaign-management"], function(domReady, campmanager){
+			domReady(function(){
+				campmanager.initDashboardPanel({
+					master : '#dashboard-master',
+					model : ${json:serialize(dashboardModel)}
+				});	
 			});
-		
-		</script>
+		});
+	});
+
+</script>

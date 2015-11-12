@@ -20,16 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.hibernate.Criteria;
+import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -39,11 +31,19 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 
+import java.math.BigInteger;
+import java.util.*;
+
 public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> implements EntityDao<ENTITY_TYPE> {
 
 	@Override
 	public /*final*/ ENTITY_TYPE findById(long id) {
 		return getEntity(id);
+	}
+
+	@Override
+	public final ENTITY_TYPE findById(long id, LockOptions lockOption) {
+		return (ENTITY_TYPE) currentSession().load(entityType, id, lockOption);
 	}
 
 	/**

@@ -30,17 +30,15 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFolderModificationController;
+import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
 
-import spock.lang.Specification
-
-
-class TestCaseLibraryTreeNodeBuilderTest extends Specification {
+class TestCaseLibraryTreeNodeBuilderTest extends NodeBuildingSpecification {
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	VerifiedRequirementsManagerService verifiedRequirementsManagerService = Mock()
 	InternationalizationHelper internationalizationHelper = Mock()
-	TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluationService, verifiedRequirementsManagerService, internationalizationHelper)
+    TestCaseLibraryTreeNodeBuilder builder = new TestCaseLibraryTreeNodeBuilder(permissionEvaluator(), verifiedRequirementsManagerService, internationalizationHelper)
 	MilestoneMembershipFinder milestoneMembershipFinder = Mock()
 
 	def setup() {

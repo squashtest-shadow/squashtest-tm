@@ -46,6 +46,8 @@ public class IterationFormModel {
 	@NotNull*/
 	private String name;
 
+	private String reference;
+
 	private String description;
 
 	private boolean copyTestPlan;
@@ -77,6 +79,16 @@ public class IterationFormModel {
 	}
 
 
+	public String getReference() {
+		return reference;
+	}
+
+
+	public void setReference(String reference) {
+		this.reference = reference;
+	}
+
+
 	public String getDescription() {
 		return description;
 	}
@@ -102,6 +114,7 @@ public class IterationFormModel {
 		Iteration newIteration= new Iteration();
 		newIteration.setName(name);
 		newIteration.setDescription(description);
+		newIteration.setReference(reference);
 		return newIteration;
 	}
 

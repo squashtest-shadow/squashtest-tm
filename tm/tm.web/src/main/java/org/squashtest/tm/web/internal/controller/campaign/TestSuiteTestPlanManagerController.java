@@ -33,7 +33,6 @@ import javax.inject.Provider;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.acls.domain.CumulativePermission;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -61,8 +60,6 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -94,7 +91,6 @@ public class TestSuiteTestPlanManagerController {
 	private static final String UNBOUND_SUITE_IDS = "unboundSuiteIds[]";
 	private static final String BOUND_SUITE_IDS = "boundSuiteIds[]";
 	private static final String BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES = "bind test plan items to test suites";
-	private static final String FALSE = "false";
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 	private static final String TEST_SUITE = "testSuite";
 	private static final String TEST_SUITE_ID = "suiteId";
@@ -119,13 +115,6 @@ public class TestSuiteTestPlanManagerController {
 
 	@Inject
 	private IterationFinder iterationFinder;
-
-	@Inject
-	private PermissionEvaluationService permissionService;
-
-	@Inject
-	private MilestoneFinderService milestoneFinder;
-
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
@@ -282,10 +271,10 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = { "detach=true" })
 	public @ResponseBody
-	String detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
+	Boolean detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, suiteId);
-		return FALSE;
+		return Boolean.FALSE;
 	}
 
 	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = { ITEM_IDS })
@@ -375,6 +364,12 @@ public class TestSuiteTestPlanManagerController {
 
 	}
 
+	@RequestMapping(value = "/test-suites/{tsId}/test-plan/{testPlanId}/last-execution", method = RequestMethod.GET)
+	public String goToLastExecution(@PathVariable("testPlanId") Long testPlanId){
+		IterationTestPlanItem item = iterationTestPlanManagerService.findTestPlanItem(testPlanId);
+		Execution exec = item.getLatestExecution();
+		return "redirect:/executions/"+exec.getId();
+	}
 
 	private String formatUnassigned(Locale locale) {
 		return messageSource.internationalize("label.Unassigned", locale);

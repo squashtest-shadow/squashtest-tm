@@ -34,18 +34,20 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
@@ -61,6 +63,7 @@ import org.squashtest.tm.web.internal.model.customfield.CustomFieldValueModel;
 @RequestMapping("/test-steps/{testStepId}")
 public class TestStepController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestStepController.class);
+	private static final String OPTIMIZED = "optimized";
 
 	@Inject
 	private TestStepModificationService testStepService;
@@ -84,9 +87,12 @@ public class TestStepController {
 	@Inject
 	private InternationalizationHelper internationalizationHelper;
 
+	@Inject
+	private ExecutionFinder executionService;
+
 	/**
 	 * Shows the step modification page.
-	 * 
+	 *
 	 * @param testStepId
 	 *            the id of the step to show
 	 * @param model
@@ -95,14 +101,19 @@ public class TestStepController {
 	@RequestMapping(method = RequestMethod.GET)
 	public String showStepInfos(@PathVariable long testStepId, Model model,
 			@CurrentMilestone Milestone activeMilestone) {
-		
-		Locale locale = LocaleContextHolder.getLocale();
 
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
 		TestStep testStep = testStepService.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
+		generateTestStepInfo(model, testStepView, activeMilestone, testStep);
 
+		return "edit-test-step.html";
+	}
+
+	private void generateTestStepInfo(Model model, AbstractTestStepView<?> testStepView, Milestone activeMilestone,
+			TestStep testStep) {
+		Locale locale = LocaleContextHolder.getLocale();
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
 
@@ -157,12 +168,34 @@ public class TestStepController {
 
 
 
+	}
+
+	@RequestMapping(value = "/from-exec", method = RequestMethod.GET, params = OPTIMIZED)
+	public String showStepInfosFromExec(@PathVariable("testStepId") int execStepId,
+			Model model, @RequestParam(OPTIMIZED) boolean optimized,
+			@CurrentMilestone Milestone activeMilestone) {
+
+
+		ExecutionStep execStep = executionService.findExecutionStepById(execStepId);
+		TestStep testStep = execStep.getReferencedTestStep();
+		TestStepViewFromExec testStepView = new TestStepViewFromExecBuilder().buildTestStepViewFromExec(execStep);
+
+		if (testStep != null) {
+		generateTestStepInfo(model, testStepView, activeMilestone, testStep);
+		} else {
+			model.addAttribute("testStepView", testStepView);
+			model.addAttribute("workspace", "test-case");
+			model.addAttribute("writable", true);
+		}
+		model.addAttribute("fromExec", execStep.getExecution().getId());
+		model.addAttribute("isIEO", optimized);
+
 		return "edit-test-step.html";
 	}
 
 	/**
 	 * update the TestStep infos
-	 * 
+	 *
 	 * @param testStepId
 	 * @param testStepModel
 	 */

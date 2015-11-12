@@ -180,8 +180,8 @@ class ExecutionTest extends Specification {
 		execNoDS.steps.collect { it.action }.join(", ") ==
 		"spongebob / glouglouglou, mclane / yippeekaiyay, &lt;no_value&gt; / &lt;no_value&gt;, &lt;no_value&gt; / &lt;no_value&gt;"
 
-	}
-
+	}		
+	
 	Parameter addParameter(String name, TestCase tc){
 		def p = new Parameter(name)
 		tc.addParameter p

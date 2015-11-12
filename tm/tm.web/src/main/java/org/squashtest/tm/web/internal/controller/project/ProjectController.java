@@ -30,18 +30,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.project.ProjectManagerService;
+import org.squashtest.tm.web.internal.model.json.JsonProjectFromTemplate;
 
 @Controller
 @RequestMapping("/projects")
@@ -68,15 +66,18 @@ public class ProjectController {
 		genericProjectManager.coerceTemplateIntoProject(projectId);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "templateId")
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
-	void createProjectFromTemplate(@Valid @ModelAttribute("add-project-from-template") Project project,
-			@RequestParam long templateId, @RequestParam boolean copyPermissions, @RequestParam boolean copyCUF,
-			@RequestParam boolean copyBugtrackerBinding, @RequestParam boolean copyAutomatedProjects, @RequestParam boolean copyInfolists, @RequestParam boolean copyMilestone) {
+	void createProjectFromTemplate(@Valid @RequestBody JsonProjectFromTemplate jsonProjectFromTemplate) {
 		try {
-			projectManager.addProjectAndCopySettingsFromTemplate(project, templateId, copyPermissions, copyCUF,
-					copyBugtrackerBinding, copyAutomatedProjects, copyInfolists, copyMilestone);
+			if (jsonProjectFromTemplate.isFromTemplate()) {
+				projectManager.addProjectFromtemplate(jsonProjectFromTemplate.getProject(), 
+						jsonProjectFromTemplate.getTemplateId(), jsonProjectFromTemplate.getParams());
+			}
+			else {
+				genericProjectManager.persist(jsonProjectFromTemplate.getProject());
+			}
 		} catch (NameAlreadyInUseException ex) {
 			ex.setObjectName("add-project-from-template");
 			throw ex;

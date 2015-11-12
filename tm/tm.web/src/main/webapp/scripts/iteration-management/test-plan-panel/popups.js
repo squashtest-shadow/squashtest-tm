@@ -52,13 +52,16 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 		deleteItemTestplanDialog.on('formdialogopen', function() {
 
-			var entityId = $("#iter-test-plan-delete-dialog").data("entity-id");
-			$("#iter-test-plan-delete-dialog").data("entity-id", null);
+			var $this = $(this),
+				$table = $("#iteration-test-plans-table").squashTable();
+			
+			var entityId = $this.data("entity-id");
+			$this.data("entity-id", null);
 
 			var selIds = [];
 
 			if (!entityId) {
-				selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
+				selIds = $table.getSelectedIds();
 			}
 
 			if (!!entityId) {
@@ -67,14 +70,21 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 			switch (selIds.length) {
 			case 0:
-				$(this).formDialog('close');
+				$this.formDialog('close');
 				notification.showError(translator.get('message.EmptyExecPlanSelection'));
 				break;
 			case 1:
-				$(this).formDialog('setState', 'single-tp');
+				var row = $table.getRowsByIds(selIds)[0];
+				var wasexecuted = (!! $table.fnGetData(row)['last-exec-on']);
+				if (wasexecuted){
+					$this.formDialog('setState', 'delete-single-tp');
+				}
+				else{
+					$this.formDialog('setState', 'unbind-single-tp');
+				}
 				break;
 			default:
-				$(this).formDialog('setState', 'multiple-tp');
+				$this.formDialog('setState', 'multiple-tp');
 				break;
 			}
 
@@ -90,11 +100,17 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 				url : url,
 				type : 'delete',
 				dataType : 'json'
-			}).done(function(unauthorized) {
-				/* Why ? If done, it shouldn't show this message after (also in test-suite-management)
-				if (unauthorized) {
-					squashtm.notification.showInfo(conf.messages.unauthorizedTestplanRemoval);
-				}*/
+			}).done(function(partiallyUnauthorized) {
+				/*
+				 * When a user can delete a planned test case unless executed, 
+				 * and that a multiple selection encompassed both cases, 
+				 * the server performs the operation only on the item it is allowed to. 
+				 * 
+				 *  When this happens, the used must be notified.
+				 */
+				if (partiallyUnauthorized) {
+					squashtm.notification.showWarning(conf.messages.unauthorizedTestplanRemoval);
+				}
 				eventBus.trigger('context.content-modified');
 			});
 

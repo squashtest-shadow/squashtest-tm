@@ -39,10 +39,10 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -50,7 +50,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
+import org.springframework.web.util.UriComponents;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
@@ -94,7 +96,7 @@ import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/generic-projects")
@@ -121,6 +123,8 @@ public class GenericProjectController {
 
 	private static final String PROJECT_ID_URL = "/{"+RequestParams.PROJECT_ID+"}";
 	private static final String PROJECT_BUGTRACKER_NAME_UNDEFINED = "project.bugtracker.name.undefined";
+
+	private static final String VALUES = "values[]";
 
 	private DatatableMapper<String> allProjectsMapper = new NameBasedMapper(9)
 	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
@@ -149,28 +153,31 @@ public class GenericProjectController {
 
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=false")
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
-	void createNewProject(@Valid @ModelAttribute("add-project") Project project) {
-		createProject(project);
-	}
-
-	private void createProject(GenericProject project) {
+	void createNewProject(@Valid @RequestBody Project project) {
 		try {
 			projectManager.persist(project);
 		} catch (NameAlreadyInUseException ex) {
-			ex.setObjectName("add-project");
+			ex.setObjectName("add-project-from-template");
 			throw ex;
 		}
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "isTemplate=true")
+	@RequestMapping(value = "/new-template", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
-	void createNewProject(@Valid @ModelAttribute("add-project") ProjectTemplate template) {
-		createProject(template);
+	HttpHeaders createNewTemplate(@RequestBody @Valid ProjectTemplate template) {
+		try {
+			projectManager.persist(template);
+		} catch (NameAlreadyInUseException ex) {
+			ex.setObjectName("add-template");
+			throw ex;
+		}
+		return getUrlToProjectInfoPage(template);
 	}
+
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-label", VALUE }, produces = "text/plain;charset=UTF-8")
 	@ResponseBody
@@ -230,12 +237,12 @@ public class GenericProjectController {
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = {
-			"id=project-bugtracker-project-name", VALUE })
+			"id=project-bugtracker-project-name", VALUES })
 	@ResponseBody
-	public String changeBugtrackerProjectName(@RequestParam(VALUE) String projectBugTrackerName,
+	public List<String> changeBugtrackerProjectName(@RequestParam(VALUES) List<String> projectBugTrackerNames,
 			@PathVariable long projectId, Locale locale) {
-		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerName);
-		return projectBugTrackerName;
+		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerNames);
+		return projectBugTrackerNames;
 	}
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "id=project-description", VALUE })
@@ -250,10 +257,10 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL + "/bugtracker/projectName", method = RequestMethod.GET)
 	@ResponseBody
-	public String getBugtrackerProject(@PathVariable long projectId) {
+	public List<String> getBugtrackerProject(@PathVariable long projectId) {
 		GenericProject project = projectManager.findById(projectId);
 		if (project.isBugtrackerConnected()) {
-			return project.getBugtrackerBinding().getProjectName();
+			return project.getBugtrackerBinding().getProjectNames();
 		} else {
 			throw new NoBugTrackerBindingException();
 		}
@@ -271,6 +278,13 @@ public class GenericProjectController {
 	@ResponseBody
 	public void deleteProject(@PathVariable long projectId) {
 		projectManager.deleteProject(projectId);
+	}
+	
+	@RequestMapping(value = "/description/{projectId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	@ResponseBody
+	public String getDescription(@PathVariable long projectId) {
+		GenericProject genericProject = projectManager.findById(projectId);
+		return genericProject.getDescription();
 	}
 
 	// ********************************** Permission Popup *******************************
@@ -501,7 +515,11 @@ public class GenericProjectController {
 		}
 	}
 
-
+	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = VALUE)
+	@ResponseBody
+	public void changeEx(@PathVariable long projectId, @RequestParam(VALUE) boolean active) {
+		projectManager.changeAllowTcModifDuringExec(projectId, active);
+	}
 
 	@RequestMapping(value = PROJECT_ID_URL + "/disable-execution-status/{executionStatus}", method = RequestMethod.POST)
 	@ResponseBody
@@ -570,5 +588,13 @@ public class GenericProjectController {
 		public void run() {
 			projectManager.replaceExecutionStepStatus(projectId, sourceExecutionStatus, targetExecutionStatus);
 		}
+	}
+
+	private HttpHeaders getUrlToProjectInfoPage(GenericProject project){
+		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
+				.buildAndExpand(project.getId());
+		HttpHeaders head = new HttpHeaders();
+		head.setLocation(uri.toUri());
+		return head;
 	}
 }

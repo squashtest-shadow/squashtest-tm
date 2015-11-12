@@ -47,7 +47,7 @@ define(["jquery", "./common-conf", "./simp-testcase-conf"], function($, genCommo
 			switch(settings.workspace){
 			case 'test-case'	: specificConf = genTC.generate(settings); break;
 			case 'requirement'	: 
-			case 'campaign'		: throw "unsupported yet";
+			case 'campaign'		: specificConf = genTC.generate(settings); break;
 			}
 			
 			return $.extend({}, commonConf, specificConf);

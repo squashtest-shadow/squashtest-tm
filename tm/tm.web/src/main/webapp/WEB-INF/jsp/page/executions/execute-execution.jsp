@@ -27,18 +27,19 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="layout" tagdir="/WEB-INF/tags/layout"%>
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
 <%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
+<%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
 
 <s:url var="attachmentsURL" value="/attach-list/${executionStep.attachmentList.id}/attachments"/>
 <s:url var="btEntityUrl" value="/bugtracker/execution-step/${executionStep.id}"/>
 
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
+ 
 
 <c:set var="editable" value="${false}" />
 
@@ -94,7 +95,14 @@
             	requirejs.config({
             		config : {
             			'execution-dialog-main' : {
+            				model : {
+            					id : ${executionStep.id},
+            					type : 'execution-step',
+            					index : ${stIndex}
+            				},
             				basic : {
+            					stepId : ${executionStep.id},
+            					execId : ${execution.id},
             					id : ${executionStep.id},
             					index : ${stIndex},
             					status : "${executionStep.executionStatus}",
@@ -133,6 +141,9 @@
             
             </script>
 
+<%-- Wizard initialization --%> 
+<comp:init-wizards workspace="campaign"/>
+
 
   <f:message var="stopTitle"            key="execute.header.button.stop.title" />
   <f:message var="untestableLabel"      key="execute.header.button.untestable.title" />
@@ -143,82 +154,87 @@
   <f:message var="nextTitle"            key="execute.header.button.next.title" />
   <f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
   
-			<div id="execute-header">
-				<table width="100%">
-					<tr>
-						<td class="centered">
-                            <button id="execute-stop-button" class="sq-btn std-btn ui-button control-button" title="${stopTitle}">
-                                <span class="ui-icon ui-icon-power"></span>
-							</button>
-						</td>
-						<td class="centered">
-							<button id="execute-previous-button" class="sq-btn std-btn ui-button control-button" title="${previousTitle}">
-                                <span class="ui-icon ui-icon-triangle-1-w"></span>
-							</button> 
-							<span id="execute-header-numbers-label">
-								${executionStep.executionStepOrder+1} / ${totalSteps}
-							</span>
-							<button id="execute-next-button" class="sq-btn std-btn ui-button control-button" 
-                                ${not hasNextStep ? 'disabled="disabled"' : ''}title="${nextTitle}">
-                                <span class="ui-icon ui-icon-triangle-1-e"></span>
-							</button>
-						</td>
-                    <c:if test="${not empty testPlanItemUrl}">
-					<td class="centered " id="execute-next-test-case-panel">
-                          <c:url var="nextTCUrl" value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />
-						<form action="${nextTCUrl}" method="post">
-                            <c:set var="nextTCdisabled" value="${(empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep}"/> 
-							<button id="execute-next-test-case" name="classic" class="sq-btn std-btn control-button" 
-                                ${ nextTCdisabled ? 'disabled="disabled"' : ''} 
-                                title="${ nextTestCaseTitle }">
-                                <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>		
-							</button>
-						</form>
-					</td>
-                    </c:if>
-						<td class="centered">
-							<label id="evaluation-label-status">
-								<f:message key="execute.header.status.label" />
-							</label> 
-							<c:choose>
-							<c:when test="${editable }">
-                                <comp:execution-status-combo name="executionStatus" id="execution-status-combo" 
-                                  allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}" selected="${executionStep.executionStatus}"/>
-    							<c:if test="${allowsUntestable}">
-    							<button id="execute-untestable-button" class="sq-btn std-btn ui-button control-button status-button" 
-                                    data-status="UNTESTABLE" title="${untestableLabel}">
-                                    <span class="ui-icon exec-status-untestable"></span>
-    							</button>
-    							</c:if>
-    							<button id="execute-blocked-button" class="sq-btn std-btn ui-button control-button status-button" 
-                                     data-status="BLOCKED" title="${blockedTitle}">
-                                    <span class="ui-icon exec-status-blocked"></span>
-    							</button>							
-    							<button id="execute-fail-button" class="sq-btn std-btn ui-button control-button status-button" 
-                                    data-status="FAILURE" title="${failureTitle}">
-                                    <span class="ui-icon exec-status-failure"></span>
-    							</button>
-    							<button id="execute-success-button" class="sq-btn std-btn ui-button control-button status-button" 
-                                    data-status="SUCCESS" title="${passedTitle}">
-                                    <span class="ui-icon exec-status-success"></span>
-    							</button>
-							</c:when>
-							<c:otherwise>
-                                <%-- 
-                                    I strongly doubt one can ever access this jsp if not granted the edit status
-                                    so this 'otherwise' block might never be called                                
-                                 --%>
-                                <c:set var="spanExecstatus" value="${executionStep.executionStatus.canonicalStatus}" />
-                                <span style="white-space:nowrap; display:inline-block;" class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}" >
-                                  <f:message key="${spanExecstatus.i18nKey}" />
-                                </span>
-							</c:otherwise>
-							</c:choose>
-						</td>
-	
-					</tr>
-				</table>
-			</div>
+  <div id="execute-header">
+  	<table width="100%" >
+  		<tr style="vertical-align:top;">
+  			<td class="centered">
+                        <button id="execute-stop-button" class="sq-btn std-btn ui-button control-button" title="${stopTitle}">
+                            <span class="ui-icon ui-icon-power"></span>
+  				</button>
+  			</td>
+  			<td class="centered">
+  				<button id="execute-previous-button" class="sq-btn std-btn ui-button control-button" title="${previousTitle}">
+                            <span class="ui-icon ui-icon-triangle-1-w"></span>
+  				</button> 
+  				<span id="execute-header-numbers-label">
+  					${executionStep.executionStepOrder+1} / ${totalSteps}
+  				</span>
+  				<button id="execute-next-button" class="sq-btn std-btn ui-button control-button" 
+                            ${not hasNextStep ? 'disabled="disabled"' : ''}title="${nextTitle}">
+                            <span class="ui-icon ui-icon-triangle-1-e"></span>
+  				</button>
+  			</td>
+                <c:if test="${not empty testPlanItemUrl}">
+  		<td class="centered " id="execute-next-test-case-panel">
+                      <c:url var="nextTCUrl" value='${ testPlanItemUrl }/next-execution/runner?optimized=false' />
+  			<form action="${nextTCUrl}" method="post">
+                        <c:set var="nextTCdisabled" value="${(empty hasNextTestCase) or (not hasNextTestCase) or hasNextStep}"/> 
+  				<button id="execute-next-test-case" name="classic" class="sq-btn std-btn control-button" 
+                            ${ nextTCdisabled ? 'disabled="disabled"' : ''} 
+                            title="${ nextTestCaseTitle }">
+                            <span class="ui-button-icon-primary ui-icon ui-icon-seek-next"></span>		
+  				</button>
+  			</form>
+  		</td>
+                </c:if>
+  			<td class="centered">
+  				<label id="evaluation-label-status">
+  					<f:message key="execute.header.status.label" />
+  				</label> 
+  				<c:choose>
+  				<c:when test="${editable }">
+                            <comp:execution-status-combo name="executionStatus" id="execution-status-combo" 
+                              allowsUntestable="${allowsUntestable}" allowsSettled="${allowsSettled}" selected="${executionStep.executionStatus}"/>
+  						<c:if test="${allowsUntestable}">
+  						<button id="execute-untestable-button" class="sq-btn std-btn ui-button control-button status-button" 
+                                data-status="UNTESTABLE" title="${untestableLabel}">
+                                <span class="ui-icon exec-status-untestable"></span>
+  						</button>
+  						</c:if>
+  						<button id="execute-blocked-button" class="sq-btn std-btn ui-button control-button status-button" 
+                                 data-status="BLOCKED" title="${blockedTitle}">
+                                <span class="ui-icon exec-status-blocked"></span>
+  						</button>							
+  						<button id="execute-fail-button" class="sq-btn std-btn ui-button control-button status-button" 
+                                data-status="FAILURE" title="${failureTitle}">
+                                <span class="ui-icon exec-status-failure"></span>
+  						</button>
+  						<button id="execute-success-button" class="sq-btn std-btn ui-button control-button status-button" 
+                                data-status="SUCCESS" title="${passedTitle}">
+                                <span class="ui-icon exec-status-success"></span>
+  						</button>
+    							<c:if test="${execution.project.allowTcModifDuringExec()}">
+    							 <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+                                 <span class="ui-icon ui-icon-pencil"/>
+                                 </button> 
+                                 </c:if>
+  				</c:when>
+  				<c:otherwise>
+                            <%-- 
+                                I strongly doubt one can ever access this jsp if not granted the edit status
+                                so this 'otherwise' block might never be called                                
+                             --%>
+                            <c:set var="spanExecstatus" value="${executionStep.executionStatus.canonicalStatus}" />
+                            <span style="white-space:nowrap; display:inline-block;" class="exec-status-label exec-status-${fn:toLowerCase(spanExecstatus)}" >
+                              <f:message key="${spanExecstatus.i18nKey}" />
+                            </span>
+  				</c:otherwise>
+  				</c:choose>
+  			</td>
+  
+  		</tr>
+  	</table>
+  </div>
       
 <script type="text/javascript">
 publish("reload.executedialog.toolbar");
@@ -297,7 +313,11 @@ publish('reload.executedialog.attachments');
 publish("reload.executedialog.complete");
 </script>
 
+
+
 			</div>
+      
+
 		</body>
 	</c:otherwise>
 </c:choose>

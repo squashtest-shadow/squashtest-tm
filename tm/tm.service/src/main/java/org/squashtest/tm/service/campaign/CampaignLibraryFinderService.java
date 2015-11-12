@@ -20,6 +20,13 @@
  */
 package org.squashtest.tm.service.campaign;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+
 public interface CampaignLibraryFinderService {
 
 	/**
@@ -29,4 +36,35 @@ public interface CampaignLibraryFinderService {
 	 * @return the path of that node.
 	 */
 	String getPathAsString(long entityId);
+
+	/**
+	 * Returns the collection of {@link CampaignLibrary}s which Campaigns can be linked by a {@link Campaign} via a
+	 * CallTestStep
+	 * 
+	 * @return
+	 */
+	List<CampaignLibrary> findLinkableCampaignLibraries();
+
+
+	/**
+	 * Passing the ids of some selected CampaignLibrary and CampaignLibraryNode (in separate collections), will return
+	 * the ids of the Campaign encompassed by this selection.
+	 * 
+	 * The campaign ids that cannot be accessed for security reason will be filtered out.
+	 * 
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @return
+	 */
+	Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
+
+
+	/**
+	 * Returns all dashboard data for a milestone dashboard (ie about all campaigns that belong to that milestone)
+	 * 
+	 * @param milestoneId
+	 * @return
+	 */
+	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId);
+
 }

@@ -53,4 +53,6 @@ public interface CustomRequirementVersionDao {
 	 */
 	List<RequirementVersion> findAllByRequirement(long requirementId, PagingAndSorting pas);
 
+	RequirementVersion findByRequirementIdAndVersionNumber(Long requirementId,
+			Integer versionNumber);
 }
