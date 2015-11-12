@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import org.hibernate.search.annotations.DocumentId;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.library.Library;
@@ -33,7 +32,6 @@ import javax.persistence.*;
 @Auditable
 public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	@Id
-	@DocumentId
 	@Column(name = "CLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_node_cln_id_seq")
 	@SequenceGenerator(name = "campaign_library_node_cln_id_seq", sequenceName = "campaign_library_node_cln_id_seq")

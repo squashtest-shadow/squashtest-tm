@@ -20,23 +20,8 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.Library;
@@ -45,6 +30,8 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
+import javax.persistence.*;
+
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
@@ -52,7 +39,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
 	@Id
 	@Column(name = "RLN_ID")
-	@DocumentId
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_library_node_rln_id_seq")
 	@SequenceGenerator(name = "requirement_library_node_rln_id_seq", sequenceName = "requirement_library_node_rln_id_seq")
 	private Long id;
@@ -69,7 +55,7 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 
 	/**
 	 * Notifies this object it is now a resource of the given project.
-	 * 
+	 *
 	 * @param project
 	 */
 	@Override
@@ -105,7 +91,7 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 
 	/**
 	 * Implementors should ask the visitor to visit this object.
-	 * 
+	 *
 	 * @param visitor
 	 */
 	public abstract void accept(RequirementLibraryNodeVisitor visitor);
