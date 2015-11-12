@@ -849,6 +849,7 @@ values
     <sql>
       SELECT setval('chart_column_prototype_chart_column_id_seq', (SELECT MAX(CHART_COLUMN_ID) from CHART_COLUMN_PROTOTYPE));
       SELECT setval('chart_query_chart_query_id_seq', (SELECT MAX(CHART_QUERY_ID) from CHART_QUERY));
+      SELECT setval('chart_filter_filter_id_seq', (SELECT MAX(CHART_FILTER_ID) from CHART_FILTER));
     </sql>
   </changeSet>
   
