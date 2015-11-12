@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.internal.test;
 
+import org.squashtest.tm.service.internal.repository.EntityDao;
+
 import java.util.Collection;
 import java.util.List;
 
-import org.hibernate.LockOptions;
-import org.squashtest.tm.service.internal.repository.EntityDao;
-
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 
@@ -37,11 +36,6 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	 */
 	//@Override
 	public ENTITY findById(long id) {
-		return null;
-	}
-
-	@Override
-	public ENTITY findById(long id, LockOptions lockOptions) {
 		return null;
 	}
 
@@ -78,14 +72,14 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 		// NOOP
 
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.EntityDao#persist(List)
 	 */
 	//@Override
 	public void persist(List<ENTITY> transientEntities) {
 		// NOOP
-		
+
 	}
 
 	//@Override
@@ -96,19 +90,19 @@ class StubEntityDao<ENTITY> implements EntityDao<ENTITY> {
 	//@Override
 	public void clearFromCache(ENTITY entity) {
 		// NOOP
-		
+
 	}
 
 	//@Override
 	public void clearFromCache(Collection<ENTITY> entities) {
 		// NOOP
-		
+
 	}
 
 	//@Override
 	public void removeAll(List<ENTITY> entities) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

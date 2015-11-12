@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.Criteria;
-import org.hibernate.LockOptions;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -39,11 +38,6 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	@Override
 	public /*final*/ ENTITY_TYPE findById(long id) {
 		return getEntity(id);
-	}
-
-	@Override
-	public final ENTITY_TYPE findById(long id, LockOptions lockOption) {
-		return (ENTITY_TYPE) currentSession().load(entityType, id, lockOption);
 	}
 
 	/**
