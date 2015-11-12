@@ -84,8 +84,11 @@
 {{/inline}}
 
 
-<br />
 
+<span th:text="#{chart.wizard.creation.step.message.filter}"/>
+
+<br />
+<br />
 {{#each attributes.columnPrototypes}}
 
   {{#if (contains ../attributes.selectedEntity @key)}}

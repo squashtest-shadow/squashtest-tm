@@ -302,7 +302,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			}
 			
 					
-			var axis = axis2 === null ? [axis1]:[axis1].concat(axis2);
+			var axis = _.isEmpty(axis2)  ? _.isEmpty(axis1) ? [] :[axis1]:[axis1].concat(axis2);
+			
 			
 			var measures = measure === undefined ? [] :[measure];
 			

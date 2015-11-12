@@ -60,7 +60,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		loadI18n : function (){
 			
 			var chartTypes = this.addPrefix(this.model.get("chartTypes"), "chartType.");
-			var entityTypes = this.addPrefix(this.model.get("entityTypes"), "entityType.");
+			var entityTypes = this.addPrefix(_.keys(this.model.get("entityTypes")), "entityType.");
 			var operation = this.addPrefix(_.uniq(this.flatten(this.model.get("dataTypes"))), "operation.");
 			var column = this.addPrefix(_.pluck(this.flatten(this.model.get("columnPrototypes")), "label") ,"column.");
 			
