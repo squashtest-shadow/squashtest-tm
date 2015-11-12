@@ -20,36 +20,18 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
@@ -68,6 +50,13 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Controller
 @RequestMapping("/executions")
@@ -103,13 +92,12 @@ public class ExecutionController extends
 	private Provider<DriveNodeBuilder<CampaignLibraryNode>> cammpaignDriveNodeBuilder;
 
 	@Inject
-	@Named("squashtest.tm.service.CampaignsWorkspaceService")
-	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
+	private WorkspaceService<CampaignLibrary> workspaceService;
 
 
 	@Inject
 	@Named("campaign.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider;
+	private Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider;
 
 	@RequestMapping(value = "/assignment-combo-data", method = RequestMethod.GET)
 	@ResponseBody
@@ -129,21 +117,23 @@ public class ExecutionController extends
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// There, got the only selected libraries
-		List<Library<CampaignLibraryNode>> libraries = getWorkspaceService().findAllLibraries();
+		List<CampaignLibrary> libraries = getWorkspaceService().findAllLibraries();
 
 		String[] nodesToOpen = new String[0];
 
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
-		DriveNodeBuilder<LibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
+		DriveNodeBuilder<CampaignLibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
 		if (activeMilestone != null) {
 			nodeBuilder.filterByMilestone(activeMilestone);
 		}
 
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder)
-				.expand(expansionCandidates).setModel(libraries).build();
-
-		return rootNodes;
+		// formatter:off
+		return new JsTreeNodeListBuilder<CampaignLibrary>(nodeBuilder)
+			.expand(expansionCandidates)
+			.setModel(libraries)
+			.build();
+		// formatter:on
 	}
 
 	@RequestMapping(value = "/add-execution/{iterationId}", method = RequestMethod.POST, params = { "executionIds[]" })
@@ -153,7 +143,7 @@ public class ExecutionController extends
 			Locale locale,
 			@CurrentMilestone Milestone activeMilestone) {
 
-		List<Long> testCaseIds = new ArrayList<Long>();
+		List<Long> testCaseIds = new ArrayList<>();
 
 		for (long executionId : executionIds) {
 			Execution execution = executionProcessingService.findExecution(executionId);
@@ -176,7 +166,7 @@ public class ExecutionController extends
 		IterationFormModel iterationForm = new IterationFormModel();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		iterationForm.setName("Iteration" + dateFormat.format(date).toString());
+		iterationForm.setName("Iteration" + dateFormat.format(date));
 		iterationForm.setDescription("Automated-Iteration");
 
 		BindingResult validation = new BeanPropertyBindingResult(iterationForm, "add-iteration");
@@ -191,32 +181,16 @@ public class ExecutionController extends
 		Map<Long, RawValue> customFieldValues = iterationForm.getCufs();
 		boolean copyTestPlan = iterationForm.isCopyTestPlan();
 
-		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId,
+		campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId,
 				copyTestPlan, customFieldValues);
 		return null;
-
-		// return createIterationTreeNode(newIteration, newIterationIndex);
-
 	}
 
-	private List<JsTreeNode> createCampaignTreeRootModel() {
-		List<CampaignLibrary> libraries = campaignLibraryFinder.findLinkableCampaignLibraries();
-
-		DriveNodeBuilder<CampaignLibraryNode> builder = cammpaignDriveNodeBuilder.get();
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
-
-		for (CampaignLibrary library : libraries) {
-			JsTreeNode libraryNode = builder.setModel(library).build();
-			linkableLibrariesModel.add(libraryNode);
-		}
-		return linkableLibrariesModel;
-	}
-
-	protected WorkspaceService<Library<CampaignLibraryNode>> getWorkspaceService() {
+	protected WorkspaceService<CampaignLibrary> getWorkspaceService() {
 		return workspaceService;
 	}
 
-	protected Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider() {
+	protected Provider<DriveNodeBuilder<CampaignLibraryNode>> driveNodeBuilderProvider() {
 		return driveNodeBuilderProvider;
 	}
 
@@ -239,10 +213,6 @@ public class ExecutionController extends
 		}
 
 		return builder.setNode(model).build();
-	}
-
-	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
-		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
 }

@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -43,6 +35,13 @@ import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+
 @Controller
 @RequestMapping("/custom-report-workspace")
 public class CustomReportWorkspaceController {
@@ -53,17 +52,17 @@ public class CustomReportWorkspaceController {
 	@Inject
 	@Named("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
 	private CustomReportWorkspaceService workspaceService;
-	
+
 	@Inject
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
-	
+
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
 			@CurrentMilestone Milestone activeMilestone,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
-		
+
 		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
 		String[] nodesToOpen = null;
 
@@ -72,24 +71,19 @@ public class CustomReportWorkspaceController {
 			model.addAttribute("selectedNode", "");
 		} else {
 			Long id = Long.valueOf(elementId);
-//			nodesToOpen = getNodeParentsInWorkspace(id);
-//			model.addAttribute("selectedNode", getTreeElementIdInWorkspace(id));
 		}
-		
-//		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
-//				.setModel(libraries).build();
-//		
-		
+
+
 		//Placeholder with just library for the beginning
 		List<JsTreeNode> rootNodes = new ArrayList<JsTreeNode>();
-		
+
 		for (CustomReportLibraryNode crl : libraries) {
 			JsTreeNode treeNode = builderProvider.get().build(crl);
 			rootNodes.add(treeNode);
 		}
-		
+
 		model.addAttribute("rootModel", rootNodes);
-		
+
 		//Active Milestone
 		if (activeMilestone != null){
 			JsonMilestone jsMilestone =
@@ -103,7 +97,7 @@ public class CustomReportWorkspaceController {
 							);
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
-		
+
 		return getWorkspaceViewName();
 	}
 
@@ -117,5 +111,5 @@ public class CustomReportWorkspaceController {
 	protected WorkspaceType getWorkspaceType() {
 		return WorkspaceType.CUSTOM_REPORT_WORKSPACE;
 	}
-	
+
 }
