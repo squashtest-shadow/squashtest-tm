@@ -52,6 +52,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
@@ -62,6 +63,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(name = "CHART_DEFINITION")
+@Auditable
 public class ChartDefinition implements TreeEntity{
 
 	@Id

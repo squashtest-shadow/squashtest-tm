@@ -21,16 +21,19 @@
 package org.squashtest.tm.web.internal.controller.chart;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ChartType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 
@@ -43,10 +46,20 @@ public class JsonChartInstance {
 	private String name;
 
 	private ChartType type;
+	
+	private String createdBy;
+	
+	private String lastModifiedBy;
+	
+	private Date createdOn;
+	
+	private Date lastModifiedOn;
 
 	private List<JsonMeasureColumn> measures = new ArrayList<>();
 
 	private List<JsonAxisColumn> axes = new ArrayList<>();
+	
+	private List<JsonFilter> filters = new ArrayList<>();
 
 	private List<Object[]> abscissa = new ArrayList<>();
 
@@ -61,6 +74,7 @@ public class JsonChartInstance {
 		ChartDefinition def = instance.getDefinition();
 		this.name = def.getName();
 		this.type = def.getType();
+		doAuditableAttributes(def);
 
 		for (AxisColumn ax : def.getAxis()){
 			axes.add(new JsonAxisColumn(ax));
@@ -68,6 +82,10 @@ public class JsonChartInstance {
 
 		for (MeasureColumn me : def.getMeasures()){
 			measures.add(new JsonMeasureColumn(me));
+		}
+		
+		for (Filter filter : def.getFilters()) {
+			filters.add(new JsonFilter(filter));
 		}
 
 		ChartSeries series = instance.getSeries();
@@ -79,12 +97,52 @@ public class JsonChartInstance {
 
 	}
 
+	private void doAuditableAttributes(ChartDefinition def) {
+		AuditableMixin audit = (AuditableMixin) def;
+		this.createdBy = audit.getCreatedBy();
+		this.lastModifiedBy = audit.getLastModifiedBy();
+		this.createdOn = audit.getCreatedOn();
+		this.lastModifiedOn = audit.getLastModifiedOn();
+	}
+
 	public String getName() {
 		return name;
 	}
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public Date getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(Date createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public Date getLastModifiedOn() {
+		return lastModifiedOn;
+	}
+
+	public void setLastModifiedOn(Date lastModifiedOn) {
+		this.lastModifiedOn = lastModifiedOn;
 	}
 
 	public ChartType getType() {
@@ -229,6 +287,42 @@ public class JsonChartInstance {
 		public void setName(String name) {
 			this.name = name;
 		}
+		
+	}
+	
+	public static final class JsonFilter{
+		
+		private List<String> values;
+		private JsonColumnPrototype columnPrototype;
+		private JsonOperation operation;
+		
+		
+		public JsonFilter(Filter filter) {
+			this.columnPrototype = new JsonColumnPrototype(filter.getColumn());
+			this.operation = new JsonOperation(filter.getOperation());
+			this.values = filter.getValues();
+		}
+		
+		public List<String> getValues() {
+			return values;
+		}
+		public void setValues(List<String> values) {
+			this.values = values;
+		}
+		public JsonColumnPrototype getColumnPrototype() {
+			return columnPrototype;
+		}
+		public void setColumnPrototype(JsonColumnPrototype columnPrototype) {
+			this.columnPrototype = columnPrototype;
+		}
+		public JsonOperation getOperation() {
+			return operation;
+		}
+		public void setOperation(JsonOperation operation) {
+			this.operation = operation;
+		}
+		
+		
 		
 	}
 

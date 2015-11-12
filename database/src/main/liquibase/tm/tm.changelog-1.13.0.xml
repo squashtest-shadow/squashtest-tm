@@ -186,6 +186,17 @@
 				<constraints nullable="false" foreignKeyName="fk_project_chart_definition_project_id" references="PROJECT(PROJECT_ID)" />
 			</column>
 
+      <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="CREATED_ON" type="DATETIME">
+        <constraints nullable="false" />
+      </column>
+
+      <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL" />
+      <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
+
 		</createTable>
 
 		<createIndex tableName="CHART_DEFINITION" indexName="idx_chart_definition">
@@ -711,7 +722,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (5, '
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (58, 5, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (1, 59, 5, 'EQUALS');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
 	(1,'CallTestStep');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (17, 5, 'NONE', 0);
@@ -944,6 +955,17 @@ values
 		<column name="PROJECT_ID" type="BIGINT" remarks="cle etrangere vers le projet. ">
 			<constraints nullable="false" foreignKeyName="fk_project_custom_report_dashboard_project_id" references="PROJECT(PROJECT_ID)" />
 		</column>
+
+    <column name="CREATED_BY" type="java.sql.Types.VARCHAR(50)">
+      <constraints nullable="false" />
+    </column>
+
+    <column name="CREATED_ON" type="DATETIME">
+      <constraints nullable="false" />
+    </column>
+
+    <column name="LAST_MODIFIED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL" />
+    <column name="LAST_MODIFIED_ON" type="DATETIME" defaultValue="NULL" />
 
 	</createTable>
 

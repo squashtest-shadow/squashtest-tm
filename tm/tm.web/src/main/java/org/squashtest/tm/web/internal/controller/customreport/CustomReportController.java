@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
+import java.util.Locale;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
@@ -79,9 +81,9 @@ public class CustomReportController {
 	}
 	
 	@RequestMapping(value="custom-report-dashboard/{id}", method=RequestMethod.GET)
-	public @ResponseBody JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id){
+	public @ResponseBody JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id,Locale locale){
 		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
-		return builderProvider.get().build(dashboard);
+		return builderProvider.get().build(dashboard, locale);
 	}
 	
 	//---- RENAME ----

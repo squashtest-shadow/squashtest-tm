@@ -44,7 +44,7 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
  * @author Gregory Fouquet
  * 
  */
-@Component
+@Component("squashtest.internationalizationHelper")
 public class InternationalizationHelper implements MessageSource {
 	@Inject
 	private MessageSource messageSource;

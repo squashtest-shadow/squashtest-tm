@@ -102,6 +102,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 
   function buildChart (viewID, jsonChart) {
     console.log("FACTORY BUILD CHART");
+    console.log(viewID);
     jsonChart = renderUtils.toChartInstance(jsonChart);
     switch(jsonChart.type){
     case 'PIE' : return generatePieChart(viewID, jsonChart);

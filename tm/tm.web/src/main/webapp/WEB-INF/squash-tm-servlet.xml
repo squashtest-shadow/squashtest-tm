@@ -199,6 +199,7 @@
   <bean id="requirementLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
     <property name="targetBeanName" value="requirementLibraryTreeNodeBuilder" />
   </bean>
+  
 
   <bean id="requirement.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder"
     scope="prototype">
@@ -219,13 +220,15 @@
     <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
   </bean> 
   
-  <bean id="customReport.dashboardBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder" scope="prototype">
+  <bean id="customReport.chartBindingBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder" scope="prototype">
     <constructor-arg ref="squashtest.tm.service.ChartModificationService" />
   </bean>
   
-  <bean id="customReport.chartBindingBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder" scope="prototype">
+  <bean id="customReport.dashboardBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder" scope="prototype">
     <constructor-arg ref="squashtest.tm.service.ChartModificationService" />
-  </bean>  
+    <constructor-arg ref="squashtest.internationalizationHelper" />
+  </bean>
+  
   <!--  DRIVE NODE BUILDERS -->
 
   <beans profile="eclipse">

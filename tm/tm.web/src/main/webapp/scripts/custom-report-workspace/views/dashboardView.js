@@ -29,10 +29,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     tplNewChart : "#tpl-new-chart-in-dashboard",
     tplChartDisplay : "#tpl-chart-display-area",
     widgetPrefixSelector : "#widget-chart-binding-",
-		dashboardInitialData : null,//just used for initialization as we rerieve all data in one json from server. To keep trace of user action please use the two following objects
-    dashboardChartViews : {},
-    dashboardChartBindings : {},
-		gridster : null,
     gridCol : 4,
     gridRow: 3,
     gridAdditionalRow: 3,
@@ -48,11 +44,15 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     secureBlank : 3,//in pixel, a margin around widget to prevent inesthetics scrollbars
 
 		initialize : function(){
+      this.dashboardInitialData = null;
+      this.dashboardChartViews = {};
+      this.dashboardChartBindings = {};
+      this.gridster = null;
 			_.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard");
 			this.initializeData();
 			this.initListenerOnTree();
       this.initListenerOnWindowResize();
-      this.refreshCharts = _.throttle(this.refreshCharts,1000);
+      this.refreshCharts = _.throttle(this.refreshCharts,1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
 		},
 
 		events : {
@@ -60,17 +60,24 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       "transitionend #dashboard-grid" : "refreshCharts",
       "webkitTransitionEnd #dashboard-grid" : "refreshCharts",
       "oTransitionEnd #dashboard-grid" : "refreshCharts",
-      "MSTransitionEnd #dashboard-grid" : "refreshCharts"
+      "MSTransitionEnd #dashboard-grid" : "refreshCharts",
+      "click #toggle-expand-left-frame-button" : "toggleDashboard",
 		},
 
     refreshCharts : function () {
-      console.log("Oh yeah");
       var charts = _.values(this.dashboardChartViews);
       var bindings =  _.values(this.dashboardChartBindings);
       for (var j = 0; j < bindings.length; j++) {
         var binding = bindings[j];
         this._changeBindedChart(binding.id,binding);
       }
+    },
+
+    toggleDashboard : function () {
+      var self = this;
+      _.delay( function () {
+        self.redrawDashboard();
+      }, 50);
     },
 
 		render : function(){
@@ -429,6 +436,14 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     },
 
+    _removeAllCharts : function () {
+      var views = this.dashboardChartViews;
+      _.each(views,function (view) {
+        view.remove();
+      });
+      this.dashboardChartViews = {};
+    },
+
     _removeChart : function (bindingId) {
       this.dashboardChartViews[bindingId].remove();//remove backbone view
       delete this.dashboardChartViews[bindingId];
@@ -455,10 +470,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this.dashboardChartBindings[binding.id] = binding;
     },
 
-    _redrawChart : function (binding) {
-
-    },
-
     //Return the first empty cell.
     _getCellFromDrop : function () {
       for (var i = 1; i <= this.gridRow; i++) {
@@ -469,6 +480,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
           }
         }
       }
+    },
+
+    remove : function () {
+      this.gridster.destroy();
+      this._removeAllCharts();
+      Backbone.View.prototype.remove.call(this);
     }
 
   });

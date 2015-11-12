@@ -411,9 +411,14 @@
 		<div id="element-toolbar" class="toolbar-class ui-corner-all">
 			<div class="toolbar-information-panel">
 				<div id="general-information-panel" class="information-panel">
-					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>{{createdOn}} ({{createdBy}})
 					<br/>
 					<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+ 					{{#if lastModifiedBy}}
+    					{{lastModifiedOn}} ({{lastModifiedBy}})
+  					{{else}}
+    					<span th:text="#{label.lower.Never}"></span>
+  					{{/if}}
 					<br/>
 				</div>
 			</div>
@@ -471,9 +476,14 @@
 		<div id="element-toolbar" class="toolbar-class ui-corner-all">
 			<div class="toolbar-information-panel">
 				<div id="general-information-panel" class="information-panel">
-					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
+				<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>{{createdOn}} ({{createdBy}})
 					<br/>
 					<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
+ 					{{#if lastModifiedBy}}
+    					{{lastModifiedOn}} ({{lastModifiedBy}})
+  					{{else}}
+    					<span th:text="#{label.lower.Never}"></span>
+  					{{/if}}
 					<br/>
 				</div>
 			</div>

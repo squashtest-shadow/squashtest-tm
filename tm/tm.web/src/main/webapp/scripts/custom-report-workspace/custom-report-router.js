@@ -147,6 +147,7 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
         if (this.activeView!==null) {
           squashtm.app.wreqr.off();
           this.activeView.remove();
+          this.activeView = null;
         }
         //recreating the context div to allow new view to target the context div as el
         $("#contextual-content").html("<div id='contextual-content-wrapper' style='height: 100%; width:98%; overflow: auto;'></div>");

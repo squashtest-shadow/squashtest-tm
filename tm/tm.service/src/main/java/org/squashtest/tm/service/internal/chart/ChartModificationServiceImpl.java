@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.chart;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 
-
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +40,6 @@ import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 
-import com.querydsl.core.types.Expression;
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 @Service("squashtest.tm.service.ChartModificationService")

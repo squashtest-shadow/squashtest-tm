@@ -35,6 +35,16 @@ public class JsonCustomReportDashboard {
 	
 	private String name;
 	
+	private String createdBy;
+	
+	private String lastModifiedBy;
+	
+	//Date formating is done server side
+	private String createdOn;
+	
+	//Date formating is done server side
+	private String lastModifiedOn;
+	
 	private Set<JsonCustomReportChartBinding> chartBindings = new HashSet<JsonCustomReportChartBinding>();
 
 	public Long getId() {
@@ -53,6 +63,44 @@ public class JsonCustomReportDashboard {
 		this.name = name;
 	}
 
+	public String getCreatedBy() {
+		return createdBy;
+	}
+
+	public void setCreatedBy(String createdBy) {
+		this.createdBy = createdBy;
+	}
+
+	/**
+	 * @return the lastModifiedBy
+	 */
+	public String getLastModifiedBy() {
+		return lastModifiedBy;
+	}
+
+	/**
+	 * @param lastModifiedBy the lastModifiedBy to set
+	 */
+	public void setLastModifiedBy(String lastModifiedBy) {
+		this.lastModifiedBy = lastModifiedBy;
+	}
+
+	public String getCreatedOn() {
+		return createdOn;
+	}
+
+	public void setCreatedOn(String createdOn) {
+		this.createdOn = createdOn;
+	}
+
+	public String getLastModifiedOn() {
+		return lastModifiedOn;
+	}
+
+	public void setLastModifiedOn(String lastModifiedOn) {
+		this.lastModifiedOn = lastModifiedOn;
+	}
+
 	public Set<JsonCustomReportChartBinding> getChartBindings() {
 		return chartBindings;
 	}
@@ -60,5 +108,5 @@ public class JsonCustomReportDashboard {
 	public void setChartBindings(Set<JsonCustomReportChartBinding> chartBindings) {
 		this.chartBindings = chartBindings;
 	}
-	
+
 }

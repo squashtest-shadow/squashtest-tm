@@ -18,14 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars","workspace.routing","../charts/chartFactory"],
-		function(_,Backbone, translator,Handlebars,urlBuilder,chartFactory) {
+define(["underscore","backbone","squash.translator","handlebars","squash.dateutils","workspace.routing","../charts/chartFactory"],
+		function(_,Backbone, translator,Handlebars,dateutils,urlBuilder,chartFactory) {
 	var View = Backbone.View.extend({
 
     el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-chart",
 
 		initialize : function(){
+      this.i18nString = translator.get({
+        "dateFormat" : "squashtm.dateformat"
+      });
 			_.bindAll(this, "render");
 			this.render();
 		},
@@ -46,10 +49,9 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 				'url' : url
 			})
 			.success(function(json){
-				self.model.set("name",json.name);
+        self._setBaseModelAttributes(json);
 				self._template();
 				chartFactory.buildChart("#chart-display-area", json);
-
 			});
 		},
 
@@ -58,7 +60,23 @@ define(["underscore","backbone","squash.translator","handlebars","workspace.rout
 			var template = Handlebars.compile(source);
 			console.log("TEAMPLATING CHART");
 			this.$el.append(template(this.model.toJSON()));
-		}
+		},
+
+    _setBaseModelAttributes : function (json) {
+      this.model.set("name",json.name);
+      this.model.set("createdBy",json.createdBy);
+      this.model.set("createdOn",this._i18nFormatDate(json.createdOn));
+      if (json.lastModifiedBy) {
+        this.model.set("lastModifiedBy",json.lastModifiedBy);
+        this.model.set("lastModifiedOn",this._i18nFormatDate(json.lastModifiedOn));
+      }
+
+      console.log(this.model);
+    },
+
+    _i18nFormatDate : function (date) {
+      return dateutils.format(date, this.i18nString.dateFormat);
+    }
 
   });
 
