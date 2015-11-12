@@ -20,23 +20,13 @@
  */
 package org.squashtest.tm.domain.campaign;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
-
-import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.library.GenericLibraryNode;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
+import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -44,7 +34,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	@Id
 	@DocumentId
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Column(name = "CLN_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "campaign_library_node_cln_id_seq")
 	@SequenceGenerator(name = "campaign_library_node_cln_id_seq", sequenceName = "campaign_library_node_cln_id_seq")
