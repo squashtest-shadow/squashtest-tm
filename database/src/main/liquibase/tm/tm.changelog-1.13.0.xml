@@ -844,6 +844,15 @@ values
 
 	</changeSet>
 
+ <changeSet id="tm-1.13.0-feature-5375-3" author="jsimon" dbms="postgresql">
+    <comment>update the sequences afterward</comment>
+    <sql>
+      SELECT setval('chart_column_prototype_chart_column_id_seq', (SELECT MAX(CHART_COLUMN_ID) from CHART_COLUMN_PROTOTYPE));
+      SELECT setval('chart_query_chart_query_id_seq', (SELECT MAX(CHART_QUERY_ID) from CHART_QUERY));
+    </sql>
+  </changeSet>
+  
+  
  <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
  	<!-- CUSTOM_REPORT_LIBRARY TABLE -->
 
@@ -857,15 +866,6 @@ values
 
 		<column name="TMP_PROJECT_ID" type="BIGINT" remarks="TMP REF TO PROJECT">
 		</column>
-
- <changeSet id="tm-1.13.0-feature-5375-3" author="jsimon" dbms="postgresql">
-    <comment>update the sequences afterward</comment>
-    <sql>
-      SELECT setval('chart_column_prototype_chart_column_id_seq', (SELECT MAX(CHART_COLUMN_ID) from CHART_COLUMN_PROTOTYPE));
-      SELECT setval('chart_query_chart_query_id_seq', (SELECT MAX(CHART_QUERY_ID) from CHART_QUERY));
-    </sql>
-  </changeSet>
-
  	</createTable>
 
  	<createIndex tableName="CUSTOM_REPORT_LIBRARY" indexName="IDX_CUSTOM_REPORT_LIBRARY">
