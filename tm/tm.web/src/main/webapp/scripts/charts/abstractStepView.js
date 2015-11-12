@@ -73,28 +73,17 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 	}
 	];
 
-	var validation = 
-			[{
-				name : "entity",
-				validationParam : "selectedEntity"
-			},{
-				name :"attributes",
-				validationParam : "selectedAttributes"
-			},{
-				name :"axis",
-				validationParam : "operations"
-			}];
+	
 	var abstractStepView = Backbone.View.extend({
 		el : "#current-step",
 
 		_initialize : function(data, wizrouter) {
 			this.router = wizrouter;
-			
-			
+
 			var currStep = _.findWhere(steps, {name : data.name});		
 			this.next = currStep.nextStep;
 			this.previous = currStep.prevStep;
-			this.showViewTitle(currStep.viewTitle);
+			this.showViewTitle(currStep.viewTitle, currStep.stepNumber);
 			this.initButtons(currStep.buttons);
 			
 			var missingStepNames = this.findMissingSteps(data, currStep.neededStep);
@@ -116,11 +105,12 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			
 			
 		},
+
 		
 		findMissingSteps : function (data, neededStep) {
-			
+			var self = this;
 			return  _.filter(neededStep, function (step) {	
-				var param = _.chain(validation)
+				var param = _.chain(self.model.get("validation"))
 				.find(function (val) {return val.name == step;})
 				.result("validationParam")
 				.value();	
@@ -161,8 +151,11 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			// do in superclass
 		},
 
-		showViewTitle : function(title) {
-			$("#step-title").text(translator.get(title));
+		showViewTitle : function(title, stepNumber) {
+			
+			
+			var text = "[" + translator.get("wizard.steps.label") +" " + stepNumber + "/" + steps.length + "] " + translator.get(title);
+			$("#step-title").text(text);
 		},
 
 		navigatePrevious : function() {

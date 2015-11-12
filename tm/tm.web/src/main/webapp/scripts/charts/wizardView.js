@@ -22,7 +22,25 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		router, translator, EntityStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
-
+	
+	var validation = 
+		[{
+			name : "entity",
+			validationParam : "selectedEntity"
+		},{
+			name :"attributes",
+			validationParam : "selectedAttributes"
+		},{
+			name :"axis",
+			validationParam : "operations"
+		},{
+			name :"filter",
+			validationParam : "filters"
+		},
+		
+		];
+	
+	
 	var wizardView = Backbone.View.extend({
 		el : "#wizard",
 		initialize : function(options) {
@@ -30,7 +48,8 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			this.model = options.model;
 			this.model.set({
 				steps:["entity", "attributes", "filter", "axis", "type", "preview"]	,
-			   perimSelect :[{text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}, {text:"label.requirements" , name:"REQUIREMENT"}]
+			    perimSelect :[{text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}, {text:"label.requirements" , name:"REQUIREMENT"}],
+				validation : validation
 			});
 			this.loadI18n();
 		},
@@ -67,7 +86,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			var keys = chartTypes.concat(entityTypes, operation, column);
 			
 			var result = this.addPrefix(keys, "chart.");
-			
+		
 			translator.load(result);
 			
 		},
@@ -94,8 +113,8 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			}
 			
 			this.resetView();
-			this.showSideView();
 			this.currentView = new View(this.model, wizrouter);
+			this.showSideView();
 
 		},
 		
@@ -135,7 +154,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		
 			if (this.currentSideView !== undefined) {
 				this.currentSideView.destroy_view();
-				$("#current-side-view-container").html('<span id="side-view" />');
+				$("#current-side-view-container").html('<span style="display : table; height:100%" id="side-view" />');
 			}
 		}
 

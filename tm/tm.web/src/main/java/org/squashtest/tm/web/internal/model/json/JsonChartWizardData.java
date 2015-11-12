@@ -117,11 +117,11 @@ public class JsonChartWizardData {
 		addLevelEnum("REQUIREMENT_VERSION_STATUS", RequirementStatus.class);
 
 
-		entityTypes.put(REQUIREMENT, "icon-requirement");
-		entityTypes.put(TEST_CASE, "icon-test-case");
-		entityTypes.put(CAMPAIGN, "icon-campaign");
-		entityTypes.put(ITERATION, "icon-iteration");
-		entityTypes.put(ITEM_TEST_PLAN, "sq-icon-control_play");
+		entityTypes.put(REQUIREMENT, "icon-chart-requirement");
+		entityTypes.put(TEST_CASE, "icon-chart-test-case");
+		entityTypes.put(CAMPAIGN, "icon-chart-campaign");
+		entityTypes.put(ITERATION, "icon-chart-iteration");
+		entityTypes.put(ITEM_TEST_PLAN, "icon-chart-item-test-plan");
 
 		for (Project project : projects) {
 

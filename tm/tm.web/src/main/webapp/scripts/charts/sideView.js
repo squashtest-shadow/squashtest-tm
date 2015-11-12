@@ -22,6 +22,8 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 	function($, backbone, _, Handlebars) {
 	"use strict";
 
+	
+	
 	var sideView = Backbone.View.extend({
 		el : "#side-view",
 		
@@ -35,8 +37,28 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 			this.tmpl = "#side-view-tpl";
 			this.model = data;
 			this.render(data);
+			
+
+			var validSteps = this.getValidSteps();
+			
+			_.each(validSteps, function(step){	
+				$("#step-icon-" + step).addClass("wizard-step-ok");
+			});
+			
+			$("#step-icon-" + data.name).attr('class', '');
+			$("#step-icon-" + data.name).addClass("wizard-step-current");
+			
 		},
 		
+		getValidSteps : function (data){
+			
+			var self = this;
+			return _.chain(self.model.get("validation"))
+			.filter(function(val) {return !_.isEmpty(_.result(self.model.attributes, _.result(val, "validationParam")));   } ).pluck("name")
+			.value();
+			
+		},
+
 		render : function(data, tmpl) {	
 				var src = $(this.tmpl).html();
 				this.template = Handlebars.compile(src);

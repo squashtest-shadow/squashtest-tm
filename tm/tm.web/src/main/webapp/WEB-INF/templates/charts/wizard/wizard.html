@@ -176,8 +176,8 @@
 					
 							
 									<div id="current-side-view-container"
-										style="border: black solid 1px; padding-left: 10px; width: 250px;height: 90%;">
-										<span id="side-view" />
+										style="    margin: 0; padding-left: 10px; width: 250px;height: 100%;    background-color: white;">
+										<span style="display : table; height:100%" id="side-view" />
 									</div>
 								
 					
@@ -194,13 +194,12 @@
 
 <div style="float: right;   padding: 5px;">
 						
-						 <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
 
-<button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
- </button>
+ <input type="button" class="sq-btn btn-sm" id="previous" value="Previous"
+           th:value="#{label.previous}" />  
+           
+ <input type="button" class="sq-btn btn-sm" id="next" value="Next"
+           th:value="#{label.next}" />  
  
 <input type="button" class="sq-btn btn-sm" id="generate" value="Generate"
            th:value="#{report.criteria.panel.button.generate.label}" />  
