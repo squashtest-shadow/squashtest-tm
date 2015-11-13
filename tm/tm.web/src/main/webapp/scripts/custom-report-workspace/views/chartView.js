@@ -29,6 +29,7 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
       this.i18nString = translator.get({
         "dateFormat" : "squashtm.dateformat"
       });
+      //this.loadData();
 			_.bindAll(this, "render");
 			this.render();
 		},
@@ -50,6 +51,7 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 			})
 			.success(function(json){
         self._setBaseModelAttributes(json);
+        self._loadI18n();
 				self._template();
 				chartFactory.buildChart("#chart-display-area", json);
 			});
@@ -70,12 +72,25 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
         this.model.set("lastModifiedBy",json.lastModifiedBy);
         this.model.set("lastModifiedOn",this._i18nFormatDate(json.lastModifiedOn));
       }
-
-      console.log(this.model);
+      this.model.set("axes",json.axes);
+      this.model.set("filters",json.filters);
+      this.model.set("measures",json.measures);
     },
 
     _i18nFormatDate : function (date) {
       return dateutils.format(date, this.i18nString.dateFormat);
+    },
+
+    _loadI18n : function () {
+      var entityFilters = _.map( this.model.get("filters"), function( filter ){
+        var formattedFilter = {
+          entityType : filter.columnPrototype.specializedEntityType.entityType,
+          columnLabel: filter.columnPrototype.label,
+          values : filter.values
+        };
+        return formattedFilter;
+      });
+      console.log(entityFilters);
     }
 
   });

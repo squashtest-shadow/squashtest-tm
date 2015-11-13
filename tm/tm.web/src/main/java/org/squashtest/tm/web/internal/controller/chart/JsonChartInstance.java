@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
@@ -36,6 +37,8 @@ import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 
 /*
@@ -187,9 +190,34 @@ public class JsonChartInstance {
 
 
 
+	public List<JsonFilter> getFilters() {
+		return filters;
+	}
+
+	public void setFilters(List<JsonFilter> filters) {
+		this.filters = filters;
+	}
+
+
+
 	public static final class JsonMeasureColumn{
 
 		private String label;
+		
+		private JsonColumnPrototype columnPrototype;
+		
+		private JsonOperation operation;
+		
+		public JsonMeasureColumn() {
+			super();
+		}
+
+		public JsonMeasureColumn(MeasureColumn measure){
+			super();
+			this.label = measure.getLabel();
+			this.columnPrototype = new JsonColumnPrototype(measure.getColumn());
+			this.operation = new JsonOperation(measure.getOperation());
+		}
 
 		public String getLabel() {
 			return label;
@@ -199,13 +227,20 @@ public class JsonChartInstance {
 			this.label = label;
 		}
 
-		public JsonMeasureColumn() {
-			super();
+		public JsonColumnPrototype getColumnPrototype() {
+			return columnPrototype;
 		}
 
-		public JsonMeasureColumn(MeasureColumn measure){
-			super();
-			this.label = measure.getLabel();
+		public void setColumnPrototype(JsonColumnPrototype columnPrototype) {
+			this.columnPrototype = columnPrototype;
+		}
+
+		public JsonOperation getOperation() {
+			return operation;
+		}
+
+		public void setOperation(JsonOperation operation) {
+			this.operation = operation;
 		}
 
 
@@ -258,8 +293,11 @@ public class JsonChartInstance {
 		
 		private String label;
 		
+		private JsonSpecializedEntityType specializedEntityType;
+		
 		public JsonColumnPrototype(ColumnPrototype column) {
 			this.label = column.getLabel();
+			this.specializedEntityType = new JsonSpecializedEntityType(column.getSpecializedType());
 		}
 
 		public String getLabel() {
@@ -268,6 +306,15 @@ public class JsonChartInstance {
 
 		public void setLabel(String label) {
 			this.label = label;
+		}
+
+		public JsonSpecializedEntityType getSpecializedEntityType() {
+			return specializedEntityType;
+		}
+
+		public void setSpecializedEntityType(
+				JsonSpecializedEntityType specializedEntityType) {
+			this.specializedEntityType = specializedEntityType;
 		}
 		
 	}
@@ -290,12 +337,37 @@ public class JsonChartInstance {
 		
 	}
 	
+	public static final class JsonSpecializedEntityType {
+		private EntityType entityType;
+		private EntityRole entityRole;
+		
+		public JsonSpecializedEntityType(SpecializedEntityType specializedEntityType) {
+			this.entityRole = specializedEntityType.getEntityRole();
+			this.entityType = specializedEntityType.getEntityType();
+		}
+
+		public EntityType getEntityType() {
+			return entityType;
+		}
+
+		public void setEntityType(EntityType entityType) {
+			this.entityType = entityType;
+		}
+
+		public EntityRole getEntityRole() {
+			return entityRole;
+		}
+
+		public void setEntityRole(EntityRole entityRole) {
+			this.entityRole = entityRole;
+		}
+	}
+	
 	public static final class JsonFilter{
 		
 		private List<String> values;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
-		
 		
 		public JsonFilter(Filter filter) {
 			this.columnPrototype = new JsonColumnPrototype(filter.getColumn());
@@ -321,9 +393,6 @@ public class JsonChartInstance {
 		public void setOperation(JsonOperation operation) {
 			this.operation = operation;
 		}
-		
-		
-		
 	}
 
 }

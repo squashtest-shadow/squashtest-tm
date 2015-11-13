@@ -77,7 +77,6 @@ public class CustomReportController {
 		ChartDefinition chartDef = customReportLibraryNodeService.findChartDefinitionByNodeId(id);
 		ChartInstance instance = chartService.generateChart(chartDef.getId());
 		return new JsonChartInstance(instance);
-		
 	}
 	
 	@RequestMapping(value="custom-report-dashboard/{id}", method=RequestMethod.GET)
