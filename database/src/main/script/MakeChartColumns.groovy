@@ -96,7 +96,7 @@ def definition = [
 			rvCreatBy : ['CREATED_BY',  'STRING','audit.createdBy', 'axis, filter'],
 			rvModBy : ['MODIFIED_BY', 'STRING','audit.lastModifiedBy','axis, filter'],
 			rvRef : ['REFERENCE', 'STRING', 'reference', 'filter, axis'],
-			rvCat : ['CATEGORY', 'INFO_LIST_ITEM', 'category.label', 'all'],
+			rvCat : ['CATEGORY', 'INFO_LIST_ITEM', 'category.code', 'all'],
 			rvCrit : ['CRITICALITY', 'LEVEL_ENUM', 'criticality', 'all'],
 			rvStatus : ['STATUS', 'LEVEL_ENUM', 'status', 'all'],
 			rvVerifTcCount : ['TCCOUNT', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'rvVerifTCCountSub'],
@@ -131,8 +131,8 @@ def definition = [
 			tcModBy : ['MODIFIED_BY', 'STRING', 'audit.lastModifiedBy', 'axis, filter'],
 			tcRef : ['REFERENCE', 'STRING', 'reference', 'filter, axis'],
 			tcImportance : ['IMPORTANCE', 'LEVEL_ENUM', 'importance', 'all'],
-			tcNat : ['NATURE', 'INFO_LIST_ITEM', 'nature.label', 'all'],
-			tcType : ['TYPE', 'INFO_LIST_ITEM', 'type.label', 'all'],
+			tcNat : ['NATURE', 'INFO_LIST_ITEM', 'nature.code', 'all'],
+			tcType : ['TYPE', 'INFO_LIST_ITEM', 'type.code', 'all'],
 			tcStatus : ['STATUS', 'LEVEL_ENUM', 'status', 'all'],
 			tcVersionCount : ['VERSCOUNT', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'tcVerifVersionCountSub'],
 			tcCallStepsCount : ['CALLSTEPCOUNT', 'NUMERIC', 'count(steps[class="CallTestStep"])', 'all', 'tcCallStepsCountSub'],
@@ -140,7 +140,7 @@ def definition = [
 			tcMilesCount : ['MILCOUNT', 'NUMERIC', 'count(milestones)', 'all', 'tcMilesCountSub'],
 			tcIterCount : ['ITERCOUNT', 'NUMERIC', 'count(iterations)', 'all', 'tcIterCountSub'],
 			tcExeCount : ['EXECOUNT', 'NUMERIC', 'count(executions)', 'all', 'tcExeCountSub'],
-			tcHasAutoScript : ['HASAUTOSCRIPT', 'BOOLEAN', 'notnull(automatedTest)', 'axis, filter', 'tcHasAutoScriptSub']
+			tcHasAutoScript : ['HASAUTOSCRIPT', 'BOOLEAN', 'notnull(automatedTest)', 'filter', 'tcHasAutoSub']
 		], 
 	
 		subqueries : [
@@ -197,7 +197,7 @@ def definition = [
 			 *  -> slows the performance, also not sure of what must be return in the second leg of the union
 			 *  
 			 *  Until then, test cases having no iteration/execution wont be counted in the 
-			 *  subquery. It entails that  
+			 *  subquery. It entails that 
 			 *  
 			 */
 			tcIterCountSub : [
@@ -215,11 +215,11 @@ def definition = [
 				measures : ['exId COUNT'],
 				axes : ['tcId']
 			],
-			
-			tcHasAutoScriptSub : [
+		
+			tcHasAutoSub : [
 				label : 'TEST_CASE_HASAUTOSCRIPT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'SUBQUERY',
+				strategy : 'INLINED',
 				measures : ['autoId NOT_NULL'],
 				axes : ['tcId']
 			]
@@ -230,41 +230,98 @@ def definition = [
 	CAMPAIGN : [
 		columns : [
 			cId : ['ID', 'NUMERIC', 'id', 'all'],
-			cName : ['LABEL', 'STRING', 'name', 'filter, measure'],
+			cRef : ['REFERENCE', 'STRING', 'reference', 'filter, measure'],
 			cSchedStart : ['SCHED_START', 'DATE', 'scheduledPeriod.scheduledStartDate', 'axis, filter'],
 			cSchedEnd : ['SCHED_END', 'DATE', 'scheduledPeriod.scheduledEndDate', 'axis, filter'],
 			cActStart : ['ACTUAL_START', 'DATE', 'actualPeriod.actualStartDate', 'axis, filter'],
 			cActEnd : ['ACTUAL_END', 'DATE', 'actualPeriod.actualEndDate', 'axis, filter'],	
+			cIterCount : ['ITERCOUNT', 'NUMERIC', 'count(iterations)', 'all', 'cIterCountSub'],
+			cIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'cIssueCountSub']
 		], 
 	
-		subqueries : [:]	
+		subqueries : [
+			cIterCountSub : [
+				label : 'CAMPAIGN_ITERCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'INLINED',
+				measures : ['itId COUNT'],
+				axes : ['cId']
+			],
+			cIssueCountSub : [
+				label : 'CAMPAIGN_ISSUECOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['isId COUNT'],
+				axes : ['cId']
+			]
+			
+		]	
 		
 	],
 	
 	ITERATION : [
 		columns : [
 			itId : ['ID', 'NUMERIC', 'id', 'all'],
-			itName : ['LABEL', 'STRING', 'name', 'filter, measure'],
+			itRef : ['REFERENCE', 'STRING', 'reference', 'filter, measure'],
 			itSchedStart : ['SCHED_START', 'DATE', 'scheduledPeriod.scheduledStartDate', 'axis, filter'],
 			itSchedEnd : ['SCHED_END', 'DATE', 'scheduledPeriod.scheduledEndDate', 'axis, filter'],
 			itActStart : ['ACTUAL_START', 'DATE', 'actualPeriod.actualStartDate', 'axis, filter'],
 			itActEnd : ['ACTUAL_END', 'DATE', 'actualPeriod.actualEndDate', 'axis, filter'],	
-				
+			itItemCount : ['ITEMCOUNT', 'NUMERIC', 'count(testPlans)', 'all', 'itItemCountSub'],
+			itIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'itIssueCountSub']
 		], 
 	
-		subqueries : [:]	
+		subqueries : [
+			itItemCountSub : [
+				label : 'ITERATION_ITEMCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'INLINED',
+				measures : ['itpId COUNT'],
+				axes : ['itId']
+			], 
+			itIssueCountSub : [
+				label : 'ITERATION_ISSUECOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['isId COUNT'],
+				axes : ['itId']
+			]
+		]	
 			
-	] ,
+	],
 
-	ITEM_TEST_PLAN : [
+	ITEM_TEST_PLAN : [		
 		columns : [
 			itpId : ['ID', 'NUMERIC', 'id', 'all'],
 			itpLabel : ['LABEL', 'STRING', 'label', 'filter'],
 			itpStatus : ['STATUS', 'EXECUTION_STATUS', 'executionStatus', 'all'],
-			itpLastExec : ['LASTEXEC', 'DATE', 'lastExecutedOn', 'filter']	
+			itpLastExec : ['LASTEXEC', 'DATE', 'lastExecutedOn', 'filter'],
+			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'filter, axis'],
+			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'filter', 'itpTcExistsSub'],
+			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'filter', 'itpIsExecutedSub']
+
+			
 		],
 	
-		subqueries : [:]	
+		subqueries : [ 
+			
+			itpTcExistsSub : [
+				label : 'ITEM_TEST_PLAN_TCEXISTS_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'INLINED',
+				measures : ['tcId NOT_NULL'],
+				axes : ['itpId']
+			],
+		
+			itpIsExecutedSub : [
+				label : 'ITEM_TEST_PLAN_ISEXECUTED_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['exId NOT_NULL'],	
+				axes : ['itpId']
+			]
+
+		]	
 	],
 
 	EXECUTION : [
@@ -367,10 +424,15 @@ def definition = [
 		],
 	
 		subqueries : [:]
-	]
+	],
 
+	AUTOMATED_EXECUTION_EXTENDER : [
+		columns : [
+			extId : ['ID', 'NUMERIC', 'id', 'none']	
+		],
+		subqueries : [:]
+	],
 
-	
 
 ]
 
@@ -500,7 +562,6 @@ output.append """
 		output.append "\n\n"
 	}
 
-
 }
 
 
@@ -597,10 +658,11 @@ def processSubqueries(entity, output, subqueries){
 
 		// insert the query entry
 		def basequeryid = idmap[querid]
+		def label = querdef.label
 		def strategy = (querdef['strategy'] != null) ? querdef['strategy'] : 'SUBQUERY'
 		def joinStyle = (querdef['joinStyle'] != null) ? querdef['joinStyle'] : 'INNER_JOIN'
 		
-		output.append """insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values ($basequeryid, '$querid', '$strategy', '$joinStyle');\n"""
+		output.append """insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values ($basequeryid, '$label', '$strategy', '$joinStyle');\n"""
 		
 		// insert the measures for it
 		querdef['measures'].eachWithIndex { item, index ->
@@ -619,7 +681,7 @@ values ($id, $basequeryid, '$operation', $index);\n"""
 			def splitargs = item.split()
 			def colref = splitargs[0]
 			def operation = splitargs[1]
-			def values = splitargs[2..splitargs.size()-1]
+			def values = (splitargs.length > 2) ? splitargs[2..splitargs.size()-1] : []
 			def colrefid = idmap[colref]
 			def filterid = filtercount++
 			
@@ -627,7 +689,7 @@ values ($id, $basequeryid, '$operation', $index);\n"""
 			output.append """insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) \
 values ($filterid, $colrefid, $basequeryid, '$operation');\n"""
 			
-			// its filter values now
+			// its filter values 
 			output.append """insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
 values """
 			def valuestring = ""
@@ -672,17 +734,9 @@ def typerole(tpname){
 		case "REQUIREMENT_VERSION_MILESTONE" : return ["MILESTONE", "REQUIREMENT_VERSION_MILESTONE"]
 		case "ITERATION_TEST_PLAN_ASSIGNED_USER" : return ["USER", "ITERATION_TEST_PLAN_ASSIGNED_USER"]
 		case "AUTOMATED_TEST" : return ["AUTOMATED_TEST", null]
+		case "AUTOMATED_EXECUTION_EXTENDER" : return ["AUTOMATED_EXECUTION_EXTENDER", null]
 	}
 }
-
-
-
-
-
-
-
-
-
 
 
 

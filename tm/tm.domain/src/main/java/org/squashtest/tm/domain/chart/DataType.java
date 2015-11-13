@@ -37,6 +37,7 @@ import static org.squashtest.tm.domain.chart.Operation.MAX;
 import static org.squashtest.tm.domain.chart.Operation.MIN;
 import static org.squashtest.tm.domain.chart.Operation.NONE;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
+import static org.squashtest.tm.domain.chart.Operation.NOT_NULL;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -48,7 +49,8 @@ public enum DataType {
 	STRING (EQUALS, LIKE, COUNT, NONE),
 	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR),
 	CLASS (EQUALS),
-	BOOLEAN (EQUALS),
+	EXISTENCE(NOT_NULL),
+	BOOLEAN(EQUALS),
 	LEVEL_ENUM(EQUALS, LOWER, LOWER_EQUAL, GREATER, GREATER_EQUAL, MAX, MIN, IN, COUNT, NONE),
 	EXECUTION_STATUS (EQUALS, IN, COUNT, NONE),
 	INFO_LIST_ITEM (EQUALS, IN, COUNT, NONE);

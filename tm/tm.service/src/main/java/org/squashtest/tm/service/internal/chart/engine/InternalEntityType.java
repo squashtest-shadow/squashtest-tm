@@ -40,8 +40,12 @@ import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.QAutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.QAutomatedTest;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.QDataset;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
@@ -351,6 +355,26 @@ enum InternalEntityType {
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QAutomatedTest(alias);
+		}
+
+	},
+
+
+	AUTOMATED_EXECUTION_EXTENDER(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return AutomatedExecutionExtender.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QAutomatedExecutionExtender.automatedExecutionExtender;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAutomatedExecutionExtender(alias);
 		}
 
 	}

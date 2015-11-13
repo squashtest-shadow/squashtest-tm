@@ -54,10 +54,12 @@ import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.FactoryExpression;
 import com.querydsl.core.types.Operator;
 import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Ops.DateTimeOps;
 import com.querydsl.core.types.ParamExpression;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.PathMetadata;
+import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
@@ -65,6 +67,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.core.types.dsl.SimpleExpression;
 import com.querydsl.core.types.dsl.SimpleOperation;
 
 class QuerydslToolbox {
@@ -447,15 +450,36 @@ class QuerydslToolbox {
 		return predicate;
 	}
 
+	/*
+	 * There is a special treatment when operation = NOT_NULL. Indeed one cannot
+	 * write 'select attribute is not null' : although legal in most SQL database,
+	 * HQL will just not have it.
+	 * 
+	 * So we must use a case construct instead.
+	 * 
+	 * Also, the case construct is a custom BOOLEAN_CASE and correctly generate 'case when (predicate) then true else false',
+	 * because the standard querysdl case builder would generate 'case when (predicate) then ?1 else false',
+	 * and then Hibernate complains because it can't determine the type of the overall expression.
+	 * 
+	 */
+	SimpleExpression<?> applyOperation(Operation operation, Expression<?> baseExp, Expression... operands){
 
-	SimpleOperation<?> applyOperation(Operation operation, Expression<?> baseExp, Expression... operands){
+		SimpleExpression result = null;
 
-		Operator operator = getOperator(operation);
+		// the NOT_NULL case
+		if (operation == Operation.NOT_NULL){
+			Predicate notNull = Expressions.predicate(Ops.IS_NOT_NULL, baseExp);
+			result = Expressions.operation(Boolean.class, ExtAggOps.BOOLEAN_CASE, notNull);
+		}
 
-		Expression[] expressions = prepend(baseExp, operands);
+		// the normal case
+		else{
+			Operator operator = getOperator(operation);
+			Expression[] expressions = prepend(baseExp, operands);
+			result = Expressions.operation(operator.getType(), operator, expressions);
 
-		return Expressions.operation(operator.getType(), operator, expressions);
-
+		}
+		return result;
 	}
 
 	/**
@@ -464,14 +488,40 @@ class QuerydslToolbox {
 	 * @param filter
 	 * @return
 	 */
+	/*
+	 * There is a special treatment when operation = NOT_NULL. Indeed one cannot
+	 * write 'where attribute is not null = true|false' : although legal in most SQL database,
+	 * HQL will just not have it.
+	 * 
+	 * So we must infer if we need operator IS_NULL or IS_NOT_NULL from the operand, and
+	 * apply this operator.
+	 * 
+	 */
 	BooleanExpression createPredicate(Operation operation, Expression<?> baseExp, Expression... operands){
 
-		Operator operator = getOperator(operation);
+		BooleanExpression predicate = null;
 
-		Expression[] expressions = prepend(baseExp, operands);
+		// special case
+		if (operation==Operation.NOT_NULL){
+			String arg = operands[0].toString();
+			Ops operator = (arg.equals("true") || arg.equals("1")) ? Ops.IS_NOT_NULL : Ops.IS_NULL;
+			predicate = Expressions.predicate(operator, baseExp);
+		}
 
-		return Expressions.predicate(operator, expressions);
+		// normal case
+		else{
+			Operator operator = getOperator(operation);
+
+			Expression[] expressions = prepend(baseExp, operands);
+
+			predicate = Expressions.predicate(operator, expressions);
+
+		}
+
+		return predicate;
+
 	}
+
 
 	List<Expression<?>> createOperands(Filter filter, Operation operation) {
 		DataType type = filter.getDataType();
@@ -547,6 +597,10 @@ class QuerydslToolbox {
 				case LEVEL_ENUM :
 					operand = LevelEnumHelper.valueOf(val);
 					break;
+				case BOOLEAN :
+				case EXISTENCE :
+					operand = Boolean.valueOf(val.toString().toLowerCase());
+					break;
 				default : throw new IllegalArgumentException("type '"+type+"' not yet supported");
 				}
 
@@ -595,6 +649,7 @@ class QuerydslToolbox {
 		case LOWER_EQUAL: operator = Ops.LOE; break;
 		case MAX: operator = ExtAggOps.S_MAX; break;
 		case MIN: operator = ExtAggOps.S_MIN; break;
+		case NOT_NULL : operator = Ops.IS_NOT_NULL; break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
 

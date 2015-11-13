@@ -103,7 +103,7 @@ class ProjectionPlanner {
 		}
 
 		// now stuff the query
-		query.select(Projections.tuple(selection.toArray(new Expression[]{})));
+		query.select(Projections.tuple(selection.toArray(new Expression[]{}))).distinct();
 
 	}
 

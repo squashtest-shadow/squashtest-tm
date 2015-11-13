@@ -41,15 +41,20 @@ public class ExtHQLTemplates extends HQLTemplates{
 	protected ExtHQLTemplates(char escape) {
 		super(escape);
 
+		// the aggregate functions wrappers
 		add(ExtAggOps.S_AVG, "s_avg({0})");
 		add(ExtAggOps.S_COUNT, "s_count({0})");
 		add(ExtAggOps.S_SUM, "s_sum({0})");
 		add(ExtAggOps.S_MIN, "s_min({0})");
 		add(ExtAggOps.S_MAX, "s_max({0})");
 
+		// group concat
 		add(ExtAggOps.GROUP_CONCAT, "group_concat({0})");
 		add(ExtAggOps.ORDERED_GROUP_CONCAT, "group_concat({0},{1},{2})");
 		add(ExtAggOps.ORDERED_GROUP_CONCAT_DIR, "group_concat({0},{1},{2},{3})");
+
+		// boolean case when
+		add(ExtAggOps.BOOLEAN_CASE, "case when {0} then true else false end ");
 
 	}
 

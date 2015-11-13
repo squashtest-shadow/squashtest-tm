@@ -58,6 +58,7 @@ import static org.squashtest.tm.domain.chart.DataType.*
 import static org.squashtest.tm.domain.chart.Operation.*
 
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport;
 
 import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
@@ -146,9 +147,9 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		then :
 		res.collect{it.a} as Set == [ [-1l,-1l], [-3l, -3l] ] as Set
 		query.toString().replaceAll(/_\d+/, "_sub") ==
-				"""select requirement.id, requirement.id
+				"""select distinct requirement.id, requirement.id
 from Requirement requirement
-where requirement.id in (select requirement_sub.id
+where requirement.id in (select distinct requirement_sub.id
 from Requirement requirement_sub
   inner join requirement_sub.versions as requirementVersion_sub
 group by requirement_sub.id
@@ -181,7 +182,7 @@ group by requirement.id"""
 		then :
 		res.collect {it.a} as Set == [[-1l, 2], [-2l, 1], [-3l, 0]] as Set
 		query.toString().replaceAll(/_\d+/, "_sub") ==
-				"""select testCase.id, s_sum((select s_count(iteration_sub.id)
+				"""select distinct testCase.id, s_sum((select distinct s_count(iteration_sub.id)
 from Iteration iteration_sub
   left join iteration_sub.testPlans as iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.referencedTestCase as testCase_sub
@@ -193,17 +194,240 @@ group by testCase.id"""
 
 
 
+	// ***************** Tests on attribute 'class' ***********************************
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count the call steps per test case "(){
+		given :
+		def measureProto = findByName("TEST_CASE_CALLSTEPCOUNT")
+		def axisProto = findByName("TEST_CASE_ID")
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		res.collect {it.a} as Set == [[-3l, 0], [-2l,0], [-1l,1]] as Set
+	}
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count how many test case per requirements have at least 1 call step"(){
+		given :
+		def measureProto = findByName("TEST_CASE_CALLSTEPCOUNT")
+		def axisProto = findByName("TEST_CASE_ID")
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		// the requirement -2l isn't verified by tc2 and thus
+		// is filtered out because of inner join
+		res.collect {it.a} as Set == [[-1l,1], [-3l, 1]] as Set
+	}
+
+
+	// ******** Tests on EXISTENCE datatype and usage of is null/not null*******************
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should filter on which test cases that have automated scripts"(){
+
+		given :
+		def measureProto = findByName("TEST_CASE_ID")
+		def filterProto = findByName("TEST_CASE_HASAUTOSCRIPT")
+		def axisProto = findByName("TEST_CASE_ID")
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				filters : [filter],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		res.collect {it.a} as Set == [[-3l, 1]] as Set
+	}
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should filter on which test cases that don't have automated scripts"(){
+
+		given :
+		def measureProto = findByName("TEST_CASE_ID")
+		def filterProto = findByName("TEST_CASE_HASAUTOSCRIPT")
+		def axisProto = findByName("TEST_CASE_ID")
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				filters : [filter],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		res.collect {it.a} as Set == [[-1l, 1], [-2l, 1]] as Set
+	}
+
+
+
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count test cases grouped by whether automated or not"(){
+
+		given :
+		def measureProto = findByName("TEST_CASE_ID")
+		def axisProto = findByName("TEST_CASE_HASAUTOSCRIPT")
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		res.collect {it.a} as Set == [[false, 2], [true, 1]] as Set
+	}
+
+
+
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count how many test plans have been executed for each iteration"(){
+		given :
+		def measureProto= findByName('ITEM_TEST_PLAN_ID')
+		def filterProto = findByName("ITEM_TEST_PLAN_IS_EXECUTED")
+		def axisProto = findByName('ITERATION_ID')
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["TRUE"])
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				filters : [filter],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+		then :
+		res.collect {it.a} as Set == [[-11l, 1], [-12l,2]] as Set
+
+	}
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count how many test plans have not been executed for each iteration"(){
+		given :
+		def measureProto= findByName('ITEM_TEST_PLAN_ID')
+		def filterProto = findByName("ITEM_TEST_PLAN_IS_EXECUTED")
+		def axisProto = findByName('ITERATION_ID')
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : Operation.EQUALS, values : ["FALSE"])
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				filters : [filter],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		println query
+		println "**********"
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+
+		then :
+		// alas, the other iteration has no not-executed items so
+		// it is filtered out because of of inner join mechanics
+		res.collect {it.a} as Set == [[-11l, 1]] as Set
+
+	}
+	// ********* utilities ***************************
+
+
 	ColumnPrototype findByName(name){
 		getSession().createQuery("from ColumnPrototype where label = '${name}'").uniqueResult();
 	}
 
-
-
 	def ExtendedHibernateQuery from(clz){
 		return new ExtendedHibernateQuery().from(clz)
 	}
-
-
 
 
 	class ManyQueryPojo {

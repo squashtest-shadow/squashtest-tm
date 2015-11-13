@@ -118,7 +118,7 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 
 		FnSupport concatSupport = findGroupConcatSupport();
 
-		SessionFactoryEnhancer.registerAggregateWrappers(config, concatSupport);
+		SessionFactoryEnhancer.registerExtensions(config, concatSupport);
 	}
 
 

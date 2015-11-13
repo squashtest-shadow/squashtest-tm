@@ -101,7 +101,7 @@ public class SessionFactoryEnhancer{
 	 * API for Hibernate SessionFactory
 	 * ************************************************/
 
-	public static void registerAggregateWrappers(Configuration hibConfig, FnSupport... fnSupports){
+	public static void registerExtensions(Configuration hibConfig, FnSupport... fnSupports){
 
 		// aggregate function wrappers
 		hibConfig.addSqlFunction(FN_NAME_SUM, new StandardSQLFunction("sum"));
@@ -109,6 +109,9 @@ public class SessionFactoryEnhancer{
 		hibConfig.addSqlFunction(FN_NAME_MAX, new StandardSQLFunction("max"));
 		hibConfig.addSqlFunction(FN_NAME_AVG, new StandardSQLFunction("avg"));
 		hibConfig.addSqlFunction(FN_NAME_CNT, new SCountDistinctFunction());
+
+		// boolean case when
+
 
 		// database-specific functions
 		for (FnSupport support : fnSupports){

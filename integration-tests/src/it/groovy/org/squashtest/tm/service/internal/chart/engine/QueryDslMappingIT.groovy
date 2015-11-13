@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Expression;
@@ -195,32 +196,23 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("QueryPlanner.dataset.xml")
-	def "should test the subquery mechanism"(){
-
-		given :
-		ExtendedHibernateQuery baseQuery = new ExtendedHibernateQuery()
-
-		baseQuery.from(r).distinct()
-				.join(r.versions, v)
-				.select(Projections.tuple(r.id))
-
-		and :
-		ExtendedHibernateQuery subquery = new ExtendedHibernateQuery()
-
-		subquery.from(r).join(r.versions, v).select(Projections.tuple(r.id)).groupBy(r.id).having(v.countDistinct().gt(2))
-
-		and :
-		baseQuery.where(r.id.in(subquery))
+	def "test the BOOLEAN_CASE thing"(){
 
 		when :
-		ExtendedHibernateQuery finalQuery = baseQuery.clone(getSession())
+		QTestCase tc = new QTestCase("tc")
+		QAutomatedTest auto = new QAutomatedTest("auto")
 
-		def res = finalQuery.fetch()
+		ExtendedHibernateQuery q = new ExtendedHibernateQuery(getSession())
+
+		q.from(tc).leftJoin(tc.automatedTest, auto)
+
+		def ex = Expressions.simpleOperation(ExtAggOps.BOOLEAN_CASE.getType(), ExtAggOps.BOOLEAN_CASE, auto.id.isNotNull())
+		q.select(ex)
+
+
 		then :
-		res.collect{it.a} == [[-1l]]
-
-
+		def res = q.fetch()
+		true
 	}
-
 
 }

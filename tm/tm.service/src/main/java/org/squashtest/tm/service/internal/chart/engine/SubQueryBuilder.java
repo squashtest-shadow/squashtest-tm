@@ -140,8 +140,8 @@ class SubQueryBuilder extends QueryBuilder {
 		MeasureColumn measure = queryDefinition.getMeasures().get(0);
 
 		Expression<?> measureExpr = utils.createAsSelect(measure);
-		List<Expression<?>> operands = utils.createOperands(subwhereProfileFilterExpression, measure.getOperation());
 		Operation operation = subwhereProfileFilterExpression.getOperation();
+		List<Expression<?>> operands = utils.createOperands(subwhereProfileFilterExpression, operation);
 
 		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, operands.toArray(new Expression[]{}));
 

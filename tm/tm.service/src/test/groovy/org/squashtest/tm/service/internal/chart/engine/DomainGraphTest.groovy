@@ -52,6 +52,7 @@ class DomainGraphTest extends Specification {
 	static InternalEntityType TCMIL = TEST_CASE_MILESTONE
 	static InternalEntityType RVMIL = REQUIREMENT_VERSION_MILESTONE
 	static InternalEntityType TATEST = AUTOMATED_TEST
+	static InternalEntityType EXTEND = AUTOMATED_EXECUTION_EXTENDER
 
 
 
@@ -74,7 +75,7 @@ class DomainGraphTest extends Specification {
 
 		// all other node have exactly one inbound connection
 		domain.nodes.findAll{it.type != rootEntity} as Set == domain.nodes.findAll{countInbounds(domain, it.type) == 1 } as Set
-		domain.nodes.collect{it.type} as Set == [REQ, RV, COV, TC, ITP, IT, CP, EX, ISS, US, TS, NAT, TYP, CAT, TCMIL, RVMIL, TATEST ] as Set
+		domain.nodes.collect{it.type} as Set == InternalEntityType.values() as Set
 
 
 		where :
@@ -172,11 +173,13 @@ class DomainGraphTest extends Specification {
 		root.key == TEST_CASE
 
 		checkTreeHierarchy(plan, TEST_CASE, [ITEM_TEST_PLAN, REQUIREMENT_VERSION_COVERAGE, TCMIL, NAT, TYP, TS, TATEST]);
+		checkTreeHierarchy(plan, TATEST, [])
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION_COVERAGE, [REQUIREMENT_VERSION]);
 		checkTreeHierarchy(plan, REQUIREMENT_VERSION, [REQUIREMENT, RVMIL, CAT ]);
 		checkTreeHierarchy(plan, REQUIREMENT, [])
 		checkTreeHierarchy(plan, ITEM_TEST_PLAN, [ITERATION, EXECUTION, US])
-		checkTreeHierarchy(plan, EXECUTION, [ISS])
+		checkTreeHierarchy(plan, EXECUTION, [ISS, EXTEND])
+		checkTreeHierarchy(plan, EXTEND, [])
 		checkTreeHierarchy(plan, ISS, [])
 		checkTreeHierarchy(plan, ITERATION, [CAMPAIGN])
 		checkTreeHierarchy(plan, CAMPAIGN, [])

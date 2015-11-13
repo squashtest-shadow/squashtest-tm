@@ -43,6 +43,7 @@ public enum EntityType {
 	INFO_LIST_ITEM,
 	USER,
 	MILESTONE,
-	AUTOMATED_TEST;
+	AUTOMATED_TEST,
+	AUTOMATED_EXECUTION_EXTENDER;
 	// @formatter:on
 }

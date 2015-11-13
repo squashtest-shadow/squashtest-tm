@@ -38,6 +38,8 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_TYPE;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_TEST;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -108,6 +110,8 @@ import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
  *		<li>ITERATION_TEST_PLAN_ASSIGNED_USER</li>
  *		<li>TEST_CASE_MILESTONE</li>
  *		<li>REQUIREMENT_VERSION_MILESTONE</li>
+ *		<li>AUTOMATED_TEST</li>
+ *		<li>AUTOMATED_EXECUTION_EXTENDER</li>
  *</ul>
  *</p>
  * @author bsiri
@@ -203,14 +207,15 @@ class DomainGraph {
 		TraversableEntity rvcatNode = new TraversableEntity(REQUIREMENT_VERSION_CATEGORY);
 		TraversableEntity tcmilNode = new TraversableEntity(TEST_CASE_MILESTONE);
 		TraversableEntity rvmilNode = new TraversableEntity(REQUIREMENT_VERSION_MILESTONE);
-		TraversableEntity autoNode = new TraversableEntity(InternalEntityType.AUTOMATED_TEST);
+		TraversableEntity autoNode = new TraversableEntity(AUTOMATED_TEST);
+		TraversableEntity extNode = new TraversableEntity(AUTOMATED_EXECUTION_EXTENDER);
 
 
 		// add them all
 		nodes.addAll(Arrays.asList(new TraversableEntity[]{
 				campaignNode, iterationNode, itemNode, executionNode, issueNode, testcaseNode,
 				reqcoverageNode, rversionNode, requirementNode, teststepNode,userNode, tcnatNode,
-				tctypNode, rvcatNode, tcmilNode, rvmilNode, autoNode
+				tctypNode, rvcatNode, tcmilNode, rvmilNode, autoNode, extNode
 		}));
 
 
@@ -254,6 +259,8 @@ class DomainGraph {
 		addEdge(rversionNode, rvmilNode, "milestones");
 
 		addEdge(testcaseNode, autoNode, "automatedTest");
+
+		addEdge(executionNode, extNode, "automatedExecutionExtender");
 
 	}
 

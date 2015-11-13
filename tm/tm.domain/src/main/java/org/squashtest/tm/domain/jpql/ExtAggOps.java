@@ -37,7 +37,6 @@ import com.querydsl.core.types.Operator;
  *  The usage syntax for GROUP_CONCAT is explained in {@link SessionFactoryEnhancer}
  * </p>
  * 
- * 
  * </p>
  * 
  * 
@@ -57,7 +56,10 @@ public enum ExtAggOps implements Operator {
 	// group concat
 	GROUP_CONCAT(String.class),
 	ORDERED_GROUP_CONCAT(String.class),
-	ORDERED_GROUP_CONCAT_DIR(String.class);
+	ORDERED_GROUP_CONCAT_DIR(String.class),
+
+	// boolean case when
+	BOOLEAN_CASE(Boolean.class);
 
 	private final Class<?> type;
 
