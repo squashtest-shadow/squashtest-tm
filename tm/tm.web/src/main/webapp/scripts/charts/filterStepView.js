@@ -238,6 +238,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 					values : self.getFilterValues(id) };
 				});
 			
+			filters = _.chain(filters)
+			.filter(function(filter){return ! _.isEmpty(filter.values)})
+			.value();
 			this.model.set({ filters : filters });
 	
 		},
