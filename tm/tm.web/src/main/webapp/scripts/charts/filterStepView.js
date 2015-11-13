@@ -239,7 +239,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				});
 			
 			filters = _.chain(filters)
-			.filter(function(filter){return ! _.isEmpty(filter.values)})
+			.filter(function(filter){return ! _.isEmpty(filter.values);})
 			.value();
 			this.model.set({ filters : filters });
 	
