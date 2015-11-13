@@ -235,8 +235,8 @@
     <!--<artifactId>pax-confman-propsloader</artifactId>-->
     <!--</dependency>-->
 
-    <!-- the following mantis artifact is a plugin. It could be removed, but that would also remove it's dependencies from 
-      the provisioning. TODO : maybe promote mantis plugin dependencies to "first class" : 1) put them in the squash-tm-dependencies 
+    <!-- the following mantis artifact is a plugin. It could be removed, but that would also remove it's dependencies from
+      the provisioning. TODO : maybe promote mantis plugin dependencies to "first class" : 1) put them in the squash-tm-dependencies
       pom and 2) put them here and in distro project. -->
     <!--<dependency>-->
     <!--<groupId>org.squashtest.tm</groupId>-->
@@ -468,30 +468,6 @@
         </executions>
       </plugin>
       <!-- end clean datasource properties -->
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <configuration>
-          <skipAssembly>${assembly.skip}</skipAssembly>
-        </configuration>
-        <executions>
-          <execution>
-            <id>provision-eclipse-platform</id>
-            <goals>
-              <goal>single</goal>
-            </goals>
-            <phase>package</phase>
-            <configuration>
-              <descriptors>
-                <descriptor>src/main/assembly/eclipse-provision.xml</descriptor>
-              </descriptors>
-              <appendAssemblyId>false</appendAssemblyId>
-              <finalName>eclipse-provision</finalName>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
 
       <!-- Populates provision database data -->
       <plugin>
