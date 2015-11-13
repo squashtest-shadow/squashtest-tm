@@ -152,28 +152,30 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
 		registry.addResourceHandler("/images/**")
-			.addResourceLocations("/imgages/")
+			.addResourceLocations("/imgages/", "classpath:/images/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())
 			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/images/**/*.png", "/images/**/*.gif", "/images/**/*.jpg"))
 			.addTransformer(new CssLinkResourceTransformer());
 
-		registry.addResourceHandler("/static/**")
-			.addResourceLocations("/static/")
-			.setCachePeriod(resourceProperties.getCachePeriod())
-			.resourceChain(resourceResolverProperties.isCache())
-			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/images/**/*.png", "/images/**/*.gif", "/images/**/*.jpg"))
-			.addTransformer(new CssLinkResourceTransformer());
+//		registry.addResourceHandler("/static/**")
+//			.addResourceLocations("/static/")
+//			.setCachePeriod(resourceProperties.getCachePeriod())
+//			.resourceChain(resourceResolverProperties.isCache())
+//			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/images/**/*.png", "/images/**/*.gif", "/images/**/*.jpg"))
+//			.addTransformer(new CssLinkResourceTransformer());
+//		;
 
-		registry.addResourceHandler("/css/**")
-			.addResourceLocations("/css/")
+		registry.addResourceHandler("/styles/**")
+			.addResourceLocations("/styles/", "classpath:/styles/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())
-			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/css/**/*.css"))
+			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/styles/**/*.css", "/styles/**/*.png", "/styles/**/*.gif", "/styles/**/*.jpg"))
 			.addTransformer(new CssLinkResourceTransformer());
 
 		registry.addResourceHandler("/scripts/**")
-			.addResourceLocations("/scripts/")
+//			.addResourceLocations("/scripts/")
+			.addResourceLocations("/scripts/", "classpath:/scripts/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())
 			.addResolver(new VersionResourceResolver().addFixedVersionStrategy(appVersion));

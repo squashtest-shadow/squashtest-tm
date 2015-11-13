@@ -55,6 +55,12 @@
     <pluginManagement>
       <plugins>
         <plugin>
+          <groupId>ro.isdc.wro4j</groupId>
+          <artifactId>wro4j-maven-plugin</artifactId>
+          <version>1.7.7</version>
+        </plugin>
+
+        <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
           <version>3.3</version>
@@ -259,22 +265,6 @@
           <groupId>com.alexnederlof</groupId>
           <artifactId>jasperreports-plugin</artifactId>
           <version>1.9</version>
-          <!--
-          <configuration>
--->
-          <!-- These are the default configurations: -->
-          <!--
-            <compiler>net.sf.jasperreports.engine.design.JRJdtCompiler</compiler>
-            <sourceDirectory>src/main/jasperreports</sourceDirectory>
-            <outputDirectory>${project.build.directory}/jasper</outputDirectory>
-            <outputFileExt>.jasper</outputFileExt>
-            <xmlValidation>true</xmlValidation>
-            <verbose>false</verbose>
-            <numberOfThreads>4</numberOfThreads>
--->
-          <!--
-          </configuration>
--->
           <dependencies>
             <dependency>
               <!-- required to make sure jr runtime version is in sync with compile-time version -->

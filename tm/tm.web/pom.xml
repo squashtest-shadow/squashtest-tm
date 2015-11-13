@@ -15,36 +15,34 @@
   <properties>
     <bundle.contextPath>squash</bundle.contextPath>
 
-    <!-- google says static resources should be cached 1 week -->
-    <client.cache.max.age>604800</client.cache.max.age>
-    <css.packageDirectory>styles</css.packageDirectory>
-
     <!-- Used to set jetty config props -->
     <is.dev.stage>false</is.dev.stage>
     <is.war.deploy>true</is.war.deploy>
 
     <!-- DEfault webdriver for jasmine runner. One can override it -->
     <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
-    <jasperreports.build.outputDirectory>${project.build.directory}/jasperreports/compiled</jasperreports.build.outputDirectory>
-    <js.packageDirectory>scripts</js.packageDirectory>
+    <jasperreports.outputDir>${project.build.directory}/jasperreports-plugin/reports</jasperreports.outputDir>
+
     <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
     <project.stage>RELEASE</project.stage>
-    <rjs.js.outputDirectory>${rjs.outputDirectory}/scripts</rjs.js.outputDirectory>
+
+    <rjs.javascript.optimizedDir>${rjs.outputDirectory}/scripts</rjs.javascript.optimizedDir>
     <rjs.optimizer>none</rjs.optimizer>
-    <rjs.outputDirectory>${project.build.directory}/optimized-js</rjs.outputDirectory>
-    <smartprites-wro4j-exchangedir>${project.build.directory}/web-optimization</smartprites-wro4j-exchangedir>
+    <rjs.outputDirectory>${project.build.directory}/rjs</rjs.outputDirectory>
     <smartsprites.inputDir>src/main/webapp/styles</smartsprites.inputDir>
-    <smartsprites.outputDir>${smartprites-wro4j-exchangedir}</smartsprites.outputDir>
+
+    <smartsprites.outputDir>${project.build.directory}/smartsprites</smartsprites.outputDir>
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
-    <!-- overridable by activating the profile development -->
-    <spring.version.range>[3,4)</spring.version.range>
-    <springdm.version.range>[2,3)</springdm.version.range>
-    <sprites.packageDirectory>images</sprites.packageDirectory>
-    <wro4j.css.outputDirectory>src/main/webapp/styles</wro4j.css.outputDirectory>
-    <wro4j.inputDir>${smartprites-wro4j-exchangedir}</wro4j.inputDir>
+
+    <war.css.dir>styles</war.css.dir>
+
+    <!-- Crap name for a directory. Yet 'wro4j/styles' makes wro4j substitute wrong urls and 'wro4j' is not picked by spring-boot -->
+    <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
+    <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
+    <wro4j-spring-boot.dir>${project.build.outputDirectory}/wro4j-spring-boot</wro4j-spring-boot.dir>
   </properties>
 
   <dependencyManagement>
@@ -61,34 +59,27 @@
 
   <dependencies>
 
-    <!-- ====== /THYMELEAF ====== -->
-
-    <!-- ====== JASPER REPORTS ====== -->
-    <!-- We need this to compile the reports. Our OSGi wrapped artifact wont work and plugin dependency wont be the one picked -->
     <dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>
     </dependency>
-    <!-- ===== / JACKSON ===== -->
 
-    <!-- ====== FILE UPLOAD ====== -->
     <dependency>
       <groupId>commons-fileupload</groupId>
       <artifactId>commons-fileupload</artifactId>
     </dependency>
-    <!--<dependency>-->
-    <!--<groupId>commons-io</groupId>-->
-    <!--<artifactId>commons-io</artifactId>-->
-    <!--</dependency>-->
+
     <dependency>
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.aspect</artifactId>
       <version>${project.version}</version>
     </dependency>
+
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.bugtracker.api</artifactId>
@@ -134,11 +125,6 @@
       <groupId>com.fasterxml.jackson.datatype</groupId>
       <artifactId>jackson-datatype-hibernate4</artifactId>
     </dependency>
-
-    <!--<dependency>-->
-    <!--<groupId>com.fasterxml.jackson.core</groupId>-->
-    <!--<artifactId>jackson-databind</artifactId>-->
-    <!--</dependency>-->
 
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
@@ -320,17 +306,13 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
-
-    <!--<dependency>-->
-    <!--<groupId>org.springframework.boot</groupId>-->
-    <!--<artifactId>spring-boot-configuration-processor</artifactId>-->
-    <!--</dependency>-->
   </dependencies>
   <build>
 
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <resources>
       <resource>
+        <filtering>true</filtering>
         <directory>src/main/resources</directory>
       </resource>
     </resources>
@@ -347,27 +329,28 @@
         <plugin>
           <groupId>ro.isdc.wro4j</groupId>
           <artifactId>wro4j-maven-plugin</artifactId>
-          <version>1.7.7</version>
         </plugin>
+
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-          <version>${spring-boot-maven-plugin.version}</version>
-          <!--<configuration>-->
-          <!--<excludeArtifactIds>hibernate-search-engine,hibernate-search-orm</excludeArtifactIds>-->
-          <!--</configuration>-->
-          <!--<configuration>-->
-          <!--<jvmArguments>-->
-          <!--&#45;&#45;Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug-->
-          <!--</jvmArguments>-->
-          <!--</configuration>-->
-          <dependencies>
-            <dependency>
-              <groupId>org.springframework</groupId>
-              <artifactId>springloaded</artifactId>
-              <version>1.2.4.RELEASE</version>
-            </dependency>
-          </dependencies>
+          <configuration>
+            <folders>
+              <folder>${rjs.outputDirectory}</folder>
+              <folder>target/smartsprites</folder>
+              <folder>${wro4j-spring-boot.dir}</folder>
+              <folder>target/jasperreports-plugin</folder>
+            </folders>
+            <jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2
+              -Dspring.datasource.url=jdbc:h2:../../provision/target/dev-database/squashtest</jvmArguments>
+          </configuration>
+          <!--<dependencies>-->
+            <!--<dependency>-->
+              <!--<groupId>org.springframework</groupId>-->
+              <!--<artifactId>springloaded</artifactId>-->
+              <!--<version>1.2.4.RELEASE</version>-->
+            <!--</dependency>-->
+          <!--</dependencies>-->
         </plugin>
       </plugins>
     </pluginManagement>
@@ -399,7 +382,7 @@
         <groupId>com.alexnederlof</groupId>
         <artifactId>jasperreports-plugin</artifactId>
         <configuration>
-          <outputDirectory>${jasperreports.build.outputDirectory}</outputDirectory>
+          <outputDirectory>${jasperreports.outputDir}</outputDirectory>
         </configuration>
       </plugin>
 
@@ -407,60 +390,47 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
+          <failOnMissingWebXml>false</failOnMissingWebXml>
           <webResources>
             <resource>
               <!-- includes compiled reports -->
-              <directory>${jasperreports.build.outputDirectory}</directory>
+              <directory>${jasperreports.outputDir}</directory>
               <targetPath>WEB-INF/reports</targetPath>
             </resource>
+
             <resource>
               <!-- includes sprites -->
-              <directory>${smartprites-wro4j-exchangedir}/images</directory>
-              <targetPath>${sprites.packageDirectory}</targetPath>
+              <directory>${smartsprites.outputDir}/images</directory>
+              <targetPath>images</targetPath>
             </resource>
+
             <resource>
               <!-- ckeditor config (which is in styles, d'uh) has to be filtered -->
               <directory>src/main/webapp/styles</directory>
-              <targetPath>${css.packageDirectory}</targetPath>
+              <targetPath>${war.css.dir}</targetPath>
               <includes>
                 <include>ckeditor/**/*.js</include>
               </includes>
               <filtering>true</filtering>
             </resource>
+
             <resource>
               <!-- includes processed / minified css -->
-              <directory>${wro4j.css.outputDirectory}</directory>
-              <targetPath>${css.packageDirectory}</targetPath>
+              <directory>${wro4j.css.outputDir}</directory>
+              <targetPath>${war.css.dir}</targetPath>
             </resource>
-            <resource>
-              <!-- some resources in WEB-INF have to be filtered -->
-              <directory>src/main/webapp/WEB-INF</directory>
-              <includes>
-                <include>urlrewrite.xml</include>
-                <include>webdefault.xml</include>
-                <include>squash-tm-servlet.xml</include>
-              </includes>
-              <filtering>true</filtering>
-              <targetPath>WEB-INF</targetPath>
-            </resource>
+
             <resource>
               <!-- includes rjs-optimized javascript -->
-              <directory>${rjs.js.outputDirectory}</directory>
-              <targetPath>${js.packageDirectory}</targetPath>
+              <directory>${rjs.javascript.optimizedDir}</directory>
+              <targetPath>scripts</targetPath>
               <filtering>true</filtering>
-            </resource>
-            <resource>
-              <!-- includes rjs-optimized javascript -->
-              <directory>src/main/webapp/static</directory>
-              <targetPath>static</targetPath>
-              <filtering>false</filtering>
             </resource>
           </webResources>
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
         </configuration>
       </plugin>
 
-      <!-- ====== INTEGRATION TESTS ====== -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -569,7 +539,6 @@
                 <configuration>
                   <targetGroups>squash-js</targetGroups>
                   <minimize>false</minimize>
-                  <options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
                   <failNever>false</failNever>
                 </configuration>
               </execution>
@@ -597,7 +566,6 @@
                 <configuration>
                   <targetGroups>squash-js</targetGroups>
                   <minimize>false</minimize>
-                  <options>browser,jquery,eqnull,evil,noarg,smarttabs,laxbreak,laxcomma,sub,loopfunc,curly</options>
                   <failNever>true</failNever>
                 </configuration>
               </execution>
@@ -626,54 +594,8 @@
         </property>
       </activation>
       <properties>
-        <is.dev.stage>true</is.dev.stage>
-        <is.war.deploy>false</is.war.deploy>
-        <logger.urlRewriteFilter>DEBUG</logger.urlRewriteFilter>
-        <project.stage>DEV</project.stage>
         <rjs.optimizer>none</rjs.optimizer>
       </properties>
-    </profile>
-
-    <profile>
-      <id>eclipse</id>
-      <activation>
-        <file>
-          <exists>${basedir}\.project</exists>
-        </file>
-      </activation>
-
-      <properties>
-        <is.dev.stage>true</is.dev.stage>
-        <is.war.deploy>false</is.war.deploy>
-      </properties>
-
-      <build>
-        <plugins>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>copy-reports-to-web-inf</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>process-resources</phase>
-
-                <configuration>
-                  <outputDirectory>${basedir}/WEB-INF/reports</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>${jasperreports.build.outputDirectory}</directory>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-        </plugins>
-      </build>
     </profile>
 
     <profile>
@@ -710,34 +632,6 @@
 
       <build>
         <plugins>
-
-          <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-              <execution>
-                <id>prepare-web-resources-optimization</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>process-sources</phase>
-
-                <configuration>
-                  <outputDirectory>${smartprites-wro4j-exchangedir}</outputDirectory>
-                  <resources>
-                    <resource>
-                      <directory>src/main/webapp</directory>
-                      <includes>
-                        <include>images/**</include>
-                        <include>styles/**</include>
-                      </includes>
-                    </resource>
-                  </resources>
-                </configuration>
-              </execution>
-            </executions>
-          </plugin>
-
           <plugin>
             <groupId>net.jangaroo</groupId>
             <artifactId>smartsprites-maven-plugin</artifactId>
@@ -753,7 +647,7 @@
                 <goals>
                   <goal>createSprites</goal>
                 </goals>
-                <phase>process-sources</phase>
+                <phase>prepare-package</phase>
               </execution>
             </executions>
           </plugin>
@@ -767,18 +661,59 @@
                 <goals>
                   <goal>run</goal>
                 </goals>
-                <phase>process-sources</phase>
+                <phase>prepare-package</phase>
                 <configuration>
                   <skip>${wro4j.skip}</skip>
                   <!-- dont break line or add spaces or maven will scream in horror -->
                   <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
                   <minimize>true</minimize>
                   <contextFolder>${wro4j.inputDir}</contextFolder>
-                  <cssDestinationFolder>${wro4j.css.outputDirectory}</cssDestinationFolder>
+                  <cssDestinationFolder>${wro4j.css.outputDir}</cssDestinationFolder>
                   <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
                   <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
                   <parallelProcessing>true</parallelProcessing>
                   <incrementalBuildEnabled>true</incrementalBuildEnabled>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
+            <artifactId>maven-resources-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>prepare-web-resources-optimization</id>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <phase>process-resources</phase>
+                <configuration>
+                  <outputDirectory>${smartsprites.outputDir}</outputDirectory>
+                  <resources>
+                    <resource>
+                      <directory>src/main/webapp</directory>
+                      <includes>
+                        <include>images/**</include>
+                        <include>styles/**</include>
+                      </includes>
+                    </resource>
+                  </resources>
+                </configuration>
+              </execution>
+
+              <execution>
+                <id>copy-wro4j-to-spring-boot</id>
+                <phase>prepare-package</phase>
+                <goals>
+                  <goal>copy-resources</goal>
+                </goals>
+                <configuration>
+                  <resources>
+                    <resource>
+                      <directory> ${wro4j.css.outputDir}</directory>
+                   </resource>
+                  </resources>
+                  <outputDirectory>${wro4j-spring-boot.dir}/styles</outputDirectory>
                 </configuration>
               </execution>
             </executions>
@@ -822,6 +757,7 @@
 
       <build>
         <plugins>
+
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-resources-plugin</artifactId>
@@ -835,7 +771,7 @@
                 <phase>prepare-package</phase>
 
                 <configuration>
-                  <outputDirectory>${rjs.js.outputDirectory}</outputDirectory>
+                  <outputDirectory>${rjs.js.outputDir}/scripts</outputDirectory>
                   <resources>
                     <resource>
                       <directory>src/main/assembly</directory>
