@@ -26,8 +26,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -42,8 +40,6 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
-import org.squashtest.tm.service.project.GenericProjectFinder;
-import org.squashtest.tm.service.project.ProjectFinder;
 
 
 /*
@@ -366,7 +362,7 @@ public class JsonChartInstance {
 		}
 		
 		private void findName(ChartDefinition def) {
-			if (entityType.equals(EntityType.PROJECT)) {
+			if (entityType.equals(EntityType.PROJECT)&&def.getProject()!=null) {
 				name = def.getProject().getName();
 			}
 		}

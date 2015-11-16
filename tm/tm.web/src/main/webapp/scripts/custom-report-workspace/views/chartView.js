@@ -31,6 +31,12 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
     valuesI18nColumnPrototypeLabel : ["REQUIREMENT_VERSION_CRITICALITY","REQUIREMENT_VERSION_STATUS",
       "TEST_CASE_IMPORTANCE","TEST_CASE_STATUS"],
     infolistI18nColumnPrototypeLabel : ["TEST_CASE_NATURE","TEST_CASE_TYPE","REQUIREMENT_VERSION_CATEGORY"],
+    infolistTestCaseType : ["TYP_COMPLIANCE_TESTING","TYP_CORRECTION_TESTING","TYP_END_TO_END_TESTING",
+      "TYP_EVOLUTION_TESTING","TYP_PARTNER_TESTING","TYP_REGRESSION_TESTING","TYP_UNDEFINED"],
+    infolistTestCaseNature : ["NAT_ATDD","NAT_BUSINESS_TESTING","NAT_FUNCTIONAL_TESTING","NAT_NON_FUNCTIONAL_TESTING",
+      "NAT_PERFORMANCE_TESTING","NAT_SECURITY_TESTING","NAT_UNDEFINED","NAT_USER_TESTING"],
+    infolistRequirementCategory : ["CAT_BUSINESS","CAT_ERGONOMIC","CAT_FUNCTIONAL","CAT_NON_FUNCTIONAL","CAT_PERFORMANCE","CAT_SECURITY",
+      "CAT_TECHNICAL","CAT_TEST_REQUIREMENT","CAT_UNDEFINED","CAT_UNKNOWN","CAT_USER_STORY","CAT_USE_CASE"],
 
 		initialize : function(){
       this.i18nString = translator.get({
@@ -219,10 +225,16 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
           return this.addPrefix(value,"test-case.importance.");
         case "TEST_CASE_STATUS":
           return this.addPrefix(value,"test-case.status.");
+        case "TEST_CASE_NATURE":
+          return this.addPrefix(value,"test-case.nature.");
+        case "TEST_CASE_TYPE":
+          return this.addPrefix(value,"test-case.type.");
         case "REQUIREMENT_VERSION_CRITICALITY":
           return this.addPrefix(value,"requirement.criticality.");
         case "REQUIREMENT_VERSION_STATUS":
           return this.addPrefix(value,"requirement.status.");
+        case "REQUIREMENT_VERSION_CATEGORY":
+          return this.addPrefix(value,"requirement.category.");
         default:
           return value;
       }
@@ -231,14 +243,14 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
     isDefaultInfolist : function (columnPrototypeLabel,value) {
       var isDefault = false;
       switch (columnPrototypeLabel) {
-        case "chart.column.TEST_CASE_NATURE":
-          isDefault = value.indexOf("test-case.nature.") > -1;
+        case "TEST_CASE_NATURE":
+          isDefault = _.contains(this.infolistTestCaseNature,value);
           break;
-        case "chart.column.TEST_CASE_TYPE":
-          isDefault = value.indexOf("test-case.type.") > -1;
+        case "TEST_CASE_TYPE":
+          isDefault = _.contains(this.infolistTestCaseType,value);
           break;
-        case "chart.column.REQUIREMENT_VERSION_CATEGORY":
-          isDefault = value.indexOf("requirement.category.") > -1;
+        case "REQUIREMENT_VERSION_CATEGORY":
+          isDefault = _.contains(this.infolistRequirementCategory,value);
           break;
         default:
       }

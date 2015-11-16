@@ -73,7 +73,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         case "TEST_CASE_NATURE":
         case "TEST_CASE_TYPE":
         case "REQUIREMENT_VERSION_CATEGORY":
-          return this._getI18nLegends(legends, squashtm.app.defaultInfoList);
+          return this._getI18nInfoListLegends(protoLabel,legends, squashtm.app.defaultInfoList);
         case "TEST_CASE_IMPORTANCE":
           return this._getI18nLegends(legends, squashtm.app.testCaseImportance);
         case "TEST_CASE_STATUS":
@@ -94,6 +94,30 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       return _.map(legends,function (legend) {
         if (i18nLegends[legend]) {
           return i18nLegends[legend];
+        }
+        return legend;
+      });
+    },
+
+    _getI18nInfoListLegends : function (protoLabel, legends, i18nLegends) {
+      var prefix = "";
+
+      switch (protoLabel) {
+        case "TEST_CASE_NATURE":
+          prefix = "test-case.nature.";
+          break;
+        case "TEST_CASE_TYPE":
+          prefix = "test-case.type.";
+          break;
+        case "REQUIREMENT_VERSION_CATEGORY":
+          prefix = "requirement.category.";
+          break;
+        default:
+      }
+
+      return _.map(legends,function (legend) {
+        if (i18nLegends[prefix+legend]) {
+          return i18nLegends[prefix+legend];
         }
         return legend;
       });

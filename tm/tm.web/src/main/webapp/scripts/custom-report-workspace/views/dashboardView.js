@@ -346,8 +346,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       var self = this;
       //update initial data with changes done by user since initialization
       this.dashboardInitialData.chartBindings = bindings;
-      this.gridster.destroy();
-      this.render().generateGridsterCss().initGrid();
+      this.gridster.gridster.remove_all_widgets();
+      this.generateGridsterCss().redrawFromSerialize();
       //as ie don't support css animations we fallback on traditionnal js with delay to wait end of transition
       if (isIE()) {
         _.delay(function(){
@@ -486,6 +486,10 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this.gridster.destroy();
       this._removeAllCharts();
       Backbone.View.prototype.remove.call(this);
+    },
+
+    redrawFromSerialize : function (json) {
+
     }
 
   });
