@@ -26,6 +26,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.AxisColumn;
@@ -39,6 +42,8 @@ import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
+import org.squashtest.tm.service.project.GenericProjectFinder;
+import org.squashtest.tm.service.project.ProjectFinder;
 
 
 /*
@@ -67,7 +72,8 @@ public class JsonChartInstance {
 	private List<Object[]> abscissa = new ArrayList<>();
 
 	private Map<String, List<Object>> series = new HashMap<>();
-
+	
+	private List<JsonEntityReference> scope = new ArrayList<>();
 
 	public JsonChartInstance() {
 		super();
@@ -90,14 +96,17 @@ public class JsonChartInstance {
 		for (Filter filter : def.getFilters()) {
 			filters.add(new JsonFilter(filter));
 		}
+		
+		for (EntityReference ref : def.getScope()) {
+			scope.add(new JsonEntityReference(ref,def));
+		}
 
 		ChartSeries series = instance.getSeries();
-
+		
 		this.abscissa = series.getAbscissa();
 
 		this.series = series.getSeries();
-
-
+		
 	}
 
 	private void doAuditableAttributes(ChartDefinition def) {
@@ -199,6 +208,14 @@ public class JsonChartInstance {
 	}
 
 
+
+	public List<JsonEntityReference> getScope() {
+		return scope;
+	}
+
+	public void setScope(List<JsonEntityReference> scope) {
+		this.scope = scope;
+	}
 
 	public static final class JsonMeasureColumn{
 
@@ -335,6 +352,48 @@ public class JsonChartInstance {
 			this.name = name;
 		}
 		
+	}
+	
+	public static final class JsonEntityReference{
+		private EntityType entityType;
+		private long id;
+		private String name;
+		
+		public JsonEntityReference(EntityReference entityReference, ChartDefinition def) {
+			this.entityType = entityReference.getType();
+			this.id = entityReference.getId();
+			findName(def);
+		}
+		
+		private void findName(ChartDefinition def) {
+			if (entityType.equals(EntityType.PROJECT)) {
+				name = def.getProject().getName();
+			}
+		}
+
+		public EntityType getEntityType() {
+			return entityType;
+		}
+		
+		public void setEntityType(EntityType entityType) {
+			this.entityType = entityType;
+		}
+		
+		public long getId() {
+			return id;
+		}
+		
+		public void setId(long id) {
+			this.id = id;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 	
 	public static final class JsonSpecializedEntityType {

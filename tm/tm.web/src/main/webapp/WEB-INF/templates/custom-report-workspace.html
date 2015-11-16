@@ -505,9 +505,95 @@
 				</div>
 			</div>
 		</div>
+
+		<div class="sq-tg expand">
+			<div class="tg-head">
+            	<h3>
+					<span th:text="#{label.Attributes}">chart type</span>
+				</h3>
+            </div>
+			<div class="tg-body">
+					<div class="display-table">
+						<div class="display-table-row">
+							<label for="chart-perimeter" class="display-table-cell">
+								<span th:text="#{chart.label.perimeter}">perimetre</span>	
+							</label>
+							<div id="chart-perimeter" class="display-table-cell">
+								&nbsp;&nbsp;{{projectName}}
+							</div>
+						</div>
+						<div class="display-table-row">&nbsp;</div>
+						<div class="display-table-row">
+							<label for="chart-operation" class="display-table-cell">
+								<span th:text="#{chart.label.operation}">operation</span>	
+							</label>
+							<div id="chart-operation" class="display-table-cell">
+								{{#each entityOperation}}
+   										{{> entityOperationsTpl}}
+ 								{{/each}}
+							</div>
+						</div>
+						<div class="display-table-row">&nbsp;</div>
+						<div class="display-table-row">
+							<label for="chart-filter" class="display-table-cell">
+								<span th:text="#{chart.label.filter}">filtres</span>	
+							</label>
+							<div id="chart-filter" class="display-table-cell">
+								<div class="display-table">
+									{{#each entityFilters}}
+   										{{> entityFiltersTpl}}
+ 									{{/each}}
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		</div>
 		
      </script>
-	
+     <script id="tpl-show-entity-filters" type="text/x-handlebars-template">
+		{{#each this}}
+			<div class="display-table-row">
+  			{{> filterTpl}}
+			</div>
+		{{/each}}
+     </script>
+     
+     <script id="tpl-show-one-filter" type="text/x-handlebars-template">
+		<div class="display-table-cell">
+		{{#if @first}}
+			{{entityType}} :
+		{{/if}}
+		</div>
+		<div class="display-table-cell">
+		{{columnLabel}}
+		</div>
+		<div class="display-table-cell">
+		{{values}}
+		</div>
+     </script>
+     
+     <script id="tpl-show-entity-operations" type="text/x-handlebars-template">
+		{{#each this}}
+			<div class="display-table-row">
+  			{{> operationTpl}}
+			</div>
+		{{/each}}
+     </script>
+     
+     <script id="tpl-show-one-operation" type="text/x-handlebars-template">
+		<div class="display-table-cell">
+		{{#if @first}}
+			{{entityType}} :
+		{{/if}}
+		</div>
+		<div class="display-table-cell">
+		{{columnLabel}}
+		</div>
+		<div class="display-table-cell">
+		{{operationLabel}}
+		</div>
+     </script>
 	<div th:include="charts/rendering/chart-templates :: templates"></div>
 	<!-- /SHOW CHART  -->
   <!-- /BACKBONE VIEWS TEMPLATES -->

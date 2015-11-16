@@ -24,12 +24,18 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 
     el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-chart",
+    entityFiltersTpl : "#tpl-show-entity-filters",
+    filterTpl : "#tpl-show-one-filter",
+    entityOperationsTpl : "#tpl-show-entity-operations",
+    operationTpl : "#tpl-show-one-operation",
+    valuesI18nColumnPrototypeLabel : ["REQUIREMENT_VERSION_CRITICALITY","REQUIREMENT_VERSION_STATUS",
+      "TEST_CASE_IMPORTANCE","TEST_CASE_STATUS"],
+    infolistI18nColumnPrototypeLabel : ["TEST_CASE_NATURE","TEST_CASE_TYPE","REQUIREMENT_VERSION_CATEGORY"],
 
 		initialize : function(){
       this.i18nString = translator.get({
         "dateFormat" : "squashtm.dateformat"
       });
-      //this.loadData();
 			_.bindAll(this, "render");
 			this.render();
 		},
@@ -38,8 +44,6 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 		},
 
 		render : function(){
-			console.log("RENDER CHART");
-
 			var self = this;
 			var url =  urlBuilder.buildURL('custom-report-chart-server',this.model.get('id'));
 
@@ -50,48 +54,201 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 				'url' : url
 			})
 			.success(function(json){
-        self._setBaseModelAttributes(json);
-        self._loadI18n();
-				self._template();
+        self.setBaseModelAttributes(json);
+        self.loadI18n();
+				self.template();
 				chartFactory.buildChart("#chart-display-area", json);
 			});
 		},
 
-		_template : function () {
+		template : function () {
 			var source = $("#tpl-show-chart").html();
 			var template = Handlebars.compile(source);
-			console.log("TEAMPLATING CHART");
+      Handlebars.registerPartial("entityFiltersTpl", $(this.entityFiltersTpl).html());
+      Handlebars.registerPartial("filterTpl", $(this.filterTpl).html());
+      Handlebars.registerPartial("entityOperationsTpl", $(this.entityOperationsTpl).html());
+      Handlebars.registerPartial("operationTpl", $(this.operationTpl).html());
 			this.$el.append(template(this.model.toJSON()));
 		},
 
-    _setBaseModelAttributes : function (json) {
+    setBaseModelAttributes : function (json) {
       this.model.set("name",json.name);
       this.model.set("createdBy",json.createdBy);
-      this.model.set("createdOn",this._i18nFormatDate(json.createdOn));
+      this.model.set("createdOn",this.i18nFormatDate(json.createdOn));
       if (json.lastModifiedBy) {
         this.model.set("lastModifiedBy",json.lastModifiedBy);
-        this.model.set("lastModifiedOn",this._i18nFormatDate(json.lastModifiedOn));
+        this.model.set("lastModifiedOn",this.i18nFormatDate(json.lastModifiedOn));
       }
       this.model.set("axes",json.axes);
       this.model.set("filters",json.filters);
       this.model.set("measures",json.measures);
+      this.model.set("projectName",json.scope[0].name);//for now we have just default project as perimeter
     },
 
-    _i18nFormatDate : function (date) {
+    i18nFormatDate : function (date) {
       return dateutils.format(date, this.i18nString.dateFormat);
     },
 
-    _loadI18n : function () {
-      var entityFilters = _.map( this.model.get("filters"), function( filter ){
-        var formattedFilter = {
-          entityType : filter.columnPrototype.specializedEntityType.entityType,
-          columnLabel: filter.columnPrototype.label,
-          values : filter.values
+    loadI18n : function () {
+      this.loadFilters();
+      this.loadOperations();
+      this.getAllI18n();
+    },
+
+    loadFilters : function () {
+      var self = this;
+      var entityFilters = _.chain( this.model.get("filters"))
+      .map(function( filter ){
+        var formatedFilter = {
+          entityType : self.addPrefix(filter.columnPrototype.specializedEntityType.entityType,"chart.entityType."),
+          columnLabel: self.addPrefix(filter.columnPrototype.label,"chart.column."),
+          values : self.getI18nKeyForFilterValues(filter.columnPrototype.label,filter.values),
+          hasI18nValues : self.filterHasI18nValues(filter.columnPrototype.label,filter.values)
         };
-        return formattedFilter;
+        return formatedFilter;
+      })
+      .groupBy("entityType")
+      .values()
+      .value();
+      this.model.set("entityFilters",entityFilters);
+    },
+
+    loadOperations : function () {
+      var self = this;
+      var operations = _.union(this.model.get("axes"),this.model.get("measures"));
+      var formatedOperations = _.chain(operations)
+      .map(function (operation) {
+        return {
+          entityType : self.addPrefix(operation.columnPrototype.specializedEntityType.entityType,"chart.entityType."),
+          columnLabel : self.addPrefix(operation.columnPrototype.label,"chart.column."),
+          operationLabel : self.addPrefix(operation.operation.name,"chart.operation.")
+        };
+      })
+      .groupBy("entityType")
+      .values()
+      .value();
+      this.model.set("entityOperation",formatedOperations);
+    },
+
+    addPrefix : function(obj, prefix){
+				return prefix + obj;
+		},
+
+    getAllI18n : function () {
+      var keys = [];
+      var self = this;
+      //get all keys from operations
+      var operations = this.model.get("entityOperation");
+      _.each(operations,function(operationsByType) {
+        _.each(operationsByType,function (op) {
+          keys.push(_.values(op));
+        });
       });
-      console.log(entityFilters);
+
+      //get all keys from filters
+      var filters = this.model.get("entityFilters");
+      _.each(filters,function(filtersByType) {
+        _.each(filtersByType,function (filter) {
+          keys.push(filter.entityType);
+          keys.push(filter.columnLabel);
+          if (filter.hasI18nValues) {
+            _.each(filter.values,function (value) {
+              keys.push(value);
+            });
+          }
+        });
+      });
+
+      keys = _.chain(keys)
+        .flatten()
+        .uniq()
+        .value();
+
+      //retrieve alls strings from server and caching into local storage. using translator.get() to make synchrone request
+      translator.get(keys);
+
+      //now translate the operations and filters
+      _.each(operations,function(operationsByType) {
+        _.each(operationsByType,function (op) {
+          op.entityType = self.getI18n(op.entityType);
+          op.columnLabel = self.getI18n(op.columnLabel);
+          op.operationLabel = self.getI18n(op.operationLabel);
+        });
+      });
+
+      _.each(filters,function(filtersByType) {
+        _.each(filtersByType,function (filter) {
+          filter.entityType = self.getI18n(filter.entityType);
+          filter.columnLabel = self.getI18n(filter.columnLabel);
+          if (filter.hasI18nValues) {
+            _.each(filter.values,function (value,index) {
+              filter.values[index] = self.getI18n(value);
+            });
+          }
+        });
+      });
+
+    },
+
+    filterHasI18nValues : function (columnPrototypeLabel, values) {
+      var hasI18nValues = false;
+      if (_.contains(this.valuesI18nColumnPrototypeLabel,columnPrototypeLabel)) {
+        hasI18nValues = true;
+      }
+      //if we have an infolist comlumn, it's a little bit tricky because we must check if vales are defaults (and must be translated) or custom values...
+      if (_.contains(this.infolistI18nColumnPrototypeLabel,columnPrototypeLabel)) {
+        var firstValue = values[0]||"";//values shouldn't be empty because a filter must have values...
+        hasI18nValues = this.isDefaultInfolist(columnPrototypeLabel,firstValue);
+      }
+      return hasI18nValues;
+    },
+
+    getI18nKeyForFilterValues : function (columnPrototypeLabel,values) {
+      var self = this;
+      if (this.filterHasI18nValues(columnPrototypeLabel,values)) {
+        return _.map( values, function( value ){
+            return self.getI18nKeyForFilterValue(columnPrototypeLabel,value);
+        });
+      }
+      return values;
+    },
+
+    getI18nKeyForFilterValue : function (columnPrototypeLabel,value) {
+      switch (columnPrototypeLabel) {
+        case "TEST_CASE_IMPORTANCE":
+          return this.addPrefix(value,"test-case.importance.");
+        case "TEST_CASE_STATUS":
+          return this.addPrefix(value,"test-case.status.");
+        case "REQUIREMENT_VERSION_CRITICALITY":
+          return this.addPrefix(value,"requirement.criticality.");
+        case "REQUIREMENT_VERSION_STATUS":
+          return this.addPrefix(value,"requirement.status.");
+        default:
+          return value;
+      }
+    },
+
+    isDefaultInfolist : function (columnPrototypeLabel,value) {
+      var isDefault = false;
+      switch (columnPrototypeLabel) {
+        case "chart.column.TEST_CASE_NATURE":
+          isDefault = value.indexOf("test-case.nature.") > -1;
+          break;
+        case "chart.column.TEST_CASE_TYPE":
+          isDefault = value.indexOf("test-case.type.") > -1;
+          break;
+        case "chart.column.REQUIREMENT_VERSION_CATEGORY":
+          isDefault = value.indexOf("requirement.category.") > -1;
+          break;
+        default:
+      }
+      return isDefault;
+    },
+
+    getI18n : function (key) {
+      return " " + translator.get(key);
     }
+
 
   });
 
