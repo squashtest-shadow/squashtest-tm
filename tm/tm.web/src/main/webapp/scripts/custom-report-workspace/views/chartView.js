@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars","squash.dateutils","workspace.routing","../charts/chartFactory"],
-		function(_,Backbone, translator,Handlebars,dateutils,urlBuilder,chartFactory) {
+define(["underscore","backbone","squash.translator","handlebars","squash.dateutils","moment","workspace.routing","../charts/chartFactory"],
+		function(_,Backbone, translator,Handlebars,dateutils,moment,urlBuilder,chartFactory) {
 	var View = Backbone.View.extend({
 
     el : "#contextual-content-wrapper",
@@ -40,16 +40,19 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 
 		initialize : function(){
       this.i18nString = translator.get({
-        "dateFormat" : "squashtm.dateformat"
+        "dateFormat" : "squashtm.dateformat",
+        "dateFormatShort" : "squashtm.dateformatShort"
       });
 			_.bindAll(this, "render");
 			this.render();
 		},
 
 		events : {
+      "click #refresh-btn":"refresh"
 		},
 
 		render : function(){
+      this.$el.html("");
 			var self = this;
 			var url =  urlBuilder.buildURL('custom-report-chart-server',this.model.get('id'));
 
@@ -63,9 +66,15 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
         self.setBaseModelAttributes(json);
         self.loadI18n();
 				self.template();
-				chartFactory.buildChart("#chart-display-area", json);
+				self.activeChart = chartFactory.buildChart("#chart-display-area", json);
 			});
 		},
+
+    refresh : function () {
+      console.log("refresh");
+      this.activeChart.remove();
+      this.render();
+    },
 
 		template : function () {
 			var source = $("#tpl-show-chart").html();
@@ -89,10 +98,16 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
       this.model.set("filters",json.filters);
       this.model.set("measures",json.measures);
       this.model.set("projectName",json.scope[0].name);//for now we have just default project as perimeter
+      this.model.set("generatedDate",this.i18nFormatDate(new Date()));
+      this.model.set("generatedHour",this.i18nFormatHour(new Date()));
     },
 
     i18nFormatDate : function (date) {
-      return dateutils.format(date, this.i18nString.dateFormat);
+      return dateutils.format(date, this.i18nString.dateFormatShort);
+    },
+
+    i18nFormatHour : function (date) {
+      return dateutils.format(date, "HH:mm");
     },
 
     loadI18n : function () {

@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery","underscore","backbone","squash.translator","handlebars","tree","workspace.routing","../charts/chartFactory","isIE","jquery.gridster"],
-		function($,_,Backbone, translator,Handlebars,tree,urlBuilder,main,isIE) {
+define(["jquery","underscore","backbone","squash.translator","handlebars","tree","workspace.routing","../charts/chartFactory","isIE","squash.dateutils","jquery.gridster"],
+		function($,_,Backbone, translator,Handlebars,tree,urlBuilder,main,isIE,dateutils) {
 
 	var View = Backbone.View.extend({
 
@@ -41,13 +41,17 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     cssStyleTagId:"gridster-stylesheet-squash",
     xSizeWidget : null,//this attribute will be computed by _calculateWidgetDimension
     ySizeWidget : null,//this attribute will be computed by _calculateWidgetDimension
-    secureBlank : 3,//in pixel, a margin around widget to prevent inesthetics scrollbars
+    secureBlank : 5,//in pixel, a margin around widget to prevent inesthetics scrollbars
 
 		initialize : function(){
       this.dashboardInitialData = null;
       this.dashboardChartViews = {};
       this.dashboardChartBindings = {};
       this.gridster = null;
+      this.i18nString = translator.get({
+        "dateFormat" : "squashtm.dateformat",
+        "dateFormatShort" : "squashtm.dateformatShort"
+      });
 			_.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard");
 			this.initializeData();
 			this.initListenerOnTree();
@@ -346,8 +350,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       var self = this;
       //update initial data with changes done by user since initialization
       this.dashboardInitialData.chartBindings = bindings;
-      this.gridster.gridster.remove_all_widgets();
-      this.generateGridsterCss().redrawFromSerialize();
+      this.gridster.destroy();
+      this.render().generateGridsterCss().initGrid();
       //as ie don't support css animations we fallback on traditionnal js with delay to wait end of transition
       if (isIE()) {
         _.delay(function(){
@@ -358,6 +362,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     _buildBindingData : function (response) {
       this.dashboardInitialData = response;//We need to cache the initial data for templating, ie render()
+      this.dashboardInitialData.generatedDate = this.i18nFormatDate(new Date());
+      this.dashboardInitialData.generatedHour = this.i18nFormatHour(new Date());
       var bindings = response.chartBindings;
       for (var i = 0; i < bindings.length; i++) {
         var binding = bindings[i];
@@ -365,6 +371,14 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         this.dashboardChartBindings[id] = binding;
       }
       return this;
+    },
+
+    i18nFormatDate : function (date) {
+      return dateutils.format(date, this.i18nString.dateFormatShort);
+    },
+
+    i18nFormatHour : function (date) {
+      return dateutils.format(date, "HH:mm");
     },
 
     _buildChart : function (binding) {
@@ -393,13 +407,14 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     _resizeChart : function (e, ui, $widget) {
-      var chartBindingId = $widget.find(".jqplot-target").attr("data-binding-id");//get binding id
+      var chartBindingId = $widget.attr("data-binding-id");//get binding id
       this._rebuildChart(chartBindingId);
     },
 
     _serializeGridster : function () {
       var gridData = this.gridster.serialize();
       var url = urlBuilder.buildURL("custom-report-chart-binding");
+      var self = this;
       $.ajax({
         headers: {
         'Accept': 'application/json',
@@ -408,6 +423,15 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         url: url,
         type: 'put',
         'data': JSON.stringify(gridData),
+      }).success(function (response) {
+        //updating bindings
+        _.each(gridData,function (widgetData) {//as resize or move can alter several widgets, all bindings must be updateds
+          var binding = self.dashboardChartBindings[widgetData.id];
+          binding.row = widgetData.row;
+          binding.col = widgetData.col;
+          binding.sizeX = widgetData.sizeX;
+          binding.sizeY = widgetData.sizeY;
+        });
       });
     },
 
@@ -475,7 +499,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       for (var i = 1; i <= this.gridRow; i++) {
         for (var j = 1; j <= this.gridCol; j++) {
           if (this.gridster.is_empty ( j,i )) {
-            console.log("empty cell col : " + j + " row " + i);
             return {col:j,row:i};
           }
         }
@@ -486,10 +509,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this.gridster.destroy();
       this._removeAllCharts();
       Backbone.View.prototype.remove.call(this);
-    },
-
-    redrawFromSerialize : function (json) {
-
     }
 
   });
