@@ -26,6 +26,13 @@ ATTR = 2
 ROLES = 3
 QUEREF = 4
 
+/*
+ * the magic number 2 stands for CallTestStep. 
+ * Long story short, it wouldn't work otherwise. 
+ * This might not work either.
+ */
+MAGIC_CALLSTEP_CLASS = 2 
+
 filtercount = 1
 
 /*
@@ -156,7 +163,7 @@ def definition = [
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
 				measures : ['tsId COUNT'],
-				filters : ['tsClass EQUALS CallTestStep'],
+				filters : ['tsClass EQUALS '+MAGIC_CALLSTEP_CLASS], 
 				axes : ['tcId']
 			],
 			tcStepsCountSub : [
@@ -352,7 +359,7 @@ def definition = [
 	TEST_CASE_STEP : [
 		columns : [
 			tsId : ['ID', 'NUMERIC', 'id', 'none'],
-			tsClass : ['CLASS', 'STRING', 'class', 'none']	
+			tsClass : ['CLASS', 'NUMERIC', 'class', 'none']	
 		],
 	
 		subqueries : [:]			

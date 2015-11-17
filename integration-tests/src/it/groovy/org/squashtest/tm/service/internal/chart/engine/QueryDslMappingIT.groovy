@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.execution.QExecution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.jpql.ExtAggOps;
+import org.squashtest.tm.domain.jpql.ExtOps;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;

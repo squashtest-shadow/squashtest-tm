@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.jpql;
 
-import org.squashtest.tm.domain.jpql.ExtAggOps.ConcatOrder;
+import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
 
 import com.querydsl.core.annotations.QueryDelegate;
 import com.querydsl.core.types.dsl.Expressions;
@@ -31,7 +31,7 @@ import com.querydsl.core.types.dsl.StringPath;
 /**
  * Adds the non standard groupConcat() function to string paths.
  * 
- * See {@link ExtAggOps} and {@link SessionFactoryEnhancer} for more about for more about
+ * See {@link ExtOps} and {@link SessionFactoryEnhancer} for more about for more about
  * about this.
  * 
  * 
@@ -48,7 +48,7 @@ public class QueryDslExtensions {
 	 */
 	@QueryDelegate(String.class)
 	public static StringExpression groupConcat(StringPath attributeConcat){
-		return Expressions.stringOperation(ExtAggOps.GROUP_CONCAT, attributeConcat);
+		return Expressions.stringOperation(ExtOps.GROUP_CONCAT, attributeConcat);
 	}
 
 	/**
@@ -58,7 +58,7 @@ public class QueryDslExtensions {
 
 	@QueryDelegate(String.class)
 	public static StringExpression orderedGroupConcat(StringPath attributeConcat, StringPath attributeOrder){
-		return Expressions.stringOperation(ExtAggOps.ORDERED_GROUP_CONCAT, attributeConcat, Expressions.constant("order by"), attributeOrder);
+		return Expressions.stringOperation(ExtOps.ORDERED_GROUP_CONCAT, attributeConcat, Expressions.constant("order by"), attributeOrder);
 	}
 
 
@@ -69,7 +69,7 @@ public class QueryDslExtensions {
 
 	@QueryDelegate(String.class)
 	public static StringExpression orderedGroupConcat(StringPath attributeConcat, StringPath attributeOrder, ConcatOrder order){
-		return Expressions.stringOperation(ExtAggOps.ORDERED_GROUP_CONCAT_DIR, attributeConcat, Expressions.constant("order by"), attributeOrder, Expressions.constant(order.toString().toLowerCase()));
+		return Expressions.stringOperation(ExtOps.ORDERED_GROUP_CONCAT_DIR, attributeConcat, Expressions.constant("order by"), attributeOrder, Expressions.constant(order.toString().toLowerCase()));
 	}
 
 }

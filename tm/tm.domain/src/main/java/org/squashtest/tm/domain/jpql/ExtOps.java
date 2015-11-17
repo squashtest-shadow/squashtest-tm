@@ -43,7 +43,7 @@ import com.querydsl.core.types.Operator;
  * @author bsiri
  *
  */
-public enum ExtAggOps implements Operator {
+public enum ExtOps implements Operator {
 
 
 	// the aggregate functions wrappers
@@ -59,11 +59,14 @@ public enum ExtAggOps implements Operator {
 	ORDERED_GROUP_CONCAT_DIR(String.class),
 
 	// boolean case when
-	BOOLEAN_CASE(Boolean.class);
+	TRUE_IF(Boolean.class),
+
+	// test on class
+	IS_CLASS(Boolean.class);
 
 	private final Class<?> type;
 
-	private ExtAggOps(Class<?> type){
+	private ExtOps(Class<?> type){
 		this.type = type;
 	}
 

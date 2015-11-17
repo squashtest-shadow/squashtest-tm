@@ -220,22 +220,25 @@ group by testCase.id"""
 		def res = clone.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[-3l, 0], [-2l,0], [-1l,1]] as Set
+		res.collect {it.a} as Set == [[-3l, 0], [-2l,1], [-1l,0]] as Set
 	}
 
 
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should count how many test case per requirements have at least 1 call step"(){
 		given :
-		def measureProto = findByName("TEST_CASE_CALLSTEPCOUNT")
-		def axisProto = findByName("TEST_CASE_ID")
+		def measureProto = findByName("TEST_CASE_ID")
+		def filterProto = findByName("TEST_CASE_CALLSTEPCOUNT")
+		def axisProto = findByName("REQUIREMENT_ID")
 
 		and :
-		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : GREATER, values : ["0"])
 		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
 
 		ChartQuery chartQuery = new ChartQuery(
 				measures : [measure],
+				filters : [filter],
 				axis : [axis]
 				)
 
@@ -243,9 +246,9 @@ group by testCase.id"""
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
 		println query
 		println "**********"
-
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
+
 
 		then :
 		// the requirement -2l isn't verified by tc2 and thus

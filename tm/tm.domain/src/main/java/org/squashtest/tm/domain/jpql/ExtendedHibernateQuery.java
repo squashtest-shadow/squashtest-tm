@@ -101,27 +101,27 @@ public class ExtendedHibernateQuery<T> extends HibernateQuery<T> implements Exte
 
 	@Override
 	public NumberExpression<Double> s_avg() {
-		return Expressions.numberOperation(Double.class, ExtAggOps.S_AVG, this);
+		return Expressions.numberOperation(Double.class, ExtOps.S_AVG, this);
 	}
 
 	@Override
 	public  NumberExpression<?>  s_min() {
-		return Expressions.numberOperation(Long.class, ExtAggOps.S_MIN, this);
+		return Expressions.numberOperation(Long.class, ExtOps.S_MIN, this);
 	}
 
 	@Override
 	public  NumberExpression<?>  s_max() {
-		return Expressions.numberOperation(Long.class, ExtAggOps.S_MAX, this);
+		return Expressions.numberOperation(Long.class, ExtOps.S_MAX, this);
 	}
 
 	@Override
 	public  NumberExpression<?>  s_sum() {
-		return Expressions.numberOperation(Long.class, ExtAggOps.S_SUM, this);
+		return Expressions.numberOperation(Long.class, ExtOps.S_SUM, this);
 	}
 
 	@Override
 	public NumberExpression<Long> s_count() {
-		return Expressions.numberOperation(Long.class, ExtAggOps.S_COUNT, this);
+		return Expressions.numberOperation(Long.class, ExtOps.S_COUNT, this);
 	}
 
 }

@@ -29,6 +29,7 @@ public enum Operation {
 	LOWER_EQUAL,
 	BETWEEN,
 	EQUALS,
+	CLASS_EQUALS,
 	IN,
 	LIKE,
 	MIN,

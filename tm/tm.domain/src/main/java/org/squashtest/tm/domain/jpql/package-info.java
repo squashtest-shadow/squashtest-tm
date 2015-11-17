@@ -57,8 +57,8 @@
  * <p>The features are available both for the fluent API and the PathBuilder API.</p>
  * 
  * <p>
- * 	For the PathBuilder API you may use new operators defined in {@link org.squashtest.tm.domain.jpql.ExtAggOps}.
- * Bits of documentation can be found in {@link org.squashtest.tm.domain.jpql.ExtAggOps}, {@link org.squashtest.tm.domain.jpql.SessionFactoryEnhancer}.
+ * 	For the PathBuilder API you may use new operators defined in {@link org.squashtest.tm.domain.jpql.ExtOps}.
+ * Bits of documentation can be found in {@link org.squashtest.tm.domain.jpql.ExtOps}, {@link org.squashtest.tm.domain.jpql.SessionFactoryEnhancer}.
  * </p>
  * 
  * 

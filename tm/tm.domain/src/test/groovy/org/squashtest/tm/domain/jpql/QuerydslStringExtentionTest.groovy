@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.domain.jpql
 
-import org.squashtest.tm.domain.jpql.ExtAggOps.ConcatOrder;
+import org.squashtest.tm.domain.jpql.ExtOps.ConcatOrder;
 import org.squashtest.tm.domain.testcase.QTestCase;
 
 import com.querydsl.core.types.dsl.Expressions;
@@ -67,7 +67,7 @@ from TestCase tc"""
 		then :
 		def projection = q.metadata.projection
 
-		projection.operator == ExtAggOps.ORDERED_GROUP_CONCAT
+		projection.operator == ExtOps.ORDERED_GROUP_CONCAT
 		projection.args as List== [tc.name, Expressions.constant("order by"), tc.reference] as List
 
 		asString ==
@@ -91,7 +91,7 @@ from TestCase tc"""
 		then :
 		def projection = q.metadata.projection
 
-		projection.operator == ExtAggOps.ORDERED_GROUP_CONCAT_DIR
+		projection.operator == ExtOps.ORDERED_GROUP_CONCAT_DIR
 		projection.args as List== [tc.name, Expressions.constant("order by"), tc.reference, Expressions.constant("asc")] as List
 
 		asString ==

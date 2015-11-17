@@ -42,19 +42,22 @@ public class ExtHQLTemplates extends HQLTemplates{
 		super(escape);
 
 		// the aggregate functions wrappers
-		add(ExtAggOps.S_AVG, "s_avg({0})");
-		add(ExtAggOps.S_COUNT, "s_count({0})");
-		add(ExtAggOps.S_SUM, "s_sum({0})");
-		add(ExtAggOps.S_MIN, "s_min({0})");
-		add(ExtAggOps.S_MAX, "s_max({0})");
+		add(ExtOps.S_AVG, "s_avg({0})");
+		add(ExtOps.S_COUNT, "s_count({0})");
+		add(ExtOps.S_SUM, "s_sum({0})");
+		add(ExtOps.S_MIN, "s_min({0})");
+		add(ExtOps.S_MAX, "s_max({0})");
 
 		// group concat
-		add(ExtAggOps.GROUP_CONCAT, "group_concat({0})");
-		add(ExtAggOps.ORDERED_GROUP_CONCAT, "group_concat({0},{1},{2})");
-		add(ExtAggOps.ORDERED_GROUP_CONCAT_DIR, "group_concat({0},{1},{2},{3})");
+		add(ExtOps.GROUP_CONCAT, "group_concat({0})");
+		add(ExtOps.ORDERED_GROUP_CONCAT, "group_concat({0},{1},{2})");
+		add(ExtOps.ORDERED_GROUP_CONCAT_DIR, "group_concat({0},{1},{2},{3})");
 
 		// boolean case when
-		add(ExtAggOps.BOOLEAN_CASE, "case when {0} then true else false end ");
+		add(ExtOps.TRUE_IF, "case when {0} then true else false end ");
+
+		// class test
+		add(ExtOps.IS_CLASS, "{0} = {1}");
 
 	}
 

@@ -27,6 +27,7 @@ import static org.squashtest.tm.domain.chart.Operation.BY_MONTH;
 import static org.squashtest.tm.domain.chart.Operation.BY_YEAR;
 import static org.squashtest.tm.domain.chart.Operation.COUNT;
 import static org.squashtest.tm.domain.chart.Operation.EQUALS;
+import static org.squashtest.tm.domain.chart.Operation.CLASS_EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.GREATER;
 import static org.squashtest.tm.domain.chart.Operation.GREATER_EQUAL;
 import static org.squashtest.tm.domain.chart.Operation.IN;
@@ -48,7 +49,7 @@ public enum DataType {
 	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE),
 	STRING (EQUALS, LIKE, COUNT, NONE),
 	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR),
-	CLASS (EQUALS),
+	CLASS (CLASS_EQUALS),
 	EXISTENCE(NOT_NULL),
 	BOOLEAN(EQUALS),
 	LEVEL_ENUM(EQUALS, LOWER, LOWER_EQUAL, GREATER, GREATER_EQUAL, MAX, MIN, IN, COUNT, NONE),
