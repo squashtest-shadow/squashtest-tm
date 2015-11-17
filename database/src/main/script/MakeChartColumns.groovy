@@ -302,15 +302,19 @@ def definition = [
 			itpId : ['ID', 'NUMERIC', 'id', 'all'],
 			itpLabel : ['LABEL', 'STRING', 'label', 'filter'],
 			itpStatus : ['STATUS', 'EXECUTION_STATUS', 'executionStatus', 'all'],
-			itpLastExec : ['LASTEXEC', 'DATE', 'lastExecutedOn', 'filter'],
-			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'filter, axis'],
-			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'filter', 'itpTcExistsSub'],
-			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'filter', 'itpIsExecutedSub']
-
+			itpLastExecOn : ['LASTEXECON', 'DATE', 'lastExecutedOn', 'axis, filter'],
+			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'filter'],
+			itpTester : ['TESTER', 'STRING', 'user.login', 'filter'],
 			
+			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'filter', 'itpTcExistsSub'],
+			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'filter', 'itpIsExecutedSub'],
+			itpManExCount : ['MANEXCOUNT', 'NUMERIC', 'count(executions[auto="false"])', 'all', 'itpManExCountSub'],
+			itpAutoExCount : ['AUTOEXCOUNT', 'NUMERIC', 'count(executions[auto="true"])', 'all', 'itpAutoExCountSub'],
+			itpIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'itpIssueCountSub']
 		],
 	
 		subqueries : [ 
+
 			
 			itpTcExistsSub : [
 				label : 'ITEM_TEST_PLAN_TCEXISTS_SUBQUERY',
@@ -326,8 +330,33 @@ def definition = [
 				strategy : 'SUBQUERY',
 				measures : ['exId NOT_NULL'],	
 				axes : ['itpId']
-			]
-
+			], 
+		
+			itpManExCountSub : [
+				label : 'ITEM_TEST_PLAN_MANEXCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['exId NOT_NULL'],
+				filter : ['autoexId NOT_NULL FALSE'],
+				axes : ['itpId']
+			],
+			
+			itpAutoExCountSub : [
+				label : 'ITEM_TEST_PLAN_AUTOEXCOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['exId NOT_NULL'],
+				filter : ['autoexId NOT_NULL TRUE'],
+				axes : ['itpId']
+			],
+		
+			itpIssueCountSub : [
+				label : 'ITEM_TEST_PLAN_ISSUECOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['isId COUNT'],
+				axes : ['itpId']
+			]		
 		]	
 	],
 
@@ -338,18 +367,38 @@ def definition = [
 			exDsLabel : ['DS_LABEL', 'STRING', 'datasetLabel', 'axis, filter'],
 			exLastExec : ['LASTEXEC', 'DATE', 'lastExecutedOn', 'axis, filter'],
 			exTesterLogin : ['TESTER_LOGIN', 'STRING', 'lastExecutedBy', 'axis, filter'],
-			exStatus : ['STATUS', 'EXECUTION_STATUS', 'executionStatus', 'all']	
+			exStatus : ['STATUS', 'EXECUTION_STATUS', 'executionStatus', 'all'],
+			
+			exIsAuto : ['ISAUTO', 'BOOLEAN', 'notnull(automatedExecutionExtender)', 'filter', 'exIsAutoSub'],
+			exIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'itpIssueCountSub']
 		],
 	
-		subqueries : [:]		
+		subqueries : [
+			
+			exIsAutoSub : [
+				label : 'EXECUTION_ISAUTO_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['autoexId NOT_NULL'],
+				axes : ['exId']
+			],
+		
+			exIssueCountSub : [
+				label : 'EXECUTION_ISSUECOUNT_SUBQUERY',
+				joinStyle : 'LEFT_JOIN',
+				strategy : 'SUBQUERY',
+				measures : ['isId COUNT'],
+				axes : ['exId']
+			]
+		]		
 	],
 
 	ISSUE : [
 		columns : [
-			isId : ['ID', 'NUMERIC', 'id', 'all'],
-			isStatus : ['STATUS', 'STRING', 'status', 'axis, filter'],
-			isSeverity : ['SEVERITY', 'STRING', 'severity', 'axis, filter'],
-			isBugtrackerLabel : ['BUGTRACKER', 'STRING', 'bugtracker', 'axis, filter']	
+			isId : ['ID', 'NUMERIC', 'id', 'none'],
+			isStatus : ['STATUS', 'STRING', 'status', 'none'],
+			isSeverity : ['SEVERITY', 'STRING', 'severity', 'none'],
+			isBugtrackerLabel : ['BUGTRACKER', 'STRING', 'bugtracker', 'none']	
 		],
 	
 		subqueries : [:]		
@@ -435,7 +484,7 @@ def definition = [
 
 	AUTOMATED_EXECUTION_EXTENDER : [
 		columns : [
-			extId : ['ID', 'NUMERIC', 'id', 'none']	
+			autoexId : ['ID', 'NUMERIC', 'id', 'none']	
 		],
 		subqueries : [:]
 	],

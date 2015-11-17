@@ -68,8 +68,6 @@ import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUti
 @Transactional
 class QueryBuilderIT extends DbunitDaoSpecification {
 
-
-
 	// fix the requirementVersion - requirement relation
 	def setup(){
 		def session = getSession()
@@ -213,14 +211,19 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
 		then :
 		res.collect {it.a} as Set == [[-3l, 0], [-2l,1], [-1l,0]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct testCase.id, s_sum((select distinct s_count(testStep_sub.id)
+from TestCase testCase_sub
+  left join testCase_sub.steps as testStep_sub
+where testStep_sub.class = ?1 and testCase = testCase_sub))
+from TestCase testCase
+group by testCase.id"""
 	}
 
 
@@ -244,8 +247,6 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -254,6 +255,19 @@ group by testCase.id"""
 		// the requirement -2l isn't verified by tc2 and thus
 		// is filtered out because of inner join
 		res.collect {it.a} as Set == [[-1l,1], [-3l, 1]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct requirement.id, s_count(testCase.id)
+from Requirement requirement
+  inner join requirement.versions as requirementVersion
+  inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
+  inner join requirementVersionCoverage.verifyingTestCase as testCase
+where testCase.id in (select distinct testCase_sub.id
+from TestCase testCase_sub
+  left join testCase_sub.steps as testStep_sub
+where testStep_sub.class = ?1
+group by testCase_sub.id
+having s_count(testStep_sub.id) > ?2)
+group by requirement.id"""
 	}
 
 
@@ -280,14 +294,18 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
 		then :
 		res.collect {it.a} as Set == [[-3l, 1]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct testCase.id, s_count(testCase.id)
+from TestCase testCase
+  left join testCase.automatedTest as automatedTest_subcolumn_sub
+where case when automatedTest_subcolumn_sub.id is not null then true else false end  = ?1
+group by testCase.id"""
 	}
 
 
@@ -312,14 +330,18 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
 		then :
 		res.collect {it.a} as Set == [[-1l, 1], [-2l, 1]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct testCase.id, s_count(testCase.id)
+from TestCase testCase
+  left join testCase.automatedTest as automatedTest_subcolumn_sub
+where case when automatedTest_subcolumn_sub.id is not null then true else false end  = ?1
+group by testCase.id"""
 	}
 
 
@@ -344,14 +366,17 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
 		then :
 		res.collect {it.a} as Set == [[false, 2], [true, 1]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct case when automatedTest_subcolumn_sub.id is not null then true else false end , s_count(testCase.id)
+from TestCase testCase
+  left join testCase.automatedTest as automatedTest_subcolumn_sub
+group by case when automatedTest_subcolumn_sub.id is not null then true else false end"""
 	}
 
 
@@ -378,14 +403,21 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
 		then :
 		res.collect {it.a} as Set == [[-11l, 1], [-12l,2]] as Set
-
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
+from Iteration iteration
+  inner join iteration.testPlans as iterationTestPlanItem
+where iterationTestPlanItem.id in (select distinct iterationTestPlanItem_sub.id
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+where case when execution_sub.id is not null then true else false end  = ?1
+group by iterationTestPlanItem_sub.id)
+group by iteration.id"""
 	}
 
 
@@ -409,8 +441,6 @@ group by testCase.id"""
 
 		when :
 		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
-		println query
-		println "**********"
 		def clone = query.clone(getSession())
 		def res = clone.fetch()
 
@@ -419,7 +449,16 @@ group by testCase.id"""
 		// alas, the other iteration has no not-executed items so
 		// it is filtered out because of of inner join mechanics
 		res.collect {it.a} as Set == [[-11l, 1]] as Set
-
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
+from Iteration iteration
+  inner join iteration.testPlans as iterationTestPlanItem
+where iterationTestPlanItem.id in (select distinct iterationTestPlanItem_sub.id
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+where case when execution_sub.id is not null then true else false end  = ?1
+group by iterationTestPlanItem_sub.id)
+group by iteration.id"""
 	}
 	// ********* utilities ***************************
 
