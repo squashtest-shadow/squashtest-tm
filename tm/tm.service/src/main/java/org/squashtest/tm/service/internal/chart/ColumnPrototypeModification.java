@@ -41,6 +41,7 @@ import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
+import org.squashtest.tm.domain.chart.QFilter;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
@@ -66,6 +67,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	};
 
 	private final static QColumnPrototype PROTOTYPE = QColumnPrototype.columnPrototype;
+	private final static QFilter FILTER = QFilter.filter;
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -166,7 +168,9 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 			HibernateQuery<?> query = createBaseQuery();
 			addCodeToQuery(query, code);
 			addTypeToQuery(query, type);
-			session().delete(query.fetchFirst());
+			ColumnPrototype proto = (ColumnPrototype) query.fetchFirst();
+			deleteFilterForColumn(proto);
+			session().delete(proto);
 		}
 	}
 
@@ -225,7 +229,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		String label = getColumnLabel(code, type);
 		SpecializedEntityType entityType = new SpecializedEntityType(type, null);
 		DataType dataType = getDataTypeFromInputType(inputType);
-		Set<ColumnRole> roles = EnumSet.allOf(ColumnRole.class);
+		Set<ColumnRole> roles = EnumSet.of(ColumnRole.FILTER);
 
 		ColumnPrototype newProto = new ColumnPrototype(label, entityType, dataType, ColumnType.CUF, null, code, true,
 				roles);
@@ -261,6 +265,15 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		HibernateQueryFactory factory = new HibernateQueryFactory(session());
 		HibernateQuery<?> query = factory.from(PROTOTYPE).where(PROTOTYPE.columnType.eq(ColumnType.CUF));
 		return query;
+	}
+
+	private void deleteFilterForColumn(ColumnPrototype column) {
+		HibernateQueryFactory factory = new HibernateQueryFactory(session());
+		HibernateQuery<?> query = factory.from(FILTER).where(FILTER.column.eq(column));
+		for (Object o : query.fetch()) {
+			session().delete(o);
+		}
+
 	}
 
 	private void addCodeToQuery(HibernateQuery<?> query, String code) {

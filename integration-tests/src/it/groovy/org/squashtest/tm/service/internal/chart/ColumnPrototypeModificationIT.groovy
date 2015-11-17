@@ -57,7 +57,7 @@ class ColumnPrototypeModificationIT extends DbunitServiceSpecification{
 
 		def result = findAll("ColumnPrototype");
 		then :
-		result.size == 5
+		result.size == 6
 		where :
 		code        |        entityType                     || _
 		"xx"        |        BindableEntity.TEST_CASE       || _
@@ -76,7 +76,7 @@ class ColumnPrototypeModificationIT extends DbunitServiceSpecification{
 
 		def result = findAll("ColumnPrototype");
 		then :
-		result.size == 6
+		result.size == 7
 		
 		where :
 		code        |        entityType                     || _
@@ -98,25 +98,25 @@ class ColumnPrototypeModificationIT extends DbunitServiceSpecification{
 			result.size == remaining
 			where :
 			ids                                      || remaining
-			[-1L]                                    ||     5
-			[-2L]                                    ||     5
-			[-3L]                                    ||     4
-			[-4L]                                    ||     5
-			[-5L]                                    ||     5
-			[-6L]                                    ||     5
-			[-7L]                                    ||     5
-			[-8L]                                    ||     4
-			[-1L, -2L]                               ||     4
-			[-1L, -2L, -3L]                          ||     3
-			[-1L, -4L, -6L]                          ||     5
-			[-1L, -4L, -7L]                          ||     5
-			[-1L, -5L, -6L]                          ||     5
-			[-1L, -5L, -7L]                          ||     5
-			[-3L, -8L]                               ||     3
-			[-1L, -2L, -3L, -4L, -5L]                ||     2
-			[-1L, -2L, -3L, -4L, -5L, -6L, -8L]      ||     1
-			[-1L, -2L, -3L, -4L, -5L, -6L, -7L]      ||     1
-			[-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L] ||     0
+			[-1L]                                    ||     6
+			[-2L]                                    ||     6
+			[-3L]                                    ||     5
+			[-4L]                                    ||     6
+			[-5L]                                    ||     6
+			[-6L]                                    ||     6
+			[-7L]                                    ||     6
+			[-8L]                                    ||     5
+			[-1L, -2L]                               ||     5
+			[-1L, -2L, -3L]                          ||     4
+			[-1L, -4L, -6L]                          ||     6
+			[-1L, -4L, -7L]                          ||     6
+			[-1L, -5L, -6L]                          ||     6
+			[-1L, -5L, -7L]                          ||     6
+			[-3L, -8L]                               ||     4
+			[-1L, -2L, -3L, -4L, -5L]                ||     3
+			[-1L, -2L, -3L, -4L, -5L, -6L, -8L]      ||     2
+			[-1L, -2L, -3L, -4L, -5L, -6L, -7L]      ||     2
+			[-1L, -2L, -3L, -4L, -5L, -6L, -7L, -8L] ||     1
 		}
 		
 		
@@ -133,4 +133,22 @@ class ColumnPrototypeModificationIT extends DbunitServiceSpecification{
 			["ww", "AAAA"]    ||   0
 		}
 	
+		def "should delete filter when corresponding columnPrototype is deleted" (){
+			
+			when :
+			eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(ids));
+	
+			then :
+			def filters = findAll("Filter")
+			filters.size == remaining
+			where :
+			ids                                      || remaining
+			[-1L]                                    ||     1
+			[-2L]                                    ||     1
+			[-1L, -2L]                               ||     0
+			[-1L, -2L, -3L]                          ||     0
+
+		}
+	
+		
 }
