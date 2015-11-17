@@ -24,6 +24,9 @@ define(function(){
 		return {
 			generate : function(){
 					return {
+            check_move : function () {
+              return false;
+            },
 						//override pluggins to have a custom DnD for dashboards
 						"plugins" : ["json_data", "ui", "types", "hotkeys", "dndCustomReport", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
 						"types" : {

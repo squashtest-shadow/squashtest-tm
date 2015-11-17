@@ -22,10 +22,9 @@
  * jsTree DND plugin 1.0
  * Drag and drop plugin for moving/copying nodes
  */
- // Redifined just for custom report workspace...just for the event listened during DnD but this event is binded to multiple callback
+ // Redifined for custom report workspace...just for the event listened during DnD but this event is binded to multiple callback
  // so it was not possible to extract that properly
 define([],function () {
-  console.log("INIT DnD");
   return function () {
 
 		 (function ($) {
@@ -468,7 +467,7 @@ define([],function () {
 			});
 		})(jQuery);
 		//*/
-	console.log("INIT DnD Inside call");
+
  };
 });
 //*/

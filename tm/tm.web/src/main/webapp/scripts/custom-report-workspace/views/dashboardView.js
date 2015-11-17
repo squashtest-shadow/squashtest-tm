@@ -18,6 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
+/*
+ * This view contains logic and data to create and upadate custom report dashboard.
+ * The main component is a grid based on a js library : Gridster.js
+ * The version used is a maintened fork : https://github.com/dsmorse/gridster.js
+ * The library used for data plotting is the same as classic dashboard JqPlot
+ */
 define(["jquery","underscore","backbone","squash.translator","handlebars","tree","workspace.routing","../charts/chartFactory","isIE","squash.dateutils","jquery.gridster"],
 		function($,_,Backbone, translator,Handlebars,tree,urlBuilder,main,isIE,dateutils) {
 
@@ -39,8 +45,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     maxChartSizeX :4,
     maxChartSizeY :3,
     cssStyleTagId:"gridster-stylesheet-squash",
-    xSizeWidget : null,//this attribute will be computed by _calculateWidgetDimension
-    ySizeWidget : null,//this attribute will be computed by _calculateWidgetDimension
+    xSizeWidget : null,//this attribute will be computed by calculateWidgetDimension
+    ySizeWidget : null,//this attribute will be computed by calculateWidgetDimension
     secureBlank : 5,//in pixel, a margin around widget to prevent inesthetics scrollbars
 
 		initialize : function(){
@@ -60,7 +66,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		},
 
 		events : {
-      "click .delete-chart-button":"_unbindChart",
+      "click .delete-chart-button":"unbindChart",
       "transitionend #dashboard-grid" : "refreshCharts",
       "webkitTransitionEnd #dashboard-grid" : "refreshCharts",
       "oTransitionEnd #dashboard-grid" : "refreshCharts",
@@ -68,35 +74,40 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       "click #toggle-expand-left-frame-button" : "toggleDashboard",
 		},
 
-    refreshCharts : function () {
-      var charts = _.values(this.dashboardChartViews);
-      var bindings =  _.values(this.dashboardChartBindings);
-      for (var j = 0; j < bindings.length; j++) {
-        var binding = bindings[j];
-        this._changeBindedChart(binding.id,binding);
-      }
-    },
-
-    toggleDashboard : function () {
+    /**
+    * Initialize dashboard data from server.
+    */
+    initializeData : function () {
+      var url = urlBuilder.buildURL("custom-report-dashboard-server", this.model.get('id'));
       var self = this;
-      _.delay( function () {
-        self.redrawDashboard();
-      }, 50);
+
+      $.ajax({
+        url: url,
+        type: 'GET',
+        dataType: 'json'
+      })
+      .success(function(response) {
+        self.buildBindingData(response).render().generateGridsterCss().initGrid().buildDashBoard();//templating first, then init gridster css, then init gridster, then add charts into widgets
+      });
     },
 
-		render : function(){
-			console.log("RENDER DASHBOARD");
+    render : function(){
+      console.log("RENDER DASHBOARD");
       this.$el.html("");
-			var source = $(this.tpl).html();
-			var template = Handlebars.compile(source);
+      var source = $(this.tpl).html();
+      var template = Handlebars.compile(source);
       Handlebars.registerPartial("chart", $(this.tplChart).html());
-			console.log("TEAMPLATING DASHBOARD");
+      console.log("TEAMPLATING DASHBOARD");
       console.log(this.dashboardInitialData);
-			this.$el.append(template(this.dashboardInitialData));
-			return this;
-		},
+      this.$el.append(template(this.dashboardInitialData));
+      return this;
+    },
 
-		//init a grid for the dashboard.
+    /**
+    * init Gridster. Note that the css auto generation is turned off.
+    * It wasn't suited for our needs especially for resize window/container.
+    * @return {[this]} [for chaining]
+    */
 		initGrid : function () {
       var self = this;
 			this.gridster = this.$("#dashboard-grid").gridster({
@@ -109,7 +120,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 				max_rows: self.gridRow,
     		max_cols: self.gridCol,
     		shift_larger_widgets_down: false,
-        autogenerate_stylesheet:false,
+        autogenerate_stylesheet:false,//Turned off
         serialize_params: function($w, wgd) {
           var chartBindingId = $w.find(".jqplot-target").attr("data-binding-id");
           return {
@@ -124,75 +135,95 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 					enabled : true,
           max_size : [self.maxChartSizeX,self.maxChartSizeY],
           resize: function(e, ui, $widget) {
-            self._resizeChart(e, ui, $widget);
+            self.resizeChart(e, ui, $widget);
           },
           stop: function(e, ui, $widget) {
-            self._resizeChart(e, ui, $widget);
-            self._serializeGridster();
+            self.resizeChart(e, ui, $widget);
+            self.serializeGridster();
           }
 				},
         draggable : {
           stop: function(e, ui, $widget) {
-            self._serializeGridster();
+            self.serializeGridster();
           }
         }
 			}).data('gridster');
 
-      this._getGridScreenDimension();
+      this.getGridScreenDimension();
       return this;
 		},
 
+    /**
+    * Update all charts
+    * @return {[type]} [description]
+    */
+    refreshCharts : function () {
+      var charts = _.values(this.dashboardChartViews);
+      var bindings =  _.values(this.dashboardChartBindings);
+      for (var j = 0; j < bindings.length; j++) {
+        var binding = bindings[j];
+        this.changeBindedChart(binding.id,binding);
+      }
+    },
+
+    toggleDashboard : function () {
+      var self = this;
+      _.delay( function () {
+        self.redrawDashboard();
+      }, 50);
+    },
+    
     generateGridsterCss : function () {
       console.log("GENERATE DYNAMIC CSS");
       console.log(this.$("#dashboard-grid").offset());
       console.log(this.$("#dashboard-grid").innerHeight());
       console.log(this.$("#dashboard-grid").innerWidth());
       console.log(document.getElementById('dashboard-grid').getBoundingClientRect());
-      var boundingRect = this._getGridScreenDimension();
-      var xSizeWidget = this._calculateWidgetDimension(boundingRect.width,this.gridCol,this.gridColMargin,this.secureBlank);
-      var ySizeWidget = this._calculateWidgetDimension(boundingRect.height,this.gridRow,this.gridRowMargin,this.secureBlank);
+      var boundingRect = this.getGridScreenDimension();
+      var xSizeWidget = this.calculateWidgetDimension(boundingRect.width,this.gridCol,this.gridColMargin,this.secureBlank);
+      var ySizeWidget = this.calculateWidgetDimension(boundingRect.height,this.gridRow,this.gridRowMargin,this.secureBlank);
       console.log("xSizeWidget" + xSizeWidget);
       console.log("ySizeWidget" + ySizeWidget);
-      var xPosStyle  = this._generateColPositionCss(xSizeWidget);
-      var widthStyle  =this._generateColWidthCss(xSizeWidget);
-      var yPosStyle  =this._generateRowPositionCss(ySizeWidget);
-      var heightStyle  =this._generateRowHeightCss(ySizeWidget);
-      this._injectCss(xPosStyle, widthStyle, yPosStyle, heightStyle);
+      var xPosStyle  = this.generateColPositionCss(xSizeWidget);
+      var widthStyle  =this.generateColWidthCss(xSizeWidget);
+      var yPosStyle  =this.generateRowPositionCss(ySizeWidget);
+      var heightStyle  =this.generateRowHeightCss(ySizeWidget);
+      this.injectCss(xPosStyle, widthStyle, yPosStyle, heightStyle);
       this.xSizeWidget = xSizeWidget;
       this.ySizeWidget = ySizeWidget;
       console.log("/GENERATE DYNAMIC CSS");
       return this;
     },
 
-    _getGridScreenDimension : function () {
+    getGridScreenDimension : function () {
       var boundingRect = document.getElementById('dashboard-grid').getBoundingClientRect();
       return boundingRect;
     },
 
-    _calculateWidgetDimension : function (totalDimension,nbWidget,margin,secureBlank) {
+    calculateWidgetDimension : function (totalDimension,nbWidget,margin,secureBlank) {
       var dimWidget = totalDimension/nbWidget - margin -secureBlank;
       return Math.round(dimWidget);
     },
 
-    _generateColPositionCss : function (xSizeWidget) {
+    generateColPositionCss : function (xSizeWidget) {
       var xPosStyle = "";
       for (var i = 1; i <= this.gridCol; i++) {//generating css for gridCol + 1 column
-        xPosStyle = xPosStyle + this._getColumnPositionCss(i,xSizeWidget);
+        xPosStyle = xPosStyle + this.getColumnPositionCss(i,xSizeWidget);
       }
       console.log(xPosStyle);
       return xPosStyle;
     },
 
-    _generateColWidthCss : function (xSizeWidget) {
+    generateColWidthCss : function (xSizeWidget) {
       var xWidthStyle = "";
       for (var i = 1; i <= this.maxChartSizeX; i++) {
-        xWidthStyle = xWidthStyle + this._getColumnWidthCss(i,xSizeWidget);
+        xWidthStyle = xWidthStyle + this.getColumnWidthCss(i,xSizeWidget);
       }
       console.log(xWidthStyle);
       return xWidthStyle;
     },
 
-    _getColumnPositionCss : function (indexCol, xSizeWidget) {
+    getColumnPositionCss : function (indexCol, xSizeWidget) {
       var xPosition = this.gridColMargin*indexCol + xSizeWidget*(indexCol-1);
       var xStyle  =  '[data-col="' + indexCol + '"] { left:' + Math.round(xPosition) +'px; }';
       console.log("Generating css col position " + indexCol);
@@ -200,7 +231,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       return xStyle;
     },
 
-    _getColumnWidthCss : function (xSize, xSizeWidget) {
+    getColumnWidthCss : function (xSize, xSizeWidget) {
       var width = xSize * xSizeWidget + (xSize-1) * this.gridColMargin;//don't forget to add xSize-1 margin
       var xStyle  =  '[data-sizex="' + xSize + '"] { width:' + Math.round(width) +'px; }';
       console.log("Generating css col width " + xSize);
@@ -208,26 +239,26 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       return xStyle;
     },
 
-    _generateRowPositionCss : function (ySizeWidget) {
+    generateRowPositionCss : function (ySizeWidget) {
       var yPosStyle = "";
       var nbRow = this.gridRow+this.gridAdditionalRow;
       for (var i = 1; i <= nbRow; i++) {//generating css for some additional rows if user expands to much a chart
-        yPosStyle = yPosStyle + this._getRowPositionCss(i,ySizeWidget);
+        yPosStyle = yPosStyle + this.getRowPositionCss(i,ySizeWidget);
       }
       console.log(yPosStyle);
       return yPosStyle;
     },
 
-    _generateRowHeightCss : function (ySizeWidget) {
+    generateRowHeightCss : function (ySizeWidget) {
       var heightStyle = "";
       for (var i = 1; i <= this.maxChartSizeY; i++) {
-        heightStyle = heightStyle + this._getRowHeightCss(i,ySizeWidget);
+        heightStyle = heightStyle + this.getRowHeightCss(i,ySizeWidget);
       }
       console.log(heightStyle);
       return heightStyle;
     },
 
-    _getRowPositionCss : function (indexRow, ySizeWidget) {
+    getRowPositionCss : function (indexRow, ySizeWidget) {
       var yPosition = this.gridRowMargin*indexRow + ySizeWidget*(indexRow-1);
       var yStyle  =  '[data-row="' + indexRow + '"] { top:' + Math.round(yPosition) +'px; }';
       console.log("Generating css row position " + indexRow);
@@ -235,7 +266,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       return yStyle;
     },
 
-    _getRowHeightCss : function (ySize, ySizeWidget) {
+    getRowHeightCss : function (ySize, ySizeWidget) {
       var height = ySize * ySizeWidget + (ySize-1) * this.gridRowMargin;//don't forget to add ySize-1 margin
       var yStyle  =  '[data-sizey="' + ySize + '"] { height:' + Math.round(height) +'px; }';
       console.log("Generating css row height width " + ySize);
@@ -243,7 +274,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       return yStyle;
     },
 
-    _injectCss : function (xPosStyle, widthStyle, yPosStyle, heightStyle) {
+    injectCss : function (xPosStyle, widthStyle, yPosStyle, heightStyle) {
       var fullStyle = xPosStyle + widthStyle + yPosStyle + heightStyle;
       var cssStyleTagSelector =  '#' + this.cssStyleTagId;
       var styleTag = $(cssStyleTagSelector);//global jquery, as we have to inject css in head...
@@ -282,7 +313,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     //create a new customReportChartBinding in database and add it to gridster in call back
 		dropChartInGrid : function (data) {
-      var cell = this._getCellFromDrop();
+      var cell = this.getCellFromDrop();
 
       var ajaxData = {
         dashboardNodeId : this.model.id,
@@ -305,7 +336,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         'data': JSON.stringify(ajaxData),
       })
       .success(function(response) {
-        self._addNewChart(response);
+        self.addNewChart(response);
       });
 
 		},
@@ -326,24 +357,11 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       })
       .success(function(response) {
         console.log("Change OK server side !!!");
-        self._changeBindedChart(bindingId,response);
+        self.changeBindedChart(bindingId,response);
       });
 		},
 
-    initializeData : function () {
-      var url = urlBuilder.buildURL("custom-report-dashboard-server", this.model.get('id'));
-      var self = this;
 
-      $.ajax({
-        url: url,
-        type: 'GET',
-        dataType: 'json'
-      })
-      .success(function(response) {
-        self._buildBindingData(response).render().generateGridsterCss().initGrid()._buildDashBoard();//templating first, then init gridster css, then init gridster, then add charts into widgets
-      });
-
-    },
 
     redrawDashboard : function () {
       var bindings = _.values(this.dashboardChartBindings);
@@ -360,7 +378,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       }
     },
 
-    _buildBindingData : function (response) {
+    buildBindingData : function (response) {
       this.dashboardInitialData = response;//We need to cache the initial data for templating, ie render()
       this.dashboardInitialData.generatedDate = this.i18nFormatDate(new Date());
       this.dashboardInitialData.generatedHour = this.i18nFormatHour(new Date());
@@ -381,37 +399,33 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       return dateutils.format(date, "HH:mm");
     },
 
-    _buildChart : function (binding) {
+    buildChart : function (binding) {
       var id = binding.id;
       var selector = "#chart-binding-" + id;
       this.dashboardChartViews[id] = main.buildChart(selector, binding.chartInstance);
     },
 
     //rebuild an existing chart
-    _rebuildChart : function (id) {
+    redrawChart : function (id) {
       var view = this.dashboardChartViews[id];
       view.render();
     },
 
-    _buildDashBoard : function () {
+    buildDashBoard : function () {
       var bindings = _.values(this.dashboardChartBindings);
       for (var i = 0; i < bindings.length; i++) {
         var binding = bindings[i];
-        this._buildChart(binding);
+        this.buildChart(binding);
       }
       return this;
     },
 
-    _getDataBychartDefId : function (id) {
-      return this.dashboardChartBindings[id];
-    },
-
-    _resizeChart : function (e, ui, $widget) {
+    resizeChart : function (e, ui, $widget) {
       var chartBindingId = $widget.attr("data-binding-id");//get binding id
-      this._rebuildChart(chartBindingId);
+      this.redrawChart(chartBindingId);
     },
 
-    _serializeGridster : function () {
+    serializeGridster : function () {
       var gridData = this.gridster.serialize();
       var url = urlBuilder.buildURL("custom-report-chart-binding");
       var self = this;
@@ -435,16 +449,16 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       });
     },
 
-    _addNewChart : function (binding) {
+    addNewChart : function (binding) {
       var source = $(this.tplNewChart).html();
       var template = Handlebars.compile(source);
       var html = template(binding);
       this.gridster.add_widget( html, binding.sizeX, binding.sizeY, binding.col, binding.row);
-      this._buildChart(binding);
-      this._addNewBindingInMap(binding);
+      this.buildChart(binding);
+      this.addNewBindingInMap(binding);
     },
 
-    _unbindChart : function (event) {
+    unbindChart : function (event) {
       //Get id of the suppressed chart
       var id = event.currentTarget.getAttribute("data-binding-id");
       var url = urlBuilder.buildURL("custom-report-chart-binding-with-id",id);
@@ -454,13 +468,13 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         url: url,
         type: 'delete',
         }).success(function(response) {
-          self._removeChart(id);
-          self._removeWidget(id);
+          self.removeChart(id);
+          self.removeWidget(id);
         });
 
     },
 
-    _removeAllCharts : function () {
+    removeAllCharts : function () {
       var views = this.dashboardChartViews;
       _.each(views,function (view) {
         view.remove();
@@ -468,34 +482,34 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this.dashboardChartViews = {};
     },
 
-    _removeChart : function (bindingId) {
+    removeChart : function (bindingId) {
       this.dashboardChartViews[bindingId].remove();//remove backbone view
       delete this.dashboardChartViews[bindingId];
       delete this.dashboardChartBindings[bindingId];
     },
 
-    _removeWidget : function (bindingId) {
+    removeWidget : function (bindingId) {
       var widgetSelector = this.widgetPrefixSelector + bindingId;
-      this.gridster.remove_widget(widgetSelector, this._serializeGridster);//after suppressing widget, serialize to update position on server if the grid reorganize itself after widget suppression
+      this.gridster.remove_widget(widgetSelector, this.serializeGridster);//after suppressing widget, serialize to update position on server if the grid reorganize itself after widget suppression
     },
 
-    _changeBindedChart : function (bindingId,binding) {
-      this._removeChart(bindingId);
+    changeBindedChart : function (bindingId,binding) {
+      this.removeChart(bindingId);
       var source = $(this.tplChartDisplay).html();
       var template = Handlebars.compile(source);
       var html = template(binding);
       var widgetSelector = this.widgetPrefixSelector + bindingId;
       $(widgetSelector).html(html);
-      this._buildChart(binding);
-      this._addNewBindingInMap(binding);
+      this.buildChart(binding);
+      this.addNewBindingInMap(binding);
     },
 
-    _addNewBindingInMap : function (binding) {
+    addNewBindingInMap : function (binding) {
       this.dashboardChartBindings[binding.id] = binding;
     },
 
     //Return the first empty cell.
-    _getCellFromDrop : function () {
+    getCellFromDrop : function () {
       for (var i = 1; i <= this.gridRow; i++) {
         for (var j = 1; j <= this.gridCol; j++) {
           if (this.gridster.is_empty ( j,i )) {
@@ -507,7 +521,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 
     remove : function () {
       this.gridster.destroy();
-      this._removeAllCharts();
+      this.removeAllCharts();
       Backbone.View.prototype.remove.call(this);
     }
 

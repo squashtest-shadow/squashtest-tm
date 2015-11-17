@@ -59,6 +59,11 @@ define(['squash.translator','tree', './cr-treemenu', './init-actions',
 		treemenu.init(settings.treemenu);
 		popups.init();
 		actions.init();
+    //For V1.13 we don't want copy/past or drag/drop inside tree. Cannot do it in workspace conf because we override some core function of jstree so
+    //It's safer to put deactivation here because of it's temporary nature
+    $.jstree._fn.check_move = function(){
+      return false;
+    };
 	}
 
 
