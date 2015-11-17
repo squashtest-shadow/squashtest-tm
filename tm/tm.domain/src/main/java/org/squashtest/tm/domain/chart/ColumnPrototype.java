@@ -93,7 +93,7 @@ public class ColumnPrototype {
 	private ColumnType columnType = ColumnType.ATTRIBUTE;
 
 	@OneToOne
-	@JoinColumn(name = "SUBQUERY_ID", nullable = false, insertable = false)
+	@JoinColumn(name = "SUBQUERY_ID", insertable = false)
 	private ChartQuery subQuery = new ChartQuery();
 
 	private String attributeName;
@@ -156,5 +156,29 @@ public class ColumnPrototype {
 		return business;
 	}
 
+	protected ColumnPrototype() {
+
+	}
+
+	public ColumnPrototype(String label, SpecializedEntityType specializedType, DataType dataType,
+			ColumnType columnType, ChartQuery subQuery, String attributeName, boolean business, Set<ColumnRole> role) {
+		super();
+		this.label = label;
+		this.specializedType = specializedType;
+		this.dataType = dataType;
+		this.columnType = columnType;
+		this.subQuery = subQuery;
+		this.attributeName = attributeName;
+		this.business = business;
+		this.role = role;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setAttributeName(String attributeName) {
+		this.attributeName = attributeName;
+	}
 
 }

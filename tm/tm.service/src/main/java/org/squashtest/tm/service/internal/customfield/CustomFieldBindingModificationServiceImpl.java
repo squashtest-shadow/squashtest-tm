@@ -30,6 +30,7 @@ import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,8 @@ import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.project.ProjectTemplate;
+import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
+import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
@@ -65,6 +68,9 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 
 	@Inject
 	private GenericProjectDao genericProjectDao;
+
+	@Inject
+	private ApplicationEventPublisher eventPublisher;
 
 	private static final Transformer BINDING_ID_COLLECTOR = new Transformer() {
 		@Override
@@ -149,6 +155,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
 		customValueService.cascadeCustomFieldValuesDeletion(bindingIds);
 		customFieldBindingDao.removeCustomFieldBindings(bindingIds);
+		eventPublisher.publishEvent(new DeleteCustomFieldBindingEvent(bindingIds));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -190,7 +197,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		newBinding.setPosition(newIndex.intValue());
 
 		customFieldBindingDao.persist(newBinding);
-
+		eventPublisher.publishEvent(new CreateCustomFieldBindingEvent(newBinding));
 	}
 
 	/**

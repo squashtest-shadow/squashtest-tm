@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.customField
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.customfield.CustomField
@@ -36,10 +37,12 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 	CustomCustomFieldManagerServiceImpl service = new CustomCustomFieldManagerServiceImpl();
 	CustomFieldDao customFieldDao = Mock()
 	CustomFieldBindingDao customFieldBindingDao = Mock();
+	ApplicationEventPublisher eventPublisher = Mock()
 
 	def setup() {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
+		service.eventPublisher = eventPublisher
 	}
 
 	def "should delete custom field"(){

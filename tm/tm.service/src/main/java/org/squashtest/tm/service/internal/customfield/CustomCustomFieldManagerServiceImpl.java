@@ -20,12 +20,15 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.apache.commons.lang.StringUtils;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -36,6 +39,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.event.ChangeCustomFieldCodeEvent;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
@@ -45,8 +49,6 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
@@ -68,6 +70,9 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
+
+	@Inject
+	private ApplicationEventPublisher eventPublisher;
 
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(PagingAndSorting)
@@ -243,7 +248,10 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	public void changeCode(long customFieldId, String code) {
 		CustomField field = customFieldDao.findById(customFieldId);
 		checkDuplicateCode(field, code);
+		String oldCode = field.getCode();
 		field.setCode(code);
+		eventPublisher.publishEvent(new ChangeCustomFieldCodeEvent(new String[] { oldCode, code }));
+
 	}
 
 	private void checkDuplicateCode(CustomField field, String newCode) {
