@@ -37,9 +37,13 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var infoListItemSrc = $("#info-list-item-tpl").html();
 			this.infoListItemTemplate = Handlebars.compile(infoListItemSrc);
 			
+			var cufListSrc = $("#chart-wizard-cuf-list-tpl").html();
+			this.cufListTemplate = Handlebars.compile(cufListSrc);
+			
 			var pickerconf = confman.getStdDatepicker();
 			$(".date-picker").datepicker(pickerconf);
 			this.initInfoListValues();
+			this.initDropDownCufValues();
 			this.reloadPreviousValues();
 			this.initOperationValues();
 			
@@ -48,6 +52,33 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		events : {
 			"change .filter-operation-select" : "changeOperation",
 			"change .info-lists" : "changeInfoList"
+		},
+		
+		initDropDownCufValues : function () {
+			
+			var self = this;
+			
+			var cufLists = _.chain(self.model.get('columnPrototypes'))
+			.values()
+			.flatten()
+			.where({columnType : "CUF", dataType : "LIST"})
+			.value();
+			
+			_.each(cufLists, function(liste){
+				
+				var $val = $("#list-filter-container-" + liste.id);
+					
+				var items = _.chain(self.model.get("customFields"))
+				.values()
+				.flatten()
+				.find(function(cuf){return cuf.code == liste.attributeName;})
+				.result("options")
+				.value();
+				
+				$val.html(self.cufListTemplate({id : liste.id,items : items}));
+				
+			});
+				
 		},
 		
 		initInfoListValues : function() {
@@ -89,7 +120,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 			return _.chain(self.model.get("columnPrototypes"))
 		.reduce(function(memo, val) {return memo.concat(val);}, [])
-		.filter(function(val) {return val.dataType == "INFO_LIST_ITEM";})
+		.where({dataType : "INFO_LIST_ITEM"})
 		.pluck("id")
 		.value();
 			
@@ -266,7 +297,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 		},
 		findColumnById : function (id){
-			return _.find(_.reduce(this.model.get("columnPrototypes"), function(memo, val){ return memo.concat(val); }, []), function(col){return col.id == id; });
+			return _.chain(this.model.get("columnPrototypes"))
+			.values()
+			.flatten()
+			.find(function(col){return col.id == id; })
+			.value();
 		},
 		
 		changeOperation : function(event){				

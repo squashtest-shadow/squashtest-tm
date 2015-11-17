@@ -71,7 +71,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 		},
 		
 		findColumnById : function (id){
-			return _.find(_.reduce(this.model.get("columnPrototypes"), function(memo, val){ return memo.concat(val); }, []), function(col){return col.id == id; });
+			return _.chain(this.model.get("columnPrototypes"))
+			.values()
+			.flatten()
+			.find(function(col){return col.id == id; })
+			.value();		
 		},
 
 

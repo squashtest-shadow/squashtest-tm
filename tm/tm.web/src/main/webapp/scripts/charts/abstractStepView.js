@@ -79,7 +79,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 
 		_initialize : function(data, wizrouter) {
 			this.router = wizrouter;
-
+			this.registerHelper();
 			var currStep = _.findWhere(steps, {name : data.name});		
 			this.next = currStep.nextStep;
 			this.previous = currStep.prevStep;
@@ -106,6 +106,19 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			
 		},
 
+		registerHelper : function(){
+			Handlebars.registerHelper("cuf-label", function(label, cufs){
+				
+				var cuf =_.chain(cufs).values().flatten().find(function(val){return val.code == label;});
+				
+				var cufLabel = cuf.result("label").value();
+				var cufName = cuf.result("name").value();
+				var html = cufLabel  + "<span class='small txt-discreet'> ("+ cufName +")</span>";
+				
+				return new Handlebars.SafeString(html);
+			});
+			
+		},
 		
 		findMissingSteps : function (data, neededStep) {
 			var self = this;

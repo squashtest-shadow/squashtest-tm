@@ -133,6 +133,13 @@
 		th:inline="text"
 		th:include="charts/wizard/missingStep :: chart-wizard-missing-step" />
 
+	<script id="chart-wizard-cuf-list-tpl" type="text/x-handlebars-template"
+		th:inline="text"
+		th:include="charts/wizard/filterStep :: chart-wizard-cuf-list" />
+
+
+
+
 	<div th:include="charts/rendering/chart-templates :: templates"></div>
 
 	<div id="navigation" th:include="navbar.frag :: navbar('report')">NAVBAR</div>

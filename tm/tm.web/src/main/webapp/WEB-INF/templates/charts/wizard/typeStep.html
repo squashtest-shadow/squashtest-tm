@@ -30,7 +30,14 @@
 
 {{#if (contains (lookup ../attributes.columRoles ../role) this.operation)}}
 <option value="{{this.column.label}}"   >
+
+
+{{#equal this.column.columnType "CUF"}}
+{{cuf-label this.column.attributeName ../attributes.customFields}}
+{{else}}
 {{i18n this.column.label prefix="chart.column."}}
+{{/equal}}
+
 </option>
 {{/if}}
 {{/each}}

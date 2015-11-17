@@ -30,11 +30,14 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.chart.ChartType;
@@ -42,6 +45,8 @@ import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnRole;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.customfield.CustomField;
+import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
@@ -51,6 +56,7 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
+import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -66,8 +72,6 @@ public class JsonChartWizardData {
 
 	private Map<DataType, EnumSet<Operation>> dataTypes = new EnumMap<DataType, EnumSet<Operation>>(DataType.class);
 
-
-
 	// don't use EnumMap here cuz the business want a custom order
 	private Map<EntityType, String> entityTypes = new LinkedHashMap<EntityType, String>();
 
@@ -77,45 +81,59 @@ public class JsonChartWizardData {
 
 	private Map<String, Map<String, InfoList>> projectInfoList = new HashMap<String, Map<String, InfoList>>();
 
-	public Map<String, Map<String, InfoList>> getProjectInfoList() {
-		return projectInfoList;
-	}
+	private Map<String, Set<CustomField>> customFields = new HashMap<String,  Set<CustomField>>();
 
-	@JsonSerialize(contentUsing = LevelEnumSerializer.class)
-	public Map<String, EnumSet<? extends Level>> getLevelEnums() {
-		return levelEnums;
-	}
+	private InfoListFinderService infoListFinder;
 
-	@JsonSerialize(using = LevelEnumSerializer.class)
-	public EnumSet<ExecutionStatus> getExecutionStatus() {
-		return executionStatus;
-	}
-
+	private CustomFieldBindingModificationService cufBindingService;
+	
+	
+	
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects,
-			InfoListFinderService infoListFinder) {
+			InfoListFinderService infoListFinder, CustomFieldBindingModificationService cufBindingService) {
 
 		this.columnPrototypes = columnPrototypes;
-		populate(projects, infoListFinder);
+		this.infoListFinder = infoListFinder;
+		this.cufBindingService = cufBindingService;
+		populate(projects);
 
 	}
 
-	private void populate(List<Project> projects, InfoListFinderService infoListFinder) {
+	private void populate(List<Project> projects) {
 
-		for (ColumnRole cr : ColumnRole.values()) {
-			columRoles.put(cr, cr.getOperations());
-		}
+		addColumnRoles();
+		addDataType();
+		addLevelEnums();
+		addEntityType();
+		addInfoList(projects);
+		fixColumnPrototype();
+		addCustomFields(projects);
 
-		for (DataType dt : DataType.values()) {
-			dataTypes.put(dt, dt.getOperations());
-		}
+	}
 
+	private void addLevelEnums() {
 		addLevelEnum("TEST_CASE_STATUS", TestCaseStatus.class);
 		addLevelEnum("test-case-execution-mode", TestCaseExecutionMode.class);
 		addLevelEnum("TEST_CASE_IMPORTANCE", TestCaseImportance.class);
 		addLevelEnum("REQUIREMENT_VERSION_CRITICALITY", RequirementCriticality.class);
 		addLevelEnum("REQUIREMENT_VERSION_STATUS", RequirementStatus.class);
+	}
 
+	private void addColumnRoles() {
+		for (ColumnRole cr : ColumnRole.values()) {
+			columRoles.put(cr, cr.getOperations());
+		}
+	}
+
+	private void addDataType() {
+
+		for (DataType dt : DataType.values()) {
+			dataTypes.put(dt, dt.getOperations());
+		}
+	}
+
+	private void addEntityType() {
 
 		entityTypes.put(REQUIREMENT, "icon-chart-requirement");
 		entityTypes.put(TEST_CASE, "icon-chart-test-case");
@@ -123,6 +141,9 @@ public class JsonChartWizardData {
 		entityTypes.put(ITERATION, "icon-chart-iteration");
 		entityTypes.put(ITEM_TEST_PLAN, "icon-chart-item-test-plan");
 
+	}
+
+	private void addInfoList(List<Project> projects) {
 		for (Project project : projects) {
 
 			Map<String, InfoList> infoLists = new HashMap<String, InfoList>();
@@ -140,7 +161,28 @@ public class JsonChartWizardData {
 		defaultList.put("TEST_CASE_NATURE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode()));
 		defaultList.put("TEST_CASE_TYPE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode()));
 		projectInfoList.put("default", defaultList);
-		
+	}
+
+
+
+	private void addCustomFields(List<Project> projects) {
+
+		for (Project project : projects) {
+			List<CustomFieldBinding> cufBindings = cufBindingService.findCustomFieldsForGenericProject(project.getId());
+			@SuppressWarnings("unchecked")
+			List<CustomField> cufs = (List<CustomField>) CollectionUtils.collect(cufBindings, new Transformer() {
+
+				@Override
+				public Object transform(Object input) {
+
+					return ((CustomFieldBinding) input).getCustomField();
+				}
+			});
+			customFields.put(project.getId().toString(), new HashSet<CustomField>(cufs));
+		}
+	}
+
+	private void fixColumnPrototype() {
 		// business want to regroup requirement and requirement version attribute under requirement
 		Set<ColumnPrototype> reqVersionCol = columnPrototypes.get(REQUIREMENT_VERSION);
 		columnPrototypes.get(REQUIREMENT).addAll(reqVersionCol);
@@ -151,7 +193,6 @@ public class JsonChartWizardData {
 	private <E extends Enum<E> & Level> void addLevelEnum(String name, Class<E> clazz) {
 		levelEnums.put(name, EnumSet.allOf(clazz));
 	}
-
 
 	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
 		return columnPrototypes;
@@ -173,4 +214,21 @@ public class JsonChartWizardData {
 		return dataTypes;
 	}
 
+	public Map<String, Map<String, InfoList>> getProjectInfoList() {
+		return projectInfoList;
+	}
+
+	public Map<String, Set<CustomField>> getCustomFields() {
+		return customFields;
+	}
+
+	@JsonSerialize(contentUsing = LevelEnumSerializer.class)
+	public Map<String, EnumSet<? extends Level>> getLevelEnums() {
+		return levelEnums;
+	}
+
+	@JsonSerialize(using = LevelEnumSerializer.class)
+	public EnumSet<ExecutionStatus> getExecutionStatus() {
+		return executionStatus;
+	}
 }

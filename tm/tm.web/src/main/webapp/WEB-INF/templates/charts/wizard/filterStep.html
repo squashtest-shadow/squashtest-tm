@@ -26,7 +26,11 @@
 
 
 <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
-    {{i18n this.label prefix="chart.column."}}
+{{#equal this.columnType "CUF"}}
+{{{cuf-label this.attributeName data.customFields}}}
+{{else}}
+{{i18n this.label prefix="chart.column."}}
+{{/equal}}
 <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}">
 {{#each  operations}}  
 
@@ -77,7 +81,9 @@
 <span id="info-list-filter-container-{{id}}" name="{{label}}"/>
 {{/equal}}
 
-
+{{#equal dataType "LIST"}}
+<span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
+{{/equal}}
 
 
 <br />
@@ -157,4 +163,13 @@
 
 
 
+<div th:fragment="chart-wizard-cuf-list">
+ <select id="first-filter-value-{{id}}" name="{{id}}">
+{{#each items}}
+ <option value="{{this.code}}">  
+  {{this.label}}
+ </option> 
+{{/each}}
+</select>
+</div>
 

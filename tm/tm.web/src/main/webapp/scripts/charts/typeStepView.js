@@ -331,16 +331,27 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		
 		findChoosenOperation : function (label){
-			return  _.result( _.find(this.model.get("operations"), function (obj) {return obj.column.label ==label;}), "operation");
+			return  _.chain(this.model.get("operations"))
+			.find(function (obj) {return obj.column.label ==label;})
+			.result("operation")
+			.value();
+
 		},
 		
 		findColumnByLabel : function (label){
-			return _.find(_.reduce(this.model.get("columnPrototypes"), function(memo, val){ return memo.concat(val); }, []), function(col){return col.label == label; });
+			return _.chain(this.model.get("columnPrototypes"))
+			.values()
+			.flatten()
+			.find(function(col){return col.label == label; })
+			.value();
 		},
 		
 		findFilterByColumnLabel : function (label){
-			return _.find(this.model.get("filters"), function(col){return col.column.label == label; });
+			return _.chain(this.model.get("filters"))
+			.find(function(obj){return obj.column.label == label; })
+			.value();
 		}
+
 		
 	});
 

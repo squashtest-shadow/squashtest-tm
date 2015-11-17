@@ -48,7 +48,12 @@
   {{#if (contains ../../attributes.selectedAttributes id)}} checked="checked" {{/if}} 
 />
 {{!--]]>--}}	
+
+{{#equal this.columnType "CUF"}}
+{{cuf-label this.attributeName ../../attributes.customFields}}
+{{else}}
 {{i18n this.label prefix="chart.column."}}
+{{/equal}}
 </div>
 
 {{/each}}  
