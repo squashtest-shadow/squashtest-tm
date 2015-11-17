@@ -1021,8 +1021,6 @@ values
 insert into CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
 values
 	 (65, 'FILTER'),
-	 (66, 'MEASURE'), (66, 'AXIS'), (66, 'FILTER');
-
 
 		</sql>
 
