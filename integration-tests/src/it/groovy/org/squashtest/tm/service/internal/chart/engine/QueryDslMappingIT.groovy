@@ -206,7 +206,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 		q.from(tc).leftJoin(tc.automatedTest, auto)
 
-		def ex = Expressions.simpleOperation(ExtAggOps.BOOLEAN_CASE.getType(), ExtAggOps.BOOLEAN_CASE, auto.id.isNotNull())
+		def ex = Expressions.simpleOperation(ExtOps.TRUE_IF.getType(), ExtOps.TRUE_IF, auto.id.isNotNull())
 		q.select(ex)
 
 

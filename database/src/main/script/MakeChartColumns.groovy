@@ -336,8 +336,8 @@ def definition = [
 				label : 'ITEM_TEST_PLAN_MANEXCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
-				measures : ['exId NOT_NULL'],
-				filter : ['autoexId NOT_NULL FALSE'],
+				measures : ['exId COUNT'],
+				filters : ['autoexId NOT_NULL FALSE'],
 				axes : ['itpId']
 			],
 			
@@ -345,8 +345,8 @@ def definition = [
 				label : 'ITEM_TEST_PLAN_AUTOEXCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
-				measures : ['exId NOT_NULL'],
-				filter : ['autoexId NOT_NULL TRUE'],
+				measures : ['exId COUNT'],
+				filters : ['autoexId NOT_NULL TRUE'],
 				axes : ['itpId']
 			],
 		

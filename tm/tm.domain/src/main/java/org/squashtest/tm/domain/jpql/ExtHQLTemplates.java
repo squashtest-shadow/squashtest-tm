@@ -56,9 +56,6 @@ public class ExtHQLTemplates extends HQLTemplates{
 		// boolean case when
 		add(ExtOps.TRUE_IF, "case when {0} then true else false end ");
 
-		// class test
-		add(ExtOps.IS_CLASS, "{0} = {1}");
-
 	}
 
 

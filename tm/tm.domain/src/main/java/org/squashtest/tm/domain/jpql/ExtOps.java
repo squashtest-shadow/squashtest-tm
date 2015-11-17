@@ -59,10 +59,7 @@ public enum ExtOps implements Operator {
 	ORDERED_GROUP_CONCAT_DIR(String.class),
 
 	// boolean case when
-	TRUE_IF(Boolean.class),
-
-	// test on class
-	IS_CLASS(Boolean.class);
+	TRUE_IF(Boolean.class);
 
 	private final Class<?> type;
 

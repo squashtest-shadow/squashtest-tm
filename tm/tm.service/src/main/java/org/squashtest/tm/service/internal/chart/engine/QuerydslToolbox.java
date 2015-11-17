@@ -68,6 +68,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
 
+import static org.squashtest.tm.domain.chart.DataType.*;
+
 class QuerydslToolbox {
 
 	private String subContext;
@@ -576,15 +578,24 @@ class QuerydslToolbox {
 
 			List<Expression<?>> expressions = new ArrayList<>(values.size());
 
+			/*
+			 * Usually binary operations have operands of the same type of
+			 * the column they apply to, except for NOT_NULL which accepts a
+			 * boolean instead. Hence the line below.
+			 */
+			DataType actualType = (operation == Operation.NOT_NULL) ? BOOLEAN : type;
+
 			for (String val : values) {// NOSONAR that's a fucking switch it's not complex !
+
 				Object operand;
-				switch(type){
+
+				switch(actualType){
 				case INFO_LIST_ITEM:
 				case STRING :
 					operand = val;
 					break;
 				case NUMERIC :
-					operand = Long.valueOf(val);
+					operand = (val.contains(".")) ? Double.valueOf(val) : Long.valueOf(val);
 					break;
 				case DATE :
 					operand = DateUtils.parseIso8601Date(val);
@@ -627,12 +638,12 @@ class QuerydslToolbox {
 	}
 
 
+
 	private Operator getOperator(Operation operation){
 		Operator operator;
 
 		switch (operation) {// NOSONAR that's a fucking switch it's not complex !
 		case EQUALS : operator = Ops.EQ; break;
-		case CLASS_EQUALS : operator = ExtOps.IS_CLASS; break;
 		case LIKE : operator = Ops.LIKE; break;
 		case BY_YEAR : operator = DateTimeOps.YEAR; break;
 		case BY_MONTH : operator = DateTimeOps.YEAR_MONTH; break;
@@ -655,6 +666,7 @@ class QuerydslToolbox {
 		return operator;
 	}
 
+
 	private Expression[] prepend(Expression head, Expression... tail){
 		Expression[] res = new Expression[tail.length+1];
 		res[0] = head;
@@ -674,9 +686,6 @@ class QuerydslToolbox {
 		case INFO_LIST_ITEM : result = InfoListItem.class; break;
 		case LEVEL_ENUM:
 			result = Level.class;
-			break;
-		case CLASS :
-			result = Class.class;
 			break;
 
 		default : throw new IllegalArgumentException("datatype '"+type+"' is not yet supported");

@@ -460,6 +460,151 @@ where case when execution_sub.id is not null then true else false end  = ?1
 group by iterationTestPlanItem_sub.id)
 group by iteration.id"""
 	}
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count how many automated executions by item"(){
+		given :
+		def measureProto= findByName('ITEM_TEST_PLAN_AUTOEXCOUNT')
+		def axisProto = findByName('ITEM_TEST_PLAN_ID')
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+
+		then :
+		res.collect {it.a} as Set == [[-111l, 0], [-121l, 0], [-122l, 1], [-112l,0]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct iterationTestPlanItem.id, s_sum((select distinct s_count(execution_sub.id)
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+  left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
+where automatedExecutionExtender_sub.id is not null and iterationTestPlanItem = iterationTestPlanItem_sub))
+from IterationTestPlanItem iterationTestPlanItem
+group by iterationTestPlanItem.id"""
+
+	}
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count how many manual executions by item"(){
+		given :
+		def measureProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
+		def axisProto = findByName('ITEM_TEST_PLAN_ID')
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.SUM)
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+
+		then :
+		res.collect {it.a} as Set == [[-111l, 3], [-121l, 1], [-122l, 0], [-112l,0]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct iterationTestPlanItem.id, s_sum((select distinct s_count(execution_sub.id)
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+  left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
+where automatedExecutionExtender_sub.id is null and iterationTestPlanItem = iterationTestPlanItem_sub))
+from IterationTestPlanItem iterationTestPlanItem
+group by iterationTestPlanItem.id"""
+
+	}
+
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count by iteration how many items have at least 1 manual execution"(){
+		given :
+		def measureProto = findByName('ITEM_TEST_PLAN_ID')
+		def filterProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
+		def axisProto = findByName('ITERATION_ID')
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values :["0"])
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				filters : [filter],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def clone = query.clone(getSession())
+		def res = clone.fetch()
+
+
+		then :
+		res.collect {it.a} as Set == [[-11l, 1], [-12l, 1]] as Set
+		query.toString().replaceAll(/_\d+/, "_sub") ==
+				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
+from Iteration iteration
+  inner join iteration.testPlans as iterationTestPlanItem
+where iterationTestPlanItem.id in (select distinct iterationTestPlanItem_sub.id
+from IterationTestPlanItem iterationTestPlanItem_sub
+  left join iterationTestPlanItem_sub.executions as execution_sub
+  left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
+where automatedExecutionExtender_sub.id is null
+group by iterationTestPlanItem_sub.id
+having s_count(execution_sub.id) > ?1)
+group by iteration.id"""
+
+	}
+
+	@DataSet("QueryPlanner.dataset.xml")
+	def "should count by iteration how many items have at least 1 manual execution and where execution label match description"(){
+		given :
+		def measureProto = findByName('ITEM_TEST_PLAN_ID')
+		def filterProto= findByName('ITEM_TEST_PLAN_MANEXCOUNT')
+		def filter2Proto= findByName('EXECUTION_LABEL')
+		def axisProto = findByName('ITERATION_ID')
+
+		and :
+		def measure = new MeasureColumn(column : measureProto, operation : Operation.COUNT)
+		def filter = new Filter(column : filterProto, operation : Operation.GREATER, values :["0"])
+		def filter2 = new Filter(column : filter2Proto, operation : Operation.LIKE, values :["cp 1 it1%"])
+		def axis = new AxisColumn(column : axisProto, operation : Operation.NONE)
+
+		ChartQuery chartQuery = new ChartQuery(
+				measures : [measure],
+				filters : [filter, filter2],
+				axis : [axis]
+				)
+
+		when :
+		def query = new QueryBuilder(new DetailedChartQuery(chartQuery)).createQuery()
+		def clone = query.clone(getSession())
+
+		def res = clone.fetch()
+
+
+		then :
+		res.collect {it.a} as Set == [[-11l, 1]] as Set
+
+
+	}
+
 	// ********* utilities ***************************
 
 
