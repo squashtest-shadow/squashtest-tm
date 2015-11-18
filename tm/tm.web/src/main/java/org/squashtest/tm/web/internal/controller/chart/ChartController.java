@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.chart;
 
 import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.validation.Valid;
@@ -37,12 +38,17 @@ import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
+import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
 
@@ -66,6 +72,9 @@ public class ChartController {
 	private InfoListFinderService infoListFinder;
 	
 	@Inject
+	private I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
+	
+	@Inject
 	private CustomFieldBindingModificationService cufBindingService;
 
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
@@ -77,12 +86,20 @@ public class ChartController {
 	}
 
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
-	public ModelAndView getWizard(@PathVariable Long parentId) {
+	public ModelAndView getWizard(@PathVariable Long parentId, Locale locale) {
 		ModelAndView mav = new ModelAndView("charts/wizard/wizard.html");
 		GenericProject project = reportNodeService.findCustomReportLibraryNodeById(parentId).getCustomReportLibrary()
 				.getProject();
 		mav.addObject("parentId", parentId);
 		mav.addObject("defaultProject", project.getId());
+		
+		//defaults lists and enums levels
+		mav.addObject("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
+		mav.addObject("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
+		mav.addObject("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
+		mav.addObject("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
+		mav.addObject("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
+				
 		return mav;
 	}
 

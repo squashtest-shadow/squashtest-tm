@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-define(["backbone","./chart-render-utils","./customReportPieView","./customReportBarView"],
-		function(Backbone,renderUtils,PieView,BarView){
+define(["backbone","./chart-render-utils","./customReportPieView","./customReportBarView","./customReportLineView"],
+		function(Backbone,renderUtils,PieView,BarView,LineView){
 
 
 	function generateBarChart(viewID, jsonChart){
@@ -50,6 +50,44 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 
 
 		return new Bar({
+			el : $(viewID),
+			model : new Backbone.Model({
+				chartmodel : series,
+        title : title,
+        axis : axis
+			},{
+				url : "whatever"
+			})
+		});
+	}
+
+  function generateLineChart(viewID, jsonChart){
+
+		var ticks = jsonChart.abscissa.map(function(elt){
+			return elt[0];
+		});
+
+		var series = jsonChart.measures.map(function(measure){
+			return jsonChart.series[measure.label];
+		});
+
+    var axis = jsonChart.axes;
+
+    var title = jsonChart.name;
+
+		var Line = LineView.extend({
+			getCategories : function(){
+				return ticks;
+			},
+
+			getSeries : function(){
+				return this.model.get('chartmodel');
+			}
+
+		});
+
+
+		return new Line({
 			el : $(viewID),
 			model : new Backbone.Model({
 				chartmodel : series,
@@ -107,6 +145,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
     switch(jsonChart.type){
     case 'PIE' : return generatePieChart(viewID, jsonChart);
     case 'BAR' : return generateBarChart(viewID, jsonChart);
+    case 'LINE' : return generateLineChart(viewID, jsonChart);
     default : throw jsonChart.chartType+" not supported yet";
     }
   }

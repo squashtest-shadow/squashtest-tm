@@ -428,6 +428,9 @@
 			<div class="unsnap"></div>
 		</div>
 		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
+			{{#if emptyDashboard}}
+				{{> dashboardDoc}}
+			{{/if}}
 			{{#each chartBindings}}
    				{{> chart}}
  			{{/each}}
@@ -459,6 +462,13 @@
 		</div>
 		<span class="gs-resize-handle gs-resize-handle-both"></span>
 	</script>
+	
+	<script id="tpl-dashboard-doc" type="text/x-handlebars-template"> 
+		<div id="dashboard-doc">
+			<span th:text="#{workspace.custom-report.dashboard.doc}">dashboard doc</span>
+		</div>
+	</script>
+	
 	<!-- /SHOW DASHBOARD  -->
 
 	<!-- SHOW CHART-->

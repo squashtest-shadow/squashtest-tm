@@ -34,6 +34,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     tplChart : "#tpl-chart-in-dashboard",
     tplNewChart : "#tpl-new-chart-in-dashboard",
     tplChartDisplay : "#tpl-chart-display-area",
+    tplDashboardDoc : "#tpl-dashboard-doc",
     widgetPrefixSelector : "#widget-chart-binding-",
     gridCol : 4,
     gridRow: 3,
@@ -58,7 +59,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         "dateFormat" : "squashtm.dateformat",
         "dateFormatShort" : "squashtm.dateformatShort"
       });
-			_.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard");
+			_.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard","serializeGridster");
 			this.initializeData();
 			this.initListenerOnTree();
       this.initListenerOnWindowResize();
@@ -97,8 +98,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       var source = $(this.tpl).html();
       var template = Handlebars.compile(source);
       Handlebars.registerPartial("chart", $(this.tplChart).html());
+      Handlebars.registerPartial("dashboardDoc", $(this.tplDashboardDoc).html());
       console.log("TEAMPLATING DASHBOARD");
       console.log(this.dashboardInitialData);
+      if (this.dashboardInitialData.chartBindings.length === 0) {
+        this.dashboardInitialData.emptyDashboard = true;
+      }
       this.$el.append(template(this.dashboardInitialData));
       return this;
     },
@@ -154,11 +159,10 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 		},
 
     /**
-    * Update all charts
-    * @return {[type]} [description]
+    * Update all charts. The binding are given by this.dashboardChartBindings
     */
     refreshCharts : function () {
-      var charts = _.values(this.dashboardChartViews);
+      // var charts = _.values(this.dashboardChartViews);
       var bindings =  _.values(this.dashboardChartBindings);
       for (var j = 0; j < bindings.length; j++) {
         var binding = bindings[j];
@@ -172,7 +176,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         self.redrawDashboard();
       }, 50);
     },
-    
+
     generateGridsterCss : function () {
       console.log("GENERATE DYNAMIC CSS");
       console.log(this.$("#dashboard-grid").offset());
@@ -450,6 +454,9 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     addNewChart : function (binding) {
+      if (_.size(this.dashboardChartBindings)===0 && this.$el.find("#dashboard-doc").length ===1) {
+        this.$el.find("#dashboard-doc").remove();
+      }
       var source = $(this.tplNewChart).html();
       var template = Handlebars.compile(source);
       var html = template(binding);

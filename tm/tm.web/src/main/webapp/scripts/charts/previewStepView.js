@@ -18,52 +18,52 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing", "charts/rendering/charts-render-main"],
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory"],
 	function($, backbone, _, Handlebars, AbstractStepView, router, chart) {
 	"use strict";
 
 	var previewStepView = AbstractStepView.extend({
-		
+
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#preview-step-tpl";
 			this.model = data;
 			data.name = "preview";
 			this._initialize(data, wizrouter);
 			this.initChart();
-			
+
 
 		},
-		
-			
+
+
 		initChart : function (){
 			var data = this.model.get("chartData");
-			chart.buildChart("#chart-display-area", data);	
-			
+			chart.buildChart("#chart-display-area", data);
+
 		},
 		save : function () {
-			
+
 			var parentId = this.model.get("parentId");
 			this.updateModel();
-			
+
 			$.ajax({
 				method : "POST",
 				contentType: "application/json",
 				url : router.buildURL("chart.new", parentId),
 				data : this.model.toJson()
-				
+
 			}).done(function(url){
 				 window.location.href = squashtm.app.contextRoot + url;
 			});
-			
-			
+
+
 		},
-		
+
 		updateModel : function() {
-			   
+
 		    var name = $("#chart-name").val();
-		    this.model.set({name : name });  
+		    this.model.set({name : name });
 		}
-		
+
 	});
 
 	return previewStepView;

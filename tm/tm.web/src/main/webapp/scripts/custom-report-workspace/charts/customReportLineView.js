@@ -34,7 +34,7 @@ define(["jquery", "./abstractCustomReportChart",
 	return JqplotView.extend({
 
 		getCategories : function(){
-			throw "attempted to create an abstract BarView !";
+			throw "attempted to create an abstract LineView !";
 		},
 
     getConf : function(series){
@@ -44,10 +44,8 @@ define(["jquery", "./abstractCustomReportChart",
 
 			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {
-					renderer : $.jqplot.BarRenderer,
 					rendererOptions : {
-						fillToZero : true,
-            varyBarColor : true
+            smooth: true
 					}
 				},
 
@@ -59,7 +57,11 @@ define(["jquery", "./abstractCustomReportChart",
 					xaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
 						ticks : ticks
-					}
+					},
+          yaxis: {
+            min : 0
+        }
+
 				},
 
 				grid : {

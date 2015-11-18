@@ -65,7 +65,11 @@
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
     	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",	
-    	  	
+    	  	defaultInfoList : /*[[${defaultInfoLists}]]*/{},
+			testCaseImportance : /*[[${testCaseImportance}]]*/{},
+			testCaseStatus : /*[[${testCaseStatus}]]*/{},
+			requirementStatus : /*[[${requirementStatus}]]*/{},
+			requirementCriticality : /*[[${requirementCriticality}]]*/{}
     	};
     	squashtm.workspace = squashtm.workspace || {};
     	squashtm.chart = {};
