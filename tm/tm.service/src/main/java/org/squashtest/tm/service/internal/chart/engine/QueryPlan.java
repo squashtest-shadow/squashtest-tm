@@ -64,7 +64,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 
 	void trim(DetailedChartQuery definition){
 
-		Collection<InternalEntityType> targets = new HashSet<>(definition.getTargetEntities());
+		Collection<InternalEntityType> targets = definition.getTargetEntities();
 
 		Queue<TraversedEntity> fifo = new LinkedList<>(getLeaves());
 

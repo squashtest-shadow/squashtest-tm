@@ -472,13 +472,13 @@ TestCaseLibraryNavigationService {
 
 		return excelService.exportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
 	}
-	
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public File searchExportTestCaseAsExcel(List<Long> nodeIds,
 			boolean includeCalledTests, boolean keepRteFormat,
 			MessageSource messageSource) {
-		
+
 		Collection<Long> allIds = findTestCaseIdsFromSelection(CollectionUtils.EMPTY_COLLECTION, nodeIds, includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
 
@@ -509,33 +509,50 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
-		return findTestCaseIdsFromSelection(libraryIds, nodeIds, false);
-	}
 
-	@Override
-	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,
-			boolean includeCalledTests) {
+		/*
+		 *  first, let's check the permissions on those root nodes
+		 *  By transitivity, if the user can read them then it will
+		 *  be allowed to read the test case below
+		 */
 
-		// get all the test cases
+		Collection<Long> readLibIds = securityFilterIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary", "READ");
+		Collection<Long> readNodeIds = securityFilterIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode", "READ");
+
+		// now we can collect the test cases
 		Collection<Long> tcIds = new ArrayList<Long>();
 
 		if (!libraryIds.isEmpty()) {
-			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(libraryIds));
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(readLibIds));
 		}
 		if (!nodeIds.isEmpty()) {
-			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(nodeIds));
-		}
-		if (includeCalledTests) {
-			tcIds.addAll(calltreeService.getTestCaseCallTree(tcIds));
+			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(readNodeIds));
 		}
 
 		// filter out duplicates
 		Set<Long> set = new HashSet<Long>(tcIds);
 		tcIds = new ArrayList<Long>(set);
 
-		// sec check
-		tcIds = securityFilterIds(tcIds, "org.squashtest.tm.domain.testcase.TestCase", "READ");
+		// return
+		return tcIds;
+	}
 
+	@Override
+	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,
+			boolean includeCalledTests) {
+
+		// first collect the test cases
+		// the implementation guarantee there are no duplicates in the returned collection
+		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
+
+		// collect if needed the called test cases
+		if (includeCalledTests) {
+			Set<Long> called = calltreeService.getTestCaseCallTree(tcIds);
+			called = securityFilterIds(called, "org.squashtest.tm.domain.testcase.TestCase", "READ");
+			tcIds.addAll(tcIds);
+		}
+
+		// return
 		return tcIds;
 
 	}

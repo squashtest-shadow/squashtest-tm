@@ -110,7 +110,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 
 		then :
-		res.collect{it.a} as Set == [ [-1l,3], [-2l,1], [-3l,2] ] as Set
+		res.collect{it.a}  == [ [-3l,2] , [-2l,1], [-1l,3] ]
 
 
 	}
@@ -143,7 +143,7 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 
 
 		then :
-		res.collect{it.a} as Set == [ [-1l,-1l], [-3l, -3l] ] as Set
+		res.collect{it.a} == [ [-3l, -3l], [-1l,-1l]  ]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct requirement.id, requirement.id
 from Requirement requirement
@@ -152,7 +152,8 @@ from Requirement requirement_sub
   inner join requirement_sub.versions as requirementVersion_sub
 group by requirement_sub.id
 having s_count(requirementVersion_sub.id) > ?1)
-group by requirement.id"""
+group by requirement.id
+order by requirement.id asc"""
 
 	}
 
@@ -178,7 +179,7 @@ group by requirement.id"""
 		def res = query.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[-1l, 2], [-2l, 1], [-3l, 0]] as Set
+		res.collect {it.a}  == [[-3l, 0], [-2l, 1], [-1l, 2]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct testCase.id, s_sum((select distinct s_count(iteration_sub.id)
 from Iteration iteration_sub
@@ -186,7 +187,8 @@ from Iteration iteration_sub
   left join iterationTestPlanItem_sub.referencedTestCase as testCase_sub
 where testCase = testCase_sub))
 from TestCase testCase
-group by testCase.id"""
+group by testCase.id
+order by testCase.id asc"""
 
 	}
 
@@ -216,14 +218,15 @@ group by testCase.id"""
 		def res = clone.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[-3l, 0], [-2l,1], [-1l,0]] as Set
+		res.collect {it.a} == [[-3l, 0], [-2l,1], [-1l,0] ]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct testCase.id, s_sum((select distinct s_count(testStep_sub.id)
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
 where testStep_sub.class = ?1 and testCase = testCase_sub))
 from TestCase testCase
-group by testCase.id"""
+group by testCase.id
+order by testCase.id asc"""
 	}
 
 
@@ -254,7 +257,7 @@ group by testCase.id"""
 		then :
 		// the requirement -2l isn't verified by tc2 and thus
 		// is filtered out because of inner join
-		res.collect {it.a} as Set == [[-1l,1], [-3l, 1]] as Set
+		res.collect {it.a}  == [[-3l,1], [-1l, 1]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct requirement.id, s_count(testCase.id)
 from Requirement requirement
@@ -267,7 +270,8 @@ from TestCase testCase_sub
 where testStep_sub.class = ?1
 group by testCase_sub.id
 having s_count(testStep_sub.id) > ?2)
-group by requirement.id"""
+group by requirement.id
+order by requirement.id asc"""
 	}
 
 
@@ -299,13 +303,14 @@ group by requirement.id"""
 		def res = clone.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[-3l, 1]] as Set
+		res.collect {it.a} == [[-3l, 1]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct testCase.id, s_count(testCase.id)
 from TestCase testCase
   left join testCase.automatedTest as automatedTest_subcolumn_sub
 where case when automatedTest_subcolumn_sub.id is not null then true else false end  = ?1
-group by testCase.id"""
+group by testCase.id
+order by testCase.id asc"""
 	}
 
 
@@ -335,13 +340,14 @@ group by testCase.id"""
 		def res = clone.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[-1l, 1], [-2l, 1]] as Set
+		res.collect {it.a}  == [[-2l, 1], [-1l, 1]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct testCase.id, s_count(testCase.id)
 from TestCase testCase
   left join testCase.automatedTest as automatedTest_subcolumn_sub
 where case when automatedTest_subcolumn_sub.id is not null then true else false end  = ?1
-group by testCase.id"""
+group by testCase.id
+order by testCase.id asc"""
 	}
 
 
@@ -371,12 +377,16 @@ group by testCase.id"""
 		def res = clone.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[false, 2], [true, 1]] as Set
+		res.collect {it.a} as Set == [[true, 1], [false, 2]] as Set
+
+		// note : the \n\ bullshit is because eclipse formatter would drop an important
+		// whitespace at the end of the line, hence the trick
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct case when automatedTest_subcolumn_sub.id is not null then true else false end , s_count(testCase.id)
 from TestCase testCase
   left join testCase.automatedTest as automatedTest_subcolumn_sub
-group by case when automatedTest_subcolumn_sub.id is not null then true else false end"""
+group by case when automatedTest_subcolumn_sub.id is not null then true else false end \n\
+order by case when automatedTest_subcolumn_sub.id is not null then true else false end  asc"""
 	}
 
 
@@ -407,7 +417,7 @@ group by case when automatedTest_subcolumn_sub.id is not null then true else fal
 		def res = clone.fetch()
 
 		then :
-		res.collect {it.a} as Set == [[-11l, 1], [-12l,2]] as Set
+		res.collect {it.a} == [[-12l, 2], [-11l,1]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
@@ -417,7 +427,8 @@ from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
 where case when execution_sub.id is not null then true else false end  = ?1
 group by iterationTestPlanItem_sub.id)
-group by iteration.id"""
+group by iteration.id
+order by iteration.id asc"""
 	}
 
 
@@ -448,7 +459,7 @@ group by iteration.id"""
 		then :
 		// alas, the other iteration has no not-executed items so
 		// it is filtered out because of of inner join mechanics
-		res.collect {it.a} as Set == [[-11l, 1]] as Set
+		res.collect {it.a} == [[-11l, 1]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
@@ -458,7 +469,8 @@ from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
 where case when execution_sub.id is not null then true else false end  = ?1
 group by iterationTestPlanItem_sub.id)
-group by iteration.id"""
+group by iteration.id
+order by iteration.id asc"""
 	}
 
 
@@ -484,7 +496,7 @@ group by iteration.id"""
 
 
 		then :
-		res.collect {it.a} as Set == [[-111l, 0], [-121l, 0], [-122l, 1], [-112l,0]] as Set
+		res.collect {it.a}  == [[-122l, 1], [-121l, 0], [-112l,0], [-111l, 0]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct iterationTestPlanItem.id, s_sum((select distinct s_count(execution_sub.id)
 from IterationTestPlanItem iterationTestPlanItem_sub
@@ -492,7 +504,8 @@ from IterationTestPlanItem iterationTestPlanItem_sub
   left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
 where automatedExecutionExtender_sub.id is not null and iterationTestPlanItem = iterationTestPlanItem_sub))
 from IterationTestPlanItem iterationTestPlanItem
-group by iterationTestPlanItem.id"""
+group by iterationTestPlanItem.id
+order by iterationTestPlanItem.id asc"""
 
 	}
 
@@ -518,7 +531,7 @@ group by iterationTestPlanItem.id"""
 
 
 		then :
-		res.collect {it.a} as Set == [[-111l, 3], [-121l, 1], [-122l, 0], [-112l,0]] as Set
+		res.collect {it.a}  == [[-122l, 0], [-121l, 1], [-112l,0], [-111l, 3]]
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct iterationTestPlanItem.id, s_sum((select distinct s_count(execution_sub.id)
 from IterationTestPlanItem iterationTestPlanItem_sub
@@ -526,7 +539,8 @@ from IterationTestPlanItem iterationTestPlanItem_sub
   left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
 where automatedExecutionExtender_sub.id is null and iterationTestPlanItem = iterationTestPlanItem_sub))
 from IterationTestPlanItem iterationTestPlanItem
-group by iterationTestPlanItem.id"""
+group by iterationTestPlanItem.id
+order by iterationTestPlanItem.id asc"""
 
 	}
 
@@ -556,7 +570,7 @@ group by iterationTestPlanItem.id"""
 
 
 		then :
-		res.collect {it.a} as Set == [[-11l, 1], [-12l, 1]] as Set
+		res.collect {it.a} as Set == [[-12l, 1], [-11l, 1]] as Set
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
@@ -568,7 +582,8 @@ from IterationTestPlanItem iterationTestPlanItem_sub
 where automatedExecutionExtender_sub.id is null
 group by iterationTestPlanItem_sub.id
 having s_count(execution_sub.id) > ?1)
-group by iteration.id"""
+group by iteration.id
+order by iteration.id asc"""
 
 	}
 

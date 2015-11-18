@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -49,10 +50,12 @@ class DetailedChartQuery extends ChartQuery{
 
 	private InternalEntityType rootEntity;
 
-	// used when DomainGraph#reverse is true, see documenation on this property for details
+	// used when DomainGraph#reverse is true, see documentation on this property for details
 	private InternalEntityType measuredEntity;
 
-	private List<InternalEntityType> targetEntities;
+	private Set<InternalEntityType> targetEntities;
+
+	private Set<Filter> scopeFilters = new HashSet<>();
 
 
 	// for testing purposes - do not use
@@ -87,14 +90,7 @@ class DetailedChartQuery extends ChartQuery{
 		measuredEntity = InternalEntityType.fromSpecializedType(parent.getMeasures().get(0).getSpecializedType());
 
 		// find all the target entities
-		Map<ColumnRole, Set<SpecializedEntityType>> entitiesByRole = parent.getInvolvedEntities();
-
-		targetEntities = new ArrayList<>();
-		for (Set<SpecializedEntityType> types : entitiesByRole.values()){
-			for (SpecializedEntityType type : types){
-				targetEntities.add(InternalEntityType.fromSpecializedType(type));
-			}
-		}
+		computeTargetEntities();
 
 	}
 
@@ -118,6 +114,22 @@ class DetailedChartQuery extends ChartQuery{
 
 	}
 
+	protected final void computeTargetEntities(){
+		Map<ColumnRole, Set<SpecializedEntityType>> entitiesByRole = getInvolvedEntities();
+
+		targetEntities = new HashSet<>();
+
+		for (Set<SpecializedEntityType> types : entitiesByRole.values()){
+			for (SpecializedEntityType type : types){
+				targetEntities.add(InternalEntityType.fromSpecializedType(type));
+			}
+		}
+
+		for (Filter f : scopeFilters){
+			targetEntities.add(InternalEntityType.fromSpecializedType(f.getSpecializedType()));
+		}
+	}
+
 	protected InternalEntityType getRootEntity() {
 		return rootEntity;
 	}
@@ -131,13 +143,21 @@ class DetailedChartQuery extends ChartQuery{
 	}
 
 
-	protected List<InternalEntityType> getTargetEntities() {
+	protected Set<InternalEntityType> getTargetEntities() {
 		return targetEntities;
 	}
 
 
-	protected void setTargetEntities(List<InternalEntityType> targetEntities) {
+	protected void setTargetEntities(Set<InternalEntityType> targetEntities) {
 		this.targetEntities = targetEntities;
+	}
+
+	protected void setScopeFilters(Set<Filter> scopeFilters){
+		this.scopeFilters = scopeFilters;
+	}
+
+	protected Set<Filter> getScopeFilters(){
+		return scopeFilters;
 	}
 
 
@@ -152,7 +172,6 @@ class DetailedChartQuery extends ChartQuery{
 	public void setFilters(List<Filter> filters){
 		getFilters().addAll(filters);
 	}
-
 
 
 	private Collection<ColumnPrototypeInstance> findSubqueriesForStrategy(PerStrategyColumnFinder finder){

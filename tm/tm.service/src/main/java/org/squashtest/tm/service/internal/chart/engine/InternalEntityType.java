@@ -44,8 +44,6 @@ import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.QAutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.QAutomatedTest;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.QDataset;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;

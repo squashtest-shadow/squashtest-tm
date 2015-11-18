@@ -400,8 +400,11 @@ CampaignLibraryNavigationService {
 
 	@Override
 	public Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
+
+		throw new IllegalArgumentException("bullshit implementation");
+
 		// get all the campaigns
-		Collection<Long> cIds = new ArrayList<Long>();
+		/*	Collection<Long> cIds = new ArrayList<Long>();
 
 		if (!libraryIds.isEmpty()) {
 			cIds.addAll(campaignDao.findAllCampaignIdsByLibraries(libraryIds));
@@ -417,7 +420,7 @@ CampaignLibraryNavigationService {
 		// sec check
 		cIds = securityFilterIds(cIds, "org.squashtest.tm.domain.campaign.Campaign", "READ");
 
-		return cIds;
+		return cIds;*/
 
 	}
 

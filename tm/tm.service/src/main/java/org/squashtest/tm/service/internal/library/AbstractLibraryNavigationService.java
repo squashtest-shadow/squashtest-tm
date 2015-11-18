@@ -25,8 +25,10 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 
@@ -419,8 +421,8 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		return dataset;
 	}
 
-	protected Collection<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
-		Collection<Long> effective = new ArrayList<Long>();
+	protected Set<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
+		Set<Long> effective = new HashSet<Long>();
 		for (Long id : original) {
 			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)) {
 				effective.add(id);

@@ -81,7 +81,8 @@ def definition = [
 
 		columns : [
 			reqId : ['ID', 'NUMERIC', 'id',  "all" ],
-			reqVCount : ['NB_VERSIONS', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'reqVCountSub']
+			reqVCount : ['NB_VERSIONS', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'reqVCountSub'],
+			reqProject : ['PROJECT', 'NUMERIC', 'project.id', 'none']
 		],
 
 		subqueries : [
@@ -134,6 +135,7 @@ def definition = [
 			tcCreatOn : ['CREATED_ON', 'DATE', 'audit.createdOn', 'axis, filter'],
 			tcModOn : ['MODIFIED_ON', 'DATE', 'audit.lastModifiedOn', 'axis, filter'],
 			tcId : ['ID', 'NUMERIC', 'id', 'all'],
+			tcProject : ['PROJECT', 'NUMERIC', 'project.id', 'none'],
 			tcCreatBy : ['CREATED_BY', 'STRING', 'audit.createdBy', 'axis, filter'],
 			tcModBy : ['MODIFIED_BY', 'STRING', 'audit.lastModifiedBy', 'axis, filter'],
 			tcRef : ['REFERENCE', 'STRING', 'reference', 'filter, axis'],
@@ -237,6 +239,7 @@ def definition = [
 	CAMPAIGN : [
 		columns : [
 			cId : ['ID', 'NUMERIC', 'id', 'all'],
+			cProject : ['PROJECT', 'NUMERIC', 'project.id', 'none'],
 			cRef : ['REFERENCE', 'STRING', 'reference', 'filter, measure'],
 			cSchedStart : ['SCHED_START', 'DATE', 'scheduledPeriod.scheduledStartDate', 'axis, filter'],
 			cSchedEnd : ['SCHED_END', 'DATE', 'scheduledPeriod.scheduledEndDate', 'axis, filter'],

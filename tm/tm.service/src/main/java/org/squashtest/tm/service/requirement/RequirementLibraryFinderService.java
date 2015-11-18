@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.requirement;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.lang.PathUtils;
@@ -39,7 +40,7 @@ public interface RequirementLibraryFinderService {
 	 * @return
 	 */
 	List<RequirementLibrary> findLinkableRequirementLibraries();
-	
+
 
 	/**
 	 * Returns the path of a RequirementLibraryNode given its id. The format is standard, beginning with /&lt;project-name&gt;
@@ -64,6 +65,17 @@ public interface RequirementLibraryFinderService {
 	 * @param path
 	 * @return the id or null if no {@link RequirementLibraryNode} have the path
 	 */
-	Long findNodeIdByPath(String path);	
+	Long findNodeIdByPath(String path);
+
+	/**
+	 * Passing the ids of some selected RequirementLibrary and RequirementLibraryNodes (in separate collections), will return
+	 * the ids of the Requirements encompassed by this selection.
+	 * 
+	 * the requirement ids that cannot be accessed for security reason will be filtered out.
+	 * @param libraryIds
+	 * @param nodeIds
+	 * @return
+	 */
+	Collection<Long> findRequirementIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds);
 
 }

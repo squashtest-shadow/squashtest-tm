@@ -26,6 +26,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -141,7 +142,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	@Inject
 	@Named(value="requirementExcelExporter")
 	private Provider<RequirementExcelExporter> exporterProvider;
-	
+
 	@Inject
 	private Provider<SearchRequirementExcelExporter> searchExporterProvider;
 
@@ -617,11 +618,11 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		exporter.appendToWorkbook(exportModel, keepRteFormat);
 		return exporter.print();
 	}
-	
+
 	@Override
 	public File searchExportRequirementAsExcel(List<Long> nodeIds,
 			boolean keepRteFormat, MessageSource messageSource) {
-		
+
 		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
 
 		Set<Long> reqIds = new HashSet<Long>();
@@ -657,6 +658,11 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	}
 
 	@Override
+	public Collection<Long> findRequirementIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
+		throw new IllegalArgumentException("not implemented yet");
+	}
+
+	@Override
 	public Long mkdirs(String folderpath) {
 		List<String> paths = PathUtils.scanPath(folderpath);
 		String[] splits = PathUtils.splitPath(folderpath);
@@ -676,20 +682,20 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 		int position = ids.indexOf(null);
 
 		switch (position) {
-			case -1 ://no null value so all node exists, returning ids of the last folder
-				return ids.get(ids.size()-1);
-			case 0 ://no member of the path exists, we must create the hierachy under the Requirement librairy
-				folderTree = makeFolderTree(project,1, splits);
-				addFolderToLibrary(project.getRequirementLibrary().getId(), folderTree);
-				break;
-			default://Something already exists... requirement or folder ?
-				Requirement requirement = findRequirement(ids.get(position-1));
-				if (requirement == null) {
-					return createFolderTree(project,position, ids.get(position-1),splits);
-				}
-				else {
-					return createRequirementTree(project,position, ids.get(position-1),splits);
-				}
+		case -1 ://no null value so all node exists, returning ids of the last folder
+			return ids.get(ids.size()-1);
+		case 0 ://no member of the path exists, we must create the hierachy under the Requirement librairy
+			folderTree = makeFolderTree(project,1, splits);
+			addFolderToLibrary(project.getRequirementLibrary().getId(), folderTree);
+			break;
+		default://Something already exists... requirement or folder ?
+			Requirement requirement = findRequirement(ids.get(position-1));
+			if (requirement == null) {
+				return createFolderTree(project,position, ids.get(position-1),splits);
+			}
+			else {
+				return createRequirementTree(project,position, ids.get(position-1),splits);
+			}
 		}
 
 		//now get the last folder on path and return id
