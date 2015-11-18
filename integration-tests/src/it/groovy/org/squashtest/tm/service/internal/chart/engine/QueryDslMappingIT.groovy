@@ -59,6 +59,7 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPASubQuery;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import spock.unitils.UnitilsSupport;
 
@@ -94,125 +95,23 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 		}
 	}
 
-
 	@DataSet("QueryPlanner.dataset.xml")
-	def "should fetch test step ids using querydsl Qtypes"(){
+	def "should accept a long dereferencing until project.id"(){
 
 		given :
-		ExtendedHibernateQuery q = new ExtendedHibernateQuery()
-
-		QTestCase testCase = QTestCase.testCase
-		QTestStep allsteps = QTestStep.testStep
-
-		q.select(allsteps.id).from(testCase).join(testCase.steps, allsteps).where(testCase.id.eq(-1l))
-
+		HibernateQuery q = new HibernateQuery(getSession())
+		def tc = QTestCase.testCase
+		q.from(tc)
+				.where(tc.project.id.eq(-11111l))
+				.select(tc.id)
+		println q
 		when :
-		ExtendedHibernateQuery attached = q.clone(getSession())
-		def res = attached.fetch();
-
-		then :
-		res as Set == [-11l, -12l, -13l] as Set
-
-	}
-
-
-
-	@DataSet("QueryPlanner.dataset.xml")
-	def "should fetch test step ids using join over dynamic path (instead of the natural way)"(){
-
-		given : "the building parts"
-
-		String tcAlias = "tc";
-		String stepAlias = "st";
-
-
-		EntityPathBase testcase = new QTestCase(tcAlias);
-		EntityPathBase tcsteps = new QTestStep(stepAlias);
-
-
-		PathBuilder stepjoin = new PathBuilder<>(TestCase.class, tcAlias)
-				.get("steps", TestStep.class);
-
-		PathBuilder stepid = new PathBuilder(TestStep.class, stepAlias).get("id");
-
-		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
-
-		and : "the assembly"
-
-		ExtendedHibernateQuery q = new ExtendedHibernateQuery();
-
-		q.from(testcase);
-
-		q.join(stepjoin, tcsteps);
-		q.select(stepid);
-		q.where(tcid.eq(-1l));
-
-		when :
-		ExtendedHibernateQuery attached = q.clone(getSession())
-		def res = attached.fetch();
-
-		then :
-		res as Set == [-11l, -12l, -13l] as Set
-
-	}
-
-
-	@DataSet("QueryPlanner.dataset.xml")
-	def "should fetch step ids in an even less natural way"(){
-
-		given : "the building parts"
-
-		String tcAlias = "tc";
-		String stepAlias = "st";
-
-
-		EntityPathBase testcase = new EntityPathBase(TestCase.class, tcAlias);
-		EntityPathBase tcsteps = new EntityPathBase(TestStep.class, stepAlias);
-
-
-		PathBuilder stepjoin = new PathBuilder<>(TestCase.class, tcAlias)
-				.get("steps", TestStep.class);
-
-		PathBuilder stepid = new PathBuilder(TestStep.class, stepAlias).get("id");
-
-		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
-
-		and : "the assembly"
-
-		ExtendedHibernateQuery q = new ExtendedHibernateQuery();
-
-		q.from(testcase);
-
-		q.join(stepjoin, tcsteps);
-		q.select(stepid);
-		q.where(tcid.eq(-1l));
-
-		when :
-		ExtendedHibernateQuery attached = q.clone(getSession())
-		def res = attached.fetch();
-
-		then :
-		res as Set == [-11l, -12l, -13l] as Set
-	}
-
-	@DataSet("QueryPlanner.dataset.xml")
-	def "test the BOOLEAN_CASE thing"(){
-
-		when :
-		QTestCase tc = new QTestCase("tc")
-		QAutomatedTest auto = new QAutomatedTest("auto")
-
-		ExtendedHibernateQuery q = new ExtendedHibernateQuery(getSession())
-
-		q.from(tc).leftJoin(tc.automatedTest, auto)
-
-		def ex = Expressions.simpleOperation(ExtOps.TRUE_IF.getType(), ExtOps.TRUE_IF, auto.id.isNotNull())
-		q.select(ex)
-
-
-		then :
 		def res = q.fetch()
-		true
+
+		then :
+		res == [-1l]
+
+
 	}
 
 }

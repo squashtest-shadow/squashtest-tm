@@ -24,6 +24,7 @@ import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.Query
 import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
@@ -31,7 +32,10 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.Expressions;
 
 /**
  * <p>
@@ -83,6 +87,7 @@ class ProjectionPlanner {
 	void modifyQuery(){
 		addProjections();
 		addGroupBy();
+		addSortBy();
 	}
 
 	private void addProjections(){
@@ -121,6 +126,22 @@ class ProjectionPlanner {
 		}
 	}
 
+	private void addSortBy(){
+		// subqueries have no sorting because we don't need to
+		if ( profile == MAIN_QUERY){
+
+			List<Expression<?>> expressions = new ArrayList<>();
+
+			populateClauses(expressions, definition.getAxis());
+
+			List<OrderSpecifier> orders = new ArrayList<>();
+			populateOrders(orders, expressions);
+
+			query.orderBy(orders.toArray(new OrderSpecifier[]{}));
+		}
+
+	}
+
 
 	private void populateClauses(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns){
 		for (ColumnPrototypeInstance col : columns){
@@ -132,5 +153,11 @@ class ProjectionPlanner {
 
 	}
 
+	private void populateOrders(List<OrderSpecifier> orders, List<Expression<?>> expressions){
+		for (Expression e : expressions){
+			OrderSpecifier spec = new OrderSpecifier(Order.ASC, e);
+			orders.add(spec);
+		}
+	}
 
 }
