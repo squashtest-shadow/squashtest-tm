@@ -20,36 +20,41 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_FOLDER;
+import static org.squashtest.tm.domain.EntityType.CAMPAIGN_LIBRARY;
+import static org.squashtest.tm.domain.EntityType.ITERATION;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
+import static org.squashtest.tm.domain.EntityType.REQUIREMENT_LIBRARY;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
+import static org.squashtest.tm.domain.EntityType.TEST_CASE_LIBRARY;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.map.MultiValueMap;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
-import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
-import static org.squashtest.tm.domain.EntityType.*;
-
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 /**
  * <p>
@@ -111,6 +116,8 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 @Scope("prototype")
 class ScopePlanner {
 
+	private static final long NONEXISTANT_PROJECT = -99999l;
+
 	// infrastructure
 	@Inject
 	private SessionFactory sessionFactory;
@@ -132,6 +139,8 @@ class ScopePlanner {
 
 	private List<EntityReference> scope;
 
+	private ScopeUtils utils;	// created with @PostContruct
+
 	// ************************ build the tool ******************************
 
 	ScopePlanner(){
@@ -147,6 +156,10 @@ class ScopePlanner {
 		this.scope = scope;
 	}
 
+	@PostConstruct
+	void afterPropertiesSet(){
+		utils = new ScopeUtils(sessionFactory, permissionService);
+	}
 
 	// *********************** actual work **********************************
 
@@ -183,8 +196,8 @@ class ScopePlanner {
 		// security check
 		// if project cannot be read we replace it by a fake reference
 		// that (hopefully) never match anything
-		if (! canReadProject(projRef)){
-			projRef = new EntityReference(EntityType.PROJECT, -99999l);
+		if (! utils.canReadProject(projRef)){
+			projRef = new EntityReference(EntityType.PROJECT, NONEXISTANT_PROJECT);
 		}
 
 		// now we can work
@@ -197,7 +210,7 @@ class ScopePlanner {
 			// use the column TEST_CASE_PROJECT, CAMPAIGN_PROJECT or REQUIREMENT_PROJECT
 			String colName = subScope.toString()+"_PROJECT";	// booooo
 
-			Filter f = createFilter(colName, projRef.getId());
+			Filter f = utils.createFilter(colName, projRef.getId());
 			filters.add(f);
 		}
 
@@ -211,7 +224,6 @@ class ScopePlanner {
 
 		Set<Filter> filters = new HashSet<>();
 
-		Set<InternalEntityType> targets = chartQuery.getTargetEntities();
 		Set<SubScope> querySubScopes = findQuerySubScopes();
 
 		MultiValueMap refmap = aggregateReferences();
@@ -220,9 +232,9 @@ class ScopePlanner {
 			Collection<Long> libIds = fetchForTypes(refmap, TEST_CASE_LIBRARY);
 			Collection<Long> nodeIds = fetchForTypes(refmap, TEST_CASE, TEST_CASE_FOLDER);
 
-			if (! nonEmpty(libIds, nodeIds)){
+			if (nonEmpty(libIds, nodeIds)){
 				Collection<Long> tcIds = tcFinder.findTestCaseIdsFromSelection(libIds, nodeIds);
-				Filter f = createFilter("TEST_CASE_ID", tcIds.toArray(new Long[]{}));
+				Filter f = utils.createFilter("TEST_CASE_ID", tcIds.toArray(new Long[]{}));
 				filters.add(f);
 			}
 		}
@@ -231,9 +243,9 @@ class ScopePlanner {
 			Collection<Long> libIds = fetchForTypes(refmap, REQUIREMENT_LIBRARY);
 			Collection<Long> nodeIds = fetchForTypes(refmap, REQUIREMENT, REQUIREMENT_FOLDER);
 
-			if (! nonEmpty(libIds, nodeIds)){
+			if (nonEmpty(libIds, nodeIds)){
 				Collection<Long> rIds = rFinder.findRequirementIdsFromSelection(libIds, nodeIds);
-				Filter f = createFilter("REQUIREMENT_ID", rIds.toArray(new Long[]{}));
+				Filter f = utils.createFilter("REQUIREMENT_ID", rIds.toArray(new Long[]{}));
 				filters.add(f);
 			}
 		}
@@ -243,9 +255,9 @@ class ScopePlanner {
 			Collection<Long> libIds = fetchForTypes(refmap, CAMPAIGN_LIBRARY);
 			Collection<Long> nodeIds = fetchForTypes(refmap, CAMPAIGN, CAMPAIGN_FOLDER);
 
-			if (! nonEmpty(libIds, nodeIds)){
+			if (nonEmpty(libIds, nodeIds)){
 				Collection<Long> cIds = cFinder.findCampaignIdsFromSelection(libIds, nodeIds);
-				Filter f = createFilter("CAMPAIGN_ID", cIds.toArray(new Long[]{}));
+				Filter f = utils.createFilter("CAMPAIGN_ID", cIds.toArray(new Long[]{}));
 				filters.add(f);
 			}
 
@@ -255,8 +267,8 @@ class ScopePlanner {
 			// on iterations
 			Collection<Long> iterIds = fetchForTypes(refmap, ITERATION);
 			if (! iterIds.isEmpty()){
-				iterIds = filterIterations(iterIds);
-				Filter f = createFilter("ITERATION_ID", iterIds.toArray(new Long[]{}));
+				iterIds = utils.filterIterations(iterIds);
+				Filter f = utils.createFilter("ITERATION_ID", iterIds.toArray(new Long[]{}));
 				filters.add(f);
 			}
 		}
@@ -353,54 +365,72 @@ class ScopePlanner {
 	}
 
 
-	private List<String> toString(Long[] ids){
-		List<String> strIds = new ArrayList<>(ids.length);
-		for (Long i : ids){
-			strIds.add(i.toString());
+
+	// ****************** internal util class *****************************
+
+	// this class exists because it is too close to the DB
+	// so we'll need to mock it in the tests. That's also why
+	// it is not final.
+
+
+	private static class ScopeUtils{
+
+		private PermissionEvaluationService permissionService;
+		private SessionFactory sessionFactory;
+
+		ScopeUtils(SessionFactory sessionFactory, PermissionEvaluationService permService) {
+			super();
+			this.permissionService = permService;
+			this.sessionFactory = sessionFactory;
 		}
-		return strIds;
-	}
 
+		Filter createFilter(String colName, Long... ids){
+			ColumnPrototype proto = findColumnPrototype(colName);
 
-	// ****************** daos utilities *****************************
+			Filter f = new Filter();
+			f.setColumn(proto);
+			f.setOperation(Operation.IN);
 
-	private Filter createFilter(String colName, Long... ids){
-		ColumnPrototype proto = findColumnPrototype(colName);
+			f.setValues(toString(ids));
 
-		Filter f = new Filter();
-		f.setColumn(proto);
-		f.setOperation(Operation.IN);
+			return f;
+		}
 
-		f.setValues(toString(ids));
+		ColumnPrototype findColumnPrototype(String colName){
+			Query q = getSession().createQuery("select p from ColumnPrototype where p.label = :label");
+			q.setParameter("label", colName);
+			return (ColumnPrototype)q.uniqueResult();
+		}
 
-		return f;
-	}
+		boolean canReadProject(EntityReference project){
+			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", project.getId(), "org.squashtest.tm.domain.project.Project");
+		}
 
-	private ColumnPrototype findColumnPrototype(String colName){
-		QColumnPrototype p = QColumnPrototype.columnPrototype;
-		HibernateQuery<ColumnPrototype> q = new HibernateQuery(getSession());
-		q.from(p).where(p.label.eq(colName));
-		return q.fetchFirst();
-	}
-
-	private Session getSession(){
-		return sessionFactory.getCurrentSession();
-	}
-
-
-	private boolean canReadProject(EntityReference project){
-		return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", project.getId(), "org.squashtest.tm.domain.project.Project");
-	}
-
-	private List<Long> filterIterations(Collection<Long> iterationIds){
-		List<Long> result = new ArrayList<>();
-		for (Long id : iterationIds){
-			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", id, "org.squashtest.tm.domain.campaign.Iteration")){
-				result.add(id);
+		List<Long> filterIterations(Collection<Long> iterationIds){
+			List<Long> result = new ArrayList<>();
+			for (Long id : iterationIds){
+				if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", id, "org.squashtest.tm.domain.campaign.Iteration")){
+					result.add(id);
+				}
 			}
+			return result;
 		}
-		return result;
-	}
 
+
+		private List<String> toString(Long[] ids){
+			List<String> strIds = new ArrayList<>(ids.length);
+			for (Long i : ids){
+				strIds.add(i.toString());
+			}
+			return strIds;
+		}
+
+
+		private Session getSession(){
+			return sessionFactory.getCurrentSession();
+		}
+
+
+	}
 
 }
