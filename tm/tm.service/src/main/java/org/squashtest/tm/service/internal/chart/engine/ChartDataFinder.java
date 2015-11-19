@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
@@ -294,6 +295,8 @@ public class ChartDataFinder {
 	@Inject
 	private SessionFactory sessionFactory;
 
+	@Inject
+	Provider<ScopePlanner> scopePlannerProvider;
 
 	@Transactional(readOnly=true)
 	public ChartSeries findData(ChartDefinition definition){
@@ -302,7 +305,10 @@ public class ChartDataFinder {
 
 		// *********** step 1 : determine scope and ACL **********************
 
-		// TODO : implement
+		ScopePlanner scopePlanner = scopePlannerProvider.get();
+		scopePlanner.setChartQuery(enhancedDefinition);
+		scopePlanner.setScope(definition.getScope());
+		scopePlanner.appendScopeFilters();
 
 		// *********** step 2 : create the query ************************
 

@@ -516,22 +516,18 @@ TestCaseLibraryNavigationService {
 		 *  be allowed to read the test case below
 		 */
 
-		Collection<Long> readLibIds = securityFilterIds(libraryIds, "org.squashtest.tm.domain.testcase.TestCaseLibrary", "READ");
-		Collection<Long> readNodeIds = securityFilterIds(nodeIds, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode", "READ");
+		Collection<Long> readLibIds = securityFilterIds(libraryIds, TestCaseLibrary.class.getName(), "READ");
+		Collection<Long> readNodeIds = securityFilterIds(nodeIds, TestCaseLibraryNode.class.getName(), "READ");
 
 		// now we can collect the test cases
-		Collection<Long> tcIds = new ArrayList<Long>();
+		Set<Long> tcIds = new HashSet<Long>();
 
-		if (!libraryIds.isEmpty()) {
+		if (!readLibIds.isEmpty()) {
 			tcIds.addAll(testCaseDao.findAllTestCaseIdsByLibraries(readLibIds));
 		}
-		if (!nodeIds.isEmpty()) {
+		if (!readNodeIds.isEmpty()) {
 			tcIds.addAll(testCaseDao.findAllTestCaseIdsByNodeIds(readNodeIds));
 		}
-
-		// filter out duplicates
-		Set<Long> set = new HashSet<Long>(tcIds);
-		tcIds = new ArrayList<Long>(set);
 
 		// return
 		return tcIds;

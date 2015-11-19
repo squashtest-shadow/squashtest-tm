@@ -29,6 +29,7 @@ import java.util.Map.Entry;
 import net.sf.cglib.core.CollectionUtils;
 import net.sf.cglib.core.Predicate;
 
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
@@ -81,6 +82,7 @@ class FilterPlanner {
 
 		addWhereClauses();
 		addHavingClauses();
+		addScopeClauses();
 	}
 
 
@@ -97,6 +99,14 @@ class FilterPlanner {
 		BooleanBuilder havingbuilder = makeBuilder(havingFilters);
 
 		query.having(havingbuilder);
+	}
+
+	private void addScopeClauses(){
+		Map<ColumnPrototype, Collection<Filter>> scopeFilters = findScopeFilters();
+
+		BooleanBuilder scopeBuilder = makeBuilder(scopeFilters);
+
+		query.where(scopeBuilder);
 	}
 
 	private BooleanBuilder makeBuilder(Map<ColumnPrototype, Collection<Filter>> sortedFilters){
@@ -148,6 +158,41 @@ class FilterPlanner {
 		return sortFilters(filters);
 	}
 
+
+	private Map<ColumnPrototype, Collection<Filter>> findScopeFilters(){
+
+		Collection<Filter> filters = new ArrayList<>(definition.getScopeFilters());
+
+		Map<ColumnPrototype, Collection<Filter>> sorted = sortFilters(filters);
+
+		// now we cheat and aggregate filters of campaign and iterations if
+		// both are present
+		ColumnPrototype campColumn=null;
+		ColumnPrototype iterColumn=null;
+
+		for (ColumnPrototype p : sorted.keySet()){
+			EntityType type = p.getEntityType();
+			if (type == EntityType.CAMPAIGN){
+				campColumn = p;
+			}
+			else if (type == EntityType.ITERATION){
+				iterColumn = p;
+			}
+		}
+
+		// merge if contain boths
+		if (campColumn != null && iterColumn != null){
+			Collection<Filter> iterFilters = sorted.get(iterColumn);
+			sorted.get(campColumn).addAll(iterFilters);
+			sorted.remove(iterColumn);
+		}
+
+		// now return the cheated map
+		return sorted;
+
+	}
+
+
 	// this will regroup filters by column prototype. Filters grouped that way will be
 	// OR'ed together.
 	private Map<ColumnPrototype, Collection<Filter>> sortFilters(Collection<Filter> filters){
@@ -167,6 +212,5 @@ class FilterPlanner {
 
 		return res;
 	}
-
 
 }

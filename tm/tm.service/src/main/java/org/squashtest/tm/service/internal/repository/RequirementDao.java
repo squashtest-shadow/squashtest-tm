@@ -71,7 +71,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<RequirementVersion> findVersionsForAll(List<Long> requirementIds);
-	
+
 	/**
 	 * returns the list of all id's of requirement versions for all the specified requirements
 	 * used for export as we only need id not complete entity.
@@ -86,13 +86,13 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<Long> findAllRequirementsIdsByLibrary(long libraryId);
-	
+
 	/**
 	 * Will find all Requirements ids contained in a list of library (not only root ones)
 	 * @param libraryIds
 	 * @return
 	 */
-	List<Long> findAllRequirementsIdsByLibrary(List<Long> libraryIds);
+	List<Long> findAllRequirementsIdsByLibrary(Collection<Long> libraryIds);
 
 	/**
 	 * returns a requirement that contains the given child requirement
@@ -121,10 +121,10 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	List<Long> filterRequirementHavingManyVersions(Collection<Long> requirementIds);
 
 	/**
-	 * Return all Ids from Requirement who are under the nodes specified in nodeIds. 
+	 * Return all Ids from Requirement who are under the nodes specified in nodeIds.
 	 * Return also the entities designed by nodeIds if they are requirement
 	 * @param nodeIds
 	 * @return
 	 */
-	List<Long> findAllRequirementsIdsByNodes(List<Long> nodeIds);
+	List<Long> findAllRequirementsIdsByNodes(Collection<Long> nodeIds);
 }

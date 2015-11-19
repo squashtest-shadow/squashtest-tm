@@ -604,8 +604,7 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 		//2. Find the list of all req ids that belongs to library and node selection.
 		Set<Long> reqIds = new HashSet<Long>();
-		reqIds.addAll(requirementDao.findAllRequirementsIdsByLibrary(libraryIds));
-		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
+		reqIds.addAll(findRequirementIdsFromSelection(libraryIds, nodeIds));
 
 		//3. For each req, find all versions
 		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
@@ -659,7 +658,28 @@ RequirementLibraryNavigationService, RequirementLibraryFinderService {
 
 	@Override
 	public Collection<Long> findRequirementIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds){
-		throw new IllegalArgumentException("not implemented yet");
+
+		/*
+		 *  first, let's check the permissions on those root nodes
+		 *  By transitivity, if the user can read them then it will
+		 *  be allowed to read the requirements below
+		 */
+		Collection<Long> readLibIds = securityFilterIds(libraryIds, RequirementLibrary.class.getName(),"READ");
+		Collection<Long> readNodeIds = securityFilterIds(nodeIds, RequirementLibraryNode.class.getName(),"READ");
+
+		// now we can collect the requirements
+		Set<Long> reqIds = new HashSet<>();
+
+		if (! readLibIds.isEmpty()){
+			reqIds.addAll(requirementDao.findAllRequirementsIdsByLibrary(readLibIds));
+		}
+		if (! readNodeIds.isEmpty()){
+			reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(readNodeIds));
+		}
+
+		// return
+		return reqIds;
+
 	}
 
 	@Override

@@ -29,9 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ChartDefinition;
@@ -103,18 +107,24 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  * @author bsiri
  *
  */
+@Component()
+@Scope("prototype")
 class ScopePlanner {
 
 	// infrastructure
-
+	@Inject
 	private SessionFactory sessionFactory;
 
+	@Inject
 	private PermissionEvaluationService permissionService;
 
+	@Inject
 	private TestCaseLibraryFinderService tcFinder;
 
+	@Inject
 	private RequirementLibraryFinderService rFinder;
 
+	@Inject
 	private CampaignLibraryFinderService cFinder;
 
 	// work variables
@@ -129,22 +139,13 @@ class ScopePlanner {
 	}
 
 
-
-
-	void setAll(SessionFactory sessionFactory, PermissionEvaluationService permissionService,
-			TestCaseLibraryFinderService tcFinder, RequirementLibraryFinderService rFinder,
-			CampaignLibraryFinderService cFinder, DetailedChartQuery chartQuery, List<EntityReference> scope) {
-
-		this.sessionFactory = sessionFactory;
-		this.permissionService = permissionService;
-		this.tcFinder = tcFinder;
-		this.rFinder = rFinder;
-		this.cFinder = cFinder;
+	protected void setChartQuery(DetailedChartQuery chartQuery) {
 		this.chartQuery = chartQuery;
-		this.scope = scope;
 	}
 
-
+	protected void setScope(List<EntityReference> scope) {
+		this.scope = scope;
+	}
 
 
 	// *********************** actual work **********************************
@@ -210,6 +211,7 @@ class ScopePlanner {
 
 		Set<Filter> filters = new HashSet<>();
 
+		Set<InternalEntityType> targets = chartQuery.getTargetEntities();
 		Set<SubScope> querySubScopes = findQuerySubScopes();
 
 		MultiValueMap refmap = aggregateReferences();
@@ -249,6 +251,8 @@ class ScopePlanner {
 
 			// same for iterations. One must also check for read permission
 			// because we won't call a service this time.
+			// also, when time's for QueryPlanning we force the inner join
+			// on iterations
 			Collection<Long> iterIds = fetchForTypes(refmap, ITERATION);
 			if (! iterIds.isEmpty()){
 				iterIds = filterIterations(iterIds);
@@ -349,6 +353,14 @@ class ScopePlanner {
 	}
 
 
+	private List<String> toString(Long[] ids){
+		List<String> strIds = new ArrayList<>(ids.length);
+		for (Long i : ids){
+			strIds.add(i.toString());
+		}
+		return strIds;
+	}
+
 
 	// ****************** daos utilities *****************************
 
@@ -390,42 +402,5 @@ class ScopePlanner {
 		return result;
 	}
 
-	// ****************** other stuffs *******************************
-
-	private List<String> toString(Long[] ids){
-		List<String> strIds = new ArrayList<>(ids.length);
-		for (Long i : ids){
-			strIds.add(i.toString());
-		}
-		return strIds;
-	}
-
-	void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
-	}
-
-	void setPermissionService(PermissionEvaluationService permissionService) {
-		this.permissionService = permissionService;
-	}
-
-	protected void setTcFinder(TestCaseLibraryFinderService tcFinder) {
-		this.tcFinder = tcFinder;
-	}
-
-	protected void setrFinder(RequirementLibraryFinderService rFinder) {
-		this.rFinder = rFinder;
-	}
-
-	protected void setcFinder(CampaignLibraryFinderService cFinder) {
-		this.cFinder = cFinder;
-	}
-
-	protected void setChartQuery(DetailedChartQuery chartQuery) {
-		this.chartQuery = chartQuery;
-	}
-
-	protected void setScope(List<EntityReference> scope) {
-		this.scope = scope;
-	}
 
 }
