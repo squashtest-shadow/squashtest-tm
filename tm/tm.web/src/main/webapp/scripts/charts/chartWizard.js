@@ -28,6 +28,7 @@
 		
 		data.parentId = squashtm.chart.parentId;
 		data.defaultProject = squashtm.chart.defaultProject;
+		data.chartDef = JSON.parse(squashtm.chart.chartDef);
 		
 		var model = new WizardModel(data);
 		

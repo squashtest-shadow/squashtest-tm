@@ -36,10 +36,12 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportNodeType;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.chart.ChartModificationService;
@@ -88,6 +90,15 @@ public class ChartController {
 	@RequestMapping(value = "/wizard/{parentId}", method = RequestMethod.GET)
 	public ModelAndView getWizard(@PathVariable Long parentId, Locale locale) {
 		ModelAndView mav = new ModelAndView("charts/wizard/wizard.html");
+
+		CustomReportLibraryNode crln = reportNodeService.findCustomReportLibraryNodeById(parentId);
+
+		if (crln.getEntityType().getTypeName().equals(CustomReportNodeType.CHART_NAME)) {
+			ChartDefinition def = (ChartDefinition) crln.getEntity();
+
+			mav.addObject("chartDef", JsonHelper.serialize(def));
+		}
+
 		GenericProject project = reportNodeService.findCustomReportLibraryNodeById(parentId).getCustomReportLibrary()
 				.getProject();
 		mav.addObject("parentId", parentId);

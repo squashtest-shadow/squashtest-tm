@@ -1600,6 +1600,26 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 </sql>
 </changeSet>
 
+<changeSet id="tm-1.13.0-feature-5375-4" author="jsimon">
 
+<comment>
+
+</comment>
+
+	<createTable tableName="CHART_PROJECT_SCOPE">
+			<column name="CHART_PROJECT_SCOPE_ID" type="BIGINT"
+				autoIncrement="true">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+			<column name="CHART_ID" type="BIGINT">
+				<constraints nullable="false"
+					foreignKeyName="fk_chart_project_scope_chart_definition"
+					references="CHART_DEFINITION(CHART_ID)" />
+			</column>
+
+			<column name="PROJECT_SCOPE" type="java.sql.Types.VARCHAR(15)"></column>
+
+		</createTable>
+</changeSet>
 
 </databaseChangeLog>

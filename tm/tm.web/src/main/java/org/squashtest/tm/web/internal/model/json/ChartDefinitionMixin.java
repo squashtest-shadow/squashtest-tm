@@ -41,10 +41,17 @@
 package org.squashtest.tm.web.internal.model.json;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonAutoDetect
@@ -53,5 +60,15 @@ public abstract class ChartDefinitionMixin {
 
 	@JsonDeserialize(contentAs = EntityReference.class)
 	private List<EntityReference> scope;
+
+	@JsonIgnore
+	private Set<CustomReportChartBinding> chartBindings;
+
+	@JsonIgnore
+	public abstract CustomReportLibrary getCustomReportLibrary();
+
+	@JsonIgnore
+	public abstract Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
+
 
 }

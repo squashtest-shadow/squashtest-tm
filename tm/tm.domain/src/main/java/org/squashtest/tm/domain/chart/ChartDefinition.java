@@ -95,6 +95,10 @@ public class ChartDefinition implements TreeEntity{
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
 
+	@ElementCollection
+	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
+	private List<String> projectScope = new ArrayList<String>();
+
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
@@ -195,6 +199,14 @@ public class ChartDefinition implements TreeEntity{
 	@AclConstrainedObject
 	public CustomReportLibrary getCustomReportLibrary(){
 		return getProject().getCustomReportLibrary();
+	}
+
+	public List<String> getProjectScope() {
+		return projectScope;
+	}
+
+	public void setProjectScope(List<String> projectScope) {
+		this.projectScope = projectScope;
 	}
 
 }

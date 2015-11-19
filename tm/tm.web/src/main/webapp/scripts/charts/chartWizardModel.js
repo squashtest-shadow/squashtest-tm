@@ -23,6 +23,95 @@ define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
 
 return Backbone.Model.extend({
 		
+	initialize : function(data){
+		
+		var self = this;
+		var chartDef = data.chartDef;
+		
+		if (chartDef !== null){
+		
+		this.set({name : chartDef.name,
+			type : chartDef.type,
+            axis: chartDef.axis,
+            scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
+            projectsScope : chartDef.projectScope,
+            scopeEntity : self.getScopeEntity(chartDef.scope),
+		    measures : chartDef.measures,
+		    operations : self.getOperations(chartDef),
+		    filters : self.getFilters(chartDef),
+		    selectedEntity : self.getSelectedEntities(chartDef),
+		    selectedAttributes : self.getSelectedAttributes(chartDef)
+		});
+		
+		}
+	},
+	
+	getOperations : function (chartDef){
+		return _.chain(chartDef)
+		.pick('filters', 'measures', 'axis')
+		.values()
+		.flatten()
+		.map(function(val){return _(val).pick('column', 'operation');})
+		.value();
+		
+	},
+	
+	getScopeEntity : function (scope){
+		
+		var val = _.chain(scope)
+		.first()
+		.result("type")
+		.value();
+		
+		val = val.split("_")[0];
+		
+		if (val == "PROJECT") {
+			val = "default";
+		} else if (val == "TEST"){
+			val = "TEST_CASE";
+		}
+		
+		return val;
+		
+	},
+	
+	getFilters : function (chartDef){
+		
+		return _.chain(chartDef.filters)
+		.map(function(filter) {  filter.values = [filter.values] ; return filter;})
+		.value();
+		
+	},
+	
+	getSelectedAttributes : function (chartDef){
+		
+		return _.chain(chartDef)
+		.pick('filters', 'measures', 'axis')
+		.values()
+		.flatten()
+		.pluck('column')
+		.pluck('id')
+		.uniq()
+		.map(function(val) {return val.toString();})
+		.value();
+		
+	},
+	
+	getSelectedEntities : function (chartDef) {
+		
+	return _.chain(chartDef)
+	.pick('filters', 'measures', 'axis')
+	.values()
+	.flatten()
+	.pluck('column')
+	.pluck('specializedType')
+	.pluck('entityType')
+	.map(function(val){return val.replace('REQUIREMENT_VERSION', 'REQUIREMENT');} )
+	.uniq()
+	.value();	
+	},
+	
+	
 	
 		toJson : function() {
 			
@@ -34,6 +123,7 @@ return Backbone.Model.extend({
 				measures : this.get("measures"),					
 				filters : _.map(this.get("filters"), function(filter) {var newFilter= _.clone(filter); newFilter.values = _.flatten(filter.values); return newFilter;})
 			},
+			projectScope : this.get("projectsScope"),
 			scope : _.map(this.get("scope"), function(val) {var newVal = _.clone(val); newVal.type = val.type.replace("LIBRARIE", "LIBRARY"); return newVal;})
 			});
 			
