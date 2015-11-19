@@ -26,11 +26,14 @@
 
 {{#*inline "filter"}}
 <br />
+
+<div style="display: table-column; width: 20%;float:left">
 {{#equal this.columnType "CUF"}}
 {{cuf-label this.attributeName data.customFields}}
 {{else}}
 {{i18n this.label prefix="chart.column."}}
 {{/equal}}
+</div>
 <select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}">
 {{#each  operations}}  
    
@@ -63,16 +66,14 @@
 <div class="tg-body">
 {{#each  this}}  
 {{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
-
 {{#if (contains ../../attributes.selectedAttributes id)}} 
 {{> filter  operations=(intersect (union (lookup ../../attributes.columRoles "MEASURE") (lookup ../../attributes.columRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
 {{/if}}
-
-{{/if }}
+{{/if}}
 {{/each}}  
  </div>  
   </div>  
- {{/if }}
+ {{/if}}
 {{/each}}  
 
 

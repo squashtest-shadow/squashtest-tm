@@ -23,14 +23,16 @@
 <div th:fragment="chart-wizard-filter">
 
 {{#*inline "filter"}}
-
-
+<div style="display: table-column; width: 20%;float:left">
 <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
 {{#equal this.columnType "CUF"}}
 {{{cuf-label this.attributeName data.customFields}}}
 {{else}}
 {{i18n this.label prefix="chart.column."}}
 {{/equal}}
+</div>
+
+<div style="display: table-column; width: 15%; float:left">
 <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}">
 {{#each  operations}}  
 
@@ -40,6 +42,7 @@
 
 {{/each}}   
 </select>
+</div>
 
 {{#equal dataType "NUMERIC"}} 
 <input type="text" id="first-filter-value-{{id}}" name="{{id}}" />
@@ -110,7 +113,11 @@
 
 {{#if (contains this.role "FILTER")}}
 {{#if (contains ../../attributes.selectedAttributes id)}} 
+
+<div style="display: table; width: 100%;">
 {{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+</div>
+
 {{/if}}
 {{/if }}
 {{/each}}  
@@ -128,7 +135,7 @@
 
 
 <div th:fragment="chart-wizard-info-list">
- 
+ <div style="display: table-column; width: 20%;float:left">
  <select id="info-list-{{id}}" class="info-lists" name="{{id}}">
 {{#each infolists}}
  <option value="{{this.code}}">
@@ -140,7 +147,7 @@
  </option> 
 {{/each}}
 </select>
-
+</div>
 <span id="info-list-item-container-{{id}}"/>
 
 </div>

@@ -35,7 +35,7 @@
 {{#equal this.column.columnType "CUF"}}
 {{cuf-label this.column.attributeName ../attributes.customFields}}
 {{else}}
-{{i18n this.column.label prefix="chart.column."}}
+{{i18n this.column.specializedType.entityType prefix="chart.entityType."}}     >  {{i18n this.column.label prefix="chart.column."}}
 {{/equal}}
 
 </option>
