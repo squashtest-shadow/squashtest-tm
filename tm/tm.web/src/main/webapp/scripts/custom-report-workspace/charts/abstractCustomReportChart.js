@@ -52,6 +52,10 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       return this.model.get('axis');
     },
 
+    /**
+    * The JqPlot conf of all
+    * @return {[type]} [description]
+    */
     getCommonConf : function () {
       return {
         title : {
@@ -65,6 +69,12 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       };
     },
 
+    /**
+    * Traduce the legends for a given axis in a chart
+    * @param  {[Array]} legends [The gross legends from server]
+    * @param  {[Axis object]} axis [The axis of legends to retrive the Column Prototype inside Axis object]
+    * @return {[Array]}         [The legends localized]
+    */
     replaceInfoListDefaultLegend : function (legends,axis) {
       var protoLabel = axis.columnPrototype.label;
 
@@ -148,6 +158,20 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         var year = legendString.substring(0, 4);
         var month = legendString.substring(4, 6);
         return month + "/" + year;
+      });
+    },
+
+    /**
+    * Convert an array of string [s1,s2,...] to an array of object like : [{label:s1},{label:s2}...]
+    * JqPlot needs this format to show series legens on multi axis charts
+    * @param  {[array]} legends [s1,s2,...]
+    * @return {[array]}         [{label:s1},{label:s2}...]
+    */
+    objectifyLegend : function (legends) {
+      return _.map(legends,function (legend) {
+        var result = {};
+        result.label = legend;
+        return result;
       });
     },
 

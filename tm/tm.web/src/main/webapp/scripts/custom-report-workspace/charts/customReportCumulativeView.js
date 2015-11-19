@@ -46,7 +46,7 @@ define(["jquery", "./abstractCustomReportChart",
 			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					rendererOptions : {
-            smooth: true
+            smooth: false
 					},
           fill: true
 				},

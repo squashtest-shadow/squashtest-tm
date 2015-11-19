@@ -49,11 +49,7 @@ define(["jquery", "./abstractCustomReportChart",
 
       var formatedLegends = self.replaceInfoListDefaultLegend(legends,axis2);
 
-      formatedLegends = _.map(formatedLegends,function (legend) {
-        var result = {};
-        result.label = legend;
-        return result;
-      });
+      formatedLegends = this.objectifyLegend(formatedLegends);
 
 			return _.extend(this.getCommonConf(),{
         stackSeries: true,
@@ -68,6 +64,9 @@ define(["jquery", "./abstractCustomReportChart",
 
 				legend : {
            renderer: $.jqplot.EnhancedLegendRenderer,
+           rendererOptions:{
+            seriesToggle: false
+            },
            show:true,
            placement:'outsideGrid',
            location:'e',
@@ -101,7 +100,7 @@ define(["jquery", "./abstractCustomReportChart",
 					shadow : false,
 					shadowColor : 'transparent'
 				}
-        
+
 			});
 
 		}

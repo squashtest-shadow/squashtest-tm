@@ -271,7 +271,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
     console.log(comparativeSeries);
 
     var cumulativeSeries = _.chain(comparativeSeries)
-      //see comment above about comparaison chart
+      //see comment above about comparaison chart, the proccess here is nearly identical (but with subtile difference so no factorisation)
       .groupBy(function (memo) {
         return memo[1];
       })
@@ -302,13 +302,17 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
     console.log("cumulativeSeries");
     console.log(cumulativeSeries);
 
+    //now we retrieve the
+    var seriesLegend = _.chain(comparativeSeries)
+      .groupBy(function (memo) {//group by on second axis ie series on comparative chart
+        return memo[1];
+      })
+      .keys()
+      .value();
+
     var axis = jsonChart.axes;
 
     var title = jsonChart.name;
-
-    //cumulativeSeries = [[1,0,5,3,4,8],[8,1,4,2,7,1],[4,1,9,3,6,4],[4,6,0,0,2,3]];
-
-    //ticks = [];
 
 		var Trend = TrendView.extend({
 			getCategories : function(){
@@ -317,7 +321,11 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 
 			getSeries : function(){
 				return this.model.get('chartmodel');
-			}
+			},
+
+      getSeriesLegends : function () {
+        return this.model.get('seriesLegend');
+      }
 
 		});
 
@@ -326,7 +334,8 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 			model : new Backbone.Model({
 				chartmodel : cumulativeSeries,
         title : title,
-        axis : axis
+        axis : axis,
+        seriesLegend : seriesLegend
 			},{
 				url : "whatever"
 			})

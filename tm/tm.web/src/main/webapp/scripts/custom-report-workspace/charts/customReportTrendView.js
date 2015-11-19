@@ -28,7 +28,7 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar"],
+        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
@@ -43,16 +43,30 @@ define(["jquery", "./abstractCustomReportChart",
       var axis = this.getAxis()[0];
       ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
+      var legends = this.getSeriesLegends();
+      var axis2 = this.getAxis()[1];
+
+      var formatedLegends = this.replaceInfoListDefaultLegend(legends,axis2);
+
+      formatedLegends = this.objectifyLegend(formatedLegends);
+
 			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					rendererOptions : {
-            smooth: true
+            smooth: false
 					}
 				},
+        series: formatedLegends,
 
-				legend : {
-					show : false
-				},
+        legend:{
+          renderer: $.jqplot.EnhancedLegendRenderer,
+          show:true,
+          placement: 'outsideGrid',
+          location:'e',
+          fontSize : 12,
+          fontColor : "#000000",
+          border: 'none'
+        },
 
 				axes : {
 					xaxis : {
