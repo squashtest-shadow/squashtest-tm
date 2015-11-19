@@ -128,6 +128,9 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
       $("#new-chart-tree-button").on("click", function(){
         var selectedNode =  tree.jstree("get_selected");
+        if (!selectedNode.canContainNodes()) {
+          selectedNode = selectedNode.getParent();
+        }
         var nodeId = selectedNode.getResId();
         url = urlBuilder.buildURL("chart.wizard",nodeId);
         document.location.href = url;

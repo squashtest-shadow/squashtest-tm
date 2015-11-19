@@ -34,7 +34,7 @@ define(["jquery", "./abstractCustomReportChart",
 	return JqplotView.extend({
 
 		getCategories : function(){
-			throw "attempted to create an abstract LineView !";
+			throw "attempted to create an abstract CumulativeView !";
 		},
 
     getConf : function(series){
@@ -47,7 +47,8 @@ define(["jquery", "./abstractCustomReportChart",
 				seriesDefaults : {
 					rendererOptions : {
             smooth: true
-					}
+					},
+          fill: true
 				},
 
 				legend : {

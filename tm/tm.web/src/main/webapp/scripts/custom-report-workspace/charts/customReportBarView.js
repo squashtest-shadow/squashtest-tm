@@ -40,7 +40,8 @@ define(["jquery", "./abstractCustomReportChart",
     getConf : function(series){
 
 			var ticks = this.getCategories();
-      ticks = this.replaceInfoListDefaultLegend(ticks);
+      var axis = this.getAxis()[0];
+      ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
 			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {

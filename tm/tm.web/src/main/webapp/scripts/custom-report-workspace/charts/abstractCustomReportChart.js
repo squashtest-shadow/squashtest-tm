@@ -65,8 +65,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       };
     },
 
-    replaceInfoListDefaultLegend : function (legends) {
-      var axis = this.getAxis()[0];
+    replaceInfoListDefaultLegend : function (legends,axis) {
       var protoLabel = axis.columnPrototype.label;
 
       switch (protoLabel) {
@@ -83,6 +82,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         case "REQUIREMENT_VERSION_STATUS":
           return this._getI18nLegends(legends, squashtm.app.requirementStatus);
         case "TEST_CASE_CREATED_ON":
+        case "TEST_CASE_MODIFIED_ON":
           return this._formatDateLegend(legends, axis);
         default:
           return legends;

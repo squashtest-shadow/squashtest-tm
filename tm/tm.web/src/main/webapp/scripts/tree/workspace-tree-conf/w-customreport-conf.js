@@ -38,7 +38,7 @@ define(function(){
 									"valid_children" : 'none'
 								},
 								"dashboard" : {
-									"valid_children" : ["chart"]
+									"valid_children" : 'none'
 								},
 								"folder" : {
 									"valid_children" : [ "chart","dashboard", "folder" ]

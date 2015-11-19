@@ -42,7 +42,8 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 			var series = this.getSeries();
 			var legends = this.getLegends();
 			legends = _.flatten(legends);
-      legends = this.replaceInfoListDefaultLegend(legends);
+      var axis = this.getAxis()[0];
+      legends = this.replaceInfoListDefaultLegend(legends,axis);
 			var jqplotSeries = [_.zip(legends,series)];
 
 			this.draw(jqplotSeries, conf);
@@ -95,11 +96,11 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 				legend:{
           renderer: $.jqplot.EnhancedLegendRenderer,
 				  show:true,
-				  placement: 'inside',
+				  placement: 'outsideGrid',
 				  rendererOptions: {
 				      numberRows: pieserie.length
 				  },
-				  location:'se',
+				  location:'e',
 				  marginTop: '15px',
           fontSize : 12,
           fontColor : "#000000",

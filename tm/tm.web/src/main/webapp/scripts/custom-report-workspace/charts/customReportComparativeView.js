@@ -28,42 +28,70 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar"],
+        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
 
 		getCategories : function(){
-			throw "attempted to create an abstract LineView !";
+			throw "attempted to create an abstract BarView !";
 		},
 
     getConf : function(series){
+      var self = this;
 
 			var ticks = this.getCategories();
       var axis = this.getAxis()[0];
       ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
+      var legends = this.getSeriesLegends();
+      var axis2 = this.getAxis()[1];
+
+      var formatedLegends = self.replaceInfoListDefaultLegend(legends,axis2);
+
+      formatedLegends = _.map(formatedLegends,function (legend) {
+        var result = {};
+        result.label = legend;
+        return result;
+      });
+
 			return _.extend(this.getCommonConf(),{
-				seriesDefaults : {
+        stackSeries: true,
+        seriesDefaults : {
+					renderer : $.jqplot.BarRenderer,
 					rendererOptions : {
-            smooth: true
+						barDirection: 'horizontal',
+            varyBarColor : true
 					}
 				},
+        series: formatedLegends,
 
 				legend : {
-					show : false
+           renderer: $.jqplot.EnhancedLegendRenderer,
+           show:true,
+           placement:'outsideGrid',
+           location:'e',
+           border:'none'
 				},
 
 				axes : {
-					xaxis : {
+					yaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
 						ticks : ticks
 					},
-          yaxis: {
-            min : 0
-        }
+          xaxis : {
 
+          }
 				},
+
+        axesDefaults: {
+          min : 0,
+          pad: 1.1,
+          tickInterval: 1,
+          tickOptions: {
+
+          }
+        },
 
 				grid : {
           drawGridlines : false,
@@ -73,6 +101,7 @@ define(["jquery", "./abstractCustomReportChart",
 					shadow : false,
 					shadowColor : 'transparent'
 				}
+        
 			});
 
 		}

@@ -25,6 +25,8 @@ public enum ChartType {
 	BAR,
 	LINE,
 	PIE,
+	CUMULATIVE,
+	COMPARATIVE,
 	TABLE;
 	// @formatter:on
 

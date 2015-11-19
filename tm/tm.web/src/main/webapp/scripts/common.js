@@ -174,6 +174,8 @@ requirejs.config({
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
 //				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer",
 				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer.min",
+        //"jqplot-legend" : "lib/jqplot/plugins/jqplot.enhancedLegendRenderer",
+        "jqplot-legend" : "lib/jqplot/plugins/jqplot.enhancedLegendRenderer.min",
 //				"moment" : "lib/momentjs/moment-with-locales.min",
 				"moment" : "lib/momentjs/moment-with-locales.min",
 				//cke
@@ -356,6 +358,7 @@ requirejs.config({
 				"jqplot-dates" : ["jquery", "jqplot-core"],
 				"jqplot-category" : ["jquery", "jqplot-core"],
 				"jqplot-bar" : ["jquery", "jqplot-core"],
+        "jqplot-legend" : ["jquery", "jqplot-core"],
 				"jqplot-highlight" : {
 					deps : ["jquery", "jqplot-core"],
 					init : function($){
