@@ -57,10 +57,10 @@ public class MantisConnector implements BugTrackerConnector {
 
 	private static final String MANTIS_ISSUE_SUFFIX = "/view.php";
 
-	private final ThreadLocal<AuthenticationCredentials> credentialsHolder = new ThreadLocal<AuthenticationCredentials>();
+	private final ThreadLocal<AuthenticationCredentials> credentialsHolder = new ThreadLocal<>();
 
 	private final MantisAxis1SoapClient client;
-	
+
 	private MantisExceptionConverter exConverter;
 
 	public MantisConnector(BugTracker bugTracker) {
@@ -110,7 +110,7 @@ public class MantisConnector implements BugTrackerConnector {
 	}
 
 
-	
+
 	public List<Permission> getPermissions() {
 		ObjectRef[] accessLevels = client.getAccessLevel(credentialsHolder.get());
 		return MantisEntityConverter.mantis2SquashPermission(accessLevels);
@@ -158,7 +158,7 @@ public class MantisConnector implements BugTrackerConnector {
 		ProjectVersionData[] mantisVersions = client.findVersions(credentialsHolder.get(),
 				MantisEntityConverter.squash2MantisId(projectId));
 
-		return MantisEntityConverter.mantis2SquashVersion(mantisVersions);		
+		return MantisEntityConverter.mantis2SquashVersion(mantisVersions);
 	}
 
 	@Override
@@ -202,10 +202,10 @@ public class MantisConnector implements BugTrackerConnector {
 		return issue;
 	}
 
-	
+
 	@Override
 	public BTIssue findIssue(String key){
-		BigInteger remoteId = null;
+		BigInteger remoteId;
 		try{
 			remoteId = MantisEntityConverter.squash2MantisId(key);
 		}catch(NumberFormatException ex){
@@ -214,24 +214,24 @@ public class MantisConnector implements BugTrackerConnector {
 		IssueData mantisIssue = client.getIssue(credentialsHolder.get(), remoteId);
 		BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
 		BTProject project = findProject(issue.getProject().getName());
-		
-		
+
+
 		//let's fill the holes left by mantis2squashIssue
 		issue.setVersion(findInListByName(project.getVersions(), issue.getVersion().getName()));
 		issue.setCategory(findInListByName(project.getCategories(), issue.getCategory().getName()));
 		issue.setAssignee(findInListByName(project.getUsers(), issue.getAssignee().getName()));
-		
-		
+
+
 		issue.setProject(project);
 		return issue;
 	}
-	
+
 	@Override
 	public List<BTIssue> findIssues(List<String> issueKeyList) {
-		List<BTIssue> toReturn = new ArrayList<BTIssue>();
+		List<BTIssue> toReturn = new ArrayList<>();
 		for (String issueKey : issueKeyList) {
 			// Get the mantis issue data....
-			
+
 			try{
 			IssueData mantisIssue = client.getIssue(credentialsHolder.get(), MantisEntityConverter.squash2MantisId(issueKey));
 			// ... and convert it
@@ -246,7 +246,7 @@ public class MantisConnector implements BugTrackerConnector {
 
 	/* ****************************private methods ****************** */
 
-	
+
 	private BTProject populateProject(BTProject project){
 		project.addAllVersions(findVersions(project));
 		project.addAllUsers(findUsers(project));
@@ -255,8 +255,8 @@ public class MantisConnector implements BugTrackerConnector {
 		project.setDefaultIssuePriority(getDefaultPriority(project.getPriorities()));
 		return project;
 	}
-	
-	
+
+
 	private Priority getDefaultPriority(List<Priority> projectPriorities) {
 		String defaultPriorityId= client.getDefaultPriority(credentialsHolder.get());
 		return findInListById(projectPriorities, defaultPriorityId);
@@ -264,7 +264,7 @@ public class MantisConnector implements BugTrackerConnector {
 
 	private List<User> makeUserList(String projectId, List<Permission> permissions) {
 
-		Map<String, User> userMap = new HashMap<String, User>();
+		Map<String, User> userMap = new HashMap<>();
 
 		for (Permission permission : permissions) {
 			AccountData[] mantisUsers = client.findUsersForProject(credentialsHolder.get(),
@@ -282,7 +282,7 @@ public class MantisConnector implements BugTrackerConnector {
 
 		}
 
-		return new LinkedList<User>(userMap.values());
+		return new LinkedList<>(userMap.values());
 	}
 
 

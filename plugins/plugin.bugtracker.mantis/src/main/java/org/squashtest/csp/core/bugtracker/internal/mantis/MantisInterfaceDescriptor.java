@@ -25,6 +25,7 @@ package org.squashtest.csp.core.bugtracker.internal.mantis;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -34,7 +35,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
 @Component("squashtest.core.bugtracker.BugTrackerInterfaceDescriptor")
 public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor {
-	
+
 	private final static String REPORT_PRIORITY_LABEL  	 = "interface.report.priority.label";
 	private final static String REPORT_VERSION_LABEL  	 = "interface.report.version.label";
 	private final static String REPORT_ASSIGNEE_LABEL 	 = "interface.report.assignee.label";
@@ -42,11 +43,11 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	private final static String REPORT_SUMMARY_LABEL 	 = "interface.report.summary.label";
 	private final static String REPORT_DESCRIPTION_LABEL = "interface.report.description.label";
 	private final static String REPORT_COMMENT_LABEL 	 = "interface.report.comment.label";
-	
+
 	private final static String REPORT_EMPTY_VERSION	 = "interface.report.lists.emptyversion.label";
 	private final static String REPORT_EMPTY_CATEGORY	 = "interface.report.lists.emptycategory.label";
 	private final static String REPORT_EMPTY_ASSIGNEE	 = "interface.report.lists.emptyassignee.label";
-	
+
 	private final static String TABLE_ID_HEADER			 = "interface.table.issueid.header";
 	private final static String TABLE_SUMMARY_HEADER	 = "interface.table.summary.header";
 	private final static String TABLE_PRIORITY_HEADER	 = "interface.table.priority.header";
@@ -54,48 +55,43 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	private final static String TABLE_ASSIGNEE_HEADER	 = "interface.table.assignee.header";
 	private final static String TABLE_REPORTEDIN_HEADER	 = "interface.table.reportedin.header";
 	private final static String TABLE_DESCRIPTION_HEADER = "interface.table.description.header";
-	
-	private final static String TABLE_EMPTY_ASSIGNEE	 = "interface.table.null.assignee.label";
-	
-	
 
-	private final ThreadLocal<Locale> threadLocalLocale = new ThreadLocal<Locale>();
-	
-	@Inject 
+	private final static String TABLE_EMPTY_ASSIGNEE	 = "interface.table.null.assignee.label";
+
+
+
+	private final ThreadLocal<Locale> threadLocalLocale = new ThreadLocal<>();
+
+	@Inject @Named("mantisConnectorMessageSource")
 	private MessageSource messageSource;
-	
-	
+
+
 	public MantisInterfaceDescriptor(){
 		threadLocalLocale.set(LocaleContextHolder.getLocale());
 	}
-	
-	
-	public void setMessageSource(MessageSource messageSource){
-		this.messageSource=messageSource;
-	}
 
-	
+
 	@Override
 	public void setLocale(Locale locale){
 		threadLocalLocale.set(locale);
 	}
-	
-	
+
+
 	// ***************** basic userful info ************
-	
+
 	@Override
 	public boolean getSupportsRichDescription(){
 		return false;
 	}
-	
+
 	@Override
 	public boolean getSupportsRichComment(){
 		return false;
 	}
-	
-	
+
+
 	// ***************** labels for the issue report popup fields *******************
-	
+
 	@Override
 	public String getReportPriorityLabel() {
 		return getValue(REPORT_PRIORITY_LABEL);
@@ -120,7 +116,7 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	public String getReportSummaryLabel() {
 		return getValue(REPORT_SUMMARY_LABEL);
 	}
-	
+
 
 	@Override
 	public String getReportDescriptionLabel() {
@@ -132,7 +128,7 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 		return getValue(REPORT_COMMENT_LABEL);
 	}
 
-	
+
 	@Override
 	public String getEmptyVersionListLabel() {
 		return getValue(REPORT_EMPTY_VERSION);
@@ -142,16 +138,16 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	public String getEmptyCategoryListLabel() {
 		return getValue(REPORT_EMPTY_CATEGORY);
 	}
-	
+
 	@Override
 	public String getEmptyAssigneeListLabel(){
 		return getValue(REPORT_EMPTY_ASSIGNEE);
 	}
-	
-	
-	
+
+
+
 	// ****************** issue tables labels ***********************
-	
+
 
 	@Override
 	public String getTableIssueIDHeader() {
@@ -199,10 +195,10 @@ public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor 
 	}
 
 
-	
+
 	/* *************************** private stuffs ************************* */
 	private String getValue(String key){
-		return messageSource.getMessage(key, null, threadLocalLocale.get());	
+		return messageSource.getMessage(key, null, threadLocalLocale.get());
 	}
 
 

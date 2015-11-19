@@ -20,20 +20,17 @@
  */
 package org.squashtest.csp.core.bugtracker.internal.core
 
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.junit.Ignore;
-import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
-import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException;
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
-import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
-
-import spock.lang.Specification;
-
+import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory
+import org.squashtest.csp.core.bugtracker.core.UnknownConnectorKindException
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider
+import org.squashtest.tm.core.foundation.exception.NullArgumentException
+import spock.lang.Specification
 
 class BugTrackerConnectorFactoryTest extends Specification {
-	BugTrackerConnectorFactory factory = new BugTrackerConnectorFactory();
+	BugTrackerConnectorFactory factory = new BugTrackerConnectorFactory()
 
 	def "should create a connector of said kind"() {
 		given: "a bugtracker definition"
@@ -47,7 +44,8 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		provider.createConnector(_) >> connector
 
 		when:
-		factory.registerProvider (provider, null)
+		factory.providers = [provider]
+		factory.registerBugTrackers()
 		def res = factory.createConnector(bt)
 
 		then:
@@ -59,13 +57,13 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		return bt
 	}
 
-
 	def "should not register null kinded providers"() {
 		given: "a null kinded provider"
 		BugTrackerConnectorProvider provider = Mock()
 
 		when:
-		factory.registerProvider (provider, null)
+		factory.providers = [provider]
+		factory.registerBugTrackers()
 
 		then:
 		thrown(NullArgumentException)
@@ -82,23 +80,4 @@ class BugTrackerConnectorFactoryTest extends Specification {
 		thrown(UnknownConnectorKindException)
 	}
 
-	def "should refuse to create a connector of unregistered kind"() {
-		given: "a bugtracker definition"
-		BugTracker bt = bugTracker()
-
-		and: "a registered connector provider"
-		BugTrackerConnector connector = Mock()
-
-		BugTrackerConnectorProvider provider = Mock()
-		provider.bugTrackerKind >> "foo"
-		provider.createConnector(_) >> connector
-		factory.registerProvider (provider, null)
-
-		when:
-		factory.unregisterProvider (provider,null)
-		def res = factory.createConnector(bt)
-
-		then:
-		thrown(UnknownConnectorKindException)
-	}
 }

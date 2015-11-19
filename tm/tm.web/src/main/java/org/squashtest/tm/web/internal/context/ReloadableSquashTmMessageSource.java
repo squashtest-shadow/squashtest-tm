@@ -80,7 +80,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 	@PostConstruct
 	public void registerFragmentMessageProperties() {
 		try {
-			Set<String> consolidatedBasenames = new LinkedHashSet<String>();
+			Set<String> consolidatedBasenames = new LinkedHashSet<>();
 
 			LOGGER.debug("About to register configured basenames to build MessageSource");
 			addConfiguredBasenames(consolidatedBasenames);
@@ -90,7 +90,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 			LOGGER.debug("About to scan {} for additional fragment / plugin basenames", PLUGIN_MESSAGES_SCAN_PATTERN);
 			addLookedUpBasenames(consolidatedBasenames);
 
-			super.setBasenames(consolidatedBasenames.toArray(new String[]{}));
+			super.setBasenames(consolidatedBasenames.toArray(new String[consolidatedBasenames.size()]));
 		} catch (IOException e) {
 			LOGGER.warn("Error during bean initialization, no fragment messages will be registered.", e);
 		}

@@ -48,7 +48,7 @@ public final class MantisEntityConverter {
 	}
 
 	public static List<Severity> convertSeverities(ObjectRef[] mantisSeverities) {
-		ArrayList<Severity> severities = new ArrayList<Severity>(mantisSeverities.length);
+		ArrayList<Severity> severities = new ArrayList<>(mantisSeverities.length);
 
 		for (ObjectRef ms : mantisSeverities) {
 			String id = mantis2SquashId(ms.getId());
@@ -60,7 +60,7 @@ public final class MantisEntityConverter {
 	}
 
 	public static List<Priority> mantis2SquashPriority(ObjectRef[] mantisSeverities) {
-		List<Priority> priorities = new LinkedList<Priority>();
+		List<Priority> priorities = new LinkedList<>();
 
 		for (ObjectRef mp : mantisSeverities) {
 			String id = mantis2SquashId(mp.getId());
@@ -72,22 +72,22 @@ public final class MantisEntityConverter {
 	}
 
 	public static List<BTProject> mantis2SquashProject(ProjectData[] mantisProjects){
-		
+
 		if ((mantisProjects==null) || (mantisProjects.length==0)){
 			return Collections.emptyList();
 		}
 		else{
-			List<BTProject> projects = new LinkedList<BTProject>();
-	
+			List<BTProject> projects = new LinkedList<>();
+
 			for (ProjectData mpd : mantisProjects){
 				String id = mantis2SquashId(mpd.getId());
 				String name = mpd.getName();
 				projects.add(new BTProject(id, name));
-				
+
 				//also remember to add its subprojects
 				projects.addAll(mantis2SquashProject(mpd.getSubprojects()));
 			}
-		
+
 			return projects;
 		}
 	}
@@ -113,14 +113,14 @@ public final class MantisEntityConverter {
 	public static Priority mantis2SquashPriority(ObjectRef data) {
 		return new Priority(mantis2SquashId(data.getId()), data.getName());
 	}
-	
+
 	/**
 	 * Convert a mantis status into Status
-	 * 
+	 *
 	 * @param mantisStatus
-	 * 
+	 *
 	 * @return a Status
-	 * 
+	 *
 	 */
 	public static Status mantis2SquashStatus(ObjectRef mantisStatus){
 		if (mantisStatus == null){
@@ -138,7 +138,7 @@ public final class MantisEntityConverter {
 	 * if the input is null or empty.
 	 */
 	public static List<Version> mantis2SquashVersion(ProjectVersionData[] mantisVersions){
-		List<Version> versions = new LinkedList<Version>();
+		List<Version> versions = new LinkedList<>();
 
 		if ((mantisVersions == null) || (mantisVersions.length==0)){
 			versions.add(Version.NO_VERSION);
@@ -169,7 +169,7 @@ public final class MantisEntityConverter {
 	 */
 	public static List<Category> mantis2SquashCategory(String[] mantisCategories){
 
-		List<Category> categories  = new LinkedList<Category>();
+		List<Category> categories  = new LinkedList<>();
 		long dummyId=0;
 
 		if ((mantisCategories==null) || (mantisCategories.length==0) ){
@@ -188,7 +188,7 @@ public final class MantisEntityConverter {
 	}
 
 	public static List<Permission> mantis2SquashPermission(ObjectRef[] mantisPermissions){
-		List<Permission> accessLevels = new LinkedList<Permission>();
+		List<Permission> accessLevels = new LinkedList<>();
 
 		for (ObjectRef level : mantisPermissions){
 			String id = mantis2SquashId(level.getId());
@@ -200,7 +200,7 @@ public final class MantisEntityConverter {
 	}
 
 	public static List<User> mantis2SquashUser(AccountData[] mantisUsers){
-		List<User> users = new LinkedList<User>();
+		List<User> users = new LinkedList<>();
 
 		for (AccountData muser : mantisUsers){
 			String id = mantis2SquashId(muser.getId());
@@ -231,7 +231,7 @@ public final class MantisEntityConverter {
 		return data;
 
 	}
-	
+
 
 
 	public static BigInteger squash2MantisId(String squashId){
@@ -260,7 +260,7 @@ public final class MantisEntityConverter {
 		IssueData data = new IssueData();
 
 		data.setProject(makeObjectRef(squashIssue.getProject()));
-		
+
 		//nope, that's not a bug. the Priority in Squash maps to Severity in Mantis, accordingly to the specs. Don't touch that.
 		data.setSeverity(makeObjectRef(squashIssue.getPriority()));
 

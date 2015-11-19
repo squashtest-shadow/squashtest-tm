@@ -26,11 +26,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
-import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.squashtest.tm.api.SquashPathProperties;
 import org.squashtest.tm.web.config.ResourceResolverProperties;
 
 /**
@@ -44,7 +43,7 @@ import org.squashtest.tm.web.config.ResourceResolverProperties;
  * @since 1.13.0
  */
 @SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
-@EnableConfigurationProperties({ResourceResolverProperties.class})
+@EnableConfigurationProperties({ResourceResolverProperties.class, SquashPathProperties.class})
 @EnableWebSecurity
 @ImportResource({"classpath*:META-INF/spring/dynamicdao-context.xml", "classpath*:META-INF/spring/dynamicmanager-context.xml"})
 public class SquashTm {

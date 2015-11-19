@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
@@ -27,6 +28,12 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService;
 import org.squashtest.csp.core.bugtracker.service.BugTrackersServiceImpl;
 import org.squashtest.csp.core.bugtracker.service.ThreadLocalBugTrackerContextHolder;
+import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
+import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
+
+import javax.inject.Inject;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Spring configuration for bugtracker connectors subsystem
@@ -35,6 +42,12 @@ import org.squashtest.csp.core.bugtracker.service.ThreadLocalBugTrackerContextHo
  */
 @Configuration
 public class BugTrackerConfig {
+	@Autowired(required = false)
+	private Collection<BugTrackerConnectorProvider> providers = Collections.emptyList();
+
+	@Autowired(required = false)
+	private Collection<AdvancedBugTrackerConnectorProvider> advancedProviders = Collections.emptyList();
+
 	@Bean(name = "squashtest.core.bugtracker.BugTrackerContextHolder")
 	public BugTrackerContextHolder bugTrackerContextHolder() {
 		return new ThreadLocalBugTrackerContextHolder();
@@ -42,7 +55,11 @@ public class BugTrackerConfig {
 
 	@Bean(name = "squashtest.core.bugtracker.BugTrackerConnectorFactory")
 	public BugTrackerConnectorFactory bugTrackerConnectorFactory() {
-		return new BugTrackerConnectorFactory();
+		BugTrackerConnectorFactory bean = new BugTrackerConnectorFactory();
+		bean.setAdvancedProviders(advancedProviders);
+		bean.setProviders(providers);
+
+		return bean;
 	}
 
 	@Bean

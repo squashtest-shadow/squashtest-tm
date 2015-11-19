@@ -46,6 +46,12 @@
     </dependency>
 
     <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>core.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core.bugtracker.api</artifactId>
       <version>${project.version}</version>

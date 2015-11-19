@@ -33,7 +33,7 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
 
 
-@Service("squashtest.core.bugtracker.mantis.MantisConnectorProvider")
+@Service
 public class MantisConnectorProvider implements BugTrackerConnectorProvider {
 
 	@Inject
