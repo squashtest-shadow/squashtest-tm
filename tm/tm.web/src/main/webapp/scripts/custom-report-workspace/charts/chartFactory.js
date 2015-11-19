@@ -20,8 +20,8 @@
  */
 
 define(["backbone","./chart-render-utils","./customReportPieView","./customReportBarView",
-  "./customReportLineView","./customReportCumulativeView","./customReportComparativeView"],
-		function(Backbone,renderUtils,PieView,BarView,LineView,CumulativeView,ComparativeView){
+  "./customReportLineView","./customReportCumulativeView","./customReportComparativeView","./customReportTrendView"],
+		function(Backbone,renderUtils,PieView,BarView,LineView,CumulativeView,ComparativeView,TrendView){
 
 
 	function generateBarChart(viewID, jsonChart){
@@ -95,14 +95,14 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
         //axis2Value1 : [[axis1Value1,Value],[axis1Value2,Value]],
         //axis2Value2 : [[axis1Value1,Value],[axis1Value2,Value]]
         //}
-        //ie we have an object were axis2 values are keys and values are series
+        //ie we have an object where axis2 values are keys and values are series
       .map(function (serie) {
         var result = [];
         _.each(ticks,function(tick,index) {
           var valueForOneTick = _.find( serie, function (value) {//inside each serie retrive the value for a given tick
             return value[0]===tick;
           });
-          //if the series has no value for given tick, _.find() return undefined so we affect 0 instead,
+          //If the series has no value for given tick, _.find() return undefined so we affect 0 instead,
           //else we affect value[2] wich is the numeric value of the double groupby axis1Value/axis2Value
           valueForOneTick = valueForOneTick === undefined ? 0 : valueForOneTick[2];
           //index +1 because for HORIZONTAL stacked bar chart jqplot wait series like :
@@ -110,17 +110,12 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
           //[[x1,1],[y1,2],[z1,3]],
           //[[x2,1],[y2,2],[z2,3]],
           //]
+          //Yeah it sucks but the option to swap series from vertical form in horizontal form seems to be under developement
           result.push([valueForOneTick,index+1]);
         });
         return result;
       })
     .value();
-
-
-    console.log("comparativeSeries");
-    console.log(comparativeSeries);
-    console.log("computedSeries");
-    console.log(computedSeries);
 
     var axis = jsonChart.axes;
 
@@ -132,9 +127,6 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
       })
       .keys()
       .value();
-
-    console.log("seriesLegend");
-    console.log(seriesLegend);
 
 		var Comparative = ComparativeView.extend({
 			getCategories : function(){
@@ -214,7 +206,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 		});
     //Now transforming series -> cumulative series
     //ex : [[1,2,3,4],[1,3,5]] -> [[1,3,6,10],[1,4,9]]
-    var cumulativeSeries =_.map( series, function( serie,indox ){
+    var cumulativeSeries =_.map( series, function( serie ){
         var resultSerie =  _.map( serie, function( value,index ){
             var memoSerie = serie.slice(0,index+1);
             var result =  _.reduce( memoSerie, function (memo, num) {
@@ -241,7 +233,95 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 		});
 
 
+
+
 		return new Cumulative({
+			el : $(viewID),
+			model : new Backbone.Model({
+				chartmodel : cumulativeSeries,
+        title : title,
+        axis : axis
+			},{
+				url : "whatever"
+			})
+		});
+	}
+
+  function generateTrendChart(viewID, jsonChart){
+
+		var ticks = jsonChart.abscissa.map(function(elt){
+			return elt[0];
+		});
+
+    ticks = _.uniq(ticks);//abscissa are combinaison axis1Value/axis2Value
+
+		var series = jsonChart.measures.map(function(measure){
+			return jsonChart.series[measure.label];
+		});
+
+
+    var comparativeSeries = _.map(series, function(serie){
+        return _.map(serie, function(value,index){
+            var result = [jsonChart.abscissa[index],value];
+            return _.flatten(result);
+        });
+    })[0];
+
+    console.log("comparativeSeries");
+    console.log(comparativeSeries);
+
+    var cumulativeSeries = _.chain(comparativeSeries)
+      //see comment above about comparaison chart
+      .groupBy(function (memo) {
+        return memo[1];
+      })
+      .map(function (serie) {
+        var result = [];
+        _.each(ticks,function(tick,index) {
+          var valueForOneTick = _.find( serie, function (value) {
+            return value[0]===tick;
+          });
+          valueForOneTick = valueForOneTick === undefined ? 0 : valueForOneTick[2];
+          result.push(valueForOneTick);
+        });
+        return result;
+      })
+      //now we do cumul for each serie
+      .map(function (serie) {
+        var resultSerie =  _.map( serie, function( value,index ){
+            var memoSerie = serie.slice(0,index+1);
+            var result =  _.reduce( memoSerie, function (memo, num) {
+              return memo + num;
+            }, 0);
+            return result;
+        });
+        return resultSerie;
+      })
+      .value();
+
+    console.log("cumulativeSeries");
+    console.log(cumulativeSeries);
+
+    var axis = jsonChart.axes;
+
+    var title = jsonChart.name;
+
+    //cumulativeSeries = [[1,0,5,3,4,8],[8,1,4,2,7,1],[4,1,9,3,6,4],[4,6,0,0,2,3]];
+
+    //ticks = [];
+
+		var Trend = TrendView.extend({
+			getCategories : function(){
+				return ticks;
+			},
+
+			getSeries : function(){
+				return this.model.get('chartmodel');
+			}
+
+		});
+
+		return new Trend({
 			el : $(viewID),
 			model : new Backbone.Model({
 				chartmodel : cumulativeSeries,
@@ -302,6 +382,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
       case 'LINE' : return generateLineChart(viewID, jsonChart);
       case 'CUMULATIVE' : return generateCumulativeChart(viewID, jsonChart);
       case 'COMPARATIVE' : return generateComparativeChart(viewID, jsonChart);
+      case 'TREND' : return generateTrendChart(viewID, jsonChart);
       default : throw jsonChart.chartType+" not supported yet";
     }
   }

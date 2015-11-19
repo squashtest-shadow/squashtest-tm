@@ -419,13 +419,6 @@
 				<div id="general-information-panel" class="information-panel">
 					<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>{{createdOn}} ({{createdBy}})
 					<br/>
-					<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
- 					{{#if lastModifiedBy}}
-    					{{lastModifiedOn}} ({{lastModifiedBy}})
-  					{{else}}
-    					<span th:text="#{label.lower.Never}"></span>
-  					{{/if}}
-					<br/>
 					<span th:text="#{workspace.custom-report.timestamp.label}">chart type</span>
 				</div>
 			</div>
