@@ -7,9 +7,7 @@
     <version>1.13.0.NOSGI-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.squashtest.tm</groupId>
   <artifactId>core.report.api</artifactId>
-  <packaging>bundle</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM API required to provide reports as plugins</description>
 
@@ -40,7 +38,6 @@
       <artifactId>core.api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- ====== SQUASHTEST ====== -->
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.foundation</artifactId>
@@ -51,7 +48,7 @@
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
     </dependency>
-    <!-- ====== /SQUASHTEST ====== -->
+
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-aop</artifactId>
@@ -80,22 +77,9 @@
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
-      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <!-- ====== /SPOCK TESTS ====== -->
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
       </plugin>
     </plugins>
   </build>
