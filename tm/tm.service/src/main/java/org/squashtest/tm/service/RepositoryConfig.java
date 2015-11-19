@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
@@ -44,7 +45,9 @@ import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor;
 import javax.inject.Inject;
 import javax.sql.DataSource;
 import javax.validation.ValidatorFactory;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Configuration for repository layer.
@@ -114,20 +117,33 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 	 *
 	 * @return
 	 */
-	@Bean(name = "hibernateProperties")
+	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public Properties hibernateProperties() {
-		Properties props = new Properties();
+		Set<String> names = new HashSet<>();
 
 		for (PropertySource ps : env.getPropertySources()) {
 			if (ps instanceof EnumerablePropertySource) {
 				for (String name : ((EnumerablePropertySource) ps).getPropertyNames()) {
 					if (name.toLowerCase().startsWith("hibernate")) {
-						props.put(name, ps.getProperty(name));
+						names.add(name);
+						// Don't directly get the property because in case of duplicate props, it would short-circuit
+						// property priority, which is managed by Environment object
 					}
 				}
 			}
 		}
+
+		if (LOGGER.isTraceEnabled()) {
+			LOGGER.trace("Filtering hibernate properties from environment : {}", names);
+		}
+
+		Properties props = new Properties();
+
+		for (String name : names) {
+			props.put(name, env.getProperty(name));
+		}
+
 
 		return props;
 	}

@@ -174,7 +174,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			.addTransformer(new CssLinkResourceTransformer());
 
 		registry.addResourceHandler("/scripts/**")
-//			.addResourceLocations("/scripts/")
 			.addResourceLocations("/scripts/", "classpath:/scripts/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())

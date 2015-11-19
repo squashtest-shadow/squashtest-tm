@@ -1,6 +1,0 @@
-This folder contains Jetty configuration files. By default, Jetty uses : 
-* etc/jetty.xml
-* etc/jetty-selector.xml
-* etc/jetty-deployer.xml
-* etc/jetty-logging.xml
-* etc/jetty-requestlog.xml

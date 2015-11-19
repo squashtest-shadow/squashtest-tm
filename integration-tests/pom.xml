@@ -21,7 +21,7 @@
     <database.schemaName>public</database.schemaName>
     <database.typefactory>org.dbunit.ext.h2.H2DataTypeFactory</database.typefactory>
     <database.username>sa</database.username>
-    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+    <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
     <dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-dbunit/squash-it
     </dbunit-database.url>
@@ -311,7 +311,7 @@
       </activation>
 
       <properties>
-        <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+        <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
         <dbunit-database.url>jdbc:h2:./target/database/squash-it-dbunit/squash-it
         </dbunit-database.url>
@@ -329,7 +329,7 @@
       </activation>
 
       <properties>
-        <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These 
+        <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
         <dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-dbunit</dbunit-database.url>
         <non-dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-non-dbunit
@@ -398,7 +398,7 @@
         <database.typefactory>org.dbunit.ext.postgresql.PostgresqlDataTypeFactory</database.typefactory>
         <database.username>${it.database.username}</database.username>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
-        <hibernate.dialect>org.hibernate.dialect.PostgreSQLDialect</hibernate.dialect>
+        <hibernate.dialect>org.hibernate.dialect.PostgreSQL9Dialect</hibernate.dialect>
         <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
       </properties>
 

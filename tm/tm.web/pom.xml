@@ -37,12 +37,12 @@
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
 
     <war.css.dir>styles</war.css.dir>
+    <wro4j-spring-boot.dir>${project.build.outputDirectory}/wro4j-spring-boot</wro4j-spring-boot.dir>
 
     <!-- Crap name for a directory. Yet 'wro4j/styles' makes wro4j substitute wrong urls and 'wro4j' is not picked by spring-boot -->
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
     <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
-    <wro4j-spring-boot.dir>${project.build.outputDirectory}/wro4j-spring-boot</wro4j-spring-boot.dir>
   </properties>
 
   <dependencyManagement>
@@ -104,6 +104,12 @@
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.wizard.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.squashtest.tm</groupId>
+      <artifactId>database.h2.fragment</artifactId>
       <version>${project.version}</version>
     </dependency>
 
@@ -306,6 +312,7 @@
       <type>pom</type>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
   <build>
 
@@ -341,15 +348,14 @@
               <folder>${wro4j-spring-boot.dir}</folder>
               <folder>target/jasperreports-plugin</folder>
             </folders>
-            <jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2
-              -Dspring.datasource.url=jdbc:h2:../../provision/target/dev-database/squashtest</jvmArguments>
+            <jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2</jvmArguments>
           </configuration>
           <!--<dependencies>-->
-            <!--<dependency>-->
-              <!--<groupId>org.springframework</groupId>-->
-              <!--<artifactId>springloaded</artifactId>-->
-              <!--<version>1.2.4.RELEASE</version>-->
-            <!--</dependency>-->
+          <!--<dependency>-->
+          <!--<groupId>org.springframework</groupId>-->
+          <!--<artifactId>springloaded</artifactId>-->
+          <!--<version>1.2.4.RELEASE</version>-->
+          <!--</dependency>-->
           <!--</dependencies>-->
         </plugin>
       </plugins>
@@ -703,15 +709,15 @@
 
               <execution>
                 <id>copy-wro4j-to-spring-boot</id>
-                <phase>prepare-package</phase>
                 <goals>
                   <goal>copy-resources</goal>
                 </goals>
+                <phase>prepare-package</phase>
                 <configuration>
                   <resources>
                     <resource>
-                      <directory> ${wro4j.css.outputDir}</directory>
-                   </resource>
+                      <directory>${wro4j.css.outputDir}</directory>
+                    </resource>
                   </resources>
                   <outputDirectory>${wro4j-spring-boot.dir}/styles</outputDirectory>
                 </configuration>

@@ -150,6 +150,7 @@ tm/tm.web/node_modules
 .profiler
 tm/tm.web/@lucene.dir@
 @lucene.dir@
+tm/data
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
