@@ -129,9 +129,10 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 
 	private void handleCUFBindingDeleteEvent(List<Long> cufBindingIds) {
 		
+		if (!cufBindingIds.isEmpty()) {
 		MultiValueMap<Long, CustomFieldBinding> bindingByCufId = populateBindingByCufId(cufBindingIds);
 		removeColumnPrototypes(bindingByCufId.entrySet());
-
+		}
 	}
 
 	@SuppressWarnings("unchecked")
