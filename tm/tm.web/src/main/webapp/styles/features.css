@@ -571,3 +571,29 @@ p {
 	background-image : url(../images/Raccourcis_Ok-26.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
+
+
+.chart-BAR {
+	background-image : url(../images/chart_bar.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-COMPARATIVE {
+	background-image : url(../images/chart_comparative.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-CUMULATIVE {
+	background-image : url(../images/chart_cumulative.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-PIE {
+	background-image : url(../images/chart_pie.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.chart-TREND {
+	background-image : url(../images/chart_trend.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+

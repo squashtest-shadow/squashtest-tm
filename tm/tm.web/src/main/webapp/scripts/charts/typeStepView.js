@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.translator", "jquery.squash"],
-	function($, backbone, _, Handlebars, AbstractStepView, translator) {
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.translator",  "custom-report-workspace/charts/chartFactory", "jquery.squash"],
+	function($, backbone, _, Handlebars, AbstractStepView, translator, chart) {
 	"use strict";
 
 	var typeStepView = AbstractStepView.extend({
@@ -31,6 +31,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this._initialize(data, wizrouter);
 			this.precalculateInfoListItemData();
 			this.reloadData();
+			this.initGraphExample();
 		},
 		
 	events : {
@@ -63,33 +64,86 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		},
 		changeType : function (event){
 			this.showAxisByType(event.target.value);
+			this.changeExampleGraph(event.target.value);
+		},
+		
+		initGraphExample : function (){
+			
+			var type = this.model.get("type") || "PIE";
+			this.changeExampleGraph(type);
+			
+		},
+		changeExampleGraph : function (type){
+			
+			$("#chart-display-area").html('');
+			var fakeData; 
+			
+			switch (type)  {
+			case "PIE":
+			case "BAR":	
+			case "CUMULATIVE": fakeData = this.getFakeData1();
+            break;
+			case "TREND": 		
+			case "COMPARATIVE": fakeData = this.getFakeData2();
+			break;
+				
+			}
+			
+			
+			fakeData.type = type;
+			chart.buildChart("#chart-display-area", fakeData);
+			
+		},	
+		
+		getFakeData1 : function () {
+			
+			return {"name":"",
+				"measures":[{"label":"","columnPrototype":{"label":"REQUIREMENT_ID","specializedEntityType":{"entityType":"REQUIREMENT","entityRole":null}},"operation":{"name":"COUNT"}}],
+				"axes":[{"label":"","columnPrototype":{"label":"REQUIREMENT_VERSION_CREATED_ON","specializedEntityType":{"entityType":"REQUIREMENT_VERSION","entityRole":null}},"operation":{"name":"BY_MONTH"}}],
+				"filters":[],
+				"abscissa":[[201502],[201503],[201504],[201505],[201506],[201507],[201508],[201509],[201510],[201511]],
+				"series":{"":[1,1,3,1,1,1,4,2,5,2]}};
+			
+		},
+		getFakeData2 : function() {
+			return {"name":"",
+				"measures":[{"label":"","columnPrototype":{"label":"REQUIREMENT_ID","specializedEntityType":{"entityType":"REQUIREMENT","entityRole":null}},"operation":{"name":"COUNT"}}],
+				"axes":[{"label":"","columnPrototype":{"label":"REQUIREMENT_VERSION_CATEGORY","specializedEntityType":{"entityType":"REQUIREMENT_VERSION","entityRole":null}},"operation":{"name":"NONE"}},{"label":"","columnPrototype":{"label":"REQUIREMENT_VERSION_CRITICALITY","specializedEntityType":{"entityType":"REQUIREMENT_VERSION","entityRole":null}},"operation":{"name":"NONE"}}],
+				"abscissa":[["CAT_ERGONOMIC","MAJOR"],["CAT_NON_FUNCTIONAL","MAJOR"],["CAT_NON_FUNCTIONAL","MINOR"],["CAT_PERFORMANCE","MINOR"],["CAT_PERFORMANCE","UNDEFINED"],["CAT_SECURITY","MINOR"],["CAT_UNDEFINED","CRITICAL"],["CAT_UNDEFINED","MAJOR"],["CAT_UNDEFINED","MINOR"],["CAT_UNDEFINED","UNDEFINED"]],
+				"series":{"":[1,1,3,1,1,1,4,2,5,2]}};
 			
 		},
 		
 		showAxisByType : function (type) {
 			
 			switch (type) {
+			case "PIE": this.showPieAxis();
+				break;
+			case "BAR":	 
+			case "CUMULATIVE": this.showOneAxis();
+            break;
+			case "TREND": 	
+			case "COMPARATIVE": this.showMultiAxis();
+			break;
 			
-			case "LINE" : this.showLineAxis();
-				break;
-			case "BAR" : this.showBarAxis();
-				break;
-			case "PIE" : this.showPieAxis();
-				break;
-			case "TABLE" : //no table atm
-				break;
 			}
 			
 			
 		},
-		
+		showMultiAxis : function (){
+			this.setVisible(["axis-y", "axis-x2"]);
+			
+		},
 		showPieAxis : function () {	
 			this.setInvisible(["axis-y", "axis-x2"]);			
 		},
 		
-		showBarAxis : function () {
-			this.setVisible(["axis-y", "axis-x2"]);
+		showOneAxis : function () {
+			this.setVisible(["axis-y"]);
+			this.setInvisible(["axis-x2"]);
 		},
+		
+		
 		
 		showLineAxis : function () {
 			this.setVisible(["axis-y"]);
@@ -97,11 +151,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		}, 
 		
 		setVisible : function (values){		
-			_.each(values, function (val) {$("#" + val).visible();});
+			_.each(values, function (val) {$("#" + val).show();});
 			
 		},
 		setInvisible : function (values){
-			_.each(values, function (val) {$("#" + val).invisible();});
+			_.each(values, function (val) {$("#" + val).hide();});
 		},
 
 		precalculateInfoListItemData : function () {
@@ -277,10 +331,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 			switch (type) {
 			
-			case "LINE" :  axis2 = null;
-			break;
-			
-		    case "BAR" : 
+			case "CUMULATIVE" :  
+		    case "BAR" : axis2 = null;
 			break;
 			
 		    case "PIE" : 
@@ -297,9 +349,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		    	
 		    	axis2 = null;
 			break;
-			
-		    case "TABLE" : //no table atm
-			break;
+
 			}
 			
 					

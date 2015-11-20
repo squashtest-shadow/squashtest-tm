@@ -51,10 +51,12 @@
 <br />
 {{/inline}}
 
-<span th:text="#{chart.wizard.creation.step.message.axis}"/>
+<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.axis}"/>
+<br />
+<span  th:text="#{chart.wizard.creation.step.sub-message.axis}"/>
 <br />
 <br />
-
+<br />
 {{#each attributes.columnPrototypes}}
 
   {{#if (contains ../attributes.selectedEntity @key)}}

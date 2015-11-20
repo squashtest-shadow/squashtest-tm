@@ -22,11 +22,11 @@ package org.squashtest.tm.domain.chart;
 
 public enum ChartType {
 	// @formatter:off
-	BAR,
-	PIE,
+        PIE,	
+        BAR,	
 	CUMULATIVE,
-	COMPARATIVE,
-	TREND;
+	TREND,
+	COMPARATIVE;
 	// @formatter:on
 
 
