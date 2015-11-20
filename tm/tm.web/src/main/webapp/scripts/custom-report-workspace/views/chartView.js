@@ -48,7 +48,8 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 		},
 
 		events : {
-      "click #refresh-btn":"refresh"
+      "click #refresh-btn":"refresh",
+      "click #modify-chart-button":"modifyChart"
 		},
 
 		render : function(){
@@ -274,6 +275,12 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 
     getI18n : function (key) {
       return " " + translator.get(key);
+    },
+
+    modifyChart : function () {
+      var nodeId = this.model.get('id');
+      url = urlBuilder.buildURL("chart.wizard",nodeId);
+      document.location.href = url;
     }
 
 

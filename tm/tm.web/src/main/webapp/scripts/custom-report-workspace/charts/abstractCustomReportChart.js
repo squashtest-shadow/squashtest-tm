@@ -33,6 +33,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
 	return Backbone.View.extend({
 		//************************** commons variables **************************
+		legendsMaxLength : 15,
 
 		// ************************* abstract functions *****************
 
@@ -77,6 +78,11 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
     */
     replaceInfoListDefaultLegend : function (legends,axis) {
       var protoLabel = axis.columnPrototype.label;
+      var protoDatatype = axis.columnPrototype.dataType;
+
+      if (protoDatatype === "DATE") {
+        return this._formatDateLegend(legends, axis);
+      }
 
       switch (protoLabel) {
         case "TEST_CASE_NATURE":
@@ -91,11 +97,8 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
           return this._getI18nLegends(legends, squashtm.app.requirementCriticality);
         case "REQUIREMENT_VERSION_STATUS":
           return this._getI18nLegends(legends, squashtm.app.requirementStatus);
-        case "TEST_CASE_CREATED_ON":
-        case "TEST_CASE_MODIFIED_ON":
-          return this._formatDateLegend(legends, axis);
         default:
-          return legends;
+          return this.truncateLegends(legends);
       }
 
     },
@@ -173,6 +176,71 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         result.label = legend;
         return result;
       });
+    },
+
+    truncateLegends : function (legends) {
+      return _.map( legends, function( legend ){
+          return string.substring(0, this.legendsMaxLength);
+      });
+    },
+
+    calculateFontSize : function (legends,ticks) {
+      var height = (this.$el.parent().height())*0.9;
+      var nbLabelLegend = legends.length;
+      var nbLabelTicks = ticks.length;
+      return Math.min(this.calculateOneFontSize(height,nbLabelLegend),this.calculateOneFontSize(height,nbLabelTicks));
+    },
+
+    calculateOneFontSize : function (height,nbLabel) {
+      var spaceForOnelabel = height/nbLabel;
+      console.log("Space for legend " + height/nbLabel);
+      if (spaceForOnelabel > 30) {
+        return 12;
+      }
+      else if (spaceForOnelabel > 27) {
+        return 10;
+      }
+      else if (spaceForOnelabel > 24) {
+        return 8;
+      }
+      return 0; //8px min.. so the 0 will be used for test value.
+    },
+
+    getResizeConf : function (legends,ticks) {
+      var self = this;
+      var fontSize = this.calculateFontSize(legends,ticks);
+      return {
+        legend:self.getResizeLegendConf(fontSize),
+        fontSize:self.getResizeTickConf(fontSize)
+      };
+    },
+
+    getResizeLegendConf : function (fontSize) {
+      if (fontSize===0) {
+        return {show:false};
+      }
+      else {
+        return {
+           renderer: $.jqplot.EnhancedLegendRenderer,
+           rendererOptions:{
+            seriesToggle: false,
+            fontSize: fontSize+'px'
+            },
+           show:true,
+           placement:'outsideGrid',
+           location:'e',
+           border:'none'
+				};
+      }
+    },
+
+    getResizeTickConf : function (fontSize) {
+      if (fontSize===0) {
+        return 'auto';
+      }
+      else {
+        return fontSize + 'px';
+      }
     },
 
 

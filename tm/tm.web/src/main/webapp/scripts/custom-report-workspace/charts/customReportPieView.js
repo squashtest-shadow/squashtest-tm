@@ -74,6 +74,8 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 				colorsAndLabels = this._getNormalConf(pieserie);
 			}
 
+      var sizeDependantconf = this.getResizeConf(colorsAndLabels.labels,colorsAndLabels.labels);
+
 			return _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					renderer : jQuery.jqplot.PieRenderer,
@@ -93,19 +95,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 					shadow : false,
 					shadowColor : 'transparent'
 				},
-				legend:{
-          renderer: $.jqplot.EnhancedLegendRenderer,
-				  show:true,
-				  placement: 'outsideGrid',
-				  rendererOptions: {
-				      numberRows: pieserie.length
-				  },
-				  location:'e',
-				  marginTop: '15px',
-          fontSize : 12,
-          fontColor : "#000000",
-          border: 'none'
-				}
+				legend : sizeDependantconf.legend
 				//seriesColors : colorsAndLabels.colors
 			});
 		},

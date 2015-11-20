@@ -48,8 +48,12 @@ define(["jquery", "./abstractCustomReportChart",
       var axis2 = this.getAxis()[1];
 
       var formatedLegends = self.replaceInfoListDefaultLegend(legends,axis2);
-
       formatedLegends = this.objectifyLegend(formatedLegends);
+
+      var sizeDependantconf = this.getResizeConf(formatedLegends,ticks);
+
+      console.log("FontSize for legend ");
+      console.log(sizeDependantconf);
 
 			return _.extend(this.getCommonConf(),{
         stackSeries: true,
@@ -62,21 +66,15 @@ define(["jquery", "./abstractCustomReportChart",
 				},
         series: formatedLegends,
 
-				legend : {
-           renderer: $.jqplot.EnhancedLegendRenderer,
-           rendererOptions:{
-            seriesToggle: false
-            },
-           show:true,
-           placement:'outsideGrid',
-           location:'e',
-           border:'none'
-				},
+				legend : sizeDependantconf.legend,
 
 				axes : {
 					yaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
-						ticks : ticks
+						ticks : ticks,
+            tickOptions: {
+              fontSize : sizeDependantconf.fontSize
+            }
 					},
           xaxis : {
 

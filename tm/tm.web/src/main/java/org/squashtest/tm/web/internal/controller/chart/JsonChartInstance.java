@@ -35,6 +35,7 @@ import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ChartType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.Operation;
@@ -308,9 +309,12 @@ public class JsonChartInstance {
 		
 		private JsonSpecializedEntityType specializedEntityType;
 		
+		private DataType dataType;
+		
 		public JsonColumnPrototype(ColumnPrototype column) {
 			this.label = column.getLabel();
 			this.specializedEntityType = new JsonSpecializedEntityType(column.getSpecializedType());
+			this.dataType = column.getDataType();
 		}
 
 		public String getLabel() {
@@ -328,6 +332,14 @@ public class JsonChartInstance {
 		public void setSpecializedEntityType(
 				JsonSpecializedEntityType specializedEntityType) {
 			this.specializedEntityType = specializedEntityType;
+		}
+
+		public DataType getDataType() {
+			return dataType;
+		}
+
+		public void setDataType(DataType dataType) {
+			this.dataType = dataType;
 		}
 		
 	}
