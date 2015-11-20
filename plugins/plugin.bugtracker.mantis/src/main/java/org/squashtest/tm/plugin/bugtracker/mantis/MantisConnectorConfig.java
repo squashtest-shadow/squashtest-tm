@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.squashtest.tm.api.SquashPathProperties;
+import org.squashtest.tm.api.config.SquashPathProperties;
 
 import javax.inject.Inject;
 
@@ -40,11 +40,11 @@ public class MantisConnectorConfig {
 	private SquashPathProperties squashPathProperties;
 
 	@Bean
-	MessageSource mantisConnectorMessageSource() {
+	public MessageSource mantisConnectorMessageSource() {
 		ReloadableResourceBundleMessageSource bean = new ReloadableResourceBundleMessageSource();
 		bean.setCacheSeconds(60);
 		bean.setBasenames(
-			"org.squashtest.tm.plugin.bugtracker.mantis.messages",
+			"classpath:/org/squashtest/tm/plugin/bugtracker/mantis/messages",
 			squashPathProperties.getLanguagesPath() + "/plugin.bugtracker.mantis/mantis-bugmessages",
 			squashPathProperties.getLanguagesPath() + "/plugin.bugtracker.mantis/messages"
 		);

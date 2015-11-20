@@ -22,11 +22,12 @@ package org.squashtest.tm.api.plugin;
 
 /**
  * Enumeration of Squash main entities.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public enum EntityType {
+	// formatter:off
 	PROJECT,
 	TEST_CASE_LIBRARY,
 	TEST_CASE_FOLDER,
@@ -44,4 +45,5 @@ public enum EntityType {
 	TEST_SUITE,
 	EXECUTION_STEP,
 	ISSUE
+	// formatter:on
 }

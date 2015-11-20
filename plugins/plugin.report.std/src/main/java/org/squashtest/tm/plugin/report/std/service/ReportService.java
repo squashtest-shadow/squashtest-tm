@@ -26,9 +26,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
 
 
-@Transactional
 public interface ReportService {
-	
+
 	List<?> executeQuery(ReportQuery query);
 
 }

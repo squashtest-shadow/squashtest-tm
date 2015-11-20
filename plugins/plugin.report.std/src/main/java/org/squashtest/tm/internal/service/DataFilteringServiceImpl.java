@@ -22,6 +22,7 @@ package org.squashtest.tm.internal.service;
 
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.ProjectResource;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
@@ -32,6 +33,7 @@ import javax.inject.Inject;
 
 
 @Service("squashtest.tm.service.DataFilteringService")
+@Transactional(readOnly = true)
 public class DataFilteringServiceImpl implements DataFilteringService {
 	@Inject
 	private PermissionEvaluationService permissionService;

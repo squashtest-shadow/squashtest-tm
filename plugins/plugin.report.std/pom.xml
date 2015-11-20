@@ -7,7 +7,6 @@
     <version>1.13.0.NOSGI-SNAPSHOT</version>
   </parent>
   <artifactId>plugin.report.std</artifactId>
-  <packaging>bundle</packaging>
   <description>Standard (default) reports for Squash TM</description>
 
   <properties>
@@ -27,9 +26,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <!-- ====== /DEPENDENCY POMS ====== -->
-
-    <!--======= SQUASHTEST MODULES ======== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core.api</artifactId>
@@ -44,19 +40,16 @@
       <groupId>javax.inject</groupId>
       <artifactId>javax.inject</artifactId>
     </dependency>
-    <!--======= /SQUASHTEST MODULES ======== -->
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
-    <!-- For legacy report -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-tx</artifactId>
     </dependency>
-    <!-- ====== DEPENDENCY POMS ====== -->
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>tm.domain</artifactId>
@@ -68,7 +61,6 @@
       <version>${project.version}</version>
     </dependency>
 
-    <!-- Required to compile reports -->
     <dependency>
       <groupId>net.sf.jasperreports</groupId>
       <artifactId>jasperreports</artifactId>
@@ -98,9 +90,6 @@
         <filtering>true</filtering>
         <directory>src/main/resources</directory>
       </resource>
-      <!-- <resource> <directory>target/jasperreports-generated</directory> 
-				<targetPath>target/jasperreports</targetPath> <filtering>false</filtering> 
-				</resource> -->
     </resources>
 
     <testResources>
@@ -112,12 +101,10 @@
 
     <plugins>
 
-      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-      <!-- ====== /SPOCK TESTS ====== -->
 
       <plugin>
         <groupId>com.alexnederlof</groupId>
@@ -127,16 +114,6 @@
         </configuration>
       </plugin>
 
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 </project>

@@ -29,7 +29,7 @@ import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfigurat
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.squashtest.tm.api.SquashPathProperties;
+import org.squashtest.tm.api.config.SquashPathProperties;
 import org.squashtest.tm.web.config.ResourceResolverProperties;
 
 /**
