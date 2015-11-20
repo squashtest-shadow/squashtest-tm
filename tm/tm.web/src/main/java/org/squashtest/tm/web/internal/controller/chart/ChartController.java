@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -41,7 +42,6 @@ import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.chart.ChartModificationService;
@@ -51,6 +51,7 @@ import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
 
@@ -131,6 +132,19 @@ public class ChartController {
 	@RequestMapping(value = "/test-page", method = RequestMethod.GET)
 	public String getTestPage(){
 		return "charts-render-test.html";
+	}
+
+	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
+	public @ResponseBody String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
+			@PathVariable("id") long id) {
+
+		ChartDefinition oldDef = reportNodeService.findChartDefinitionByNodeId(id);
+		definition.setProject(oldDef.getProject());
+		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());
+		((AuditableMixin) definition).setCreatedOn(((AuditableMixin) oldDef).getCreatedOn());
+		chartService.update(definition);
+
+		return "custom-report-workspace#custom-report-chart/" + id;
 	}
 
 	@RequestMapping(value = "/new/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)

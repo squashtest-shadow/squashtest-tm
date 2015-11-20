@@ -106,11 +106,19 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 		},
 		getFakeData2 : function() {
+			
+			var val = translator.get("chart.wizard.example.value");
+			var ser = translator.get("chart.wizard.example.serie");
+			
+			var value = function(number) {return val + " " + number;};
+			var serie = function(number) {return ser + " " + number;};
+			
+			
 			return {"name":"",
 				"measures":[{"label":"","columnPrototype":{"label":"REQUIREMENT_ID","specializedEntityType":{"entityType":"REQUIREMENT","entityRole":null}},"operation":{"name":"COUNT"}}],
 				"axes":[{"label":"","columnPrototype":{"label":"REQUIREMENT_VERSION_CATEGORY","specializedEntityType":{"entityType":"REQUIREMENT_VERSION","entityRole":null}},"operation":{"name":"NONE"}},{"label":"","columnPrototype":{"label":"REQUIREMENT_VERSION_CRITICALITY","specializedEntityType":{"entityType":"REQUIREMENT_VERSION","entityRole":null}},"operation":{"name":"NONE"}}],
-				"abscissa":[["CAT_ERGONOMIC","MAJOR"],["CAT_NON_FUNCTIONAL","MAJOR"],["CAT_NON_FUNCTIONAL","MINOR"],["CAT_PERFORMANCE","MINOR"],["CAT_PERFORMANCE","UNDEFINED"],["CAT_SECURITY","MINOR"],["CAT_UNDEFINED","CRITICAL"],["CAT_UNDEFINED","MAJOR"],["CAT_UNDEFINED","MINOR"],["CAT_UNDEFINED","UNDEFINED"]],
-				"series":{"":[1,1,3,1,1,1,4,2,5,2]}};
+				"abscissa":[[value(1),serie(1)],[value(2),serie(1)],[value(3),serie(1)],[value(4),serie(1)],[value(1),serie(2)],[value(2),serie(2)],[value(3),serie(2)],[value(4),serie(2)], [value(1),serie(3)],[value(2),serie(3)],[value(3),serie(3)],[value(4),serie(3)],[value(1),serie(4)],[value(2),serie(4)],[value(3),serie(4)],[value(4),serie(4)]],
+				"series":{"":[1,1,3,1,1,1,4,2, 3, 1, 4, 1, 0, 0, 5, 0]}};
 			
 		},
 		

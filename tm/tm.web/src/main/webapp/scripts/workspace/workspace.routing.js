@@ -206,6 +206,7 @@ define([], function(){
 		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
 		'chart.wizard.data'                       : root + '/charts',
 		'chart.new'                               : root + '/charts/new/{\\d+}',
+		'chart.update'                      : root + '/charts/update/{\\d+}',
 		'chart.wizard'                       : root + '/charts/wizard/{\\d+}',
 		'chart.instance'                       : root + '/charts/{\\d+}/instance',
 

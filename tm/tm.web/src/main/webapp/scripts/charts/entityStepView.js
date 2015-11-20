@@ -133,7 +133,7 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 			
 		    var entity = _.map($("input[name='entity']:checked"), function(a) {return $(a).val();});
 
-			this.model.set({selectedEntity : entity, name : "graph" });  
+			this.model.set({selectedEntity : entity});  
 			
 			this.model.set({selectedAttributes : _.filter(this.model.get("selectedAttributes"), function(val){return _.contains(self.getIdsOfValidColumn(), val);})});
 			

@@ -30,33 +30,45 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			data.name = "preview";
 			this._initialize(data, wizrouter);
 			this.initChart();
-
+			this.initName();
 
 		},
 
 
+		initName : function (){
+			var name = this.model.get('name') || "graph" ;
+			 $("#chart-name").val(name);
+		},
 		initChart : function (){
 			var data = this.model.get("chartData");
 			chart.buildChart("#chart-display-area", data);
 
 		},
 		save : function () {
-
 			var parentId = this.model.get("parentId");
 			this.updateModel();
-
+			
+			var targetUrl;
+			
+			if (this.model.get("chartDef") === null){
+				targetUrl = router.buildURL("chart.new", parentId);
+			} else {
+				targetUrl = router.buildURL("chart.update", parentId);
+			}
+			
 			$.ajax({
 				method : "POST",
 				contentType: "application/json",
-				url : router.buildURL("chart.new", parentId),
+				url : targetUrl,
 				data : this.model.toJson()
 
 			}).done(function(url){
 				 window.location.href = squashtm.app.contextRoot + url;
-			});
-
+			});	
+			
 
 		},
+		
 
 		updateModel : function() {
 

@@ -30,9 +30,11 @@ return Backbone.Model.extend({
 		
 		if (chartDef !== null){
 		
-		this.set({name : chartDef.name,
+		this.set({
+			name : chartDef.name,
 			type : chartDef.type,
             axis: chartDef.axis,
+            owner : chartDef.owner,
             scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
             projectsScope : chartDef.projectScope,
             scopeEntity : self.getScopeEntity(chartDef.scope),
@@ -116,13 +118,14 @@ return Backbone.Model.extend({
 		toJson : function() {
 			
 			return JSON.stringify ({
-			name : this.get("name"),
+			name : this.get("name") || "graph",
 			type : this.get("type"),
 			query : {
 				axis: this.get("axis"),
 				measures : this.get("measures"),					
 				filters : _.map(this.get("filters"), function(filter) {var newFilter= _.clone(filter); newFilter.values = _.flatten(filter.values); return newFilter;})
 			},
+			owner : this.get("owner") || null,
 			projectScope : this.get("projectsScope"),
 			scope : _.map(this.get("scope"), function(val) {var newVal = _.clone(val); newVal.type = val.type.replace("LIBRARIE", "LIBRARY"); return newVal;})
 			});

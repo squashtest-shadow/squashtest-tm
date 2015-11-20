@@ -31,6 +31,8 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.web.internal.model.json.AxisColumnMixin;
 import org.squashtest.tm.web.internal.model.json.ChartDefinitionMixin;
 import org.squashtest.tm.web.internal.model.json.ChartQueryMixin;
@@ -42,6 +44,8 @@ import org.squashtest.tm.web.internal.model.json.GenericProjectMixin;
 import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
 import org.squashtest.tm.web.internal.model.json.InfoListMixin;
 import org.squashtest.tm.web.internal.model.json.MeasureColumnMixin;
+import org.squashtest.tm.web.internal.model.json.UserGroupMixin;
+import org.squashtest.tm.web.internal.model.json.UserMixin;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -78,6 +82,8 @@ public class SquashObjectMapper extends ObjectMapper {
 		addMixInAnnotations(AxisColumn.class, AxisColumnMixin.class);
 		addMixInAnnotations(MeasureColumn.class, MeasureColumnMixin.class);
 		addMixInAnnotations(ColumnPrototype.class, ColumnPrototypeMixin.class);
+		addMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
+		addMixInAnnotations(User.class, UserMixin.class);
 	}
 
 }

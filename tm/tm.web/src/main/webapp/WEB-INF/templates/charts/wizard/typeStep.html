@@ -24,8 +24,10 @@
 
 {{#*inline "axe"}}
 <div id="{{name}}">
-<span style="font-weight: bold;">{{i18n name prefix="chart.wizard.axis.label."}}</span>
-<br /><br />
+<div     style="display: flex;">
+<span class="ui-icon {{icone}}"/><span style="font-weight: bold;">{{i18n name prefix="chart.wizard.axis.label."}}</span>
+</div>
+
 <select id="axis-{{name}}" class="axis-select" name="{{name}}">
 {{#each attributes.operations}}
 
@@ -47,10 +49,11 @@
 <span th:text="#{chart.wizard.label.operation}"/> <span id="operation-{{name}}" />
 <br />
 <span id="filter-{{name}}" />
+<br />
+<br />
+<br />
 </div>
-<br />
-<br />
-<br />
+
 {{/inline}}
 
 
@@ -100,9 +103,9 @@
 
 
 <div style="float:left">
-{{>axe name="axis-y" role="MEASURE"}}
-{{>axe name="axis-x1" role="AXIS"}}
-{{>axe name="axis-x2" role="AXIS"}}
+{{>axe name="axis-y" role="MEASURE" icone="ui-icon-arrowthick-1-e"}}
+{{>axe name="axis-x1" role="AXIS" icone="ui-icon-arrowthick-1-n"}}
+{{>axe name="axis-x2" role="AXIS" icone="ui-icon-arrowthick-1-ne"}}
 </div>
 
 
