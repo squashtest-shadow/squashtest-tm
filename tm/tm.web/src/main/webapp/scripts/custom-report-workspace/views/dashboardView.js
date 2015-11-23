@@ -73,6 +73,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       "oTransitionEnd #dashboard-grid" : "refreshCharts",
       "MSTransitionEnd #dashboard-grid" : "refreshCharts",
       "click #toggle-expand-left-frame-button" : "toggleDashboard",
+      "click #rename-dashboard-button" : "rename"
 		},
 
     /**
@@ -93,16 +94,16 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     render : function(){
-      console.log("RENDER DASHBOARD");
       this.$el.html("");
       var source = $(this.tpl).html();
       var template = Handlebars.compile(source);
       Handlebars.registerPartial("chart", $(this.tplChart).html());
       Handlebars.registerPartial("dashboardDoc", $(this.tplDashboardDoc).html());
-      console.log("TEAMPLATING DASHBOARD");
-      console.log(this.dashboardInitialData);
       if (this.dashboardInitialData.chartBindings.length === 0) {
         this.dashboardInitialData.emptyDashboard = true;
+      }
+      else {
+        this.dashboardInitialData.emptyDashboard = false;
       }
       this.$el.append(template(this.dashboardInitialData));
       return this;
@@ -184,16 +185,9 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     * @return {[type]} [description]
     */
     generateGridsterCss : function () {
-      console.log("GENERATE DYNAMIC CSS");
-      console.log(this.$("#dashboard-grid").offset());
-      console.log(this.$("#dashboard-grid").innerHeight());
-      console.log(this.$("#dashboard-grid").innerWidth());
-      console.log(document.getElementById('dashboard-grid').getBoundingClientRect());
       var boundingRect = this.getGridScreenDimension();
       var xSizeWidget = this.calculateWidgetDimension(boundingRect.width,this.gridCol,this.gridColMargin,this.secureBlank);
       var ySizeWidget = this.calculateWidgetDimension(boundingRect.height,this.gridRow,this.gridRowMargin,this.secureBlank);
-      console.log("xSizeWidget" + xSizeWidget);
-      console.log("ySizeWidget" + ySizeWidget);
       var xPosStyle  = this.generateColPositionCss(xSizeWidget);
       var widthStyle  =this.generateColWidthCss(xSizeWidget);
       var yPosStyle  =this.generateRowPositionCss(ySizeWidget);
@@ -201,7 +195,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this.injectCss(xPosStyle, widthStyle, yPosStyle, heightStyle);
       this.xSizeWidget = xSizeWidget;
       this.ySizeWidget = ySizeWidget;
-      console.log("/GENERATE DYNAMIC CSS");
       return this;
     },
 
@@ -220,7 +213,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       for (var i = 1; i <= this.gridCol; i++) {//generating css for gridCol + 1 column
         xPosStyle = xPosStyle + this.getColumnPositionCss(i,xSizeWidget);
       }
-      console.log(xPosStyle);
       return xPosStyle;
     },
 
@@ -229,23 +221,18 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       for (var i = 1; i <= this.maxChartSizeX; i++) {
         xWidthStyle = xWidthStyle + this.getColumnWidthCss(i,xSizeWidget);
       }
-      console.log(xWidthStyle);
       return xWidthStyle;
     },
 
     getColumnPositionCss : function (indexCol, xSizeWidget) {
       var xPosition = this.gridColMargin*indexCol + xSizeWidget*(indexCol-1);
       var xStyle  =  '[data-col="' + indexCol + '"] { left:' + Math.round(xPosition) +'px; }';
-      console.log("Generating css col position " + indexCol);
-      console.log(xStyle);
       return xStyle;
     },
 
     getColumnWidthCss : function (xSize, xSizeWidget) {
       var width = xSize * xSizeWidget + (xSize-1) * this.gridColMargin;//don't forget to add xSize-1 margin
       var xStyle  =  '[data-sizex="' + xSize + '"] { width:' + Math.round(width) +'px; }';
-      console.log("Generating css col width " + xSize);
-      console.log(xStyle);
       return xStyle;
     },
 
@@ -255,7 +242,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       for (var i = 1; i <= nbRow; i++) {//generating css for some additional rows if user expands to much a chart
         yPosStyle = yPosStyle + this.getRowPositionCss(i,ySizeWidget);
       }
-      console.log(yPosStyle);
       return yPosStyle;
     },
 
@@ -264,23 +250,18 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       for (var i = 1; i <= this.maxChartSizeY; i++) {
         heightStyle = heightStyle + this.getRowHeightCss(i,ySizeWidget);
       }
-      console.log(heightStyle);
       return heightStyle;
     },
 
     getRowPositionCss : function (indexRow, ySizeWidget) {
       var yPosition = this.gridRowMargin*indexRow + ySizeWidget*(indexRow-1);
       var yStyle  =  '[data-row="' + indexRow + '"] { top:' + Math.round(yPosition) +'px; }';
-      console.log("Generating css row position " + indexRow);
-      console.log(yStyle);
       return yStyle;
     },
 
     getRowHeightCss : function (ySize, ySizeWidget) {
       var height = ySize * ySizeWidget + (ySize-1) * this.gridRowMargin;//don't forget to add ySize-1 margin
       var yStyle  =  '[data-sizey="' + ySize + '"] { height:' + Math.round(height) +'px; }';
-      console.log("Generating css row height width " + ySize);
-      console.log(yStyle);
       return yStyle;
     },
 
@@ -300,7 +281,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
 			var wreqr = squashtm.app.wreqr;
 			var self = this;
 			wreqr.on("dropFromTree",function (data) {
-				console.log("FIRE FLY");
 				var idTarget = data.r.attr('id');
 				if (idTarget === 'dashboard-grid') {
 					self.dropChartInGrid(data);
@@ -316,7 +296,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       var lazyInitialize = _.throttle(this.redrawDashboard, 500);
       var self = this;
       $(window).on('resize', function () {
-        console.log("FIRE RESIZE !!!");
         lazyInitialize();
       });
     },
@@ -366,7 +345,6 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         type: 'post',
       })
       .success(function(response) {
-        console.log("Change OK server side !!!");
         self.changeBindedChart(bindingId,response);
       });
 		},
@@ -536,8 +514,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       this.gridster.destroy();
       this.removeAllCharts();
       Backbone.View.prototype.remove.call(this);
-    }
+    },
 
+    rename : function () {
+      var wreqr = squashtm.app.wreqr;
+      wreqr.trigger("renameNode");
+    }
   });
 
 	return View;

@@ -145,7 +145,7 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       //Will clean the contextual part and restore the contextual div
       cleanContextContent : function () {
         if (this.activeView!==null) {
-          squashtm.app.wreqr.off();
+          squashtm.app.wreqr.off('dropFromTree');
           this.activeView.remove();
           this.activeView = null;
         }

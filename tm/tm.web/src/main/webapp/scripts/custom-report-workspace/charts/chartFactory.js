@@ -267,8 +267,6 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
         });
     })[0];
 
-    console.log("comparativeSeries");
-    console.log(comparativeSeries);
 
     var cumulativeSeries = _.chain(comparativeSeries)
       //see comment above about comparaison chart, the proccess here is nearly identical (but with subtile difference so no factorisation)
@@ -299,8 +297,6 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
       })
       .value();
 
-    console.log("cumulativeSeries");
-    console.log(cumulativeSeries);
 
     //now we retrieve the
     var seriesLegend = _.chain(comparativeSeries)
@@ -382,8 +378,6 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 	}
 
   function buildChart (viewID, jsonChart) {
-    console.log("FACTORY BUILD CHART");
-    console.log(viewID);
     jsonChart = renderUtils.toChartInstance(jsonChart);
     switch(jsonChart.type){
       case 'PIE' : return generatePieChart(viewID, jsonChart);

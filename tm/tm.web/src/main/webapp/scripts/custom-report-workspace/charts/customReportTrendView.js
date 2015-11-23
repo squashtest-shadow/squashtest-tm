@@ -49,6 +49,11 @@ define(["jquery", "./abstractCustomReportChart",
       var formatedLegends = this.replaceInfoListDefaultLegend(legends,axis2);
 
       formatedLegends = this.objectifyLegend(formatedLegends);
+      formatedLegends = _.map( formatedLegends, function( formatedLegend ){
+          return _.extend(formatedLegend,{
+            markerOptions: { size:5 }
+          });
+      });
       var sizeDependantconf = this.getResizeConf(formatedLegends,ticks);
 
 			return _.extend(this.getCommonConf(),{
@@ -72,7 +77,8 @@ define(["jquery", "./abstractCustomReportChart",
           yaxis: {
             tickOptions: {
               fontSize : sizeDependantconf.fontSize
-            }
+            },
+            min:0
           }
 
 				},

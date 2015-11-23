@@ -140,12 +140,19 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			// ***************** rename **********************
 
 			$("#rename-node-tree-button").on("click", function(){
-				$("#rename-node-dialog").formDialog("open");
+				openRenamePopup();
 			});
 
 			tree.on("rename.squashtree", function(){
-				$("#rename-node-dialog").formDialog("open");
+				openRenamePopup();
 			});
+
+      function openRenamePopup() {
+        	$("#rename-node-dialog").formDialog("open");
+      }
+
+      var wreqr = squashtm.app.wreqr;
+      wreqr.on("renameNode",openRenamePopup);
 
 
 			// ***************** deletion ********************

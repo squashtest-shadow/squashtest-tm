@@ -49,7 +49,8 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 
 		events : {
       "click #refresh-btn":"refresh",
-      "click #modify-chart-button":"modifyChart"
+      "click #modify-chart-button":"modifyChart",
+      "click #rename-chart-button" : "rename"
 		},
 
 		render : function(){
@@ -281,8 +282,12 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
       var nodeId = this.model.get('id');
       url = urlBuilder.buildURL("chart.wizard",nodeId);
       document.location.href = url;
-    }
+    },
 
+    rename : function () {
+      var wreqr = squashtm.app.wreqr;
+      wreqr.trigger("renameNode");
+    }
 
   });
 
