@@ -177,6 +177,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       }, 50);
     },
 
+    /**
+    * Override of gridster generated css. The main goal is to support dynamic resize of widget size,
+    * as the parent container size change.
+    * The generated css is injected in document head before the grid is resized
+    * @return {[type]} [description]
+    */
     generateGridsterCss : function () {
       console.log("GENERATE DYNAMIC CSS");
       console.log(this.$("#dashboard-grid").offset());
