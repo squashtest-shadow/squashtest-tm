@@ -29,10 +29,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
-import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.springframework.web.multipart.MultipartResolver;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
+import org.squashtest.tm.api.config.SquashPathProperties;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
@@ -62,6 +62,8 @@ public class TmWebConfig {
 	private MessagesProperties messagesProperties;
 	@Inject
 	private ThymeleafProperties thymeleafProperties;
+	@Inject
+	private SquashPathProperties squashPathProperties;
 
 	/**
 	 * Message source which takes into account messages from "fragments"
@@ -71,6 +73,7 @@ public class TmWebConfig {
 	@Bean
 	public MessageSource messageSource() {
 		ReloadableSquashTmMessageSource bean = new ReloadableSquashTmMessageSource();
+		bean.setSquashPathProperties(squashPathProperties);
 		bean.setBasenames(commaDelimitedListToStringArray(trimAllWhitespace(messagesProperties.getBasename())));
 		bean.setDefaultEncoding(messagesProperties.getEncoding());
 		bean.setCacheSeconds(messagesProperties.getCacheSeconds());
