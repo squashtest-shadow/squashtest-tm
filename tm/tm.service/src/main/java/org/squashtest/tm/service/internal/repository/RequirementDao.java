@@ -127,4 +127,12 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<Long> findAllRequirementsIdsByNodes(Collection<Long> nodeIds);
+	
+	/**
+	 * Return the id of all the descendants of param requirements
+	 * @param params
+	 * @return
+	 */
+	List<Long> findDescendantRequirementIds(Collection<Long> requirementIds);
+
 }

@@ -135,6 +135,7 @@ define([], function(){
 		'requirements.testcases.manager':	root + '/requirement-versions/{\\d+}/verifying-test-cases/manager',
 		'requirements.audittrail.change' :	root + '/audit-trail/requirement-versions/fat-prop-change-events/{\\d+}',
 		'requirements.audittrail.model' :	root + '/audit-trail/requirement-versions/{\\d+}/events-table',
+    'requirements.coverageStats.model' :	root + '/requirement-versions/{\\d+}/coverage-stats',
 
 		'requirementversions'	:			root + '/requirement-versions/{\\d+}',
 

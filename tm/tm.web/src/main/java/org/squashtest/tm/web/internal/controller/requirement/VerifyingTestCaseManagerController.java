@@ -29,6 +29,8 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -41,6 +43,7 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
@@ -48,9 +51,11 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -87,10 +92,14 @@ public class VerifyingTestCaseManagerController {
 
 	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
-
+	
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(VerifyingTestCaseManagerController.class);
 
 	/*
 	 * Kind of a hack : we rely on mDataProp sent by squash table. IndexBasedMapper looks up into mataProps unmarchalled
@@ -188,7 +197,12 @@ public class VerifyingTestCaseManagerController {
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
 
-
+	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/coverage-stats", method = RequestMethod.GET)
+	public @ResponseBody
+	RequirementCoverageStat getCoverageStat(@CurrentMilestone Milestone currentMilestone, @PathVariable long requirementVersionId) {
+		LOGGER.debug("JTH go controller go");
+		return verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, currentMilestone);
+	}
 
 
 }

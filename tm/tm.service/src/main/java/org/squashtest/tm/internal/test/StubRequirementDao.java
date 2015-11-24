@@ -179,4 +179,11 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 		return null;
 	}
 
+	@Override
+	public List<Long> findDescendantRequirementIds(
+			Collection<Long> requirementIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

@@ -149,11 +149,11 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Long> findDescendantRequirementIds(Collection<Long> params) {
+	@Override
+	public List<Long> findDescendantRequirementIds(Collection<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementDescendantIds");
 		query.setParameterList("nodeIds", params);
 		return query.list();
-
 	}
 
 	/**

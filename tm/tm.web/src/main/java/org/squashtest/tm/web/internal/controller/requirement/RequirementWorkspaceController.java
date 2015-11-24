@@ -77,8 +77,6 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}
 
-
-
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#driveNodeBuilderProvider()
 	 */

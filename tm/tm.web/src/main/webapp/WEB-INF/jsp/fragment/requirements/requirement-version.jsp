@@ -105,7 +105,8 @@ that page won't be editable if
 	            verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
 	            attachments : ${json:serialize(attachmentsModel.aaData)},
 	            audittrail : ${json:serialize(auditTrailModel.aaData)},
-	            hasCufs : ${hasCUF}
+	            hasCufs : ${hasCUF},
+	            requirementVersionId : ${requirementVersion.id}
 	          },
 	          permissions : {
 	            moreThanReadOnly : ${moreThanReadOnly},
@@ -126,7 +127,6 @@ that page won't be editable if
 	
 	require(['common'], function(){
 		require(['requirement-version-page'], function(){});
-
 	});
 
 </script>
@@ -287,7 +287,6 @@ publish('reload.requirement.toolbar');
 		            </button>
 			</c:if>
 		</jsp:attribute>
-
 		<jsp:attribute name="body">
 			<reqs:verifying-test-cases-table 
 			     batchRemoveButtonId="remove-verifying-test-case-button" 
