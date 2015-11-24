@@ -42,7 +42,8 @@ return Backbone.Model.extend({
 		    operations : self.getOperations(chartDef),
 		    filters : self.getFilters(chartDef),
 		    selectedEntity : self.getSelectedEntities(chartDef),
-		    selectedAttributes : self.getSelectedAttributes(chartDef)
+		    selectedAttributes : self.getSelectedAttributes(chartDef),
+		    filtered : [true]
 		});
 		
 		}

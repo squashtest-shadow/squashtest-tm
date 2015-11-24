@@ -38,18 +38,47 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers"],
 			this.model = data;
 			this.render(data);
 			
-
+			
 			var validSteps = this.getValidSteps();
+			
+			var invalidSteps = this.getInvalidSteps(validSteps, data.name); 
+			
+			_.each(invalidSteps , function(step){	
+				$("#step-icon-" + step).addClass("wizard-step-fail");
+			});
+			
 			
 			_.each(validSteps, function(step){	
 				$("#step-icon-" + step).addClass("wizard-step-ok");
+				$("#step-" + step).addClass("nota-bene");
 			});
 			
 			$("#step-icon-" + data.name).attr('class', '');
 			$("#step-icon-" + data.name).addClass("wizard-step-current");
+			$("#step-" + data.name).addClass("normal-warning-message");
 			
 		},
 		
+		getInvalidSteps : function(validSteps, currStepName){
+		
+			
+			var steps = this.model.get("steps");
+			
+			var currStepNumber = _.chain(steps)
+			.where({name : currStepName})
+			.pluck('stepNumber')
+			.first()
+			.value();
+			
+			var invalidStep = _.chain(steps)
+			.filter(function(step){return step.stepNumber < currStepNumber;})
+			.pluck('name')
+			.difference(validSteps)
+			.value();
+			
+			return invalidStep;
+			
+		},		
 		getValidSteps : function (data){
 			
 			var self = this;

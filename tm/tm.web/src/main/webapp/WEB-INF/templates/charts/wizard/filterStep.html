@@ -33,7 +33,7 @@
 </div>
 
 <div style="display: table-column; width: 15%; float:left">
-<select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}">
+<select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;">
 {{#each  operations}}  
 
 <option value="{{this}}">
@@ -44,8 +44,9 @@
 </select>
 </div>
 
+
 {{#equal dataType "NUMERIC"}} 
-<input type="text" id="first-filter-value-{{id}}" name="{{id}}" />
+<input type="text" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 40px;"/>
 <input type="text" id="second-filter-value-{{id}}" name="{{id}}" />
 {{/equal}}
 
@@ -54,13 +55,13 @@
 {{/equal}}
 
 {{#equal dataType "DATE"}}
-<input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" />
+<input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 40px;"/>
 <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
 {{/equal}}
 
 
 {{#equal dataType "EXECUTION_STATUS"}}
-<select id="first-filter-value-{{id}}" name="{{id}}">
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
 {{#each  data.executionStatus}}  
 <option value="{{this.name}}">
     {{this.level}} - {{i18n this.i18nkey}}
@@ -70,7 +71,7 @@
 {{/equal}}
 
 {{#equal dataType "LEVEL_ENUM"}}
-<select id="first-filter-value-{{id}}" name="{{id}}">
+<select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 182px;">
 {{#each  (lookup data.levelEnums label)}}  
 <option value="{{this.name}}">
     {{this.level}} - {{i18n this.i18nkey}}
@@ -79,13 +80,26 @@
 </select>
 {{/equal}}
 
-
 {{#equal dataType "INFO_LIST_ITEM"}}
 <span id="info-list-filter-container-{{id}}" name="{{label}}"/>
 {{/equal}}
 
 {{#equal dataType "LIST"}}
 <span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
+{{/equal}}
+
+{{#equal dataType "BOOLEAN"}}
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
+
+<option value="TRUE">
+ <span th:text="#{squashtm.truefalse.true}"/>
+</option>
+<option value="FALSE">
+ <span th:text="#{squashtm.truefalse.false}"/>
+</option>
+
+</select>
+
 {{/equal}}
 
 
@@ -135,8 +149,8 @@
 
 
 <div th:fragment="chart-wizard-info-list">
- <div style="display: table-column; width: 20%;float:left">
- <select id="info-list-{{id}}" class="info-lists" name="{{id}}">
+ <div style="display: table-column; float:left; margin-right: 40px;">
+ <select id="info-list-{{id}}" class="info-lists" name="{{id}} " style=" width: 182px;">
 {{#each infolists}}
  <option value="{{this.code}}">
  {{#if (eq this.createdBy "system")}} 
@@ -155,7 +169,8 @@
 
 
 <div th:fragment="chart-wizard-info-list-item">
- <select id="first-filter-value-{{id}}" name="{{id}}">
+ <div style="display: table-column;float:left">
+ <select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 182px;">
 {{#each items}}
  <option value="{{this.code}}">  
  {{#if this.isSystem}} 
@@ -166,6 +181,7 @@
  </option> 
 {{/each}}
 </select>
+</div>
 </div>
 
 

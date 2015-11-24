@@ -22,56 +22,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		backbone, _, Handlebars, translator) {
 	"use strict";
 
-	var steps = [ {
-		name : "attributes",
-		prevStep : "entity",
-		nextStep : "filter",
-		viewTitle : "chart.wizard.creation.step.attributes",
-		stepNumber : 2,
-		neededStep : ["entity"],
-		buttons : ["previous", "next"]
-	}, {
-		name : "entity",
-		prevStep : "",
-		nextStep : "attributes",
-		viewTitle : "chart.wizard.creation.step.entity",
-		stepNumber : 1,
-		buttons : ["next"]
-	},{
-		name : "axis",
-		prevStep : "filter",
-		nextStep : "type",
-		viewTitle : "chart.wizard.creation.step.axis",
-		stepNumber : 4,
-		neededStep : ["entity", "attributes"],
-		buttons : ["previous", "next"]
-	},{
-		name : "filter",
-		prevStep  : "attributes",
-	    nextStep : "axis",
-		viewTitle : "chart.wizard.creation.step.filter",
-		stepNumber : 3,
-		neededStep : ["entity", "attributes"],
-		buttons : ["previous", "next"]
-	},{
-		name : "preview",
-		prevStep : "type",
-		nextStep : "",
-		viewTitle : "chart.wizard.creation.step.preview",
-		stepNumber : 6,
-		neededStep : ["entity", "attributes", "axis"],
-		buttons : ["previous", "save"]
-	},{
-		name : "type",
-		prevStep : "axis",
-		nextStep : "preview",
-		viewTitle : "chart.wizard.creation.step.type",
-		stepNumber : 5,
-		neededStep : ["entity", "attributes", "axis"],
-		buttons : ["previous", "generate"]
 	
-	}
-	];
 
 	
 	var abstractStepView = Backbone.View.extend({
@@ -80,26 +31,26 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		_initialize : function(data, wizrouter) {
 			this.router = wizrouter;
 			this.registerHelper();
-			var currStep = _.findWhere(steps, {name : data.name});		
+			this.steps = this.model.get("steps");
+			var currStep = _.findWhere(this.steps, {name : data.name});		
 			this.next = currStep.nextStep;
 			this.previous = currStep.prevStep;
 			this.showViewTitle(currStep.viewTitle, currStep.stepNumber);
 			this.initButtons(currStep.buttons);
-			
 			var missingStepNames = this.findMissingSteps(data, currStep.neededStep);
 			
 			if (_.isEmpty(missingStepNames)){
 				this.render(data, $(this.tmpl));
 			} else {
 				
-				var missingSteps = _.chain(steps)
+				var missingSteps = _.chain(this.steps)
 				.filter(function(step){
 					return _.contains(missingStepNames, step.name);
 				})
 				.sortBy("stepNumber")
 				.value();
 
-				var model = {steps : missingSteps, totalStep : steps.length};
+				var model = {steps : missingSteps, totalStep : this.steps.length};
 				this.render(model, $("#missing-step-tpl"));
 			}
 			
@@ -167,7 +118,7 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		showViewTitle : function(title, stepNumber) {
 			
 			
-			var text = "[" + translator.get("wizard.steps.label") +" " + stepNumber + "/" + steps.length + "] " + translator.get(title);
+			var text = "[" + translator.get("wizard.steps.label") +" " + stepNumber + "/" + this.steps.length + "] " + translator.get(title);
 			$("#step-title").text(text);
 		},
 

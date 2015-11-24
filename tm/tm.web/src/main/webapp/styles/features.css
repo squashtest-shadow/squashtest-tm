@@ -572,6 +572,11 @@ p {
 	background-repeat : no-repeat;
 }
 
+.wizard-step-fail {
+	background-image : url(../images/Raccourcis_Error-24.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;	
+}
+
 
 .chart-BAR {
 	background-image : url(../images/chart_bar.png); /** sprite-ref: sprites-icons; */

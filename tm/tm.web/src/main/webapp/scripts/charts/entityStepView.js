@@ -39,7 +39,7 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 		
 		events : {
 			"click .perimeter-select" : "openPerimeterPopup",
-			"click #repen-perim" : "reopenPerimeter",
+			"click #repopen-perim" : "reopenPerimeter",
 			"click #reset-perimeter" : "resetPerimeter"
 			
 		},
@@ -55,6 +55,7 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 		},
 		
 		writeDefaultPerimeter : function (){
+			$("#selected-perim-msg").text(translator.get("wizard.perimeter.msg.default"));
 			$("#selected-perim").text(translator.get("wizard.perimeter.default"));	
 			var defaultId = this.model.get("defaultProject");
 			this.model.set({scope : [{type : "PROJECT", id : defaultId}] });
@@ -62,9 +63,10 @@ define(["jquery", "backbone", "handlebars", "./abstractStepView", "tree", "squas
 			this.model.set({scopeEntity : "default"});
 		},
 		writePerimeter : function (name){
-			var link = "<a id='repen-perim' style='text-decoration: underline;' name= '" + name + "'>" + translator.get("wizard.perimeter." + name) + "</a>" ;
-			var message = translator.get("wizard.perimeter.selection").split("{0}").join(link);
-			$("#selected-perim").html(message);
+	
+			$("#selected-perim-msg").text(translator.get("wizard.perimeter.msg.selection") );
+			var link = "<a id='repopen-perim' style='font-weight: bold;color: #750021;text-decoration: underline;' name= '" + name + "'>" + translator.get("wizard.perimeter." + name) + "</a>" ;
+			$("#selected-perim").html(link);
 			
 		},
 		resetPerimeter : function () {	

@@ -35,11 +35,69 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			validationParam : "operations"
 		},{
 			name :"filter",
-			validationParam : "filters"
+			validationParam : "filtered"
 		},
 		
 		];
+	var steps = [{
+		name : "entity",
+		prevStep : "",
+		nextStep : "attributes",
+		viewTitle : "chart.wizard.creation.step.entity",
+		stepNumber : 1,
+		buttons : ["next"],
+		clickable : true
+	}, {
+		name : "attributes",
+		prevStep : "entity",
+		nextStep : "filter",
+		viewTitle : "chart.wizard.creation.step.attributes",
+		stepNumber : 2,
+		neededStep : ["entity"],
+		buttons : ["previous", "next"],
+		clickable : true
+	},{
+		name : "filter",
+		prevStep  : "attributes",
+	    nextStep : "axis",
+		viewTitle : "chart.wizard.creation.step.filter",
+		stepNumber : 3,
+		neededStep : ["entity", "attributes"],
+		buttons : ["previous", "next"],
+		clickable : true
+	}, {
+		name : "axis",
+		prevStep : "filter",
+		nextStep : "type",
+		viewTitle : "chart.wizard.creation.step.axis",
+		stepNumber : 4,
+		neededStep : ["entity", "attributes"],
+		buttons : ["previous", "next"],
+		clickable : true
+	},{
+		name : "type",
+		prevStep : "axis",
+		nextStep : "preview",
+		viewTitle : "chart.wizard.creation.step.type",
+		stepNumber : 5,
+		neededStep : ["entity", "attributes", "axis"],
+		buttons : ["previous", "generate"],
+		clickable : true
 	
+	},{
+		name : "preview",
+		prevStep : "type",
+		nextStep : "",
+		viewTitle : "chart.wizard.creation.step.preview",
+		stepNumber : 6,
+		neededStep : ["entity", "attributes", "axis"],
+		buttons : ["previous", "save"],
+		clickable : false
+	}
+	];
+	
+			   
+			
 	
 	var wizardView = Backbone.View.extend({
 		el : "#wizard",
@@ -47,7 +105,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		
 			this.model = options.model;
 			this.model.set({
-				steps:["entity", "attributes", "filter", "axis", "type", "preview"]	,
+				steps: steps,
 			    perimSelect :[{text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}, {text:"label.requirements" , name:"REQUIREMENT"}],
 				validation : validation
 			});
@@ -58,7 +116,14 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			"click #next" : "navigateNext",
 			"click #previous" : "navigatePrevious",
 		    "click #generate" : "generate",
-			"click #save" : "save"
+			"click #save" : "save",
+			"click #back" : "back"
+		},
+		
+		back : function(){
+			
+			
+			
 		},
 		
 		navigateNext : function (){

@@ -33,8 +33,8 @@
 	href="../../../../../../../tm/tm.web/src/main/webapp/images/favicon.ico"
 	th:href="@{/images/favicon.ico}" />
 <link rel="stylesheet" type="text/css" media="all"
-	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.purple.css"
-	sq:css="squash.purple.css" />
+	href="../../../../../../../tm/tm.web/src/main/webapp/styles/squash.wine.css"
+	sq:css="squash.wine.css" />
 <link rel="stylesheet" type="text/css" media="all"
 	href="../../../../../../../tm/tm.web/src/main/webapp/styles/structure.override.css"
 	sq:css="squash.core.override.css" />
@@ -163,7 +163,7 @@
 	<div id="workspace">
 		<div id="workspace-title">
 			<div class="snap-left">
-				<h2 th:text="#{chart.wizard.title}"></h2>
+				<h2 th:text="#{workspace.custom-report.title}"></h2>
 			</div>
 			<div class="snap-right">
 				<div class="main-menubar" th:include="menubar.frag :: menubar">MENUBAR</div>
@@ -184,6 +184,12 @@
 					<h2 th:text="#{chart.wizard.title}"></h2>
 				</div>
 
+<div id="sub-page-buttons" class="sub-page-buttons">
+					
+		<input type="button" class="sq-btn" id="back" value="Back"/>
+				</div>
+
+
 				<div class="unsnap"></div>
 			</div>
 
@@ -195,27 +201,50 @@
 
 					<div id="wizard"
 						class="fragment-body ui-tabs ui-widget ui-widget-content ui-corner-all"
-						style="top: 0; background: 0; border: 0 none;height: 100%;">
+						style="top: 0; background: 0; border: 0 none;  height: 100%;">
 					
 							
 									<div id="current-side-view-container"
-										style="    margin: 0; padding-left: 10px; width: 250px;height: 100%;    background-color: white;">
-										<span style="display : table; height:100%" id="side-view" />
+										style="    margin: 0; padding-left: 10px; width: 150px;height: 100%;      overflow: hidden;  background-color: white;">
+										<span style="display : table; height:100%; " id="side-view" />
 									</div>
-								
+		
+	 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="margin-top: 0;top: 0; left: 170px; position: absolute;">
+
+							<h2 id="step-title" />
+							</div>							
 					
 
-						<div id="contextual-content" style="margin-top:0">
-							<div id="step-title" style="height: 25px;"
-								class="ui-widget-header ui-corner-all ui-state-default fragment-header" />
+	<div id="contextual-content" style="    margin-top: 0;
+    position: absolute;
+    bottom: 50px;
+    overflow: inherit;
+    left: 180px;
+    padding-right: 10px;
+        top: 35px;">
+						
+						
+							
+							
 							<span id="steps-view" /> 
 							<br /> 
 							<br />
-							<div id="current-step-container" style="border-bottom: black 1px solid; min-height:80%">
+							<div id="current-step-container" >
 								<span id="current-step" />
 							</div>
 
-<div style="float: right;   padding: 5px;">
+						</div>
+						
+			<div style="border-top: black 1px solid;
+    position: absolute;
+    width: 100%;
+    left: 170px;
+    bottom: 50px;"/>			
+						
+						
+						<div style=" position: fixed;
+    bottom: 70px;
+    right: 127px;  padding: 5px;">
 						
 
  <input type="button" class="sq-btn btn-sm" id="previous" value="Previous"
@@ -231,9 +260,7 @@
            th:value="#{label.save}" />				
 						
 					</div>
-
-
-						</div>
+						
 				
 					</div>
 				</div>

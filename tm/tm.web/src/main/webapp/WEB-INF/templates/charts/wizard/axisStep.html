@@ -34,7 +34,7 @@
 {{i18n this.label prefix="chart.column."}}
 {{/equal}}
 </div>
-<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}">
+<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}" style="width: 120px;">
 {{#each  operations}}  
    
    {{!--<![CDATA[--}}
@@ -47,8 +47,6 @@
 {{/each}}   
 </select>
 
-
-<br />
 {{/inline}}
 
 <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.axis}"/>

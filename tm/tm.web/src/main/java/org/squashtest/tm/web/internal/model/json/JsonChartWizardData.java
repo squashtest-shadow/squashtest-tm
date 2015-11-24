@@ -63,6 +63,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 public class JsonChartWizardData {
 
+
 	private Map<EntityType, Set<ColumnPrototype>> columnPrototypes;
 
 	private EnumSet<ChartType> chartTypes = EnumSet.allOf(ChartType.class);
@@ -110,6 +111,7 @@ public class JsonChartWizardData {
 		fixColumnPrototype();
 		addCustomFields(projects);
 
+
 	}
 
 	private void addLevelEnums() {
@@ -136,10 +138,10 @@ public class JsonChartWizardData {
 	private void addEntityType() {
 
 		entityTypes.put(REQUIREMENT, "icon-chart-requirement");
-		entityTypes.put(TEST_CASE, "icon-chart-test-case");
 		entityTypes.put(CAMPAIGN, "icon-chart-campaign");
-		entityTypes.put(ITERATION, "icon-chart-iteration");
 		entityTypes.put(ITEM_TEST_PLAN, "icon-chart-item-test-plan");
+		entityTypes.put(TEST_CASE, "icon-chart-test-case");
+		entityTypes.put(ITERATION, "icon-chart-iteration");
 
 	}
 
@@ -187,6 +189,7 @@ public class JsonChartWizardData {
 		Set<ColumnPrototype> reqVersionCol = columnPrototypes.get(REQUIREMENT_VERSION);
 		columnPrototypes.get(REQUIREMENT).addAll(reqVersionCol);
 		columnPrototypes.remove(REQUIREMENT_VERSION);
+
 
 	}
 
