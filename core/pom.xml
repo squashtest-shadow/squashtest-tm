@@ -23,7 +23,6 @@
     <module>core.testautomation.api</module>
     <module>launcher</module>
     <module>core.dynamicmanager</module>
-    <module>core.jasperreports.fragment</module>
     <module>core.wizard.api</module>
   </modules>
 </project>
