@@ -8,7 +8,6 @@
   </parent>
 
   <artifactId>plugin.testautomation.jenkins</artifactId>
-  <packaging>bundle</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
   <description>Squash TM Connector for Squash TA on Jenkins</description>
 
@@ -42,10 +41,6 @@
       <artifactId>httpclient</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.apache.httpcomponents</groupId>
-      <artifactId>httpclient</artifactId>
-    </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-web</artifactId>
@@ -125,19 +120,6 @@
     </pluginManagement>
 
     <plugins>
-      <!-- package -->
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
-      </plugin>
-
-      <!-- ====== INTEGRATION TESTS ====== -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
