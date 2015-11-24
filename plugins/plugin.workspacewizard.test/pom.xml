@@ -7,7 +7,6 @@
     <version>1.13.0.NOSGI-SNAPSHOT</version>
   </parent>
   <artifactId>plugin.workspacewizard.test</artifactId>
-  <packaging>bundle</packaging>
   <description>Fake workspace wizard plugin for integration tests purpose</description>
 
   <dependencyManagement>
@@ -67,17 +66,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
       </plugin>
     </plugins>
   </build>
