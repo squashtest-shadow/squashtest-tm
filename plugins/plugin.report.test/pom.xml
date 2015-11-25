@@ -7,7 +7,6 @@
     <version>1.13.0.NOSGI-SNAPSHOT</version>
   </parent>
   <artifactId>plugin.report.test</artifactId>
-  <packaging>bundle</packaging>
   <description>Fake report plugin for integration tests purpose</description>
 
   <dependencyManagement>
@@ -23,9 +22,6 @@
   </dependencyManagement>
 
   <dependencies>
-    <!-- ====== /DEPENDENCY POMS ====== -->
-
-    <!--======= SQUASHTEST MODULES ======== -->
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>core.api</artifactId>
@@ -36,8 +32,6 @@
       <artifactId>core.report.api</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <!-- ====== DEPENDENCY POMS ====== -->
-    <!--======= /SQUASHTEST MODULES ======== -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
@@ -59,8 +53,6 @@
   </dependencies>
 
   <build>
-
-    <testSourceDirectory>src/test/groovy</testSourceDirectory>
     <resources>
       <resource>
         <filtering>true</filtering>
@@ -80,24 +72,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
-
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <_include>bnd.bnd</_include>
-          </instructions>
-        </configuration>
-      </plugin>
-
-      <!-- ====== SPOCK TESTS ====== -->
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-surefire-plugin</artifactId>
-      </plugin>
-      <!-- ====== /SPOCK TESTS ====== -->
     </plugins>
   </build>
 </project>
