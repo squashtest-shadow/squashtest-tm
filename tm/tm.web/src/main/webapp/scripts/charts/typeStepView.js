@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.translator",  "custom-report-workspace/charts/chartFactory", "jquery.squash"],
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.translator",  "custom-report-workspace/charts/chartFactory", "jquery.squash", "jquery.squash.messagedialog"],
 	function($, backbone, _, Handlebars, AbstractStepView, translator, chart) {
 	"use strict";
 
@@ -43,11 +43,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 		generate : function(){
 
-
-
 			var self = this;
 
 			self.updateModel();
+			
+			if (self.isValid()){
 
 			$.ajax({
 				'type' : 'POST',
@@ -60,7 +60,19 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				self.model.set({chartData : json});
 				self.navigateNext();
 			});
-
+			}
+		},
+		
+		isValid : function(){
+			
+			if (_.isEmpty(this.model.get('measures')) || _.isEmpty(this.model.get('axis'))){
+				
+				var title = translator.get('wizard.generate.error.title');
+				var msg = translator.get('wizard.generate.error.msg');				
+				$.squash.openMessage(title, msg);		
+				return false;
+			}
+			return true;
 		},
 		changeType : function (event){
 			this.showAxisByType(event.target.value);
@@ -139,23 +151,26 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 		},
 		showMultiAxis : function (){
-			this.setVisible(["axis-y", "axis-x2"]);
+			this.setVisible(["axis-y", "axis-x2", "axis-x1-axeName"]);
 
 		},
 		showPieAxis : function () {
-			this.setInvisible(["axis-y", "axis-x2"]);
+			this.setInvisible(["axis-y", "axis-x2", "axis-x1-axeName"]);
+			this.setVisible(["pie-axis"]);
+			
+			
 		},
 
 		showOneAxis : function () {
-			this.setVisible(["axis-y"]);
-			this.setInvisible(["axis-x2"]);
+			this.setVisible(["axis-y", "axis-x1-axeName"]);
+			this.setInvisible(["axis-x2", "pie-axis"]);
 		},
 
 
 
 		showLineAxis : function () {
-			this.setVisible(["axis-y"]);
-			this.setInvisible(["axis-x2"]);
+			this.setVisible(["axis-y", "axis-x1-axeName"]);
+			this.setInvisible(["axis-x2", "pie-axis"]);
 		},
 
 		setVisible : function (values){
@@ -337,6 +352,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var axis1 = this.find("x1");
 			var axis2  = this.find("x2");
 
+			if (! _.isUndefined(axis1)){
+			
 			switch (type) {
 
 			case "CUMULATIVE" :
@@ -344,6 +361,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			break;
 
 		    case "PIE" :
+		    	
 		    	var entityType = axis1.column.specializedType.entityType == "REQUIREMENT_VERSION" ?  "REQUIREMENT" : axis1.column.specializedType.entityType;
 		    	measure = {};
 		    	measure.operation = "COUNT";
@@ -359,7 +377,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			break;
 
 			}
-
+			}
 
 			var axis = _.isEmpty(axis2)  ? _.isEmpty(axis1) ? [] :[axis1]:[axis1].concat(axis2);
 

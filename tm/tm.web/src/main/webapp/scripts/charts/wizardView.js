@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel" ], function($, Backbone,
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel", "jquery.squash.confirmdialog" ], function($, Backbone,
 		router, translator, EntityStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
@@ -96,8 +96,6 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 	}
 	];
 	
-			   
-			
 	
 	var wizardView = Backbone.View.extend({
 		el : "#wizard",
@@ -116,15 +114,11 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			"click #next" : "navigateNext",
 			"click #previous" : "navigatePrevious",
 		    "click #generate" : "generate",
-			"click #save" : "save",
-			"click #back" : "back"
+			"click #save" : "save"
+	
 		},
 		
-		back : function(){
-			
-			
-			
-		},
+	
 		
 		navigateNext : function (){
 			this.currentView.navigateNext();

@@ -35,8 +35,10 @@ define([ "jquery", "backbone", "workspace.routing", "./abstractStepView" ], func
 			"axis" : "axisStep",
 			"preview" : "previewStep",
 			"attributes":"attributesStep"
+
 		}, 
 
+		
 		entityStep : function() {
 			this.wizardView.showEntityStep(this);			
 		},

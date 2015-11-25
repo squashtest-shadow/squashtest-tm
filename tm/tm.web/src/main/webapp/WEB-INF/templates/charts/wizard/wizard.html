@@ -267,5 +267,17 @@
 			</div>
 		</div>
 	</div>
+	
+	
+	 <div id="back-popup" class="popup-dialog not-displayed" th:title="#{wizard.back.popup.title}">
+
+<span th:text="#{wizard.back.popup.message}"> </span> 
+      <div class="popup-dialog-buttonpane">
+        <input type="button" th:value="#{wizard.back.popup.confirm}" data-def="mainbtn, evt=confirm"/>
+        <input type="button" th:value="#{wizard.back.popup.cancel}" data-def="evt=cancel"/>    
+      </div>
+  
+    </div>
+	
 </body>
 </html>
