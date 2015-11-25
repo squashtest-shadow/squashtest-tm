@@ -181,7 +181,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
     truncateLegends : function (legends) {
       var self = this;
       return _.map( legends, function( legend ){
-          return legend.substring(0, self.legendsMaxLength);
+          return legend.toString().substring(0, self.legendsMaxLength);
       });
     },
 
