@@ -331,7 +331,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
           defaults: {
             id : config.basic.requirementVersionId,
             requirementId : config.basic.requirementId,
-            currentVersionId : config.basic.currentVersionId
+            currentVersionId : config.basic.currentVersionId,
+            projectId : config.basic.projectId
           },
           url : "whatever"
         });

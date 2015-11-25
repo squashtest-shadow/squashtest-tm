@@ -18,14 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "squash.translator", "jquery.squash.formdialog"],
-  function ($, Backbone, Handlebars, _, urlBuilder, translator) {
+define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "squash.translator","tree","workspace.storage","jquery.squash.formdialog"],
+  function ($, Backbone, Handlebars, _, urlBuilder, translator, tree, storage) {
   var viewConstructor = Backbone.View.extend({
 
     el: "#coverage-stat",
+    treeSelector : "#perimeter-tree",
+    storagePrefix : "requirement-coverage-stat-perimeter",
+
+    events : {
+      "click #change-perimeter-button" :"showSelectPerimeter"
+    },
 
     initialize: function () {
       console.log("INIT RATES");
+      this.initializeRate();
+      this.initPerimeterDialog();
+    },
+
+    initializeRate : function () {
       this.initializeData().render();
     },
 
@@ -33,11 +44,17 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
       console.log("INIT RATES DATA");
       var url = urlBuilder.buildURL("requirements.coverageStats.model",this.model.get("id"));
       var self = this;
+      var key = this.getStorageKey();
+      var value = storage.get(key) ? storage.get(key) : "";
+      var data = {
+        perimeter : value
+      };
       console.log(url);
 
       $.ajax({
         url: url,
-        type: 'GET'
+        type: 'GET',
+        data : data
       })
       .done(function(response) {
         console.log(response);
@@ -49,10 +66,66 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
     },
 
     render : function () {
-      var source = $("#tpl-show-coverage-rate").html();
+      var templated = this.makeTemplating("#tpl-show-coverage-rate",this.model.get("coverage"));
+      this.$el.find("#coverage-rate").html(templated);
+    },
+
+    initPerimeterDialog : function () {
+      var self = this;
+      var templated = this.makeTemplating("#tpl-dialog-select-perimeter");
+      this.$el.find("#dialog-select-perimeter-wrapper").html(templated);
+      var dialog = this.$el.find("#dialog-select-perimeter").formDialog();
+
+      //Init popup events
+      dialog.on('formdialogconfirm', function(){
+        self.changePerimeter();
+  			dialog.formDialog('close');
+  		});
+
+  		dialog.on('formdialogcancel', function(){
+  			dialog.formDialog('close');
+  		});
+
+      $.ajax({
+        url : squashtm.app.contextRoot + "/" + 'campaign-workspace/tree/0',
+        datatype : 'json'
+
+
+      }).done(function(model){
+
+        var treeConfig = {
+            model : model,
+            treeselector: self.treeSelector,
+            workspace: "campaign-it",
+            canSelectProject:false,
+            forbidSelectFolder:true
+        };
+        tree.initLinkableTree(treeConfig);
+      });
+    },
+
+    makeTemplating : function (selector, data) {
+      var source = $(selector).html();
       var template = Handlebars.compile(source);
-      var coverage = template(this.model.get("coverage"));
-      this.$el.find("#coverage-rate").html(coverage);
+      return template(data);
+    },
+
+    showSelectPerimeter : function () {
+      console.log("click");
+      $("#dialog-select-perimeter").formDialog("open");
+    },
+
+    changePerimeter : function () {
+      var selectedNode = $(this.treeSelector).jstree("get_selected");
+      var key = this.getStorageKey();
+      var value = selectedNode.getDomId();
+
+      storage.set(key,value);
+      console.log(storage.get(key));
+    },
+
+    getStorageKey : function () {
+      return this.storagePrefix + this.model.get("projectId");
     }
   });
 

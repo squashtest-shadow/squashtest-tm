@@ -42,6 +42,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
@@ -605,7 +606,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')"
 			+ OR_HAS_ROLE_ADMIN)
 	public RequirementCoverageStat findCoverageStat(Long requirementVersionId,
-			Milestone currentMilestone) {
+			Milestone currentMilestone, List<Iteration> iterations) {
 		RequirementCoverageStat stats = new RequirementCoverageStat();
 
 		RequirementVersion mainVersion = requirementVersionDao.findById(requirementVersionId);

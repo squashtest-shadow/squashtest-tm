@@ -26,6 +26,7 @@
 <%@ attribute name="requirementVersion" type="java.lang.Object" required="true" description="The RequirementVersion instance for which we render the verifying testcases" %>
 <%@ attribute name="model" type="java.lang.Object" required="true" description="the initial rows of the table"%>
 <%@ attribute name="milestoneConf" type="java.lang.Object" required="true" description="an instance of MilestoneFeatureConfiguration" %>
+<%@ attribute name="coverageStats" type="java.lang.Boolean" description="Show or " %>
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -43,10 +44,6 @@
 <f:message var="labelConfirm" key="label.Confirm"/>
 <f:message var="labelCancel"  key="label.Cancel"/>
 
-<f:message var="titleCoverageRequirement"  key="requirement.rate.cover.main"/>
-<f:message var="titleCoverageRequirementChildren"  key="requirement.rate.cover.children"/>
-<f:message var="titleCoverageRequirementAll"  key="requirement.rate.cover.all"/>
-
 <c:set var="tblRemoveBtnClause" value=""/>
 <c:if test="${editable}" >
 <c:set var="tblRemoveBtnClause" value=", unbind-button" />
@@ -55,32 +52,6 @@
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
 <c:set var="milestoneVisibility" value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/> 
-<div id="coverage-stat">
-	<div class="display-table">
-		<div class="display-table-row">
-			<label for="coverage-rate" class="display-table-cell">
-				<f:message key="requirement.rate.cover" />
-			</label>
-			<div id="coverage-rate" class="display-table-cell">XX %</div>
-		</div>
-		<div class="display-table-row">
-			<label for="verification-rate" class="display-table-cell">
-				<f:message key="requirement.rate.verification" />
-			</label>
-			<div id="verification-rate" class="display-table-cell">XX %</div>
-		</div>
-		<div class="display-table-row">
-			<label for="validation-rate" class="display-table-cell">
-				<f:message key="requirement.rate.validation" />
-			</label>
-			<div id="validation-rate" class="display-table-cell">XX %</div>
-		</div>
-	</div>    
-</div>
-
-<script type="text/javascript">
-publish('reload.requirement.requirementversionrate');
-</script>
    
 <table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
   datakeys-id=tc-id, pre-sort=2-asc, pagesize=50 ">
@@ -116,8 +87,3 @@ publish('reload.requirement.requirementversionrate');
   </div>
 </script>
 
-<script type="text/x-handlebars-template" id="tpl-show-coverage-rate">
-	<span title="${titleCoverageRequirement}">{{requirementVersionRate}} % </span>
-	|<span title="${titleCoverageRequirementChildren}"> {{requirementVersionChildrenRate}} % </span>
-	|<span title="${titleCoverageRequirementAll}"> {{requirementVersionGlobalRate}} % </span>
-</script>

@@ -36,8 +36,8 @@
  * }
  *
  */
-define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf","./tp-customreport-conf"],
-	function($, genCommon, genTC, genReq, genCamp, genCustomReport){
+define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf","./tp-campaign-it-conf","./tp-customreport-conf"],
+	function($, genCommon, genTC, genReq, genCamp, genCampIt, genCustomReport){
 
 
 	return {
@@ -49,6 +49,7 @@ define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf"
 			case 'test-case'	: specificConf = genTC.generate(settings); break;
 			case 'requirement'	: specificConf = genReq.generate(settings); break;
 			case 'campaign'		: specificConf = genCamp.generate(settings); break;
+			case 'campaign-it'		: specificConf = genCampIt.generate(settings); break;
 			case 'custom-report'		: specificConf = genCustomReport.generate(settings); break;
 			}
 

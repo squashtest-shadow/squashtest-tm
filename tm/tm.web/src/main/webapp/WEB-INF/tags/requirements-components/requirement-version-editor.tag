@@ -101,7 +101,8 @@
           attachments : ${json:serialize(attachmentsModel.aaData)},
           audittrail : ${json:serialize(auditTrailModel.aaData)},
           hasCufs : ${hasCUF},
-          requirementVersionId : ${requirementVersion.id}
+          requirementVersionId : ${requirementVersion.id},
+          projectId : ${requirementVersion.requirement.project.id}
         },
         permissions : {
           moreThanReadOnly : ${moreThanReadOnly},
