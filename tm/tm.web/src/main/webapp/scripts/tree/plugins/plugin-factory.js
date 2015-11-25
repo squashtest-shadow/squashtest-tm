@@ -27,12 +27,12 @@ define(['jquery', './jstree-dnd-override', './continuous-shift-select-plugin','.
 			switch(type){
       case 'custom-report-workspace-tree' :
         applyDndOverride(settings);
-  			applySquashPlugin();
-  			applyContinuousShiftSelectPlugin();
-  			applyWorkspacePlugin();
-  			applyConditionalSelectPlugin();
-  			applyCustomReportDnD();
-  			break;
+			applySquashPlugin();
+			applyContinuousShiftSelectPlugin();
+			applyWorkspacePlugin();
+			applyConditionalSelectPlugin();
+			applyCustomReportDnD();
+			break;
 
 			case 'workspace-tree' :
         applyDndOverride(settings);
