@@ -55,16 +55,10 @@ define(['squash.translator','tree', './cr-treemenu', './init-actions',
     initTabbedPane();
 		initMilestoneMenu();
 		ToggleWorkspace.init(settings.toggleWS);
-		tree.initWorkspaceTree(settings.tree);
+		tree.initCustomReportWorkspaceTree(settings.tree);
 		treemenu.init(settings.treemenu);
 		popups.init();
 		actions.init();
-    //For V1.13 we don't want copy/past or drag/drop inside tree. Cannot do it in workspace conf because we override some core function of jstree
-    //with custom plugin so the conf will be overriden
-    //It's safer to put deactivation here because of it's temporary nature and remove the line when copy/pasta will be done in custom-report-workspace
-    $.jstree._fn.check_move = function(){
-      return false;
-    };
 	}
 
 

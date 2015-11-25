@@ -41,10 +41,19 @@ define([ "jquery",
 
 	return {
 
-		// TODO : move the extra event bindings into workspace-tree-plugin.js
 		initWorkspaceTree : function(settings) {
 			pluginsFactory.configure("workspace-tree", settings);
-			var conf = wkspConf.generate(settings);
+      this.initWorkspaceTreeCommon(settings);
+		},
+
+    initCustomReportWorkspaceTree : function (settings) {
+      pluginsFactory.configure("custom-report-workspace-tree", settings);
+      this.initWorkspaceTreeCommon(settings);
+    },
+
+		// TODO : move the extra event bindings into workspace-tree-plugin.js
+    initWorkspaceTreeCommon : function (settings) {
+      var conf = wkspConf.generate(settings);
 			var treeDiv = $(settings.treeselector);
 			//trick for [Issue 2886]
 			treeDiv.bind("loaded.jstree", function(event, data){
@@ -64,7 +73,7 @@ define([ "jquery",
 		          data.inst.open_node(this);
 		        });
 			});
-		},
+    },
 
 		initLinkableTree : function(settings) {
 			pluginsFactory.configure("tree-picker");
