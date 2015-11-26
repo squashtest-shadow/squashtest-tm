@@ -21,44 +21,44 @@
 //the 'tree-node' plugin will be automatically applied when required
 define(['jquery', './jstree-dnd-override', './continuous-shift-select-plugin','./squash-plugin', './workspace-tree-plugin', './tree-picker-plugin' , './conditional-select-plugin','./jstree-dnd-customreport-override', './tree-node', 'jstree'], function($, applyDndOverride, applyContinuousShiftSelectPlugin, applySquashPlugin, applyWorkspacePlugin, applyTreePickerPlugin, applyConditionalSelectPlugin, applyCustomReportDnD){
 
-	return {
+    return {
 
-		configure : function(type, settings){
-			switch(type){
+        configure : function(type, settings){
+            switch(type){
       case 'custom-report-workspace-tree' :
         applyDndOverride(settings);
-			applySquashPlugin();
-			applyContinuousShiftSelectPlugin();
-			applyWorkspacePlugin();
-			applyConditionalSelectPlugin();
-			applyCustomReportDnD();
-			break;
+            applySquashPlugin();
+            applyContinuousShiftSelectPlugin();
+            applyWorkspacePlugin();
+            applyConditionalSelectPlugin();
+            applyCustomReportDnD();
+            break;
 
-			case 'workspace-tree' :
+            case 'workspace-tree' :
         applyDndOverride(settings);
-				applySquashPlugin();
-				applyContinuousShiftSelectPlugin();
-				applyWorkspacePlugin();
-				applyConditionalSelectPlugin();
-				break;
+                applySquashPlugin();
+                applyContinuousShiftSelectPlugin();
+                applyWorkspacePlugin();
+                applyConditionalSelectPlugin();
+                break;
 
-			case 'tree-picker' :
-				applySquashPlugin();
-				applyContinuousShiftSelectPlugin();
-				applyTreePickerPlugin();
-				applyConditionalSelectPlugin();
-				break;
+            case 'tree-picker' :
+                applySquashPlugin();
+                applyContinuousShiftSelectPlugin();
+                applyTreePickerPlugin();
+                applyConditionalSelectPlugin();
+                break;
 
-			case 'simple-tree' :
-				applySquashPlugin();
+            case 'simple-tree' :
+                applySquashPlugin();
 
-				break;
+                break;
 
-			default :
-				throw "'"+type+"' is not a valid tree profile";
-			}
-		}
+            default :
+                throw "'"+type+"' is not a valid tree profile";
+            }
+        }
 
-	};
+    };
 
 });
