@@ -298,5 +298,13 @@ public class RequirementVersionCoverage implements Identified {
 		}
 
 	}
+	
+	/**
+	 * Check if this {@link RequirementVersionCoverage} is linked to one or more {@link TestStep}
+	 * @return
+	 */
+	public boolean hasSteps(){
+		return verifyingSteps.size()>0;
+	}
 
 }

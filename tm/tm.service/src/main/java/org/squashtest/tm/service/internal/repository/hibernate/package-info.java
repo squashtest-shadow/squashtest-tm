@@ -169,6 +169,10 @@
 	@NamedQuery(name = "iterationTestPlanItem.countAllStatus", query = "select count(itpi) from IterationTestPlanItem itpi where itpi.executionStatus = :status and itpi.iteration.campaign.project.id = :projectId"),
 	@NamedQuery(name = "iterationTestPlanItem.replaceStatus", query = "update IterationTestPlanItem set executionStatus = :newStatus where executionStatus = :oldStatus and id in "
 	+ "(select itpi.id from IterationTestPlanItem itpi where itpi.iteration.campaign.project.id = :projectId)"),
+	
+	//@NamedQuery(name = "iteration.findITPIByTestCaseGroupByStatus", query = "select itpi.executionStatus, count(itpi) from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds) group by itpi.executionStatus"),
+	@NamedQuery(name = "iteration.findITPIByTestCaseGroupByStatus", query = "select  itpi.executionStatus,tc.id from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds)"),
+	@NamedQuery(name = "iteration.findVerifiedTcIdsInIterations", query = "select itpi.referencedTestCase.id from IterationTestPlanItem itpi join itpi.referencedTestCase tc join itpi.iteration it where tc.id in (:testCasesIds) and it.id in (:iterationsIds)"),
 
 	// TestSuite
 	@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id order by index(tp)"),

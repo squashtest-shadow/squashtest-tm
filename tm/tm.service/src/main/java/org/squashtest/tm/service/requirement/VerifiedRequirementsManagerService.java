@@ -130,5 +130,5 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 * @param iterations 
 	 * @return
 	 */
-	RequirementCoverageStat findCoverageStat(Long requirementVersionId, Milestone currentMilestone, List<Iteration> iterations);
+	RequirementCoverageStat findCoverageStat(Long requirementVersionId, Milestone currentMilestone, List<Long> iterationsIds);
 }

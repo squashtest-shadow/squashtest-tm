@@ -34,6 +34,7 @@ import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -52,8 +53,11 @@ import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
@@ -437,6 +441,44 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 				columnFiltering);
 
 		return query.list().size();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<TestCaseExecutionStatus> findExecStatusForIterationsAndTestCases(
+			List<Long> testCasesIds, List<Long> iterationsIds) {
+		if (testCasesIds.size()==0) {
+			return Collections.EMPTY_LIST;
+		}
+		Query q = currentSession().getNamedQuery("iteration.findITPIByTestCaseGroupByStatus");
+		q.setParameterList("testCasesIds", testCasesIds, LongType.INSTANCE);
+		q.setParameterList("iterationsIds", iterationsIds, LongType.INSTANCE);
+		HashMap<ExecutionStatus,Long> map = new HashMap<ExecutionStatus, Long>();
+		List<TestCaseExecutionStatus> formatedResult = new ArrayList<TestCaseExecutionStatus>();
+		List<Object[]> results = q.list();
+		for (Object[] result : results) {
+			formatedResult.add(new TestCaseExecutionStatus((ExecutionStatus)result[0], (Long) result[1]));
+		}
+		return formatedResult;
+	}
+
+	@Override
+	public Map<ExecutionStatus, Integer> findRequirementSteppedVersionCoverageExecutionStats(
+			List<Long> testStepsIds, List<Long> iterationsIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Long> findVerifiedTcIdsInIterations(List<Long> testCasesIds,
+			List<Long> iterationsIds) {
+		if (testCasesIds.size()==0) {
+			return Collections.emptyList();
+		}
+		Query q = currentSession().getNamedQuery("iteration.findVerifiedTcIdsInIterations");
+		q.setParameterList("testCasesIds", testCasesIds, LongType.INSTANCE);
+		q.setParameterList("iterationsIds", iterationsIds, LongType.INSTANCE);
+		return q.list();
 	}
 
 }

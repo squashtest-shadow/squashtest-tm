@@ -18,14 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.domain.testcase;
 
-import java.util.List;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 
-import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
-
-public interface CampaignTestPlanItemDao extends EntityDao<CampaignTestPlanItem>{
-
-	List<Long> findPlannedTestCasesIdsByCampaignId(Long campaignId);
-
+/**
+ * Pojo used to link a test case with an excution status.
+ * Used for 4433 and 4334
+ * @author jthebault
+ *
+ */
+public class TestCaseExecutionStatus {
+	
+	private ExecutionStatus status;
+	private Long testCaseId;
+	
+	public TestCaseExecutionStatus(ExecutionStatus status, Long testCaseId) {
+		super();
+		this.status = status;
+		this.testCaseId = testCaseId;
+	}
+	public ExecutionStatus getStatus() {
+		return status;
+	}
+	public void setStatus(ExecutionStatus status) {
+		this.status = status;
+	}
+	public Long getTestCaseId() {
+		return testCaseId;
+	}
+	public void setTestCaseId(Long testCaseId) {
+		this.testCaseId = testCaseId;
+	}
 }

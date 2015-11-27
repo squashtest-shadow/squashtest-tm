@@ -25,8 +25,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
@@ -34,6 +37,8 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -181,5 +186,6 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 
 
 	}
+
 
 }

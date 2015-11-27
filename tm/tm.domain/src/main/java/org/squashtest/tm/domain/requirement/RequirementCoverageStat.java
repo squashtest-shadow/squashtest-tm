@@ -21,10 +21,7 @@
 package org.squashtest.tm.domain.requirement;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import org.squashtest.tm.domain.requirement.RequirementCoverageStat.Rate;
 
 /**
  * Model class used for Feat 5433 and 5434, Show cover, verification and validation rate
