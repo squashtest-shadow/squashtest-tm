@@ -31,7 +31,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.OneToMany;
@@ -56,6 +59,7 @@ import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
+import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreationException;
 
 /**
  * Entity requirement
@@ -93,6 +97,12 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	private List<Requirement> children = new ArrayList<Requirement>();
 
+	@Column
+	@Enumerated(EnumType.STRING)
+	private ManagementMode mode = ManagementMode.NATIVE;
+
+	@OneToOne(mappedBy="requirement", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
+	private RequirementSyncExtender syncExtender;
 
 	protected Requirement() {
 		super();
@@ -108,9 +118,20 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		addVersion(version);
 	}
 
+
 	private void addVersion(RequirementVersion version) {
-		versions.add(version);
-		version.setRequirement(this);
+		/*
+		 * prevent the requirement from having more than
+		 * one version if this requirement is synchronized
+		 */
+		if (versions.size() >= 1 && isSynchronized()){
+			throw new IllegalRequirementVersionCreationException();
+		}
+		// else we can add the version normally
+		else{
+			versions.add(version);
+			version.setRequirement(this);
+		}
 	}
 
 	@Override
@@ -357,13 +378,13 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 *         or null if all versions are obsolete
 	 */
 	public RequirementVersion findLastNonObsoleteVersion() {
-		
+
 		for (RequirementVersion version : this.versions) {
 			if (!version.getStatus().equals(OBSOLETE)) {
 				return version;
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -472,19 +493,19 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	public boolean meOrMyChildHaveAVersionBoundToMilestone(Milestone milestone){
-		
+
 		if (findByMilestone(milestone) != null){
 			return true;
 		}
-		
+
 		for (Requirement child : children){
 			if (child.meOrMyChildHaveAVersionBoundToMilestone(milestone)){
 				return true;
 			}
 		}
-		return false;	
+		return false;
 	}
-	
+
 	/**
 	 * Add a requirement version which is not a copy of current version.
 	 * Used by import [Feat 5085] because we need to create non successive RequirementVersion
@@ -504,22 +525,38 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 			throw new RuntimeException("RequirementVersion with version number " + newVersionNumber + " already exist in this Requirement, id : " + getId());
 		}
 	}
-	
+
 	/**
 	 * @return the last non obsolete requirement version after an import [Feat 5085]<br>
 	 *         or null if all versions are obsolete
 	 */
 	public RequirementVersion findLastNonObsoleteVersionAfterImport() {
 		SortedMap<Integer, RequirementVersion> sortedVersions = new TreeMap<Integer, RequirementVersion>();
-		
+
 		for (RequirementVersion version : this.versions) {
 			if (!version.getStatus().equals(OBSOLETE)) {
 				sortedVersions.put(version.getVersionNumber(), version);
 			}
 		}
-		
+
 		return (sortedVersions.size() == 0) ? null : sortedVersions.get(sortedVersions.lastKey());
 	}
-	
-	
+
+
+	// **************** requirement sync section *****************
+
+	public RequirementSyncExtender getSyncExtender() {
+		return syncExtender;
+	}
+
+	public void setSyncExtender(RequirementSyncExtender syncExtender) {
+		this.mode = ManagementMode.SYNCHRONIZED;
+		this.syncExtender = syncExtender;
+	}
+
+	public boolean isSynchronized(){
+		return (this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null);
+	}
+
+
 }

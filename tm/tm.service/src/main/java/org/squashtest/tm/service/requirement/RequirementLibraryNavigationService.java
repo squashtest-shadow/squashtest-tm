@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.requirement;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -38,7 +37,6 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
 @SuppressWarnings("rawtypes")
@@ -46,16 +44,71 @@ public interface RequirementLibraryNavigationService extends
 LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode>,
 RequirementLibraryFinderService {
 
+	/**
+	 * Will add a Requirement at the root of the given library and bind it to the given milestones. The custom fields
+	 * for this requirement will be created with their default value.
+	 * 
+	 * @param libraryId
+	 * @param requirement
+	 * @param milestoneIds
+	 * @return
+	 */
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull Requirement requirement, List<Long> milestoneIds);
 
+	/**
+	 * Given a DTO that eventually generates a RequirementVersion, will create a Requirement using this version then add it to the given
+	 * library with and bind it to the given milestones. The DTO may hold additional information for initialization of the custom fields.
+	 * On the other hand this method is not suitable for creation of synchronized Requirements.
+	 * 
+	 * @param libraryId
+	 * @param requirement
+	 * @param milestoneIds
+	 * @return
+	 */
 	Requirement addRequirementToRequirementLibrary(long libraryId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
+	/**
+	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
+	 * given folder.
+	 * 
+	 * @param folderId
+	 * @param requirement
+	 * @param milestoneIds
+	 * @return
+	 */
 	Requirement addRequirementToRequirementFolder(long folderId, @NotNull Requirement requirement, List<Long> milestoneIds);
 
+	/**
+	 * Same than {@link #addRequirementToRequirementLibrary(long, NewRequirementVersionDto, List), except that the requirement will be added to the
+	 * given folder.
+	 * 
+	 * @param folderId
+	 * @param requirement
+	 * @param milestoneIds
+	 * @return
+	 */
 	Requirement addRequirementToRequirementFolder(long folderId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
+	/**
+	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
+	 * given parent requirement.
+	 * 
+	 * @param folderId
+	 * @param requirement
+	 * @param milestoneIds
+	 * @return
+	 */
 	Requirement addRequirementToRequirement(long requirementId, @NotNull Requirement newRequirement, List<Long> milestoneIds);
 
+	/**
+	 * Same than {@link #addRequirementToRequirementLibrary(long, NewRequirementVersionDto, List), except that the requirement will be added to the
+	 * given parent requirement.
+	 * 
+	 * @param folderId
+	 * @param requirement
+	 * @param milestoneIds
+	 * @return
+	 */
 	Requirement addRequirementToRequirement(long requirementId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
 	List<Requirement> copyNodesToRequirement(long requirementId, Long[] sourceNodesIds);
@@ -89,7 +142,7 @@ RequirementLibraryFinderService {
 	List<Requirement> findChildrenRequirements(long requirementId);
 
 	List<String> getParentNodesAsStringList(Long elementId);
-	
+
 	/**
 	 * Generate a xls file to export requirements
 	 * @param libraryIds List of libraryIds (ie project ids) selected for export
@@ -100,7 +153,7 @@ RequirementLibraryFinderService {
 	 */
 	File exportRequirementAsExcel(List<Long> libraryIds, List<Long> nodeIds,
 			boolean keepRteFormat, MessageSource messageSource);
-	
+
 	/**
 	 * Generate a xls file to export requirements from research screen
 	 * @param libraryIds List of libraryIds (ie project ids) selected for export
@@ -115,7 +168,7 @@ RequirementLibraryFinderService {
 	ImportLog simulateImportExcelRequirement(File xls);
 
 	ImportLog importExcelRequirement(File xls);
-	
+
 	/**
 	 * Create a hierarchy of requirement library node.
 	 * The type of node depends of the first existing node in hierarchy :
@@ -130,22 +183,22 @@ RequirementLibraryFinderService {
 	 * @return the ID of the created node. Take care that it can be an ID corresponding to a {@link RequirementFolder} or a {@link Requirement}. See above...
 	 */
 	public Long mkdirs(String folderpath);
-	
+
 	/**
-	 * Change the current version number. 
+	 * Change the current version number.
 	 * Used by import to change the last created version number.
-	 * This method also modify the {@link Requirement#getCurrentVersion()} if needed. 
+	 * This method also modify the {@link Requirement#getCurrentVersion()} if needed.
 	 */
 	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion);
-	
+
 	/**
 	 * Initialize the CUF values for a {@link RequirementVersion}
 	 * @param reqVersion
-	 * @param initialCustomFieldValues map the id of the CUF to the value. 
+	 * @param initialCustomFieldValues map the id of the CUF to the value.
 	 * Beware, it's not the id of the CUFValue entry in db but the id of the CUF itself
 	 */
 	void initCUFvalues(RequirementVersion reqVersion, Map<Long, RawValue> initialCustomFieldValues);
-	
+
 	public RequirementLibraryNode findRequirementLibraryNodeById(Long id);
-	
+
 }
