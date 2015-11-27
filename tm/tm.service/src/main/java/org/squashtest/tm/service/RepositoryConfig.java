@@ -118,7 +118,6 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 	 * @return
 	 */
 	@Bean
-	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	public Properties hibernateProperties() {
 		Set<String> names = new HashSet<>();
 

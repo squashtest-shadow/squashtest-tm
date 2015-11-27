@@ -102,7 +102,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 
 			super.setBasenames(consolidatedBasenames.toArray(new String[consolidatedBasenames.size()]));
 		} catch (IOException e) {
-			LOGGER.warn("Error during bean initialization, no fragment messages will be registered.", e);
+			LOGGER.warn("Error during message source initialization, some messages may not be properly translated.", e);
 		}
 	}
 
@@ -123,7 +123,7 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 
 			} catch (IOException e) {
 				LOGGER.info("An IO error occurred while looking up plugin language resources '{}': {}", resource, e.getMessage());
-				LOGGER.debug("Plugin language resources lookup error for resource {}",resource,  e);
+				LOGGER.debug("Plugin language resources lookup error for resource {}", resource, e);
 			}
 		}
 	}
@@ -152,17 +152,22 @@ public class ReloadableSquashTmMessageSource extends ReloadableResourceBundleMes
 		}
 	}
 
-	private void addLookedUpBasenames(Set<String> consolidatedBasenames) throws IOException {
-		Resource[] resources = resourcePatternResolver.getResources(PLUGIN_MESSAGES_SCAN_PATTERN);
+	private void addLookedUpBasenames(Set<String> consolidatedBasenames) {
+		try {
+			Resource[] resources = resourcePatternResolver.getResources(PLUGIN_MESSAGES_SCAN_PATTERN);
 
-		for (Resource resource : resources) {
-			if (isFirstLevelDirectory(resource)) {
-				String basename = MESSAGES_BASE_PATH + resource.getFilename() + "/messages";
-				consolidatedBasenames.add(basename);
+			for (Resource resource : resources) {
+				if (isFirstLevelDirectory(resource)) {
+					String basename = MESSAGES_BASE_PATH + resource.getFilename() + "/messages";
+					consolidatedBasenames.add(basename);
 
-				LOGGER.info("Registering *discovered* path {} as a basename for application MessageSource", basename);
+					LOGGER.info("Registering *discovered* path {} as a basename for application MessageSource", basename);
+
+				}
+
 			}
-
+		} catch (IOException e) {
+			LOGGER.info("Error during bean initialization, no fragment messages will be registered. Maybe there are no fragments.", e);
 		}
 	}
 

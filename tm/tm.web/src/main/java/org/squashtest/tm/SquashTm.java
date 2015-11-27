@@ -54,5 +54,4 @@ public class SquashTm {
 		new SpringApplication(SquashTm.class).run(args);
 	}
 
-
 }

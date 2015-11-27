@@ -37,7 +37,7 @@
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
 
     <war.css.dir>styles</war.css.dir>
-    <wro4j-spring-boot.dir>${project.build.outputDirectory}/wro4j-spring-boot</wro4j-spring-boot.dir>
+    <wro4j-spring-boot.dir>${project.build.directory}/wro4j-spring-boot</wro4j-spring-boot.dir>
 
     <!-- Crap name for a directory. Yet 'wro4j/styles' makes wro4j substitute wrong urls and 'wro4j' is not picked by spring-boot -->
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
@@ -236,6 +236,12 @@
 
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-loader</artifactId>
+      <version>1.2.4.RELEASE</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
 
@@ -306,16 +312,23 @@
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>8.0.23</version>
+      <scope>provided</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.apache.tomcat.embed</groupId>
       <artifactId>tomcat-embed-jasper</artifactId>
       <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-tomcat</artifactId>
-      <scope>runtime</scope>
     </dependency>
 
     <dependency>
@@ -369,6 +382,7 @@
               <folder>target/jasperreports-plugin</folder>
             </folders>
             <jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2</jvmArguments>
+            <!--<layout>ZIP</layout>-->
           </configuration>
           <!--<dependencies>-->
           <!--<dependency>-->
