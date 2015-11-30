@@ -29,16 +29,29 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.QExecution;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.infolist.QInfoListItem;
+import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.milestone.QMilestone;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.AutomatedTest;
+import org.squashtest.tm.domain.testautomation.QAutomatedExecutionExtender;
+import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.users.QUser;
+import org.squashtest.tm.domain.users.User;
 
 import com.querydsl.core.types.dsl.EntityPathBase;
 
@@ -198,7 +211,173 @@ enum InternalEntityType {
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QIssue(alias);
 		}
-	};
+	},
+	TEST_CASE_STEP(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return TestStep.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QTestStep.testStep;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QTestStep(alias);
+		}
+
+	},
+
+	TEST_CASE_NATURE(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return InfoListItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QInfoListItem("testcaseNature");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
+		}
+
+	},
+
+	TEST_CASE_TYPE(){
+		@Override
+		Class<?> getEntityClass() {
+			return InfoListItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QInfoListItem("testcaseType");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
+		}
+
+	},
+
+	REQUIREMENT_VERSION_CATEGORY(){
+		@Override
+		Class<?> getEntityClass() {
+			return InfoListItem.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QInfoListItem("reqversionCategory");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
+		}
+
+	},
+	ITERATION_TEST_PLAN_ASSIGNED_USER(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return User.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QUser("iterTestPlanAssignedUser");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QUser(alias);
+		}
+
+	},
+	TEST_CASE_MILESTONE(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return Milestone.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QMilestone("testCaseMilestone");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QMilestone(alias);
+		}
+
+	},
+	REQUIREMENT_VERSION_MILESTONE(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return Milestone.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return new QMilestone("reqversionMilestone");
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QMilestone(alias);
+		}
+
+	}, AUTOMATED_TEST(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return AutomatedTest.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QAutomatedTest.automatedTest;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAutomatedTest(alias);
+		}
+
+	},
+
+
+	AUTOMATED_EXECUTION_EXTENDER(){
+
+		@Override
+		Class<?> getEntityClass() {
+			return AutomatedExecutionExtender.class;
+		}
+
+		@Override
+		EntityPathBase<?> getQBean() {
+			return QAutomatedExecutionExtender.automatedExecutionExtender;
+		}
+
+		@Override
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QAutomatedExecutionExtender(alias);
+		}
+
+	}
+	;
+
 	// @formatter:on
 
 
@@ -210,22 +389,18 @@ enum InternalEntityType {
 	abstract EntityPathBase<?> getAliasedQBean(String alias);
 
 
-	static InternalEntityType fromDomainType(EntityType domainType) {// NOSONAR this switch is not so complex...
-		InternalEntityType converted;
-
-		switch(domainType){
-		case REQUIREMENT : converted = REQUIREMENT; break;
-		case REQUIREMENT_VERSION : converted = REQUIREMENT_VERSION; break;
-		case TEST_CASE : converted = TEST_CASE; break;
-		case CAMPAIGN : converted = CAMPAIGN; break;
-		case ITERATION : converted = ITERATION; break;
-		case ITEM_TEST_PLAN : converted = ITEM_TEST_PLAN; break;
-		case EXECUTION : converted = EXECUTION; break;
-		case ISSUE : converted = ISSUE; break;
-		default : throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type");
+	static InternalEntityType fromSpecializedType(SpecializedEntityType domainType){
+		String name =  domainType.getEntityType().name();
+		if (domainType.getEntityRole() != null) {
+			name = domainType.getEntityRole().name();
+		}
+		try{
+			return InternalEntityType.valueOf(name);
+		}
+		catch(Exception ex){
+			throw new IllegalArgumentException("Unimplemented : cannot convert type '"+domainType+"' to a corresponding internal type", ex);
 		}
 
-		return converted;
 	}
 
 

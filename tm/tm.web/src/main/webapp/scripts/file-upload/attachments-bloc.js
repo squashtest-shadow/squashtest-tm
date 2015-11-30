@@ -26,7 +26,11 @@ define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 		container.load(settings.baseURL+"/display");
 	}
 	
-	function initDialogs(settings){
+
+
+	function init(settings){
+		
+		// init the dialog
 		var dialog = $("#add-attachments-dialog").attachmentsDialog({
 			url : settings.baseURL+"/upload"
 		});
@@ -34,19 +38,17 @@ define(["jquery", "./jquery.squash.attachmentsDialog"], function($){
 		dialog.on('attachmentsdialogdone', function(){
 			reloadAttachments(settings);
 		});
-	}
-
-	function init(settings){
 		
-		initDialogs(settings);
 		
+		// bind the buttons
 		$("#manage-attachment-bloc-button").on('click', function(){
 			document.location.href = settings.baseURL+"/manager?workspace="+settings.workspace;
 		});
 		
+	
 		$("#upload-attachment-button").on('click', function(){
 			$("#add-attachments-dialog").attachmentsDialog('open');
-		});
+		});	
 	}
 	
 	return {

@@ -22,24 +22,26 @@
 -->
   <div th:fragment="chart-wizard-scope">
 
+{{#*inline "perim"}}
+{{i18n text}}
+<input type="button" class="sq-btn btn-sm perimeter-select" id="{{name}}" value="perimeter" 
+            th:value="#{chart.wizard.select.perimeter}" />  
+<br />
+<br />
+<br />
+{{/inline}}
 
-       	 	<div id="tree-pane">
-	         <div id="tree" class="tree" />
-	THIS IS A TREE 
+<div id="tree-popup-container" /> 
 
-			          </div>
-
-
+{{#each attributes.perimSelect}}
+{{>perim}}
+{{/each}}
 
 
-
- <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
-
- <button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
-  </button>
 
 
  </div>
+ 
+ 
+
+ 

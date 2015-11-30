@@ -73,8 +73,40 @@ define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _
 		return false;
 	});
 	
+	
+	Handlebars.registerHelper({
+	    eq: function (v1, v2) {
+	        return v1 === v2;
+	    },
+	    ne: function (v1, v2) {
+	        return v1 !== v2;
+	    },
+	    lt: function (v1, v2) {
+	        return v1 < v2;
+	    },
+	    gt: function (v1, v2) {
+	        return v1 > v2;
+	    },
+	    lte: function (v1, v2) {
+	        return v1 <= v2;
+	    },
+	    gte: function (v1, v2) {
+	        return v1 >= v2;
+	    },
+	    and: function (v1, v2) {
+	        return v1 && v2;
+	    },
+	    or: function (v1, v2) {
+	        return v1 || v2;
+	    }
+	});
+	
 	Handlebars.registerHelper("intersect", function(col1, col2){
 		return _.intersection(col1, col2);	
+	});
+	
+	Handlebars.registerHelper("union", function(col1, col2){
+		return _.union(col1, col2);
 	});
 	
 	Handlebars.registerHelper("i18n", function (key, options){
@@ -85,6 +117,12 @@ define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _
 		
 		return translator.get(result);
 	});
+	
+	
+	Handlebars.registerHelper("inc", function(value, options)
+			{
+			    return parseInt(value, 10) + 1;
+			});
 	
 	return Handlebars;
 });

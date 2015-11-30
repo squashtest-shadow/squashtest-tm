@@ -24,7 +24,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -121,6 +123,12 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	int changeVerifiedRequirementVersionOnTestCase(long oldVerifiedRequirementVersionId,
 			long newVerifiedRequirementVersionId, long testCaseId);
 
-
-
+	/**
+	 * Return a list of coverage rate for a designed requirement version
+	 * @param requirementVersionId
+	 * @param currentMilestone
+	 * @param iterations 
+	 * @return
+	 */
+	RequirementCoverageStat findCoverageStat(Long requirementVersionId, Milestone currentMilestone, List<Iteration> iterations);
 }

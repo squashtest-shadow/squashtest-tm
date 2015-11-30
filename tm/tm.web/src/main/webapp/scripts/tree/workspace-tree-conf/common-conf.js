@@ -20,47 +20,47 @@
  */
 /*
  * Returns the workspace-independant part of the configuration of a "workspace" tree.
- * 
- * 
+ *
+ *
  * conf : {
  *  model : model object for that tree
  * }
- * 
+ *
  */
 define(function(){
-	
+
 	var baseURL = squashtm.app.contextRoot;
-	
+
 	return {
 		generate : function(settings){
-	
+
 			var workspace = settings.workspace;
 			var treepref = localStorage[workspace+"-tree-pref"];
-			
-			
-			var cfg = { 
+
+
+			var cfg = {
 				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
-				
-				"json_data" : { 
-					"data" : settings.model, 
+
+				"json_data" : {
+					"data" : settings.model,
 					"ajax" : {
 						"url": function (node) {
 							return node.treeNode().getContentUrl();
-						} 
+						}
 					}
 				},
-				
-				"core" : { 
+
+				"core" : {
 					"animation" : 0
 				},
-				
+
 				"ui": {
 					"disable_selecting_children" : true,
 					"select_multiple_modifier" : "ctrl",
 					"select_range_modifier" : "shift",
 					"select_prev_on_delete" : false
 				},
-				
+
 				"hotkeys" : {
 					"del" : function(){
 								this.get_container().trigger('suppr.squashtree');
@@ -74,33 +74,33 @@ define(function(){
 					"ctrl+v" : function(){
 								this.get_container().trigger('paste.squashtree');
 							},
-							
-					
-					"up" : false, 
-					"ctrl+up" : false, 
-					"shift+up" : false, 
-					"down" : false, 
-					"ctrl+down" : false, 
-					"shift+down" : false, 
-					"left" : false, 
-					"ctrl+left" : false, 
-					"shift+left" : false, 
-					"right" : false, 
+
+
+					"up" : false,
+					"ctrl+up" : false,
+					"shift+up" : false,
+					"down" : false,
+					"ctrl+down" : false,
+					"shift+down" : false,
+					"left" : false,
+					"ctrl+left" : false,
+					"shift+left" : false,
+					"right" : false,
 					"ctrl+right" : false,
-					"shift+right" : false, 
-					"space" : false, 
-					"ctrl+space" : false, 
-					"shift+space" : false							
-							
+					"shift+right" : false,
+					"space" : false,
+					"ctrl+space" : false,
+					"shift+space" : false
+
 				},
-				
+
 				"themes" : {
 					"theme" : "squashtest",
 					"dots" : true,
 					"icons" : true,
 					"url" : baseURL+"/styles/squash.tree.css"
 				},
-				
+
 				"squash" : {
 					rootUrl : baseURL,
 					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
@@ -111,14 +111,14 @@ define(function(){
 					}
 					return true;
 				}
-				
+
 			};
-			
-			
+
+
 			if(treepref != 1) {
-				cfg.plugins.push("sort"); 
+				cfg.plugins.push("sort");
 			}
-			
+
 			return cfg;
 		}
 	};

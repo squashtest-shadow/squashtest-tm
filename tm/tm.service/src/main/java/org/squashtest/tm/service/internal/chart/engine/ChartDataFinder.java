@@ -24,21 +24,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.AxisColumn;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.Tuple;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
 /**
@@ -145,9 +146,9 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
  * 	The main building blocks that defines the main query are the following :
  * 
  * 	<ul>
+ * 		<li><b>Root Entity</b> : This is the entity from which the query plan begins the entity traversal. The root entity is the
+ * 		entity targeted by the AxisColumn.  When multiple target entities are eligible, the one with the lowest rank will be the Root entity.</li>
  * 		<li><b>Target Entities</b> : entities on which apply at least one of the MeasureColumns, AxisColumns or Filters</li>
- * 		<li><b>Root Entity</b> : specifically, this is the Target entity referred to by the MeasureColumns. When multiple
- * 			target entities are eligible, the one with the highest MeasureColumn rank will be the Root entity.</li>
  * 		<li><b>Support Entities</b> : entities that aren't Target entities but must be joined on in order to join together all
  * 			the Target entities. For example if a ChartDefinition defines Execution as Root entity and Campaign as a TargetEntity,
  * 			then IterationTestPlanItem and Iteration are Support entities. </li>
@@ -294,6 +295,8 @@ public class ChartDataFinder {
 	@Inject
 	private SessionFactory sessionFactory;
 
+	@Inject
+	Provider<ScopePlanner> scopePlannerProvider;
 
 	@Transactional(readOnly=true)
 	public ChartSeries findData(ChartDefinition definition){
@@ -302,16 +305,19 @@ public class ChartDataFinder {
 
 		// *********** step 1 : determine scope and ACL **********************
 
-		// TODO : implement
+		ScopePlanner scopePlanner = scopePlannerProvider.get();
+		scopePlanner.setChartQuery(enhancedDefinition);
+		scopePlanner.setScope(definition.getScope());
+		scopePlanner.appendScopeFilters();
 
 		// *********** step 2 : create the query ************************
 
-		HibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).asMainQuery().createQuery();
+		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
 
 		// ******************* step 3 : run the query*************************
 
 		sessionFactory.getCurrentSession();
-		HibernateQuery finalQuery = (HibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
+		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
 
 		List<Tuple> tuples = finalQuery.fetch();
 

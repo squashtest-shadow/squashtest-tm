@@ -20,12 +20,12 @@
  */
 /*
  * Returns the workspace-independant part of the configuration of a "workspace" tree.
- * 
- * 
+ *
+ *
  * conf : {
  *  model : model object for that tree
  * }
- * 
+ *
  */
 define(function() {
 
@@ -74,9 +74,19 @@ define(function() {
 					opened : (!!settings.selectedNode) ? [ settings.selectedNode ] : []
 				},
 				conditionalselect : function(node) {
+
+					if (settings.canSelectProject && $(node).is("[rel='drive']")){
+						return true;
+					}
+
 					if($(node).is("[rel='drive']") ){
 						return false ;
 					}
+
+          if (settings.forbidSelectFolder && $(node).is("[rel='folder']")){
+						return false;
+					}
+          
 					return true;
 				}
 			};

@@ -27,7 +27,7 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	/**
 	 * Describe how the two entities should be joined.
 	 * <ul>
-	 * 	<li>Natural : used an inner join over the attribute, nothing special about it</li>
+	 * 	<li>Natural : uses an inner join over the attribute, nothing special about it</li>
 	 * 	<li>Reversed Where : should be used when a natural join is not possible (because the relation is not mapped). </li>
 	 * </ul>
 	 * @author bsiri
@@ -44,6 +44,7 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	 */
 	private String attribute;
 
+	// Note : this attribute is not part of the computation of Equals
 	private JoinType type = JoinType.NATURAL;
 
 
@@ -73,5 +74,39 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	JoinType getType(){
 		return type;
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result + ((attribute == null) ? 0 : attribute.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (!super.equals(obj)) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		PlannedJoin other = (PlannedJoin) obj;
+		if (attribute == null) {
+			if (other.attribute != null) {
+				return false;
+			}
+		} else if (!attribute.equals(other.attribute)) {
+			return false;
+		}
+		return true;
+	}
+
+
+
+
 
 }

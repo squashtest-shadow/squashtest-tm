@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -29,28 +30,38 @@ import javax.inject.Named;
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
+import org.squashtest.tm.service.campaign.CampaignFinder;
+import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
+import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -87,10 +98,23 @@ public class VerifyingTestCaseManagerController {
 
 	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
-
+	
+	@Inject
+	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
+
+	@Inject
+	private CampaignFinder campaignFinder;
+	
+	@Inject
+	private IterationFinder iterationFinder;
+	
+	private static final String campaign_name = "Campaign";
+	private static final String iteration_name = "Iteration";
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(VerifyingTestCaseManagerController.class);
 
 	/*
 	 * Kind of a hack : we rely on mDataProp sent by squash table. IndexBasedMapper looks up into mataProps unmarchalled
@@ -181,6 +205,7 @@ public class VerifyingTestCaseManagerController {
 
 	}
 
+	@SuppressWarnings("rawtypes")
 	protected DataTableModel buildVerifyingTestCaseModel(long requirementVersionId, PagingAndSorting pas, String sEcho){
 		PagedCollectionHolder<List<TestCase>> holder = verifyingTestCaseManager.findAllByRequirementVersion(
 				requirementVersionId, pas);
@@ -188,7 +213,30 @@ public class VerifyingTestCaseManagerController {
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
 
-
+	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/coverage-stats", method = RequestMethod.GET,params = { "perimeter" })
+	@SuppressWarnings("unchecked")
+	public @ResponseBody
+	RequirementCoverageStat getCoverageStat(@CurrentMilestone Milestone currentMilestone, @PathVariable long requirementVersionId, @RequestParam String perimeter) {
+		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
+		List<Iteration> iterations = new ArrayList<Iteration>();
+		if (mapIdsByType.containsKey(campaign_name)) {
+			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
+			//Only one selected node for v1.13...
+			Campaign campaign = campaignFinder.findById(ids.get(0));
+			iterations.addAll(campaign.getIterations());
+		}
+		if (mapIdsByType.containsKey(iteration_name)) {
+			List<Long> ids = (List<Long>) mapIdsByType.get(iteration_name);
+			Iteration iteration = iterationFinder.findById(ids.get(0));
+			if (iteration != null) {
+				iterations.add(iteration);
+			}
+		}
+		
+		LOGGER.debug("JTH go controller go");
+		LOGGER.debug("JTH" + mapIdsByType);
+		return verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, currentMilestone, iterations);
+	}
 
 
 }

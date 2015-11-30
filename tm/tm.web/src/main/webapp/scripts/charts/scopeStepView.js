@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "tree"],
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "tree", "jquery.squash.confirmdialog"],
 	function($, backbone, _, Handlebars, AbstractStepView, tree) {
 	"use strict";
 
@@ -27,22 +27,27 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#scope-step-tpl";
 			this.model = data;
-			data.nextStep = "filter";
-			data.prevStep = "entity";
+			data.name = "scope";
 			this._initialize(data, wizrouter);
 			
-			//var nodes;
-			//$("#tree").on('reopen.jstree', function(event, data) {
+			var treePopup = $("#tree-popup-tpl").html();
+			this.treePopupTemplate = Handlebars.compile(treePopup);
 
-			//	nodes = data.inst.findNodes([ {resid : 1, restype : 'test-cases'}]);
-			//});	
+		},
+		
+		events : {
+			"click .perimeter-select" : "openPerimeterPopup"
 			
-			this.initTree();
+		},
+		
+		openPerimeterPopup : function (event) {
+		
 			
+			$("#tree-popup-container").html(this.treePopupTemplate());
 			
-			
-			//nodes.select();
-			
+			$("#tree-dialog").confirmDialog();
+			$("#tree-dialog").confirmDialog('open');
+			this.initTree(event.target.id);
 		},
 		
 		updateModel : function() {
@@ -50,32 +55,17 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var scope = _.map($("#tree").jstree('get_selected'), function (sel) { return {type : $(sel).attr("restype").split("-").join("_").slice(0,-1).toUpperCase(), id:$(sel).attr("resid")}; } );
 			
 			this.model.set({scope : scope});
+			this.model.set({projectsScope : _.uniq(_.map($("#tree").jstree('get_selected'), function(obj){return $(obj.closest("[project]")).attr("project"); }))});
 		},
 		
 		
-		initTree : function (){
+		initTree : function (workspaceName){
 		
-
-			var workspaceName;
 
 			var ids = _.pluck(this.model.get("scope"), "id");
 			ids = ids.length > 0 ? ids : 0;
 			
-			switch (this.model.get("selectedEntity")){
 			
-			case "REQUIREMENT": 
-			case "REQUIREMENT_VERSION":  workspaceName = "requirement";
-				break;
-				
-			case "TEST_CASE" : workspaceName = "test-case";
-				break;
-				
-			case "CAMPAIGN" :
-			case "ITERATION" :
-			case "EXECUTION" :
-			case "ITEM_TEST_PLAN" : workspaceName = "campaign";
-			
-			}
 			
 			$.ajax({
 				url : squashtm.app.contextRoot + "/" + workspaceName + '-workspace/tree/' + ids,
@@ -87,10 +77,10 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				var treeConfig = {
 						model : model,
 						treeselector: "#tree",
-						workspace:"campaign",	
-						
+						workspace: workspaceName,	
+						canSelectProject:true
 				};
-				tree.initWorkspaceTree(treeConfig);
+				tree.initLinkableTree(treeConfig);
 					
 			});
 

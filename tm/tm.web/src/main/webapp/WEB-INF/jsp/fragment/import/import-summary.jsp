@@ -30,10 +30,4 @@ This is so because Chrome and FF handle well a repsonse in json but not IE. -->
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
-<%--
-if ok : 
-<p>${'{' } "success" : ${ summary.success }, "total" : ${ summary.total }, "rejected" : ${ summary.rejected }, "failures" : ${ summary.failures }, "modified" : ${ summary.modified }, "renamed" : ${ summary.renamed } ${'}'}</p>
-if ko : //TODO
-<p> </p>
- --%>
  <p>${json:marshall(summary)}</p>

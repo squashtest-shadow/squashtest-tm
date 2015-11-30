@@ -25,6 +25,8 @@ import static org.squashtest.tm.domain.chart.ColumnType.*
 import static org.squashtest.tm.domain.chart.DataType.*
 import static org.squashtest.tm.domain.chart.Operation.*
 
+import java.util.List;
+
 import org.hibernate.Query
 import org.hibernate.type.LongType
 import org.spockframework.util.NotThreadSafe
@@ -40,7 +42,9 @@ import org.squashtest.tm.domain.chart.DataType
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn
 import org.squashtest.tm.domain.chart.Operation
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.execution.QExecution
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement
 import org.squashtest.tm.domain.requirement.QRequirementVersion
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage
@@ -54,34 +58,23 @@ import spock.unitils.UnitilsSupport
 
 import com.querydsl.core.types.Projections
 import com.querydsl.core.types.Ops.AggOps;
-import com.querydsl.jpa.hibernate.HibernateQuery
-
+import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUtils.*;
 
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
 class FilterPlannerIT extends DbunitDaoSpecification {
 
-	static QTestCase tc = QTestCase.testCase
-	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
-	static QRequirementVersion v = QRequirementVersion.requirementVersion
-	static QRequirement r = QRequirement.requirement
-	static QIterationTestPlanItem itp = QIterationTestPlanItem.iterationTestPlanItem
-	static QIteration ite = QIteration.iteration
-	static QCampaign cp = QCampaign.campaign
-	static QExecution exec = QExecution.execution
-	static QIssue iss = QIssue.issue
 
 
 	// TODO : test the AND/OR mechanism
-
 
 	@DataSet("QueryPlanner.dataset.xml")
 	def "should retain the requirement versions only for test case 1"(){
 
 		given : "the query"
 
-		HibernateQuery query = new HibernateQuery()
+		ExtendedHibernateQuery query = new ExtendedHibernateQuery()
 		query.from(v).join(v.requirementVersionCoverages, cov)
 				.join(cov.verifyingTestCase, tc)
 				.select(Projections.tuple(v.id,  v.name.countDistinct() ))
@@ -95,7 +88,7 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 		when :
 		FilterPlanner planner = new FilterPlanner(definition, query)
 		planner.modifyQuery()
-		HibernateQuery concrete = query.clone(getSession())
+		ExtendedHibernateQuery concrete = query.clone(getSession())
 
 		def res = concrete.fetch()
 
@@ -106,40 +99,17 @@ class FilterPlannerIT extends DbunitDaoSpecification {
 
 	}
 
-	def mkMeasure(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new MeasureColumn(column : proto, operation : operation)
-
-		return meas
-
-	}
-
-	def mkAxe(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def meas = new AxisColumn(column : proto, operation : operation)
-
-		return meas
-
-	}
-
-	def mkFilter(ColumnType attrType, DataType datatype, Operation operation, EntityType eType, String attributeName, List<String> values){
-		def proto = new ColumnPrototype(entityType : eType, dataType : datatype, columnType : attrType, attributeName : attributeName)
-		def filter = new Filter(column : proto, operation : operation, values : values)
-
-		return filter
-
-	}
 
 
-	def HibernateQuery from(clz){
-		return new HibernateQuery().from(clz)
+	def ExtendedHibernateQuery from(clz){
+		return new ExtendedHibernateQuery().from(clz)
 	}
 
 
 
 
 	class ManyQueryPojo {
-		HibernateQuery query
+		ExtendedHibernateQuery query
 		DetailedChartQuery definition
 		Set<?> expected
 	}

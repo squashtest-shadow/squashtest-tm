@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.Query;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
@@ -35,5 +38,47 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 		CustomReportLibraryNode node = findById(parentId);
 		return node.getChildren();
 	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllDescendantIds(List<Long> nodesIds) {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
+		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<CustomReportLibraryNode> findAllDescendants(List<Long> nodesIds) {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
+		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		return query.list();
+	}
+
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds) {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
+		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		return query.list();
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findAncestorIds(Long nodeId) {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
+		query.setParameter("id", nodeId);
+		return query.list();
+	}
+
+	@Override
+	public List<Long> findAllFirstLevelDescendantIds(Long nodeId) {
+		List<Long> ids = new ArrayList<Long>();
+		ids.add(nodeId);
+		return findAllFirstLevelDescendantIds(ids);
+	}
+
+
 	
 }

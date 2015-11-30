@@ -21,40 +21,49 @@
 package org.squashtest.tm.domain.chart;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.AttributeOverride;
 import javax.persistence.AttributeOverrides;
+import javax.persistence.CascadeType;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(name = "CHART_DEFINITION")
+@Auditable
 public class ChartDefinition implements TreeEntity{
 
 	@Id
@@ -81,6 +90,14 @@ public class ChartDefinition implements TreeEntity{
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROJECT_ID")
+	private Project project;
+
+	@ElementCollection
+	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
+	private List<String> projectScope = new ArrayList<String>();
 
 
 	@ElementCollection
@@ -92,11 +109,13 @@ public class ChartDefinition implements TreeEntity{
 	private List<EntityReference> scope = new ArrayList<>();
 
 
-	@OneToOne
-	@JoinColumn(name="QUERY_ID")
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "QUERY_ID", nullable = false)
 	private ChartQuery query = new ChartQuery();
 
-
+	@NotNull
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	private Set<CustomReportChartBinding> chartBindings = new HashSet<CustomReportChartBinding>();
 
 	public User getOwner() {
 		return owner;
@@ -140,7 +159,7 @@ public class ChartDefinition implements TreeEntity{
 	 *
 	 * @return
 	 */
-	public Map<ColumnRole, Set<EntityType>> getInvolvedEntities(){
+	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
 		return query.getInvolvedEntities();
 	}
 
@@ -157,10 +176,7 @@ public class ChartDefinition implements TreeEntity{
 	public void setName(String name) {
 		this.name = name;
 	}
-	@Override
-	public TreeLibraryNode getTreeNode() {
-		throw new UnsupportedOperationException("TO IMPLEMENT");
-	}
+	
 	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
@@ -168,6 +184,29 @@ public class ChartDefinition implements TreeEntity{
 
 	public void setOwner(User user) {
 		this.owner = user;
-
 	}
+
+	@Override
+	public Project getProject() {
+		return project;
+	}
+
+	@Override
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary(){
+		return getProject().getCustomReportLibrary();
+	}
+
+	public List<String> getProjectScope() {
+		return projectScope;
+	}
+
+	public void setProjectScope(List<String> projectScope) {
+		this.projectScope = projectScope;
+	}
+
 }

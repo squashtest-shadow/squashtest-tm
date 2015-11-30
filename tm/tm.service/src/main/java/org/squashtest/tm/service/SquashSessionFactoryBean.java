@@ -22,15 +22,16 @@ package org.squashtest.tm.service;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
-import org.hibernate.dialect.function.SQLFunction;
 import org.hibernate.internal.util.config.ConfigurationHelper;
-import org.hibernate.type.StringType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBuilder;
-import org.squashtest.tm.service.internal.hibernate.GroupConcatFunction;
-import org.squashtest.tm.service.internal.hibernate.StringAggFunction;
+import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer;
+import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport;
+
+import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.GROUP_CONCAT;
+import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.STR_AGG;
 
 /**
  * Specialization of LocalSessionFactoryBean which registers a "group_concat" hsl function for any known dialect.
@@ -51,28 +52,25 @@ public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
 	@Override
 	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
 		String dialect = sfb.getProperty("hibernate.dialect");
-		sfb.addSqlFunction(FN_NAME_GROUP_CONCAT, groupConcatFunction(dialect));
+		SessionFactoryEnhancer.registerExtensions(sfb, groupConcatFunction(dialect));
+
 		return super.buildSessionFactory(sfb);
 	}
 
 	/**
-	 * Creates an adapter to the underlying DB group_concat (or equivalent) function with a regular syntax which
-	 * can be used in hql regardless of the underlaying DB
-	 *
 	 * @param dialectProp value of the dialect Hibernate property
-	 * @return a group concat function which suits the dialect
 	 */
-	private SQLFunction groupConcatFunction(String dialectProp) {
+	private FnSupport groupConcatFunction(String dialectProp) {
 		String dialect = ConfigurationHelper.resolvePlaceHolder(StringUtils.defaultString(dialectProp)).toLowerCase();
 
 		if (StringUtils.contains(dialect, "postgresql")) {
-			return new StringAggFunction(FN_NAME_GROUP_CONCAT, new StringType());
+			return STR_AGG;
 		}
 		if (!StringUtils.contains(dialect, "h2") && !StringUtils.contains(dialect, "mysql")) {
 			LOGGER.warn("Selected hibernate Dialect '{}' is not known to support the sql function 'group_concat()'. Application will certainly not properly work. Maybe you configured a wrong dialect ?", dialectProp);
 		}
 
-		return new GroupConcatFunction(FN_NAME_GROUP_CONCAT, new StringType());
+		return GROUP_CONCAT;
 	}
 
 }

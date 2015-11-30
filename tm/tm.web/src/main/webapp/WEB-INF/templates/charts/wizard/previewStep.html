@@ -22,22 +22,17 @@
 -->
 <div th:fragment="chart-wizard-preview">
 
+
+<span th:text="#{label.name}" />
+<input type="text" id="chart-name" value="{{attributes.name}}"/>
+
   <div>
-  THIS IS A PREVIEW !
-  
-        <div id="chart-display-area" class="chart-display-area" />
+
+        <div id="chart-display-area" style="width:500px;" />
 
    <div>
-  <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
 
-<input type="button" class="sq-btn btn-sm" id="preview" value="Generate"
-            th:value="#{report.criteria.panel.button.generate.label}" />  
-                    
-<input type="button" class="sq-btn btn-sm" id="save" value="save"
-            th:value="#{label.save}" />
-  
+
   </div>
 </div>
 

@@ -29,7 +29,7 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 			description : dialog.find('#add-folder-description').val()
 		};
 
-		return tree.jstree('postNewNode', 'new-folder', params, false);
+		return tree.jstree('postNewNode', 'new-folder', params, true);
 	}
 
 
@@ -41,10 +41,10 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 		// Added to cancel the open if no rights
 		dialog.on('formdialogopen', function(){
 			var node = tree.jstree('get_selected');
-			
+
 			if (! rules.canCreateFolder(node)){
-				/* Acknowledged by Safi, David and Gregory : 
-				 * Inactivated buttons and item-menu should not be clickable. 
+				/* Acknowledged by Safi, David and Gregory :
+				 * Inactivated buttons and item-menu should not be clickable.
 				 * No error popup should be visible despite the fact a lot of these error popup have been implemented since 1.11.
 				 * Due to event flow bug in jQuery, we cant't prevent the popup 'onopen' event to be triggered,
 				 * so it was decided to close the popup immediately if rules check function return false,
@@ -63,10 +63,10 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 			else{
 				dialog.formDialog('setState','confirm');
 				var name = node.getName();
-				dialog.find("#new-folder-tree-button").val(name);				
-			}			
+				dialog.find("#new-folder-tree-button").val(name);
+			}
 		});
-		
+
 		// end
 
 		dialog.on('formdialogadd-close', function(){

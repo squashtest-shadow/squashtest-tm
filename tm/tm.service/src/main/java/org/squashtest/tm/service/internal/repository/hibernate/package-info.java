@@ -591,7 +591,7 @@
 	@NamedQuery(name = "CustomField.findByName", query = "from CustomField where name = ?1"),
 
 	//CustomFieldBinding
-	@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject order by cfb.position asc"),
+	@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject, cfb.id order by cfb.position asc"),
 	@NamedQuery(name = "CustomFieldBinding.findAllForGenericProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ?1 group by cfb.boundEntity, cfb.id order by cfb.position asc"),
 	@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ?1 and cfb.boundEntity = ?2 order by cfb.position asc"),
 	@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ?1 and cfb.boundEntity = ?2"),
@@ -829,6 +829,10 @@
 	
 	// ChartLibraryNode
 	@NamedQuery(name="CustomReportLibraryNode.findAllByEntityType",query="from CustomReportLibraryNode crln where crln.entityType = ?1"),
+	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendantIds",query="select distinct path.descendantId from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
+	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds",query="select distinct path.descendantId from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids) and path.depth=1"),
+	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendant",query="select distinct path from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
+	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllAncestorIds",query="select distinct path.ancestorId from CustomReportLibraryNodePathEdge path where path.descendantId=:id"),
 	
 })
 //@formatter:on

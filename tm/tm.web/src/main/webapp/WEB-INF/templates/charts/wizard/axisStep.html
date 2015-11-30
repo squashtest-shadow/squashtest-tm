@@ -22,72 +22,59 @@
 -->
 <div th:fragment="chart-wizard-axis">
 
-{{#*inline "columnSelector"}}
 
 
-<select id="{{ROLE}}">
-{{#each  (lookup attributes.columnPrototypes attributes.selectedEntity)   }}  
-{{#if (contains this.role ../ROLE)}}
- <option value="{{this.label}}">
- {{i18n this.label prefix="chart.column."}}
- </option>
-{{/if }}
-{{/each}}     
+{{#*inline "filter"}}
+<br />
+
+<div style="display: table-column; width: 20%;float:left">
+{{#equal this.columnType "CUF"}}
+{{cuf-label this.attributeName data.customFields}}
+{{else}}
+{{i18n this.label prefix="chart.column."}}
+{{/equal}}
+</div>
+<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}" style="width: 120px;">
+{{#each  operations}}  
+   
+   {{!--<![CDATA[--}}
+<option value="{{this}}" 
+{{#equal this "NONE"}} selected="selected" {{/equal}}
+ >  
+    {{i18n this prefix="chart.operation."}}
+</option>
+ {{!--]]>--}}
+{{/each}}   
 </select>
-<span id="{{ROLE}}-operation-container"></span>
 
-
-<span th:text="#{label.name}" />
-<input type="text" id="{{ROLE}}-name" />
-<br />
-<br />
 {{/inline}}
 
-
-CHOOSE YOUR CHART AXIS/MEASURE
+<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.axis}"/>
+<br />
+<span  th:text="#{chart.wizard.creation.step.sub-message.axis}"/>
 <br />
 <br />
-CHOOSE MEASURE
 <br />
-<br />
-{{> columnSelector ROLE="MEASURE"}}
+{{#each attributes.columnPrototypes}}
 
+  {{#if (contains ../attributes.selectedEntity @key)}}
+  <div class="sq-tg expand">
+ <div class="tg-head">
+{{i18n @key prefix='chart.entityType.'}}           
+</div> 
 
-CHOOSE AXIS
-<br />
-
-{{> columnSelector ROLE="AXIS"}}
-
-
-
- <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
-
- <button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
-  </button>
+<div class="tg-body">
+{{#each  this}}  
+{{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
+{{#if (contains ../../attributes.selectedAttributes id)}} 
+{{> filter  operations=(intersect (union (lookup ../../attributes.columRoles "MEASURE") (lookup ../../attributes.columRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+{{/if}}
+{{/if}}
+{{/each}}  
+ </div>  
+  </div>  
+ {{/if}}
+{{/each}}  
 
 
 </div>
-
-
-
-<div th:fragment="chart-wizard-measure-operation">
- 
-{{#if operations}}
- <select id="{{role}}-operation">
- {{/if}}
-  
-{{#each operations}}
- <option value="{{this}}">
-  {{i18n this prefix="chart.operation."}}
- </option> 
-{{/each}}
-  
-{{#if operations}}
-</select>
- {{/if}}
-</div>
-
-

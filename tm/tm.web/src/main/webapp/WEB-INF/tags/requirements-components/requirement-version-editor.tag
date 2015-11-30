@@ -100,7 +100,9 @@
           verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
           attachments : ${json:serialize(attachmentsModel.aaData)},
           audittrail : ${json:serialize(auditTrailModel.aaData)},
-          hasCufs : ${hasCUF}
+          hasCufs : ${hasCUF},
+          requirementVersionId : ${requirementVersion.id},
+          projectId : ${requirementVersion.requirement.project.id}
         },
         permissions : {
           moreThanReadOnly : ${moreThanReadOnly},

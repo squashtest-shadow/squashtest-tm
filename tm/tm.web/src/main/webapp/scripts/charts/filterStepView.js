@@ -18,26 +18,164 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.configmanager", "jeditable.datepicker", "jquery.squash.togglepanel"],
-	function($, backbone, _, Handlebars, AbstractStepView, confman) {
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "squash.configmanager", "squash.translator", "jeditable.datepicker", "jquery.squash.togglepanel",],
+	function($, backbone, _, Handlebars, AbstractStepView, confman, translator) {
 	"use strict";
 
 	var filterStepView = AbstractStepView.extend({
 		
 		initialize : function(data, wizrouter) {
+			this.dateISOFormat = $.datepicker.ISO_8601;
+			this.datePickerFormat = translator.get("squashtm.dateformatShort.datepicker");
 			this.tmpl = "#filter-step-tpl";
 			this.model = data;
-			data.nextStep = "type";
-			data.prevStep = "scope";
-			this._initialize(data, wizrouter);
+			data.name = "filter";
+			this._initialize(data, wizrouter);	
+		
+			var infoListSrc = $("#info-list-tpl").html();
+			this.infoListTemplate = Handlebars.compile(infoListSrc);
+			var infoListItemSrc = $("#info-list-item-tpl").html();
+			this.infoListItemTemplate = Handlebars.compile(infoListItemSrc);
+			
+			var cufListSrc = $("#chart-wizard-cuf-list-tpl").html();
+			this.cufListTemplate = Handlebars.compile(cufListSrc);
+			
 			var pickerconf = confman.getStdDatepicker();
 			$(".date-picker").datepicker(pickerconf);
+			this.initInfoListValues();
+			this.initDropDownCufValues();
+			this.reloadPreviousValues();
 			this.initOperationValues();
 			
 		},
 	
 		events : {
 			"change .filter-operation-select" : "changeOperation",
+			"change .info-lists" : "changeInfoList"
+		},
+		
+		initDropDownCufValues : function () {
+			
+			var self = this;
+			
+			var cufLists = _.chain(self.model.get('columnPrototypes'))
+			.values()
+			.flatten()
+			.where({columnType : "CUF", dataType : "LIST"})
+			.value();
+			
+			_.each(cufLists, function(liste){
+				
+				var $val = $("#list-filter-container-" + liste.id);
+					
+				var items = _.chain(self.model.get("customFields"))
+				.values()
+				.flatten()
+				.find(function(cuf){return cuf.code == liste.attributeName;})
+				.result("options")
+				.value();
+				
+				$val.html(self.cufListTemplate({id : liste.id,items : items}));
+				
+			});
+				
+		},
+		
+		initInfoListValues : function() {
+			
+			var self = this;
+			var ids = self.getInfoListSelectorIds();
+			
+			var scope = _.size(self.model.get("projectsScope")) > 0 ? self.model.get("projectsScope") : "default";
+			
+			var scopedInfoLists = self.getInfoListForScope(scope);
+			var infoLists = self.getAllInfoList();
+		
+			var scopedEntity = self.model.get("scopeEntity");
+			
+		_.each(ids, function(id){
+			var container = $("#info-list-filter-container-" + id);
+			var name = container.attr("name");
+					
+			
+			var lists;
+			if (scopedEntity == self.findTypeFromColumnId(id) || scopedEntity == "default"){
+				lists = _(scopedInfoLists[name]);
+			} else {
+				lists = _(infoLists[name]);
+			}
+			lists = lists.uniq(false, function (val) {return val.id;});
+			
+			
+			var infoListHtml = self.infoListTemplate({id :id, infolists : lists});
+			container.html(infoListHtml);	
+			self.loadInfoListItems(id);
+		});
+			
+		},
+		
+		getInfoListSelectorIds : function() {
+
+			var self = this;
+			
+			return _.chain(self.model.get("columnPrototypes"))
+		.reduce(function(memo, val) {return memo.concat(val);}, [])
+		.where({dataType : "INFO_LIST_ITEM"})
+		.pluck("id")
+		.value();
+			
+		},
+
+		getInfoListsFromModel : function(infoLists){
+			
+			return _.chain(infoLists)
+			.map(_.pairs) 
+			.reduce(function(memo, val){ return memo.concat(val);}, [])
+            .reduce(function(memo, val) { 
+            	if(memo[val[0]] === undefined){
+            	memo[val[0]] = [];}  
+            	memo[val[0]] = memo[val[0]].concat(val[1]); 
+            	return memo;}, {})
+			.value();
+		},
+		
+		getInfoListForScope : function (scope){
+			return this.getInfoListsFromModel(_(this.model.get("projectInfoList")).pick(scope));		
+		},
+		
+		getAllInfoList : function (){
+			return this.getInfoListsFromModel(this.model.get("projectInfoList"));			
+		},
+	
+		loadInfoListItems : function (id) {
+			
+			var self = this;
+			
+			var selectedList = $("#info-list-" + id).val();
+			
+			if (!_.isArray(selectedList)){
+				selectedList = [selectedList];
+			}
+			
+			var infoListItems = _.chain(self.model.get("projectInfoList"))
+			.reduce(function(memo, val){ return memo.concat(_.values(val));}, [])
+			.filter(function(obj) {return _.contains(selectedList, obj.code);})
+			.uniq(false, function(obj){return obj.code;})
+			.reduce(function(memo, val){
+				return memo.concat(_.map(val.items, function (item){
+					item.isSystem = val.createdBy == "system";
+					return item;}));}, [])
+			.value();
+						
+			var container = $("#info-list-item-container-" + id);
+			var infoListItemHtml = self.infoListItemTemplate({items : infoListItems, id : id});
+			container.html(infoListItemHtml);
+			
+		}, 
+		
+		changeInfoList : function (event){
+			this.loadInfoListItems(event.target.name);
+			this.initOperationValues();
 		},
 		
 		initOperationValues : function (){
@@ -49,6 +187,77 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			
 		},
 		
+		reloadPreviousValues : function (){
+			
+			var self = this;
+			var filters = this.model.get("filters");
+			
+			if (filters !== undefined){
+				
+				_.each(filters, function(filter){				
+					self.applyPreviousValues(filter);
+				});	
+			}
+			
+		},
+		applyPreviousValues : function (filter){
+			var self = this;
+			var id = filter.column.id;
+					
+						
+			$("#filter-selection-" + id).attr("checked", "true");
+			$("#filter-operation-select-" + id).val(filter.operation);	
+			
+			self.reloadInfoList(filter);
+			self.showFilterValues(id, filter.operation);
+			
+			$("#first-filter-value-" + id).val(self.getValueFromFilter(filter, 0));
+			$("#second-filter-value-" + id).val(self.getValueFromFilter(filter, 1));
+		},
+		getValueFromFilter : function (filter, pos){
+			var self = this;
+			var datatype = filter.column.dataType;
+			
+			var result = filter.values[pos];
+			
+			if (datatype == "DATE" && result !== undefined){
+			var date = $.datepicker.parseDate(self.dateISOFormat, result);
+			result = $.datepicker.formatDate(self.datePickerFormat, date);
+			}
+
+			return  result;	
+		},
+		
+		reloadInfoList : function (filter){
+			
+			var self = this;
+			var datatype = filter.column.dataType;
+			
+			if (datatype == "INFO_LIST_ITEM") {
+			
+			var id = filter.column.id;
+			var value = filter.values[0];
+			
+			if (!_.isArray(value)){
+				value = [value];
+			}
+			
+			var selectedInfoList = _.chain(self.model.get("projectInfoList"))
+			.reduce(function(memo, val){ return memo.concat(_.values(val));}, [])
+			.uniq(false, function(val) {return val.id;})
+		    .reduce(function(memo, val) { 
+		    	memo[val.code] = _.map(val.items, function (item){return item.code;}) 
+		    	;return memo;}, {})
+		    .pairs()
+		    .filter(function(val) {return !_.isEmpty(_.intersection(val[1], value));})
+		    .map(_.first)
+			.value();
+			self.showFilterValues(id, filter.operation);
+			$("#info-list-" + id).val(selectedInfoList);
+			self.loadInfoListItems(id);
+			}
+		},
+		
 		updateModel : function() {
 			//get ids of selecteds columns
 			var ids = _.pluck($('[id^="filter-selection-"]').filter(":checked"), "name");
@@ -57,19 +266,56 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				return { 
 					column : self.findColumnById(id),
 					operation : $("#filter-operation-select-" + id).val(),
-					values : [$("#first-filter-value-" + id).val(), $("#second-filter-value-" + id).val()] };
+					values : self.getFilterValues(id) };
 				});
 			
+			filters = _.chain(filters)
+			.filter(function(filter){return ! _.isEmpty(filter.values);})
+			.value();
 			this.model.set({ filters : filters });
+			this.model.set({filtered : [true]});
+			
 	
 		},
-		
+		getFilterValues : function (id){
+			var self = this;
+			var datatype = self.findColumnById(id)["dataType"];
+			var result = [$("#first-filter-value-" + id).val(), $("#second-filter-value-" + id).val()];
+			
+			
+			if (datatype == "DATE"){
+				result = _.map(result, function(elem){				
+					var date = $.datepicker.parseDate(self.datePickerFormat, elem);
+					var result = $.datepicker.formatDate(self.dateISOFormat, date);
+					return result;
+				});	
+			}
+			
+			return self.removeEmpty(result);
+			
+		},
+		removeEmpty : function(tab){
+			return _.filter(tab, function(elem){return elem !== undefined && elem !== "";});
+			
+		},
 		findColumnById : function (id){
-			return _.find(_.reduce(this.model.get("columnPrototypes"), function(memo, val){ return memo.concat(val); }, []), function(col){return col.id == id; });
+			return _.chain(this.model.get("columnPrototypes"))
+			.values()
+			.flatten()
+			.find(function(col){return col.id == id; })
+			.value();
 		},
 		
 		changeOperation : function(event){				
 			this.showFilterValues(event.target.name, event.target.value);
+		},
+		
+		findTypeFromColumnId : function(id){
+			return _.chain(this.model.get("columnPrototypes"))
+			.pairs()
+			.find(function(val){ var ids =_.pluck(val[1], "id"); return _.contains(ids,id); })
+			.first()
+			.value();
 		},
 		
 		showFilterValues : function (id, val){
@@ -81,6 +327,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				selector.hide();
 				selector.val('');
 			}
+			
+			var select = $("select[name=" + id + "]").not(".filter-operation-select");
+
+			select.attr("MULTIPLE", val == "IN");	
+		
 			
 		}
 		

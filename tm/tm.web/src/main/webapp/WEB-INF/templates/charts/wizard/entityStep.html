@@ -22,26 +22,108 @@
 -->
   <div th:fragment="chart-wizard-entity">
 
-
-<span th:text="#{label.name}" />
-<input type="text" id="chart-name" />
-
+<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.entity}"/>
 <br />
- <ul style="list-style: none;">
-        {{#each attributes.entityTypes}}
-        <li>
-        {{!--<![CDATA[--}}
-        <input  type="radio" name="entity" value="{{this}}"  {{#unless @index}} checked="checked" {{/unless}}  />  
-        {{!--]]>--}}	
-        
-     {{i18n this prefix="chart.entityType."}}
+<span th:text="#{chart.wizard.creation.step.sub-message.entity}"/>
+<br />
+<br />
+<br />
 
+ <ul style="list-style: none;">
+        {{#each attributes.entityTypes}}       
+
+        <li style="float:left;  width:33% ">
+        
+        <div style='display: table;height: 50px;width: 100%;  margin-bottom: 40px;'>
+     
+     
+     <div style="display: table-cell; vertical-align:middle;">
+        {{!--<![CDATA[--}}
+        <input  type="checkbox" name="entity" value="{{@key}}"
+
+        {{#if ../attributes.selectedEntity}}         
+        {{#if (contains ../../attributes.selectedEntity @key)}} checked="checked" {{/if}}    
+        {{/if}}
+         />  
+        {{!--]]>--}}	
+        </div>
+       <span    style="min-height: 50px;
+    min-width: 50px; display: table-cell;width: 15%;" class="{{this}}" />
+        <span style="display: table-cell;width: 80%;    vertical-align: middle;">
+     {{i18n @key prefix="chart.entityType."}}
+</span>
+
+</div>
         </li>
         {{/each}}     
 </ul>
 
- <button id="next" class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
-  </button>
+<br class="unsnap"/>
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+<br />
+                            
+<br />
+<br />                
+<span style="font-weight: bold;" id="selected-perim-msg"/> <span style="font-weight: bold;color: #750021;text-decoration: underline;" id="selected-perim"/>
+<div style="display:inline-block; position:relative;" class="buttonmenu-wrapper">
+<a id="change-perimeter-button" class="buttonmenu sq-icon-btn buttonmenu-button" role="buttonmenu" shape="rect">
+                  <span th:text="#{wizard.perimeter.change}"/>
+                </a>
+                <ul id="change-perimeter-menu" class="buttonmenu-menu squash-buttonmenu ui-menu ui-widget  ui-corner-all collapse" role="menu" tabindex="0" style="position: absolute; overflow: hidden; white-space: nowrap; z-index: 3000; width: 113px; display: none;" aria-activedescendant="ui-id-7">
+                
+                {{#each attributes.perimSelect}}
+     <li  class="cursor-pointer ui-menu-item perimeter-select" role="presentation" aria-disabled="true">
+                    <a shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" name="{{name}}">{{i18n text}}</a>
+                  </li>
+               {{/each}}
+  <li id="reset-perimeter" class="cursor-pointer ui-menu-item" role="presentation" aria-disabled="true">
+                    <a th:text="#{wizard.perimeter.reset}" shape="rect"  class="ui-corner-all " tabindex="-1" role="menuitem" ></a>
+                  </li>
+
+
+                </ul></div>
+
+
+<div id="tree-dialog-container">
+ <div id="tree-dialog" style="height: 200px!important"
+				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" />
+ </div>
 
  </div>
+ 
+ 
+ 
+ 
+  <div th:fragment="chart-wizard-tree-popup">
+ 
+ <span id="warning-info-list"  class="red-warning-message" />
+
+ <div class="main">
+       	 	<div id="tree-pane">
+	         <div id="tree" class="tree jstree" />
+			 </div>
+</div>
+ 
+ 
+
+
+ 
+ </div>
+ 
+ 

@@ -29,147 +29,148 @@
  * 
  */
 
-define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery.squash.attachmentsDialog", 
-        "jquery.squash.confirmdialog", "squashtable"], 
-		function($,  translator, notification){
-	
-	function getMessages(){
-		return translator.get({
-			nothingSelected : 'message.EmptyTableSelection',
-			renameImpossible : 'message.CanRenameOnlyOneAttachment'
-		});
-	}
-	
-	function initDialogs(settings){
-		
-		var table = $("#attachment-detail-table").squashTable();
-		
-		// ******** delete dialog init ***********
-		
-		var deleteDialog = $("#delete-attachment-dialog");
-		
-		deleteDialog.confirmDialog();
-		
-		deleteDialog.on('confirmdialogconfirm', function(){
-				
-			var removedIds = table.getSelectedIds().join(',');
-			var url = settings.baseURL+"/"+removedIds;
-			
-			$.ajax({
-				type : 'DELETE',
-				url : url
-			}).done(function(){
-				deleteDialog.confirmDialog('close');
-				table.refresh();	
+define(["jquery", "squash.translator", "app/ws/squashtm.notification", "./jquery.squash.attachmentsDialog",
+		"jquery.squash.confirmdialog", "squashtable"],
+	function ($, translator, notification) {
+
+		function getMessages() {
+			return translator.get({
+				nothingSelected: 'message.EmptyTableSelection',
+				renameImpossible: 'message.CanRenameOnlyOneAttachment'
 			});
-		});
-		
-		// ******* rename dialog init ***************
-		
-		var renameDialog = $("#rename-attachment-dialog");
-		
-		renameDialog.confirmDialog();
-		
-		renameDialog.on("confirmdialogconfirm", function(){
-			
-			var id = renameDialog.data("attachmentId");
-			var url = settings.baseURL+"/"+id+"/name";
-			var newName = $("#rename-attachment-input").val();
-			
-			$.ajax({
-				url : url,
-				type : 'POST',
-				data : { name : newName }
-			})
-			.done(function(){
-				renameDialog.confirmDialog('close');
+		}
+
+		function initDialogs(settings) {
+
+			var table = $("#attachment-detail-table").squashTable();
+
+			// ******** delete dialog init ***********
+
+			var deleteDialog = $("#delete-attachment-dialog");
+
+			deleteDialog.confirmDialog();
+
+			deleteDialog.on('confirmdialogconfirm', function () {
+
+				var removedIds = table.getSelectedIds().join(',');
+				var url = settings.baseURL + "/" + removedIds;
+
+				$.ajax({
+					type: 'DELETE',
+					url: url
+				}).done(function () {
+					deleteDialog.confirmDialog('close');
+					table.refresh();
+				});
+			});
+
+			// ******* rename dialog init ***************
+
+			var renameDialog = $("#rename-attachment-dialog");
+
+			renameDialog.confirmDialog();
+
+			renameDialog.on("confirmdialogconfirm", function () {
+
+				var id = renameDialog.data("attachmentId");
+				var url = settings.baseURL + "/" + id + "/name";
+				var newName = $("#rename-attachment-input").val();
+
+				$.ajax({
+					url: url,
+					type: 'POST',
+					data: {name: newName}
+				})
+					.done(function () {
+						renameDialog.confirmDialog('close');
+						table.refresh();
+					});
+			});
+
+			// ******************* upload dialog settings **********
+
+			var uploadDialog = $("#add-attachments-dialog");
+			uploadDialog.attachmentsDialog({
+				url: settings.baseURL + "/upload"
+			});
+
+			uploadDialog.on('attachmentsdialogdone', function () {
 				table.refresh();
 			});
-		});
-		
-		// ******************* upload dialog settings **********
-		
-		var uploadDialog = $("#add-attachments-dialog");
-		uploadDialog.attachmentsDialog({
-			url : settings.baseURL+"/upload"
-		});
-		
-		uploadDialog.on('attachmentsdialogdone', function(){
-			table.refresh();
-		});
-		
-	}
-	
-	
-	function initButtons(){
-		
-		var table = $("#attachment-detail-table").squashTable();
-		
-		var deleteButton = $("#delete-attachment-button");			
-		var renameButton = $("#rename-attachment-button");
-		var uploadButton = $("#add-attachment-button");
-		
-		deleteButton.on('click', function(){
-			if (table.getSelectedRows().size()>0){
-				$("#delete-attachment-dialog").confirmDialog('open');
-			}
-			else{
-				var messages = getMessages();
-				notification.showError(messages.nothingSelected);
-			}
-		});
-		
-		
-		renameButton.on('click', function(){
-			var selectedIds = table.getSelectedIds();
-			if (selectedIds.length !== 1){
-				var messages = getMessages();
-				notification.showError(messages.renameImpossible);
-				return false;
-			}
-			else{
-				var id = selectedIds[0],
-					name = table.getDataById(id).name;
-				
-				var index = name.lastIndexOf('.');
-				$("#rename-attachment-input").val(name.substring(0,index));
-				
-				$("#rename-attachment-dialog").data('attachmentId', id)
-												.confirmDialog('open');
-				
-			}
-		});
-		
-		
-		uploadButton.on('click', function(){
-			$("#add-attachments-dialog").attachmentsDialog('open');
-		}); 
-	}
-	
-	
-	function init(settings){
-		
-		var dtSettings = {};
-		if (settings.aaData){
-			dtSettings.aaData = settings.aaData;
+			
 		}
-		
-		// Added parameters there to allow tooltips on buttons
-		$("#attachment-detail-table").squashTable(dtSettings, {
-			deleteButtons : {
-				delegate : "#delete-attachment-dialog",
-				tooltip : translator.get('title.RemoveAttachment')
-			}
-		});
 
-		initDialogs(settings);
-		initButtons();
-		
-	}
-	
-	
-	return {
-		init : init	
-	};
-	
-});
+
+		function initButtons(settings) {
+
+			var table = $("#attachment-detail-table").squashTable();
+
+			var deleteButton = $("#delete-attachment-button");
+			var renameButton = $("#rename-attachment-button");
+			var uploadButton = $("#add-attachment-button");
+
+			deleteButton.on('click', function () {
+				if (table.getSelectedRows().size() > 0) {
+					$("#delete-attachment-dialog").confirmDialog('open');
+				}
+				else {
+					var messages = getMessages();
+					notification.showError(messages.nothingSelected);
+				}
+			});
+
+
+			renameButton.on('click', function () {
+				var selectedIds = table.getSelectedIds();
+				if (selectedIds.length !== 1) {
+					var messages = getMessages();
+					notification.showError(messages.renameImpossible);
+					return false;
+				}
+				else {
+					var id = selectedIds[0],
+						name = table.getDataById(id).name;
+
+					var index = name.lastIndexOf('.');
+					$("#rename-attachment-input").val(name.substring(0, index));
+
+					$("#rename-attachment-dialog").data('attachmentId', id)
+						.confirmDialog('open');
+
+				}
+			});
+
+			
+			uploadButton.on('click', function () {
+				$("#add-attachments-dialog").attachmentsDialog('open');
+			});
+			
+		}
+
+
+		function init(settings) {
+
+			var dtSettings = {};
+			if (settings.aaData) {
+				dtSettings.aaData = settings.aaData;
+			}
+
+			// Added parameters there to allow tooltips on buttons
+			$("#attachment-detail-table").squashTable(dtSettings, {
+				deleteButtons: {
+					delegate: "#delete-attachment-dialog",
+					tooltip: translator.get('title.RemoveAttachment')
+				}
+			});
+
+			initDialogs(settings);
+			initButtons(settings);
+
+		}
+
+
+		return {
+			init: init
+		};
+
+	});

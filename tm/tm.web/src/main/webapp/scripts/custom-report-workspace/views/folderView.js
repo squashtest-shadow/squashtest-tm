@@ -18,17 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars"],
-		function(_,Backbone, translator,Handlebars) {
+define(["underscore","backbone","squash.translator","handlebars","squash.basicwidgets"],
+		function(_,Backbone, translator,Handlebars,basicWidgets) {
 	var View = Backbone.View.extend({
 
-    el : "#contextual-content",
+    el : "#contextual-content-wrapper",
 		tpl : "#tpl-show-folder",
 
 		initialize : function(){
 			_.bindAll(this, "render");
 			this.model.fetch({
-       success: this.render 
+       success: this.render
      });
 		},
 
@@ -36,15 +36,14 @@ define(["underscore","backbone","squash.translator","handlebars"],
 		},
 
 		render : function(){
-			console.log("RENDER");
 			var source = $("#tpl-show-folder").html();
 			var template = Handlebars.compile(source);
-			console.log("TEAMPLATING");
-			console.log(this.model.toJSON());
 			this.$el.append(template(this.model.toJSON()));
+			basicWidgets.init();
 		},
 
   });
 
 	return View;
 });
+

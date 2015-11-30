@@ -214,7 +214,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setCustomReportLibrary(crl);
 		session.persist(crl);
 		
-		//add the tree node for the CustomReportLibrary as now library
+		//add the tree node for the CustomReportLibrary as for custom report workspace library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
 		crlNode.setEntity(crl);

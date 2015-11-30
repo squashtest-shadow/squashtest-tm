@@ -25,6 +25,7 @@ import javax.inject.Inject
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.tree.TreeEntity
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
@@ -52,24 +53,96 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 	
 	def "should add new folder to library"() {
 		given :
-		def parent = crlnDao.findById(-1L);
-		def library = crlDao.findById(-1L);
+		def parent = crlnDao.findById(-1L)
+		def library = crlDao.findById(-1L)
 		
-		CustomReportFolder folder = new CustomReportFolder();
-		folder.setName("newFolder");
+		CustomReportFolder folder = new CustomReportFolder()
+		folder.setName("newFolder")
 		
 		when:
-		def res = service.createNewCustomReportLibraryNode(-1L,folder);
-		def resId = res.getId();
-		getSession().flush();
-		getSession().clear();
-		def newChildAfterPersist = crlnDao.findById(resId);
-		def parentNode = newChildAfterPersist.getParent();
+		def res = service.createNewNode(-1L,folder)
+		def resId = res.getId()
+		getSession().flush()
+		getSession().clear()
+		def newChildAfterPersist = crlnDao.findById(resId)
+		def parentNode = newChildAfterPersist.getParent()
+		def entityLinkedToNode = newChildAfterPersist.getEntity()
+		def projectLinked = entityLinkedToNode.getProject();
 
 		then:
-		res.id != null;
-		library != null;
-		parentNode.id == parent.id;
+		res.id != null
+		library != null
+		parentNode.id == parent.id
+		entityLinkedToNode != null
+		projectLinked.getId() == -1L
+	}
+	
+	def "should find descendants for nodes"() {
+		given :
+		
+		when:
+		def res = service.findDescendantIds(parentIds)
+
+		then:
+		res as Set == childrenIds as Set
+		
+		where:
+		parentIds 			|| 	childrenIds
+		[-20L]				||	[-20L,-40L]
+		[-6L]				||	[-6L,-11L,-12L,-13L,-14L,-15L]
+		[-7L]				||	[-7L]
+		[-2L]				||	[-2L,-3L,-4L,-5L]
+		[-10L]				||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
+		[-10L,-20L,-30L]	||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
+		[-10L,-7L]			||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L]
+		[-2L,-6L]			||	[-6L,-11L,-12L,-13L,-14L,-15L,-2L,-3L,-4L,-5L]
+	}
+	
+	def "should delete various nodes"() {
+		given :
+		
+		when:
+		service.delete(nodesIds)
+
+		then:
+		
+		for (id in deletedNodesIds) {
+			def node = crlDao.findById(id);
+			node == null;
+		}
+		
+		for (id in siblingIds) {
+			def node = crlDao.findById(id);
+			node != null;
+		}
+		
+		where:
+		nodesIds 		|| 	 		siblingIds											|	deletedNodesIds
+		[-40L]			||	[-10L,-20L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]|	[-40L]
+		[-20L]			||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]		|	[-20L,-40L]
+		[-20L,-40L]		||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]		|	[-20L,-40L]
+		[-20L,-40L,-12L]||	[-10L,-30L,-2L,-3L,-4L,-5L,-7L,-6L,-11L]					|	[-20L,-40L,-12L,-13L,-14L]
+		[-20L,-30L]		||	[-10L,-2L,-3L,-4L,-5L,-7L,-6L,-11L,-12L,-13L,-14L]			|	[-20L,-30L,-40L]
+		[-11L,-15L]		||	[-10L,-20L,-30L,-40L,-2L,-3L,-4L,-5L,-7L,-6L,-12L,-13L,-14L]|	[-11L,-15L]
+	}
+	
+	def "should rename node and entity"() {
+		given :
+		
+		when:
+		service.renameNode(nodeId, newName)
+		
+
+		then:
+		CustomReportLibraryNode node = crlnDao.findById(nodeId)
+		node.getName().equals(newName)
+		node.getEntity().getName().equals(newName)
+		
+		where:
+		nodeId 	|| newName
+		-20L	|| "newFolderName"
+		-2L		|| "newDashName"
+		
 	}
 	
 }

@@ -20,19 +20,31 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.audit.Auditable;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
-import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
+@Auditable
 public class CustomReportDashboard implements TreeEntity {
 
 	@Id
@@ -45,6 +57,14 @@ public class CustomReportDashboard implements TreeEntity {
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	@Column
 	private String name;
+	
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="PROJECT_ID")
+	private Project project;
+	
+	@NotNull
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
+	private Set<CustomReportChartBinding> chartBindings = new HashSet<CustomReportChartBinding>();
 	
 	@Override
 	public Long getId() {
@@ -62,15 +82,30 @@ public class CustomReportDashboard implements TreeEntity {
 	}
 
 	@Override
-	public TreeLibraryNode getTreeNode() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
 
+	@Override
+	public Project getProject() {
+		return project;
+	}
 
+	@Override
+	public void setProject(Project project) {
+		this.project = project;
+	}
+	
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary(){
+		return getProject().getCustomReportLibrary();
+	}
+
+	public Set<CustomReportChartBinding> getChartBindings() {
+		return chartBindings;
+	}
+
+	public void setChartBindings(Set<CustomReportChartBinding> chartBindings) {
+		this.chartBindings = chartBindings;
+	}
 }

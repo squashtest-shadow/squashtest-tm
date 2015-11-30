@@ -42,12 +42,6 @@
 
 <input type="button" value="${execIEOBtnLabel}" id="ieo-execution-button" />
 
-<form action="${ runnerUrl }?optimized=true&suitemode=false" method="post"
-	name="execute-test-case-form" target="optimized-execution-runner"
-	class="not-displayed">
-	<input type="submit" value='' name="optimized"
-		id="start-optimized-button" />
-</form>
 
 <input type="button" value="${executeBtnLabel}"
 	id="execute-execution-button" />

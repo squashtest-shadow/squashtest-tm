@@ -26,6 +26,7 @@ import java.util.Set;
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -40,6 +41,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 /**
  * <p>Represents the concept of "attribute of an entity" :
@@ -81,17 +83,17 @@ public class ColumnPrototype {
 	@Size(min = 0, max = 255)
 	private String label;
 
-	@Enumerated(EnumType.STRING)
-	private EntityType entityType;
+	@Embedded
+	private SpecializedEntityType specializedType;
 
 	@Enumerated(EnumType.STRING)
 	private DataType dataType;
 
 	@Enumerated(EnumType.STRING)
-	private ColumnType columnType;
+	private ColumnType columnType = ColumnType.ATTRIBUTE;
 
 	@OneToOne
-	@JoinColumn(name="SUBQUERY_ID")
+	@JoinColumn(name = "SUBQUERY_ID", insertable = false)
 	private ChartQuery subQuery = new ChartQuery();
 
 	private String attributeName;
@@ -116,12 +118,21 @@ public class ColumnPrototype {
 	@Column(name="ROLE")
 	private Set<ColumnRole> role;
 
+
 	public String getLabel() {
 		return label;
 	}
 
 	public EntityType getEntityType() {
-		return entityType;
+		return specializedType.getEntityType();
+	}
+
+	public SpecializedEntityType getSpecializedType(){
+		return specializedType;
+	}
+
+	public EntityRole getEntityRole(){
+		return specializedType.getEntityRole();
 	}
 
 	public DataType getDataType() {
@@ -129,7 +140,7 @@ public class ColumnPrototype {
 	}
 
 	public EnumSet<ColumnRole> getRole() {
-		return EnumSet.copyOf(role);
+		return role.isEmpty() ? EnumSet.noneOf(ColumnRole.class) : EnumSet.copyOf(role);
 	}
 
 	/**
@@ -145,5 +156,29 @@ public class ColumnPrototype {
 		return business;
 	}
 
+	protected ColumnPrototype() {
+
+	}
+
+	public ColumnPrototype(String label, SpecializedEntityType specializedType, DataType dataType,
+			ColumnType columnType, ChartQuery subQuery, String attributeName, boolean business, Set<ColumnRole> role) {
+		super();
+		this.label = label;
+		this.specializedType = specializedType;
+		this.dataType = dataType;
+		this.columnType = columnType;
+		this.subQuery = subQuery;
+		this.attributeName = attributeName;
+		this.business = business;
+		this.role = role;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	public void setAttributeName(String attributeName) {
+		this.attributeName = attributeName;
+	}
 
 }

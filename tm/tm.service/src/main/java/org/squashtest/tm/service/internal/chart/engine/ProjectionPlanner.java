@@ -20,16 +20,22 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.MAIN_QUERY;
+import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile;
 
 import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Order;
+import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
-import com.querydsl.jpa.hibernate.HibernateQuery;
-import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.*;
+import com.querydsl.core.types.dsl.Expressions;
 
 /**
  * <p>
@@ -54,20 +60,20 @@ class ProjectionPlanner {
 
 	private DetailedChartQuery definition;
 
-	private HibernateQuery<?> query;
+	private ExtendedHibernateQuery<?> query;
 
 	private QuerydslToolbox utils;
 
 	private QueryProfile profile = MAIN_QUERY;
 
-	ProjectionPlanner(DetailedChartQuery definition, HibernateQuery<?> query){
+	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query = query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	ProjectionPlanner(DetailedChartQuery definition, HibernateQuery<?> query, QuerydslToolbox utils){
+	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query = query;
@@ -81,6 +87,7 @@ class ProjectionPlanner {
 	void modifyQuery(){
 		addProjections();
 		addGroupBy();
+		addSortBy();
 	}
 
 	private void addProjections(){
@@ -101,19 +108,37 @@ class ProjectionPlanner {
 		}
 
 		// now stuff the query
-		query.select(Projections.tuple(selection.toArray(new Expression[]{})));
+		query.select(Projections.tuple(selection.toArray(new Expression[]{}))).distinct();
 
 	}
 
 
 
 	private void addGroupBy(){
+		// SUBSELECT queries have no group by : this is unneeded because
+		// they are correlated subqueries
+		if ( profile != SUBSELECT_QUERY){
+			List<Expression<?>> groupBy = new ArrayList<>();
 
-		List<Expression<?>> groupBy = new ArrayList<>();
+			populateClauses(groupBy, definition.getAxis());
 
-		populateClauses(groupBy, definition.getAxis());
+			query.groupBy(groupBy.toArray(new Expression[]{}));
+		}
+	}
 
-		query.groupBy(groupBy.toArray(new Expression[]{}));
+	private void addSortBy(){
+		// subqueries have no sorting because we don't need to
+		if ( profile == MAIN_QUERY){
+
+			List<Expression<?>> expressions = new ArrayList<>();
+
+			populateClauses(expressions, definition.getAxis());
+
+			List<OrderSpecifier> orders = new ArrayList<>();
+			populateOrders(orders, expressions);
+
+			query.orderBy(orders.toArray(new OrderSpecifier[]{}));
+		}
 
 	}
 
@@ -128,5 +153,11 @@ class ProjectionPlanner {
 
 	}
 
+	private void populateOrders(List<OrderSpecifier> orders, List<Expression<?>> expressions){
+		for (Expression e : expressions){
+			OrderSpecifier spec = new OrderSpecifier(Order.ASC, e);
+			orders.add(spec);
+		}
+	}
 
 }

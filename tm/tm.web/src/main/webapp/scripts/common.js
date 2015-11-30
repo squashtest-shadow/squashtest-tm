@@ -174,6 +174,8 @@ requirejs.config({
 				"jqplot-category" : "lib/jqplot/plugins/jqplot.categoryAxisRenderer.min",
 //				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer",
 				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer.min",
+        //"jqplot-legend" : "lib/jqplot/plugins/jqplot.enhancedLegendRenderer",
+        "jqplot-legend" : "lib/jqplot/plugins/jqplot.enhancedLegendRenderer.min",
 //				"moment" : "lib/momentjs/moment-with-locales.min",
 				"moment" : "lib/momentjs/moment-with-locales.min",
 				//cke
@@ -190,6 +192,7 @@ requirejs.config({
 				//jquery
 				"jstree" : "jquery/jquery.jstree",
 				"jform" : "jquery/jquery.form",
+//				"jform" : "jquery/jquery.form.min",
 				"jquery.squash.milestoneDialog" : "milestones/jquery.squash.milestoneDialog",
 				"jquery.dialog-patch" : "jquery/jquery.dialog-patch",
 				"jquery.generateId" : "jquery/jquery.generateId",
@@ -198,6 +201,9 @@ requirejs.config({
 				"jquery.cookie" : "jquery/jquery.cookie",
 //				"jquery.tagit" : "jquery/tag-it",
 				"jquery.tagit" : "jquery/tag-it.min",
+				//"jquery.gridster" : "jquery/jquery.gridster",
+				"jquery.gridster" : "jquery/jquery.gridster.with-extras",
+				"jstree-dnd-customreport-override" : "tree/workspace-tree-conf/jstree-dnd-customreport-override",
 				//squashtest
 				"jquery.squash" : "squashtest/jquery.squash.plugin",
 				"jquery.squash.rangedatepicker" : "squashtest/jquery.squash.rangedatepicker",
@@ -308,6 +314,7 @@ requirejs.config({
 					deps : [ "jquery", "jqueryui" ],
 					exports : "DatePickerAuto" // this is a constructor
 				},
+				"jquery.timepicker": [ "jquery", "jqueryui" ],
 				"jquery.squash.togglepanel" : {
 					deps : [ "jquery", "jqueryui", "jquery.squash.squashbutton" ],
 					exports : "jquerySquashtmTogglepanel"
@@ -351,6 +358,7 @@ requirejs.config({
 				"jqplot-dates" : ["jquery", "jqplot-core"],
 				"jqplot-category" : ["jquery", "jqplot-core"],
 				"jqplot-bar" : ["jquery", "jqplot-core"],
+        "jqplot-legend" : ["jquery", "jqplot-core"],
 				"jqplot-highlight" : {
 					deps : ["jquery", "jqplot-core"],
 					init : function($){

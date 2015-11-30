@@ -400,22 +400,24 @@ CampaignLibraryNavigationService {
 
 	@Override
 	public Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
-		// get all the campaigns
-		Collection<Long> cIds = new ArrayList<Long>();
 
-		if (!libraryIds.isEmpty()) {
-			cIds.addAll(campaignDao.findAllCampaignIdsByLibraries(libraryIds));
+		/*
+		 *  first, let's check the permissions on those root nodes
+		 *  By transitivity, if the user can read them then it will
+		 *  be allowed to read the campaigns below
+		 */
+		Collection<Long> readLibIds = securityFilterIds(libraryIds, CampaignLibrary.class.getName(), "READ");
+		Collection<Long> readNodeIds = securityFilterIds(nodeIds, CampaignLibraryNode.class.getName(), "READ");
+
+		// now we can collect the campaigns
+		Set<Long> cIds = new HashSet<Long>();
+
+		if (!readLibIds.isEmpty()) {
+			cIds.addAll(campaignDao.findAllCampaignIdsByLibraries(readLibIds));
 		}
-		if (!nodeIds.isEmpty()) {
-			cIds.addAll(campaignDao.findAllCampaignIdsByNodeIds(nodeIds));
+		if (!readNodeIds.isEmpty()) {
+			cIds.addAll(campaignDao.findAllCampaignIdsByNodeIds(readNodeIds));
 		}
-
-		// filter out duplicates
-		Set<Long> set = new HashSet<Long>(cIds);
-		cIds = new ArrayList<Long>(set);
-
-		// sec check
-		cIds = securityFilterIds(cIds, "org.squashtest.tm.domain.campaign.Campaign", "READ");
 
 		return cIds;
 

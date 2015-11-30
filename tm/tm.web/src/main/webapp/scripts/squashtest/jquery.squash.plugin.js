@@ -109,6 +109,16 @@ var squashtm = squashtm || {};
 
 	};
 
+	
+	$.fn.visible = function() {
+	    return this.css('visibility', 'visible');
+	};
+
+	$.fn.invisible = function() {
+	    return this.css('visibility', 'hidden');
+	};
+	
+	
 	/*
 	 * thanks to
 	 * http://stackoverflow.com/questions/2360655/jquery-event-handlers-always-execute-in-order-they-were-bound-any-way-around-t
@@ -124,6 +134,8 @@ var squashtm = squashtm || {};
 			handlers.splice(0, 0, handler);
 		});
 	};
+
+	
 
 	/* defines functions in the jQuery namespace */
 	$.extend({
@@ -192,5 +204,6 @@ var squashtm = squashtm || {};
 			});
 		}
 	});
+
 
 })(jQuery);

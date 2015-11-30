@@ -36,6 +36,17 @@ public final class ExceptionResolverUtils {
 		Enumeration<String> e = request.getHeaders(RequestHeaders.ACCEPT);
 		while (e.hasMoreElements()) {
 			String header = e.nextElement();
+			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean clientAcceptsMIMEOrAnything(HttpServletRequest request, MimeType type) {
+		Enumeration<String> e = request.getHeaders(RequestHeaders.ACCEPT);
+		while (e.hasMoreElements()) {
+			String header = e.nextElement();
 			if (StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), type.requestHeaderValue()) 
 					|| StringUtils.containsIgnoreCase(StringUtils.trimToEmpty(header), MimeType.ANYTHING.requestHeaderValue())) {
 				return true;

@@ -20,28 +20,42 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
+import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportLibraryNodeService")
 @Transactional
 public class CustomReportLibraryNodeServiceImpl implements
 		CustomReportLibraryNodeService {
+	
+	@Inject
+	protected PermissionEvaluationService permissionService;
 	
 	@Inject 
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
@@ -49,31 +63,62 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@Inject
 	private SessionFactory sessionFactory;
 	
+	@Inject
+	private CRLNDeletionHandler deletionHandler;
+	
 	@Override
 	public CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
 		return customReportLibraryNodeDao.findById(id);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
 		return (CustomReportLibrary) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
-
+	
 	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
+	public List<CustomReportLibraryNode> findAllCustomReportLibraryNodeById(List<Long> treeNodeIds) {
+		return customReportLibraryNodeDao.findAllByIds(treeNodeIds);
+	}
+
+	
+	@Override
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public CustomReportFolder findFolderByTreeNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.FOLDER);
 		return (CustomReportFolder) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
 	public ChartDefinition findChartDefinitionByNodeId(Long treeNodeId) {
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
 		return (ChartDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
 	
 	@Override
-	public CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) {
+	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
+			+ OR_HAS_ROLE_ADMIN)
+	@Transactional(readOnly = true)
+	public CustomReportDashboard findCustomReportDashboardById(Long treeNodeId) {
+		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.DASHBOARD);
+		return (CustomReportDashboard) entity;//NOSONAR cast is checked by findEntityAndCheckType method
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) {
 		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.findById(parentId);
 		if (parentNode == null) {
 			throw new IllegalArgumentException("The node designed by parentId doesn't exist, can't add new node");
@@ -87,14 +132,47 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 	
 	@Override
-	public void deleteCustomReportLibraryNode(List<Long> nodeIds) {
-		for (Long nodeId : nodeIds) {
-			CustomReportLibraryNode targetNode = customReportLibraryNodeDao.findById(nodeId);
-			TreeLibraryNode parentNode = targetNode.getParent();
-			parentNode.removeChild(targetNode);
-			customReportLibraryNodeDao.remove(targetNode);
-		}
+	public List<SuppressionPreviewReport> simulateDeletion(List<Long> nodeIds) {
+		return deletionHandler.simulateDeletion(nodeIds);
 	}
+	
+	@Override
+	public OperationReport delete(List<Long> nodeIds) {
+		for (Long id : nodeIds) {
+			TreeLibraryNode node = customReportLibraryNodeDao.findById(id);
+			checkPermission(new SecurityCheckableObject(node, "DELETE"));
+		}
+		return deletionHandler.deleteNodes(nodeIds);
+	}
+	
+	
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	public List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds) {
+		return customReportLibraryNodeDao.findAllDescendants(nodeIds);
+	}
+
+	@Override
+	public List<Long> findDescendantIds(List<Long> nodeIds) {
+		return customReportLibraryNodeDao.findAllDescendantIds(nodeIds);
+	}
+	
+	@Override
+	@PreAuthorize("hasPermission(#nodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') "
+			+ OR_HAS_ROLE_ADMIN)
+	public void renameNode(Long nodeId, String newName)
+			throws DuplicateNameException {
+		CustomReportLibraryNode crln = customReportLibraryNodeDao.findById(nodeId);
+		crln.renameNode(newName);
+	}
+	
+	@Override
+	
+	public List<Long> findAncestorIds(Long nodeId) {
+		return customReportLibraryNodeDao.findAncestorIds(nodeId);
+	}
+	
+	
 	
 	//--------------- PRIVATE METHODS --------------
 	
@@ -116,6 +194,15 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return entity;
 	}
+
+	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
+	}
+
+	
+
+	
+
 
 
 }

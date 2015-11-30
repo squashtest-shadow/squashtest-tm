@@ -29,11 +29,13 @@ import static org.squashtest.tm.domain.chart.Operation.COUNT;
 import static org.squashtest.tm.domain.chart.Operation.EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.GREATER;
 import static org.squashtest.tm.domain.chart.Operation.GREATER_EQUAL;
+import static org.squashtest.tm.domain.chart.Operation.IN;
 import static org.squashtest.tm.domain.chart.Operation.LIKE;
 import static org.squashtest.tm.domain.chart.Operation.LOWER;
 import static org.squashtest.tm.domain.chart.Operation.LOWER_EQUAL;
 import static org.squashtest.tm.domain.chart.Operation.MAX;
 import static org.squashtest.tm.domain.chart.Operation.MIN;
+import static org.squashtest.tm.domain.chart.Operation.NONE;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
 
 import java.util.Arrays;
@@ -42,9 +44,9 @@ import java.util.EnumSet;
 public enum ColumnRole {
 
 	// @formatter:off
-	AXIS (BY_DAY, BY_MONTH, BY_YEAR),
+	AXIS (BY_DAY, BY_MONTH, BY_YEAR, NONE),
 	MEASURE(AVG, COUNT, MIN, MAX, SUM),
-	FILTER (BETWEEN, EQUALS, GREATER, GREATER_EQUAL, LIKE, LOWER, LOWER_EQUAL);
+	FILTER (BETWEEN, EQUALS, GREATER, GREATER_EQUAL, LIKE, LOWER, LOWER_EQUAL, IN);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;

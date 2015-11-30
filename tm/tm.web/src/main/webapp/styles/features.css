@@ -528,3 +528,77 @@ p {
 }
 
 
+.icon-chart-requirement {
+	background-image : url(../images/Icone_Requirement3.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-test-case {
+	background-image : url(../images/Icone_TestCase2.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-iteration {
+	background-image : url(../images/Icone_iteration.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.icon-chart-item-test-plan {
+	background-image : url(../images/Icone_TestPlanItem.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-campaign {
+	background-image : url(../images/Icone_Campagne.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.illustration-graph {
+	background-image : url(../images/Illustration_Graph.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-active {
+	background-image : url(../images/Raccourcis_Active_State-26.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-current {
+	background-image : url(../images/Raccourcis_Final_State-26.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-ok {
+	background-image : url(../images/Raccourcis_Ok-26.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.wizard-step-fail {
+	background-image : url(../images/Raccourcis_Error-24.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;	
+}
+
+
+.chart-BAR {
+	background-image : url(../images/chart_bar.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-COMPARATIVE {
+	background-image : url(../images/chart_comparative.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-CUMULATIVE {
+	background-image : url(../images/chart_cumulative.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.chart-PIE {
+	background-image : url(../images/chart_pie.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+.chart-TREND {
+	background-image : url(../images/chart_trend.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.customField
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
@@ -39,12 +40,14 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 	CustomFieldBindingDao customFieldBindingDao = Mock()
 	GenericProjectDao genericProjectDao = Mock()
 	PrivateCustomFieldValueService customValueService = Mock()
+	ApplicationEventPublisher eventPublisher = Mock()
 	
 	def setup() {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
 		service.genericProjectDao = genericProjectDao
 		service.customValueService = customValueService
+		service.eventPublisher = eventPublisher
 	}
 
 	def "should copy paste cuf binding from template"(){ 

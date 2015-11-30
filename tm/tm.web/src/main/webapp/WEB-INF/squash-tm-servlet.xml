@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xmlns:aop="http://www.springframework.org/schema/aop" xmlns:p="http://www.springframework.org/schema/p"
+  xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.1.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.1.xsd">
+
+	<!-- Scans the classpath of this application for @Components to deploy as
+		beans -->
+  <context:component-scan base-package="org.squashtest.tm">
+    <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
+    <context:exclude-filter type="annotation" expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+  </context:component-scan>
+
+  <!-- placeholder configurer does not seem to be inherited from parent, we need it here too -->
+  <context:property-placeholder properties-ref="squash.tm.config" />
+
+
+       <mvc:argument-resolvers>
+            <bean class="org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver">
+        </bean></mvc:argument-resolvers>
+  </mvc:annotation-driven>
+
+  <bean id="validator" class="org.springframework.validation.beanvalidation.CustomValidatorBean">
+    <property name="validatorFactory" ref="javax.validation.ValidatorFactory" />
+  </bean>
+
+	<!-- Injects OSGi services in Controllers -->
+  <bean class="org.springframework.osgi.extensions.annotation.ServiceReferenceInjectionBeanPostProcessor" />
+
+  <!-- We need this for Spring to resolve @ExpressionHandler methods. Order prop makes these handlers supersede application-wide handlers -->
+  <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerExceptionResolver">
+    <property name="order" value="1" />
+  </bean>
+
+	<!-- Resolves view names to protected .jsp resources within the /WEB-INF/jsp
+		directory -->
+  <bean name="jsp.viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+    <property name="prefix" value="/WEB-INF/jsp/" />
+    <property name="suffix" value=".jsp" />
+    <property name="order" value="2" />
+  </bean>
+
+	<!-- Thymeleaf Spring dialect -->
+  <bean id="thymeleaf.view.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+    <property name="prefix" value="/WEB-INF/templates/" />
+		<!-- no suffix because it's already in view name  -->
+    <property name="templateMode" value="HTML5" />
+    <property name="characterEncoding" value="UTF-8" />
+    <property name="cacheable" value="${is.war.deploy}" />
+  </bean>
+
+  <bean id="thymeleaf.fragment.templateResolver" class="org.thymeleaf.templateresolver.ServletContextTemplateResolver">
+    <property name="prefix" value="/WEB-INF/templates/" />
+    <property name="suffix" value=".html" />
+    <property name="templateMode" value="HTML5" />
+    <property name="characterEncoding" value="UTF-8" />
+    <property name="cacheable" value="${is.war.deploy}" />
+  </bean>
+
+  <bean id="thymeleaf.templateEngine" class="org.thymeleaf.spring3.SpringTemplateEngine">
+    <property name="templateResolvers">
+      <list>
+        <ref bean="thymeleaf.view.templateResolver" />
+        <ref bean="thymeleaf.fragment.templateResolver" />
+      </list>
+    </property>
+    <property name="additionalDialects">
+      <set>
+        <bean class="org.thymeleaf.extras.springsecurity3.dialect.SpringSecurityDialect" />
+        <bean class="org.squashtest.tm.web.thymeleaf.dialect.SquashDialect" />
+      </set>
+    </property>
+  </bean>
+
+	<!-- Thymeleaf view resolver -->
+  <bean id="thymeleaf.viewResolver" class="org.thymeleaf.spring3.view.ThymeleafViewResolver">
+    <property name="templateEngine" ref="thymeleaf.templateEngine" />
+ 	<property name="characterEncoding" value="UTF-8" />
+	<property name="contentType" value="text/html; charset=UTF-8" />
+    <property name="order" value="1" />
+		<!-- Thymeleaf view names end with html cos we need to differenciate from jsps -->
+    <property name="viewNames" value="*.html" />
+  </bean>
+
+  <!-- static resources (optimized headers) -->
+  <!-- Placeholders below are interpolated by maven. The @placeholder@ syntax would be clearer but it does not work in this file -->
+  <mvc:resources location="/images/" mapping="/images/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/scripts/" mapping="/scripts/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/static/" mapping="/static/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/styles/" mapping="/styles/**" cache-period="${client.cache.max.age}" />
+  <mvc:resources location="/styles/" mapping="/styles-*/**" cache-period="${client.cache.max.age}" />
+
+  <mvc:interceptors>
+    <bean class="org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor">
+      <property name="sessionFactory" ref="squashtest.tm.persistence.hibernate.SessionFactory" />
+    </bean>
+
+    <bean class="org.squashtest.tm.web.internal.interceptor.ExcludeRequestInterceptorWrapper">
+      <constructor-arg>
+        <bean class="org.springframework.web.servlet.mvc.WebContentInterceptor">
+          <property name="cacheSeconds" value="0" />
+          <property name="useExpiresHeader" value="true" />
+          <property name="useCacheControlHeader" value="true" />
+          <property name="useCacheControlNoStore" value="true" />
+        </bean>
+      </constructor-arg>
+      <property name="excludedExtensions" value="jpg, jpeg, png, gif, js, css, map" />
+    </bean>
+
+    <bean class="org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor">
+      <property name="includeClientInfo" value="true" />
+    </bean>
+
+    <bean class="org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor" />
+
+    <mvc:interceptor>
+      <mvc:mapping path="/test-cases/*" />
+      <mvc:mapping path="/test-cases/*/info" />
+      <mvc:mapping path="/test-cases/*/verified-requirement-versions/manager" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.TestCaseViewInterceptor" />
+    </mvc:interceptor>
+    <mvc:interceptor>
+      <mvc:mapping path="/requirement-versions/*" />
+      <mvc:mapping path="/requirement-versions/*/info" />
+      <mvc:mapping path="/requirement-versions/*/verifying-test-cases/manager" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.RequirementViewInterceptor" />
+    </mvc:interceptor>
+    <mvc:interceptor>
+      <mvc:mapping path="/campaigns/*" />
+      <mvc:mapping path="/campaigns/*/info" />
+      <mvc:mapping path="/campaigns/*/test-plan/manager" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.CampaignViewInterceptor" />
+    </mvc:interceptor>
+    <mvc:interceptor>
+      <mvc:mapping path="/iterations/*" />
+      <mvc:mapping path="/iterations/*/info" />
+      <mvc:mapping path="/iterations/*/test-plan-manager" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.IterationViewInterceptor" />
+    </mvc:interceptor>
+    <mvc:interceptor>
+      <mvc:mapping path="/test-suites/*" />
+      <mvc:mapping path="/test-suites/*/info" />
+      <mvc:mapping path="/test-suites/*/*/test-plan-manager" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.TestSuiteViewInterceptor" />
+    </mvc:interceptor>
+    <mvc:interceptor>
+      <mvc:mapping path="/executions/*" />
+      <mvc:mapping path="/executions/*/info" />
+      <bean class="org.squashtest.tm.web.internal.interceptor.openedentity.ExecutionViewInterceptor" />
+    </mvc:interceptor>
+  </mvc:interceptors>
+
+  <!--  DRIVE NODE BUILDERS -->
+  <bean id="testCaseLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+    <property name="targetBeanName" value="testCaseLibraryTreeNodeBuilder" />
+  </bean>
+
+  <bean id="testCase.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+    <constructor-arg ref="testCaseLibraryTreeNodeBuilder.provider" />
+  </bean>
+
+  <bean id="requirementLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+    <property name="targetBeanName" value="requirementLibraryTreeNodeBuilder" />
+  </bean>
+
+
+  <bean id="requirement.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder"
+    scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+    <constructor-arg ref="requirementLibraryTreeNodeBuilder.provider" />
+  </bean>
+
+  <bean id="campaignLibraryTreeNodeBuilder.provider" class="org.springframework.beans.factory.config.ProviderCreatingFactoryBean">
+    <property name="targetBeanName" value="campaignLibraryTreeNodeBuilder" />
+  </bean>
+
+  <bean id="campaign.driveNodeBuilder" class="org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+    <constructor-arg ref="campaignLibraryTreeNodeBuilder.provider" />
+  </bean>
+
+  <bean id="customReport.nodeBuilder" class="org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.core.security.PermissionEvaluationService" />
+  </bean>
+
+  <bean id="customReport.chartBindingBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportChartBindingBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.tm.service.ChartModificationService" />
+  </bean>
+
+  <bean id="customReport.dashboardBuilder" class="org.squashtest.tm.web.internal.model.builder.JsonCustomReportDashboardBuilder" scope="prototype">
+    <constructor-arg ref="squashtest.tm.service.ChartModificationService" />
+    <constructor-arg ref="squashtest.internationalizationHelper" />
+  </bean>
+
+  <!--  DRIVE NODE BUILDERS -->
+
+  <beans profile="eclipse">
+    <context:component-scan base-package="target/classes/org.squashtest.tm">
+      <context:exclude-filter type="annotation" expression="org.springframework.context.annotation.Configuration" />
+      <context:exclude-filter type="annotation"
+        expression="org.squashtest.tm.web.internal.annotation.ApplicationComponent" />
+    </context:component-scan>
+  </beans>
+</beans>

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customreport;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CascadeType;
@@ -46,12 +47,14 @@ import org.hibernate.annotations.Table;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.tree.GenericTreeLibrary;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeEntityDefinition;
-import org.squashtest.tm.domain.tree.TreeLibrary;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeNodeVisitor;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Table(appliesTo="CUSTOM_REPORT_LIBRARY_NODE")
@@ -108,16 +111,16 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
 	private TreeEntity entity;
 	
-	@ManyToOne(fetch = FetchType.LAZY, targetEntity=CustomReportLibrary.class)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRL_ID")
-	private TreeLibrary library;
+	private CustomReportLibrary library;
 	
 	public CustomReportLibraryNode() {
 		super();
 	}
 	
 	public CustomReportLibraryNode(CustomReportTreeDefinition entityType,
-			Long entityId, String name, TreeLibrary library) {
+			Long entityId, String name, CustomReportLibrary library) {
 		super();
 		this.entityType = entityType;
 		this.entityId = entityId;
@@ -146,12 +149,20 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	}
 
 	@Override
-	public TreeLibrary getLibrary() {
+	public GenericTreeLibrary getLibrary() {
+		return library;
+	}
+	
+	/**
+	 * concrete class getter for @AclConstrainedObject
+	 * @return
+	 */
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary() {
 		return library;
 	}
 
-	@Override
-	public void setLibrary(TreeLibrary library) {
+	public void setLibrary(CustomReportLibrary library) {
 		this.library = library;
 	}
 	
@@ -209,7 +220,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		
 		String newChildName = treeLibraryNode.getName();
 		
-		if(this.nameAlreadyUsed(newChildName)){
+		if(this.childNameAlreadyUsed(newChildName)){
 			throw new NameAlreadyInUseException(newChildName,this.getEntityType().getTypeName());
 		}
 		this.getChildren().add(treeLibraryNode);
@@ -225,7 +236,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		}
 	}
 
-	private boolean nameAlreadyUsed(String newChildName) {
+	private boolean childNameAlreadyUsed(String newChildName) {
 		for (TreeLibraryNode child : children) {
 			if (child.getName().equals(newChildName)) {
 				return true;
@@ -236,9 +247,54 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 
 	@Override
 	public void removeChild(TreeLibraryNode treeLibraryNode) {
-		if (!this.children.contains(treeLibraryNode)) {
-			throw new IllegalArgumentException("Can't suppress a node that didn't exist in this entity children");
-		}
 		children.remove(treeLibraryNode);
+		//forcing hibernate to clean it's children list, 
+		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
+		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation constraint... 
+		children = new ArrayList<TreeLibraryNode>(children);
+	}
+
+	@Override
+	public boolean hasContent() {
+		if (!getEntityType().isContainer()) {
+			return false;
+		}
+		return children.size() > 0;
+	}
+
+	@Override
+	public void renameNode(String newName) {
+		if (getEntityType().equals(CustomReportTreeDefinition.LIBRARY)) {
+			throw new IllegalArgumentException("Cannot rename a library, rename project");
+		}
+		if(nameAlreadyUsedBySibling(newName)){
+			throw new DuplicateNameException(newName,this.getEntityType().getTypeName());
+		}
+		else {
+			setName(newName);
+			getEntity().setName(newName);
+		}
+	}
+
+	private boolean nameAlreadyUsedBySibling(String newName) {
+		List<String> siblingsNames = getSiblingsNames();
+		if (siblingsNames.contains(newName)) {
+			return true;
+		}
+		return false;
+	}
+
+	private List<String> getSiblingsNames() {
+		List<TreeLibraryNode> siblings = getSiblings();
+		List<String> siblingNames = new ArrayList<String>();
+		for (TreeLibraryNode sibling : siblings) {
+			siblingNames.add(sibling.getName());
+		}
+		return siblingNames;
+	}
+
+	private List<TreeLibraryNode> getSiblings() {
+		TreeLibraryNode parent = getParent();
+		return parent.getChildren();
 	}
 }

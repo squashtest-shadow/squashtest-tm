@@ -18,62 +18,64 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing", "charts/rendering/charts-render-main"],
+define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory"],
 	function($, backbone, _, Handlebars, AbstractStepView, router, chart) {
 	"use strict";
 
 	var previewStepView = AbstractStepView.extend({
-		
+
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#preview-step-tpl";
 			this.model = data;
-			data.nextStep = "";
-			data.prevStep = "axis";
+			data.name = "preview";
 			this._initialize(data, wizrouter);
+			this.initChart();
+			this.initName();
+
 		},
-		
-		events : {
-			"click #preview" : "preview",
-			"click #save" : "save"
-			
+
+
+		initName : function (){
+			var name = this.model.get('name') || "graph" ;
+			 $("#chart-name").val(name);
 		},
-		
-		preview : function(){
-		
-			$.ajax({
-				'type' : 'POST',
-				'dataType' : 'json',
-				'contentType' : 'application/json',
-				'url' : squashtm.app.contextRoot + '/charts/instance',
-				'data' : this.model.toJson()
-			})
-			.success(function(json){
-				chart.buildChart("#chart-display-area", json);
-			});
-	
+		initChart : function (){
+			var data = this.model.get("chartData");
+			chart.buildChart("#chart-display-area", data);
+
 		},
-		
 		save : function () {
-			
 			var parentId = this.model.get("parentId");
+			this.updateModel();
+			
+			var targetUrl;
+			
+			if (this.model.get("chartDef") === null){
+				targetUrl = router.buildURL("chart.new", parentId);
+			} else {
+				targetUrl = router.buildURL("chart.update", parentId);
+			}
 			
 			$.ajax({
 				method : "POST",
 				contentType: "application/json",
-				url : router.buildURL("chart.new", parentId),
+				url : targetUrl,
 				data : this.model.toJson()
-				
+
 			}).done(function(url){
 				 window.location.href = squashtm.app.contextRoot + url;
-			});
+			});	
 			
-			
+
 		},
 		
+
 		updateModel : function() {
 
+		    var name = $("#chart-name").val();
+		    this.model.set({name : name });
 		}
-		
+
 	});
 
 	return previewStepView;

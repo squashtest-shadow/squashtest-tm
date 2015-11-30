@@ -26,13 +26,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import net.sf.cglib.core.CollectionUtils;
+import net.sf.cglib.core.Predicate;
+
+import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
-import com.querydsl.jpa.hibernate.HibernateQuery;
 
 
 /**
@@ -48,16 +52,16 @@ class FilterPlanner {
 
 	private QuerydslToolbox utils;
 
-	private HibernateQuery<?> query;
+	private ExtendedHibernateQuery<?> query;
 
-	FilterPlanner(DetailedChartQuery definition, HibernateQuery<?> query){
+	FilterPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
 		super();
 		this.definition = definition;
 		this.query= query;
 		this.utils = new QuerydslToolbox();
 	}
 
-	FilterPlanner(DetailedChartQuery definition, HibernateQuery<?> query, QuerydslToolbox utils){
+	FilterPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query, QuerydslToolbox utils){
 		super();
 		this.definition = definition;
 		this.query= query;
@@ -71,13 +75,41 @@ class FilterPlanner {
 	 * multiple {@link Filter} that target the same {@link ColumnPrototype}.</p>
 	 * 
 	 * <p>All filters for a given prototype are ORed together,
-	 * then the ORed expressions are ANded together.</p>
+	 * then the ORed expressions are ANDed together.</p>
 	 * 
 	 */
 	void modifyQuery(){
 
-		Map<ColumnPrototype, Collection<Filter>> sortedFilters = getSortedFilters();
+		addWhereClauses();
+		addHavingClauses();
+		addScopeClauses();
+	}
 
+
+	private void addWhereClauses(){
+		Map<ColumnPrototype, Collection<Filter>> whereFilters = findWhereFilters();
+		BooleanBuilder wherebuilder = makeBuilder(whereFilters);
+
+		query.where(wherebuilder);
+	}
+
+	private void addHavingClauses(){
+		Map<ColumnPrototype, Collection<Filter>> havingFilters = findHavingFilters();
+
+		BooleanBuilder havingbuilder = makeBuilder(havingFilters);
+
+		query.having(havingbuilder);
+	}
+
+	private void addScopeClauses(){
+		Map<ColumnPrototype, Collection<Filter>> scopeFilters = findScopeFilters();
+
+		BooleanBuilder scopeBuilder = makeBuilder(scopeFilters);
+
+		query.where(scopeBuilder);
+	}
+
+	private BooleanBuilder makeBuilder(Map<ColumnPrototype, Collection<Filter>> sortedFilters){
 		BooleanBuilder mainBuilder = new BooleanBuilder();
 
 		for (Entry<ColumnPrototype, Collection<Filter>> entry : sortedFilters.entrySet()) {
@@ -96,16 +128,78 @@ class FilterPlanner {
 			mainBuilder.and(orBuilder);
 		}
 
-		query.where(mainBuilder);
+		return mainBuilder;
 	}
+
+	private Map<ColumnPrototype, Collection<Filter>> findWhereFilters(){
+		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+
+		CollectionUtils.filter(filters, new Predicate() {
+			@Override
+			public boolean evaluate(Object filter) {
+				return utils.isWhereClauseComponent((Filter)filter);
+			}
+		});
+
+		return sortFilters(filters);
+	}
+
+
+	private Map<ColumnPrototype, Collection<Filter>> findHavingFilters(){
+		Collection<Filter> filters = new ArrayList<>(definition.getFilters());
+
+		CollectionUtils.filter(filters, new Predicate() {
+			@Override
+			public boolean evaluate(Object filter) {
+				return utils.isHavingClauseComponent((Filter)filter);
+			}
+		});
+
+		return sortFilters(filters);
+	}
+
+
+	private Map<ColumnPrototype, Collection<Filter>> findScopeFilters(){
+
+		Collection<Filter> filters = new ArrayList<>(definition.getScopeFilters());
+
+		Map<ColumnPrototype, Collection<Filter>> sorted = sortFilters(filters);
+
+		// now we cheat and aggregate filters of campaign and iterations if
+		// both are present
+		ColumnPrototype campColumn=null;
+		ColumnPrototype iterColumn=null;
+
+		for (ColumnPrototype p : sorted.keySet()){
+			EntityType type = p.getEntityType();
+			if (type == EntityType.CAMPAIGN){
+				campColumn = p;
+			}
+			else if (type == EntityType.ITERATION){
+				iterColumn = p;
+			}
+		}
+
+		// merge if contain boths
+		if (campColumn != null && iterColumn != null){
+			Collection<Filter> iterFilters = sorted.get(iterColumn);
+			sorted.get(campColumn).addAll(iterFilters);
+			sorted.remove(iterColumn);
+		}
+
+		// now return the cheated map
+		return sorted;
+
+	}
+
 
 	// this will regroup filters by column prototype. Filters grouped that way will be
 	// OR'ed together.
-	private Map<ColumnPrototype, Collection<Filter>> getSortedFilters(){
+	private Map<ColumnPrototype, Collection<Filter>> sortFilters(Collection<Filter> filters){
 
 		Map<ColumnPrototype, Collection<Filter>> res = new HashMap<>();
 
-		for (Filter filter : definition.getFilters()){
+		for (Filter filter : filters){
 			ColumnPrototype prototype = filter.getColumn();
 
 			if (! res.containsKey(prototype)){
@@ -118,6 +212,5 @@ class FilterPlanner {
 
 		return res;
 	}
-
 
 }

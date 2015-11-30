@@ -3,11 +3,11 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 	        "contextual-content-handlers", "workspace.event-bus", "jquery.squash.fragmenttabs",
 	        "custom-field-values", "squash.configmanager", "app/ws/squashtm.notification",
 	        "workspace.routing",  "squash.translator", "file-upload", "milestones/entity-milestone-count-notifier",
-	        "app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel",
+	        "app/squash.wreqr.init", "verifying-test-cases/VerifyingTestCasesPanel","req-workspace/requirement-coverage-stat-view",
 	         "jquery.squash.confirmdialog", "jquery.squash.formdialog"],
 			function(module, $, pubsub, basicwidg, WS, contentHandlers, eventBus, Frag,
 					cufvalues, confman, notification, routing, translator, upload, milestoneNotifier,
-					squash, VerifyingTestCasesPanel) {
+					squash, VerifyingTestCasesPanel, CoveverageStatView) {
 
 		// event subscription
 			pubsub.subscribe('reload.requirement.toolbar', initToolbar);
@@ -15,6 +15,8 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 			pubsub.subscribe('reload.requirement.generalinfo', initGeneralinfos);
 
 			pubsub.subscribe('reload.requirement.verifyingtestcases', initVerifyingtestcases);
+
+      pubsub.subscribe('reload.requirement.requirementversionrate', initRequirementVersionRates);
 
 			pubsub.subscribe('reload.requirement.audittrail', initAudittrail);
 
@@ -321,6 +323,26 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 					aaData : config.basic.attachments
 				});
 			}
+
+      function initRequirementVersionRates() {
+        var config = module.config();
+
+        var modelConstructor = Backbone.Model.extend({
+          defaults: {
+            id : config.basic.requirementVersionId,
+            requirementId : config.basic.requirementId,
+            currentVersionId : config.basic.currentVersionId,
+            projectId : config.basic.projectId
+          },
+          url : "whatever"
+        });
+
+        var model = new modelConstructor();
+
+        var coverageStatView = new CoveverageStatView({
+          model : model
+        });
+      }
 
 			function initPopups(){
 				var config = module.config();

@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/ws/squashtm.notification", "underscore", "app/lnf/Forms", "app/util/StringUtil",
-		"jquery.squash.formdialog", "squashtest/jquery.squash.popuperror" ], function($, Backbone, WTF, _, Forms,
+define([ "jquery", "backbone", "handlebars", "app/ws/squashtm.notification", "underscore", "app/lnf/Forms", "app/util/StringUtil",
+		"jquery.squash.formdialog", "squashtest/jquery.squash.popuperror" ], function($, Backbone, Handlebars, WTF, _, Forms,
 		StringUtil) {
 
 	// *************************************** BindPopup **********************************************

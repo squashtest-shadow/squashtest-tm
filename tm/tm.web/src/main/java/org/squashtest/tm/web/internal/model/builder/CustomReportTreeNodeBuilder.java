@@ -26,83 +26,160 @@ import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
 import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
 import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
+
+import javax.inject.Inject;
 
 /**
- * No param/generic for v1, also no milestone in tree. 
+ * No param/generic for v1, also no milestone in tree.
  * These class should be completed and probably be generisized for future workspaces
  * @author jthebault
  *
  */
-@Component
+@Component("customReport.nodeBuilder")
 @Scope("prototype")
 public class CustomReportTreeNodeBuilder {
-	
-	private final JsTreeNode builtNode = new JsTreeNode();
-	
+
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 	private static final Permission[] NODE_PERMISSIONS = { WRITE, CREATE, DELETE, EXECUTE, EXPORT };
 	private static final String[] PERM_NAMES = {WRITE.name(), CREATE.name(), DELETE.name(), EXECUTE.name(), EXPORT.name()};
 
-	protected final PermissionEvaluationService permissionEvaluationService;
-	
+	private final PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
 	public CustomReportTreeNodeBuilder(PermissionEvaluationService permissionEvaluationService) {
 		super();
 		this.permissionEvaluationService = permissionEvaluationService;
 	}
 
-	public JsTreeNode build(CustomReportLibraryNode tln){
-		builtNode.setTitle(tln.getName());
-		builtNode.addAttr("resId", String.valueOf(tln.getId()));
-		
+	/**
+	 * Build a {@link JsTreeNode} from a {@link CustomReportLibraryNode} with it's descendants builded inside if node is opened. Will also open and retrieve descendant at layer n+1
+	 * if one descendant at layer n is also in opened list.
+	 * @param crln
+	 * @return
+	 */
+	public JsTreeNode buildWithOpenedNodes(CustomReportLibraryNode crln,Set<Long> openedNodeIds){
+		JsTreeNode builtNode = build(crln);
+		if (openedNodeIds.contains(crln.getId())) {
+			List<TreeLibraryNode> children = crln.getChildren();
+			for (TreeLibraryNode child : children) {
+				JsTreeNode childJsTreeNode = buildWithOpenedNodes((CustomReportLibraryNode) child, openedNodeIds);//NOSONAR cast is safe, we have the child of a crln
+				builtNode.getChildren().add(childJsTreeNode);
+			}
+		setNodeOpen(builtNode);
+		}
+		return builtNode;
+	}
+
+	public JsTreeNode build(CustomReportLibraryNode crln){
+		JsTreeNode builtNode = new JsTreeNode();
+		builtNode.setTitle(crln.getName());
+		builtNode.addAttr("resId", String.valueOf(crln.getId()));
+		builtNode.addAttr("id", String.valueOf(crln.getId()));
+
 		//No milestone for custom report tree in first version so yes for all perm
 		builtNode.addAttr("milestone-creatable-deletable", "true");
 		builtNode.addAttr("milestone-editable", "true");
-		
-		doPermissionCheck(tln);
-		
+
+
+		doPermissionCheck(builtNode,crln);
+
 		//A visitor would be elegant here and allow interface type development but we don't want hibernate to fetch each linked entity
 		//for each node and we don't want subclass for each node type. sooooo the good old switch on enumerated type will do the job...
-		CustomReportTreeDefinition entityType = (CustomReportTreeDefinition) tln.getEntityType();//NO SONAR the argument for this method is a CustomReportLibraryNode so entity type is a CustomReportTreeDefinition 
-		
+		CustomReportTreeDefinition entityType = (CustomReportTreeDefinition) crln.getEntityType();//NO SONAR the argument for this method is a CustomReportLibraryNode so entity type is a CustomReportTreeDefinition
+
 		switch (entityType) {
 		case LIBRARY:
-			buildNode("drive", "custom-report-libraries");
+			doLibraryBuild(builtNode,crln);
 			break;
 		case FOLDER:
-			buildNode("folder", "custom-report-folders");
+			doFolderBuild(builtNode,crln);
 			break;
 		case CHART:
-			buildNode("chart", "custom-report-chart");
+			doChartBuild(builtNode,crln);
 			break;
 		case DASHBOARD:
-			buildNode("dashboard", "custom-report-dashboard");
+			doDashboardBuild(builtNode,crln);
 			break;
 		default:
 			throw new UnsupportedOperationException("The node builder isn't implemented for node of type : " + entityType);
 		}
-		
-		return builtNode;
-	} 
 
-	private void buildNode(String rel, String resType) {
-		builtNode.addAttr("rel", rel);
-		builtNode.addAttr("resType", resType);
+		return builtNode;
 	}
 
-	private void doPermissionCheck(CustomReportLibraryNode crln){
+	private void buildDescendantIfOpened() {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void doLibraryBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode,"drive");
+		setNodeResType(builtNode,"custom-report-libraries");
+		setStateForNodeContainer(builtNode,crln);
+	}
+
+	private void doFolderBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode, "folder");
+		setNodeResType(builtNode, "custom-report-folders");
+		setStateForNodeContainer(builtNode, crln);
+	}
+
+	private void doChartBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode, "chart");
+		setNodeResType(builtNode, "custom-report-chart");
+		setNodeLeaf(builtNode);
+	}
+
+	private void doDashboardBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeRel(builtNode, "dashboard");
+		setNodeResType(builtNode, "custom-report-dashboard");
+		setStateForNodeContainer(builtNode, crln);
+	}
+
+	private void doPermissionCheck(JsTreeNode builtNode, CustomReportLibraryNode crln){
 		Map<String, Boolean> permByName = permissionEvaluationService.hasRoleOrPermissionsOnObject(ROLE_ADMIN, PERM_NAMES, crln);
 		for (Permission perm : NODE_PERMISSIONS) {
 			builtNode.addAttr(perm.getQuality(), permByName.get(perm.name()).toString());
 		}
+	}
+
+	private void setStateForNodeContainer(JsTreeNode builtNode, TreeLibraryNode tln){
+		if (tln.hasContent()) {
+			builtNode.setState(State.closed);
+		}
+		else {
+			builtNode.setState(State.leaf);
+		}
+	}
+
+	private void setNodeRel(JsTreeNode builtNode, String rel){
+		builtNode.addAttr("rel", rel);
+	}
+
+	private void setNodeResType(JsTreeNode builtNode, String resType){
+		builtNode.addAttr("resType", resType);
+	}
+
+	private void setNodeLeaf(JsTreeNode builtNode){
+		builtNode.setState(State.leaf);
+	}
+
+	private void setNodeOpen(JsTreeNode builtNode){
+		builtNode.setState(State.open);
 	}
 
 }

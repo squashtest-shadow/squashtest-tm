@@ -20,10 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -38,14 +41,15 @@ public class CustomReportWorkspaceServiceImpl implements
 		CustomReportWorkspaceService {
 	
 	@Inject
-	private CustomReportLibraryDao dao;
+	private CustomReportLibraryDao libraryDao;
 	
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
 
 	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibrary> findAllLibraries() {
-		return dao.findAll();
+		return libraryDao.findAll();
 	}
 
 	@Override
@@ -64,8 +68,9 @@ public class CustomReportWorkspaceServiceImpl implements
 	}
 
 	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findRootNodes() {
 		return crlnDao.findAllByEntityType(CustomReportTreeDefinition.LIBRARY);
 	}
-	
+
 }

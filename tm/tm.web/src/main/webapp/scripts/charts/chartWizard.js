@@ -21,12 +21,22 @@
 
 	define([ "jquery", "backbone", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, router, WizardRouter, WizardView, WizardModel) {
 
+		$("#back-popup").confirmDialog().on('confirmdialogconfirm', function(){
+			var url = "custom-report-workspace";
+			window.location.href = squashtm.app.contextRoot + url;
+			});
+		
+		$("#back").on('click', function() {
+			$("#back-popup").confirmDialog('open');
+		});	
 		
 	$.ajax({
 		url: router.buildURL('chart.wizard.data')	
 	}).done(function(data){
 		
 		data.parentId = squashtm.chart.parentId;
+		data.defaultProject = squashtm.chart.defaultProject;
+		data.chartDef = JSON.parse(squashtm.chart.chartDef);
 		
 		var model = new WizardModel(data);
 		

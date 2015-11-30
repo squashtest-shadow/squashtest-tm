@@ -92,6 +92,10 @@ that page won't be editable if
 <f:message var="cancelLabel" key="label.Cancel"/>
 <f:message var="okLabel" key="label.Ok"/>
 
+<f:message var="titleCoverageRequirement"  key="requirement.rate.cover.main"/>
+<f:message var="titleCoverageRequirementChildren"  key="requirement.rate.cover.children"/>
+<f:message var="titleCoverageRequirementAll"  key="requirement.rate.cover.all"/>
+
 <script type="text/javascript">
 	requirejs.config({
 	    config : {
@@ -105,7 +109,9 @@ that page won't be editable if
 	            verifyingTestcases : ${json:serialize(verifyingTestCasesModel.aaData)},
 	            attachments : ${json:serialize(attachmentsModel.aaData)},
 	            audittrail : ${json:serialize(auditTrailModel.aaData)},
-	            hasCufs : ${hasCUF}
+	            hasCufs : ${hasCUF},
+	            requirementVersionId : ${requirementVersion.id},
+	            projectId : ${requirementVersion.requirement.project.id}
 	          },
 	          permissions : {
 	            moreThanReadOnly : ${moreThanReadOnly},
@@ -126,7 +132,6 @@ that page won't be editable if
 	
 	require(['common'], function(){
 		require(['requirement-version-page'], function(){});
-
 	});
 
 </script>
@@ -287,8 +292,12 @@ publish('reload.requirement.toolbar');
 		            </button>
 			</c:if>
 		</jsp:attribute>
-
 		<jsp:attribute name="body">
+		
+		<reqs:requirement-version-coverage-stats />
+			
+
+			
 			<reqs:verifying-test-cases-table 
 			     batchRemoveButtonId="remove-verifying-test-case-button" 
                  requirementVersion="${requirementVersion}" 

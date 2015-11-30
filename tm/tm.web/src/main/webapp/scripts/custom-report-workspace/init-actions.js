@@ -128,82 +128,32 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 
       $("#new-chart-tree-button").on("click", function(){
         var selectedNode =  tree.jstree("get_selected");
+        if (!selectedNode.canContainNodes()) {
+          selectedNode = selectedNode.getParent();
+        }
         var nodeId = selectedNode.getResId();
         url = urlBuilder.buildURL("chart.wizard",nodeId);
         document.location.href = url;
       });
 
 
-			// *************** copy paste ****************
-
-			$("#copy-node-tree-button").on("click", function(){
-				copyIfOk(tree);
-			});
-
-			// issue 2762 : the events "copy.squashtree" and the native js event "copy" (also triggered using ctrl+c) would both fire this
-			// handler. Its a bug of jquery, fixed in 1.9.
-			// TODO : upgrade to jquery 1.9
-			tree.on("copy.squashtree", function(evt){
-				if (evt.namespace==="squashtree"){
-					copyIfOk(tree);
-				}
-			});
-
-			$("#paste-node-tree-button").on("click", function(){
-				pasteIfOk(tree);
-			});
-
-			// issue 2762 : the events "paste.squashtree" and the native js event "paste" (also triggered using ctrl+v) would both fire this
-			// handler. Its a bug of jquery, fixed in 1.9
-			// TODO : upgrade to jquery 1.9
-			tree.on("paste.squashtree", function(evt){
-				if (evt.namespace === "squashtree"){
-					pasteIfOk(tree);
-				}
-			});
-
-
 			// ***************** rename **********************
 
 			$("#rename-node-tree-button").on("click", function(){
-				$("#rename-node-dialog").formDialog("open");
+				openRenamePopup();
 			});
 
 			tree.on("rename.squashtree", function(){
-				$("#rename-node-dialog").formDialog("open");
+				openRenamePopup();
 			});
 
-			// ****************** import tc ******************
-			// NOTE : DO NOT BIND USING $("menu").on("click", "button", handler), this breaks under (true) IE8. See #3268
-			$("#import-excel-tree-button").on("click", function(){
-				$("#import-excel-dialog").tcimportDialog("open");
-			});
+      function openRenamePopup() {
+        	$("#rename-node-dialog").formDialog("open");
+      }
 
-			// **************** import links *****************
+      var wreqr = squashtm.app.wreqr;
+      wreqr.on("renameNode",openRenamePopup);
 
-			$("#import-links-excel-tree-button").on("click", function(){
-				$("#import-links-excel-dialog").linksimportDialog("open");
-			});
-
-			// ******************* export ********************
-
-			$("#export-tree-button").on("click", function(){
-
-					$("#export-test-case-dialog").exportDialog("open");
-					$('input:radio[data-val=xls]').prop('checked', true);
-					$('#export-test-case-includecalls').prop('checked', false);
-					$('#export-test-case-keepRteFormat').prop('checked', true);
-
-			});
-
-			// *****************  search  ********************
-
-			$("#search-tree-button").on("click", function(){
-			  // get value of Campaign Workspace Cookie
-				var cookieValueSelect = $.cookie("jstree_select");
-				var cookieValueOpen = $.cookie("jstree_open");
-				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=test-case&cookieValueSelect=" + encodeURIComponent(cookieValueSelect) + "&cookieValueOpen=" + encodeURIComponent(cookieValueOpen);
-			});
 
 			// ***************** deletion ********************
 

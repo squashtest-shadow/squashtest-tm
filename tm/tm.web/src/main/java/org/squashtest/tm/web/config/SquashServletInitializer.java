@@ -22,14 +22,19 @@ package org.squashtest.tm.web.config;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.SquashTm;
 
 /**
+ * This class replaces the web deployment descriptor (web.xml). It should not be tampered with.
+ *
+ *
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */
-@Component
+@Configuration
 public class SquashServletInitializer extends SpringBootServletInitializer {
 	/**
 	 * This is required for embedded tomcat to be able to handle JSPs.

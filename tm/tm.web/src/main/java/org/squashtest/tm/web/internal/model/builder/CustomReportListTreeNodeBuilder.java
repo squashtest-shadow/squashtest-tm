@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.model.builder;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -43,6 +44,11 @@ public class CustomReportListTreeNodeBuilder {
 		super();
 	}
 	
+	/**
+	 * Build a list of {@link JsTreeNode} from a list of {@link CustomReportLibraryNode}
+	 * @param nodes
+	 * @return
+	 */
 	public List<JsTreeNode> build(List<TreeLibraryNode> nodes){
 		List<JsTreeNode> builtNodes =new ArrayList<JsTreeNode>();
 		
@@ -53,5 +59,24 @@ public class CustomReportListTreeNodeBuilder {
 		}
 		return builtNodes;
 	}
+	
+	/**
+	 * Build a list of {@link JsTreeNode} from a list of {@link CustomReportLibraryNode}. Will also
+	 * build children if needed by looking inside openedNodesIds if a builded node is open. il a node is open, 
+	 * his children must be retrieved and converted in {@link JsTreeNode}.
+	 * @param nodes
+	 * @param openedNodesIds
+	 * @return
+	 */
+	public List<JsTreeNode> buildWithOpenedNodes(List<TreeLibraryNode> nodes, Set<Long> openedNodesIds){
+		List<JsTreeNode> builtNodes =new ArrayList<JsTreeNode>();
+		
+		for (TreeLibraryNode tln : nodes) {
+			CustomReportTreeNodeBuilder builder = builderProvider.get();
+			builtNodes.add(builder.buildWithOpenedNodes((CustomReportLibraryNode) tln,openedNodesIds));//NOSONAR cast is safe
+		}
+		return builtNodes;
+	}
+	
 	
 }

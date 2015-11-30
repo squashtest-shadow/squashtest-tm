@@ -32,79 +32,79 @@
 define(['jquery'], function($){
 
 	// *********************** functions ************************************
-	// 'library' and 'folder' are still named 'library' and 'folder'. Others 
+	// 'library' and 'folder' are still named 'library' and 'folder'. Others
 	// will be renamed according to their subtypes.
 	function _getSemiSpecializedTypeName(node){
 		var type = node.getDomType();
 		var typeRepresentation = "";
-		
+
 		if ((type==='folder') || (type === 'drive')){
 			return type+'s';
 		}
 		else{
 			return node.getResType();
-		}		
+		}
 	}
 
 	function getResourceUrl(){
-		return this.getBaseUrl() + this.getResType() + "/" + this.getResId();		
+		return this.getBaseUrl() + this.getResType() + "/" + this.getResId();
 	}
-	
+
 	function getBaseUrl(){
 		return this.tree.data.squash.rootUrl + "/";
 	}
-	
+
 	function getBrowserUrl(){
 		return this.getBaseUrl() + this.getWorkspace() + "-browser";
 	}
-	
+
 	function getContentUrl(){
 
 		var wkspce = this.getWorkspace();
 		var id = this.getResId();
 		var representation = _getSemiSpecializedTypeName(this);
-			
+
 		return this.getBrowserUrl() + '/' + representation + "/" + id + "/content";
-		
+
 	}
-	
-	
+
+
 	function getCopyUrl(){
-		
+
 		var representation =   _getSemiSpecializedTypeName(this);
 		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId();
-		
+
 		switch (this.getDomType()) {
-			case "drive" :	
+			case "drive" :
 			case "folder":
 			case "requirement" :	url += '/content/new'; break;
 			case "campaign" :		url += '/iterations/new'; break;
 			case "iteration":		url += '/test-suites/new'; break;
 			default : throw "copy aborted : node type '"+this.getDomType()+"' cannot receive new content.";
 		}
-		
+
 		return url;
-		
+
 	}
-	
-	
+
+
 	function getMoveUrl(){
-		
+
 		var representation =   _getSemiSpecializedTypeName(this);
 		var url = this.getBrowserUrl() + '/' + representation + '/' +this.getResId();
-		
+
 		switch (this.getDomType()) {
-			case "drive" :	
+			case "drive" :
 			case "folder":
 			case "requirement" :
 			case "campaign" :	url += '/content/{nodeIds}/{position}'; break;
 			default : throw "move aborted : node type '"+this.getDomType()+"' cannot receive moved content.";
 		}
-		
-		return url;	
+
+		return url;
 	}
-	
-	
+
+
 	function getDeleteUrl(){
 		var specific = "";
 		var options = "";
@@ -112,40 +112,42 @@ define(['jquery'], function($){
 			case "folder" :
 			case "test-case" :
 			case "requirement" :
+			case "dashboard" :
+      case "chart":
 			case "campaign"		: specific = "/content"; break;
 			case "iteration"	: specific = "/iterations"; break;
 			case "test-suite"	: specific = '/test-suites'; options="?remove_from_iter={remove_from_iter}"; break;
 		}
 		return this.getBrowserUrl()+specific+"/{nodeIds}" + options;
 	}
-	
+
 	function refreshLabel(){
 
 		var label = null;
 		var name;
-		
-		
+
+
 		switch(this.getResType()){
-		
+
 		case 'requirements' :
-		case 'test-cases' : 
+		case 'test-cases' :
 		case 'campaigns' :
 		case 'iterations' :
 			name = this.getName();
 			var reference = this.getReference() || "";
-			
+
 			if (reference.length > 0) {
 				reference += " - ";
 			}
-			
+
 			label = reference + name;
 			break;
-		
-		default : 
+
+		default :
 			label = this.getName();
 			break;
 		}
-		
+
 		this.tree.set_text(this, label);
 	}
 
@@ -178,7 +180,7 @@ define(['jquery'], function($){
 		this.getDomType = function() {
 			return this.reference.attr('rel');
 		};
-		
+
 		// equivalent to getDomType
 		this.getRel = function(){
 			return this.reference.attr('rel');
@@ -191,7 +193,7 @@ define(['jquery'], function($){
 		this.getResType = function() {
 			return this.reference.attr('restype');
 		};
-		
+
 		this.getIdentity = function(){
 			return {
 				resid : this.reference.attr('resid'),
@@ -206,11 +208,11 @@ define(['jquery'], function($){
 		this.isCreatable = function() {
 			return this.reference.attr('creatable') === "true";
 		};
-		
+
 		this.isMilestoneCreatable = function(){
 			return this.reference.attr('milestone-creatable-deletable') === "true";
 		};
-		
+
 		this.isMilestoneEditable = function(){
 			return this.reference.attr('milestone-editable') === "true";
 		};
@@ -218,7 +220,7 @@ define(['jquery'], function($){
 		this.isDeletable = function() {
 			return this.reference.attr('deletable') === "true";
 		};
-		
+
 		this.isExportable = function() {
 			return this.reference.attr('exportable') === "true";
 		};
@@ -250,7 +252,7 @@ define(['jquery'], function($){
 		};
 		/**
 		 * Checks if a given workspace wizard is enabled for this node.
-		 * 
+		 *
 		 * @param wizard
 		 *            an object with an id property which will be used to
 		 *            perform the check
@@ -290,7 +292,7 @@ define(['jquery'], function($){
 			this.reference.attr(attrName, value);
 			this.refreshLabel();
 		};
-		
+
 		this.setName = function(name) {
 			this.reference.attr('name', name);
 			this.refreshLabel();
@@ -321,7 +323,7 @@ define(['jquery'], function($){
 		};
 
 		this.getChildren = function() {
-			var children =  this.tree._get_children(this); 
+			var children =  this.tree._get_children(this);
 			return (children.length) ? children.treeNode() : $();
 		};
 
@@ -360,7 +362,7 @@ define(['jquery'], function($){
 			this.tree.open_node(this, defer.resolve);
 			return defer.promise();
 		};
-		
+
 		this.isLoaded = function(){
 			return this.tree._is_loaded(this);
 		};
@@ -382,24 +384,24 @@ define(['jquery'], function($){
 			var newNode = res.treeNode();
 			return [ newNode, defer.promise() ];
 		};
-		
-		
+
+
 		/* Will move around the nodes without triggering events.
 		 * Moved nodes will be removed from their container.
 		 */
 		this.moveTo = function(target){
-			
+
 			if (this.length===0) {return;}
 
-			// remove me from my former parent 
+			// remove me from my former parent
 			this.removeMe();
-			
+
 			// if the target was empty, now it isn't anymore.
 			if (target.hasClass('jstree-leaf')){
 				target.removeClass('jstree-leaf').addClass('jstree-closed');
 			}
-			
-			// if the target was loaded, we must actually move the nodes in there because they won't be fetched 
+
+			// if the target was loaded, we must actually move the nodes in there because they won't be fetched
 			// from the server again. We create the <ul/> in the process if need be.
 			if (target.isLoaded){
 				var ul = (target.find('> ul'));
@@ -409,7 +411,7 @@ define(['jquery'], function($){
 				}
 				this.appendTo(ul);
 			}
-			
+
 		};
 
 		this.select = function() {
@@ -419,7 +421,7 @@ define(['jquery'], function($){
 		this.deselect = function() {
 			this.tree.deselect_node(this);
 		};
-		
+
 		this.removeMe = function(){
 			var tr = this.tree;
 			this.each(function(elt){
@@ -437,37 +439,37 @@ define(['jquery'], function($){
 			}
 			return true;
 		};
-		
+
 
 		//TODO : this test relates to the configuration of the "types" plugin of their instance of jstree.
 		this.acceptsAsContent = function(nodes) {
-			
-			// reject if this node cannot have children anyhow			
+
+			// reject if this node cannot have children anyhow
 			if (! this.canContainNodes()){
 				return false;
 			}
-			
+
 			var typePluginConf = this.tree._get_settings().types.types;
 			var thisRel = this.getDomType();
-			
+
 			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
-			var validChildrenTypes = typePluginConf[thisRel].valid_children;	
-			
+			var validChildrenTypes = typePluginConf[thisRel].valid_children;
+
 			if (! validChildrenTypes instanceof Array ){
 				validChildrenTypes = [validChildrenTypes];
 			}
-			
+
 			return nodes.areEither(validChildrenTypes);
-			
+
 		};
-		
-		
+
+
 		this.canContainNodes = function(){
 			//might throw npe if the conf is invalid, and so is good candidate for fail-fast warning
 			var typePluginConf = this.tree._get_settings().types.types;
 			var thisRel = this.getDomType();
 			var thisConf = typePluginConf[thisRel];
-			
+
 			return (thisConf !== undefined && thisConf.valid_children !== 'none');
 		};
 
@@ -522,7 +524,7 @@ define(['jquery'], function($){
 				return res;
 			});
 		};
-		
+
 		// given a matchObject describing the name/value dom attributes they all
 		// must share,
 		// returns true if they all have the same or false if they differ.
@@ -542,12 +544,12 @@ define(['jquery'], function($){
 			return (shrinkingSet.length == this.length);
 		};
 
-		
+
 		this.areEither = function(typesArray){
 			var collected = this.all('getDomType');
 			return $(collected).not(typesArray).length === 0;
 		};
-		
+
         this.areSameLibs = function() {
             var libs = this.collect(function(elt) {
                     return $(elt).treeNode().getLibrary().getDomId();
@@ -557,7 +559,7 @@ define(['jquery'], function($){
 
 
 		// *************** urls *******************************
-		
+
 		this.getResourceUrl = getResourceUrl;
 
 		this.getBaseUrl = getBaseUrl;
@@ -565,15 +567,15 @@ define(['jquery'], function($){
 		this.getBrowserUrl = getBrowserUrl;
 
 		this.getContentUrl = getContentUrl;
-		
+
 		this.refreshLabel = refreshLabel;
 
 		this.getCopyUrl = getCopyUrl;
 
 		this.getMoveUrl = getMoveUrl;
-		
+
 		this.getDeleteUrl = getDeleteUrl;
-		
-		return this;		
+
+		return this;
 	};
 });

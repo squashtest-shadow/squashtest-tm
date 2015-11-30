@@ -23,11 +23,15 @@ package org.squashtest.tm.service.customreport;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 public interface CustomReportLibraryNodeService {
 	
@@ -37,6 +41,13 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	CustomReportLibraryNode findCustomReportLibraryNodeById(Long treeNodeId);
+	
+	/**
+	 * Return a list of {@link CustomReportLibraryNode} given a list of ids
+	 * @param treeNodeId
+	 * @return
+	 */
+	List<CustomReportLibraryNode> findAllCustomReportLibraryNodeById(List<Long> treeNodeIds);
 
 	/**
 	 * Return a {@link CustomReportLibrary}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
@@ -63,21 +74,53 @@ public interface CustomReportLibraryNodeService {
 	ChartDefinition findChartDefinitionByNodeId(Long treeNodeId);
 	
 	/**
+	 * Return a {@link CustomReportDashboard}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
+	 * representing this entity
+	 * @param treeNodeId
+	 * @return
+	 */
+	CustomReportDashboard findCustomReportDashboardById(Long treeNodeId);
+	
+	/**
 	 * Service to add a new {@link CustomReportLibraryNode}. The caller is responsible for giving a
-	 * {@link CustomReportLibraryNode} with a not null {@link TreeEntity} linked inside.
-	 * The {@link TreeEntity} must have the same name as the {@link CustomReportLibraryNode} because the name have been voluntary denormalized,
-	 * to allow request on path and other stuff that doesn't support the polymorphic nature of {@link TreeEntity}
+	 * a not null, named {@link TreeEntity}. The service will persist the entity, create and persist the node and make links.
 	 * <br/>
 	 * <br/>
 	 * WARNING :
 	 * This method clear the hibernate session. The @any mapping in {@link CustomReportLibraryNode}
-	 * require a proper commit and reload to have an updated node and entity
+	 * require a proper persist and reload to have an updated node and entity.
 	 * 
 	 * @param parentId Id of parent node. Can't be null.
 	 * @param node A valid {@link CustomReportLibraryNode} with it's {@link TreeEntity}.
 	 * @return
 	 */
-	CustomReportLibraryNode createNewCustomReportLibraryNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
+	CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
 	
-	void deleteCustomReportLibraryNode(List<Long> nodeIds);
+	List<SuppressionPreviewReport> simulateDeletion (List<Long> nodeIds);
+	
+	OperationReport delete(List<Long> nodeIds);
+	
+	/**
+	 * Find all descendant of a given list of node id's. The returned list will include the nodes witch id's are given in arguments
+	 * @param nodeIds
+	 * @return
+	 */
+	List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds);
+	
+	/**
+	 * Find all descendant id's of a given list of node id's. The returned list will include the nodes id's given in arguments
+	 * @param nodeIds
+	 * @return
+	 */
+	List<Long> findDescendantIds(List<Long> nodeIds);
+	
+	void renameNode(Long nodeId, String newName) throws DuplicateNameException;
+
+	/**
+	 * Return the list of all ancestor ids for a given node id
+	 * @param nodeId
+	 * @return
+	 */
+	List<Long> findAncestorIds(Long nodeId);
+
 }

@@ -20,16 +20,8 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.internal.testautomation.AutomatedSuiteManagerServiceImpl.ExecutionCollector;
+import spock.lang.Specification
 
-import com.querydsl.core.types.dsl.DatePath;
-import com.querydsl.core.types.dsl.Expressions;
-import com.querydsl.core.types.dsl.PathBuilder;
-
-import spock.lang.Specification;
-
-class ProjectionPlannerTest extends Specification{
-
+class ProjectionPlannerTest extends Specification {
 
 }

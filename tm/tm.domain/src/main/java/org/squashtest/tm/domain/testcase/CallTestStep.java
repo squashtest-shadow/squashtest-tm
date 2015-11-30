@@ -49,6 +49,7 @@ public class CallTestStep extends TestStep {
 	@Override
 	public CallTestStep createCopy() {
 		CallTestStep copy = new CallTestStep();
+		copy.calledDataset = this.calledDataset;
 		copy.calledTestCase = this.calledTestCase;
 		return copy;
 	}

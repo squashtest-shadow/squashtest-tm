@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.tree;
 
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.project.Project;
 
 /**
  * Interface that every ENTITY represented in a tree by a {@link TreeLibraryNode} must implements
@@ -46,8 +47,9 @@ public interface TreeEntity extends Identified{
 	 */
 	void setName(String name);
 	
-	TreeLibraryNode getTreeNode();
-	
 	void accept(TreeEntityVisitor visitor);
 	
+	Project getProject();
+	
+	void setProject(Project project);
 }

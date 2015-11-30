@@ -29,12 +29,15 @@ import static org.squashtest.tm.domain.chart.Operation.COUNT;
 import static org.squashtest.tm.domain.chart.Operation.EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.GREATER;
 import static org.squashtest.tm.domain.chart.Operation.GREATER_EQUAL;
+import static org.squashtest.tm.domain.chart.Operation.IN;
 import static org.squashtest.tm.domain.chart.Operation.LIKE;
 import static org.squashtest.tm.domain.chart.Operation.LOWER;
 import static org.squashtest.tm.domain.chart.Operation.LOWER_EQUAL;
 import static org.squashtest.tm.domain.chart.Operation.MAX;
 import static org.squashtest.tm.domain.chart.Operation.MIN;
+import static org.squashtest.tm.domain.chart.Operation.NONE;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
+import static org.squashtest.tm.domain.chart.Operation.NOT_NULL;
 
 import java.util.Arrays;
 import java.util.EnumSet;
@@ -42,12 +45,15 @@ import java.util.EnumSet;
 public enum DataType {
 
 	// @formatter:off
-	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM),
-	STRING (EQUALS, LIKE, COUNT),
+	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE),
+	STRING (EQUALS, LIKE, COUNT, NONE),
 	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR),
-	LEVEL_ENUM(EQUALS, LOWER, LOWER_EQUAL, GREATER, GREATER_EQUAL, MAX, MIN),
-	EXECUTION_STATUS (EQUALS),
-	INFO_LIST_ITEM (EQUALS);
+	EXISTENCE(NOT_NULL),
+	BOOLEAN(EQUALS),
+	LEVEL_ENUM(EQUALS, LOWER, LOWER_EQUAL, GREATER, GREATER_EQUAL, MAX, MIN, IN, COUNT, NONE),
+	EXECUTION_STATUS (EQUALS, IN, COUNT, NONE),
+	LIST(EQUALS, IN, COUNT, NONE),
+	INFO_LIST_ITEM (EQUALS, IN, COUNT, NONE);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;

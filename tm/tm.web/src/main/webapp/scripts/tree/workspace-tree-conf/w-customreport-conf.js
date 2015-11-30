@@ -21,31 +21,34 @@
 define(function(){
 	var baseURL = squashtm.app.contextRoot;
 
-	return {
-		generate : function(){
-
-			return {
-				"types" : {
-					"max_depth" : -2, // unlimited without check
-					"max_children" : -2, // unlimited w/o check
-					"valid_children" : [ "drive" ],
-					"types" : {
-						"chart" : {
-							"valid_children" : 'none'
-						},
-						"dashboard" : {
-							"valid_children" : ["chart"]
-						},
-						"folder" : {
-							"valid_children" : [ "chart","dashboard", "folder" ]
-						},
-						"drive" : {
-							"valid_children" : [ "chart","dashboard", "folder" ]
+		return {
+			generate : function(){
+					return {
+            check_move : function () {
+              return false;
+            },
+						//override pluggins to have a custom DnD for dashboards
+						"plugins" : ["json_data", "ui", "types", "hotkeys", "dndCustomReport", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
+						"types" : {
+							"max_depth" : -2, // unlimited without check
+							"max_children" : -2, // unlimited w/o check
+							"valid_children" : [ "drive" ],
+							"types" : {
+								"chart" : {
+									"valid_children" : 'none'
+								},
+								"dashboard" : {
+									"valid_children" : 'none'
+								},
+								"folder" : {
+									"valid_children" : [ "chart","dashboard", "folder" ]
+								},
+								"drive" : {
+									"valid_children" : [ "chart","dashboard", "folder" ]
+								}
+							}
 						}
-					}
-				}
-			};
-		}
-
-	};
+					};
+			}
+		};
 });

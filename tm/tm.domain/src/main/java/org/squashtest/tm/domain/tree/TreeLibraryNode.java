@@ -27,8 +27,8 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 
 /**
- * Interface for a tree node without data. The main goal of this API is to separate concern beetwen
- * tree and entity referenced in this tree.
+ * Interface for a tree node without data. The main goal of this API is to separate concern between
+ * a tree node and the entity referenced by this tree node.
  * By design, a tree node and an entity have a 1:1 relationship.
  * @author jthebault
  *
@@ -48,17 +48,13 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	
 	TreeEntityDefinition getEntityType();
 	
-//	void setEntityType(TreeEntityDefinition definition);
-	
 	TreeLibraryNode getParent();
 	
 	void setParent(TreeLibraryNode parent);
 	
 	List<TreeLibraryNode> getChildren();
 	
-	TreeLibrary getLibrary();
-	
-	void setLibrary(TreeLibrary treeLibrary);
+	GenericTreeLibrary getLibrary();
 	
 	void addChild(TreeLibraryNode treeLibraryNode) throws UnsupportedOperationException,IllegalArgumentException,NameAlreadyInUseException;
 
@@ -70,5 +66,9 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	 * @return
 	 */
 	void isCoherentWithEntity();
+	
+	boolean hasContent();
+	
+	void renameNode(String newName);
 
 }

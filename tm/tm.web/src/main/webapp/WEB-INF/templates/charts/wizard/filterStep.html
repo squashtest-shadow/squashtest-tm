@@ -23,9 +23,17 @@
 <div th:fragment="chart-wizard-filter">
 
 {{#*inline "filter"}}
+<div style="display: table-column; width: 20%;float:left">
 <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
-    {{i18n this.label prefix="chart.column."}}
-<select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}">
+{{#equal this.columnType "CUF"}}
+{{{cuf-label this.attributeName data.customFields}}}
+{{else}}
+{{i18n this.label prefix="chart.column."}}
+{{/equal}}
+</div>
+
+<div style="display: table-column; width: 15%; float:left">
+<select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;">
 {{#each  operations}}  
 
 <option value="{{this}}">
@@ -34,9 +42,11 @@
 
 {{/each}}   
 </select>
+</div>
+
 
 {{#equal dataType "NUMERIC"}} 
-<input type="text" id="first-filter-value-{{id}}" name="{{id}}" />
+<input type="text" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 40px;"/>
 <input type="text" id="second-filter-value-{{id}}" name="{{id}}" />
 {{/equal}}
 
@@ -45,37 +55,144 @@
 {{/equal}}
 
 {{#equal dataType "DATE"}}
-<input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" />
+<input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 40px;"/>
 <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
 {{/equal}}
+
+
+{{#equal dataType "EXECUTION_STATUS"}}
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
+{{#each  data.executionStatus}}  
+<option value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}   
+</select>
+{{/equal}}
+
+{{#equal dataType "LEVEL_ENUM"}}
+<select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 182px;">
+{{#each  (lookup data.levelEnums label)}}  
+<option value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}   
+</select>
+{{/equal}}
+
+{{#equal dataType "INFO_LIST_ITEM"}}
+<span id="info-list-filter-container-{{id}}" name="{{label}}"/>
+{{/equal}}
+
+{{#equal dataType "LIST"}}
+<span id="list-filter-container-{{id}}" name="{{attributeName}}" class="cuf-list"/>
+{{/equal}}
+
+{{#equal dataType "BOOLEAN"}}
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
+
+<option value="TRUE">
+ <span th:text="#{squashtm.truefalse.true}"/>
+</option>
+<option value="FALSE">
+ <span th:text="#{squashtm.truefalse.false}"/>
+</option>
+
+</select>
+
+{{/equal}}
+
 
 <br />
 {{/inline}}
 
 
-CHOOSE FILTER
+
+<span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.filter}"/>
 <br />
+<span  th:text="#{chart.wizard.creation.step.sub-message.filter}"/>
 
-
+<br />
+<br />
 {{#each attributes.columnPrototypes}}
+
+  {{#if (contains ../attributes.selectedEntity @key)}}
   <div class="sq-tg expand">
  <div class="tg-head">
-{{i18n @key prefix='chart.entityType.'}} 
-            
+{{i18n @key prefix='chart.entityType.'}}          
 </div> 
+
+<div class="tg-body">
 {{#each  this}}  
+
 {{#if (contains this.role "FILTER")}}
-{{> filter INDEX=@index operations= (intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) }}
+{{#if (contains ../../attributes.selectedAttributes id)}} 
+
+<div style="display: table; width: 100%;">
+{{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+</div>
+
+{{/if}}
 {{/if }}
 {{/each}}  
+</div>
+
  </div>  
+ {{/if}}
 {{/each}}  
 
- <button id="previous"  class="sq-icon-btn btn-sm" th:title="#{label.previous}" title="Previous">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-w"></span>
-  </button>
 
- <button id="next"  class="sq-icon-btn btn-sm" th:title="#{label.next}" title="Next">
-    <span class="ui-button-icon-primary ui-icon ui-icon-triangle-1-e"></span>
-  </button>
+
 </div>
+
+
+
+
+<div th:fragment="chart-wizard-info-list">
+ <div style="display: table-column; float:left; margin-right: 40px;">
+ <select id="info-list-{{id}}" class="info-lists" name="{{id}} " style=" width: 182px;">
+{{#each infolists}}
+ <option value="{{this.code}}">
+ {{#if (eq this.createdBy "system")}} 
+  {{i18n this.label}}
+  {{else}}
+  {{this.label}}
+  {{/if}}
+ </option> 
+{{/each}}
+</select>
+</div>
+<span id="info-list-item-container-{{id}}"/>
+
+</div>
+
+
+
+<div th:fragment="chart-wizard-info-list-item">
+ <div style="display: table-column;float:left">
+ <select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 182px;">
+{{#each items}}
+ <option value="{{this.code}}">  
+ {{#if this.isSystem}} 
+  {{i18n this.label}}
+  {{else}}
+  {{this.label}}
+  {{/if}}
+ </option> 
+{{/each}}
+</select>
+</div>
+</div>
+
+
+
+<div th:fragment="chart-wizard-cuf-list">
+ <select id="first-filter-value-{{id}}" name="{{id}}">
+{{#each items}}
+ <option value="{{this.code}}">  
+  {{this.label}}
+ </option> 
+{{/each}}
+</select>
+</div>
+

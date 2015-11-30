@@ -25,7 +25,7 @@ import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.project.GenericProject;
 
 
-public interface TreeLibrary extends TreeVisitable, AttachmentHolder, Identified {
+public interface TreeLibrary extends AttachmentHolder, Identified {
 	GenericProject getProject();
 	void notifyAssociatedWithProject(GenericProject p);
 }

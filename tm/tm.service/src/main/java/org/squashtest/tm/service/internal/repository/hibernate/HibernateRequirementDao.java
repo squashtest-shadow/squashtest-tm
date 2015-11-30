@@ -149,11 +149,11 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Long> findDescendantRequirementIds(Collection<Long> params) {
+	@Override
+	public List<Long> findDescendantRequirementIds(Collection<Long> params) {
 		Query query = currentSession().getNamedQuery("requirement.findRequirementDescendantIds");
 		query.setParameterList("nodeIds", params);
 		return query.list();
-
 	}
 
 	/**
@@ -375,7 +375,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@Override
-	public List<Long> findAllRequirementsIdsByLibrary(List<Long> libraryIds) {
+	public List<Long> findAllRequirementsIdsByLibrary(Collection<Long> libraryIds) {
 		if (! libraryIds.isEmpty()){
 			Query q = currentSession().getNamedQuery("requirement.findAllRequirementIdsByLibraries");
 			q.setParameterList("libraryIds", libraryIds, LongType.INSTANCE);
@@ -387,7 +387,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@Override
-	public List<Long> findAllRequirementsIdsByNodes(List<Long> nodeIds) {
+	public List<Long> findAllRequirementsIdsByNodes(Collection<Long> nodeIds) {
 		if (! nodeIds.isEmpty()){
 			Query q = currentSession().getNamedQuery("requirement.findAllRequirementIdsByNodesId");
 			q.setParameterList("nodeIds", nodeIds, LongType.INSTANCE);

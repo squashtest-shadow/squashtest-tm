@@ -23,10 +23,15 @@ package org.squashtest.tm.web.json;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.web.internal.model.json.InfoListItemMixin;
-import org.squashtest.tm.web.internal.model.json.InfoListMixin;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.web.internal.model.json.*;
 
 /**
  * Jackson Module which configures the default object mapper. Mixins definitions go here.
@@ -45,5 +50,16 @@ public class SquashModule extends SimpleModule {
 		// configures various domain objects (un)marshalling w/O the use of DTOs or jackson annotations
 		context.setMixInAnnotations(InfoList.class, InfoListMixin.class);
 		context.setMixInAnnotations(InfoListItem.class, InfoListItemMixin.class);
+		context.setMixInAnnotations(CustomReportLibrary.class, CustomReportLibraryMixin.class);
+		context.setMixInAnnotations(Project.class, GenericProjectMixin.class);
+		context.setMixInAnnotations(CustomReportFolder.class, CustomReportFolderMixin.class);
+		context.setMixInAnnotations(ChartDefinition.class, ChartDefinitionMixin.class);
+		context.setMixInAnnotations(ChartQuery.class, ChartQueryMixin.class);
+		context.setMixInAnnotations(Filter.class, FilterMixin.class);
+		context.setMixInAnnotations(AxisColumn.class, AxisColumnMixin.class);
+		context.setMixInAnnotations(MeasureColumn.class, MeasureColumnMixin.class);
+		context.setMixInAnnotations(ColumnPrototype.class, ColumnPrototypeMixin.class);
+		context.setMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
+		context.setMixInAnnotations(User.class, UserMixin.class);
 	}
 }

@@ -135,6 +135,7 @@ define([], function(){
 		'requirements.testcases.manager':	root + '/requirement-versions/{\\d+}/verifying-test-cases/manager',
 		'requirements.audittrail.change' :	root + '/audit-trail/requirement-versions/fat-prop-change-events/{\\d+}',
 		'requirements.audittrail.model' :	root + '/audit-trail/requirement-versions/{\\d+}/events-table',
+    'requirements.coverageStats.model' :	root + '/requirement-versions/{\\d+}/coverage-stats',
 
 		'requirementversions'	:			root + '/requirement-versions/{\\d+}',
 
@@ -206,17 +207,22 @@ define([], function(){
 		'execution.updateExecStep'                        : root + '/executions/{\\d+}/updateSteps',
 		'chart.wizard.data'                       : root + '/charts',
 		'chart.new'                               : root + '/charts/new/{\\d+}',
+		'chart.update'                      : root + '/charts/update/{\\d+}',
 		'chart.wizard'                       : root + '/charts/wizard/{\\d+}',
 		'chart.instance'                       : root + '/charts/{\\d+}/instance',
 
-		//custome report workspace
+		//custom report workspace
 		'custom-report-library'                        : '/custom-report-library/{\\d+}',
 		'custom-report-library-server'                 : root + '/custom-report-library',
 		'custom-report-folder'                        : '/custom-report-folder/{\\d+}',
 		'custom-report-folder-server'                 : root + '/custom-report-folder',
 		'custom-report-dashboard'                        : '/custom-report-dashboard/{\\d+}',
+		'custom-report-dashboard-server'                        :root + '/custom-report-dashboard/{\\d+}',
 		'custom-report-chart'                        : '/custom-report-chart/{\\d+}',
 		'custom-report-chart-server'                        : root + '/custom-report-chart/{\\d+}',
+		'custom-report-chart-binding'                        : root + '/custom-report-chart-binding',
+    'custom-report-chart-binding-with-id'                        : root + '/custom-report-chart-binding/{\\d+}',
+    'custom-report-chart-binding-replace-chart'                        : root + '/custom-report-chart-binding-replace-chart/{\\d+}/{\\d+}',
 
 		// helper methods
 		buildURL : function(){

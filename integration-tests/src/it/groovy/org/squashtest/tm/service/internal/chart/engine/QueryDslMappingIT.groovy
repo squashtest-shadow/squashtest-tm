@@ -31,8 +31,12 @@ import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
 import org.squashtest.tm.domain.campaign.QIterationTestPlanItem;
 import org.squashtest.tm.domain.execution.QExecution;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.jpql.ExtOps;
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
@@ -41,12 +45,20 @@ import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet;
+import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.Ops;
+import com.querydsl.core.types.Ops.AggOps;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.QBean;
+import com.querydsl.core.types.Ops.MathOps;
 import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
+import com.querydsl.jpa.JPAExpressions;
+import com.querydsl.jpa.JPASubQuery;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 
 import spock.unitils.UnitilsSupport;
@@ -59,6 +71,7 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 
 
 	static QTestCase tc = QTestCase.testCase
+	static QTestStep st = QTestStep.testStep
 	static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage
 	static QRequirementVersion v = QRequirementVersion.requirementVersion
 	static QRequirement r = QRequirement.requirement
@@ -83,133 +96,22 @@ class QueryDslMappingIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("QueryPlanner.dataset.xml")
-	def "should fetch test step ids using querydsl Qtypes"(){
+	def "should accept a long dereferencing until project.id"(){
 
 		given :
-		HibernateQuery q = new HibernateQuery()
-
-		QTestCase testCase = QTestCase.testCase
-		QTestStep allsteps = QTestStep.testStep
-
-		q.select(allsteps.id).from(testCase).join(testCase.steps, allsteps).where(testCase.id.eq(-1l))
-
+		HibernateQuery q = new HibernateQuery(getSession())
+		def tc = QTestCase.testCase
+		q.from(tc)
+				.where(tc.project.id.eq(-11111l))
+				.select(tc.id)
+		println q
 		when :
-		HibernateQuery attached = q.clone(getSession())
-		def res = attached.fetch();
+		def res = q.fetch()
 
 		then :
-		res as Set == [-11l, -12l, -13l] as Set
-
-	}
-
-
-
-	@DataSet("QueryPlanner.dataset.xml")
-	def "should fetch test step ids using join over dynamic path (instead of the natural way)"(){
-
-		given : "the building parts"
-
-		String tcAlias = "tc";
-		String stepAlias = "st";
-
-
-		EntityPathBase testcase = new QTestCase(tcAlias);
-		EntityPathBase tcsteps = new QTestStep(stepAlias);
-
-
-		PathBuilder stepjoin = new PathBuilder<>(TestCase.class, tcAlias)
-				.get("steps", TestStep.class);
-
-		PathBuilder stepid = new PathBuilder(TestStep.class, stepAlias).get("id");
-
-		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
-
-		and : "the assembly"
-
-		HibernateQuery q = new HibernateQuery();
-
-		q.from(testcase);
-
-		q.join(stepjoin, tcsteps);
-		q.select(stepid);
-		q.where(tcid.eq(-1l));
-
-		when :
-		HibernateQuery attached = q.clone(getSession())
-		def res = attached.fetch();
-
-		then :
-		res as Set == [-11l, -12l, -13l] as Set
-
-	}
-
-
-	@DataSet("QueryPlanner.dataset.xml")
-	def "should fetch step ids in an even less natural way"(){
-
-		given : "the building parts"
-
-		String tcAlias = "tc";
-		String stepAlias = "st";
-
-
-		EntityPathBase testcase = new EntityPathBase(TestCase.class, tcAlias);
-		EntityPathBase tcsteps = new EntityPathBase(TestStep.class, stepAlias);
-
-
-		PathBuilder stepjoin = new PathBuilder<>(TestCase.class, tcAlias)
-				.get("steps", TestStep.class);
-
-		PathBuilder stepid = new PathBuilder(TestStep.class, stepAlias).get("id");
-
-		PathBuilder tcid = new PathBuilder(TestCase.class, tcAlias).get("id");
-
-		and : "the assembly"
-
-		HibernateQuery q = new HibernateQuery();
-
-		q.from(testcase);
-
-		q.join(stepjoin, tcsteps);
-		q.select(stepid);
-		q.where(tcid.eq(-1l));
-
-		when :
-		HibernateQuery attached = q.clone(getSession())
-		def res = attached.fetch();
-
-		then :
-		res as Set == [-11l, -12l, -13l] as Set
-	}
-
-	@DataSet("QueryPlanner.dataset.xml")
-	def "should test the subquery mechanism"(){
-
-		given :
-		HibernateQuery baseQuery = new HibernateQuery()
-
-		baseQuery.from(r).distinct()
-				.join(r.versions, v)
-				.select(Projections.tuple(r.id))
-
-		and :
-		HibernateQuery subquery = new HibernateQuery()
-
-		subquery.from(r).join(r.versions, v).select(Projections.tuple(r.id)).groupBy(r.id).having(v.countDistinct().gt(2))
-
-		and :
-		baseQuery.where(r.id.in(subquery))
-
-		when :
-		HibernateQuery finalQuery = baseQuery.clone(getSession())
-
-		def res = finalQuery.fetch()
-		then :
-		res.collect{it.a} == [[-1l]]
+		res == [-1l]
 
 
 	}
-
-
 
 }

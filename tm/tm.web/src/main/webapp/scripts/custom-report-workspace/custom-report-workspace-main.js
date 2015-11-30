@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['tree', './cr-treemenu', './init-actions',
+define(['squash.translator','tree', './cr-treemenu', './init-actions',
         'squash/squash.tree-page-resizer', 'app/ws/squashtm.toggleworkspace',
         'milestone-manager/milestone-activation', 'milestones/milestones-tree-menu','./popups/init-all'],
-		function(tree, treemenu, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu,popups) {
+		function(translator,tree, treemenu, actions, resizer, ToggleWorkspace, mstoneManager, mstoneTreeMenu,popups) {
 
 
 	function initResizer(){
@@ -42,14 +42,20 @@ define(['tree', './cr-treemenu', './init-actions',
 		}
 	}
 
-
+  function initI18n() {
+    translator.load({
+      "date-format" : "squashtm.dateformat",
+      "label-never": "label.lower.Never"
+    });
+  }
 
 	function init(settings){
+    initI18n();
 		initResizer();
-		initTabbedPane();
+    initTabbedPane();
 		initMilestoneMenu();
 		ToggleWorkspace.init(settings.toggleWS);
-		tree.initWorkspaceTree(settings.tree);
+		tree.initCustomReportWorkspaceTree(settings.tree);
 		treemenu.init(settings.treemenu);
 		popups.init();
 		actions.init();

@@ -91,12 +91,12 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 			it.getId()
 		}
 		
-		ids == expectedChildrensIDs
+		ids as Set == expectedChildrensIDs as Set
 		
 		where:
 		
 		nodeID		 	|| 	 expectedChildrensIDs 	|	expectedSize
-		-1L				||	 [-2L]					|	1
+		-1L				||	 [-2L,-30L]				|	2
 		-2L				||	 [-3L,-4L,-5L]			|	3
 		
 	}
@@ -120,7 +120,7 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 		where:
 		
 		nodeID		 	|| 	 	expectedSize
-		-1L				||	 	2
+		-1L				||	 	3
 		-2L				||	 	4
 		-3L				||		1
 		
@@ -149,5 +149,18 @@ class CustomReportLibraryNodeIT extends DbunitServiceSpecification {
 		-4L				||				-2L			|		"Chart2"
 		-5L				||				-3L			|		"Chart3"
 	}
+	
+	def "should find binded charts in dashboard"(){
+		given :
+		CustomReportDashboard crd = findEntity(CustomReportDashboard.class, -1L)
+		
+		when :
+		def chartBindings = crd.getChartBindings()
+				
+		then :
+		chartBindings.size()==3
+		
+	}
+	
 	
 }

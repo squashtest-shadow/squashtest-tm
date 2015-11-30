@@ -41,24 +41,37 @@
 package org.squashtest.tm.web.internal.model.json;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import org.squashtest.tm.domain.chart.AxisColumn;
-import org.squashtest.tm.domain.chart.Filter;
-import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.EntityReference;
+import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.project.Project;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 @JsonAutoDetect
 public abstract class ChartDefinitionMixin {
 
-	@JsonDeserialize(contentAs = Filter.class)
-	private List<Filter> filters;
 
-	@JsonDeserialize(contentAs = AxisColumn.class)
-	private List<AxisColumn> axis;
+	@JsonDeserialize(contentAs = EntityReference.class)
+	private List<EntityReference> scope;
 
-	@JsonDeserialize(contentAs = MeasureColumn.class)
-	private List<MeasureColumn> measures;
+	@JsonIgnore
+	private Set<CustomReportChartBinding> chartBindings;
+
+	@JsonIgnore
+	public abstract CustomReportLibrary getCustomReportLibrary();
+
+	@JsonIgnore
+	public abstract Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities();
+
+	@JsonIgnore
+	private Project project;
 
 }

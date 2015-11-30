@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.chart;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 
-
 import java.util.Map;
 import java.util.Set;
 
@@ -62,6 +61,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		return (ChartDefinition)(session().get(ChartDefinition.class, id));
 	}
 
+
 	@Override
 	public Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes() {
 
@@ -70,7 +70,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 		Map<EntityType, Set<ColumnPrototype>> prototypes;
 
-		prototypes = factory.from(prototype).where(prototype.business.eq(true)).transform(groupBy(prototype.entityType).as(set(prototype)));
+		prototypes = factory.from(prototype).where(prototype.business.eq(true)).orderBy(prototype.id.asc())
+				.transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));
 
 		return prototypes;
 	}

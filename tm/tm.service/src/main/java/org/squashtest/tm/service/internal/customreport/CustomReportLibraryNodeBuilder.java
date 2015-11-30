@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.tree.TreeEntity;
@@ -29,7 +33,7 @@ import org.squashtest.tm.domain.tree.TreeEntity;
  * Implement {@link TreeEntityVisitor} if type dependent process is necessary
  * @author jthebault
  */
-public class CustomReportLibraryNodeBuilder {
+public class CustomReportLibraryNodeBuilder implements TreeEntityVisitor{
 
 	private CustomReportLibraryNode builtNode;
 	private CustomReportLibraryNode parentNode;
@@ -45,7 +49,33 @@ public class CustomReportLibraryNodeBuilder {
 		nameBuiltNode();
 		linkEntity();
 		linkToParent();
+		treeEntity.accept(this);
 		return builtNode;
+	}
+	
+	//--------------- SPECIFIC JOB TO EACH ENTITY TYPE --------------------
+	
+	@Override
+	public void visit(CustomReportFolder crf) {
+		linkToProject();
+	}
+
+	@Override
+	public void visit(CustomReportLibrary crl) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void visit(CustomReportDashboard crf) {
+		linkToProject();
+		
+	}
+
+	@Override
+	public void visit(ChartDefinition chartDefinition) {
+		linkToProject();
+		
 	}
 
 	//******************* PRIVATE STUFF *******************************//
@@ -60,6 +90,12 @@ public class CustomReportLibraryNodeBuilder {
 	
 	private void linkToParent(){
 		parentNode.addChild(builtNode);
-		builtNode.setLibrary(parentNode.getLibrary());
+		builtNode.setLibrary(parentNode.getCustomReportLibrary());
 	}
+	
+	private void linkToProject(){
+		treeEntity.setProject(parentNode.getCustomReportLibrary().getProject());
+	}
+
+	
 }

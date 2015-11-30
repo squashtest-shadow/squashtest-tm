@@ -121,13 +121,36 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
         });
       },
 
+      //Only for forcing router to reload page after updates on selected node
+      //To navigate inside workspace and have a correct history please use router.navigateTo()
+      showNodeDetails : function (nodeType,nodeId) {
+        switch (nodeType) {
+          case "drive":
+            showLibraryDetails(nodeId);
+            break;
+          case "folder":
+            showFolderDetails(nodeId);
+            break;
+          case "dashboard":
+            showDashboardDetails(nodeId);
+            break;
+          case "chart":
+            showChartDetails(nodeId);
+            break;
+          default:
+
+        }
+      },
+
       //Will clean the contextual part and restore the contextual div
       cleanContextContent : function () {
         if (this.activeView!==null) {
+          squashtm.app.wreqr.off('dropFromTree');
           this.activeView.remove();
+          this.activeView = null;
         }
         //recreating the context div to allow new view to target the context div as el
-        $("#contextual-content-wrapper").html("<div id='contextual-content'></div>");
+        $("#contextual-content").html("<div id='contextual-content-wrapper' style='height: 100%; width:98%; overflow: auto;'></div>");
       }
     });
 

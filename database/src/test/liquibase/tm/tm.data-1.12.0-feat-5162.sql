@@ -7,6 +7,8 @@
 --
 --
 
+Insert into ATTACHMENT_LIST(ATTACHMENT_LIST_ID) values (9000);
+
 insert into CAMPAIGN_LIBRARY_NODE(NAME, CREATED_BY, CREATED_ON, ATTACHMENT_LIST_ID) values
 ('feat-5162-campaign', 'liquibase', '2015-08-21', (select max(ATTACHMENT_LIST_ID) from ATTACHMENT_LIST));
 

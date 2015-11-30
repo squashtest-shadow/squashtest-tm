@@ -18,50 +18,188 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scopeStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView" ], function($, Backbone,
-		router, EntityStepView, ScopeStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView) {
+define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./entityStepView", "./filterStepView", "./typeStepView", "./axisStepView", "./previewStepView", "./sideView", "./attributeStepView", "jquery.squash.togglepanel", "jquery.squash.confirmdialog" ], function($, Backbone,
+		router, translator, EntityStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
-
+	
+	var validation = 
+		[{
+			name : "entity",
+			validationParam : "selectedEntity"
+		},{
+			name :"attributes",
+			validationParam : "selectedAttributes"
+		},{
+			name :"axis",
+			validationParam : "operations"
+		},{
+			name :"filter",
+			validationParam : "filtered"
+		},
+		
+		];
+	var steps = [{
+		name : "entity",
+		prevStep : "",
+		nextStep : "attributes",
+		viewTitle : "chart.wizard.creation.step.entity",
+		stepNumber : 1,
+		buttons : ["next"],
+		clickable : true
+	}, {
+		name : "attributes",
+		prevStep : "entity",
+		nextStep : "filter",
+		viewTitle : "chart.wizard.creation.step.attributes",
+		stepNumber : 2,
+		neededStep : ["entity"],
+		buttons : ["previous", "next"],
+		clickable : true
+	},{
+		name : "filter",
+		prevStep  : "attributes",
+	    nextStep : "axis",
+		viewTitle : "chart.wizard.creation.step.filter",
+		stepNumber : 3,
+		neededStep : ["entity", "attributes"],
+		buttons : ["previous", "next"],
+		clickable : true
+	}, {
+		name : "axis",
+		prevStep : "filter",
+		nextStep : "type",
+		viewTitle : "chart.wizard.creation.step.axis",
+		stepNumber : 4,
+		neededStep : ["entity", "attributes"],
+		buttons : ["previous", "next"],
+		clickable : true
+	},{
+		name : "type",
+		prevStep : "axis",
+		nextStep : "preview",
+		viewTitle : "chart.wizard.creation.step.type",
+		stepNumber : 5,
+		neededStep : ["entity", "attributes", "axis"],
+		buttons : ["previous", "generate"],
+		clickable : true
+	
+	},{
+		name : "preview",
+		prevStep : "type",
+		nextStep : "",
+		viewTitle : "chart.wizard.creation.step.preview",
+		stepNumber : 6,
+		neededStep : ["entity", "attributes", "axis"],
+		buttons : ["previous", "save"],
+		clickable : false
+	}
+	];
+	
+	
 	var wizardView = Backbone.View.extend({
 		el : "#wizard",
 		initialize : function(options) {
+		
 			this.model = options.model;
-			this.steps = options.steps;
+			this.model.set({
+				steps: steps,
+			    perimSelect :[{text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}, {text:"label.requirements" , name:"REQUIREMENT"}],
+				validation : validation
+			});
+			this.loadI18n();
 		},
-
-		showEntityStep : function(wizrouter) {
+		
+		events : {
+			"click #next" : "navigateNext",
+			"click #previous" : "navigatePrevious",
+		    "click #generate" : "generate",
+			"click #save" : "save"
+	
+		},
+		
+	
+		
+		navigateNext : function (){
+			this.currentView.navigateNext();
+		},
+		
+		navigatePrevious : function (){
+			this.currentView.navigatePrevious();
+		},
+		
+		generate : function (){
+			this.currentView.generate();
+		},
+		save : function() {
+			this.currentView.save();
+		},
+		
+		loadI18n : function (){
+			
+			var chartTypes = this.addPrefix(this.model.get("chartTypes"), "chartType.");
+			var entityTypes = this.addPrefix(_.keys(this.model.get("entityTypes")), "entityType.");
+			var operation = this.addPrefix(_.uniq(this.flatten(this.model.get("dataTypes"))), "operation.");
+			var column = this.addPrefix(_.pluck(this.flatten(this.model.get("columnPrototypes")), "label") ,"column.");
+			
+			var keys = chartTypes.concat(entityTypes, operation, column);
+			
+			var result = this.addPrefix(keys, "chart.");
+		
+			translator.load(result);
+			
+		},
+		
+		flatten : function (col) {		
+			return _.reduce(col, function(memo, val) {return memo.concat(val);}, []);			
+		},
+		
+		addPrefix : function(col, prefix){
+			return _.map(col, function (obj){
+				return prefix + obj;
+			});
+			
+		},
+		
+		showSideView : function(){
+			this.resetSideView();
+			this.currentSideView = new SideView(this.model);
+		},
+		
+		showNewStepView : function (View, wizrouter){	
+			if (this.currentView !== undefined) {
+			this.currentView.updateModel();
+			}
+			
 			this.resetView();
-			this.currentView = new EntityStepView(this.model, wizrouter);
-
+			this.currentView = new View(this.model, wizrouter);
+			this.showSideView();
 
 		},
-		showScopeStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new ScopeStepView(this.model, wizrouter);
+		
+		showEntityStep : function(wizrouter) {			
+			this.showNewStepView(EntityStepView, wizrouter);
 		},
-
+		
 		showFilterStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new FilterStepView(this.model, wizrouter);
-
+			this.showNewStepView(FilterStepView, wizrouter);
 		},
 
 		showTypeStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new TypeStepView(this.model, wizrouter);
+			this.showNewStepView(TypeStepView, wizrouter);
 		},
 		
 		showAxisStep : function(wizrouter) {
-			this.resetView();
-			this.currentView = new AxisStepView(this.model, wizrouter);
+			this.showNewStepView(AxisStepView, wizrouter);
 		},
 
 		showPreviewStep :  function(wizrouter) {
-			this.resetView();
-			this.currentView = new PreviewStepView(this.model, wizrouter);
+			this.showNewStepView(PreviewStepView, wizrouter);
 		},
 		
+		showAttributesStep : function(wizrouter){
+			this.showNewStepView(AttributeStepView, wizrouter);
+		},
 		resetView : function() {
 			console.log(this.model);
 			if (this.currentView !== undefined) {
@@ -69,6 +207,14 @@ define([ "jquery", "backbone", "workspace.routing", "./entityStepView", "./scope
 				$("#current-step-container").html('<span id="current-step" />');
 			}
 
+		},
+		
+		resetSideView : function() {
+		
+			if (this.currentSideView !== undefined) {
+				this.currentSideView.destroy_view();
+				$("#current-side-view-container").html('<span style="display : table; height:100%" id="side-view" />');
+			}
 		}
 
 	});
