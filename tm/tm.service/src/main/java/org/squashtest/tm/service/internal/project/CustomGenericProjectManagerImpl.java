@@ -209,11 +209,11 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		TestCaseLibrary tcl = new TestCaseLibrary();
 		project.setTestCaseLibrary(tcl);
 		session.persist(tcl);
-		
+
 		CustomReportLibrary crl = new CustomReportLibrary();
 		project.setCustomReportLibrary(crl);
 		session.persist(crl);
-		
+
 		//add the tree node for the CustomReportLibrary as for custom report workspace library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
@@ -479,48 +479,24 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 
 
-	// **************************** wizards section
+	// **************************** plugin section
 	// **********************************
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
+	public void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		library.enablePlugin(wizardId);
+		library.enablePlugin(pluginId);
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId) {
+	public void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId) {
 		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		library.disablePlugin(wizardId);
+		library.disablePlugin(pluginId);
 	}
 
-	@Override
-	// this information is read-only and public, no need for security
-	public Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId) {
-		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
-		if (binding != null) {
-			return binding.getProperties();
-		} else {
-			return new HashMap<String, String>();
-		}
-	}
 
-	@Override
-	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId,
-			Map<String, String> configuration) {
-
-		PluginReferencer<?> library = findLibrary(projectId, workspace);
-		if (!library.isPluginEnabled(wizardId)) {
-			library.enablePlugin(wizardId);
-		}
-
-		LibraryPluginBinding binding = library.getPluginBinding(wizardId);
-		binding.setProperties(configuration);
-	}
 
 	// ************************** status configuration section
 	// ****************************

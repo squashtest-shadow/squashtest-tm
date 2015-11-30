@@ -39,6 +39,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.api.plugin.EntityReference;
+import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -56,7 +58,7 @@ import org.squashtest.tm.service.testautomation.TestAutomationProjectFinderServi
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
-import org.squashtest.tm.web.internal.controller.project.WorkspaceWizardModel;
+import org.squashtest.tm.web.internal.controller.project.ProjectPluginModel;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -64,6 +66,8 @@ import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 @Controller
 @RequestMapping("/administration/projects")
 public class ProjectAdministrationController {
+	private static final String STATUS_ERROR = "ERROR";
+	private static final String STATUS_OK = "OK";
 	/**
 	 * Finder service for generic project. We manage here both projects and templates !
 	 */
@@ -80,7 +84,7 @@ public class ProjectAdministrationController {
 	private TestAutomationProjectFinderService taProjectFinderService;
 
 	@Inject
-	private WorkspaceWizardManager wizardManager;
+	private WorkspaceWizardManager pluginManager;
 
 	@Inject
 	private ServiceAwareAttachmentTableModelHelper attachmentsHelper;
@@ -148,46 +152,6 @@ public class ProjectAdministrationController {
 		return mav;
 	}
 
-
-
-
-	// ********************** Wizard administration section ************
-
-
-	@RequestMapping(value = "{projectId}/wizards")
-	public String getWizardsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model) {
-
-		GenericProject project = projectFinder.findById(projectId);
-
-		Collection<WorkspaceWizardModel> availableWizards = toWizardModel(wizardManager.findAll());
-
-		Collection<String> enabledWizards = new ArrayList<String>();
-		enabledWizards.addAll(project.getTestCaseLibrary().getEnabledPlugins());
-		enabledWizards.addAll(project.getRequirementLibrary().getEnabledPlugins());
-		enabledWizards.addAll(project.getCampaignLibrary().getEnabledPlugins());
-
-		model.addAttribute("availableWizards", availableWizards);
-		model.addAttribute("enabledWizards", enabledWizards);
-		model.addAttribute(RequestParams.PROJECT_ID, projectId);
-
-		return "project-tabs/workspace-wizards-tab.html";
-
-	}
-
-
-	private Collection<WorkspaceWizardModel> toWizardModel(Collection<WorkspaceWizard> wizards) {
-		Locale locale = LocaleContextHolder.getLocale();
-		List<WorkspaceWizardModel> output = new ArrayList<WorkspaceWizardModel>(wizards.size());
-
-		for (WorkspaceWizard wizard : wizards) {
-			WorkspaceWizardModel model = new WorkspaceWizardModel(wizard);
-			model.setType(internationalizationHelper.internationalize("label.Wizard", locale));
-			output.add(model);
-		}
-
-		return output;
-	}
-
 	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
 		Map<Long, String> comboDataMap = new HashMap<Long, String>();
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
@@ -197,5 +161,96 @@ public class ProjectAdministrationController {
 		return comboDataMap;
 
 	}
+
+
+	// ********************** Plugin administration section ************
+
+
+	@RequestMapping(value = "{projectId}/plugins")
+	public String getPluginsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model) {
+
+		GenericProject project = projectFinder.findById(projectId);
+
+		Collection<WorkspaceWizard> plugins = pluginManager.findAll();
+
+		Collection<String> enabledPlugins = new ArrayList<String>();
+		enabledPlugins.addAll(project.getTestCaseLibrary().getEnabledPlugins());
+		enabledPlugins.addAll(project.getRequirementLibrary().getEnabledPlugins());
+		enabledPlugins.addAll(project.getCampaignLibrary().getEnabledPlugins());
+
+		Collection<ProjectPluginModel> models = toPluginModel(projectId, plugins, enabledPlugins);
+
+		//model.addAttribute("plugins", models);
+		model.addAttribute("plugins", stubPluginModel());
+		model.addAttribute(RequestParams.PROJECT_ID, projectId);
+
+		return "project-tabs/plugins-tab.html";
+
+	}
+
+
+	private Collection<ProjectPluginModel> stubPluginModel(){
+
+		List<ProjectPluginModel> stubs = new ArrayList<>();
+
+		ProjectPluginModel ppm1 = new ProjectPluginModel();
+		ppm1.setIndex(1);
+		ppm1.setId("plugin-qui-marche");
+		ppm1.setEnabled(true);
+		ppm1.setType("gizmo");
+		ppm1.setName("coffee generator");
+		ppm1.setStatus("OK");
+		ppm1.setConfigUrl("/squash/projects/1/plugins/plugin-qui-marche/conf");
+
+
+		ProjectPluginModel ppm2 = new ProjectPluginModel();
+		ppm2.setIndex(2);
+		ppm2.setId("truc-bugge");
+		ppm2.setEnabled(false);
+		ppm2.setType("mozig");
+		ppm2.setName("plugin chiffrage");
+		ppm2.setStatus("ERROR");
+		ppm2.setConfigUrl("/squash/projects/1/plugins/plugin-chiffrage/conf");
+
+		stubs.add(ppm1);
+		stubs.add(ppm2);
+
+		return stubs;
+
+
+	}
+
+
+	private Collection<ProjectPluginModel> toPluginModel(long projectId, Collection<WorkspaceWizard> plugins, Collection<String> enabledPlugins) {
+		List<ProjectPluginModel> output = new ArrayList<ProjectPluginModel>(plugins.size());
+
+		int loop=1;
+		for (WorkspaceWizard plugin : plugins) {
+			ProjectPluginModel model = new ProjectPluginModel(plugin);
+
+			model.setIndex(loop++);
+
+			String id = plugin.getId();
+			if (enabledPlugins.contains(id)){
+				model.setEnabled(true);
+			}
+
+			// that should be refactored too once the API is updated
+			EntityReference ref = new EntityReference(EntityType.PROJECT, projectId);
+			try{
+				plugin.validate(ref);
+				model.setStatus(STATUS_OK);
+			}
+			catch(Exception anything){
+				model.setStatus(STATUS_ERROR);
+			}
+
+			output.add(model);
+		}
+
+		return output;
+	}
+
+
 
 }

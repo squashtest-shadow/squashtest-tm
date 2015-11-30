@@ -115,7 +115,7 @@ public class GenericProjectController {
 	private TestAutomationProjectFinderService testAutomationProjectFinder;
 
 	@Inject
-	private WorkspaceWizardManager wizardManager;
+	private WorkspaceWizardManager pluginManager;
 
 	@Inject
 	private TaskExecutor taskExecutor;
@@ -279,7 +279,7 @@ public class GenericProjectController {
 	public void deleteProject(@PathVariable long projectId) {
 		projectManager.deleteProject(projectId);
 	}
-	
+
 	@RequestMapping(value = "/description/{projectId}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public String getDescription(@PathVariable long projectId) {
@@ -398,43 +398,24 @@ public class GenericProjectController {
 
 	}
 
-	// ************************* wizards administration ***********************
+	// ************************* plugins administration ***********************
 
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/", method = RequestMethod.POST)
+	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.POST)
 	@ResponseBody
-	public void enableWizard(@PathVariable long projectId, @PathVariable String wizardId) {
-		WorkspaceWizard wizard = wizardManager.findById(wizardId);
-		projectManager.enableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
+	public void enablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
+		WorkspaceWizard wizard = pluginManager.findById(pluginId);
+		projectManager.enablePluginForWorkspace(projectId, wizard.getDisplayWorkspace(), pluginId);
 
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/", method = RequestMethod.DELETE)
+	@RequestMapping(value = PROJECT_ID_URL + "/plugins/{pluginId}", method = RequestMethod.DELETE)
 	@ResponseBody
-	public void disableWizard(@PathVariable long projectId, @PathVariable String wizardId) {
-		WorkspaceWizard wizard = wizardManager.findById(wizardId);
-		projectManager.disableWizardForWorkspace(projectId, wizard.getDisplayWorkspace(), wizardId);
+	public void disablePlugin(@PathVariable long projectId, @PathVariable String pluginId) {
+		WorkspaceWizard plugin = pluginManager.findById(pluginId);
+		projectManager.disablePluginForWorkspace(projectId, plugin.getDisplayWorkspace(), pluginId);
 	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	@ResponseBody
-	public Map<String, String> getEnabledWizardProperties(@PathVariable(RequestParams.PROJECT_ID) long projectId,
-			@PathVariable("wizardId") String wizardId) {
-		WorkspaceWizard wizard = wizardManager.findById(wizardId);
-		Map<String, String> conf = wizard.getProperties();
-		Map<String, String> configuration = projectManager.getWizardConfiguration(projectId,
-				wizard.getDisplayWorkspace(), wizardId);
-		conf.putAll(configuration);
-		return conf;
-	}
 
-	@RequestMapping(value = PROJECT_ID_URL + "/wizards/{wizardId}/configuration", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
-	@ResponseBody
-	public void setEnabledWizardProperties(@PathVariable(RequestParams.PROJECT_ID) long projectId,
-			@PathVariable("wizardId") String wizardId, @RequestBody Map<String, String> configuration) {
-		WorkspaceWizard wizard = wizardManager.findById(wizardId);
-		wizard.validate(new EntityReference(EntityType.PROJECT, projectId), configuration);
-		projectManager.setWizardConfiguration(projectId, wizard.getDisplayWorkspace(), wizardId, configuration);
-	}
 
 	// ********************** other stuffs *****************************
 

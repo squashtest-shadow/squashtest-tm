@@ -1696,6 +1696,7 @@ squashtm.action.exception.execution.has.no.steps                    = L'ex\u00E9
 squashtm.action.exception.execution.was.deleted                     = L\u2019ex\u00E9cution que vous souhaiter consulter \u00E0 \u00E9t\u00E9 supprim\u00E9e 
 squashtm.action.exception.forbiddenexecutioncreate.label            = Ce cas de test ne vous est pas assign\u00E9 et vous n'avez pas suffisamment de droits pour l'ex\u00E9cuter.
 squashtm.action.exception.illegalrequirementmodification.label      = Impossible de modifier cette exigence : son statut ne le permet pas.
+squashtm.action.exception.illegalrequirementversioncreation.label   = Cette exigence est synchronis\u009e et ne peut pas avoir plus d'une version.
 squashtm.action.exception.import.column.header.label                = Impossible d'importer le fichier : une ent\u00EAte de colonne obligatoire est manquante.
 squashtm.action.exception.impossiblerequirementsuppression.label    = Impossible de supprimer l'exigence : l'une de ses sous-exigences ne peut pas \u00EAtre renomm\u00E9e \u00E0 cause de sont statut, ce qui entra\u00EEnerait un conflit de nom une fois qu'elle sera remont\u00E9e d'un niveau. Veuillez r\u00E9soudre pr\u00E9emptivement les conflits de nom \u00E9ventuels avant de retenter la suppression.
 squashtm.action.exception.login.doesnt.exist.label                  = Ce login ne correspond \u00E0 aucun utilisateur.

@@ -23,7 +23,7 @@ define([ "./project-info/project-info-manager" ], function(infoManager) {
 	return {
 		projectInfo : {
 			initUserPermissions : infoManager.initUserPermissions,
-			initWizardsTab : infoManager.initWizardsTab
+			initPluginsTab : infoManager.initPluginsTab
 		}
 	};
 });
