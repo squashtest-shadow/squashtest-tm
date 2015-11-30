@@ -25,7 +25,6 @@
 
 
 {{#*inline "filter"}}
-<br />
 
 <div style="display: table-column; width: 20%;float:left">
 {{#equal this.columnType "CUF"}}
@@ -34,19 +33,20 @@
 {{i18n this.label prefix="chart.column."}}
 {{/equal}}
 </div>
-<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}" style="width: 120px;">
+<select id="operations-operation-select-{{id}}" class="operations-operation-select" name="{{id}}" style="display: table-column; width: 120px;float:left">
 {{#each  operations}}  
    
    {{!--<![CDATA[--}}
 <option value="{{this}}" 
 {{#equal this "NONE"}} selected="selected" {{/equal}}
+{{#equal this "BY_DAY"}} selected="selected" {{/equal}}
  >  
     {{i18n this prefix="chart.operation."}}
 </option>
  {{!--]]>--}}
 {{/each}}   
 </select>
-
+<br class="unsnap"/>
 {{/inline}}
 
 <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.axis}"/>
@@ -64,13 +64,15 @@
 </div> 
 
 <div class="tg-body">
+
 {{#each  this}}  
 {{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
 {{#if (contains ../../attributes.selectedAttributes id)}} 
 {{> filter  operations=(intersect (union (lookup ../../attributes.columRoles "MEASURE") (lookup ../../attributes.columRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
 {{/if}}
 {{/if}}
-{{/each}}  
+{{/each}}
+
  </div>  
   </div>  
  {{/if}}
