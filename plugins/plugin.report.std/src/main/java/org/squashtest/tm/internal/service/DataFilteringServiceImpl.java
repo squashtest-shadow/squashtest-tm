@@ -38,6 +38,7 @@ public class DataFilteringServiceImpl implements DataFilteringService {
 	@Inject
 	private PermissionEvaluationService permissionService;
 
+	@Inject
 	private ProjectFilterModificationService userFilterService;
 
 	@Override
