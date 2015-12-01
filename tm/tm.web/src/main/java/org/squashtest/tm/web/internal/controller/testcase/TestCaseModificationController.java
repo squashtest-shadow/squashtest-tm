@@ -63,7 +63,6 @@ import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -73,6 +72,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -673,7 +673,7 @@ public class TestCaseModificationController {
 		// ============================BUGTRACKER
 		if (testCase.getProject().isBugtrackerConnected()) {
 			Project project = testCase.getProject();
-			BugTrackerStatus status = bugTrackersLocalService.checkBugTrackerStatus(project.getId());
+			AuthenticationStatus status = bugTrackersLocalService.checkBugTrackerStatus(project.getId());
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(project
 					.findBugTracker());
 			descriptor.setLocale(locale);
@@ -682,7 +682,7 @@ public class TestCaseModificationController {
 			mav.addObject("bugTrackerStatus", status);
 
 			List<DecoratedIssueOwnership> decoratedIssues = Collections.emptyList();
-			if (status.equals(BugTrackerStatus.BUGTRACKER_READY)) {
+			if (status.equals(AuthenticationStatus.AUTHENTICATED)) {
 				try {
 					List<IssueOwnership<RemoteIssueDecorator>> issuesOwnerShipList = Collections.emptyList();
 					issuesOwnerShipList = bugTrackersLocalService.findIssueOwnershipForTestCase(testCaseId);

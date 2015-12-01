@@ -41,13 +41,14 @@
 	parameters : 
 		- entity : the instance of the entity we need to display current bugs and possible add new ones.
 		- entityType : a String being the REST name of that kind of resource, like in the regular workspaces.
+        - bugTracker : the bugtracker
 		- interfaceDescriptor : an instance of BugTrackerInterfaceDescriptor that will provide the bug report dialog
 			with the proper labels  
 		- panelStyle : must be either string among : 'toggle', 'fragment-tab', or null or empty
-		- bugTrackerStatus : a BugTrackerStatus that will set the initial status of that component :
+		- bugTrackerStatus : a AuthenticationStatus that will set the initial status of that component :
 				* UNDEFINED : never happens, since the controller is not supposed to return the view in the first place,
-				* NEEDS_CREDENTIALS : a label will prompt the user for login,
-				* READY : nothing special, the component is fully functional.
+				* NON_AUTHENTICATED : a label will prompt the user for login,
+				* AUTHENTICATED : nothing special, the component is fully functional.
 		- useParentContextPopup : if false, will create a popup as usual. If true, will use instead a popup accessible in the parent context 
 								(that's how the ieo-execute-execution.jsp works)
         - tableEntries : if not null, will be used as data for table init instead of ajax call. The data must be valid datatable aaData 
@@ -82,13 +83,11 @@
 <%-- ------------------- urls ----------------- --%>
 
 <s:url var="bugTrackerServiceUrl" value="/bugtracker" />
-<s:url var="bugTrackerStatusUrl" value="/bugtracker/status"/>
 <s:url var="entityUrl" value="/bugtracker/{entityType}/{id}">
 	<s:param name="entityType" value="${entityType}" />
 	<s:param name="id" value="${entity.id}" />
 </s:url>
 
-<s:url var="credentialsUrl" value="/bugtracker/credentials" />
 
 <s:url var="tableUrl" value="/bugtracker/{entityType}/{id}/known-issues">
 	<s:param name="entityType" value="${entityType}" />
@@ -133,30 +132,8 @@
 
 <%--------------------------------- /login code ------------------------------------%>
 
-<%--
-	the two first functions are actually pointers to the callback we need to use when the login popup is invoked.
-	Indeed, one can login when :
-		- reporting an issue before being logged in,
-		- spontaneously login in if the user wants to check the known issues.
-		
-	Those pointers will be set accordingly prior to open the popup.
-	
-	
-	The rest is just standard functions.
-
- --%>
 
 <script type="text/javascript">
-	function loginSuccess() {
-	};
-	function loginFail() {
-	};
-
-	function invokeCredentialPopup(fnSuccessHandler, fnFailureHandler) {
-		loginSuccess = fnSuccessHandler;
-		loginFail = fnFailureHandler;
-		$("#issue-dialog-credentials").formDialog("open");
-	}
 
 	function refreshIssueTable() {
 		var dataTable = $('#issue-table').dataTable();
@@ -164,33 +141,16 @@
 	}
 
 	function enableIssueTable() {
-		$("#issue-panel-knownissues-div").removeClass(
-				"issue-panel-knownissues-displayed");
-		$("#issue-panel-knownissues-div").addClass(
-				"issue-panel-knownissues-notdisplayed");
+		$("#issue-panel-knownissues-div").removeClass("issue-panel-knownissues-displayed");
+		$("#issue-panel-knownissues-div").addClass("issue-panel-knownissues-notdisplayed");
 		$("#issue-panel-known-issue-table-div").removeClass("not-displayed");
 	}
-</script>
-
-
-<%-- internal logic for loging in when one want to check the issues. Main function : checkAndReloadIssue.
-	due to the asynchronous nature of ajax calls the logic depends heavily on ajax callbacks.
-	Depending on the success of a call, one of another function will be called and the logic 
-	continues there.
- --%>
-
-<script type="text/javascript">
+	
 	function loginSuccessCheckIssues() {
 		enableIssueTable();
 		refreshIssueTable();
 	}
-
-	function loginAbort() {
-		return false;
-	}
-
 </script>
-
 
 
 <%-- internal logic for reporting an issue. Main function : checkAndReportIssue
@@ -205,43 +165,16 @@
 	--%>
 	function checkAndReportIssue(bugtrackerReportSettings) {
 
-		//first step : check
-		$.ajax({
-			url : "${bugTrackerStatusUrl}",
-			type : "GET",
-			data : {"projectId": ${project.id} },
-			dataType : "json",
-			success : function(jsonCheck) {handleBugTrackerStatus(jsonCheck, bugtrackerReportSettings);}
-		});
-	}
-
-	function handleBugTrackerStatus(jsonCheck, bugtrackerReportSettings) {
-		if (jsonCheck.status == "bt_undefined") {
-<%-- the bugtracker is undefined. Why the hell should we log in ?--%>
-	return false;
-		}
-
-		if (jsonCheck.status == "needs_credentials") {
-			invokeCredentialPopup(function() {loginSuccessOpenReport(bugtrackerReportSettings);}, abortReport);
-
-			return false;
-		}
-
-		if (jsonCheck.status == "ready") {
+		var btmanager = squashtm.workspace.authmanagers[${bugTracker.id}];
+		
+		console.log("check and report");
+		
+		btmanager.authenticate()
+		.done(function(){
+			console.log("calling back");
 			invokeBugReportPopup(bugtrackerReportSettings);
-			return false;
-		}
+		});
 
-	}
-
-	function abortReport() {
-		return false;
-	}
-
-	function loginSuccessOpenReport(bugtrackerReportSettings) {
-		enableIssueTable();
-		refreshIssueTable();
-		 invokeBugReportPopup(bugtrackerReportSettings);
 	}
 
 	function invokeBugReportPopup(bugtrackerReportSettings) {
@@ -265,9 +198,21 @@
 
 <script type="text/javascript">
 require([ "common" ], function() {
-  require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "jquery.squash.formdialog" ], 
-      function($,_,  storage, basicwidg, eventBus) {
-    $(function() {    
+  require([ "jquery","underscore", "workspace.storage", "squash.basicwidgets", "workspace.event-bus", "serverauth/auth-manager", "jquery.squash.formdialog" ], 
+      function($,_,  storage, basicwidg, eventBus, authmanagers) {
+    
+	  $(function() {    
+		  var btId = ${bugTracker.id};
+
+		  var btmanager = authmanagers.get({
+			 serverId : btId,
+			 status : "${bugTrackerStatus}"
+		  })
+		  
+		  eventBus.onContextual('authmanager.authentication', function(){
+			  loginSuccessCheckIssues();
+		  });
+		  
       basicwidg.init();
       <c:if test="${executable}">
         $("#issue-report-dialog-openbutton").click(function() {
@@ -279,38 +224,11 @@ require([ "common" ], function() {
           });
       </c:if>
 
-      
-      var credentialsDialog = $("#issue-dialog-credentials");
-      credentialsDialog.formDialog({width : 300});
-      
-      credentialsDialog.on('formdialogconfirm', function(){
 
-        var login = $("#dialog-issue-login").val();
-        var password = $("#dialog-issue-password").val();
-        $.ajax({
-          url : "${credentialsUrl}",
-          type : 'POST',
-          data : { login : login, password : password, bugTrackerId : ${bugTracker.id}},
-          dataType : 'json'
-        })
-        .success(function(){
-          credentialsDialog.formDialog('close');
-          loginSuccess();
-        });
-        
-      });
-      
-      credentialsDialog.on('formdialogcancel', function(){
-        $('#dialog-issue-login').val('');
-        $('#dialog-issue-password').val('');
-        credentialsDialog.formDialog('close');
-        loginFail();    
-      });
-      
       
       $("#issue-login-button").click(function() {
         $(this).removeClass("ui-state-focus ui-state-hover");
-        invokeCredentialPopup(loginSuccessCheckIssues, loginAbort);
+          btmanager.authenticate();
       });
       
       
@@ -357,7 +275,7 @@ require([ "common" ], function() {
 
 <%-- init section for issue-panel-knownissues-div --%>
 <c:choose>
-	<c:when test="${bugTrackerStatus == 'BUGTRACKER_NEEDS_CREDENTIALS'}">
+	<c:when test="${bugTrackerStatus == 'NON_AUTHENTICATED'}">
 		<c:set var="knownIssuesLabelInitCss"
 			value="issue-panel-knownissues-displayed" />
 		<c:set var="knownIssuesTableInitCss" value="class=\"not-displayed\"" />
@@ -415,30 +333,5 @@ require([ "common" ], function() {
 
 
 <%--------------------------------- login code ------------------------------------%>
-
-<f:message var="credentialsTitle" key="dialog.issue.credentials.title" />
-<div id="issue-dialog-credentials" class="popup-dialog not-displayed" title="${credentialsTitle}" >
-
-  <div>
-    <comp:error-message forField="bugtracker" />
-    <div class="centered">
-    	<div class="display-table">
-    		<div class="display-table-row">
-    			<div class="display-table-cell"><label><f:message key="dialog.issue.credentials.labels.username"/></label></div>
-    			<div class="display-table-cell"><input type="text" id="dialog-issue-login" /></div>
-    		</div>
-    		<div class="display-table-row">
-    			<div class="display-table-cell"><label><f:message key="dialog.issue.credentials.labels.password"/></label></div>
-    			<div class="display-table-cell"><input type="password"  id="dialog-issue-password"/></div>	
-    		</div>
-    	</div>
-    </div>
-  </div>
-  
-  <div class="popup-dialog-buttonpane">
-    <input type="button" value="${loginLabel}"  data-def="evt=confirm, mainbtn"/>
-    <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-  </div>  
-</div> 
 
 

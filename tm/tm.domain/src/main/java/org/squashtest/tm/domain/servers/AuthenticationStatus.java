@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.bugtracker;
+package org.squashtest.tm.domain.servers;
 
-public enum BugTrackerStatus {
-	BUGTRACKER_UNDEFINED,
-	BUGTRACKER_NEEDS_CREDENTIALS,
-	BUGTRACKER_READY;
+public enum AuthenticationStatus {
+	NON_AUTHENTICATED, 	// User is not authenticated
+	AUTHENTICATED,		// User is authenticated
+	UNDEFINED;			// There's no host anyway
 }

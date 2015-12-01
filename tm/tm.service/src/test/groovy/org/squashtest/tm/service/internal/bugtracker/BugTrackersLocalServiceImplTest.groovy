@@ -32,13 +32,13 @@ import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.tm.bugtracker.definition.RemoteIssue
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
-import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.squashtest.tm.service.internal.repository.IterationDao
@@ -262,10 +262,10 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		remoteService.isCredentialsNeeded(bugTracker) >> true
 
 		when :
-		def status = service.checkBugTrackerStatus(project)
+		def status = service.checkAuthenticationStatus(project)
 
 		then :
-		status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS
+		status == AuthenticationStatus.NON_AUTHENTICATED
 	}
 
 
@@ -279,10 +279,10 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		remoteService.isCredentialsNeeded(bugTracker) >> false
 
 		when :
-		def status = service.checkBugTrackerStatus(project)
+		def status = service.checkAuthenticationStatus(project)
 
 		then :
-		status == BugTrackerStatus.BUGTRACKER_READY
+		status == AuthenticationStatus.AUTHENTICATED
 	}
 
 

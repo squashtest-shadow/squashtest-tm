@@ -228,6 +228,9 @@ define([], function(){
 		
 		// project plugins
 		'project-plugins' : 				root + '/generic-projects/{\\d+}/plugins/{[^\\/]+}',
+		
+		// server authentication
+		'servers.authentication' :			root + '/servers/{\\d+}/authentication',
 
 		// helper methods
 		buildURL : function(){
