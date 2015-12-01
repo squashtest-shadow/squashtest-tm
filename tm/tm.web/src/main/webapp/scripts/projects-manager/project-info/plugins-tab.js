@@ -26,12 +26,6 @@ define(
 
 			translator.load(["label.Enabled", "label.disabled", "label.Configure"]); 
 			  
-			  var aler = window.alert;
-			window.alert = function(){
-				console.log('frack');
-				aler.apply(this, arguments)
-			}
-
 		  
 			function configureSwitch($row, data){
 				var switchcell = $row.find('.plugin-enabled');
@@ -132,6 +126,6 @@ define(
 					configureStyle($row, data);
 				});
 			
-			}
+			};
 
 });
