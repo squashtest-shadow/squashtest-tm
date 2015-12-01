@@ -547,10 +547,24 @@ p {
 	background-repeat : no-repeat;
 }
 
+
 .icon-chart-campaign {
 	background-image : url(../images/Icone_Campagne.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
+
+
+.icon-chart-requirement-version {
+	background-image : url(../images/Icone_RequirementVersion.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+.icon-chart-execution {
+	background-image : url(../images/Icone_Execution.png); /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+}
+
+
 
 .illustration-graph {
 	background-image : url(../images/Illustration_Graph.png); /** sprite-ref: sprites-icons; */
