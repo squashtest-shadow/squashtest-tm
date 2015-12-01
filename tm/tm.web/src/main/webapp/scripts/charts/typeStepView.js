@@ -362,7 +362,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 		    case "PIE" :
 		    	
-		    	var entityType = axis1.column.specializedType.entityType == "REQUIREMENT_VERSION" ?  "REQUIREMENT" : axis1.column.specializedType.entityType;
+		    	var entityType = axis1.column.specializedType.entityType;
 		    	measure = {};
 		    	measure.operation = "COUNT";
 		    	measure.column = _.chain(this.model.get("columnPrototypes"))
