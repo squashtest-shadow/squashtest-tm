@@ -20,29 +20,27 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import net.sf.cglib.core.CollectionUtils;
-import net.sf.cglib.core.Predicate;
-
+import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.Operation;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
-import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 
 /**
  * This class will apply filters on the query, see doc on ChartDataFinder for rules about
  * logical combination on filters.
- * 
+ *
  * @author bsiri
  *
  */
@@ -73,10 +71,10 @@ class FilterPlanner {
 	/**
 	 * <p>A given column may be filtered multiple time. This is represented by the
 	 * multiple {@link Filter} that target the same {@link ColumnPrototype}.</p>
-	 * 
+	 *
 	 * <p>All filters for a given prototype are ORed together,
 	 * then the ORed expressions are ANDed together.</p>
-	 * 
+	 *
 	 */
 	void modifyQuery(){
 

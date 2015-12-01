@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="#{tabbed_panel.search.pane.result.campaign.label}">Campaign Result</title>
@@ -50,7 +50,7 @@
       title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-    }, 
+    },
     menuBarConf: {
         boxSelector: "#menu-toggle-filter-ckbox",
         url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
@@ -58,7 +58,7 @@
         enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
         disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
         enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-      }, 
+      },
   	campaignWorkspaceConf: {
 				tree : {
 					model : /*[[${ rootModel }]]*/ '',
@@ -95,7 +95,7 @@
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{workspace.campaign.title}">Espace campagne</h2> 
+        <h2 th:text="#{workspace.campaign.title}">Espace campagne</h2>
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -108,12 +108,12 @@
     </div>
     <div id="sub-page" class="sub-page" >
 			<div id="sub-page-header" class="sub-page-header">
-			
+
 				<div id="sub-page-title" class="sub-page-title">
-					<h2 th:if="!${associateResult}" th:text="#{title.search.campaign.result}">Recherche des exigences</h2> 
-					<h2 th:if="${associateResult}" th:text="#{title.search.campaign.result.assoc}">Recherche des exigences</h2> 
+					<h2 th:if="!${associateResult}" th:text="#{title.search.campaign.result}">Recherche des exigences</h2>
+					<h2 th:if="${associateResult}" th:text="#{title.search.campaign.result.assoc}">Recherche des exigences</h2>
 				</div>
-				
+
 				<div id="sub-page-buttons" class="sub-page-buttons">
 				  	<input type="button" th:if="${associateResult}"
 							th:value="#{label.AssociateSelection}" id="associate-selection-button"
@@ -123,58 +123,58 @@
 							th:value="#{label.AssociateAll}" id="associate-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
-                            onclick="document.location.href=squashtm.workspace.backurl"/>	
+				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"
+                            onclick="document.location.href=squashtm.workspace.backurl"/>
 				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"
-                            onclick="document.location.href=squashtm.workspace.backurl"/>		
+                            onclick="document.location.href=squashtm.workspace.backurl"/>
 				</div>
-				
+
 				<div class="unsnap"></div>
 			</div>
-			
+
 			<div id="sub-page-content" class="sub-page-content">
     <div class="fragment-body-without-upper-margin" id="campaign-search-results">
-   
+
    <div id="search-toolbar" class="toolbar-class toolbar ui-corner-all">
 			<div class="left-buttons">
-			<input type="button" 
+			<input type="button"
 							th:value="#{label.SelectAllForSelection}" id="select-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-			<input type="button" 
+			<input type="button"
 							th:value="#{label.DeselectAll}" id="deselect-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-							
+
 			</div>
 						<input type="button" th:value="#{label.ModifySearch}"
 							id="modify-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 					
+							role="button" aria-disabled="false" />
 						<input type="button" th:value="#{label.NewSearch}"
 							id="new-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 						
+							role="button" aria-disabled="false" />
 						<input type="button" th:if="!${associateResult}" th:value="#{label.Modify}"
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 
+							role="button" aria-disabled="false" />
 						<input type="button" th:if="!${associateResult}" th:value="#{label.Add}"
 							id="add-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 
+							role="button" aria-disabled="false" />
 						<input type="button" th:if="!${associateResult}"
 							th:value="#{label.Export}" id="export-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />				
+							role="button" aria-disabled="false" />
 
 					<div class="unsnap"></div>
 	</div>
-				
+
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
 				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
 				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
-		
+
 				<div id="search-results">
 					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="campaign-search-result-table"
@@ -188,7 +188,7 @@
 									<th th:attr="data-def='map=campaign-name'"
 										th:text="#{label.Campaign}">campaign name</th>
 									<th th:attr="data-def='map=iteration-name'"
-										th:text="#{label.Iteration}">iteration name</th>		
+										th:text="#{label.Iteration}">iteration name</th>
 									<th th:attr="data-def='map=execution-id'"
 										th:text="#{label.execution}">execution id</th>
 									<th th:attr="data-def='map=execution-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode'"
@@ -200,7 +200,7 @@
 									<th th:attr="data-def='map=execution-executed-by'"
 										th:text="#{label.execution.lastRunBy}">executed by</th>
 									<th th:attr="data-def='map=execution-executed-on'"
-										th:text="#{label.execution.lastRunOn}">executed on</th>					
+										th:text="#{label.execution.lastRunOn}">executed on</th>
 									<th th:attr="data-def='map=execution-datasets'"
 										th:text="#{label.datasets}">execution datasets</th>
 									<th th:if="!${associateResult}" th:attr="data-def='map=empty-opentree-holder'"></th>
@@ -210,7 +210,7 @@
 							<tbody>
 							</tbody>
 						</table>
-						
+
 						    <div id="shortcut-exec-menu-template" class="not-displayed">
 						      <div class="buttonmenu execute-arrow cursor-pointer"></div>
 						      <ul style="display: none">
@@ -224,7 +224,7 @@
 						        </li>
 						      </ul>
 						    </div>
-    
+
 					</div>
 				</div>
 			</div>
@@ -235,9 +235,9 @@
 				class="not-displayed popup-dialog" th:title="#{label.Modify}">
 				<div class="main">
                     <div id="modify-search-result-dialog-project-conf-warning"
-                         class="not-displayed" 
+                         class="not-displayed"
                          th:text="#{message.search.modify.differentInfolists}">
-                         
+
                       Warning : hey, something's wrong !
                     </div>
 					<table id="modify-search-result-dialog-table">
@@ -254,27 +254,27 @@
 						type="button" value="cancel" th:value="#{label.Cancel}" />
 				</div>
 			</div>
-			
+
 			<!-- Get another popup to add the selected execution in an existing iteration and also allow user to add a new iteration where they want -->
-			
+
 			<div id="add-new-execution-dialog" style="height: 200px!important"
 				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" >
 
-            
+
 				<div class="main">
 	         	 	<div id="tree-pane">
-	          
+
 			            <!--  ____________________HTML TREE__________________________ -->
 			            <!-- 	<tree:_html-tree treeId="tree" /> -->
-			
-			        
+
+
 			               <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
-			               
+
 			                <div th:remove="tag"
 			              th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
-			              
-			              
-			
+
+
+
 			            <!-- /	_________________HTML TREE___________________ -->
 			          </div>
 					</div>
@@ -284,11 +284,11 @@
 			        <input type="button" th:value="#{label.Confirm}" value="confirm"
           data-def="evt=confirm, mainbtn=confirm, state=confirm" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
-       
+
 				</div>
 			</div>
-			
-			
+
+
 			</div></div>
       </div>
     </div>

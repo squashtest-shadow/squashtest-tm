@@ -20,14 +20,14 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
   <title th:text="#{title.infoListManager}">User lists manager</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  
+
   <style th:include="admin/admin-subpage.frag :: subpage-css" th:remove="tag"></style>
-  
+
   <script th:remove="all" type="text/javascript" src="../../scripts/lib/jquery/jquery-1.8.3.min.js"></script>
   <script th:remove="all" type="text/javascript" src="../../js/thymol.js"></script>
   <script type="text/javascript" th:inline="javascript">
@@ -38,46 +38,46 @@
       localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
       locale : /*[[ #{squashtm.locale} ]]*/"fr",
     };
-    
-    
-    
+
+
+
   </script>
   <script type="text/javascript" th:inline="javascript" th:include="fragments-utils/various-headers :: env-setup"/>
-  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>  
-   <script th:src="@{/scripts/require-min.js}"></script> 
-   
+  <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
+   <script th:src="@{/scripts/require-min.js}"></script>
+
    <style type="text/css">
     body{
       background-color : white;
     }
-    
+
     .chart-definition-field{
-      margin-bottom : 15px; 
+      margin-bottom : 15px;
     }
-    
+
     .chart-builder-area{
       margin-top : 100px;
       display : inline-block;
       width : 49%;
     }
-    
+
     .chart-display-area{
       margin-top : 100px;
       display : inline-block;
       width : 49%;
     }
-    
+
     #contextual-content{
       left : 20px;
     }
 
    </style>
   </head>
-  
+
   <body>
  <div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
 
-  <div id="workspace">  
+  <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
         <h2 th:text="#{workspace.test-case.title}">Espace Cas de tests</h2>
@@ -87,27 +87,27 @@
         <div class="unstyled-notification-pane" th:include="menubar.frag :: notification">NOTIFICATION</div>
       </div>
     </div>
-    
+
     <div id="contextual-content">
-  
+
         <div id="chart-display-area" class="chart-display-area">
-      
-          
+
+
         </div>
-  
+
     </div>
-    
+
     <div th:include="charts/rendering/chart-templates :: templates"></div>
-   
+
   </div>
-  
-  
-  
+
+
+
   <script type="text/javascript" th:inline="javascript">
 
     require(["common"], function(){
         require(["charts/rendering/charts-render-main"], function(main){
-			
+
         	$.ajax({
 				'type' : 'get',
 				'dataType' : 'json',
@@ -117,12 +117,12 @@
 			.success(function(json){
 				main.buildChart("#chart-display-area", json);
 			});
-			
+
 		});
     });
-    
+
   </script>
-  
+
   </body>
-  
+
 </html>

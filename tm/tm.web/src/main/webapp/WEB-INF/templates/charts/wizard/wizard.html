@@ -20,7 +20,7 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring3-3.dtd">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-transitional-thymeleaf-spring4-4.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -56,7 +56,7 @@
 	src="../../scripts/require.js"></script>
 <script th:remove="all" type="text/javascript"
 	src="../../scripts/common.js"></script>
-	
+
 <style type="text/css">
   	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
 	.jqplot-target-wrapper{ width: 800px; margin: auto;}
@@ -72,10 +72,10 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
-    	var pathname = window.location.pathname; 
+    	var pathname = window.location.pathname;
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
-    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",	
+    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
     	  	defaultInfoList : /*[[${defaultInfoLists}]]*/{},
 			testCaseImportance : /*[[${testCaseImportance}]]*/{},
 			testCaseStatus : /*[[${testCaseStatus}]]*/{},
@@ -91,10 +91,10 @@
     		  baseUrl: /*[[@{/scripts/}]]*/,
     	});
     	require(["common"], function(){
-    	    require(["charts/chartWizard"], function () {  
+    	    require(["charts/chartWizard"], function () {
     	    });
     	});
-    	
+
     /* ]]> */
     </script>
 
@@ -185,7 +185,7 @@
 				</div>
 
 <div id="sub-page-buttons" class="sub-page-buttons">
-					
+
 		<input type="button" class="sq-btn" id="back" value="Back"/>
 				</div>
 
@@ -202,18 +202,18 @@
 					<div id="wizard"
 						class="fragment-body ui-tabs ui-widget ui-widget-content ui-corner-all"
 						style="top: 0; background: 0; border: 0 none;  height: 100%;">
-					
-							
+
+
 									<div id="current-side-view-container"
 										style="    margin: 0; padding-left: 10px; width: 150px;height: 100%;      overflow: hidden;  background-color: white;">
 										<span style="display : table; height:100%; " id="side-view" />
 									</div>
-		
+
 	 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="margin-top: 0;top: 0; left: 170px; position: absolute;">
 
 							<h2 id="step-title" />
-							</div>							
-					
+							</div>
+
 
 	<div id="contextual-content" style="    margin-top: 0;
     position: absolute;
@@ -222,62 +222,62 @@
     left: 180px;
     padding-right: 10px;
         top: 35px;">
-						
-						
-							
-							
-							<span id="steps-view" /> 
-							<br /> 
+
+
+
+
+							<span id="steps-view" />
+							<br />
 							<br />
 							<div id="current-step-container" >
 								<span id="current-step" />
 							</div>
 
 						</div>
-						
+
 			<div style="border-top: black 1px solid;
     position: absolute;
     width: 100%;
     left: 170px;
-    bottom: 50px;"/>			
-						
-						
+    bottom: 50px;"/>
+
+
 						<div style=" position: fixed;
     bottom: 70px;
     right: 127px;  padding: 5px;">
-						
+
 
  <input type="button" class="sq-btn btn-sm" id="previous" value="Previous"
-           th:value="#{label.previous}" />  
-           
+           th:value="#{label.previous}" />
+
  <input type="button" class="sq-btn btn-sm" id="next" value="Next"
-           th:value="#{label.next}" />  
- 
+           th:value="#{label.next}" />
+
 <input type="button" class="sq-btn btn-sm" id="generate" value="Generate"
-           th:value="#{report.criteria.panel.button.generate.label}" />  
-                   
+           th:value="#{report.criteria.panel.button.generate.label}" />
+
 <input type="button" class="sq-btn btn-sm" id="save" value="save"
-           th:value="#{label.save}" />				
-						
+           th:value="#{label.save}" />
+
 					</div>
-						
-				
+
+
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-	
+
+
 	 <div id="back-popup" class="popup-dialog not-displayed" th:title="#{wizard.back.popup.title}">
 
-<span th:text="#{wizard.back.popup.message}"> </span> 
+<span th:text="#{wizard.back.popup.message}"> </span>
       <div class="popup-dialog-buttonpane">
         <input type="button" th:value="#{wizard.back.popup.confirm}" data-def="mainbtn, evt=confirm"/>
-        <input type="button" th:value="#{wizard.back.popup.cancel}" data-def="evt=cancel"/>    
+        <input type="button" th:value="#{wizard.back.popup.cancel}" data-def="evt=cancel"/>
       </div>
-  
+
     </div>
-	
+
 </body>
 </html>
