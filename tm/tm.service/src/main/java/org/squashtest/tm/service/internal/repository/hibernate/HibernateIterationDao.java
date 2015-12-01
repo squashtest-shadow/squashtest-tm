@@ -30,6 +30,9 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.collections.MultiHashMap;
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -479,6 +482,37 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		q.setParameterList("testCasesIds", testCasesIds, LongType.INSTANCE);
 		q.setParameterList("iterationsIds", iterationsIds, LongType.INSTANCE);
 		return q.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<Long> findVerifiedTcIdsInIterationsWithExecution(
+			List<Long> tcIds, List<Long> iterationsIds) {
+		if (tcIds.size()==0) {
+			return Collections.emptyList();
+		}
+		Query q = currentSession().getNamedQuery("iteration.findVerifiedAndExecutedTcIdsInIterations");
+		q.setParameterList("testCasesIds", tcIds, LongType.INSTANCE);
+		q.setParameterList("iterationsIds", iterationsIds, LongType.INSTANCE);
+		return q.list();
+	}
+
+	@Override
+	public MultiMap findVerifiedITPI(List<Long> tcIds,
+			List<Long> iterationsIds) {
+		if (tcIds.size()==0) {
+			return new MultiValueMap();
+		}
+		Query q = currentSession().getNamedQuery("iteration.findITPIByTestCaseGroupByStatus");
+		q.setParameterList("testCasesIds", tcIds, LongType.INSTANCE);
+		q.setParameterList("iterationsIds", iterationsIds, LongType.INSTANCE);
+		List<Object[]> itpis = q.list();
+		MultiMap result = new MultiValueMap();
+		for (Object[] itpi : itpis) {
+			TestCaseExecutionStatus tcStatus = new TestCaseExecutionStatus((ExecutionStatus)itpi[0], (Long) itpi[1]);
+			result.put(tcStatus.getTestCaseId(), tcStatus);
+		}
+		return result; 
 	}
 
 }

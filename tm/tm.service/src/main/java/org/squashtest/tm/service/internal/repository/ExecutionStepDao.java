@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
+import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 
@@ -28,4 +31,12 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 public interface ExecutionStepDao extends EntityDao<ExecutionStep> {
 	int findExecutionStepRank(Long executionStepId);
 	Execution findParentExecution(Long executionStepId);
+	/**
+	 * Look for {@link ExecutionStep}, to allow statistics computation. Return a {@link MultiMap}. Key : testStepIds, Value {@link ExecutionStep}
+	 * @param testStepIds
+	 * @param iterationIds The perimeter in sense of feat 5434
+	 * @param iterationsIds 
+	 * @return
+	 */
+	MultiMap findStepExecutionsStatus(List<Long> testCaseIds,List<Long> testStepIds);
 }

@@ -67,6 +67,7 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
@@ -125,6 +126,9 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Inject
 	private IterationDao iterationDao;
+	
+	@Inject
+	private ExecutionStepDao executionStepDao;
 	
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -639,10 +643,11 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * Constraints from specification Feat 4434 :
 	 * <code>
 	 * <ul>
-	 * <li>Requirement without linked {@link TestStep} must be treated at {@link Execution} level</li>
+	 * <li>Requirement without linked {@link TestStep} must be treated at {@link Execution} level, for last execution. 
+	 * We must also include fast pass so we take the {@link IterationTestPlanItem} status</li>
 	 * <li>Requirement with linked {@link TestStep} must be treated at {@link ExecutionStep} level</li>
 	 * <li>Only last execution must be considered for a given {@link IterationTestPlanItem}</li>
-	 * <li>FastPass must be considered for all case (ie even if the {@link RequirementVersion} is linked to {@link TestStep})</li>
+	 * <li>FastPass must be considered for all cases (ie even if the {@link RequirementVersion} is linked to {@link TestStep})</li>
 	 * <li>Rate must be calculate on the designed {@link Requirement} and it's descendants</li>
 	 * <li>The descendant list must be filtered by {@link Milestone} and exclude {@link RequirementVersion} with {@link RequirementStatus#OBSOLETE}</li>
 	 * </ul>
@@ -650,17 +655,13 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @param mainRequirement
 	 * @param mainVersion
 	 * @param descendants
-	 * @param stats
+	 * @param stats pojo containing the computed stats
 	 * @param iterationsIds
 	 */
 	private void findExecutionRate(Requirement mainRequirement,
 			RequirementVersion mainVersion,
 			List<RequirementVersion> descendants,
 			RequirementCoverageStat stats, List<Long> iterationsIds) {
-		
-		Map<ExecutionStatus, Long> mainFullCoverageResult = new HashMap<ExecutionStatus, Long>();
-		Map<ExecutionStatus, Long> descendantFullCoverageResult = new HashMap<ExecutionStatus, Long>();
-		
 		boolean hasDescendant = descendants.size()>0;
 		Rate verificationRate = new Rate();
 		Rate validationRate = new Rate();
@@ -670,25 +671,31 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		Map<ExecutionStatus, Long> mainStatusMap = new HashMap<ExecutionStatus, Long>();
 		makeStatusMap(mainVersion.getRequirementVersionCoverages(), mainUntestedElementsCount, mainStatusMap, iterationsIds);
 		verificationRate.setRequirementVersionRate(doRateVerifiedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
+		validationRate.setRequirementVersionRate(doRateValidatedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
 		
 		if (hasDescendant) {
 			verificationRate.setAncestor(true);
+			validationRate.setAncestor(true);
 			
 			Set<RequirementVersionCoverage> descendantCoverages = getCoverages(descendants);
-			Long[] descendantTestedElementsCount = new Long[1];
+			Long[] descendantUntestedElementsCount = new Long[1];
 			Map<ExecutionStatus, Long> descendantStatusMap = new HashMap<ExecutionStatus, Long>();
-			makeStatusMap(descendantCoverages, descendantTestedElementsCount, descendantStatusMap, iterationsIds);
-			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, descendantTestedElementsCount[0]));
+			makeStatusMap(descendantCoverages, descendantUntestedElementsCount, descendantStatusMap, iterationsIds);
+			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
+			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
 			
 			Long[] allUntestedElementsCount = new Long[1];
-			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + descendantTestedElementsCount[0];
+			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + descendantUntestedElementsCount[0];
 			Map<ExecutionStatus, Long> allStatusMap = mergeMapResult(mainStatusMap,descendantStatusMap);
 			verificationRate.setRequirementVersionGlobalRate(doRateVerifiedCalculation(allStatusMap, allUntestedElementsCount[0]));
+			validationRate.setRequirementVersionGlobalRate(doRateValidatedCalculation(allStatusMap, allUntestedElementsCount[0]));
 		}
 		
 		stats.addRate("verification", verificationRate);
 		stats.addRate("validation", validationRate);
 	}
+
+	
 
 	private Map<ExecutionStatus, Long> mergeMapResult(
 			Map<ExecutionStatus, Long> mainStatusMap,
@@ -703,6 +710,32 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		}
 		return mergedStatusMap;
 	}
+	
+	/**
+	 * As above but with no return. The second map is merged into the first map, witch orginal state is lost
+	 * @param statusMap
+	 * @param statusMapToMerge
+	 */
+	private void fusionMapResult(Map<ExecutionStatus, Long> statusMap,
+			Map<ExecutionStatus, Long> statusMapToMerge) {
+		Set<ExecutionStatus> keySet = statusMap.keySet();
+		Set<ExecutionStatus> keySetToMerge = statusMapToMerge.keySet();
+		for (ExecutionStatus executionStatus : keySet) {
+			Long mergedValue = statusMapToMerge.get(executionStatus);
+			Long memo = statusMap.get(executionStatus);
+			if (mergedValue !=null && mergedValue !=0L) {
+				statusMap.put(executionStatus, mergedValue + memo);
+			}
+		}
+		keySetToMerge.removeAll(keySet);
+		for (ExecutionStatus executionStatus : keySetToMerge) {
+			Long mergedValue = statusMapToMerge.get(executionStatus);
+			if (mergedValue !=null && mergedValue !=0L) {
+				statusMap.put(executionStatus, mergedValue);
+			}
+		}
+	}
+
 
 	private Set<RequirementVersionCoverage> getCoverages(
 			List<RequirementVersion> descendants) {
@@ -740,21 +773,104 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		List<RequirementVersionCoverage> simpleCoverage = new ArrayList<RequirementVersionCoverage>();
 		List<RequirementVersionCoverage> stepedCoverage = new ArrayList<RequirementVersionCoverage>();
 		Map<Long, Long> nbSimpleCoverageByTestCase = new HashMap<Long, Long>();
-		partRequirementVersionCoverage(covs,simpleCoverage,stepedCoverage,nbSimpleCoverageByTestCase);
+		Map<Long, Long> nbSteppedCoverageByTestCase = new HashMap<Long, Long>();
+		partRequirementVersionCoverage(covs,simpleCoverage,stepedCoverage,nbSimpleCoverageByTestCase,nbSteppedCoverageByTestCase);
 		//Find the test case with at least one itpi
-		List<Long> mainSimpleCoverageTCIds = findAllTestCaseIds(simpleCoverage);
-		List<Long> mainVersionTCWithItpiIds = findTCWithItpi(mainSimpleCoverageTCIds,iterationsIds);
+		List<Long> simpleCoverageTCIds = findAllTestCaseIds(simpleCoverage);
+		List<Long> simpleTCWithItpiIds = findTCWithItpi(simpleCoverageTCIds,iterationsIds);
 		//Filter to have the test case without itpi
-		List<Long> mainVersionTCWithoutItpiIds = filterTCIds(mainSimpleCoverageTCIds,mainVersionTCWithItpiIds);
-		untestedElementsCount[0] = calculateUntestedElementCount(mainVersionTCWithoutItpiIds,nbSimpleCoverageByTestCase);
-		statusMap.putAll(findResults(mainVersionTCWithItpiIds, iterationsIds, nbSimpleCoverageByTestCase));
+		List<Long> mainVersionTCWithoutItpiIds = filterTCIds(simpleCoverageTCIds,simpleTCWithItpiIds);
+		Map<ExecutionStatus, Long> statusMapForSimple = findResultsForSimpleCoverage(simpleTCWithItpiIds, iterationsIds, nbSimpleCoverageByTestCase);
+		
+		//STEPPED
+		//we need : TC without ITPI -> untested, TC With ITPI but no execution -> treated like fastpass (ie the status of ITPI is applied to each stepped coverage),
+		//TC with execution -> treated at test step level
+		List<Long> steppedCoverageTCIds = findAllTestCaseIds(stepedCoverage);
+		List<Long> steppedCoverageTCIdsWithITPI = iterationDao.findVerifiedTcIdsInIterations(steppedCoverageTCIds, iterationsIds);
+		List<Long> steppedCoverageTCIdsWithExecution = iterationDao.findVerifiedTcIdsInIterationsWithExecution(steppedCoverageTCIds, iterationsIds);
+		List<Long> steppedCoverageTCIdsWithoutITPI = filterTCIds(steppedCoverageTCIds,steppedCoverageTCIdsWithITPI);
+		List<Long> steppedCoverageTCIdsWithoutExecution = filterTCIds(steppedCoverageTCIdsWithITPI,steppedCoverageTCIdsWithExecution);
+		//TC With ITPI but no execution are treated like simple testcase
+		Map<ExecutionStatus, Long> statusMapForSteppedNoExecution = findResultsForSteppedCoverageWithoutExecution(stepedCoverage,steppedCoverageTCIdsWithoutExecution, iterationsIds, nbSteppedCoverageByTestCase);
+		untestedElementsCount[0] = calculateUntestedElementCount(mainVersionTCWithoutItpiIds,nbSimpleCoverageByTestCase, stepedCoverage, steppedCoverageTCIdsWithoutITPI);
+		Map<ExecutionStatus, Long> statusMapForSteppedWithExecution = findResultsForSteppedCoverageWithExecution(stepedCoverage,steppedCoverageTCIdsWithExecution, nbSteppedCoverageByTestCase);
+		
+		//merging the three map of results
+		fusionMapResult(statusMap,statusMapForSimple);
+		fusionMapResult(statusMap,statusMapForSteppedNoExecution);
+		fusionMapResult(statusMap,statusMapForSteppedWithExecution);
 	}
 	
-	private Long calculateUntestedElementCount(
-			List<Long> mainVersionTCWithoutItpiIds,
-			Map<Long, Long> nbSimpleCoverageByTestCase) {
-		// TODO Auto-generated method stub
-		return null;
+	
+	@SuppressWarnings("unchecked")
+	private Map<ExecutionStatus,Long> findResultsForSteppedCoverageWithoutExecution(
+			List<RequirementVersionCoverage> stepedCoverage, List<Long> testCaseIds,
+			List<Long> iterationsIds,
+			Map<Long, Long> nbSteppedCoverageByTestCase) {
+		MultiMap testCaseExecutionStatus = iterationDao.findVerifiedITPI(testCaseIds, iterationsIds);
+		Map<ExecutionStatus,Long> result = new HashMap<ExecutionStatus, Long>();
+		for (RequirementVersionCoverage cov : stepedCoverage) {
+			Long tcId = cov.getVerifyingTestCase().getId();
+			List<TestCaseExecutionStatus> tcsStatus = (List<TestCaseExecutionStatus>) testCaseExecutionStatus.get(tcId);
+			if (tcsStatus != null) {
+				for (TestCaseExecutionStatus tcStatus : tcsStatus) {
+					//For each cov we must count one status per steps. So fast pass status is forwarded to steps...
+					result.put(tcStatus.getStatus(), (long) cov.getVerifyingSteps().size());
+				}
+			}
+		}
+		return result;
+	}
+
+	private Map<ExecutionStatus,Long> findResultsForSteppedCoverageWithExecution(
+			List<RequirementVersionCoverage> stepedCoverage, List<Long> mainVersionTCWithItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
+		List<Long> testStepsIds = new ArrayList<Long>();
+		Map<ExecutionStatus,Long> result = new HashMap<ExecutionStatus, Long>();
+		//First we compute all testStep id in a list, to allow multiple occurrence of the same step.
+		//Witch is not a good practice but is allowed by the app so we must take this possibility in account for calculations.
+		for (RequirementVersionCoverage cov : stepedCoverage) {
+			Long tcId = cov.getVerifyingTestCase().getId();
+			if (mainVersionTCWithItpiIds.contains(tcId)) {
+				for (ActionTestStep step : cov.getVerifyingSteps()) {
+					testStepsIds.add(step.getId());
+				}
+			}
+		}
+		//now retrieve a list of exec steps
+		MultiMap executionsStatus = executionStepDao.findStepExecutionsStatus(mainVersionTCWithItpiIds,testStepsIds);
+		for (Long testStepsId : testStepsIds) {
+			List<ExecutionStep> executionSteps = (List<ExecutionStep>) executionsStatus.get(testStepsId);
+			for (ExecutionStep executionStep : executionSteps) {
+				ExecutionStatus status = executionStep.getExecutionStatus();
+				Long memo = result.get(status);
+				if (memo==null) {
+					result.put(status, 1L);
+				}
+				else {
+					result.put(status, memo + 1);
+				}
+			}
+		}
+		return result;
+	}
+
+	private Long calculateUntestedElementCount(List<Long> mainVersionTCWithoutItpiIds,Map<Long, Long> nbSimpleCoverageByTestCase,
+			List<RequirementVersionCoverage> stepedCoverage, List<Long> steppedCoverageTCIdsWithoutITPI) {
+		Long total = 0L;
+		for (Long tcId : mainVersionTCWithoutItpiIds) {
+			Long nbCovegrage = nbSimpleCoverageByTestCase.get(tcId);
+			if (nbCovegrage!=null&&nbCovegrage!=0L) {
+				total += nbCovegrage;
+			}
+		}
+		for (Long tcId : steppedCoverageTCIdsWithoutITPI) {
+			for (RequirementVersionCoverage cov : stepedCoverage) {
+				if (cov.getVerifyingTestCase().getId()==tcId) {
+					total += cov.getVerifyingSteps().size();
+				}
+			}
+		}
+		return total;
 	}
 
 	private double doRateVerifiedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount){
@@ -762,6 +878,13 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return doRateCalculation(statusSet, fullCoverageResult, untestedElementsCount);
 	}
 	
+	private double doRateValidatedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount) {
+		Set<ExecutionStatus> statusSet = getValidatedStatus();
+		return doRateCalculation(statusSet, fullCoverageResult, untestedElementsCount);
+	}
+	
+	
+
 	private double doRateCalculation(Set<ExecutionStatus> statusSet, Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount){
 		//Implicit conversion of all Long and Integer in floating point number to allow proper rate operation
 		double execWithRequiredStatus = countforStatus(fullCoverageResult, statusSet);
@@ -801,13 +924,15 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		verifiedStatus.add(ExecutionStatus.UNTESTABLE);
 		return verifiedStatus;
 	}
-
-//	private Map<ExecutionStatus, Long> findResults(
-//			List<Long> testCaseIds, List<Long> iterationIds) {
-//		return iterationDao.findExecStatusForIterationsAndTestCases(testCaseIds, iterationIds);
-//	}
 	
-	private Map<ExecutionStatus, Long> findResults(
+	private Set<ExecutionStatus> getValidatedStatus() {
+		Set<ExecutionStatus> verifiedStatus = new HashSet<ExecutionStatus>();
+		verifiedStatus.add(ExecutionStatus.SUCCESS);
+		verifiedStatus.add(ExecutionStatus.SETTLED);
+		return verifiedStatus;
+	}
+
+	private Map<ExecutionStatus, Long> findResultsForSimpleCoverage(
 			List<Long> testCaseIds, List<Long> iterationIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
 		List<TestCaseExecutionStatus> testCaseExecutionStatus = iterationDao.findExecStatusForIterationsAndTestCases(testCaseIds, iterationIds);
 		Map<ExecutionStatus, Long> computedResults = new HashMap<ExecutionStatus, Long>();
@@ -834,16 +959,22 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @param nbSimpleCoverageByTestCase 
 	 */
 	private void partRequirementVersionCoverage(
-			Set<RequirementVersionCoverage> requirementVersionCoverages,
-			List<RequirementVersionCoverage> simpleCoverage,
-			List<RequirementVersionCoverage> stepedCoverage, Map<Long, Long> nbSimpleCoverageByTestCase) {
+			Set<RequirementVersionCoverage> requirementVersionCoverages, List<RequirementVersionCoverage> simpleCoverage,
+			List<RequirementVersionCoverage> stepedCoverage, Map<Long, Long> nbSimpleCoverageByTestCase,
+			Map<Long, Long> nbSteppedCoverageByTestCase) {
 		for (RequirementVersionCoverage requirementVersionCoverage : requirementVersionCoverages) {
+			Long tcId = requirementVersionCoverage.getVerifyingTestCase().getId();
 			if (requirementVersionCoverage.hasSteps()) {
 				stepedCoverage.add(requirementVersionCoverage);
+				if (nbSteppedCoverageByTestCase.containsKey(tcId)) {
+					nbSteppedCoverageByTestCase.put(tcId,nbSteppedCoverageByTestCase.get(tcId)+1);
+				}
+				else {
+					nbSteppedCoverageByTestCase.put(tcId, 1L);
+				}
 			}
 			else {
 				simpleCoverage.add(requirementVersionCoverage);
-				Long tcId = requirementVersionCoverage.getVerifyingTestCase().getId();
 				if (nbSimpleCoverageByTestCase.containsKey(tcId)) {
 					nbSimpleCoverageByTestCase.put(tcId,nbSimpleCoverageByTestCase.get(tcId)+1);
 				}

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.requirement
 import javax.inject.Inject
 
 import org.hibernate.Query
+import org.hibernate.validator.constraints.NotEmpty;
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
@@ -62,7 +63,7 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 	private RequirementDao requirementDao
 
 	def setup (){
-		def ids = [-11L,-21L,-210L,-211L,-22L,-23L,-31L,-41L]
+		def ids = [-11L,-21L,-210L,-211L,-22L,-23L,-31L,-41L,-42L,-43L,-44L,-441L,-442L]
 		ids.each { 
 			setBidirectionalReqReqVersion(it,it)
 		}
@@ -119,6 +120,35 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		-211L			|			null		||		0	|	0			| 0
 		-21L			|			null		||		50	|	75			| 100
 		-11L			|			null		||		100	|	83			| 80
+		-42L			|			null		||		100	|	0			| 0
+		-43L			|			null		||		50	|	0			| 0
+		-44L			|			null		||		75	|	67			| 60
+	}
+	
+	@DataSet("RequirementCoverageStat.sandbox.xml")
+	def "shouldCalculateValidationRate"() {
+		given :
+		def testedReqVersionId = reqVersionId
+		def perimeter = [-1L]
+		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
+
+		when:
+		def result = verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,currentMilestoneId,perimeter)
+
+		then:
+		result.getRates().get("validation").requirementVersionRate == selfRate
+		result.getRates().get("validation").requirementVersionGlobalRate == globalRate
+		result.getRates().get("validation").requirementVersionChildrenRate == childrenRate
+
+		where:
+		reqVersionId 	| currentMilestoneId 	|| selfRate | globalRate 	| childrenRate
+		-210L			|			null		||		50	|	0			| 0
+		-211L			|			null		||		0	|	0			| 0
+		-21L			|			null		||		50	|	50			| 50
+		-11L			|			null		||		100	|	50			| 40
+		-42L			|			null		||		0	|	0			| 0
+		-43L			|			null		||		50	|	0			| 0
+		-44L			|			null		||		25	|	22			| 20
 	}
 
 

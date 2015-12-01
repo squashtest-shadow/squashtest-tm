@@ -23,7 +23,7 @@ package org.squashtest.tm.domain.testcase;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 /**
- * Pojo used to link a test case with an excution status.
+ * Pojo used to link a test case with an execution status.
  * Used for 4433 and 4334
  * @author jthebault
  *
@@ -38,6 +38,7 @@ public class TestCaseExecutionStatus {
 		this.status = status;
 		this.testCaseId = testCaseId;
 	}
+	
 	public ExecutionStatus getStatus() {
 		return status;
 	}

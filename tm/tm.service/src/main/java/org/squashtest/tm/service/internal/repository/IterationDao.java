@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -123,6 +124,9 @@ public interface IterationDao extends EntityDao<Iteration> {
 	 */
 	Map<ExecutionStatus,Integer> findRequirementSteppedVersionCoverageExecutionStats(List<Long> testStepsIds, List<Long> iterationsIds);
 
-	List<Long> findVerifiedTcIdsInIterations(List<Long> tcIds,
-			List<Long> iterationsIds);
+	List<Long> findVerifiedTcIdsInIterations(List<Long> tcIds,List<Long> iterationsIds);
+
+	List<Long> findVerifiedTcIdsInIterationsWithExecution(List<Long> tcIds, List<Long> iterationsIds);
+	
+	MultiMap findVerifiedITPI(List<Long> tcIds, List<Long> iterationsIds);
 }
