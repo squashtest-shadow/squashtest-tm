@@ -830,7 +830,7 @@
 	
 	// ChartLibraryNode
 	@NamedQuery(name="CustomReportLibraryNode.findAllByEntityType",query="from CustomReportLibraryNode crln where crln.entityType = ?1"),
-	@NamedQuery(name="CustomReportLibraryNode.findConcreteLibrary",query="from CustomReportLibraryNode crln where crln.entityType = 'LIBRARY' and crln.library.project.class ='P'"),
+	@NamedQuery(name="CustomReportLibraryNode.findConcreteLibrary",query="from CustomReportLibraryNode crln where crln.entityType = 'LIBRARY' and crln.library.project.class ='P' order by crln.name"),
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendantIds",query="select distinct path.descendantId from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds",query="select distinct path.descendantId from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids) and path.depth=1"),
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendant",query="select distinct path from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
