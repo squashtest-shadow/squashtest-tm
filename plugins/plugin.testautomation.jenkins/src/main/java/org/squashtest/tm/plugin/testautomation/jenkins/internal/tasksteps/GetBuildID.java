@@ -35,8 +35,6 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 
 	/* ********* technically needed for the computation ************** */
 
-	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
-
 	private CloseableHttpClient client;
 
 	private HttpUriRequest method;
@@ -96,7 +94,7 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 	@Override
 	public void perform() throws Exception {
 
-		String json = requestExecutor.execute(client, method);
+		String json = RequestExecutor.getInstance().execute(client, method);
 
 		BuildList buildList = parser.getBuildListFromJson(json);
 

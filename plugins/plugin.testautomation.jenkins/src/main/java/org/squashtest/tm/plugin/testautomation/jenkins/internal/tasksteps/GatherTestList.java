@@ -36,8 +36,6 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 
 	//* ************* collaborators ****************
 
-	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
-
 	private CloseableHttpClient client;
 
 	private HttpUriRequest method;
@@ -95,7 +93,7 @@ public class GatherTestList extends BuildStep<GatherTestList> implements HttpBas
 
 	@Override
 	public void perform() throws Exception {
-		String response = requestExecutor.execute(client, method);
+		String response = RequestExecutor.getInstance().execute(client, method);
 		TestListElement testList = parser.getTestListFromJson(response);
 		testNames = testList.collectAllTestNames();
 	}

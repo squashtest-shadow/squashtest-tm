@@ -20,42 +20,35 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
+import org.apache.http.StatusLine;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.impl.client.CloseableHttpClient
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 
 import spock.lang.Specification
 
-class CheckBuildRunningTest extends Specification {
+class CheckBuildRunningTest extends JenkinsConnectorSpec {
 
 	CheckBuildRunning checkRun;
 	CloseableHttpClient client;
-	HttpUriRequest method;
-	JsonParser parser;
-	
-	BuildAbsoluteId  absoluteId = new BuildAbsoluteId("CorrectJob", "CorrectExternalID")
 	
 	def setup(){
-		
-		client = Mock()
-		method = Mock()
-		parser = new JsonParser()
-		
 		checkRun = new CheckBuildRunning()
 		checkRun.client = client
 		checkRun.method = method
 		checkRun.parser = parser;
 		
-		
 	}
-	
 	
 	def "should say that the given build is still running, and need to be checked again"(){
 		
 		given :
 			def json = makeBuildingJson()
-			method.getResponseBodyAsString() >> json
-		
+			RequestExecutor.INSTANCE.execute(_,_) >> json
+			
 		when :
 			checkRun.perform()
 		
@@ -69,8 +62,8 @@ class CheckBuildRunningTest extends Specification {
 		
 		given :
 			def json = makeFinishedJson()
-			method.getResponseBodyAsString() >> json
-		
+			RequestExecutor.INSTANCE.execute(_,_) >> json
+			
 		when :
 			checkRun.perform()
 		

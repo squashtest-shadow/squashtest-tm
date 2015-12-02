@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
-
 import org.apache.http.StatusLine;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -40,7 +39,7 @@ public class RequestExecutor {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(RequestExecutor.class);
 
-	public static final RequestExecutor INSTANCE = new RequestExecutor();
+	private static RequestExecutor INSTANCE = new RequestExecutor();
 
 	private RequestExecutor() {
 		super();
@@ -51,7 +50,7 @@ public class RequestExecutor {
 	}
 
 	public String execute(CloseableHttpClient client, HttpUriRequest method) {
-		try (CloseableHttpResponse resp= client.execute(method)) {
+		try (CloseableHttpResponse resp = client.execute(method)) {
 			checkResponseCode(resp.getStatusLine());
 
 			ResponseHandler<String> handler = new BasicResponseHandler();
@@ -59,10 +58,10 @@ public class RequestExecutor {
 			return handler.handleResponse(resp);
 		} catch (AccessDenied ex) {
 			throw new AccessDenied(
-				"Test automation - jenkins : operation rejected the operation because of wrong credentials");
+					"Test automation - jenkins : operation rejected the operation because of wrong credentials");
 		} catch (IOException ex) {
 			throw new ServerConnectionFailed(
-				"Test automation - jenkins : could not connect to server due to technical error : ", ex);
+					"Test automation - jenkins : could not connect to server due to technical error : ", ex);
 		}
 	}
 
@@ -74,10 +73,10 @@ public class RequestExecutor {
 		}
 
 		switch (sc) {
-			case SC_FORBIDDEN:
-			case SC_UNAUTHORIZED:
-			case SC_PROXY_AUTHENTICATION_REQUIRED:
-				throw new AccessDenied();
+		case SC_FORBIDDEN:
+		case SC_UNAUTHORIZED:
+		case SC_PROXY_AUTHENTICATION_REQUIRED:
+			throw new AccessDenied();
 		}
 	}
 

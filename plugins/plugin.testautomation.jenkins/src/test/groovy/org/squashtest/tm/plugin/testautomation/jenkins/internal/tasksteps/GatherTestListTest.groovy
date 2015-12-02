@@ -22,24 +22,17 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.impl.client.CloseableHttpClient
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 
 import spock.lang.Specification
 
-class GatherTestListTest extends Specification {
+class GatherTestListTest extends JenkinsConnectorSpec {
 
 	GatherTestList gatherList;
-	CloseableHttpClient client;
-	HttpUriRequest method;
-	JsonParser parser;
-	
-	BuildAbsoluteId  absoluteId = new BuildAbsoluteId("CorrectJob", "CorrectExternalID")
 	
 	def setup(){
-		
-		client = Mock()
-		method = Mock()
-		parser = new JsonParser()
 		
 		gatherList = new GatherTestList()
 		gatherList.client = client
@@ -52,7 +45,7 @@ class GatherTestListTest extends Specification {
 		
 		given :
 			def json = makeJson()
-			method.getResponseBodyAsString() >> json
+			RequestExecutor.INSTANCE.execute(_,_) >> json
 		
 		and :
 			def expected = [

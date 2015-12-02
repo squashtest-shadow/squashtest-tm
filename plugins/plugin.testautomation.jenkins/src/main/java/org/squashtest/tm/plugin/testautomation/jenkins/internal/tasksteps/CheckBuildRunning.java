@@ -33,8 +33,6 @@ public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements H
 
 	/* ********* technically needed for the computation ************** */
 
-	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
-
 	private CloseableHttpClient client;
 
 	private HttpUriRequest method;
@@ -89,7 +87,7 @@ public class CheckBuildRunning extends BuildStep<CheckBuildRunning> implements H
 	@Override
 	public void perform() throws Exception {
 
-		String response = requestExecutor.execute(client, method);
+		String response = RequestExecutor.getInstance().execute(client, method);
 
 		Build build = parser.getBuildFromJson(response);
 

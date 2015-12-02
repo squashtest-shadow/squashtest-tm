@@ -29,8 +29,6 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.BuildStep;
 
 
 public class StartBuild extends BuildStep<StartBuild> implements HttpBasedStep{
-
-	private RequestExecutor requestExecutor = RequestExecutor.getInstance();
 	
 	private CloseableHttpClient client;
 	
@@ -70,7 +68,7 @@ public class StartBuild extends BuildStep<StartBuild> implements HttpBasedStep{
 
 	@Override
 	public void perform() throws Exception {
-		requestExecutor.execute(client, method);
+		RequestExecutor.getInstance().execute(client, method);
 	}
 
 	@Override

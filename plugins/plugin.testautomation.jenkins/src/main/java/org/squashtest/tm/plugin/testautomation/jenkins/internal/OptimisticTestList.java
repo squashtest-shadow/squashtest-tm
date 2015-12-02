@@ -44,7 +44,6 @@ public class OptimisticTestList {
 
 	private HttpClientProvider clientProvider;
 	private TestAutomationProject project;
-	private RequestExecutor executor = RequestExecutor.INSTANCE;
 	private JsonParser parser = new JsonParser();
 
 
@@ -61,7 +60,7 @@ public class OptimisticTestList {
 		HttpGet method = new HttpRequestFactory().newGetJsonTestList(project);
 
 		try {
-			String response = executor.execute(client, method);
+			String response = RequestExecutor.getInstance().execute(client, method);
 			TestListElement testList = parser.getTestListFromJson(response);
 
 

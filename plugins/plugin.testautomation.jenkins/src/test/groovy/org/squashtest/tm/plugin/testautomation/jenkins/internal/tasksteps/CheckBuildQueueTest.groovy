@@ -20,27 +20,19 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
-import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.impl.client.CloseableHttpClient
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 
 import spock.lang.Specification
 
-class CheckBuildQueueTest extends Specification {
+class CheckBuildQueueTest extends JenkinsConnectorSpec {
 
 	CheckBuildQueue checkQueue;
-	CloseableHttpClient client;
-	HttpUriRequest method;
-	BuildAbsoluteId absoluteId;
-	JsonParser parser;
-
 
 	def setup(){
-
-		client = Mock()
-		method = Mock()
-		parser = new JsonParser()
 
 		checkQueue = new CheckBuildQueue()
 		checkQueue.client = client
@@ -55,8 +47,7 @@ class CheckBuildQueueTest extends Specification {
 
 		given :
 			def json = makeQueueWithoutThatBuild()
-		client.execute(method) >> Mock(HttpResponse)
-//			method.getResponseBodyAsString >> json
+		RequestExecutor.INSTANCE.execute(_, _)>> json
 
 		when :
 			checkQueue.perform()
@@ -64,14 +55,13 @@ class CheckBuildQueueTest extends Specification {
 		then :
 			checkQueue.buildIsQueued == false
 			checkQueue.needsRescheduling() == false
-
 	}
 
 	def "should check that the given build is queued and the step needs rescheduling while it is"(){
 
 		given :
 			def json = makeQueueWithThatBuild()
-			method.getResponseBodyAsString() >> json
+		RequestExecutor.INSTANCE.execute(_, _)>> json
 
 		when :
 			checkQueue.perform()
@@ -84,7 +74,7 @@ class CheckBuildQueueTest extends Specification {
 	def "should check that the given build is not queued because the queue is empty"(){
 
 		given :
-			method.getResponseBodyAsString() >> '{"items":[]}'
+		RequestExecutor.INSTANCE.execute(_, _)>>  '{"items":[]}'
 
 		when :
 			checkQueue.perform()
@@ -92,7 +82,6 @@ class CheckBuildQueueTest extends Specification {
 		then :
 			checkQueue.buildIsQueued == false
 			checkQueue.needsRescheduling() == false
-
 	}
 
 
@@ -105,8 +94,6 @@ class CheckBuildQueueTest extends Specification {
 			   '{"name":"externalJobId","value":"CorrectExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],"id":13,'+
 			   '"task":{"name":"WrongJob"}}]}'
-
-
 	}
 
 
@@ -119,10 +106,7 @@ class CheckBuildQueueTest extends Specification {
 			   '{"name":"externalJobId","value":"CorrectExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],"id":13,'+
 			   '"task":{"name":"CorrectJob"}}]}'
-
-
 	}
-
 }
 
 

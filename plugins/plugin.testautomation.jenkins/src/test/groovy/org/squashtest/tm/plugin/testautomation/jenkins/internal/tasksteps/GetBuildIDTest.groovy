@@ -22,39 +22,19 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.impl.client.CloseableHttpClient
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec;
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 
 import spock.lang.Specification
 
-class GetBuildIDTest extends Specification {
-
-	GetBuildID getID;
-	CloseableHttpClient client;
-	HttpUriRequest method;
-	BuildAbsoluteId absoluteId;
-	JsonParser parser;
-	
-	def setup(){
-		
-		client = Mock()
-		method = Mock()
-		parser = new JsonParser()
-		
-		getID = new GetBuildID()
-		getID.client = client
-		getID.method = method
-		getID.parser = parser;
-		
-		getID.absoluteId = new BuildAbsoluteId("CorrectJob", "CorrectExternalID")
-		
-	}
-	
+class GetBuildIDTest extends JenkinsConnectorSpec {
 
 	def "should get the id of a build"(){
 		
 		given :
 			def json = makeBuildListForProject()
-			method.getResponseBodyAsString() >> json
+			RequestExecutor.INSTANCE.execute(_, _)>> json
 			
 		when :
 			getID.perform()

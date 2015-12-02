@@ -22,30 +22,28 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.impl.client.CloseableHttpClient
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.JenkinsConnectorSpec
+import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
+
 import spock.lang.Specification
 
-class StartBuildTest extends Specification {
+class StartBuildTest extends JenkinsConnectorSpec {
 
 	StartBuild startBuild;
-	CloseableHttpClient client;
-	HttpUriRequest method;
-	
+
 	def setup(){
-		client = Mock()
-		method = Mock()
-		
 		startBuild = new StartBuild()
 		startBuild.client = client
 		startBuild.method = method
+		RequestExecutor.INSTANCE = new RequestExecutor()
 	}
-	
+
 	def "should simply start the build"(){
-		
+
 		when :
-			startBuild.perform()
-		
+		startBuild.perform()
+
 		then :
-			1 * client.executeMethod(method)
-		
+		1 * client.execute(method) >> resp
 	}
 }
