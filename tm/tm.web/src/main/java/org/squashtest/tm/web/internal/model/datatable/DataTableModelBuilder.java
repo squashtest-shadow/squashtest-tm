@@ -20,28 +20,27 @@
  */
 package org.squashtest.tm.web.internal.model.datatable;
 
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.domain.milestone.Milestone;
-
 /**
  * Superclass to create builders of {@link DataTableModel} AND NOTHING ELSE !
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <X>
  */
 public abstract class DataTableModelBuilder<X> {
 	private long currentIndex = 0;
 
-	public final DataTableModel<Object> buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
+	public final DataTableModel buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
 
 		currentIndex = holder.getFirstItemIndex() + 1;
 		Collection<X> pagedItems = holder.getPagedItems();
-		DataTableModel<Object> model = createModelFromItems(sEcho, pagedItems);
+		DataTableModel model = createModelFromItems(sEcho, pagedItems);
 		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
 
 		return model;
@@ -78,8 +77,8 @@ public abstract class DataTableModelBuilder<X> {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
 	}
-	private DataTableModel<Object> createModelFromItems(String sEcho, Collection<X> pagedItems) {
-		DataTableModel<Object> model = new DataTableModel<Object>(sEcho);
+	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
+		DataTableModel model = new DataTableModel(sEcho);
 
 		for (X item : pagedItems) {
 			model.addRow(buildItemData(item));
