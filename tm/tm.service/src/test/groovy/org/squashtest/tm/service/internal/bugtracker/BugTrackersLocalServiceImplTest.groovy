@@ -262,7 +262,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		remoteService.isCredentialsNeeded(bugTracker) >> true
 
 		when :
-		def status = service.checkAuthenticationStatus(project)
+		def status = service.checkBugTrackerStatus(project)
 
 		then :
 		status == AuthenticationStatus.NON_AUTHENTICATED
@@ -279,7 +279,7 @@ class BugTrackersLocalServiceImplTest extends Specification {
 		remoteService.isCredentialsNeeded(bugTracker) >> false
 
 		when :
-		def status = service.checkAuthenticationStatus(project)
+		def status = service.checkBugTrackerStatus(project)
 
 		then :
 		status == AuthenticationStatus.AUTHENTICATED
