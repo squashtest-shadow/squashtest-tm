@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net
 
-
-
-
 import org.squashtest.tm.domain.testautomation.AutomatedTest
-import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent
-
 import spock.lang.Specification
 
 class HttpRequestFactoryTest extends Specification {
@@ -47,10 +41,9 @@ class HttpRequestFactoryTest extends Specification {
 		def method = factory.newGetJobsMethod(server)
 
 		then :
-		method.path == "http://ci.jruby.org/api/json"
-		method.queryString == "tree=jobs%5Bname%2Ccolor%5D"
+		method.getURI().getPath() == "http://ci.jruby.org/api/json"
+		method.getURI().getQuery() == "tree=jobs%5Bname%2Ccolor%5D"
 	}
-
 
 	def "should create the result path for tests being at the root of the project"(){
 		given :

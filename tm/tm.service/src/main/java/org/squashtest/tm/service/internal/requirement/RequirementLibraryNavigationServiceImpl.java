@@ -792,7 +792,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		} else {
 			throw new IllegalArgumentException("RequirementVersion with version number " + noVersion + " already exist in this Requirement, id : " + requirement.getId());
 		}
-	}CRWC
+	}
 
 	@Override
 	public void initCUFvalues(RequirementVersion reqVersion,

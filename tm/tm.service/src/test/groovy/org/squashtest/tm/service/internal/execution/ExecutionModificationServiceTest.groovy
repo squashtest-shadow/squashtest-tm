@@ -30,6 +30,8 @@ import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
+import org.squashtest.tm.domain.testcase.TestCaseImportance
+import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl

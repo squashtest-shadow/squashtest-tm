@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.library;
 
@@ -50,21 +50,21 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
  */
 @Transactional
 public class GenericNodeManagementService<MANAGED extends LibraryNode, NODE extends LibraryNode, FOLDER extends Folder<NODE>>
-implements NodeManagementService<MANAGED, NODE, FOLDER> {
+	implements NodeManagementService<MANAGED, NODE, FOLDER> {
 
 	private final PermissionEvaluationService permissionService;
 
 	private final EntityDao<MANAGED> nodeDao;
 
-    private final FolderDao<FOLDER, NODE> folderDao;
-    private final LibraryDao<? extends Library<NODE>, NODE> libraryDao;
+	private final FolderDao<FOLDER, NODE> folderDao;
+	private final LibraryDao<? extends Library<NODE>, NODE> libraryDao;
 
-    public GenericNodeManagementService(PermissionEvaluationService permissionService, EntityDao<MANAGED> nodeDao, FolderDao<FOLDER, NODE> folderDao, LibraryDao<? extends Library<NODE>, NODE> libraryDao) {
-        this.permissionService = permissionService;
-        this.nodeDao = nodeDao;
-        this.folderDao = folderDao;
-        this.libraryDao = libraryDao;
-    }
+	public GenericNodeManagementService(PermissionEvaluationService permissionService, EntityDao<MANAGED> nodeDao, FolderDao<FOLDER, NODE> folderDao, LibraryDao<? extends Library<NODE>, NODE> libraryDao) {
+		this.permissionService = permissionService;
+		this.nodeDao = nodeDao;
+		this.folderDao = folderDao;
+		this.libraryDao = libraryDao;
+	}
 
 	/*
 	 * (non-Javadoc)

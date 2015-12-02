@@ -31,17 +31,13 @@ import org.squashtest.tm.service.security.PermissionEvaluationService
 import spock.lang.Specification
 
 class GenericNodeManagementServiceTest extends Specification {
-	NodeManagementService service = new GenericNodeManagementService(permissionService, nodeDao, folderDao, libraryDao)
 	TestCaseDao nodeDao = Mock()
 	FolderDao folderDao = Mock()
 	LibraryDao libraryDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
+	NodeManagementService service = new GenericNodeManagementService(permissionService, nodeDao, folderDao, libraryDao)
 
 	def setup() {
-		service.setFolderDao folderDao
-		service.setLibraryDao libraryDao
-		service.setNodeDao nodeDao
-		service.permissionService = permissionService;
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 

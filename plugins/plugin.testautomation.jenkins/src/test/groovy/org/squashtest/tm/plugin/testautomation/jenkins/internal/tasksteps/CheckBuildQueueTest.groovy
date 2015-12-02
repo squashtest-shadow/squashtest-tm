@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps
 
+import org.apache.http.HttpResponse
 import org.apache.http.client.methods.HttpUriRequest
 import org.apache.http.impl.client.CloseableHttpClient
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.JsonParser;
@@ -33,69 +34,70 @@ class CheckBuildQueueTest extends Specification {
 	HttpUriRequest method;
 	BuildAbsoluteId absoluteId;
 	JsonParser parser;
-	
-	
+
+
 	def setup(){
-		
+
 		client = Mock()
 		method = Mock()
 		parser = new JsonParser()
-		
+
 		checkQueue = new CheckBuildQueue()
 		checkQueue.client = client
 		checkQueue.method = method
 		checkQueue.parser = parser;
-		
+
 		checkQueue.absoluteId = new BuildAbsoluteId("CorrectJob", "CorrectExternalID")
 	}
-	
-	
+
+
 	def "should check that a given build is not queued"(){
-		
+
 		given :
 			def json = makeQueueWithoutThatBuild()
-			method.getResponseBodyAsString() >> json
-		
+		client.execute(method) >> Mock(HttpResponse)
+//			method.getResponseBodyAsString >> json
+
 		when :
 			checkQueue.perform()
-		
+
 		then :
 			checkQueue.buildIsQueued == false
 			checkQueue.needsRescheduling() == false
-		
+
 	}
-	
+
 	def "should check that the given build is queued and the step needs rescheduling while it is"(){
 
 		given :
 			def json = makeQueueWithThatBuild()
 			method.getResponseBodyAsString() >> json
-		
+
 		when :
 			checkQueue.perform()
-		
+
 		then :
 			checkQueue.buildIsQueued == true
 			checkQueue.needsRescheduling() == true
 	}
-	
+
 	def "should check that the given build is not queued because the queue is empty"(){
-		
+
 		given :
 			method.getResponseBodyAsString() >> '{"items":[]}'
-			
+
 		when :
 			checkQueue.perform()
-			
+
 		then :
 			checkQueue.buildIsQueued == false
 			checkQueue.needsRescheduling() == false
-		
+
 	}
-	
-	
+
+
 	def makeQueueWithoutThatBuild(){
-		
+
 		return '{"items":[{"actions":[{"parameters":[{"name":"operation","value":"test-list"},'+
 		       '{"name":"externalJobId","value":"WrongExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],'+
@@ -103,13 +105,13 @@ class CheckBuildQueueTest extends Specification {
 			   '{"name":"externalJobId","value":"CorrectExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],"id":13,'+
 			   '"task":{"name":"WrongJob"}}]}'
-		
-		
+
+
 	}
 
-	
+
 	def makeQueueWithThatBuild(){
-		
+
 		return '{"items":[{"actions":[{"parameters":[{"name":"operation","value":"test-list"},'+
 			   '{"name":"externalJobId","value":"WrongExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],'+
@@ -117,10 +119,10 @@ class CheckBuildQueueTest extends Specification {
 			   '{"name":"externalJobId","value":"CorrectExternalID"},{"name":"callerId","value":"anonymous@example.com"},'+
 			   '{"name":"notificationURL","value":"file://dev/null"},{"name":"testList","value":"**/*"}]},{}],"id":13,'+
 			   '"task":{"name":"CorrectJob"}}]}'
-		
-		
+
+
 	}
-	
+
 }
 
 

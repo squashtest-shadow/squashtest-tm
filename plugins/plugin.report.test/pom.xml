@@ -36,20 +36,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
-      <version>${project.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.squashtest.tm</groupId>
-      <artifactId>spock-test-dependencies</artifactId>
-      <version>${project.version}</version>
-      <type>pom</type>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
   <build>
@@ -59,13 +45,6 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
-
-    <testResources>
-      <testResource>
-        <filtering>false</filtering>
-        <directory>src/test/resources</directory>
-      </testResource>
-    </testResources>
 
     <plugins>
       <plugin>
