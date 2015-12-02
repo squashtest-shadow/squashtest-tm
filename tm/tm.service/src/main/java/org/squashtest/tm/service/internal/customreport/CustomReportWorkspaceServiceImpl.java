@@ -70,7 +70,7 @@ public class CustomReportWorkspaceServiceImpl implements
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findRootNodes() {
-		return crlnDao.findAllByEntityType(CustomReportTreeDefinition.LIBRARY);
+		return crlnDao.findAllConcreteLibraries();
 	}
 
 }

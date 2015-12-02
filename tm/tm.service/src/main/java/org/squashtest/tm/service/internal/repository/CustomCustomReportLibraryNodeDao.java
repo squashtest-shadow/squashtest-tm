@@ -32,4 +32,5 @@ public interface CustomCustomReportLibraryNodeDao extends EntityDao<CustomReport
 	List<Long> findAllFirstLevelDescendantIds(Long nodeId);
 	List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds);
 	List<Long> findAncestorIds(Long nodeId);
+	List<CustomReportLibraryNode> findAllConcreteLibraries();
 }

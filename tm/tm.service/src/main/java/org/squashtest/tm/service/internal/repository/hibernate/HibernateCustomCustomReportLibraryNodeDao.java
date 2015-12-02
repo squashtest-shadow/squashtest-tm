@@ -79,6 +79,12 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 		return findAllFirstLevelDescendantIds(ids);
 	}
 
+	@Override
+	public List<CustomReportLibraryNode> findAllConcreteLibraries() {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
+		return query.list();
+	}
+
 
 	
 }
