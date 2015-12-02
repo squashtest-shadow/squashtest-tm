@@ -77,7 +77,12 @@
 
 <script data-main="../../scripts/requirement-workspace.js" th:attr="data-main=@{/scripts/requirement-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  
+<!--  initialize the wizards --> 
+<div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='requirement')"/>
+  
 </head>
+
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('requirement')">NAVBAR</div>
 
@@ -351,6 +356,8 @@
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
       
       <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
+      
+      <span data-def="state=synchronized-denied" th:text="#{tree.button.rename.error.reqissynchronized}">synchronized</span>
       
       <div data-def="state=confirm">      
             

@@ -43,14 +43,14 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				nameHandler.referenceHidden = "#requirement-raw-reference";
 
 				// rename button
-				if (config.permissions.writable){
+				if (config.permissions.writable && ! config.basic.isSynchronized){
 					$("#rename-requirement-button").on('click', function(){
 						$("#rename-requirement-dialog").formDialog('open');
 					});
 				}
 
 				// new version button
-				if (config.permissions.creatable){
+				if (config.permissions.creatable && ! config.basic.isSynchronized){
 					$( "#new-version-button" ).on( "click", function() {
 						$( "#confirm-new-version-dialog" ).confirmDialog( "open" );
 					});
@@ -386,7 +386,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 				}
 
 
-		         if (config.permissions.writable){
+		         if (config.permissions.writable && ! config.basic.isSynchronized){
 
 					// ************ rename dialog ********
 

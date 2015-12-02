@@ -1655,6 +1655,8 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 
 			<column name="REMOTE_PROJECT_ID" type="java.sql.Types.VARCHAR(15)" remarks="ID of the remote project that hosts the remote requirement"/>
 
+			<column name="REMOTE_REQ_URL" type="VARCHAR(300)" remarks="the url of the remote requirement" />
+			
      		<column name="LAST_SYNCHRONIZED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
         remarks="the last used that synchronized that requirement with the remote manager" />
 

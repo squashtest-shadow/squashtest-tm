@@ -214,8 +214,10 @@ public class RequirementVersionModificationController {
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 		String criticalities = buildMarshalledCriticalities(locale);
+
 		boolean hasCUF = cufValueService.hasCustomFields(requirementVersion);
 		JsonInfoList categories = infoListBuilder.toJson(requirementVersion.getProject().getRequirementCategories());
+
 		DataTableModel verifyingTCModel = getVerifyingTCModel(requirementVersion);
 		DataTableModel attachmentsModel = attachmentsHelper.findPagedAttachments(requirementVersion);
 		DataTableModel auditTrailModel = getEventsTableModel(requirementVersion);
@@ -231,6 +233,10 @@ public class RequirementVersionModificationController {
 		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, requirementVersion);
 
 		model.addAttribute("milestoneConf", milestoneConf);
+
+		if (requirementVersion.getRequirement().isSynchronized()){
+			model.addAttribute("requirementURL", requirementVersion.getRequirement().getSyncExtender().getRemoteUrl());
+		}
 
 	}
 

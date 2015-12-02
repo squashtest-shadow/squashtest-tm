@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.net.URL;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -68,6 +70,8 @@ public class RequirementSyncExtender {
 	@Column
 	private String remoteProjectID;
 
+	@Column(name = "REMOTE_REQ_URL")
+	private URL remoteUrl;
 
 
 	public RequirementSyncExtender(){
@@ -119,6 +123,14 @@ public class RequirementSyncExtender {
 
 	public void setBugtracker(BugTracker bugtracker) {
 		this.bugtracker = bugtracker;
+	}
+
+	public URL getRemoteUrl() {
+		return remoteUrl;
+	}
+
+	public void setRemoteUrl(URL remoteUrl) {
+		this.remoteUrl = remoteUrl;
 	}
 
 

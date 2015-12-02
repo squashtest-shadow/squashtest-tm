@@ -24,8 +24,10 @@ import java.util.List;
 
 import javax.inject.Provider;
 
+import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -56,6 +58,10 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 	 */
 	@Override
 	protected JsTreeNode doBuild(JsTreeNode node, Library<LN> model) {
+
+		boolean manageable = getPermissionEvaluationService().hasRoleOrPermissionOnObject( "ROLE_ADMIN", Permission.MANAGEMENT.name(), model);
+
+		node.addAttr("manageable", Boolean.toString(manageable));
 		node.addAttr("rel", "drive");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));
@@ -70,6 +76,7 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 		// milestone attributes : libraries are yes-men
 		node.addAttr("milestone-creatable-deletable", "true");
 		node.addAttr("milestone-editable", "true");
+
 
 		return node;
 	}

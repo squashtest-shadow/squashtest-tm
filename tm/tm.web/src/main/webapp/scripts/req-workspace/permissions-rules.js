@@ -180,6 +180,9 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			else if (nodes.filter(':editable').not(':library').length !== 1){
 				return "permission-denied";
 			}
+			else if (nodes.is(':synchronized')){
+				return "synchronized";
+			}
 			else {
 				return "yes-you-can";
 			}
