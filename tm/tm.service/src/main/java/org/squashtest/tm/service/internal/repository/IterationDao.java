@@ -21,7 +21,9 @@
 package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.collections.MultiMap;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -31,6 +33,10 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseExecutionStatus;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface IterationDao extends EntityDao<Iteration> {
@@ -93,4 +99,34 @@ public interface IterationDao extends EntityDao<Iteration> {
 	TestPlanStatistics getIterationStatistics(long iterationId);
 
 	long countRunningOrDoneExecutions(long iterationId);
+	
+	/**
+	 * For Feat 4434. Compute a Map<ExecutionStatus,Integer> by following the chain :
+	 * {@link RequirementVersionCoverage} -> {@link TestCase} -> {@link IterationTestPlanItem}.<br/>
+	 * Filtered by the perimeter : the {@link List} of {@link Iteration}.
+	 * This method WILL NOT take account of results induced by {@link RequirementVersion} linked to {@link TestStep}.
+	 * They will be treated as if they were linked only to their {@link TestCase}
+	 * @param mainSimpleCoverage
+	 * @param iterations
+	 * @return
+	 */
+	List<TestCaseExecutionStatus> findExecStatusForIterationsAndTestCases(List<Long> testCasesIds, List<Long> iterationsIds);
+	
+	/**
+	 * For Feat 4434. Compute a Map<ExecutionStatus,Integer> by following the chain :
+	 * {@link RequirementVersionCoverage} -> {@link TestCase} -> {@link IterationTestPlanItem}.<br/>
+	 * Filtered by the perimeter : the {@link List} of {@link Iteration}.
+	 * This method WILL NOT take account of results induced by {@link RequirementVersion} linked to {@link TestStep}.
+	 * They will be treated as if they were linked only to their {@link TestCase}
+	 * @param mainSimpleCoverage
+	 * @param iterations
+	 * @return
+	 */
+	Map<ExecutionStatus,Integer> findRequirementSteppedVersionCoverageExecutionStats(List<Long> testStepsIds, List<Long> iterationsIds);
+
+	List<Long> findVerifiedTcIdsInIterations(List<Long> tcIds,List<Long> iterationsIds);
+
+	List<Long> findVerifiedTcIdsInIterationsWithExecution(List<Long> tcIds, List<Long> iterationsIds);
+	
+	MultiMap findVerifiedITPI(List<Long> tcIds, List<Long> iterationsIds);
 }

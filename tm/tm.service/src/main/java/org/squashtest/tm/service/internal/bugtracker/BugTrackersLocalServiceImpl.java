@@ -61,7 +61,6 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueList;
@@ -75,6 +74,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -157,23 +157,37 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	@PreAuthorize("hasPermission(#entity, 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
-	public BugTrackerStatus checkBugTrackerStatus(Project project) {
-		BugTrackerStatus status;
+	public AuthenticationStatus checkBugTrackerStatus(Project project) {
+		AuthenticationStatus status;
 
 		if (!project.isBugtrackerConnected()) {
-			status = BugTrackerStatus.BUGTRACKER_UNDEFINED;
+			status = AuthenticationStatus.UNDEFINED;
 		} else if (remoteBugTrackersService.isCredentialsNeeded(project.findBugTracker())) {
-			status = BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS;
+			status = AuthenticationStatus.NON_AUTHENTICATED;
 		} else {
-			status = BugTrackerStatus.BUGTRACKER_READY;
+			status = AuthenticationStatus.AUTHENTICATED;
 		}
 		return status;
 	}
 
 	@Override
-	public BugTrackerStatus checkBugTrackerStatus(Long projectId) {
+	public AuthenticationStatus checkBugTrackerStatus(Long projectId) {
 		Project project = projectDao.findById(projectId);
 		return checkBugTrackerStatus(project);
+	}
+
+	@Override
+	public AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId) {
+		AuthenticationStatus status;
+		BugTracker bugtracker = bugTrackerDao.findById(bugtrackerId);
+		if(bugtracker == null){
+			status = AuthenticationStatus.UNDEFINED;
+		}
+		else{
+			boolean needs = remoteBugTrackersService.isCredentialsNeeded(bugtracker);
+			status = (needs) ? AuthenticationStatus.NON_AUTHENTICATED : AuthenticationStatus.AUTHENTICATED;
+		}
+		return status;
 	}
 
 	private RemoteIssue createRemoteIssue(IssueDetector entity, RemoteIssue btIssue) {
@@ -247,6 +261,12 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public void setCredentials(String username, String password, BugTracker bugTracker) {
 		remoteBugTrackersService.setCredentials(username, password, bugTracker);
+	}
+
+	@Override
+	public void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException {
+		BugTracker bugtracker = bugTrackerDao.findById(bugtrackerId);
+		remoteBugTrackersService.setCredentials(username, password, bugtracker);
 	}
 
 	@Override

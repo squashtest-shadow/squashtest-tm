@@ -24,50 +24,53 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
 
     el: "#coverage-stat",
     treeSelector : "#perimeter-tree",
-    storagePrefix : "requirement-coverage-stat-perimeter",
+    storagePrefix : "requirement-coverage-stat-perimeter-",
 
     events : {
         "click #change-perimeter-button" :"showSelectPerimeter"
     },
 
     initialize: function () {
-        console.log("INIT RATES");
-        this.initializeRate();
+        this.initializeData();
         this.initPerimeterDialog();
     },
 
-    initializeRate : function () {
-        this.initializeData().render();
-    },
-
     initializeData : function () {
-        console.log("INIT RATES DATA");
         var url = urlBuilder.buildURL("requirements.coverageStats.model",this.model.get("id"));
         var self = this;
         var key = this.getStorageKey();
-        var value = storage.get(key) ? storage.get(key) : "";
+        var value = storage.get(key) ? storage.get(key) : {id:"",name:""};
         var data = {
-        perimeter : value
+          perimeter : value.id
         };
-        console.log(url);
 
-        $.ajax({
-        url: url,
-        type: 'GET',
-        data : data
-        })
-        .done(function(response) {
-        console.log(response);
-        console.log("success");
-        self.model.set("coverage",response.rates.coverage);
-        self.render();
-        });
+          $.ajax({
+            url: url,
+            type: 'GET',
+            data : data
+          })
+          .done(function(response) {
+            if (value.id!=="") {
+              self.model.set("hasPerimeter",!response.corruptedPerimeter);
+              self.model.set("perimeterName",value.name);
+              self.model.set("verification",response.rates.verification);
+              self.model.set("validation",response.rates.validation);
+            }
+            else {
+              self.model.set("hasPerimeter",false);
+            }
+            self.model.set("corruptedPerimeter",response.corruptedPerimeter);
+            self.model.set("isAncestor",response.ancestor);
+            self.model.set("coverage",response.rates.coverage);
+            self.render();
+          });
         return this;
     },
 
     render : function () {
-        var templated = this.makeTemplating("#tpl-show-coverage-rate",this.model.get("coverage"));
-        this.$el.find("#coverage-rate").html(templated);
+        this.$el.find("#table-rates").html("");
+        var templatedRates = this.makeTemplating("#tpl-table-rates",this.model.attributes);
+        this.$el.find("#table-rates").html(templatedRates);
     },
 
     initPerimeterDialog : function () {
@@ -111,17 +114,26 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
     },
 
     showSelectPerimeter : function () {
-        console.log("click");
         $("#dialog-select-perimeter").formDialog("open");
     },
 
+    /**
+     * Set the choosen perimeter in local storage.
+     * Each project will have is own perimeter, choosen when you choose a perimeter for a requirement version of this project
+     * @return {[type]} [description]
+     */
     changePerimeter : function () {
         var selectedNode = $(this.treeSelector).jstree("get_selected");
         var key = this.getStorageKey();
-        var value = selectedNode.getDomId();
+        var id = selectedNode.getDomId();
+        var name = selectedNode.getName();
+        var value = {
+          id : id,
+          name : name
+        };
 
         storage.set(key,value);
-        console.log(storage.get(key));
+        this.initializeData();
     },
 
     getStorageKey : function () {

@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
@@ -142,6 +143,19 @@ class CustomReportLibraryNodeServiceIT extends DbunitServiceSpecification {
 		nodeId 	|| newName
 		-20L	|| "newFolderName"
 		-2L		|| "newDashName"
+		
+	}
+	
+	def "should find node from library"() {
+		given :
+		def library = findEntity(CustomReportLibrary, -1L);
+		
+		when:
+		CustomReportLibraryNode node = crlnDao.findNodeFromEntity(library);
+
+		then:
+		node.id == -1L
+		node.name == "project-1"
 		
 	}
 	

@@ -22,10 +22,12 @@ package org.squashtest.tm.hibernate.mapping.requirement
 
 
 import org.hibernate.JDBCException
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
@@ -92,5 +94,37 @@ class RequirementMappingIT extends HibernateMappingSpecification {
 		thrown (JDBCException)
 	}
 
+	def "should cascade persist a requirement and a sync extender"(){
+
+		given :
+		BugTracker bt = new BugTracker(name :"by", kind :"something", url : "http://")
+
+		and :
+		def version = new RequirementVersion(name: "req 1", description: "this is a new requirement")
+		Requirement requirement = new Requirement(version)
+		def categ = doInTransaction({it.get(InfoListItem.class, 1l)})
+		requirement.category = categ
+
+		RequirementSyncExtender ext = new RequirementSyncExtender()
+
+		ext.bugtracker = bt
+		requirement.syncExtender = ext
+		ext.requirement = requirement
+
+		when :
+		persistFixture bt
+		persistFixture requirement
+
+
+		then :
+		requirement.id != null
+		ext.id != null
+
+		cleanup :
+		deleteFixture ext
+		deleteFixture bt
+
+
+	}
 
 }

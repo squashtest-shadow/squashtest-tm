@@ -34,13 +34,13 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 
 @Transactional
@@ -225,7 +225,7 @@ public interface BugTrackersLocalService {
 	 * @return the status of the bugtracker
 	 * 
 	 */
-	BugTrackerStatus checkBugTrackerStatus(Project project);
+	AuthenticationStatus checkBugTrackerStatus(Project project);
 
 
 	/**
@@ -235,7 +235,16 @@ public interface BugTrackersLocalService {
 	 * @param projectId
 	 * @return
 	 */
-	BugTrackerStatus checkBugTrackerStatus(Long projectId);
+	AuthenticationStatus checkBugTrackerStatus(Long projectId);
+
+	/**
+	 * says whether the user is authenticated against that bugtracker regardless
+	 * of the bindings with projects.
+	 * 
+	 * @param bugtracker
+	 * @return
+	 */
+	AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId);
 
 	/**
 	 * sets the credentials of an user for authentication bugtracker-side.
@@ -249,6 +258,16 @@ public interface BugTrackersLocalService {
 	 *             if the credentials are wrong
 	 */
 	void setCredentials(String username, String password, BugTracker bugTracker) throws BugTrackerRemoteException;
+
+	/**
+	 * Same as {@link #setCredentials(String, String, BugTracker)}, but the bugtracker is identified by its id.
+	 * 
+	 * @param username
+	 * @param password
+	 * @param bugtrackerId
+	 * @throws BugTrackerRemoteException
+	 */
+	void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException;
 
 	/**
 	 * returns an instance of the remote project.

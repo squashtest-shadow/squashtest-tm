@@ -18,10 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.bugtracker;
+package org.squashtest.tm.exception.requirement;
 
-public enum BugTrackerStatus {
-	BUGTRACKER_UNDEFINED,
-	BUGTRACKER_NEEDS_CREDENTIALS,
-	BUGTRACKER_READY;
+import org.squashtest.tm.core.foundation.exception.ActionException;
+
+public class IllegalRequirementVersionCreationException extends ActionException {
+
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private static final String illegalReqVersionCreationException = "squashtm.action.exception.illegalrequirementversioncreation.label";
+
+
+	public IllegalRequirementVersionCreationException(Exception ex){
+		super(ex);
+	}
+
+	public IllegalRequirementVersionCreationException(String message){
+		super(message);
+	}
+
+	public IllegalRequirementVersionCreationException(){
+
+	}
+
+	@Override
+	public String getI18nKey() {
+		return illegalReqVersionCreationException;
+	}
 }

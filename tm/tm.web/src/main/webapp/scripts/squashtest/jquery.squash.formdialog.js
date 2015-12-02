@@ -252,8 +252,6 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 				}
 			}
 
-			// creates the widget
-			self._super();
 
 			// extend the conf with the domconf on the root element
 			var def = this.element.data('def');
@@ -266,7 +264,10 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			var datas = _.omit(this.element.data(), "def");
 			this.options = _.extend(this.options, datas);
 
-			// read and apply dom conf
+			// creates the widget
+			self._super();
+			
+			// now read and apply dom conf from the content
 			this._readDomConf();
 
 			// declares custom events

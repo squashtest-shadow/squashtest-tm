@@ -958,28 +958,7 @@ div#search-result .library {
 }
 
 
-/* ------------------------------------------*/
-/* ----------->>> wizards conf <<<-----------*/
-/* ------------------------------------------*/
 
-
-.wizard-list table{
-  width : auto;
-  border-collapse : collapse;
-    line-height : 2em
- }
- 
-
-.wizard-list thead{
-	font-weight : bold;	
-	text-align: center;
-	border-bottom : 1px solid black;
-}
-
-
-.wizard-list tbody tr:hover{
-	background-color : #EFEFEF;	
-}
 
 /* ------------------------------------------*/
 /* ------------>>> fragments <<<-------------*/

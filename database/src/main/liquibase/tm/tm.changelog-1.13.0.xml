@@ -731,7 +731,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (5, '
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (74, 5, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (1, 75, 5, 'EQUALS');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
 	(1,'2');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (16, 5, 'NONE', 0);
@@ -838,7 +838,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (17, 
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (62, 17, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (2, 89, 17, 'NOT_NULL');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
 	(2,'FALSE');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (51, 17, 'NONE', 0);
@@ -851,7 +851,7 @@ insert into CHART_QUERY(CHART_QUERY_ID, NAME, STRATEGY, JOIN_STYLE) values (18, 
 insert into CHART_MEASURE_COLUMN(CHART_COLUMN_ID, QUERY_ID, MEASURE_OPERATION, MEASURE_RANK) values (62, 18, 'COUNT', 0);
 insert into CHART_FILTER(FILTER_ID, CHART_COLUMN_ID, QUERY_ID, FILTER_OPERATION) values (3, 89, 18, 'NOT_NULL');
 insert into CHART_FILTER_VALUES(FILTER_ID, FILTER_VALUE)
-values 
+values
 	(3,'TRUE');
 
 insert into CHART_AXIS_COLUMN(CHART_COLUMN_ID, QUERY_ID, AXIS_OPERATION, AXIS_RANK)  values (51, 18, 'NONE', 0);
@@ -1039,8 +1039,8 @@ values
       SELECT setval('chart_filter_filter_id_seq', (SELECT MAX(FILTER_ID) from CHART_FILTER));
     </sql>
   </changeSet>
-  
-  
+
+
  <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
  	<!-- CUSTOM_REPORT_LIBRARY TABLE -->
 
@@ -1074,7 +1074,7 @@ values
 		<column name="ENTITY_ID" type="BIGINT"/>
 
 		<column name="CRL_ID" type="BIGINT" remarks="fk to the containing CUSTOM_REPORT_LIBRARY">
-			<constraints nullable="false" foreignKeyName="fk_crln_custom_report_library_crl_id" references="CUSTOM_REPORT_LIBRARY(CRL_ID)" />
+			<constraints nullable="true" foreignKeyName="fk_crln_custom_report_library_crl_id" references="CUSTOM_REPORT_LIBRARY(CRL_ID)" />
 		</column>
 
 	</createTable>
@@ -1578,23 +1578,23 @@ values
 
 <sql>
 INSERT INTO CHART_COLUMN_PROTOTYPE (COLUMN_TYPE, LABEL, ENTITY_TYPE,  ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, ATTRIBUTE_TYPE)
-SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity,  code, 'STRING', true,'ATTRIBUTE'  
+SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity,  code, 'STRING', true,'ATTRIBUTE'
 FROM (SELECT DISTINCT bound_entity, code FROM CUSTOM_FIELD_BINDING cfb join CUSTOM_FIELD cf ON cfb.cf_id= cf.cf_id WHERE cf.INPUT_TYPE = 'PLAIN_TEXT' ) as request;
 
 INSERT INTO CHART_COLUMN_PROTOTYPE (COLUMN_TYPE, LABEL, ENTITY_TYPE,  ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, ATTRIBUTE_TYPE)
-SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'STRING', true,'ATTRIBUTE'  
+SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'STRING', true,'ATTRIBUTE'
 FROM (SELECT DISTINCT bound_entity, code FROM CUSTOM_FIELD_BINDING cfb join CUSTOM_FIELD cf ON cfb.cf_id= cf.cf_id WHERE cf.INPUT_TYPE = 'RICH_TEXT' ) as request;
 
 INSERT INTO CHART_COLUMN_PROTOTYPE (COLUMN_TYPE, LABEL, ENTITY_TYPE,  ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, ATTRIBUTE_TYPE)
-SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'DATE', true,'ATTRIBUTE'  
+SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'DATE', true,'ATTRIBUTE'
 FROM (SELECT DISTINCT bound_entity, code FROM CUSTOM_FIELD_BINDING cfb join CUSTOM_FIELD cf ON cfb.cf_id= cf.cf_id WHERE cf.INPUT_TYPE = 'DATE_PICKER' ) as request;
 
 INSERT INTO CHART_COLUMN_PROTOTYPE (COLUMN_TYPE, LABEL, ENTITY_TYPE,  ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, ATTRIBUTE_TYPE)
-SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'LIST', true,'ATTRIBUTE'  
+SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'LIST', true,'ATTRIBUTE'
 FROM (SELECT DISTINCT bound_entity, code FROM CUSTOM_FIELD_BINDING cfb join CUSTOM_FIELD cf ON cfb.cf_id= cf.cf_id WHERE cf.INPUT_TYPE = 'DROPDOWN_LIST' ) as request;
 
 INSERT INTO CHART_COLUMN_PROTOTYPE (COLUMN_TYPE, LABEL, ENTITY_TYPE,  ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, ATTRIBUTE_TYPE)
-SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'EXISTENCE', true,'ATTRIBUTE'  
+SELECT 'CUF', concat(bound_entity, '_CUF_', code), bound_entity, code, 'EXISTENCE', true,'ATTRIBUTE'
 FROM (SELECT DISTINCT bound_entity, code FROM CUSTOM_FIELD_BINDING cfb join CUSTOM_FIELD cf ON cfb.cf_id= cf.cf_id WHERE cf.INPUT_TYPE = 'CHECKBOX' ) as request;
 
 INSERT INTO CHART_COLUMN_ROLE(CHART_COLUMN_ID, ROLE)
@@ -1626,5 +1626,52 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 		</createTable>
 </changeSet>
 
+
+	<changeSet id="tm-1.13.0-feature-5265-1" author="bsiri">
+
+	<comment>
+	This table holds the optional extension for requirement, that flags them as synchronized requirement
+	</comment>
+
+		<createTable tableName="REQUIREMENT_SYNC_EXTENDER">
+			<column name="REQ_SYNC_ID" type="BIGINT"
+				autoIncrement="true" remarks="autogenerated key">
+				<constraints primaryKey="true" nullable="false" />
+			</column>
+
+			<column name="REQUIREMENT_ID" type="BIGINT" remarks="foreign key to the (now synchronized) requirement">
+				<constraints nullable="false"
+					foreignKeyName="fk_sync_extender_requirement"
+					references="REQUIREMENT(RLN_ID)" />
+			</column>
+
+			<column name="BUGTRACKER_ID" type="BIGINT" remarks="foreign key to the source bugtracker">
+				<constraints nullable="false"
+					foreignKeyName="fk_sync_extender_bugtracker"
+					references="BUGTRACKER(BUGTRACKER_ID)" />
+			</column>
+
+			<column name="REMOTE_REQ_ID" type="java.sql.Types.VARCHAR(15)" remarks="ID of the remote requirement"/>
+
+			<column name="REMOTE_PROJECT_ID" type="java.sql.Types.VARCHAR(15)" remarks="ID of the remote project that hosts the remote requirement"/>
+
+     		<column name="LAST_SYNCHRONIZED_BY" type="java.sql.Types.VARCHAR(50)" defaultValue="NULL"
+        remarks="the last used that synchronized that requirement with the remote manager" />
+
+
+		</createTable>
+	</changeSet>
+
+	<changeSet id="tm-1.13.0-feature-5265-2" author="bsiri">
+
+	<comment>
+		adding a column recording how a requirement should be managed
+	</comment>
+
+	<addColumn tableName="REQUIREMENT">
+		<column name="MODE" type="VARCHAR(15)" defaultValue="NATIVE" remarks="Says whether a requirement is NATIVE or SYNCHRONIZED"/>
+	</addColumn>
+
+	</changeSet>
 
 </databaseChangeLog>

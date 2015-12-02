@@ -30,6 +30,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -44,6 +46,7 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.project.ProjectDeletionHandler;
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
@@ -71,7 +74,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private ProjectsPermissionManagementService projectPermissionManagementService;
 	@Inject
 	private SessionFactory sessionFactory;
-
+	@Inject
+	private CustomReportLibraryNodeDao crlnDao;
 
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
@@ -120,6 +124,11 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		RequirementLibrary requirementLibrary = project.getRequirementLibrary();
 		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
+		
+		//deleting the node associated to custom report library
+		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
+		deleteCustomReportLibraryNode(customReportLibrary);
+		
 		sessionFactory.getCurrentSession().evict(project);
 		project = genericProjectDao.findById(projectId);
 		project.accept(new ProjectVisitor() {
@@ -138,18 +147,30 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		genericProjectDao.remove(project);
 	}
 
+	private void deleteCustomReportLibraryNode(
+			CustomReportLibrary customReportLibrary) {
+		CustomReportLibraryNode node = crlnDao.findNodeFromEntity(customReportLibrary);
+		node.setLibrary(null);
+		node.setEntity(null);
+		sessionFactory.getCurrentSession().delete(node);
+		sessionFactory.getCurrentSession().flush();
+	}
+
 	private void removeACLsForProjectAndLibraries(GenericProject project) {
 		long rlId = project.getRequirementLibrary().getId();
 		long tclId = project.getTestCaseLibrary().getId();
 		long clId = project.getCampaignLibrary().getId();
+		long crlId = project.getCustomReportLibrary().getId();
 		//remove arse for libraries
 		projectPermissionManagementService.removeAllPermissionsFromObject(RequirementLibrary.class, rlId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(TestCaseLibrary.class, tclId);
 		projectPermissionManagementService.removeAllPermissionsFromObject(CampaignLibrary.class, clId);
+		projectPermissionManagementService.removeAllPermissionsFromObject(CustomReportLibrary.class, crlId);
 		//remove aoi for libaries
 		objectIdentityService.removeObjectIdentity(rlId, RequirementLibrary.class);
 		objectIdentityService.removeObjectIdentity(tclId, TestCaseLibrary.class);
 		objectIdentityService.removeObjectIdentity(clId, CampaignLibrary.class);
+		objectIdentityService.removeObjectIdentity(crlId, CustomReportLibrary.class);
 		//remove arse for project
 		//and remove aoi for project
 		project.accept(new ProjectVisitor() {

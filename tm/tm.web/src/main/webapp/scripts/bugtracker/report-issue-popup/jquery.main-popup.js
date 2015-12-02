@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable", "./default-field-view", "./advanced-field-view", "file-upload", 
-        "workspace.event-bus", "jqueryui", "squashtest/jquery.squash.popuperror", 
-        "jquery.squash.formdialog"], 
-        function($, _, storage, SelectJEditable, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus){
+        "workspace.event-bus", "handlebars",
+        "jqueryui", "squashtest/jquery.squash.popuperror", "jquery.squash.formdialog"], 
+        function($, _, storage, SelectJEditable, DefaultFieldView, AdvancedFieldView, fileUploadUtils, eventBus, Handlebars){
 	
 	squashtm.eventBus = eventBus;
 	

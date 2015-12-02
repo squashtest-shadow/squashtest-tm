@@ -38,7 +38,6 @@ import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.bugtracker.BugTrackerStatus;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
@@ -49,6 +48,7 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.servers.AuthenticationStatus;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
@@ -58,9 +58,9 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.TestSuiteFinder;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
-import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedDataPropertyEditorSupport;
+import org.squashtest.tm.web.internal.controller.authentication.ThirPartyServersAuthenticationController;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
@@ -73,6 +73,14 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
+
+/**
+ * 
+ * Note : as of 1.13 the questions regarding authentications has been moved to {@link ThirPartyServersAuthenticationController}
+ * 
+ * @author bsiri
+ *
+ */
 @Controller
 @RequestMapping("/bugtracker")
 public class BugTrackerController {
@@ -597,40 +605,6 @@ public class BugTrackerController {
 		return bugTrackersLocalService.getIssue(remoteKey, bugTracker);
 	}
 
-	@RequestMapping(value = "/credentials", method = RequestMethod.POST, params = {"login", "password", BUGTRACKER_ID})
-	public
-	@ResponseBody
-	Map<String, String> setCredendials(@RequestParam("login") String login, @RequestParam("password") String password,
-	                                   @RequestParam(BUGTRACKER_ID) long bugTrackerId) {
-		BugTracker bugTracker = bugTrackerManagerService.findById(bugTrackerId);
-		bugTrackersLocalService.setCredentials(login, password, bugTracker);
-
-		Map<String, String> map = new HashMap<>();
-		map.put("status", "ok");
-		return map;
-
-	}
-
-	@RequestMapping(value = "/status", method = RequestMethod.GET, params = {RequestParams.PROJECT_ID})
-	public
-	@ResponseBody
-	Object getBugTrackerStatus(@RequestParam(RequestParams.PROJECT_ID) Long projectId) {
-		String strStatus;
-
-		BugTrackerStatus status = checkStatus(projectId);
-
-		if (status == BugTrackerStatus.BUGTRACKER_READY) {
-			strStatus = "ready";
-		} else if (status == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS) {
-			strStatus = "needs_credentials";
-		} else {
-			strStatus = "bt_undefined";
-		}
-
-		Map<String, String> result = new HashMap<>();
-		result.put("status", strStatus);
-		return result;
-	}
 
 	// FIXME : check first if a bugtracker is defined and if the credentials are set
 	private Map<String, String> processIssue(RemoteIssue issue, IssueDetector entity) {
@@ -737,7 +711,7 @@ public class BugTrackerController {
 	private ModelAndView makeIssuePanel(Identified entity, String type, Locale locale, String panelStyle,
 	                                    Project project) {
 		if (project.isBugtrackerConnected()) {
-			BugTrackerStatus status = checkStatus(project.getId());
+			AuthenticationStatus status = checkStatus(project.getId());
 			// JSON STATUS TODO
 
 			BugTrackerInterfaceDescriptor descriptor = bugTrackersLocalService.getInterfaceDescriptor(project
@@ -772,7 +746,7 @@ public class BugTrackerController {
 	@RequestMapping(value = "/{bugtrackerIds}", method = RequestMethod.DELETE)
 	public
 	@ResponseBody
-	void deleteUsers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds) {
+	void deleteBugtrackers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds){
 		LOGGER.debug("ids of bugtracker to delete " + bugtrackerIds.toString());
 		bugTrackerManagerService.deleteBugTrackers(bugtrackerIds);
 	}
@@ -827,7 +801,7 @@ public class BugTrackerController {
 	}
 
 
-	private BugTrackerStatus checkStatus(long projectId) {
+	private AuthenticationStatus checkStatus(long projectId) {
 		return bugTrackersLocalService.checkBugTrackerStatus(projectId);
 	}
 
@@ -879,7 +853,7 @@ public class BugTrackerController {
 	}
 
 	private boolean shouldGetTableData(ModelAndView mav) {
-		return mav.getModel().get(MODEL_BUG_TRACKER_STATUS) == BugTrackerStatus.BUGTRACKER_READY;
+		return mav.getModel().get(MODEL_BUG_TRACKER_STATUS) == AuthenticationStatus.AUTHENTICATED;
 	}
 
 }

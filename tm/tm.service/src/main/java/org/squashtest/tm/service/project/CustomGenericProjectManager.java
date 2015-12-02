@@ -141,35 +141,19 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 */
 	void changeBugTrackerProjectName(long projectId, List<String> projectBugTrackerNames);
 
-	// ****************************** wizards management ***********************
+	// ****************************** plugins management ***********************
 
 	/**
-	 * enables the given wizard for the given workspace of the given project
+	 * enables the given plugin for the given workspace of the given project
 	 */
-	void enableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
+	void enablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
 
 	/**
-	 * enables the given wizard for the given workspace of the given project
+	 * enables the given plugin for the given workspace of the given project
 	 */
-	void disableWizardForWorkspace(long projectId, WorkspaceType workspace, String wizardId);
+	void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
 
-	/**
-	 * Returns the configuration of a given wizard for a given project. Returns an empty map if the wizard is not bound
-	 * to this project.
-	 */
-	Map<String, String> getWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId);
 
-	/**
-	 * Applies the given configuration to a wizard for a given project. If the wizard wasn't enabled for this project
-	 * already, it will be during the process.
-	 *
-	 * @param projectId
-	 * @param workspace
-	 * @param wizardId
-	 * @param configuration
-	 */
-	void setWizardConfiguration(long projectId, WorkspaceType workspace, String wizardId,
-			Map<String, String> configuration);
 
 	// ***************************** status management *************************
 
@@ -225,7 +209,7 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	boolean projectUsesExecutionStatus(long projectId,  ExecutionStatus executionStatus);
 
 	void changeName(long projectId, String newName) throws NameAlreadyInUseException;
-	
+
 	GenericProject synchronizeGenericProject(GenericProject target,
 			GenericProject source, GenericProjectCopyParameter params);
 }

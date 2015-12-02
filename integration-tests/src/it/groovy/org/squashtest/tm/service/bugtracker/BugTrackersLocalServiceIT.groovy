@@ -40,7 +40,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.domain.bugtracker.BugTrackerStatus
+import org.squashtest.tm.domain.bugtracker.ThirdPartyServerStatus
 import org.squashtest.tm.domain.bugtracker.Issue
 import org.squashtest.tm.domain.bugtracker.IssueOwnership
 import org.squashtest.tm.domain.execution.Execution
@@ -211,12 +211,12 @@ class BugTrackersLocalServiceIT extends DbunitServiceSpecification  {
 		given :
 
 		when :
-		BugTrackerStatus status1 = btService.checkBugTrackerStatus()
+		ThirdPartyServerStatus status1 = btService.checkAuthenticationStatus()
 		btService.setCredentials("administrator", "root")
-		BugTrackerStatus status2 = btService.checkBugTrackerStatus()
+		ThirdPartyServerStatus status2 = btService.checkAuthenticationStatus()
 		then :
-		status1 == BugTrackerStatus.BUGTRACKER_NEEDS_CREDENTIALS
-		status2 == BugTrackerStatus.BUGTRACKER_READY
+		status1 == ThirdPartyServerStatus.NON_AUTHENTICATED
+		status2 == ThirdPartyServerStatus.AUTHENTICATED
 
 	}
 

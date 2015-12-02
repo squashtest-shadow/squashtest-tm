@@ -28,5 +28,4 @@ public interface CampaignTestPlanItemDao extends EntityDao<CampaignTestPlanItem>
 
 	List<Long> findPlannedTestCasesIdsByCampaignId(Long campaignId);
 
-
 }

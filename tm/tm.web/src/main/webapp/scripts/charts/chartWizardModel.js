@@ -109,7 +109,6 @@ return Backbone.Model.extend({
 	.pluck('column')
 	.pluck('specializedType')
 	.pluck('entityType')
-	.map(function(val){return val.replace('REQUIREMENT_VERSION', 'REQUIREMENT');} )
 	.uniq()
 	.value();	
 	},

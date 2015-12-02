@@ -65,7 +65,7 @@
 	<s:param name="projectId" 		value="${adminproject.project.id}"/>
 </s:url>
 
-<s:url var="wizardsManagerURL"      value="/administration/projects/{projectId}/wizards">
+<s:url var="pluginsManagerURL"      value="/administration/projects/{projectId}/plugins">
 	<s:param name="projectId" 	    value="${adminproject.project.id}" />
 </s:url>
 
@@ -165,7 +165,7 @@
 			   <c:if test="${milestoneFeatureEnabled }">
 			    <li><a href="${milestoneManagerURL}"><f:message key="tabs.label.milestone"/></a></li>
 				</c:if>
-				<li><a href="${wizardsManagerURL}"><f:message key="tabs.label.wizards"/></a></li>
+				<li><a href="${pluginsManagerURL}"><f:message key="tabs.label.plugins"/></a></li>
 			
 			</ul>
 		

@@ -43,6 +43,7 @@ import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.domain.chart.QFilter;
 import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.InputType;
@@ -62,7 +63,8 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 
 		@Override
 		public Object transform(Object cufBinding) {
-			return EntityType.valueOf(((CustomFieldBinding) cufBinding).getBoundEntity().name());
+			BindableEntity bind = ((CustomFieldBinding) cufBinding).getBoundEntity();
+			return convertBindableEntityToEntityType(bind);
 		}
 	};
 
@@ -186,7 +188,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 
 		CustomField cuf = cufBinding.getCustomField();
 		String code = cuf.getCode();
-		EntityType type = EntityType.valueOf(cufBinding.getBoundEntity().name());
+		EntityType type = convertBindableEntityToEntityType(cufBinding.getBoundEntity());
 
 		if (!columnAlreadyExist(code, type)) {
 			createColumnPrototype(cuf, code, type);
@@ -286,5 +288,14 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	}
 	private Session session() {
 		return sessionFactory.getCurrentSession();
+	}
+
+	private static EntityType convertBindableEntityToEntityType(BindableEntity bind) {
+		// we need to fix the name for test step...because it's not called the same in bindable entity and
+		// entityType
+		// Maybe we could do something better later to avoid having different name for the same thing
+		String name = bind.equals(BindableEntity.TEST_STEP) ? EntityType.TEST_CASE_STEP.name() : bind.name();
+		return EntityType.valueOf(name);
+
 	}
 }

@@ -20,9 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -70,6 +76,29 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 		public void setQueryParameters(Query query) {
 			query.setLong("childId", childId);
 		}
+	}
+
+	@Override
+	public MultiMap findStepExecutionsStatus(List<Long> testCaseIds,List<Long> testStepIds) {
+		if (testStepIds.size()==0) {
+			return new MultiValueMap();
+		}
+		List<ExecutionStep> execSteps = new ArrayList<ExecutionStep>();
+		for (Long tcId : testCaseIds) {
+			Query q = currentSession().getNamedQuery("execution.findAllByTestCaseIdAndItIdOrderByRunDate");
+			q.setParameter("testCaseId", tcId, LongType.INSTANCE);
+			List<Execution> execs = q.list();
+			if (execs.size() > 0) {
+				execSteps.addAll(execs.get(0).getSteps());
+			}
+		}
+		MultiMap result = new MultiValueMap();
+		for (ExecutionStep executionStep : execSteps) {
+			if (testStepIds.contains(executionStep.getReferencedTestStep().getId())) {
+				result.put(executionStep.getReferencedTestStep().getId(), executionStep);
+			}
+		}
+		return result; 
 	}
 
 

@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "./user-permission-table", "./workspace-wizard-tab" ], function(
-		fnInitPermissionTable, fnInitWizardTab) {
+define([ "./user-permission-table", "./plugins-tab" ], function(
+		fnInitPermissionTable, fnInitPluginsTab) {
 
 	return {
 		initUserPermissions : fnInitPermissionTable,
-		initWizardsTab : fnInitWizardTab
+		initPluginsTab : fnInitPluginsTab
 	};
 
 });

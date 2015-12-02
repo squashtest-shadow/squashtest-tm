@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.json;
 
 import static org.squashtest.tm.domain.EntityType.CAMPAIGN;
+import static org.squashtest.tm.domain.EntityType.EXECUTION;
 import static org.squashtest.tm.domain.EntityType.ITEM_TEST_PLAN;
 import static org.squashtest.tm.domain.EntityType.ITERATION;
 import static org.squashtest.tm.domain.EntityType.REQUIREMENT;
@@ -108,7 +109,6 @@ public class JsonChartWizardData {
 		addLevelEnums();
 		addEntityType();
 		addInfoList(projects);
-		fixColumnPrototype();
 		addCustomFields(projects);
 
 
@@ -138,10 +138,12 @@ public class JsonChartWizardData {
 	private void addEntityType() {
 
 		entityTypes.put(REQUIREMENT, "icon-chart-requirement");
+		entityTypes.put(REQUIREMENT_VERSION, "icon-chart-requirement-version");
 		entityTypes.put(CAMPAIGN, "icon-chart-campaign");
 		entityTypes.put(ITEM_TEST_PLAN, "icon-chart-item-test-plan");
 		entityTypes.put(TEST_CASE, "icon-chart-test-case");
 		entityTypes.put(ITERATION, "icon-chart-iteration");
+		entityTypes.put(EXECUTION, "icon-chart-execution");
 
 	}
 
@@ -184,14 +186,6 @@ public class JsonChartWizardData {
 		}
 	}
 
-	private void fixColumnPrototype() {
-		// business want to regroup requirement and requirement version attribute under requirement
-		Set<ColumnPrototype> reqVersionCol = columnPrototypes.get(REQUIREMENT_VERSION);
-		columnPrototypes.get(REQUIREMENT).addAll(reqVersionCol);
-		columnPrototypes.remove(REQUIREMENT_VERSION);
-
-
-	}
 
 	private <E extends Enum<E> & Level> void addLevelEnum(String name, Class<E> clazz) {
 		levelEnums.put(name, EnumSet.allOf(clazz));
