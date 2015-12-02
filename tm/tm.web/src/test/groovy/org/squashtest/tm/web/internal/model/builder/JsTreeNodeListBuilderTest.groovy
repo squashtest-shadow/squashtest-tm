@@ -28,7 +28,13 @@ import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecificati
 class JsTreeNodeListBuilderTest extends NodeBuildingSpecification {
 	def "should build list of tree nodes"() {
 		given:
-		DummyBuilder nodeBuilder = new DummyBuilder(Mock(PermissionEvaluationService))
+		PermissionEvaluationService permEvaluator = Mock()
+		Map<String, Boolean> perms = Mock()
+		perms.get(_) >> false
+		permEvaluator._ >> perms
+		
+		and:
+		DummyBuilder nodeBuilder = new DummyBuilder(permEvaluator)
 		JsTreeNodeListBuilder listBuilder = new JsTreeNodeListBuilder(nodeBuilder)
 
 
@@ -46,6 +52,7 @@ class JsTreeNodeListBuilderTest extends NodeBuildingSpecification {
 }
 
 class Dummy implements Identified {
+	public String title
 	@Override
 	Long getId() {
 		return 1

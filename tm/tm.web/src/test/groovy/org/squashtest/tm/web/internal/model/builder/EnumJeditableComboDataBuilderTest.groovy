@@ -20,8 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.builder
 
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LabelFormatter;
-import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
+import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spock.lang.Specification
 
@@ -34,6 +37,8 @@ class EnumJeditableComboDataBuilderTest extends Specification {
 	Locale locale = Locale.default
 	
 	def setup() {
+		new JsonHelper(new ObjectMapper())
+		
 		builder.model = DummyEnum.values()
 		builder.labelFormatter = new DummyLabelFormatter()
 		builder.modelComparator = new DummyEnumComparator()

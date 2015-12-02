@@ -62,34 +62,11 @@ class ReportViewServletContextInitializerTest extends Specification {
 		Map pluginProps = ['osgi.service.blueprint.compname' : 'awesome report']
 
 		when:
-		registry.registerViews plugin, pluginProps
+		registry.reportPlugins = [plugin]
+		registry.registerViews()
 
 		then:
 		viewDef.servletContext == servletContext
 	}
 
-	def "should unbind servlet context from view definition"() {
-		given:
-		JasperReportsMultiFormatView viewDef = new JasperReportsMultiFormatView(servletContext: servletContext)
-
-		ReportView view = Mock()
-		view.springView >> viewDef
-
-		Report report = Mock()
-		report.views >> [view]
-
-		ReportPlugin plugin = Mock()
-		plugin.reports >> [report]
-
-		and:
-		Map pluginProps = ['osgi.service.blueprint.compname' : 'awesome report']
-		
-		when:
-		registry.unregisterViews plugin, pluginProps
-		// throws ex because no context
-		viewDef.servletContext
-
-		then:
-		thrown IllegalStateException
-	}
 }

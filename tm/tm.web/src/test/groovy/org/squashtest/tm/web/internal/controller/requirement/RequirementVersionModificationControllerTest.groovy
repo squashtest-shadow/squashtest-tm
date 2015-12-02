@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import javax.inject.Provider
 
 import org.springframework.ui.ExtendedModelMap
@@ -42,6 +43,7 @@ import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
+import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.helper.LabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
@@ -71,6 +73,8 @@ class RequirementVersionModificationControllerTest extends Specification {
 	MockFactory mockFactory = new MockFactory()
 
 	def setup() {
+		new JsonHelper(new ObjectMapper())
+		
 		controller.requirementVersionManager = requirementVersionModificationService
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider

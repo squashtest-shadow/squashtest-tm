@@ -37,11 +37,11 @@ import org.squashtest.tm.domain.milestone.Milestone;
 public abstract class DataTableModelBuilder<X> {
 	private long currentIndex = 0;
 
-	public final DataTableModel buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
+	public final DataTableModel<Object> buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
 
 		currentIndex = holder.getFirstItemIndex() + 1;
 		Collection<X> pagedItems = holder.getPagedItems();
-		DataTableModel model = createModelFromItems(sEcho, pagedItems);
+		DataTableModel<Object> model = createModelFromItems(sEcho, pagedItems);
 		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
 
 		return model;
@@ -78,8 +78,8 @@ public abstract class DataTableModelBuilder<X> {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
 	}
-	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
-		DataTableModel model = new DataTableModel(sEcho);
+	private DataTableModel<Object> createModelFromItems(String sEcho, Collection<X> pagedItems) {
+		DataTableModel<Object> model = new DataTableModel<Object>(sEcho);
 
 		for (X item : pagedItems) {
 			model.addRow(buildItemData(item));

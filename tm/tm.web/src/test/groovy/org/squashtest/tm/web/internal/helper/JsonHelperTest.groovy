@@ -21,12 +21,18 @@
 package org.squashtest.tm.web.internal.helper;
 
 import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.helper.JsonHelper
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import spock.lang.Specification;
 
 
 class JsonHelperTest extends Specification {
+	def setup() {
+		new JsonHelper(new ObjectMapper())
+	}
+	
 	def "should serialize a Dummy"() {
 		when:
 		def res = JsonHelper.serialize(new Dummy(foo: "foofoo", bar: "barbar"))

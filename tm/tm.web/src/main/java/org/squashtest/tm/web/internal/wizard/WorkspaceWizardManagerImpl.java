@@ -37,6 +37,8 @@ import org.squashtest.tm.service.project.GenericProjectFinder;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -115,9 +117,16 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
 
 		Predicate predicate = new BelongsToList(enabledWizardIds);
-		CollectionUtils.filter(wizards, predicate);
+		
+		Collection<WorkspaceWizard> res = filterWizards(wizards, predicate);
 
-		return wizards;
+		return res;
+	}
+
+	private Collection<WorkspaceWizard> filterWizards(Collection<WorkspaceWizard> wizards, Predicate predicate) {
+		Collection<WorkspaceWizard> res = new ArrayList<>(wizards); // 'wizards' is immutable
+		CollectionUtils.filter(res, predicate);
+		return res;
 	}
 
 	@Override
@@ -141,9 +150,8 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
 
 		Predicate predicate = new AbsentFromList(enabledWizardIds);
-		CollectionUtils.filter(wizards, predicate);
 
-		return wizards;
+		return filterWizards(wizards, predicate);
 
 	}
 

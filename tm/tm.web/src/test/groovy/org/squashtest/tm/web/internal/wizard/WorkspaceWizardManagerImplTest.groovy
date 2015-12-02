@@ -63,7 +63,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 
 	def "should find all #workspace wizards"() {
 		given:
-		manager.registerWizard new WorkspaceWizard() {
+		registerAll([new WorkspaceWizard() {
 					String getId() {
 						"campaign"
 					}
@@ -92,9 +92,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					String getModule(){
 						return "module";
 					}
-				}, Collections.emptyMap()
-
-		manager.registerWizard new WorkspaceWizard() {
+				}, new WorkspaceWizard() {
 					String getId() {
 						"requirement"
 					}
@@ -123,9 +121,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					String getModule(){
 						return "module";
 					}
-				}, Collections.emptyMap()
-
-		manager.registerWizard new WorkspaceWizard() {
+				}, new WorkspaceWizard() {
 					String getId() {
 						"test case"
 					}
@@ -154,7 +150,7 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					String getModule(){
 						return "module";
 					}
-				}, Collections.emptyMap()
+				}])
 
 		when:
 		def res = manager.findAllByWorkspace(workspace)
@@ -278,8 +274,9 @@ class WorkspaceWizardManagerImplTest extends Specification {
 		return allwizzs
 	}
 
-	def registerAll = {  wizzs ->
-		wizzs.each { manager.registerWizard it, [:] }
+	def registerAll(ws) {  
+		manager.wizards = ws 
+		manager.registerWizards()
 	}
 
 

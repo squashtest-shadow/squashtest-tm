@@ -21,24 +21,18 @@
 package org.squashtest.tm.web.internal.context
 
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
-import org.springframework.context.MessageSource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.MessageSource
+import org.springframework.test.context.ContextConfiguration
 
-import spock.lang.Specification;
-import spock.lang.Unroll;
-import spock.unitils.UnitilsSupport;
+import spock.lang.Specification
+import spock.lang.Unroll
 /**
  * @author Gregory Fouquet
  *
  */
 @ContextConfiguration(["classpath:ReloadableSquashTmMessageSourceIT.xml"])
-@UnitilsSupport
 class ReloadableSquashTmMessageSourceIT extends Specification {
 	@Inject
 	MessageSource messageSource
