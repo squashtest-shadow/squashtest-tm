@@ -835,6 +835,7 @@
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds",query="select distinct path.descendantId from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids) and path.depth=1"),
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllDescendant",query="select distinct path from CustomReportLibraryNodePathEdge path where path.ancestorId in (:ids)"),
 	@NamedQuery(name="CustomReportLibraryNodePathEdge.findAllAncestorIds",query="select distinct path.ancestorId from CustomReportLibraryNodePathEdge path where path.descendantId=:id"),
+	@NamedQuery(name="CustomReportLibraryNode.findNodeFromEntity",query="from CustomReportLibraryNode crln where crln.entityType = :entityType and crln.entityId = :entityId"),
 	
 	
 	//Coverage stat 5433 and 5434

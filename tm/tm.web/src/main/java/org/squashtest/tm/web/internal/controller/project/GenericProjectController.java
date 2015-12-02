@@ -53,8 +53,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import org.springframework.web.util.HtmlUtils;
 import org.springframework.web.util.UriComponents;
-import org.squashtest.tm.api.plugin.EntityReference;
-import org.squashtest.tm.api.plugin.EntityType;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
