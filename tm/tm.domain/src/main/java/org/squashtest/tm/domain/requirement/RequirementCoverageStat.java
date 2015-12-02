@@ -30,12 +30,16 @@ import java.util.Map;
  */
 public class RequirementCoverageStat {
 
+	/**
+	 * Used to mark if the perimeter(persisted in localstorage of each user) is referencing a suppressed Campaign or Iteration. 
+	 */
+	private boolean corruptedPerimeter = false;
+	
 	private boolean ancestor = false;
 	
 	private Map<String,Rate> rates = new HashMap<String, Rate>();
 
 	public RequirementCoverageStat() {
-		// TODO Auto-generated constructor stub
 	}
 
 	public boolean isAncestor() {
@@ -117,5 +121,19 @@ public class RequirementCoverageStat {
 		for (Rate rate : rates.values()) {
 			rate.convertToPercent();
 		}
+	}
+
+	/**
+	 * @return the corruptedPerimeter
+	 */
+	public boolean isCorruptedPerimeter() {
+		return corruptedPerimeter;
+	}
+
+	/**
+	 * @param corruptedPerimeter the corruptedPerimeter to set
+	 */
+	public void setCorruptedPerimeter(boolean corruptedPerimeter) {
+		this.corruptedPerimeter = corruptedPerimeter;
 	};
 }

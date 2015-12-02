@@ -29,12 +29,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import org.hibernate.ObjectNotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 /**
@@ -103,7 +105,19 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 		} catch (IllegalAccessException e) {
 			throw new RuntimeException(e);
 		} catch (InvocationTargetException e) {
-			throw new RuntimeException(e);
+			//If e.cause is a reference to a non existing object in database,
+			//continue the procedure to let spring cast a more friendly IdentityUnavailableException
+			if (e.getCause().getClass() == ObjectNotFoundException.class) {
+				identityHolder = new Identified() {
+					@Override
+					public Long getId() {
+						return 0L;
+					}
+				};
+			}
+			else {
+				throw new RuntimeException(e);
+			}
 		}
 
 		return identityHolder;

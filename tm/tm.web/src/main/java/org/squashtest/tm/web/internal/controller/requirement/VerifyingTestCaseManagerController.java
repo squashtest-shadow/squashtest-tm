@@ -32,6 +32,7 @@ import javax.inject.Provider;
 import org.apache.commons.collections.MultiMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.acls.domain.IdentityUnavailableException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -217,22 +218,28 @@ public class VerifyingTestCaseManagerController {
 	@SuppressWarnings("unchecked")
 	public @ResponseBody
 	RequirementCoverageStat getCoverageStat(@CurrentMilestone Milestone currentMilestone, @PathVariable long requirementVersionId, @RequestParam String perimeter) {
+		LOGGER.debug("JTH go controller go");
+		
 		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
 		List<Long> iterationIds = new ArrayList<Long>();
+		RequirementCoverageStat stat = new RequirementCoverageStat();
+		
 		if (mapIdsByType.containsKey(campaign_name)) {
 			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
-			//Only one selected node for v1.13...
-			Campaign campaign = campaignFinder.findById(ids.get(0));
-			iterationIds.addAll(getIterationsIdsForCampagain(campaign));
+			try {
+				//Only one selected node for v1.13...
+				Campaign campaign = campaignFinder.findById(ids.get(0));
+				iterationIds.addAll(getIterationsIdsForCampagain(campaign));
+			} catch (IdentityUnavailableException e) {
+				stat.setCorruptedPerimeter(true);
+			}
 		}
 		if (mapIdsByType.containsKey(iteration_name)) {
 			List<Long> ids = (List<Long>) mapIdsByType.get(iteration_name);
 			iterationIds.addAll(ids);
 		}
-		
-		LOGGER.debug("JTH go controller go");
-		LOGGER.debug("JTH" + mapIdsByType);
-		return verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, currentMilestone, iterationIds);
+		verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, currentMilestone, iterationIds,stat);
+		return stat;
 	}
 
 	private List<Long> getIterationsIdsForCampagain(

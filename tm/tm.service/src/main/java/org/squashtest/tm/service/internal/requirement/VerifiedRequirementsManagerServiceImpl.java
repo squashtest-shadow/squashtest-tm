@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -76,7 +78,6 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -84,8 +85,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
@@ -619,22 +618,29 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
-	public RequirementCoverageStat findCoverageStat(Long requirementVersionId,
-			Milestone currentMilestone, List<Long> iterationsIds) {
-		RequirementCoverageStat stats = new RequirementCoverageStat();
+	public void findCoverageStat(Long requirementVersionId,
+			Milestone currentMilestone, List<Long> iterationsIds, RequirementCoverageStat stats) {
 
 		RequirementVersion mainVersion = requirementVersionDao.findById(requirementVersionId);
 		Requirement mainRequirement = mainVersion.getRequirement();
 		List<RequirementVersion> descendants = findValidDescendants(mainRequirement,currentMilestone);
 		findCoverageRate(mainRequirement,mainVersion,descendants,stats);
-		//if we have a perimeter (ie iteration(s)), we'll have to calculate verification and validation rates
+		//if we have a valid perimeter (ie iteration(s)), we'll have to calculate verification and validation rates
 		if (iterationsIds.size() > 0) {
-			findExecutionRate(mainRequirement,mainVersion,descendants,stats,iterationsIds);
+			checkPerimeter(iterationsIds,stats);
+			if (!stats.isCorruptedPerimeter()) {
+				findExecutionRate(mainRequirement,mainVersion,descendants,stats,iterationsIds);
+			}
 		}
 		stats.convertRatesToPercent();
-		return stats;
+	}
+
+	private void checkPerimeter(List<Long> iterationsIds,
+			RequirementCoverageStat stats) {
+		List<Iteration> iterations = iterationDao.findAllByIds(iterationsIds);
+		if (iterations.size()!=iterationsIds.size()) {
+			stats.setCorruptedPerimeter(true);
+		}
 	}
 
 	/**
@@ -667,7 +673,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		Rate validationRate = new Rate();
 		
 		//see http://javadude.com/articles/passbyvalue.htm to understand why an array (or any object) is needed here
-		Long[] mainUntestedElementsCount = new Long[1];
+		Long[] mainUntestedElementsCount = new Long[]{0L};
 		Map<ExecutionStatus, Long> mainStatusMap = new HashMap<ExecutionStatus, Long>();
 		makeStatusMap(mainVersion.getRequirementVersionCoverages(), mainUntestedElementsCount, mainStatusMap, iterationsIds);
 		verificationRate.setRequirementVersionRate(doRateVerifiedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
@@ -676,16 +682,17 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		if (hasDescendant) {
 			verificationRate.setAncestor(true);
 			validationRate.setAncestor(true);
-			
-			Set<RequirementVersionCoverage> descendantCoverages = getCoverages(descendants);
-			Long[] descendantUntestedElementsCount = new Long[1];
+			Long[] descendantWithNoCoverageCount = new Long[]{0L};
+			Set<RequirementVersionCoverage> descendantCoverages = getDescendantCoverages(descendants,descendantWithNoCoverageCount);
+			Long[] descendantUntestedElementsCount = new Long[]{0L};
 			Map<ExecutionStatus, Long> descendantStatusMap = new HashMap<ExecutionStatus, Long>();
 			makeStatusMap(descendantCoverages, descendantUntestedElementsCount, descendantStatusMap, iterationsIds);
-			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
-			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
+			Long totalNonVerifiedDescendant = descendantWithNoCoverageCount[0] + descendantUntestedElementsCount[0];
+			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, totalNonVerifiedDescendant));
+			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, totalNonVerifiedDescendant));
 			
-			Long[] allUntestedElementsCount = new Long[1];
-			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + descendantUntestedElementsCount[0];
+			Long[] allUntestedElementsCount = new Long[]{0L};
+			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + totalNonVerifiedDescendant;
 			Map<ExecutionStatus, Long> allStatusMap = mergeMapResult(mainStatusMap,descendantStatusMap);
 			verificationRate.setRequirementVersionGlobalRate(doRateVerifiedCalculation(allStatusMap, allUntestedElementsCount[0]));
 			validationRate.setRequirementVersionGlobalRate(doRateValidatedCalculation(allStatusMap, allUntestedElementsCount[0]));
@@ -696,7 +703,13 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	
-
+	/**
+	 * Return a merged map. For each {@link ExecutionStatus}, the returned value is the value in map1 + value in map 2.
+	 * The state of the two arguments maps is preserved
+	 * @param mainStatusMap
+	 * @param descendantStatusMap
+	 * @return
+	 */
 	private Map<ExecutionStatus, Long> mergeMapResult(
 			Map<ExecutionStatus, Long> mainStatusMap,
 			Map<ExecutionStatus, Long> descendantStatusMap) {
@@ -737,11 +750,17 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 
-	private Set<RequirementVersionCoverage> getCoverages(
-			List<RequirementVersion> descendants) {
+	private Set<RequirementVersionCoverage> getDescendantCoverages(
+			List<RequirementVersion> descendants, Long[] descendantWithNoCoverageCount) {
 		Set<RequirementVersionCoverage> covs = new HashSet<RequirementVersionCoverage>();
 		for (RequirementVersion requirementVersion : descendants) {
-			covs.addAll(requirementVersion.getRequirementVersionCoverages());
+			Set<RequirementVersionCoverage> coverages = requirementVersion.getRequirementVersionCoverages();
+			if (coverages.size()>0) {
+				covs.addAll(coverages);
+			}
+			else {
+				descendantWithNoCoverageCount[0] = descendantWithNoCoverageCount[0] + 1;
+			}
 		}
 		return covs;
 	}
@@ -822,6 +841,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return result;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Map<ExecutionStatus,Long> findResultsForSteppedCoverageWithExecution(
 			List<RequirementVersionCoverage> stepedCoverage, List<Long> mainVersionTCWithItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
 		List<Long> testStepsIds = new ArrayList<Long>();
@@ -999,6 +1019,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			coverageRate.setAncestor(true);
 		}
 		stats.addRate("coverage",coverageRate);
+		stats.setAncestor(mainRequirement.hasContent());
 	}
 
 	private List<RequirementVersion> getAllRequirementVersion(

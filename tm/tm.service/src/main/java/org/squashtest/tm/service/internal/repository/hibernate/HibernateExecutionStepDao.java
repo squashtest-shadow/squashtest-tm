@@ -31,10 +31,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionStatus;
-import org.squashtest.tm.domain.testcase.TestStepExecutionStatus;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 
 

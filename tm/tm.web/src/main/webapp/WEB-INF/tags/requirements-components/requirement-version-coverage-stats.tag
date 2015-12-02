@@ -35,41 +35,118 @@
 <f:message var="titleCoverageRequirement"  key="requirement.rate.cover.main"/>
 <f:message var="titleCoverageRequirementChildren"  key="requirement.rate.cover.children"/>
 <f:message var="titleCoverageRequirementAll"  key="requirement.rate.cover.all"/>
+<f:message var="titleVerificationRequirement"  key="requirement.rate.verification.main"/>
+<f:message var="titleVerificationRequirementChildren"  key="requirement.rate.verification.children"/>
+<f:message var="titleVerificationRequirementAll"  key="requirement.rate.verification.all"/>
+<f:message var="titleValidationRequirement"  key="requirement.rate.validation.main"/>
+<f:message var="titleValidationRequirementChildren"  key="requirement.rate.validation.children"/>
+<f:message var="titleValidationRequirementAll"  key="requirement.rate.validation.all"/>
 
 
 <%-- ======================== /VARIABLES & URLS ============================ --%>
 
 <div id="coverage-stat">
-	<div class="display-table">
-		<div class="display-table-row">
-			<label for="coverage-rate" class="display-table-cell">
-				<f:message key="requirement.rate.cover" />
-			</label>
-			<div id="coverage-rate" class="display-table-cell">XX %</div>
-		</div>
+	
+	<div id="table-rates"></div>
+	 
+	<div id="dialog-select-perimeter-wrapper"></div>
+</div>
+
+<script type="text/x-handlebars-template" id="tpl-show-verification-rate">
 		<div class="display-table-row">
 			<label for="verification-rate" class="display-table-cell">
 				<f:message key="requirement.rate.verification" />
 			</label>
-			<div id="verification-rate" class="display-table-cell">XX %</div>
 			<div class="display-table-cell">
-				<input type="button" value="<f:message key='requirement.rate.perimeter.change'/>" title="<f:message key='requirement.rate.perimeter.change'/>" id="change-perimeter-button" class="sq-btn btn-sm">
+					<span title="${titleVerificationRequirement}">{{requirementVersionRate}} % </span>
+					|<span title="${titleVerificationRequirementChildren}"> {{requirementVersionChildrenRate}} % </span>
+					|<span title="${titleVerificationRequirementAll}"> {{requirementVersionGlobalRate}} % </span>
 			</div>
 		</div>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-show-validation-rate">
+	<span title="${titleValidationRequirement}">{{requirementVersionRate}} % </span>
+	|<span title="${titleValidationRequirementChildren}"> {{requirementVersionChildrenRate}} % </span>
+	|<span title="${titleValidationRequirementAll}"> {{requirementVersionGlobalRate}} % </span>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-table-rates">
+	<div class="display-table">
 		<div class="display-table-row">
 			<label for="validation-rate" class="display-table-cell">
-				<f:message key="requirement.rate.validation" />
+				<f:message key="requirement.rate.perimeter" />
 			</label>
-			<div id="validation-rate" class="display-table-cell">XX %</div>
+			<div id="show-perimeter" class="display-table-cell">
+				{{#if corruptedPerimeter}}
+					<a id="change-perimeter-button" href="#"><f:message key="requirement.rate.perimeter.corrupted" /></a>
+				{{else}}
+					{{#if hasPerimeter}}
+						<a id="change-perimeter-button" href="#">{{perimeterName}}</a>
+					{{else}}
+						<a id="change-perimeter-button" href="#"><f:message key="requirement.rate.perimeter.no" /></a>
+					{{/if}}
+				{{/if}}
+			</div>
 		</div>
 	</div>
-	 
-	<div id="dialog-select-perimeter-wrapper"></div>
-</div>
-<script type="text/x-handlebars-template" id="tpl-show-coverage-rate">
-	<span title="${titleCoverageRequirement}">{{requirementVersionRate}} % </span>
-	|<span title="${titleCoverageRequirementChildren}"> {{requirementVersionChildrenRate}} % </span>
-	|<span title="${titleCoverageRequirementAll}"> {{requirementVersionGlobalRate}} % </span>
+
+	<div class="display-table">
+		<div class="display-table-row">
+			<label class="display-table-cell">
+				<f:message key="requirement.rate.cover" />
+			</label>
+			<div class="display-table-cell">
+				<span title="${titleValidationRequirement}">{{coverage.requirementVersionRate}} % </span>
+			</div>
+			{{#if isAncestor}}
+			<div class="display-table-cell">
+				<span title="${titleCoverageRequirementChildren}"> {{coverage.requirementVersionChildrenRate}} % </span>
+			</div>
+			<div class="display-table-cell">
+				<span title="${titleCoverageRequirementAll}"> {{coverage.requirementVersionGlobalRate}} % </span>
+			</div>
+			{{/if}}
+		</div>
+		{{#if hasPerimeter}}
+		<div class="display-table-row">
+			<label class="display-table-cell">
+				<f:message key="requirement.rate.verification" />
+			</label>
+			<div class="display-table-cell">
+				<span title="${titleVerificationRequirement}">{{verification.requirementVersionRate}} % </span>
+			</div>
+			{{#if isAncestor}}
+			<div class="display-table-cell">
+				<span title="${titleVerificationRequirementChildren}"> {{verification.requirementVersionChildrenRate}} % </span>
+			</div>
+			<div class="display-table-cell">
+				<span title="${titleVerificationRequirementAll}"> {{verification.requirementVersionGlobalRate}} % </span>
+			</div>
+			{{/if}}
+		</div>
+		<div class="display-table-row">
+			<label class="display-table-cell">
+				<f:message key="requirement.rate.validation" />
+			</label>
+			<div class="display-table-cell">
+				<span title="${titleValidationRequirement}">{{validation.requirementVersionRate}} % </span>
+			</div>
+			{{#if isAncestor}}
+			<div class="display-table-cell">
+				<span title="${titleValidationRequirementChildren}"> {{validation.requirementVersionChildrenRate}} % </span>
+			</div>
+			<div class="display-table-cell">
+				<span title="${titleValidationRequirementAll}"> {{validation.requirementVersionGlobalRate}} % </span>
+			</div>
+			{{/if}}
+		</div>
+		{{/if}}
+	</div>
+</script>
+
+<script type="text/x-handlebars-template" id="tpl-show-perimeter">
+	
 </script>
 
 <script type="text/x-handlebars-template" id="tpl-dialog-select-perimeter">
