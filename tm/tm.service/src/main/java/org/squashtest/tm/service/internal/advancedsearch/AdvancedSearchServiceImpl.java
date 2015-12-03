@@ -543,7 +543,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				case "milestone.status":
 					List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
 
-					if ((! statusValues.isEmpty()) && statusValues != null && !statusValues.isEmpty()) {
+					if (statusValues != null && !statusValues.isEmpty()) {
 						crit.add(Restrictions.in("status", convertStatus(statusValues)));
 					}
 
