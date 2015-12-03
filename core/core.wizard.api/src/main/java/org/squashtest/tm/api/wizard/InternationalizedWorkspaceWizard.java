@@ -173,6 +173,12 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		return getMessage(typeKey);
 	}
 
+
+
+	public void setTypeKey(String typeKey) {
+		this.typeKey = typeKey;
+	}
+
 	@PostConstruct
 	public void checkBeanState() {
 		Assert.propertyNotBlank(nameKey, "nameKey property should not be blank");

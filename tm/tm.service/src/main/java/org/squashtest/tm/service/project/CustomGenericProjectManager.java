@@ -153,7 +153,23 @@ public interface CustomGenericProjectManager extends CustomGenericProjectFinder 
 	 */
 	void disablePluginForWorkspace(long projectId, WorkspaceType workspace, String pluginId);
 
+	/**
+	 * Returns the configuration of a given plugin for a given project. Returns an empty map if the plugin is not bound
+	 * to this project.
+	 */
+	Map<String, String> getPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId);
 
+	/**
+	 * Applies the given configuration to a plugin for a given project. If the plugin wasn't enabled for this project
+	 * already, it will be during the process.
+	 *
+	 * @param projectId
+	 * @param workspace
+	 * @param pluginId
+	 * @param configuration
+	 */
+	void setPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId,
+			Map<String, String> configuration);
 
 	// ***************************** status management *************************
 

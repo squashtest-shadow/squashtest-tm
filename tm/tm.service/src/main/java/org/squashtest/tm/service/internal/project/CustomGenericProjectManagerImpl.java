@@ -496,7 +496,31 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		library.disablePlugin(pluginId);
 	}
 
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	public Map<String, String> getPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId) {
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
+		LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+		if (binding != null) {
+			return binding.getProperties();
+		} else {
+			return new HashMap<String, String>();
+		}
+	}
 
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+	public void setPluginConfiguration(long projectId, WorkspaceType workspace, String pluginId,
+			Map<String, String> configuration) {
+
+		PluginReferencer<?> library = findLibrary(projectId, workspace);
+		if (!library.isPluginEnabled(pluginId)) {
+			library.enablePlugin(pluginId);
+		}
+
+		LibraryPluginBinding binding = library.getPluginBinding(pluginId);
+		binding.setProperties(configuration);
+	}
 
 	// ************************** status configuration section
 	// ****************************
