@@ -22,6 +22,14 @@
 -->
 <div th:fragment="chart-wizard-filter">
 
+{{#*inline "execution-status"}}
+{{#each status}}
+<option class="exec-status" value="{{this.name}}">
+    {{this.level}} - {{i18n this.i18nkey}}
+</option>
+{{/each}}   
+{{/inline}}
+
 {{#*inline "filter"}}
 <div style="display: table-column; width: 20%;float:left">
 <input type="checkbox" id="filter-selection-{{id}}" name="{{id}}" />
@@ -62,12 +70,17 @@
 
 {{#equal dataType "EXECUTION_STATUS"}}
 <select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
-{{#each  data.executionStatus}}  
-<option value="{{this.name}}">
-    {{this.level}} - {{i18n this.i18nkey}}
-</option>
-{{/each}}   
+
+{{#if (eq this.specializedType.entityType "ITEM_TEST_PLAN")}}
+{{>execution-status status=data.itpiExecutionStatus}}
+{{else}}
+{{>execution-status status= data.executionStatus}}
+{{/if}}
+
+
 </select>
+
+
 {{/equal}}
 
 {{#equal dataType "LEVEL_ENUM"}}

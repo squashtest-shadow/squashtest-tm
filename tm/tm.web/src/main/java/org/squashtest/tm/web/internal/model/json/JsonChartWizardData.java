@@ -81,6 +81,9 @@ public class JsonChartWizardData {
 
 	private EnumSet<ExecutionStatus> executionStatus = EnumSet.allOf(ExecutionStatus.class);
 
+	private EnumSet<ExecutionStatus> itpiExecutionStatus = EnumSet
+			.complementOf(EnumSet.copyOf(ExecutionStatus.TA_STATUSES_ONLY));
+
 	private Map<String, Map<String, InfoList>> projectInfoList = new HashMap<String, Map<String, InfoList>>();
 
 	private Map<String, Set<CustomField>> customFields = new HashMap<String,  Set<CustomField>>();
@@ -89,7 +92,7 @@ public class JsonChartWizardData {
 
 	private CustomFieldBindingModificationService cufBindingService;
 	
-	
+	private Map<Long, Set<ExecutionStatus>> disabledStatusByProject = new HashMap<Long, Set<ExecutionStatus>>();
 	
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects,
@@ -110,8 +113,15 @@ public class JsonChartWizardData {
 		addEntityType();
 		addInfoList(projects);
 		addCustomFields(projects);
+		addDisabledStatus(projects);
 
 
+	}
+
+	private void addDisabledStatus(List<Project> projects) {
+		for (Project project : projects) {
+			disabledStatusByProject.put(project.getId(), project.getCampaignLibrary().getDisabledStatuses());
+		}
 	}
 
 	private void addLevelEnums() {
@@ -228,4 +238,14 @@ public class JsonChartWizardData {
 	public EnumSet<ExecutionStatus> getExecutionStatus() {
 		return executionStatus;
 	}
+
+	public Map<Long, Set<ExecutionStatus>> getDisabledStatusByProject() {
+		return disabledStatusByProject;
+	}
+
+	@JsonSerialize(using = LevelEnumSerializer.class)
+	public EnumSet<ExecutionStatus> getItpiExecutionStatus() {
+		return itpiExecutionStatus;
+	}
+
 }
