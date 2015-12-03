@@ -123,7 +123,7 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 			    var importanceValues;
 			    
 				var importance =  seriesIndex;
-				var status = 	pointIndex;
+				var status =	pointIndex;
 				
 				switch (importance){
 				case 0 : 
