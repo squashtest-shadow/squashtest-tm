@@ -72,7 +72,7 @@
 				<div class="unsnap"></div>
 			</div>
       
-			<c:set var="milestoneVisibility" value="${(empty cookie['milestones']) ? ', invisible' : ''}"/> 
+			<c:set var="milestoneVisibility" value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/> 
 			<div id="sub-page-list-panel" class="sub-page-list-panel shadow ui-corner-all ui-helper-reset ui-widget ui-widget-content" >
 				<table id="versions-table" class="unstyled-table" data-def="ajaxsource=${dtModel}, hover, pre-sort=1-desc, deferLoading=${fn:length(versions)}">
 					<thead>
