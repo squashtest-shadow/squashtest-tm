@@ -1053,7 +1053,10 @@ public class AdvancedSearchController {
 			res.put("iteration-id", item.getIteration().getId());
 			res.put("editable", isExecutionEditable(item));
 			res.put("itpi-id", item.getId().toString());
-			res.put("itpi-label", item.getReferencedTestCase().getName());
+			res.put("tc-weight", item.isTestCaseDeleted() ? ""
+					: formatImportance(item.getReferencedTestCase().getImportance(), locale));
+			res.put("itpi-isauto", item.isAutomated());
+			res.put("itpi-label", item.isTestCaseDeleted() ? "" : item.getReferencedTestCase().getName());
 			res.put("itpi-mode", formatMode(item.getExecutionMode(), locale));
 			res.put("itpi-testsuites", item.getTestSuiteNames());
 			res.put("itpi-status", formatExecutionStatus(item.getExecutionStatus(), locale));
@@ -1073,6 +1076,10 @@ public class AdvancedSearchController {
 			return messageSource.internationalize(mode, locale);
 		}
 
+		private String formatImportance(TestCaseImportance importance, Locale locale) {
+
+			return importance.getLevel() + "-" + messageSource.internationalize(importance, locale);
+		}
 
 		private String formatDatasetsItem(IterationTestPlanItem item) {
 			String dataset = "-";

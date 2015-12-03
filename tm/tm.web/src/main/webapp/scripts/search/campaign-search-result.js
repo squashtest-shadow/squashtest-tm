@@ -54,8 +54,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			"click #modify-search-result-button" : "editResults",			
 			"click #new-search-button" : "newSearch",
 			"click #modify-search-button" : "modifySearch",		
-			"click #add-search-result-button" : "addExecution",
-			"click #export-search-result-button" : "exportResults"
+			"click #add-search-result-button" : "addITPI",
+
 		},
 
 	
@@ -119,33 +119,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 		},
 		
-		exportResults : function(){
-			// document.location.href= squashtm.app.contextRoot +"/advanced-search?campaign&export=csv";
-			var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
-			if (selectedIds.length === 0){
-					notification.showError(translator.get('message.exportNoExecutionSelected'));
-				return;
-			} 
-			else if (selectedIds.length > 1) {
-				notification.showError(translator.get('message.exportMultipleExecutionSelected'));
-				return;
-			}
-			else {
-				// We have a campaign to export :)
-				var table = $('#campaign-search-result-table').dataTable();
-				var selectedRow = table.find(".ui-state-row-selected");
-				
-				document.location.href = window.squashtm.app.contextRoot + "/campaign-browser/export-campaign-by-execution/" + selectedIds.toString() + "?export=csv&exportType=S";
-			}
 
-		},
 		 
 		editResults : function(){
 			this.addModifyResultDialog.confirmDialog("open");
 		},
 		
-		addExecution : function(){
-			this.addExecutionDialog.formDialog("open");
+		addITPI: function(){
+			this.addITPIDialog.formDialog("open");
 		},
 		
 		_restoreSelect : function restoreSelect(){
@@ -307,58 +288,48 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			this.addModifyResultDialog = addModifyResultDialog;
 		},
 		
+		loadTree : function (){
+			$.ajax({
+				url : squashtm.app.contextRoot + "/campaign-workspace/tree/''",
+				datatype : 'json' 
+			})
+			.success(function(json) {
+			 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
+				squashtm.app.campaignWorkspaceConf.tree.model = json;
+				tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
+			});
+			
+		},
 		
 		configureExecutionDialog : function() {
 			var self = this;
-			var addExecutionDialog = $("#add-new-execution-dialog").formDialog();
-
-			function loadTree(){
-				$.ajax({
-					url : squashtm.app.contextRoot + "/executions/getTree",
-					datatype : 'json' 
-				})
-				.success(function(json) {
-				 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
-					squashtm.app.campaignWorkspaceConf.tree.model = json;
-					tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
-				});
-			}
+			var addITPIDialog = $("#add-new-execution-dialog").formDialog();
 
  
-			addExecutionDialog.activate = function(arg) {};
+			addITPIDialog.activate = function(arg) {};
 
-			addExecutionDialog.on('formdialogopen',function() {
-				addExecutionDialog.formDialog('open');
+			addITPIDialog.on('formdialogopen',function() {
+				addITPIDialog.formDialog('open');
 				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
 				if (selectedIds.length === 0){
-					addExecutionDialog.formDialog('close');
+					addITPIDialog.formDialog('close');
 				  notification.showError(translator.get('message.NoExecutionSelected'));
-					return; 
+					
 				} 
-				/* Get more Ids
-				else if (selectedIds.length > 1) {
-					addExecutionDialog.formDialog('close');
-				  notification.showError(translator.get('message.MultipleExecutionSelected'));
-					return;
-				}
-				*/
+
 				else {
 				// get the execution id, give it to the controller which gives back the rootmodel for the tree
-				loadTree();
+				self.loadTree();
 				}
 				
 			});
 			
-			addExecutionDialog.on('formdialogconfirm',function() {
+			addITPIDialog.on('formdialogconfirm',function() {
 				
 				// Get all executions we want to add
 				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
 
-				var arraySelectedIds = [];
-				for (var j = 0  ; j < selectedIds.length ; j++)
-				 { arraySelectedIds.push(selectedIds[j]);
-				 }
-				
+			
 				// Get the place where we want to put the executions 
 				var nodes = $("#tree").jstree('get_selected');
 				
@@ -371,10 +342,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				}
 				else {
 						$.ajax({
-							url : squashtm.app.contextRoot + "/executions/add-execution/"  + nodes.getResId() ,
+							url : squashtm.app.contextRoot + "/iterations/" +  nodes.getResId() + "/test-plan"  ,
 							type : 'POST',
 							data : {
-										executionIds : arraySelectedIds 
+								itpiIds : selectedIds 
 							}
 						})
 						.success(function(json) {
@@ -384,26 +355,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 				
 				
-				addExecutionDialog.formDialog('close');
+				addITPIDialog.formDialog('close');
 			});
 			
-			addExecutionDialog.on('formdialogadd',function() {
-				
-				
-				/* copypasta from this file (look it up) for the moment to check if it works */
-				function loadTree(){
-					$.ajax({
-						url : squashtm.app.contextRoot + "/executions/getTree",
-						datatype : 'json' 
-					})
-					.success(function(json) {
-					 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
-						squashtm.app.campaignWorkspaceConf.tree.model = json;
-						tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
-					});
-				}
-				/* end copypasta*/
-				
+			addITPIDialog.on('formdialogadd',function() {
+
 				// Get the place where we want to add the iteration
 				var nodes = $("#tree").jstree('get_selected');
 
@@ -421,23 +377,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							})
 						.success(function() {
 						 // refresh tree
-							loadTree();
+							self.loadTree();
 						});
 				}
 			});
 			
 			
 			
-			addExecutionDialog.on('formdialogcancel',function() {
-				addExecutionDialog.formDialog('close');
+			addITPIDialog.on('formdialogcancel',function() {
+				addITPIDialog.formDialog('close');
 			});
 			
-			addExecutionDialog.on('formdialogclose',function() {
-				addExecutionDialog.formDialog('close');
+			addITPIDialog.on('formdialogclose',function() {
+				addITPIDialog.formDialog('close');
 			});
 			
 			
-			this.addExecutionDialog = addExecutionDialog; 
+			this.addITPIDialog = addITPIDialog; 
 			
 		}
 		

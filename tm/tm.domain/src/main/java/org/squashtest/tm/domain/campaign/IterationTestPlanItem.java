@@ -150,6 +150,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	private Iteration iteration;
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
+	@IndexedEmbedded(includePaths = "id")
 	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
 
 	public IterationTestPlanItem() {

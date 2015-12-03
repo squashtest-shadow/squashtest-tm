@@ -19,16 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-runner',"jeditable.simpleJEditable", "workspace.projects",
-         "squash.configmanager", "workspace.routing", "app/ws/squashtm.notification", "squashtable",
-         "jqueryui", "jquery.squash.jeditable", "jquery.cookie" ],
-         function($, Backbone, translator, execrunner, SimpleJEditable, projects, confman, routing, notification) {
+         "squash.configmanager", "workspace.routing", "app/ws/squashtm.notification", 'test-automation/automated-suite-overview', "squashtable",
+         "jqueryui", "jquery.squash.jeditable", "jquery.cookie"],
+         function($, Backbone, translator, execrunner, SimpleJEditable, projects, confman, routing, notification, autosuitedialog) {
 
 	var CampaignSearchResultTable = Backbone.View.extend({
 		el : "#campaign-search-result-table",
 		initialize : function(model, isAssociation, associateType, associateId) {
-			this.model = model;
-
-
+			this.model = model;		
 			this.getTableRowId = $.proxy(this._getTableRowId, this);
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 
@@ -90,31 +88,29 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 		},
 
 		automatedHandler : function() {
-			var row = $(this).parents('tr').get(0);
-			var	table = $("#iteration-test-plans-table").squashTable();
-			var	data = table.fnGetData(row);
-
-			var tpiIds =  [];
-			var tpiId = data['entity-id'];
-			tpiIds.push(tpiId);
+		
+			var row =$("#campaign-search-result-table").squashTable().fnGetData($(this).parent().parent());
+			
+			
+	
+			var	tpid = row['tpid'];
+			var itId = row['iteration-id'];
 
 			var url = squashtm.app.contextRoot + "/automated-suites/new";
-
-			var formParams = {};
-			var ent =  squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-			formParams[ent] = squashtm.page.identity.resid;
-			formParams.testPlanItemsIds = tpiIds;
+		
+	
 
 			$.ajax({
 				url : url,
 				dataType:'json',
 				type : 'post',
-				data : formParams,
-				contentType : "application/x-www-form-urlencoded;charset=UTF-8"
+				data : {	testPlanItemsIds :[tpid], 
+					iterationId : itId}
 			}).done(function(suite) {
+
 				squashtm.context.autosuiteOverview.start(suite);
 			});
-			return false;
+	
  
 		},
 		
@@ -124,7 +120,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 
 			var automated = translator.get("test-case.execution-mode.AUTOMATED");
 			var isTcDel = data['is-tc-deleted'];
-			var isAutomated = (data['itpi-mode'] === automated);
+			var isAutomated = data['itpi-isauto']; 
 			
 
 			var tpId = data['itpi-id'];

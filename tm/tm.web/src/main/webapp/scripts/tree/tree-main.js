@@ -32,9 +32,10 @@ define([ "jquery",
 		"./workspace-tree-conf/conf-factory",
 		"./tree-picker-conf/conf-factory",
 		"./plugins/plugin-factory",
+		"./search-tree-conf/conf-factory",
 		"workspace.contextual-content",
 		"jstree"], function($, simpleConf, wkspConf,
-		pickerConf, pluginsFactory, ctxtcontent) {
+		pickerConf, pluginsFactory, searchConf, ctxtcontent) {
 
 	squashtm = squashtm || {};
 	squashtm.tree = squashtm.tree || undefined;
@@ -74,7 +75,24 @@ define([ "jquery",
 		        });
 			});
     },
-
+    initSearchTree : function(settings){
+    	pluginsFactory.configure("search-tree");
+		var conf = searchConf.generate(settings);
+		var instance = $(settings.treeselector).jstree(conf);
+		
+		instance.on("select_node.jstree", function(event, data) {
+			var prevSelect = $($(event.target).jstree('get_selected')[0]).attr('restype');
+			
+			if (prevSelect !== undefined && prevSelect !== data.rslt.obj.attr('restype')){
+				$(event.target).jstree('deselect_all');
+			}
+			
+			return true;
+		});
+		
+		squashtm.tree = instance;
+    	
+    },
 		initLinkableTree : function(settings) {
 			pluginsFactory.configure("tree-picker");
 			var conf = pickerConf.generate(settings);

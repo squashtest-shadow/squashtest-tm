@@ -39,6 +39,8 @@ public interface IterationTestPlanFinder {
 	
 	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
 	
+	List<IterationTestPlanItem> findTestPlanItems(List<Long> ids);
+
 	/**
 	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
 	 */

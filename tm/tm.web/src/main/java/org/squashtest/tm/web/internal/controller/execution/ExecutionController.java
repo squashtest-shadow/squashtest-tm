@@ -22,72 +22,30 @@ package org.squashtest.tm.web.internal.controller.execution;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 
-import org.apache.commons.collections.MultiMap;
 import org.springframework.stereotype.Controller;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindException;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.CampaignLibrary;
-import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.service.campaign.CampaignLibraryFinderService;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
-import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
-import org.squashtest.tm.service.execution.ExecutionProcessingService;
-import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
-import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel;
-import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
-import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
-import org.squashtest.tm.web.internal.helper.JsTreeHelper;
-import org.squashtest.tm.web.internal.model.builder.CampaignLibraryTreeNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.IterationNodeBuilder;
-import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Controller
 @RequestMapping("/executions")
-public class ExecutionController extends
-		LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode> {
-
-	@Inject
-	private Provider<IterationNodeBuilder> iterationNodeBuilder;
+public class ExecutionController {
 
 	@Inject
 	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-
-	@Inject
-	private Provider<CampaignLibraryTreeNodeBuilder> campaignLibraryTreeNodeBuilder;
-
-	@Inject
-	private IterationTestPlanManagerService iterationTestPlanManagerService;
-
-	@Inject
-	private ExecutionProcessingService executionProcessingService;
 
 	@Inject
 	private Provider<ExecutionAssignmentComboDataBuilder> assignmentComboBuilderProvider;
@@ -96,20 +54,9 @@ public class ExecutionController extends
 	private Provider<ExecutionStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 	@Inject
-	private CampaignLibraryFinderService campaignLibraryFinder;
-
-	@Inject
-	@Named("campaign.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<CampaignLibraryNode>> cammpaignDriveNodeBuilder;
-
-	@Inject
-	@Named("squashtest.tm.service.CampaignsWorkspaceService")
-	private WorkspaceService<Library<CampaignLibraryNode>> workspaceService;
+	private InternationalizationHelper i18n;
 
 
-	@Inject
-	@Named("campaign.driveNodeBuilder")
-	private Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider;
 
 	@RequestMapping(value = "/assignment-combo-data", method = RequestMethod.GET)
 	@ResponseBody
@@ -123,126 +70,22 @@ public class ExecutionController extends
 		return statusComboDataBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
-	@RequestMapping(value = "/getTree", method = RequestMethod.GET)
-	public @ResponseBody
-	List<JsTreeNode> buildTreeModel(Locale locale,
-			@CurrentMilestone Milestone activeMilestone) {
-
-		// There, got the only selected libraries
-		List<Library<CampaignLibraryNode>> libraries = getWorkspaceService().findAllLibraries();
-
-		String[] nodesToOpen = new String[0];
-
-		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
-
-		DriveNodeBuilder<LibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
-		if (activeMilestone != null) {
-			nodeBuilder.filterByMilestone(activeMilestone);
-		}
-
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder)
-				.expand(expansionCandidates).setModel(libraries).build();
-
-		return rootNodes;
-	}
-
-	@RequestMapping(value = "/add-execution/{iterationId}", method = RequestMethod.POST, params = { "executionIds[]" })
-	public @ResponseBody
-	List<JsTreeNode> addNewExecution(@RequestParam("executionIds[]") Long[] executionIds,
-			@PathVariable long iterationId,
-			Locale locale,
-			@CurrentMilestone Milestone activeMilestone) {
-
-		List<Long> testCaseIds = new ArrayList<Long>();
-
-		for (long executionId : executionIds) {
-			Execution execution = executionProcessingService.findExecution(executionId);
-			TestCase testCaseFromExecution = execution.getReferencedTestCase();
-			// Find TestCasesIds from the execution
-			testCaseIds.add(testCaseFromExecution.getId());
-		}
-
-		iterationTestPlanManagerService.addTestCasesToIteration(testCaseIds, iterationId);
-		// Should put void. Or get something. Think about it
-		return null;
-	}
-
 	@RequestMapping(value = "/add-iteration/{campaignId}", method = RequestMethod.POST)
 	public @ResponseBody
-	List<JsTreeNode> addNewIteration(@PathVariable long campaignId, Locale locale,
+ void addNewIteration(@PathVariable long campaignId, Locale locale,
 			@CurrentMilestone Milestone activeMilestone) throws BindException {
 
-		// Add new iteration to a campaign
-		IterationFormModel iterationForm = new IterationFormModel();
+		Iteration iteration = new Iteration();
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Date date = new Date();
-		iterationForm.setName("Iteration" + dateFormat.format(date).toString());
-		iterationForm.setDescription("Automated-Iteration");
 
-		BindingResult validation = new BeanPropertyBindingResult(iterationForm, "add-iteration");
-		IterationFormModelValidator validator = new IterationFormModelValidator(getMessageSource());
-		validator.validate(iterationForm, validation);
+		iteration.setName(
+				i18n.internationalize("label.generatedIT.name", locale) + " " + dateFormat.format(date).toString());
+		iteration.setDescription(i18n.internationalize("label.generatedIT.description", locale));
+		iteration.setReference("");
 
-		if (validation.hasErrors()) {
-			throw new BindException(validation);
-		}
+		campaignLibraryNavigationService.addIterationToCampaign(iteration, campaignId, false);
 
-		Iteration newIteration = iterationForm.getIteration();
-		Map<Long, RawValue> customFieldValues = iterationForm.getCufs();
-		boolean copyTestPlan = iterationForm.isCopyTestPlan();
-
-		int newIterationIndex = campaignLibraryNavigationService.addIterationToCampaign(newIteration, campaignId,
-				copyTestPlan, customFieldValues);
-		return null;
-
-		// return createIterationTreeNode(newIteration, newIterationIndex);
-
-	}
-
-	private List<JsTreeNode> createCampaignTreeRootModel() {
-		List<CampaignLibrary> libraries = campaignLibraryFinder.findLinkableCampaignLibraries();
-
-		DriveNodeBuilder<CampaignLibraryNode> builder = cammpaignDriveNodeBuilder.get();
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
-
-		for (CampaignLibrary library : libraries) {
-			JsTreeNode libraryNode = builder.setModel(library).build();
-			linkableLibrariesModel.add(libraryNode);
-		}
-		return linkableLibrariesModel;
-	}
-
-	protected WorkspaceService<Library<CampaignLibraryNode>> getWorkspaceService() {
-		return workspaceService;
-	}
-
-	protected Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider() {
-		return driveNodeBuilderProvider;
-	}
-
-	protected MultiMap mapIdsByType(String[] openedNodes) {
-		return JsTreeHelper.mapIdsByType(openedNodes);
-	}
-
-	@Override
-	protected LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> getLibraryNavigationService() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model, Milestone activeMilestone) {
-		CampaignLibraryTreeNodeBuilder builder = campaignLibraryTreeNodeBuilder.get();
-
-		if (activeMilestone != null) {
-			builder.filterByMilestone(activeMilestone);
-		}
-
-		return builder.setNode(model).build();
-	}
-
-	private JsTreeNode createIterationTreeNode(Iteration iteration, int iterationIndex) {
-		return iterationNodeBuilder.get().setModel(iteration).setIndex(iterationIndex).build();
 	}
 
 }
