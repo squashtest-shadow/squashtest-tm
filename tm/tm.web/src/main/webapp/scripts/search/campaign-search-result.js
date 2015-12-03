@@ -38,18 +38,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		  this.configureModifyResultsDialog();
 		  this.configureExecutionDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
-			this.getVersionIdsOfSelectedTableRowList = $.proxy(this._getVersionIdsOfSelectedTableRowList, this); 
+			
 			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
-			this.isAssociation = !!$("#associationType").length;
-			if(this.isAssociation){
-				this.associationType = $("#associationType").text();
-				this.associationId = $("#associationId").text();
-			}
 			this.model = model;
 			new CampaignSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
-			this.milestoneMassModif = new milestoneMassModif();
 			this.initTableCallback();
 			
 		},
@@ -60,8 +54,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			"click #modify-search-result-button" : "editResults",			
 			"click #new-search-button" : "newSearch",
 			"click #modify-search-button" : "modifySearch",		
-			"click #add-search-result-button" : "addExecution",
-			"click #export-search-result-button" : "exportResults"
+			"click #add-search-result-button" : "addITPI"
 		},
 
 	
@@ -96,15 +89,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 		
 		modifySearch : function(){
-			if(this.isAssociation){
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=campaign&id="+this.associationId+"&associateResultWithType="+this.associationType, {
-					searchModel : JSON.stringify(this.model)
-				});	
-			} else {
+
 				this.post(squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign", {
 					searchModel : JSON.stringify(this.model) 
 				});	
-			}
+
 		},
 
 		post : function (URL, PARAMS) {
@@ -125,41 +114,18 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 		
 		newSearch : function(){
-			
-			if(this.isAssociation){
-				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=campaign&id="+this.associationId+"&associateResultWithType="+this.associationType;
-			} else {
 				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=campaign";
-			}
-		},
-		
-		exportResults : function(){
-			// document.location.href= squashtm.app.contextRoot +"/advanced-search?campaign&export=csv";
-			var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
-			if (selectedIds.length === 0){
-					notification.showError(translator.get('message.exportNoExecutionSelected'));
-				return;
-			} 
-			else if (selectedIds.length > 1) {
-				notification.showError(translator.get('message.exportMultipleExecutionSelected'));
-				return;
-			}
-			else {
-				// We have a campaign to export :)
-				var table = $('#campaign-search-result-table').dataTable();
-				var selectedRow = table.find(".ui-state-row-selected");
-				
-				document.location.href = window.squashtm.app.contextRoot + "/campaign-browser/export-campaign-by-execution/" + selectedIds.toString() + "?export=csv&exportType=S";
-			}
 
 		},
+		
+
 		 
 		editResults : function(){
 			this.addModifyResultDialog.confirmDialog("open");
 		},
 		
-		addExecution : function(){
-			this.addExecutionDialog.formDialog("open");
+		addITPI: function(){
+			this.addITPIDialog.formDialog("open");
 		},
 		
 		_restoreSelect : function restoreSelect(){
@@ -170,21 +136,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
 				var rows = table.fnGetNodes();
 				$(rows).filter(function() {		
-					var rId = table.fnGetData(this)["execution-id"];
+					var rId = table.fnGetData(this)["itpi-id"];
 					return $.inArray(rId, selectedIds) != -1;
 				}).addClass('ui-state-row-selected');
 			}
 			
 		},
-		
-		_containsDuplicate : function containsDuplicate(arr) {arr.sort();
-		var last = arr[0];
-		for (var i=1; i<arr.length; i++) {
-		   if (arr[i] == last) {return true;}
-		   last = arr[i];
-		}
-		return false;
-		},
+
 		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
@@ -193,26 +151,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
-					ids.push(data["execution-id"]);
+					ids.push(data["itpi-id"]);
 				}
 			});
 			
 			return ids;
 		},
 		
-		_getVersionIdsOfSelectedTableRowList : function(dataTable){
-			var rows = dataTable.fnGetNodes();
-			var ids = [];
-			
-			$( rows ).each(function(index, row) {
-				if ($( row ).attr('class').search('selected') != -1) {
-					var data = dataTable.fnGetData(row);
-					ids.push(data["execution-id"]);
-				}
-			});
-			
-			return ids;		
-		},
+
 		
 		_getIdsOfEditableSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
@@ -222,7 +168,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
 					if(data["editable"]){
-						ids.push(data["execution-id"]);
+						ids.push(data["itpi-id"]);
 					} 
 				}
 			});
@@ -231,46 +177,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 		
 		
-		// enableCategoryModification 
-		enableCategoryModification : function(dialog, table){
-			
-			var rows = table.getSelectedRows();
-			
-			if (rows.length === 0){
-				return;
-			}
-
-			// reset the controls
-			$("#modify-search-result-dialog-project-conf-warning").hide();
-			$(".mass-change-forbidden").hide();
-			$(".mass-change-allowed").show();
-			$(".mass-change-infolist-combo").prop('disabled', false);
-			
-			// find the selected projects unique ids
-			var selectedProjects = [];
-			rows.each(function(indx, row){
-				selectedProjects.push(table.fnGetData(row)['project-id']);
-			});
-			selectedProjects = _.uniq(selectedProjects);
-			
-			// check for conflicts
-			var difCat = projects.haveDifferentInfolists(selectedProjects, ["category"]);
-			
-			function populateCombo(select, infolistName){
-				var p = projects.findProject(selectedProjects[0]);
-				select.empty();
-				
-				for (var i=0;i<p[infolistName].items.length; i++){
-					var item = p[infolistName].items[i];
-					var opt = $('<option/>', {
-						value : item.code,
-						html : item.friendlyLabel
-					});
-					select.append(opt);
-				}				
-			}
-			
-		},
+	
 		
 		_updateDisplayedValueInColumn : function(dataTable, column) {
 			var rows = dataTable.fnGetNodes();
@@ -332,7 +239,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			addModifyResultDialog.on("confirmdialogconfirm",function() {
 				var table = $('#campaign-search-result-table').dataTable();
-				var ids = self.getVersionIdsOfSelectedTableRowList(table);
+				var ids = self.getIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				var columns = ["assignment","status"];
 				var index = 0;
@@ -341,15 +248,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					if($("#"+columns[index]+"-checkbox").prop('checked')){
 						self.updateDisplayedValueInColumn(table, columns[index]);
 						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
-						for(var i=0; i<editableIds.length; i++){
-							var urlPOST = routing.buildURL('executions', editableIds[i]);
+					
+							var urlPOST = routing.buildURL('iterations.testplan.changestatus', editableIds);
 							$.post(urlPOST, {
-								value : value,
-								id : "execution-"+columns[index]	
+								status : value,
+								id : "status"	
 							}).success(function(){
 								$('#campaign-search-result-table').squashTable()._fnAjaxUpdate();
 							});
-						}
+						
 					}
 				}
 			});
@@ -359,7 +266,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				addModifyResultDialog.find('select').prop('disabled', true);
 			
 				var table = $('#campaign-search-result-table').squashTable();
-				var ids = self.getVersionIdsOfSelectedTableRowList(table);
+				var ids = self.getIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				if(ids.length === 0) {							
 					notification.showError(translator.get('message.noLinesSelected'));
@@ -371,7 +278,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					notification.showError(translator.get('message.search.modify.noWritingRightsOrWrongStatus'));
 				}
 				
-				self.enableCategoryModification(addModifyResultDialog, table);
+	
 
 			});
 
@@ -380,58 +287,48 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			this.addModifyResultDialog = addModifyResultDialog;
 		},
 		
+		loadTree : function (){
+			$.ajax({
+				url : squashtm.app.contextRoot + "/campaign-workspace/tree/''",
+				datatype : 'json' 
+			})
+			.success(function(json) {
+			 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
+				squashtm.app.campaignWorkspaceConf.tree.model = json;
+				tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
+			});
+			
+		},
 		
 		configureExecutionDialog : function() {
 			var self = this;
-			var addExecutionDialog = $("#add-new-execution-dialog").formDialog();
-
-			function loadTree(){
-				$.ajax({
-					url : squashtm.app.contextRoot + "/executions/getTree",
-					datatype : 'json' 
-				})
-				.success(function(json) {
-				 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
-					squashtm.app.campaignWorkspaceConf.tree.model = json;
-					tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
-				});
-			}
+			var addITPIDialog = $("#add-new-execution-dialog").formDialog();
 
  
-			addExecutionDialog.activate = function(arg) {};
+			addITPIDialog.activate = function(arg) {};
 
-			addExecutionDialog.on('formdialogopen',function() {
-				addExecutionDialog.formDialog('open');
+			addITPIDialog.on('formdialogopen',function() {
+				addITPIDialog.formDialog('open');
 				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
 				if (selectedIds.length === 0){
-					addExecutionDialog.formDialog('close');
+					addITPIDialog.formDialog('close');
 				  notification.showError(translator.get('message.NoExecutionSelected'));
-					return; 
+					
 				} 
-				/* Get more Ids
-				else if (selectedIds.length > 1) {
-					addExecutionDialog.formDialog('close');
-				  notification.showError(translator.get('message.MultipleExecutionSelected'));
-					return;
-				}
-				*/
+
 				else {
 				// get the execution id, give it to the controller which gives back the rootmodel for the tree
-				loadTree();
+				self.loadTree();
 				}
 				
 			});
 			
-			addExecutionDialog.on('formdialogconfirm',function() {
+			addITPIDialog.on('formdialogconfirm',function() {
 				
 				// Get all executions we want to add
 				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
 
-				var arraySelectedIds = [];
-				for (var j = 0  ; j < selectedIds.length ; j++)
-				 { arraySelectedIds.push(selectedIds[j]);
-				 }
-				
+			
 				// Get the place where we want to put the executions 
 				var nodes = $("#tree").jstree('get_selected');
 				
@@ -444,10 +341,10 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				}
 				else {
 						$.ajax({
-							url : squashtm.app.contextRoot + "/executions/add-execution/"  + nodes.getResId() ,
+							url : squashtm.app.contextRoot + "/iterations/" +  nodes.getResId() + "/test-plan"  ,
 							type : 'POST',
 							data : {
-										executionIds : arraySelectedIds 
+								itpiIds : selectedIds 
 							}
 						})
 						.success(function(json) {
@@ -457,26 +354,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 				
 				
-				addExecutionDialog.formDialog('close');
+				addITPIDialog.formDialog('close');
 			});
 			
-			addExecutionDialog.on('formdialogadd',function() {
-				
-				
-				/* copypasta from this file (look it up) for the moment to check if it works */
-				function loadTree(){
-					$.ajax({
-						url : squashtm.app.contextRoot + "/executions/getTree",
-						datatype : 'json' 
-					})
-					.success(function(json) {
-					 // Add tree in the dialog > rootModel is supposed to be given thanks to the controller
-						squashtm.app.campaignWorkspaceConf.tree.model = json;
-						tree.initWorkspaceTree(squashtm.app.campaignWorkspaceConf.tree);
-					});
-				}
-				/* end copypasta*/
-				
+			addITPIDialog.on('formdialogadd',function() {
+
 				// Get the place where we want to add the iteration
 				var nodes = $("#tree").jstree('get_selected');
 
@@ -494,23 +376,23 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							})
 						.success(function() {
 						 // refresh tree
-							loadTree();
+							self.loadTree();
 						});
 				}
 			});
 			
 			
 			
-			addExecutionDialog.on('formdialogcancel',function() {
-				addExecutionDialog.formDialog('close');
+			addITPIDialog.on('formdialogcancel',function() {
+				addITPIDialog.formDialog('close');
 			});
 			
-			addExecutionDialog.on('formdialogclose',function() {
-				addExecutionDialog.formDialog('close');
+			addITPIDialog.on('formdialogclose',function() {
+				addITPIDialog.formDialog('close');
 			});
 			
 			
-			this.addExecutionDialog = addExecutionDialog; 
+			this.addITPIDialog = addITPIDialog; 
 			
 		}
 		

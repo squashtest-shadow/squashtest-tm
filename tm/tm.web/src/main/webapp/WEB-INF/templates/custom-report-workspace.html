@@ -38,14 +38,14 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
-    	var pathname = window.location.pathname;
+    	var pathname = window.location.pathname; 
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
     	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 			menuBarConf: {
-	    	},
+	    	}, 
 	    	notificationConf: {
-    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info',
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
     			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
     		},
     		customReportWorkspaceConf : {
@@ -59,7 +59,7 @@
   					wizards: /*[[${ wizards }]]*/ '',
 				},
 				toggleWS : {
-					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
 					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
 					workspace : pathname
 				},
@@ -71,20 +71,20 @@
 			requirementStatus : /*[[${requirementStatus}]]*/{},
 			requirementCriticality : /*[[${requirementCriticality}]]*/{}
     	};
-
+    	
     	squashtm.workspace = squashtm.workspace || {};
     	squashtm.workspace.projects = /*[[${projects}]]*/ [];
-
+    	
     /* ]]> */
 </script>
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
-<script data-main="../../scripts/test-case-workspace.js" th:attr="data-main=@{/scripts/custom-report-workspace.js}"
+<script data-main="../../scripts/custom-report-workspace.js" th:attr="data-main=@{/scripts/custom-report-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
-
+  
   <style type="text/css">
   	.dashboard-grid {
- 		min-width : 98%;
+ 		min-width : 98%; 
    		min-height: 90%;
   	}
   	.dashboard-graph {
@@ -106,7 +106,7 @@
     	opacity: 1;
   	}
   </style>
-
+  
   <style type="text/css">
   	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
 	.jqplot-target-wrapper{ width: 800px; height: 300px; margin: auto;}
@@ -118,7 +118,7 @@
   		margin-bottom:5px !important;
 	}
   </style>
-
+  
   <style type="text/css">
   /*! gridster.js - v0.5.6 - 2014-09-25
 * http://gridster.net/
@@ -248,11 +248,11 @@
 }
 */
 </style>
-
-
+  
+  
 </head>
 <body>
-  <div class="noprint" id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
+  <div class="noprint" id="navigation" th:include="navbar.frag :: navbar('custom-report')">NAVBAR</div>
 
   <div id="workspace">
     <div id="workspace-title" class="noprint">
@@ -276,7 +276,7 @@
            <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
             <li class="tab">
               <a href="#tree-pane" >
-              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span>
+              <span  id="testCaseDashboardMilestone"  th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"  class="clickable-item" style="text-decoration:none"></span> 
               <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>
@@ -337,7 +337,7 @@
         </div>
       </div>
     </div>
-
+	
 	<div id="contextual-content">
 		<div id="contextual-content-wrapper" style=" height: 100%; width:98%;">
 	      <!--empty -->
@@ -346,38 +346,38 @@
 
 
   </div>
-
+  
   <!-- BACKBONE VIEWS TEMPLATES -->
 	<!-- SHOW LIBRARY -->
      <script id="tpl-show-library" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showLibrary :: library-view" />
 	<!-- /SHOW LIBRARY -->
-
+	
 	<!-- SHOW FOLDER -->
 	<script id="tpl-show-folder" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showFolder :: folder-view" />
 	<!-- /SHOW FOLDER -->
-
+	
 	<!-- SHOW DASHBOARD -->
 	<script id="tpl-show-dashboard" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showDashboard :: dashboard-view" />
-
+		
 	<script id="tpl-chart-in-dashboard" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showDashboard :: chart-in-dashboard" />
-
+	
 	<script id="tpl-chart-display-area" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showDashboard :: chart-display-area" />
-
+		
 	<script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showDashboard :: new-chart-in-dashboard" />
-
-	 <!--
+	
+	 <!-- 
      <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
 		<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
 			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
@@ -387,9 +387,9 @@
 		</div>
      </script>
 	  -->
-
-     <!--
-    <script id="tpl-chart-display-area" type="text/x-handlebars-template">
+     
+     <!--  
+    <script id="tpl-chart-display-area" type="text/x-handlebars-template"> 
 		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
 		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
 				<span class="ui-icon ui-icon-trash"></span>
@@ -397,20 +397,20 @@
 		<span class="gs-resize-handle gs-resize-handle-both"></span>
 	</script>
      -->
-
-	<script id="tpl-dashboard-doc" type="text/x-handlebars-template">
+	
+	<script id="tpl-dashboard-doc" type="text/x-handlebars-template"> 
 		<div id="dashboard-doc">
 			<span th:text="#{workspace.custom-report.dashboard.doc}">dashboard doc</span>
 		</div>
 	</script>
-
+	
 	<!-- /SHOW DASHBOARD  -->
 
 	<!-- SHOW CHART-->
 	<script id="tpl-show-chart" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showChart :: chart-view" />
-
+		
      <script id="tpl-show-entity-filters" type="text/x-handlebars-template">
 		{{#each this}}
 			<div class="display-table-row">
@@ -418,7 +418,7 @@
 			</div>
 		{{/each}}
      </script>
-
+     
      <script id="tpl-show-one-filter" type="text/x-handlebars-template">
 		<div class="display-table-cell">
 		{{#if @first}}
@@ -432,7 +432,7 @@
 		{{values}}
 		</div>
      </script>
-
+     
      <script id="tpl-show-entity-operations" type="text/x-handlebars-template">
 		{{#each this}}
 			<div class="display-table-row">
@@ -440,7 +440,7 @@
 			</div>
 		{{/each}}
      </script>
-
+     
      <script id="tpl-show-one-operation" type="text/x-handlebars-template">
 		<div class="display-table-cell">
 		{{#if @first}}
@@ -457,10 +457,10 @@
 	<div th:include="charts/rendering/chart-templates :: templates"></div>
 	<!-- /SHOW CHART  -->
   <!-- /BACKBONE VIEWS TEMPLATES -->
-
-
-
-
+  
+  
+  
+  
   <!-- _____________________TREE POPUPS______________________________ -->
 
 
@@ -468,12 +468,12 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-
+      
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-
+      
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
-
+            
+      
       <div data-def="state=confirm">
       <table class="add-node-attributes">
         <tr>
@@ -502,15 +502,15 @@
       </div>
      </div>
     </div>
-
+    
     <div id="add-dashboard-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-dashboard.title}"
       title="new folder">
-
+      
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-
+      
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
-
+            
+      
       <div data-def="state=confirm">
       <table class="add-node-attributes">
         <tr>
@@ -538,17 +538,17 @@
       title="rename tree node">
 
       <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
-
+      
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
+      
       <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
-
+      
       <div data-def="state=confirm">
-
+      
         <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
-          <span th:text="#{message.RenameTestCaseBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>
+          <span th:text="#{message.RenameTestCaseBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>        
         </div>
-
+      
         <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
         <input id="rename-tree-node-text" type="text" size="50" />
         <br />
@@ -562,7 +562,7 @@
       </div>
 
     </div>
-
+    
     <div id="delete-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.delete-tree-node.title}"
       title="delete node">
 
@@ -599,7 +599,7 @@
           </div>
         </div>
       </div>
-
+      
        <!--
       <div class="not-displayed" data-def="state=copyconfirm">        </div>
 
@@ -615,12 +615,12 @@
       <div class="popup-dialog-buttonpane">
         <input id="del-node-confirm-btn" type="button" th:value="#{label.Confirm}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
 
-        <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" />
+        <input type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="state=copyconfirm" /> 
  <!--
-        <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" />
+        <input id="del-node-lol-btn" type="button" th:value="#{label.Confirm}" value="deadlyconfirm" data-def="evt=deadlyconfirm, state=lol" /> 
         -->
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn=rejected, state=pleasewait confirm copyconfirm lol rejected" />
-
+  
       </div>
     </div>
   </div>

@@ -57,7 +57,7 @@
 		</c:forEach>
 		</ul>		
 		
-		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/report-workspace"			title="${repoTitle}"></a>
+		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/custom-report-workspace"			title="${repoTitle}"></a>
 	</div>
 	
 	<div id="nav_logo" class="vertical-logo"></div>

@@ -88,6 +88,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					void validate(EntityReference ref){
 
 					}
+					String getType(){
+						return "R"
+					}
+					URL getConfigurationUrl(EntityReference ref){
+						return new URL("http://toto")
+					}
 					Map getProperties() { return [:]}
 					String getModule(){
 						return "module";
@@ -118,6 +124,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 
 					}
 					Map getProperties() { return [:]}
+					String getType(){
+						return "safe"
+					}
+					URL getConfigurationUrl(EntityReference ref){
+						return new URL("http://safe")
+					}
 					String getModule(){
 						return "module";
 					}
@@ -145,6 +157,12 @@ class WorkspaceWizardManagerImplTest extends Specification {
 					}
 					void validate(EntityReference ref){
 
+					}
+					String getType(){
+						return "R"
+					}
+					URL getConfigurationUrl(EntityReference ref){
+						return new URL("http://toto")
 					}
 					Map getProperties() { return [:]}
 					String getModule(){

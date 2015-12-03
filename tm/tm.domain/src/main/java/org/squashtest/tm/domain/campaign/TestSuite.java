@@ -42,6 +42,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.DocumentId;
+import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -64,6 +66,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 
 @Auditable
 @Entity
+@Indexed
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testSuites")
 public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, AttachmentHolder, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 100;
@@ -72,6 +75,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	@Id
+	@DocumentId
 	@Column(name = "ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "test_suite_id_seq")
 	@SequenceGenerator(name = "test_suite_id_seq", sequenceName = "test_suite_id_seq")

@@ -50,7 +50,7 @@
       title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-    },
+    }, 
     menuBarConf: {
         boxSelector: "#menu-toggle-filter-ckbox",
         url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
@@ -58,7 +58,7 @@
         enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
         disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
         enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-      },
+      }, 
   	campaignWorkspaceConf: {
 				tree : {
 					model : /*[[${ rootModel }]]*/ '',
@@ -87,6 +87,10 @@
   <script data-main="../../scripts/campaign-search-result.js" th:attr="data-main=@{/scripts/campaign-search-result.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
+  
+  <script type="text/javascript">
+publish("reload.auto-suite-overview-popup");
+</script>
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('campaign')">
@@ -95,7 +99,7 @@
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{workspace.campaign.title}">Espace campagne</h2>
+        <h2 th:text="#{workspace.campaign.title}">Espace campagne</h2> 
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -108,123 +112,115 @@
     </div>
     <div id="sub-page" class="sub-page" >
 			<div id="sub-page-header" class="sub-page-header">
-
+			
 				<div id="sub-page-title" class="sub-page-title">
-					<h2 th:if="!${associateResult}" th:text="#{title.search.campaign.result}">Recherche des exigences</h2>
-					<h2 th:if="${associateResult}" th:text="#{title.search.campaign.result.assoc}">Recherche des exigences</h2>
-				</div>
+					<h2  th:text="#{title.search.campaign.result}">Recherche des exigences</h2> 
 
+				</div>
+				
 				<div id="sub-page-buttons" class="sub-page-buttons">
-				  	<input type="button" th:if="${associateResult}"
-							th:value="#{label.AssociateSelection}" id="associate-selection-button"
-							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-					<input type="button" th:if="${associateResult}"
-							th:value="#{label.AssociateAll}" id="associate-all-button"
-							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"
-                            onclick="document.location.href=squashtm.workspace.backurl"/>
-				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"
-                            onclick="document.location.href=squashtm.workspace.backurl"/>
+				  	
+				  	<input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
+                            onclick="document.location.href=squashtm.workspace.backurl"/>		
 				</div>
-
+				
 				<div class="unsnap"></div>
 			</div>
-
+			
 			<div id="sub-page-content" class="sub-page-content">
     <div class="fragment-body-without-upper-margin" id="campaign-search-results">
-
+   
    <div id="search-toolbar" class="toolbar-class toolbar ui-corner-all">
 			<div class="left-buttons">
-			<input type="button"
+			<input type="button" 
 							th:value="#{label.SelectAllForSelection}" id="select-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-			<input type="button"
+			<input type="button" 
 							th:value="#{label.DeselectAll}" id="deselect-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-
+							
 			</div>
 						<input type="button" th:value="#{label.ModifySearch}"
 							id="modify-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
+							role="button" aria-disabled="false" /> 					
 						<input type="button" th:value="#{label.NewSearch}"
 							id="new-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-						<input type="button" th:if="!${associateResult}" th:value="#{label.Modify}"
+							role="button" aria-disabled="false" /> 						
+						<input type="button" th:value="#{label.Modify}"
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-						<input type="button" th:if="!${associateResult}" th:value="#{label.Add}"
+							role="button" aria-disabled="false" /> 
+						<input type="button"  th:value="#{label.Add}"
 							id="add-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-						<input type="button" th:if="!${associateResult}"
+							role="button" aria-disabled="false" /> 
+						<input type="button" 
 							th:value="#{label.Export}" id="export-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
+							role="button" aria-disabled="false" />				
 
 					<div class="unsnap"></div>
 	</div>
-
+				
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
-				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
-				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
-
+						
 				<div id="search-results">
 					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="campaign-search-result-table"
-							th:attr="data-def='filter, hover, datakeys-id=execution-id'" class="unstyled-table" th:with="milestoneColVisible=${application.milestoneFeatureEnabled and not isMilestoneMode}">
+							th:attr="data-def='filter, hover,pre-sort=2-asc, datakeys-id=itpi-id'" class="unstyled-table">
 							<thead>
 								<tr>
-									<th th:attr="data-def='select, map=user-index'">#</th>
-									<th th:if="${associateResult}" th:attr="data-def='map=is-associated'" th:title="#{'search.associatedwith.'+${associateResultWithType}+'.tooltip'}"></th>
-									<th th:attr="data-def='map=project-name'"
+									<th th:attr="data-def='select, map=entity-index'">#</th>								
+									<th th:attr="data-def='map=project-name, sortable'"
 										th:text="#{label.project}">project name</th>
-									<th th:attr="data-def='map=campaign-name'"
+									<th th:attr="data-def='map=campaign-name, sortable'"
 										th:text="#{label.Campaign}">campaign name</th>
-									<th th:attr="data-def='map=iteration-name'"
-										th:text="#{label.Iteration}">iteration name</th>
-									<th th:attr="data-def='map=execution-id'"
-										th:text="#{label.execution}">execution id</th>
-									<th th:attr="data-def='map=execution-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode'"
+									<th th:attr="data-def='map=iteration-name, sortable'"
+										th:text="#{label.Iteration}">iteration name</th>		
+									<th th:attr="data-def='map=itpi-label, sortable'"
+										th:text="#{label.Label}">itpi label</th>
+										
+									<th th:attr="data-def='map=tc-weight, sortable'"
+										th:text="#{label.Importance}">tc-weight</th>	
+								
+									<th th:attr="data-def='map=itpi-mode, sortable, narrow, center, sClass=exec-mode'"
 										th:text="#{label.Mode}" class="no-user-select tp-th-filter tp-th-exec-mode">execution mode</th>
-									<th th:attr="data-def='map=testsuite-execution'"
+									<th th:attr="data-def='map=itpi-testsuites'"
 										th:text="#{label.testSuite}">Test suite label</th>
-									<th th:attr="data-def='map=execution-status'"
+									<th th:attr="data-def='map=itpi-status, sortable'"
 										th:text="#{label.Status}">execution status</th>
-									<th th:attr="data-def='map=execution-executed-by'"
+									<th th:attr="data-def='map=itpi-executed-by, sortable'"
 										th:text="#{label.execution.lastRunBy}">executed by</th>
-									<th th:attr="data-def='map=execution-executed-on'"
-										th:text="#{label.execution.lastRunOn}">executed on</th>
-									<th th:attr="data-def='map=execution-datasets'"
+									<th th:attr="data-def='map=itpi-executed-on, sortable'"
+										th:text="#{label.execution.lastRunOn}">executed on</th>					
+									<th th:attr="data-def='map=itpi-datasets, sortable'"
 										th:text="#{label.datasets}">execution datasets</th>
-									<th th:if="!${associateResult}" th:attr="data-def='map=empty-opentree-holder'"></th>
-									<th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
+							
+									<th class="no-user-select" data-def="map=empty-openinterface2-holder, narrow, center, sClass=search-open-interface2-holder">&nbsp;</th>
 								</tr>
 							</thead>
 							<tbody>
 							</tbody>
 						</table>
-
+						
 						    <div id="shortcut-exec-menu-template" class="not-displayed">
 						      <div class="buttonmenu execute-arrow cursor-pointer"></div>
 						      <ul style="display: none">
 						        <li class="cursor-pointer">
-						          <a data-tpid="#placeholder-tpid#" data-suiteid="#placeholder-suiteid#" class="run-menu-item run-popup" th:text="#{test-suite.execution.classic.label}" >
+						          <a data-tpid="#placeholder-tpid#" data-itid="#placeholder-itid#" class="run-menu-item run-popup" th:text="#{test-suite.execution.classic.label}" >
 						          </a>
 						        </li>
 						        <li class="cursor-pointer">
-						          <a data-tpid="#placeholder-tpid#" data-suiteid="#placeholder-suiteid#" class="run-menu-item run-oer" th:text="#{test-suite.execution.optimized.label}" >
+						          <a data-tpid="#placeholder-tpid#" data-itid="#placeholder-itid#" class="run-menu-item run-oer" th:text="#{test-suite.execution.optimized.label}" >
 						          </a>
 						        </li>
 						      </ul>
 						    </div>
-
+    
 					</div>
 				</div>
 			</div>
@@ -235,9 +231,9 @@
 				class="not-displayed popup-dialog" th:title="#{label.Modify}">
 				<div class="main">
                     <div id="modify-search-result-dialog-project-conf-warning"
-                         class="not-displayed"
+                         class="not-displayed" 
                          th:text="#{message.search.modify.differentInfolists}">
-
+                         
                       Warning : hey, something's wrong !
                     </div>
 					<table id="modify-search-result-dialog-table">
@@ -254,27 +250,27 @@
 						type="button" value="cancel" th:value="#{label.Cancel}" />
 				</div>
 			</div>
-
+			
 			<!-- Get another popup to add the selected execution in an existing iteration and also allow user to add a new iteration where they want -->
-
+			
 			<div id="add-new-execution-dialog" style="height: 200px!important"
 				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" >
 
-
+            
 				<div class="main">
 	         	 	<div id="tree-pane">
-
+	          
 			            <!--  ____________________HTML TREE__________________________ -->
 			            <!-- 	<tree:_html-tree treeId="tree" /> -->
-
-
+			
+			        
 			               <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
-
+			               
 			                <div th:remove="tag"
 			              th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
-
-
-
+			              
+			              
+			
 			            <!-- /	_________________HTML TREE___________________ -->
 			          </div>
 					</div>
@@ -284,14 +280,119 @@
 			        <input type="button" th:value="#{label.Confirm}" value="confirm"
           data-def="evt=confirm, mainbtn=confirm, state=confirm" />
         <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
-
+       
 				</div>
 			</div>
-
-
+			
+			
 			</div></div>
       </div>
     </div>
+  
+  
+  
+  
+<script id="exec-info-tpl" type="text/x-handlebars-template">
+{{#each execs}}
+	<tr id="execution-info-{{id}}" class="display-table-row {{oddity @index}}">
+		<td class="execution-auto-project display-table-cell">{{automatedProject}}</td>
+		<td class="execution-name display-table-cell">{{name}}</td>
+		<td class="execution-status display-table-cell">{{{ballsyStatus status}}}</td>
+		<td class="execution-node display-table-cell">{{node}}</td>
+	</tr>
+{{/each}}
+</script>
+
+<script id="node-selector-pnl-tpl" type="text/x-handlebars-template">
+{{#each contexts}}
+<p>
+  <fieldset data-proj-id="{{project.id}}">
+    <legend>
+      <f:message key="message.automatedTests.ofProject" />&nbsp;<strong>{{project.label}}</strong>&nbsp;
+      <f:message key="message.fromMasterNode" />&nbsp;<em>{{project.server.name}}</em>
+    </legend>
+  
+    <div>
+      <label for="nodes-list-{{project.id}}"><f:message key="message.automatedTests.executedOn" /></label>
+      <select id="nodes-list-{{project.id}}">
+        <option selected="selected" value=""><f:message key="label.irrelevant" /></option>
+        <option value="master">{{project.server.name}}</option>
+        {{#each project.nodes}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    </div>
+  
+    <div id="tests-tl-{{project.server.id}}" class="collapse sq-tl">
+      <h5 class="tl-head">
+        <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{tests.length}} <f:message key="label.testCases.lower" />)
+      </h5>
+      <ul class="tl-body">
+        {{#each tests}}
+        <li>{{name}}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{#unless orderGuaranteed}}
+      <p class="error-message" ><label class="error-message"><f:message key="label.warning"/></label><f:message key="message.orderNonGuaranteed"/></p>
+    {{/unless}}
+  </fieldset>
+</p>
+{{/each}}
+</script>    
+    
+    
+    <!-- *************************POPUP*********************** -->
+<div id="execute-auto-dialog" class="popup-dialog not-displayed" title="#{dialog.execute-auto.title}" th:with="suiteUrl=@{/automated-suites}"
+	 th:attr="data-def='url=' + ${suiteUrl}+ ', height=490'">
+
+	<div data-def="state=main">
+		<div class="executions-auto-top" style="height:335px; width: 100%; overflow-y: scroll">
+      <table class="display-table dataTable" style="width:100%">
+        <thead>
+          <tr>
+            <td class="ui-state-default" th:text="#{label.automatedProject}"></td>
+            <td class="ui-state-default" th:text="#{label.testCase}"></td>
+            <td class="ui-state-default" th:text="#{label.Status}"></td>
+            <td class="ui-state-default" th:text="#{label.TestAutomationServer}"></td>
+          </tr>
+        </thead>
+        <tbody id="executions-auto-infos">
+        </tbody>
+      </table>
+		</div>
+		
+		<div class="executions-auto-bottom" style="min-height:45px; width: 100%;">
+		
+			<div id="execution-auto-progress" style="width: 80%; margin: auto; margin-top: 20px">
+				<div style="width: 80%; display: inline-block; vertical-align: middle">
+					<div id="execution-auto-progress-bar" ></div>
+				</div>
+				<div id="execution-auto-progress-amount" style="width: 10%; display: inline-block"></div>
+			</div>
+			
+		</div>
+	</div>
+	
+	<div data-def="state=warning">
+		<span th:text="#{message.CloseAutomatedSuiteOverview}"></span>
+	</div>
+
+    <div data-def="state=node-selector">
+      <div id="node-selector-pnl">
+      </div>
+    </div>
+    
+	<div class="popup-dialog-buttonpane">
+		<input type="button" th:value="#{label.Close}" data-def="evt=mainclose, state=main, mainbtn=main"/>
+		<input type="button" th:value="#{label.Confirm}" data-def="evt=warningok, state=warning"/>
+		<input type="button" th:value="#{label.Cancel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>	
+    <input type="button" th:value="#{label.Confirm}" data-def="evt=submitNodes, state=node-selector"/>
+    <input type="button" th:value="#{label.Cancel}" data-def="evt=discardNodes, state=node-selector"/>
+	</div>
+</div>
+    
+   
 </body>
 </html>
 

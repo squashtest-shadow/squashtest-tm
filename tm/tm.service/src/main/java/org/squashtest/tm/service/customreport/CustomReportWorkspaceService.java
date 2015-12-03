@@ -25,6 +25,7 @@ import java.util.List;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
 @Transactional

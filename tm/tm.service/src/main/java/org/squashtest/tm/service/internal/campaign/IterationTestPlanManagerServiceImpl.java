@@ -566,4 +566,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 
 	}
+
+	@Override
+	public List<IterationTestPlanItem> findTestPlanItems(List<Long> ids) {
+		return iterationTestPlanDao.findAllByIds(ids);
+	}
 }

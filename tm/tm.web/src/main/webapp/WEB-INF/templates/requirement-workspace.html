@@ -38,14 +38,14 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
-    	var pathname = window.location.pathname;
+    	var pathname = window.location.pathname; 
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
     	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
 			menuBarConf: {
-	    	},
+	    	}, 
 	    	notificationConf: {
-    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info',
+    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info', 
     			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
     		},
     		requirementWorkspaceConf : {
@@ -59,25 +59,30 @@
   					wizards: /*[[${ wizards }]]*/ '',
 				},
 				toggleWS : {
-					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>', 
 					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
 					workspace : pathname
 				},
 				activeMilestone : /*[[${activeMilestone}]]*/{}
 			}
-
+			
     	};
-
+    	
     	squashtm.workspace = squashtm.workspace || {};
     	squashtm.workspace.projects = /*[[${projects}]]*/ [];
-
+    	
     /* ]]> */
     </script>
 <script src="../../scripts/pubsub-boot.js" th:src="@{/scripts/pubsub-boot.js}"></script>
 
 <script data-main="../../scripts/requirement-workspace.js" th:attr="data-main=@{/scripts/requirement-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+  
+<!--  initialize the wizards --> 
+<div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='requirement')"/>
+  
 </head>
+
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('requirement')">NAVBAR</div>
 
@@ -98,12 +103,12 @@
     </div>
     <div id="tree-panel-left" style="z-index: 1" class="left-frame">
       <div class="position-layout-fix">
-        <div  id="tabbed-pane"
+        <div  id="tabbed-pane" 
               th:with="usesMilestone = ${(activeMilestone!=null)}, milestoneLabel = ${(activeMilestone!=null) ? activeMilestone.label : ''}">
            <ul th:class="${(usesMilestone) ? 'milestones-mode' : ''}">
-            <li class="tab">
+            <li class="tab">                
               <a href="#tree-pane" >
-                <span th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"></span>
+                <span th:text="#{label.Milestone} + ' : ' + ${milestoneLabel}"></span>              
                 <span id="tree-milestone-selector" class="clickable-item small-down-white-arrow"></span>
               </a>
             </li>
@@ -152,6 +157,7 @@
                   <li id="import-excel-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Import}+'...'">Import ...</a>
                   </li>
+
                   <li id="export-tree-button" class="ui-state-disabled cursor-pointer">
                     <a th:text="#{label.Export}+'...'">export ...</a>
                   </li>
@@ -172,15 +178,15 @@
                   title="wizards...">
                   <span class="ui-icon ui-icon-star"></span>
                 </a>
-                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">
+                <script id="ws-wizard-tree-menu-template" type="text/x-handlebars-template">		
 								<ul id="ws-wizard-tree-menu">
 								{{#each wizards}}
 								<li id="{{this.name}}" class="ui-state-disabled cursor-pointer"><a  title="{{this.tooltip}}">{{this.label}}...</a></li>
 								{{/each}}
-								</ul>
+								</ul>	
    							 </script>
                 <script id="start-ws-wizard-form-template" type="text/x-handlebars-template">
-								<form id="start-ws-wizard-form" action="{{url}}" method="post">
+								<form id="start-ws-wizard-form" action="{{url}}" method="post"> 
 								{{#each nodes}}
 								<input type="hidden" name="{{this.type}}" value="{{this.id}}" />
 								{{/each}}
@@ -232,13 +238,13 @@
 
     <div id="add-folder-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-folder.title}"
       title="new folder">
-
-
+      
+      
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-
+      
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
-
+            
+             
        <div data-def="state=confirm">
 	      <table class="add-node-attributes">
 	        <tr>
@@ -271,14 +277,14 @@
 
     <div id="add-requirement-dialog" class="popup-dialog not-displayed" th:title="#{dialog.new-requirement.title}"
       title="new requirement">
-
-
+      
+      
       <span data-def="state=permission-denied" th:text="#{squashtm.action.exception.rightUnsuficients}">rename node rejected</span>
-
+      
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
+      
       <div data-def="state=confirm">
-
+       
       <table class="add-node-attributes">
 
         <tr>
@@ -339,24 +345,26 @@
         <input type="button" th:value="#{label.Add}" value="add" data-def="evt=add-close, state=confirm" />
         <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel" />
       </div>
-       </div>
+       </div> 
     </div>
 
     <div id="rename-node-dialog" class="popup-dialog not-displayed" th:title="#{dialog.rename-tree-node.title}"
       title="rename tree node">
-
+      
       <span data-def="state=permission-denied" th:text="#{dialog.label.rename-node.rejected}">rename node rejected</span>
-
+      
       <span data-def="state=milestone-denied" th:text="#{squashtm.action.exception.milestonelocked}">milestone said no</span>
-
+      
       <span data-def="state=notunique-denied" th:text="#{squashtm.action.exception.notunique}">not unique</span>
-
-      <div data-def="state=confirm">
-
+      
+      <span data-def="state=synchronized-denied" th:text="#{tree.button.rename.error.reqissynchronized}">synchronized</span>
+      
+      <div data-def="state=confirm">      
+            
         <div id="rename-node-dialog-warningmilestones" class="centered std-margin-top std-margin-bottom not-displayed">
-          <span th:text="#{message.RenameRequirementBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>
+          <span th:text="#{message.RenameRequirementBoundToMultipleMilestones}">warning : attempting to rename something bound to multiple milestones</span>        
         </div>
-
+        
         <label for="rename-tree-node-text" th:text="#{dialog.rename.label}">rename</label>
         <input id="rename-tree-node-text" type="text" size="50" />
         <br />
@@ -455,7 +463,7 @@
         </div>
       </div>
 
-      <div data-def="state=confirm">
+      <div data-def="state=confirm"> 
         <div class="confirm-div">
           <label class="confirm-label" th:text="#{dialog.import.file.confirm}">import file confirm</label>
           <span class="confirm-span confirm-file"></span>

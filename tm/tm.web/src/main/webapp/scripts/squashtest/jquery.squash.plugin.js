@@ -74,6 +74,12 @@ var squashtm = squashtm || {};
 		exportable : function(a){
 			return $(a).attr('exportable') === 'true';
 		},
+		manageable : function(a){
+			return $(a).attr('manageable') === 'true';
+		},
+		synchronized : function(a){
+			return $(a).attr('synchronized') === 'true';
+		},
 		'milestone-creatable' : function(a){
 			return $(a).attr('milestone-creatable-deletable') === 'true';
 		},

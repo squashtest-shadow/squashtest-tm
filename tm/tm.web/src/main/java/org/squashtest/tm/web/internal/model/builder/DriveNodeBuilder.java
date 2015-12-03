@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.List;
-
-import javax.inject.Provider;
-
+import org.squashtest.tm.api.security.acls.Permission;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
@@ -32,31 +29,36 @@ import org.squashtest.tm.web.internal.helper.HyphenedStringHelper;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
+import javax.inject.Provider;
+import java.util.List;
+
 /**
  * Builds a {@link JsTreeNode} representing a "drive" from a {@link Library}
- * 
+ *
  * @author Gregory Fouquet
- * 
  */
 public class DriveNodeBuilder<LN extends LibraryNode> extends
-GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
+	GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 
 	private final Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider;
 
 
 	public DriveNodeBuilder(PermissionEvaluationService permissionEvaluationService,
-			Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
+	                        Provider<? extends LibraryTreeNodeBuilder<LN>> childrenBuilderProvider) {
 		super(permissionEvaluationService);
 		this.childrenBuilderProvider = childrenBuilderProvider;
 	}
 
 	/**
-	 * 
 	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
-	 *      org.squashtest.tm.domain.Identified)
+	 * org.squashtest.tm.domain.Identified)
 	 */
 	@Override
 	protected JsTreeNode doBuild(JsTreeNode node, Library<LN> model) {
+
+		boolean manageable = getPermissionEvaluationService().hasRoleOrPermissionOnObject("ROLE_ADMIN", Permission.MANAGEMENT.name(), model);
+
+		node.addAttr("manageable", Boolean.toString(manageable));
 		node.addAttr("rel", "drive");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));
@@ -88,20 +90,20 @@ GenericJsTreeNodeBuilder<Library<LN>, DriveNodeBuilder<LN>> {
 		if (model.hasContent()) {
 
 			LibraryTreeNodeBuilder<LN> builder = childrenBuilderProvider.get();
-			if (milestoneFilter != null){
+			if (milestoneFilter != null) {
 				builder.filterByMilestone(milestoneFilter);
 			}
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<LN>(builder)
-					.expand(getExpansionCandidates())
-					.setModel(model.getOrderedContent())
-					.build();
+				.expand(getExpansionCandidates())
+				.setModel(model.getOrderedContent())
+				.build();
 
 			node.setChildren(children);
 
 			// because of the milestoneFilter it may happen that the children collection ends up empty.
 			// in that case we must set the state of the node accordingly
-			State state =  (children.isEmpty()) ? State.leaf : State.open;
+			State state = (children.isEmpty()) ? State.leaf : State.open;
 			node.setState(state);
 		}
 

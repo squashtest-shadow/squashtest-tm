@@ -31,7 +31,7 @@ public class ImportSummaryImpl implements ImportSummary {
 	private int rejected=0;
 	private int milestoneFailures=0;
 	private int milestoneNotActivatedFailures=0;
-	
+
 	public int getMilestoneNotActivatedFailures() {
 		return milestoneNotActivatedFailures;
 	}
@@ -46,28 +46,28 @@ public class ImportSummaryImpl implements ImportSummary {
 	}
 
 	public ImportSummaryImpl(){
-		
+
 	}
-	
+
 	public void incrMilestoneNotActivatedFailures(){
 		milestoneNotActivatedFailures++;
 	}
-	
+
 	public void incrMilestoneFailures(){
 		milestoneFailures++;
 	}
 	public void incrTotal(){
 		total++;
 	}
-	
+
 	public void incrRenamed(){
 		renamed++;
 	}
-	
+
 	public void incrFailures(){
 		failures++;
 	}
-	
+
 	public void incrModified(){
 		modified++;
 	}
@@ -75,7 +75,7 @@ public class ImportSummaryImpl implements ImportSummary {
 	public void incrRejected(){
 		rejected++;
 	}
-	
+
 	@Override
 	public int getTotal() {
 		return total;
@@ -126,7 +126,7 @@ public class ImportSummaryImpl implements ImportSummary {
 	public void setRejected(int rejected) {
 		this.rejected = rejected;
 	}
-	
+
 	@Override
 	public void add(ImportSummary summary) {
 		this.total+=summary.getTotal();
@@ -137,8 +137,5 @@ public class ImportSummaryImpl implements ImportSummary {
 		this.milestoneFailures+=summary.getMilestoneFailures();
 		this.milestoneNotActivatedFailures+=summary.getMilestoneNotActivatedFailures();
 	}
-
-	
-	
 
 }

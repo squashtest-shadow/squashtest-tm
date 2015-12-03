@@ -28,6 +28,7 @@ import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 import org.squashtest.tm.core.foundation.lang.Assert;
 
 import javax.annotation.PostConstruct;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,12 +52,17 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	 */
 	private String nameKey;
 
-	
+	/**
+	 * i18n key for this wizard's type
+	 */
+	private String typeKey;
+
+
 	@Override
 	public Map<String, String> getProperties(){
 		return new HashMap<String, String>();
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#getDisplayWorkspace()
 	 */
@@ -141,19 +147,30 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 		this.displayWorkspace = displayWorkspace;
 	}
 
-	
+
 	public void validate(EntityReference reference){
 		// defaults : allways passes
 	}
-	
+
 	/**
 	 * This default validation always passes.
-	 * 
+	 *
 	 * @see org.squashtest.tm.api.wizard.WorkspaceWizard#validate(EntityReference)
 	 */
 	@Override
 	public void validate(EntityReference reference, Map<String, String> conf) {
 		// defaults : allways passes
+	}
+
+	@Override
+	public URL getConfigurationUrl(EntityReference context) {
+		// default : no configuration
+		return null;
+	}
+
+	@Override
+	public String getType() {
+		return getMessage(typeKey);
 	}
 
 	@PostConstruct

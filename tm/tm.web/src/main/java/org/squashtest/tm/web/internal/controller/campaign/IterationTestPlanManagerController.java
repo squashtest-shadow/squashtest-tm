@@ -85,6 +85,8 @@ public class IterationTestPlanManagerController {
 
 	private static final String TESTCASES_IDS_REQUEST_PARAM = "testCasesIds[]";
 
+	private static final String ITPI_IDS_REQUEST_PARAM = "itpiIds[]";
+
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
@@ -100,6 +102,7 @@ public class IterationTestPlanManagerController {
 
 	@Inject
 	private Provider<JsonTestCaseBuilder> jsonTestCaseBuilder;
+
 
 
 	@Inject
@@ -152,6 +155,23 @@ public class IterationTestPlanManagerController {
 				iterationTestPlanManagerService.findAssignedTestPlan(iterationId, paging, filter);
 
 		return new TestPlanTableModelHelper(messageSource, locale).buildDataModel(holder, params.getsEcho());
+
+	}
+
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan", method = RequestMethod.POST, params = ITPI_IDS_REQUEST_PARAM)
+	public @ResponseBody void addIterationTestPlanItemToIteration(
+			@RequestParam(ITPI_IDS_REQUEST_PARAM) List<Long> iterationTestPlanIds, @PathVariable long iterationId) {
+
+		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.findTestPlanItems(iterationTestPlanIds);
+
+		for (IterationTestPlanItem itpi : itpis) {
+
+			if (!itpi.isTestCaseDeleted()) {
+				Long datasetId = itpi.getReferencedDataset() == null ? null : itpi.getReferencedDataset().getId();
+				iterationTestPlanManagerService.addTestCaseToIteration(itpi.getReferencedTestCase().getId(), datasetId,
+						iterationId);
+			}
+		}
 
 	}
 
@@ -269,6 +289,12 @@ public class IterationTestPlanManagerController {
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 		return createJsonITPI(itpis.get(0));
 
+	}
+
+	@RequestMapping(value = "/iterations/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "status" })
+	public @ResponseBody void editIterationTestPlanItemsStatus(@PathVariable("testPlanIds") List<Long> testPlanIds,
+			@RequestParam("status") String status) {
+		iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 	}
 
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { "dataset" })

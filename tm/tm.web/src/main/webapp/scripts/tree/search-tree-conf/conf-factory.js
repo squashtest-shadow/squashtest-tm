@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,22 +18,26 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
 
-import java.util.List;
-import java.util.Locale;
+define(["jquery", "./common-conf", "./w-campaign-conf"], function($, genCommon, genCamp){
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 
-public interface CampaignAdvancedSearchService extends AdvancedSearchService {
+	return {
+		generate : function(settings){
+			var commonConf = genCommon.generate(settings);
+			var specificConf;
 
-	List<String> findAllAuthorizedUsersForACampaign();
+			switch(settings.workspace){
+			case 'test-case'	:  break;
+			case 'requirement'	:  break;
+			case 'campaign'		: specificConf = genCamp.generate(settings); break;
+			case 'custom-report'		: break;
+			}
 
-	PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-			PagingAndMultiSorting paging, Locale locale);
+			return $.extend({}, commonConf, specificConf);
 
-}
+		}
+	};
+
+
+});

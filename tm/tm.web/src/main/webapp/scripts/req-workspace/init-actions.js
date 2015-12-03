@@ -32,7 +32,8 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			"empty-selection"		: "tree.button.copy-node.error.nothing-to-paste",
 			"invalid-content"		: "tree.button.copy-node.error.pastenothere",
 			"not-deletable"			: "dialog.label.delete-node.rejected",
-			"milestone-denied"		: "squashtm.action.exception.milestonelocked" 
+			"milestone-denied"		: "squashtm.action.exception.milestonelocked",
+			"synchronized"			: "tree.button.rename.error.reqissynchronized"
 		});		
 
 		squashtm.notification.showInfo(messages[messageName]);

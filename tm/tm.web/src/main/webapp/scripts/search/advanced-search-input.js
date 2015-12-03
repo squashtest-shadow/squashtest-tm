@@ -466,52 +466,36 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			// This method extractModel puts them in the model and it's been sent to the controller (check showResults to see the url)
 
 			if( !!$("#tree").attr("id") ){
-				var key = "project.id";
+				var key; 
 				var selectedInTree = $("#tree").jstree('get_selected');
 				
-				var arr = [];
-				for (var i = 0; i < selectedInTree.size() ; i++) {		
-					// TODO : id from campaign-libraries
-							if ( selectedInTree[i].getAttribute("restype") == "campaign-libraries" ) {
-								arr.push( selectedInTree[i].getAttribute("resid") );	
-							}
-							
-							/*
-					// TODO : id from campaign-folders
-							if ( selectedInTree[i].getAttribute("restype") == "campaign-folders" ) {
-								arr.push( selectedInTree[i].getAttribute("resid") );	
-							}
-							
-					// TODO : id from campaigns
-							if ( selectedInTree[i].getAttribute("restype") == "campaigns" ) {
-								arr.push( selectedInTree[i].getAttribute("resid") );	
-							}
-							
-					// TODO : id from iterations
-							if ( selectedInTree[i].getAttribute("restype") == "iterations" ) {
-								arr.push( selectedInTree[i].getAttribute("resid") );	
-							}
-							
-					// TODO : id from test-suites
-							if ( selectedInTree[i].getAttribute("restype") == "test-suites" ) {
-								arr.push( selectedInTree[i].getAttribute("resid") );	
-							}				*/			
-							
+				//because we don't have time, we can select only one type of node in the tree, so the following will work fine.
+				// BE CAREFULL : This won't work anymore if multiple node type can be selected.
+				var type = selectedInTree.attr('restype');
+					
+				switch (type){
+				
+				case 'campaign-libraries' :
+					key =  "project.id";
+					break;
+				case 'campaign-folders' :
+					selectedInTree = selectedInTree.find("[restype=campaigns]"); //select sub campaign for folders
+					key =  "campaign.id";
+					break;
+				case 'campaigns' :
+					key =  "campaign.id";
+					break;
+				case 'iterations' :	
+					key =  "iteration.id";
+					break;
+				case 'test-suites' :	
+					key =  "testSuites.id";
+					break;
 				}
 				
-				var valueForTree = Object.create( {
-				  'type' : {
-				    value: ""
-				  },
-				  'values': {
-				    value: []
-				  }
-				});
-				
-				valueForTree.type = "LIST";
-				valueForTree.values = arr;
-				
-				jsonVariable[key] = valueForTree;
+				var ids =_.map(selectedInTree, function(node){return $(node).attr('resid');});
+			
+				jsonVariable[key] = {type : "LIST", values : ids};
 							
 			}
 			
@@ -520,10 +504,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			for (var k = 0, $field; k < fields.length; k++) {
 				$field = $(fields[k]);
-				var type = $($field.children()[0]).attr("data-widgetname");
+				var wtype = $($field.children()[0]).attr("data-widgetname");
 				var newKey = $field.attr("id");
 				var escapedKey = newKey.replace(/\./g, "\\.");
-				var field = $("#"+escapedKey).data("search"+type+"Widget");
+				var field = $("#"+escapedKey).data("search"+wtype+"Widget");
 				if(field && !!field.fieldvalue()){
 					var value = field.fieldvalue();
 					if( value ) {

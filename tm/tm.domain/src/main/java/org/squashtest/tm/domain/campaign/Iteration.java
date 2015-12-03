@@ -21,10 +21,13 @@
 package org.squashtest.tm.domain.campaign;
 
 
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -67,6 +70,7 @@ BoundEntity, MilestoneMember {
 
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String name;
 
 	@NotNull
@@ -82,14 +86,14 @@ BoundEntity, MilestoneMember {
 	/*
 	 * read http://docs.redhat.com/docs/en-US/JBoss_Enterprise_Web_Platform/5/html
 	 * /Hibernate_Annotations_Reference_Guide /entity-mapping-association-collection-onetomany.html
-	 * 
+	 *
 	 * "To map a bidirectional one to many, with the one-to-many side as the owning side, you have to remove the
 	 * mappedBy element and set the many to one @JoinColumn as insertable and updatable to false. This solution is
 	 * obviously not optimized and will produce some additional UPDATE statements."
-	 * 
+	 *
 	 * The reason for this is because Hibernate doesn't support the correct mapping (using mappingBy and @OrderColumns).
 	 * The solution used here is only a workaround.
-	 * 
+	 *
 	 * See bug HHH-5390 for a concise discussion about this.
 	 */
 
@@ -150,7 +154,7 @@ BoundEntity, MilestoneMember {
 
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
-	 * 
+	 *
 	 */
 	public String getFullName() {
 		if (StringUtils.isBlank(reference)) {
@@ -257,7 +261,7 @@ BoundEntity, MilestoneMember {
 	 * <p>
 	 * copy of iteration <u>doesn't contain test-suites</u> !!<br>
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	@Override
@@ -281,7 +285,7 @@ BoundEntity, MilestoneMember {
 	/**
 	 * copy planning info: <br>
 	 * if actual end/start is auto => don't copy the actual date.
-	 * 
+	 *
 	 * @param clone
 	 */
 	private void copyPlanning(Iteration clone) {
@@ -345,7 +349,7 @@ BoundEntity, MilestoneMember {
 
 	/***
 	 * Method which returns the position of a test case in the current iteration
-	 * 
+	 *
 	 * @param testCaseId
 	 *            the id of the test case we're looking for
 	 * @return the position of the test case (int)
@@ -369,7 +373,7 @@ BoundEntity, MilestoneMember {
 
 	/***
 	 * Method which returns the position of an item test plan in the current iteration
-	 * 
+	 *
 	 * @param testPlanId
 	 *            the id of the test plan we're looking for
 	 * @return the position of the test plan (int)
@@ -394,7 +398,7 @@ BoundEntity, MilestoneMember {
 
 	/***
 	 * Method which sets a test case at a new position
-	 * 
+	 *
 	 * @param currentPosition
 	 *            the current position
 	 * @param newPosition
@@ -514,7 +518,7 @@ BoundEntity, MilestoneMember {
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 * 
+	 *
 	 * @param newItemTestPlanDate
 	 */
 	public void updateAutoDates(Date newItemTestPlanDate) {
@@ -588,7 +592,7 @@ BoundEntity, MilestoneMember {
 	/***
 	 * This methods browses testPlans and checks if at least one testPlanItem has RUNNING or READY for execution status.
 	 * If this is the case, the actualEndDate should not be set
-	 * 
+	 *
 	 * @return false if the date should not be set
 	 */
 	private boolean actualEndDateUpdateAuthorization() {
@@ -623,7 +627,7 @@ BoundEntity, MilestoneMember {
 
 	/**
 	 * this method is used in case of copy paste of an iteration with test suites.<br>
-	 * 
+	 *
 	 * @return A map of test suite and indexes<br>
 	 *         One entry-set contains
 	 *         <ul>
@@ -671,7 +675,7 @@ BoundEntity, MilestoneMember {
 
 	/**
 	 * will update acual end and start dates if are auto and if they were driven by the execution last-executed on
-	 * 
+	 *
 	 */
 	public void updateAutoDatesAfterExecutionDetach(IterationTestPlanItem iterationTestPlanItem) {
 
@@ -740,7 +744,7 @@ BoundEntity, MilestoneMember {
 
 	/**
 	 * The content of an iteration means its test suites.
-	 * 
+	 *
 	 * @see org.squashtest.tm.domain.library.NodeContainer#getContent()
 	 */
 	@Override

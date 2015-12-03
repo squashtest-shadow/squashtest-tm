@@ -106,6 +106,11 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			builtNode.addAttr("milestone-creatable-deletable", version.doMilestonesAllowCreation().toString());
 			builtNode.addAttr("milestone-editable", version.doMilestonesAllowEdition().toString());
 
+			//synchronized requirements
+			if (requirement.isSynchronized()){
+				builtNode.addAttr("synchronized", "true");
+			}
+
 		}
 
 	}

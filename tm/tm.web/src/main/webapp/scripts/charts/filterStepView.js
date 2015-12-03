@@ -46,6 +46,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.initDropDownCufValues();
 			this.reloadPreviousValues();
 			this.initOperationValues();
+			this.removeStatusDependingOnProjectConf();
 			
 		},
 	
@@ -332,6 +333,25 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 			select.attr("MULTIPLE", val == "IN");	
 		
+			
+		},
+		removeStatusDependingOnProjectConf : function() {
+			
+			var projectScope = this.model.get('projectsScope');
+			var disabledStatusByProject = this.model.get('disabledStatusByProject');
+			
+			var disabledStatus = _.intersection
+			.apply(_, _.chain(disabledStatusByProject)
+					.pick(projectScope)
+					.values()
+					.value());
+			
+			_.each(disabledStatus, function(status){
+				
+				$(".exec-status").filter("option[value='" + status + "']").remove();
+				
+			});
+			
 			
 		}
 		

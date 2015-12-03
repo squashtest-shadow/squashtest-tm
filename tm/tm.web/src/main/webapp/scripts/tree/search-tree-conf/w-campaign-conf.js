@@ -1,4 +1,4 @@
-/**
+/*
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,22 +18,39 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+define(function(){
 
-import java.util.List;
-import java.util.Locale;
-
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
-
-public interface CampaignAdvancedSearchService extends AdvancedSearchService {
-
-	List<String> findAllAuthorizedUsersForACampaign();
-
-	PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-			PagingAndMultiSorting paging, Locale locale);
-
-}
+	var baseURL = squashtm.app.contextRoot;
+	
+	return {
+		generate : function(){
+		
+				return {
+				"types" : {
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+					"types" : {					
+						"test-suite" : {
+							"valid_children" : "none"
+						},
+						
+						"iteration" : {
+							"valid_children" : ["test-suite"]
+						},					
+						"campaign" : {
+							"valid_children" : ['iteration']
+						},
+						"folder" : {
+							"valid_children" : [ "campaign", "folder" ]
+						},
+						"drive" : {
+							"valid_children" : [ "campaign", "folder" ]
+						}
+					}
+				}
+			};
+		}
+	
+	};
+});

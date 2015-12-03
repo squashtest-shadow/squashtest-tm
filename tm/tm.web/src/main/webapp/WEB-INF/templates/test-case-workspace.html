@@ -77,7 +77,12 @@
 
 <script data-main="../../scripts/test-case-workspace.js" th:attr="data-main=@{/scripts/test-case-workspace.js}"
   src="../../scripts/require.js" th:src="@{/scripts/require-min.js}"></script>
+ 
+<!--  initialize the wizards --> 
+<div th:replace="fragments-utils/init-wizards :: init-wizards(workspace='test-case')"/>
+
 </head>
+
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('test-case')">NAVBAR</div>
 

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
+import java.net.URL;
+
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 
 
@@ -27,11 +29,11 @@ public class ProjectPluginModel {
 
 	private int index;
 	private String id;
-	private boolean enabled;
+	private boolean enabled = false;
 	private String type;
 	private String name;
 	private String status;
-	private String configUrl;
+	private URL configUrl;
 
 	public int getIndex() {
 		return index;
@@ -71,10 +73,10 @@ public class ProjectPluginModel {
 		this.status = status;
 	}
 
-	public String getConfigUrl() {
+	public URL getConfigUrl() {
 		return configUrl;
 	}
-	public void setConfigUrl(String configUrl) {
+	public void setConfigUrl(URL configUrl) {
 		this.configUrl = configUrl;
 	}
 
@@ -85,9 +87,8 @@ public class ProjectPluginModel {
 	public ProjectPluginModel(WorkspaceWizard plugin){
 		super();
 		this.id = plugin.getId();
-		this.type="TODO";
+		this.type=plugin.getType();
 		this.name = plugin.getName();
-		this.configUrl = "TODO";
 	}
 
 }

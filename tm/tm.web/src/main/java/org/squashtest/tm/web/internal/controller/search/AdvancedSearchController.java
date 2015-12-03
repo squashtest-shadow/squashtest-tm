@@ -34,8 +34,8 @@ import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.*;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -272,16 +272,17 @@ public class AdvancedSearchController {
 
 	private DatatableMapper<String> campaignSearchResultMapper = new NameBasedMapper(11)
 			.mapAttribute(DataTableModelConstants.PROJECT_NAME_KEY, NAME, Project.class)
-			.mapAttribute("campaign-name", "id", Execution.class)
-.mapAttribute("iteration-name", NAME, Execution.class)
-			.mapAttribute("execution-id", "id", Execution.class)
-			.mapAttribute("execution-mode", "lastExecutedBy", Execution.class)
-			.mapAttribute("execution-milestone-nb", "id", Execution.class)
-			.mapAttribute("testsuite-execution", "id", Execution.class)
-			.mapAttribute("execution-status", "status", Execution.class)
-			.mapAttribute("execution-executed-by", "lastExecutedBy", Execution.class)
-			.mapAttribute("execution-executed-on", "lastExecutedOn", Execution.class)
-			.mapAttribute("execution-datasets", "id", Execution.class);
+			.mapAttribute("campaign-name", "campaign.label", IterationTestPlanItem.class)
+			.mapAttribute("iteration-name", "iteration.name", IterationTestPlanItem.class)
+			.mapAttribute("itpi-id", "id", IterationTestPlanItem.class)
+			.mapAttribute("itpi-label", "label", IterationTestPlanItem.class)
+			.mapAttribute("itpi-mode", "", IterationTestPlanItem.class)
+			.mapAttribute("itpi-testsuites", "", IterationTestPlanItem.class)
+			.mapAttribute("itpi-status", "executionStatus", IterationTestPlanItem.class)
+			.mapAttribute("itpi-executed-by", "lastExecutedBy", IterationTestPlanItem.class)
+			.mapAttribute("itpi-executed-on", "lastExecutedOn", IterationTestPlanItem.class)
+			.mapAttribute("itpi-datasets", "", IterationTestPlanItem.class);
+
 
 	// Could be change and discriminate params = "searchDomain=campaign" but not necessary
 	@RequestMapping(method = RequestMethod.GET)
@@ -354,6 +355,7 @@ public class AdvancedSearchController {
 	protected WorkspaceService<CampaignLibrary> getWorkspaceService() {
 		return workspaceService;
 	}
+
 
 	protected MultiMap mapIdsByType(String[] openedNodes) {
 		return JsTreeHelper.mapIdsByType(openedNodes);
@@ -561,20 +563,12 @@ public class AdvancedSearchController {
 		}
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
 
-		PagedCollectionHolder<List<Execution>> holder = campaignAdvancedSearchService.searchForCampaign(searchModel,
+		PagedCollectionHolder<List<IterationTestPlanItem>> holder = campaignAdvancedSearchService
+				.searchForIterationTestPlanItem(searchModel,
 				paging, locale);
 
-		boolean isInAssociationContext = isInAssociationContext(associateResultWithType);
-
-		// TODO wtf ids is null ?!
-		Set<Long> ids = null;
-
-		if (isInAssociationContext) {
-			ids = getIdsOfTestCasesAssociatedWithObjects(associateResultWithType, id);
-		}
-
-		return new CampaignSearchResultDataTableModelHelper(locale, messageSource, permissionService,
-			isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
+		return new CampaignSearchResultDataTableModelHelper(locale, messageSource, permissionService)
+				.buildDataModel(holder, params.getsEcho());
 	}
 
 	/*
@@ -741,14 +735,8 @@ public class AdvancedSearchController {
 			model.addPanel(requirementVersionSearchInterfaceDescription.createMilestonePanel(locale));
 		}
 
-		// Content
-		model.addPanel(campaignSearchInterfaceDescription.createContentPanel(locale));
-
 		// TODO : executions there
 		model.addPanel(campaignSearchInterfaceDescription.createExecutionPanel(locale));
-
-		// CUF
-		model.addPanel(createCUFPanel(locale, BindableEntity.CAMPAIGN));
 
 		return model;
 	}
@@ -987,57 +975,53 @@ public class AdvancedSearchController {
 		}
 	}
 
-	/* Execution */
+	/* IterationTestPlanItem */
 
-	private static final class CampaignSearchResultDataTableModelHelper extends DataTableModelBuilder<Execution> {
+	private static final class CampaignSearchResultDataTableModelHelper
+			extends DataTableModelBuilder<IterationTestPlanItem> {
 		private InternationalizationHelper messageSource;
 		private Locale locale;
 		private PermissionEvaluationService permissionService;
-		private boolean isInAssociationContext;
-		private Set<Long> associatedTestCaseIds;
+
 
 		private CampaignSearchResultDataTableModelHelper(Locale locale, InternationalizationHelper messageSource,
-					 PermissionEvaluationService permissionService, boolean isInAssociationContext, Set<Long> associatedTestCaseIds) {
+				PermissionEvaluationService permissionService) {
 			this.locale = locale;
 			this.messageSource = messageSource;
 			this.permissionService = permissionService;
-			this.isInAssociationContext = isInAssociationContext;
-			this.associatedTestCaseIds = associatedTestCaseIds;
+
 		}
 
-		private boolean isInAssociationContext() {
-			return this.isInAssociationContext;
-		}
 
-		private boolean isExecutionEditable(Execution item) {
+		private boolean isExecutionEditable(IterationTestPlanItem item) {
 			// Milestone dependent ? Not for now.
 			return permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", item);
 		}
 
 		@Override
-		public Map<String, Object> buildItemData(Execution item) {
-			Map<String, Object> res = new HashMap<>();
+		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
+
+			Map<String, Object> res = new HashMap<String, Object>();
 			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
 			res.put("project-id", item.getProject().getId());
-			if (isInAssociationContext()) {
-				res.put("empty-is-associated-holder", " ");
-				res.put("is-associated", associatedTestCaseIds.contains(item.getId()));
-			}
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put("campaign-name", item.getCampaign().getName());
 			res.put("iteration-name", item.getIteration().getName());
+			res.put("iteration-id", item.getIteration().getId());
 			res.put("editable", isExecutionEditable(item));
-			res.put("execution-id", item.getId().toString());
-			res.put("execution-mode", formatMode(item.getExecutionMode(), locale));
-			res.put("execution-milestone-nb", item.getCampaign().getMilestones().toString());
-			res.put("testsuite-execution", item.getTestPlan().getLabel());
-			res.put("execution-status", formatExecutionStatus(item.getExecutionStatus(), locale));
-			res.put("execution-executed-by", formatUsername(item.getLastExecutedBy()));
-			res.put("execution-executed-on", formatDateItem(item));
-			res.put("execution-datasets", formatDatasetsItem(item));
-			res.put("execution-suiteId", item.getTestPlan().getId());
-			res.put("empty-openinterface2-holder", " ");
+			res.put("itpi-id", item.getId().toString());
+			res.put("tc-weight", item.isTestCaseDeleted() ? ""
+					: formatImportance(item.getReferencedTestCase().getImportance(), locale));
+			res.put("itpi-isauto", item.isAutomated());
+			res.put("itpi-label", item.isTestCaseDeleted() ? "" : item.getReferencedTestCase().getName());
+			res.put("itpi-mode", formatMode(item.getExecutionMode(), locale));
+			res.put("itpi-testsuites", item.getTestSuiteNames());
+			res.put("itpi-status", formatExecutionStatus(item.getExecutionStatus(), locale));
+			res.put("itpi-executed-by", formatUsername(item.getLastExecutedBy()));
+			res.put("itpi-executed-on", formatDateItem(item));
+			res.put("itpi-datasets", formatDatasetsItem(item));
 			res.put("empty-opentree-holder", " ");
+			res.put("empty-openinterface2-holder", " ");
 			return res;
 		}
 
@@ -1049,15 +1033,20 @@ public class AdvancedSearchController {
 			return messageSource.internationalize(mode, locale);
 		}
 
-		private String formatDatasetsItem(Execution item) {
+		private String formatImportance(TestCaseImportance importance, Locale locale) {
+
+			return importance.getLevel() + "-" + messageSource.internationalize(importance, locale);
+		}
+
+		private String formatDatasetsItem(IterationTestPlanItem item) {
 			String dataset = "-";
-			if (item.getDatasetLabel() != null) {
-				dataset = item.getDatasetLabel();
+			if (item.getReferencedDataset() != null) {
+				dataset = item.getReferencedDataset().getName();
 			}
 			return dataset;
 		}
 
-		private String formatDateItem(Execution item) {
+		private String formatDateItem(IterationTestPlanItem item) {
 			String reportDate = "-";
 			// Get the i18n thing
 			DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");

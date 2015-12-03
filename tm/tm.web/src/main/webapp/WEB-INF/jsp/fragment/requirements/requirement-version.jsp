@@ -34,6 +34,9 @@
 <s:url var="requirementVersionUrl" value="/requirement-versions/${requirementVersion.id}"/>
 <s:url var="requirementUrl" value="/requirements/${requirementVersion.requirement.id}"/>
 <c:url var="attachmentsUrl" value="/attach-list/${requirementVersion.attachmentList.id}/attachments" />
+
+<c:set var="synced"            value="${requirementVersion.requirement.synchronized }"/>
+
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
 that page won't be editable if 
@@ -95,6 +98,8 @@ that page won't be editable if
 <f:message var="titleCoverageRequirement"  key="requirement.rate.cover.main"/>
 <f:message var="titleCoverageRequirementChildren"  key="requirement.rate.cover.children"/>
 <f:message var="titleCoverageRequirementAll"  key="requirement.rate.cover.all"/>
+<f:message var="renameLabel" key="requirement.button.rename.label" />
+<f:message var="newversionLabel" key="requirement.button.new-version.label" />
 
 <script type="text/javascript">
 	requirejs.config({
@@ -111,7 +116,8 @@ that page won't be editable if
 	            audittrail : ${json:serialize(auditTrailModel.aaData)},
 	            hasCufs : ${hasCUF},
 	            requirementVersionId : ${requirementVersion.id},
-	            projectId : ${requirementVersion.requirement.project.id}
+	            projectId : ${requirementVersion.requirement.project.id},
+	            isSynchronized : ${synced}
 	          },
 	          permissions : {
 	            moreThanReadOnly : ${moreThanReadOnly},
@@ -166,11 +172,12 @@ that page won't be editable if
 	</div>
 
 	<div class="toolbar-button-panel">
-		<c:if test="${ writable }">
-			<input type="button" value='<f:message key="requirement.button.rename.label" />' title='<f:message key="requirement.button.rename.label" />' id="rename-requirement-button" class="sq-btn"/> 
+        <c:set var="disableIfSynced" value="${(synced) ? 'disabled=\"disabled\"' : ''}"/>
+        <c:if test="${ writable }">
+			<input type="button" value="${renameLabel}" title="${renameLabel}" id="rename-requirement-button" class="sq-btn"  ${disableIfSynced}/> 
 		</c:if>
 		<c:if test="${ creatable }">
-			<input type="button" value='<f:message key="requirement.button.new-version.label" />' title='<f:message key="requirement.button.new-version.label" />' id="new-version-button" class="sq-btn"/>		
+			<input type="button" value="${newversionLabel}" title="${newversionLabel}" id="new-version-button" class="sq-btn"  ${disableIfSynced}/>		
 		</c:if>
 		<input type="button" value="<f:message key='label.print'/>" title='<f:message key='label.print'/>' id="print-requirement-version-button" class="sq-btn"/>
 	</div>	
@@ -216,9 +223,21 @@ publish('reload.requirement.toolbar');
 	<comp:toggle-panel id="requirement-information-panel" title='${labelRequirementInfoPanel} <span class="small txt-discreet">[ID = ${ requirementVersion.requirement.id }]</span>' open="true" >
 		<jsp:attribute name="body">
 			<div id="edit-requirement-table" class="display-table">
+      
+                <c:if test="${not empty requirementURL}">
+                <div class="display-table-row">
+                  <label for="requirement-sync-source"><f:message key="label.Url" /></label>
+                  <div class="display-table-cell" id="requirement-sync-source"><a href="<c:url value='${ requirementURL }' />">${requirementURL}</a></div>
+                </div>                
+                </c:if>
+      
 				<div class="display-table-row">
 					<label for="requirement-version-number"><f:message key="requirement-version.version-number.label" /></label>
-					<div class="display-table-cell" id="requirement-version-number">${ requirementVersion.versionNumber }&nbsp;&nbsp;<a href="<c:url value='/requirements/${ requirementVersion.requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a></div>
+					<div class="display-table-cell" id="requirement-version-number">${ requirementVersion.versionNumber }&nbsp;&nbsp;
+                        <c:if test="${not synced}">
+                        <a href="<c:url value='/requirements/${ requirementVersion.requirement.id }/versions/manager' />"><f:message key="requirement.button.manage-versions.label" /></a>
+                        </c:if>
+                        </div>
 				</div>
 			
 				
