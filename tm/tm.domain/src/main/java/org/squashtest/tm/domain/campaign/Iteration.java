@@ -20,9 +20,43 @@
  */
 package org.squashtest.tm.domain.campaign;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Embedded;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.Lob;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
+import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Type;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -32,7 +66,11 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.library.*;
+import org.squashtest.tm.domain.library.Copiable;
+import org.squashtest.tm.domain.library.NodeContainer;
+import org.squashtest.tm.domain.library.NodeContainerVisitor;
+import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneMember;
 import org.squashtest.tm.domain.project.Project;
@@ -40,11 +78,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.UnknownEntityException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.util.*;
 
 @Auditable
 @Entity
@@ -66,6 +99,7 @@ BoundEntity, MilestoneMember {
 
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String name;
 
 	@NotNull

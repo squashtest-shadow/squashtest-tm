@@ -18,22 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.campaign;
+package org.squashtest.tm.domain.campaign;
 
-import java.util.List;
-import java.util.Locale;
+import org.hibernate.search.bridge.StringBridge;
+import org.squashtest.tm.domain.users.User;
 
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
+public class UserLoginBridgeAdaptor implements StringBridge {
 
-public interface CampaignAdvancedSearchService extends AdvancedSearchService {
+	@Override
+	public String objectToString(Object user) {
 
-	List<String> findAllAuthorizedUsersForACampaign();
-
-	PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-			PagingAndMultiSorting paging, Locale locale);
+		return user != null ? ((User) user).getLogin() : "";
+	}
 
 }

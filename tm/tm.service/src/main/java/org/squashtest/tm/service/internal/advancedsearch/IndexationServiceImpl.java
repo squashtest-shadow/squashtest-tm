@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.advancedsearch;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -40,17 +40,16 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.library.AdvancedSearchIndexingMonitor;
 
 @Service("squashtest.tm.service.IndexationService")
-public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements IndexationService {
+public class IndexationServiceImpl implements IndexationService {
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -96,24 +95,7 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		return date;
 	}
 
-	@Override
-	public void indexAll() {
-		AdvancedSearchIndexMonitoring.reset();
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		@SuppressWarnings("rawtypes")
-		List<Class> domains = new ArrayList<Class>();
-		domains.add(TestCase.class);
-		domains.add(RequirementVersion.class);
-		domains.add(Execution.class);
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
-
-		ftSession.createIndexer(TestCase.class, RequirementVersion.class, Execution.class).purgeAllOnStart(true)
-				.threadsToLoadObjects(1)
-				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.IGNORE)
-				.progressMonitor(monitor).start();
-	}
 
 	@Override
 	public Boolean isIndexedOnPreviousVersion() {
@@ -128,13 +110,10 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		return !result;
 	}
 
-	/* ----------------------------REQUIREMENTS-------------------------------- */
+
 	@Override
 	public void reindexRequirementVersion(Long requirementVersionId) {
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		Object requirementVersion = ftSession.load(RequirementVersion.class, requirementVersionId);
-		ftSession.index(requirementVersion);
+		reindexEntity(RequirementVersion.class, requirementVersionId);
 	}
 
 	@Override
@@ -152,29 +131,10 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 
 	}
 
-	@Override
-	public void indexRequirementVersions() {
 
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-
-		@SuppressWarnings("rawtypes")
-		List<Class> domains = new ArrayList<Class>();
-		domains.add(RequirementVersion.class);
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
-
-		ftSession.createIndexer(RequirementVersion.class).purgeAllOnStart(true).threadsToLoadObjects(1)
-				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
-				.progressMonitor(monitor).start();
-	}
-
-	/* ----------------------------TEST CASES-------------------------------- */
 	@Override
 	public void reindexTestCase(Long testCaseId) {
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		Object testCase = ftSession.load(TestCase.class, testCaseId);
-		ftSession.index(testCase);
+		reindexEntity(TestCase.class, testCaseId);
 	}
 
 	@Override
@@ -184,20 +144,42 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		}
 	}
 
-	@Override
-	public void indexTestCases() {
-
+	private void reindexEntity(Class<?> T, long id) {
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
+		Object obj = ftSession.load(T, id);
+		ftSession.index(obj);
+	}
 
-		@SuppressWarnings("rawtypes")
-		List<Class> domains = new ArrayList<Class>();
-		domains.add(TestCase.class);
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
+	// index used in administration
+	@Override
+	public void indexAll() {
+		indexEntities(TestCase.class, RequirementVersion.class, IterationTestPlanItem.class);
+	}
 
-		ftSession.createIndexer(TestCase.class).purgeAllOnStart(true).threadsToLoadObjects(1)
-				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
-				.progressMonitor(monitor).start();
+	@Override
+	public void indexRequirementVersions() {
+		indexEntities(RequirementVersion.class);
+	}
+
+	@Override
+	public void indexTestCases() {
+		indexEntities(TestCase.class);
+	}
+
+	@Override
+	public void indexIterationTestPlanItem() {
+		indexEntities(IterationTestPlanItem.class);
+	}
+
+	private void indexEntities(Class<?>... T) {
+		Session session = sessionFactory.getCurrentSession();
+		FullTextSession ftSession = Search.getFullTextSession(session);
+		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(Arrays.asList(T),
+				this.configurationService);
+		ftSession.createIndexer(T).purgeAllOnStart(true).threadsToLoadObjects(1).threadsForSubsequentFetching(1)
+				.batchSizeToLoadObjects(10).cacheMode(CacheMode.IGNORE).progressMonitor(monitor).start();
+
 	}
 
 	@Override
@@ -205,6 +187,14 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		batchReindex(TestCase.class, tcIdsToIndex);	
 	}
 	
+	@Override
+	public void batchReindexReqVersion(List<Long> reqVersionIdsToIndex) {
+		batchReindex(RequirementVersion.class, reqVersionIdsToIndex);
+
+	}
+
+	// Batched versions
+
 	private <T> void batchReindex(Class<T> entity, List<Long> ids){
 		Session session = sessionFactory.getCurrentSession();
 		
@@ -232,42 +222,6 @@ public class IndexationServiceImpl extends AdvancedSearchServiceImpl implements 
 		}
 
 	}
-	/* ----------------------------EXECUTIONS -------------------------------- */
-	@Override
-	public void indexCampaigns() {
-		// It's called Campaigns but we need first to index Executions only // Maybe more later, will see
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		@SuppressWarnings("rawtypes")
-		List<Class> domains = new ArrayList<Class>();
-		domains.add(Execution.class);
-		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(domains, this.configurationService);
-
-		ftSession.createIndexer(Execution.class).purgeAllOnStart(true).threadsToLoadObjects(1)
-				.threadsForSubsequentFetching(1).batchSizeToLoadObjects(10).cacheMode(CacheMode.NORMAL)
-				.progressMonitor(monitor).start();
-	}
-
-	@Override
-	public void reindexCampaign(Long campaignId) {
-		Session session = sessionFactory.getCurrentSession();
-		FullTextSession ftSession = Search.getFullTextSession(session);
-		Object execution = ftSession.load(Execution.class, campaignId);
-		ftSession.index(execution);
-	}
-
-	@Override
-	public void reindexCampaigns(List<Execution> campaignList) {
-		for (Execution execution : campaignList) {
-			reindexTestCase(execution.getId());
-		}
-	}
-
-	@Override
-	public void batchReindexReqVersion(List<Long> reqVersionIdsToIndex) {
-		batchReindex(RequirementVersion.class, reqVersionIdsToIndex);
-		
-	}
 
 }

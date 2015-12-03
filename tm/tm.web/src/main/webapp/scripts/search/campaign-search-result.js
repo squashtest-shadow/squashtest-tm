@@ -38,18 +38,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		  this.configureModifyResultsDialog();
 		  this.configureExecutionDialog();
 			this.getIdsOfSelectedTableRowList =  $.proxy(this._getIdsOfSelectedTableRowList, this);
-			this.getVersionIdsOfSelectedTableRowList = $.proxy(this._getVersionIdsOfSelectedTableRowList, this); 
+			
 			this.getIdsOfEditableSelectedTableRowList = $.proxy(this._getIdsOfEditableSelectedTableRowList, this);
 			this.updateDisplayedValueInColumn =  $.proxy(this._updateDisplayedValueInColumn, this);
 			var model = JSON.parse($("#searchModel").text());
-			this.isAssociation = !!$("#associationType").length;
-			if(this.isAssociation){
-				this.associationType = $("#associationType").text();
-				this.associationId = $("#associationId").text();
-			}
 			this.model = model;
 			new CampaignSearchResultTable(model, this.isAssociation, this.associationType, this.associationId);
-			this.milestoneMassModif = new milestoneMassModif();
 			this.initTableCallback();
 			
 		},
@@ -96,15 +90,11 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 		
 		modifySearch : function(){
-			if(this.isAssociation){
-				this.post(squashtm.app.contextRoot + "advanced-search?searchDomain=campaign&id="+this.associationId+"&associateResultWithType="+this.associationType, {
-					searchModel : JSON.stringify(this.model)
-				});	
-			} else {
+
 				this.post(squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign", {
 					searchModel : JSON.stringify(this.model) 
 				});	
-			}
+
 		},
 
 		post : function (URL, PARAMS) {
@@ -125,12 +115,8 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 		
 		newSearch : function(){
-			
-			if(this.isAssociation){
-				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=campaign&id="+this.associationId+"&associateResultWithType="+this.associationType;
-			} else {
 				document.location.href= squashtm.app.contextRoot +"/advanced-search?searchDomain=campaign";
-			}
+
 		},
 		
 		exportResults : function(){
@@ -170,21 +156,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			if ((selectedIds instanceof Array) && (selectedIds.length > 0)) {
 				var rows = table.fnGetNodes();
 				$(rows).filter(function() {		
-					var rId = table.fnGetData(this)["execution-id"];
+					var rId = table.fnGetData(this)["itpi-id"];
 					return $.inArray(rId, selectedIds) != -1;
 				}).addClass('ui-state-row-selected');
 			}
 			
 		},
-		
-		_containsDuplicate : function containsDuplicate(arr) {arr.sort();
-		var last = arr[0];
-		for (var i=1; i<arr.length; i++) {
-		   if (arr[i] == last) {return true;}
-		   last = arr[i];
-		}
-		return false;
-		},
+
 		
 		_getIdsOfSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
@@ -193,26 +171,14 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			$( rows ).each(function(index, row) {
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
-					ids.push(data["execution-id"]);
+					ids.push(data["itpi-id"]);
 				}
 			});
 			
 			return ids;
 		},
 		
-		_getVersionIdsOfSelectedTableRowList : function(dataTable){
-			var rows = dataTable.fnGetNodes();
-			var ids = [];
-			
-			$( rows ).each(function(index, row) {
-				if ($( row ).attr('class').search('selected') != -1) {
-					var data = dataTable.fnGetData(row);
-					ids.push(data["execution-id"]);
-				}
-			});
-			
-			return ids;		
-		},
+
 		
 		_getIdsOfEditableSelectedTableRowList : function(dataTable) {
 			var rows = dataTable.fnGetNodes();
@@ -222,7 +188,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				if ($( row ).attr('class').search('selected') != -1) {
 					var data = dataTable.fnGetData(row);
 					if(data["editable"]){
-						ids.push(data["execution-id"]);
+						ids.push(data["itpi-id"]);
 					} 
 				}
 			});
@@ -231,46 +197,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		},
 		
 		
-		// enableCategoryModification 
-		enableCategoryModification : function(dialog, table){
-			
-			var rows = table.getSelectedRows();
-			
-			if (rows.length === 0){
-				return;
-			}
-
-			// reset the controls
-			$("#modify-search-result-dialog-project-conf-warning").hide();
-			$(".mass-change-forbidden").hide();
-			$(".mass-change-allowed").show();
-			$(".mass-change-infolist-combo").prop('disabled', false);
-			
-			// find the selected projects unique ids
-			var selectedProjects = [];
-			rows.each(function(indx, row){
-				selectedProjects.push(table.fnGetData(row)['project-id']);
-			});
-			selectedProjects = _.uniq(selectedProjects);
-			
-			// check for conflicts
-			var difCat = projects.haveDifferentInfolists(selectedProjects, ["category"]);
-			
-			function populateCombo(select, infolistName){
-				var p = projects.findProject(selectedProjects[0]);
-				select.empty();
-				
-				for (var i=0;i<p[infolistName].items.length; i++){
-					var item = p[infolistName].items[i];
-					var opt = $('<option/>', {
-						value : item.code,
-						html : item.friendlyLabel
-					});
-					select.append(opt);
-				}				
-			}
-			
-		},
+	
 		
 		_updateDisplayedValueInColumn : function(dataTable, column) {
 			var rows = dataTable.fnGetNodes();
@@ -332,7 +259,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			addModifyResultDialog.on("confirmdialogconfirm",function() {
 				var table = $('#campaign-search-result-table').dataTable();
-				var ids = self.getVersionIdsOfSelectedTableRowList(table);
+				var ids = self.getIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				var columns = ["assignment","status"];
 				var index = 0;
@@ -341,15 +268,15 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					if($("#"+columns[index]+"-checkbox").prop('checked')){
 						self.updateDisplayedValueInColumn(table, columns[index]);
 						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
-						for(var i=0; i<editableIds.length; i++){
-							var urlPOST = routing.buildURL('executions', editableIds[i]);
+					
+							var urlPOST = routing.buildURL('iterations.testplan.changestatus', editableIds);
 							$.post(urlPOST, {
-								value : value,
-								id : "execution-"+columns[index]	
+								status : value,
+								id : "status"	
 							}).success(function(){
 								$('#campaign-search-result-table').squashTable()._fnAjaxUpdate();
 							});
-						}
+						
 					}
 				}
 			});
@@ -359,7 +286,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				addModifyResultDialog.find('select').prop('disabled', true);
 			
 				var table = $('#campaign-search-result-table').squashTable();
-				var ids = self.getVersionIdsOfSelectedTableRowList(table);
+				var ids = self.getIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
 				if(ids.length === 0) {							
 					notification.showError(translator.get('message.noLinesSelected'));
@@ -371,7 +298,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					notification.showError(translator.get('message.search.modify.noWritingRightsOrWrongStatus'));
 				}
 				
-				self.enableCategoryModification(addModifyResultDialog, table);
+	
 
 			});
 

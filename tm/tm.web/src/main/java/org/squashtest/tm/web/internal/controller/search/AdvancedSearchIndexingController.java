@@ -26,10 +26,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoring;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForCampaigns;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForRequirementVersions;
-import org.squashtest.tm.domain.search.AdvancedSearchIndexMonitoringForTestcases;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 
 @Controller
@@ -61,7 +57,7 @@ public class AdvancedSearchIndexingController {
 	@RequestMapping(value = "/index-campaigns", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexCampaigns(){
-		indexationService.indexCampaigns();
+		indexationService.indexIterationTestPlanItem();
 	} 	
 
 	@RequestMapping(value = "/refresh", method = RequestMethod.POST)
@@ -70,22 +66,6 @@ public class AdvancedSearchIndexingController {
 		
 		IndexingProgressModel model = new IndexingProgressModel();
 		
-		model.setTotalEntities(AdvancedSearchIndexMonitoring.getAddToTotalCount());
-		model.setWrittenEntities(AdvancedSearchIndexMonitoring.getDocumentsBuilt());
-		model.setProgressPercentage(((Double)(AdvancedSearchIndexMonitoring.getProgressPercentage()*100)).intValue());
-		
-		model.setTotalEntitiesForTestcases(AdvancedSearchIndexMonitoringForTestcases.getAddToTotalCount());
-		model.setWrittenEntitiesForTestcases(AdvancedSearchIndexMonitoringForTestcases.getDocumentsBuilt());
-		model.setProgressPercentageForTestcases(((Double)(AdvancedSearchIndexMonitoringForTestcases.getProgressPercentage()*100)).intValue());
-	
-		model.setTotalEntitiesForRequirementVersions(AdvancedSearchIndexMonitoringForRequirementVersions.getAddToTotalCount());
-		model.setWrittenEntitiesForRequirementVersions(AdvancedSearchIndexMonitoringForRequirementVersions.getDocumentsBuilt());
-		model.setProgressPercentageForRequirementVersions(((Double)(AdvancedSearchIndexMonitoringForRequirementVersions.getProgressPercentage()*100)).intValue());
-		
-		model.setTotalEntitiesForCampaigns(AdvancedSearchIndexMonitoringForCampaigns.getAddToTotalCount());
-		model.setWrittenEntitiesForCampaigns(AdvancedSearchIndexMonitoringForCampaigns.getDocumentsBuilt());
-		model.setProgressPercentageForCampaigns(AdvancedSearchIndexMonitoringForCampaigns.getProgressPercentage() * 100);
-
 		return model;
 	} 	
 }

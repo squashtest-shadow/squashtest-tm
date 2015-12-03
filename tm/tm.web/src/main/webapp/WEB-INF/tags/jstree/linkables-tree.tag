@@ -83,15 +83,7 @@ require( ["common"], function(){
       			$("#search-tree-button").on('click', function(){
       				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=requirement&id=${elementId}&associateResultWithType=${elementType}";
       			});
-			} else if(conf.workspace != "campaign"){
-      			$("#search-tree-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=campaign&id=${elementId}&associateResultWithType=${elementType}";
-      			});
-      			
-      			$("#search-by-requirement-button").on('click', function(){
-      				document.location.href = squashtm.app.contextRoot + "/advanced-search?searchDomain=testcaseViaRequirement&id=${elementId}&associateResultWithType=${elementType}";
-      			});
-      
+   
       		} else if(conf.domain != "requirement"){
       			
       			$("#search-tree-button").buttonmenu();

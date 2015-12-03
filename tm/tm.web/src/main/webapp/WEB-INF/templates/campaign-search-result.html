@@ -110,22 +110,13 @@
 			<div id="sub-page-header" class="sub-page-header">
 			
 				<div id="sub-page-title" class="sub-page-title">
-					<h2 th:if="!${associateResult}" th:text="#{title.search.campaign.result}">Recherche des exigences</h2> 
-					<h2 th:if="${associateResult}" th:text="#{title.search.campaign.result.assoc}">Recherche des exigences</h2> 
+					<h2  th:text="#{title.search.campaign.result}">Recherche des exigences</h2> 
+
 				</div>
 				
 				<div id="sub-page-buttons" class="sub-page-buttons">
-				  	<input type="button" th:if="${associateResult}"
-							th:value="#{label.AssociateSelection}" id="associate-selection-button"
-							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-					<input type="button" th:if="${associateResult}"
-							th:value="#{label.AssociateAll}" id="associate-all-button"
-							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" />
-				  	<input th:if="!${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
-                            onclick="document.location.href=squashtm.workspace.backurl"/>	
-				  	<input th:if="${associateResult}" id="back" type="button" class="sq-btn" th:value="#{label.Cancel}" value="Retour"
+				  	
+				  	<input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
                             onclick="document.location.href=squashtm.workspace.backurl"/>		
 				</div>
 				
@@ -155,15 +146,15 @@
 							id="new-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" /> 						
-						<input type="button" th:if="!${associateResult}" th:value="#{label.Modify}"
+						<input type="button" th:value="#{label.Modify}"
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" /> 
-						<input type="button" th:if="!${associateResult}" th:value="#{label.Add}"
+						<input type="button"  th:value="#{label.Add}"
 							id="add-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" /> 
-						<input type="button" th:if="!${associateResult}"
+						<input type="button" 
 							th:value="#{label.Export}" id="export-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />				
@@ -172,39 +163,36 @@
 	</div>
 				
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
-				<div th:if="${associateResult}" id="associationType" class="not-displayed" th:text="${associateResultWithType}"></div>
-				<div th:if="${associateResult}" id="associationId" class="not-displayed" th:text="${associateId}"></div>
-		
+						
 				<div id="search-results">
 					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="campaign-search-result-table"
-							th:attr="data-def='filter, hover, datakeys-id=execution-id'" class="unstyled-table" th:with="milestoneColVisible=${application.milestoneFeatureEnabled and not isMilestoneMode}">
+							th:attr="data-def='filter, hover,pre-sort=2-asc, datakeys-id=itpi-id'" class="unstyled-table">
 							<thead>
 								<tr>
-									<th th:attr="data-def='select, map=user-index'">#</th>
-									<th th:if="${associateResult}" th:attr="data-def='map=is-associated'" th:title="#{'search.associatedwith.'+${associateResultWithType}+'.tooltip'}"></th>
-									<th th:attr="data-def='map=project-name'"
+									<th th:attr="data-def='select, map=entity-index'">#</th>								
+									<th th:attr="data-def='map=project-name, sortable'"
 										th:text="#{label.project}">project name</th>
-									<th th:attr="data-def='map=campaign-name'"
+									<th th:attr="data-def='map=campaign-name, sortable'"
 										th:text="#{label.Campaign}">campaign name</th>
-									<th th:attr="data-def='map=iteration-name'"
+									<th th:attr="data-def='map=iteration-name, sortable'"
 										th:text="#{label.Iteration}">iteration name</th>		
-									<th th:attr="data-def='map=execution-id'"
-										th:text="#{label.execution}">execution id</th>
-									<th th:attr="data-def='map=execution-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode'"
+									<th th:attr="data-def='map=itpi-label, sortable'"
+										th:text="#{label.Label}">itpi label</th>
+									<th th:attr="data-def='map=itpi-mode, sortable, narrow, center, sClass=exec-mode'"
 										th:text="#{label.Mode}" class="no-user-select tp-th-filter tp-th-exec-mode">execution mode</th>
-									<th th:attr="data-def='map=testsuite-execution'"
+									<th th:attr="data-def='map=itpi-testsuites'"
 										th:text="#{label.testSuite}">Test suite label</th>
-									<th th:attr="data-def='map=execution-status'"
+									<th th:attr="data-def='map=itpi-status, sortable'"
 										th:text="#{label.Status}">execution status</th>
-									<th th:attr="data-def='map=execution-executed-by'"
+									<th th:attr="data-def='map=itpi-executed-by, sortable'"
 										th:text="#{label.execution.lastRunBy}">executed by</th>
-									<th th:attr="data-def='map=execution-executed-on'"
+									<th th:attr="data-def='map=itpi-executed-on, sortable'"
 										th:text="#{label.execution.lastRunOn}">executed on</th>					
-									<th th:attr="data-def='map=execution-datasets'"
+									<th th:attr="data-def='map=itpi-datasets, sortable'"
 										th:text="#{label.datasets}">execution datasets</th>
-									<th th:if="!${associateResult}" th:attr="data-def='map=empty-opentree-holder'"></th>
-									<th class="no-user-select" data-def="map=empty-execute-holder, narrow, center, sClass=execute-button">&nbsp;</th>
+							
+									<th class="no-user-select" data-def="map=empty-openinterface2-holder, narrow, center, sClass=search-open-interface2-holder">&nbsp;</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -215,11 +203,11 @@
 						      <div class="buttonmenu execute-arrow cursor-pointer"></div>
 						      <ul style="display: none">
 						        <li class="cursor-pointer">
-						          <a data-tpid="#placeholder-tpid#" data-suiteid="#placeholder-suiteid#" class="run-menu-item run-popup" th:text="#{test-suite.execution.classic.label}" >
+						          <a data-tpid="#placeholder-tpid#" data-itid="#placeholder-itid#" class="run-menu-item run-popup" th:text="#{test-suite.execution.classic.label}" >
 						          </a>
 						        </li>
 						        <li class="cursor-pointer">
-						          <a data-tpid="#placeholder-tpid#" data-suiteid="#placeholder-suiteid#" class="run-menu-item run-oer" th:text="#{test-suite.execution.optimized.label}" >
+						          <a data-tpid="#placeholder-tpid#" data-itid="#placeholder-itid#" class="run-menu-item run-oer" th:text="#{test-suite.execution.optimized.label}" >
 						          </a>
 						        </li>
 						      </ul>

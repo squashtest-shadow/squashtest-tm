@@ -20,25 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.inject.Inject;
 
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
 @Component
 public class CampaignSearchInterfaceDescription extends SearchInterfaceDescription {
@@ -48,8 +39,6 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 	@Inject
 	private CampaignAdvancedSearchService campaignAdvancedSearchService;
 
-	@Inject
-	private ProjectFinder projectFinder;
 
 	public SearchInputPanelModel createGeneralInfoPanel(Locale locale) {
 		SearchInputPanelModel panel = new SearchInputPanelModel();
@@ -62,15 +51,12 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		SearchInputFieldModel labelField = new SearchInputFieldModel("id", getMessageSource().internationalize(
 				"label.id", locale), TEXTFIELD);
 		panel.addField(labelField);
-		SearchInputFieldModel referenceField = new SearchInputFieldModel("reference", getMessageSource()
+		SearchInputFieldModel referenceField = new SearchInputFieldModel("referencedTestCase.reference",
+				getMessageSource()
 				.internationalize("label.reference", locale), TEXTFIELDREFERENCE);
 		panel.addField(referenceField);
-		SearchInputFieldModel descriptionField = new SearchInputFieldModel("description", getMessageSource()
-				.internationalize("label.Description", locale), TEXTAREA);
-		panel.addField(descriptionField);
-		SearchInputFieldModel prerequisiteField = new SearchInputFieldModel("prerequisite", getMessageSource()
-				.internationalize("test-case.prerequisite.label", locale), TEXTAREA);
-		panel.addField(prerequisiteField);
+
+
 
 		return panel;
 	}
@@ -83,7 +69,8 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-attributes");
 
-		SearchInputFieldModel importanceField = new SearchInputFieldModel("importance", getMessageSource()
+		SearchInputFieldModel importanceField = new SearchInputFieldModel("referencedTestCase.importance",
+				getMessageSource()
 				.internationalize("test-case.importance.label", locale), MULTISELECT);
 		panel.addField(importanceField);
 
@@ -93,7 +80,8 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		// *************** Assignment ****************************
 
-		SearchInputFieldModel assignmentField = new SearchInputFieldModel("assignment", getMessageSource()
+		SearchInputFieldModel assignmentField = new SearchInputFieldModel("user",
+				getMessageSource()
 				.internationalize("search.execution.assignation", locale), MULTIAUTOCOMPLETE);
 		panel.addField(assignmentField);
 
@@ -161,16 +149,19 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		SearchInputFieldModel createdOnField = new SearchInputFieldModel("createdOn", getMessageSource()
 				.internationalize("search.execution.executed.label", locale), DATE);
 		panel.addField(createdOnField);
+
+
+
 		OptionBuilder optionBuilder = optionBuilder(locale);
 
-		// Executed by
-		/*
-		 * TODO List<String> users = advancedSearchService.findAllAuthorizedUsersForACampaign(); for (String user :
-		 * users) { createdByField.addPossibleValue(optionBuilder.label(user).optionKey(user).build()); } Already done
-		 * in the Attribute block. Something different here ?
-		 */
-		SearchInputFieldModel authorizedUsersField = new SearchInputFieldModel("authorizedUsersField",
+
+		SearchInputFieldModel authorizedUsersField = new SearchInputFieldModel("lastExecutedBy",
 				getMessageSource().internationalize("search.execution.executedby.label", locale), MULTIAUTOCOMPLETE);
+		List<String> users = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign();
+		for (String user : users) {
+			authorizedUsersField.addPossibleValue(optionBuilder.label(user).optionKey(user).build());
+		}
+
 		panel.addField(authorizedUsersField);
 
 		// Status
@@ -197,10 +188,6 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		 * .internationalize("search.execution.lastExecution", locale), CHECKBOX); panel.addField(lastExecutionField);
 		 */
 
-		// Issue
-		SearchInputFieldModel issuesField = new SearchInputFieldModel("issues", getMessageSource().internationalize(
-				"search.testcase.association.issue.label", locale), RANGE);
-		panel.addField(issuesField);
 
 		return panel;
 	}
@@ -209,118 +196,4 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		return perimeterPanelBuilder(locale).cssClass("search-icon-perimeter").htmlId("project.id").build();
 	}
 
-	public SearchInputPanelModel createContentPanel(Locale locale) {
-
-		SearchInputPanelModel panel = new SearchInputPanelModel();
-		panel.setTitle(getMessageSource().internationalize("search.testcase.content.panel.title", locale));
-		panel.setOpen(true);
-		panel.setId("content");
-		panel.setLocation(COLUMN_1);
-		panel.addCssClass("search-icon-content");
-
-		SearchInputFieldModel teststepField = new SearchInputFieldModel("steps", getMessageSource().internationalize(
-				"label.customField.bindableEntity.EXECUTION_STEP", locale), RANGE);
-		panel.addField(teststepField);
-
-		SearchInputFieldModel datasetField = new SearchInputFieldModel("datasets", getMessageSource().internationalize(
-				"search.testcase.content.dataset.label", locale), EXISTS);
-		panel.addField(datasetField);
-
-		OptionBuilder optionBuilder = optionBuilder(locale);
-
-		datasetField.addPossibleValue(optionBuilder
-				.labelI18nKey("search.requirement.association.childRequirement.atleastone").optionKey(ATLEASTONE)
-				.build());
-
-		datasetField.addPossibleValue(optionBuilder
-				.labelI18nKey("search.requirement.association.childRequirement.none").optionKey(NONE).build());
-
-		SearchInputFieldModel attachmentField = new SearchInputFieldModel("attachments", getMessageSource()
-				.internationalize("search.testcase.content.attachment.label", locale), EXISTS);
-		panel.addField(attachmentField);
-
-		attachmentField.addPossibleValue(optionBuilder
-				.labelI18nKey("search.requirement.association.childRequirement.atleastone").optionKey(ATLEASTONE)
-				.build());
-
-		attachmentField.addPossibleValue(optionBuilder
-				.labelI18nKey("search.requirement.association.childRequirement.none").optionKey(NONE).build());
-
-		return panel;
-	}
-
-
-	private SearchInputFieldModel buildNatureFieldModel(Locale locale){
-
-
-		SearchInputFieldModel natureField = new SearchInputFieldModel("nature", getMessageSource().internationalize(
-				"test-case.nature.label", locale), MULTICASCADEFLAT);
-
-
-		Collection<Project> readableProjects = projectFinder.findAllReadable();
-
-		Collection<InfoList> natures = new ArrayList<InfoList>(readableProjects.size());
-
-		for (Project p : readableProjects){
-			natures.add(p.getTestCaseNatures());
-		}
-
-		populateInfoListFieldModel(natureField, natures, locale);
-
-		return natureField;
-
-	}
-
-	private SearchInputFieldModel buildTypeFieldModel(Locale locale){
-
-
-		SearchInputFieldModel typeField = new SearchInputFieldModel("type", getMessageSource().internationalize(
-				"test-case.type.label", locale), MULTICASCADEFLAT);
-
-
-		Collection<Project> readableProjects = projectFinder.findAllReadable();
-
-		Collection<InfoList> types = new ArrayList<InfoList>(readableProjects.size());
-
-		for (Project p : readableProjects){
-			types.add(p.getTestCaseTypes());
-		}
-
-		populateInfoListFieldModel(typeField, types, locale);
-
-		return typeField;
-
-	}
-
-	// get ready to puke !
-	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){
-
-		InternationalizationHelper messages = getMessageSource();
-		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<String, SearchInputPossibleValueModel>();
-
-		for (InfoList list : infoLists){
-			if (! listsByListCode.containsKey(list.getCode())){
-
-				String listName = messages.getMessage(list.getLabel(), null, list.getLabel(), locale);
-				String listCode = list.getCode();
-				SearchInputPossibleValueModel listValues = new SearchInputPossibleValueModel(listName, listCode);
-
-				SearchInputFieldModel subInput = new SearchInputFieldModel();
-
-				for (InfoListItem item : list.getItems()){
-					String itemName = messages.getMessage(item.getLabel(), null, item.getLabel(), locale);
-					String itemCode = item.getCode();
-					subInput.addPossibleValue(new SearchInputPossibleValueModel(itemName, itemCode));
-				}
-
-				listValues.setSubInput(subInput);
-
-				listsByListCode.put(list.getCode(), listValues);
-
-			}
-		}
-
-		model.setPossibleValues(new ArrayList<SearchInputPossibleValueModel>(listsByListCode.values()));
-
-	}
 }

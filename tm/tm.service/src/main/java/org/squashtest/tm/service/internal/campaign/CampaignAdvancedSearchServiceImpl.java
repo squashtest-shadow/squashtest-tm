@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.campaign;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -38,27 +37,19 @@ import org.hibernate.SessionFactory;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
+import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
-import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 
@@ -74,12 +65,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private SessionFactory sessionFactory;
 
 	@Inject
-	private TestCaseDao testCaseDao;
-
-	@Inject
-	private MessageSource source;
-	
-	@Inject
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
 
 
@@ -87,19 +72,16 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			new SortField("project.name", SortField.STRING, false),
 			new SortField("campaign-name", SortField.STRING, false),
 			new SortField("iteration-name", SortField.STRING, false),
-			new SortField("iteration-name", SortField.STRING, false),
-			new SortField("execution-id", SortField.STRING, false),
-			new SortField("execution-mode", SortField.STRING, false),
-			new SortField("execution-milestone-nb", SortField.STRING, false),
-			new SortField("testsuite-execution", SortField.STRING, false),
-			new SortField("execution-status", SortField.STRING, false),
-			new SortField("execution-executed-by", SortField.STRING, false),
-			new SortField("execution-executed-on", SortField.STRING, false),
-			new SortField("execution-datasets", SortField.STRING, false) };
+			new SortField("itpi-id", SortField.STRING, false),
+			new SortField("itpi-label", SortField.STRING, false),
+			new SortField("itpi-mode", SortField.STRING, false),
+			new SortField("itpi-status", SortField.STRING, false),
+			new SortField("itpi-executed-by", SortField.STRING, false),
+			new SortField("itpi-executed-on", SortField.STRING, false),
+			new SortField("itpi-datasets", SortField.STRING, false)};
 
 	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("");
 
-	private static final String FAKE_TC_ID = "-9000";
 
 	@Override
 	public List<String> findAllAuthorizedUsersForACampaign() {
@@ -112,8 +94,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return findUsersWhoCanAccessProject(projectIds);
 	}
 
-	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds){
-	List<String> list = new ArrayList<>();
+	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
+		List<String> list = new ArrayList<>();
 
 	List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<PartyProjectPermissionsBean>();
 
@@ -124,49 +106,44 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
 		if (partyProjectPermissionsBean.isUser()) {
-			list.add(partyProjectPermissionsBean.getParty().getName());
+
+				User user = (User) partyProjectPermissionsBean.getParty();
+				list.add(user.getLogin());
 		}
 	}
 	return list;
 	}
-	
-	
-	@Override
-	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	@Override
-	public PagedCollectionHolder<List<Execution>> searchForCampaign(AdvancedSearchModel searchModel,
+	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
 			PagingAndMultiSorting paging, Locale locale) {
-		// Actually, it's more searchForExecution than searchForCampaign
+
 
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		// Let's try without milestones
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(Execution.class).get();
+		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
 		Query luceneQuery = buildLuceneQuery(qb, searchModel, locale);
 
-		List<Execution> result = Collections.emptyList();
+		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;
 		if (luceneQuery != null) {
 			Sort sort = getExecutionSort(paging);
 
-			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, Execution.class).setSort(sort);
+			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class)
+					.setSort(sort);
 			countAll = hibQuery.list().size();
 			result = hibQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).list();
 		}
 
 		// Please, don't return null there, it will explode everything. It did.
-		return new PagingBackedPagedCollectionHolder<List<Execution>>(paging, countAll, result);
+		return new PagingBackedPagedCollectionHolder<List<IterationTestPlanItem>>(paging, countAll, result);
 
 	}
 
 	private Sort getExecutionSort(PagingAndMultiSorting multisorting) {
 
-		Locale locale = LocaleContextHolder.getLocale();
 
 		List<Sorting> sortings = multisorting.getSortings();
 
@@ -187,9 +164,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.LONG, isReverse);
-			} else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
-				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source, locale),
-						isReverse);
 			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.STRING, isReverse);
 			}
@@ -200,103 +174,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private String formatSortFieldName(String fieldName) {
 		String result = fieldName;
-		if (fieldName.startsWith("Execution.")) {
-			result = fieldName.replaceFirst("Execution.", "");
+		if (fieldName.startsWith("IterationTestPlanItem.")) {
+			result = fieldName.replaceFirst("IterationTestPlanItem.", "");
 		} else if (fieldName.startsWith("Project.")) {
 			result = fieldName.replaceFirst("Project.", "project.");
 		} else if (fieldName.startsWith("Campaign.")) {
 			result = fieldName.replaceFirst("Campaign.", "campaign.");
 		}
 		return result;
-	}
-	/*
-	 * That implementation is special because we cannot process the milestones as usual. Indeed, we need the test cases
-	 * that belongs both directly and indirectly to the milestone. That's why we use the method noMilestoneLuceneQuery.
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService#searchForTestCases(org.squashtest.tm.domain.
-	 * search.AdvancedSearchModel, java.util.Locale)
-	 */
-	/*
-	 * TODO :
-	 * 
-	 * This method is basically an override of "buildLuceneQuery" defined in the superclass -> thus we could rename it
-	 * accordingly. However in method "searchForTestCasesThroughRequirementModel" we must use the super implementation
-	 * of "buildLuceneQuery" -> thus renaming "searchTestCaseQuery" to "buildLuceneQuery" could lead to ambiguity.
-	 * 
-	 * I don't know what to do about it.
-	 */
-	protected Query searchExecutionQuery(AdvancedSearchModel model, FullTextSession ftSession, Locale locale) {
-
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(Execution.class).get();
-
-		/*
-		 * we must not include the milestone criteria yet because it'll be the subject of a separate query.
-		 * 
-		 * Let's save the search model and create a milestone-stripped version of it
-		 */
-
-		AdvancedSearchModel modelCopy = model.shallowCopy();
-		removeMilestoneSearchFields(model);
-
-		// create the main query (search test cases, no milestones)
-		Query luceneQuery = buildCoreLuceneQuery(qb, model, locale);
-
-		// now add the test-cases specific milestones criteria
-		if (shouldSearchByMilestones(modelCopy)) {
-			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
-		}
-
-		return luceneQuery;
-
-	}
-
-	// Behold copypasta from TCASSI
-
-	public boolean shouldSearchByMilestones(AdvancedSearchModel model) {
-		boolean enabled = getFeatureManager().isEnabled(Feature.MILESTONE);
-
-		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model.getFields().get(
-				"searchByMilestone");
-		boolean hasCriteria = (searchByMilestone != null && "true".equals(searchByMilestone.getValue()));
-
-		return enabled && hasCriteria;
-	}
-
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy,
-			Locale locale) {
-
-		// find the milestones
-		addMilestoneFilter(modelCopy);
-
-		List<String> strMilestoneIds = ((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id"))
-				.getValues();
-
-		// now find the test cases
-		Collection<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds) {
-			milestoneIds.add(Long.valueOf(str));
-		}
-
-		List<Long> lTestcaseIds = testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
-		List<String> testcaseIds = new ArrayList<>(lTestcaseIds.size());
-		for (Long l : lTestcaseIds) {
-			testcaseIds.add(l.toString());
-		}
-
-		// if no tc are found then use fake id so the lucene query will not find anything
-
-		if (testcaseIds.isEmpty()) {
-			testcaseIds.add(FAKE_TC_ID);
-		}
-
-		// finally, add a criteria that restrict the test case ids
-		Query idQuery = buildLuceneValueInListQuery(qb, "id", testcaseIds, false);
-
-		return qb.bool().must(mainQuery).must(idQuery).createQuery();
-
 	}
 
 }

@@ -52,12 +52,20 @@ import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.CollectionSizeBridge;
+import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -71,6 +79,7 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 	@NamedQuery(name="IterationTestPlanItem.findAllByIdsOrderedBySuiteTestPlan", query="select tp from TestSuite ts join ts.testPlan tp where ts.id = :suiteId and tp.id in :testPlanIds order by index(tp)")
 })
 @Entity
+@Indexed
 @Auditable
 @InheritsAcls(constrainedClass = Iteration.class, collectionName = "testPlans")
 public class IterationTestPlanItem implements HasExecutionStatus, Identified {
@@ -91,26 +100,35 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	@Id
 	@Column(name = "ITEM_TEST_PLAN_ID")
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "item_test_plan_item_test_plan_id_seq")
 	@SequenceGenerator(name = "item_test_plan_item_test_plan_id_seq", sequenceName = "item_test_plan_item_test_plan_id_seq")
 	private Long id;
 
 	@Enumerated(EnumType.STRING)
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String label = "";
 
+	@FieldBridge(impl = UserLoginBridgeAdaptor.class)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@ManyToOne
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
 	@Column(insertable = false)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String lastExecutedBy;
 
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	private Date lastExecutedOn;
 
+	@IndexedEmbedded(includePaths = { "reference", "importance", "name" })
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	private TestCase referencedTestCase;
@@ -122,8 +140,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "EXECUTION_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
+	@FieldBridge(impl = CollectionSizeBridge.class)
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	private final List<Execution> executions = new ArrayList<Execution>();
 
+	@IndexedEmbedded(depth=1)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
@@ -363,6 +384,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		return copy;
 	}
 
+	@IndexedEmbedded
 	public Project getProject() {
 		if (iteration != null) {
 			return iteration.getProject();
@@ -550,6 +572,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	public void addExecutionAtPos(Execution execution, int order) {
 		executions.add(order, execution);
 		execution.notifyAddedTo(this);
+	}
+
+	@IndexedEmbedded(depth = 1)
+	public Campaign getCampaign() {
+		return getIteration().getCampaign();
 	}
 
 }

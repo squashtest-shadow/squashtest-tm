@@ -271,6 +271,12 @@ public class IterationTestPlanManagerController {
 
 	}
 
+	@RequestMapping(value = "/iterations/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "status" })
+	public @ResponseBody void editIterationTestPlanItemsStatus(@PathVariable("testPlanIds") List<Long> testPlanIds,
+			@RequestParam("status") String status) {
+		iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
+	}
+
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { "dataset" })
 	public @ResponseBody
 	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {

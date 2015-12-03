@@ -20,105 +20,82 @@
  */
 package org.squashtest.tm.web.internal.controller.search;
 
+import java.math.BigInteger;
+import java.util.Map;
+
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.search.IndexMonitor;
+import org.squashtest.tm.domain.testcase.TestCase;
+
+
 public class IndexingProgressModel {
 
-	private int progressPercentage;
-	private long writtenEntities;
-	private long totalEntities;
 
-	private int progressPercentageForTestcases;
-	private long writtenEntitiesForTestcases;
-	private long totalEntitiesForTestcases;
-	
-	private int progressPercentageForRequirementVersions;
-	private long writtenEntitiesForRequirementVersions;
-	private long totalEntitiesForRequirementVersions;
+	private IndexMonitor tcMon;
+	private IndexMonitor reqVMon;
+	private IndexMonitor itpiMon;
+	private IndexMonitor total;
 
-	private double progressPercentageForCampaigns;
-	private long writtenEntitiesForCampaigns;
-	private long totalEntitiesForCampaigns;
-	
-	public int getProgressPercentage() {
-		return progressPercentage;
-	}
-	public void setProgressPercentage(int progressPercentage) {
-		this.progressPercentage = progressPercentage;
-	}
-	public long getWrittenEntities() {
-		return writtenEntities;
-	}
-	public void setWrittenEntities(long writtenEntities) {
-		this.writtenEntities = writtenEntities;
-	}
-	public long getTotalEntities() {
-		return totalEntities;
-	}
-	public void setTotalEntities(long totalEntities) {
-		this.totalEntities = totalEntities;
-	}
-	public int getProgressPercentageForTestcases() {
-		return progressPercentageForTestcases;
-	}
-	public void setProgressPercentageForTestcases(
-			int progressPercentageForTestcases) {
-		this.progressPercentageForTestcases = progressPercentageForTestcases;
-	}
-	public long getWrittenEntitiesForTestcases() {
-		return writtenEntitiesForTestcases;
-	}
-	public void setWrittenEntitiesForTestcases(long writtenEntitiesForTestcases) {
-		this.writtenEntitiesForTestcases = writtenEntitiesForTestcases;
-	}
-	public long getTotalEntitiesForTestcases() {
-		return totalEntitiesForTestcases;
-	}
-	public void setTotalEntitiesForTestcases(long totalEntitiesForTestcases) {
-		this.totalEntitiesForTestcases = totalEntitiesForTestcases;
-	}
-	public int getProgressPercentageForRequirementVersions() {
-		return progressPercentageForRequirementVersions;
-	}
-	public void setProgressPercentageForRequirementVersions(
-			int progressPercentageForRequirementVersions) {
-		this.progressPercentageForRequirementVersions = progressPercentageForRequirementVersions;
-	}
-	public long getWrittenEntitiesForRequirementVersions() {
-		return writtenEntitiesForRequirementVersions;
-	}
-	public void setWrittenEntitiesForRequirementVersions(
-			long writtenEntitiesForRequirementVersions) {
-		this.writtenEntitiesForRequirementVersions = writtenEntitiesForRequirementVersions;
-	}
-	public long getTotalEntitiesForRequirementVersions() {
-		return totalEntitiesForRequirementVersions;
-	}
-	public void setTotalEntitiesForRequirementVersions(
-			long totalEntitiesForRequirementVersions) {
-		this.totalEntitiesForRequirementVersions = totalEntitiesForRequirementVersions;
+	public IndexingProgressModel() {
+		Map<Class<?>, IndexMonitor> allMonitor = IndexMonitor.monitors;
+		tcMon = allMonitor.get(TestCase.class);
+		reqVMon = allMonitor.get(RequirementVersion.class);
+		itpiMon = allMonitor.get(IterationTestPlanItem.class);
+		total = IndexMonitor.total;
 	}
 
-	public double getProgressPercentageForCampaigns() {
-		return progressPercentageForCampaigns;
+	public BigInteger getProgressPercentage() {
+		return total.getPercentComplete();
 	}
 
-	public void setProgressPercentageForCampaigns(double progressPercentageForCampaigns) {
-		this.progressPercentageForCampaigns = progressPercentageForCampaigns;
+	public BigInteger getWrittenEntities() {
+		return total.getDocumentsBuilt();
 	}
 
-	public long getWrittenEntitiesForCampaigns() {
-		return writtenEntitiesForCampaigns;
+	public BigInteger getTotalEntities() {
+		return total.getTotalCount();
 	}
 
-	public void setWrittenEntitiesForCampaigns(long writtenEntitiesForCampaigns) {
-		this.writtenEntitiesForCampaigns = writtenEntitiesForCampaigns;
+	public BigInteger getProgressPercentageForTestcases() {
+		return tcMon.getPercentComplete();
 	}
 
-	public long getTotalEntitiesForCampaigns() {
-		return totalEntitiesForCampaigns;
+	public BigInteger getWrittenEntitiesForTestcases() {
+		return tcMon.getDocumentsBuilt();
 	}
 
-	public void setTotalEntitiesForCampaigns(long totalEntitiesForCampaigns) {
-		this.totalEntitiesForCampaigns = totalEntitiesForCampaigns;
+	public BigInteger getTotalEntitiesForTestcases() {
+		return tcMon.getTotalCount();
 	}
+
+	public BigInteger getProgressPercentageForRequirementVersions() {
+		return reqVMon.getPercentComplete();
+	}
+
+	public BigInteger getWrittenEntitiesForRequirementVersions() {
+		return reqVMon.getDocumentsBuilt();
+	}
+
+	public BigInteger getTotalEntitiesForRequirementVersions() {
+		return reqVMon.getTotalCount();
+	}
+
+
+	public BigInteger getProgressPercentageForCampaigns() {
+		return itpiMon.getPercentComplete();
+	}
+
+
+	public BigInteger getWrittenEntitiesForCampaigns() {
+		return itpiMon.getDocumentsBuilt();
+	}
+
+
+	public BigInteger getTotalEntitiesForCampaigns() {
+		return itpiMon.getTotalCount();
+	}
+
+
 
 }

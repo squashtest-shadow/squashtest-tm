@@ -145,7 +145,9 @@ define([], function(){
 		'iterations.base' :					root + '/iterations',
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'iterations.testplan.lastexec' :	root + '/iterations/{\\d+}/test-plan/{\\d+}/last-execution',
-
+		'iterations.testplan.changestatus' : root + '/iterations/test-plan/{\\d+}',
+		
+		
 		'testsuites.base' :					root + '/test-suites',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
