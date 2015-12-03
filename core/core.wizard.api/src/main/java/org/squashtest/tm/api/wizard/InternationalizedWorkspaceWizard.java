@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.api.wizard;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,6 +59,11 @@ BeanNameAware, BundleContextAware {
 	 * i18n key of this wizard's name
 	 */
 	private String nameKey;
+
+	/**
+	 * i18n key for this wizard's type
+	 */
+	private String typeKey;
 
 
 	@Override
@@ -162,6 +168,17 @@ BeanNameAware, BundleContextAware {
 	@Override
 	public void validate(EntityReference reference, Map<String, String> conf) {
 		// defaults : allways passes
+	}
+
+	@Override
+	public URL getConfigurationUrl(EntityReference context) {
+		// default : no configuration
+		return null;
+	}
+
+	@Override
+	public String getType() {
+		return getMessage(typeKey);
 	}
 
 	@PostConstruct

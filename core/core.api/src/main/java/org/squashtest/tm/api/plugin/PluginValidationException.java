@@ -18,27 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.api.wizard;
+package org.squashtest.tm.api.plugin;
 
 import org.squashtest.tm.core.foundation.exception.ActionException;
 
-public class WizardValidationException extends ActionException
+public class PluginValidationException extends ActionException
 {
 	private static final long serialVersionUID = 1L;
 
-	public WizardValidationException() {
+	public PluginValidationException() {
 		super();
 	}
 
-	public WizardValidationException(String arg0, Throwable arg1) {
+	public PluginValidationException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
 	}
 
-	public WizardValidationException(String arg0) {
+	public PluginValidationException(String arg0) {
 		super(arg0);
 	}
 
-	public WizardValidationException(Throwable arg0) {
+	public PluginValidationException(Throwable arg0) {
 		super(arg0);
 	}
 	

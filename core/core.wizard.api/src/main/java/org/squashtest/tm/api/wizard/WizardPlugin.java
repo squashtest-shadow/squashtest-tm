@@ -27,6 +27,8 @@ import org.squashtest.tm.api.plugin.Plugin;
  * 
  */
 public interface WizardPlugin extends Plugin {
+
+
 	/**
 	 * This wizard's name, the one which may appear in administation workspace and such. should not be null.
 	 * 

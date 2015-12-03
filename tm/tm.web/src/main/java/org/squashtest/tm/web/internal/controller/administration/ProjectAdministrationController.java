@@ -41,6 +41,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.plugin.EntityType;
+import org.squashtest.tm.api.plugin.PluginValidationException;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
@@ -180,8 +181,8 @@ public class ProjectAdministrationController {
 
 		Collection<ProjectPluginModel> models = toPluginModel(projectId, plugins, enabledPlugins);
 
-		//model.addAttribute("plugins", models);
-		model.addAttribute("plugins", stubPluginModel());
+		model.addAttribute("plugins", models);
+		//model.addAttribute("plugins", stubPluginModel());
 		model.addAttribute(RequestParams.PROJECT_ID, projectId);
 
 		return "project-tabs/plugins-tab.html";
@@ -189,59 +190,29 @@ public class ProjectAdministrationController {
 	}
 
 
-	private Collection<ProjectPluginModel> stubPluginModel(){
-
-		List<ProjectPluginModel> stubs = new ArrayList<>();
-
-		ProjectPluginModel ppm1 = new ProjectPluginModel();
-		ppm1.setIndex(1);
-		ppm1.setId("plugin-qui-marche");
-		ppm1.setEnabled(true);
-		ppm1.setType("gizmo");
-		ppm1.setName("coffee generator");
-		ppm1.setStatus("OK");
-		ppm1.setConfigUrl("/squash/projects/1/plugins/plugin-qui-marche/conf");
-
-
-		ProjectPluginModel ppm2 = new ProjectPluginModel();
-		ppm2.setIndex(2);
-		ppm2.setId("truc-bugge");
-		ppm2.setEnabled(false);
-		ppm2.setType("mozig");
-		ppm2.setName("plugin chiffrage");
-		ppm2.setStatus("ERROR");
-		ppm2.setConfigUrl("/squash/projects/1/plugins/plugin-chiffrage/conf");
-
-		stubs.add(ppm1);
-		stubs.add(ppm2);
-
-		return stubs;
-
-
-	}
-
-
 	private Collection<ProjectPluginModel> toPluginModel(long projectId, Collection<WorkspaceWizard> plugins, Collection<String> enabledPlugins) {
+
 		List<ProjectPluginModel> output = new ArrayList<ProjectPluginModel>(plugins.size());
+
+		EntityReference context = new EntityReference(EntityType.PROJECT, projectId);
 
 		int loop=1;
 		for (WorkspaceWizard plugin : plugins) {
+
+			boolean enabled = enabledPlugins.contains(plugin.getId());
+
 			ProjectPluginModel model = new ProjectPluginModel(plugin);
 
 			model.setIndex(loop++);
-
-			String id = plugin.getId();
-			if (enabledPlugins.contains(id)){
-				model.setEnabled(true);
-			}
+			model.setEnabled(enabled);
+			model.setConfigUrl(plugin.getConfigurationUrl(context));
 
 			// that should be refactored too once the API is updated
-			EntityReference ref = new EntityReference(EntityType.PROJECT, projectId);
 			try{
-				plugin.validate(ref);
+				plugin.validate(context);
 				model.setStatus(STATUS_OK);
 			}
-			catch(Exception anything){
+			catch(PluginValidationException damnit){
 				model.setStatus(STATUS_ERROR);
 			}
 
