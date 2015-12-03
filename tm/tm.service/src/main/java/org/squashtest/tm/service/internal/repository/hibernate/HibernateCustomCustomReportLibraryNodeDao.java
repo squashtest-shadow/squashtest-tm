@@ -91,8 +91,14 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 
 	@Override
 	public List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds) {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibraryFiltered");
 		query.setParameterList("filteredProjectsIds", projectIds, LongType.INSTANCE);
+		return query.list();
+	}
+	
+	@Override
+	public List<CustomReportLibraryNode> findAllConcreteLibraries() {
+		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
 		return query.list();
 	}
 
@@ -128,7 +134,5 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 		CustomReportLibraryNode uniqueResult =(CustomReportLibraryNode) query.uniqueResult();
 		return uniqueResult;
 	}
-
-
 	
 }

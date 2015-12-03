@@ -86,10 +86,10 @@ public class CustomReportWorkspaceServiceImpl implements
 			for (Project project : projectFilter.getProjects()) {
 				projectIds.add(project.getId());
 			}
-			return Collections.emptyList();
+			return crlnDao.findAllConcreteLibraries(projectIds);
 		}
 		else {
-			return crlnDao.findAllConcreteLibraries(projectIds);
+			return crlnDao.findAllConcreteLibraries();
 		}
 	}
 
