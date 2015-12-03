@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.customreport;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -30,11 +32,13 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
+import org.squashtest.tm.service.project.ProjectFilterModificationService;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
 public class CustomReportWorkspaceServiceImpl implements
@@ -45,6 +49,9 @@ public class CustomReportWorkspaceServiceImpl implements
 	
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
+	
+	@Inject
+	private ProjectFilterModificationService projectFilterModificationService;
 
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
@@ -70,7 +77,20 @@ public class CustomReportWorkspaceServiceImpl implements
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findRootNodes() {
-		return crlnDao.findAllConcreteLibraries();
+		ProjectFilter projectFilter = projectFilterModificationService.findProjectFilterByUserLogin();
+		List<Long> projectIds = new ArrayList<Long>();
+		if (projectFilter.isEnabled()) {
+			if (projectFilter.getProjects().size()==0) {
+				return Collections.emptyList();
+			}
+			for (Project project : projectFilter.getProjects()) {
+				projectIds.add(project.getId());
+			}
+			return Collections.emptyList();
+		}
+		else {
+			return crlnDao.findAllConcreteLibraries(projectIds);
+		}
 	}
 
 }

@@ -88,12 +88,6 @@ public class CustomReportWorkspaceController {
 		
 		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
 		
-		LOGGER.debug("JTH - selected Node " + elementId);
-		LOGGER.debug("JTH - openedNodes" + openedNodes.toString());
-		for (int i = 0; i < openedNodes.length; i++) {
-			LOGGER.debug("JTH - " + openedNodes[i]);
-		}
-		
 		Set<Long> nodeIdToOpen = new HashSet<Long>();
 		nodeIdToOpen.addAll(convertCookieIds(openedNodes));
 		//Every node above selected node should be opened and it should be not necessary to get ancestors.

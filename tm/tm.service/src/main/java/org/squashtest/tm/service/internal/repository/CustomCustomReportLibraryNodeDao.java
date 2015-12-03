@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
@@ -33,6 +34,6 @@ public interface CustomCustomReportLibraryNodeDao extends EntityDao<CustomReport
 	List<Long> findAllFirstLevelDescendantIds(Long nodeId);
 	List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds);
 	List<Long> findAncestorIds(Long nodeId);
-	List<CustomReportLibraryNode> findAllConcreteLibraries();
+	List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds);
 	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
 }

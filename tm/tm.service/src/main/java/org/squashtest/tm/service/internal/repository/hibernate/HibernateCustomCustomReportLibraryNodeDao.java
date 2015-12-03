@@ -34,6 +34,8 @@ import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
@@ -88,8 +90,9 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 	}
 
 	@Override
-	public List<CustomReportLibraryNode> findAllConcreteLibraries() {
+	public List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds) {
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
+		query.setParameterList("filteredProjectsIds", projectIds, LongType.INSTANCE);
 		return query.list();
 	}
 
