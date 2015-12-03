@@ -92,7 +92,6 @@ final class TestPlanFilteringHelper {
 		clauses.put(WEIGHT_DATA, HQL_INDEXED_TEST_PLAN_WEIGHT_FILTER);
 		clauses.put(DATASET_DATA, HQL_INDEXED_TEST_PLAN_DATASET_FILTER);
 		clauses.put(STATUS_DATA, HQL_INDEXED_TEST_PLAN_STATUS_FILTER);
-		clauses.put(USER_DATA, HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		clauses.put(LASTEXEC_DATA, HQL_INDEXED_TEST_PLAN_EXECUTIONDATE_FILTER);
 		SIMPLE_FILTER_CLAUSES = Collections.unmodifiableMap(clauses);
 	}
@@ -138,7 +137,7 @@ final class TestPlanFilteringHelper {
 		if (columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))) {
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA)));
 		}
-
+		
 		if (columnFiltering.hasFilter(TestPlanFilteringHelper.LASTEXEC_DATA)) {
 			setQueryStartAndEndDateParameters(columnFiltering, query);
 		}
