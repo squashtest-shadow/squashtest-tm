@@ -76,7 +76,7 @@ define([ "jquery",
 			});
     },
     initSearchTree : function(settings){
-    	pluginsFactory.configure("search-tree");
+pluginsFactory.configure("search-tree");
 		var conf = searchConf.generate(settings);
 		var instance = $(settings.treeselector).jstree(conf);
 		
@@ -91,7 +91,7 @@ define([ "jquery",
 		});
 		
 		squashtm.tree = instance;
-    	
+
     },
 		initLinkableTree : function(settings) {
 			pluginsFactory.configure("tree-picker");

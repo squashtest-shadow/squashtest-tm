@@ -47,10 +47,7 @@ define([ "jquery", "backbone", "squash.translator", '../test-plan-panel/exec-run
 					"bDeferRender" : true,
 					"bFilter" : false,
 					"fnRowCallback" : this.tableRowCallback,
-					"fnDrawCallback" : this.tableDrawCallback,
-				
-					
-					
+					"fnDrawCallback" : this.tableDrawCallback					
 				};
 
 			var squashConf = {

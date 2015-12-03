@@ -54,8 +54,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			"click #modify-search-result-button" : "editResults",			
 			"click #new-search-button" : "newSearch",
 			"click #modify-search-button" : "modifySearch",		
-			"click #add-search-result-button" : "addITPI",
-
+			"click #add-search-result-button" : "addITPI"
 		},
 
 	

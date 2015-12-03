@@ -58,7 +58,7 @@ define(['jquery', './jstree-dnd-override', './continuous-shift-select-plugin','.
                  applyContinuousShiftSelectPlugin();
                  applyWorkspacePlugin();
                  applyConditionalSelectPlugin();
-            	
+
             break;
             default :
                 throw "'"+type+"' is not a valid tree profile";
