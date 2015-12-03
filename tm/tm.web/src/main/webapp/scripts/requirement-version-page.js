@@ -16,7 +16,7 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 			pubsub.subscribe('reload.requirement.verifyingtestcases', initVerifyingtestcases);
 
-      pubsub.subscribe('reload.requirement.requirementversionrate', initRequirementVersionRates);
+			pubsub.subscribe('reload.requirement.requirementversionrate', initRequirementVersionRates);
 
 			pubsub.subscribe('reload.requirement.audittrail', initAudittrail);
 

@@ -103,8 +103,14 @@ define([ "jquery",
 			squashtm.tree = instance;
 		},
 
-		get : function() {
-			return squashtm.tree;
+		get : function(arg) {
+			if (arg===undefined){
+				return $("#tree");
+			}
+			else{
+				return $(arg);
+			}
+			//return squashtm.tree;
 		}
 	};
 
