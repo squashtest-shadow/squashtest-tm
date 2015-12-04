@@ -643,11 +643,19 @@ html.execute-html body.ieo-body {
 }
 
 .navigation-report{
-	background-image: url(../images/Button_Nav_Reporting_off.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/Button_Nav_Reports_off.png); /** sprite-ref: sprites-icons; */
 }
 
 .navigation-report:hover, .navigation-report.navigation-selected{	
-	background-image: url(../images/Button_Nav_Reporting_on.png); /** sprite-ref: sprites-icons; */
+	background-image: url(../images/Button_Nav_Reports_on.png); /** sprite-ref: sprites-icons; */
+}
+
+.navigation-custom-report{
+	background-image: url(../images/Button_Nav_Custom_Reports_off.png); /** sprite-ref: sprites-icons; */
+}
+
+.navigation-custom-report:hover, .navigation-custom-report.navigation-selected{	
+	background-image: url(../images/Button_Nav_Custom_Reports_on.png); /** sprite-ref: sprites-icons; */
 }
 
 #test_mgt_nav {

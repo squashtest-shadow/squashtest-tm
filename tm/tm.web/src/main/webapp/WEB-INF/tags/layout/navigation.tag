@@ -46,6 +46,10 @@
 		<a id="test-case-link"	 	class="navigation-link navigation-test-case" 	href="${rootctxt}/test-case-workspace/"		title="${tcTitle}"></a>
 		<a id="campaign-link"	 	class="navigation-link navigation-campaign"		href="${rootctxt}/campaign-workspace/"		title="${campTitle}"></a>
 		
+		
+		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/report-workspace"			title="${repoTitle}"></a>
+		
+		<a id="custom-report-link"	 	class="navigation-link navigation-custom-report" 			href="${rootctxt}/custom-report-workspace"			title="${repoTitle}"></a>
 		<a id="bugtracker-link"	 	class="navigation-link navigation-bugtracker ${hideClass}" 	title="${bugTitle}"></a>
 		<ul class="not-displayed width:130px;">
 		<c:forEach var="bugtracker" items="${visibleBugtrackers}">
@@ -56,8 +60,6 @@
 			</li>
 		</c:forEach>
 		</ul>		
-		
-		<a id="report-link"	 	class="navigation-link navigation-report" 			href="${rootctxt}/custom-report-workspace"			title="${repoTitle}"></a>
 	</div>
 	
 	<div id="nav_logo" class="vertical-logo"></div>

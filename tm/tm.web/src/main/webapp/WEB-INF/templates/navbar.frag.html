@@ -65,6 +65,19 @@
                th:title="#{workspace.campaign.button.label}" 
                th:classappend="${highlight == 'campaign'} ? 'navigation-selected'"></a>
       
+      
+      <a id="report-link"     
+               class="navigation-link navigation-report"    
+               th:href="@{/report-workspace}" 
+               th:title="#{workspace.report.button.label}" 
+               th:classappend="${highlight == 'report'} ? 'navigation-selected'"></a>
+      
+      <a id="custom-report-link"     
+               class="navigation-link navigation-custom-report"    
+               th:href="@{/custom-report-workspace}" 
+               th:title="#{workspace.report.button.label}" 
+               th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"></a>
+               
       <a id="bugtracker-link"     
                 class="navigation-link navigation-bugtracker"     
                 th:classappend="${#lists.isEmpty(bugtrackers)} ? 'not-displayed'" 
@@ -77,13 +90,6 @@
                                 th:text="${bugtracker.name}">mantis</a>      
         </li>      
       </ul>          
-      
-      <a id="custom-report-link"     
-               class="navigation-link navigation-report"    
-               th:href="@{/custom-report-workspace}" 
-               th:title="#{workspace.report.button.label}" 
-               th:classappend="${highlight == 'custom-report'} ? 'navigation-selected'"></a>
-               
     </div>
     
     <div id="nav_logo" class="vertical-logo"></div>
