@@ -229,7 +229,7 @@ define([], function(){
 		'custom-report-chart-binding-replace-chart' : root + '/custom-report-chart-binding-replace-chart/{\\d+}/{\\d+}',
 		
 		// project plugins
-		'project-plugins' :					root + '/generic-projects/{\\d+}/plugins/{[^\\/]+}',
+		'project-plugins' :					root + '/generic-projects/{\\d+}/plugins/{[^\\/]+}/',	// the trailing '/' is important
 		
 		// server authentication
 		'servers.authentication' :			root + '/servers/{\\d+}/authentication',

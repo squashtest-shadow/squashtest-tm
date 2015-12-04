@@ -28,7 +28,7 @@ import org.squashtest.tm.core.foundation.i18n.ContextBasedInternationalized;
 import org.squashtest.tm.core.foundation.lang.Assert;
 
 import javax.annotation.PostConstruct;
-import java.net.URL;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -163,7 +163,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	}
 
 	@Override
-	public URL getConfigurationUrl(EntityReference context) {
+	public String getConfigurationPath(EntityReference context) {
 		// default : no configuration
 		return null;
 	}

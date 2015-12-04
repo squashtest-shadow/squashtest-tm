@@ -133,6 +133,18 @@ public class SquashServletConfig {
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
 	}
+	
+	@Bean(name = "thymeleaf.templateResolver.fromclasspath.fragment")
+	public ITemplateResolver thymeleafClasspathTemplateResolver(SpringResourceResourceResolver resourceResolver) {
+		TemplateResolver res = new TemplateResolver();
+		res.setResourceResolver(resourceResolver);
+		res.setPrefix("classpath:/templates/");
+		res.setSuffix("");
+		res.setTemplateMode(thymeleafProperties.getMode());
+		res.setCharacterEncoding(thymeleafProperties.getEncoding());
+		res.setCacheable(thymeleafProperties.isCache());
+		return res;
+	}
 
 	@Inject
 	private BugTrackerContextHolder bugTrackerContextHolder;

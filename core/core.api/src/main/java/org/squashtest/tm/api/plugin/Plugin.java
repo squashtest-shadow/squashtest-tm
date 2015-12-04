@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.api.plugin;
 
-import java.net.URL;
 import java.util.Map;
 
 
@@ -80,8 +79,8 @@ public interface Plugin {
 
 	/**
 	 * <p>
-	 * 	Must return an URL that lead to a configuration page for this plugin. Because the configuration might be context-dependant,
-	 * 	(a prominent example is per-project dependant), an EntityReference is supplied as this context.
+	 * 	Must return the URI path that lead to a configuration page for this plugin. Because the configuration might be context-dependant,
+	 * 	(a prominent example is per-project dependant), an EntityReference is supplied as this context. 
 	 * </p>
 	 * 
 	 * <p>
@@ -92,7 +91,7 @@ public interface Plugin {
 	 * @param context
 	 * @return
 	 */
-	URL getConfigurationUrl(EntityReference context);
+	String getConfigurationPath(EntityReference context);
 
 	/**
 	 * <p>Same as {@link #validate(EntityReference)}, except that the configuration is supplied as a parameter by Squash TM instead of

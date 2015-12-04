@@ -33,7 +33,7 @@ public class ProjectPluginModel {
 	private String type;
 	private String name;
 	private String status;
-	private URL configUrl;
+	private String configUrl;
 
 	public int getIndex() {
 		return index;
@@ -73,10 +73,10 @@ public class ProjectPluginModel {
 		this.status = status;
 	}
 
-	public URL getConfigUrl() {
+	public String getConfigUrl() {
 		return configUrl;
 	}
-	public void setConfigUrl(URL configUrl) {
+	public void setConfigUrl(String configUrl) {
 		this.configUrl = configUrl;
 	}
 

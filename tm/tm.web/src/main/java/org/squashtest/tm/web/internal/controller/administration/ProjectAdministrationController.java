@@ -29,8 +29,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
 
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -168,7 +168,7 @@ public class ProjectAdministrationController {
 
 
 	@RequestMapping(value = "{projectId}/plugins")
-	public String getPluginsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model) {
+	public String getPluginsManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId, Model model, HttpServletRequest request) {
 
 		GenericProject project = projectFinder.findById(projectId);
 
@@ -179,10 +179,10 @@ public class ProjectAdministrationController {
 		enabledPlugins.addAll(project.getRequirementLibrary().getEnabledPlugins());
 		enabledPlugins.addAll(project.getCampaignLibrary().getEnabledPlugins());
 
-		Collection<ProjectPluginModel> models = toPluginModel(projectId, plugins, enabledPlugins);
+		String context = request.getServletContext().getContextPath();
+		Collection<ProjectPluginModel> models = toPluginModel(context, projectId, plugins, enabledPlugins);
 
 		model.addAttribute("plugins", models);
-		//model.addAttribute("plugins", stubPluginModel());
 		model.addAttribute(RequestParams.PROJECT_ID, projectId);
 
 		return "project-tabs/plugins-tab.html";
@@ -190,7 +190,7 @@ public class ProjectAdministrationController {
 	}
 
 
-	private Collection<ProjectPluginModel> toPluginModel(long projectId, Collection<WorkspaceWizard> plugins, Collection<String> enabledPlugins) {
+	private Collection<ProjectPluginModel> toPluginModel(String servContext, long projectId, Collection<WorkspaceWizard> plugins, Collection<String> enabledPlugins) {
 
 		List<ProjectPluginModel> output = new ArrayList<ProjectPluginModel>(plugins.size());
 
@@ -205,7 +205,11 @@ public class ProjectAdministrationController {
 
 			model.setIndex(loop++);
 			model.setEnabled(enabled);
-			model.setConfigUrl(plugin.getConfigurationUrl(context));
+			
+			String url = plugin.getConfigurationPath(context);
+			url = url.startsWith("/") ? url : "/" + url;
+			
+			model.setConfigUrl(servContext + url);
 
 			// that should be refactored too once the API is updated
 			try{
