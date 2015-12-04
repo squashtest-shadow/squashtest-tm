@@ -90,7 +90,7 @@
             	  
                 <%-- test-case addition --%>
                 $( '#add-items-button' ).click(function() {
-         					var tree = zetree.get(); 
+         					var tree = zetree.get('#linkable-test-cases-tree'); 
         					var ids =	[];
         					var nodes = 0;
         					if( tree.jstree('get_selected').length > 0 ) {
