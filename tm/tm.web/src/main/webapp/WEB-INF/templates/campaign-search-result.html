@@ -343,7 +343,7 @@ publish("reload.auto-suite-overview-popup");
     
     
     <!-- *************************POPUP*********************** -->
-<div id="execute-auto-dialog" class="popup-dialog not-displayed" title="#{dialog.execute-auto.title}" th:with="suiteUrl=@{/automated-suites}"
+<div id="execute-auto-dialog" class="popup-dialog not-displayed" th:title="#{dialog.execute-auto.title}" th:with="suiteUrl=@{/automated-suites}"
 	 th:attr="data-def='url=' + ${suiteUrl}+ ', height=490'">
 
 	<div data-def="state=main">

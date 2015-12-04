@@ -149,7 +149,7 @@ def definition = [
 			tcMilesCount : ['MILCOUNT', 'NUMERIC', 'count(milestones)', 'all', 'tcMilesCountSub'],
 			tcIterCount : ['ITERCOUNT', 'NUMERIC', 'count(iterations)', 'all', 'tcIterCountSub'],
 			tcExeCount : ['EXECOUNT', 'NUMERIC', 'count(executions)', 'all', 'tcExeCountSub'],
-			tcHasAutoScript : ['HASAUTOSCRIPT', 'BOOLEAN', 'notnull(automatedTest)', 'filter', 'tcHasAutoSub']
+			tcHasAutoScript : ['HASAUTOSCRIPT', 'BOOLEAN', 'notnull(automatedTest)', 'all', 'tcHasAutoSub']
 		], 
 	
 		subqueries : [
@@ -303,14 +303,14 @@ def definition = [
 	ITEM_TEST_PLAN : [		
 		columns : [
 			itpId : ['ID', 'NUMERIC', 'id', 'all'],
-			itpLabel : ['LABEL', 'STRING', 'label', 'filter'],
+			itpLabel : ['LABEL', 'STRING', 'label', 'all'],
 			itpStatus : ['STATUS', 'EXECUTION_STATUS', 'executionStatus', 'all'],
-			itpLastExecOn : ['LASTEXECON', 'DATE', 'lastExecutedOn', 'axis, filter'],
-			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'filter'],
-			itpTester : ['TESTER', 'STRING', 'user.login', 'filter'],
-			
-			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'filter', 'itpTcExistsSub'],
-			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'filter', 'itpIsExecutedSub'],
+			itpLastExecOn : ['LASTEXECON', 'DATE', 'lastExecutedOn', 'all'],
+			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'all'],
+			itpTester : ['TESTER', 'STRING', 'user.login', 'all'],
+			itpTcId : ['TC_ID', 'STRING', 'referencedTestCase.id', 'all'],
+			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'all', 'itpTcExistsSub'],
+			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'all', 'itpIsExecutedSub'],
 			itpManExCount : ['MANEXCOUNT', 'NUMERIC', 'count(executions[auto="false"])', 'all', 'itpManExCountSub'],
 			itpAutoExCount : ['AUTOEXCOUNT', 'NUMERIC', 'count(executions[auto="true"])', 'all', 'itpAutoExCountSub'],
 			itpIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'itpIssueCountSub']

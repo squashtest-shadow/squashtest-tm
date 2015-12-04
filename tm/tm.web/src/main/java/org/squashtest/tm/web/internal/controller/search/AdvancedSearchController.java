@@ -281,7 +281,10 @@ public class AdvancedSearchController {
 			.mapAttribute("itpi-status", "executionStatus", IterationTestPlanItem.class)
 			.mapAttribute("itpi-executed-by", "lastExecutedBy", IterationTestPlanItem.class)
 			.mapAttribute("itpi-executed-on", "lastExecutedOn", IterationTestPlanItem.class)
-			.mapAttribute("itpi-datasets", "", IterationTestPlanItem.class);
+			.mapAttribute("itpi-datasets", "", IterationTestPlanItem.class)
+			.mapAttribute("tc-weight", "referencedTestCase.importance", IterationTestPlanItem.class);
+
+
 
 
 	// Could be change and discriminate params = "searchDomain=campaign" but not necessary
