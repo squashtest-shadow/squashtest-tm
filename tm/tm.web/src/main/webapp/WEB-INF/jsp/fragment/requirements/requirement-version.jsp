@@ -172,7 +172,7 @@ that page won't be editable if
 	</div>
 
 	<div class="toolbar-button-panel">
-        <c:set var="disableIfSynced" value="${(synced) ? 'disabled=\"disabled\"' : ''}"/>
+        <c:set var="disableIfSynced" value="${synced ? 'disabled=\"disabled\"' : ''}"/>
         <c:if test="${ writable }">
 			<input type="button" value="${renameLabel}" title="${renameLabel}" id="rename-requirement-button" class="sq-btn"  ${disableIfSynced}/> 
 		</c:if>
