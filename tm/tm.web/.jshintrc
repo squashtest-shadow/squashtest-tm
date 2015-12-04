@@ -10,5 +10,8 @@
 	"sub": true,
 	"loopfunc": true,
 	"curly": true,
-	"predef": ["squashtm", "log"]
+	"globals": {
+		"squashtm": true,
+		"log": false
+	}
 }

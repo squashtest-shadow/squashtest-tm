@@ -581,6 +581,18 @@
                   <targetGroups>squash-js</targetGroups>
                   <minimize>false</minimize>
                   <failNever>false</failNever>
+                  <!-- options below should be in sync with .jshintrc except for globals, which cannot be set with wro4j -->
+                  <options>browser=true,
+                    jquery=true,
+                    eqnull=true,
+                    evil=true,
+                    noarg=true,
+                    smarttabs=true,
+                    laxbreak=true,
+                    laxcomma=true,
+                    sub=true,
+                    loopfunc=true,
+                    curly=true</options>
                 </configuration>
               </execution>
             </executions>

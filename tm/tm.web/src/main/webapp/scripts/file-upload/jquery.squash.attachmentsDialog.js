@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * This dialog uploads files using xhr2 API for Chrome and FF, 
+ * This dialog uploads files using xhr2 API for Chrome and FF,
  * and a shitty workaround for IE9
- * 
+ *
  */
 
 define(
@@ -102,7 +102,7 @@ define(
 			// ****************** files submission ***********************
 
 			supportProgressBar: function supportAjaxUploadWithProgress() {
-		
+
 				return supportFileAPI() && supportAjaxUploadProgressEvents();
 
 				function supportFileAPI() {
@@ -116,7 +116,7 @@ define(
 					return !!(xhr && ('upload' in xhr) && ('onprogress' in xhr.upload));
 				}
 			},
-			
+
 			setShowProgress : function(show){
 				var fn = (show) ? "show" : "hide";
 				$(".attachment-upload-uploading").children()[fn]();
@@ -137,7 +137,7 @@ define(
 				self.refreshBar(0);
 
 				if (self.supportProgressBar()) {
-					
+
 					self.setShowProgress(true);
 
 					var xhr = new XMLHttpRequest();
@@ -265,8 +265,8 @@ define(
 			},
 
 			populateSummary: function (summaries) {
-				i = 0, 
-				summarydiv = this.element.find('.attachment-upload-summary'), 
+				var i = 0,
+				summarydiv = this.element.find('.attachment-upload-summary'),
 				summaryItemTpl = this.options.summaryitem;
 
 				summarydiv.empty();
@@ -287,7 +287,7 @@ define(
 				}
 				else{
 					var s = (sizeOrMsg / 1048576).toFixed(3);
-					
+
 					var errMessage = this.options._sizeexceeded.replace('#size#', s);
 					this.element.find('.attachment-upload-error-message').text(errMessage);
 				}
