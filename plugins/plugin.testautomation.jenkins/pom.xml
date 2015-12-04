@@ -258,4 +258,11 @@
       <!-- ====== /INTEGRATION TESTS ====== -->
     </plugins>
   </build>
+  <repositories>
+    <repository>
+      <id>squashtest-release</id>
+      <name>SquashTest release repository</name>
+      <url>http://repo.squashtest.org/maven2/releases</url>
+    </repository>
+  </repositories>
 </project>
