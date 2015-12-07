@@ -133,8 +133,8 @@ public class SquashServletConfig {
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
 	}
-	
-	@Bean(name = "thymeleaf.templateResolver.fromclasspath.fragment")
+
+	@Bean(name = "thymeleaf.templateResolver.plugins")
 	public ITemplateResolver thymeleafClasspathTemplateResolver(SpringResourceResourceResolver resourceResolver) {
 		TemplateResolver res = new TemplateResolver();
 		res.setResourceResolver(resourceResolver);

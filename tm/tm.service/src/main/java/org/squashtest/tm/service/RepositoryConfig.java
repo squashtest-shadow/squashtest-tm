@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
@@ -84,6 +85,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 
 	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
 	public LocalSessionFactoryBean sessionFactory() {
 		if (StringUtils.defaultString(hibernateDialect).toLowerCase().contains("h2")) {
 			LOGGER.warn("I'm configured to use the '{}' H2 dialect. H2 is not to be used as a production database !", hibernateDialect);
