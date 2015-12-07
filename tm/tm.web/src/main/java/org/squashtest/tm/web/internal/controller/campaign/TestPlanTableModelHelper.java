@@ -46,6 +46,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
+	
+	private static final String NONE = "";
 
 	TestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
 		this.messageSource = messageSource;
@@ -83,11 +85,11 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		String milestoneLabels = "-";
 
 		if (item.isTestCaseDeleted()) {
-			projectName = formatNoData(locale);
+			projectName = NONE; // the empty string trick is a cheap way to solve #5585
 			testCaseName = formatDeleted(locale);
 			tcId = null;
 			importance = formatNoData(locale);
-			reference = formatNoData(locale);
+			reference = NONE; // the empty string trick is a cheap way to solve #5585
 		} else {
 			projectName = item.getReferencedTestCase().getProject().getName();
 			testCaseName = item.getReferencedTestCase().getName();

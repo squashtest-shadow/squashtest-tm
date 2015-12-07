@@ -23,7 +23,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" prefix="comp"%>
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component" %>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="aggr" tagdir="/WEB-INF/tags/aggregates"%>
@@ -76,7 +76,7 @@
 <c:set var="linkable"         value="${false}" />  
 <c:set var="executable"       value="${false}" />
 <c:set var="deletable"        value="${false}" />
-<c:set var="extendedDeletable"value="${false}" />
+<c:set var="extendedDeletable" value="${false}" />
   
   
 <c:if test="${not milestoneConf.locked}">

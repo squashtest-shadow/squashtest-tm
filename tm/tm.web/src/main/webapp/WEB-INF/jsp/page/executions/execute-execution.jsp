@@ -30,7 +30,7 @@
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="authz" tagdir="/WEB-INF/tags/authz"%>
 <%@ taglib prefix="at" tagdir="/WEB-INF/tags/attachments"%>
-<%@ taglib prefix="fn"uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib prefix="issues" tagdir="/WEB-INF/tags/issues"%>
 <%@ taglib prefix="wu" uri="http://org.squashtest.tm/taglib/workspace-utils" %>
 

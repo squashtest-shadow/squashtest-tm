@@ -84,7 +84,7 @@
 <c:set var="linkable"         value="${false}" />  
 <c:set var="executable"       value="${false}" />
 <c:set var="deletable"        value="${false}" />
-<c:set var="extendedDeletable"value="${false}" />
+<c:set var="extendedDeletable" value="${false}" />
   
   
 <c:if test="${not milestoneConf.locked}">

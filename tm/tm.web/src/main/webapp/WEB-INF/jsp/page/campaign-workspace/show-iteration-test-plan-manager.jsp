@@ -44,7 +44,7 @@
 <c:set var="attachable"       value="${false}" />
 <c:set var="linkable"         value="${false}" />  
 <c:set var="deletable"        value="${false}" />
-<c:set var="extendedDeletable"value="${false}" />
+<c:set var="extendedDeletable" value="${false}" />
   
   
 <c:if test="${not milestoneConf.locked}">
@@ -118,9 +118,9 @@
     <it:iteration-test-plan-manager-table 
         iteration="${iteration}" 
         milestoneConf="${milestoneConf}"
-        editable="${editable}"
+        editable="${writable}"
         linkable="${linkable}"
-        reorderable="${reorderable}"
+        reorderable="${linkable}"
         deletable="${deletable}"
         extendedDeletable="${extendedDeletable}"
         />      

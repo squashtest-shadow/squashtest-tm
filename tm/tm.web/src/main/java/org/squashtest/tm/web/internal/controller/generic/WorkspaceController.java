@@ -89,7 +89,9 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
 
-		if (StringUtils.isBlank(elementId)) {
+		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen 
+		// thus the test here
+		if (StringUtils.isBlank(elementId) || elementId.equals("null")) {
 			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {

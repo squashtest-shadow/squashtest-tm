@@ -48,7 +48,7 @@
 <c:set var="attachable"       value="${false}" />
 <c:set var="linkable"         value="${false}" />  
 <c:set var="deletable"        value="${false}" />
-<c:set var="extendedDeletable"value="${false}" />
+<c:set var="extendedDeletable" value="${false}" />
   
   
 <c:if test="${not milestoneConf.locked}">
@@ -126,9 +126,9 @@
         <tsuites:test-suite-test-plan-manager-table 
             testSuite="${testSuite}" 
             milestoneConf="${milestoneConf}" 
-            editable="${editable}"
+            editable="${writable}"
             linkable="${linkable}"
-            reorderable="${reorderable}"
+            reorderable="${linkable}"
             deletable="${deletable}"
             extendedDeletable="${extendedDeletable}"
             />  
