@@ -527,6 +527,7 @@
     <repository>
       <id>squash-release-deploy-repo</id>
       <name>Squash releases deployment repo</name>
+      <url>${deploy-repo.release.url}</url>
     </repository>
     <snapshotRepository>
       <id>squash-snapshot-deploy-repo</id>
