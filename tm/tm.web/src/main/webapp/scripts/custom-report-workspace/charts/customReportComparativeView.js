@@ -28,7 +28,7 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend"],
+        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend","jqplot-canvas-label"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
@@ -55,14 +55,24 @@ define(["jquery", "./abstractCustomReportChart",
       console.log("FontSize for legend ");
       console.log(sizeDependantconf);
 
-			return _.extend(this.getCommonConf(),{
+			var finalConf = _.extend(this.getCommonConf(),{
         stackSeries: true,
         seriesDefaults : {
 					renderer : $.jqplot.BarRenderer,
 					rendererOptions : {
+            animation: {
+              speed: 1000
+            },
 						barDirection: 'horizontal',
             varyBarColor : true
-					}
+					},
+          pointLabels: {
+            show: true,
+            labelsFromSeries : true,
+            formatString :'%d',
+            textColor: "slategray",
+            hideZeros : true
+          }
 				},
         series: formatedLegends,
 
@@ -73,11 +83,18 @@ define(["jquery", "./abstractCustomReportChart",
 						renderer : $.jqplot.CategoryAxisRenderer,
 						ticks : ticks,
             tickOptions: {
-              fontSize : sizeDependantconf.fontSize
+              fontSize : sizeDependantconf.fontSize,
+              showGridline: false
+            },
+            label : this.getXAxisLabel(),//we have inversed axis for this kind of charts ie horizontal bar charts
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+            labelOptions: {
+              angle : 0
             }
 					},
           xaxis : {
-
+            label : this.getYAxisLabel(),//we have inversed axis for this kind of charts ie horizontal bar charts
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
           }
 				},
 
@@ -88,18 +105,16 @@ define(["jquery", "./abstractCustomReportChart",
           tickOptions: {
 
           }
-        },
-
-				grid : {
-          drawGridlines : false,
-					background : '#FFFFFF',
-					drawBorder : false,
-					borderColor : 'transparent',
-					shadow : false,
-					shadowColor : 'transparent'
-				}
+        }
 
 			});
+
+      var vueConf = this.getVueConf();
+      if (vueConf) {
+        finalConf = _.extend(finalConf,vueConf);
+      }
+
+      return finalConf;
 
 		}
 

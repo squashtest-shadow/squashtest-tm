@@ -43,9 +43,12 @@ define(["jquery", "./abstractCustomReportChart",
       var axis = this.getAxis()[0];
       ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
-			return _.extend(this.getCommonConf(),{
+			var finalConf = _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					rendererOptions : {
+            animation: {
+              speed: 1000
+            },
             smooth: true
 					}
 				},
@@ -74,6 +77,13 @@ define(["jquery", "./abstractCustomReportChart",
 					shadowColor : 'transparent'
 				}
 			});
+
+      var vueConf = this.getVueConf();
+      if (vueConf) {
+        finalConf = _.extend(finalConf,vueConf);
+      }
+
+      return finalConf;
 
 		}
 

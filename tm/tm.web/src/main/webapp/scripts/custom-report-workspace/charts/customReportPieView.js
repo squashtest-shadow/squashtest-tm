@@ -76,7 +76,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 
       var sizeDependantconf = this.getResizeConf(colorsAndLabels.labels,colorsAndLabels.labels);
 
-			return _.extend(this.getCommonConf(),{
+			var finalConf = _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					renderer : jQuery.jqplot.PieRenderer,
 					rendererOptions : {
@@ -98,6 +98,13 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 				legend : sizeDependantconf.legend
 				//seriesColors : colorsAndLabels.colors
 			});
+
+      var vueConf = this.getVueConf();
+      if (vueConf) {
+        finalConf = _.extend(finalConf,vueConf);
+      }
+
+      return finalConf;
 		},
 
 		_getEmptyConf : function(pieserie){

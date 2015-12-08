@@ -43,8 +43,9 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
         "dateFormat" : "squashtm.dateformat",
         "dateFormatShort" : "squashtm.dateformatShort"
       });
-			_.bindAll(this, "render");
+			_.bindAll(this, "render","redraw");
 			this.render();
+      //this.initListenerOnWindowResize();
 		},
 
 		events : {
@@ -54,6 +55,7 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 		},
 
 		render : function(){
+      $(window).unbind('resize.chart');
       this.$el.html("");
 			var self = this;
 			var url =  urlBuilder.buildURL('custom-report-chart-server',this.model.get('id'));
@@ -68,7 +70,8 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
         self.setBaseModelAttributes(json);
         self.loadI18n();
 				self.template();
-				self.activeChart = chartFactory.buildChart("#chart-display-area", json);
+				self.activeChart = chartFactory.buildChart("#chart-display-area", json, self.getVueConf(),self.model.get("entityOperation"));
+        $(window).bind('resize.chart', self.redraw);
 			});
 		},
 
@@ -76,6 +79,18 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
       console.log("refresh");
       this.activeChart.remove();
       this.render();
+    },
+
+    initListenerOnWindowResize : function () {
+      var self = this;
+      $(window).bind('resize.chart', self.redraw);
+      // $(window).on('resize', function () {
+      //   self.redraw();
+      // });
+    },
+
+    redraw : function () {
+      this.activeChart.render();
     },
 
 		template : function () {
@@ -284,9 +299,24 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
       document.location.href = url;
     },
 
+    remove : function () {
+      $(window).unbind('resize.chart');
+      this.activeChart.remove();
+      Backbone.View.prototype.remove.call(this);
+    },
+
     rename : function () {
       var wreqr = squashtm.app.wreqr;
       wreqr.trigger("renameNode");
+    },
+
+    getVueConf : function () {
+      return {
+        animate :true,
+        title : {
+          show : false
+        }
+      };
     }
 
   });

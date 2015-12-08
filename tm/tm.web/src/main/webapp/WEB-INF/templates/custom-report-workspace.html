@@ -109,7 +109,7 @@
   
   <style type="text/css">
   	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
-	.jqplot-target-wrapper{ width: 800px; height: 300px; margin: auto;}
+	.jqplot-target-wrapper{ width: 95%; height: 600px; margin: auto;}
 	.jqplot-title{ margin-top: 10px;}
 	.jqplot-yaxis {
   		margin-left:5px !important;
@@ -376,27 +376,6 @@
 	<script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template"
 		th:inline="text"
 		th:include="charts/workspace/showDashboard :: new-chart-in-dashboard" />
-	
-	 <!-- 
-     <script id="tpl-new-chart-in-dashboard" type="text/x-handlebars-template">
-		<div id="widget-chart-binding-{{id}}" class="dashboard-graph" data-binding-id="{{id}}">
-			<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-			<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
-				<span class="ui-icon ui-icon-trash"></span>
-			</div>
-		</div>
-     </script>
-	  -->
-     
-     <!--  
-    <script id="tpl-chart-display-area" type="text/x-handlebars-template"> 
-		<div id="chart-binding-{{id}}" data-binding-id="{{id}}" class="chart-display-area" style="height:100%; width:100%;"></div>
-		<div id="delete-chart-binding-{{id}}" class="delete-chart-button" data-binding-id="{{id}}">
-				<span class="ui-icon ui-icon-trash"></span>
-		</div>
-		<span class="gs-resize-handle gs-resize-handle-both"></span>
-	</script>
-     -->
 	
 	<script id="tpl-dashboard-doc" type="text/x-handlebars-template"> 
 		<div id="dashboard-doc">

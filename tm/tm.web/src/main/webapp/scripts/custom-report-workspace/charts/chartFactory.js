@@ -20,11 +20,16 @@
  */
 
 define(["backbone","./chart-render-utils","./customReportPieView","./customReportBarView",
-  "./customReportLineView","./customReportCumulativeView","./customReportComparativeView","./customReportTrendView"],
-		function(Backbone,renderUtils,PieView,BarView,LineView,CumulativeView,ComparativeView,TrendView){
+  "./customReportLineView","./customReportCumulativeView","./customReportComparativeView","./customReportTrendView","squash.translator"],
+		function(Backbone,renderUtils,PieView,BarView,LineView,CumulativeView,ComparativeView,TrendView,translator){
 
-
-	function generateBarChart(viewID, jsonChart){
+  /**
+  * Generate a bar chart. Other type of graph have the same kind of arguments and behavior
+  * @param  {[String]} viewID    Jquery selector that will be the el of chart backbone view
+  * @param  {[Object]} jsonChart serialized chart datas from server
+  * @param  {[Object]} vueConf   conf specific to the view containing the chart (ie conf for chart visualisation page, dashboards...)
+  */
+	function generateBarChart(viewID, jsonChart,vueConf){
 
 		var ticks = jsonChart.abscissa.map(function(elt){
 			return elt[0];
@@ -37,6 +42,9 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
     var axis = jsonChart.axes;
 
     var title = jsonChart.name;
+
+    var xaxisLabel = extractXlabel(jsonChart);
+    var yaxisLabel = extractYlabel(jsonChart);
 
 		var Bar = BarView.extend({
 			getCategories : function(){
@@ -55,14 +63,17 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 			model : new Backbone.Model({
 				chartmodel : series,
         title : title,
-        axis : axis
+        axis : axis,
+        vueConf : vueConf,
+        xaxisLabel : xaxisLabel,
+        yaxisLabel : yaxisLabel
 			},{
 				url : "whatever"
 			})
 		});
 	}
 
-	function generateComparativeChart(viewID, jsonChart){
+	function generateComparativeChart(viewID, jsonChart,vueConf){
 
 		var ticks = jsonChart.abscissa.map(function(elt){
 			return elt[0];
@@ -110,7 +121,8 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
           //[[x1,1],[y1,2],[z1,3]],
           //[[x2,1],[y2,2],[z2,3]],
           //]
-          //Yeah it sucks but the option to swap series from vertical form in horizontal form seems to be under developement
+          //Yeah it sucks but the option to swap series from vertical form in horizontal form seems to be under developement in jqplot...
+          //so we need to do it ourself
           result.push([valueForOneTick,index+1]);
         });
         return result;
@@ -118,8 +130,9 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
     .value();
 
     var axis = jsonChart.axes;
-
     var title = jsonChart.name;
+    var xaxisLabel = extractXlabel(jsonChart);
+    var yaxisLabel = extractYlabel(jsonChart);
 
     var seriesLegend = _.chain(comparativeSeries)
       .groupBy(function (memo) {//group by on second axis ie series on comparative chart
@@ -150,14 +163,17 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 				chartmodel : computedSeries,
         title : title,
         axis : axis,
-        seriesLegend : seriesLegend
+        seriesLegend : seriesLegend,
+        vueConf : vueConf,
+        xaxisLabel : xaxisLabel,
+        yaxisLabel : yaxisLabel
 			},{
 				url : "whatever"
 			})
 		});
 	}
 
-  function generateLineChart(viewID, jsonChart){
+  function generateLineChart(viewID, jsonChart,vueConf){
 
 		var ticks = jsonChart.abscissa.map(function(elt){
 			return elt[0];
@@ -188,14 +204,17 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 			model : new Backbone.Model({
 				chartmodel : series,
         title : title,
-        axis : axis
+        axis : axis,
+        vueConf : vueConf,
+        xaxisLabel : xaxisLabel,
+        yaxisLabel : yaxisLabel
 			},{
 				url : "whatever"
 			})
 		});
 	}
 
-  function generateCumulativeChart(viewID, jsonChart){
+  function generateCumulativeChart(viewID, jsonChart,vueConf){
 
 		var ticks = jsonChart.abscissa.map(function(elt){
 			return elt[0];
@@ -218,8 +237,9 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
     });
 
     var axis = jsonChart.axes;
-
     var title = jsonChart.name;
+    var xaxisLabel = extractXlabel(jsonChart);
+    var yaxisLabel = extractYlabel(jsonChart);
 
 		var Cumulative = CumulativeView.extend({
 			getCategories : function(){
@@ -240,14 +260,17 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 			model : new Backbone.Model({
 				chartmodel : cumulativeSeries,
         title : title,
-        axis : axis
+        axis : axis,
+        vueConf : vueConf,
+        xaxisLabel : xaxisLabel,
+        yaxisLabel : yaxisLabel
 			},{
 				url : "whatever"
 			})
 		});
 	}
 
-  function generateTrendChart(viewID, jsonChart){
+  function generateTrendChart(viewID, jsonChart,vueConf){
 
 		var ticks = jsonChart.abscissa.map(function(elt){
 			return elt[0];
@@ -307,8 +330,9 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
       .value();
 
     var axis = jsonChart.axes;
-
     var title = jsonChart.name;
+    var xaxisLabel = extractXlabel(jsonChart);
+    var yaxisLabel = extractYlabel(jsonChart);
 
 		var Trend = TrendView.extend({
 			getCategories : function(){
@@ -331,7 +355,10 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 				chartmodel : cumulativeSeries,
         title : title,
         axis : axis,
-        seriesLegend : seriesLegend
+        seriesLegend : seriesLegend,
+        vueConf : vueConf,
+        xaxisLabel : xaxisLabel,
+        yaxisLabel : yaxisLabel
 			},{
 				url : "whatever"
 			})
@@ -339,7 +366,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 	}
 
 
-	function generatePieChart(viewID, jsonChart){
+	function generatePieChart(viewID, jsonChart,vueConf){
 
 		var Pie = PieView.extend({
 
@@ -364,30 +391,41 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
 				series : series,
         legends : legends,
         title : title,
-        axis : axis
+        axis : axis,
+        vueConf : vueConf
 			},{
 				url : "whatever"
 			})
 		});
 	}
 
-	function generateTableChart(viewID, jsonChart){
+	function generateTableChart(viewID, jsonChart,vueConf){
 		// NOOP : the DOM has it all already
 		// TODO : use dashboard/basic-objects/table-view for
 		// the sake of consistency
 	}
 
-  function buildChart (viewID, jsonChart) {
+  function buildChart (viewID, jsonChart,vueConf) {
     jsonChart = renderUtils.toChartInstance(jsonChart);
     switch(jsonChart.type){
-      case 'PIE' : return generatePieChart(viewID, jsonChart);
-      case 'BAR' : return generateBarChart(viewID, jsonChart);
-      case 'LINE' : return generateLineChart(viewID, jsonChart);
-      case 'CUMULATIVE' : return generateCumulativeChart(viewID, jsonChart);
-      case 'COMPARATIVE' : return generateComparativeChart(viewID, jsonChart);
-      case 'TREND' : return generateTrendChart(viewID, jsonChart);
+      case 'PIE' : return generatePieChart(viewID, jsonChart,vueConf);
+      case 'BAR' : return generateBarChart(viewID, jsonChart,vueConf);
+      case 'LINE' : return generateLineChart(viewID, jsonChart,vueConf);
+      case 'CUMULATIVE' : return generateCumulativeChart(viewID, jsonChart,vueConf);
+      case 'COMPARATIVE' : return generateComparativeChart(viewID, jsonChart,vueConf);
+      case 'TREND' : return generateTrendChart(viewID, jsonChart,vueConf);
       default : throw jsonChart.chartType+" not supported yet";
     }
+  }
+
+  function extractXlabel(jsonChart) {
+    var labelKey = jsonChart.axes[0].columnPrototype.label;
+    return translator.get('chart.column.' + labelKey);
+  }
+
+  function extractYlabel(jsonChart) {
+    var labelKey = jsonChart.measures[0].columnPrototype.label;
+    return translator.get('chart.column.' + labelKey);
   }
 
 	return  {

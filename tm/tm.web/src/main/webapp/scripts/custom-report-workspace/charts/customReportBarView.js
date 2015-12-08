@@ -28,7 +28,7 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar"],
+        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-point-labels","jqplot-canvas-label"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
@@ -43,13 +43,24 @@ define(["jquery", "./abstractCustomReportChart",
       var axis = this.getAxis()[0];
       ticks = this.replaceInfoListDefaultLegend(ticks,axis);
 
-			return _.extend(this.getCommonConf(),{
+			var finalConf = _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					renderer : $.jqplot.BarRenderer,
 					rendererOptions : {
+            animation: {
+              speed: 1000
+            },
 						fillToZero : true,
             varyBarColor : true
-					}
+					},
+          pointLabels: {
+            show: true,
+            labelsFromSeries : true,
+            formatString :'%d',
+            textColor: "slategray",
+            location : 'n',
+            hideZeros : true
+          }
 				},
 
 				legend : {
@@ -59,19 +70,27 @@ define(["jquery", "./abstractCustomReportChart",
 				axes : {
 					xaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
-						ticks : ticks
-					}
-				},
-
-				grid : {
-          drawGridlines : false,
-					background : '#FFFFFF',
-					drawBorder : false,
-					borderColor : 'transparent',
-					shadow : false,
-					shadowColor : 'transparent'
+						ticks : ticks,
+            tickOptions:{
+              showGridline: false
+            },
+            label : this.getXAxisLabel()
+					},
+          yaxis : {
+            label : this.getYAxisLabel(),
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+          }
 				}
+
+
 			});
+
+      var vueConf = this.getVueConf();
+      if (vueConf) {
+        finalConf = _.extend(finalConf,vueConf);
+      }
+
+      return finalConf;
 
 		}
 

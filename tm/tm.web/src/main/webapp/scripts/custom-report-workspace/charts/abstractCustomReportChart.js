@@ -53,6 +53,18 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       return this.model.get('axis');
     },
 
+    getXAxisLabel : function(){
+      return this.model.get('xaxisLabel');
+    },
+
+    getYAxisLabel : function(){
+      return this.model.get('yaxisLabel');
+    },
+
+    getVueConf : function () {
+      return this.model.get('vueConf');
+    },
+
     /**
     * The JqPlot conf of all
     * @return {[type]} [description]
@@ -66,7 +78,15 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
           text : this.getTitle(),
           textAlign: "center",
           fontSize: "14px",
-        }
+        },
+        grid : {
+          drawGridlines : true,
+  				background : '#eeeeee',
+  				drawBorder : false,
+  				borderColor : 'transparent',
+  				shadow : false,
+  				shadowColor : 'transparent'
+  			}
       };
     },
 
@@ -262,6 +282,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			this._bindEvents();
 
       _.bindAll(this, "draw");
+
 		},
 
 

@@ -28,7 +28,7 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend"],
+        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-legend","jqplot-point-labels","jqplot-canvas-label"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
@@ -56,11 +56,22 @@ define(["jquery", "./abstractCustomReportChart",
       });
       var sizeDependantconf = this.getResizeConf(formatedLegends,ticks);
 
-			return _.extend(this.getCommonConf(),{
+			var finalConf = _.extend(this.getCommonConf(),{
 				seriesDefaults : {
 					rendererOptions : {
+            animation: {
+              speed: 1000
+            },
             smooth: false
-					}
+					},
+          pointLabels: {
+            show: true,
+            labelsFromSeries : true,
+            formatString :'%d',
+            textColor: "slategray",
+            location : 'se',
+            hideZeros : true
+          }
 				},
         series: formatedLegends,
 
@@ -71,27 +82,29 @@ define(["jquery", "./abstractCustomReportChart",
 						renderer : $.jqplot.CategoryAxisRenderer,
 						ticks : ticks,
             tickOptions: {
-              fontSize : sizeDependantconf.fontSize
-            }
+              fontSize : sizeDependantconf.fontSize,
+              showGridline: false
+            },
+            label : this.getXAxisLabel(),
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
 					},
           yaxis: {
             tickOptions: {
               fontSize : sizeDependantconf.fontSize
             },
-            min:0
+            min:0,
+            label : this.getYAxisLabel(),
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
           }
-
-				},
-
-				grid : {
-          drawGridlines : false,
-					background : '#FFFFFF',
-					drawBorder : false,
-					borderColor : 'transparent',
-					shadow : false,
-					shadowColor : 'transparent'
 				}
 			});
+
+      var vueConf = this.getVueConf();
+      if (vueConf) {
+        finalConf = _.extend(finalConf,vueConf);
+      }
+
+      return finalConf;
 
 		}
 
