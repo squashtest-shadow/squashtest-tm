@@ -116,7 +116,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
 			remove: function () {
 				Backbone.View.prototype.remove.apply(this, arguments);
-				$("#tree-dialog-container").html('<div id="tree-dialog" style="height: 200px!important" class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" />');
+				$("#tree-dialog-container").html('<div id="tree-dialog" style="height: 200px!important" class="not-displayed popup-dialog search-minimal-height" title="' + translator.get('report.form.tree-picker.dialog.title') + '" />');
 			}
 		});
 
