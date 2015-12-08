@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.web.config;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -30,17 +36,11 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
+import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
-import org.squashtest.tm.service.security.UserDetailsService;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 /**
  * This configures Spring Security
@@ -123,7 +123,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //			.accessDeniedPage("/squash/accessDenied")
 		.and()
 			.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
-			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
+			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class)
+			.headers()
+		    .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
 		// @formatter:on
 
 
