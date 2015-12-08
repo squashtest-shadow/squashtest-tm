@@ -32,6 +32,7 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
@@ -99,4 +100,15 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		ChartSeries series = dataFinder.findData(definition);
 		return new ChartInstance(definition, series);
 	}
+
+	@Override
+	public void updateDefinition(ChartDefinition definition, ChartDefinition oldDef) {
+		definition.setProject(oldDef.getProject());
+		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());
+		((AuditableMixin) definition).setCreatedOn(((AuditableMixin) oldDef).getCreatedOn());
+		session().flush();
+		session().clear();
+		update(definition);
+	}
+
 }

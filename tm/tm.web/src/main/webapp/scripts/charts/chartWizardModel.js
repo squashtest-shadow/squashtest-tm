@@ -31,6 +31,7 @@ return Backbone.Model.extend({
 		if (chartDef !== null){
 		
 		this.set({
+			updateId : chartDef.id,
 			name : chartDef.name,
 			type : chartDef.type,
             axis: chartDef.axis,
@@ -118,6 +119,7 @@ return Backbone.Model.extend({
 		toJson : function() {
 			
 			return JSON.stringify ({
+			id : this.get('updateId') || 0,	
 			name : this.get("name") || "graph",
 			type : this.get("type"),
 			query : {

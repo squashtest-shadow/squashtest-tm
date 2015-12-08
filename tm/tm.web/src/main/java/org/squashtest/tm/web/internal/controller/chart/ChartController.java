@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -138,11 +137,10 @@ public class ChartController {
 	public @ResponseBody String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
 			@PathVariable("id") long id) {
 
+
+
 		ChartDefinition oldDef = reportNodeService.findChartDefinitionByNodeId(id);
-		definition.setProject(oldDef.getProject());
-		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());
-		((AuditableMixin) definition).setCreatedOn(((AuditableMixin) oldDef).getCreatedOn());
-		chartService.update(definition);
+		chartService.updateDefinition(definition, oldDef);
 
 		return "custom-report-workspace#custom-report-chart/" + id;
 	}

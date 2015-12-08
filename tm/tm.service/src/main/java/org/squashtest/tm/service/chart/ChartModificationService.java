@@ -62,4 +62,7 @@ public interface ChartModificationService {
 
 	ChartInstance generateChart(ChartDefinition definition);
 
+
+	void updateDefinition(ChartDefinition definition, ChartDefinition oldDef);
+
 }
