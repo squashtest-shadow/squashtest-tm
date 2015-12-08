@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.chart.engine;
 
 
+import static org.squashtest.tm.domain.chart.DataType.BOOLEAN;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,8 +69,6 @@ import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
 import com.querydsl.core.types.dsl.SimpleExpression;
-
-import static org.squashtest.tm.domain.chart.DataType.*;
 
 class QuerydslToolbox {
 
@@ -507,7 +507,6 @@ class QuerydslToolbox {
 			Ops operator = (arg.equals("true") || arg.equals("1")) ? Ops.IS_NOT_NULL : Ops.IS_NULL;
 			predicate = Expressions.predicate(operator, baseExp);
 		}
-
 		// normal case
 		else{
 			Operator operator = getOperator(operation);
@@ -613,8 +612,13 @@ class QuerydslToolbox {
 				default : throw new IllegalArgumentException("type '"+type+"' not yet supported");
 				}
 
+				if (Operation.LIKE.equals(operation)) {
+					operand = '%' + operand.toString() + '%';
+				}
+
 				expressions.add(Expressions.constant(operand));
 			}
+
 
 			if (operation == Operation.IN) {
 				List<Expression<?>> listeExpression = new ArrayList<>(1);
