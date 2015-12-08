@@ -163,7 +163,7 @@
 
 <div th:fragment="chart-wizard-info-list">
  <div style="display: table-column; float:left; margin-right: 40px;">
- <select id="info-list-{{id}}" class="info-lists" name="{{id}} " style=" width: 182px;">
+ <select id="info-list-{{id}}" class="info-lists" name="{{id}}" style=" width: 182px;">
 {{#each infolists}}
  <option value="{{this.code}}">
  {{#if (eq this.createdBy "system")}} 
