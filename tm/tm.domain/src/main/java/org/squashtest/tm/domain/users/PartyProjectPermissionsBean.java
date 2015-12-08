@@ -50,21 +50,23 @@ public class PartyProjectPermissionsBean {
 	}
 
 	public boolean isTeam(){
-		return new PartyVisitor() {
+		final boolean[] isTeam = { false };
 
-			private boolean isTeam = false;
+		this.party.accept(new PartyVisitor() {
 
 			@Override
 			public void visit(Team team) {
-				isTeam = true;
+				isTeam[0] = true;
 			}
 
 			@Override
 			public void visit(User user) {
-				isTeam = false;
+				isTeam[0] = false;
 			}
 
-		}.isTeam;
+		});
+
+		return isTeam[0];
 	}
 
 	public boolean isUser(){
