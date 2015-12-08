@@ -288,7 +288,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		persistTestCase(copyTestCase);
 		copyCustomFields(source, copyTestCase);
 		copyRequirementVersionCoverage(source, copyTestCase);
-		genericDao.clearFromCache(source);
+
 		batchRequirement++;
 		if (batchRequirement % 10 == 0){
 			cleanSomeCache(TestCaseLibraryNode.class);
