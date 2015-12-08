@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.service.internal.feature;
 
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
+import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
+
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
@@ -29,16 +34,11 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 
-import javax.inject.Inject;
-
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.CASE_INSENSITIVE_LOGIN_FEATURE_ENABLED;
-import static org.squashtest.tm.service.configuration.ConfigurationService.Properties.MILESTONE_FEATURE_ENABLED;
-
 /**
  * @author Gregory Fouquet
  *
  */
-@Service
+@Service(value = "featureManager")
 @Transactional
 public class FeatureManagerImpl implements FeatureManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FeatureManagerImpl.class);
