@@ -165,3 +165,4 @@ syntax: regexp
 \.iml$
 ^\.idea\/
 \/bin\/
+^.*rjs\.js\.output.*/
