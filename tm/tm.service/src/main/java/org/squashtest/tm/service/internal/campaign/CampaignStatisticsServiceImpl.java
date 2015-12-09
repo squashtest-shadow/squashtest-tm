@@ -21,6 +21,17 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -34,12 +45,15 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.statistics.campaign.*;
-
-import javax.inject.Inject;
-import java.util.*;
-
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseStatusStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestCaseSuccessRateStatistics;
+import org.squashtest.tm.service.statistics.campaign.CampaignTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
+import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
+import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
@@ -85,6 +99,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
 		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
+		bundle.setSelectedId(campaignId);
 
 		// return
 		return bundle;
@@ -148,7 +163,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		bundle.setCampaignTestCaseStatusStatistics(testcaseStatuses);
 		bundle.setCampaignNonExecutedTestCaseImportanceStatistics(testcaseImportance);
 		bundle.setCampaignTestCaseSuccessRateStatistics(testcaseSuccessRate);
-
+		bundle.setSelectedIds(campaignIds);
 		// return
 		return bundle;
 	}

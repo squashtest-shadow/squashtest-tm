@@ -42,7 +42,7 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 					model : this.model
 				});
 
-				var iventoryTable = new InventoryTable({
+				var inventoryTable = new InventoryTable({
 					el : this.$("#dashboard-test-inventory"),
 					model : this.model
 				}); 
@@ -50,7 +50,7 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				 res.push(impPie);
 				 res.push(statusPie);
 				 res.push(succesDonut);
-				 res.push(iventoryTable);
+				 res.push(inventoryTable);
 				
 				 if ( this.$("#dashboard-cumulative-progression").length > 0 ) {
 					 res.push(
@@ -88,11 +88,14 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				});
 
 				item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
-
-
+					
+					var ids = pie.model.get('selectedIds') || [pie.model.get('selectedId')];
+					
 					var search = {fields : {}};
+					
+					search.fields['campaign.id'] = {type : 'LIST', values : ids};
 
-
+					
 					switch (type) {
 					case "nonexecuted-testcase-importance":
 						addNonexcTcImportanceToSearch(search, pointIndex);

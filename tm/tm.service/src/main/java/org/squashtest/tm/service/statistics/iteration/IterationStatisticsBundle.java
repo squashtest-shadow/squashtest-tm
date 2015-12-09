@@ -39,6 +39,8 @@ public class IterationStatisticsBundle {
 	
 	private IterationProgressionStatistics iterationProgressionStatistics;
 	
+	private Long selectedId;
+
 	public IterationProgressionStatistics getIterationProgressionStatistics() {
 		return iterationProgressionStatistics;
 	}
@@ -83,4 +85,12 @@ public class IterationStatisticsBundle {
 		this.testsuiteTestInventoryStatisticsList = testSuiteTestInventoryStatisticsList;
 	}
 	
+	public Long getSelectedId() {
+		return selectedId;
+	}
+
+	public void setSelectedId(Long selectedId) {
+		this.selectedId = selectedId;
+	}
+
 }

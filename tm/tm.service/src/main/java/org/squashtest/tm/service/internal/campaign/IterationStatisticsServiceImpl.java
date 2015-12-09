@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +47,6 @@ import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
 import org.squashtest.tm.service.statistics.iteration.IterationProgressionStatistics;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 import org.squashtest.tm.service.statistics.iteration.TestSuiteTestInventoryStatistics;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional(readOnly=true)
 @Service("IterationStatisticsService")
@@ -269,6 +270,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		bundle.setIterationTestCaseSuccessRateStatistics(testCaseSuccessRate);
 		bundle.setTestsuiteTestInventoryStatisticsList(testSuiteTestInventoryStatistics);
 		bundle.setIterationProgressionStatistics(iterationProgressionStatistics);
+		bundle.setSelectedId(iterationId);
 		return bundle;
 
 	}

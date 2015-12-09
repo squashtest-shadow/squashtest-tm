@@ -35,6 +35,7 @@ public final class CampaignStatisticsBundle {
 
 	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics;
 
+	private Long selectedId;
 
 	public List<IterationTestInventoryStatistics> getIterationTestInventoryStatisticsList() {
 		return iterationTestInventoryStatisticsList;
@@ -89,5 +90,12 @@ public final class CampaignStatisticsBundle {
 		this.campaignTestCaseSuccessRateStatistics = campaignTestCaseSuccessRateStatistics;
 	}
 
-}
+	public Long getSelectedId() {
+		return selectedId;
+	}
 
+	public void setSelectedId(Long selectedId) {
+		this.selectedId = selectedId;
+	}
+
+}

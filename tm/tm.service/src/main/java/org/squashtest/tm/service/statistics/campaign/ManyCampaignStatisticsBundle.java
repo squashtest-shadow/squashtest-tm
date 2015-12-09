@@ -35,6 +35,15 @@ public final class ManyCampaignStatisticsBundle {
 
 	private CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics;
 
+	private List<Long> selectedIds;
+
+	public List<Long> getSelectedIds() {
+		return selectedIds;
+	}
+
+	public void setSelectedIds(List<Long> selectedIds) {
+		this.selectedIds = selectedIds;
+	}
 
 	public List<CampaignTestInventoryStatistics> getCampaignTestInventoryStatisticsList() {
 		return campaignTestInventoryStatisticsList;
@@ -88,6 +97,9 @@ public final class ManyCampaignStatisticsBundle {
 			CampaignTestCaseSuccessRateStatistics campaignTestCaseSuccessRateStatistics) {
 		this.campaignTestCaseSuccessRateStatistics = campaignTestCaseSuccessRateStatistics;
 	}
+
+
+
 
 }
 
