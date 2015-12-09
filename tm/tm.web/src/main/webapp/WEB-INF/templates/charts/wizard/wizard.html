@@ -56,18 +56,31 @@
 	src="../../scripts/require.js"></script>
 <script th:remove="all" type="text/javascript"
 	src="../../scripts/common.js"></script>
-	
+
 <style type="text/css">
-  	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
-	.jqplot-target-wrapper{ width: 800px; margin: auto;}
-	.jqplot-title{ margin-top: 10px;}
-	.jqplot-yaxis {
-  		margin-left:5px !important;
-	}
-	.jqplot-xaxis {
-  		margin-bottom:5px !important;
-	}
-  </style>
+.jqplot-table-legend {
+	width: auto;
+	margin: auto;
+	padding: inherit;
+}
+
+.jqplot-target-wrapper {
+	width: 800px;
+	margin: auto;
+}
+
+.jqplot-title {
+	margin-top: 10px;
+}
+
+.jqplot-yaxis {
+	margin-left: 5px !important;
+}
+
+.jqplot-xaxis {
+	margin-bottom: 5px !important;
+}
+</style>
 
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
@@ -149,8 +162,8 @@
 		th:inline="text"
 		th:include="charts/wizard/missingStep :: chart-wizard-missing-step" />
 
-	<script id="chart-wizard-cuf-list-tpl" type="text/x-handlebars-template"
-		th:inline="text"
+	<script id="chart-wizard-cuf-list-tpl"
+		type="text/x-handlebars-template" th:inline="text"
 		th:include="charts/wizard/filterStep :: chart-wizard-cuf-list" />
 
 
@@ -184,9 +197,9 @@
 					<h2 th:text="#{chart.wizard.title}"></h2>
 				</div>
 
-<div id="sub-page-buttons" class="sub-page-buttons">
-					
-		<input type="button" class="sq-btn" id="back" value="Back"/>
+				<div id="sub-page-buttons" class="sub-page-buttons">
+
+					<input type="button" class="sq-btn" id="back" value="Back" />
 				</div>
 
 
@@ -197,87 +210,74 @@
 
 				<div id="information-content" style="overflow: hidden;">
 
-
-
 					<div id="wizard"
 						class="fragment-body ui-tabs ui-widget  ui-corner-all"
-						style="top: 0; background: 0; border: 0 none;  height: 100%;">
-					
-							
-									<div id="current-side-view-container"
-										style="    margin: 0; padding-left: 10px; width: 150px;height: 100%;      overflow: hidden;  background-color: white;">
-										<span style="display : table; height:100%; " id="side-view" />
-									</div>
-		
-	 <div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="width:88%;top: 0; left: 170px; position: absolute;">
+						style="top: 0; background: 0; border: 0 none; height: 100%;">
+
+
+						<div id="current-side-view-container"
+							style="margin: 0; padding-left: 10px; width: 150px; height: 100%; overflow: hidden; background-color: white;">
+							<span style="display: table; height: 100%;" id="side-view" />
+						</div>
+
+						<div
+							class="ui-widget-header ui-corner-all ui-state-default fragment-header"
+							style="width: 88%; top: 0; left: 170px; position: absolute;">
 
 							<h2 id="step-title" />
-							</div>							
-					
+						</div>
 
-	<div id="contextual-content" style="    margin-top: 0;
-    position: absolute;
-    bottom: 50px;
-    overflow: inherit;
-    left: 180px;
-    padding-right: 10px;
-        top: 45px;">
-						
-						
-							
-							
-							<span id="steps-view" /> 
-							<br /> 
-							<br />
-							<div id="current-step-container" >
+
+						<div id="contextual-content"
+							style="margin-top: 0; position: absolute; bottom: 50px; overflow: inherit; left: 180px; padding-right: 10px; top: 45px;">
+
+
+
+
+							<span id="steps-view" /> <br /> <br />
+							<div id="current-step-container">
 								<span id="current-step" />
 							</div>
 
 						</div>
-						
-			<div style="border-top: black 1px solid;
-    position: absolute;
-    width: 100%;
-    left: 170px;
-    bottom: 50px;"/>			
-						
-						
-						<div style=" position: fixed;
-    bottom: 65px;
-    right: 60px;  padding: 5px;">
-						
 
- <input type="button" class="sq-btn" id="previous" value="Previous"
-           th:value="#{label.previous}" />  
-           
- <input type="button" class="sq-btn" id="next" value="Next"
-           th:value="#{label.next}" />  
- 
-<input type="button" class="sq-btn" id="generate" value="Generate"
-           th:value="#{report.criteria.panel.button.generate.label}" />  
-                   
-<input type="button" class="sq-btn" id="save" value="save"
-           th:value="#{label.save}" />				
-						
+						<div
+							style="border-top: black 1px solid; position: absolute; width: 100%; left: 170px; bottom: 50px;" />
+
 					</div>
-						
 				
+			
+					<div id="wizard-toolbar"
+						style="position: fixed; bottom: 65px; right: 60px; padding: 5px;">
+
+
+						<input type="button" class="sq-btn" id="previous"
+							value="Previous" th:value="#{label.previous}" /> <input
+							type="button" class="sq-btn" id="next" value="Next"
+							th:value="#{label.next}" /> <input type="button" class="sq-btn"
+							id="generate" value="Generate"
+							th:value="#{report.criteria.panel.button.generate.label}" /> <input
+							type="button" class="sq-btn" id="save" value="save"
+							th:value="#{label.save}" />
+
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
-	
-	
-	 <div id="back-popup" class="popup-dialog not-displayed" th:title="#{wizard.back.popup.title}">
 
-<span th:text="#{wizard.back.popup.message}"> </span> 
-      <div class="popup-dialog-buttonpane">
-        <input type="button" th:value="#{wizard.back.popup.confirm}" data-def="mainbtn, evt=confirm"/>
-        <input type="button" th:value="#{wizard.back.popup.cancel}" data-def="evt=cancel"/>    
-      </div>
-  
-    </div>
-	
+
+	<div id="back-popup" class="popup-dialog not-displayed"
+		th:title="#{wizard.back.popup.title}">
+
+		<span th:text="#{wizard.back.popup.message}"> </span>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{wizard.back.popup.confirm}"
+				data-def="mainbtn, evt=confirm" /> <input type="button"
+				th:value="#{wizard.back.popup.cancel}" data-def="evt=cancel" />
+		</div>
+
+	</div>
+
 </body>
 </html>
