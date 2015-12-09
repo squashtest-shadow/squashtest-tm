@@ -52,24 +52,6 @@
 	<div id="dialog-select-perimeter-wrapper"></div>
 </div>
 
-<script type="text/x-handlebars-template" id="tpl-show-verification-rate">
-		<div class="display-table-row">
-			<label for="verification-rate" class="display-table-cell">
-				<f:message key="requirement.rate.verification" />
-			</label>
-			<div class="display-table-cell">
-					<span title="${titleVerificationRequirement}">{{requirementVersionRate}} % </span>
-					|<span title="${titleVerificationRequirementChildren}"> {{requirementVersionChildrenRate}} % </span>
-					|<span title="${titleVerificationRequirementAll}"> {{requirementVersionGlobalRate}} % </span>
-			</div>
-		</div>
-</script>
-
-<script type="text/x-handlebars-template" id="tpl-show-validation-rate">
-	<span title="${titleValidationRequirement}">{{requirementVersionRate}} % </span>
-	|<span title="${titleValidationRequirementChildren}"> {{requirementVersionChildrenRate}} % </span>
-	|<span title="${titleValidationRequirementAll}"> {{requirementVersionGlobalRate}} % </span>
-</script>
 
 <script type="text/x-handlebars-template" id="tpl-table-rates">
 	<div class="display-table">
@@ -101,13 +83,12 @@
 			</div>
 			{{#if isAncestor}}
 			<div class="display-table-cell">
-				<span title="${titleCoverageRequirementChildren}"> {{coverage.requirementVersionChildrenRate}} % </span>
-			</div>
-			<div class="display-table-cell">
-				<span title="${titleCoverageRequirementAll}"> {{coverage.requirementVersionGlobalRate}} % </span>
+				(<f:message key="requirement.rate.global" /> {{coverage.requirementVersionGlobalRate}} %,
+				<f:message key="requirement.rate.child" /> {{coverage.requirementVersionChildrenRate}} %) 
 			</div>
 			{{/if}}
 		</div>
+		
 		{{#if hasPerimeter}}
 		<div class="display-table-row">
 			<label class="display-table-cell">
@@ -118,10 +99,8 @@
 			</div>
 			{{#if isAncestor}}
 			<div class="display-table-cell">
-				<span title="${titleVerificationRequirementChildren}"> {{verification.requirementVersionChildrenRate}} % </span>
-			</div>
-			<div class="display-table-cell">
-				<span title="${titleVerificationRequirementAll}"> {{verification.requirementVersionGlobalRate}} % </span>
+				(<f:message key="requirement.rate.global" /> {{verification.requirementVersionGlobalRate}} %,
+				<f:message key="requirement.rate.child" /> {{verification.requirementVersionChildrenRate}} %)
 			</div>
 			{{/if}}
 		</div>
@@ -134,10 +113,8 @@
 			</div>
 			{{#if isAncestor}}
 			<div class="display-table-cell">
-				<span title="${titleValidationRequirementChildren}"> {{validation.requirementVersionChildrenRate}} % </span>
-			</div>
-			<div class="display-table-cell">
-				<span title="${titleValidationRequirementAll}"> {{validation.requirementVersionGlobalRate}} % </span>
+				(<f:message key="requirement.rate.global" /> {{validation.requirementVersionGlobalRate}} %,
+				<f:message key="requirement.rate.child" /> {{validation.requirementVersionChildrenRate}} %)
 			</div>
 			{{/if}}
 		</div>

@@ -273,6 +273,9 @@ publish('reload.requirement.toolbar');
       
       	<%--------------------------- coverage stat section ------------------------------------%>
 		<comp:toggle-panel id="coverage-stat-requirement-panel" titleKey="requirement.rate.panel.title" open="true">
+			<jsp:attribute name="panelButtons">
+				<div class="icon-helper" title='<f:message key="requirement.rate.doc" />'> </div>
+			</jsp:attribute>
 			<jsp:attribute name="body">
 				<reqs:requirement-version-coverage-stats />
 			</jsp:attribute>
