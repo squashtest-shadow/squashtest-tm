@@ -20,18 +20,15 @@
  */
 package org.squashtest.tm.web.config;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.core.annotation.Order;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -42,8 +39,17 @@ import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
 
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
 /**
  * This configures Spring Security
+ *
+ * #configure(AuthenticationManagerBuilder) should not be overriden ! When it is overriden, it supersedes any "global"
+ * AuthenticationManager. This means any third party authentication provider will be ignored.
  *
  * @author Gregory Fouquet
  * @since 1.13.0
@@ -51,7 +57,8 @@ import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
 @Configuration
 @EnableConfigurationProperties(SquashManagementProperties.class)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	@Inject private Environment environment;
+	@Value("${squash.security.filter.debug.enabled:false}")
+	private boolean debugSecurityFilter;
 
 	@Inject
 	private SquashManagementProperties managementProperties;
@@ -59,22 +66,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Inject
 	private ServerProperties serverProperties;
 
-	@Inject
-	private SquashUserDetailsManager squashUserDetailsManager;
-
-	@Inject
-	private PasswordEncoder passwordEncoder;
-
-	@Override
-	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(squashUserDetailsManager).passwordEncoder(passwordEncoder);
-		// don't call super otherwise spring-sec will totally ignore what we just did !
-	}
-
 	@Override
 	public void configure(WebSecurity web) throws Exception {
-		boolean debug = environment.acceptsProfiles("dev", "debug");
-		web.debug(debug);
+		web.debug(debugSecurityFilter);
 	}
 
 	@Override
@@ -152,5 +146,26 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //				.requires(managementProperties.getRequiredChannel())
 //			.and().authorizeRequests().anyRequest().permitAll();
 		// @formatter:on
+	}
+
+	/**
+	 * Defines a global internal (dao based) authentication manager. This is the default authentication manager.
+	 */
+	@Configuration
+	@ConditionalOnProperty(name = "authentication.provider", matchIfMissing = true, havingValue = "internal")
+	@Order(0) // WebSecurityConfigurerAdapter default order is 100, we need to init this before
+	public static class InternalAuthenticationConfig extends GlobalAuthenticationConfigurerAdapter {
+
+		@Override
+		public void init(AuthenticationManagerBuilder auth) throws Exception {
+			auth.userDetailsService(squashUserDetailsManager).passwordEncoder(passwordEncoder);
+
+		}
+
+		@Inject
+		private SquashUserDetailsManager squashUserDetailsManager;
+
+		@Inject
+		private PasswordEncoder passwordEncoder;
 	}
 }
