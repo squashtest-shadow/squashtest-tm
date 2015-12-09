@@ -731,20 +731,15 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 */
 	private void fusionMapResult(Map<ExecutionStatus, Long> statusMap,
 			Map<ExecutionStatus, Long> statusMapToMerge) {
-		Set<ExecutionStatus> keySet = statusMap.keySet();
 		Set<ExecutionStatus> keySetToMerge = statusMapToMerge.keySet();
-		for (ExecutionStatus executionStatus : keySet) {
-			Long mergedValue = statusMapToMerge.get(executionStatus);
-			Long memo = statusMap.get(executionStatus);
-			if (mergedValue !=null && mergedValue !=0L) {
-				statusMap.put(executionStatus, mergedValue + memo);
-			}
-		}
-		keySetToMerge.removeAll(keySet);
 		for (ExecutionStatus executionStatus : keySetToMerge) {
+			Long originalValue = statusMap.get(executionStatus);
 			Long mergedValue = statusMapToMerge.get(executionStatus);
-			if (mergedValue !=null && mergedValue !=0L) {
+			if (mergedValue!=null && originalValue==null) {
 				statusMap.put(executionStatus, mergedValue);
+			}
+			if (mergedValue!=null && originalValue!=null) {
+				statusMap.put(executionStatus, mergedValue + originalValue);
 			}
 		}
 	}
@@ -899,12 +894,32 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 	
 	private double doRateValidatedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount) {
-		Set<ExecutionStatus> statusSet = getValidatedStatus();
-		return doRateCalculation(statusSet, fullCoverageResult, untestedElementsCount);
+		Set<ExecutionStatus> validStatusSet = getValidatedStatus();
+		Set<ExecutionStatus> verifiedStatusSet = getVerifiedStatus();
+		return doRateCalculation(validStatusSet,verifiedStatusSet, fullCoverageResult);
 	}
 	
 	
+	/**
+	 * Rate calculation for two status set.
+	 * The count on the first one will be the numerator, the count one second set will be the denominator
+	 * @param numeratorStatus
+	 * @param fullCoverageResult
+	 * @return
+	 */
+	private double doRateCalculation(Set<ExecutionStatus> numeratorStatus, Set<ExecutionStatus> denominatorStatus, Map<ExecutionStatus, Long> fullCoverageResult) {
+		double numerator = countforStatus(fullCoverageResult, numeratorStatus);
+		double denominator = countforStatus(fullCoverageResult, denominatorStatus);
+		return numerator/denominator;
+	}
 
+	/**
+	 * Rate calculation with some untested elements
+	 * @param statusSet
+	 * @param fullCoverageResult
+	 * @param untestedElementsCount
+	 * @return
+	 */
 	private double doRateCalculation(Set<ExecutionStatus> statusSet, Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount){
 		//Implicit conversion of all Long and Integer in floating point number to allow proper rate operation
 		double execWithRequiredStatus = countforStatus(fullCoverageResult, statusSet);
@@ -951,7 +966,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		verifiedStatus.add(ExecutionStatus.SETTLED);
 		return verifiedStatus;
 	}
-
+	
 	private Map<ExecutionStatus, Long> findResultsForSimpleCoverage(
 			List<Long> testCaseIds, List<Long> iterationIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
 		List<TestCaseExecutionStatus> testCaseExecutionStatus = iterationDao.findExecStatusForIterationsAndTestCases(testCaseIds, iterationIds);
@@ -971,8 +986,9 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	/**
 	 * Part the {@link RequirementVersionCoverage} list in two list :
-	 * One with {@link RequirementVersionCoverage} with linked test steps
-	 * One with {@link RequirementVersionCoverage} without linked test steps 
+	 * One with {@link RequirementVersionCoverage} with linked test steps.
+	 * One with {@link RequirementVersionCoverage} without linked test steps.
+	 * This is necessary as {@link RequirementVersionCoverage} with {@link TestStep} linked must be treated at step level
 	 * @param requirementVersionCoverages
 	 * @param simpleCoverage
 	 * @param stepedCoverage
