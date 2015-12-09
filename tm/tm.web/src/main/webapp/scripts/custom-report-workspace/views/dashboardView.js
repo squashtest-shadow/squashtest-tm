@@ -51,8 +51,12 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     secureBlank : 5,//in pixel, a margin around widget to prevent inesthetics scrollbars
 
 		initialize : function(){
+      //Initial data that will be set by ajax request, contains dashboard attributes and bindings. NOT UPDATED by user actions. Will be reinitialized on refresh.
       this.dashboardInitialData = null;
+      //Map of the charts drawn on the grid. Each object inside this map is a backbone view.
       this.dashboardChartViews = {};
+      //Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
+      //Initialy set with CustomReportChartBinding presents inside initial data
       this.dashboardChartBindings = {};
       this.gridster = null;
       this.i18nString = translator.get({
@@ -99,6 +103,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
       var template = Handlebars.compile(source);
       Handlebars.registerPartial("chart", $(this.tplChart).html());
       Handlebars.registerPartial("dashboardDoc", $(this.tplDashboardDoc).html());
+      //this bolean is used to allow cleaner html code... i prefer avoid complex test in handlebars templates
       if (this.dashboardInitialData.chartBindings.length === 0) {
         this.dashboardInitialData.emptyDashboard = true;
       }
@@ -182,7 +187,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     * Override of gridster generated css. The main goal is to support dynamic resize of widget size,
     * as the parent container size change.
     * The generated css is injected in document head before the grid is resized
-    * @return {[type]} [description]
+    * @return {[this]} [for chaining]
     */
     generateGridsterCss : function () {
       var boundingRect = this.getGridScreenDimension();
@@ -295,7 +300,8 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     initListenerOnWindowResize : function () {
       var lazyInitialize = _.throttle(this.redrawDashboard, 500);
       var self = this;
-      $(window).on('resize', function () {
+      //adding a namespace to resize event to avoid conflict with other resize handler, and allow proper event removing
+      $(window).on('resize.dashboard', function () {
         lazyInitialize();
       });
     },
@@ -513,6 +519,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     remove : function () {
       this.gridster.destroy();
       this.removeAllCharts();
+      $(window).off("resize.dashboard");
       Backbone.View.prototype.remove.call(this);
     },
 

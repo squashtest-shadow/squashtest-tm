@@ -658,12 +658,12 @@ html.execute-html body.ieo-body {
 	background-image: url(../images/Button_Nav_Custom_Reports_on.png); /** sprite-ref: sprites-icons; */
 }
 
-#test_mgt_nav {
+.squash-navbar {
 	height: 60%;
 	width: 100%;
 	text-align: center;
-	margin-top: 5px;
 }
+
 
 .vertical-logo{
 	background-image : url("../images/logo_squash30.png"); /** sprite-ref: sprites-icons; */
