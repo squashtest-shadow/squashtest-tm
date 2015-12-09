@@ -39,7 +39,9 @@ public class HandlerBugTrackerRemoteExceptionResolver extends AbstractHandlerExc
 	@Override
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+		
+		// must not check the MIME type : BugTrackerRemoteException are always serialized as JSON
+		if (exceptionIsHandled(ex)/* && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)*/) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			BugTrackerRemoteException remoteException = (BugTrackerRemoteException) ex; // NOSONAR Type was previously
