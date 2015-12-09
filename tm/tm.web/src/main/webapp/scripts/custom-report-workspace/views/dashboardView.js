@@ -38,7 +38,7 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     widgetPrefixSelector : "#widget-chart-binding-",
     gridCol : 4,
     gridRow: 3,
-    gridAdditionalRow: 3,
+    gridAdditionalRow: 10,
     gridColMargin : 10,
     gridRowMargin: 10,
     newChartSizeX :1,

@@ -76,7 +76,6 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 		},
 
     refresh : function () {
-      console.log("refresh");
       this.activeChart.remove();
       this.render();
     },

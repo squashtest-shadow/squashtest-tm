@@ -28,7 +28,7 @@
 *
 *
 */
-define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore"],
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore","dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
 		function($, Backbone, attrparser, eventbus, _){
 
 	return Backbone.View.extend({
@@ -85,7 +85,8 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
   				drawBorder : false,
   				borderColor : 'transparent',
   				shadow : false,
-  				shadowColor : 'transparent'
+  				shadowColor : 'transparent',
+          renderer : $.jqplot.StylableGridRenderer
   			}
       };
     },

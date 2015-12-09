@@ -79,7 +79,17 @@ define(["jquery", "./abstractCustomReportChart",
           yaxis: {
             min : 0,
             label : this.getYAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+            tickOptions:{
+              gridStyle : {
+								lineDash : [5],
+								strokeStyle : "#c3c3c3"
+							},
+							markStyle : {
+								lineDash : [5],
+								strokeStyle : '#c3c3c3'
+							}
+            }
           }
 				}
 			});

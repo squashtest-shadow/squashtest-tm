@@ -95,6 +95,16 @@ define(["jquery", "./abstractCustomReportChart",
           xaxis : {
             label : this.getYAxisLabel(),//we have inversed axis for this kind of charts ie horizontal bar charts
             labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+            tickOptions:{
+              gridStyle : {
+                lineDash : [5],
+                strokeStyle : "#c3c3c3"
+              },
+              markStyle : {
+                lineDash : [5],
+                strokeStyle : '#c3c3c3'
+              }
+            }
           }
 				},
 

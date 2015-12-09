@@ -90,11 +90,20 @@ define(["jquery", "./abstractCustomReportChart",
 					},
           yaxis: {
             tickOptions: {
-              fontSize : sizeDependantconf.fontSize
+              fontSize : sizeDependantconf.fontSize,
+              gridStyle : {
+                lineDash : [5],
+                strokeStyle : "#c3c3c3"
+              },
+              markStyle : {
+                lineDash : [5],
+                strokeStyle : '#c3c3c3'
+              }
             },
             min:0,
             label : this.getYAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+
           }
 				}
 			});
