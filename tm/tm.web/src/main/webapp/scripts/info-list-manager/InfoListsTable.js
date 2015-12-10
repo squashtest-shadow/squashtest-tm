@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(
-	[ "jquery", "backbone", "underscore", "../squashtable/squashtable.options", "jquery.squash.oneshotdialog", "squash.translator", "app/ws/squashtm.notification"],
-	function($, Backbone, _, SquashTable, oneshot, messages, notif) {
+	[ "jquery", "backbone", "underscore", "../squashtable/squashtable.options", "jquery.squash.oneshotdialog", "squash.translator", "app/ws/squashtm.notification","handlebars"],
+	function($, Backbone, _, SquashTable, oneshot, messages, notif, Handlebars) {
 		"use strict";
 
 		messages.load([
@@ -39,7 +39,7 @@ define(
 			"message.infoList.batchRemove.first",
 			"message.infoList.bound.batchRemove.second",
 			"message.infoList.bound.batchRemove.third",
-			"message.infoList.bound.batchRemove.fourth",	
+			"message.infoList.bound.batchRemove.fourth",
 			"message.noListSelected",
 			"dialog.info-list.warning.reindex.before",
 			"label.GotoIndex"
@@ -51,7 +51,7 @@ define(
 			'sInfo' : 'generics.datatable.info',
 			'sInfoEmpty' : 'generics.datatable.infoEmpty',
 			'sInfoFiltered' : 'generics.datatable.infoFiltered',
-			'sSearch' : 'generics.datatable.search', 
+			'sSearch' : 'generics.datatable.search',
 			'oPaginage' : {
 				'sFirst' : 'generics.datatable.paginate.first',
 				'sPrevious' : 'generics.datatable.paginate.previous',
@@ -59,7 +59,7 @@ define(
 				'sLast' : 'generics.datatable.paginate.last'
 			}
 		});
-		
+
 		var itemsTableConf = window.squashtm.app.itemsTable;
 		console.log("table conf" ,itemsTableConf);
 
@@ -172,7 +172,7 @@ define(
 						pageLength: this.$el.data("pageLength"),
 						dom: '<"dataTables_header"fr>t<"dataTables_footer"lp>',
 						order: [ [ 2, "asc" ] ],
-						columnDefs: colDefs, 
+						columnDefs: colDefs,
 						language :  oLanguage,
 						//	url: this.$el.data("language-url")
 						// },
@@ -198,7 +198,7 @@ define(
 				var self = this;
 
 				self.$el.DataTable().rows().data().each(function(rowdata, index){
-				
+
 				var row =	self.$el.DataTable().row(function ( idx, data, node ) {return data.id === rowdata.id;});
 				row.data()['1'] = index+1;
 				self.$el.DataTable().cell(row.node(), 1).node().innerHTML = index+1;
