@@ -174,7 +174,7 @@
           <label class="control-label" for="add-project-from-template-label"><f:message key="label.tag" /></label>
         </td>
         <td class="controls">
-          <input id="add-project-from-template-label" name="add-project-from-template-label"  type="text" size="50" maxlength="255" />
+          <input id="add-project-from-template-label" name="add-project-from-template-label" data-prop="label"  type="text" size="50" maxlength="255" />
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>

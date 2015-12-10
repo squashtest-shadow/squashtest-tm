@@ -25,6 +25,7 @@ define([ "jquery", "backbone", "underscore", "squash.translator", "app/util/Stri
 		defaults : {
 			name : "",
 			templateId : "0",
+      label : "",
 			fromTemplate : false,
 			copyPermissions :true,
 			copyCUF:true,
