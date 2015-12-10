@@ -21,11 +21,15 @@
 package org.squashtest.tm.service.internal.testautomation;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
@@ -35,6 +39,9 @@ public class TestAutomationConnectorRegistry {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestAutomationConnectorRegistry.class);
 
+	@Autowired(required = false)
+	private Collection<TestAutomationConnector> connectors = Collections.emptyList();
+	
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
@@ -62,34 +69,19 @@ public class TestAutomationConnectorRegistry {
 	 * 
 	 * @param provider
 	 */
-	public void registerConnector(TestAutomationConnector connector, Map<?, ?> serviceProperties) {
-		String kind = connector.getConnectorKind();
-
-		if (kind == null) {
-			throw new IllegalArgumentException("TestAutomationConnector : kind is undefined");
+	@PostConstruct
+	public void registerConnector() {
+		for (TestAutomationConnector connector : connectors) {
+			String kind = connector.getConnectorKind();
+			
+			if (kind == null) {
+				throw new IllegalArgumentException("TestAutomationConnector : kind is undefined");
+			}
+			
+			LOGGER.info("Registering connector for test automation platforms of kind '{}'", kind);
+			
+			availableConnectors.put(kind, connector);
 		}
-
-		LOGGER.info("Registering connector for test automation platforms of kind '{}'", kind);
-
-		availableConnectors.put(kind, connector);
-	}
-
-	/**
-	 * Unregisters a kind of provider, making it no longer addressable by this registry
-	 * 
-	 * @param provider
-	 */
-	public void unregisterConnector(TestAutomationConnector connector, Map<?, ?> serviceProperties) {
-
-		if (connector == null) {
-			return;
-		}
-
-		String kind = connector.getConnectorKind();
-
-		LOGGER.info("Unregistering connector for test automation platforms of kind '{}'", kind);
-
-		availableConnectors.remove(kind);
 	}
 
 }
