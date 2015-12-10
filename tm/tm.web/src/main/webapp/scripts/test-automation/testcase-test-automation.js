@@ -19,89 +19,89 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- settings : 
- - canModify : a boolean telling if the associated script can be changed or not 
+ settings :
+ - canModify : a boolean telling if the associated script can be changed or not
  - testAutomationURL : the url where to GET - POST - DELETE things.
  */
 define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configmanager", "tree/plugins/plugin-factory",
 		"jquery.squash.formdialog", "jeditable" ], function($, eventBus, translator, confman, treefactory) {
 
-	
+
 	// ************* specific jeditable plugin ***************
-	
+
 	/*
-	 * We need a specific plugin because we need the buttons panel 
+	 * We need a specific plugin because we need the buttons panel
 	 * to have a third button.
-	 * 
+	 *
 	 * We base our plugin on the 'text' builtin plugin.
-	 * 
+	 *
 	 */
-	
+
 	var edObj = $.extend(true, {},$.editable.types.text);
 	var edFnButtons = $.editable.types.defaults.buttons;
 	var edFnElements = $.editable.types.text.element;
-	
+
 	edObj.buttons = function(settings, original){
 		//var form = this;
 		//first apply the original function
 		edFnButtons.call(this, settings, original);
-		
+
 		// now add our own button
 		var btnChoose = $("<button/>",{
 			'text' : translator.get('label.dot.pick'),
 			'id' : 'ta-script-picker-button'
 		});
-		
+
 		var btnRemove = $("<button/>",{
 			'text' : translator.get('label.Remove'),
 			'id' : 'ta-script-remove-button'
 		});
-		
+
 		this.append(btnChoose)
 			.append(btnRemove);
 	};
-	
+
 	// this is overriden so as to enforce the width.
 	edObj.element = function(settings, original){
 		var input = edFnElements.call(this, settings, original);
 		input.css('width', '70%');
 		input.css('height', '16px');
 		return input;
-	} ; 
-	
+	} ;
+
 	$.editable.addInputType('ta-picker', edObj );
-	
-	
+
+
 	// ****************** init function ********************
-	
+
 	function init(settings){
-		
-		
+
+
 		// simple case first
 		if (! settings.canModify){
 			return;
 		}
-		
+
 		// else we must init the special edit in place and the popups
 		_initEditable(settings);
 		_initPickerPopup(settings);
 		_initRemovePopup(settings);
-		
+
 	}
-	
+
 	function _initEditable(settings){
-		
+
 		var elt = $("#ta-script-picker-span");
-		
+
 		var conf = confman.getStdJeditable();
 		conf.type = 'ta-picker';
 		conf.name = 'path';
 		conf.width = '70%';
-		
-		
+
+
 		// now make it editable
 		elt.editable(settings.testAutomationURL, conf);
-		
+
 		// more events
 		elt.on('click', '#ta-script-picker-button', function(){
 			$("#ta-picker-popup").formDialog('open');
@@ -112,31 +112,31 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 			$("#ta-remove-popup").formDialog('open');
 			return false;// see comment above
 		});
-		
+
 	}
-	
+
 	function _initRemovePopup(settings){
 		var dialog = $("#ta-remove-popup");
-		
+
 		dialog.formDialog();
-		
+
 		dialog.on('formdialogconfirm', function(){
 			dialog.formDialog('close');
-			var form = $("#ta-script-picker-span>form"); 
+			var form = $("#ta-script-picker-span>form");
 			form.find('input').val('');
-			form.submit();	
+			form.submit();
 		});
-		
+
 		dialog.on('formdialogcancel', function(){
 			dialog.formDialog('close');
 		});
 	}
-	
+
 	function _initPickerPopup(settings){
-		
+
 		var dialog = $("#ta-picker-popup");
-		
-		var tree = dialog.find(".structure-tree");
+
+		testAutomationTree = dialog.find(".structure-tree");
 
 		// init
 
@@ -150,11 +150,11 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 
 
 		// ************ model loading *************************
-		
+
 		var initDialogCache = function() {
-			
+
 			dialog.formDialog('setState', 'pleasewait');
-			
+
 			return $.ajax({
 				url : settings.testAutomationURL,
 				type : 'GET',
@@ -173,29 +173,33 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 		var createTree = function() {
 
 			treefactory.configure('simple-tree'); // will add the 'squash' plugin if doesn't exist yet
-			tree.jstree({
+			instanceTree = testAutomationTree.jstree({
 				"json_data" : {
 					"data" : dialog.data('model-cache')
 				},
 
 				"types" : {
+          "max_depth" : -2, // unlimited without check
+          "max_children" : -2, // unlimited w/o check
+          "valid_children" : [ "drive" ],
 					"types" : {
 						"drive" : {
 							"valid_children" : [ "ta-test", "folder" ],
-							"select_node" : false
+							"select_node" : true
 						},
 						"ta-test" : {
-							"valid_chidlren" : "none"
+							"valid_chidlren" : "none",
+							"select_node" : true
 						},
 						"folder" : {
 							"valid_children" : [ "ta-test", "folder" ],
-							"select_node" : false
+							"select_node" : true
 						}
 					}
 				},
 
 				"ui" : {
-					select_multiple_modifier : false
+					"select_multiple_modifier" : false
 				},
 
 				"themes" : {
@@ -209,15 +213,26 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 					"animation" : 0
 				},
 
-				"plugins" : [ "json_data", "types", "ui", "themes", "squash" ]
+        conditionalselect : function () {
+          return true;
+        },
+
+				"plugins" : [ "json_data", "types", "ui", "themes", "squash",'conditionalselect']
 
 			});
+
+      $(window).bind('select_node.jstree', function () {
+        console.log('select_node.jstree');
+      });
+      $(window).bind('click.jstree', function () {
+        console.log('click.jstree');
+      });
 
 		};
 
 		var reset = function() {
-			if (tree.jstree('get_selected').length > 0) {
-				tree.jstree('get_selected').deselect();
+			if (testAutomationTree.jstree('get_selected').length > 0) {
+				testAutomationTree.jstree('get_selected').deselect();
 			}
 		};
 
@@ -228,7 +243,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 
 			try {
 
-				var node = tree.jstree('get_selected');
+				var node = testAutomationTree.jstree('get_selected');
 
 				if (node.length < 1) {
 					throw "no-selection";
@@ -272,7 +287,7 @@ define([ "jquery", "workspace.event-bus", "squash.translator", "squash.configman
 
 		});
 	}
-	
+
 	return {
 		init : init
 	};
