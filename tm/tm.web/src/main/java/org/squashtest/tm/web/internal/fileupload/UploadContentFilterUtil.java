@@ -29,8 +29,6 @@ import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.controller.attachment.UploadedData;
 
-import javax.inject.Inject;
-
 @Component
 public class UploadContentFilterUtil implements ApplicationListener<ApplicationEvent> {
     /**
@@ -38,7 +36,8 @@ public class UploadContentFilterUtil implements ApplicationListener<ApplicationE
      */
 	private ConfigurationService config;
 
-	private String[] allowed;
+	private String[] allowed = new String[] { "txt", "doc", "xls", "ppt", "docx", "xlsx", "pptx", "odt", "ods", "odp",
+			"pdf" };
 
 	private String whiteListKey = ConfigurationService.Properties.UPLOAD_EXTENSIONS_WHITELIST;
 
