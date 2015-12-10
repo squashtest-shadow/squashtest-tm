@@ -201,8 +201,7 @@
 
 					<input type="button" class="sq-btn" id="back" value="Back" />
 				</div>
-
-
+				
 				<div class="unsnap"></div>
 			</div>
 
@@ -210,57 +209,66 @@
 
 				<div id="information-content" style="overflow: hidden;">
 
-					<div id="wizard"
-						class="fragment-body ui-tabs ui-widget  ui-corner-all"
-						style="top: 0; background: 0; border: 0 none; height: 100%;">
+					<!-- ========================================================
+								main wizard panel
+					======================================================== -->
+					
+					<div id="wizard" class="fragment-body ui-tabs"
+						style="top: 0; background: 0; border: 0 none; height: 100%; "> 
 
+						<!-- ========================= the side view ========================= -->
 
 						<div id="current-side-view-container"
 							style="margin: 0; padding-left: 10px; width: 150px; height: 100%; overflow: hidden; background-color: white;">
-							<span style="display: table; height: 100%;" id="side-view" />
+							<span style="display: table; height: 100%;" id="side-view" ></span>
 						</div>
 
-						<div
-							class="ui-widget-header ui-corner-all ui-state-default fragment-header"
-							style="width: 88%; top: 0; left: 170px; position: absolute;">
+						
+						<!-- ========================= the main step view ========================= -->
 
-							<h2 id="step-title" />
-						</div>
-
-
-						<div id="contextual-content"
-							style="margin-top: 0; position: absolute; bottom: 50px; overflow: inherit; left: 180px; padding-right: 10px; top: 45px;">
-
-
-
-
-							<span id="steps-view" /> <br /> <br />
-							<div id="current-step-container">
-								<span id="current-step" />
+						<div id="main-step-view" 
+								style="position: absolute;	top: 0; right: 0; left: 180px; bottom: 45px; border-bottom:1px solid black; overflow:hidden;">
+							
+							<!--  the position : relative resets the positioning context -->
+							<div style="position:relative; height:100%; margin-top:5px;">
+							
+								<div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="width: 99%;">		
+									<h2 id="step-title" />
+								</div>
+		
+		
+								<div style="position:absolute; top: 40px; bottom: 0; left:0; right:0; padding-right: 10px;  overflow:auto;">		
+									
+									<div id="current-step-container" >
+										<div id="current-step" >
+										<!--  populated via javascript -->
+										</div>
+									</div>
+		
+								</div>
 							</div>
-
 						</div>
+						
+						<!-- ========================= the button view ========================= -->
+						
+						<div id="wizard-toolbar"
+							style="position: fixed; bottom: 65px; right: 60px; ">
+	
+	
+							<input type="button" class="sq-btn" id="previous"
+								value="Previous" th:value="#{label.previous}" /> <input
+								type="button" class="sq-btn" id="next" value="Next"
+								th:value="#{label.next}" /> <input type="button" class="sq-btn"
+								id="generate" value="Generate"
+								th:value="#{report.criteria.panel.button.generate.label}" /> <input
+								type="button" class="sq-btn" id="save" value="save"
+								th:value="#{label.save}" />
+	
+						</div>							
 
-						<div
-							style="border-top: black 1px solid; position: absolute; width: 100%; left: 170px; bottom: 50px;" />
-
+					
 					</div>
-				
-			
-					<div id="wizard-toolbar"
-						style="position: fixed; bottom: 65px; right: 60px; padding: 5px;">
-
-
-						<input type="button" class="sq-btn" id="previous"
-							value="Previous" th:value="#{label.previous}" /> <input
-							type="button" class="sq-btn" id="next" value="Next"
-							th:value="#{label.next}" /> <input type="button" class="sq-btn"
-							id="generate" value="Generate"
-							th:value="#{report.criteria.panel.button.generate.label}" /> <input
-							type="button" class="sq-btn" id="save" value="save"
-							th:value="#{label.save}" />
-
-					</div>
+											
 				</div>
 			</div>
 		</div>

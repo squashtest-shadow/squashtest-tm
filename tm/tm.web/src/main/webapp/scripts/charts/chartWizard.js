@@ -19,9 +19,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-	define([ "jquery", "backbone", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, router, WizardRouter, WizardView, WizardModel) {
+define([ "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, workspace, router, WizardRouter, WizardView, WizardModel) {
 
-		$("#back-popup").confirmDialog().on('confirmdialogconfirm', function(){
+	$("#back-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var url = "custom-report-workspace";
 			window.location.href = squashtm.app.contextRoot + url;
 			});
@@ -29,6 +29,8 @@
 		$("#back").on('click', function() {
 			$("#back-popup").confirmDialog('open');
 		});	
+		
+		workspace.init();
 		
 	$.ajax({
 		url: router.buildURL('chart.wizard.data')	
