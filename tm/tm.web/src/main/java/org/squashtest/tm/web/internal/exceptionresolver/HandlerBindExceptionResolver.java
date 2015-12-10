@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.exceptionresolver;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.DispatcherServlet;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,7 +48,7 @@ import java.util.List;
  * @author Gregory Fouquet
  *
  */
-@Component
+@ControllerAdvice
 public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolver {
 
 
@@ -55,6 +57,7 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 	}
 
 	@Override
+	@ExceptionHandler(value = {BindException.class})
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
 		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
