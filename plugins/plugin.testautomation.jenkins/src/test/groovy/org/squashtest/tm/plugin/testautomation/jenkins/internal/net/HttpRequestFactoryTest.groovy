@@ -43,7 +43,7 @@ class HttpRequestFactoryTest extends Specification {
 		def method = factory.newGetJobsMethod(server)
 
 		then :
-		method.getURI().toString() == "http://ci.jruby.org/api/json?tree=jobs%5Bname%2Ccolor%5D"
+		method.getURI().toString() == "http://ci.jruby.org/server/api/json?tree=jobs%5Bname%2Ccolor%5D"
 	}
 
 	def "should create the result path for tests being at the root of the project"(){
