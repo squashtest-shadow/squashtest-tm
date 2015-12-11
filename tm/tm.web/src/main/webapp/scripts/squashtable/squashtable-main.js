@@ -1837,10 +1837,10 @@ define(["jquery",
 			},
 			columns : {
 				'invisible' : function(conf, value) {
-					conf.current.bVisible = ! (value === true);
+					conf.current.bVisible = ! ((value === true) || (value === "true"));
 				},
 				'visible' : function(conf, value){
-					conf.current.bVisible = (value === true);
+					conf.current.bVisible = (value === true) || (value === "true");
 				},
 				'sortable' : function(conf, value) {
 					conf.current.bSortable = true;

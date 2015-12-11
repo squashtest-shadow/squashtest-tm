@@ -187,7 +187,7 @@
             <f:message key="label.Milestone"/>
           </th>         
           <th title="<f:message key='label.Mode' />" class="no-user-select tp-th-filter tp-th-exec-mode"
-            data-def="map=exec-mode, sortable, narrow, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode">   <f:message key="label.Mode" /></th>
+            data-def="map=exec-mode, sortable, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode, sWidth=5%">   <f:message key="label.Mode" /></th>
             
           <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
               data-def="map=reference, sortable, link=${testCaseUrl}">
