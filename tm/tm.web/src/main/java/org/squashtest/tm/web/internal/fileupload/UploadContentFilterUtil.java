@@ -23,7 +23,7 @@ package org.squashtest.tm.web.internal.fileupload;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -36,8 +36,7 @@ public class UploadContentFilterUtil implements ApplicationListener<ApplicationE
      */
 	private ConfigurationService config;
 
-	private String[] allowed = new String[] { "txt", "doc", "xls", "ppt", "docx", "xlsx", "pptx", "odt", "ods", "odp",
-			"pdf" };
+	private String[] allowed;
 
 	private String whiteListKey = ConfigurationService.Properties.UPLOAD_EXTENSIONS_WHITELIST;
 
@@ -61,11 +60,11 @@ public class UploadContentFilterUtil implements ApplicationListener<ApplicationE
 
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ContextStartedEvent && config == null) {
-            config = ((ContextStartedEvent) event).getApplicationContext().getBean(ConfigurationService.class);
+		if (event instanceof ContextRefreshedEvent && config == null) {
+			config = ((ContextRefreshedEvent) event).getApplicationContext().getBean(ConfigurationService.class);
         }
 
-		if (event instanceof ConfigUpdateEvent || event instanceof ContextStartedEvent) {
+		if (event instanceof ConfigUpdateEvent || event instanceof ContextRefreshedEvent) {
 			updateConfig();
 		}
 	}

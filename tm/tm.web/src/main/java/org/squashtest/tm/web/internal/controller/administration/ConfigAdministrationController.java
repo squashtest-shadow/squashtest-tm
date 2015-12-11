@@ -20,15 +20,30 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.oauth2.provider.ClientAlreadyExistsException;
 import org.springframework.security.oauth2.provider.ClientDetails;
 import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.exception.client.ClientNameAlreadyExistsException;
@@ -41,15 +56,9 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 
-import javax.inject.Inject;
-import javax.validation.Valid;
-import java.util.*;
-
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
 @Controller
 @RequestMapping("administration/config")
-public class ConfigAdministrationController implements ApplicationContextAware {
+public class ConfigAdministrationController {
 
     private static final String WHITE_LIST = "uploadfilter.fileExtensions.whitelist";
     private static final String UPLOAD_SIZE_LIMIT = ConfigurationService.Properties.UPLOAD_SIZE_LIMIT;
@@ -69,16 +78,10 @@ public class ConfigAdministrationController implements ApplicationContextAware {
     @Inject
     private UserManagerService userManager;
 
-    /**
-     * application context needed to create osgi event
-     */
-    private ApplicationContext applicationCtx;
 
-    /**
-     * publisher of the osgi event.
-     */
-//	@Inject
-//	private OsgiBundleApplicationContextEventMulticaster publisher;
+	@Inject
+	private ApplicationEventPublisher eventPublisher;
+
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public void changeConfig(@RequestParam(WHITE_LIST) String whiteList,
@@ -91,17 +94,6 @@ public class ConfigAdministrationController implements ApplicationContextAware {
         sendUpdateEvent();
     }
 
-//	@Override
-//	public void setBundleContext(BundleContext bundleContext) {
-//		bundleCtx = bundleContext;
-//
-//	}
-
-    @Override
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        applicationCtx = applicationContext;
-
-    }
 
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView administration() {
@@ -143,8 +135,8 @@ public class ConfigAdministrationController implements ApplicationContextAware {
 
 
     private void sendUpdateEvent() {
-        ConfigUpdateEvent event = new ConfigUpdateEvent(applicationCtx);
-//		publisher.multicastEvent(event);
+		ConfigUpdateEvent event = new ConfigUpdateEvent("");
+		eventPublisher.publishEvent(event);
     }
 
     @RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)

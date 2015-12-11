@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.web.internal.fileupload;
 
-import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.event.ContextStartedEvent;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.squashtest.tm.event.ConfigUpdateEvent;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -34,6 +31,7 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
  * TODO SquashMultipartResolver both needs to be initialized early (infrastructure bean) and requires a configService to
  * get its configuration -> quick and dodgy solution is to fetch the service from beanFactory
  */
+
 public class SquashMultipartResolver extends CommonsMultipartResolver implements ApplicationListener<ApplicationEvent> {
 
 	/**
@@ -67,11 +65,12 @@ public class SquashMultipartResolver extends CommonsMultipartResolver implements
 
 	@Override
 	public void onApplicationEvent(ApplicationEvent event) {
-        if (event instanceof ContextStartedEvent && configurationService == null) {
-            configurationService = ((ContextStartedEvent) event).getApplicationContext().getBean(ConfigurationService.class);
+		if (event instanceof ContextRefreshedEvent && configurationService == null) {
+			configurationService = ((ContextRefreshedEvent) event).getApplicationContext()
+					.getBean(ConfigurationService.class);
         }
 
-		if (event instanceof ConfigUpdateEvent || event instanceof ContextStartedEvent) {
+		if (event instanceof ConfigUpdateEvent || event instanceof ContextRefreshedEvent) {
 			updateConfig();
 		}
 	}

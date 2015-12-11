@@ -23,20 +23,29 @@ package org.squashtest.tm.web.config;
 import static org.springframework.util.StringUtils.commaDelimitedListToStringArray;
 import static org.springframework.util.StringUtils.trimAllWhitespace;
 
+import java.util.HashMap;
+
 import javax.inject.Inject;
 import javax.servlet.DispatcherType;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.embedded.FilterRegistrationBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Role;
 import org.springframework.core.annotation.Order;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
+import org.springframework.web.multipart.support.MultipartFilter;
 import org.squashtest.csp.core.bugtracker.service.BugTrackerContextHolder;
 import org.squashtest.csp.core.bugtracker.web.BugTrackerContextPersistenceFilter;
 import org.squashtest.tm.api.config.SquashPathProperties;
+import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
+import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
+import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
@@ -115,8 +124,44 @@ public class SquashServletConfig {
 	@Inject
 	private BugTrackerContextHolder bugTrackerContextHolder;
 
+
+
+	@Bean
+	@Role(BeanDefinition.ROLE_SUPPORT)
+	public CommonsMultipartResolver filterMultipartResolver()
+
+	{
+			MultipartResolverDispatcher bean = new MultipartResolverDispatcher();
+			bean.setDefaultResolver(defaultMultipartResolver());
+			HashMap<String, SquashMultipartResolver> resolverMap = new HashMap<>();
+		    resolverMap.put(".*/import/upload.*", importMultipartResolver());
+			resolverMap.put(".*/importer/.*", importMultipartResolver());
+			bean.setResolverMap(resolverMap);
+			return bean;
+		}
+
+
+	@Role(BeanDefinition.ROLE_SUPPORT)
+	public SquashMultipartResolver defaultMultipartResolver() {
+		return new SquashMultipartResolver();
+	}
+	
+
+	@Role(BeanDefinition.ROLE_SUPPORT)
+	public SquashMultipartResolver importMultipartResolver() {
+		SquashMultipartResolver bean = new SquashMultipartResolver();
+		bean.setMaxUploadSizeKey(ConfigurationService.Properties.IMPORT_SIZE_LIMIT);
+		return bean;
+	}
+
 	@Bean
 	@Order(0)
+	public MultipartFilter multipartFilter() {
+		return new MultipartFilter();
+	}
+
+	@Bean
+	@Order(1)
 	public FilterRegistrationBean bugTrackerContextPersister() {
 
 		BugTrackerContextPersistenceFilter filter = new BugTrackerContextPersistenceFilter();

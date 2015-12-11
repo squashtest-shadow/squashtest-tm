@@ -43,7 +43,8 @@ import org.squashtest.tm.web.config.ResourceResolverProperties;
  * @author Gregory Fouquet
  * @since 1.13.0
  */
-@SpringBootApplication(exclude = {HibernateJpaAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class, BatchAutoConfiguration.class})
+@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class,
+		BatchAutoConfiguration.class })
 @EnableConfigurationProperties({ResourceResolverProperties.class, SquashPathProperties.class})
 @EnableWebSecurity
 @ImportResource({"classpath*:META-INF/spring/dynamicdao-context.xml", "classpath*:META-INF/spring/dynamicmanager-context.xml"})
