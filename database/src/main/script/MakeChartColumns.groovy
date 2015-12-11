@@ -121,7 +121,7 @@ def definition = [
 			rvMilesCountSub : [
 				label : 'REQUIREMENT_VERSION_MILCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'INLINED',
+				strategy : 'SUBQUERY',
 				measures : ['rvmilId COUNT'],
 				axes : ['rvId']
 			]
@@ -171,14 +171,14 @@ def definition = [
 			tcStepsCountSub : [
 				label : 'TEST_CASE_STEPCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'INLINED',
+				strategy : 'SUBQUERY',
 				measures : ['tsId COUNT'],
 				axes : ['tcId']
 			],
 			tcMilesCountSub : [
 				label : 'TEST_CASE_VERSION_MILCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'INLINED',
+				strategy : 'SUBQUERY',
 				measures : ['tcmilId COUNT'],
 				axes : ['tcId']
 			],
@@ -253,7 +253,7 @@ def definition = [
 			cIterCountSub : [
 				label : 'CAMPAIGN_ITERCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'INLINED',
+				strategy : 'SUBQUERY',
 				measures : ['itId COUNT'],
 				axes : ['cId']
 			],
@@ -285,7 +285,7 @@ def definition = [
 			itItemCountSub : [
 				label : 'ITERATION_ITEMCOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
-				strategy : 'INLINED',
+				strategy : 'SUBQUERY',
 				measures : ['itpId COUNT'],
 				axes : ['itId']
 			], 
