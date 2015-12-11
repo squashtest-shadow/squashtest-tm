@@ -22,8 +22,8 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		router, translator, EntityStepView, FilterStepView, TypeStepView , AxisStepView, PreviewStepView, SideView, AttributeStepView) {
 
 	"use strict";
-	
-	var validation = 
+
+	var validation =
 		[{
 			name : "entity",
 			validationParam : "selectedEntity"
@@ -37,7 +37,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			name :"filter",
 			validationParam : "filtered"
 		},
-		
+
 		];
 	var steps = [{
 		name : "entity",
@@ -83,7 +83,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		neededStep : ["entity", "attributes", "axis"],
 		buttons : ["previous", "generate"],
 		clickable : true
-	
+
 	},{
 		name : "preview",
 		prevStep : "type",
@@ -95,12 +95,12 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		clickable : false
 	}
 	];
-	
-	
+
+
 	var wizardView = Backbone.View.extend({
 		el : "#wizard",
 		initialize : function(options) {
-		
+
 			this.model = options.model;
 			this.model.set({
 				steps: steps,
@@ -109,78 +109,83 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			});
 			this.loadI18n();
 		},
-		
+
 		events : {
 			"click #next" : "navigateNext",
 			"click #previous" : "navigatePrevious",
 		    "click #generate" : "generate",
 			"click #save" : "save"
-	
+
 		},
-		
-	
-		
+
+
+
 		navigateNext : function (){
 			this.currentView.navigateNext();
 		},
-		
+
 		navigatePrevious : function (){
 			this.currentView.navigatePrevious();
 		},
-		
+
 		generate : function (){
 			this.currentView.generate();
 		},
 		save : function() {
 			this.currentView.save();
 		},
-		
+
 		loadI18n : function (){
-			
+
 			var chartTypes = this.addPrefix(this.model.get("chartTypes"), "chartType.");
 			var entityTypes = this.addPrefix(_.keys(this.model.get("entityTypes")), "entityType.");
 			var operation = this.addPrefix(_.uniq(this.flatten(this.model.get("dataTypes"))), "operation.");
-			var column = this.addPrefix(_.pluck(this.flatten(this.model.get("columnPrototypes")), "label") ,"column.");
-			
-			var keys = chartTypes.concat(entityTypes, operation, column);
-			
+      var columnsWithoutCuf = _.map(this.model.get("columnPrototypes"),function (protosForEntityType) {
+        return _.filter(protosForEntityType, function (proto) {
+          return proto.columnType != "CUF";
+        });
+      });
+			var columns = this.addPrefix(_.pluck(this.flatten(columnsWithoutCuf), "label") ,"column.");
+
+			var keys = chartTypes.concat(entityTypes, operation, columns);
+
 			var result = this.addPrefix(keys, "chart.");
-		
+
 			translator.load(result);
-			
+
 		},
-		
-		flatten : function (col) {		
-			return _.reduce(col, function(memo, val) {return memo.concat(val);}, []);			
+
+		flatten : function (col) {
+			return _.reduce(col, function(memo, val) {return memo.concat(val);}, []);
 		},
-		
+
 		addPrefix : function(col, prefix){
 			return _.map(col, function (obj){
 				return prefix + obj;
 			});
-			
+
 		},
-		
+
 		showSideView : function(){
 			this.resetSideView();
 			this.currentSideView = new SideView(this.model);
 		},
-		
-		showNewStepView : function (View, wizrouter){	
+
+		showNewStepView : function (View, wizrouter){
 			if (this.currentView !== undefined) {
 			this.currentView.updateModel();
 			}
-			
+
 			this.resetView();
 			this.currentView = new View(this.model, wizrouter);
 			this.showSideView();
 
 		},
-		
-		showEntityStep : function(wizrouter) {			
+
+		showEntityStep : function(wizrouter) {
 			this.showNewStepView(EntityStepView, wizrouter);
 		},
-		
+
 		showFilterStep : function(wizrouter) {
 			this.showNewStepView(FilterStepView, wizrouter);
 		},
@@ -188,7 +193,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		showTypeStep : function(wizrouter) {
 			this.showNewStepView(TypeStepView, wizrouter);
 		},
-		
+
 		showAxisStep : function(wizrouter) {
 			this.showNewStepView(AxisStepView, wizrouter);
 		},
@@ -196,7 +201,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		showPreviewStep :  function(wizrouter) {
 			this.showNewStepView(PreviewStepView, wizrouter);
 		},
-		
+
 		showAttributesStep : function(wizrouter){
 			this.showNewStepView(AttributeStepView, wizrouter);
 		},
@@ -208,9 +213,9 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			}
 
 		},
-		
+
 		resetSideView : function() {
-		
+
 			if (this.currentSideView !== undefined) {
 				this.currentSideView.destroy_view();
 				$("#current-side-view-container").html('<span style="display : table; height:100%" id="side-view" />');
