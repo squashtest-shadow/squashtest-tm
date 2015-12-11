@@ -125,11 +125,16 @@ public class CustomReportWorkspaceController {
 	}
 
 	private Collection<Long> findAncestorsOfselectedNode(String elementId) {
-		Long nodeId = convertCookieId(elementId);
-		List<Long> ancestorIds = customReportLibraryNodeService.findAncestorIds(nodeId);
-		//The selected node isn't opened by default (it can be a leaf node !).
-		//So it will be open ONLY if he's also in open node cookies.
-		ancestorIds.remove(nodeId);
+		List<Long> ancestorIds = new ArrayList<>();
+		try {
+			Long nodeId = convertCookieId(elementId);
+			ancestorIds = customReportLibraryNodeService.findAncestorIds(nodeId);
+			//The selected node isn't opened by default (it can be a leaf node !).
+			//So it will be open ONLY if he's also in open node cookies.
+			ancestorIds.remove(nodeId);
+		} catch (NumberFormatException e) {
+			LOGGER.error("Error on parsing js_open cookie. Workspace will be shown with closed tree");
+		}
 		return ancestorIds;
 	}
 
