@@ -104,8 +104,12 @@ public class HttpRequestFactory {
 	}
 
 	private URIBuilder buildApiPath(TestAutomationServer server) {
-		return uriBuilder(server)
-			.setPath("/" + server.getName() + API_URI);
+		URIBuilder uriBuilder = uriBuilder(server);
+		return concatPath(uriBuilder, API_URI);
+	}
+	
+	private URIBuilder concatPath(URIBuilder builder, String path){
+		return builder.setPath(builder.getPath() + path);
 	}
 
 	public HttpGet newGetJobsMethod(TestAutomationServer server) {
@@ -163,9 +167,8 @@ public class HttpRequestFactory {
 	public HttpGet newCheckQueue(TestAutomationProject project) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + "/queue" + API_URI)
-			.setParameters(QUEUED_BUILDS_QUERY);
-
+		concatPath(builder, "/queue" + API_URI);
+		builder.setParameters(QUEUED_BUILDS_QUERY);
 		return new HttpGet(build(builder));
 	}
 
@@ -180,9 +183,8 @@ public class HttpRequestFactory {
 	public HttpGet newGetBuildsForProject(TestAutomationProject project) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + JOB_PATH + project.getJobName() + API_URI)
-			.setParameters(EXISTING_BUILDS_QUERY);
-
+		concatPath(builder, JOB_PATH + project.getJobName() + API_URI);
+		builder.setParameters(EXISTING_BUILDS_QUERY);
 		return new HttpGet(build(builder));
 
 	}
@@ -190,29 +192,24 @@ public class HttpRequestFactory {
 	public HttpGet newGetBuild(TestAutomationProject project, int buildId) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + JOB_PATH + project.getJobName() + '/' + buildId + '/' + API_URI)
-			.setParameters(SINGLE_BUILD_QUERY);
-
+		concatPath(builder, JOB_PATH + project.getJobName() + '/' + buildId + '/' + API_URI);
+		builder.setParameters(SINGLE_BUILD_QUERY);
 		return new HttpGet(build(builder));
 	}
 
 	public HttpGet newGetBuildResults(TestAutomationProject project, int buildId) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + JOB_PATH + project.getJobName() + '/' + buildId + "/testReport/" + API_URI)
-			.setParameters(BUILD_RESULT_QUERY);
-
+		concatPath(builder, JOB_PATH + project.getJobName() + '/' + buildId + "/testReport/" + API_URI);
+		builder.setParameters(BUILD_RESULT_QUERY);
 		return new HttpGet(build(builder));
-
 	}
 
 	public HttpGet newGetJsonTestList(TestAutomationProject project) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + JOB_PATH + project.getJobName() + "/Test_list/testTree.json");
-
+		concatPath(builder, JOB_PATH + project.getJobName() + "/Test_list/testTree.json");
 		return new HttpGet(build(builder));
-
 	}
 
 	public String buildResultURL(AutomatedTest test, Integer buildID) {
@@ -222,8 +219,7 @@ public class HttpRequestFactory {
 		String relativePath = toRelativePath(test);
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + JOB_PATH + project.getJobName() + "/" + buildID + "/testReport/" + relativePath);
-
+		concatPath(builder, JOB_PATH + project.getJobName() + "/" + buildID + "/testReport/" + relativePath);
 		return builder.toString();
 
 	}
@@ -231,7 +227,7 @@ public class HttpRequestFactory {
 	protected HttpPost newStartBuild(TestAutomationProject project, ParameterArray params) {
 		TestAutomationServer server = project.getServer();
 		URIBuilder builder = uriBuilder(server);
-		builder.setPath("/" + server.getName() + JOB_PATH + project.getJobName() + "/build");
+		concatPath(builder, JOB_PATH + project.getJobName() + "/build");
 
 		String jsonParam = jsonParser.toJson(params);
 
