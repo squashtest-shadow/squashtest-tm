@@ -55,7 +55,9 @@ public class ExtHQLTemplates extends HQLTemplates{
 
 		// boolean case when
 		add(ExtOps.TRUE_IF, "case when {0} then true else false end ");
-
+		
+		// by_day operator
+		add(ExtOps.YEAR_MONTH_DAY, "year({0}) * 10000 + month({0}) * 100 + day({0})");
 	}
 
 

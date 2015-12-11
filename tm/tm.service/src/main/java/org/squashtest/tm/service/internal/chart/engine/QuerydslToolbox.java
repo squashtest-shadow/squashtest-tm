@@ -661,7 +661,7 @@ class QuerydslToolbox {
 		case IN : operator = Ops.IN; break;
 		case BETWEEN: operator = Ops.BETWEEN; break;
 		case AVG: operator = ExtOps.S_AVG; break;
-		case BY_DAY: operator = DateTimeOps.DAY_OF_YEAR; break;
+		case BY_DAY: operator = ExtOps.YEAR_MONTH_DAY; break;
 		case GREATER_EQUAL: operator = Ops.GOE; break;
 		case LOWER: operator = Ops.LT; break;
 		case LOWER_EQUAL: operator = Ops.LOE; break;

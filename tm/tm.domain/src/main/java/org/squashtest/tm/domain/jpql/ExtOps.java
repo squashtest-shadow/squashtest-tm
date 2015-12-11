@@ -59,7 +59,10 @@ public enum ExtOps implements Operator {
 	ORDERED_GROUP_CONCAT_DIR(String.class),
 
 	// boolean case when
-	TRUE_IF(Boolean.class);
+	TRUE_IF(Boolean.class),
+	
+	// by_day date operator
+	YEAR_MONTH_DAY(Integer.class);
 
 	private final Class<?> type;
 

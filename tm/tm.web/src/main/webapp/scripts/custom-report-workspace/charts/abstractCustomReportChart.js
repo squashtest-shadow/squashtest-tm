@@ -28,8 +28,10 @@
 *
 *
 */
-define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore","dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
-		function($, Backbone, attrparser, eventbus, _){
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
+		function($, Backbone, attrparser, eventbus, _, translator){
+	
+	translator.load(["squashtm.dateformatShort", "squashtm.dateformatMonthshort"]);
 
 	return Backbone.View.extend({
 		//************************** commons variables **************************
@@ -161,29 +163,42 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       var operation = axis.operation.name;
       switch (operation) {
         case "BY_DAY":
-          return legends;
+          return this._formatDate(legends, translator.get("squashtm.dateformatShort"));
         case "BY_MONTH":
-          return this._formatDateLegendByMonth(legends);
+          return this._formatDate(legends, translator.get("squashtm.dateformatMonthshort"));
         case "BY_YEAR":
-          return legends;
+          return legends;	// this is a year already
         default:
           return legends;
       }
     },
+    
+    _formatDate : function(legends, outformat){
+		
+		function splitdate(str){
+			var parsed = {};
+			// by month components
+			parsed.year = str.substring(0,4);
+			parsed.month = str.substring(4,6);
+			// by day components
+			if (str.length===8){
+				parsed.day = str.substring(6,8);
+			}
+			return parsed;
+		}
 
-    //In chart instance date by month are returned with format YYYYMM
-    _formatDateLegendByMonth : function (legends,axis) {
-      var self = this;
-      return _.map( legends, function(legend){
-        if (Array.isArray(legend)) {
-          return self._formatDateLegendByMonth(legend);
-        }
-        var legendString = legend.toString();
-        var year = legendString.substring(0, 4);
-        var month = legendString.substring(4, 6);
-        return month + "/" + year;
-      });
+        var self = this;
+        
+        return _.map( legends, function(legend){
+          
+          if (Array.isArray(legend)) {
+            return self._formatDate(legend, outformat);
+          }
+          var d = splitdate(legend.toString());
+          return outformat.replace('yyyy', d.year).replace('MM', d.month).replace('dd', d.day);
+        });
     },
+
 
     /**
     * Convert an array of string [s1,s2,...] to an array of object like : [{label:s1},{label:s2}...]

@@ -294,6 +294,7 @@ import com.querydsl.core.Tuple;
  *
  */
 @Component
+@SuppressWarnings("all")
 public class ChartDataFinder {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);
