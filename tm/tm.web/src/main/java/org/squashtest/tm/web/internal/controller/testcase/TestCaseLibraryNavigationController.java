@@ -86,7 +86,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
 
-	private static final String JASPER_EXPORT_FILE = "/WEB-INF/reports/test-case-export.jasper";
+	private static final String JASPER_EXPORT_FILE = "WEB-INF/reports/test-case-export.jasper";
 	private static final String ADD_TEST_CASE = "add-test-case";
 	private static final String FILENAME = "filename";
 	private static final String LIBRARIES = "libraries";
@@ -136,11 +136,11 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
 		List<Long> milestoneIds = new ArrayList<Long>();
-		
+
 		if (activeMilestone != null){
 			milestoneIds.add(activeMilestone.getId());
 		}
-		
+
 		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues, null, milestoneIds);
 
 		return createTreeNodeFromLibraryNode(testCase, activeMilestone);
@@ -224,21 +224,21 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return new FileSystemResource(export);
 
 	}
-	
+
 	@RequestMapping(value = "/searchExports", produces = "application/octet-stream", method = RequestMethod.GET, params = {
 			FILENAME, NODES, CALLS, RequestParams.RTEFORMAT })
 	@ResponseBody
 	public FileSystemResource searchExportAsExcel(@RequestParam(FILENAME) String filename,
 			@RequestParam(NODES) List<Long> nodeIds, @RequestParam(CALLS) Boolean includeCalledTests, @RequestParam(RequestParams.RTEFORMAT) Boolean keepRteFormat,
 			HttpServletResponse response) throws FileNotFoundException {
-		
+
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + filename + ".xls");
-		
+
 		File export = testCaseLibraryNavigationService.searchExportTestCaseAsExcel( nodeIds, includeCalledTests,
 				keepRteFormat, getMessageSource());
 		return new FileSystemResource(export);
-		
+
 	}
 
 	private void escapePrerequisiteAndSteps(List<ExportTestCaseData> dataSource) {
@@ -277,7 +277,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			LIBRARIES, NODES })
 	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(
 			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
-			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds, 
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
 			@CurrentMilestone Milestone activeMilestone) {
 
 		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds, activeMilestone);

@@ -39,6 +39,7 @@ import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 
 import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceResourceBundle;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,9 +68,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 /**
  * Superclass for library navigation controllers. This controller handles : library root retrieval, folder content
  * retrieval, folder creation at any depth.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <LIBRARY>
  * @param <FOLDER>
  * @param <NODE>
@@ -77,7 +78,7 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 public abstract class LibraryNavigationController<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
 	/**
 	 * Should return a library navigation service.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract LibraryNavigationService<LIBRARY, FOLDER, NODE> getLibraryNavigationService();
@@ -291,6 +292,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 			// report generation parameters
 			reportParameters.put(JRParameter.REPORT_LOCALE, locale);
+			reportParameters.put(JRParameter.REPORT_RESOURCE_BUNDLE, new MessageSourceResourceBundle(messageSource, locale));
 
 			// exporter parameters
 			// TODO : defining an export parameter specific to csv while in the future we could export to other formats

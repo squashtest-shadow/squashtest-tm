@@ -356,7 +356,7 @@
 					<subreportParameterExpression><![CDATA[$F{id}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{steps})]]></dataSourceExpression>
-				<subreportExpression><![CDATA["test-case-export-steps.jasper"]]></subreportExpression>
+				<subreportExpression><![CDATA["WEB-INF/reports/test-case-export-steps.jasper"]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
