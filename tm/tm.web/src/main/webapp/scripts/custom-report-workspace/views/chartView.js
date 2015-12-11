@@ -69,6 +69,7 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 			.success(function(json){
         self.setBaseModelAttributes(json);
         self.loadI18n();
+        self.getCustomPerimeterMessage(json);
 				self.template();
 				self.activeChart = chartFactory.buildChart("#chart-display-area", json, self.getVueConf(),self.model.get("entityOperation"));
         $(window).bind('resize.chart', self.redraw);
@@ -80,12 +81,24 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
       this.render();
     },
 
+    /**
+    * Set a boolean in model so Handlebar can handle fancy specification rules on perimeter
+    */
+    getCustomPerimeterMessage : function (json) {
+      if (json.scope.length > 1) {
+        this.model.set("customPerimeter",true);
+      }
+      else if (json.scope[0].name === "" || json.scope[0].name === null) {
+        this.model.set("customPerimeter",true);
+      }
+      else {
+        this.model.set("customPerimeter",false);
+      }
+    },
+
     initListenerOnWindowResize : function () {
       var self = this;
       $(window).bind('resize.chart', self.redraw);
-      // $(window).on('resize', function () {
-      //   self.redraw();
-      // });
     },
 
     redraw : function () {
