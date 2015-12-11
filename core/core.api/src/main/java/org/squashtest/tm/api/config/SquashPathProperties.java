@@ -40,10 +40,6 @@ public class SquashPathProperties {
 	 * Root path for bundles
 	 */
 	private String bundlesPath;
-	/**
-	 * Root path for configuration. Should be an alias of ${spfing.config.location}
-	 */
-	private String configPath;
 
 	public String getBundlesPath() {
 		return bundlesPath;
@@ -69,11 +65,4 @@ public class SquashPathProperties {
 		this.pluginsPath = pluginsPath;
 	}
 
-	public String getConfigPath() {
-		return configPath;
-	}
-
-	public void setConfigPath(String configPath) {
-		this.configPath = configPath;
-	}
 }
