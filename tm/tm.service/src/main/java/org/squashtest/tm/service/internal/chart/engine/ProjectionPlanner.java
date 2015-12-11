@@ -24,7 +24,6 @@ import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.Query
 import static org.squashtest.tm.service.internal.chart.engine.QueryBuilder.QueryProfile.SUBSELECT_QUERY;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import org.squashtest.tm.domain.chart.ColumnPrototypeInstance;
@@ -52,6 +51,25 @@ import com.querydsl.core.types.dsl.Expressions;
  * 	</ul>
  * </p>
  * 
+ * <h3>Hacked section, pay attention</h3>
+ * <p>
+ * 	Last detail, about grouping on subqueries (which happens when a subquery is defined as axis). The Hibernate HQL parser wont allow 
+ * 	group by/ order by on subqueries because it doesn't allow AST nodes of type query at that position. However it will allow column aliases.
+ * 	So when this situation arise we have to give :
+ * 		<ul>
+ * 			<li>an alias to the subquery in the 'from' clause, </li>
+ * 			<li>use that alias in the group by/order by</li>
+ * 		</ul> 
+ * 
+ * 	<b>Gotcha #1 : </b> such notation is not supported by all databases, fortunately mysql and postgres do <br/>
+ * 	<b>Gotcha #2 : </b> we cannot specify our own aliases because the aliases that Hibernate generates in the 'from' clause and 
+ * the 'group by' clause are inconsistent. A query is not supposed to be expressed that way in the first place. So we have to guess what
+ * the alias will be, and follow the pattern col_0_0, col_0_1. This is highly dependent on Hibernate implementation and might break 
+ * any day.
+ * 	<b>Gotcha #3 : </b> it's safer to specify aliases for subqueries only because hibernate would generate more meaningful aliases when 
+ * the aliases column is a regular column, thoses aliases wouldn't follow the generic pattern col_x_y.
+ * </p>
+ * 
  * 
  * @author bsiri
  *
@@ -65,6 +83,15 @@ class ProjectionPlanner {
 	private QuerydslToolbox utils;
 
 	private QueryProfile profile = MAIN_QUERY;
+	
+	// see comment on that hack above
+	private static final String HIBERNATE_ALIAS_PREFIX = "col_x_0_";
+	
+	private static enum SubqueryAliasStrategy{
+		NONE, 
+		APPEND_ALIAS,
+		REPLACE_BY_ALIAS;
+	}
 
 	ProjectionPlanner(DetailedChartQuery definition, ExtendedHibernateQuery<?> query){
 		super();
@@ -96,16 +123,17 @@ class ProjectionPlanner {
 
 		switch(profile){
 		case MAIN_QUERY :
-			populateClauses(selection, definition.getAxis());
-			populateClauses(selection, definition.getMeasures());
+			populateClauses(selection, definition.getAxis(), SubqueryAliasStrategy.APPEND_ALIAS);
+			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBSELECT_QUERY :
-			populateClauses(selection, definition.getMeasures());
+			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBWHERE_QUERY :
-			populateClauses(selection, definition.getAxis());
+			populateClauses(selection, definition.getAxis(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		}
+
 
 		// now stuff the query
 		query.select(Projections.tuple(selection.toArray(new Expression[]{}))).distinct();
@@ -120,7 +148,7 @@ class ProjectionPlanner {
 		if ( profile != SUBSELECT_QUERY){
 			List<Expression<?>> groupBy = new ArrayList<>();
 
-			populateClauses(groupBy, definition.getAxis());
+			populateClauses(groupBy, definition.getAxis(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			query.groupBy(groupBy.toArray(new Expression[]{}));
 		}
@@ -132,7 +160,7 @@ class ProjectionPlanner {
 
 			List<Expression<?>> expressions = new ArrayList<>();
 
-			populateClauses(expressions, definition.getAxis());
+			populateClauses(expressions, definition.getAxis(), SubqueryAliasStrategy.REPLACE_BY_ALIAS);
 
 			List<OrderSpecifier> orders = new ArrayList<>();
 			populateOrders(orders, expressions);
@@ -143,12 +171,35 @@ class ProjectionPlanner {
 	}
 
 
-	private void populateClauses(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns){
+	private void populateClauses(List<Expression<?>> toPopulate, List<? extends ColumnPrototypeInstance> columns, SubqueryAliasStrategy aliasStrategy){
+		
+		int count = 0;
 		for (ColumnPrototypeInstance col : columns){
+			
+			Expression<?> expr = null;
 
-			Expression<?> expr = utils.createAsSelect(col);
-
+			// regular column
+			if (! utils.isSubquery(col)){
+				expr = utils.createAsSelect(col);
+			}
+			else{
+				String alias = genAlias(count);
+				switch(aliasStrategy){
+				case APPEND_ALIAS : 
+					expr = utils.createAsSelect(col);
+					expr = Expressions.as(expr, alias);
+					break;
+				case REPLACE_BY_ALIAS :					
+					expr = Expressions.stringPath(alias);
+					break;
+				case NONE : 
+					expr = utils.createAsSelect(col);
+					break;							
+				}
+			}
+			
 			toPopulate.add(expr);
+			count++;
 		}
 
 	}
@@ -158,6 +209,10 @@ class ProjectionPlanner {
 			OrderSpecifier spec = new OrderSpecifier(Order.ASC, e);
 			orders.add(spec);
 		}
+	}
+	
+	private String genAlias(int count){
+		return HIBERNATE_ALIAS_PREFIX.replace("x", String.valueOf(count));
 	}
 
 }

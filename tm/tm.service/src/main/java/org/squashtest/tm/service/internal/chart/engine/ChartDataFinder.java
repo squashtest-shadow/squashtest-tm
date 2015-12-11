@@ -321,21 +321,15 @@ public class ChartDataFinder {
 		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
 
 		// ******************* step 3 : run the query*************************
-
-		sessionFactory.getCurrentSession();
-		String strq = detachedQuery.toString();
-		
-		Query hq = sessionFactory.getCurrentSession().createQuery(strq);
-		hq.list();
 		
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
 
 		try{
-		List<Tuple> tuples = finalQuery.fetch();
+			List<Tuple> tuples = finalQuery.fetch();
 
-		// ****************** step 6 : convert the data *********************
+			// ****************** step 6 : convert the data *********************
 
-		return makeSeries(enhancedDefinition, tuples);
+			return makeSeries(enhancedDefinition, tuples);
 		}
 		catch(Exception ex){
 			LOGGER.error("attempted to execute a chart query and failed : ");

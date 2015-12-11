@@ -238,6 +238,10 @@ class QuerydslToolbox {
 	boolean isHavingClauseComponent(Filter filter){
 		return ! isWhereClauseComponent(filter);
 	}
+	
+	boolean isSubquery(ColumnPrototypeInstance proto){
+		return (proto.getColumn().getColumnType() == ColumnType.CALCULATED);
+	}
 
 	// ***************************** high level API ***********************
 
