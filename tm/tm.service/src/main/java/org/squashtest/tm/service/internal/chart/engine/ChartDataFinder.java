@@ -20,13 +20,17 @@
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.hibernate.Query;
 import org.hibernate.SessionFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.chart.AxisColumn;
@@ -291,6 +295,8 @@ import com.querydsl.core.Tuple;
  */
 @Component
 public class ChartDataFinder {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -317,13 +323,25 @@ public class ChartDataFinder {
 		// ******************* step 3 : run the query*************************
 
 		sessionFactory.getCurrentSession();
+		String strq = detachedQuery.toString();
+		
+		Query hq = sessionFactory.getCurrentSession().createQuery(strq);
+		hq.list();
+		
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
 
+		try{
 		List<Tuple> tuples = finalQuery.fetch();
 
 		// ****************** step 6 : convert the data *********************
 
 		return makeSeries(enhancedDefinition, tuples);
+		}
+		catch(Exception ex){
+			LOGGER.error("attempted to execute a chart query and failed : ");
+			LOGGER.error(finalQuery.toString());
+			throw new RuntimeException(ex);
+		}
 
 	}
 
