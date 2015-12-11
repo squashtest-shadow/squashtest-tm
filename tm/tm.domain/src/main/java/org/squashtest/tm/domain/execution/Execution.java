@@ -202,7 +202,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private IssueList issueList = new IssueList();
 
 
@@ -509,7 +509,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/* ***************** Bugged implementation *********************** */
 
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@Override
 	public Project getProject() {
 		return testPlan.getProject();
@@ -748,7 +748,7 @@ DenormalizedFieldHolder, BoundEntity {
 		return testPlan.getIteration();
 	}
 
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}

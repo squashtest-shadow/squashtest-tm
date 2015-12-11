@@ -20,6 +20,17 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -29,8 +40,6 @@ import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
-
-import javax.persistence.*;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -45,7 +54,7 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 
 	@ManyToOne
 	@JoinColumn(name = "PROJECT_ID")
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Project project;
 
 	@Override

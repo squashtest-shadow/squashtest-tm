@@ -133,7 +133,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@NotNull
 	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinColumn(name = "REQUIREMENT_ID")
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Requirement requirement;
 
 	@Field(analyze = Analyze.NO, store = Store.YES)
@@ -141,7 +141,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();

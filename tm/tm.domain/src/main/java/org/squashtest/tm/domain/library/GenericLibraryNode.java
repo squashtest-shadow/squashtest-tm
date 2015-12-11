@@ -52,7 +52,7 @@ import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolder {
 	@ManyToOne(fetch = FetchType.LAZY, cascade=CascadeType.DETACH)
 	@JoinColumn(name = "PROJECT_ID")
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Project project;
 
 	@NotBlank

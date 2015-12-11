@@ -20,6 +20,34 @@
  */
 package org.squashtest.tm.domain.project;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorColumn;
+import javax.persistence.DiscriminatorType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.Size;
+
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.Field;
@@ -41,10 +69,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.exception.NoBugTrackerBindingException;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.*;
-
 /**
  * GenericProject is the superclass of Project and ProjectTemplate. Even though there is no other structural difference
  * between an project and a template, choosing a specialization through inheritance (instead of a specialization through
@@ -59,6 +83,7 @@ import java.util.*;
 @Entity
 @Table(name = "PROJECT")
 public abstract class GenericProject implements Identified, AttachmentHolder {
+
 	@Id
 	@Column(name = "PROJECT_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "project_project_id_seq")

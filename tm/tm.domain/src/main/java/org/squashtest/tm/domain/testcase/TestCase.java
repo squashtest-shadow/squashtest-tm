@@ -194,7 +194,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze=Analyze.NO, store=Store.YES)
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();

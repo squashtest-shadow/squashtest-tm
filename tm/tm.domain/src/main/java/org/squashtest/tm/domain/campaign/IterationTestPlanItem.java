@@ -127,7 +127,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	private Date lastExecutedOn;
 
-	@IndexedEmbedded(includePaths = { "reference", "importance", "name" })
+	@IndexedEmbedded(includeEmbeddedObjectId = true, includePaths = { "reference", "importance", "name" })
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	private TestCase referencedTestCase;
@@ -143,7 +143,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@Field(analyze=Analyze.NO, store=Store.YES)
 	private final List<Execution> executions = new ArrayList<Execution>();
 
-	@IndexedEmbedded(depth=1)
+	@IndexedEmbedded(includeEmbeddedObjectId = true, depth=1)
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID", insertable = false, updatable = false))
 	private Iteration iteration;
@@ -384,7 +384,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		return copy;
 	}
 
-	@IndexedEmbedded
+	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	public Project getProject() {
 		if (iteration != null) {
 			return iteration.getProject();
@@ -574,7 +574,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		execution.notifyAddedTo(this);
 	}
 
-	@IndexedEmbedded(depth = 1)
+	@IndexedEmbedded(includeEmbeddedObjectId = true, depth = 1)
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}
