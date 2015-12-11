@@ -504,6 +504,7 @@
             </resource>
           </webResources>
           <filteringDeploymentDescriptors>true</filteringDeploymentDescriptors>
+          <attachClasses>true</attachClasses>
         </configuration>
       </plugin>
 
