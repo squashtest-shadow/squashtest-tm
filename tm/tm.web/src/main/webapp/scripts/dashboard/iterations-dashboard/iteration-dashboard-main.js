@@ -96,6 +96,15 @@ define([ "require", 'squash.translator', "./iteration-progression-view", "./none
 
 		item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
 
+			//Special case for full pie.
+			if (pie.getData().isFull) {
+				pointIndex = pie.getData().nonzeroindex;
+			}
+			//Special case for empty pie.
+			if (pie.getData().isEmpty){
+				return;
+			}
+			
 			var id = pie.model.get('selectedId');
 			var search = {fields : {}};
 
