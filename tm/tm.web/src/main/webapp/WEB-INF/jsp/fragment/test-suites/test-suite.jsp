@@ -222,8 +222,8 @@
       <c:if test="${ writable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${testSuiteUrl}'" />
       </c:if>
-
-      <comp:toggle-panel id="test-suite-description-panel" titleKey="label.Description"
+<f:message var="labelDescription" key="label.Description" />
+      <comp:toggle-panel id="test-suite-description-panel"  title='${labelDescription} <span class="small txt-discreet">[ID = ${ testSuite.id }]</span>'
         open="${ not empty testSuite.description }">
         <jsp:attribute name="body">
 				<div id="test-suite-description" ${descrRicheditAttributes}>${ testSuite.description }</div>

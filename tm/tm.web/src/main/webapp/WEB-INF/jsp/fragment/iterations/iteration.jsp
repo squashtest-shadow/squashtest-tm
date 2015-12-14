@@ -227,8 +227,8 @@
       <c:if test="${ writable }">
         <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${iterationUrl}'" />
       </c:if>
-
-      <comp:toggle-panel id="iteration-description-panel" titleKey="label.Description" open="true">
+<f:message var="labelDescription" key="label.Description" />
+      <comp:toggle-panel id="iteration-description-panel" title='${labelDescription} <span class="small txt-discreet">[ID = ${ iteration.id }]</span>' open="true">
         <jsp:attribute name="body">
               <div class="display-table-row">
                 <label class="display-table-cell" for="iteration-reference"><f:message key="label.Reference" /></label>

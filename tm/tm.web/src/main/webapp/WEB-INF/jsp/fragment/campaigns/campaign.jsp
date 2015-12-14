@@ -210,8 +210,9 @@
       <c:if test="${ writable }">
         <c:set var="descrRichAttributes" value="class='editable rich-editable' data-def='url=${campaignUrl}' " />
       </c:if>
+<f:message var="labelDescription" key="label.Description" />
 
-      <comp:toggle-panel id="campaign-description-panel" titleKey="label.Description" open="true">
+      <comp:toggle-panel id="campaign-description-panel" title='${labelDescription} <span class="small txt-discreet">[ID = ${ campaign.id }]</span>' open="true">
         <jsp:attribute name="body">
               <div class="display-table-row">
                 <label class="display-table-cell" for="campaign-reference"><f:message key="label.Reference" /></label>
