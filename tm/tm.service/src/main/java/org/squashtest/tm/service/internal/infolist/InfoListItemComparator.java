@@ -20,12 +20,14 @@
  */
 package org.squashtest.tm.service.internal.infolist;
 
-import org.apache.lucene.index.AtomicReaderContext;
-import org.apache.lucene.search.FieldComparator;
-import org.springframework.context.MessageSource;
-
 import java.io.IOException;
 import java.util.Locale;
+
+import org.apache.lucene.index.AtomicReaderContext;
+import org.apache.lucene.index.BinaryDocValues;
+import org.apache.lucene.search.FieldCache;
+import org.apache.lucene.search.FieldComparator;
+import org.springframework.context.MessageSource;
 
 /**
  * FIXME NdGRF I added required methods when upgrading dependencies. As there is no documentation (comments or tests),
@@ -34,7 +36,7 @@ import java.util.Locale;
 public class InfoListItemComparator extends FieldComparator<String> {
 
     private String[] values;
-    private String[] currentReaderValues;
+	private BinaryDocValues currentReaderValues;
     private final String field;
     private String bottom;
     private String i18nRoot;
@@ -76,7 +78,8 @@ public class InfoListItemComparator extends FieldComparator<String> {
     }
 
     private int compareValueToDoc(String val1, int doc) {
-        final String val2 = currentReaderValues[doc];
+
+		final String val2 = currentReaderValues.get(doc).utf8ToString();
 
         int result = 0;
         if (val1 == null) {
@@ -101,13 +104,12 @@ public class InfoListItemComparator extends FieldComparator<String> {
 
     @Override
     public void copy(int slot, int doc) {
-        values[slot] = currentReaderValues[doc];
+		values[slot] = currentReaderValues.get(doc).utf8ToString();
     }
 
     @Override
     public FieldComparator<String> setNextReader(AtomicReaderContext context) throws IOException {
-        // FIXME 90% sure its broken but I'm clueless about what to do
-//        currentReaderValues = FieldCache.DEFAULT.getStrings(reader, field);
+		currentReaderValues = FieldCache.DEFAULT.getTerms(context.reader(), field, true);
         return this;
     }
 
@@ -126,6 +128,6 @@ public class InfoListItemComparator extends FieldComparator<String> {
     @Override
     public String value(int slot) {
 
-        return values[slot];
+		return values[slot];
     }
 }
