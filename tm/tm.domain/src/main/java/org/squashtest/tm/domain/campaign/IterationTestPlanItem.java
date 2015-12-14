@@ -63,6 +63,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.CollectionSizeBridge;
 import org.squashtest.tm.domain.search.LevelEnumBridge;
@@ -577,6 +578,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@IndexedEmbedded(includeEmbeddedObjectId = true, depth = 1)
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
+	}
+
+	@IndexedEmbedded(includeEmbeddedObjectId = true, depth = 1)
+	public Set<Milestone> getMilestones() {
+		return getIteration().getCampaign().getMilestones();
 	}
 
 }
