@@ -687,7 +687,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			Long[] descendantUntestedElementsCount = new Long[]{0L};
 			Map<ExecutionStatus, Long> descendantStatusMap = new HashMap<ExecutionStatus, Long>();
 			makeStatusMap(descendantCoverages, descendantUntestedElementsCount, descendantStatusMap, iterationsIds);
-			Long totalNonVerifiedDescendant = descendantWithNoCoverageCount[0] + descendantUntestedElementsCount[0];
+			Long totalNonVerifiedDescendant = descendantUntestedElementsCount[0];
 			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, totalNonVerifiedDescendant));
 			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, totalNonVerifiedDescendant));
 			
