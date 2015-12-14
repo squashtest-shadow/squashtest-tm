@@ -48,15 +48,18 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-information");
 
-		SearchInputFieldModel labelField = new SearchInputFieldModel("id", getMessageSource().internationalize(
+		SearchInputFieldModel idField = new SearchInputFieldModel("id",
+				getMessageSource().internationalize(
 				"label.id", locale), TEXTFIELD);
-		panel.addField(labelField);
+		panel.addField(idField);
 		SearchInputFieldModel referenceField = new SearchInputFieldModel("referencedTestCase.reference",
 				getMessageSource()
 				.internationalize("label.reference", locale), TEXTFIELDREFERENCE);
 		panel.addField(referenceField);
 
-
+		SearchInputFieldModel labelField = new SearchInputFieldModel("label",
+				getMessageSource().internationalize("label.Label", locale), TEXTFIELD);
+		panel.addField(labelField);
 
 		return panel;
 	}
