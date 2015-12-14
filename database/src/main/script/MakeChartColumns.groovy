@@ -82,7 +82,10 @@ def definition = [
 		columns : [
 			reqId : ['ID', 'NUMERIC', 'id',  "all" ],
 			reqVCount : ['NB_VERSIONS', 'NUMERIC', 'count(requirementVersionCoverages)', 'all', 'reqVCountSub'],
-			reqProject : ['PROJECT', 'NUMERIC', 'project.id', 'none']
+			reqProject : ['PROJECT', 'NUMERIC', 'project.id', 'none'],
+			reqCat : ['CRITICALITY', 'LEVEL_ENUM', 'resource.criticality', 'all'],
+			reqStatus : ['STATUS', 'LEVEL_ENUM', 'resource.status', 'all'],
+			reqCategory : ['CATEGORY', 'INFO_LIST_ITEM', 'resource.category.code', 'all']
 		],
 
 		subqueries : [

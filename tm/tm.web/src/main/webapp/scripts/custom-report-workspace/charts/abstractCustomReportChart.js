@@ -111,14 +111,17 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         case "TEST_CASE_NATURE":
         case "TEST_CASE_TYPE":
         case "REQUIREMENT_VERSION_CATEGORY":
+        case "REQUIREMENT_CATEGORY":	
           return this._getI18nInfoListLegends(protoLabel,legends, squashtm.app.defaultInfoList);
         case "TEST_CASE_IMPORTANCE":
           return this._getI18nLegends(legends, squashtm.app.testCaseImportance);
         case "TEST_CASE_STATUS":
           return this._getI18nLegends(legends, squashtm.app.testCaseStatus);
         case "REQUIREMENT_VERSION_CRITICALITY":
+        case "REQUIREMENT_CRITICALITY":
           return this._getI18nLegends(legends, squashtm.app.requirementCriticality);
         case "REQUIREMENT_VERSION_STATUS":
+        case "REQUIREMENT_STATUS":
           return this._getI18nLegends(legends, squashtm.app.requirementStatus);
         default:
           return this.truncateLegends(legends);
@@ -146,6 +149,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
           prefix = "test-case.type.";
           break;
         case "REQUIREMENT_VERSION_CATEGORY":
+        case "REQUIREMENT_CATEGORY":	
           prefix = "requirement.category.";
           break;
         default:

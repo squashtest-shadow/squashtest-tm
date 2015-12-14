@@ -130,6 +130,8 @@ public class JsonChartWizardData {
 		addLevelEnum("TEST_CASE_IMPORTANCE", TestCaseImportance.class);
 		addLevelEnum("REQUIREMENT_VERSION_CRITICALITY", RequirementCriticality.class);
 		addLevelEnum("REQUIREMENT_VERSION_STATUS", RequirementStatus.class);
+		addLevelEnum("REQUIREMENT_CRITICALITY", RequirementCriticality.class);
+		addLevelEnum("REQUIREMENT_STATUS", RequirementStatus.class);
 	}
 
 	private void addColumnRoles() {
@@ -163,6 +165,7 @@ public class JsonChartWizardData {
 			Map<String, InfoList> infoLists = new HashMap<String, InfoList>();
 
 			infoLists.put("REQUIREMENT_VERSION_CATEGORY", project.getRequirementCategories());
+			infoLists.put("REQUIREMENT_CATEGORY", project.getRequirementCategories());
 			infoLists.put("TEST_CASE_NATURE", project.getTestCaseNatures());
 			infoLists.put("TEST_CASE_TYPE", project.getTestCaseTypes());
 			projectInfoList.put(project.getId().toString(), infoLists);
@@ -171,6 +174,8 @@ public class JsonChartWizardData {
 		Map<String, InfoList> defaultList = new HashMap<String, InfoList>();
 
 		defaultList.put("REQUIREMENT_VERSION_CATEGORY",
+				infoListFinder.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode()));
+		defaultList.put("REQUIREMENT_CATEGORY",
 				infoListFinder.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode()));
 		defaultList.put("TEST_CASE_NATURE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode()));
 		defaultList.put("TEST_CASE_TYPE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode()));
