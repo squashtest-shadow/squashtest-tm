@@ -121,7 +121,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			var id = this.associationId;
 			var  targetUrl = "";
 			var  returnUrl = "";
-			if("testcase" === this.associationType){
+			if("test-case" === this.associationType){
 				targetUrl =  squashtm.app.contextRoot + "/test-cases/" + id + "/verified-requirements";
 			}else if ("teststep" === this.associationType){
 				targetUrl = squashtm.app.contextRoot + "/test-steps/" + id + "/verified-requirements";
