@@ -127,7 +127,7 @@
       
       <div id="admin-stats">
         <div class="admin-stats-table">
-          <label><f:message key="label.version" /></label><span>${ initParam["squashTMVersion"] }</span>
+          <label><f:message key="label.version" /></label><span>${sqTMversion}</span>
         </div>
         <div class="admin-stats-table">
           <label><f:message key="label.statistics" /></label>

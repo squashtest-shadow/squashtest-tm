@@ -33,6 +33,10 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 public class LoginLogoutController {
 
 	@Inject private ConfigurationService configService;
+	
+	@Value("${info.app.version}")
+    private String version;
+	
 	private final static String LOGIN_MESSAGE = "LOGIN_MESSAGE";
 
 //	@Inject
@@ -48,6 +52,7 @@ public class LoginLogoutController {
 	public String login(Model model) {
 		String welcomeMessage = configService.findConfiguration(LOGIN_MESSAGE);
 		model.addAttribute("welcomeMessage", welcomeMessage);
+		model.addAttribute("version", version);
 		return "page/authentication/login";
 	}
 

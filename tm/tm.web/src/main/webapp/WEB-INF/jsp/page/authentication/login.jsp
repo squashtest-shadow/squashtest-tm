@@ -51,7 +51,7 @@
 <body class="nav-up-layout">
   <div id="nav-bar" class="ui-helper-clearfix">
     <div class="snap-left">
-      <span id="nav-up-version">Squash TM v${initParam["squashTMVersion"]} </span>
+      <span id="nav-up-version">Squash TM v${version} </span>
     </div>
     <div class="snap-right">
       <div class="unstyled-notification-pane">

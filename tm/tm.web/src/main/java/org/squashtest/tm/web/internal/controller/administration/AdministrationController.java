@@ -22,6 +22,7 @@ package org.squashtest.tm.web.internal.controller.administration;
 
 import javax.inject.Inject;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -32,12 +33,16 @@ import org.squashtest.tm.service.user.AdministrationService;
 public class AdministrationController {
 	@Inject
 	private AdministrationService administrationService;
+	
+	@Value("${info.app.version}")
+    private String sqTMversion;
 
 	@RequestMapping("/administration")
 	public ModelAndView administration() {
 		AdministrationStatistics adminStat = administrationService.findAdministrationStatistics();
 		ModelAndView mav = new ModelAndView("page/administration/administration");
 		mav.addObject("adminStats", adminStat);
+		mav.addObject("sqTMversion", sqTMversion);
 		return mav;
 	}
 
