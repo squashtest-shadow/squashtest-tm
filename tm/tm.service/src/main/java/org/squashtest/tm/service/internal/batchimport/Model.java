@@ -53,6 +53,8 @@ import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.Requirement;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
@@ -1125,19 +1127,32 @@ public class Model {
 				Long reqVersionId = requirementVersionManagerService.
 						findReqVersionIdByRequirementAndVersionNumber(reqId, versionNumber);
 				if (reqVersionId!=null) {
-					requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqVersionId));
-					//here get milestone and milestoneLocked
-					Collection<Milestone> milestones = milestoneMemberFinder.findMilestonesForRequirementVersion(reqVersionId);
-					for (Milestone milestone : milestones) {
-						requirementTree.bindMilestone(target, milestone.getLabel());
-						if (milestone.getStatus()==MilestoneStatus.LOCKED||milestone.getStatus()==MilestoneStatus.PLANNED) {
-							requirementTree.milestoneLock(target);
-						}
-					}
+					initExistingRequirementVersion(target, reqVersionId);
 				}
 				else {
 					requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.NOT_EXISTS));
 				}
+				//now we init all existing requirement version in the same requirement we are trying to update or add, 
+				// as we need it to make some check (milestone already used by another version...)
+				Requirement req = requirementVersionManagerService.findRequirementById(reqId);
+				List<RequirementVersion> reqVersions = req.getRequirementVersions();
+				for (RequirementVersion requirementVersion : reqVersions) {
+					//we init the RequirementVersionTarget with the same RequirementTarget as the imported one as they have the same Requirement in db
+					RequirementVersionTarget existingRequirementversion = new RequirementVersionTarget(target.getRequirement(),requirementVersion.getVersionNumber());
+					initExistingRequirementVersion(existingRequirementversion, requirementVersion.getId());
+				}
+			}
+		}
+	}
+	
+	private void initExistingRequirementVersion(RequirementVersionTarget target, Long reqVersionId){
+		requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqVersionId));
+		//here get milestone and milestoneLocked
+		Collection<Milestone> milestones = milestoneMemberFinder.findMilestonesForRequirementVersion(reqVersionId);
+		for (Milestone milestone : milestones) {
+			requirementTree.bindMilestone(target, milestone.getLabel());
+			if (milestone.getStatus()==MilestoneStatus.LOCKED||milestone.getStatus()==MilestoneStatus.PLANNED) {
+				requirementTree.milestoneLock(target);
 			}
 		}
 	}

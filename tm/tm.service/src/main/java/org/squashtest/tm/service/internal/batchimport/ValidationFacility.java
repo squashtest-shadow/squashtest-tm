@@ -1178,8 +1178,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		List<String> milestones = instr.getMilestones();
 		RequirementVersionTarget target = instr.getTarget();
-
+		
 		for (String milestone : milestones) {
+			//checking in model wich keep trace of change since the begining of the batch
 			if (model.checkMilestonesAlreadyUsedInRequirement(milestone,target)) {
 				logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.WARN_MILESTONE_USED, REQ_VERSION_MILESTONE.header)
 						.withImpact(Messages.IMPACT_MILESTONE_NOT_BINDED).build());
