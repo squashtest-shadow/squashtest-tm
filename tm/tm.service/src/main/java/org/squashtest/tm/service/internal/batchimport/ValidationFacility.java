@@ -1259,7 +1259,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
 		if (tcId != null && reqVersionId != null
 				&& coverageDao.byRequirementVersionAndTestCase(reqVersionId, tcId) != null) {
-			logs.addEntry(createLogFailure(target, Messages.ERROR_COVERAGE_ALREADY_EXIST));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_COVERAGE_ALREADY_EXIST)
+					.withImpact(Messages.IMPACT_COVERAGE_FAILURE).build());
 		}
 	}
 
