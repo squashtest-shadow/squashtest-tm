@@ -39,7 +39,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.task.TaskExecutor;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindException;
@@ -88,6 +87,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableMultiSorting;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+import org.squashtest.tm.web.internal.model.json.JsonUrl;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
@@ -165,8 +165,7 @@ public class GenericProjectController {
 
 	@RequestMapping(value = "/new-template", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public @ResponseBody
-	HttpHeaders createNewTemplate(@RequestBody @Valid ProjectTemplate template) {
+	public @ResponseBody JsonUrl createNewTemplate(@RequestBody @Valid ProjectTemplate template) {
 		try {
 			projectManager.persist(template);
 		} catch (NameAlreadyInUseException ex) {
@@ -569,11 +568,9 @@ public class GenericProjectController {
 		}
 	}
 
-	private HttpHeaders getUrlToProjectInfoPage(GenericProject project){
+	private JsonUrl getUrlToProjectInfoPage(GenericProject project){
 		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
 				.buildAndExpand(project.getId());
-		HttpHeaders head = new HttpHeaders();
-		head.setLocation(uri.toUri());
-		return head;
+		return new JsonUrl(uri.toString());
 	}
 }

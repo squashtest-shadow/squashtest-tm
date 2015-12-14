@@ -1,4 +1,4 @@
-/*
+/**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2015 Henix, henix.fr
  *
@@ -18,30 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery.squash.bindviewformdialog","./NewTemplateDialogModel", "jquery.squash"],
-		function(BindViewFormDialog, NewTemplateDialogModel) {
-	"use strict";
+package org.squashtest.tm.web.internal.model.json;
 
-	var templateFormDialog = BindViewFormDialog.extend({
-		el : "#add-template-dialog-tpl",
-		popupSelector : "#add-template-dialog",
-		model : new NewTemplateDialogModel(),
+/**
+ * Just a class to send back a JSON to client as backbone save is waiting a JSON.
+ * Our automatic error notification system catch the response if i send a string even if status is OK
+ * @author jthebault
+ *
+ */
+public class JsonUrl {
 
-		//overriding callConfirm method of BindViewFormDialog to have redirection after the save success
-		callConfirm : function(){
-			this.updateModelFromCKEditor();
-			this.model.save().success(function(response, status, options){
-				document.location.href = response.url;
-			});
-		},
+	private String url;
 
-		onConfirmSuccessAndResetDialog : function(){
-			this.trigger("newtemplate.confirm");
-			BindViewFormDialog.prototype.onConfirmSuccessAndResetDialog.call(this);
-		}
+	public JsonUrl(String url) {
+		super();
+		this.url = url;
+	}
 
-	});
+	public String getUrl() {
+		return url;
+	}
 
-	return templateFormDialog;
-
-});
+	public void setUrl(String url) {
+		this.url = url;
+	}
+	
+	
+}
