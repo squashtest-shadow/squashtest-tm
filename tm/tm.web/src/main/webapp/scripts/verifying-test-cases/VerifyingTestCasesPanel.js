@@ -58,7 +58,6 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			squash.vent.trigger("verifyingtestcasespanel:unbound", {
 				model : ids
 			});
-			$(self).formDialog('close');
 		};
 	}
 
@@ -135,9 +134,10 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 			return function() {
 				var ids = table().getSelectedIds();
 				if (ids.length > 0) {
-					unbind(ids).done(batchSucceed(ids));
+          $(this).formDialog("close");
+					unbind(ids).done(unbindDialogSucceed(ids));
 				}
-			}; 
+			};
 		},
 
 		onCloseBatch : function() {
@@ -166,6 +166,7 @@ define([ "jquery", "app/squash.wreqr.init", "backbone", "handlebars", "underscor
 						$(self).data('entity-id', null);
 					});
 				}
+        $(this).formDialog("close");
 			};
 		},
 
