@@ -33,7 +33,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 
 
-@Component("squashtest.core.bugtracker.BugTrackerInterfaceDescriptor")
+@Component
 public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor {
 
 	private final static String REPORT_PRIORITY_LABEL  	 = "interface.report.priority.label";
