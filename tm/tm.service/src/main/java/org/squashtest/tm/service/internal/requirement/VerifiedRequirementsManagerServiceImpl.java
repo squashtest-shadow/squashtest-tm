@@ -682,17 +682,15 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		if (hasDescendant) {
 			verificationRate.setAncestor(true);
 			validationRate.setAncestor(true);
-			Long[] descendantWithNoCoverageCount = new Long[]{0L};
-			Set<RequirementVersionCoverage> descendantCoverages = getDescendantCoverages(descendants,descendantWithNoCoverageCount);
+			Set<RequirementVersionCoverage> descendantCoverages = getDescendantCoverages(descendants);
 			Long[] descendantUntestedElementsCount = new Long[]{0L};
 			Map<ExecutionStatus, Long> descendantStatusMap = new HashMap<ExecutionStatus, Long>();
 			makeStatusMap(descendantCoverages, descendantUntestedElementsCount, descendantStatusMap, iterationsIds);
-			Long totalNonVerifiedDescendant = descendantUntestedElementsCount[0];
-			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, totalNonVerifiedDescendant));
-			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, totalNonVerifiedDescendant));
+			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
+			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
 			
 			Long[] allUntestedElementsCount = new Long[]{0L};
-			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + totalNonVerifiedDescendant;
+			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + descendantUntestedElementsCount[0];
 			Map<ExecutionStatus, Long> allStatusMap = mergeMapResult(mainStatusMap,descendantStatusMap);
 			verificationRate.setRequirementVersionGlobalRate(doRateVerifiedCalculation(allStatusMap, allUntestedElementsCount[0]));
 			validationRate.setRequirementVersionGlobalRate(doRateValidatedCalculation(allStatusMap, allUntestedElementsCount[0]));
@@ -746,15 +744,12 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 
 	private Set<RequirementVersionCoverage> getDescendantCoverages(
-			List<RequirementVersion> descendants, Long[] descendantWithNoCoverageCount) {
+			List<RequirementVersion> descendants) {
 		Set<RequirementVersionCoverage> covs = new HashSet<RequirementVersionCoverage>();
 		for (RequirementVersion requirementVersion : descendants) {
 			Set<RequirementVersionCoverage> coverages = requirementVersion.getRequirementVersionCoverages();
 			if (coverages.size()>0) {
 				covs.addAll(coverages);
-			}
-			else {
-				descendantWithNoCoverageCount[0] = descendantWithNoCoverageCount[0] + 1;
 			}
 		}
 		return covs;
