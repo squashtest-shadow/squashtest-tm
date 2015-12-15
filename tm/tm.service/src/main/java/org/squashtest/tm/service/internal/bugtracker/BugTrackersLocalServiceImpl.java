@@ -25,6 +25,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +60,7 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.Issue;
@@ -535,6 +537,22 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			// Bind the BT issues to their owner with the kept informations
 			List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators,
 					localIssues, issueDetectorByListId);
+
+			// sort issue by remote issue id because it's what is displayed.
+			Collections.sort(ownerships, new Comparator<IssueOwnership<RemoteIssueDecorator>>() {
+
+				@Override
+				public int compare(IssueOwnership<RemoteIssueDecorator> o1, IssueOwnership<RemoteIssueDecorator> o2) {
+					int issueId1 = Integer.parseInt(o1.getIssue().getId());
+					int issueId2 = Integer.parseInt(o2.getIssue().getId());
+					return issueId1 - issueId2;
+				}
+
+			});
+			
+			if (SortOrder.DESCENDING.equals(sorter.getSortOrder())) {
+				Collections.reverse(ownerships);
+			}
 
 			Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds, bugTracker.getId());
 			return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
