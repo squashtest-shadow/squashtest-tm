@@ -128,12 +128,7 @@ public class ChartController {
 		return new JsonChartInstance(instance);
 	}
 
-	// ******************* TEMPORARY TEST CODE BELOW *********************
 
-	@RequestMapping(value = "/test-page", method = RequestMethod.GET)
-	public String getTestPage(){
-		return "charts-render-test.html";
-	}
 
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
