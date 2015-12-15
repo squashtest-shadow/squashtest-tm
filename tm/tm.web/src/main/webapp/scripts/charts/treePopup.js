@@ -69,18 +69,34 @@ define(["jquery", "backbone", "underscore", "handlebars", "tree", "squash.transl
 
 			events: {
 				"confirmdialogcancel": "cancel",
-				"confirmdialogconfirm": "confirm"
+				"confirmdialogconfirm": "confirm",
+				"confirmdialogvalidate" : "validate"
 			},
 
 			cancel: function (event) {
 				this.remove();
 
 			},
+			
+			validate : function(event){
+				
+				var nbSelect = $("#tree").jstree('get_selected').size();
+				if (nbSelect == 0){
+					var title = translator.get('wizard.perimeter.select.title');
+					var msg = translator.get('wizard.perimeter.select.msg');				
+					$.squash.openMessage(title, msg); 
+					return false;
+				}
+				return true;
+		
+			},
 
 			confirm: function (event) {
 				var self = this;
+
 				self.trigger("treePopup.confirm");
 				this.remove();
+
 			},
 			
 			
