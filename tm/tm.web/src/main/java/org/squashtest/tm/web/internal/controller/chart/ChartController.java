@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportNodeType;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -110,7 +111,8 @@ public class ChartController {
 		mav.addObject("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
 		mav.addObject("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
 		mav.addObject("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
-				
+		mav.addObject("executionStatus",
+				i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 		return mav;
 	}
 

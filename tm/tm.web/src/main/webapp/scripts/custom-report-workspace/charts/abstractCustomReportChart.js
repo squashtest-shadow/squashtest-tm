@@ -106,6 +106,10 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       if (protoDatatype === "DATE") {
         return this._formatDateLegend(legends, axis);
       }
+      
+      if (protoDatatype === "EXECUTION_STATUS"){
+    	     return this._getI18nLegends(legends, squashtm.app.executionStatus);
+      }
 
       switch (protoLabel) {
         case "TEST_CASE_NATURE":
