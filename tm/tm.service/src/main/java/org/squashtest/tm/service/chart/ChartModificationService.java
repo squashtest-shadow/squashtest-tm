@@ -38,7 +38,7 @@ public interface ChartModificationService {
 
 	/**
 	 * Returns all the ColumnPrototypes known in the database, indexed by EntityType.
-	 *
+	 * For 1.13 we filter the CUF in a where clause in the request.
 	 * @return
 	 */
 	Map<EntityType, Set<ColumnPrototype>> getColumnPrototypes();

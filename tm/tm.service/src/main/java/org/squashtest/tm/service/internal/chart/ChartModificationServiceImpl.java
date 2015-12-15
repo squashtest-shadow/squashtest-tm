@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.chart.ChartInstance;
 import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
@@ -71,7 +72,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 		Map<EntityType, Set<ColumnPrototype>> prototypes;
 
-		prototypes = factory.from(prototype).where(prototype.business.eq(true)).orderBy(prototype.id.asc())
+		//For 1.13 we don't support CUF so it's filtered. Remove the where clause when cuf must be supported
+		prototypes = factory.from(prototype).where(prototype.business.eq(true)).where(prototype.columnType.ne(ColumnType.CUF)).orderBy(prototype.id.asc())
 				.transform(groupBy(prototype.specializedType.entityType).as(set(prototype)));
 
 		return prototypes;
