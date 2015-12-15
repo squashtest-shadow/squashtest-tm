@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -38,6 +39,9 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.MultiMap;
+import org.joda.time.DateTime;
+import org.joda.time.Duration;
+import org.joda.time.Interval;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -763,11 +767,9 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return filtered;
 	}
 
-	private List<Long> findAllTestCaseIds(List<RequirementVersionCoverage> coverages) {
+	private List<Long> convertSetToList(Map<Long, Long> nbSimpleCoverageByTestCase) {
 		List<Long> testCaseIds = new ArrayList<Long>();
-		for (RequirementVersionCoverage cov : coverages) {
-			testCaseIds.add(cov.getVerifyingTestCase().getId());
-		}
+		testCaseIds.addAll(nbSimpleCoverageByTestCase.keySet());
 		return testCaseIds;
 	}
 
@@ -785,7 +787,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		Map<Long, Long> nbSteppedCoverageByTestCase = new HashMap<Long, Long>();
 		partRequirementVersionCoverage(covs,simpleCoverage,stepedCoverage,nbSimpleCoverageByTestCase,nbSteppedCoverageByTestCase);
 		//Find the test case with at least one itpi
-		List<Long> simpleCoverageTCIds = findAllTestCaseIds(simpleCoverage);
+		List<Long> simpleCoverageTCIds = convertSetToList(nbSimpleCoverageByTestCase);
 		List<Long> simpleTCWithItpiIds = findTCWithItpi(simpleCoverageTCIds,iterationsIds);
 		//Filter to have the test case without itpi
 		List<Long> mainVersionTCWithoutItpiIds = filterTCIds(simpleCoverageTCIds,simpleTCWithItpiIds);
@@ -794,11 +796,12 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		//STEPPED
 		//we need : TC without ITPI -> untested, TC With ITPI but no execution -> treated like fastpass (ie the status of ITPI is applied to each stepped coverage),
 		//TC with execution -> treated at test step level
-		List<Long> steppedCoverageTCIds = findAllTestCaseIds(stepedCoverage);
+		List<Long> steppedCoverageTCIds = convertSetToList(nbSteppedCoverageByTestCase);
 		List<Long> steppedCoverageTCIdsWithITPI = iterationDao.findVerifiedTcIdsInIterations(steppedCoverageTCIds, iterationsIds);
 		List<Long> steppedCoverageTCIdsWithExecution = iterationDao.findVerifiedTcIdsInIterationsWithExecution(steppedCoverageTCIds, iterationsIds);
 		List<Long> steppedCoverageTCIdsWithoutITPI = filterTCIds(steppedCoverageTCIds,steppedCoverageTCIdsWithITPI);
 		List<Long> steppedCoverageTCIdsWithoutExecution = filterTCIds(steppedCoverageTCIdsWithITPI,steppedCoverageTCIdsWithExecution);
+		
 		//TC With ITPI but no execution are treated like simple testcase
 		Map<ExecutionStatus, Long> statusMapForSteppedNoExecution = findResultsForSteppedCoverageWithoutExecution(stepedCoverage,steppedCoverageTCIdsWithoutExecution, iterationsIds, nbSteppedCoverageByTestCase);
 		untestedElementsCount[0] = calculateUntestedElementCount(mainVersionTCWithoutItpiIds,nbSimpleCoverageByTestCase, stepedCoverage, steppedCoverageTCIdsWithoutITPI);
@@ -851,7 +854,18 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		for (Long testStepsId : testStepsIds) {
 			List<ExecutionStep> executionSteps = (List<ExecutionStep>) executionsStatus.get(testStepsId);
 			for (ExecutionStep executionStep : executionSteps) {
-				ExecutionStatus status = executionStep.getExecutionStatus();
+				//Here come horrible code to detect if ITPI was fast passed AFTER execution.
+				//We have no attribute in model to help us, and no time to develop a proper solution.
+				//So we'll use execution date on itpi and exec. If the delta between two date is superior to 3 seconds, 
+				//we consider it's a fast pass
+				Execution execution = executionStep.getExecution();
+				IterationTestPlanItem itpi = execution.getTestPlan();
+				DateTime itpiLastExecutedOn = new DateTime(itpi.getLastExecutedOn().getTime());
+				DateTime execLastExecutedOn = new DateTime(execution.getLastExecutedOn().getTime());
+				Interval interval = new Interval(execLastExecutedOn,itpiLastExecutedOn);
+				boolean fastPass = interval.toDuration().isLongerThan(new Duration(2000L));
+				//If we have a fast path use it for step status
+				ExecutionStatus status = fastPass ? itpi.getExecutionStatus() : executionStep.getExecutionStatus();
 				Long memo = result.get(status);
 				if (memo==null) {
 					result.put(status, 1L);
