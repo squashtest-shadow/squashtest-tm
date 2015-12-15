@@ -1021,16 +1021,17 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			List<RequirementVersion> descendants, RequirementCoverageStat stats) {
 		
 		Rate coverageRate = new Rate();
+		boolean hasValidDescendant = descendants.size()>0;
 		coverageRate.setRequirementVersionRate(calculateCoverageRate(mainVersion));
 		
-		if (mainRequirement.hasContent()) {
+		if (hasValidDescendant) {
 			coverageRate.setRequirementVersionChildrenRate(calculateCoverageRate(descendants));
 			List<RequirementVersion> all = getAllRequirementVersion(mainVersion, descendants);
 			coverageRate.setRequirementVersionGlobalRate(calculateCoverageRate(all));
 			coverageRate.setAncestor(true);
 		}
 		stats.addRate("coverage",coverageRate);
-		stats.setAncestor(mainRequirement.hasContent());
+		stats.setAncestor(hasValidDescendant);
 	}
 
 	private List<RequirementVersion> getAllRequirementVersion(
