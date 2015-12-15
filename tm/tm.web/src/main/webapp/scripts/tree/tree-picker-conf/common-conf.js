@@ -83,10 +83,6 @@ define(function() {
 						return false ;
 					}
 
-          if (settings.forbidSelectFolder && $(node).is("[rel='folder']")){
-						return false;
-					}
-          
 					return true;
 				}
 			};

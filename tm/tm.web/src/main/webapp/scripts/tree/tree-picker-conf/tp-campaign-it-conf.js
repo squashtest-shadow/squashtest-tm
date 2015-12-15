@@ -44,6 +44,13 @@ define(function(){
 							"valid_children" : [ "campaign", "folder" ]
 						}
 					}
+				},
+        conditionalselect : function(node) {
+
+					if ($(node).is("[rel='campaign']")||$(node).is("[rel='iteration']")){
+						return true;
+					}
+					return false;
 				}
 			};
 		}

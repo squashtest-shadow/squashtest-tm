@@ -99,9 +99,7 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
         var treeConfig = {
             model : model,
             treeselector: self.treeSelector,
-            workspace: "campaign-it",
-            canSelectProject:false,
-            forbidSelectFolder:true
+            workspace: "campaign-it"
         };
         tree.initLinkableTree(treeConfig);
       });
