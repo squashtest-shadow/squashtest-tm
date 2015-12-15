@@ -65,6 +65,7 @@ import com.querydsl.core.types.SubQueryExpression;
 import com.querydsl.core.types.TemplateExpression;
 import com.querydsl.core.types.Visitor;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.DateOperation;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -392,6 +393,7 @@ class QuerydslToolbox {
 	 * @param column
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	BooleanExpression createAttributePredicate(Filter filter){
 		DataType datatype = filter.getDataType();
 		Operation operation = filter.getOperation();
@@ -403,7 +405,9 @@ class QuerydslToolbox {
 		List<Expression<?>> valExpr = makeOperands(operation, datatype, filter.getValues());
 		Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
-		return createPredicate(operation, attrExpr, operands);
+
+
+		return createPredicate(operation, attrExpr, datatype, operands);
 	}
 
 	/**
@@ -440,7 +444,7 @@ class QuerydslToolbox {
 			List<Expression<?>> valExpr = makeOperands(filter.getOperation(), filter.getDataType(), filter.getValues());
 			Expression<?>[] operands = valExpr.toArray(new Expression[]{});
 
-			predicate = createPredicate(filter.getOperation(), subexpr, operands);
+			predicate = createPredicate(filter.getOperation(), subexpr, submeasure.getDataType(), operands);
 
 			break;
 
@@ -501,7 +505,8 @@ class QuerydslToolbox {
 	 * apply this operator.
 	 * 
 	 */
-	BooleanExpression createPredicate(Operation operation, Expression<?> baseExp, Expression... operands){
+	BooleanExpression createPredicate(Operation operation, Expression<?> baseExp, DataType datatype,
+			Expression... operands) {
 
 		BooleanExpression predicate = null;
 
@@ -510,6 +515,11 @@ class QuerydslToolbox {
 			String arg = operands[0].toString();
 			Ops operator = (arg.equals("true") || arg.equals("1")) ? Ops.IS_NOT_NULL : Ops.IS_NULL;
 			predicate = Expressions.predicate(operator, baseExp);
+		}
+
+		// special case for date
+		else if (DataType.DATE.equals(datatype)) {
+			predicate = createDatePredicate(operation, baseExp, operands);
 		}
 		// normal case
 		else{
@@ -525,6 +535,39 @@ class QuerydslToolbox {
 
 	}
 
+
+	@SuppressWarnings("unchecked")
+	private BooleanExpression createDatePredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
+
+		Expression<Date> exp = (Expression<Date>) operands[0];
+		DateOperation<Date> dateOp = Expressions.dateOperation(Date.class, DateTimeOps.DATE, baseExp);
+		BooleanExpression result = null;
+		switch (operation) {
+		case EQUALS:
+			result = dateOp.eq(exp);
+			break;
+		case BETWEEN:
+			result = dateOp.between(exp, (Expression<Date>) operands[1]);
+			break;
+		case GREATER:
+			result = dateOp.gt(exp);
+			break;
+		case GREATER_EQUAL:
+			result = dateOp.goe(exp);
+			break;
+		case LOWER:
+			result = dateOp.lt(exp);
+			break;
+		case LOWER_EQUAL:
+			result = dateOp.loe(exp);
+			break;
+		default:
+			throw new IllegalArgumentException("Operation '" + operation + "' not yet supported");
+		}
+
+		return result;
+
+	}
 
 	List<Expression<?>> createOperands(Filter filter, Operation operation) {
 		DataType type = filter.getDataType();
