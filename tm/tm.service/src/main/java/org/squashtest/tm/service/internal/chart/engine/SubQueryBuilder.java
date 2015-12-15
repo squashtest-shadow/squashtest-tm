@@ -143,7 +143,8 @@ class SubQueryBuilder extends QueryBuilder {
 		Operation operation = subwhereProfileFilterExpression.getOperation();
 		List<Expression<?>> operands = utils.createOperands(subwhereProfileFilterExpression, operation);
 
-		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, operands.toArray(new Expression[]{}));
+		BooleanExpression predicate = utils.createPredicate(operation, measureExpr, measure.getDataType(),
+				operands.toArray(new Expression[] {}));
 
 		if (utils.isAggregate(measure.getOperation())){
 			detachedQuery.having(predicate);
