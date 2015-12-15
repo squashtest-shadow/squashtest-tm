@@ -36,6 +36,7 @@ import static org.squashtest.tm.domain.chart.Operation.LOWER_EQUAL;
 import static org.squashtest.tm.domain.chart.Operation.MAX;
 import static org.squashtest.tm.domain.chart.Operation.MIN;
 import static org.squashtest.tm.domain.chart.Operation.NONE;
+import static org.squashtest.tm.domain.chart.Operation.NOT_EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
 
 import java.util.Arrays;
@@ -46,7 +47,7 @@ public enum ColumnRole {
 	// @formatter:off
 	AXIS (BY_DAY, BY_MONTH, BY_YEAR, NONE),
 	MEASURE(AVG, COUNT, MIN, MAX, SUM),
-	FILTER (BETWEEN, EQUALS, GREATER, GREATER_EQUAL, LIKE, LOWER, LOWER_EQUAL, IN);
+	FILTER (BETWEEN, EQUALS, GREATER, GREATER_EQUAL, LIKE, LOWER, LOWER_EQUAL, IN, NOT_EQUALS);
 	// @formatter:on
 
 	private EnumSet<Operation> operations;

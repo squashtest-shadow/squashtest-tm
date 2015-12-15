@@ -561,6 +561,9 @@ class QuerydslToolbox {
 		case LOWER_EQUAL:
 			result = dateOp.loe(exp);
 			break;
+		case NOT_EQUALS:
+			result = dateOp.ne(exp);
+			break;
 		default:
 			throw new IllegalArgumentException("Operation '" + operation + "' not yet supported");
 		}
@@ -711,6 +714,9 @@ class QuerydslToolbox {
 		case MAX: operator = ExtOps.S_MAX; break;
 		case MIN: operator = ExtOps.S_MIN; break;
 		case NOT_NULL : operator = Ops.IS_NOT_NULL; break;
+		case NOT_EQUALS:
+			operator = Ops.NE;
+			break;
 		default : throw new IllegalArgumentException("Operation '"+operation+"' not yet supported");
 		}
 

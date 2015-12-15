@@ -36,6 +36,7 @@ import static org.squashtest.tm.domain.chart.Operation.LOWER_EQUAL;
 import static org.squashtest.tm.domain.chart.Operation.MAX;
 import static org.squashtest.tm.domain.chart.Operation.MIN;
 import static org.squashtest.tm.domain.chart.Operation.NONE;
+import static org.squashtest.tm.domain.chart.Operation.NOT_EQUALS;
 import static org.squashtest.tm.domain.chart.Operation.NOT_NULL;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
 
@@ -45,9 +46,9 @@ import java.util.EnumSet;
 public enum DataType {
 
 	// @formatter:off
-	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE),
+	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE, NOT_EQUALS),
 	STRING (EQUALS, LIKE, COUNT, NONE),
-	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR),
+	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR, NOT_EQUALS),
 	EXISTENCE(NOT_NULL),
 	BOOLEAN(EQUALS, COUNT, NONE),
 	LEVEL_ENUM(EQUALS, IN, COUNT, NONE),

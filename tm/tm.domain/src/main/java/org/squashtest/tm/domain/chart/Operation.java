@@ -37,6 +37,7 @@ public enum Operation {
 	SUM,
 	COUNT,
 	NOT_NULL,
+	NOT_EQUALS,
 	BY_DAY,
 	BY_MONTH,
 	BY_YEAR;
