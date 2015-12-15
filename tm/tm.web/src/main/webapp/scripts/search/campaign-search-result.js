@@ -302,7 +302,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		
 		configureExecutionDialog : function() {
 			var self = this;
-			var addITPIDialog = $("#add-new-execution-dialog").formDialog();
+			var addITPIDialog = $("#test-plan-dialog").formDialog({
+				height : 400
+			});
 
  
 			addITPIDialog.activate = function(arg) {};
@@ -330,7 +332,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 
 			
 				// Get the place where we want to put the executions 
-				var nodes = $("#tree").jstree('get_selected');
+				var nodes = $("#tp-dialog-tree").jstree('get_selected');
 				
 				// Node must be an iteration (and only one for now)
 				if (nodes.getResType() !== "iterations") {
@@ -360,7 +362,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			addITPIDialog.on('formdialogadd',function() {
 
 				// Get the place where we want to add the iteration
-				var nodes = $("#tree").jstree('get_selected');
+				var nodes = $("#tp-dialog-tree").jstree('get_selected');
 
 				// Node must be a campaign (and only one for now)
 				if (nodes.getResType() !== "campaigns") {

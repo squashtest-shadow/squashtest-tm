@@ -63,7 +63,7 @@
 				tree : {
 					model : /*[[${ rootModel }]]*/ '',
 					workspace : "campaign",
-					treeselector : "#tree",
+					treeselector : "#tp-dialog-tree",
 					selectedNode : /*[[${selectedNode}]]*/[],
 					state : {  opened    : true },
   					openedNode : /*[[${openedNode}]]*/[]
@@ -91,6 +91,7 @@
   <script type="text/javascript">
 publish("reload.auto-suite-overview-popup");
 </script>
+
 </head>
 <body>
   <div id="navigation" th:include="navbar.frag :: navbar('campaign')">
@@ -250,39 +251,26 @@ publish("reload.auto-suite-overview-popup");
 			
 			<!-- Get another popup to add the selected execution in an existing iteration and also allow user to add a new iteration where they want -->
 			
-			<div id="add-new-execution-dialog" style="height: 200px!important"
-				class="not-displayed popup-dialog search-minimal-height" th:title="#{report.form.tree-picker.dialog.title}" >
-
-            
-				<div class="main">
-	         	 	<div id="tree-pane">
-	          
-			            <!--  ____________________HTML TREE__________________________ -->
-			            <!-- 	<tree:_html-tree treeId="tree" /> -->
-			
-			        
-			               <div id="tree" class="tree" th:attr="data-importable=${ importable }" data-importable="true"></div>
-			               
-			                <div th:remove="tag"
-			              th:with="importable = ( ${sec.hasRole('ROLE_TM_PROJECT_MANAGER')} or ${sec.hasRole('ROLE_ADMIN')})">
-			              
-			              
-			
-			            <!-- /	_________________HTML TREE___________________ -->
-			          </div>
-					</div>
+			<div id="test-plan-dialog" 
+				class="not-displayed popup-dialog" th:title="#{search.campaign.testplandialog.title}" >
+				
+				<div class="main" style="height:100%">
+	         	 	<div id="tp-dialog-treepane" style="height:80%; overflow:auto; border-bottom:1px solid black;margin-bottom:1em;">
+			       		<div id="tp-dialog-tree" style="border:none;"></div>
+			       	</div>	
+			       	<span id="tp-dialog-hint" class="nota-bene"  th:text="#{search.campaign.testplandialog.hint}">hint</span>
+				</div>
+				
 				<div class="popup-dialog-buttonpane">
-				<input type="button" th:value="#{tree.button.new-iteration.label}" value="add"
-          data-def="evt=add, mainbtn" style="float:left"/>
-			        <input type="button" th:value="#{label.Confirm}" value="confirm"
-          data-def="evt=confirm, mainbtn=confirm, state=confirm" />
-        <input type="button" th:value="#{label.Cancel}" value="cancel" data-def="evt=cancel, mainbtn" />
+					<input type="button" th:value="#{tree.button.new-iteration.label}" value="add" data-def="evt=add, mainbtn" style="float:left"/>
+					<input type="button" th:value="#{label.Add}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
+			        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel, mainbtn" />
        
 				</div>
 			</div>
 			
 			
-			</div></div>
+			</div>
       </div>
     </div>
   
