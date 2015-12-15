@@ -173,6 +173,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         case "BY_DAY":
           return this._formatDate(legends, translator.get("squashtm.dateformatShort"));
         case "BY_MONTH":
+        case "BY_WEEK" :
           return this._formatDate(legends, translator.get("squashtm.dateformatMonthshort"));
         case "BY_YEAR":
           return legends;	// this is a year already
@@ -183,7 +184,8 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
     
     _formatDate : function(legends, outformat){
 		
-		function splitdate(str){
+		function splitdate(intDate){	
+			str = intDate.toString();
 			var parsed = {};
 			// by month components
 			parsed.year = str.substring(0,4);
@@ -202,8 +204,13 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
           if (Array.isArray(legend)) {
             return self._formatDate(legend, outformat);
           }
-          var d = splitdate(legend.toString());
-          return outformat.replace('yyyy', d.year).replace('MM', d.month).replace('dd', d.day);
+          if (!! legend){
+	          var d = splitdate(legend);
+	          return outformat.replace('yyyy', d.year).replace('MM', d.month).replace('dd', d.day);
+          }
+          else{
+        	  return translator.get("label.lower.Never");
+          }
         });
     },
 

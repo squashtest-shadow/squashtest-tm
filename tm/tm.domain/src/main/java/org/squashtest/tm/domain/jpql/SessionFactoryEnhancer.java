@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.jpql;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
@@ -84,6 +85,7 @@ import java.util.List;
 public class SessionFactoryEnhancer {
 
 	public static final String FN_NAME_GROUP_CONCAT = "group_concat";
+	public static final String FN_NAME_WEEK = "week";
 
 
 	public static final String FN_NAME_SUM = "s_sum";
@@ -94,7 +96,8 @@ public class SessionFactoryEnhancer {
 
 	public static enum FnSupport {
 		GROUP_CONCAT,
-		STR_AGG
+		STR_AGG,
+		EXTRACT_WEEK
 	}
 
 	/* ************************************************
@@ -122,6 +125,8 @@ public class SessionFactoryEnhancer {
 				case STR_AGG:
 					hibConfig.addSqlFunction(FN_NAME_GROUP_CONCAT, new StringAggFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
 					break;
+				case EXTRACT_WEEK: 
+					hibConfig.addSqlFunction(FN_NAME_WEEK, new ExtractWeek(FN_NAME_WEEK, IntegerType.INSTANCE));
 			}
 		}
 
@@ -224,6 +229,29 @@ public class SessionFactoryEnhancer {
 			return "string_agg( cast(" + arguments.get(0) + " as text),'" + separator + "' order by " + arguments.get(2)
 				+ " " + direction + ")";
 		}
+	}
+	
+	/**
+	 * Support for week(timestamp) function
+	 * 
+	 */
+	private static final class ExtractWeek extends  StandardSQLFunction{
+
+		ExtractWeek(String name) {
+			super(name);
+		}
+
+		public ExtractWeek(String name, Type registeredType) {
+			super(name, registeredType);
+			// TODO Auto-generated constructor stub
+		}
+		
+		@Override
+		public final String render(Type firstArgumentType, List arguments, SessionFactoryImplementor sessionFactory) {
+			return "extract(week from "+arguments.get(0) +")";
+		}
+		
+		
 	}
 
 

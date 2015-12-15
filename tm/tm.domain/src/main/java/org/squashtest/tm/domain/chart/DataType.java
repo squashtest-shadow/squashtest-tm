@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.chart;
 import static org.squashtest.tm.domain.chart.Operation.AVG;
 import static org.squashtest.tm.domain.chart.Operation.BETWEEN;
 import static org.squashtest.tm.domain.chart.Operation.BY_DAY;
+import static org.squashtest.tm.domain.chart.Operation.BY_WEEK;
 import static org.squashtest.tm.domain.chart.Operation.BY_MONTH;
 import static org.squashtest.tm.domain.chart.Operation.BY_YEAR;
 import static org.squashtest.tm.domain.chart.Operation.COUNT;
@@ -48,7 +49,7 @@ public enum DataType {
 	// @formatter:off
 	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE, NOT_EQUALS),
 	STRING (EQUALS, LIKE, COUNT, NONE),
-	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_MONTH, BY_YEAR, NOT_EQUALS),
+	DATE (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR, NOT_EQUALS),
 	EXISTENCE(NOT_NULL),
 	BOOLEAN(EQUALS, COUNT, NONE),
 	LEVEL_ENUM(EQUALS, IN, COUNT, NONE),

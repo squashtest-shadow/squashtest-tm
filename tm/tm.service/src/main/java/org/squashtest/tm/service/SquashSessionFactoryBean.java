@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport;
 
 import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.GROUP_CONCAT;
 import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.STR_AGG;
+import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.EXTRACT_WEEK;
 
 /**
  * Specialization of LocalSessionFactoryBean which registers a "group_concat" hsl function for any known dialect.
@@ -45,32 +46,56 @@ import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.STR
  * @since 1.13.0
  */
 public class SquashSessionFactoryBean extends LocalSessionFactoryBean {
-	private static final String FN_NAME_GROUP_CONCAT = "group_concat";
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashSessionFactoryBean.class);
 
 	@Override
 	protected SessionFactory buildSessionFactory(LocalSessionFactoryBuilder sfb) {
 		String dialect = sfb.getProperty("hibernate.dialect");
-		SessionFactoryEnhancer.registerExtensions(sfb, groupConcatFunction(dialect));
+		SessionFactoryEnhancer.registerExtensions(sfb, configureFunctionSupport(dialect));
 
 		return super.buildSessionFactory(sfb);
 	}
 
 	/**
+	 * Returns the extensions required by our supported dialects. As of Squash 1.13 extensions are : 
+	 * 
+	 * <ul>
+	 * 	<li>Postgresql : 
+	 * 		<ul>
+	 * 			<li>string_aggr : maps our HQL version of group_concat to postgresql string_aggr</li>
+	 * 			<li>extract_week : maps native HQL week(timestamp) to postgresql extract(week from timestamp) because Hibernate won't</li>
+	 * 		</ul>
+	 * 	</li>
+	 * 	<li>Mysql, H2 :
+	 * 		<ul>
+	 * 			<li>group_concat : just maps our HQL version of group_concat to group_concat (same name in both database)</li>
+	 * 		</ul>
+	 * 	</li>
+	 * 	<li>
+	 * 	<li>default (for not officially supported DBs) : 
+	 * 		<ul>
+	 * 			<li>group_concat : a short in the dark and hope that function group_concat exists in the end target</li>
+	 * 		</ul>
+	 * </li>
+	 * </ul>
+	 * 
 	 * @param dialectProp value of the dialect Hibernate property
 	 */
-	private FnSupport groupConcatFunction(String dialectProp) {
+	
+	private FnSupport[] configureFunctionSupport(String dialectProp){
 		String dialect = ConfigurationHelper.resolvePlaceHolder(StringUtils.defaultString(dialectProp)).toLowerCase();
-
-		if (StringUtils.contains(dialect, "postgresql")) {
-			return STR_AGG;
+		
+		if (StringUtils.contains(dialect, "postgresql")){
+			return new FnSupport[]{STR_AGG, EXTRACT_WEEK};
 		}
-		if (!StringUtils.contains(dialect, "h2") && !StringUtils.contains(dialect, "mysql")) {
-			LOGGER.warn("Selected hibernate Dialect '{}' is not known to support the sql function 'group_concat()'. Application will certainly not properly work. Maybe you configured a wrong dialect ?", dialectProp);
-		}
+		else {
+			if (!StringUtils.contains(dialect, "h2") && !StringUtils.contains(dialect, "mysql")) {
+				LOGGER.warn("Selected hibernate Dialect '{}' is not known to support the sql function 'group_concat()'. Application will certainly not properly work. Maybe you configured a wrong dialect ?", dialectProp);
+			}
 
-		return GROUP_CONCAT;
+			return new FnSupport[]{GROUP_CONCAT};		
+		}
 	}
 
 }

@@ -696,18 +696,19 @@ class QuerydslToolbox {
 	private Operator getOperator(Operation operation){
 		Operator operator;
 
-		switch (operation) {// NOSONAR that's a fucking switch it's not complex !
+		switch (operation) {// NOSONAR that's a <no swearing please> switch it's not complex !
 		case EQUALS : operator = Ops.EQ; break;
 		case LIKE : operator = Ops.LIKE; break;
-		case BY_YEAR : operator = DateTimeOps.YEAR; break;
+		case BY_DAY: operator = ExtOps.YEAR_MONTH_DAY; break;
+		case BY_WEEK: operator = DateTimeOps.YEAR_WEEK; break;
 		case BY_MONTH : operator = DateTimeOps.YEAR_MONTH; break;
+		case BY_YEAR : operator = DateTimeOps.YEAR; break;
 		case COUNT : operator = ExtOps.S_COUNT; break;
 		case SUM : operator = ExtOps.S_SUM; break;
 		case GREATER : operator = Ops.GT; break;
 		case IN : operator = Ops.IN; break;
 		case BETWEEN: operator = Ops.BETWEEN; break;
 		case AVG: operator = ExtOps.S_AVG; break;
-		case BY_DAY: operator = ExtOps.YEAR_MONTH_DAY; break;
 		case GREATER_EQUAL: operator = Ops.GOE; break;
 		case LOWER: operator = Ops.LT; break;
 		case LOWER_EQUAL: operator = Ops.LOE; break;

@@ -294,7 +294,7 @@ import com.querydsl.core.Tuple;
  *
  */
 @Component
-@SuppressWarnings("all")
+@SuppressWarnings(value={"rawtypes", "unchecked"})
 public class ChartDataFinder {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);

@@ -39,6 +39,7 @@ public enum Operation {
 	NOT_NULL,
 	NOT_EQUALS,
 	BY_DAY,
+	BY_WEEK,
 	BY_MONTH,
 	BY_YEAR;
 	// @formatter:on
