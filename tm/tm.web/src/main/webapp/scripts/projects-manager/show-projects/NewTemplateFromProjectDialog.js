@@ -35,7 +35,7 @@ define(["jquery.squash.bindviewformdialog","squash.translator"],
 		callConfirm : function(){
 			this.updateModelFromCKEditor();
 			this.model.save().success(function(response, status, options){
-				document.location.href = response.Location[0];
+				document.location.href = response.url;
 			});
 		},
 

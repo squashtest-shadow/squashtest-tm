@@ -146,8 +146,8 @@ define([], function(){
 		'iterations.testplan.manager' :		root + '/iterations/{\\d+}/test-plan-manager',
 		'iterations.testplan.lastexec' :	root + '/iterations/{\\d+}/test-plan/{\\d+}/last-execution',
 		'iterations.testplan.changestatus' : root + '/iterations/test-plan/{\\d+}',
-		
-		
+
+
 		'testsuites.base' :					root + '/test-suites',
 		'testsuites.testplan.manager' :		root + '/test-suites/{\\d+}/test-plan-manager',
 		'testsuites.testplan.lastexec' :	root + '/test-suites/{\\d+}/test-plan/{\\d+}/last-execution',
@@ -201,7 +201,7 @@ define([], function(){
 		'search-reqV.mass-change.data' :	root + '/advanced-search/milestones/reqV-mass-modif-data/{\\d+}',
 		'search-reqV.mass-change.bindmilestones' : root + '/advanced-search/reqVersions/{\\d+}/milestones',
 		'project.new' :						root + '/projects/new',
-		'generic.project.description' :		root + '/generic-projects/description/{\\d+}',
+		'generic.project.description' :		root + '/generic-projects/{\\d+}/description',
 		'generic.template.new' :			root + '/generic-projects/new-template',
 		'template.new' :					root + '/project-templates/new',
 		'template' :						root + '/project-templates?dropdownList',
@@ -214,7 +214,7 @@ define([], function(){
 		'chart.instance' :					root + '/charts/{\\d+}/instance',
 
 		//custom report workspace
-		// note : I understand that the next 4 urls below don't need a root 
+		// note : I understand that the next 4 urls below don't need a root
 		// because they are used in a backbone router (custom-report-workspace/init-action.js)
 		'custom-report-library' :			'/custom-report-library/{\\d+}',
 		'custom-report-folder' :			'/custom-report-folder/{\\d+}',
@@ -227,10 +227,10 @@ define([], function(){
 		'custom-report-chart-binding' :		root + '/custom-report-chart-binding',
 		'custom-report-chart-binding-with-id' : root + '/custom-report-chart-binding/{\\d+}',
 		'custom-report-chart-binding-replace-chart' : root + '/custom-report-chart-binding-replace-chart/{\\d+}/{\\d+}',
-		
+
 		// project plugins
 		'project-plugins' :					root + '/generic-projects/{\\d+}/plugins/{[^\\/]+}/',	// the trailing '/' is important
-		
+
 		// server authentication
 		'servers.authentication' :			root + '/servers/{\\d+}/authentication',
 

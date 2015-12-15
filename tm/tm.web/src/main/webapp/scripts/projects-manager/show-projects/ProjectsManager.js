@@ -111,6 +111,7 @@ define([ "jquery","underscore", "backbone","handlebars", "./ProjectsTable", "./N
 
 					$.ajax({
 						url : urlCtrl,
+            dataType :"html",
 						success : function (response) {
 							self.showNewTemplateFromProjectDialog(response);
 						}

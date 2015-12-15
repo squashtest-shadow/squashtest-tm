@@ -43,6 +43,7 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.project.ProjectTemplateFinder;
 import org.squashtest.tm.service.project.ProjectTemplateManagerService;
 import org.squashtest.tm.web.internal.model.json.JsonTemplateFromProject;
+import org.squashtest.tm.web.internal.model.json.JsonUrl;
 
 @Controller
 @RequestMapping("/project-templates")
@@ -64,7 +65,7 @@ public class ProjectTemplateController {
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	public @ResponseBody
-	HttpHeaders createTemplateFromProject(@Valid @RequestBody JsonTemplateFromProject jsonTemplateFromProject) {
+	JsonUrl createTemplateFromProject(@Valid @RequestBody JsonTemplateFromProject jsonTemplateFromProject) {
 		try {
 			projectTemplateManagerService.addTemplateFromProject(jsonTemplateFromProject.getProjectTemplate(),
 					jsonTemplateFromProject.getTemplateId(), jsonTemplateFromProject.getParams());
@@ -75,11 +76,9 @@ public class ProjectTemplateController {
 		return getUrlToProjectInfoPage(jsonTemplateFromProject.getProjectTemplate());
 	}
 	
-	private HttpHeaders getUrlToProjectInfoPage(GenericProject project){
+	private JsonUrl getUrlToProjectInfoPage(GenericProject project){
 		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
 				.buildAndExpand(project.getId());
-		HttpHeaders head = new HttpHeaders();
-		head.setLocation(uri.toUri());
-		return head;
+		return new JsonUrl(uri.toString());
 	}
 }
