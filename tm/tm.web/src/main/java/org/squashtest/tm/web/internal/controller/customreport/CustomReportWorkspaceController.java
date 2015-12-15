@@ -160,12 +160,16 @@ public class CustomReportWorkspaceController {
 	private Long convertCookieId(String cookieValue){
 		cookieValue = cookieValue.replace(cookieDelimiter, "");
 		return Long.parseLong(cookieValue);
-}
+	}
 
 	private Set<Long> convertCookieIds(String[] cookieValues){
 		Set<Long> nodeIdToOpen = new HashSet<Long>();
 		for (String value : cookieValues) {
-			nodeIdToOpen.add(convertCookieId(value));
+			try {
+				nodeIdToOpen.add(convertCookieId(value));
+			} catch (NumberFormatException e) {
+				LOGGER.error("Error on parsing js_open cookie. Workspace will be shown with closed tree");
+			}
 		}
 		return nodeIdToOpen;
 	}
