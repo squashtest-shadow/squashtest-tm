@@ -1683,4 +1683,11 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 
 	</changeSet>
 
+  <changeSet id="tm-1.13.0-feature-5292-4" author="jthebault" dbms="postgresql">
+     <comment>update the sequences afterward</comment>
+     <sql>
+       SELECT setval('acl_object_identity_id_seq', (SELECT MAX(ID) from ACL_OBJECT_IDENTITY));
+     </sql>
+   </changeSet>
+
 </databaseChangeLog>
