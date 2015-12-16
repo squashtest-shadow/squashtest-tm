@@ -28,7 +28,7 @@ define(function(){
               return false;
             },
 						//override pluggins to have a custom DnD for dashboards
-						"plugins" : ["json_data", "ui", "types", "hotkeys", "dndCustomReport", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
+						"plugins" : ["json_data", "ui", "types", "hotkeys", "dndCustomReport", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect',"sort" ],
 						"types" : {
 							"max_depth" : -2, // unlimited without check
 							"max_children" : -2, // unlimited w/o check

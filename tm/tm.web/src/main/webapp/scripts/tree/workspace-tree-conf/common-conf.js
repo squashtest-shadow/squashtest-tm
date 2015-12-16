@@ -114,8 +114,8 @@ define(function(){
 
 			};
 
-
-			if(treepref != 1) {
+      //Load sort by default for custom-report-workspace as we haven't positionnal select
+			if(treepref != 1 || workspace=="custom-report") {
 				cfg.plugins.push("sort");
 			}
 
