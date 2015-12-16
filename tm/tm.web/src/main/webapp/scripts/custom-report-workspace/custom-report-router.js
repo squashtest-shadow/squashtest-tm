@@ -29,7 +29,7 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       },
 
       routes: {
-        "test":"showLibraryDetails",
+        "":"cleanContextContent",
         "custom-report-library/:query":"showLibraryDetails",
         "custom-report-folder/:query":"showFolderDetails",
         "custom-report-dashboard/:query":"showDashboardDetails",

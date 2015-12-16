@@ -62,22 +62,12 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 	function loadFragment(tree){
 		var selected =  tree.jstree("get_selected");
 
-		switch (selected.length){
-
-			//nothing selected : return to workspace original page
-			case 0 :
-				break;
-			//exactly one element is selected : display it
-			case 1 :
-        console.log("SELECTED !!! " + selected.getDomType());
-        navigateToDetails(tree,selected);
-				break;
-
-			//mode than 1 element is selected : do nothing in this workspace
-			default :
-
-				break;
-		}
+    if (selected.length === 1) {
+      navigateToDetails(tree,selected);
+    }
+    else {
+      navigateToEmpty();
+    }
 	}
 
   function navigateToDetails (tree,selectedNode) {
@@ -105,6 +95,11 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
       default:
 
     }
+  }
+
+  function navigateToEmpty(){
+    var backboneRouter = squashtm.app.router;
+    backboneRouter.navigate("", {trigger: true});
   }
 
 	return {
