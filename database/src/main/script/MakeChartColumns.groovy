@@ -311,7 +311,7 @@ def definition = [
 			itpLastExecOn : ['LASTEXECON', 'DATE', 'lastExecutedOn', 'all'],
 			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'all'],
 			itpTester : ['TESTER', 'STRING', 'user.login', 'all'],
-			itpTcId : ['TC_ID', 'STRING', 'referencedTestCase.id', 'all'],
+			itpTcId : ['TC_ID', 'NUMERIC', 'referencedTestCase.id', 'all'],
 			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'all', 'itpTcExistsSub'],
 			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'all', 'itpIsExecutedSub'],
 			itpManExCount : ['MANEXCOUNT', 'NUMERIC', 'count(executions[auto="false"])', 'all', 'itpManExCountSub'],
