@@ -557,7 +557,7 @@ public class TestCaseModificationController {
 
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
 
-		return buildMilestoneModel(testCaseId, allMilestones, params.getsEcho());
+		return buildMilestoneTableModel(testCaseId, allMilestones, params.getsEcho());
 	}
 
 	@RequestMapping(value = "/milestones/{milestoneIds}", method=RequestMethod.POST)
@@ -578,7 +578,7 @@ public class TestCaseModificationController {
 	@ResponseBody
 	public DataTableModel getNotYetBoundMilestones(@PathVariable long testCaseId, DataTableDrawParameters params){
 		Collection<Milestone> notBoundMilestones = testCaseModificationService.findAssociableMilestones(testCaseId);
-		return buildMilestoneModel(testCaseId, notBoundMilestones, params.getsEcho());
+		return buildMilestoneTableModel(testCaseId, notBoundMilestones, params.getsEcho());
 	}
 
 
@@ -591,7 +591,7 @@ public class TestCaseModificationController {
 		TestCase tc = testCaseModificationService.findById(testCaseId);
 		// build the needed data
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
-		List<?> currentModel = buildMilestoneModel(testCaseId,allMilestones,  "0").getAaData();
+		List<?> currentModel = buildMilestoneTableModel(testCaseId,allMilestones,  "0").getAaData();
 
 		Map<String, String> identity = new HashMap<>();
 		identity.put("restype", "test-cases");
@@ -631,11 +631,9 @@ public class TestCaseModificationController {
 	}
 
 
-	private DataTableModel buildMilestoneModel(long testCaseId, Collection<Milestone> milestones, String sEcho){
+	private DataTableModel buildMilestoneTableModel(long testCaseId, Collection<Milestone> milestones, String sEcho){
 
 		TestCase tc = testCaseModificationService.findById(testCaseId);
-
-
 
 		List<MetaMilestone> metaMilestones = new ArrayList<>(milestones.size());
 
@@ -746,7 +744,7 @@ public class TestCaseModificationController {
 		mav.addObject("paramHeadersById", paramHeadersByParamId);
 		mav.addObject("datasetsparamValuesById", datasetsparamValuesById);
 
-		// =====================CALLING TC
+		// ========================CALLING TC
 		List<CallTestStep> callingSteps = testCaseModificationService.findAllCallingTestSteps(testCaseId);
 		mav.addObject("callingSteps", callingSteps);
 
@@ -754,7 +752,12 @@ public class TestCaseModificationController {
 		List<VerifiedRequirement> verifReq = verifiedRequirementsManagerService
 				.findAllVerifiedRequirementsByTestCaseId(testCaseId);
 		mav.addObject("verifiedRequirements", verifReq);
-
+		
+		// ========================THE LOVELY MILESTONES
+		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
+		List<?> milestoneModels = buildMilestoneTableModel(testCaseId,allMilestones,  "0").getAaData();
+		mav.addObject("milestones", milestoneModels);
+		
 		return mav;
 	}
 

@@ -339,7 +339,7 @@
 			<table id="calling-test-case-table" class="greystyle-table">
 				<thead>
     				<tr>
-    					<th>#</th>
+    					<th class="small">#</th>
     					<th th:text="#{label.project}">project</th>
     					<th th:text="#{test-case.reference.label}">reference</th>
     					<th th:text="#{label.Name}">name</th>
@@ -365,6 +365,34 @@
 				</tbody>
 			</table>
 
+		</div>
+
+		<!-- ===========================================THE LOVELY MILESTONES ========================================-->
+
+		<div id="milestones-tab" class="tab" th:if="${application.milestoneFeatureEnabled}">
+			<h3 th:text="#{label.Milestones}">Milestones</h3>
+			<table id="milestones-detail-table" class="greystyle-table">
+				<thead>
+					<tr>
+				        <th class="small">#</th>
+				        <th th:text="#{label.Label}">label</th>
+				        <th th:text="#{label.Status}">status</th>
+				        <th th:text="#{label.EndDate}">end date</th> 
+				        <th th:text="#{label.Description}">description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- note : the milestone models here are hashmaps : the same than for the datatables -->
+					<tr th:each="m, iterStat: ${milestones}"					
+						th:class="${m['directMember']} ? '' : 'milestone-indirect-membership'">
+						<td th:text="${iterStat.count}">1</td>
+						<td th:text="${m['label']}">the milestone</td>
+						<td th:text="${m['status']}"></td>
+						<td th:text="${m['date']}">12/02/2012</td>
+						<td th:text="${m['description']}">your average milestone</td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 
 		<!-- ===========================================ATTACHMENTS ===================================================-->
@@ -447,40 +475,40 @@
 				</tbody>
 			</table>
 		</div>
-	</div>
-
-	<div th:if="${testCase.project.bugtrackerConnected}" class="tab">
-		<h3 th:text="#{issue.panel.title}">Anomalies</h3>
-		<div th:switch="${bugTrackerStatus.name()}" th:remove="tag">
-			<div th:case="'BUGTRACKER_NEEDS_CREDENTIALS'"
-				th:text="#{issue.panel.needscredentials.label}">You need to connext
-				to the bugtracker.</div>
-			<table th:case="*">
-				<thead>
-					<tr>
-						<th th:text="${interfaceDescriptor.tableIssueIDHeader}">Id</th>
-						<th th:text="${interfaceDescriptor.tableSummaryHeader}">Résumé</th>
-						<th th:text="${interfaceDescriptor.tablePriorityHeader}">Priorité</th>
-						<th th:text="${interfaceDescriptor.tableStatusHeader}">Statut</th>
-						<th th:text="${interfaceDescriptor.tableAssigneeHeader}">Assignée
-							à</th>
-						<th
-							th:text="#{test-case.issues.table.column-header.reportedin.label}">Reported
-							in</th>
-					</tr>
-				</thead>
-				<tbody>
-					<tr th:each="issueOwner : ${issuesOwnerShipList}" th:object="${issueOwner.ownership}">
-						<td th:text="*{issue.id}">1</td>
-						<td th:text="*{issue.summary}">erreur 500 à l'ajout d'une anomalie</td>
-						<td th:text="*{issue.priority.name}">high</td>
-						<td th:text="*{issue.status.name}">ouverte</td>
-						<td th:text="*{issue.assignee.name}">charles paul</td>
-						<td sq:unsafe-html="${issueOwner.ownerDesc}">Iteration 3</td>
-					</tr>
-				</tbody>
-			</table>
-		</div>
+		
+		<div th:if="${testCase.project.bugtrackerConnected}" class="tab">
+			<h3 th:text="#{issue.panel.title}">Anomalies</h3>
+			<div th:switch="${bugTrackerStatus.name()}" th:remove="tag">
+				<div th:case="'BUGTRACKER_NEEDS_CREDENTIALS'"
+					th:text="#{issue.panel.needscredentials.label}">You need to connext
+					to the bugtracker.</div>
+				<table th:case="*" class="greystyle-table">
+					<thead>
+						<tr>
+							<th th:text="${interfaceDescriptor.tableIssueIDHeader}">Id</th>
+							<th th:text="${interfaceDescriptor.tableSummaryHeader}">Résumé</th>
+							<th th:text="${interfaceDescriptor.tablePriorityHeader}">Priorité</th>
+							<th th:text="${interfaceDescriptor.tableStatusHeader}">Statut</th>
+							<th th:text="${interfaceDescriptor.tableAssigneeHeader}">Assignée
+								à</th>
+							<th
+								th:text="#{test-case.issues.table.column-header.reportedin.label}">Reported
+								in</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr th:each="issueOwner : ${issuesOwnerShipList}" th:object="${issueOwner.ownership}">
+							<td th:text="*{issue.id}">1</td>
+							<td th:text="*{issue.summary}">erreur 500 à l'ajout d'une anomalie</td>
+							<td th:text="*{issue.priority.name}">high</td>
+							<td th:text="*{issue.status.name}">ouverte</td>
+							<td th:text="*{issue.assignee.name}">charles paul</td>
+							<td sq:unsafe-html="${issueOwner.ownerDesc}">Iteration 3</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>		
 	</div>
 </body>
 </html>
