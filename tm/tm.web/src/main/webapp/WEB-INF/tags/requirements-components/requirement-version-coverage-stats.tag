@@ -130,11 +130,11 @@
   <div id="dialog-select-perimeter" class="not-displayed popup-dialog" title="<f:message key='requirement.rate.perimeter.title'/>">
 	<div class="main" style="height:600px; ">
 		<div id="tree-pane">
-    	<div id="perimeter-tree" class="tree jstree" style="position:relative; overflow:auto;"></div>
-		<div class="popup-dialog-buttonpane">
-     		<input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>
-      		<input type="button" class="button" value="${labelCancel}" data-def="evt=cancel"/>
-    	</div>
+    		<div id="perimeter-tree" class="tree jstree" style="position:relative; overflow:auto;"></div>
+			<div class="popup-dialog-buttonpane">
+     				<input type="button" class="button" value="${labelConfirm}" data-def="evt=confirm, mainbtn"/>
+      				<input type="button" class="button" value="${labelCancel}" data-def="evt=cancel"/>
+    		</div>
 		<div>
 	<div>
   </div>
