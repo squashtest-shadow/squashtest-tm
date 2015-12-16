@@ -32,7 +32,6 @@ import org.apache.commons.collections.Transformer;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.ApplicationListener;
-import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.squashtest.tm.domain.EntityType;
@@ -56,7 +55,12 @@ import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
-@Service
+
+/*
+ * COMMENTING COLUMN PROTOTYPE HANDLING BECAUSE OUT OF SCOPE OF 1.13
+ * RE-ACTIVATE WHEN DEV OF 1.14 BEGINS 
+ */
+//@Service
 public class ColumnPrototypeModification implements ApplicationListener<ColumnPrototypeEvent> {
 
 	private final static Transformer TYPE_COLLECTOR = new Transformer() {

@@ -1038,16 +1038,6 @@
 
 	</changeSet>
 
- <changeSet id="tm-1.13.0-feature-5375-3" author="jsimon" dbms="postgresql">
-    <comment>update the sequences afterward</comment>
-    <sql>
-      SELECT setval('chart_column_prototype_chart_column_id_seq', (SELECT MAX(CHART_COLUMN_ID) from CHART_COLUMN_PROTOTYPE));
-      SELECT setval('chart_query_chart_query_id_seq', (SELECT MAX(CHART_QUERY_ID) from CHART_QUERY));
-      SELECT setval('chart_filter_filter_id_seq', (SELECT MAX(FILTER_ID) from CHART_FILTER));
-    </sql>
-  </changeSet>
-
-
  <changeSet id="tm-1.13.0-feature-5292-1" author="jthebault">
  	<!-- CUSTOM_REPORT_LIBRARY TABLE -->
 
@@ -1580,8 +1570,12 @@
 <dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
 </changeSet>
 
+<!-- 
+	DEACTIVATING MIGRATION, AS CHARTS ON CUFS ARE NOW OUT OF SCOPE OF 1.13
+	RE-ACTIVATE WHEN DEV 1.14 BEGINS
+ -->
+<!--  
 <changeSet id="tm-1.13.0.feat-5493" author="jsimon">
-
 
 <sql>
 INSERT INTO CHART_COLUMN_PROTOTYPE (COLUMN_TYPE, LABEL, ENTITY_TYPE,  ATTRIBUTE_NAME, DATA_TYPE, BUSINESS, ATTRIBUTE_TYPE)
@@ -1610,6 +1604,18 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 
 </sql>
 </changeSet>
+-->
+
+<changeSet id="tm-1.13.0-feature-5375-3" author="jsimon" dbms="postgresql">
+   <comment>update the sequences afterward</comment>
+   <sql>
+     SELECT setval('chart_column_prototype_chart_column_id_seq', (SELECT MAX(CHART_COLUMN_ID) from CHART_COLUMN_PROTOTYPE));
+     SELECT setval('chart_query_chart_query_id_seq', (SELECT MAX(CHART_QUERY_ID) from CHART_QUERY));
+     SELECT setval('chart_filter_filter_id_seq', (SELECT MAX(FILTER_ID) from CHART_FILTER));
+   </sql>
+ </changeSet>
+
+
 
 <changeSet id="tm-1.13.0-feature-5375-4" author="jsimon">
 
