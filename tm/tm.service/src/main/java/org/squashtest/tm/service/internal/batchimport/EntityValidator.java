@@ -253,21 +253,24 @@ class EntityValidator {
 
 	public LogTrain createRequirementVersionChecks(
 			RequirementVersionTarget target, RequirementVersion reqVersion) {
-		return basicReqVersionTests(target, reqVersion);
+		LogTrain logs = new LogTrain();
+		return basicReqVersionTests(target, reqVersion,logs);
 	}
 
 	public LogTrain updateRequirementChecks(RequirementVersionTarget target,
 			RequirementVersion reqVersion) {
-		LogTrain logs = basicReqVersionTests(target, reqVersion);
-
-		// 2 - Checking if requirement version number value isn't empty and > 0
+		LogTrain logs = new LogTrain();
+		// 1 - For update checking if requirement version number value isn't empty and > 0
 		checkRequirementVersionNumber(target, logs);
-
+		if (logs.hasCriticalErrors()) {
+			return logs;
+		}
+		basicReqVersionTests(target, reqVersion,logs);
 		return logs;
 	}
 
 	private void checkRequirementVersionNumber(RequirementVersionTarget target, LogTrain logs) {
-		if (target.getVersion() == null ||target.getVersion() < 1) {
+		if (target.getVersion() == null || target.getVersion() < 1) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
 					.withMessage(Messages.ERROR_REQUIREMENT_VERSION_INVALID)
 					.build());
@@ -278,11 +281,11 @@ class EntityValidator {
 	 * Basics check commons to create and update requirements
 	 * @param target
 	 * @param reqVersion
+	 * @param logs 
 	 * @return
 	 */
 	private LogTrain basicReqVersionTests(RequirementVersionTarget target,
-			RequirementVersion reqVersion){
-		LogTrain logs = new LogTrain();
+			RequirementVersion reqVersion, LogTrain logs){
 		checkMalformedPath(target,logs);
 		if (logs.hasCriticalErrors()) {
 			return logs;

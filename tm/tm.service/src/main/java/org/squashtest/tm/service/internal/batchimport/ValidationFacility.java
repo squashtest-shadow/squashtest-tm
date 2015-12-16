@@ -1069,11 +1069,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		LogTrain logs;
 
-		// 1 - basic verifications
+		// 1 - basic verifications, if failure on preliminary verification the import is corrupted, return to avoid exception
 		logs = entityValidator.updateRequirementChecks(target, reqVersion);
+		if (logs.hasCriticalErrors()) {
+			instr.fatalError();
+			return logs;
+		}
+		
 		checkImportedRequirementVersionStatus(target, reqVersion);
-
-
 		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues,
 				model.getRequirementVersionCufs(target)));
 
