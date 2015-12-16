@@ -22,7 +22,11 @@ package org.squashtest.tm.service.internal.hibernate
 
 import org.squashtest.tm.service.SquashSessionFactoryBean;
 import spock.lang.Specification;
-import spock.lang.Unroll;
+import spock.lang.Unroll
+
+import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.EXTRACT_WEEK;
+import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.STR_AGG;
+import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.GROUP_CONCAT;
 
 import java.util.Properties
 
@@ -43,15 +47,15 @@ class SquashSessionFactoryBeanTest extends Specification {
 	@Unroll
 	def "should substitute placeholder with system prop #dialect"() {
 		when:
-		def func = factoryBean.groupConcatFunction(dialect)
+		def func = factoryBean.configureFunctionSupport(dialect)
 
 		then:
-		func == type
+		func as Set == type as Set
 
 		where:
 		dialect								| type
-		"org.hibernate.dialect.PostgreSQL"	| FnSupport.STR_AGG
-		"org.hibernate.dialect.MySQL"		| FnSupport.GROUP_CONCAT
-		"org.hibernate.dialect.H2"		| FnSupport.GROUP_CONCAT
+		"org.hibernate.dialect.PostgreSQL"	| [STR_AGG, EXTRACT_WEEK]
+		"org.hibernate.dialect.MySQL"		| [GROUP_CONCAT]
+		"org.hibernate.dialect.H2"			| [GROUP_CONCAT]
 	}
 }
