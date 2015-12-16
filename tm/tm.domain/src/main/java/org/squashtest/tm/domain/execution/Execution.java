@@ -58,6 +58,8 @@ import javax.validation.constraints.Size;
 
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.Analyze;
 import org.hibernate.search.annotations.ClassBridge;
@@ -106,6 +108,7 @@ import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
+import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
@@ -260,6 +263,8 @@ DenormalizedFieldHolder, BoundEntity {
 	@JoinTable(name="EXECUTION_ISSUES_CLOSURE",
 	joinColumns=@JoinColumn(name="EXECUTION_ID", insertable=false, updatable=false ),
 	inverseJoinColumns = @JoinColumn(name="ISSUE_ID"))
+	@Persister(impl = ReadOnlyCollectionPersister.class)
+	@Immutable
 	private List<Issue> issues = new ArrayList<Issue>();
 
 
