@@ -63,11 +63,13 @@ define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 			"no-auto-hide" : false,
 
 			// private
-			_firstInvokation : true
+			_firstInvokation : true,
+
+      display : "inline-block"
 		},
 
 		// will wrap both elements in an enclosing div, that will help adjust their relative positionning later.
-		_createStructure : function() {
+		_createStructure : function(settings) {
 
 			var btn = this.element, menu = this.element.next(), components = btn.add(menu);
 
@@ -76,7 +78,7 @@ define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 			menu.addClass("buttonmenu-menu");
 
 			var div = $("<div/>", {
-				style : "display:inline-block; position:relative;",
+				style : "display:"+ settings.display +"; position:relative;",
 				"class" : "buttonmenu-wrapper"
 			});
 
@@ -93,7 +95,7 @@ define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 			var menu = button.next();
 
 			// basics
-			this._createStructure();
+			this._createStructure(settings);
 			this._menuCssTweak();
 			this._bindLi();
 
@@ -104,7 +106,7 @@ define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 				if (button.hasClass('ui-state-disabled')){
 					return false;
 				}
-				
+
 				if (menu.hasClass("expand")) {
 					self.close();
 				} else {
@@ -183,10 +185,10 @@ define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 				menu.css("right", 0);
 			}
 		},
-		
+
 		_bindLi : function() {
 			var self = this, settings = this.options, menu = this.element.next();
-			
+
 			// item disabled ? event prevented !
 			menu.find('li').each(function(){
 				$(this).bindFirst('click', function(evt){
@@ -196,7 +198,7 @@ define([ "jquery", "jqueryui", "jquery.squash" ], function($) {
 					}
 				});
 			});
-			
+
 			menu.on("click", "li", function(evt) {
 				var $li = $(this);
 
