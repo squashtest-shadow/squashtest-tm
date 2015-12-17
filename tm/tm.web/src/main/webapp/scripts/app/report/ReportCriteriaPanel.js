@@ -20,9 +20,10 @@
  */
 define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree",
          "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", "./TagPickerPopup",
-         "milestone-manager/milestone-activation", "jeditable.datepicker",
-         "jquery.squash.formdialog"],
-function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, MilestonePickerPopup, TagPickerPopup, milestone) {
+         "milestone-manager/milestone-activation", "app/util/StringUtil", 
+         "jeditable.datepicker", "jquery.squash.formdialog"],
+function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, 
+		MilestonePickerPopup, TagPickerPopup, milestone, strutils) {
 	"use strict";
 
 	var postDateFormat = $.datepicker.ATOM;
@@ -248,7 +249,8 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var self = this;
 			this.$(".project-picker").each(function(i, dom) {
 				var pickerView;
-				if ($(dom).data("multiselect") === "true") {
+				var strmulti = $(dom).data("multiselect"); 
+				if ( strutils.coerceToBoolean(strmulti) === true) {
 					pickerView = new ProjectsPickerPopup({ el : dom, model: self.model });
 				} else {
 					pickerView = new SingleProjectPickerPopup({ el : dom, model: self.model });
@@ -301,7 +303,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		_initCheckboxes: function() {
 			var self = this;
 
-			this.$("input:checkbox[data-grouped!='true']").each(function() {
+			this.$("input:checkbox[data-grouped!='true']").not('.report-init-ignore').each(function() {
 				var dom = this;
 				self.model.set(dom.name, new FormModel.Input("CHECKBOX", dom.checked));
 			});
@@ -309,7 +311,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 		_initCheckboxesGroups: function() {
 			var model = this.model;
-			var $checked = this.$("input:checkbox[data-grouped='true']:checked");
+			var $checked = this.$("input:checkbox[data-grouped='true']:checked").not('.report-init-ignore');
 
 			// extract control names
 			var names = _.chain($checked).pluck("name").uniq().value();

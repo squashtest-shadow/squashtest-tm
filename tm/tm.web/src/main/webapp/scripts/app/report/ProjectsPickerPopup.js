@@ -67,7 +67,7 @@
 			this.$("table tbody tr .project-checkbox").each(function() {
 				var $checkbox = $(this);
 				var id = $checkbox.val();
-				var checked = _.contains(ids, id);
+				var checked = _.contains(ids.val, id);
 				$checkbox.data("previous-checked", checked);
 				$checkbox.prop("checked", checked);
 			});
@@ -117,11 +117,13 @@
 
 		updateResult : function(){
 			var self = this;
+			
+			var selection = self.filterModel.get("projectIds").val;
 
-			if (self.filterModel.get("projectIds").length > 1) {
+			if (selection.length > 1) {
 				self.$result.text(self.$result.data("multiplevaluetext"));
-			} else if (self.filterModel.get("projectIds").length == 1) {
-				var projectId = self.filterModel.get("projectIds")[0];
+			} else if (selection.length == 1) {
+				var projectId = selection[0];
 				var projectName = this.$("table td .project-checkbox[value=" + projectId + "]").parent()
 						.parent().find(".project-name").text();
 				self.$result.text(projectName);
@@ -134,27 +136,27 @@
 		 * "this" bound to view at init
 		 */
 		updateFormState : function(){
-			this.model.setVal(this.name, this.filterModel.get("projectIds"));
+			this.model.setVal(this.name, this.filterModel.get("projectIds").val);
 		},
 
 		cancel : function(){
 			this.table.fnFilter("");
 			this.$(".project-checkbox").each(function() {
 				var previous = $(this).data("previous-checked");
-				$(this).attr("checked", previous);
+				$(this).prop("checked", previous);
 			});
 		},
 
 		selectAllProjects : function() {
 			var ids = eachCheckbox(this.$el, function() {
-				$(this).attr("checked", true);
+				$(this).prop("checked", true);
 			});
 			this.filterModel.select(ids);
 		},
 
 		deselectAllProjects : function () {
 			var ids = eachCheckbox(this.$el, function() {
-				$(this).attr("checked", false);
+				$(this).prop("checked", false);
 			});
 			this.filterModel.deselect(ids);
 		},
@@ -165,10 +167,10 @@
 			eachCheckbox(this.$el, function() {
 				var $checkbox = $(this);
 				if($checkbox.is(":checked")){
-					$checkbox.attr("checked",false);
+					$checkbox.prop("checked",false);
 					deselectIds.push(this.value);
 				}else{
-					$checkbox.attr("checked",true);
+					$checkbox.prop("checked",true);
 					selectIds.push(this.value);
 
 				}

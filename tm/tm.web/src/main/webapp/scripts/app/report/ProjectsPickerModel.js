@@ -31,18 +31,18 @@ define([ "jquery", "backbone", "app/util/StringUtil", "underscore" ], function($
 		
 		
 		select : function(ids) {
-			this.attributes.projectIds = _.union(this.attributes.projectIds, ids);
+			this.attributes.projectIds.val = _.union(this.attributes.projectIds.val, ids);
 			
 		},
 		deselect : function(ids) {
-			this.attributes.projectIds = _.difference(this.attributes.projectIds, ids);
+			this.attributes.projectIds.val = _.difference(this.attributes.projectIds.val, ids);
 		},
 				
 		changeProjectState : function(id, checked) {
 			if(checked){
-				this.attributes.projectIds.push(id);
+				this.attributes.projectIds.val.push(id);
 			}else{
-				this.attributes.projectIds = _.without(this.attributes.projectIds, id);
+				this.attributes.projectIds.val = _.without(this.attributes.projectIds.val, id);
 			}
 			
 		}

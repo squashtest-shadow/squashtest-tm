@@ -56,11 +56,52 @@ define([ "jquery" ], function($) {
 			}
 		}
 	}
+	
+	function coerceToBoolean(toparse){
+		
+		if (toparse === undefined || toparse === null){
+			return false;
+		}
+		
+		var result;
+		var type = (typeof toparse);
+
+		switch(type){
+		case "boolean" : 
+			result = toparse;
+			break;
+			
+		case "number" :
+			result = (toparse !== 0)
+			break;
+			
+		case "string" :
+			var lower = $.trim(toparse.toLowerCase());
+			switch(lower){
+			case "true" : result = true; break;
+			case "false" : result = false; break;
+			case "" : result = false; break;
+			default : 
+				var isnum = Number(lower);
+				if (! isNaN(isnum)){
+					result = coerceToBoolean(lower);
+				}
+				else{
+					// non-blank, non-number and non-stringified booleans are arbitrarily considered true
+					result = true;	
+				}
+			}
+		}
+		
+		return result;
+	
+	}
 
 	return {
 		isBlank : isBlank,
 		isEmpty : isEmpty,
 		parseSequence : parseSequence,
-		getParsedSequenceAttribute :getParsedSequenceAttribute
+		getParsedSequenceAttribute :getParsedSequenceAttribute,
+		coerceToBoolean : coerceToBoolean
 	};
 });

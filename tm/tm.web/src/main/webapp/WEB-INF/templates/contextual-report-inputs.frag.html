@@ -136,7 +136,7 @@
             <tbody class="available-fields">
               <tr th:each="projectData : ${projectFilterModel.projectData}">
                 <td class="td-check">
-                  <input th:type="${projectMultiselect} ? 'checkbox' : 'radio'" type="checkbox" class="project-checkbox"
+                  <input th:type="${projectMultiselect} ? 'checkbox' : 'radio'" type="checkbox" class="project-checkbox report-init-ignore"
                     id="project-checkbox-1" th:id="'project-checkbox-'+${projectData[0]}" name="rpt-project-crit"
                     th:name="${input.name}" value="1" th:value="${projectData[0]}" data-previouschecked="false" />
                 </td>

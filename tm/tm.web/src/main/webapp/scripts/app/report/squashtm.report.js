@@ -133,11 +133,8 @@ define([ "jquery", "app/report/squashtm.reportworkspace", "tree", "underscore", 
 			// collapses the form
 			$("#report-criteria-panel.expand .tg-head").click();
 	
-
 			var tabPanel = $("#view-tabed-panel");
 
-
-			
 			if (!selectedTab) {
 				tabPanel.tabs("option", "active", 0);
 				// tab is inited, we dont need collapsible anymore,
