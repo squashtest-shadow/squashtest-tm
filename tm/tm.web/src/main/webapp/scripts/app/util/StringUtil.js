@@ -23,11 +23,11 @@ define([ "jquery" ], function($) {
 		// IE8 does not not compute the regex "^\s*$" properly, hence the "trim"
 		return (!val) || $.trim(val) === "";
 	}
-	
+
 	function isEmpty(val) {
 		return (!val) || val === "";
 	}
-	
+
 	function parseAssignation(atom) {
 		var members = atom.split('=');
 		return {
@@ -48,7 +48,7 @@ define([ "jquery" ], function($) {
 
 		return result;
 	}
-	
+
 	function getParsedSequenceAttribute(parsedSequence, key){
 		for(var k=0; k<parsedSequence.length; k++){
 			if(parsedSequence[k].name == key){
@@ -56,45 +56,45 @@ define([ "jquery" ], function($) {
 			}
 		}
 	}
-	
+
 	function coerceToBoolean(toparse){
-		
+
 		if (toparse === undefined || toparse === null){
 			return false;
 		}
-		
+
 		var result;
 		var type = (typeof toparse);
 
 		switch(type){
-		case "boolean" : 
+		case "boolean" :
 			result = toparse;
 			break;
-			
+
 		case "number" :
-			result = (toparse !== 0)
+			result = (toparse !== 0);
 			break;
-			
+
 		case "string" :
 			var lower = $.trim(toparse.toLowerCase());
 			switch(lower){
 			case "true" : result = true; break;
 			case "false" : result = false; break;
 			case "" : result = false; break;
-			default : 
+			default :
 				var isnum = Number(lower);
 				if (! isNaN(isnum)){
 					result = coerceToBoolean(lower);
 				}
 				else{
 					// non-blank, non-number and non-stringified booleans are arbitrarily considered true
-					result = true;	
+					result = true;
 				}
 			}
 		}
-		
+
 		return result;
-	
+
 	}
 
 	return {
