@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
-import org.springframework.stereotype.Component;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -30,11 +35,6 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * This {@link HandlerExceptionResolver} proccesses {@link BindException}s and resolves them to a JSON representation.
@@ -60,7 +60,7 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 	@ExceptionHandler(value = {BindException.class})
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
-		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIMEOrAnything(request, MimeType.APPLICATION_JSON)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			BindException bex = (BindException) ex; // NOSONAR Type was checked earlier
