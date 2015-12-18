@@ -275,6 +275,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	public Campaign createCopy() {
 		Campaign copy = new Campaign();
 		copy.setName(this.getName());
+		copy.setReference(this.getReference());
 		copy.setDescription(this.getDescription());
 
 		// as of 0.22.0 we do not copy actual start and end dates.
