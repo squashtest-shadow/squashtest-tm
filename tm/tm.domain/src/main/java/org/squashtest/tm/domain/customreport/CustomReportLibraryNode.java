@@ -221,7 +221,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		String newChildName = treeLibraryNode.getName();
 		
 		if(this.childNameAlreadyUsed(newChildName)){
-			throw new NameAlreadyInUseException(newChildName,this.getEntityType().getTypeName());
+			TreeLibraryNode node = getContentNodeByName(newChildName);
+			throw new NameAlreadyInUseException(node.getEntityType().getTypeName(),newChildName);
 		}
 		this.getChildren().add(treeLibraryNode);
 	}
@@ -243,6 +244,15 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 			}
 		}
 		return false;
+	}
+	
+	private TreeLibraryNode getContentNodeByName (String name){
+		for (TreeLibraryNode child : children) {
+			if (child.getName().equals(name)) {
+				return child;
+			}
+		}
+		return null;
 	}
 
 	@Override

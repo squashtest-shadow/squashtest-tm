@@ -21,10 +21,19 @@
 
 -->
 <div th:fragment="chart-wizard-preview">
+<div class="display-table">
+		<div class="display-table-row control-group">
+          <label th:text="#{label.name}" class="display-table-cell control-label" for="chart-name">
+          </label>
+        <div class="controls display-table-cell">
+          <input id="chart-name" name="name" type="text" maxlength="255"/>
+          <span class="help-inline">&nbsp;</span>
+		</div>
+      </div>
+</div>
 
-
-<span th:text="#{label.name}" />
-<input type="text" id="chart-name" value="{{attributes.name}}"/>
+<!-- <input name="name" type="text" id="chart-name" value="{{attributes.name}}" />
+<span class="help-inline">&nbsp;</span> -->
 <br />
 <br />
 <br />

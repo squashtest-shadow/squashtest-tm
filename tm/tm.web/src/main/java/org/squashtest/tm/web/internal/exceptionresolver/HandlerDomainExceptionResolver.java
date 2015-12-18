@@ -29,14 +29,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.context.MessageSource;
-import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.tm.exception.DomainException;
 
 
-@Component
+@ControllerAdvice
 public class HandlerDomainExceptionResolver extends
 AbstractHandlerExceptionResolver {
 
@@ -50,10 +51,11 @@ AbstractHandlerExceptionResolver {
 
 
 	@Override
+	@ExceptionHandler(value = {DomainException.class})
 	protected ModelAndView doResolveException(HttpServletRequest request, HttpServletResponse response, Object handler,
 			Exception ex) {
 
-		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIME(request, MimeType.APPLICATION_JSON)) {
+		if (exceptionIsHandled(ex) && ExceptionResolverUtils.clientAcceptsMIMEOrAnything(request, MimeType.APPLICATION_JSON)) {
 			response.setStatus(HttpServletResponse.SC_PRECONDITION_FAILED);
 
 			DomainException dex = (DomainException) ex; // NOSONAR Type was checked earlier
