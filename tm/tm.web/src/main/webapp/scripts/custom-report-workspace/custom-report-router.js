@@ -37,7 +37,6 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       },
 
       showLibraryDetails : function (id) {
-        console.log("INTERCEPTED : showLibraryDetails" + id);
         var resourceUrl = urlBuilder.buildURL("custom-report-library-server",id);
         this.cleanContextContent();
 
@@ -71,7 +70,6 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       },
 
       showFolderDetails : function (id) {
-        console.log("INTERCEPTED : showFolderDetails" + id);
         this.cleanContextContent();
         var modelDef = Backbone.Model.extend({
           defaults: {
@@ -90,7 +88,6 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       },
 
       showDashboardDetails : function (id) {
-        console.log("INTERCEPTED : showDashboardDetails " + id);
         this.cleanContextContent();
         var modelDef = Backbone.Model.extend({
           defaults: {
@@ -106,7 +103,6 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       },
 
       showChartDetails : function (id) {
-        console.log("INTERCEPTED : showChartDetails " + id);
         this.cleanContextContent();
         var modelDef = Backbone.Model.extend({
           defaults: {

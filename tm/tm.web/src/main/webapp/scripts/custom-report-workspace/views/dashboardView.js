@@ -517,7 +517,9 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     remove : function () {
-      this.gridster.destroy();
+      if (this.gridster && this.gridster != null) {
+        this.gridster.destroy();
+      }
       this.removeAllCharts();
       $(window).off("resize.dashboard");
       Backbone.View.prototype.remove.call(this);
