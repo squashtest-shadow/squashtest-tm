@@ -28,7 +28,7 @@
 
 //TODO : move to dashboard/basic-objects when ready
 define(["jquery", "./abstractCustomReportChart",
-        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-point-labels","jqplot-canvas-label"],
+        "jqplot-core",  "jqplot-category", "jqplot-bar","jqplot-point-labels","jqplot-canvas-label","jqplot-canvas-ticks"],
 		function($, JqplotView){
 
 	return JqplotView.extend({
@@ -69,12 +69,14 @@ define(["jquery", "./abstractCustomReportChart",
 				axes : {
 					xaxis : {
 						renderer : $.jqplot.CategoryAxisRenderer,
+            tickRenderer:$.jqplot.CanvasAxisTickRenderer,
 						ticks : ticks,
             tickOptions:{
+              angle : -30,
               showGridline: false
             },
-            label : this.getXAxisLabel(),
-            labelRenderer: $.jqplot.CanvasAxisLabelRenderer
+            labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
+            label : this.getXAxisLabel()
 					},
           yaxis: {
             min : 0,

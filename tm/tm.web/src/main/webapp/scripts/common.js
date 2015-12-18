@@ -176,6 +176,8 @@ requirejs.config({
 				"jqplot-canvas-fonts" : "lib/jqplot/plugins/jqplot.canvasTextRenderer.min",
 				//"jqplot-canvas-label" : "lib/jqplot/plugins/jqplot.canvasAxisLabelRenderer",
 				"jqplot-canvas-label" : "lib/jqplot/plugins/jqplot.canvasAxisLabelRenderer.min",
+				//"jqplot-canvas-ticks" : "lib/jqplot/plugins/jqplot.canvasAxisTickRenderer",
+				"jqplot-canvas-ticks" : "lib/jqplot/plugins/jqplot.canvasAxisTickRenderer.min",
 //			"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer",
 				"jqplot-bar" : "lib/jqplot/plugins/jqplot.barRenderer.min",
         //"jqplot-legend" : "lib/jqplot/plugins/jqplot.enhancedLegendRenderer",
@@ -368,6 +370,7 @@ requirejs.config({
         "jqplot-point-labels" : ["jquery", "jqplot-core"],
         "jqplot-canvas-fonts" : ["jquery", "jqplot-core"],
         "jqplot-canvas-label" : ["jquery", "jqplot-core","jqplot-canvas-fonts"],
+        "jqplot-canvas-ticks" : ["jquery", "jqplot-core","jqplot-canvas-fonts"],
 				"jqplot-highlight" : {
 					deps : ["jquery", "jqplot-core"],
 					init : function($){

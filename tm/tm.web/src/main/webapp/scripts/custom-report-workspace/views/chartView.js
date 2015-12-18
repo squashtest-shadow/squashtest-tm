@@ -313,7 +313,9 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
 
     remove : function () {
       $(window).unbind('resize.chart');
-      this.activeChart.remove();
+      if (this.activeChart) {
+        this.activeChart.remove();
+      }
       Backbone.View.prototype.remove.call(this);
     },
 

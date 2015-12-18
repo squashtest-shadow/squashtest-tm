@@ -30,7 +30,7 @@
 */
 define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
 		function($, Backbone, attrparser, eventbus, _, translator){
-	
+
 	translator.load(["squashtm.dateformatShort", "squashtm.dateformatMonthshort"]);
 
 	return Backbone.View.extend({
@@ -106,7 +106,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
       if (protoDatatype === "DATE") {
         return this._formatDateLegend(legends, axis);
       }
-      
+
       if (protoDatatype === "EXECUTION_STATUS"){
     	     return this._getI18nLegends(legends, squashtm.app.executionStatus);
       }
@@ -115,7 +115,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         case "TEST_CASE_NATURE":
         case "TEST_CASE_TYPE":
         case "REQUIREMENT_VERSION_CATEGORY":
-        case "REQUIREMENT_CATEGORY":	
+        case "REQUIREMENT_CATEGORY":
           return this._getI18nInfoListLegends(protoLabel,legends, squashtm.app.defaultInfoList);
         case "TEST_CASE_IMPORTANCE":
           return this._getI18nLegends(legends, squashtm.app.testCaseImportance);
@@ -153,7 +153,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
           prefix = "test-case.type.";
           break;
         case "REQUIREMENT_VERSION_CATEGORY":
-        case "REQUIREMENT_CATEGORY":	
+        case "REQUIREMENT_CATEGORY":
           prefix = "requirement.category.";
           break;
         default:
@@ -181,10 +181,10 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
           return legends;
       }
     },
-    
+
     _formatDate : function(legends, outformat){
-		
-		function splitdate(intDate){	
+
+		function splitdate(intDate){
 			str = intDate.toString();
 			var parsed = {};
 			// by month components
@@ -198,9 +198,9 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 		}
 
         var self = this;
-        
+
         return _.map( legends, function(legend){
-          
+
           if (Array.isArray(legend)) {
             return self._formatDate(legend, outformat);
           }
@@ -209,7 +209,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 	          return outformat.replace('yyyy', d.year).replace('MM', d.month).replace('dd', d.day);
           }
           else{
-        	  return translator.get("label.lower.Never");
+        	  return translator.get("label.lower.None");
           }
         });
     },
