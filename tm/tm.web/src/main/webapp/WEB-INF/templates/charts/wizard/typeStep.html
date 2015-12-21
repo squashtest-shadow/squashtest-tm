@@ -39,7 +39,7 @@
 <select id="axis-{{name}}" class="axis-select" name="{{name}}">
 {{#each attributes.operations}}
 
-{{#if (contains (lookup ../attributes.columRoles ../role) this.operation)}}
+{{#if (contains (lookup ../attributes.columnRoles ../role) this.operation)}}
 <option value="{{this.column.label}}"   >
 
 

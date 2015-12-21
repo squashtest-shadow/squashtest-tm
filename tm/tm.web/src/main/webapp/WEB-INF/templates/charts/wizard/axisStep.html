@@ -68,7 +68,7 @@
 {{#each  this}}  
 {{#if (or (contains this.role "AXIS") (contains this.role "MEASURE"))}}
 {{#if (contains ../../attributes.selectedAttributes id)}} 
-{{> filter  operations=(intersect (union (lookup ../../attributes.columRoles "MEASURE") (lookup ../../attributes.columRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+{{> filter  operations=(intersect (union (lookup ../../attributes.columnRoles "MEASURE") (lookup ../../attributes.columnRoles "AXIS"))(lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
 {{/if}}
 {{/if}}
 {{/each}}

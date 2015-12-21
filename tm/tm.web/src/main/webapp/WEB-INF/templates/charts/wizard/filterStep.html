@@ -142,7 +142,7 @@
 {{#if (contains ../../attributes.selectedAttributes id)}} 
 
 <div style="display: table; width: 100%;">
-{{> filter  operations=(intersect (lookup ../../attributes.columRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
+{{> filter  operations=(intersect (lookup ../../attributes.columnRoles "FILTER") (lookup ../../attributes.dataTypes dataType)) data=../../attributes}}
 </div>
 
 {{/if}}

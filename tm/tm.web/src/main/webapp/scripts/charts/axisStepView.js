@@ -54,7 +54,20 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			
 			var operations = this.getVals(ids);
 			
-			this.model.set({operations : operations}); 
+			
+			// #5761
+			
+			var axes = this.updateColumnsForRole('axis', operations);
+			var measures = this.updateColumnsForRole('measures', operations);
+			
+			
+
+			this.model.set({
+				operations : operations,
+				axis : axes,
+				measures : measures
+			}); 
+			
 		},
 		
 		getVals : function (ids) {
@@ -78,7 +91,38 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView"],
 			.value();		
 		},
 
-
+		
+		/* *************************************************
+		 * 
+		 * #5761 : must ensure that the content of attributes 'axis' and 'measures' are
+		 * adjusted according to what operations the user applied to the columns
+		 * 
+		 * *************************************************/
+		
+		// 'role' should be 'axis' or 'measures'
+		updateColumnsForRole : function(role, columns){
+			var operations = this.model.get('columnRoles')[(role === 'axis') ? 'AXIS' : 'MEASURE'];
+			
+			// find which columns define an operation compatible with the role and copy them
+			// with a default label
+			var newCols = _.chain(columns)
+							.filter(function(col){ return _.contains(operations , col.operation); })
+							.map(function(col){ return _.extend({label : ""}, col); })
+							.value();
+			
+			// get the old columns for that role
+			var oldCols = this.model.get(role);
+			
+			// the updated columns for that role are the new columns, updated with label if any where defined prior to this 
+			var updatedCols = _.chain(newCols)
+								.each(function(col){
+									var label = _.chain(oldCols).find(function(co){return co.column.id === col.column.id}).result('label').value() || "";
+									col.label = label;
+								})
+								.value();
+			
+			return updatedCols;
+		}
 		
 		
 	});

@@ -69,7 +69,7 @@ public class JsonChartWizardData {
 
 	private EnumSet<ChartType> chartTypes = EnumSet.allOf(ChartType.class);
 
-	private Map<ColumnRole, EnumSet<Operation>> columRoles = new EnumMap<ColumnRole, EnumSet<Operation>>(
+	private Map<ColumnRole, EnumSet<Operation>> columnRoles = new EnumMap<ColumnRole, EnumSet<Operation>>(
 			ColumnRole.class);
 
 	private Map<DataType, EnumSet<Operation>> dataTypes = new EnumMap<DataType, EnumSet<Operation>>(DataType.class);
@@ -138,7 +138,7 @@ public class JsonChartWizardData {
 
 	private void addColumnRoles() {
 		for (ColumnRole cr : ColumnRole.values()) {
-			columRoles.put(cr, cr.getOperations());
+			columnRoles.put(cr, cr.getOperations());
 		}
 	}
 
@@ -220,8 +220,8 @@ public class JsonChartWizardData {
 		return entityTypes;
 	}
 
-	public Map<ColumnRole, EnumSet<Operation>> getColumRoles() {
-		return columRoles;
+	public Map<ColumnRole, EnumSet<Operation>> getcolumnRoles() {
+		return columnRoles;
 	}
 
 	public Map<DataType, EnumSet<Operation>> getDataTypes() {
