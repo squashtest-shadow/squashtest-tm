@@ -147,9 +147,10 @@ class QueryBuilderIT extends DbunitDaoSpecification {
 		query.toString().replaceAll(/_\d+/, "_sub") ==
 				"""select distinct requirement.id, requirement.id
 from Requirement requirement
-where requirement.id in (select distinct requirement_sub.id
+where exists (select 1
 from Requirement requirement_sub
   inner join requirement_sub.versions as requirementVersion_sub
+where requirement = requirement_sub
 group by requirement_sub.id
 having s_count(requirementVersion_sub.id) > ?1)
 group by requirement.id
@@ -264,10 +265,10 @@ from Requirement requirement
   inner join requirement.versions as requirementVersion
   inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
   inner join requirementVersionCoverage.verifyingTestCase as testCase
-where testCase.id in (select distinct testCase_sub.id
+where exists (select 
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
-where testStep_sub.class = ?1
+where testStep_sub.class = ?1 and testCase = testCase_sub
 group by testCase_sub.id
 having s_count(testStep_sub.id) > ?2)
 group by requirement.id
@@ -422,10 +423,10 @@ order by case when automatedTest_subcolumn_sub.id is not null then true else fal
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
   inner join iteration.testPlans as iterationTestPlanItem
-where iterationTestPlanItem.id in (select distinct iterationTestPlanItem_sub.id
+where exists (select 1
 from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
-where case when execution_sub.id is not null then true else false end  = ?1
+where case when execution_sub.id is not null then true else false end  = ?1 and iterationTestPlanItem = iterationTestPlanItem_sub
 group by iterationTestPlanItem_sub.id)
 group by iteration.id
 order by iteration.id asc"""
@@ -464,10 +465,10 @@ order by iteration.id asc"""
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
   inner join iteration.testPlans as iterationTestPlanItem
-where iterationTestPlanItem.id in (select distinct iterationTestPlanItem_sub.id
+where exists (select 1
 from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
-where case when execution_sub.id is not null then true else false end  = ?1
+where case when execution_sub.id is not null then true else false end  = ?1 and iterationTestPlanItem = iterationTestPlanItem_sub
 group by iterationTestPlanItem_sub.id)
 group by iteration.id
 order by iteration.id asc"""
@@ -575,11 +576,11 @@ order by iterationTestPlanItem.id asc"""
 				"""select distinct iteration.id, s_count(iterationTestPlanItem.id)
 from Iteration iteration
   inner join iteration.testPlans as iterationTestPlanItem
-where iterationTestPlanItem.id in (select distinct iterationTestPlanItem_sub.id
+where exists (select 1
 from IterationTestPlanItem iterationTestPlanItem_sub
   left join iterationTestPlanItem_sub.executions as execution_sub
   left join execution_sub.automatedExecutionExtender as automatedExecutionExtender_sub
-where automatedExecutionExtender_sub.id is null
+where automatedExecutionExtender_sub.id is null and iterationTestPlanItem = iterationTestPlanItem_sub
 group by iterationTestPlanItem_sub.id
 having s_count(execution_sub.id) > ?1)
 group by iteration.id

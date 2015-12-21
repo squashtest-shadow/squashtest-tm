@@ -103,10 +103,11 @@ class SubQueryBuilder extends QueryBuilder {
 		super.createQuery();
 
 		if (profile == QueryProfile.SUBSELECT_QUERY){
-			addSubselectSpecifics();
+			joinWithOuterquery();
 		}
 
 		if (profile == QueryProfile.SUBWHERE_QUERY){
+			joinWithOuterquery();
 			addSubwhereSpecifics();
 		}
 
@@ -115,7 +116,7 @@ class SubQueryBuilder extends QueryBuilder {
 	}
 
 	// we must join on the axes with those of the outer query
-	private void addSubselectSpecifics(){
+	private void joinWithOuterquery(){
 		BooleanBuilder joinWhere = new BooleanBuilder();
 
 		List<AxisColumn> axes = queryDefinition.getAxis();
@@ -180,6 +181,13 @@ class SubQueryBuilder extends QueryBuilder {
 	}
 
 	private void checkSubwhereConfiguration(){
+		if (subselectProfileJoinExpression == null){
+			throw new IllegalArgumentException("subwhere queries must always provide a join with the outer query, please use joinAxesOn()");
+		}
+
+		if (subselectProfileJoinExpression.size() != queryDefinition.getAxis().size()){
+			throw new IllegalArgumentException("subwhere queries joined entities must match (in number and type) the axis entities of the subquery");
+		}
 		if (subwhereProfileFilterExpression == null){
 			throw new IllegalArgumentException("subwhere queries must always provide a filter on the measure, please use filterMeasureOn()");
 		}

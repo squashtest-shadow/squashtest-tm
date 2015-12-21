@@ -47,7 +47,8 @@ import com.querydsl.core.types.dsl.Expressions;
  * 	<ul>
  * 		<li>MAIN_QUERY : the full projection will be applied (that is, axis then measures)</li>
  * 		<li>SUBSELECT_QUERY : only the measures will be projected - the axis only value is implicit because the outer query will drive it</li>
- * 		<li>SUBWHERE_QUERY : only the axis will be projected - the measure values are implicit because the outer query will drive them  </li>
+ * 		<li>SUBWHERE_QUERY : the select clause will always be 'select 1' - the rest of the inner query will define whether the result is null or not, 
+ * 			the outer  query can then test with 'exists (subquery)'  </li>
  * 	</ul>
  * </p>
  * 
@@ -130,7 +131,9 @@ class ProjectionPlanner {
 			populateClauses(selection, definition.getMeasures(), SubqueryAliasStrategy.APPEND_ALIAS);
 			break;
 		case SUBWHERE_QUERY :
-			populateClauses(selection, definition.getAxis(), SubqueryAliasStrategy.APPEND_ALIAS);
+			// that one is special : it's always 'select 1'
+			Expression<?> select1 = Expressions.constant(1);
+			selection.add(select1);
 			break;
 		}
 

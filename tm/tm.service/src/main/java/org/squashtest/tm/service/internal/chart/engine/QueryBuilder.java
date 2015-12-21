@@ -59,7 +59,7 @@ import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
  * join cov.verifiedRequirementVersion version
  * join version.requirement requirement
  * where testCase.id =1
- * and requirement.id in (select req2.id from Requirement req2 join req2.versions version2 group by req2.id having count(distinct version2) > 1 )
+ * and exists (select 1 from Requirement req2 join req2.versions version2 where req2.id = requirement.id group by req2.id having count(distinct version2) > 1 )
  * group by testCase.id
  * 
  * 

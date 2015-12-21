@@ -234,10 +234,14 @@ import com.querydsl.core.Tuple;
  * </p>
  * 
  * <p>
- * 	Subqueries have them own Query plan. We won't study the details here because it depends on the Target entity under process.
- * 	Also, unlike the main query - which can be computed entirely with first-class citizen elements like Enums - ,
- * 	the subquery plan is data-driven (especially for the Calculated attributes) : each ColumnPrototype will be identified and
- * 	have a custom treatment, so you'll have to read the code on that.
+ * 	Subqueries have them own Query plan, and are joined with the main query as follow : the bean of the outer query that defines the 
+ * calculated attribute will join with the root entity of the subquery (usually its axis). 
+ * 	We choose to use correlated subqueries (joining them as described above) even when an uncorellated would do fine, because in 
+ * practice a clause 
+ * 	<pre> where exists (select 1 from ... where ... and inner_col = outer_col) </pre>
+ * will outperform 
+ * 	<pre> where bean.id in (select id from .... where ...) </pre>
+ * by several order of magnitude (especially because in the former the DB can then use the indexed primary keys). 
  * </p>
  * 
  * <h3>Grouping</h3>

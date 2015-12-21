@@ -246,7 +246,7 @@ class QuerydslToolbox {
 
 	// ***************************** high level API ***********************
 
-
+	
 	Expression<?> createAsSelect(ColumnPrototypeInstance col){
 
 		Expression<?> selectElement = null;
@@ -422,16 +422,20 @@ class QuerydslToolbox {
 
 		switch(subQueryStrategy(filter)){
 
-		// create "where entity.id in (subquery)" expression
+		// create "where exists (subquery)" expression
 		case SUBQUERY :
+			EntityPathBase<?> colBean = getQBean(filter);
 			//create the subquery
-			QueryBuilder qbuilder = createSubquery(filter).asSubwhereQuery().filterMeasureOn(filter);
+			QueryBuilder qbuilder = createSubquery(filter)
+									.asSubwhereQuery()
+									.joinAxesOn(colBean)
+									.filterMeasureOn(filter);
 			Expression<?> subquery = qbuilder.createQuery();
 
 			// now integrate the subquery
-			Expression<?> entityIdPath = idPath(filter);
+			//Expression<?> entityIdPath = idPath(filter);
 
-			predicate = Expressions.predicate(Ops.IN, entityIdPath, subquery);
+			predicate = Expressions.predicate(Ops.EXISTS, subquery);
 			break;
 
 		case INLINED :
