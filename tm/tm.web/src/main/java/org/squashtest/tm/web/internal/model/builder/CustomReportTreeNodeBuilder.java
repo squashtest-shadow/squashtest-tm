@@ -89,11 +89,11 @@ public class CustomReportTreeNodeBuilder {
 		builtNode.setTitle(crln.getName());
 		builtNode.addAttr("resId", String.valueOf(crln.getId()));
 		builtNode.addAttr("id", String.valueOf(crln.getId()));
+		builtNode.addAttr("name", crln.getName());
 
 		//No milestone for custom report tree in first version so yes for all perm
 		builtNode.addAttr("milestone-creatable-deletable", "true");
 		builtNode.addAttr("milestone-editable", "true");
-
 
 		doPermissionCheck(builtNode,crln);
 
