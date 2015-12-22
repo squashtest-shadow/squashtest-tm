@@ -54,7 +54,7 @@
 <table id="issue-table" data-def="datakeys-id=issue-id, pre-sort=1-desc">
 	<thead>
 		<tr>
-			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable,">${interfaceDescriptor.tableIssueIDHeader}</th>
+			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
 			<th data-def="map=BtProject"><f:message key="bugtracker.project" /></th>
 			<th data-def="map=issue-summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=issue-priority">${interfaceDescriptor.tablePriorityHeader}</th>

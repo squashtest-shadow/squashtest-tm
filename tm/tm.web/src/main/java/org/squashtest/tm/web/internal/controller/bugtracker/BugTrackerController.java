@@ -101,7 +101,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 @RequestMapping("/bugtracker")
 public class BugTrackerController {
 
-	private static final String SORTING_DEFAULT_ATTRIBUTE = "Issue.id";
+	private static final String SORTING_DEFAULT_ATTRIBUTE = "Issue.remoteIssueId";	// here is the real fix for #5683 ;)
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerController.class);

@@ -538,22 +538,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			List<IssueOwnership<RemoteIssueDecorator>> ownerships = bindBTIssuesToOwner(btIssueDecorators,
 					localIssues, issueDetectorByListId);
 
-			// sort issue by remote issue id because it's what is displayed.
-			Collections.sort(ownerships, new Comparator<IssueOwnership<RemoteIssueDecorator>>() {
-
-				@Override
-				public int compare(IssueOwnership<RemoteIssueDecorator> o1, IssueOwnership<RemoteIssueDecorator> o2) {
-					int issueId1 = Integer.parseInt(o1.getIssue().getId());
-					int issueId2 = Integer.parseInt(o2.getIssue().getId());
-					return issueId1 - issueId2;
-				}
-
-			});
-			
-			if (SortOrder.DESCENDING.equals(sorter.getSortOrder())) {
-				Collections.reverse(ownerships);
-			}
-
 			Integer totalIssues = issueDao.countIssuesfromIssueList(issueListIds, bugTracker.getId());
 			return new PagingBackedPagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>>(sorter, totalIssues,
 					ownerships);
