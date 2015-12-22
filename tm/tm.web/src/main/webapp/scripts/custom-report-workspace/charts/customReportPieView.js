@@ -74,7 +74,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 				colorsAndLabels = this._getNormalConf(pieserie);
 			}
 
-      var sizeDependantconf = this.getResizeConf(colorsAndLabels.labels,colorsAndLabels.labels);
+			var sizeDependantconf = this.getResizeConf(colorsAndLabels.labels,colorsAndLabels.labels);
 
 			var finalConf = _.extend(this.getCommonConf(),{
 				seriesDefaults : {
@@ -84,7 +84,8 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 						dataLabels : colorsAndLabels.labels,
 						startAngle : -45,
 						shadowOffset : 0,
-						sliceMargin : 1.5
+						sliceMargin : 1.5,
+						dataLabelThreshold : 0
 					},
 					showHighlight : false
 				},
@@ -99,12 +100,12 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 				//seriesColors : colorsAndLabels.colors
 			});
 
-      var vueConf = this.getVueConf();
-      if (vueConf) {
-        finalConf = _.extend(finalConf,vueConf);
-      }
-
-      return finalConf;
+			var vueConf = this.getVueConf();
+			if (vueConf) {
+				finalConf = _.extend(finalConf,vueConf);
+			}
+	
+			return finalConf;
 		},
 
 		_getEmptyConf : function(pieserie){
