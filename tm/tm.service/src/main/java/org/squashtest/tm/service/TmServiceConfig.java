@@ -143,15 +143,18 @@ public class TmServiceConfig {
 
 		return listener;
 	}
-
-	@Bean @Lazy
+	
+	
+	// Issue #5776 : disabling @Lazy for the requirement audit event aspects
+	@Bean /*@Lazy*/
 	public RequirementCreationEventPublisherAspect requirementCreationEventPublisherAspect() {
 		RequirementCreationEventPublisherAspect aspect = RequirementCreationEventPublisherAspect.aspectOf();
 		aspect.setAuditor(statusBasedRequirementAuditor);
 		return aspect;
 	}
 
-	@Bean @Lazy
+	// Issue #5776 : disabling @Lazy for the requirement audit event aspects
+	@Bean /*@Lazy*/
 	public RequirementModificationEventPublisherAspect requirementModificationEventPublisherAspect() {
 		RequirementModificationEventPublisherAspect aspect = RequirementModificationEventPublisherAspect.aspectOf();
 		aspect.setAuditor(statusBasedRequirementAuditor);
