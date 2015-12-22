@@ -48,10 +48,10 @@
 			</div>
 			<div class="unsnap"></div>
 		</div>
-		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
 			{{#if emptyDashboard}}
 				{{> dashboardDoc}}
 			{{/if}}
+		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
 			{{#each chartBindings}}
    				{{> chart}}
  			{{/each}}
