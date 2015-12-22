@@ -315,7 +315,6 @@ define([],function () {
 						return false;
 					},
 					drop_finish		: function (data) {
-						console.log("finish drop plugin");
            var wreqr = squashtm.app.wreqr;
            wreqr.trigger("dropFromTree",data);
 					},
