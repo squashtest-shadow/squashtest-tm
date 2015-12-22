@@ -210,7 +210,7 @@ requirejs.config({
 //				"jquery.tagit" : "jquery/tag-it",
 				"jquery.tagit" : "jquery/tag-it.min",
 				//"jquery.gridster" : "jquery/jquery.gridster",
-				"jquery.gridster" : "jquery/jquery.gridster.with-extras",
+				"jquery.gridster" : "jquery/jquery.gridster",
 				"jstree-dnd-customreport-override" : "tree/workspace-tree-conf/jstree-dnd-customreport-override",
 				//squashtest
 				"jquery.squash" : "squashtest/jquery.squash.plugin",

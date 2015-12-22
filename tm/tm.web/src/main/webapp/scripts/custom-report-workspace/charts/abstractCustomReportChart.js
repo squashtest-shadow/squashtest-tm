@@ -245,7 +245,6 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
     calculateOneFontSize : function (height,nbLabel) {
       var spaceForOnelabel = height/nbLabel;
-      console.log("Space for legend " + height/nbLabel);
       if (spaceForOnelabel > 30) {
         return 12;
       }

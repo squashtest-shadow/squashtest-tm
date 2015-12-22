@@ -52,9 +52,6 @@ define(["jquery", "./abstractCustomReportChart",
 
       var sizeDependantconf = this.getResizeConf(formatedLegends,ticks);
 
-      console.log("FontSize for legend ");
-      console.log(sizeDependantconf);
-
 			var finalConf = _.extend(this.getCommonConf(),{
         stackSeries: true,
         seriesDefaults : {

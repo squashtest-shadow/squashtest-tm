@@ -145,12 +145,15 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
         resize : {
 					enabled : true,
           max_size : [self.maxChartSizeX,self.maxChartSizeY],
+          start : function (e, ui, $widget) {
+            self.cacheWidgetOriginalSize(e, ui, $widget);
+          },
           resize: function(e, ui, $widget) {
             self.resizeChart(e, ui, $widget);
           },
           stop: function(e, ui, $widget) {
+            self.resolveConflict($widget);
             self.resizeChart(e, ui, $widget);
-            self.serializeGridster();
           }
 				},
         draggable : {
@@ -514,6 +517,30 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
           }
         }
       }
+    },
+
+    cacheWidgetOriginalSize : function (e, ui, $widget) {
+      this.widgetInitialSizeX = parseInt($widget.attr("data-sizex"));
+      this.widgetInitialSizeY = parseInt($widget.attr("data-sizey"));
+    },
+
+    resolveConflict : function ($widget) {
+      if (this.hasExeededRowLimit()) {
+        this.gridster.resize_widget($widget, this.widgetInitialSizeX, this.widgetInitialSizeY);
+      }
+      else {
+        this.serializeGridster();
+      }
+    },
+
+    hasExeededRowLimit : function () {
+      var overMaxRow = this.gridRow + 1;
+      for (var i = 1; i <= this.gridCol; i++) {
+        if (this.gridster.is_occupied(i,overMaxRow)) {
+          return true;
+        }
+      }
+      return false;
     },
 
     remove : function () {
