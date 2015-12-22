@@ -33,6 +33,7 @@ import javax.inject.Inject;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -614,7 +615,10 @@ public class BugTrackerController {
 
 		String projectName = issue.getProject().getName();
 
-		if (!projectNames.contains(projectName)){
+		//Dirty fix to Issue 5767. As the bugtracker "trac" do not provide project name, we have to ignore the case of projectName is null
+		//yeah it's sucks because we can let some invalid issues from other bugtracker pass trough the control
+		//we should modify API to do that correctly but no time for this in 1.13
+		if (!projectNames.contains(projectName) && StringUtils.isNotEmpty(projectName)){
 			throw new BugTrackerRemoteException(messageSource.internationalize("bugtracker.issue.notfoundinprojects", locale), new Throwable());
 		}
 
