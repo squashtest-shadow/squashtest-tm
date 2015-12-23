@@ -127,7 +127,7 @@ public class CustomFieldJsonConverter {
 	// we're doing an ugly downcast for multi select fields when appropriate
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
-		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())){
+		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())){//NOSONAR see comment above...
 			return toJson((TagsValue)value);
 		}
 		else{
@@ -206,7 +206,7 @@ public class CustomFieldJsonConverter {
 		model.setBinding(bindingModel);
 
 		// the value depends on the actual subtype
-		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())){
+		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())){//NOSONAR see coment above
 			model.setOptionValues(((DenormalizedMultiSelectField)value).getValues());
 		}
 		else{

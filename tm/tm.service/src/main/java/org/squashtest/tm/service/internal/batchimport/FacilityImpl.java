@@ -846,6 +846,40 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
+	
+
+	private void doUpdateRequirementCoreAttributes(
+			RequirementVersion reqVersion, RequirementVersion orig) {
+
+		doUpdateRequirementReference(reqVersion, orig);
+		doUpdateRequirementDescription(reqVersion, orig);
+		doUpdateRequirementCriticality(reqVersion, orig);
+		doUpdateRequirementCategory(reqVersion, orig);
+	}
+	
+	private void doUpdateRequirementCriticality(RequirementVersion reqVersion, RequirementVersion orig) {
+		RequirementCriticality newCriticality = reqVersion.getCriticality();
+		if (newCriticality!=null && !newCriticality.equals(orig.getCriticality())) {
+			requirementVersionManagerService.changeCriticality(orig.getId(), newCriticality);
+		}
+	}
+
+
+	private void doUpdateRequirementDescription(RequirementVersion reqVersion, RequirementVersion orig) {
+		String newDescription = reqVersion.getDescription();
+		if (!StringUtils.isBlank(newDescription) && !newDescription.equals(orig.getReference())) {
+			requirementVersionManagerService.changeDescription(orig.getId(), newDescription);
+		}
+	}
+
+
+	private void doUpdateRequirementReference(RequirementVersion reqVersion,RequirementVersion orig){
+		String newReference = reqVersion.getReference();
+		if (!StringUtils.isBlank(newReference) && !newReference.equals(orig.getReference())) {
+			requirementVersionManagerService.changeReference(orig.getId(), newReference);
+		}
+	}
+	
 	private void doUpdateRequirementCategory(
 			RequirementVersion reqVersion, RequirementVersion orig) {
 		Long idOrig = orig.getId();
@@ -854,32 +888,6 @@ public class FacilityImpl implements Facility {
 		InfoListItem newCategory = reqVersion.getCategory();
 
 		if (newCategory!=null && !oldCategory.references(newCategory)) {
-			requirementVersionManagerService.changeCategory(idOrig, newCategory.getCode());
-		}
-	}
-
-	private void doUpdateRequirementCoreAttributes(
-			RequirementVersion reqVersion, RequirementVersion orig) {
-
-		Long idOrig = orig.getId();
-
-		String newReference = reqVersion.getReference();
-		if (!StringUtils.isBlank(newReference) && !newReference.equals(orig.getReference())) {
-			requirementVersionManagerService.changeReference(idOrig, newReference);
-		}
-
-		String newDescription = reqVersion.getDescription();
-		if (!StringUtils.isBlank(newDescription) && !newDescription.equals(orig.getReference())) {
-			requirementVersionManagerService.changeDescription(idOrig, newDescription);
-		}
-
-		RequirementCriticality newCriticality = reqVersion.getCriticality();
-		if (newCriticality!=null && !newCriticality.equals(orig.getCriticality())) {
-			requirementVersionManagerService.changeCriticality(idOrig, newCriticality);
-		}
-
-		InfoListItem newCategory = reqVersion.getCategory();
-		if (newCategory!=null&&!newCategory.equals(orig.getCategory())) {
 			requirementVersionManagerService.changeCategory(idOrig, newCategory.getCode());
 		}
 	}

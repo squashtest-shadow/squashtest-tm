@@ -888,7 +888,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		}
 		for (Long tcId : steppedCoverageTCIdsWithoutITPI) {
 			for (RequirementVersionCoverage cov : stepedCoverage) {
-				if (cov.getVerifyingTestCase().getId()==tcId) {
+				if (cov.getVerifyingTestCase().getId().equals(tcId)) {
 					total += cov.getVerifyingSteps().size();
 				}
 			}
@@ -950,8 +950,8 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	private Long countforStatus(Map<ExecutionStatus, Long> fullCoverageResult,
 			Set<ExecutionStatus> statusSet) {
 		Long count = 0L;
-		for (ExecutionStatus executionStatus : fullCoverageResult.keySet()) {
-			if (statusSet.contains(executionStatus)) {
+		for (Entry<ExecutionStatus, Long> executionStatus : fullCoverageResult.entrySet()) {
+			if (statusSet.contains(executionStatus.getKey())) {
 				count += fullCoverageResult.get(executionStatus);
 			}
 		}
