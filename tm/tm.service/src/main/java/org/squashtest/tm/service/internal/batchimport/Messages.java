@@ -99,7 +99,7 @@ public final class Messages {
 	public static final String IMPACT_VERSION_NUMBER_MODIFIED = "message.import.log.impact.versionModified";
 	public static final String IMPACT_MILESTONE_NOT_BINDED = "message.import.log.impact.milestone.notBinded";
 	public static final String IMPACT_REQ_RENAMED = "message.import.log.impact.requirement.reqRenamed";
-	public static final String IMPACT_COVERAGE_FAILURE = "message.import.log.impact.coveraged.failure";
+	public static final String IMPACT_COVERAGE_FAILURE = "message.import.log.impact.line.ignored";
 
 	public static final String WARN_MILESTONE_FEATURE_DEACTIVATED = "message.import.log.warn.milestoneFeatureDeactivated";
 	public static final String WARN_UNKNOWN_MILESTONE = ERROR_UNKNOWN_MILESTONE;
