@@ -25,7 +25,7 @@
  *  
  */
 define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "squash.translator", "jquery.timepicker", "jqueryui"], 
-		function($, FieldValue, confman, dateutils){
+		function($, FieldValue, confman, dateutils, translator){
 
 	function convertStrDate(fromFormat, toFormat, strFromValue){
 		var date = $.datepicker.parseDate(fromFormat, strFromValue);
