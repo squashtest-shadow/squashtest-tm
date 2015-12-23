@@ -30,7 +30,7 @@ define(["handlebars", "underscore", "squash.translator"], function(Handlebars, _
 	function propertyHelper(propName) {
 		return function() {
 			if (this[propName] === true) {
-				return propName + '="' + propName + '"';
+				return new Handlebars.SafeString(propName + '="' + propName + '"');
 			}
 			return "";
 		};
