@@ -36,8 +36,10 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		},{
 			name :"filter",
 			validationParam : "filtered"
-		},
-
+		},{
+			name :"type",
+			validationParam : "chartData"
+		}
 		];
 	var steps = [{
 		name : "entity",
