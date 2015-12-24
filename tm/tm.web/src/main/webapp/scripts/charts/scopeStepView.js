@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", "tree", "jquery.squash.confirmdialog"],
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "tree", "jquery.squash.confirmdialog"],
 	function($, backbone, _, Handlebars, AbstractStepView, tree) {
 	"use strict";
 

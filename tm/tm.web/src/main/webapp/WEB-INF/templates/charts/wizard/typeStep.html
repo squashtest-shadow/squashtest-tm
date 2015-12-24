@@ -81,7 +81,7 @@
         <input  type="radio" name="chart-type" class="chart-type" value="{{this}}"  
         
         {{#if ../attributes.type}}     
-        {{#equal this ../../attributes.type}} checked="checked" {{/equal}} 
+        {{#equal this ../attributes.type}} checked="checked" {{/equal}} 
         {{else}}
         {{#unless @index}} checked="checked" {{/unless}}
         {{/if}}            
