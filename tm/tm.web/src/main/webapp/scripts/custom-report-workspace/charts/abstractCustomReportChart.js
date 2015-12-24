@@ -28,8 +28,8 @@
 *
 *
 */
-define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
-		function($, Backbone, attrparser, eventbus, _, translator){
+define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "underscore", "squash.translator", "handlebars",  "text!./empty-chart.html!strip", "dashboard/jqplot-ext/jqplot.squash.stylableGridRenderer"],
+		function($, Backbone, attrparser, eventbus, _, translator, Handlebars,  emptyChartTemplate){
 
 	translator.load(["squashtm.dateformatShort", "squashtm.dateformatMonthshort"]);
 
@@ -356,8 +356,13 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
 		draw : function(series, conf){
 
-			if (this.plot === undefined){
-				var viewId = this.$el.attr('id');
+			var viewId = this.$el.attr('id');
+			
+			if (series.length===0 || series[0].length===0){
+				this.drawNoplot(viewId);
+			}
+			
+			else if (this.plot === undefined){
 				this.plot = $.jqplot(viewId, series, conf);
 			}
 
@@ -374,8 +379,18 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 				this.plot.destroy();
 			}
 			Backbone.View.prototype.remove.call(this);
-		}
+		},
+		
+		drawNoplot : function(viewId){
+			
+			var view = $("#"+viewId);
 
+			view.empty();
+			
+			var html = Handlebars.compile(emptyChartTemplate)();
+			
+			view.append(html);
+		}
 
 	});
 
