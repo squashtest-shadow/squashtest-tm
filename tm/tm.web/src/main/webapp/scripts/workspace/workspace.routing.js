@@ -107,6 +107,7 @@ define([], function(){
 	return {
 
 		// url names mapping
+		'home': 	root + '/home-workspace/',
 		'attachments.manager':				root + '/attach-list/{\\d+}/attachments/manager',
 		'search' :							root + '/advanced-search',
 		'search.results' :					root + '/advanced-search/results',

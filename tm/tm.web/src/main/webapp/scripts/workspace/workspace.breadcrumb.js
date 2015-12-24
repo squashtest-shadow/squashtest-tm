@@ -211,9 +211,34 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 
 	}
 
+  function resolveUndefinedUrl(url) {
+    if (url) {
+      return url;
+    }
+    else {
+      var workspace;
+      if (squashtm.app.campaignWorkspaceConf) {
+        workspace = "campaigns.workspace";
+      }
+      else if (squashtm.app.testCaseWorkspaceConf) {
+        workspace = "testcases.workspace";
+      }
+      else if (squashtm.app.requirementWorkspaceConf) {
+        workspace = "requirements.workspace";
+      }
+      //now get url for the workspace and return
+      if (workspace) {
+        return routing.buildURL(workspace);
+      }
+    }
+    //if we come here something really messed in breadcomb, fallback to home page to prevent nasty 404 or 500.
+    return routing.buildURL("home");
+  }
+
 	function track(){
 
 		var breadcrumb = storage.get(storekey) || [];
+    var backUrl;
 
 
 		// step 2
@@ -228,7 +253,9 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 		else if (justNavigatedBack(breadcrumb)){
 			breadcrumb.pop();
 			if (breadcrumb.length>0){
-				window.squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
+        backUrl = breadcrumb[breadcrumb.length-1];
+        backUrl = resolveUndefinedUrl(backUrl);
+				window.squashtm.workspace.backurl = backUrl;
 			}
 		}
 
@@ -243,7 +270,7 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 
 			var locationMapped = false,
 				referrerMapped = false;
-			
+
 			for (var l in module.routes){
 				if (routing.matches(l, locationPath)){
 					locationMapped = true;
@@ -260,8 +287,10 @@ define(["jquery", "workspace.routing", "workspace.storage", 'app/util/URLUtils']
 			}
 
 			// step 5
-			window.squashtm.workspace.backurl = breadcrumb[breadcrumb.length-1];
-			
+      backUrl = breadcrumb[breadcrumb.length-1];
+      backUrl = resolveUndefinedUrl(backUrl);
+      window.squashtm.workspace.backurl = backUrl;
+
 		}
 
 
