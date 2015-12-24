@@ -126,7 +126,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	private final List<TestStep> steps = new ArrayList<TestStep>();
+	private List<TestStep> steps = new ArrayList<TestStep>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
@@ -679,7 +679,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * @return an unmodifiable set of the test case {@link RequirementVersionCoverage}s
 	 */
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
-		return Collections.unmodifiableSet(this.requirementVersionCoverages);
+		return requirementVersionCoverages;
 	}
 
 	/**
@@ -713,7 +713,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	// =====================Parameter Section====================
 	public Set<Parameter> getParameters() {
-		return Collections.unmodifiableSet(this.parameters);
+		return parameters;
 	}
 
 	/**
@@ -733,7 +733,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public Set<Dataset> getDatasets() {
-		return Collections.unmodifiableSet(this.datasets);
+		return datasets;
 	}
 
 	public void addDataset(@NotNull Dataset dataset) {

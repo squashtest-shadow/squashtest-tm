@@ -1,30 +1,28 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
+import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 
@@ -35,12 +33,19 @@ import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
-import org.hibernate.search.MassIndexer;
 import org.hibernate.search.Search;
+import org.hibernate.search.SearchFactory;
+import org.hibernate.search.backend.impl.PostTransactionWorkQueueSynchronization;
+import org.hibernate.search.backend.impl.TransactionalWorker;
+import org.hibernate.search.backend.impl.WorkQueue;
 import org.hibernate.search.batchindexing.MassIndexerProgressMonitor;
+import org.hibernate.search.spi.SearchIntegrator;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -50,7 +55,10 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.library.AdvancedSearchIndexingMonitor;
 
 @Service("squashtest.tm.service.IndexationService")
+@Transactional
 public class IndexationServiceImpl implements IndexationService {
+
+	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(IndexationServiceImpl.class);
 
 	@Inject
 	private SessionFactory sessionFactory;
@@ -67,6 +75,8 @@ public class IndexationServiceImpl implements IndexationService {
 	public final static String REQUIREMENT_INDEXING_VERSION_KEY = "lastindexing.requirement.version";
 	public final static String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
 	public final static String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
+
+	private static final int BATCH_SIZE = 20;
 
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
@@ -96,8 +106,6 @@ public class IndexationServiceImpl implements IndexationService {
 		return date;
 	}
 
-
-
 	@Override
 	public Boolean isIndexedOnPreviousVersion() {
 		String currentVersion = configurationService.findConfiguration(SQUASH_VERSION_KEY);
@@ -110,7 +118,6 @@ public class IndexationServiceImpl implements IndexationService {
 
 		return !result;
 	}
-
 
 	@Override
 	public void reindexRequirementVersion(Long requirementVersionId) {
@@ -131,7 +138,6 @@ public class IndexationServiceImpl implements IndexationService {
 		}
 
 	}
-
 
 	@Override
 	public void reindexTestCase(Long testCaseId) {
@@ -183,22 +189,11 @@ public class IndexationServiceImpl implements IndexationService {
 
 	}
 
-	private MassIndexer configure(MassIndexer indexer) {
-		// formatter:off
-		indexer.purgeAllOnStart(true)
-			.threadsToLoadObjects(1)
-			.threadsForSubsequentFetching(1)
-			.batchSizeToLoadObjects(10)
-			.cacheMode(CacheMode.NORMAL);
-		// formatter:on
-		return indexer;
-	};
-
 	@Override
 	public void batchReindexTc(List<Long> tcIdsToIndex) {
-		batchReindex(TestCase.class, tcIdsToIndex);	
+		batchReindex(TestCase.class, tcIdsToIndex);
 	}
-	
+
 	@Override
 	public void batchReindexReqVersion(List<Long> reqVersionIdsToIndex) {
 		batchReindex(RequirementVersion.class, reqVersionIdsToIndex);
@@ -206,34 +201,81 @@ public class IndexationServiceImpl implements IndexationService {
 	}
 
 	// Batched versions
+	private <T> void batchReindex(Class<T> entity, List<Long> ids) {
+		if (!ids.isEmpty()) {
+			FullTextSession ftSession = getFullTextSession();
+			ScrollableResults scroll = getScrollableResults(ftSession, entity, ids);
+			doReindex(ftSession, scroll);
+		}
+	}
 
-	private <T> void batchReindex(Class<T> entity, List<Long> ids){
+	private void doReindex(FullTextSession ftSession, ScrollableResults scroll) {
+		// update index going through the search results
+		int batch = 0;
+		while (scroll.next()) {
+			ftSession.index(scroll.get(0)); // indexing of a single entity
+
+			if (++batch % BATCH_SIZE == 0) { // commit batch
+				ftSession.flushToIndexes();
+				ftSession.clear();
+			}
+		}
+		// commit remaining item
+		ftSession.flushToIndexes();
+		ftSession.clear();
+	}
+
+	private ScrollableResults getScrollableResults(FullTextSession ftSession, Class<?> entity, List<Long> ids) {
+		Criteria query = ftSession.createCriteria(entity);
+		query.add(Restrictions.in("id", ids));
+		return query.scroll(ScrollMode.FORWARD_ONLY);
+	}
+
+	private FullTextSession getFullTextSession() {
 		Session session = sessionFactory.getCurrentSession();
-		
-		session.flush();
-		session.clear();
-		
+
 		// get FullText session
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		ftSession.setFlushMode(FlushMode.MANUAL);
 		ftSession.setCacheMode(CacheMode.IGNORE);
-		//define criteria to load entities
-		Criteria query = session.createCriteria(entity);
-		query.add(Restrictions.in("id", ids));
-		// update index going through the search results
-	
-		int batch = 0;
-		ScrollableResults scroll = query.scroll(ScrollMode.FORWARD_ONLY); 
-		while (scroll.next()) {
-		   ftSession.index(scroll.get(0)); //indexing of a single entity
-		       if (batch % 20 == 0) { // commit batch                
-		           ftSession.flushToIndexes();                
-		           ftSession.clear();   
-		        
-		      }
+
+		// Clear the lucene work queue to eliminate lazy init bug for batch processing.
+		clearLuceneQueue(ftSession);
+
+		return ftSession;
+	}
+
+	// BEWARE dark magic
+	private void clearLuceneQueue(FullTextSession ftSession) {
+		SearchFactory searchFactory = ftSession.getSearchFactory();
+		SearchIntegrator searchIntegrator = searchFactory.unwrap(SearchIntegrator.class);
+		TransactionalWorker worker = (TransactionalWorker) searchIntegrator.getWorker();
+
+		try {
+			Field synchronizationPerTransactionField = TransactionalWorker.class
+					.getDeclaredField("synchronizationPerTransaction");
+
+			synchronizationPerTransactionField.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			ConcurrentMap<Object, PostTransactionWorkQueueSynchronization> synchronizationPerTransaction = (ConcurrentMap<Object, PostTransactionWorkQueueSynchronization>) synchronizationPerTransactionField
+					.get(worker);
+
+			Transaction transaction = ftSession.getTransaction();
+			PostTransactionWorkQueueSynchronization txSync = (PostTransactionWorkQueueSynchronization) synchronizationPerTransaction
+					.get(transaction);
+
+			Field queueField = PostTransactionWorkQueueSynchronization.class.getDeclaredField("queue");
+			queueField.setAccessible(true);
+
+			if (txSync != null) {
+			WorkQueue queue = (WorkQueue) queueField.get(txSync);
+			queue.clear();
+			}
+
+		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+			e.printStackTrace();
 		}
 
 	}
 
-		
-	}
+}

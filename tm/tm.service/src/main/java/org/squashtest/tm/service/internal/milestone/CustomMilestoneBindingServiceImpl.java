@@ -25,19 +25,32 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Transformer;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 import org.squashtest.tm.service.internal.repository.ProjectTemplateDao;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 @Service("squashtest.tm.service.MilestoneBindingManagerService")
 public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManagerService {
+
+	private static final Transformer ID_COLLECTOR = new Transformer() {
+
+		@Override
+		public Object transform(Object input) {
+			return ((Identified) input).getId();
+		}
+	};
 
 	@Inject
 	private MilestoneDao milestoneDao;
@@ -53,6 +66,12 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
+
+	@Inject
+	private TestCaseLibraryNavigationService tcService;
+
+	@Inject
+	private IndexationService indexService;
 
 	@Override
 	public List<Milestone> getAllBindableMilestoneForProject(Long projectId) {
@@ -132,6 +151,8 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		return bindedProject;
 	}
 
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId) {
 
@@ -145,10 +166,21 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 			milestone.removeProjectFromPerimeter(project);
 		}
 
+		List<Long> tcIds = new ArrayList<>();
+		List<Long> reqIds = new ArrayList<>();
+
 		for (Milestone milestone : milestones) {
+
+			tcIds.addAll(CollectionUtils.collect(milestone.getTestCases(), ID_COLLECTOR));
+			reqIds.addAll(CollectionUtils.collect(milestone.getRequirementVersions(), ID_COLLECTOR));
+
 			// BE CAREFULL if you refactor here : This method may clear the session.
 			milestoneDao.unbindAllObjectsForProject(milestone.getId(), projectId);
+
+
 		}
+		indexService.batchReindexTc(tcIds);
+		indexService.batchReindexReqVersion(reqIds);
 	}
 
 	@Override
