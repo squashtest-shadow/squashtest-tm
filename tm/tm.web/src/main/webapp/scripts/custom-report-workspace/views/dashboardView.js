@@ -525,8 +525,14 @@ define(["jquery","underscore","backbone","squash.translator","handlebars","tree"
     },
 
     resolveConflict : function ($widget) {
+      var coords = this.gridster.dom_to_coords($widget);
+      if(coords.size_x===this.widgetInitialSizeX && coords.size_y===this.widgetInitialSizeY){
+        //no change, return. Can happend if widget resize go above widget size limit.
+        return;
+      }
       if (this.hasExeededRowLimit()) {
         this.gridster.resize_widget($widget, this.widgetInitialSizeX, this.widgetInitialSizeY);
+        this.redrawDashboard();
       }
       else {
         this.serializeGridster();
