@@ -18,18 +18,18 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore"], function($, Backbone, _) {
+define([ "jquery", "backbone", "underscore","app/util/StringUtil"], function($, Backbone, _,stringUtil) {
 	"use strict";
 
 return Backbone.Model.extend({
-		
+
 	initialize : function(data){
-		
+
 		var self = this;
 		var chartDef = data.chartDef;
-		
+
 		if (chartDef !== null){
-		
+
 		this.set({
 			updateId : chartDef.id,
 			name : chartDef.name,
@@ -46,10 +46,10 @@ return Backbone.Model.extend({
 		    selectedAttributes : self.getSelectedAttributes(chartDef),
 		    filtered : [true]
 		});
-		
+
 		}
 	},
-	
+
 	getOperations : function (chartDef){
 		return _.chain(chartDef)
 		.pick('filters', 'measures', 'axis')
@@ -57,38 +57,38 @@ return Backbone.Model.extend({
 		.flatten()
 		.map(function(val){return _(val).pick('column', 'operation');})
 		.value();
-		
+
 	},
-	
+
 	getScopeEntity : function (scope){
-		
+
 		var val = _.chain(scope)
 		.first()
 		.result("type")
 		.value();
-		
+
 		val = val.split("_")[0];
-		
+
 		if (val == "PROJECT") {
 			val = "default";
 		} else if (val == "TEST"){
 			val = "TEST_CASE";
 		}
-		
+
 		return val;
-		
+
 	},
-	
+
 	getFilters : function (chartDef){
-		
+
 		return _.chain(chartDef.filters)
 		.map(function(filter) {  filter.values = [filter.values] ; return filter;})
 		.value();
-		
+
 	},
-	
+
 	getSelectedAttributes : function (chartDef){
-		
+
 		return _.chain(chartDef)
 		.pick('filters', 'measures', 'axis')
 		.values()
@@ -98,11 +98,11 @@ return Backbone.Model.extend({
 		.uniq()
 		.map(function(val) {return val.toString();})
 		.value();
-		
+
 	},
-	
+
 	getSelectedEntities : function (chartDef) {
-		
+
 	return _.chain(chartDef)
 	.pick('filters', 'measures', 'axis')
 	.values()
@@ -111,30 +111,28 @@ return Backbone.Model.extend({
 	.pluck('specializedType')
 	.pluck('entityType')
 	.uniq()
-	.value();	
+	.value();
 	},
-	
-	
-	
-		toJson : function() {
-			
+
+
+
+		toJson : function(param) {
 			return JSON.stringify ({
-			id : this.get('updateId') || null,	
-			name : this.get("name") || "graph",
+			id : this.get('updateId') || null,
+			name : param || this.get("name"),
 			type : this.get("type"),
 			query : {
 				axis: this.get("axis"),
-				measures : this.get("measures"),					
+				measures : this.get("measures"),
 				filters : _.map(this.get("filters"), function(filter) {var newFilter= _.clone(filter); newFilter.values = _.flatten(filter.values); return newFilter;})
 			},
 			owner : this.get("owner") || null,
 			projectScope : this.get("projectsScope"),
 			scope : _.map(this.get("scope"), function(val) {var newVal = _.clone(val); newVal.type = val.type.replace("LIBRARIE", "LIBRARY"); return newVal;})
 			});
-			
 		}
-	
-	
+
+
 		});
 
 

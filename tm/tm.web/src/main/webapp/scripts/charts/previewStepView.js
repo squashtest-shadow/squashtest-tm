@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory"],
-	function($, backbone, _, Handlebars, AbstractStepView, router, chart) {
+	function($, backbone, _, Handlebars, AbstractStepView, router, chart ) {
 	"use strict";
 
 	var previewStepView = AbstractStepView.extend({
@@ -36,8 +36,9 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 
 		initName : function (){
-			var name = this.model.get('name') || "graph" ;
-			 $("#chart-name").val(name);
+			//var name = this.model.get('name') || "graph" ;
+			 $("#chart-name").val("");
+       this.updateModel();
 		},
 		initChart : function (){
 			var data = this.model.get("chartData");
@@ -47,15 +48,15 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		save : function () {
 			var parentId = this.model.get("parentId");
 			this.updateModel();
-			
+
 			var targetUrl;
-			
+
 			if (this.model.get("chartDef") === null){
 				targetUrl = router.buildURL("chart.new", parentId);
 			} else {
 				targetUrl = router.buildURL("chart.update", parentId);
 			}
-			
+
 			$.ajax({
 				method : "POST",
 				contentType: "application/json",
@@ -64,16 +65,15 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			}).done(function(url){
 				 window.location.href = squashtm.app.contextRoot + url;
-			});	
-			
+			});
+
 
 		},
-		
+
 
 		updateModel : function() {
-
 		    var name = $("#chart-name").val();
-		    this.model.set({name : name });
+		    this.model.set("name",name );
 		}
 
 	});

@@ -46,7 +46,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var self = this;
 
 			self.updateModel();
-			
+
 			if (self.isValid()){
 
 			$.ajax({
@@ -54,7 +54,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 				'dataType' : 'json',
 				'contentType' : 'application/json',
 				'url' : squashtm.app.contextRoot + '/charts/instance',
-				'data' : this.model.toJson()
+				'data' : this.model.toJson("graph")
 			})
 			.success(function(json){
 				self.model.set({chartData : json});
@@ -62,14 +62,14 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			});
 			}
 		},
-		
+
 		isValid : function(){
-			
+
 			if (_.isEmpty(this.model.get('measures')) || _.isEmpty(this.model.get('axis'))){
-				
+
 				var title = translator.get('wizard.generate.error.title');
-				var msg = translator.get('wizard.generate.error.msg');				
-				$.squash.openMessage(title, msg);		
+				var msg = translator.get('wizard.generate.error.msg');
+				$.squash.openMessage(title, msg);
 				return false;
 			}
 			return true;
@@ -157,8 +157,8 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		showPieAxis : function () {
 			this.setInvisible(["axis-y", "axis-x2", "axis-x1-axeName"]);
 			this.setVisible(["pie-axis"]);
-			
-			
+
+
 		},
 
 		showOneAxis : function () {
@@ -353,7 +353,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			var axis2  = this.find("x2");
 
 			if (! _.isUndefined(axis1)){
-			
+
 			switch (type) {
 
 			case "CUMULATIVE" :
@@ -361,7 +361,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			break;
 
 		    case "PIE" :
-		    	
+
 		    	var entityType = axis1.column.specializedType.entityType;
 		    	measure = {};
 		    	measure.operation = "COUNT";
