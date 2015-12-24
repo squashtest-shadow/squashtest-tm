@@ -31,7 +31,6 @@ import java.util.Map.Entry;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-import org.springframework.beans.factory.ObjectFactory;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.service.annotation.CacheScope;
@@ -220,7 +219,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				appendNextLayerNodes(srcNode, outputNode);
 			}
 		}
-
+		firstOperation.reindexAfterCopy();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -235,7 +234,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				appendNextLayerNodes(srcNode, outputNode);
 			}
 		}
-
+		firstOperation.reindexAfterCopy();
 	}
 
 	/**
@@ -256,7 +255,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			}
 		}
 
+		nextsOperation.reindexAfterCopy();
+
 	}
+
 
 	private PasteOperation createNextLayerOperation() {
 		return nextLayersOperationFactory.get();

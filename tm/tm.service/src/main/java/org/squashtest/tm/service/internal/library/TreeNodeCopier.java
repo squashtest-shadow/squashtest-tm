@@ -280,6 +280,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		}	
 		
 		genericDao.clearFromCache(entities);
+		sessionFactory.getCurrentSession().flush();
 	}
 
 	@Override
