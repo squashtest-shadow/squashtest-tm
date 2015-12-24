@@ -23,6 +23,7 @@ package org.squashtest.tm.domain.search;
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -41,40 +42,34 @@ public class IndexMonitor {
 		monitors.put(IterationTestPlanItem.class, new IndexMonitor());
 	}
 
-	private BigInteger totalCount = BigInteger.ZERO;
-	private BigInteger documentsBuilt = BigInteger.ZERO;
+	private final AtomicLong totalCount = new AtomicLong();
+	private final AtomicLong documentsBuilt = new AtomicLong();
 
 
 	public void addToTotalCount(long count) {
-		totalCount = totalCount.add(BigInteger.valueOf(count));
+		totalCount.addAndGet(count);
 	}
 
 	public void addToDocumentsBuilded(int doc) {
-		documentsBuilt = documentsBuilt.add(BigInteger.valueOf(doc));
+		documentsBuilt.addAndGet(doc);
 	}
 
-	public void addToTotalCount(BigInteger count) {
-		totalCount = totalCount.add(count);
-	}
 
-	public void addToDocumentsBuilded(BigInteger doc) {
-		documentsBuilt = documentsBuilt.add(doc);
-	}
 
 	public BigInteger getTotalCount() {
-		return totalCount;
+		return BigInteger.valueOf(totalCount.get());
 	}
 
 	public BigInteger getDocumentsBuilt() {
-		return documentsBuilt;
+		return BigInteger.valueOf(documentsBuilt.get());
 	}
 
 	public BigInteger getPercentComplete() {
 
-		if (totalCount.equals(BigInteger.ZERO)) {
+		if (getTotalCount().equals(BigInteger.ZERO)) {
 			return CENT;
 		}
-		return documentsBuilt.multiply(CENT).divide(totalCount);
+		return getDocumentsBuilt().multiply(CENT).divide(getTotalCount());
 
 	}
 

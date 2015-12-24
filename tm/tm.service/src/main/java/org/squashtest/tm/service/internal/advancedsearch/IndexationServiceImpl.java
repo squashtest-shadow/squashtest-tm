@@ -82,6 +82,8 @@ public class IndexationServiceImpl implements IndexationService {
 
 	private static final int BATCH_SIZE = 20;
 
+	private static final int MASS_INDEX_BATCH_SIZE = 50;
+
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	@Override
@@ -188,8 +190,9 @@ public class IndexationServiceImpl implements IndexationService {
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(Arrays.asList(T),
 				this.configurationService);
-		ftSession.createIndexer(T).purgeAllOnStart(true).threadsToLoadObjects(1).threadsForSubsequentFetching(1)
-				.batchSizeToLoadObjects(10).cacheMode(CacheMode.IGNORE).progressMonitor(monitor).start();
+		ftSession.createIndexer(T).purgeAllOnStart(true).threadsToLoadObjects(T.length).typesToIndexInParallel(T.length)
+				.batchSizeToLoadObjects(MASS_INDEX_BATCH_SIZE).cacheMode(CacheMode.IGNORE).progressMonitor(monitor)
+				.start();
 
 	}
 
