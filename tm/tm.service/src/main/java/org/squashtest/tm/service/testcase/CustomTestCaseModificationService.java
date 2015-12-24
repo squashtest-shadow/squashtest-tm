@@ -97,30 +97,57 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	List<TestStep> removeListOfSteps(long testCaseId, List<Long> testStepIds);
 
 	/**
-	 * will insert a test step into a test case script, possibly after a step (the position), given their Ids.
+	 * will insert a test step into a test case script, after the step identified by idInsertion.
+	 * If the copied step id a call step the method returns true, or false when it is a regular step.
 	 * 
 	 * @param testCaseId
 	 *            the id of the test case.
-	 * @param idToCopyAfter
-	 *            the id of the step after which we'll insert the copy of a step, may be null.
+	 * @param idInsertion
+	 *            the id of the step after which we'll insert the copy of a step
 	 * @param copiedTestStepId
 	 *            the id of the testStep to copy.
-	 * @return true if the copied step is instance of CallStep
+	 * 
+	 * @return true if the copied step is instance of CallStep, false otherwise
 	 * 
 	 */
-	boolean pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId);
+	boolean pasteCopiedTestStep(long testCaseId, long idInsertion, long copiedTestStepId);
 
 	/**
-	 * will insert a test step into a test case script at the last position
+	 * will insert a test step into a test case script, at the last position.
+	 * If the copied step id a call step the method returns true, or false when it is a regular step.
 	 * 
 	 * @param testCaseId
 	 *            the id of the test case.
 	 * @param copiedTestStepId
 	 *            the id of the testStep to copy.
-	 * @return true if copied step is instance of CallStep
+	 * 
+	 * @return true if the copied step is instance of CallStep, false otherwise
+	 * 
 	 */
 	boolean pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId);
 
+	
+	/**
+	 * Same as {@link #pasteCopiedTestStep(long, long, long)}, accepting a list of step ids
+	 * 
+	 * @param testCaseId
+	 * @param idInsertion
+	 * @param copiedTestStepIds
+	 * @return
+	 */
+	boolean pasteCopiedTestSteps(long testCaseId, long idInsertion, List<Long> copiedTestStepIds);
+	
+	
+	/**
+	 * Same as {@link #pasteCopiedTestStepToLastIndex(long, long)}, accepting a list of step ids
+	 * 
+	 * @param testCaseId
+	 * @param copiedTestStepIds
+	 * @return
+	 */
+	boolean pasteCopiedTestStepToLastIndex(long testCaseId, List<Long> copiedTestStepIds);
+	
+	
 	/**
 	 * will change the test case importance too if auto is true.
 	 * 

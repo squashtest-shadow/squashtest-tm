@@ -311,20 +311,33 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public boolean pasteCopiedTestStep(long testCaseId, long idToCopyAfter, long copiedTestStepId) {
-		Integer position = testStepDao.findPositionOfStep(idToCopyAfter) + 1;
-		return pasteTestStepAtPosition(testCaseId, copiedTestStepId, position);
+	public boolean pasteCopiedTestStep(long testCaseId, long idInsertion, long copiedTestStepId) {
+		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
+		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), position);
 	}
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public boolean pasteCopiedTestSteps(long testCaseId, long idInsertion, List<Long> copiedTestStepIds) {
+		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
+		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, position);
+	}
+	
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public boolean pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
-		return pasteTestStepAtPosition(testCaseId, copiedTestStepId, null);
-
+		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), null);
+	}
+	
+	@Override
+	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
+	public boolean pasteCopiedTestStepToLastIndex(long testCaseId, List<Long> copiedTestStepIds) {
+		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, null);
 	}
 
-	// FIXME il faut vérifier un éventuel cycle ! // pour l'instant vérifié au
-	// niveau du controller
+
+	// FIXME : check for potential cycle with call steps. For now it's being checked 
+	// on the controller but it is obviously less safe.
 	/**
 	 * 
 	 * @param testCaseId
@@ -332,61 +345,53 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 * @param position
 	 * @return true if copied step is instance of CallTestStep
 	 */
-	private boolean pasteTestStepAtPosition(long testCaseId, long copiedTestStepId, Integer position) {
-		TestStep original = testStepDao.findById(copiedTestStepId);
-		TestStep copyStep = original.createCopy();
-		testStepDao.persist(copyStep);
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		if (position != null) {
-			try {
-				testCase.addStep(position, copyStep);
-			} catch (IndexOutOfBoundsException ex) {
+	private boolean pasteTestStepAtPosition(long testCaseId, List<Long> copiedStepIds, Integer position) {
+		
+		boolean hasCallstep = false;
+		
+		List<TestStep> originals = testStepDao.findAllByIds(copiedStepIds);
+		
+		for (TestStep original : originals){
+			
+			// first, create the step
+			TestStep copyStep = original.createCopy();
+			testStepDao.persist(copyStep);
+			
+			// attach it to a test case
+			TestCase testCase = testCaseDao.findById(testCaseId);
+			
+			if (position != null) {
+				try {
+					testCase.addStep(position, copyStep);
+				} catch (IndexOutOfBoundsException ex) {
+					testCase.addStep(copyStep);
+				}
+			} else {
 				testCase.addStep(copyStep);
 			}
-		} else {
-			testCase.addStep(copyStep);
-		}
-
-		if (!testCase.getSteps().contains(original)) {
-			updateImportanceIfCallStep(testCase, copyStep);
-			parameterModificationService.createParamsForStep(copyStep);
-		}
-
-		copyStep.accept(new TestStepCustomFieldCopier(original));
-		return copyStep instanceof CallTestStep;
-	}
-
-	private final class TestStepCustomFieldCopier implements TestStepVisitor {
-		TestStep original;
-
-		private TestStepCustomFieldCopier(TestStep original) {
-			this.original = original;
-		}
-
-		@Override
-		public void visit(ActionTestStep visited) {
-			customFieldValuesService.copyCustomFieldValues((ActionTestStep) original, visited);
-			Project origProject = original.getTestCase().getProject();
-			Project newProject = visited.getTestCase().getProject();
-
-			if (!origProject.equals(newProject)) {
-				customFieldValuesService.migrateCustomFieldValues(visited);
+	
+			// now special treatment if the steps are from another source
+			if (!testCase.getSteps().contains(original)) {
+				updateImportanceIfCallStep(testCase, copyStep);
+				parameterModificationService.createParamsForStep(copyStep);
 			}
+	
+			copyStep.accept(new TestStepCustomFieldCopier(original));
+			
+			// last, update that weird variable
+			hasCallstep = hasCallstep || (copyStep instanceof CallTestStep);
 		}
-
-		@Override
-		public void visit(CallTestStep visited) {
-			// NOPE
-		}
-
+		
+		return hasCallstep;
 	}
-
+	
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();
 			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(called, parentTestCase);
 		}
 	}
+
 
 	@Override
 	@Transactional(readOnly = true)
@@ -591,56 +596,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 
-
-
-
-
-	// ******************** private stuffs *********************
-
-	// returns a tuple-2 with first element : project ID, second element : test name
-	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath) {
-
-		// first we reject the operation if the script name is malformed
-		if (!PathUtils.isPathWellFormed(testPath)) {
-			throw new MalformedScriptPathException();
-		}
-
-		// now it's clear to go, let's find which TA project it is. The first slash must be removed because it doesn't
-		// count.
-		String path = testPath.replaceFirst("^/", "");
-		int idxSlash = path.indexOf('/');
-
-		String projectLabel = path.substring(0, idxSlash);
-		String testName = path.substring(idxSlash + 1);
-
-		TestCase tc = testCaseDao.findById(testCaseId);
-		GenericProject tmproject = tc.getProject();
-
-		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(),
-				new HasSuchLabel(projectLabel));
-
-		// if the project couldn't be found we must also reject the operation
-		if (tap == null) {
-			throw new UnallowedTestAssociationException();
-		}
-
-		return new Couple<Long, String>(tap.getId(), testName);
-	}
-
-	private static final class HasSuchLabel implements Predicate {
-		private String label;
-
-		HasSuchLabel(String label) {
-			this.label = label;
-		}
-
-		@Override
-		public boolean evaluate(Object object) {
-			TestAutomationProject tap = (TestAutomationProject) object;
-			return (tap.getLabel().equals(label));
-		}
-	}
-
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	public void changeNature(long testCaseId, String natureCode) {
@@ -778,6 +733,85 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		return true;
 	}
+
+	
+	/* *******************************************************	
+		private stuffs and shit etc	
+	**********************************************************/
+
+	// returns a tuple-2 with first element : project ID, second element : test name
+	private Couple<Long, String> extractAutomatedProjectAndTestName(Long testCaseId, String testPath) {
+
+		// first we reject the operation if the script name is malformed
+		if (!PathUtils.isPathWellFormed(testPath)) {
+			throw new MalformedScriptPathException();
+		}
+
+		// now it's clear to go, let's find which TA project it is. The first slash must be removed because it doesn't
+		// count.
+		String path = testPath.replaceFirst("^/", "");
+		int idxSlash = path.indexOf('/');
+
+		String projectLabel = path.substring(0, idxSlash);
+		String testName = path.substring(idxSlash + 1);
+
+		TestCase tc = testCaseDao.findById(testCaseId);
+		GenericProject tmproject = tc.getProject();
+
+		TestAutomationProject tap = (TestAutomationProject) CollectionUtils.find(tmproject.getTestAutomationProjects(),
+				new HasSuchLabel(projectLabel));
+
+		// if the project couldn't be found we must also reject the operation
+		if (tap == null) {
+			throw new UnallowedTestAssociationException();
+		}
+
+		return new Couple<Long, String>(tap.getId(), testName);
+	}
+
+	
+	private static final class HasSuchLabel implements Predicate {
+		private String label;
+
+		HasSuchLabel(String label) {
+			this.label = label;
+		}
+
+		@Override
+		public boolean evaluate(Object object) {
+			TestAutomationProject tap = (TestAutomationProject) object;
+			return (tap.getLabel().equals(label));
+		}
+	}
+	
+	
+	
+	private final class TestStepCustomFieldCopier implements TestStepVisitor {
+		TestStep original;
+
+		private TestStepCustomFieldCopier(TestStep original) {
+			this.original = original;
+		}
+
+		@Override
+		public void visit(ActionTestStep visited) {
+			customFieldValuesService.copyCustomFieldValues((ActionTestStep) original, visited);
+			Project origProject = original.getTestCase().getProject();
+			Project newProject = visited.getTestCase().getProject();
+
+			if (!origProject.equals(newProject)) {
+				customFieldValuesService.migrateCustomFieldValues(visited);
+			}
+		}
+
+		@Override
+		public void visit(CallTestStep visited) {
+			// NOPE
+		}
+
+	}
+
+	
 
 
 }

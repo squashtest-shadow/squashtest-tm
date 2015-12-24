@@ -201,36 +201,24 @@ public class TestCaseTestStepsController {
 	@RequestMapping(value = "/paste", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
 	public boolean pasteStep(@RequestParam(COPIED_STEP_ID_PARAM) List<Long> copiedStepIds,
-			@RequestParam(value = "indexToCopy", required = true) Long positionId, @PathVariable long testCaseId) {
+			@RequestParam(value = "idPosition", required = true) long idPosition, @PathVariable long testCaseId) {
 
 		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
-		boolean copiedCallStep = false;
-		for (int i = copiedStepIds.size() - 1; i >= 0; i--) {
-			Long id = copiedStepIds.get(i);
-			boolean copyIsCallStep  = testCaseModificationService.pasteCopiedTestStep(testCaseId, positionId, id);
-			copiedCallStep = copiedCallStep || copyIsCallStep;
-		}
-		LOGGER.trace("test case copied some Steps");
-		return copiedCallStep;
+		return testCaseModificationService.pasteCopiedTestSteps(testCaseId, idPosition, copiedStepIds);
+		
 	}
 
 
 	@RequestMapping(value = "/paste-last-index", method = RequestMethod.POST, params = { COPIED_STEP_ID_PARAM })
 	@ResponseBody
-	public boolean pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) String[] copiedStepId,
+	public boolean pasteStepLastIndex(@RequestParam(COPIED_STEP_ID_PARAM) List<Long> copiedStepIds,
 			@PathVariable long testCaseId) {
 
-		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepId);
-		boolean copiedCallStep = false;
-		for (int i = 0; i < copiedStepId.length; i++) {
-			String id = copiedStepId[i];
-			boolean copyIsCallStep  = testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, Long.parseLong(id));
-			copiedCallStep = copiedCallStep || copyIsCallStep;
-		}
-		LOGGER.trace("test case copied some Steps");
-		return copiedCallStep;
+		callStepManager.checkForCyclicStepCallBeforePaste(testCaseId, copiedStepIds);
+		return testCaseModificationService.pasteCopiedTestStepToLastIndex(testCaseId, copiedStepIds);
 	}
 
+	
 	@RequestMapping(value = "/{stepId}", method = RequestMethod.POST, params = "newIndex")
 	@ResponseBody
 	public void changeStepIndex(@PathVariable long stepId, @RequestParam int newIndex, @PathVariable long testCaseId) {

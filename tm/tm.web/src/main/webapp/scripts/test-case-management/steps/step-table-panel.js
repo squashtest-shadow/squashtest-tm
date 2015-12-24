@@ -630,22 +630,20 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 
 		});
 
-		$("#paste-step").bind(
-				"click",
-				function() {
+		$("#paste-step").bind("click",function() {
 
-					var cookieIds = $.cookie("squash-test-step-ids");
-					var cookieProject = $.cookie("squash-test-step-project");
-					var currentProject = urls.projectId;
+			var cookieIds = $.cookie("squash-test-step-ids");
+			var cookieProject = $.cookie("squash-test-step-project");
+			var currentProject = urls.projectId;
 
-					if (parseInt(cookieProject, 10) !== currentProject) {
-						oneshot.show(language.infoTitle, language.warnCopy).then(function() {
-							performPaste(cookieIds); // see definition below
-						});
-					} else {
-						performPaste(cookieIds); // see definition below
-					}
+			if (parseInt(cookieProject, 10) !== currentProject) {
+				oneshot.show(language.infoTitle, language.warnCopy).then(function() {
+					performPaste(cookieIds); // see definition below
 				});
+			} else {
+				performPaste(cookieIds); // see definition below
+			}
+		});
 
 		function performPaste(rawIds) {
 			var stepIds = rawIds.split(",");
@@ -663,12 +661,13 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 				var pasteUrl = urls.pasteStep;
 
 				if (position.length > 0) {
-					data.indexToCopy = position[0];
+					data.idPosition = position[0];
 					pasteUrl = pasteUrl + "/paste";
 				} else {
 					pasteUrl = pasteUrl + "/paste-last-index";
 				}
 
+				$("#paste-step").squashButton('disable');
 				$.ajax({
 					type : "POST",
 					data : data,
@@ -685,6 +684,7 @@ define([ "jquery", "squashtable/squashtable.collapser", "custom-field-values", "
 	}
 
 	function pasteSuccess (pastedCallSteps){
+		$("#paste-step").squashButton('enable');
 		if(pastedCallSteps){
 			eventBus.trigger("testStepsTable.pastedCallSteps");
 		}
