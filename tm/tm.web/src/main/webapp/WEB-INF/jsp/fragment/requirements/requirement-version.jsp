@@ -35,7 +35,7 @@
 <s:url var="requirementUrl" value="/requirements/${requirementVersion.requirement.id}"/>
 <c:url var="attachmentsUrl" value="/attach-list/${requirementVersion.attachmentList.id}/attachments" />
 
-<c:set var="synced"            value="${requirementVersion.requirement.synchronized }"/>
+<c:set var="synced"            value="${requirementVersion.requirement.isSynchronized()}"/>
 
 <%-- ----------------------------------- Authorization ----------------------------------------------%>
 <%-- 
