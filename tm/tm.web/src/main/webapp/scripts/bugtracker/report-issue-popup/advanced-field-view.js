@@ -194,6 +194,8 @@ define(["jquery",
 
 		render : function(){
 
+			this.undelegateEvents();
+			
 			//flush the panels
 			this._flushPanels();
 

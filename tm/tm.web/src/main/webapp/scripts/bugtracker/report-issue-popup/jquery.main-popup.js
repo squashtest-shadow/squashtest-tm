@@ -478,7 +478,11 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				storage.set("bugtracker.projects-preferences", projectPrefs);
 				self.selectedProject = project;
 				self.mdlTemplate = null;
+				
+				// neutralize the former view before wiping it
+				self.fieldsView.undelegateEvents();
 				self.fieldsView = null;
+				
 				resetModel();
 
 			};
@@ -493,10 +497,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 				var template = Handlebars.compile(self.find("#project-selector-tpl").html());
 				self.find("#project-selector").html(template({options: data}));
-				self.find("#project-selector").on("change", function () {
-					var selected = self.find("#project-selector").find(":selected").val();
-					self.changeBugTrackerProject(selected);
-				});
+
 				self.postButton.focus();
 				self.reportRadio.click();
 				this.formDialog("open");
@@ -520,6 +521,11 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				self.formDialog('close');
 			});
 
+			// the project selector
+			this.find("#project-selector").on("change", function () {
+				var selected = self.find("#project-selector").find(":selected").val();
+				self.changeBugTrackerProject(selected);
+			});
 
 			return this;
 
