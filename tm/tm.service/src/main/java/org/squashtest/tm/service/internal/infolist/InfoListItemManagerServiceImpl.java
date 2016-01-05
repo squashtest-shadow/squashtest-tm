@@ -24,7 +24,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.infolist.InfoList;
@@ -33,8 +32,8 @@ import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
-import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.annotation.CachableType;
+import org.squashtest.tm.service.annotation.CacheResult;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;

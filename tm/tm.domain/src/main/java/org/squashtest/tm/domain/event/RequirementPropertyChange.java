@@ -20,12 +20,14 @@
  */
 package org.squashtest.tm.domain.event;
 
+import java.util.Objects;
+
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.apache.commons.lang3.ObjectUtils;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 /**
@@ -47,13 +49,24 @@ ChangedProperty {
 		@Override
 		public RequirementPropertyChange build() {
 			RequirementPropertyChange event = new RequirementPropertyChange(eventSource, author);
+			
 			event.propertyName = modifiedProperty;
-			event.oldValue = ObjectUtils.toString(oldValue);
-			event.newValue = ObjectUtils.toString(newValue);
+			event.oldValue = toString(oldValue);
+			event.newValue = toString(newValue);
 
 			return event;
 		}
-
+		
+		
+		private String toString(Object v){
+			if (v != null && InfoListItem.class.isAssignableFrom(v.getClass())){
+				return ((InfoListItem)v).getLabel();
+			}
+			else{
+				return Objects.toString(v, "");
+			}
+		}
+		
 	}
 
 	@NotNull

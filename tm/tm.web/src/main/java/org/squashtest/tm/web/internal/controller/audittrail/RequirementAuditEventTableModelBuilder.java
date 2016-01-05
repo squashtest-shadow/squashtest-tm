@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.event.RequirementCreation;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.tm.domain.event.RequirementVersionModification;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
@@ -111,11 +112,19 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	}
 
 	private Object[] buildMessageArgs(RequirementPropertyChange event) {
+		Object[] args;
+		
 		if (propertyIsEnumeratedAndInternationalizable(event)) {
-			return buildMessageArgsForI18nableEnumProperty(event);
+			args = buildMessageArgsForI18nableEnumProperty(event);
 		}
-
-		return buildMessageArgsForStringProperty(event);
+		else if (propertyIsInfolist(event)){
+			args = buildMessageArgsForI18ableInfoListProperty(event);
+		}
+		else{
+			args = buildMessageArgsForStringProperty(event); 
+		}
+		
+		return args;
 	}
 
 	private boolean propertyIsEnumeratedAndInternationalizable(RequirementPropertyChange event) {
@@ -123,6 +132,14 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		Class<?> fieldType = field.getType();
 
 		return Enum.class.isAssignableFrom(fieldType) && Internationalizable.class.isAssignableFrom(fieldType);
+	}
+	
+	private boolean propertyIsInfolist(RequirementPropertyChange event){
+		Field field = ReflectionUtils.findField(RequirementVersion.class, event.getPropertyName());
+		Class<?> fieldType = field.getType();
+
+		return InfoListItem.class.isAssignableFrom(fieldType);
+		
 	}
 
 	private Object[] buildMessageArgsForStringProperty(RequirementPropertyChange event) {
@@ -137,6 +154,20 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		String newValueLabel = retrieveEnumI18ndLabel(enumType, event.getNewValue());
 
 		return new Object[] { oldValueLabel, newValueLabel };
+	}
+	
+	
+	/*
+	 * Unfortunately there is no way to tell which subtype of InfoListItem is being processed there : 
+	 * the SystemListItem is i18nable while the UserListItem is not. So let's hope for the best : 
+	 * the i18nhelper should return the key itself if not found in the messagesource
+	 */
+	private Object[]  buildMessageArgsForI18ableInfoListProperty(RequirementPropertyChange event){
+
+		return new Object[]{
+			i18nHelper.getMessage(event.getOldValue(), null, event.getOldValue(), locale),
+			i18nHelper.getMessage(event.getNewValue(), null, event.getNewValue(), locale)
+		};
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })

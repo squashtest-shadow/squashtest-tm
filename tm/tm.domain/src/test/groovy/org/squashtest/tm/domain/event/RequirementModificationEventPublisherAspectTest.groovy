@@ -22,7 +22,9 @@ package org.squashtest.tm.domain.event;
 
 import org.springframework.security.core.Authentication
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.tm.domain.infolist.InfoListItem
+import org.squashtest.tm.domain.infolist.UserListItem;
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.RequirementStatus
 import org.squashtest.tm.domain.requirement.RequirementVersion
@@ -123,6 +125,22 @@ class RequirementModificationEventPublisherAspectTest extends Specification {
 			then:
 			1 *	auditor.notify({event = it})
 			event instanceof RequirementLargePropertyChange
+		}
+		
+		
+		def "should correctly audit changed info list items"(){
+			
+			given :
+			InfoListItem newCategory = new UserListItem(label:"awesome")
+			
+			when :
+			persistentRequirement.category = newCategory
+			
+			then :
+			1 * auditor.notify({event = it})
+			event.newValue == "awesome"
+			
+			
 		}
 	
 		def "uninitialized user context should generate 'unknown' event author"() {
