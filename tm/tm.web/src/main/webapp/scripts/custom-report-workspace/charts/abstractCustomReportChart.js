@@ -387,7 +387,9 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
 			view.empty();
 			
-			var html = Handlebars.compile(emptyChartTemplate)();
+			var msg = translator.get('chart.label.empty');
+			
+			var html = Handlebars.compile(emptyChartTemplate)(msg);
 			
 			view.append(html);
 		}
