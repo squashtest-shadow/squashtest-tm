@@ -38,21 +38,22 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			});
 		},
 		
+		getInput : function(num){
+			return this.element.find('input:eq('+num+')');
+		},
+		
 		fieldvalue : function(fieldvalue) {
 			if (fieldvalue === null || fieldvalue === undefined) {
 				
 				var field = this.options;
-				var original = this.evaluateToMinutes($($("input", this.element.eq(0))[0]).val());
-				var remaining = this.evaluateToMinutes($($("input", this.element.eq(0))[1]).val());
-				var typename = this.options.rendering.inputType.dataType;
-
-				var allValues = [];
 				
+				var original = this.getInput(0).val();
+				var remaining = this.getInput(1).val();
+
 				var originalValue = new FieldValue("originalEstimate", "string", original);
 				var remainingValue = new FieldValue("remainingEstimate", "string", remaining);
 				
-				allValues.push(originalValue);
-				allValues.push(remainingValue);
+				var allValues = [originalValue, remainingValue];
 				 
 				return new FieldValue(field.id, "composite", allValues);
 				
@@ -86,32 +87,13 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			
 			return div;
 		},
-
-		isDigit : function(character) {
-			var digits = "0123456789";
-			return digits.indexOf(character) != -1;
-		},
-
-		evaluateToMinutes : function(expression){
-
-			var result = this.evaluateField(expression);
-			var totalMinutes = "";
-			
-			if(!!result){
-				var totalDays = parseInt(result.days,10) + (parseInt(result.weeks,10)*5);
-				var totalHours = parseInt(result.hours,10) + (totalDays*8);
-				totalMinutes = parseInt(result.minutes,10) + (totalHours*60);
-			}
-			
-			return totalMinutes;
-		}, 
 		
 		validate : function(){
 		
 			var messages = [];
 			
-			var result1 = this.evaluateField($($("input", this.element.eq(0))[0]).val());
-			var result2 = this.evaluateField($($("input", this.element.eq(0))[1]).val());
+			var result1 = this.validateExpression(this.getInput(0).val());
+			var result2 = this.validateExpression(this.getInput(1).val());
 			
 			if(!result1 || !result2){
 				messages[0] = "validation.error.illformedTimetrackingExpression";
@@ -133,116 +115,37 @@ define([ "jquery", "../domain/FieldValue", "squash.translator", "handlebars" ], 
 			}
 		},
 		
-		evaluateField : function(expression) {
-
-			// get the string and split it into charachters
-			var array = expression.split("");
-			var index = 0;
-
-			// current number
-			var currentNumber = "";
-
-			var weeks = "";
-			var days = "";
-			var hours = "";
-			var minutes = "";
-
-			var hasWeeks = false;
-			var hasDays = false;
-			var hasHours = false;
-			var hasMinutes = false;
-
-			var isIllformed = false;
-
-			while (index < array.length) {
-
-				if (array[index] == "w") {
-					if (!!currentNumber && !hasWeeks) {
-						weeks = currentNumber;
-						hasWeeks = true;
-						currentNumber = "";
-					} else {
-						isIllformed = true;
-					}
-				} else {
-					if (array[index] == "d") {
-						if (!!currentNumber && !hasDays) {
-							days = currentNumber;
-							hasDays = true;
-							currentNumber = "";
-						} else {
-							isIllformed = true;
-						}
-					} else {
-						if (array[index] == "h") {
-							if (!!currentNumber && !hasHours) {
-								hours = currentNumber;
-								hasHours = true;
-								currentNumber = "";
-							} else {
-								isIllformed = true;
-							}
-						} else {
-							if (array[index] == "m") {
-								if (!!currentNumber && !hasMinutes) {
-									minutes = currentNumber;
-									hasMinutes = true;
-									currentNumber = "";
-								} else {
-									isIllformed = true;
-								}
-							} else {
-								if (this.isDigit(array[index])) {
-
-									if (!!currentNumber && !hasMinutes) {
-										minutes = currentNumber;
-										hasMinutes = true;
-										currentNumber = "";
-									}
-									if (!!currentNumber && hasMinutes) {
-										isIllformed = true;
-									}
-
-									do {
-										currentNumber = currentNumber + array[index];
-										index++;
-									} while (this.isDigit(array[index]));
-									index--;
-								} else {
-
-									if (array[index] == " ") {
-
-									} else {
-										isIllformed = true;
-									}
-								}
-							}
-						}
-					}
-				}
-				index++;
-			}
-
-			if (!!currentNumber && !hasMinutes) {
-				minutes = currentNumber;
-				hasMinutes = true;
-				currentNumber = "";
-			}
-			if (!!currentNumber && hasMinutes) {
-				isIllformed = true;
-			}
+		/*
+		 * The goal here is to check that :
+		 *  1 - a blank string is fine, or
+		 * 	2a - the expression is composed of digits immediately followed by one of w, d, h or m, and those sequences must be separated by a number of whitespaces of at least 1 
+		 *  2b - and each letter may be used only once
+		 *  
+		 *  example of valid expression : 0w 1d 5h 2m
+		 *  example of invalid expression : 0w 1w, 15k
+		 */
+		validateExpression : function(expression) {
 			
-			var result = {};
-			result.weeks = weeks;
-			result.days = days;
-			result.hours = hours;
-			result.minutes = minutes;
+			// the regular expressions
 			
-			if(isIllformed){
-				result = null;
-			}
+			var 
+				// the "blank string" test
+				test1 = /^\s*$/,
+				// test2a must succeed, while test2b must fail
+				test2a = /^(\d+[wdhm]\s+)*$/,
+				test2b = /([wdhm]).*\1/;
 			
-			return result;
+			// preprocess the expression : 
+			// remove extra spaces around, then add 1 at the end. 
+			// This helps matching regex test1 while keeping it concise and readable
+			var ex = $.trim(expression)+" ";
+			
+			var passed1 = test1.test(ex);
+			var passed2a = test2a.test(ex);
+			var passed2b = test2b.test(ex);
+			
+			return passed1 || ( passed2a && !passed2b);
+			
 		}
 	};
 
