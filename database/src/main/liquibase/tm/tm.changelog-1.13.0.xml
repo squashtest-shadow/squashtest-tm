@@ -1558,7 +1558,8 @@ Although not technically needed, this is more aesthetic and convenient.
 				select p.NAME
 				from PROJECT p
 				where ENTITY_ID = p.CRL_ID
-			);
+			)
+		where ENTITY_TYPE = 'LIBRARY';
 
 </sql>
 

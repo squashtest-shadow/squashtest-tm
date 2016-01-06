@@ -88,7 +88,6 @@ public class CustomReportTreeNodeBuilder {
 		JsTreeNode builtNode = new JsTreeNode();
 		builtNode.setTitle(crln.getName());
 		builtNode.addAttr("resId", String.valueOf(crln.getId()));
-		builtNode.addAttr("id", String.valueOf(crln.getId()));
 		builtNode.addAttr("name", crln.getName());
 
 		//No milestone for custom report tree in first version so yes for all perm
@@ -127,24 +126,28 @@ public class CustomReportTreeNodeBuilder {
 	}
 
 	private void doLibraryBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeHTMLId(builtNode, "CustomReportLibrary-"+crln.getId());
 		setNodeRel(builtNode,"drive");
 		setNodeResType(builtNode,"custom-report-libraries");
 		setStateForNodeContainer(builtNode,crln);
 	}
 
 	private void doFolderBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeHTMLId(builtNode, "CustomReportFolder-"+crln.getId());
 		setNodeRel(builtNode, "folder");
 		setNodeResType(builtNode, "custom-report-folders");
 		setStateForNodeContainer(builtNode, crln);
 	}
 
 	private void doChartBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeHTMLId(builtNode, "CustomReportChart-"+crln.getId());
 		setNodeRel(builtNode, "chart");
 		setNodeResType(builtNode, "custom-report-chart");
 		setNodeLeaf(builtNode);
 	}
 
 	private void doDashboardBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
+		setNodeHTMLId(builtNode, "CustomReportDashboard-"+crln.getId());
 		setNodeRel(builtNode, "dashboard");
 		setNodeResType(builtNode, "custom-report-dashboard");
 		setStateForNodeContainer(builtNode, crln);
@@ -180,6 +183,10 @@ public class CustomReportTreeNodeBuilder {
 
 	private void setNodeOpen(JsTreeNode builtNode){
 		builtNode.setState(State.open);
+	}
+	
+	private void setNodeHTMLId(JsTreeNode builtNode, String id){
+		builtNode.addAttr("id", id);
 	}
 
 }
