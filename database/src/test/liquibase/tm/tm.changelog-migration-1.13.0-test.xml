@@ -54,6 +54,17 @@
 			</sqlCheck>
 		</preConditions>
 	</changeSet>
+	
+
+	<changeSet id="tm-1.13.0.feat-5375-test01" author="bsiri">
+		<preConditions>
+			<sqlCheck expectedResult="0">
+				select count(*)
+				from PROJECT p
+				where p.project_id != p.crl_id
+			</sqlCheck>
+		</preConditions>
+	</changeSet>	
 
 
 <!-- 

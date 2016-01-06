@@ -1049,8 +1049,6 @@
 		<column name="ATTACHMENT_LIST_ID" type="BIGINT" remarks="FK to ATTACHMENT_LIST">
 		</column>
 
-		<column name="TMP_PROJECT_ID" type="BIGINT" remarks="TMP REF TO PROJECT">
-		</column>
  	</createTable>
 
  	<createIndex tableName="CUSTOM_REPORT_LIBRARY" indexName="IDX_CUSTOM_REPORT_LIBRARY">
@@ -1513,17 +1511,17 @@
 <comment>Migration for custom report workspace evolution. Mainly create the Library entities and their nodes, attachement list...</comment>
 
 <!-- SQL CREATE A NEW CUSTOM_REPORT_LIBRARY FOR EACH PROJECT IN DB AND CREATE ACLS ON OBJECT-->
+
+<!-- Note : we force CRLN_ID = PROJECT_ID. 
+Although not technically needed, this is more aesthetic and convenient. 
+-->
 <sql>
-	insert into CUSTOM_REPORT_LIBRARY (TMP_PROJECT_ID)
+	insert into CUSTOM_REPORT_LIBRARY (CRL_ID)
 		select p.PROJECT_ID
 		from PROJECT p;
 
 	update PROJECT p
-		set CRL_ID = (
-			select crl.CRL_ID
-			from CUSTOM_REPORT_LIBRARY crl
-			where p.PROJECT_ID = crl.TMP_PROJECT_ID
-	);
+		set CRL_ID = PROJECT_ID;
 
 	insert into ACL_OBJECT_IDENTITY (IDENTITY,CLASS_ID)
 		  select CRL_ID, ID from CUSTOM_REPORT_LIBRARY,ACL_CLASS
@@ -1567,9 +1565,29 @@
 
 <!-- REMOVE TMP COLUMNS USED FOR MIGRATION -->
 <dropColumn tableName="ATTACHMENT_LIST" columnName="TMP_CRL_ID" />
-<dropColumn tableName="CUSTOM_REPORT_LIBRARY" columnName="TMP_PROJECT_ID" />
+
 </changeSet>
 
+<changeSet id="tm-1.13.0-feature-5292-4" author="bsiri" >
+   <comment>set the foreign key constraints from project to custom report library, and from custom report_library to attachment_list</comment>
+   
+   <addForeignKeyConstraint constraintName="fk_project_crl" baseTableName="PROJECT"
+      baseColumnNames="CRL_ID" referencedTableName="CUSTOM_REPORT_LIBRARY" referencedColumnNames="CRL_ID" />
+      
+   <addForeignKeyConstraint constraintName="fk_crl_attachment_list" baseTableName="CUSTOM_REPORT_LIBRARY"
+      baseColumnNames="ATTACHMENT_LIST_ID" referencedTableName="ATTACHMENT_LIST" referencedColumnNames="ATTACHMENT_LIST_ID" />      
+ </changeSet>
+
+
+  <changeSet id="tm-1.13.0-feature-5292-5" author="jthebault" dbms="postgresql">
+     <comment>update the sequences afterward</comment>
+     <sql>
+       SELECT setval('custom_report_library_crl_id_seq', (SELECT MAX(CRL_ID) from CUSTOM_REPORT_LIBRARY));
+       SELECT setval('custom_report_library_node_crln_id_seq', (SELECT MAX(CRLN_ID) from CUSTOM_REPORT_LIBRARY_NODE));
+       SELECT setval('acl_object_identity_id_seq', (SELECT MAX(ID) from ACL_OBJECT_IDENTITY));
+     </sql>
+   </changeSet>
+   
 <!-- 
 	DEACTIVATING MIGRATION, AS CHARTS ON CUFS ARE NOW OUT OF SCOPE OF 1.13
 	RE-ACTIVATE WHEN DEV 1.14 BEGINS
@@ -1606,7 +1624,7 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 </changeSet>
 -->
 
-<changeSet id="tm-1.13.0-feature-5375-3" author="jsimon" dbms="postgresql">
+<changeSet id="tm-1.13.0-feature-5375-3" author="jsimon, bsiri" dbms="postgresql">
    <comment>update the sequences afterward</comment>
    <sql>
      SELECT setval('chart_column_prototype_chart_column_id_seq', (SELECT MAX(CHART_COLUMN_ID) from CHART_COLUMN_PROTOTYPE));
@@ -1614,8 +1632,7 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
      SELECT setval('chart_filter_filter_id_seq', (SELECT MAX(FILTER_ID) from CHART_FILTER));
    </sql>
  </changeSet>
-
-
+ 
 
 <changeSet id="tm-1.13.0-feature-5375-4" author="jsimon">
 
@@ -1689,11 +1706,5 @@ SELECT CHART_COLUMN_ID, 'FILTER' FROM CHART_COLUMN_PROTOTYPE ccp WHERE ccp.COLUM
 
 	</changeSet>
 
-  <changeSet id="tm-1.13.0-feature-5292-4" author="jthebault" dbms="postgresql">
-     <comment>update the sequences afterward</comment>
-     <sql>
-       SELECT setval('acl_object_identity_id_seq', (SELECT MAX(ID) from ACL_OBJECT_IDENTITY));
-     </sql>
-   </changeSet>
 
 </databaseChangeLog>
