@@ -45,16 +45,24 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	private Long id;
 	
 	@OneToOne(mappedBy = "customReportLibrary")
-	private Project project;
+	private GenericProject project;
 
 	@Override
 	public void notifyAssociatedWithProject(GenericProject p) {
-		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
+		this.project = p;
 	}
 
 	@Override
 	public Project getProject() {
-		return project;
+		/*
+		 * We have a conflict here because this class mixes two roles :
+		 * - as a structural component of a project : it could belong to a project template, hence the use of type GenericProject
+		 * - as its own representation in a tree (in the GUI) : it should then not possibly belong to a project template, just as Charts and Folder do
+		 * 
+		 * Because those two roles are not properly separated we find ourselves with a method getProjet() that must 
+		 * very unsafely downcast from GenericProject to Project. I'm confident it'll be just fine, but cannot ascertain this.
+		 */
+		return (Project)project;
 	}
 
 	@Override

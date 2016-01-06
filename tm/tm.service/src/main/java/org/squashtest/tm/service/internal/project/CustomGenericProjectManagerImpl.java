@@ -220,7 +220,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		crlNode.setEntity(crl);
 		session.persist(crlNode);
 
-		// hook up the default info lists
+		// plug-in the default info lists
 		// TODO : extract the code lists to some meaningful place
 		InfoList defaultCategories = infoListService.findByCode("DEF_REQ_CAT");
 		project.setRequirementCategories(defaultCategories);

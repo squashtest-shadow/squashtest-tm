@@ -33,7 +33,7 @@ public abstract class GenericTreeLibrary implements TreeLibrary, TreeEntity {
 	
 	@OneToOne(cascade={ CascadeType.PERSIST, CascadeType.MERGE}, fetch=FetchType.LAZY)
 	@JoinColumn(name="ATTACHMENT_LIST_ID")
-	private AttachmentList attachmentList;
+	private AttachmentList attachmentList = new AttachmentList();
 
 	public GenericTreeLibrary() {
 		super();
