@@ -18,8 +18,6 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-var CKEDITOR_BASEPATH = "/squash/scripts/ckeditor/";
-
 if (window.console === undefined) {
 	window.console = {};
 }
@@ -29,6 +27,16 @@ if (window.console.log === undefined) {
 if (window.console.trace === undefined){
 	window.console.trace = function() {/*NOOP*/};
 }
+
+var contextRoot;
+if (!!squashtm && !!squashtm.app && !!squashtm.app.contextRoot) {
+	contextRoot = squashtm.app.contextRoot;
+	if (contextRoot.lastIndexOf("/") < 0) contextRoot = contextRoot + "/";
+} else {
+	contextRoot = "/squash/";
+	window.console.log("WARN could not find squashtm.app.contextRoot, context root set to 'squash'");
+}
+var CKEDITOR_BASEPATH = contextRoot + "scripts/ckeditor/";
 
 requirejs.config({
 			packages : [
