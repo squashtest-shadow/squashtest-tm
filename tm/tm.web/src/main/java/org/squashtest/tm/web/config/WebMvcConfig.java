@@ -32,6 +32,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
+import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver;
 import org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor;
@@ -151,33 +152,35 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+		VersionResourceResolver versionResolver = new VersionResourceResolver()
+			.addContentVersionStrategy(appVersion, "/**/*.png", "/**/*.gif", "/**/*.jpg", "/**/*.css")
+			.addFixedVersionStrategy(appVersion, "/**/*.js");
+		GzipResourceResolver gzipResolver = new GzipResourceResolver();
+
+		CssLinkResourceTransformer transformer = new CssLinkResourceTransformer();
+
 		registry.addResourceHandler("/images/**")
-			.addResourceLocations("/imgages/", "classpath:/images/")
+			.addResourceLocations("/images/", "classpath:/images/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())
-			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/images/**/*.png", "/images/**/*.gif", "/images/**/*.jpg"))
-			.addTransformer(new CssLinkResourceTransformer());
-
-//		registry.addResourceHandler("/static/**")
-//			.addResourceLocations("/static/")
-//			.setCachePeriod(resourceProperties.getCachePeriod())
-//			.resourceChain(resourceResolverProperties.isCache())
-//			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/images/**/*.png", "/images/**/*.gif", "/images/**/*.jpg"))
-//			.addTransformer(new CssLinkResourceTransformer());
-//		;
+			.addResolver(versionResolver)
+			.addTransformer(transformer);
 
 		registry.addResourceHandler("/styles/**")
 			.addResourceLocations("/styles/", "classpath:/styles/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())
-			.addResolver(new VersionResourceResolver().addContentVersionStrategy("/styles/**/*.css", "/styles/**/*.png", "/styles/**/*.gif", "/styles/**/*.jpg"))
-			.addTransformer(new CssLinkResourceTransformer());
+			.addResolver(gzipResolver)
+			.addResolver(versionResolver)
+			.addTransformer(transformer);
 
 		registry.addResourceHandler("/scripts/**")
 			.addResourceLocations("/scripts/", "classpath:/scripts/")
 			.setCachePeriod(resourceProperties.getCachePeriod())
 			.resourceChain(resourceResolverProperties.isCache())
-			.addResolver(new VersionResourceResolver().addFixedVersionStrategy(appVersion));
+			.addResolver(gzipResolver)
+			.addResolver(versionResolver);
 	}
 
 	@Override
