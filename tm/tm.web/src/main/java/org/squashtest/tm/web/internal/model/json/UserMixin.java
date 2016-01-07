@@ -20,13 +20,19 @@
  */
 package org.squashtest.tm.web.internal.model.json;
 
+import java.util.Set;
+
+import org.squashtest.tm.domain.users.Team;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonAutoDetect
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class UserMixin {
 
-
+	@JsonIgnore
+	public abstract Set<Team> getTeams();	
 
 }

@@ -40,6 +40,8 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
  */
 @JsonAutoDetect
 public abstract class InfoListMixin {
+	// FIXME : I strongly suggest ListItemReference.class instead as
+	// it was meant for similar purposes
 	@JsonDeserialize(contentAs = UserListItem.class)
 	private List<InfoListItem> items;
 
