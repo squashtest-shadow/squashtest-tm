@@ -18,12 +18,12 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/** 
+/**
  * smartsprites directive :
  */
- 
+
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
- 
+
 /* ---------->>> PAGE <<<-----------*/
 /* ---------------------------------*/
 html,body {
@@ -128,7 +128,7 @@ label.afterDisabled:after, input + label:after {
 ul.ui-tabs-nav li.ui-state-default.ui-corner-top {
 	background-image :url("jquery/ui/images/ui-bg_glass_45_2b2b2b_1x400.png");
 	background-repeat : repeat-x;
-	background-attachment : scroll; 
+	background-attachment : scroll;
 	background-position :  50% 50%;
 	background-color : #2B2B2B;
 	border-color: #2E2E2E;
@@ -303,8 +303,8 @@ select.th_input {
 	width: 100px;
 }
 
-#datepicker-div > .ui-state-highlight a, 
-#datepicker-div > .ui-widget-content .ui-state-highlight a, 
+#datepicker-div > .ui-state-highlight a,
+#datepicker-div > .ui-widget-content .ui-state-highlight a,
 #datepicker-div > .ui-widget-header .ui-state-highlight a {
 	color : white;
 }
@@ -327,7 +327,7 @@ select.th_input {
 }
 
 .search-line {
-	display:inline;		
+	display:inline;
 }
 
 .search-div {
@@ -371,7 +371,7 @@ span.search-text {
 
 
 #test-case-search-toolbar {
-	text-align : right;	
+	text-align : right;
 	/* padding-right : 3%; */
 }
 
@@ -393,7 +393,7 @@ span.search-text {
 }
 
 .search-minimal-height {
-    min-height : 250px!important; 
+    min-height : 250px!important;
 }
 
 .search-panel-tc-importance .options {
@@ -430,7 +430,7 @@ span.search-text {
 #test-plan-sort-mode-message{
 	margin-right: 1em;
 	vertical-align: middle;
-	color: red;	
+	color: red;
 	cursor: help;
 }
 
@@ -449,12 +449,12 @@ span.search-text {
 	position: absolute;
 	right: 0;
 	top: 0.6cm;
-	left : 310px;
+	left : 320px;
 	z-index: 0;
 }
 
 /*
- *  this is a legacy of the pre-resizable panels (0.16.0 and before). 
+ *  this is a legacy of the pre-resizable panels (0.16.0 and before).
  *  It disables the extra features defined above for the #contextual-content.
  */
 #contextual-content.no-resizable-contextual-content {
@@ -520,7 +520,7 @@ div.snap-right>a.button.test-step-toolbar-button>span {
 /*************************
 
 	IEO
-	
+
 *************************/
 
 #ieo-left-panel {
@@ -557,7 +557,7 @@ div.snap-right>a.button.test-step-toolbar-button>span {
 
 .ieo-frame{
 	width : 100%;
-	height : 100%;	
+	height : 100%;
 }
 
 html.execute-html body.ieo-body {
@@ -567,7 +567,7 @@ html.execute-html body.ieo-body {
 /*************************
 
 	/IEO
-	
+
 *************************/
 
  a.unstyledLink:link {color:inherit; text-decoration:none}      /* unvisited link */
@@ -585,10 +585,10 @@ html.execute-html body.ieo-body {
 	width: 1cm;
 	background-repeat : repeat-y;
 	background-position :0 0;
-	background-image: url("../images/fond_nav.gif"); 
+	background-image: url("../images/fond_nav.gif");
 	background-attachment : scroll;
 	background-color : #393834;
-	margin-right: 0.4cm;	
+	margin-right: 0.4cm;
 	z-index : 2;	/* this ensures that menus from this sidebar are displayed over the rest (which have lesser z-index)*/
 }
 
@@ -638,7 +638,7 @@ html.execute-html body.ieo-body {
 	background-image: url(../images/Button_Nav_Bugtracker_off.png); /** sprite-ref: sprites-icons; */
 }
 
-.navigation-bugtracker:hover, .navigation-bugtracker.navigation-selected{	
+.navigation-bugtracker:hover, .navigation-bugtracker.navigation-selected{
 	background-image: url(../images/Button_Nav_Bugtracker_on.png); /** sprite-ref: sprites-icons; */
 }
 
@@ -646,7 +646,7 @@ html.execute-html body.ieo-body {
 	background-image: url(../images/Button_Nav_Reports_off.png); /** sprite-ref: sprites-icons; */
 }
 
-.navigation-report:hover, .navigation-report.navigation-selected{	
+.navigation-report:hover, .navigation-report.navigation-selected{
 	background-image: url(../images/Button_Nav_Reports_on.png); /** sprite-ref: sprites-icons; */
 }
 
@@ -654,7 +654,7 @@ html.execute-html body.ieo-body {
 	background-image: url(../images/Button_Nav_Custom_Reports_off.png); /** sprite-ref: sprites-icons; */
 }
 
-.navigation-custom-report:hover, .navigation-custom-report.navigation-selected{	
+.navigation-custom-report:hover, .navigation-custom-report.navigation-selected{
 	background-image: url(../images/Button_Nav_Custom_Reports_on.png); /** sprite-ref: sprites-icons; */
 }
 
@@ -743,7 +743,7 @@ div.main-menubar  a.filter-enabled {
 .rotateright {
     -ms-transform: rotate(270deg); /* IE 9 */
     -webkit-transform: rotate(270deg); /* Chrome, Safari, Opera */
-    transform: rotate(270deg); 
+    transform: rotate(270deg);
 }
 
 .inlineflex {
@@ -751,11 +751,11 @@ div.main-menubar  a.filter-enabled {
 }
 
 .iconmargin {
-  float: none;  
+  float: none;
 }
 
 .menubarmargintop {
-  margin-top: 3px;  
+  margin-top: 3px;
 }
 
 
@@ -792,7 +792,7 @@ div.tree-filter-reminder-div {
 
 div#tree-panel-left {
 	height: 100%;
-	width: 300px;
+	width: 310px;
 	border-right: 1px solid #CCCCCC;
 	z-index: 0;
 }
@@ -971,7 +971,7 @@ div#search-result .library {
 /* ------------------------------------------*/
 /* ------------>>> fragments <<<-------------*/
 /* ------------------------------------------*/
-/* add the class .fragment-header if the first child of the contextual-content is not a div 
+/* add the class .fragment-header if the first child of the contextual-content is not a div
 (any preceding <style>, <script> etc will break it) */
 div#contextual-content>div:first-child,.fragment-fixed {
 	padding-left: 15px;
@@ -1079,13 +1079,13 @@ body.execute-html-body { /*width:100%;*/
 
 div#execute-header {
 	position: absolute;
-	overflow : hidden;	
-	width : 100%;	
+	overflow : hidden;
+	width : 100%;
 }
 
 
 #new-test-case-label{
-	color : red;	
+	color : red;
 }
 
 div#execute-header-left-div {
@@ -1183,7 +1183,7 @@ input[disabled]{
     text-overflow: ellipsis;
     white-space: nowrap;
 	}
-	
+
 table#test-steps-table > tbody > tr > td > a {
     color: inherit;
     text-decoration: underline;
@@ -1195,7 +1195,7 @@ td.button-cell, th.button-cell, td.icon-cell, th.icon-cell {
 }
 
 
-.requirement-indirect-verification td, 
+.requirement-indirect-verification td,
 .requirement-indirect-verification td>a,
 .testcases-indirect-verification td,
 .testcases-indirect-verification td>a,
@@ -1260,7 +1260,7 @@ div.information-panel p {
 	position: absolute;
 	min-width: 100%;
 	height: 1cm;
-	background-image: url("../images/fond_nav_rotate.gif"); 
+	background-image: url("../images/fond_nav_rotate.gif");
 	margin-bottom: 0.4cm;
 }
 
@@ -1279,7 +1279,7 @@ div.information-panel p {
 }
 
 .nav-up-layout #footer {
-	
+
 }
 
 /* ---------------------------------------------------------*/
@@ -1356,9 +1356,9 @@ div.information-panel p {
 	 color: #888888;
 }
 #admin-link-pane{
-    margin: auto; 
+    margin: auto;
     display: block;
-    text-align: center; 
+    text-align: center;
      font-size: 1.5em;
     font-style: italic;
 }
@@ -1432,10 +1432,10 @@ div.information-panel p {
 }
 
 #admin-link-pane  span.admin-section-label {
-	position:absolute; 
-	z-index:5; 
+	position:absolute;
+	z-index:5;
 	top: 100px;
-	left:0px; 
+	left:0px;
 	right:0px
 }
 
@@ -1610,17 +1610,17 @@ div.admin-message-page-content{
 
 .index-block-title{
 	font-variant:small-caps;
-	text-decoration:underline;	
+	text-decoration:underline;
     font-size: medium;
     padding-bottom:25px;
 }
 
-.index-info-line{    
+.index-info-line{
 	padding-bottom:25px;
 }
 
 .index-message-title{
-	text-decoration:underline;	
+	text-decoration:underline;
 }
 
 .index-important{
@@ -1634,19 +1634,19 @@ div.admin-message-page-content{
 }
 
 .index-inline-left-block{
-	display: inline-block; 
+	display: inline-block;
 	width: 80%;
 	padding-bottom:25px;
 }
 
 .index-inline-right-block{
-	display: inline-block; 
+	display: inline-block;
 	width: 19%;
 	padding-bottom:25px;
 }
 
 .index-inline-center-block{
-	display: inline-block; 
+	display: inline-block;
 	width: 25%;
 	text-align: center;
 	border-style:solid;
@@ -1663,7 +1663,7 @@ div.admin-message-page-content{
 
 #manage-test-suites-menu{
 	text-align : left;
-	font-size : 12px;	
+	font-size : 12px;
 }
 
 #manage-test-suites-menu > .suite-manager-newsection{
@@ -1707,32 +1707,32 @@ background-color:#969696;
 /* ---------------- test case importance and status icon-----------------*/
 
 .test-case-importance-VERY_HIGH {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 0px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 0px;
 															 sprite-margin-left: 240px;*/
 background-position : -240px -0px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-HIGH {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 16px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 16px;
 															 sprite-margin-left: 240px;*/
 background-position : -240px -16px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-MEDIUM {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 32px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 32px;
 															 sprite-margin-left: 240px;*/
 background-position : -240px -32px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-LOW {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 48px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 48px;
 															 sprite-margin-left: 240px;*/
 background-position : -240px -48px ;
 width: 24px;
@@ -1743,16 +1743,16 @@ height: 16px;
 
 
 .test-case-status-WORK_IN_PROGRESS{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 48px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 48px;
 															 sprite-margin-left: 120px;*/
 background-position : -129px -48px ;
 width: 24px;
 height: 16px;
 }
 .test-case-status-UNDER_REVIEW{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 0px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 0px;
 															 sprite-margin-left: 144px;*/
 background-position : -153px -0px ;
 width: 24px;
@@ -1760,16 +1760,16 @@ height: 16px;
 }
 
 .test-case-status-APPROVED{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 0px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 0px;
 															 sprite-margin-left: 168px;*/
 background-position : -177px -0px ;
 width: 24px;
 height: 16px;
 }
 .test-case-status-OBSOLETE{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 0px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 0px;
 															 sprite-margin-left: 192px;*/
 background-position : -201px -0px ;
 width: 24px;
@@ -1777,8 +1777,8 @@ height: 16px;
 }
 
 .test-case-status-TO_BE_UPDATED{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons; 
-															 sprite-margin-top: 0px; 
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
+															 sprite-margin-top: 0px;
 															 sprite-margin-left: 216px;*/
 background-position : -225px -0px ;
 width: 24px;
@@ -1786,63 +1786,63 @@ height: 16px;
 }
 
 .icon-default-tc-nat-undefined{
-	
+
 }
 
 .icon-default-tc-nat-functional-testing{
-	
+
 }
 
 .icon-default-tc-nat-business-testing{
-	
+
 }
 
 .icon-default-tc-nat-user-testing{
-	
+
 }
 
 .icon-default-tc-nat-non-functional-testing{
-	
+
 }
 
 .icon-default-tc-nat-performance-testing{
-	
+
 }
 
 .icon-default-tc-nat-security-testing{
-	
+
 }
 
 .icon-default-tc-nat-atdd{
-	
+
 }
 
 .icon-default-tc-typ-undefined{
-	
+
 }
 
 .icon-default-tc-typ-compliance-testing{
-	
+
 }
 
 .icon-default-tc-typ-correction-testing{
-	
+
 }
 
 .icon-default-tc-typ-evolution-testing{
-	
+
 }
 
 .icon-default-tc-typ-regression-testing{
-	
+
 }
 
 .icon-default-tc-typ-end-to-end-testing{
-	
+
 }
 
 .icon-default-tc-typ-partner-testing{
-	
+
 }
 
 .info-list-item-icon-selected {
