@@ -451,10 +451,10 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	@Override
 	public void reindexAfterCopy() {
-
+		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
+		flush();
 		indexationService.batchReindexTc(tcIdsToIndex);
 		indexationService.batchReindexReqVersion(reqVersionIdsToIndex);
-		
 	}
 
 }
