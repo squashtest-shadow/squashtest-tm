@@ -269,6 +269,7 @@ BoundEntity, MilestoneMember {
 		Iteration clone = new Iteration();
 		clone.setName(this.getName());
 		clone.setDescription(this.getDescription());
+		clone.setReference(this.getReference());
 		copyPlanning(clone);
 		for (IterationTestPlanItem itemTestPlan : testPlans) {
 			clone.addTestPlan(itemTestPlan.createCopy());

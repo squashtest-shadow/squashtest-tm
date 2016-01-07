@@ -20,22 +20,17 @@
  */
 package org.squashtest.tm.domain.campaign
 
-import java.text.SimpleDateFormat
-
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.attachment.AttachmentList
-import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode
-import org.squashtest.tm.exception.DuplicateNameException;
-
+import org.squashtest.tm.exception.DuplicateNameException
 import spock.lang.Specification
+import spock.lang.Unroll
+
+import java.text.SimpleDateFormat
 
 class IterationTest extends Specification {
 
@@ -43,17 +38,21 @@ class IterationTest extends Specification {
 	Iteration copySource = new Iteration(
 	description: "description",
 	name: "name",
+	reference: "ref",
 	campaign: Mock(Campaign)
 	)
 
 
-	def "copy of an Iteration should copy it's name and description"() {
+	@Unroll
+	def "copy of an Iteration should copy its property #prop"() {
 		when:
 		Iteration copy = copySource.createCopy()
 
 		then:
-		copy.getDescription() == copySource.getDescription()
-		copy.getName() == copySource.getName()
+		copy[prop] == copySource[prop]
+
+		where:
+		prop << ["name", "description", "reference"]
 	}
 
 
@@ -233,10 +232,10 @@ class IterationTest extends Specification {
 
 		IterationTestPlanItem tp1 = new IterationTestPlanItem(iteration:iteration,referencedTestCase:testCase1)
 		IterationTestPlanItem tp2 = new IterationTestPlanItem(iteration:iteration,referencedTestCase:testCase2)
-		
+
 		tp1.executionStatus = ExecutionStatus.SUCCESS
 		tp2.executionStatus = ExecutionStatus.SUCCESS
-		
+
 		tp1.lastExecutedOn = null
 		tp2.lastExecutedOn = null
 
