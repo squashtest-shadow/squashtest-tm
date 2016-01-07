@@ -959,7 +959,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		Long count = 0L;
 		for (Entry<ExecutionStatus, Long> executionStatus : fullCoverageResult.entrySet()) {
 			if (statusSet.contains(executionStatus.getKey())) {
-				count += fullCoverageResult.get(executionStatus);
+				count += fullCoverageResult.get(executionStatus.getKey());
 			}
 		}
 		return count;
