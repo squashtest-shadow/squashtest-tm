@@ -104,8 +104,8 @@
 				$("#edit-tc").on('click', function(){
 			          var url = routing.buildURL('teststeps.fromExec', "${executionStep.id}", true);	
 					  localStorage.setItem("squashtm.execModification.index", "${executionStep.executionStepOrder}");
-					  parent.squashtm.ieomanager.closeWindow();    
 			          window.open(url);
+					  parent.squashtm.ieomanager.closeWindow();    
 				});
 				
 				$("#execute-next-button").button({

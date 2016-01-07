@@ -146,8 +146,8 @@ define(['module',
 		$("#edit-tc").on('click', function(){
 	          var url = routing.buildURL('teststeps.fromExec', config.basic.stepId, false);
 			  localStorage.setItem("squashtm.execModification.index", config.basic.index);
-	          window.close();
 	          window.open(url);
+	          window.close();
 		});
 
 		$("#execute-next-button").on('click', navigateNext);

@@ -31,7 +31,7 @@ define(["module",
 	
 	// ************* events subscription *********
 	
-	pubsub.subscribe("reload.oer.panels", initPanels);
+	pubsub.subscribe("reload.oer.panelsready", initPanels);
 	
 	pubsub.subscribe("reload.oer.control", initControl);
 	
