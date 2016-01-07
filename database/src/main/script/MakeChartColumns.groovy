@@ -376,7 +376,7 @@ def definition = [
 			exStatus : ['STATUS', 'EXECUTION_STATUS', 'executionStatus', 'all'],
 			
 			exIsAuto : ['ISAUTO', 'BOOLEAN', 'notnull(automatedExecutionExtender)', 'filter', 'exIsAutoSub'],
-			exIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'itpIssueCountSub']
+			exIssueCount : ['ISSUECOUNT', 'NUMERIC', 'count(issues)', 'all', 'exIssueCountSub']
 		],
 	
 		subqueries : [
