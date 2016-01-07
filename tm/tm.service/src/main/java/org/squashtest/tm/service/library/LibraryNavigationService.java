@@ -25,6 +25,11 @@ import java.util.List;
 import org.squashtest.tm.domain.library.Folder;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
@@ -70,9 +75,19 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	void moveNodesToLibrary(long destinationId, Long[] targetId, int position);
 
-	void addFolderToLibrary(long destinationId, FOLDER newFolder);
+	/**
+	 *{@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes 
+	 * @param destinationId
+	 * @param newFolder
+	 */
+	void addFolderToLibrary(@Id long destinationId, FOLDER newFolder);
 
-	void addFolderToFolder(long destinationId, FOLDER newFolder);
+	/**
+	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes 
+	 * @param destinationId
+	 * @param newFolder
+	 */
+	void addFolderToFolder(@Id long destinationId, FOLDER newFolder);
 
 	FOLDER findFolder(long folderId);
 

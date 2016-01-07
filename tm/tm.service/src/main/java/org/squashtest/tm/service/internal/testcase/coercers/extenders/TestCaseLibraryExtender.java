@@ -18,37 +18,48 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
+package org.squashtest.tm.service.internal.testcase.coercers.extenders;
 
 import java.io.Serializable;
 import java.util.Collection;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
-import org.squashtest.tm.service.annotation.IdsCoercer;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.IdsCoercerExtender;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 
 /**
- * @author Gregory Fouquet
- * @since 1.11.6
+ * Extender used for move operations. This class is used with {@link PreventConcurrents} and {@link BatchPreventConcurrent} annotations.
+ * 
+ * Will give the ids of the libraries that we need to lock when we move the {@link TestCaseLibraryNode}. 
+ * Each library witch content can be changed by the operation must be locked to prevent weird concurrency results.
+ * 
+ * @author Julien Thebault
+ * @since 1.13
  */
 @Configurable
-public class IterationToCampaignIdsCoercer implements IdsCoercer {
+@Named("testCaseLibraryExtender")
+public class TestCaseLibraryExtender implements IdsCoercerExtender {
 	@Inject
 	private SessionFactory sessionFactory;
 
 	@Override
-	public Collection<? extends Serializable> coerce(Object ids) {
+	public Collection<? extends Serializable> doCoerce (Collection<? extends Serializable>  ids) {
 		StatelessSession s = sessionFactory.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession().createQuery("select distinct c.id from Iteration i join i.campaign c where i.id in (:iterIds)");
-			q.setParameterList("iterIds", (Collection<? extends Serializable>) ids);
+			Query q = sessionFactory.getCurrentSession()
+					.createSQLQuery("SELECT DISTINCT library_id FROM test_case_library_content WHERE content_id in (:tclnIds)");
+			q.setParameterList("tclnIds", (Collection<? extends Serializable>) ids);
 			return q.list();
 
 		} finally {
@@ -56,5 +67,4 @@ public class IterationToCampaignIdsCoercer implements IdsCoercer {
 			s.close();
 		}
 	}
-
 }

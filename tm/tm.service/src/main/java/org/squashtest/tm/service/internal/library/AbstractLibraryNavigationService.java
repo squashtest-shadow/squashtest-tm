@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
+import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;

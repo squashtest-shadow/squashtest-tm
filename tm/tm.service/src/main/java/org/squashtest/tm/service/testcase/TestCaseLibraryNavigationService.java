@@ -35,8 +35,19 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.service.annotation.ArrayIdsCoercer;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
+import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForArray;
+import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForList;
+import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForArray;
+import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForList;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
 /**
@@ -203,5 +214,70 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	public List<Long> findAllTestCasesLibraryForMilestone(Milestone activeMilestone);
 
 	public List<Long> findAllTestCasesLibraryNodeForMilestone(Milestone activeMilestone);
+	
+	
+	//####################### PREVENT CONCURENCY OVERRIDES #########################//
+	
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="sourceNodesIds", coercer=ArrayIdsCoercer.class)}
+			)
+	public List<TestCaseLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId, @Ids("sourceNodesIds") Long[] sourceNodesIds);
 
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=ArrayIdsCoercer.class)}
+			)
+	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId);
+
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
+							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			)
+	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId);
+
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			)
+	void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId);
+
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			)
+	void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position);
+
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
+			)
+	void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position);
+
+	@Override
+	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	void addFolderToLibrary(@Id long destinationId, TestCaseFolder newFolder);
+
+	@Override
+	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	void addFolderToFolder(@Id long destinationId, TestCaseFolder newFolder);
+	
+	@Override
+	@PreventConcurrents(
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetIds", coercer=TCLNAndParentIdsCoercerForList.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetIds", coercer=TestCaseLibraryIdsCoercerForList.class)}
+			)
+	OperationReport deleteNodes(@Ids("targetIds")List<Long> targetIds, Long milestoneId);
+	
+	//####################### /PREVENT CONCURENCY OVERRIDES #########################//
 }
