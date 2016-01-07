@@ -27,6 +27,11 @@ import java.util.Collection;
  * @author Gregory Fouquet
  * @since 1.11.6
  */
-public interface IdsCoercer {
-	Collection<? extends Serializable> coerce(Object ids);
+public class PassThroughIdsCoercerExtender implements IdsCoercerExtender {
+	public static final PassThroughIdsCoercerExtender INSTANCE = new PassThroughIdsCoercerExtender();
+
+	@Override
+	public Collection<? extends Serializable> doCoerce (Collection<? extends Serializable> ids) {
+		return ids;
+	}
 }

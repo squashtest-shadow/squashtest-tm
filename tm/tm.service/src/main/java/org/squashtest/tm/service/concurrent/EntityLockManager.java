@@ -49,7 +49,7 @@ public final class EntityLockManager {
 		super();
 	}
 
-	private static final class EntityRef {
+	public static final class EntityRef {
 		private final Class type;
 		private final Serializable id;
 
@@ -61,7 +61,7 @@ public final class EntityLockManager {
 				'}';
 		}
 
-		private EntityRef(@NotNull Class type, Serializable id) {
+		public EntityRef(@NotNull Class type, Serializable id) {
 			this.type = type;
 			this.id = id;
 		}
@@ -97,8 +97,7 @@ public final class EntityLockManager {
 	 * @param id
 	 * @return
 	 */
-	public static synchronized ReentrantLock getLock(Class type, Serializable id) {
-		EntityRef ref = new EntityRef(type, id);
+	public static synchronized ReentrantLock getLock(EntityRef ref) {
 		WeakReference<ReentrantLock> wr = locks.get(ref);
 		ReentrantLock lock;
 
@@ -132,12 +131,12 @@ public final class EntityLockManager {
 	 * @param ids
 	 * @return
 	 */
-	public static synchronized Collection<Lock> lock(Class<?> type, Collection<? extends Serializable> ids) {
-		LOGGER.trace("Batch locking entities of type {} and ids {}", type, ids);
-		ArrayList<Lock> locks = new ArrayList<Lock>(ids.size());
+	public static synchronized Collection<Lock> lock(Collection<EntityRef> refs) {
+		LOGGER.trace("Batch locking entities {}", refs);
+		ArrayList<Lock> locks = new ArrayList<Lock>(refs.size());
 
-		for (Serializable id : ids) {
-			Lock lock = getLock(type, id);
+		for (EntityRef ref : refs) {
+			Lock lock = getLock(ref);
 			lock.lock();
 			locks.add(lock);
 		}

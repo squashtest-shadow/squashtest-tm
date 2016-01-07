@@ -36,5 +36,13 @@ public @interface BatchPreventConcurrent {
 	 * Type of the entity which should be locked
 	 */
 	Class<?> entityType();
+	/**
+	 * The name of the id parameter, used only if method needs severals locks. 
+	 * We have to put the name here, as Spring proxy are JDK proxy if the bean implement an interface.
+	 * So inside the aspect, we cannot retrieve the name of the parameters of the method. The SAME name value should be put inside the {@link Id}
+	 * to allow the link.
+	 * @return
+	 */
+	String paramName() default "";
 	Class<? extends IdsCoercer> coercer() default PassThroughIdsCoercer.class;
 }

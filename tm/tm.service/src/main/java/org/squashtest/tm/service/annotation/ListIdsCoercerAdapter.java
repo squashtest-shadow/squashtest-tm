@@ -20,13 +20,21 @@
  */
 package org.squashtest.tm.service.annotation;
 
-import java.io.Serializable;
-import java.util.Collection;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
- * @author Gregory Fouquet
- * @since 1.11.6
+ * @author Julien Thebault
+ * @since 1.13
  */
-public interface IdsCoercer {
-	Collection<? extends Serializable> coerce(Object ids);
+public abstract class ListIdsCoercerAdapter extends IdsCoercerAdapter {
+	
+	@Inject
+	@Named("passThroughIdsCoercer")
+	protected IdsCoercer coercer;
+	
+	@Override
+	public IdsCoercer getCoercer() {
+		return coercer;
+	}
 }

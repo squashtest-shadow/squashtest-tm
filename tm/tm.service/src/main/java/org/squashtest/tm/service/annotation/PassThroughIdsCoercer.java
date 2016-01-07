@@ -21,17 +21,27 @@
 package org.squashtest.tm.service.annotation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.inject.Named;
+
+import org.aspectj.lang.ProceedingJoinPoint;
+
 /**
+ * Make a copy of the argument list. Decision was taken to copy the list, as passing directly {@link ProceedingJoinPoint} args can lead to
+ * unpredictable results if the list is modified by a {@link IdsCoercerExtender} after.
  * @author Gregory Fouquet
  * @since 1.11.6
  */
+@Named("passThroughIdsCoercer")
 public class PassThroughIdsCoercer implements IdsCoercer {
-	public static final PassThroughIdsCoercer INSTANCE = new PassThroughIdsCoercer();
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<? extends Serializable> coerce(Collection<? extends Serializable> ids) {
-		return ids;
+	public Collection<? extends Serializable> coerce(Object object) {
+		Collection<? extends Serializable> args = (Collection<? extends Serializable>) object;
+		return new ArrayList<>(args);
 	}
+
 }

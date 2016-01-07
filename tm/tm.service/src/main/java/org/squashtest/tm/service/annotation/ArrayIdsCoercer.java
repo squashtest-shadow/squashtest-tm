@@ -21,12 +21,28 @@
 package org.squashtest.tm.service.annotation;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.inject.Named;
+
 /**
- * @author Gregory Fouquet
- * @since 1.11.6
+ * @author Julien Thebault
+ * @since 1.13
  */
-public interface IdsCoercer {
-	Collection<? extends Serializable> coerce(Object ids);
+@Named("arrayIdsCoercer")
+public class ArrayIdsCoercer implements IdsCoercer {
+	public static final ArrayIdsCoercer INSTANCE = new ArrayIdsCoercer();
+
+	@Override
+	public Collection<? extends Serializable> coerce (Object object) {
+		Collection<Serializable> collection = new ArrayList<>();
+		Object[] objects = (Object[]) object;
+		for (int i = 0; i < objects.length; i++) {
+			Object obj = objects[i];
+			collection.add((Serializable)obj);
+		}
+		return collection;
+	}
+
 }

@@ -26,10 +26,16 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Annotation used to mark a method parameter for {@link PreventConcurrent}.
+ * 
  * @author Gregory Fouquet
  * @since 1.11.6
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.PARAMETER)
 public @interface Id {
+	/**
+	 * Name of the parameter(See {@link PreventConcurrent#paramName()})
+	 */
+	String value() default "";
 }

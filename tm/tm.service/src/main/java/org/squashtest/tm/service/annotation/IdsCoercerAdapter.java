@@ -24,9 +24,18 @@ import java.io.Serializable;
 import java.util.Collection;
 
 /**
- * @author Gregory Fouquet
- * @since 1.11.6
+ * @author Julien Thebault
+ * @since 1.13
  */
-public interface IdsCoercer {
-	Collection<? extends Serializable> coerce(Object ids);
+public abstract class IdsCoercerAdapter implements IdsCoercer {
+	
+	@Override
+	public Collection<? extends Serializable> coerce(Object object) {
+		Collection<? extends Serializable> resolvedIds = getCoercer().coerce(object);
+		return getExtender().doCoerce(resolvedIds);
+	}
+
+	public abstract IdsCoercerExtender getExtender();
+	
+	public abstract IdsCoercer getCoercer();
 }

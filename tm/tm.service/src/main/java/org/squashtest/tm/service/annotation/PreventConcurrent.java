@@ -33,6 +33,9 @@ import java.lang.annotation.Target;
  * This annotation is processed at runtime using Spring AOP so it can only be used on spring beans. It means it should
  * be put on the concrete class and @Id should be put on the interface (yeah, that sucks) => best thing is to put it on
  * both the interface and the concrete class.
+ * 
+ * For generic method, as the type of the entity is required, we have to override the generic method, and call the generic method with
+ * super.methodName...
  *
  * @author Gregory Fouquet
  * @since 1.11.6
@@ -44,4 +47,13 @@ public @interface PreventConcurrent {
 	 * Type of the entity which should be locked
 	 */
 	Class<?> entityType();
+	
+	/**
+	 * The name of the id parameter, used only if method needs severals locks. 
+	 * We have to put the name here, as Spring proxy are JDK proxy if the bean implement an interface.
+	 * So inside the aspect, we cannot retrieve the name of the parameters of the method. The SAME name value should be put inside the {@link Id}
+	 * to allow the link.
+	 * @return
+	 */
+	String paramName() default "";
 }
