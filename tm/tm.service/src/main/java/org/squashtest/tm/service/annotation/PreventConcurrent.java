@@ -56,4 +56,9 @@ public @interface PreventConcurrent {
 	 * @return
 	 */
 	String paramName() default "";
+	
+	/**
+	 * Class of a coercer if needed. Default is a direct transmission of the argument to {@link PreventConcurrentAspect}
+	 */
+	Class<? extends IdCoercer> coercer() default PassThroughIdCoercer.class;
 }

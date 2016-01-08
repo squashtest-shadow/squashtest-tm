@@ -62,7 +62,10 @@ public class PreventConcurrentAspect implements Ordered {
 
 	@Around(value = "execution(@org.squashtest.tm.service.annotation.PreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
 	public Object lockEntity(ProceedingJoinPoint pjp, PreventConcurrent pc) throws Throwable { // NOSONAR propagated exception
-		EntityRef ref = new EntityRef(pc.entityType(), findEntityId(pjp));
+		Serializable id = findEntityId(pjp);
+		IdCoercer coercer =  pc.coercer().newInstance();
+		Serializable coercedId = coercer.coerce(id);
+		EntityRef ref = new EntityRef(pc.entityType(), coercedId);
 		ReentrantLock lock = EntityLockManager.getLock(ref);
 		lock.lock();
 		LOGGER.warn("Acquired lock on {}", lock);
@@ -170,7 +173,7 @@ public class PreventConcurrentAspect implements Ordered {
 		return refs;
 	}
 
-	private Collection<EntityRef> findEntityIdsForSimpleLocks(ProceedingJoinPoint pjp, PreventConcurrent[] simplesLocks) {
+	private Collection<EntityRef> findEntityIdsForSimpleLocks(ProceedingJoinPoint pjp, PreventConcurrent[] simplesLocks) throws Throwable {
 		Set<EntityRef> refs = new HashSet<>();
 		for (int i = 0; i < simplesLocks.length; i++) {
 			PreventConcurrent preventConcurrent = simplesLocks[i];
@@ -179,10 +182,11 @@ public class PreventConcurrentAspect implements Ordered {
 		return refs;
 	}
 
-	private EntityRef findEntityRefForNamedParam(ProceedingJoinPoint pjp, PreventConcurrent preventConcurrent) {
+	private EntityRef findEntityRefForNamedParam(ProceedingJoinPoint pjp, PreventConcurrent preventConcurrent) throws Throwable {
 		Class<?> entityType = preventConcurrent.entityType();
 		Serializable id = findIdForNamedParam(pjp, preventConcurrent.paramName(), Id.class);
-		EntityRef entityRef = new EntityRef(entityType, id);
+		IdCoercer coercer = preventConcurrent.coercer().newInstance();
+		EntityRef entityRef = new EntityRef(entityType, coercer.coerce(id));
 		LOGGER.debug("Prevent Concurency - Finded an entity to lock {}.", entityRef.toString());
 		return entityRef;
 	}
