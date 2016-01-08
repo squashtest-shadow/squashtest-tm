@@ -66,7 +66,8 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param testCase
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToLibrary(long libraryId, TestCase testCase, Integer position);
+	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Integer position);
 
 
 	/**
@@ -80,7 +81,8 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 * @param milestoneIds the list of the ids of the milestones the test case must be bound to
 	 */
-	void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds);
+	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds);
 
 
 
@@ -91,7 +93,8 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param testCase
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 */
-	void addTestCaseToFolder(long folderId, TestCase testCase, Integer position);
+	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	void addTestCaseToFolder(@Id long folderId, TestCase testCase, Integer position);
 
 
 	/**
@@ -105,7 +108,8 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 	 * @param position if non-null and non-negative, the test case will be inserted at that index.
 	 * @param milestoneIds the ids of the milestones the test case will be bound to
 	 */
-	void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds);
+	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	void addTestCaseToFolder(@Id long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds);
 
 
 	/**
@@ -264,14 +268,6 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 			)
 	void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position);
 
-	@Override
-	@PreventConcurrent(entityType=TestCaseLibrary.class)
-	void addFolderToLibrary(@Id long destinationId, TestCaseFolder newFolder);
-
-	@Override
-	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
-	void addFolderToFolder(@Id long destinationId, TestCaseFolder newFolder);
-	
 	@Override
 	@PreventConcurrents(
 			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetIds", coercer=TCLNAndParentIdsCoercerForList.class),

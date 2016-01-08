@@ -286,7 +286,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Integer position) {
+	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	public void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Integer position) {
 
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
@@ -312,7 +313,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ OR_HAS_ROLE_ADMIN)
-	public void addTestCaseToLibrary(long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
+	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	public void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
 		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
@@ -321,7 +323,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public void addTestCaseToFolder(long folderId, TestCase testCase, Integer position) {
+	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	public void addTestCaseToFolder(@Id long folderId, TestCase testCase, Integer position) {
 		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
@@ -342,7 +345,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public void addTestCaseToFolder(long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
+	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	public void addTestCaseToFolder(@Id long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
 		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
