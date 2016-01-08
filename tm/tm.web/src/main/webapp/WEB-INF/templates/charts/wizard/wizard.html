@@ -85,10 +85,10 @@
 <script type="text/javascript" th:inline="javascript">
     /* <![CDATA[ */
     	var squashtm = {};
-    	var pathname = window.location.pathname; 
+    	var pathname = window.location.pathname;
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
-    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",	
+    	  	contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
     	  	defaultInfoList : /*[[${defaultInfoLists}]]*/{},
 			testCaseImportance : /*[[${testCaseImportance}]]*/{},
 			testCaseStatus : /*[[${testCaseStatus}]]*/{},
@@ -105,10 +105,10 @@
     		  baseUrl: /*[[@{/scripts/}]]*/,
     	});
     	require(["common"], function(){
-    	    require(["charts/chartWizard"], function () {  
+    	    require(["charts/chartWizard"], function () {
     	    });
     	});
-    	
+
     /* ]]> */
     </script>
 
@@ -200,9 +200,9 @@
 
 				<div id="sub-page-buttons" class="sub-page-buttons">
 
-					<input type="button" class="sq-btn" id="back" value="Back" />
+					<input type="button" class="sq-btn" id="back" value="Back" th:value="#{label.Back}" />
 				</div>
-				
+
 				<div class="unsnap"></div>
 			</div>
 
@@ -213,9 +213,9 @@
 					<!-- ========================================================
 								main wizard panel
 					======================================================== -->
-					
+
 					<div id="wizard" class="fragment-body ui-tabs"
-						style="top: 0; background: 0; border: 0 none; height: 100%; "> 
+						style="top: 0; background: 0; border: 0 none; height: 100%; ">
 
 						<!-- ========================= the side view ========================= -->
 
@@ -224,38 +224,38 @@
 							<span style="display: table; height: 100%;" id="side-view" ></span>
 						</div>
 
-						
+
 						<!-- ========================= the main step view ========================= -->
 
-						<div id="main-step-view" 
+						<div id="main-step-view"
 								style="position: absolute;	top: 0; right: 0; left: 180px; bottom: 45px; border-bottom:1px solid black; overflow:hidden;">
-							
+
 							<!--  the position : relative resets the positioning context -->
 							<div style="position:relative; height:100%; margin-top:5px;">
-							
-								<div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="width: 99%;">		
+
+								<div class="ui-widget-header ui-corner-all ui-state-default fragment-header" style="width: 99%;">
 									<h2 id="step-title" />
 								</div>
-		
-		
-								<div style="position:absolute; top: 40px; bottom: 0; left:0; right:0; padding-right: 10px;  overflow:auto;">		
-									
+
+
+								<div style="position:absolute; top: 40px; bottom: 0; left:0; right:0; padding-right: 10px;  overflow:auto;">
+
 									<div id="current-step-container" >
 										<div id="current-step" >
 										<!--  populated via javascript -->
 										</div>
 									</div>
-		
+
 								</div>
 							</div>
 						</div>
-						
+
 						<!-- ========================= the button view ========================= -->
-						
+
 						<div id="wizard-toolbar"
 							style="position: fixed; bottom: 65px; right: 60px; ">
-	
-	
+
+
 							<input type="button" class="sq-btn" id="previous"
 								value="Previous" th:value="#{label.previous}" /> <input
 								type="button" class="sq-btn" id="next" value="Next"
@@ -264,12 +264,12 @@
 								th:value="#{label.next}" /> <input
 								type="button" class="sq-btn" id="save" value="save"
 								th:value="#{label.save}" />
-	
-						</div>							
 
-					
+						</div>
+
+
 					</div>
-											
+
 				</div>
 			</div>
 		</div>
