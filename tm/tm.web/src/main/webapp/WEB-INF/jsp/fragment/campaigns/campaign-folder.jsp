@@ -46,14 +46,14 @@
 <c:set var="hasBugtracker" value="${folder.project.bugtrackerConnected}"/>
 
 <c:if test="${empty editable}">
-  <c:set var="editable" value="${ false }" /> 
+  <c:set var="editable" value="${ false }" />
   <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ folder }">
-    <c:set var="editable" value="${ true }" /> 
+    <c:set var="editable" value="${ true }" />
   </authz:authorized>
 </c:if>
 
 
-<c:if test="${ editable }">        
+<c:if test="${ editable }">
   <c:set var="descrRicheditAttributes" value="class='editable rich-editable' data-def='url=${folderUrl}'"/>
 </c:if>
 
@@ -71,7 +71,7 @@
 
   <csst:jq-tab>
     <div class="fragment-tabs fragment-body">
-      <ul class="tab-menu"> 
+      <ul class="tab-menu">
         <li>
           <a href="#folder-dashboard">
             <f:message key="title.Dashboard"/>
@@ -83,7 +83,7 @@
           <%-- div#bugtracker-section-main-div is declared in tagfile issues:bugtracker-panel.tag  --%>
           <a href="#bugtracker-section-main-div"><f:message key="tabs.label.issues"/></a>
         </li>
-</c:if>     
+</c:if>
 
         <li>
           <a href="#folder-infos">
@@ -91,32 +91,32 @@
           </a>
         </li>
       </ul>
-      
+
       <div id="folder-dashboard">
-			<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}" 
-                                                      printUrl="${folderStatisticsPrintUrl}" 
-                                                      allowsSettled="${allowsSettled}" 
+			<dashboard:campaign-folder-dashboard-panel url="${folderStatisticsUrl}"
+                                                      printUrl="${folderStatisticsPrintUrl}"
+                                                      allowsSettled="${allowsSettled}"
                                                       allowsUntestable="${allowsUntestable}" />
       </div>
-      
-      <%-- ----------------------- bugtracker (if present)----------------------------------------%> 
-  
+
+      <%-- ----------------------- bugtracker (if present)----------------------------------------%>
+
       <c:if test="${hasBugtracker}">
               <issues:butracker-panel entity="${folder}" />
       </c:if>
-      
+
       <div id="folder-infos">
-      
+
         <comp:toggle-panel id="folder-description-panel" titleKey="label.Description" open="true">
           <jsp:attribute name="body">
             <div id="folder-description" ${descrRicheditAttributes}>${ folder.description }</div>
           </jsp:attribute>
         </comp:toggle-panel>
-        
+
         <at:attachment-bloc editable="${ editable }" workspaceName="${ workspaceName }" attachListId="${ folder.attachmentList.id }" attachmentSet="${attachments}"/>
-                
+
       </div>
-    
+
     </div>
   </csst:jq-tab>
 
@@ -124,13 +124,13 @@
 
 <script type="text/javascript">
 
-  var identity = { resid : ${folder.id}, restype : '${su:camelCaseToHyphened(folder.class.simpleName)}s'  };
-  
+  var identity = { resid : ${folder.id}, restype : '${su:camelCaseToHyphened(folder["class"].simpleName)}s'  };
+
   require(["common"], function(){
-      require(["campaign-folder-management", "workspace.routing"], 
+      require(["campaign-folder-management", "workspace.routing"],
           function(CFManager, routing){
             $(function(){
-                
+
                 var conf = {
                 	basic : {
                 		identity : identity
@@ -141,8 +141,8 @@
                 		style : "fragment-tab"
                 	}
                 };
-                
-                CFManager.init(conf);   
+
+                CFManager.init(conf);
      	 	});
     	});
   });
