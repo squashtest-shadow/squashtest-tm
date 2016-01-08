@@ -47,6 +47,7 @@ import org.squashtest.tm.web.internal.context.ReloadableSquashTmMessageSource;
 import org.squashtest.tm.web.internal.fileupload.MultipartResolverDispatcher;
 import org.squashtest.tm.web.internal.fileupload.SquashMultipartResolver;
 import org.squashtest.tm.web.internal.filter.AjaxEmptyResponseFilter;
+import org.squashtest.tm.web.internal.filter.UserConcurrentRequestLockFilter;
 import org.squashtest.tm.web.internal.listener.HttpSessionLifecycleLogger;
 import org.squashtest.tm.web.internal.listener.OpenedEntitiesLifecycleListener;
 import org.thymeleaf.spring4.resourceresolver.SpringResourceResourceResolver;
@@ -145,7 +146,7 @@ public class SquashServletConfig {
 	public SquashMultipartResolver defaultMultipartResolver() {
 		return new SquashMultipartResolver();
 	}
-	
+
 
 	@Role(BeanDefinition.ROLE_SUPPORT)
 	public SquashMultipartResolver importMultipartResolver() {
@@ -178,6 +179,17 @@ public class SquashServletConfig {
 	public FilterRegistrationBean ajaxEmptyResponseFilter() {
 		FilterRegistrationBean bean = new FilterRegistrationBean(new AjaxEmptyResponseFilter());
 		bean.setDispatcherTypes(DispatcherType.REQUEST);
+		return bean;
+	}
+
+	@Bean @Order(500)
+	public FilterRegistrationBean userConcurrentRequestLockFilter() {
+		// This filter prevents a user from creating race conditions with himself. It prevents most concurrency-related
+		// bugs (see #5748) but probably slows up the app.
+		FilterRegistrationBean bean  = new FilterRegistrationBean(new UserConcurrentRequestLockFilter());
+		bean.addInitParameter("excludePatterns", "(/|/isSquashAlive|/opened-entity)");
+		bean.setDispatcherTypes(DispatcherType.REQUEST);
+
 		return bean;
 	}
 
