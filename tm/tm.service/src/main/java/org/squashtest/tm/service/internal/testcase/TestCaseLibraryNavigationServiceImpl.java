@@ -735,7 +735,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="sourceNodesIds", coercer=ArrayIdsCoercer.class)}
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="sourceNodesIds", coercer=TCLNAndParentIdsCoercerForArray.class),
+							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="sourceNodesIds", coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
 	public List<TestCaseLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId, @Ids("sourceNodesIds") Long[] sourceNodesIds){
 		return super.copyNodesToFolder(destinationId, sourceNodesIds);
@@ -744,7 +745,8 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=ArrayIdsCoercer.class)}
+			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
 			)
 	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId) {
 		return super.copyNodesToLibrary(destinationId, targetId);
