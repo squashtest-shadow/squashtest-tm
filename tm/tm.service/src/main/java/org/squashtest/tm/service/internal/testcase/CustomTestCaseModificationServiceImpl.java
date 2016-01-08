@@ -74,6 +74,8 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
@@ -165,7 +167,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 
 		testStepDao.persist(newTestStep);
@@ -179,7 +182,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, int index) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		
 		testStepDao.persist(newTestStep);
@@ -193,7 +197,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep,
+	@PreventConcurrent(entityType=TestCase.class)
+	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 			Map<Long, RawValue> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
@@ -204,7 +209,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
-	public ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep,
+	@PreventConcurrent(entityType=TestCase.class)
+	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 			Map<Long, RawValue> customFieldValues, int index) {
 		
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep,index);
@@ -246,7 +252,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public void changeTestStepsPosition(@Id long testCaseId, int newPosition, List<Long> stepIds) {
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		List<TestStep> steps = testStepDao.findListById(stepIds);
@@ -257,7 +264,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void removeStepFromTestCase(long testCaseId, long testStepId) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public void removeStepFromTestCase(@Id long testCaseId, long testStepId) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		TestStep testStep = testStepDao.findById(testStepId);
 		deletionHandler.deleteStep(testCase, testStep);
@@ -265,7 +273,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public void removeStepFromTestCaseByIndex(long testCaseId, int index) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public void removeStepFromTestCaseByIndex(@Id long testCaseId, int index) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		TestStep testStep = testCase.getSteps().get(index);
 		deletionHandler.deleteStep(testCase, testStep);
@@ -290,7 +299,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public List<TestStep> removeListOfSteps(long testCaseId, List<Long> testStepIds) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public List<TestStep> removeListOfSteps(@Id long testCaseId, List<Long> testStepIds) {
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
 		for (Long id : testStepIds) {
@@ -311,27 +321,31 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public boolean pasteCopiedTestStep(long testCaseId, long idInsertion, long copiedTestStepId) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public boolean pasteCopiedTestStep(@Id long testCaseId, long idInsertion, long copiedTestStepId) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), position);
 	}
 
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public boolean pasteCopiedTestSteps(long testCaseId, long idInsertion, List<Long> copiedTestStepIds) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public boolean pasteCopiedTestSteps(@Id long testCaseId, long idInsertion, List<Long> copiedTestStepIds) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, position);
 	}
 	
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public boolean pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId) {
 		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), null);
 	}
 	
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
-	public boolean pasteCopiedTestStepToLastIndex(long testCaseId, List<Long> copiedTestStepIds) {
+	@PreventConcurrent(entityType=TestCase.class)
+	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, List<Long> copiedTestStepIds) {
 		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, null);
 	}
 

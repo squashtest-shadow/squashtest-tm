@@ -32,6 +32,8 @@ import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 
 
@@ -44,9 +46,11 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 	void rename(long testCaseId, String newName);
 
-	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep);
+	@PreventConcurrent(entityType=TestCase.class)
+	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep);
 	
-	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, int index);
+	@PreventConcurrent(entityType=TestCase.class)
+	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index);
 
 	/**
 	 * Adds an action test step to a test case, and its initial custom field values.
@@ -57,7 +61,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param testCase
 	 * @param customFieldValues
 	 */
-	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues);
+	@PreventConcurrent(entityType=TestCase.class)
+	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues);
 	
 	/**
 	 * Adds an action test step to a test case, and its initial custom field values, inserted at the index value
@@ -69,7 +74,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param customFieldValues
 	 * @param index
 	 */
-	ActionTestStep addActionTestStep(long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues,int index);
+	@PreventConcurrent(entityType=TestCase.class)
+	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, Map<Long, RawValue> customFieldValues,int index);
 
 	void updateTestStepAction(long testStepId, String newAction);
 
@@ -88,13 +94,17 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param movedSteps
 	 *            the list of steps to move, sorted by rank among each others.
 	 */
-	void changeTestStepsPosition(long testCaseId, int newPosition, List<Long> stepIds);
+	@PreventConcurrent(entityType=TestCase.class)
+	void changeTestStepsPosition(@Id long testCaseId, int newPosition, List<Long> stepIds);
 
-	void removeStepFromTestCase(long testCaseId, long testStepId);
+	@PreventConcurrent(entityType=TestCase.class)
+	void removeStepFromTestCase(@Id long testCaseId, long testStepId);
 
-	void removeStepFromTestCaseByIndex(long testCaseId, int stepIndex);
+	@PreventConcurrent(entityType=TestCase.class)
+	void removeStepFromTestCaseByIndex(@Id long testCaseId, int stepIndex);
 
-	List<TestStep> removeListOfSteps(long testCaseId, List<Long> testStepIds);
+	@PreventConcurrent(entityType=TestCase.class)
+	List<TestStep> removeListOfSteps(@Id long testCaseId, List<Long> testStepIds);
 
 	/**
 	 * will insert a test step into a test case script, after the step identified by idInsertion.
@@ -110,7 +120,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @return true if the copied step is instance of CallStep, false otherwise
 	 * 
 	 */
-	boolean pasteCopiedTestStep(long testCaseId, long idInsertion, long copiedTestStepId);
+	@PreventConcurrent(entityType=TestCase.class)
+	boolean pasteCopiedTestStep(@Id long testCaseId, long idInsertion, long copiedTestStepId);
 
 	/**
 	 * will insert a test step into a test case script, at the last position.
@@ -124,7 +135,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @return true if the copied step is instance of CallStep, false otherwise
 	 * 
 	 */
-	boolean pasteCopiedTestStepToLastIndex(long testCaseId, long copiedTestStepId);
+	@PreventConcurrent(entityType=TestCase.class)
+	boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId);
 
 	
 	/**
@@ -135,7 +147,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param copiedTestStepIds
 	 * @return
 	 */
-	boolean pasteCopiedTestSteps(long testCaseId, long idInsertion, List<Long> copiedTestStepIds);
+	@PreventConcurrent(entityType=TestCase.class)
+	boolean pasteCopiedTestSteps(@Id long testCaseId, long idInsertion, List<Long> copiedTestStepIds);
 	
 	
 	/**
@@ -145,7 +158,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	 * @param copiedTestStepIds
 	 * @return
 	 */
-	boolean pasteCopiedTestStepToLastIndex(long testCaseId, List<Long> copiedTestStepIds);
+	@PreventConcurrent(entityType=TestCase.class)
+	boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, List<Long> copiedTestStepIds);
 	
 	
 	/**
