@@ -31,7 +31,9 @@ if (window.console.trace === undefined){
 var contextRoot;
 if (!!squashtm && !!squashtm.app && !!squashtm.app.contextRoot) {
 	contextRoot = squashtm.app.contextRoot;
-	if (contextRoot.lastIndexOf("/") < 0) contextRoot = contextRoot + "/";
+	if (contextRoot.lastIndexOf("/") < 0) {
+		contextRoot = contextRoot + "/";
+	}
 } else {
 	contextRoot = "/squash/";
 	window.console.log("WARN could not find squashtm.app.contextRoot, context root set to 'squash'");
