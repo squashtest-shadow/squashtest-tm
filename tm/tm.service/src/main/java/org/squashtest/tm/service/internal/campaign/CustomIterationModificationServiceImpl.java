@@ -31,7 +31,6 @@ import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -39,6 +38,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -52,12 +52,18 @@ import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.ExecutionWasDeleted;
 import org.squashtest.tm.exception.execution.TestPlanItemNotExecutableException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForArray;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForUniqueId;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
@@ -130,7 +136,7 @@ IterationTestPlanManager {
 	private Provider<TreeNodeCopier> treeNodeCopierFactory;
 
 	@Override
-	@PreventConcurrent(entityType = Campaign.class)
+	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
@@ -254,7 +260,8 @@ IterationTestPlanManager {
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public void addTestSuite(long iterationId, TestSuite suite) {
+	@PreventConcurrent(entityType=Iteration.class)
+	public void addTestSuite(@Id long iterationId, TestSuite suite) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		addTestSuite(iteration, suite);
 	}
@@ -276,7 +283,11 @@ IterationTestPlanManager {
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId) {
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId"),
+					@PreventConcurrent(entityType=Iteration.class,paramName="testSuiteId",coercer=TestSuiteToIterationCoercerForUniqueId.class)}
+			)
+	public TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId")long testSuiteId,@Id("iterationId") long iterationId) {
 		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteId)).get(0);
 	}
 
@@ -290,12 +301,17 @@ IterationTestPlanManager {
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId) {
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType=Iteration.class,paramName="testSuiteIds",coercer=TestSuiteToIterationCoercerForArray.class)}
+			)
+	public List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds")Long[] testSuiteIds,@Id("iterationId") long iterationId) {
 		return createCopyToIterationStrategy().pasteNodes(iterationId, Arrays.asList(testSuiteIds));
 	}
 
 	@Override
-	public OperationReport removeTestSuites(List<Long> suitesIds) {
+	@BatchPreventConcurrent(entityType=Iteration.class,coercer=TestSuiteToIterationCoercerForList.class)
+	public OperationReport removeTestSuites(@Ids List<Long> suitesIds) {
 		List<TestSuite> testSuites = suiteDao.findAllByIds(suitesIds);
 		// check
 		checkPermissionsForAll(testSuites, "DELETE");

@@ -22,14 +22,20 @@ package org.squashtest.tm.service.campaign;
 
 import java.util.List;
 
-import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForArray;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForUniqueId;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
 
 /**
@@ -47,7 +53,7 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @param campaignId
 	 * @return the index of the added iteration.
 	 */
-	@PreventConcurrent(entityType = Campaign.class)
+	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan);
 
 	String delete(long iterationId);
@@ -65,7 +71,8 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 */
 	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
 
-	void addTestSuite(long iterationId, TestSuite suite);
+	@PreventConcurrent(entityType=Iteration.class)
+	void addTestSuite(@Id long iterationId, TestSuite suite);
 
 	List<TestSuite> findAllTestSuites(long iterationId);
 
@@ -77,7 +84,8 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 * @param suitesIds
 	 * @return
 	 */
-	OperationReport removeTestSuites(List<Long> suitesIds);
+	@BatchPreventConcurrent(entityType=Iteration.class,coercer=TestSuiteToIterationCoercerForList.class)
+	OperationReport removeTestSuites(@Ids List<Long> suitesIds);
 
 	/**
 	 * <p>
@@ -91,7 +99,12 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 *            = iteration where to add the copy of the test suite
 	 * @return the copy of the test suite
 	 */
-	TestSuite copyPasteTestSuiteToIteration(long testSuiteId, long iterationId);
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId"),
+					@PreventConcurrent(entityType=Iteration.class,paramName="testSuiteId",coercer=TestSuiteToIterationCoercerForUniqueId.class)
+				}
+			)
+	TestSuite copyPasteTestSuiteToIteration(@Id("testSuiteId")long testSuiteId, @Id("iterationId") long iterationId);
 
 	/**
 	 * <p>
@@ -105,7 +118,11 @@ public interface CustomIterationModificationService extends IterationFinder {
 	 *            = iteration where to add the copy of the test suite
 	 * @return the list containing all the copies of the test suites
 	 */
-	List<TestSuite> copyPasteTestSuitesToIteration(Long[] testSuiteIds, long iterationId);
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType=Iteration.class,paramName="iterationId")},
+			batchsLocks={@BatchPreventConcurrent(entityType=Iteration.class,paramName="testSuiteIds",coercer=TestSuiteToIterationCoercerForArray.class)}
+			)
+	List<TestSuite> copyPasteTestSuitesToIteration(@Ids("testSuiteIds") Long[] testSuiteIds,@Id("iterationId") long iterationId);
 
 	IterationStatisticsBundle gatherIterationStatisticsBundle(long iterationId);
 
