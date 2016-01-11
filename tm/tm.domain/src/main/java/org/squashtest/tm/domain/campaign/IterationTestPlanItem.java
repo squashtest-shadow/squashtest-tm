@@ -512,6 +512,8 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		return null;
 	}
 
+	@Field(analyze = Analyze.NO, store = Store.YES)
+	@FieldBridge(impl = LevelEnumBridge.class)
 	public TestCaseExecutionMode getExecutionMode() {
 		Execution latest = getLatestExecution();
 

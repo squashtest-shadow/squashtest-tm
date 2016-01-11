@@ -216,7 +216,6 @@ public abstract class SearchInterfaceDescription {
 	protected static final String TEXTAREA = "textarea";
 	protected static final String RANGE = "range";
 	protected static final String EXISTS = "exists";
-	protected static final String EXISTSBEFORE = "existsbefore";
 	protected static final String DATE = "date";
 	protected static final String MULTISELECT = "multiselect";
 	protected static final String MULTISELECTPERIMETER = "multiselectperimeter";

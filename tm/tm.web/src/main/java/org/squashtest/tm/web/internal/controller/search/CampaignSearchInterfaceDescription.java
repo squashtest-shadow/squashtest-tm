@@ -178,19 +178,12 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		// Mode
 		SearchInputFieldModel executionModeField = new SearchInputFieldModel("executionMode", getMessageSource()
-				.internationalize("search.execution.mode.label", locale), EXISTSBEFORE);
+				.internationalize("search.execution.mode.label", locale), MULTISELECT);
 		panel.addField(executionModeField);
 
 		List<SearchInputPossibleValueModel> modeOptions = levelComboBuilder(TestCaseExecutionMode.values())
 				.useLocale(locale).build();
 		executionModeField.addPossibleValues(modeOptions);
-
-		// Last execution not working yet in the Lucene query
-		/*
-		 * SearchInputFieldModel lastExecutionField = new SearchInputFieldModel("lastExecution", getMessageSource()
-		 * .internationalize("search.execution.lastExecution", locale), CHECKBOX); panel.addField(lastExecutionField);
-		 */
-
 
 		return panel;
 	}
