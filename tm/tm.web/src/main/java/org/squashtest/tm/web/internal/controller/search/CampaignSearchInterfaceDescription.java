@@ -48,9 +48,9 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.setLocation(COLUMN_1);
 		panel.addCssClass("search-icon-information");
 
-		SearchInputFieldModel idField = new SearchInputFieldModel("id",
+		SearchInputFieldModel idField = new SearchInputFieldModel("referencedTestCase.id",
 				getMessageSource().internationalize(
-				"label.id", locale), TEXTFIELD);
+"referenced-tc.id", locale), TEXTFIELD);
 		panel.addField(idField);
 		SearchInputFieldModel referenceField = new SearchInputFieldModel("referencedTestCase.reference",
 				getMessageSource()
