@@ -85,7 +85,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 						startAngle : -45,
 						shadowOffset : 0,
 						sliceMargin : 1.5,
-						dataLabelThreshold : 0
+						dataLabelThreshold : 2
 					},
 					showHighlight : false
 				},
@@ -104,7 +104,7 @@ define(["jquery", "underscore", "./abstractCustomReportChart", "jqplot-pie"], fu
 			if (vueConf) {
 				finalConf = _.extend(finalConf,vueConf);
 			}
-	
+
 			return finalConf;
 		},
 

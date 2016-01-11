@@ -90,7 +90,8 @@ define(["jquery", "./abstractCustomReportChart",
 							markStyle : {
 								lineDash : [5],
 								strokeStyle : '#c3c3c3'
-							}
+							},
+              fontSize : '12px'
             }
 
           }
