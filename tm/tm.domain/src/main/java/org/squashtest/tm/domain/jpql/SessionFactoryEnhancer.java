@@ -20,15 +20,16 @@
  */
 package org.squashtest.tm.domain.jpql;
 
+import java.util.List;
+
 import org.hibernate.cfg.Configuration;
 import org.hibernate.dialect.function.StandardSQLFunction;
 import org.hibernate.engine.spi.SessionFactoryImplementor;
+import org.hibernate.type.DoubleType;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.hibernate.type.Type;
-
-import java.util.List;
 
 
 // TODO : move in there the group concat functions, and maybe share them with QueryDSL ?
@@ -110,7 +111,7 @@ public class SessionFactoryEnhancer {
 		hibConfig.addSqlFunction(FN_NAME_SUM, new StandardSQLFunction("sum"));
 		hibConfig.addSqlFunction(FN_NAME_MIN, new StandardSQLFunction("min"));
 		hibConfig.addSqlFunction(FN_NAME_MAX, new StandardSQLFunction("max"));
-		hibConfig.addSqlFunction(FN_NAME_AVG, new StandardSQLFunction("avg"));
+		hibConfig.addSqlFunction(FN_NAME_AVG, new StandardSQLFunction("avg", DoubleType.INSTANCE));
 		hibConfig.addSqlFunction(FN_NAME_CNT, new SCountDistinctFunction());
 
 		// boolean case when

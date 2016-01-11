@@ -56,7 +56,7 @@ define(["jquery", "./abstractCustomReportChart",
           pointLabels: {
             show: true,
             labelsFromSeries : true,
-            formatString :'%d',
+            formatString :'%.1f',
             textColor: "slategray",
             location : 'n',
             hideZeros : true
