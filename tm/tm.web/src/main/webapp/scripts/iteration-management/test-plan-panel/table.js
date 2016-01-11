@@ -102,7 +102,7 @@ define(
 					tpid = data['entity-id'],
 					format = translator.get('squashtm.dateformat');
 
-				if(!!date ){		
+				if(!!date ){
 					var exTxt = dateutils.format(date, format),
 						exRef = routing.buildURL('iterations.testplan.lastexec', iterid, tpid);
 					var exLnk = $('<a>', { 'text' : exTxt, 'href' : exRef});
@@ -113,7 +113,7 @@ define(
 
 				// assignee (read)
 				var $assigneetd = $row.find('.assignee-combo');
-											
+
 				$assigneetd.wrapInner('<span/>');
 
 				// dataset : we create the 'button' part of a menu, but not actual menu.
@@ -144,7 +144,7 @@ define(
 				// return the span element.
 				var assigneeurl = _conf.testplanUrl + data['entity-id'];
 				var assigneeElt = $row.find('.assignee-combo').children().first();
-				
+
 				// Add to AssignableUsers a possible non assigned admin who did an iteration
 				var listWithUnassignedUsers = JSON.parse(_conf.jsonAssignableUsers) ;
 				var property = data['assignee-id'];
@@ -152,9 +152,9 @@ define(
 				if (listWithUnassignedUsers[property] === undefined) {
 					listWithUnassignedUsers[property] = dataProperty;
 				}
-				
+
 				listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
-				
+
 				assigneeElt.addClass('cursor-arrow');
 				assigneeElt.editable(
 					assigneeurl, {
@@ -262,9 +262,9 @@ define(
 									.children().first().
 									text(itp.assignee);
 					},
-					
-		
-					
+
+
+
 					jsonAssignableUsers : JSON.stringify(initconf.basic.assignableUsers),
 
 					submitAssigneeClbk : function(value, settings) {
@@ -333,24 +333,24 @@ define(
 					fnPreDrawCallback : function(settings){
 
 						/*
-						 * The column dataset.selected.name is visible if : 
+						 * The column dataset.selected.name is visible if :
 						 * 1/ the dataset column is being filtered (we want to see the filter) or
 						 * 2/ at least one row contains a non empty dataset
-						 * 
+						 *
 						 */
 						var alldata = this.fnGetData();
-						
+
 						var dsFilterOn = this.data('filtermode').isFiltering('dataset.selected.name'),
 							rowsHavingDataset = $.grep(alldata, function(model){ return model.dataset.available.length !== 0 ;});
 
-						
+
 						var dsColIdx = this.getColumnIndexByName('dataset.selected.name'),
 							dsColVis = (dsFilterOn || rowsHavingDataset.length!==0);
-						
+
 
 						this.fnSetColumnVis(dsColIdx, dsColVis, false);
 						this.data('showDatasets', dsColVis);
-				
+
 					},
 
 
@@ -385,7 +385,7 @@ define(
 							$(this).submit();
 						});
 
-						// update the sort mode 
+						// update the sort mode
 						this.data('sortmode').update();
 					}
 				};
@@ -400,14 +400,14 @@ define(
 							return (data['last-exec-on'] !== null) ? 'ui-icon-trash' : 'ui-icon-minus';
 						},
 						/*
-						 * the delete button must be drawn if 
+						 * the delete button must be drawn if
 						 * - the user can delete and the item was not executed or
 						 * - the user can extended delete and item was executed
 						 */
 						condition : function(row, data){
-							return (data['last-exec-on'] === null) ? 
+							return (data['last-exec-on'] === null) ?
 									initconf.permissions.deletable :
-									initconf.permissions.extendedDeletable;					
+									initconf.permissions.extendedDeletable;
 						},
 						onClick : function(table, cell){
 							var dialog = $('#iter-test-plan-delete-dialog');
@@ -416,7 +416,7 @@ define(
 							dialog.formDialog('open');
 						}
 					}],
-					
+
 					toggleRows : {
 						'td.toggle-row' : function(table, jqold, jqnew) {
 
@@ -438,7 +438,7 @@ define(
 								}
 
 								// the delete buttons
-								if (initconf.permissions.executable) {
+								if (initconf.permissions.deletable) {
 									jqnew.find('.delete-execution-table-button')
 										.button({
 											text : false,
@@ -449,7 +449,7 @@ define(
 											var dialog = $("#iter-test-plan-delete-execution-dialog");
 											dialog.data('origin',this);
 											dialog.confirmDialog('open');
-											
+
 										});
 
 									// the new execution buttons
@@ -526,19 +526,19 @@ define(
 
 					var sortmode = smode.newInst(enhconf);
 					var filtermode = fmode.newInst(enhconf);
-					
+
 					tableconf.tconf.aaSorting = sortmode.loadaaSorting();
 					tableconf.tconf.searchCols = filtermode.loadSearchCols();
 
 					var $table = $("#iteration-test-plans-table");
-					
+
 					$table.data('sortmode', sortmode);
 					$table.data('filtermode', filtermode);
-					
-					
+
+
 					var sqtable = $table.squashTable(tableconf.tconf, tableconf.sconf);
 
-					// glue code between the filter and the sort mode				
+					// glue code between the filter and the sort mode
 					function toggleSortmode(locked){
 						if (locked){
 							sortmode.disableReorder();
@@ -547,15 +547,15 @@ define(
 							sortmode.enableReorder();
 						}
 					}
-					
+
 					toggleSortmode(filtermode.isFiltering());
-					
+
 					sqtable.toggleFiltering = function(){
 						var isFiltering = filtermode.toggleFilter();
 						toggleSortmode(isFiltering);
 					};
-					
-					
+
+
 				}
 			};
 
