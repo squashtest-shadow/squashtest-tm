@@ -59,19 +59,24 @@ define(['backbone','jquery', 'tree', 'workspace.event-bus', '../permissions-rule
 		});
 
 		dialog.on('formdialogconfirm', function(){
-			var node = tree.jstree('get_selected');
-			var url = node.getResourceUrl();
-			var id = node.getResId();
-			var name = dialog.find("#rename-tree-node-text").val();
-			var backboneRouter = squashtm.app.router;
+      var node = tree.jstree('get_selected');
+      var oginalName = node.getName();
+      var name = dialog.find("#rename-tree-node-text").val();
+      if (name === oginalName) {
+        dialog.formDialog('close');
+      }
+      else {
+        var url = node.getResourceUrl();
+        var id = node.getResId();
+        var backboneRouter = squashtm.app.router;
 
-			$.post(url, {newName : name}, null, 'json')
-			.done(function(){
-				eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
-				dialog.formDialog('close');
-				Backbone.history.loadUrl(Backbone.history.fragment);
-			});
-
+        $.post(url, {newName : name}, null, 'json')
+        .done(function(){
+          eventBus.trigger("node.rename", { identity : node.getIdentity(), newName : name});
+          dialog.formDialog('close');
+          Backbone.history.loadUrl(Backbone.history.fragment);
+        });
+      }
 		});
 
 		dialog.on('formdialogcancel', function(){
