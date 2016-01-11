@@ -19,7 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-		require([ "jquery", "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace" ], function($, WS,
+	
+		require([ "jquery", "app/ws/squashtm.workspace", "app/report/squashtm.reportworkspace", "jszip-ie9-support" ], function($, WS,
 				ReportWorkspace) {
 			$(function() {
 				WS.init();

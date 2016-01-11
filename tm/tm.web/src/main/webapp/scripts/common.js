@@ -148,7 +148,7 @@ requirejs.config({
 				"ltxml"         : "lib/openXML/ltxml",
 				"ltxml-extensions"         : "lib/openXML/ltxml-extensions",
 				"jszip"   : "lib/openXML/jszip",
-				"jszip-utils-ie" : "lib/openXML/jszip-utils-ie",
+				"jszip-ie9-support" : "lib/openXML/jszip-ie9-support",
 				"jszip-utils" : "lib/openXML/jszip-utils",
 				"jszip-deflate"   : "lib/openXML/jszip-deflate",
 				"jszip-inflate"   : "lib/openXML/jszip-inflate",
@@ -272,7 +272,11 @@ requirejs.config({
 				"openxml" : {
 					deps:["jszip-load", "jszip-inflate", "jszip-deflate"]
 				},
-
+				
+				"jszip":{
+					deps:['jszip-ie9-support']
+				},
+				
 				"jszip-load":{
 					deps:["jszip"]
 				},
