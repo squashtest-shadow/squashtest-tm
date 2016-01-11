@@ -232,7 +232,11 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
     truncateLegends : function (legends) {
       var self = this;
       return _.map( legends, function( legend ){
-          return legend.toString().substring(0, self.legendsMaxLength);
+        var truncated = legend.toString().substring(0, self.legendsMaxLength);
+          if (truncated.length === 0) {
+            truncated = translator.get("chart.label.noticks");
+          }
+          return truncated;
       });
     },
 
@@ -357,11 +361,11 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 		draw : function(series, conf){
 
 			var viewId = this.$el.attr('id');
-			
+
 			if (series.length===0 || series[0].length===0){
 				this.drawNoplot(viewId);
 			}
-			
+
 			else if (this.plot === undefined){
 				this.plot = $.jqplot(viewId, series, conf);
 			}
@@ -380,17 +384,17 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			}
 			Backbone.View.prototype.remove.call(this);
 		},
-		
+
 		drawNoplot : function(viewId){
-			
+
 			var view = $("#"+viewId);
 
 			view.empty();
-			
+
 			var msg = translator.get('chart.label.empty');
-			
+
 			var html = Handlebars.compile(emptyChartTemplate)(msg);
-			
+
 			view.append(html);
 		}
 
