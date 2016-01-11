@@ -20,26 +20,25 @@
  */
 package org.squashtest.tm.domain.event;
 
-import java.util.Objects;
+import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 import javax.persistence.Entity;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import java.util.Objects;
 
 /**
  * Will log when the value of a property of a requirement changed. For technical reasons and optimization, large
  * properties (typically CLOBS) will be logged in a sister class : RequirementLargePropertyChange
- * 
+ *
  * @author bsiri
  */
 @Entity
 @PrimaryKeyJoinColumn(name = "EVENT_ID")
 public class RequirementPropertyChange extends RequirementAuditEvent implements RequirementVersionModification,
-ChangedProperty {
+	ChangedProperty {
 	public static RequirementPropertyChangeEventBuilder<RequirementPropertyChange> builder() {
 		return new Builder();
 	}
@@ -49,24 +48,21 @@ ChangedProperty {
 		@Override
 		public RequirementPropertyChange build() {
 			RequirementPropertyChange event = new RequirementPropertyChange(eventSource, author);
-			
+
 			event.propertyName = modifiedProperty;
-			event.oldValue = toString(oldValue);
-			event.newValue = toString(newValue);
+			event.oldValue = valueToString(oldValue);
+			event.newValue = valueToString(newValue);
 
 			return event;
 		}
-		
-		
-		private String toString(Object v){
-			if (v != null && InfoListItem.class.isAssignableFrom(v.getClass())){
-				return ((InfoListItem)v).getLabel();
-			}
-			else{
-				return Objects.toString(v, "");
+
+		private String valueToString(Object value) {
+			if (value != null && value instanceof InfoListItem) {
+				return ((InfoListItem) value).getLabel();
+			} else {
+				return Objects.toString(value, "");
 			}
 		}
-		
 	}
 
 	@NotNull

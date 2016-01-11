@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.event;
 
 import org.squashtest.tm.domain.event.RequirementPropertyChange
+import org.squashtest.tm.domain.infolist.SystemListItem
 import org.squashtest.tm.domain.requirement.RequirementVersion
 
 import spock.lang.Specification
@@ -29,7 +30,7 @@ class RequirementPropertyChangeTest extends Specification {
 	def "should build a property change event"() {
 		given:
 		RequirementVersion rv = new RequirementVersion()
-		
+
 		when:
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 			.setModifiedProperty("name")
@@ -38,7 +39,7 @@ class RequirementPropertyChangeTest extends Specification {
 			.setSource(rv)
 			.setAuthor("proust")
 			.build()
-			
+
 		then:
 		event.requirementVersion == rv
 		event.oldValue == "foo"
@@ -50,19 +51,40 @@ class RequirementPropertyChangeTest extends Specification {
 		def "should build event with null values"() {
 		given:
 		RequirementVersion rv = new RequirementVersion()
-		
+
 		when:
 		RequirementPropertyChange event = RequirementPropertyChange.builder()
 			.setModifiedProperty("name")
 			.setSource(rv)
 			.setAuthor("proust")
 			.build()
-			
+
 		then:
 		notThrown(NullPointerException)
 		event.requirementVersion == rv
 		event.oldValue == ""
 		event.newValue == ""
+		event.propertyName == "name"
+		event.author == "proust"
+	}
+
+	def "should build a system list property change event"() {
+		given:
+		RequirementVersion rv = new RequirementVersion()
+
+		when:
+		RequirementPropertyChange event = RequirementPropertyChange.builder()
+			.setModifiedProperty("name")
+			.setOldValue(new SystemListItem(label: "modern"))
+			.setNewValue(new SystemListItem(label: "postmodern"))
+			.setSource(rv)
+			.setAuthor("proust")
+			.build()
+
+		then:
+		event.requirementVersion == rv
+		event.oldValue == "modern"
+		event.newValue == "postmodern"
 		event.propertyName == "name"
 		event.author == "proust"
 	}

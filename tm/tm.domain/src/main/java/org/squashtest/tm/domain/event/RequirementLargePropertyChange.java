@@ -20,23 +20,19 @@
  */
 package org.squashtest.tm.domain.event;
 
-import javax.persistence.Basic;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Lob;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
-import org.apache.commons.lang3.ObjectUtils;
 import org.hibernate.annotations.Type;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.Objects;
 
 /**
  * Will log when the value of a property of a requirement changed. For technical reasons and optimization, that class
  * logs only large properties (typically CLOBS), the other ones will be logged in a sister class :
  * RequirementPropertyChange
- * 
+ *
  * @author bsiri
  */
 @Entity
@@ -53,10 +49,14 @@ ChangedProperty {
 		public RequirementLargePropertyChange build() {
 			RequirementLargePropertyChange event = new RequirementLargePropertyChange(eventSource, author);
 			event.propertyName = modifiedProperty;
-			event.oldValue = ObjectUtils.toString(oldValue);
-			event.newValue = ObjectUtils.toString(newValue);
+			event.oldValue = valueToString(oldValue);
+			event.newValue = valueToString(newValue);
 
 			return event;
+		}
+
+		private String valueToString(Object oldValue) {
+			return Objects.toString(oldValue, "");
 		}
 
 	}
