@@ -106,7 +106,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 			this.model = options.model;
 			this.model.set({
 				steps: steps,
-			    perimSelect :[{text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}, {text:"label.requirements" , name:"REQUIREMENT"}],
+			    perimSelect :[{text:"label.requirements" , name:"REQUIREMENT"}, {text:"label.testCase" , name:"TEST_CASE"}, {text:"label.campaigns" , name:"CAMPAIGN"}],
 				validation : validation
 			});
 			this.loadI18n();
