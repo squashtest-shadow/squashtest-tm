@@ -176,10 +176,19 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
         case "BY_WEEK" :
           return this._formatDate(legends, translator.get("squashtm.dateformatMonthshort"));
         case "BY_YEAR":
-          return legends;	// this is a year already
+          return this.stripNullYear(legends);
         default:
           return legends;
       }
+    },
+
+    stripNullYear : function (legends) {
+      return _.map(legends, function (legend) {
+        if (!!legend) {
+          return legend;
+        }
+        return translator.get("label.lower.Never");
+      });
     },
 
     _formatDate : function(legends, outformat){
@@ -209,7 +218,7 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 	          return outformat.replace('yyyy', d.year).replace('MM', d.month).replace('dd', d.day);
           }
           else{
-        	  return translator.get("label.lower.None");
+        	  return translator.get("label.lower.Never");
           }
         });
     },
