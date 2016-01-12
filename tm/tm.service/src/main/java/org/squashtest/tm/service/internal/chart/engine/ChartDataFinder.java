@@ -268,30 +268,20 @@ import com.querydsl.core.Tuple;
  * <h1>Scope and ACLs</h1>
  * 
  * <p>
- * 	Before any query is ran nor filter applied, an implicit filter will be processed : the Scope.
- * 	The Scope is the exhaustive list of Root Entity ids, and is added to the filters targeting Root entity.
- * 	It is the conjunction of :
+ * 	Additionally, another special filter will be processed : the Scope, ie the subset of RootEntity on which 
+ *  the chart query will be applied to. At runtime it is refined into an Effective Scope, which is the conjunction of :
  * 	<ul>
- * 		<li>the content of the projects/folders selected by the user <b>who designed</b> the ChartDefinition</li>
- * 		<li>the nodes that can actually be READ by the user <b>who is running</b> the ChartDataFinder</li>
+ * 		<li>the content of the projects/folders/nodes selected by the user <b>who designed</b> the ChartDefinition (the scope part)</li>
+ * 		<li>the nodes that can actually be READ by the user <b>who is running</b> the ChartDataFinder (the acl part)</li>
  * 	</ul>
  * 
- * 	Which may well end up with no data available in the result set after all.
+ * 	An amusing side effect of this is that the user may end up with no data available for plot.
  * </p>
  * 
  * <p>
- * 	The EffectiveScope is treated separately because it is a filter of organizational nature (how the entities are
- * 	organized and who may access them), whereas the other filters are more related to business attributes of
- * 	those entities.
+ * 	 The Effective Scope will be computed then added to the query after is has been generated. See {@link ScopePlanner} for details on what is going on.
  * </p>
  * 
- * <p>
- * 	The EffectiveScope is computed before the Main Query plan is drawn :
- * 	<ul>
- * 		<li>The exhaustive list depending on the selection designer selection is first determined,</li>
- * 		<li>This list is then filtered by the Acl services</li>
- * </ul>
- * </p>
  * @author bsiri
  *
  */
@@ -312,16 +302,18 @@ public class ChartDataFinder {
 
 		DetailedChartQuery enhancedDefinition = new DetailedChartQuery(definition.getQuery());
 
-		// *********** step 1 : determine scope and ACL **********************
+
+		// *********** step 1 : create the query ************************
+		
+		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
+		
+		// *********** step 2 : determine scope and ACL **********************
 
 		ScopePlanner scopePlanner = scopePlannerProvider.get();
 		scopePlanner.setChartQuery(enhancedDefinition);
+		scopePlanner.setHibernateQuery(detachedQuery);
 		scopePlanner.setScope(definition.getScope());
-		scopePlanner.appendScopeFilters();
-
-		// *********** step 2 : create the query ************************
-
-		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
+		scopePlanner.appendScope();
 
 		// ******************* step 3 : run the query*************************
 		

@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain;
 
 public enum EntityType {
+	
 	// @formatter:off
 	PROJECT,
 	TEST_CASE_LIBRARY,
@@ -46,4 +47,5 @@ public enum EntityType {
 	AUTOMATED_TEST,
 	AUTOMATED_EXECUTION_EXTENDER;
 	// @formatter:on
+
 }

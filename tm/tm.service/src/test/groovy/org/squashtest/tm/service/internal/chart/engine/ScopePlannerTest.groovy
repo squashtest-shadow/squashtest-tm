@@ -23,9 +23,15 @@ package org.squashtest.tm.service.internal.chart.engine
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.EntityReference;
-import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.Filter;
+import org.squashtest.tm.domain.EntityType
+import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.ChartQuery;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.Filter
+import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
+import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
+import org.squashtest.tm.service.internal.chart.ColumnPrototypeModification;
 import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils;
 import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.SubScope;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
@@ -56,16 +62,8 @@ class ScopePlannerTest extends Specification {
 		ISS : "ISSUE"
 	]
 
-
-
-
-
-
 	SessionFactory sessionFactory
 	PermissionEvaluationService permissionService
-	TestCaseLibraryFinderService tcFinder
-	RequirementLibraryFinderService rFinder
-	CampaignLibraryFinderService cFinder
 	ScopeUtils utils
 
 
@@ -74,37 +72,14 @@ class ScopePlannerTest extends Specification {
 	def setup(){
 		sessionFactory = Mock()
 		permissionService = Mock()
-		tcFinder = Mock()
-		rFinder = Mock()
-		cFinder = Mock()
 		utils = Mock()
 
 		scopePlanner = new ScopePlanner();
 		scopePlanner.sessionFactory = sessionFactory
 		scopePlanner.permissionService = permissionService
-		scopePlanner.tcFinder = tcFinder
-		scopePlanner.rFinder = rFinder
-		scopePlanner.cFinder = cFinder
 		scopePlanner.utils = utils
 	}
 
-	@Unroll("should detect that mode is #humanmsg")
-	def "should detect whether it is blanket mode or specified mode"(){
-
-
-		given :
-		scopePlanner.scope = scope
-
-		expect :
-		scopePlanner.isBlanketProjectMode() == isBlanket
-
-		where :
-
-		scope			|	isBlanket	| humanmsg
-		[ref('P', 1)]	|	true		| "blanket project mode"
-		[ref('TC', 1)]	|	false		| "specific mode"
-
-	}
 
 	@Unroll("should determine the query subscopes")
 	def "should find query scopes"(){
@@ -133,7 +108,7 @@ class ScopePlannerTest extends Specification {
 
 		when :
 
-		def res = scopePlanner.aggregateReferences()
+		def res = scopePlanner.mapScopeByType()
 
 		then :
 
@@ -143,28 +118,13 @@ class ScopePlannerTest extends Specification {
 	}
 
 
-	def "should just test that at least one collection contains something"(){
-
-		given :
-		def col1 = []
-		def col2 = [1]
-		def col3 = []
-
-		when :
-		def res = scopePlanner.nonEmpty(col1, col2, col3)
-
-		then :
-		res == true
-
-	}
-
 	def "should return the aggregate result of a lookup for multiple entries in a map"(){
 
 		given :
-		def map = new MultiValueMap()
-		map.putAll(et('TC'), [1, 2, 3])
-		map.putAll(et('TCF'), [4,5,6])
-		map.putAll(et('TCL'), [7,8,9])
+		def map = [:];
+		map.put(et('TC'), [1, 2, 3])
+		map.put(et('TCF'), [4,5,6])
+		map.put(et('TCL'), [7,8,9])
 
 		when :
 		def res = scopePlanner.fetchForTypes(map, et('TC'), et('TCL'))
@@ -175,73 +135,170 @@ class ScopePlannerTest extends Specification {
 
 	}
 
-
-	def "should build a blanket project filter but restricted to campaign subscope"(){
-
+	def "should trim from the scope because of failed ACL test"(){
+		
 		given :
-		def refP = ref('P',1l)
-		def scope = [refP]
-
-		utils.canReadProject(refP) >> true
-
-		and :
-		def query = new DetailedChartQuery(
-				targetEntities : [ iet('C'), iet('EX')] )
-
-		and :
-		Filter mockf = Mock()
-		utils.createFilter('CAMPAIGN_PROJECT', 1l) >> mockf
-
-		and :
-		scopePlanner.scope = scope
-		scopePlanner.chartQuery = query
-
+			def ref1 = ref('P', 5)
+			def ref2 = ref('TCF', 15)
+			utils.checkPermissions(_) >>> [false, true]
+			scopePlanner.scope = [ ref1, ref2]
+		
 		when :
-		def filters = scopePlanner.generateBlanketFilters()
-
+			scopePlanner.filterByACLs()
+		
 		then :
-		filters as Set == [mockf] as Set
-
+			scopePlanner.scope == [ref2]
+		
 	}
 
-
-	def "should create specific filters"(){
+	
+	def "should declare that the scope is relevant because is can be applied to campaigns"(){
+		
+		// chart encompass test cases and campaign
+		// scope defined campaign folders and requirement library
+		// -> they have the campaign in common
 		given :
-		def scope = [
-			ref('TCL', 1),
-			ref('TCF', 2),
-			ref('TCF', 3),
-			ref('TCL', 4),
-			ref('TC', 5)
-		]
-
-		and :
-		def query = new DetailedChartQuery(
-				targetEntities : [ iet('C'), iet('TC')] )
-
-		and :
-		def tcIds = Arrays.asList([11l, 23l, 45l, 67l, 89l, 5l] as Long[])
-		tcFinder.findTestCaseIdsFromSelection([1, 4], [5, 2, 3]) >> tcIds
-
-		and :
-		Filter mockf = Mock()
-		utils.createFilter('TEST_CASE_ID', tcIds) >> mockf
-
-		and :
-		scopePlanner.scope = scope
-		scopePlanner.chartQuery = query
-
+			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC'), iet('C')])
+			List<EntityReference> scope = [ref('CF', 10), ref('RL', 65)]
+			
+			scopePlanner.chartQuery = q
+			scopePlanner.scope = scope
+		
 		when :
-
-		def filters = scopePlanner.generateSpecificFilters()
+			def res = scopePlanner.isScopeRelevant()
+		
+		then :
+			res == true
+		
+	}
+	
+	def "should declare a scope irrelevant because the Scope and the content of the query are disjoint"(){
+		
+		// chart encompass test cases 
+		// scope defined campaign folders
+		// -> they have nothing in common
+		given :
+			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC')])
+			List<EntityReference> scope = [ref('CF', 10)]
+			
+			scopePlanner.chartQuery = q
+			scopePlanner.scope = scope
+		
+		when :
+			def res = scopePlanner.isScopeRelevant()		
 
 		then :
-		filters as Set == [mockf] as Set
-		0 * rFinder.findRequirementIdsFromSelection(_,_)
-		0 * cFinder.findCampaignIdsFromSelection(_,_)
-
+			res == false
+		
 	}
+	
+	def "should decalre a scope irrelevant because the scope is empty"(){
+		
+		// chart encompass test cases
+		// scope is empty
+		// -> they have nothing in common
+		given :
+			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC')])
+			List<EntityReference> scope = []
+			
+			scopePlanner.chartQuery = q
+			scopePlanner.scope = scope
+		
+		when :
+			def res = scopePlanner.isScopeRelevant()		
 
+		then :
+			res == false
+		
+	}
+	
+	def "should add an impossible condition to a query in order to make it return no data"(){
+		
+		given :
+			def tc = QTestCase.testCase
+			ExtendedHibernateQuery hibQuery = new ExtendedHibernateQuery().select(tc.id).from(tc)
+		
+			scopePlanner.hibQuery = hibQuery
+			
+		when :
+			scopePlanner.addImpossibleCondition()
+			
+		then :
+			scopePlanner.hibQuery.toString() == 
+"""select testCase.id
+from TestCase testCase
+where ?1 = ?2"""	
+		
+		
+	}
+	
+	
+	def "should find which extra columns should be joined on for the purposes of the Scope"(){
+		
+		given :
+			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC'), iet('RV')])
+			List<EntityReference> scope = [ref('RL', 132)]
+		
+			scopePlanner.chartQuery = q
+			scopePlanner.scope = scope
+			
+		when :
+			def extraColumns = scopePlanner.findExtraJoinColumnNames()
+		
+		then :
+			extraColumns == ['REQUIREMENT_ID']as Set
+		
+	}
+	
+	
+	def "should create a mock query for the purpose of extending the main query with required joins"(){
+		
+		given :
+			def axis = Mock(AxisColumn)
+			DetailedChartQuery q = new DetailedChartQuery(axis : [axis])
+			
+			scopePlanner.chartQuery = q
+			def fakeColumns = ['REQUIREMENT_ID', 'CAMPAIGN_ID']
+			
+		and :
+			def fakeReqidProto = Mock(ColumnPrototype)
+			def fakeCidProto = Mock(ColumnPrototype)
+			utils.findColumnPrototype('REQUIREMENT_ID') >> fakeReqidProto
+			utils.findColumnPrototype('CAMPAIGN_ID') >> fakeCidProto
+			
+		when :
+			ChartQuery dummy = scopePlanner.createDummyQuery(fakeColumns as Set)
+		
+		then :	
+			dummy.axis == [ axis]
+			dummy.measures.collect{it.column} as Set == [fakeReqidProto, fakeCidProto] as Set
+		
+	}
+	
+	def "should generate where clauses testing that a test case belongs to a library or a folder"(){
+		
+		given :
+			def refmap = [:]
+			refmap.put(et('TCL') , [10])
+			refmap.put(et('TCF'),  [15])
+			
+		and :
+			def tc = QTestCase.testCase
+			def testquery = new ExtendedHibernateQuery()
+			testquery.from(tc).select(tc.id)
+			
+		when :
+			def builder = scopePlanner.whereClauseForTestcases(refmap)
+			testquery.where(builder)
+		then :
+			testquery.toString() == """select testCase.id
+from TestCase testCase
+where testCase.project.testCaseLibrary.id = ?1 or exists (select 1
+from TestCasePathEdge testCasePathEdge
+where testCasePathEdge.ancestorId = ?2 and testCase.id = testCasePathEdge.descendantId)"""
+		
+		
+	}
 
 	// **************** test utils ************************
 

@@ -29,37 +29,7 @@ import spock.lang.Specification
 
 class FilterPlannerTest extends Specification {
 
-	def "should cheat with the scope filter and arrange the campaign-or-iteration trick"(){
-
-		given :
-		ColumnPrototype campProto = new ColumnPrototype(specializedType : spec(EntityType.CAMPAIGN))
-		ColumnPrototype itProto = new ColumnPrototype(specializedType : spec(EntityType.ITERATION))
-
-		Filter campFilter = new Filter(column : campProto)
-		Filter itFilter = new Filter(column : itProto)
-
-		and :
-		DetailedChartQuery q = new DetailedChartQuery(scopeFilters : [campFilter, itFilter])
-
-		FilterPlanner filterPlanner = new FilterPlanner(q, null)
-
-		when :
-
-		Map<ColumnPrototype, Collection<Filter>> origMap = filterPlanner.sortFilters(q.scopeFilters)
-
-		Map<ColumnPrototype, Collection<Filter>> cheatedFilters = filterPlanner.findScopeFilters()
-
-		then :
-
-		// the original map
-		origMap[campProto] == [campFilter]
-		origMap[itProto] == [itFilter]
-
-		// the cheated map
-		cheatedFilters[campProto] as Set == [campFilter, itFilter] as Set
-		cheatedFilters[itProto] == null
-	}
-
+	// No test... yet
 
 
 	def spec(type){

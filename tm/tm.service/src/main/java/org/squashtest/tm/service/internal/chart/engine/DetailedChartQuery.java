@@ -55,8 +55,6 @@ class DetailedChartQuery extends ChartQuery{
 
 	private Set<InternalEntityType> targetEntities;
 
-	private Set<Filter> scopeFilters = new HashSet<>();
-
 
 	// for testing purposes - do not use
 	DetailedChartQuery(){
@@ -125,9 +123,6 @@ class DetailedChartQuery extends ChartQuery{
 			}
 		}
 
-		for (Filter f : scopeFilters){
-			targetEntities.add(InternalEntityType.fromSpecializedType(f.getSpecializedType()));
-		}
 	}
 
 	protected InternalEntityType getRootEntity() {
@@ -150,14 +145,6 @@ class DetailedChartQuery extends ChartQuery{
 
 	protected void setTargetEntities(Set<InternalEntityType> targetEntities) {
 		this.targetEntities = targetEntities;
-	}
-
-	protected void setScopeFilters(Set<Filter> scopeFilters){
-		this.scopeFilters = scopeFilters;
-	}
-
-	protected Set<Filter> getScopeFilters(){
-		return scopeFilters;
 	}
 
 

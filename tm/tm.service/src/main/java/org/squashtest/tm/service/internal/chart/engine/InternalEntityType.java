@@ -65,165 +65,65 @@ import com.querydsl.core.types.dsl.EntityPathBase;
  *
  */
 enum InternalEntityType {
+	
 	// @formatter:off
-	REQUIREMENT(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return Requirement.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QRequirement.requirement;
-		}
-
+	REQUIREMENT(Requirement.class , QRequirement.requirement){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QRequirement(alias);
 		}
 
 	},
-	REQUIREMENT_VERSION(){
-		@Override
-		Class<?> getEntityClass() {
-			return RequirementVersion.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QRequirementVersion.requirementVersion;
-		}
-
+	REQUIREMENT_VERSION(RequirementVersion.class, QRequirementVersion.requirementVersion){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QRequirementVersion(alias);
 		}
 	},
-	REQUIREMENT_VERSION_COVERAGE(){
-		@Override
-		Class<?> getEntityClass() {
-			return RequirementVersionCoverage.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QRequirementVersionCoverage.requirementVersionCoverage;
-		}
-
+	
+	REQUIREMENT_VERSION_COVERAGE(RequirementVersionCoverage.class, QRequirementVersionCoverage.requirementVersionCoverage){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QRequirementVersionCoverage(alias);
 		}
 	},
-	TEST_CASE(){
-		@Override
-		Class<?> getEntityClass() {
-			return TestCase.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QTestCase.testCase;
-		}
-
+	TEST_CASE(TestCase.class, QTestCase.testCase){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QTestCase(alias);
 		}
 	},
-	CAMPAIGN(){
-		@Override
-		Class<?> getEntityClass() {
-			return Campaign.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QCampaign.campaign;
-		}
-
+	CAMPAIGN(Campaign.class, QCampaign.campaign){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QCampaign(alias);
 		}
 	},
-	ITERATION(){
-		@Override
-		Class<?> getEntityClass() {
-			return Iteration.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QIteration.iteration;
-		}
-
+	ITERATION(Iteration.class, QIteration.iteration){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QIteration(alias);
 		}
 	},
-	ITEM_TEST_PLAN(){
-		@Override
-		Class<?> getEntityClass() {
-			return IterationTestPlanItem.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QIterationTestPlanItem.iterationTestPlanItem;
-		}
-
+	ITEM_TEST_PLAN(IterationTestPlanItem.class, QIterationTestPlanItem.iterationTestPlanItem){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QIterationTestPlanItem(alias);
 		}
 	},
-	EXECUTION(){
-		@Override
-		Class<?> getEntityClass() {
-			return Execution.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QExecution.execution;
-		}
-
+	EXECUTION(Execution.class, QExecution.execution){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QExecution(alias);
 		}
 	},
-	ISSUE(){
-		@Override
-		Class<?> getEntityClass() {
-			return Issue.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QIssue.issue;
-		}
-
+	ISSUE(Issue.class, QIssue.issue){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QIssue(alias);
 		}
 	},
-	TEST_CASE_STEP(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return TestStep.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QTestStep.testStep;
-		}
-
+	TEST_CASE_STEP(TestStep.class, QTestStep.testStep){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QTestStep(alias);
@@ -231,18 +131,14 @@ enum InternalEntityType {
 
 	},
 
-	TEST_CASE_NATURE(){
-
+	TEST_CASE_NATURE(InfoListItem.class, new QInfoListItem("testcaseNature")){
 		@Override
-		Class<?> getEntityClass() {
-			return InfoListItem.class;
+		EntityPathBase<?> getAliasedQBean(String alias) {
+			return new QInfoListItem(alias);
 		}
+	},
 
-		@Override
-		EntityPathBase<?> getQBean() {
-			return new QInfoListItem("testcaseNature");
-		}
-
+	TEST_CASE_TYPE(InfoListItem.class, new QInfoListItem("testcaseType")){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QInfoListItem(alias);
@@ -250,106 +146,35 @@ enum InternalEntityType {
 
 	},
 
-	TEST_CASE_TYPE(){
-		@Override
-		Class<?> getEntityClass() {
-			return InfoListItem.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return new QInfoListItem("testcaseType");
-		}
-
+	REQUIREMENT_VERSION_CATEGORY(InfoListItem.class, new QInfoListItem("reqversionCategory")){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QInfoListItem(alias);
 		}
 
 	},
-
-	REQUIREMENT_VERSION_CATEGORY(){
-		@Override
-		Class<?> getEntityClass() {
-			return InfoListItem.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return new QInfoListItem("reqversionCategory");
-		}
-
-		@Override
-		EntityPathBase<?> getAliasedQBean(String alias) {
-			return new QInfoListItem(alias);
-		}
-
-	},
-	ITERATION_TEST_PLAN_ASSIGNED_USER(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return User.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return new QUser("iterTestPlanAssignedUser");
-		}
-
+	ITERATION_TEST_PLAN_ASSIGNED_USER(User.class, new QUser("iterTestPlanAssignedUser")){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QUser(alias);
 		}
 
 	},
-	TEST_CASE_MILESTONE(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return Milestone.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return new QMilestone("testCaseMilestone");
-		}
-
+	TEST_CASE_MILESTONE(Milestone.class, new QMilestone("testCaseMilestone")){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QMilestone(alias);
 		}
 
 	},
-	REQUIREMENT_VERSION_MILESTONE(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return Milestone.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return new QMilestone("reqversionMilestone");
-		}
-
+	REQUIREMENT_VERSION_MILESTONE(Milestone.class, new QMilestone("reqversionMilestone")){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QMilestone(alias);
 		}
 
-	}, AUTOMATED_TEST(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return AutomatedTest.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QAutomatedTest.automatedTest;
-		}
-
+	}, 
+	AUTOMATED_TEST(AutomatedTest.class, QAutomatedTest.automatedTest){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QAutomatedTest(alias);
@@ -358,33 +183,35 @@ enum InternalEntityType {
 	},
 
 
-	AUTOMATED_EXECUTION_EXTENDER(){
-
-		@Override
-		Class<?> getEntityClass() {
-			return AutomatedExecutionExtender.class;
-		}
-
-		@Override
-		EntityPathBase<?> getQBean() {
-			return QAutomatedExecutionExtender.automatedExecutionExtender;
-		}
-
+	AUTOMATED_EXECUTION_EXTENDER(AutomatedExecutionExtender.class, QAutomatedExecutionExtender.automatedExecutionExtender){
 		@Override
 		EntityPathBase<?> getAliasedQBean(String alias) {
 			return new QAutomatedExecutionExtender(alias);
 		}
 
-	}
-	;
+	};
 
 	// @formatter:on
+	
 
+	
+	private Class<?> entityClass;
+	private EntityPathBase<?> qBean;
 
-	abstract Class<?> getEntityClass();
+	InternalEntityType(Class<?> entityClass, EntityPathBase<?> qBean){
+		this.entityClass = entityClass;
+		this.qBean = qBean;
+	}
+	
+	
+	Class<?> getEntityClass(){
+		return entityClass;
+	}
 
 	// fun fact : in the querydsl domain a QBean is not exactly an EntityPathBase
-	abstract EntityPathBase<?> getQBean();
+	EntityPathBase<?> getQBean(){
+		return qBean;
+	}
 
 	abstract EntityPathBase<?> getAliasedQBean(String alias);
 

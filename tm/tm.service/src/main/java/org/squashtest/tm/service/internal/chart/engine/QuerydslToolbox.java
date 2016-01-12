@@ -433,9 +433,8 @@ class QuerydslToolbox {
 			Expression<?> subquery = qbuilder.createQuery();
 
 			// now integrate the subquery
-			//Expression<?> entityIdPath = idPath(filter);
-
 			predicate = Expressions.predicate(Ops.EXISTS, subquery);
+			
 			break;
 
 		case INLINED :

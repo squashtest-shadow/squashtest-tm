@@ -144,14 +144,14 @@ class QueryPlanner {
 
 
 	/**
-	 * Used when there are inlined subqueries. Will append to the query (configured with {@link #appendToQuery(ExtendedHibernateQuery)})
+	 * Used when an existing HibernateQuery must now join on more columns. Will append to the query (configured with {@link #appendToQuery(ExtendedHibernateQuery)})
 	 * the joins defined in the ChartQuery. This new set of joins will be attached to the
 	 * main query on the root entity of this ChartQuery.
 	 * 
 	 * 
 	 */
 
-	private void modifyQuery(){
+	void modifyQuery(){
 		doTheJob();
 	}
 

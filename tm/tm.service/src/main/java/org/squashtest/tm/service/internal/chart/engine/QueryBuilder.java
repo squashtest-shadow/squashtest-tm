@@ -69,7 +69,8 @@ class QueryBuilder {
 	enum QueryProfile{
 		MAIN_QUERY,			// for the main query, tuples returns the full axis + measures data
 		SUBSELECT_QUERY,	// generate correlated subqueries, returning the measure only, correlated on axes supplied by the outer query
-		SUBWHERE_QUERY;		// generate uncorrelated subqueries, returning the axes only, measures must match predicates supplied by the outer query
+		SUBWHERE_QUERY;		// the "where" clause is supplied by the outer query and joined with axes from he outer query. 
+							// Returns 1 or null, ie it's test the existence of elements matching the predicate.
 	}
 
 	protected QuerydslToolbox utils = new QuerydslToolbox();
