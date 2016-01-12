@@ -31,7 +31,7 @@ if (window.console.trace === undefined){
 var contextRoot;
 if (!!squashtm && !!squashtm.app && !!squashtm.app.contextRoot) {
 	contextRoot = squashtm.app.contextRoot;
-	if (contextRoot.lastIndexOf("/") < 0) {
+	if (contextRoot.lastIndexOf("/") < 1) {
 		contextRoot = contextRoot + "/";
 	}
 } else {
@@ -272,11 +272,11 @@ requirejs.config({
 				"openxml" : {
 					deps:["jszip-load", "jszip-inflate", "jszip-deflate"]
 				},
-				
+
 				"jszip":{
 					deps:['jszip-ie9-support']
 				},
-				
+
 				"jszip-load":{
 					deps:["jszip"]
 				},
