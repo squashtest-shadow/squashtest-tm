@@ -43,6 +43,7 @@ require([ "common" ], function() {
 					}
 
 					if (e == 13) {
+						event.preventDefault();
 						$("#login-form-button-set input").click();
 					}
 				});
