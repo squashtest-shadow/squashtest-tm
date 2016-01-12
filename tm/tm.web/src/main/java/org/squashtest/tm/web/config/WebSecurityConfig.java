@@ -78,7 +78,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			// massive changes, so it's deactivated for now.
 		.csrf().disable()
 
-		.authorizeRequests()
+		.headers()
+			.cacheControl()
+			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+
+		.and().authorizeRequests()
 			.antMatchers(
 				"/administration",
 				"/administration/milestones",
@@ -113,13 +117,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.invalidateHttpSession(true)
 			.logoutSuccessUrl("/")
 
-//		.and().exceptionHandling()
-//			.accessDeniedPage("/squash/accessDenied")
 		.and()
 			.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
-			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class)
-			.headers()
-		    .addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN));
+			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 		// @formatter:on
 
 
