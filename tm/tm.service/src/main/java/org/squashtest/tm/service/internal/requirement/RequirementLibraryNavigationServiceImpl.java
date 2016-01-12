@@ -482,10 +482,10 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="sourceNodesIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="sourceNodesIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public List<RequirementLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("sourceNodesIds") Long[] targetId) {
+	public List<RequirementLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId) {
 		try {
 			return super.copyNodesToLibrary(destinationId, targetId);
 		} catch (IllegalRequirementModificationException e) {
