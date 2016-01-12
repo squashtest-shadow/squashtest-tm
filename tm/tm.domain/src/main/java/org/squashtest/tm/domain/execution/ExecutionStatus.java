@@ -394,7 +394,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	private static final Set<ExecutionStatus> CANONICAL_STATUSES;
 	// tests with terminal statuses are considered executed (used for setting iteration/campaign end dates
 	// automatically)
-	private static final Set<ExecutionStatus> TERMINAL_STATUSES;
+	public static final Set<ExecutionStatus> TERMINAL_STATUSES;
 	// tests with non terminal statuses are considered not executed (used for setting iteration/campaign end dates
 	// automatically)
 	private static final Set<ExecutionStatus> NON_TERMINAL_STATUSES;

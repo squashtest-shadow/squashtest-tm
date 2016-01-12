@@ -172,7 +172,10 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize(
 				"test-case.status.label", locale), MULTISELECT);
 		panel.addField(statusField);
-		List<SearchInputPossibleValueModel> statusOptions = levelComboBuilder(ExecutionStatus.values())
+		
+		//ExecutionStatus[] values = ExecutionStatus.getCanonicalStatusSet().toArray(new ExecutionStatus[ExecutionStatus.getCanonicalStatusSet().size()]);
+		ExecutionStatus[] values = ExecutionStatus.values();
+		List<SearchInputPossibleValueModel> statusOptions = levelComboBuilder(values)
 				.useLocale(locale).build();
 		statusField.addPossibleValues(statusOptions);
 
