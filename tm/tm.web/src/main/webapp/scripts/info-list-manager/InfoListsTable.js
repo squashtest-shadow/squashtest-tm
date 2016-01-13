@@ -45,6 +45,7 @@ define(
 			"label.GotoIndex"
 		]);
 
+		// TODO revert that crap back to be58f1969577
 		var oLanguage = messages.get({
 			'sLengthMenu' : 'generics.datatable.lengthMenu',
 			'sZeroRecords' : 'generics.datatable.zeroRecords',
