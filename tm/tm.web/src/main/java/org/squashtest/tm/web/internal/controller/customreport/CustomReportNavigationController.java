@@ -28,6 +28,7 @@ import java.util.Locale;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,25 +89,25 @@ public class CustomReportNavigationController {
 
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/drives/{libraryId}/content/new-folder", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId, @RequestBody CustomReportFolder customReportFolder){
+	public @ResponseBody JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId,@Valid @RequestBody CustomReportFolder customReportFolder){
 		return createNewCustomReportLibraryNode(libraryId, customReportFolder);
 	}
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/folders/{folderId}/content/new-folder", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewFolderInFolder(@PathVariable Long folderId, @RequestBody CustomReportFolder customReportFolder){
+	public @ResponseBody JsTreeNode createNewFolderInFolder(@PathVariable Long folderId,@Valid @RequestBody CustomReportFolder customReportFolder){
 		return createNewCustomReportLibraryNode(folderId, customReportFolder);
 	}
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/drives/{libraryId}/content/new-dashboard", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewDashboardInLibrary(@PathVariable Long libraryId, @RequestBody CustomReportDashboard customReportDashboard){
+	public @ResponseBody JsTreeNode createNewDashboardInLibrary(@PathVariable Long libraryId,@Valid @RequestBody CustomReportDashboard customReportDashboard){
 		return createNewCustomReportLibraryNode(libraryId, customReportDashboard);
 	}
 	
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/folders/{folderId}/content/new-dashboard", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewDashboardInFolder(@PathVariable Long folderId, @RequestBody CustomReportDashboard customReportDashboard){
+	public @ResponseBody JsTreeNode createNewDashboardInFolder(@PathVariable Long folderId,@Valid @RequestBody CustomReportDashboard customReportDashboard){
 		return createNewCustomReportLibraryNode(folderId, customReportDashboard);
 	}
 	
