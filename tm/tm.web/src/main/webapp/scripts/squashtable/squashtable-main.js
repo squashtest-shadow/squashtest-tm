@@ -370,7 +370,7 @@ define(["jquery",
 	 */
 	function _getODataId(arg) {
 		var key = this.squashSettings.dataKeys.entityId;
-		var id = this.fnGetData(arg)[key];
+		var id = (!!this.fnGetData(arg)) ? this.fnGetData(arg)[key] : NaN;
 		if ((!!id) && (!isNaN(id))) {
 			return id;
 		} else {
@@ -1844,6 +1844,10 @@ define(["jquery",
 				},
 				'sortable' : function(conf, value) {
 					conf.current.bSortable = true;
+				},
+				'searchable' : function(conf, value) {
+					value = value === "false" ? false : value // because of js's shit coercion rules
+					conf.current.bSearchable = new Boolean(value).valueOf() // almost everything is coerced to true -- which is the default anyway
 				},
 				'narrow' : function(conf, value) {
 					conf.current.sWidth = '2em';

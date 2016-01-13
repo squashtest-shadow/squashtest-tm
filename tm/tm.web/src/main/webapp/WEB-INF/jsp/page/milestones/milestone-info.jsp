@@ -56,19 +56,19 @@
 
 
 <layout:info-page-layout titleKey="workspace.milestone.info.title" isSubPaged="true" >
-  <jsp:attribute name="head">  
-    <comp:sq-css name="squash.grey.css" />  
+  <jsp:attribute name="head">
+    <comp:sq-css name="squash.grey.css" />
   </jsp:attribute>
 
   <jsp:attribute name="titlePane"><h2 class="admin"><f:message key="label.administration" /></h2></jsp:attribute>
   <jsp:attribute name="subPageTitle">
     <h2><f:message key="workspace.milestone.info.title" /></h2>
   </jsp:attribute>
-  
+
 
   <jsp:attribute name="subPageButtons">
     <f:message var="backButtonLabel" key="label.Back" />
-    <input type="button" class="button" id="back" value="${backButtonLabel}" "/>  
+    <input type="button" class="button" id="back" value="${backButtonLabel}" "/>
   </jsp:attribute>
   <jsp:attribute name="informationContent">
 
@@ -87,63 +87,63 @@
       <div class="unsnap"></div>
 
     </div>
-  
+
       <div id="milestone-toolbar" class="toolbar-class ui-corner-all">
   <div class="snap-left">
 <comp:general-information-panel auditableEntity="${milestone}"  />
         </div>
   </div>
-  
-  
+
+
     <div class="fragment-body">
       <%------------------------------------------------ BODY -----------------------------------------------%>
-  
+
       <div id="milestone-toolbar" classes="toolbar-class ui-corner-all">
         <%--- Toolbar ---------------------%>
-        
+
       <div class="toolbar-button-panel">
         <f:message var="rename" key="rename" />
       <c:if test="${canEdit }">
         <input type="button" value="${ rename }" id="rename-milestone-button"
               class="sq-btn" title="<f:message key="milestone.button.rename.label" />"/>
-              
+
   <f:message var="delete" key='button.delete.label' />
-         <input type="button" value="${ delete }" id="delete-milestone-button" class="sq-btn" title =   "<f:message key='milestone.button.delete.label' />"/>    
+         <input type="button" value="${ delete }" id="delete-milestone-button" class="sq-btn" title="<f:message key='milestone.button.delete.label' />"/>
               </c:if>
       </div>
       </div>
       <%--------End Toolbar ---------------%>
-    
+
       <%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
       <br />
       <br />
       <comp:toggle-panel id="milestone-info-panel"
         titleKey="label.MilestoneInformations" open="true">
-  
+
         <jsp:attribute name="body">
           <div id="milestone-description-table" class="display-table">
-          
+
             <div class="display-table-row">
               <label for="milestone-end-date" class="display-table-cell">
               <f:message key="label.EndDate" />
               </label>
               <div class="display-table-cell" ><span id="milestone-end-date" >${formatedEndDate}</span></div>
             </div>
-          
+
           <div class="display-table-row">
               <label for="milestone-status" class="display-table-cell">
               <f:message key="label.Status" />
               </label>
               <div class="display-table-cell" ><span id="milestone-status" >  ${ milestoneStatusLabel } </span></div>
             </div>
-            
+
                 <div class="display-table-row">
               <label for="milestone-range" class="display-table-cell">
               <f:message key="label.Range" />
               </label>
               <div class="display-table-cell" >
               <c:choose>
-              <c:when test="${isAdmin}">  
+              <c:when test="${isAdmin}">
               <span id="milestone-range" >  ${ milestoneRangeLabel } </span>
               </c:when>
               <c:otherwise>
@@ -152,36 +152,36 @@
               </c:choose>
               </div>
             </div>
-            
+
                 <div class="display-table-row">
               <label for="milestone-owner" class="display-table-cell">
               <f:message key="label.Owner" />
               </label>
-              
+
               <div class="display-table-cell" id="milestone-owner-cell">
                   <c:choose>
-            <c:when test="${ milestone.range == 'GLOBAL'}">  
-                  <f:message  key="label.milestone.global.owner" /> 
+            <c:when test="${ milestone.range == 'GLOBAL'}">
+                  <f:message  key="label.milestone.global.owner" />
               </c:when>
                  <c:otherwise>
                 <span id="milestone-owner" >${ milestone.owner.name } </span>
                     </c:otherwise>
             </c:choose>
             </div>
-            
+
             </div>
-            
-        
-            
-            
-            
-            
+
+
+
+
+
+
             <div class="display-table-row">
               <label for="milestone-description" class="display-table-cell">
               <f:message key="label.Description" />
               </label>
               <c:choose>
-                  <c:when test="${ canEdit }">                       
+                  <c:when test="${ canEdit }">
               <div class="display-table-cell editable rich-editable" data-def="url=${milestoneUrl}" id="milestone-description">${ milestone.description }</div>
                  </c:when>
              <c:otherwise>
@@ -189,16 +189,16 @@
                           </c:otherwise>
             </c:choose>
             </div>
-          
+
           </div>
         </jsp:attribute>
       </comp:toggle-panel>
-      
-      
+
+
       <%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
     <comp:toggle-panel id="milestone-project-panel"
         titleKey="label.projects" open="true">
-  
+
     <jsp:attribute name="panelButtons">
       <c:if test="${canEdit }">
         <button id="bind-project-button" title="<f:message key="label.milestone.bindProject" />" class="sq-icon-btn btn-sm">
@@ -208,10 +208,10 @@
           <span class="ui-icon ui-icon-minus squared-icons">-</span>
           </c:if>
         </button>
-        
-        </jsp:attribute>  
+
+        </jsp:attribute>
         <jsp:attribute name="body">
-        
+
         <table id="projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?binded, hover, filter, pre-sort=2-asc"
           data-project-url="${projectDetailBaseUrl}/{{entity-id}}/info">
     <thead>
@@ -220,7 +220,7 @@
         <th data-def="map=entity-index, select">#</th>
         <th data-def="map=name, sortable"  class="datatable-filterable"><f:message key="label.project" /></th>
        <th data-def="map=binded, sortable, sClass=binded-to-project" class="datatable-filterable"><f:message key="label.project.isBoundToMilestone" /></th>
-        <th data-def="map=isUsed, sortable"><f:message key="label.used" /></th>   
+        <th data-def="map=isUsed, sortable"><f:message key="label.used" /></th>
         <th data-def="map=empty-delete-holder, unbind-button=#unbind-project-popup"></th>
         <th data-def="map=link, invisible"></th>
       </tr>
@@ -230,16 +230,16 @@
 
         </jsp:attribute>
       </comp:toggle-panel>
-    
+
       <%-----------------------------------START PROJECT PANEL -----------------------------------------------%>
-    
-    
-    
-    
-    <%-----------------------------------END PROJECT PANEL -----------------------------------------------%>  
-    
-      </div>  
-      
+
+
+
+
+    <%-----------------------------------END PROJECT PANEL -----------------------------------------------%>
+
+      </div>
+
     <%---------------------------------------------------------------END  BODY -----------------------------------------------%>
   </jsp:attribute>
 </layout:info-page-layout>
@@ -249,7 +249,7 @@
 
 <!-- --------------------------------BIND PROJECT POPUP--------------------------------------------------------- -->
 
-  
+
     <f:message var="bindProjectTitle" key="dialog.milestone.bind.project" />
     <div id="bind-project-dialog" class="not-displayed popup-dialog"
         title="${bindProjectTitle}">
@@ -257,12 +257,11 @@
   <table id="bind-to-projects-table" class="unstyled-table" data-def="ajaxsource=${projectsUrl}?bindable, hover, filter, pre-sort=1-asc">
     <thead>
       <tr>
-        <th data-def="map=checkbox, checkbox"></th>
-      <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
-          <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
+        <th data-def="map=checkbox, searchable=false, checkbox"></th>
+        <th data-def="map=raw-type, searchable=false, invisible">raw type (not shown)</th>
+        <th data-def="map=type, searchable=false, sClass=icon-cell type">&nbsp;</th>
         <th data-def="map=name, sortable"  class="datatable-filterable"><f:message key="label.Name" /></th>
-          <th data-def="map=label, sortable"><f:message key="label.tag" /></th>
-          
+        <th data-def="map=label, sortable"><f:message key="label.tag"/></th>
       </tr>
     </thead>
     <tbody><%-- Will be populated through ajax --%></tbody>
@@ -281,7 +280,7 @@
         <div class="popup-dialog-buttonpane">
           <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
           <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-        </div>        
+        </div>
     </div>
 
 
@@ -293,14 +292,14 @@
   <f:message var="unbindProjectTitle" key="dialog.milestone.unbind.project.title" />
   <f:message var="warningUnbind" key="dialog.milestone.unbind.milestone.warning.single" />
   <div id="unbind-project-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
-    
+
         <comp:notification-pane type="error" txtcontent="${warningUnbind}"/>
 
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" />
-        <input class="cancel" type="button" value="${cancelLabel}" />        
+        <input class="cancel" type="button" value="${cancelLabel}" />
     </div>
-  
+
   </div>
 
 <!-- ------------------------------------END UNBIND PROJECT POPUP------------------------------------------------------- -->
@@ -310,14 +309,14 @@
   <f:message var="unbindProjectTitle" key="dialog.milestone.unbind.project.title" />
   <f:message var="warningUnbind" key="dialog.milestone.unbind.project.warning" />
   <div id="unbind-project-but-keep-in-perimeter-popup" class="popup-dialog not-displayed" title="${unbindProjectTitle}">
-    
+
         <comp:notification-pane type="error" txtcontent="${warningUnbind}"/>
 
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" />
-        <input class="cancel" type="button" value="${cancelLabel}" />        
+        <input class="cancel" type="button" value="${cancelLabel}" />
     </div>
-  
+
   </div>
 
 <!-- ------------------------------------END UNBIND PROJECT BUT KEEP IN PERIMETER  POPUP------------------------------------------------------- -->
@@ -327,14 +326,14 @@
   <f:message var="changeRangeTitle" key="dialog.milestone.changerange.title" />
   <f:message var="warningChangeRange" key="dialog.milestone.changerange.warning" />
   <div id="changeRange-popup" class="popup-dialog not-displayed" title="${changeRangeTitle}">
-            
+
         <comp:notification-pane type="error" txtcontent="${warningChangeRange}"/>
-    
+
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" />
-        <input class="cancel" type="button" value="${cancelLabel}" />        
+        <input class="cancel" type="button" value="${cancelLabel}" />
     </div>
-  
+
   </div>
 
 <!-- ------------------------------------END CHANGE RANGE WITH TEMPLATE POPUP------------------------------------------------------- -->
@@ -344,14 +343,14 @@
   <f:message var="changeStatusTitle" key="dialog.milestone.changestatus.title" />
   <f:message var="warningChangeStatus" key="dialog.milestone.changestatus.warning" />
   <div id="changeStatus-popup" class="popup-dialog not-displayed" title="${changeStatusTitle}">
-    
+
          <comp:notification-pane type="error" txtcontent="${warningChangeStatus}"/>
-    
+
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" />
-        <input class="cancel" type="button" value="${cancelLabel}" />        
+        <input class="cancel" type="button" value="${cancelLabel}" />
     </div>
-  
+
   </div>
 
 <!-- ------------------------------------END CHANGE STATUS POPUP------------------------------------------------------- -->
@@ -360,14 +359,14 @@
   <f:message var="changeOwnerTitle" key="dialog.milestone.changeower.title" />
   <f:message var="warningChangeOwner" key="dialog.milestone.changeowner.warning" />
   <div id="changeOwner-popup" class="popup-dialog not-displayed" title="${changeOwnerTitle}">
-    
+
          <comp:notification-pane type="error" txtcontent="${warningChangeOwner}"/>
-    
+
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" />
-        <input class="cancel" type="button" value="${cancelLabel}" />        
+        <input class="cancel" type="button" value="${cancelLabel}" />
     </div>
-  
+
   </div>
 
 
@@ -375,11 +374,11 @@
 
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
-  
+
         <f:message var="renameMilestoneTitle" key="dialog.rename-milestone.title" />
       <div id="rename-milestone-dialog" class="not-displayed popup-dialog"
         title="${renameMilestoneTitle}">
-  
+
          <tr>
             <td><label for="rename-milestone-input"><f:message
               key="label.Label" /></label></td>
@@ -390,11 +389,11 @@
         <div class="popup-dialog-buttonpane">
           <input type="button" value="${confirmLabel}" data-def="mainbtn, evt=confirm"/>
           <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-        </div>        
+        </div>
     </div>
 
 
-  
+
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
 
@@ -407,17 +406,17 @@
                 <div class="generic-error-signal"></div>
             </div>
             <div id="warning-delete" class="display-table-cell">
-            </div>          
-      <div class="display-table-cell">    
+            </div>
+      <div class="display-table-cell">
          <p>
                 <span id="errorMessageDeleteMilestone">    </span>
-              </p>                   
+              </p>
           </div>
     </div>
-    
+
     <div class="popup-dialog-buttonpane">
         <input class="confirm" type="button" value="${confirmLabel}" />
-        <input class="cancel" type="button" value="${cancelLabel}" />        
+        <input class="cancel" type="button" value="${cancelLabel}" />
     </div>
 
 
@@ -446,12 +445,12 @@ requirejs.config({
           currentRange: '${ milestone.range}',
           range: '${milestoneRange}'
                     }
-        
+
              }
                    }
       }
     });
-    
+
 require(["common"], function(){
   require(["milestone-manager/milestone-info"], function(){});
 });
