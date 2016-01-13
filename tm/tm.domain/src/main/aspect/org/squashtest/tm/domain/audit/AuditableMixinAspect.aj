@@ -29,7 +29,11 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Transient;
 
-import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DateBridge;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Resolution;
+import org.hibernate.search.annotations.Store;
 
 /**
  * This aspect adds the {@link AuditableMixin} mixin to entities annotated with @Audidable
@@ -46,18 +50,22 @@ public aspect AuditableMixinAspect {
 	@Transient private
 	AuditableSupport AuditableMixin.audit = new AuditableSupport();
 
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@DateBridge(resolution = Resolution.DAY)
 	public Date AuditableMixin.getCreatedOn() {
 		return this.getAudit().getCreatedOn();
 	}
-	
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	public String AuditableMixin.getCreatedBy() {
 		return this.getAudit().getCreatedBy();
 	}
 
+	@Field(analyze=Analyze.NO, store=Store.YES)
+	@DateBridge(resolution = Resolution.DAY)
 	public Date AuditableMixin.getLastModifiedOn() {
 		return this.getAudit().getLastModifiedOn();
 	}
-
+	@Field(analyze=Analyze.NO, store=Store.YES)
 	public String AuditableMixin.getLastModifiedBy() {
 		return this.getAudit().getLastModifiedBy();
 	}
@@ -80,7 +88,7 @@ public aspect AuditableMixinAspect {
 	
 	
 	
-	@Embedded @Access(AccessType.PROPERTY) @IndexedEmbedded(prefix = "")
+	@Embedded @Access(AccessType.PROPERTY)
 	public AuditableSupport AuditableMixin.getAudit() {
 		return this.audit;
 	}

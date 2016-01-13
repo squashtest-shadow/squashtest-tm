@@ -99,45 +99,6 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		return panel;
 	}
 
-	public SearchInputPanelModel createAssociationPanel(Locale locale) {
-
-		SearchInputPanelModel panel = new SearchInputPanelModel();
-
-		panel.setTitle(getMessageSource().internationalize("search.testcase.association.panel.title", locale));
-		panel.setOpen(true);
-		panel.setId("association");
-		panel.setLocation(COLUMN_1);
-		panel.addCssClass("search-icon-associations");
-
-		SearchInputFieldModel requirementsField = new SearchInputFieldModel("requirements", getMessageSource()
-				.internationalize("search.testcase.association.requirement.label", locale), RANGE);
-		panel.addField(requirementsField);
-
-		SearchInputFieldModel iterationsField = new SearchInputFieldModel("iterations", getMessageSource()
-				.internationalize("search.testcase.association.iteration.label", locale), EXISTS);
-		panel.addField(iterationsField);
-
-		OptionBuilder optionBuilder = optionBuilder(locale);
-		iterationsField.addPossibleValue(optionBuilder.labelI18nKey("search.testcase.association.iteration.atleastone")
-				.optionKey(ATLEASTONE).build());
-		iterationsField.addPossibleValue(optionBuilder.labelI18nKey("search.testcase.association.iteration.none")
-				.optionKey(NONE).build());
-
-		SearchInputFieldModel executionsField = new SearchInputFieldModel("executions", getMessageSource()
-				.internationalize("search.testcase.association.execution.label", locale), EXISTS);
-		panel.addField(executionsField);
-
-		executionsField.addPossibleValue(optionBuilder.labelI18nKey("search.testcase.association.execution.atleastone")
-				.optionKey(ATLEASTONE).build());
-		executionsField.addPossibleValue(optionBuilder.labelI18nKey("search.testcase.association.execution.none")
-				.optionKey(NONE).build());
-
-		SearchInputFieldModel issuesField = new SearchInputFieldModel("issues", getMessageSource().internationalize(
-				"search.testcase.association.issue.label", locale), RANGE);
-		panel.addField(issuesField);
-
-		return panel;
-	}
 
 	public SearchInputPanelModel createExecutionPanel(Locale locale) {
 
@@ -149,9 +110,10 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 		panel.addCssClass("search-icon-execution");
 
 		// Created on
-		SearchInputFieldModel createdOnField = new SearchInputFieldModel("createdOn", getMessageSource()
+		SearchInputFieldModel lastExecuted = new SearchInputFieldModel("lastExecutedOn",
+				getMessageSource()
 				.internationalize("search.execution.executed.label", locale), DATE);
-		panel.addField(createdOnField);
+		panel.addField(lastExecuted);
 
 
 

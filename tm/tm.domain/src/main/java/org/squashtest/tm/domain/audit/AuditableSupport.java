@@ -27,12 +27,6 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
-import org.hibernate.search.annotations.Store;
-
 /**
  * Embeddable delegate for Auditable entities.
  * 
@@ -42,24 +36,18 @@ import org.hibernate.search.annotations.Store;
 @Embeddable
 public class AuditableSupport {
 	@Column(updatable = false)
-	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String createdBy;
 
 	@Column(updatable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@DateBridge(resolution = Resolution.DAY)
 	private Date createdOn;
 
 	@Column(insertable = false)
-	@Field(analyze=Analyze.NO, store=Store.YES)
 	private String lastModifiedBy;
 
 
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@DateBridge(resolution = Resolution.DAY)
 	private Date lastModifiedOn;
 
 	public String getCreatedBy() {

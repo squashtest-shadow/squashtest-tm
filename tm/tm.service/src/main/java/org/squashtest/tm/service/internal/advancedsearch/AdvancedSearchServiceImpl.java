@@ -1,22 +1,18 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ * This file is part of the Squashtest platform. Copyright (C) 2010 - 2015 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later
+ * version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied
+ * warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more
+ * details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License along with this software. If not, see
+ * <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
@@ -37,7 +33,6 @@ import javax.inject.Inject;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -71,7 +66,6 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
-
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private static final String PROJECT_CRITERIA_NAME = "project.id";
@@ -80,7 +74,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 			"milestone.endDate", "searchByMilestone");
-
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -147,17 +140,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			String paddedMaxValue = padRawValue(maxValue);
 			String paddedMinValue = padRawValue(minValue);
 
-			query = qb
-					.bool()
-					.must(qb.range().onField(fieldName).ignoreFieldBridge().from(paddedMinValue).to(paddedMaxValue)
-							.createQuery()).createQuery();
+			query = qb.bool().must(qb.range().onField(fieldName).ignoreFieldBridge().from(paddedMinValue)
+					.to(paddedMaxValue).createQuery()).createQuery();
 		}
 
 		return query;
 	}
 
 	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values, boolean isTag) {
-		//TODO write something better when we have some time to do something not 'a minima'
+		// TODO write something better when we have some time to do something not 'a minima'
 		Query mainQuery = null;
 
 		if (!values.isEmpty()) {
@@ -169,15 +160,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				Query query;
 
 				if (isTag) {
-					query = qb
-							.bool()
-							.should(qb.phrase().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer().sentence(value)
-									.createQuery()).createQuery();
+					query = qb.bool().should(qb.phrase().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
+							.sentence(value).createQuery()).createQuery();
 				} else {
-					query = qb
-							.bool()
-							.should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
-									.matching(value).createQuery()).createQuery();
+					query = qb.bool().should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
+							.matching(value).createQuery()).createQuery();
 				}
 
 				if (query != null && mainQuery == null) {
@@ -201,14 +188,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			Query query;
 
 			if (value.contains("*")) {
-				query = qb
-						.bool()
-						.must(qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value)
-								.createQuery()).createQuery();
+				query = qb.bool().must(
+						qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value).createQuery())
+						.createQuery();
 			} else {
 
-				query = qb.bool()
-						.must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery())
+				query = qb.bool().must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery())
 						.createQuery();
 			}
 
@@ -243,32 +228,22 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName, Date startdate, Date enddate) {
 
-		Query query = qb
-				.bool()
-				.must(qb.range().onField(fieldName).ignoreFieldBridge()
-						.from(DateTools.dateToString(startdate, DateTools.Resolution.DAY))
-						.to(DateTools.dateToString(enddate, DateTools.Resolution.DAY)).createQuery()).createQuery();
+		Query query = qb.bool().must(qb.range().onField(fieldName).from(startdate).to(enddate).createQuery())
+				.createQuery();
 
 		return query;
 	}
 
 	private Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName, Date enddate) {
 
-		Query query = qb
-				.bool()
-				.must(qb.range().onField(fieldName).ignoreFieldBridge()
-						.below(DateTools.dateToString(enddate, DateTools.Resolution.DAY)).createQuery()).createQuery();
+		Query query = qb.bool().must(qb.range().onField(fieldName).below(enddate).createQuery()).createQuery();
 
 		return query;
 	}
 
 	private Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName, Date startdate) {
 
-		Query query = qb
-				.bool()
-				.must(qb.range().onField(fieldName).ignoreFieldBridge()
-						.above(DateTools.dateToString(startdate, DateTools.Resolution.DAY)).createQuery())
-						.createQuery();
+		Query query = qb.bool().must(qb.range().onField(fieldName).above(startdate).createQuery()).createQuery();
 
 		return query;
 	}
@@ -316,7 +291,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		// init the double quote context
 		boolean inDoubleQuoteContext = (startChar == '"');
 
-
 		// iterate over each characters
 		for (int i = 1; i < input.length; i++) {
 
@@ -325,9 +299,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 			// add a new token if the current character reached a delimiter
 			// and prepare the counter for the next token
-			if (isSimpleQuote(charAtPosition, charBeforePosition)	||
-					isDoubleQuote(charAtPosition, charBeforePosition)	||
-					isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)){
+			if (isSimpleQuote(charAtPosition, charBeforePosition) || isDoubleQuote(charAtPosition, charBeforePosition)
+					|| isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)) {
 				addToTokens(tokens, textInput.substring(start, i).trim());
 				start = i + 1;
 			}
@@ -340,7 +313,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 
 		// add the last bit if this is a token too
-		char lastChar = input[input.length-1];
+		char lastChar = input[input.length - 1];
 		if (lastChar != '"' && lastChar != ' ') {
 			addToTokens(tokens, textInput.substring(start, input.length).trim());
 		}
@@ -492,14 +465,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			Criteria crit = createMilestoneHibernateCriteria(fields);
 
 			List<String> milestoneIds = new ArrayList<String>();
-			List<Long> foundIds = (List<Long>)crit.list();
+			List<Long> foundIds = (List<Long>) crit.list();
 			for (Long milestoneId : foundIds) {
 				milestoneIds.add(String.valueOf(milestoneId));
 			}
 
-			//if there is no milestone id that means we didn't found any milestones
-			//matching search criteria, so we use a fake milestoneId to find no result.
-			if (milestoneIds.isEmpty()){
+			// if there is no milestone id that means we didn't found any milestones
+			// matching search criteria, so we use a fake milestoneId to find no result.
+			if (milestoneIds.isEmpty()) {
 				milestoneIds.add(FAKE_MILESTONE_ID);
 			}
 
@@ -615,10 +588,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				// query =
 				// qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
 
-				query = qb
-						.bool()
-						.must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
-								.sentence(tag).createQuery()).createQuery();
+				query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
+						.sentence(tag).createQuery()).createQuery();
 
 				if (query == null) {
 					break;
@@ -671,50 +642,49 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	// Issue #5079 : ensure that criteria project.id contains only
 	// projects the user can read
-	private void secureProjectCriteria(AdvancedSearchModel model){
+	private void secureProjectCriteria(AdvancedSearchModel model) {
 
 		// Issue #5079 again
 		// first task is to locate which name has the project criteria because it may differ depending on the interface
 		// (test case, requirement, test-case-through-requirements
 		String key = null;
 		Set<String> keys = model.getFields().keySet();
-		for (String k : keys){
-			if (k.contains(PROJECT_CRITERIA_NAME)){
-				key=k;
+		for (String k : keys) {
+			if (k.contains(PROJECT_CRITERIA_NAME)) {
+				key = k;
 				break;
 			}
 		}
 		// if no projectCriteria was set -> nothing to do
-		if (key == null){
+		if (key == null) {
 			return;
 		}
 
 		AdvancedSearchListFieldModel projectCriteria = (AdvancedSearchListFieldModel) model.getFields().get(key);
 
-
 		List<String> approvedIds;
 		List<String> selectedIds = projectCriteria.getValues();
 
-
 		// case 1 : no project is selected
-		if (selectedIds == null || selectedIds.isEmpty()){
+		if (selectedIds == null || selectedIds.isEmpty()) {
 			List<Project> ps = projectFinder.findAllReadable();
-			approvedIds = (List<String>)CollectionUtils.collect(ps, new Transformer() {
+			approvedIds = (List<String>) CollectionUtils.collect(ps, new Transformer() {
 				@Override
 				public Object transform(Object project) {
-					return ((Identified)project).getId().toString();
+					return ((Identified) project).getId().toString();
 				}
 			});
 		}
 		// case 2 : some projects were selected
-		else{
+		else {
 			approvedIds = new ArrayList<>();
-			for (String id : selectedIds){
-				if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", Long.valueOf(id), Project.class.getName())){
+			for (String id : selectedIds) {
+				if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", Long.valueOf(id),
+						Project.class.getName())) {
 					approvedIds.add(id);
-				}
-				else{
-					LOGGER.info("AdvancedSearchService : removed element '"+id+"' from criteria 'project.id' because the user is not approved for 'READ' operation on it");
+				} else {
+					LOGGER.info("AdvancedSearchService : removed element '" + id
+							+ "' from criteria 'project.id' because the user is not approved for 'READ' operation on it");
 				}
 			}
 		}
@@ -722,8 +692,5 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		projectCriteria.setValues(approvedIds);
 
 	}
-
-
-
 
 }

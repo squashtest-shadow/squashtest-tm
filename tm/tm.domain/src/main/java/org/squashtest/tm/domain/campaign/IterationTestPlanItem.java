@@ -53,10 +53,12 @@ import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.Resolution;
 import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -126,6 +128,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@Column(insertable = false)
 	@Temporal(TemporalType.TIMESTAMP)
 	@Field(analyze = Analyze.NO, store = Store.YES)
+	@DateBridge(resolution = Resolution.DAY)
 	private Date lastExecutedOn;
 
 	@IndexedEmbedded(includeEmbeddedObjectId = true, includePaths = { "reference", "importance", "name" })

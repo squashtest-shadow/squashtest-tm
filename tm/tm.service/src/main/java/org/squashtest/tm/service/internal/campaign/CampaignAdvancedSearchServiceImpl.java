@@ -21,6 +21,14 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
@@ -30,7 +38,11 @@ import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -40,9 +52,6 @@ import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
 import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceImpl;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-
-import javax.inject.Inject;
-import java.util.*;
 
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
@@ -112,7 +121,6 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		Session session = sessionFactory.getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
-		// Let's try without milestones
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
 		Query luceneQuery = buildLuceneQuery(qb, searchModel, locale);
 
