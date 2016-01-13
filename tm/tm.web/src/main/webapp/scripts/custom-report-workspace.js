@@ -19,11 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 require([ "common" ], function() {
-	require([ "jquery", './custom-report-workspace/custom-report-workspace-main' ,"app/ws/squashtm.workspace", "domReady" ,'backbone.wreqr','backbone','./custom-report-workspace/custom-report-router', 'jquery.cookie' ], function($, CRWorkspace,  WS, domReady,wreqr,Backbone,router) {
-		domReady(function() {
-			squashtm.app.router = router.init();
+	"use strict";
+
+	require([ "jquery", './custom-report-workspace/custom-report-workspace-main' ,"app/ws/squashtm.workspace" ,'backbone.wreqr','backbone','./custom-report-workspace/custom-report-router', 'jquery.cookie' ],
+			function($, CRWorkspace, WS, wreqr, Backbone, router) {
+		$(function() {
+			window.squashtm.app.router = router.init();
 			//setting the event bus at global level so it will be avaible for all objects in workspace
-			squashtm.app.wreqr = new wreqr.EventAggregator();
+			window.squashtm.app.wreqr = new wreqr.EventAggregator();
 			//starting the history push state router
 			Backbone.history.start();
 			WS.init();
@@ -31,7 +34,7 @@ require([ "common" ], function() {
 			$.cookie("workspace-prefs", null, {
 				path : '/'
 			});
-			CRWorkspace.init(squashtm.app.customReportWorkspaceConf);
+			CRWorkspace.init(window.squashtm.app.customReportWorkspaceConf);
 		});
 	});
 });

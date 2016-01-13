@@ -20,6 +20,7 @@
  */
 define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryView","./views/folderView","./views/dashboardView","./views/chartView" ],
   function($, Backbone,domReady,urlBuilder,libraryView,folderView,dashboardView,chartView) {
+      "use strict";
 
       var router = Backbone.Router.extend({
 
@@ -154,6 +155,7 @@ define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryVi
       return new router();
     }
 
+    // TODO simply return the Router function
     return {
       init:init
     };
