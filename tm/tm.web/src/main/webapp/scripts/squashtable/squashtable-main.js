@@ -1824,7 +1824,7 @@ define(["jquery",
 					conf.squash.dataKeys.entityId = value;
 				},
 				'pagesize' : function(conf, value) {
-					conf.table.iDisplayLength = value;
+					conf.table.iDisplayLength = parseInt(value, 10);
 				},
 				'pre-sort' : function(conf, value) {
 					// value must be an expression as follow : <columnindex>[-<asc|desc>]. If unspecified or invalid,
