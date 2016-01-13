@@ -24,8 +24,8 @@
  - availableServers : an array of TestAutomationServer
  - TAServerId : the id of the selected server if there is one, or null if none
  */
-define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
-		function($,Backbone, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator) {
+define([ "jquery","backbone","handlebars", "jeditable.selectJEditable", "./AddTAProjectsDialog", "./EditTAProjectDialog", "app/ws/squashtm.notification", "squash.translator", "squashtable", "jquery.squash.formdialog" ],
+		function($, Backbone, Handlebars, SelectJEditable, BindPopup, EditTAProjectPopup, WTF, translator) {
 			// *************************************** ConfirmChangePopup **********************************************
 			var ConfirmChangePopup = Backbone.View.extend({
 
@@ -96,7 +96,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					}else{
 						this.confirm();
 					}
-					
+
 
 				},
 
@@ -107,7 +107,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					this.parentPanel = parentPanel;
 				}
 			});
-			
+
 			// *************************************** UnbindPopup **********************************************
 
 			var UnbindPopup = Backbone.View.extend({
@@ -116,7 +116,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				initialize : function() {
 					this.confirmSuccess = $.proxy(this._confirmSuccess, this);
 					this.confirmFail = $.proxy(this._confirmFail, this);
-					
+
 					this.$el.formDialog();
 				},
 				events : {
@@ -128,7 +128,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					this.trigger("unbindTAProjectPopup.confirm");
 					$.ajax({
 						url : squashtm.app.contextRoot + "/test-automation-projects/" + this.deletedId,
-						type : "delete"						
+						type : "delete"
 					}).done(this.confirmSuccess).fail(this.confirmFail);
 				},
 				open : function(){
@@ -136,14 +136,14 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					this.deletedId = this.$el.data('entity-id');
 					this.jobName = this.$el.data('jobName');
 					this.$el.formDialog("setState", "pleaseWait");
-					
+
 					function displayState(whichcase){
 						var $removeP = self.$el.find(".remove-message");
 						$removeP.empty();
 						var source = $("#remove-message-tpl-"+whichcase).html();
 						var template = Handlebars.compile(source);
 						var message = template({jobName : self.jobName});
-						$removeP.html(message);	
+						$removeP.html(message);
 						self.$el.formDialog('setState', whichcase);
 					}
 
@@ -190,7 +190,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					}
 					this.initSelect(conf);
 					this.initTable();
-					
+
 					// listens to change-server-popup cancel and fail events to update the server's select-jeditable
 					// status accordingly
 					this.onChangeServerComplete = $.proxy(this._onChangeServerComplete, this);
@@ -209,7 +209,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				events : {
 					"click #ta-projects-bind-button" : "openBindPopup"
 				},
-				
+
 				initTable : function(){
 					var self = this;
 					this.table = $("#ta-projects-table").squashTable({}, {
@@ -235,7 +235,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 				openBindPopup : function() {
 					this.popups.bindPopup.show();
 				},
-				
+
 				_refreshTable : function(){
 					this.table.refresh();
 				},
@@ -250,7 +250,7 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 						$addBlock.show();
 					}
 				},
-				
+
 				initSelect : function(conf) {
 					var self = this;
 					var data = {
@@ -279,8 +279,8 @@ define([ "jquery","backbone", "jeditable.selectJEditable", "./AddTAProjectsDialo
 					});
 				}
 			});
-			
-			
+
+
 			// *************************************** automation panel **********************************************
 
 			return {
