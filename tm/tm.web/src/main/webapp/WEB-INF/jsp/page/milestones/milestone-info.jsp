@@ -260,7 +260,7 @@
         <th data-def="map=checkbox, checkbox"></th>
       <th data-def="map=raw-type, invisible">raw type (not shown)</th> 
           <th data-def="map=type, sClass=icon-cell type" >&nbsp;</th> 
-        <th data-def="map=name, sortable, link=${projectDetailBaseUrl}/{entity-id}/info"  class="datatable-filterable"><f:message key="label.Name" /></th>
+        <th data-def="map=name, sortable"  class="datatable-filterable"><f:message key="label.Name" /></th>
           <th data-def="map=label, sortable"><f:message key="label.tag" /></th>
           
       </tr>

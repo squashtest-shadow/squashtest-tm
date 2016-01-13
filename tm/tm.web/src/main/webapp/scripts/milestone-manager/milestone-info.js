@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 	define([ 'module', "jquery", "handlebars", "squash.translator", "squash.basicwidgets", "jeditable.selectJEditable",
-			"squash.configmanager", "workspace.routing", "jquery.squash.formdialog", "jeditable.datepicker", 
+			"squash.configmanager", "workspace.routing", "jquery.squash.formdialog", "jeditable.datepicker",
 			"squashtable", "jquery.squash.confirmdialog" ], function(
 			module, $, Handlebars, translator, basic, SelectJEditable, confman, routing) {
 
@@ -159,8 +159,8 @@
 			changeOwnerRequest(value, ownerEditable);
 			clickBackButton();
 		});
-		
-		
+
+
 		$("#changeOwner-popup").confirmDialog().on('confirmdialogcancel', function(){
 			var $this = $(this);
 			var ownerEditable = $this.data('ownerEditable');
@@ -169,7 +169,7 @@
 			ownerEditable.component.html(user);
 		});
 
-		
+
 		function changeOwnerRequest(value, ownerEditable){
 
 			$.ajax({
@@ -311,17 +311,17 @@
 
 			changeStatusRequest(value, statusEditable);
 		});
-		
+
 
 		$("#changeStatus-popup").confirmDialog().on('confirmdialogcancel', function(){
-		
+
 			var $this = $(this);
 			var value = $this.data('value');
 			var statusEditable = $this.data('statusEditable');
 			var data = JSON.parse(statusEditable.settings.jeditableSettings.data);
 			statusEditable.component.html(data[config.data.milestone.currentStatus]);
 		});
-		
+
 
 		var changeRangeRequest = function changeRange(value, rangeEditable){
 			$.ajax({
@@ -380,14 +380,14 @@
 
 
 		var drawCallBack = function() {
-			
+
 			// the bind to project is editable only if range is restricted
 			if (config.data.milestone.currentRange === "RESTRICTED"){
 				$("td.binded-to-project").editable('enable');
 			} else {
-				$("td.binded-to-project").editable('disable');	
+				$("td.binded-to-project").editable('disable');
 			}
-			
+
 			// turn elements to editable
 			$("td.binded-to-project").editable(function(value, settings) {
 			    var returned;
@@ -451,7 +451,7 @@
 			chkbx.prop('checked', false);
 			chkbx.trigger('change');
 		};
-		
+
 		var checkAll = function() {
 			var chkbx = $("#bind-to-projects-table").find(":checkbox");
 			chkbx.prop('checked', true);
@@ -471,7 +471,7 @@
 			*/
 			checked.prop('checked', false);
 			unchecked.prop('checked', true);
-			
+
 			checked.add(unchecked).trigger('change');
 		};
 
@@ -520,7 +520,7 @@
 			});
 			$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 		}
-		
+
 
 		$("#unbind-project-popup").confirmDialog().on('confirmdialogconfirm', function(){
 
@@ -561,8 +561,8 @@
 			else{
 				displayNothingSelected();
 			}
-			
-			
+
+
 		});
 
 		function displayNothingSelected(){
@@ -605,7 +605,7 @@
 
 		bindProjectDialog.formDialog();
 
-		bindProjectDialog.on('formdialogcancel', function() { 
+		bindProjectDialog.on('formdialogcancel', function() {
 			bindProjectDialog.formDialog('close');
 		});
 
@@ -622,7 +622,7 @@
 
 		bindProjectDialog.on('formdialogconfirm', function() {
 
-			var ids = getCheckedId(); 
+			var ids = getCheckedId();
 			if ( ids == 0 ) {
 				bindProjectDialog.formDialog('close');
 			}
@@ -642,7 +642,7 @@
 		});
 
 		// ************** init *******************
-		
+
         $(function() {
 
 			var squashSettings = {functions:{}};
@@ -699,11 +699,15 @@
 					mRender: projectLinkRenderer
 				} ]
 			}, squashSettings);
-			
+
 			var bindTable = $("#bind-to-projects-table").squashTable({
-				"bServerSide":false, 
-				"fnRowCallback" : projectTableRowCallback
-			}, {});
+				"bServerSide":false,
+				"fnRowCallback" : projectTableRowCallback,
+				aoColumnDefs: [ {
+					aTargets: [3],
+					mRender: projectLinkRenderer
+				} ]
+			}, squashSettings);
 
 			basic.init();
 			$("#back").click(clickBackButton);
@@ -717,20 +721,20 @@
 					 cell.firstChild.innerHTML = index + 1;
 				 });
 			});
-			
+
 
 			// *******save/restore selection (issue 4816) ********
-			
+
 			// save on click
 			bindTable.on('change', 'input[type="checkbox"]', function(){
-				
+
 				var selection = (bindTable.selection || []),
 					$cbox = $(this),
 					checked = this.checked,
 					$row = $cbox.parents('tr:first'),
 					id = bindTable.getODataId($row.get(0)),
 					index = selection.indexOf(id);
-				
+
 				// add
 				if (checked && index === -1){
 					selection.push(id);
@@ -739,22 +743,22 @@
 				else if (index !== -1){
 					selection.splice(index, 1);
 				}
-				
+
 				bindTable.selection = selection;
-				
+
 			});
-			
+
 			// restore
 			bindTable.drawcallbacks.push(function(oSettins){
 				var selection = bindTable.selection || [];
-				
+
 				bindTable.find('>tbody>tr').each(function(){
 					if (selection.indexOf(bindTable.getODataId(this)) > -1){
 						$(this).find('input').prop('checked', true);
 					}
-				});		
+				});
 			});
-			
+
 
 		});
 	});
