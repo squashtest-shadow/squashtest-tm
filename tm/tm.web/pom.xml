@@ -13,18 +13,9 @@
   <description>Squash TM webapp - Provides web frontend</description>
 
   <properties>
-    <bundle.contextPath>squash</bundle.contextPath>
-
-    <!-- Used to set jetty config props -->
-    <is.dev.stage>false</is.dev.stage>
-    <is.war.deploy>true</is.war.deploy>
-
     <!-- DEfault webdriver for jasmine runner. One can override it -->
     <jasmine.webdriver.classname>org.openqa.selenium.htmlunit.HtmlUnitDriver</jasmine.webdriver.classname>
     <jasperreports.outputDir>${project.build.directory}/jasperreports-plugin/reports</jasperreports.outputDir>
-
-    <logger.urlRewriteFilter>INFO</logger.urlRewriteFilter>
-    <project.stage>RELEASE</project.stage>
 
     <rjs.javascript.optimizedDir>${rjs.outputDirectory}/scripts</rjs.javascript.optimizedDir>
     <rjs.optimizer>none</rjs.optimizer>
