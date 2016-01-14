@@ -51,6 +51,7 @@ import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
+import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.ObjectIdentityService;
 
@@ -79,6 +80,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
+	@Inject private MilestoneBindingManagerService milestoneBindingManager;
 
 	@Override
 	public void deleteProject(long projectId) {
@@ -97,6 +99,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		});
 
 		bindingService.removeCustomFieldBindings(projectId);
+		milestoneBindingManager.unbindAllMilestonesFromProject(project);
+
 
 		doDeleteProject(projectId);
 
@@ -124,11 +128,11 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 
 		RequirementLibrary requirementLibrary = project.getRequirementLibrary();
 		deleteLibraryContent(requirementLibrary, requirementDeletionHandler);
-		
+
 		//deleting the node associated to custom report library
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
 		deleteCustomReportLibraryNode(customReportLibrary);
-		
+
 		sessionFactory.getCurrentSession().evict(project);
 		project = genericProjectDao.findById(projectId);
 		project.accept(new ProjectVisitor() {

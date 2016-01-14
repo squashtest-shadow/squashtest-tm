@@ -96,6 +96,7 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
+import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
 import org.squashtest.tm.service.project.CustomGenericProjectFinder;
 import org.squashtest.tm.service.project.CustomGenericProjectManager;
 import org.squashtest.tm.service.project.GenericProjectCopyParameter;
@@ -143,6 +144,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private InfoListFinderService infoListService;
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
+
+	@Inject private MilestoneBindingManagerService milestoneBindingManager;
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomGenericProjectManagerImpl.class);
 

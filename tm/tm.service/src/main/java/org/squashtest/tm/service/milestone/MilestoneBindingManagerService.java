@@ -50,26 +50,26 @@ public interface MilestoneBindingManagerService {
 	 * @return list of milestone bound to the project
 	 */
 	List<Milestone> getAllBindedMilestoneForProject(Long projectId);
-	
+
 	/**
 	 * The list of milestone the current user can bind to the project
 	 * @param projectId the id of project
 	 * @return list of bindable milestone for the project (depend on user rights)
 	 */
 	List<Milestone> getAllBindableMilestoneForProject(Long projectId);
-	
+
 	/**
 	 *  The list of milestone the current user can bind to the project
-	 * @param projectId the id of project 
+	 * @param projectId the id of project
 	 * @param type the filter to be applied. If set to "global", will find only global milestone. If set to
-	 *  "personal" will find non global milestone owned by current user. If any other value is supplied will 
+	 *  "personal" will find non global milestone owned by current user. If any other value is supplied will
 	 *  return all non global non owned milestone (that the user can see).
 	 * @return list of bindable milestone for the project filtered by type (depend on user rights)
 	 */
 	List<Milestone> getAllBindableMilestoneForProject(Long projectId, String type);
-	
+
 	/**
-	 * 
+	 *
 	 * @param milestoneId the id of milestone
 	 * @return list of all bindable project for milestone
 	 */
@@ -82,7 +82,7 @@ public interface MilestoneBindingManagerService {
 	 * @return all project for the milestone
 	 */
 	List<GenericProject> getAllProjectForMilestone(Long milestoneId);
-	
+
 
 	/**
 	 * Unbind multiple milestone from a project. REMOVE this project from all those milestone perimeter.
@@ -90,6 +90,12 @@ public interface MilestoneBindingManagerService {
 	 * @param projectId id of the project
 	 */
 	void unbindMilestonesFromProject(List<Long> milestoneIds, Long projectId);
+
+	/**
+	 * Unbinds a project from all its Milestones if any. While we're at it, also remove the project from the milestones' perimeters
+	 * @param project
+	 */
+	void unbindAllMilestonesFromProject(GenericProject project);
 
 	/**
 	 * Unbind multiple projects from a milestone. Also REMOVE all those projects from the milestone perimeter.

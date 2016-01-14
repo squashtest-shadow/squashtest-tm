@@ -21,9 +21,11 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
@@ -32,6 +34,7 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject;
+import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
@@ -85,7 +88,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	private List<Milestone> getMilestoneYouCanSee(List<Milestone> allMilestones, GenericProject project) {
 
-		List<Milestone> filtered = new ArrayList<Milestone>();
+		List<Milestone> filtered = new ArrayList<>();
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			// admin can see all
 			filtered = allMilestones;
@@ -158,6 +161,10 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 		GenericProject project = projectDao.findById(projectId);
 		List<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
+		unbindMilestonesFromProject(project, milestones);
+	}
+
+	private void unbindMilestonesFromProject(GenericProject project, List<Milestone> milestones) {
 		project.unbindMilestones(milestones);
 
 		// Remove the project in different for loop because milestoneDao.unbindAllObjectsForProject may clear the
@@ -175,17 +182,21 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 			reqIds.addAll(CollectionUtils.collect(milestone.getRequirementVersions(), ID_COLLECTOR));
 
 			// BE CAREFULL if you refactor here : This method may clear the session.
-			milestoneDao.unbindAllObjectsForProject(milestone.getId(), projectId);
-
-
+			milestoneDao.unbindAllObjectsForProject(milestone.getId(), project.getId());
 		}
 		indexService.batchReindexTc(tcIds);
 		indexService.batchReindexReqVersion(reqIds);
 	}
 
 	@Override
-	public void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId) {
+	public void unbindAllMilestonesFromProject(@NotNull GenericProject project) {
+		unbindMilestonesFromProject(project, project.getMilestones());
 
+	}
+
+
+	@Override
+	public void unbindProjectsFromMilestone(List<Long> projectIds, Long milestoneId) {
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		List<GenericProject> projects = projectDao.findAllByIds(projectIds);
 		milestone.unbindProjects(projects);
@@ -202,7 +213,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	private List<Milestone> removeNonBindableStatus(List<Milestone> milestones) {
 
-		List<Milestone> filtered = new ArrayList<Milestone>();
+		List<Milestone> filtered = new ArrayList<>();
 
 		for (Milestone milestone : milestones) {
 			if (milestone.getStatus().isBindableToProject()) {
@@ -214,7 +225,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	private List<Milestone> filterByType(List<Milestone> milestones, String type) {
 
-		List<Milestone> filtered = null;
+		List<Milestone> filtered;
 		if ("global".equals(type)) {
 			// global milestone
 			filtered = getGlobalMilestones(milestones);
@@ -230,7 +241,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	private List<Milestone> getOtherMilestones(List<Milestone> milestones) {
-		List<Milestone> filtered = new ArrayList<Milestone>();
+		List<Milestone> filtered = new ArrayList<>();
 
 		for (Milestone milestone : milestones) {
 			if (isRestricted(milestone) && !isCreatedBySelf(milestone)) {
@@ -241,7 +252,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	private List<Milestone> getMilestoneCreatedBySelf(List<Milestone> milestones) {
-		List<Milestone> filtered = new ArrayList<Milestone>();
+		List<Milestone> filtered = new ArrayList<>();
 		for (Milestone milestone : milestones) {
 			if (isRestricted(milestone) && isCreatedBySelf(milestone)) {
 				filtered.add(milestone);
@@ -268,7 +279,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	private List<Milestone> getGlobalMilestones(List<Milestone> milestones) {
-		List<Milestone> filtered = new ArrayList<Milestone>();
+		List<Milestone> filtered = new ArrayList<>();
 		for (Milestone milestone : milestones) {
 			if (milestone.getRange().equals(MilestoneRange.GLOBAL)) {
 				filtered.add(milestone);

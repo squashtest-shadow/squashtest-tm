@@ -174,6 +174,11 @@ public class Milestone  {
 		genericProject.removeMilestone(this);
 	}
 
+	/**
+	 * CONSIDER THIS PRIVATE ! It should only be called by project.unbindMilestone or milestone.unbindProject
+	 * TODO find a better design
+	 * @param project
+	 */
 	public void removeProject(GenericProject project) {
 		Iterator<GenericProject> iter = projects.iterator();
 		while (iter.hasNext()) {

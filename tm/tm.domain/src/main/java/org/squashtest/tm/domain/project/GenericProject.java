@@ -406,6 +406,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 		milestone.removeProject(this);
 	}
 
+	/**
+	 * CONSIDER THIS PRIVATE ! It should only be called by project.unbindMilestone or milestone.unbindProject
+	 * TODO find a better design
+	 * @param milestone
+	 */
 	public void removeMilestone(Milestone milestone) {
 		Iterator<Milestone> iter = milestones.iterator();
 		while (iter.hasNext()) {
@@ -418,6 +423,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	}
 
 	public void unbindMilestones(List<Milestone> milestones) {
+		// TODO arg could be Collection instead of List
 		for (Milestone milestone : milestones) {
 			unbindMilestone(milestone);
 		}
