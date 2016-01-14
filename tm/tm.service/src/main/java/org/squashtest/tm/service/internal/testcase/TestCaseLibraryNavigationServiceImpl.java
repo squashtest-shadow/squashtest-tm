@@ -93,10 +93,10 @@ import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
-public class TestCaseLibraryNavigationServiceImpl extends
-AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode> implements
-TestCaseLibraryNavigationService {
-	
+public class TestCaseLibraryNavigationServiceImpl
+		extends AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>
+		implements TestCaseLibraryNavigationService {
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseLibraryNavigationServiceImpl.class);
 
 	@Inject
@@ -242,63 +242,62 @@ TestCaseLibraryNavigationService {
 		return getLibraryNodeDao().findNodeByPath(path);
 	}
 
-
-
 	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
 	public void addFolderToLibrary(@Id long destinationId, TestCaseFolder newFolder) {
 
 		TestCaseLibrary container = getLibraryDao().findById(destinationId);
 		container.addContent(newFolder);
 
-		// fix the nature and type for the possible nested test cases inside that folder
+		// fix the nature and type for the possible nested test cases inside
+		// that folder
 		new NatureTypeChainFixer().fix(newFolder);
 
 		// now proceed
 		getFolderDao().persist(newFolder);
 
-		// and then create the custom field values, as a better fix for [Issue 2061]
+		// and then create the custom field values, as a better fix for [Issue
+		// 2061]
 		new CustomFieldValuesFixer().fix(newFolder);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE' )"
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
 	public final void addFolderToFolder(@Id long destinationId, TestCaseFolder newFolder) {
 
 		TestCaseFolder container = getFolderDao().findById(destinationId);
 		container.addContent(newFolder);
 
-		// fix the nature and type for the possible nested test cases inside that folder
+		// fix the nature and type for the possible nested test cases inside
+		// that folder
 		new NatureTypeChainFixer().fix(newFolder);
 
 		// now proceed
 		getFolderDao().persist(newFolder);
 
-		// and then create the custom field values, as a better fix for [Issue 2061]
+		// and then create the custom field values, as a better fix for [Issue
+		// 2061]
 		new CustomFieldValuesFixer().fix(newFolder);
 	}
-
 
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCaseLibrary.class)
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
 	public void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Integer position) {
 
 		TestCaseLibrary library = testCaseLibraryDao.findById(libraryId);
 
 		if (!library.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
-		}
-		else {
-			if (position != null){
-				library.addContent(testCase,position);
-			}
-			else{
+		} else {
+			if (position != null) {
+				library.addContent(testCase, position);
+			} else {
 				library.addContent(testCase);
 			}
 			replaceInfoListReferences(testCase);
@@ -308,13 +307,12 @@ TestCaseLibraryNavigationService {
 		}
 	}
 
-
-
 	@Override
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary' , 'CREATE' )"
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCaseLibrary.class)
-	public void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
+	@PreventConcurrent(entityType = TestCaseLibrary.class)
+	public void addTestCaseToLibrary(@Id long libraryId, TestCase testCase, Map<Long, RawValue> customFieldValues,
+			Integer position, List<Long> milestoneIds) {
 		addTestCaseToLibrary(libraryId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
@@ -323,17 +321,16 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
+	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
 	public void addTestCaseToFolder(@Id long folderId, TestCase testCase, Integer position) {
 		TestCaseFolder folder = testCaseFolderDao.findById(folderId);
 
 		if (!folder.isContentNameAvailable(testCase.getName())) {
 			throw new DuplicateNameException(testCase.getName(), testCase.getName());
 		} else {
-			if (position != null){
+			if (position != null) {
 				folder.addContent(testCase, position);
-			}
-			else{
+			} else {
 				folder.addContent(testCase);
 			}
 			replaceInfoListReferences(testCase);
@@ -345,8 +342,9 @@ TestCaseLibraryNavigationService {
 	@Override
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder' , 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=TestCaseLibraryNode.class)
-	public void addTestCaseToFolder(@Id long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues, Integer position, List<Long> milestoneIds) {
+	@PreventConcurrent(entityType = TestCaseLibraryNode.class)
+	public void addTestCaseToFolder(@Id long folderId, TestCase testCase, Map<Long, RawValue> customFieldValues,
+			Integer position, List<Long> milestoneIds) {
 		addTestCaseToFolder(folderId, testCase, position);
 		initCustomFieldValues(testCase, customFieldValues);
 		milestoneService.bindTestCaseToMilestones(testCase.getId(), milestoneIds);
@@ -354,7 +352,6 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	public Long mkdirs(String folderpath) {
-
 
 		String path = folderpath.replaceFirst("^/", "").replaceFirst("/$", "");
 
@@ -378,7 +375,9 @@ TestCaseLibraryNavigationService {
 
 		switch (nullIdx) {
 		case -1:
-			return foundIds.get(foundIds.size() - 1); // all folders do exist, simply return the last element;
+			return foundIds.get(foundIds.size() - 1); // all folders do exist,
+														// simply return the
+														// last element;
 
 		case 0:
 			Long libraryId = projectDao.findByName(split[0].replaceAll("\\\\\\/", "/")).getTestCaseLibrary().getId();
@@ -412,10 +411,17 @@ TestCaseLibraryNavigationService {
 
 		for (int i = startIndex; i < names.length; i++) {
 			currentChild = new TestCaseFolder();
-			currentChild.setName(names[i].replaceAll("\\\\\\/", "/")); // unescapes escaped slashes '\/' to slashes '/'
+			currentChild.setName(names[i].replaceAll("\\\\\\/", "/")); // unescapes
+																		// escaped
+																		// slashes
+																		// '\/'
+																		// to
+																		// slashes
+																		// '/'
 			currentChild.setDescription("");
 
-			// if this is the first round in the loop we must initialize some variables
+			// if this is the first round in the loop we must initialize some
+			// variables
 			if (baseFolder == null) {
 				baseFolder = currentChild;
 				currentParent = currentChild;
@@ -432,13 +438,13 @@ TestCaseLibraryNavigationService {
 	}
 
 	/*
-	 * CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines that are related to this issue and
-	 * replace
-	 * it with another solution mentioned in the ticket
-	 * same for requirement import
+	 * CUF : this is a very quick fix for [Issue 2061], TODO : remove the lines
+	 * that are related to this issue and replace it with another solution
+	 * mentioned in the ticket same for requirement import
 	 */
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'IMPORT')"
+			+ OR_HAS_ROLE_ADMIN)
 	public ImportSummary importZipTestCase(InputStream archiveStream, long libraryId, String encoding) {
 
 		ImportSummary summary = testCaseImporter.importExcelTestCases(archiveStream, libraryId, encoding);
@@ -460,8 +466,8 @@ TestCaseLibraryNavigationService {
 	@PostFilter("hasPermission(filterObject, 'LINK')" + OR_HAS_ROLE_ADMIN)
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
-		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
-				.findAll();
+		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects())
+				: testCaseLibraryDao.findAll();
 
 	}
 
@@ -481,12 +487,8 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public File exportTestCaseAsExcel(
-			List<Long> libraryIds,
-			List<Long> nodeIds,
-			boolean includeCalledTests,
-			boolean keepRteFormat,
-			MessageSource messageSource) {
+	public File exportTestCaseAsExcel(List<Long> libraryIds, List<Long> nodeIds, boolean includeCalledTests,
+			boolean keepRteFormat, MessageSource messageSource) {
 
 		Collection<Long> allIds = findTestCaseIdsFromSelection(libraryIds, nodeIds, includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
@@ -496,11 +498,11 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public File searchExportTestCaseAsExcel(List<Long> nodeIds,
-			boolean includeCalledTests, boolean keepRteFormat,
+	public File searchExportTestCaseAsExcel(List<Long> nodeIds, boolean includeCalledTests, boolean keepRteFormat,
 			MessageSource messageSource) {
 
-		Collection<Long> allIds = findTestCaseIdsFromSelection(CollectionUtils.EMPTY_COLLECTION, nodeIds, includeCalledTests);
+		Collection<Long> allIds = findTestCaseIdsFromSelection(CollectionUtils.EMPTY_COLLECTION, nodeIds,
+				includeCalledTests);
 		allIds = securityFilterIds(allIds, "org.squashtest.tm.domain.testcase.TestCase", "EXPORT");
 
 		return excelService.searchExportAsExcel(new ArrayList<Long>(allIds), keepRteFormat, messageSource);
@@ -516,25 +518,25 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,Milestone activeMilestone) {
+	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,
+			Milestone activeMilestone) {
 
 		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
 
-		if (activeMilestone!=null) {
-			tcIds = filterTcIdsListsByMilestone(tcIds,activeMilestone);
+		if (activeMilestone != null) {
+			tcIds = filterTcIdsListsByMilestone(tcIds, activeMilestone);
 		}
 
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
 	}
 
-
 	@Override
 	public Collection<Long> findTestCaseIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
 
 		/*
-		 *  first, let's check the permissions on those root nodes
-		 *  By transitivity, if the user can read them then it will
-		 *  be allowed to read the test case below
+		 * first, let's check the permissions on those root nodes By
+		 * transitivity, if the user can read them then it will be allowed to
+		 * read the test case below
 		 */
 
 		Collection<Long> readLibIds = securityFilterIds(libraryIds, TestCaseLibrary.class.getName(), "READ");
@@ -559,7 +561,8 @@ TestCaseLibraryNavigationService {
 			boolean includeCalledTests) {
 
 		// first collect the test cases
-		// the implementation guarantee there are no duplicates in the returned collection
+		// the implementation guarantee there are no duplicates in the returned
+		// collection
 		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
 
 		// collect if needed the called test cases
@@ -576,18 +579,20 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	public List<String> getParentNodesAsStringList(Long nodeId) {
-		List<Long> ids = testCaseLibraryNodeDao.getParentsIds(nodeId);
-
-		TestCase tc = testCaseDao.findById(nodeId);
-		Long librabryId = tc.getLibrary().getId();
-
 		List<String> parents = new ArrayList<String>();
+		TestCase tc = testCaseDao.findById(nodeId);
 
-		parents.add("#TestCaseLibrary-" + librabryId);
+		if (tc != null) {
 
-		if (ids.size() > 1) {
-			for (int i = 0; i < ids.size() - 1; i++) {
-				parents.add("#TestCaseFolder-" + String.valueOf(ids.get(i)));
+			List<Long> ids = testCaseLibraryNodeDao.getParentsIds(nodeId);
+			Long librabryId = tc.getLibrary().getId();
+
+			parents.add("#TestCaseLibrary-" + librabryId);
+
+			if (ids.size() > 1) {
+				for (int i = 0; i < ids.size() - 1; i++) {
+					parents.add("#TestCaseFolder-" + String.valueOf(ids.get(i)));
+				}
 			}
 		}
 
@@ -595,17 +600,18 @@ TestCaseLibraryNavigationService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.testcase.TestCaseFolder', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
 	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
 		return testCaseFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.testcase.TestCaseLibrary', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
 		return testCaseFolderDao.findNamesInLibraryStartingWith(libraryId, nameStart);
 	}
-
 
 	@Override
 	public int countSiblingsOfNode(long nodeId) {
@@ -613,7 +619,6 @@ TestCaseLibraryNavigationService {
 	}
 
 	// ******************** more private code *******************
-
 
 	private void createCustomFieldValuesForTestCase(TestCase testCase) {
 		createCustomFieldValues(testCase);
@@ -624,51 +629,48 @@ TestCaseLibraryNavigationService {
 		}
 	}
 
-	private void replaceInfoListReferences(TestCase testCase){
+	private void replaceInfoListReferences(TestCase testCase) {
 
 		InfoListItem nature = testCase.getNature();
 
 		// if no nature set -> use the default item configured for the project
-		if (nature == null){
-			testCase.setNature( testCase.getProject().getTestCaseNatures().getDefaultItem());
-		}
-		else{
+		if (nature == null) {
+			testCase.setNature(testCase.getProject().getTestCaseNatures().getDefaultItem());
+		} else {
 			// validate the code
 			String natureCode = nature.getCode();
-			if (! infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)){
+			if (!infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)) {
 				throw new InconsistentInfoListItemException("nature", natureCode);
 			}
 
-			// in case the item used here is merely a reference we need to replace it with
+			// in case the item used here is merely a reference we need to
+			// replace it with
 			// a persistent instance
-			if (nature instanceof ListItemReference){
-				testCase.setNature(infoListItemService.findReference((ListItemReference)nature));
+			if (nature instanceof ListItemReference) {
+				testCase.setNature(infoListItemService.findReference((ListItemReference) nature));
 			}
 		}
-
 
 		// now unroll the same procedure with the type
 		InfoListItem type = testCase.getType();
 
-		if (type == null){
-			testCase.setType( testCase.getProject().getTestCaseTypes().getDefaultItem());
-		}
-		else{
+		if (type == null) {
+			testCase.setType(testCase.getProject().getTestCaseTypes().getDefaultItem());
+		} else {
 			String typeCode = type.getCode();
-			if (! infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)){
+			if (!infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)) {
 				throw new InconsistentInfoListItemException("type", typeCode);
 			}
-			if (type instanceof ListItemReference){
-				testCase.setType(infoListItemService.findReference((ListItemReference)type));
+			if (type instanceof ListItemReference) {
+				testCase.setType(infoListItemService.findReference((ListItemReference) type));
 			}
 		}
 	}
 
+	private class NatureTypeChainFixer implements TestCaseLibraryNodeVisitor {
 
-	private class NatureTypeChainFixer implements TestCaseLibraryNodeVisitor{
-
-		private void fix(TestCaseFolder folder){
-			for (TestCaseLibraryNode node : folder.getContent()){
+		private void fix(TestCaseFolder folder) {
+			for (TestCaseLibraryNode node : folder.getContent()) {
 				node.accept(this);
 			}
 		}
@@ -684,10 +686,10 @@ TestCaseLibraryNavigationService {
 		}
 	}
 
-	private class CustomFieldValuesFixer implements TestCaseLibraryNodeVisitor{
+	private class CustomFieldValuesFixer implements TestCaseLibraryNodeVisitor {
 
-		private void fix(TestCaseFolder folder){
-			for (TestCaseLibraryNode node : folder.getContent()){
+		private void fix(TestCaseFolder folder) {
+			for (TestCaseLibraryNode node : folder.getContent()) {
 				node.accept(this);
 			}
 		}
@@ -713,91 +715,85 @@ TestCaseLibraryNavigationService {
 
 	@Override
 	public List<Long> findAllTestCasesLibraryNodeForMilestone(Milestone activeMilestone) {
-		if (activeMilestone != null){
+		if (activeMilestone != null) {
 			List<Long> milestoneIds = new ArrayList<Long>();
 			milestoneIds.add(activeMilestone.getId());
 			return testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
-		}
-		else{
+		} else {
 			return new ArrayList<>();
 		}
 	}
 
-
 	@SuppressWarnings("unchecked")
-	private Collection<Long> filterTcIdsListsByMilestone(
-			Collection<Long> tcIds, Milestone activeMilestone) {
+	private Collection<Long> filterTcIdsListsByMilestone(Collection<Long> tcIds, Milestone activeMilestone) {
 
 		List<Long> tcInMilestone = findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 		return CollectionUtils.retainAll(tcIds, tcInMilestone);
 	}
 
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="sourceNodesIds", coercer=TCLNAndParentIdsCoercerForArray.class),
-							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="sourceNodesIds", coercer=TestCaseLibraryIdsCoercerForArray.class)}
-			)
-	public List<TestCaseLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId, @Ids("sourceNodesIds") Long[] sourceNodesIds){
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "sourceNodesIds", coercer = TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "sourceNodesIds", coercer = TestCaseLibraryIdsCoercerForArray.class) })
+	public List<TestCaseLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId,
+			@Ids("sourceNodesIds") Long[] sourceNodesIds) {
 		return super.copyNodesToFolder(destinationId, sourceNodesIds);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
-			)
-	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = TestCaseLibrary.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "targetId", coercer = TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "targetId", coercer = TestCaseLibraryIdsCoercerForArray.class) })
+	public List<TestCaseLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId,
+			@Ids("targetId") Long[] targetId) {
 		return super.copyNodesToLibrary(destinationId, targetId);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-							@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
-			)
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "targetId", coercer = TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "targetId", coercer = TestCaseLibraryIdsCoercerForArray.class) })
 	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId) {
 		super.moveNodesToFolder(destinationId, targetId);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
-			)
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = TestCaseLibrary.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "targetId", coercer = TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "targetId", coercer = TestCaseLibraryIdsCoercerForArray.class) })
 	public void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId) {
 		super.moveNodesToLibrary(destinationId, targetId);
 	}
 
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
-			)
-	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "targetId", coercer = TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "targetId", coercer = TestCaseLibraryIdsCoercerForArray.class) })
+	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId,
+			int position) {
 		super.moveNodesToFolder(destinationId, targetId, position);
 	}
 
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType = TestCaseLibrary.class, paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetId", coercer=TCLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetId", coercer=TestCaseLibraryIdsCoercerForArray.class)}
-			)
-	public void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId, int position) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = TestCaseLibrary.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "targetId", coercer = TCLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "targetId", coercer = TestCaseLibraryIdsCoercerForArray.class) })
+	public void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId,
+			int position) {
 		super.moveNodesToLibrary(destinationId, targetId, position);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetIds", coercer=TCLNAndParentIdsCoercerForList.class),
-					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetIds", coercer=TestCaseLibraryIdsCoercerForList.class)}
-			)
-	public OperationReport deleteNodes(@Ids("targetIds")List<Long> targetIds, Long milestoneId) {
+	@PreventConcurrents(batchsLocks = {
+			@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = "targetIds", coercer = TCLNAndParentIdsCoercerForList.class),
+			@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = "targetIds", coercer = TestCaseLibraryIdsCoercerForList.class) })
+	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId) {
 		return super.deleteNodes(targetIds, milestoneId);
 	}
 

@@ -49,7 +49,6 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.service.annotation.ArrayIdsCoercer;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
@@ -83,10 +82,9 @@ import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
-public class CampaignLibraryNavigationServiceImpl extends
-AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode> implements
-CampaignLibraryNavigationService {
-
+public class CampaignLibraryNavigationServiceImpl
+		extends AbstractLibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>
+		implements CampaignLibraryNavigationService {
 
 	@Inject
 	private CampaignLibraryDao campaignLibraryDao;
@@ -176,8 +174,7 @@ CampaignLibraryNavigationService {
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign', 'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
-	public int
-	addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
+	public int addIterationToCampaign(Iteration iteration, @Id long campaignId, boolean copyTestPlan) {
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		if (!campaign.isContentNameAvailable(iteration.getName())) {
@@ -198,20 +195,20 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.campaign.Campaign', 'WRITE') "+OR_HAS_ROLE_ADMIN)
-	@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")
-	public void moveIterationsWithinCampaign(@Id("destinationId")long destinationId, Long[] nodeIds, int position) {
+	@PreAuthorize("hasPermission(#destinationId, 'org.squashtest.tm.domain.campaign.Campaign', 'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
+	@PreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "destinationId")
+	public void moveIterationsWithinCampaign(@Id("destinationId") long destinationId, Long[] nodeIds, int position) {
 		/*
-		 * because :
-		 * 1 - iteration is not a campaign library node
-		 * 2 - an iteration will move only within the same campaign,
+		 * because : 1 - iteration is not a campaign library node 2 - an
+		 * iteration will move only within the same campaign,
 		 *
 		 * we can't use the TreeNodeMover and we don't need it anyway.
 		 */
 
 		List<Long> iterationIds = Arrays.asList(nodeIds);
 
-		Campaign c= campaignDao.findById(destinationId);
+		Campaign c = campaignDao.findById(destinationId);
 		List<Iteration> iterations = iterationDao.findAllByIds(iterationIds);
 
 		c.moveIterations(position, iterations);
@@ -235,11 +232,13 @@ CampaignLibraryNavigationService {
 
 	/*
 	 * refer to the comment in
-	 * org.squashtest.csp.tm.internal.service.TestCaseModificationServiceImpl#findVerifiedRequirementsByTestCaseId
+	 * org.squashtest.csp.tm.internal.service.TestCaseModificationServiceImpl#
+	 * findVerifiedRequirementsByTestCaseId
 	 *
 	 * (non-Javadoc)
 	 *
-	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#findIterationsByCampaignId(long)
+	 * @see org.squashtest.csp.tm.service.CampaignLibraryNavigationService#
+	 * findIterationsByCampaignId(long)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' , 'READ') "
@@ -269,7 +268,8 @@ CampaignLibraryNavigationService {
 	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.campaign.CampaignLibrary', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = CampaignLibrary.class)
-	public void addCampaignToCampaignLibrary(@Id long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId) {
+	public void addCampaignToCampaignLibrary(@Id long libraryId, Campaign campaign,
+			Map<Long, RawValue> customFieldValues, Long milestoneId) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
 		milestoneManager.bindCampaignToMilestone(campaign.getId(), milestoneId);
@@ -295,7 +295,8 @@ CampaignLibraryNavigationService {
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
 			+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
-	public void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId) {
+	public void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues,
+			Long milestoneId) {
 
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
@@ -344,8 +345,8 @@ CampaignLibraryNavigationService {
 	public List<CampaignLibrary> findLinkableCampaignLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 
-		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : campaignLibraryDao
-				.findAll();
+		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects())
+				: campaignLibraryDao.findAll();
 	}
 
 	@Override
@@ -364,16 +365,16 @@ CampaignLibraryNavigationService {
 		return deletionHandler.simulateSuiteDeletion(targetIds);
 	}
 
-
 	@Override
-	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'EXPORT')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize("hasPermission(#campaignId, 'org.squashtest.tm.domain.campaign.Campaign' ,'EXPORT')"
+			+ OR_HAS_ROLE_ADMIN)
 	public CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType) {
 
 		Campaign campaign = campaignDao.findById(campaignId);
 
 		WritableCampaignCSVModel model;
 
-		if ("L".equals(exportType)){
+		if ("L".equals(exportType)) {
 			model = simpleCampaignExportCSVModelProvider.get();
 		} else if ("F".equals(exportType)) {
 			model = fullCampaignExportCSVModelProvider.get();
@@ -388,24 +389,26 @@ CampaignLibraryNavigationService {
 	}
 
 	@Override
-	//Only functions for campaigns and campaign folders
-	//TODO make it work for iteration and test suites
+	// Only functions for campaigns and campaign folders
+	// TODO make it work for iteration and test suites
 	public List<String> getParentNodesAsStringList(Long nodeId) {
-		List<Long> ids = campaignLibraryNodeDao.getParentsIds(nodeId);
-
 		CampaignLibraryNode node = campaignLibraryNodeDao.findById(nodeId);
-
-		Long librabryId = node.getLibrary().getId();
-
 		List<String> parents = new ArrayList<String>();
+		
+		if (node != null) {
 
-		parents.add("#CampaignLibrary-"+librabryId);
+			List<Long> ids = campaignLibraryNodeDao.getParentsIds(nodeId);
 
-		if(ids.size() > 1){
-			for(int i=0; i<ids.size()-1; i++){
-				long currentId = ids.get(i);
-				CampaignLibraryNode currentNode = campaignLibraryNodeDao.findById(currentId);
-				parents.add(currentNode.getClass().getSimpleName()+"-"+String.valueOf(currentId));
+			Long librabryId = node.getLibrary().getId();
+
+			parents.add("#CampaignLibrary-" + librabryId);
+
+			if (ids.size() > 1) {
+				for (int i = 0; i < ids.size() - 1; i++) {
+					long currentId = ids.get(i);
+					CampaignLibraryNode currentNode = campaignLibraryNodeDao.findById(currentId);
+					parents.add(currentNode.getClass().getSimpleName() + "-" + String.valueOf(currentId));
+				}
 			}
 		}
 
@@ -416,9 +419,9 @@ CampaignLibraryNavigationService {
 	public Collection<Long> findCampaignIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
 
 		/*
-		 *  first, let's check the permissions on those root nodes
-		 *  By transitivity, if the user can read them then it will
-		 *  be allowed to read the campaigns below
+		 * first, let's check the permissions on those root nodes By
+		 * transitivity, if the user can read them then it will be allowed to
+		 * read the campaigns below
 		 */
 		Collection<Long> readLibIds = securityFilterIds(libraryIds, CampaignLibrary.class.getName(), "READ");
 		Collection<Long> readNodeIds = securityFilterIds(nodeIds, CampaignLibraryNode.class.getName(), "READ");
@@ -437,102 +440,99 @@ CampaignLibraryNavigationService {
 
 	}
 
-
 	@Override
 	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
 		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
 	}
 
 	@Override
-	@BatchPreventConcurrent(entityType=Iteration.class,coercer=TestSuiteToIterationCoercerForList.class)
+	@BatchPreventConcurrent(entityType = Iteration.class, coercer = TestSuiteToIterationCoercerForList.class)
 	public OperationReport deleteSuites(@Ids List<Long> suiteIds, boolean removeFromIter) {
 
 		return deletionHandler.deleteSuites(suiteIds, removeFromIter);
 	}
-	
-	// ####################### PREVENT CONCURRENCY OVERIDES ############################
-	
+
+	// ####################### PREVENT CONCURRENCY OVERIDES
+	// ############################
+
 	@Override
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	public void addFolderToFolder(@Id long destinationId, CampaignFolder newFolder) {
 		super.addFolderToFolder(destinationId, newFolder);
 	}
-	
+
 	@Override
 	@PreventConcurrent(entityType = CampaignLibrary.class)
 	public void addFolderToLibrary(@Id long destinationId, CampaignFolder newFolder) {
 		super.addFolderToLibrary(destinationId, newFolder);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="sourceNodesIds",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="sourceNodesIds",coercer=CLNAndParentIdsCoercerForArray.class)}
-			)
-	public List<CampaignLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId, @Ids("sourceNodesIds")Long[] sourceNodesIds) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "sourceNodesIds", coercer = CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "sourceNodesIds", coercer = CLNAndParentIdsCoercerForArray.class) })
+	public List<CampaignLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId,
+			@Ids("sourceNodesIds") Long[] sourceNodesIds) {
 		return super.copyNodesToFolder(destinationId, sourceNodesIds);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
-			)
-	public List<CampaignLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId")Long[] targetIds) {
-		return super.copyNodesToLibrary(destinationId,targetIds);
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = CampaignLibrary.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetId", coercer = CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetId", coercer = CLNAndParentIdsCoercerForArray.class) })
+	public List<CampaignLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId,
+			@Ids("targetId") Long[] targetIds) {
+		return super.copyNodesToLibrary(destinationId, targetIds);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
-			)
-	public void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetIds) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetId", coercer = CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetId", coercer = CLNAndParentIdsCoercerForArray.class) })
+	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetIds) {
 		super.moveNodesToFolder(destinationId, targetIds);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
-			)
-	public void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetIds, int position) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetId", coercer = CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetId", coercer = CLNAndParentIdsCoercerForArray.class) })
+	public void moveNodesToFolder(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetIds,
+			int position) {
 		super.moveNodesToFolder(destinationId, targetIds, position);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
-			)
-	public void moveNodesToLibrary(@Id("destinationId")long destinationId,@Ids("targetId") Long[] targetIds) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = CampaignLibrary.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetId", coercer = CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetId", coercer = CLNAndParentIdsCoercerForArray.class) })
+	public void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetIds) {
 		super.moveNodesToLibrary(destinationId, targetIds);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetId",coercer=CampaignLibraryIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
-			)
-	public void moveNodesToLibrary(@Id("destinationId")long destinationId,@Ids("targetId") Long[] targetIds, int position) {
+	@PreventConcurrents(simplesLocks = {
+			@PreventConcurrent(entityType = CampaignLibrary.class, paramName = "destinationId") }, batchsLocks = {
+					@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetId", coercer = CampaignLibraryIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetId", coercer = CLNAndParentIdsCoercerForArray.class) })
+	public void moveNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetIds,
+			int position) {
 		super.moveNodesToLibrary(destinationId, targetIds, position);
 	}
-	
+
 	@Override
-	@PreventConcurrents(
-			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetIds",coercer=CampaignLibraryIdsCoercerForList.class),
-					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetIds",coercer=CLNAndParentIdsCoercerForList.class)}
-			)
+	@PreventConcurrents(batchsLocks = {
+			@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetIds", coercer = CampaignLibraryIdsCoercerForList.class),
+			@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetIds", coercer = CLNAndParentIdsCoercerForList.class) })
 	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId) {
 		return super.deleteNodes(targetIds, milestoneId);
 	}
 
-	
-	// ###################### /PREVENT CONCURRENCY OVERIDES ############################
+	// ###################### /PREVENT CONCURRENCY OVERIDES
+	// ############################
 }

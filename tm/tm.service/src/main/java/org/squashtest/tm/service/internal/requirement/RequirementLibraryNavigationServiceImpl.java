@@ -496,20 +496,21 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	public List<String> getParentNodesAsStringList(Long nodeId) {
-		List<Long> ids = requirementLibraryNodeDao.getParentsIds(nodeId);
-
 		RequirementLibraryNode node = requirementLibraryNodeDao.findById(nodeId);
-		Long librabryId = node.getLibrary().getId();
-
 		List<String> parents = new ArrayList<String>();
-
-		parents.add("#RequirementLibrary-" + librabryId);
-
-		if (ids.size() > 1) {
-			for (int i = 0; i < ids.size() - 1; i++) {
-				long currentId = ids.get(i);
-				RequirementLibraryNode currentNode = requirementLibraryNodeDao.findById(currentId);
-				parents.add(currentNode.getClass().getSimpleName() + "-" + String.valueOf(currentId));
+		
+		if (node!=null) {
+			Long librabryId = node.getLibrary().getId();
+			List<Long> ids = requirementLibraryNodeDao.getParentsIds(nodeId);
+			
+			parents.add("#RequirementLibrary-" + librabryId);
+			
+			if (ids.size() > 1) {
+				for (int i = 0; i < ids.size() - 1; i++) {
+					long currentId = ids.get(i);
+					RequirementLibraryNode currentNode = requirementLibraryNodeDao.findById(currentId);
+					parents.add(currentNode.getClass().getSimpleName() + "-" + String.valueOf(currentId));
+				}
 			}
 		}
 
