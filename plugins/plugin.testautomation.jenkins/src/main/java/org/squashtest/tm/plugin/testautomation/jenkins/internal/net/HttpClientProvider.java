@@ -20,11 +20,20 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal.net;
 
+import java.io.IOException;
+import java.net.URL;
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.http.HttpException;
 import org.apache.http.HttpHost;
 import org.apache.http.HttpRequest;
 import org.apache.http.HttpRequestInterceptor;
-import org.apache.http.auth.*;
+import org.apache.http.auth.AuthScheme;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.AuthState;
+import org.apache.http.auth.Credentials;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.impl.auth.BasicScheme;
@@ -32,18 +41,12 @@ import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpCoreContext;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-
-import java.io.IOException;
-import java.net.URL;
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * TODO : have the client shutdown and disposed of when it is not needed after a certain amount
@@ -64,7 +67,7 @@ public class HttpClientProvider {
 			// If no auth scheme avaialble yet, try to initialize it
 			// preemptively
 			if (authState.getAuthScheme() == null) {
-				AuthScheme authScheme = (AuthScheme) context.getAttribute("preemptive-auth");
+				AuthScheme authScheme = new BasicScheme();
 				CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(HttpClientContext.CREDS_PROVIDER);
 				HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
 				if (authScheme != null) {
@@ -88,12 +91,6 @@ public class HttpClientProvider {
 	public HttpClientProvider() {
 		PoolingHttpClientConnectionManager  manager = new PoolingHttpClientConnectionManager();
 		manager.setMaxTotal(25);
-
-		// Pre-emptive authentication to speed things up
-		BasicHttpContext localHttpContext = new BasicHttpContext();
-
-		BasicScheme basicAuth = new BasicScheme();
-		localHttpContext.setAttribute("preemptive-auth", basicAuth);
 
 		client = HttpClients.custom()
 			.setConnectionManager(manager)
