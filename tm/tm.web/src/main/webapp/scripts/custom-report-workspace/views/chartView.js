@@ -118,10 +118,10 @@ define(["underscore","backbone","squash.translator","handlebars","squash.dateuti
     setBaseModelAttributes : function (json) {
       this.model.set("name",json.name);
       this.model.set("createdBy",json.createdBy);
-      this.model.set("createdOn",this.i18nFormatDate(json.createdOn));
+      this.model.set("createdOn",(this.i18nFormatDate(json.createdOn) + " " + this.i18nFormatHour(json.createdOn)));
       if (json.lastModifiedBy) {
         this.model.set("lastModifiedBy",json.lastModifiedBy);
-        this.model.set("lastModifiedOn",this.i18nFormatDate(json.lastModifiedOn));
+        this.model.set("lastModifiedOn",(this.i18nFormatDate(json.lastModifiedOn) + " " + this.i18nFormatHour(json.lastModifiedOn)));
       }
       this.model.set("axes",json.axes);
       this.model.set("filters",json.filters);
