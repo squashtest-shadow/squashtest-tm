@@ -86,7 +86,7 @@ define(["jquery", "./abstractCustomReportChart",
             label : this.getXAxisLabel(),//we have inversed axis for this kind of charts ie horizontal bar charts
             labelRenderer: $.jqplot.CanvasAxisLabelRenderer,
             labelOptions: {
-              angle : 0
+              angle : -90
             }
 					},
           xaxis : {
