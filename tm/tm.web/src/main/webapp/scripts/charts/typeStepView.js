@@ -270,7 +270,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 		loadFilter : function (colName, axis) {
 			var filter = this.findFilterByColumnLabel(colName);
-
+			var text;
 			var self = this;
 
 			if (filter){
@@ -327,13 +327,13 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 				}
 
-				var text = translator.get("chart.wizard.label.filter") + " " +operation +" " + values.join(" ; ");
+				text = translator.get("chart.wizard.label.filter") + " " +operation +" " + values.join(" ; ");
 
-				$("#filter-" + axis).text(text);
-
-
+			} else {
+				text = translator.get("chart.wizard.label.filter") + " " + translator.get("chart.wizard.label.filter.none");
 			}
-
+			$("#filter-" + axis).text(text);
+			
 		},
 
 		translateEnum : function (values, myEnum){
