@@ -32,6 +32,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
@@ -124,7 +125,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-			@RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
+			@Valid @RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
@@ -135,7 +136,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-			@RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
+			@Valid @RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
