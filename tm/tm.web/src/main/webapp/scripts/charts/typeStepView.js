@@ -77,11 +77,19 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		changeType : function (event){
 			this.showAxisByType(event.target.value);
 			this.changeExampleGraph(event.target.value);
+      this.changeExplanation(event.target.value);
 		},
+
+    changeExplanation : function (type) {
+      var key = "chart.chartType.explanation." + type;
+      var text = translator.get(key);
+      this.$el.find("#type-explanation").html(text);
+    },
 
 		initGraphExample : function (){
 
 			var type = this.model.get("type") || "PIE";
+      this.changeExplanation(type);
 			this.changeExampleGraph(type);
 
 		},
