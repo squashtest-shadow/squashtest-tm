@@ -47,15 +47,19 @@ label {
 	white-space: nowrap;
 }
 
+label.ui-helper-reset {
+	font-style: inherit;
+	color: inherit;
+}
+
 label:after {
 	content: "\0000a0: ";
 	float: none;
 }
 
-label.afterDisabled:after, input + label:after {
+label.afterDisabled:after, label.ui-helper-reset:after,  input + label:after {
 	content: "";
 }
-
 
 #workspace {
 	bottom: 0.2cm;

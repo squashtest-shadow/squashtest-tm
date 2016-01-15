@@ -190,7 +190,7 @@ tr.nodrop td.drag-handle {
 
 .processing-indicator{
 	background-image: url(../scripts/jquery/indicator.gif);
-	backgrond-repeat : no-repeat;
+	background-repeat : no-repeat;
 	height : 16px;
 	width : 16px;
 	display : inline-block;
@@ -419,7 +419,7 @@ th.width-tenperc, td.width-tenperc {
 
 
 .delete-confirm{
-	background-repear:no-repeat;
+	background-repeat:no-repeat;
 	background-image:url(../images/messagebox_confirm.png);	/** sprite-ref: sprites-icons; */
 	width : 72px;
 	height : 64px;
@@ -505,13 +505,10 @@ th.width-tenperc, td.width-tenperc {
 /* ---------------->>> Hypenation <<<------------------*/
 /* ---------------------------------------------------------*/
 p {
-    -ms-word-break: break-all;
     word-break: break-all;
-    word-break: break-word;
 	-moz-hyphens: auto;
 	-webkit-hyphens: auto;
 	hyphens: auto;
-	hyphenate: auto;
 }
 
 
@@ -527,6 +524,13 @@ p {
 	padding : 0.5em 0.5em;
 }
 
+/* this class should be used along with one of the .icon-chart-* icon definition class */
+.icon-chart {
+	min-height: 50px;
+	min-width: 50px;
+	display: table-cell;
+	width: 15%;
+}
 
 .icon-chart-requirement {
 	background-image : url(../images/Icone_Requirement3.png); /** sprite-ref: sprites-icons; */
@@ -563,8 +567,6 @@ p {
 	background-image : url(../images/Icone_Execution.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
-
-
 
 .illustration-graph {
 	background-image : url(../images/Illustration_Graph.png); /** sprite-ref: sprites-icons; */

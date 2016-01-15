@@ -38,16 +38,15 @@
 	        <div style="display: table; height: 50px; width: 100%; margin-bottom: 40px;">
 		     	<div style="display: table-cell; vertical-align:middle;">
 			        {{!--<![CDATA[--}}
-			        <input  type="checkbox" name="entity" value="{{@key}}"
+			        <input  id="{{@key}}" type="checkbox" name="entity" value="{{@key}}"
 			        {{#if (contains ../attributes.selectedEntity @key)}} checked="checked" {{/if}}    
 			         />  
 			        {{!--]]>--}}	
 		        </div>
-			    <span style="min-height: 50px; min-width: 50px; display: table-cell;width: 15%;" class="{{this}}" ></span>
-			    <span style="display: table-cell; width: 80%; vertical-align: middle;">
-			     	{{i18n @key prefix="chart.entityType."}}
-				</span>
-	
+				<label for="{{@key}}" class="{{this}} ui-helper-reset icon-chart" ></label>
+				<label for="{{@key}}" class="ui-helper-reset" style="display: table-cell; width: 80%; vertical-align: middle;">
+					{{i18n @key prefix="chart.entityType."}}
+				</label>
 			</div>
         </div>
        {{/each}}    
