@@ -24,7 +24,7 @@
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<title th:text="#{title.infoList.consultation}">Espace detail info list</title>
+<title th:text="#{title.infoList}">Espace detail info list</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 
 <style th:replace="admin/admin-subpage.frag :: subpage-css" />
@@ -58,7 +58,7 @@
     <div id="sub-page" class="sub-page">
     <div id="sub-page-header" class="sub-page-header shadow ui-corner-all">
         <div id="sub-page-title" class="sub-page-title">
-          <h2 th:text="#{title.infoList.consultation}">Espace detail champ
+          <h2 th:text="#{title.infoList}">Espace detail champ
             personnalisé de test</h2>
         </div>
 
@@ -340,8 +340,8 @@
 
     </table>
     <div class="popup-dialog-buttonpane">
-      <input class="confirm" type="button" th:value="#{label.addAnother}" value="addanother" data-def="mainbtn, evt=addanother"/> 
-      <input class="confirm" type="button" th:value="#{label.Add}" value="add" data-def="evt=confirm"/> 
+      <input class="confirm" type="button" th:value="#{label.addAnother}" value="addanother" data-def="mainbtn, evt=addanother"/>
+      <input class="confirm" type="button" th:value="#{label.Add}" value="add" data-def="evt=confirm"/>
       <input class="cancel" type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel"/>
     </div>
   </div>
