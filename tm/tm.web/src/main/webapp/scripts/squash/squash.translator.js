@@ -63,7 +63,9 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 	//initialization
 	window.squashtm = window.squashtm || {};
 	window.squashtm.message = window.squashtm.message || {};
-	var KEY = "squashtm.message-"+ window.squashtm.app.locale;
+	// sometimes, there's no w.s.a.locale, we fall back on navigator.language. Note that IE<11 use another prop but it somewhat works anyway.
+	var locale = window.squashtm.app.locale || window.navigator.language;
+	var KEY = "squashtm.message-"+ locale;
 	window.squashtm.message.cache = storage.get(KEY) || window.squashtm.message.cache || {};
 
 
