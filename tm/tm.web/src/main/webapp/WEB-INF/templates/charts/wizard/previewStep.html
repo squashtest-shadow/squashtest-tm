@@ -23,10 +23,10 @@
 <div th:fragment="chart-wizard-preview">
 <div class="display-table">
 		<div class="display-table-row control-group">
-          <label th:text="#{label.Name}" class="display-table-cell control-label" for="chart-name">
+          <label th:text="#{label.Name}" class="display-table-cell control-label" for="name">
           </label>
         <div class="controls display-table-cell">
-          <input id="chart-name" name="chartDefinition-name" type="text" maxlength="255"/>
+          <input id="chart-name" name="name" type="text" maxlength="255" data-prop="name" data-object="chartDefinition"/>
           <span class="help-inline">&nbsp;</span>
 		</div>
       </div>
