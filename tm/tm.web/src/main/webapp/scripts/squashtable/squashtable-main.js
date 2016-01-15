@@ -1829,10 +1829,18 @@ define(["jquery",
 				'pre-sort' : function(conf, value) {
 					// value must be an expression as follow : <columnindex>[-<asc|desc>]. If unspecified or invalid,
 					// the default sorting order will be 'asc'.
-					var sorting = /(\d+)(-(asc|desc))?/.exec(value);
-					var colIndex = sorting[1];
-					var order = (sorting[3] !== undefined) ? sorting[3] : 'asc';
-					conf.table.aaSorting = [ [ colIndex, order ] ];
+					//multiples values can be used, separated by |. ex : <columnindex 1>[-<asc|desc>]|<columnindex 2>[-<asc|desc>]
+					
+					var sortings = [];
+					var values = value.split("|");
+					_.each(values, function(val){
+						var sorting = /(\d+)(-(asc|desc))?/.exec(val);
+						var colIndex = sorting[1];
+						var order = (sorting[3] !== undefined) ? sorting[3] : 'asc';	
+						sortings.push([ colIndex, order ]);				
+					});
+
+					conf.table.aaSorting = sortings;
 				}
 			},
 			columns : {
