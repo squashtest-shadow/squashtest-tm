@@ -350,13 +350,13 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							}
 						})
 						.success(function(json) {
-							// not need to refresh yet
+							addITPIDialog.formDialog('close');
 						});
 				}
 
 				
 				
-				addITPIDialog.formDialog('close');
+				
 			});
 			
 			addITPIDialog.on('formdialogadd',function() {
