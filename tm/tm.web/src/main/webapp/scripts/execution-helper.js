@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
+/* TODO move that file in a folder */
 	define([], function() {	
 		
 		var dryRunStart = function(runnerUrl) {
