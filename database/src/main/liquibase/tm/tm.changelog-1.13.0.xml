@@ -1210,6 +1210,8 @@ values
 		indexName="idx_crln_relationship_clos_anc">
 		<column name="ANCESTOR_ID" />
 	</createIndex>
+	
+	<addUniqueConstraint tableName="CRLN_RELATIONSHIP_CLOSURE" columnNames="ANCESTOR_ID, DESCENDANT_ID"/>
 
 
 	<!-- CLOSURE-->
@@ -1457,7 +1459,7 @@ values
 	<sql>
 		create trigger ins_crln_after after insert on
 		CUSTOM_REPORT_LIBRARY_NODE
-		for each row insert into
+		for each row insert ignore into
 		CRLN_RELATIONSHIP_CLOSURE values (new.crln_id, new.crln_id, 0);
 	</sql>
 
@@ -1477,7 +1479,7 @@ values
 	<!-- when two rl nodes are attached : attach the subtrees as well. -->
 	<sql>
 		create trigger attach_crln_after after insert on CRLN_RELATIONSHIP
-		for each row insert into CRLN_RELATIONSHIP_CLOSURE
+		for each row insert ignore into CRLN_RELATIONSHIP_CLOSURE
 		select
 		c1.ancestor_id, c2.descendant_id, c1.depth+c2.depth+1
 		from
