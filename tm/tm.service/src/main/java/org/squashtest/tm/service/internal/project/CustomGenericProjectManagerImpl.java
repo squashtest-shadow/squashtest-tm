@@ -93,6 +93,7 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.infolist.InfoListFinderService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.PartyDao;
@@ -144,6 +145,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private InfoListFinderService infoListService;
 	@Inject
 	private CustomFieldBindingModificationService customFieldBindingModificationService;
+	@Inject
+	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
 
 	@Inject private MilestoneBindingManagerService milestoneBindingManager;
 
@@ -793,7 +796,10 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if (genericProjectDao.countByName(newName) > 0) {
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), newName);
 		}
+		CustomReportLibrary crl = project.getCustomReportLibrary();
+		CustomReportLibraryNode node = customReportLibraryNodeDao.findNodeFromEntity(crl);
 		project.setName(newName);
+		node.setName(newName);
 	}
 
 

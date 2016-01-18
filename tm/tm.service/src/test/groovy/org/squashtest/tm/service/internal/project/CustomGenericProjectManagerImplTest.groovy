@@ -20,35 +20,30 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import javax.inject.Inject;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Test;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.exception.NameAlreadyInUseException;
-import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService;
-import org.squashtest.tm.service.infolist.InfoListFinderService;
-import org.squashtest.tm.service.internal.repository.GenericProjectDao;
-import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
-import org.squashtest.tm.service.security.ObjectIdentityService;
-import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService;
+import org.hibernate.Session
+import org.hibernate.SessionFactory
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding
-import org.squashtest.tm.domain.infolist.InfoList;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.project.ProjectTemplate
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
-import org.squashtest.tm.service.project.GenericProjectCopyParameter;
-import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
-import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.domain.testautomation.TestAutomationServer
+import org.squashtest.tm.exception.NameAlreadyInUseException
+import org.squashtest.tm.service.customfield.CustomFieldBindingModificationService
+import org.squashtest.tm.service.infolist.InfoListFinderService
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
+import org.squashtest.tm.service.internal.repository.GenericProjectDao
+import org.squashtest.tm.service.project.GenericProjectCopyParameter
+import org.squashtest.tm.service.project.ProjectsPermissionManagementService
+import org.squashtest.tm.service.security.ObjectIdentityService
+import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
 
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * @author Gregory Fouquet
@@ -65,6 +60,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	CustomFieldBindingModificationService customFieldBindingModificationService = Mock()
 	PermissionEvaluationService permissionEvaluationService = Mock()
 	TestAutomationProjectManagerService taProjectService = Mock()
+	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
 
 	def setup() {
 		manager.sessionFactory = sessionFactory
@@ -76,6 +72,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		manager.customFieldBindingModificationService = customFieldBindingModificationService
 		manager.permissionEvaluationService = permissionEvaluationService
 		manager.taProjectService = taProjectService
+		manager.customReportLibraryNodeDao = customReportLibraryNodeDao
 	}
 
 	def "should not persist project with name in use"() {
@@ -141,7 +138,10 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	def "should change a project's name to a free name"() {
 		given:
 		Project project = new Project()
+		CustomReportLibrary crl = new CustomReportLibrary()
 		genericProjectDao.findById(10L) >> project
+		project.getCustomReportLibrary() >> crl
+		customReportLibraryNodeDao.findNodeFromEntity(_) >> new CustomReportLibraryNode()
 
 		and:
 		genericProjectDao.countByName("use your freedom a'choice") >> 0L
