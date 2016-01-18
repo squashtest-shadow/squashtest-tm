@@ -752,14 +752,14 @@
 
       <div class="std-margin-top">
         <input type="checkbox" id="export-test-case-includecalls" />
-        <span th:text="#{test-case.export.dialog.includecall}"></span>
+        <label th:text="#{test-case.export.dialog.includecall}"  for="export-test-case-includecalls" class="ui-helper-reset"/>
         <div class="nota-bene" th:text="#{test-case.export.dialog.includecall.description}"></div>
       </div>
 
 
       <div class="std-margin-top">
         <input type="checkbox" id="export-test-case-keepRteFormat" checked="checked" />
-        <span th:text="#{test-case.export.dialog.keeprteformat}">keep rte format</span>
+        <label th:text="#{test-case.export.dialog.keeprteformat}" for="export-test-case-keepRteFormat" class="ui-helper-reset">keep rte format</label>
         <div class="nota-bene" th:text="#{test-case.export.dialog.keeprteformat.description}">keep rte format
           description</div>
       </div>
