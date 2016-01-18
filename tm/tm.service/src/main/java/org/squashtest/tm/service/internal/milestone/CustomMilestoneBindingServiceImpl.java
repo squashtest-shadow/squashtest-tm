@@ -30,6 +30,7 @@ import javax.validation.constraints.NotNull;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;
@@ -132,7 +133,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	public List<GenericProject> getAllBindableProjectForMilestone(Long milestoneId) {
 
 		List<GenericProject> projectBoundToMilestone = getAllProjectForMilestone(milestoneId);
-		List<GenericProject> allProjects = projectDao.findAll();
+		List<GenericProject> allProjects = projectDao.findAll(new DefaultSorting("name"));
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		if (milestone.getRange().equals(MilestoneRange.RESTRICTED)) {
 			allProjects.removeAll(projectTemplateDao.findAll());

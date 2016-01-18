@@ -41,6 +41,8 @@ public interface GenericProjectDao extends CustomGenericProjectDao {
 	List<GenericProject> findAll();
 	
 	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);
+	
+	List<GenericProject> findAll(Sorting sorting);
 
 	List<GenericProject> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);
 
