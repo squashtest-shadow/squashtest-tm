@@ -21,7 +21,7 @@
 
 -->
 <div th:remove="all">
-	<!--  
+	<!--
 		This snippet of html describes the template for the test step panel of the tab panel of a test case.
 		Required data :
 			- testCase : the test case bean
@@ -33,12 +33,12 @@
 </div>
 
 
-<div id="test-steps-tabs-panel" 
-	 class="table-tab" 
-   th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable} , 
-            isLinkable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK')) and milestoneConf.editable} , 
+<div id="test-steps-tabs-panel"
+	 class="table-tab"
+   th:with="isWritable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'WRITE')) and milestoneConf.editable} ,
+            isLinkable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'LINK')) and milestoneConf.editable} ,
             isAttachable = ${(#authorization.expression('hasRole(''ROLE_ADMIN'')') or sec.hasPermission(testCase , 'ATTACH')) and milestoneConf.editable}">
-	
+
 	<!-- ==================== toolbar definition =================== -->
 	<div class="toolbar">
 
@@ -46,51 +46,51 @@
 				class="button test-step-toolbar-button" style="float: left" data-icon="ui-icon-zoomout"  th:text="#{test-case.step.button.collapse.label}"
 				th:title="#{test-case.step.button.collapse.label}">collapse</button>
 		</span>
-		
+
 		<span class="group" th:if="${isWritable}">
 			<button id="add-test-step-button"
 					data-icon="ui-icon-plusthick"
-				    class="button test-step-toolbar-button" 				    
+				    class="button test-step-toolbar-button"
 				    th:text="#{test-case.step.button.add.label}"
 				    th:title="#{test-case.step.button.add.label}">
 				    add a step
 			</button>
-			<a id="add-call-step-button" 
+			<a id="add-call-step-button"
 					data-icon="ui-icon-arrowthickstop-1-e"
 					class="button test-step-toolbar-button"
-                    href="javascript:void(0)"					
+                    href="javascript:void(0)"
 					th:text="#{test-case.step.button.call.label}"
 					th:title="#{test-case.step.button.call.label}">
 					call a test case
-			</a> 
+			</a>
 		</span>
-		
+
 		<span class="group" th:if="${isWritable}">
 			<button id="copy-step"
 					data-icon="ui-icon-clipboard"
-					class="button test-step-toolbar-button" 
+					class="button test-step-toolbar-button"
 					th:text="#{test-case.step.button.copy.label}"
 					th:title="#{test-case.step.button.copy.label}">
 					copy step(s)
 			</button>
-			<button id="paste-step" 
+			<button id="paste-step"
 					data-icon="ui-icon-copy"
-					class="button test-step-toolbar-button" 
+					class="button test-step-toolbar-button"
 					th:text="#{test-case.step.button.paste.label}"
 					th:title="#{test-case.step.button.paste.label}">
 					paste step(s)
-			</button> 
+			</button>
 		</span>
-		
+
 		<span class="group" th:if="${isWritable}">
 			<button id="delete-all-steps-button"
 					data-icon="ui-icon-trash"
-				     class="button test-step-toolbar-button" 				     
+				     class="button test-step-toolbar-button"
 				     th:text="#{test-case.step.delete.button}"
 				     th:title="#{test-case.step.delete.button}">
 					 remove selected steps
 			</button>
-		</span>	
+		</span>
 	</div>
 
 	<!-- ==================== /toolbar definition =================== -->
@@ -104,7 +104,7 @@
 					<th class="not-displayed">id (masked)</th>
 					<th>#</th>
 					<th th:text="#{table.column-header.has-requirement.label}"> </th> <!-- requirements -->
-					<th th:text="#{table.column-header.has-attachment.label}">0</th>				
+					<th th:text="#{table.column-header.has-attachment.label}">0</th>
 					<th th:text="#{label.Actions}">Actions</th>
 					<th th:text="#{label.ExpectedResults}">Expected results</th>
 					<th> </th> <!-- browse -->
@@ -118,36 +118,36 @@
 	</div>
 
 	<!-- ==================== /table definition =================== -->
-	
-	
+
+
 	<!-- ==================== Add Test Step Dialog ==================== -->
-	
+
 	<div id="add-test-step-dialog" class="not-displayed popup-dialog" th:title="#{test-case.step.button.add.label}" th:if="${isWritable}">
-		
+
 		<table id="add-test-step-custom-fields">
 			<!--  populated using ajax -->
 		</table>
-		
+
 		<div class="centered" style="text-align: center; margin-bottom: 2em;">
-			<label style="font-weight: bold;" 
+			<label style="font-weight: bold;"
 				for="add-test-step-action" th:text="#{label.Actions}">Actions
 			</label>
 			<textarea data-def="isrich" id="add-test-step-action"></textarea>
 		</div>
-		
+
 		<div class="centered">
 			<label style="font-weight: bold;" for="add-test-step-result"
 				   th:text="#{label.ExpectedResults}"> Expected Results
 			</label>
 			<textarea data-def="isrich" id="add-test-step-result"></textarea>
-		</div>	
-    
+		</div>
+
         <div class="popup-dialog-buttonpane">
           <input type="button" th:value="#{label.addAnother}" data-def="mainbtn, evt=addandmore" />
           <input type="button" th:value="#{label.Add}"        data-def="evt=add"      />
           <input type="button" th:value="#{label.Close}"     data-def="evt=cancel"   />
         </div>
-		
+
 	</div>
 
 	<!-- ==================== /Add Test Step Dialog ==================== -->
@@ -163,19 +163,20 @@
 				<span data-def="state=empty-selec" th:text="#{message.EmptyTableSelection}">no selection</span>
 			</div>
 		</div>
-		<div class="popup-dialog-buttonpane"> 
-			<input type="button" th:value="#{label.Confirm}" data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm"/> 
-			<input type="button" th:value="#{label.Cancel}" data-def="mainbtn=empty-selec, evt=cancel"/> 
-		</div>
+		<div class="popup-dialog-buttonpane">
+			<input type="button" th:value="#{label.Confirm}" data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm"/>
+			<input type="button" th:value="#{label.Close}" data-def="state=empty-selec, evt=cancel"/>
+      <input type="button" th:value="#{label.Cancel}" data-def="state=single-tp multiple-tp, evt=cancel"/>
+    </div>
 	</div>
 	<!-- ==================== /Remove Test Step Row Dialog ==================== -->
     <!-- ==================== Pick call step dataset Dialog ==================== -->
     <div id="pick-call-step-dataset-dialog" class="not-displayed popup-dialog" th:title="#{title.callstepdataset.PickDataset}">
-    
+
       <div data-def="state=loading" th:include="fragments-utils/static-panels :: custom-please-wait" th:with="height='200px'">
         please wait
       </div>
-      
+
       <div data-def="state=main">
         <div class="display-table-row">
           <input type="radio" name="param-mode" value="choice1" class="display-table-cell"/>
@@ -186,7 +187,7 @@
             <span id="pick-call-step-dataset-nonavailable" class="not-displayed" th:text="#{label.callstepdataset.NoDatasetAvailable}"></span>
           </div>
         </div>
-        
+
         <div class="display-table-row">
           <input type="radio" name="param-mode" value="choice2" class="display-table-cell"/>
           <div class="display-table-cell">
@@ -196,21 +197,21 @@
           </div>
         </div>
       </div>
-    
+
       <div class="popup-dialog-buttonpane">
           <input type="button" th:value="#{label.Add}" data-def="mainbtn, evt=confirm, state=main"/>
           <input type="button" th:value="#{label.Close}" data-def="evt=cancel, state=main loading"/>
       </div>
-    </div>    
+    </div>
     <!-- ==================== /Pick call step dataset Dialog =================== -->
 	<!-- ==================== initialisation ==================== -->
-	
+
 	<script type="text/javascript" th:inline="javascript">
 		/*<![CDATA[*/
 	require([ "common" ], function(common) {
 		require(["domReady", "test-case-management"], function(domReady,testCaseManagement){
 			domReady(function(){
-				
+
 				var settings = {
 					basic : {
 							testCaseUrl : /*[[@{/test-cases/__${testCase.id}__}]]*/"/squash/test-cases/1",
@@ -220,8 +221,8 @@
 							totalRows : /*[[${#lists.size(testCase.steps)}]]*/57,
 							tableData : /*[[${stepsData}]]*/[],
 							cufDefinitions : /*[[${cufDefinitions}]]*/[],
-					},	
-					
+					},
+
 					language : {
 						oklabel : /*[[#{label.Yes}]]*/"okay",
 						cancellabel : /*[[#{label.Cancel}]]*/"nope",
@@ -245,15 +246,15 @@
 						edit : /*[[#{label.edit}]]*/"edit",
 						warnCopy : /*[[#{message.warnCopyToDifferentLibrary}]]*/"warning : you may lose data"
 					},
-					
+
 					permissions :{
 						isWritable : /*[[${isWritable}]]*/true,
 						isLinkable : /*[[${isLinkable}]]*/true,
 						isAttachable : /*[[${isAttachable}]]*/true
-					}					
+					}
 
 				};
-				
+
 				testCaseManagement.initStepTablePanel(settings);
 			})
 		});
