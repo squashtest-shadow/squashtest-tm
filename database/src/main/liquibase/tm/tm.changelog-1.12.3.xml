@@ -332,7 +332,7 @@
 	</changeSet>	
 	
 	
-	<changeSet id="tm-1.12.3-issue-3-2" author="bsiri" dbms="mysql">
+	<changeSet id="tm-1.12.3-issue-3-3" author="bsiri" dbms="mysql">
 
 
 		<comment> redefining some triggers for table CLN_RELATIONHIP and CAMPAIGN_LIBRARY_NODE</comment>
