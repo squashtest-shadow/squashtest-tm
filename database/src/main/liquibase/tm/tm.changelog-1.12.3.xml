@@ -218,35 +218,10 @@
 		
   <!-- ====================================================================================================================================
   	step 2 : now we add unique indexes on them to prevent further corruption creeping in (unlikely, but better safe than sorry)
-  	To be sure we first drop them if exist (because they might have been declared already via TM 1.11.7)
   ==================================================================================================================================== -->
 	
 	
 	<changeSet id="tm-1.12.3-issue-5965-2-1" author="bsiri">
-		<preConditions onFail="CONTINUE">
-			<indexExists indexName="uniq_tcln_clos" tableName="TCLN_RELATIONSHIP_CLOSURE"/>
-		</preConditions>
-		<comment>droping the constraints if exist in order to prevent double declaration</comment>
-		<dropUniqueConstraint constraintName="uniq_tcln_clos" tableName="TCLN_RELATIONSHIP_CLOSURE"/>
-	</changeSet>
-	
-	<changeSet id="tm-1.12.3-issue-5965-2-2" author="bsiri">
-		<preConditions onFail="CONTINUE">
-			<indexExists indexName="uniq_rln_clos" tableName="RLN_RELATIONSHIP_CLOSURE"/>
-		</preConditions>
-		<comment>droping the constraints if exist in order to prevent double declaration</comment>
-		<dropUniqueConstraint constraintName="uniq_rln_clos" tableName="RLN_RELATIONSHIP_CLOSURE"/>
-	</changeSet>
-	
-	<changeSet id="tm-1.12.3-issue-5965-2-3" author="bsiri">
-		<preConditions onFail="CONTINUE">
-			<indexExists indexName="uniq_cln_clos" tableName="CLN_RELATIONSHIP_CLOSURE"/>
-		</preConditions>
-		<comment>droping the constraints if exist in order to prevent double declaration</comment>
-		<dropUniqueConstraint constraintName="uniq_cln_clos" tableName="CLN_RELATIONSHIP_CLOSURE"/>
-	</changeSet>
-	
-	<changeSet id="tm-1.12.3-issue-5965-2-4" author="bsiri">
 		<comment>now we can add the unique constraints on the closure tables</comment>
 	
  		<addUniqueConstraint constraintName="uniq_tcln_clos" columnNames="ancestor_id, descendant_id" tableName="TCLN_RELATIONSHIP_CLOSURE" />
