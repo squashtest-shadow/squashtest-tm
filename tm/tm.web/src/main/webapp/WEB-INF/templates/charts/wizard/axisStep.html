@@ -51,8 +51,14 @@
 
 <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.axis}"/>
 <br />
-<span  th:text="#{chart.wizard.creation.step.sub-message.axis}"/>
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis}"/>
 <br />
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis.sum}"/>
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis.count}"/>
+<br />
+<span  th:utext="#{chart.wizard.creation.step.sub-message.axis.aggregate}"/>
 <br />
 <br />
 {{#each attributes.columnPrototypes}}
