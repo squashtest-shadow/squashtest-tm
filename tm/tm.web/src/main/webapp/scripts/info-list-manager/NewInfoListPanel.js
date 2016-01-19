@@ -322,6 +322,7 @@ define(
 					var tgt = event.currentTarget;
 					var opt = this.options.findWhere({ code: $(tgt).data("code").toString() });
 					this.iconPicker = this.iconPicker || new IconPicker({ el: "#icon-picker-dialog", model: { icon: opt.get("iconName") } });
+					this.iconPicker.open();
 				},
 
 				onIconPicked: function(event) {

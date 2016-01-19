@@ -77,6 +77,10 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 				this.$icons().removeClass("low-opacity");
 			}
 		},
+		
+		open : function(){
+			this.$el.confirmDialog("open");
+		},
 
 
 		cancel : function(event) {
