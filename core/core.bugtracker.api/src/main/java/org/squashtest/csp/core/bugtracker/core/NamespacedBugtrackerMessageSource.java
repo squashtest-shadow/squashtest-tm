@@ -25,9 +25,11 @@ import java.util.Locale;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.NoSuchMessageException;
+import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.core.io.ResourceLoader;
 
-public class NamespacedBugtrackerMessageSource implements MessageSource {
+public class NamespacedBugtrackerMessageSource implements MessageSource, ResourceLoaderAware {
 
 	private MessageSource source;
 
@@ -64,4 +66,10 @@ public class NamespacedBugtrackerMessageSource implements MessageSource {
 		return source.getMessage(namespacedResolvable, locale);
 	}
 
+	@Override
+	public void setResourceLoader(ResourceLoader resourceLoader) {
+		if (source instanceof ResourceLoaderAware) {
+			((ResourceLoaderAware) source).setResourceLoader(resourceLoader);
+		}
+	}
 }
