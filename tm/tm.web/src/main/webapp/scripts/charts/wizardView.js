@@ -140,6 +140,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
 		loadI18n : function (){
 
 			var chartTypes = this.addPrefix(this.model.get("chartTypes"), "chartType.");
+      var chartTypeExplanation = this.addPrefix(this.model.get("chartTypes"), "chartType.explanation.");
 			var entityTypes = this.addPrefix(_.keys(this.model.get("entityTypes")), "entityType.");
 			var operation = this.addPrefix(_.uniq(this.flatten(this.model.get("dataTypes"))), "operation.");
       var columnsWithoutCuf = _.map(this.model.get("columnPrototypes"),function (protosForEntityType) {
@@ -149,7 +150,7 @@ define([ "jquery", "backbone", "workspace.routing", "squash.translator", "./enti
       });
 			var columns = this.addPrefix(_.pluck(this.flatten(columnsWithoutCuf), "label") ,"column.");
 
-			var keys = chartTypes.concat(entityTypes, operation, columns);
+			var keys = chartTypes.concat(chartTypeExplanation,entityTypes, operation, columns);
 
 			var result = this.addPrefix(keys, "chart.");
 

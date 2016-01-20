@@ -22,6 +22,8 @@
 -->
 <div th:fragment="chart-wizard-type">
 
+
+
 {{#*inline "axe"}}
 <div id="{{name}}">
 
@@ -67,8 +69,7 @@
 
 <span style="font-weight: bold;" th:text="#{chart.wizard.creation.step.message.type}"/>
 <br />
-<br />
-
+<div id="type-explanation"></div>
 <div>
  <ul style="list-style: none;">
         {{#each attributes.chartTypes}}
