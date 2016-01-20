@@ -357,13 +357,13 @@
 	+ "where st.class = CallTestStep "
 	+ "and tc.id in (:testCaseIds) "
 	+ "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id , dataset.name, st.delegateParameterValues "),
-
+	
 	@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType, case when cfv.class = TagsValue then group_concat(so.label, 'order by', so.label, 'asc', '|')  else '' end "
-	+ "from CustomFieldValue cfv left join cfv.selectedOptions so join cfv.binding binding join binding.customField cf "
-	+ "where cfv.boundEntityId in ("
-	+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
-	+ ") "
-	+ "and cfv.boundEntityType = 'TEST_STEP'"
+	+ "from CustomFieldValue cfv left join cfv.selectedOptions so join cfv.binding binding join binding.customField cf, "
+	+ "TestCase tc inner join tc.steps st "
+	+ "where cfv.boundEntityId = st.id "
+	+ "and cfv.boundEntityType = 'TEST_STEP' "
+	+ "and tc.id in (:testCaseIds) "
 	+ "group by cfv.id, cf.id"),
 
 	@NamedQuery(name = "testStep.findBasicInfosByTcId",

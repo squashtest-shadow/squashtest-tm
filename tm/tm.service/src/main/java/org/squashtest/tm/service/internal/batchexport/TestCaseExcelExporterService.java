@@ -47,6 +47,8 @@ import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 
 @Service
 public class TestCaseExcelExporterService {
+	private static final int BATCH_SIZE = 50;
+
 	@Inject
 	private ExportDao exportDao;
 
@@ -73,10 +75,10 @@ public class TestCaseExcelExporterService {
 	
 	private File doExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, ExcelExporter exporter){
 
-		// let's chunk the job by batches of 20 test cases
+		// let's chunk the job by batches of 50 test cases
 		List<Long> ids;
 		int idx=0;
-		int max = Math.min(idx+20, testCaseIds.size());
+		int max = Math.min(idx+BATCH_SIZE, testCaseIds.size());
 		exporter.setMessageSource(messageSource);
 
 		Map<Long, String> pathById = new HashMap<Long, String>(testCaseIds.size());
@@ -93,7 +95,7 @@ public class TestCaseExcelExporterService {
 			exporter.appendToWorkbook(model, keepRteFormat);
 
 			idx = max;
-			max = Math.min(idx+20, testCaseIds.size());
+			max = Math.min(idx+BATCH_SIZE, testCaseIds.size());
 		}
 
 		return exporter.print();
