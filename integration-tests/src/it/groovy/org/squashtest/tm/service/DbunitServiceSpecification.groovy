@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service
 
+import javax.inject.Inject
+
 import org.hibernate.ObjectNotFoundException
 import org.hibernate.Query
 import org.hibernate.Session
@@ -32,9 +34,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.it.config.UnitilsConfig
-import spock.lang.Specification
 
-import javax.inject.Inject
+import spock.lang.Specification
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
@@ -42,7 +43,7 @@ import javax.inject.Inject
  */
 @ContextConfiguration(classes = [ServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(defaultRollback = true)
 abstract class DbunitServiceSpecification extends Specification {
 
 	@Inject
@@ -72,7 +73,6 @@ abstract class DbunitServiceSpecification extends Specification {
 
 		try {
 			found = (getSession().get(entityClass, id) != null)
-
 		} catch (ObjectNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
@@ -188,5 +188,4 @@ abstract class DbunitServiceSpecification extends Specification {
 			(sourceOjbect instanceof BigInteger) ? ((BigInteger) sourceOjbect).longValue() : sourceOjbect
 		}
 	}
-
 }

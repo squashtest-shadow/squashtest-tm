@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service
 
+import javax.inject.Inject
+
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.springframework.test.context.ContextConfiguration
@@ -27,22 +29,24 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
-import spock.lang.Specification
+import org.squashtest.it.utils.SkipAll
 
-import javax.inject.Inject
+import spock.lang.Specification
 
 /**
  * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.
  * @deprecated Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
  */
-@ContextConfiguration(classes = [ServiceSpecConfig, DataSourceConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
+@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+@TransactionConfiguration()
 @Deprecated
+@SkipAll //Skip all child test for the moment
 abstract class HibernateServiceSpecification extends Specification {
 	@Inject
 	SessionFactory sessionFactory
 
-	Session getCurrentSession() { sessionFactory.currentSession }
-
+	Session getCurrentSession() {
+		sessionFactory.currentSession
+	}
 }

@@ -20,38 +20,30 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
-import org.springframework.test.context.TestPropertySource
-import org.squashtest.it.config.DynamicServiceConfig
-import org.squashtest.it.config.SecuritySpecConfig
-import org.squashtest.it.config.ServiceSpecConfig
-import org.squashtest.it.config.UnitilsConfig
-import org.squashtest.tm.service.BugTrackerConfig
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.RepositoryConfig
-import org.squashtest.tm.service.SchedulerConfig
-import org.squashtest.tm.service.SecurityConfig
-import org.squashtest.tm.service.TmServiceConfig
-import spock.lang.IgnoreRest
-
 import javax.inject.Inject
+import javax.sql.DataSource
 
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.config.SecuritySpecConfig
+import org.squashtest.it.config.UnitilsConfig
 import org.squashtest.it.stub.security.StubAuthentication
+import org.squashtest.it.utils.SkipAll
+import org.squashtest.tm.service.SecurityConfig
 import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService
 import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
 
+import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
-
-import javax.sql.DataSource
 
 //@ContextConfiguration(classes = [ServiceSpecConfig,
 //	UnitilsConfig,
@@ -65,6 +57,7 @@ import javax.sql.DataSource
 @ContextConfiguration(classes = [ UnitilsConfig, SecurityConfig, SecuritySpecConfig ])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@SkipAll
 class JdbcManageableAclServiceIT extends Specification {
 	@Inject DataSource dataSource
 	@Inject ManageableAclService manageableService

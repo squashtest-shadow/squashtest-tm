@@ -20,30 +20,28 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.security.acls.domain.PrincipalSid;
-import org.springframework.security.acls.jdbc.BasicLookupStrategy;
-import org.springframework.security.acls.model.ObjectIdentity;
-import org.springframework.security.acls.model.Sid;
+import org.springframework.security.acls.domain.PrincipalSid
+import org.springframework.security.acls.jdbc.BasicLookupStrategy
+import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.transaction.TransactionConfiguration
+import org.squashtest.it.utils.SkipAll
+import org.squashtest.test.unitils.dbunit.datasetloadstrategy.DeleteInsertLoadStrategy
+import org.unitils.dbunit.annotation.DataSet
 
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.squashtest.test.unitils.dbunit.datasetloadstrategy.DeleteInsertLoadStrategy;
-import org.unitils.dbunit.annotation.DataSet;
-import org.unitils.dbunit.datasetloadstrategy.impl.CleanInsertLoadStrategy;
-import org.unitils.dbunit.datasetloadstrategy.impl.InsertLoadStrategy;
-
-import spock.lang.Specification;
-import spock.unitils.UnitilsSupport;
+import spock.lang.Specification
+import spock.unitils.UnitilsSupport
 
 @ContextConfiguration(["classpath:service/dependencies-scan-context.xml",
-	"classpath:unitils-datasource-context.xml", "classpath*:META-INF/**/bundle-context.xml",
+	, "classpath*:META-INF/**/bundle-context.xml",
 	"classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml",
 	"classpath*:META-INF/**/dynamicmanager-context.xml",
 	"classpath:it-config-context.xml"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
+@SkipAll
 class LookupStrategyConfigIT extends Specification {
 	@Inject BasicLookupStrategy lookupStrategy
 

@@ -20,10 +20,9 @@
  */
 package org.squashtest.it.stub.security
 
-import org.springframework.stereotype.Component
 import org.squashtest.tm.service.security.ObjectIdentityService
 
-@Component
+
 class StubObjectIdentityService implements ObjectIdentityService {
 
 	@Override
@@ -38,6 +37,6 @@ class StubObjectIdentityService implements ObjectIdentityService {
 	@Override
 	public void removeObjectIdentity(long entityId, Class<?> entityType) {
 		// noop
-		
+
 	}
 }

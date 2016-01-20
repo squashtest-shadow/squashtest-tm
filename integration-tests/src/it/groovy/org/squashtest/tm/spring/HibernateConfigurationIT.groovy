@@ -20,26 +20,38 @@
  */
 package org.squashtest.tm.spring
 
+
+
+
+
+
+
+import javax.inject.Inject
+import javax.transaction.Transaction
+
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.springframework.boot.test.IntegrationTest
+import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.squashtest.it.config.RepositorySpecConfig
-
+import org.springframework.test.context.transaction.TransactionConfiguration
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.ServiceSpecConfig
+import org.squashtest.tm.service.BugTrackerConfig
 import org.squashtest.tm.service.RepositoryConfig
+import org.squashtest.tm.service.SchedulerConfig
+import org.squashtest.tm.service.TmServiceConfig
 
-import javax.inject.Inject;
+import spock.lang.Specification
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import spock.lang.Specification;
-
-@ContextConfiguration(classes = [ RepositorySpecConfig, DataSourceConfig, RepositoryConfig ])
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
-@TransactionConfiguration(transactionManager="squashtest.tm.hibernate.TransactionManager")
+@ContextConfiguration( classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig], loader = SpringApplicationContextLoader.class)
+@TransactionConfiguration()
+@IntegrationTest
 class HibernateConfigurationIT  extends Specification {
 	@Inject SessionFactory sessionFactory;
+
 
 	def "should have injected session factory"() {
 		expect:

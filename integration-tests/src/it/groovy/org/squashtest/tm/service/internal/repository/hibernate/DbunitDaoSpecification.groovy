@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import javax.inject.Inject
+
 import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -30,11 +32,10 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.DynamicDaoConfig
 import org.squashtest.it.config.RepositorySpecConfig
 import org.squashtest.it.config.UnitilsConfig
-
+import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.RepositoryConfig
-import spock.lang.Specification
 
-import javax.inject.Inject
+import spock.lang.Specification
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
@@ -42,8 +43,9 @@ import javax.inject.Inject
  */
 @ContextConfiguration(classes = [ RepositorySpecConfig, UnitilsConfig, DynamicDaoConfig, RepositoryConfig ])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@TransactionConfiguration( defaultRollback = true)
 @Transactional
+@SkipAll
 abstract class DbunitDaoSpecification extends Specification {
 
 	@Inject
@@ -68,5 +70,4 @@ abstract class DbunitDaoSpecification extends Specification {
 		def result = query.uniqueResult();
 		return (result != 0)
 	}
-
 }

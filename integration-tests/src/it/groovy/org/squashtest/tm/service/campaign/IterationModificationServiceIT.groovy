@@ -34,7 +34,6 @@ import org.squashtest.tm.domain.customfield.RenderingLocation
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.DuplicateNameException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
@@ -168,9 +167,9 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 
 		then: "fields from test step should be denormalized"
 		step1denofields.size() == 2
-		step1denofields*.code == ["cufUprim", "cufT" ]
+		step1denofields*.code == ["cufUprim", "cufT"]
 		step1denofields*.value == ["Uprim", "T"]
-		step1denofields*.renderingLocations == [[RenderingLocation.STEP_TABLE] as Set,[] as Set]
+		step1denofields*.renderingLocations == [[RenderingLocation.STEP_TABLE] as Set, [] as Set]
 
 		and: "fields from test step and called test step should be denormalized"
 		query.setParameter("id", exec.steps.get(1).id)
@@ -181,7 +180,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 		step2denofields.size() == 2
 		step2denofields.collect { it.code } == ["cufT", "cufU"]
 		step2denofields.collect { it.value } == ["T", "U"]
-		step2denofields.collect { it.renderingLocations } == [ [RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
+		step2denofields.collect { it.renderingLocations } == [[RenderingLocation.STEP_TABLE] as Set, [RenderingLocation.STEP_TABLE] as Set]
 	}
 
 

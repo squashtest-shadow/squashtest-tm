@@ -25,13 +25,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.security.acls.model.Permission;
-import org.springframework.stereotype.Component;
-import org.squashtest.it.infrastructure.Stub;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
-@Stub
+
 public class StubPermissionEvaluationService implements PermissionEvaluationService {
 
 	Set<String> permissionsToRefuse = new HashSet<String>();

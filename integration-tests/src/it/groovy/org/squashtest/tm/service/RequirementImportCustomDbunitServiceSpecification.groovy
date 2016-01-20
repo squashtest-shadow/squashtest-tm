@@ -21,17 +21,14 @@
 package org.squashtest.tm.service
 
 
-import java.util.List
-
 import javax.inject.Inject
 
-import org.hibernate.Query
-import org.hibernate.transform.ResultTransformer
-import org.hibernate.type.LongType
 import org.hibernate.ObjectNotFoundException
+import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.springframework.test.annotation.DirtiesContext;
+import org.hibernate.transform.ResultTransformer
+import org.hibernate.type.LongType
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.transaction.TransactionConfiguration
 
@@ -41,12 +38,12 @@ import spock.lang.Specification
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(["classpath:service/requirement-import-custom-dependencies-scan-context.xml", "classpath:unitils-datasource-context.xml",
+@ContextConfiguration(["classpath:service/requirement-import-custom-dependencies-scan-context.xml",
 	"classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml",
 	"classpath*:META-INF/**/dynamicdao-context.xml",
 	"classpath*:META-INF/**/dynamicmanager-context.xml",
 	"classpath:it-config-context.xml"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(defaultRollback = true)
 abstract class RequirementImportCustomDbunitServiceSpecification extends Specification {
 
 	@Inject
@@ -75,7 +72,6 @@ abstract class RequirementImportCustomDbunitServiceSpecification extends Specifi
 
 		try {
 			found = (getSession().get(entityClass, id) != null)
-
 		} catch (ObjectNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
@@ -193,5 +189,4 @@ abstract class RequirementImportCustomDbunitServiceSpecification extends Specifi
 			(sourceOjbect instanceof BigInteger) ? ((BigInteger)sourceOjbect).longValue() : sourceOjbect
 		}
 	}
-
 }

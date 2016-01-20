@@ -20,14 +20,10 @@
  */
 package org.squashtest.it.stub.security
 
-import org.springframework.stereotype.Component
+import org.springframework.security.acls.domain.PermissionFactory
+import org.springframework.security.acls.model.Permission
 
-import java.util.List
 
-import org.springframework.security.acls.domain.PermissionFactory;
-import org.springframework.security.acls.model.Permission;
-
-@Component
 class StubPermissionFactory implements PermissionFactory {
 
 	@Override
@@ -44,5 +40,4 @@ class StubPermissionFactory implements PermissionFactory {
 	public List<Permission> buildFromNames(List<String> names) {
 		return {} as Permission;
 	}
-
 }

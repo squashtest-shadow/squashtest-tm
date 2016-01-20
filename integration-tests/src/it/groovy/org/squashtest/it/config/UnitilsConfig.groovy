@@ -20,12 +20,11 @@
  */
 package org.squashtest.it.config
 
-import org.springframework.beans.factory.FactoryBean
+import javax.sql.DataSource
+
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.unitils.database.UnitilsDataSourceFactoryBean
-
-import javax.sql.DataSource
 
 /**
  * @author Gregory Fouquet
@@ -40,5 +39,4 @@ class UnitilsConfig {
 	DataSource dataSource() {
 		return new UnitilsDataSourceFactoryBean().getObject()
 	}
-
 }

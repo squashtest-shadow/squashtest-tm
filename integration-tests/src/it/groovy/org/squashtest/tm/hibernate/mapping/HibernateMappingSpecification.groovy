@@ -20,33 +20,33 @@
  */
 package org.squashtest.tm.hibernate.mapping
 
+import javax.inject.Inject
+
+import org.hibernate.Session
+import org.hibernate.SessionFactory
+import org.hibernate.Transaction
+import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicDaoConfig
 import org.squashtest.it.config.RepositorySpecConfig
-
+import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.RepositoryConfig
 
-import javax.inject.Inject;
-
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.transaction.TransactionConfiguration;
-
-import spock.lang.Specification;
+import spock.lang.Specification
 
 /**
  * Superclass for hibernate mapping integration tests.
  */
-@ContextConfiguration(classes= [ RepositorySpecConfig, DataSourceConfig, DynamicDaoConfig, RepositoryConfig])
+@ContextConfiguration(classes= [ RepositorySpecConfig, DynamicDaoConfig, RepositoryConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+@SkipAll
 abstract class HibernateMappingSpecification extends Specification {
 	@Inject SessionFactory sessionFactory;
 	/**
 	 * Runs action closure in a new transaction created from a new session.
-	 * @param action 
+	 * @param action
 	 * @return propagates closure result.
 	 */
 	def final doInTransaction(def action) {
@@ -74,9 +74,7 @@ abstract class HibernateMappingSpecification extends Specification {
 	 */
 	def final persistFixture(Object... fixtures) {
 		doInTransaction { session ->
-			fixtures.each {  fixture ->
-				session.persist fixture 
-			}
+			fixtures.each {  fixture -> session.persist fixture }
 		}
 	}
 	/**
@@ -86,9 +84,7 @@ abstract class HibernateMappingSpecification extends Specification {
 	 */
 	def final deleteFixture(Object... fixtures) {
 		doInTransaction { session ->
-			fixtures.each {  fixture ->
-				session.delete fixture 
-			}
+			fixtures.each {  fixture -> session.delete fixture }
 		}
 	}
 }

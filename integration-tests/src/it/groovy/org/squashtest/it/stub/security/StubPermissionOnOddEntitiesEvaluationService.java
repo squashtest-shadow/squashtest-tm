@@ -20,13 +20,10 @@
  */
 package org.squashtest.it.stub.security;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.springframework.security.acls.model.Permission;
-import org.squashtest.it.infrastructure.Stub;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
@@ -35,7 +32,7 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
  * @author jsimon
  * @since 1.12.0
  */
-@Stub
+
 public class StubPermissionOnOddEntitiesEvaluationService implements PermissionEvaluationService {
 
 	Set<String> permissionsToRefuse = new HashSet<String>();

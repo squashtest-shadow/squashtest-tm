@@ -20,25 +20,20 @@
  */
 package org.squashtest.tm.service
 
-import org.springframework.test.context.TestPropertySource
-import org.squashtest.it.config.AsManagerServiceSpecConfig
-import org.squashtest.it.config.DynamicServiceConfig
-import org.squashtest.it.config.ServiceSpecConfig
-import org.squashtest.it.config.UnitilsConfig
-
-import java.util.List
-
 import javax.inject.Inject
 
-import org.hibernate.Query
-import org.hibernate.transform.ResultTransformer
-import org.hibernate.type.LongType
 import org.hibernate.ObjectNotFoundException
+import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.springframework.test.annotation.DirtiesContext;
+import org.hibernate.transform.ResultTransformer
+import org.hibernate.type.LongType
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
+import org.squashtest.it.config.AsManagerServiceSpecConfig
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.UnitilsConfig
 
 import spock.lang.Specification
 
@@ -48,7 +43,7 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = [AsManagerServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@TransactionConfiguration(defaultRollback = true)
 abstract class AsManagerDbunitServiceSpecification extends Specification {
 
 	@Inject
@@ -77,7 +72,6 @@ abstract class AsManagerDbunitServiceSpecification extends Specification {
 
 		try {
 			found = (getSession().get(entityClass, id) != null)
-
 		} catch (ObjectNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
@@ -195,5 +189,4 @@ abstract class AsManagerDbunitServiceSpecification extends Specification {
 			(sourceOjbect instanceof BigInteger) ? ((BigInteger)sourceOjbect).longValue() : sourceOjbect
 		}
 	}
-
 }

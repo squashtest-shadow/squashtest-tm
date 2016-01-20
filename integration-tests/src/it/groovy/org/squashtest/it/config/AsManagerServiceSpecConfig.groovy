@@ -20,6 +20,9 @@
  */
 package org.squashtest.it.config
 
+import javax.inject.Inject
+import javax.sql.DataSource
+
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.ComponentScan
 import org.springframework.context.annotation.Configuration
@@ -27,6 +30,7 @@ import org.springframework.context.annotation.FilterType
 import org.springframework.context.annotation.Primary
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.springframework.security.acls.jdbc.LookupStrategy
 import org.springframework.security.acls.model.AclCache
 import org.springframework.security.authentication.encoding.PasswordEncoder
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder
@@ -34,25 +38,24 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
 import org.squashtest.it.stub.security.StubChefContextService
-import org.squashtest.it.stub.security.StubPermissionEvaluationService
+import org.squashtest.it.stub.security.StubObjectAclService
+import org.squashtest.it.stub.security.StubObjectIdentityService
 import org.squashtest.it.stub.security.StubPermissionEvaluator
 import org.squashtest.it.stub.security.StubPermissionFactory
 import org.squashtest.it.stub.security.StubPermissionOnOddEntitiesEvaluationService
-import org.squashtest.it.stub.security.StubUserContextService
-import org.squashtest.it.stub.security.StubUserDetailsManager
 import org.squashtest.it.stub.user.StubChefAccountService
 import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.AffirmativeBasedCompositePermissionEvaluator
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
+import org.squashtest.tm.service.security.ObjectIdentityService
 import org.squashtest.tm.service.security.PermissionEvaluationService
+import org.squashtest.tm.service.security.StubLookupStrategy
 import org.squashtest.tm.service.security.UserContextService
 import org.squashtest.tm.service.security.acls.model.NullAclCache
+import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.squashtest.tm.service.user.UserAccountService
-
-import javax.inject.Inject
-import javax.sql.DataSource
 
 /**
  * @author Gregory Fouquet
@@ -60,12 +63,12 @@ import javax.sql.DataSource
  */
 @Configuration
 @ComponentScan(
-		basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
-				"org.squashtest.it.stub.security", "org.squashtest.it.stub.validation"],
-		excludeFilters = [
-				@ComponentScan.Filter(Configuration),
-				@ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.security\\..*", type = FilterType.REGEX),
-		]
+basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
+	"org.squashtest.it.stub.security", "org.squashtest.it.stub.validation"],
+excludeFilters = [
+	@ComponentScan.Filter(Configuration),
+	@ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.security\\..*", type = FilterType.REGEX),
+]
 )
 @EnableSpringConfigured
 class AsManagerServiceSpecConfig {
@@ -82,11 +85,11 @@ class AsManagerServiceSpecConfig {
 		new NullAclCache();
 	}
 
-//	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
-//	@Primary
-//	SquashUserDetailsManager userDetailsManager() {
-//		new StubUserDetailsManager();
-//	}
+	//	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
+	//	@Primary
+	//	SquashUserDetailsManager userDetailsManager() {
+	//		new StubUserDetailsManager();
+	//	}
 
 	@Bean(name = "squashtest.core.user.UserContextService")
 	@Primary
@@ -134,10 +137,25 @@ class AsManagerServiceSpecConfig {
 		new StubPermissionEvaluator()
 	}
 
-	@Bean SquashUserDetailsManager userDetailsManager() {
+	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
+	@Primary SquashUserDetailsManager userDetailsManager() {
 		SquashUserDetailsManagerImpl manager = new SquashUserDetailsManagerImpl()
 		manager.setDataSource(dataSource)
 		return manager
+	}
+
+	@Primary
+	@Bean ObjectIdentityService objectIdentityService() {
+		new StubObjectIdentityService()
+	}
+
+	@Primary
+	@Bean ObjectAclService objectAclService(){
+		new StubObjectAclService();
+	}
+	@Bean
+	LookupStrategy lookupStrategy() {
+		new StubLookupStrategy();
 	}
 
 }

@@ -20,17 +20,13 @@
  */
 package org.squashtest.it.stub.security
 
-import org.springframework.stereotype.Component
+import org.springframework.security.acls.model.ObjectIdentity
+import org.squashtest.tm.core.foundation.collection.Filtering
+import org.squashtest.tm.core.foundation.collection.Sorting
+import org.squashtest.tm.security.acls.PermissionGroup
+import org.squashtest.tm.service.security.acls.model.ObjectAclService
 
-import java.util.List
 
-import org.springframework.security.acls.model.ObjectIdentity;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.security.acls.PermissionGroup;
-import org.squashtest.tm.service.security.acls.model.ObjectAclService;
-
-@Component
 class StubObjectAclService implements ObjectAclService {
 
 	@Override
@@ -42,12 +38,10 @@ class StubObjectAclService implements ObjectAclService {
 
 	@Override
 	public void removeAllResponsibilities(long partyId, ObjectIdentity entityRef) {
-		
 	}
 
 	@Override
 	public void removeAllResponsibilities(ObjectIdentity entityRef) {
-		
 	}
 
 	@Override
@@ -67,7 +61,6 @@ class StubObjectAclService implements ObjectAclService {
 	@Override
 	public void addNewResponsibility(long partyId, ObjectIdentity entityRef,
 			String qualifiedName) {
-		
 	}
 
 	@Override
@@ -110,14 +103,14 @@ class StubObjectAclService implements ObjectAclService {
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromUserLogin(String userLogin,
 			String qualifiedClassName) {
-		
+
 		return Collections.emptyList();
 	}
 
 	@Override
 	public List<Object[]> retrieveClassAclGroupFromPartyId(long partyId,
 			String qualifiedClassName, Sorting sorting, Filtering filtering) {
-		
+
 		return Collections.emptyList();
 	}
 
@@ -156,20 +149,19 @@ class StubObjectAclService implements ObjectAclService {
 
 		return Collections.emptyList();
 	}
-			
+
 	@Override
 	public void refreshAcls() {
 	}
 
 	@Override
 	public void removeAllResponsibilities(long partyId) {
-		
 	}
-	
+
 	@Override
 	public void updateDerivedPermissions(long partyId) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
