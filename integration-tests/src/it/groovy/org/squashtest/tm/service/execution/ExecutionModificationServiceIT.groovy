@@ -20,18 +20,12 @@
  */
 package org.squashtest.tm.service.execution
 
-import spock.lang.IgnoreRest
-
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
-import org.squashtest.tm.domain.execution.ExecutionStatus
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.campaign.IterationModificationService
-import org.squashtest.tm.service.execution.ExecutionProcessingService
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
@@ -44,72 +38,69 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private ExecutionModificationService execService
 
-	
+
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
 	def "should update action and expected result"(){
-		
+
 		given :
-		
+
 		when :
 		execService.updateSteps(-1L)
 		def steps = findAll("ExecutionStep")
-		
+
 		then :
 		steps.action as Set == (1..5).collect{"action " + it} as Set
-		steps.expectedResult.each {assert it == ""} 
-		
+		steps.expectedResult.each {assert it == ""}
 	}
-	
+
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
 	def "denormalization was merely a setback"(){
-		
+
 		given :
-		
-		when : 
+
+		when :
 		execService.updateSteps(-1L)
 		def denoCufs = findAll("DenormalizedFieldValue")
-		
+
 		then :
-		denoCufs.value.each {assert it == "cuf 1"} 
-		
+		denoCufs.value.each {assert it == "cuf 1"}
 	}
-	
+
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
 	def "should find index of first modif"(){
 		given :
-		
+
 		when :
 		def indexOfFirstModif = execService.updateSteps(-1L)
-			
+
 		then :
 		indexOfFirstModif == 2
-	
 	}
 
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
 	def "should update attachment"(){
-		
+
 		given :
-		
+
 		when :
 		execService.updateSteps(-1L)
 		def steps = findAll("ExecutionStep")
-		
+
 		then :
 		steps.attachmentList.inject([]){result, val -> result.addAll(val.attachments); result}.each {
 			assert it.size == 1
-			assert it.name == "lol"
+			assert it.name == "lol.zip"
 		}
 	}
-	
-	
+
+
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
 	def "should update execution description"(){
 
 		given :
 		def executionId = -1L
 		def updatedDescription = "wooohooo I just updated the description here !"
-		
+
 		when :
 		execService.setExecutionDescription(executionId, updatedDescription)
 

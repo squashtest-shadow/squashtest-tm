@@ -30,7 +30,10 @@ import org.hibernate.SessionFactory
 import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
+import org.squashtest.it.config.DynamicServiceConfig
+import org.squashtest.it.config.UnitilsConfig
 
 import spock.lang.Specification
 
@@ -38,11 +41,8 @@ import spock.lang.Specification
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(["classpath:service/requirement-import-custom-dependencies-scan-context.xml",
-	"classpath*:META-INF/**/bundle-context.xml", "classpath*:META-INF/**/repository-context.xml",
-	"classpath*:META-INF/**/dynamicdao-context.xml",
-	"classpath*:META-INF/**/dynamicmanager-context.xml",
-	"classpath:it-config-context.xml"])
+@ContextConfiguration(classes = [RequirementImportServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
+@TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(defaultRollback = true)
 abstract class RequirementImportCustomDbunitServiceSpecification extends Specification {
 
