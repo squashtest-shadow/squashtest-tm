@@ -65,7 +65,7 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "./abstractStepVi
 		writePerimeter : function (name){
 	
 			$("#selected-perim-msg").text(translator.get("wizard.perimeter.msg.selection") );
-			var link = "<a id='repopen-perim' style='font-weight: bold;color: #750021;text-decoration: underline;' name= '" + name + "'>" + translator.get("wizard.perimeter." + name) + "</a>" ;
+			var link = "<a id='repopen-perim' style='cursor:pointer' name= '" + name + "'>" + translator.get("wizard.perimeter." + name) + "</a>" ;
 			$("#selected-perim").html(link);
 			
 		},
