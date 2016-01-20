@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2015 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans:beans xmlns="http://www.springframework.org/schema/security" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans" xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util" xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+  xsi:schemaLocation="
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc-3.1.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+        http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
+        http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-1.0.xsd">
+
+  <!--  images and stuff dont need authentication -->
+  <!-- NOSGI done -->
+  <http pattern="/images/**" security="none" />
+  <http pattern="/styles/**" security="none" />
+  <http pattern="/styles-*/**" security="none" />
+  <http pattern="/scripts/**" security="none" />
+  <http pattern="/isSquashAlive" create-session="stateless" security="none" />
+
+  <!-- Defines a (potentially) secured namespace for a management api -->
+  <!-- There is no authentication because this namespace collects system operation which cannot be done otherwise. 
+    As a consequence, is supposed to be secured at the app server / host level -->
+  <!-- NOSGI done -->
+  <http auto-config="true" use-expressions="true" pattern="/management/**">
+    <port-mappings>
+      <port-mapping http="80" https="${management.port:9443}" />
+      <port-mapping http="${jetty.port:8080}" https="${management.port:9443}" />
+    </port-mappings>
+    <intercept-url pattern="/management/**" requires-channel="${managemement.channel:https}"
+      access="request.getLocalPort() == ${management.port:9443}" />
+  </http>
+
+  <http pattern="/oauth/token" create-session="stateless" authentication-manager-ref="squashtest.core.security.AuthenticationManager">
+    <intercept-url pattern="/oauth/token" access="IS_AUTHENTICATED_FULLY" />
+    <anonymous enabled="false" />
+    <http-basic entry-point-ref="clientAuthenticationEntryPoint" />
+    <custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+    <access-denied-handler ref="oauthAccessDeniedHandler" />
+  </http>
+
+  <!-- NOSGI done -->
+  <http pattern="/api/**" create-session="never" entry-point-ref="oauthAuthenticationEntryPoint">
+    <!-- NOSGI ignored -->
+    <anonymous enabled="false" />
+    <!-- NOSGI done -->
+    <intercept-url pattern="/api/**" method="GET" access="IS_AUTHENTICATED_FULLY" />
+    <!-- NOSGI ignored -->
+    <custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" />
+    <!-- NOSGI auto -->
+    <access-denied-handler ref="oauthAccessDeniedHandler" />
+  </http> 
+  
+  <http auto-config="true" use-expressions="true" entry-point-ref="authenticationProcessingFilterEntryPoint">
+    <!-- Logout page config; we have to set "home-workspace" instead of "/" for logout url to avoid "/null" url -->
+    <!-- NOSGI done -->
+    <logout invalidate-session="true" logout-success-url="/home-workspace/" logout-url="/logout" />
+
+    <request-cache ref="httpSessionRequestCache" />
+
+    <!-- IMPORTANT : RULES SHOULD BE DEFINED FROM MOST TO LEAST GENERIC ! -->
+
+    <!-- management namespace is handled in some other <http> tag -->
+    <!-- NOSGI done -->
+    <intercept-url pattern="/management/**" requires-channel="https" access="denyAll" />
+
+    <!-- Login page config -->
+    <!-- NOSGI done -->
+    <intercept-url pattern="/login" access="permitAll" />
+
+    <!-- Pages restricted to admins -->
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/administration" access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/admin" access="hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/admin/**" access="hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/milestones/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/info-lists"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/info-lists/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/administration/projects/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/administration/**" access="hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/configuration" access="hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/configuration/**" access="hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${authentication.application.securablechannels:http}" pattern="/milestone/**"
+      access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')" />
+
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/platform/**" access="hasRole('ROLE_ADMIN')" />
+
+    <!-- API for test automation clients -->
+    <!-- NOSGI done -->
+    <intercept-url requires-channel="${application.channel:any}" pattern="/resultUpdate/**" access="hasRole('ROLE_TA_API_CLIENT')" />
+    
+    <!-- One must log in to access the application -->
+    <!-- NOSGI done -->
+    <intercept-url pattern="/**" access="isAuthenticated()" />
+    
+    <!-- we must specify this to force redirect to login page when failure happens
+     and avoid unstyled login error page generated by spring -->
+    <!-- NOSGI done -->
+    <form-login authentication-failure-url="/login.jsp?login-error" authentication-success-handler-ref="accessGrantedHandler" />
+
+    <access-denied-handler ref="accessDeniedHandler" />
+
+    <!-- NOSGI done sauf "first" -->
+    <custom-filter ref="htmlSanitizationFilter" position="FIRST" />
+  </http>
+
+   <!-- Oauth 2 -->
+  <beans:bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint" />
+
+  <beans:bean id="clientAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+    <beans:property name="realmName" value="oauth" />
+    <beans:property name="typeName" value="Basic" />
+  </beans:bean>
+
+
+  <!-- NOSGI auto -->
+  <beans:bean id="oauthAccessDeniedHandler" class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+
+  <beans:bean id="clientCredentialsTokenEndpointFilter" class="org.springframework.security.oauth2.provider.client.ClientCredentialsTokenEndpointFilter">
+    <beans:property name="authenticationManager" ref="clientAuthenticationManager" />
+  </beans:bean>
+
+  <!-- NOSGI auto -->
+  <authentication-manager alias="authenticationManager">
+    <authentication-provider user-service-ref="clientDetailsUserService" />
+  </authentication-manager>
+
+  <beans:bean id="clientDetailsUserService" class="org.springframework.security.oauth2.provider.client.ClientDetailsUserDetailsService">
+    <beans:constructor-arg ref="clientDetails" />
+  </beans:bean>
+
+  <!-- NOSGI auto ? -->
+  <authentication-manager id="clientAuthenticationManager" xmlns="http://www.springframework.org/schema/security">
+    <authentication-provider user-service-ref="clientDetailsUserService" />
+  </authentication-manager>
+
+
+  <!-- NOSGI done -->
+  <beans:bean id="clientDetails" class="org.springframework.security.oauth2.provider.JdbcClientDetailsService">
+    <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
+  </beans:bean>
+
+  <!-- NOSGI done -->
+  <beans:bean id="oauthCodeDetails" class="org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices">
+    <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
+  </beans:bean>
+
+  <authentication-manager id="userAuthenticationManager">
+    <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
+  </authentication-manager>
+
+  <!-- NOSGI auto -->
+  <beans:bean id="userApprovalHandler" class="org.springframework.security.oauth2.provider.approval.TokenServicesUserApprovalHandler">
+    <beans:property name="tokenServices" ref="tokenServices"></beans:property>
+  </beans:bean>
+    
+    <!-- user-approval-page="page/oauth/confirm_access" -->
+  <oauth:authorization-server user-approval-handler-ref="userApprovalHandler"
+    user-approval-page="redirect:/oauth/confirm_access" error-page="redirect:/oauth/error" client-details-service-ref="clientDetails"
+    token-services-ref="tokenServices">
+    <oauth:authorization-code authorization-code-services-ref="oauthCodeDetails" />
+    <oauth:implicit />
+    <oauth:refresh-token />
+    <oauth:client-credentials />
+    <oauth:password authentication-manager-ref="userAuthenticationManager" />
+  </oauth:authorization-server>
+
+  <!-- NOSGI done -->
+  <oauth:resource-server id="resourceServerFilter" resource-id="springsec" token-services-ref="tokenServices" />
+
+  <!-- NOSGI done -->
+  <beans:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.JdbcTokenStore">
+    <beans:constructor-arg name="dataSource" ref="squashtest.core.persistence.jdbc.DataSource" />
+  </beans:bean>
+
+  <!-- NOSGI done -->
+  <beans:bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">
+    <beans:property name="tokenStore" ref="tokenStore" />
+    <beans:property name="supportRefreshToken" value="true" />
+    <beans:property name="accessTokenValiditySeconds" value="900000000" />
+    <beans:property name="clientDetailsService" ref="clientDetails" />
+  </beans:bean>
+
+
+    <!-- /OAuth 2 -->
+
+  <beans:bean id="exceptionTranslationFilter" class="org.springframework.security.web.access.ExceptionTranslationFilter">
+    <beans:property name="authenticationEntryPoint" ref="authenticationProcessingFilterEntryPoint" />
+    <beans:property name="accessDeniedHandler" ref="accessDeniedHandler" />
+  </beans:bean>
+
+  <!-- NOSGI en attente pour voir ce que ça fait -->
+  <beans:bean id="httpSessionRequestCache"
+    class="org.squashtest.tm.web.internal.controller.authentication.HttpSessionRequestCacheWithExceptions">
+    <!-- beans:property name="justUseSavedRequestOnGet" value="true" /-->
+    <beans:property name="exceptions">
+      <beans:list>
+        <beans:value>/login.jsp</beans:value>
+        <beans:value>/localization/filler</beans:value>
+      </beans:list>
+    </beans:property>
+  </beans:bean>
+
+  <!-- NOSGI class is almost copy-paste from ist superclass, so we'll retort to the superclass -->
+  <beans:bean id="accessDeniedHandler" class="org.squashtest.tm.web.internal.security.authentication.SquashAccessDeniedHandler">
+    <beans:property name="errorPage" value="/squash/accessDenied" />
+  </beans:bean>
+
+  <!-- NOSGI DONE -->
+  <beans:bean id="accessGrantedHandler"
+    class="org.squashtest.tm.web.internal.security.authentication.AuthenticationSuccessCallbacksHandler">
+    <beans:property name="callbacks">
+      <beans:list>
+        <beans:bean class="org.squashtest.tm.web.internal.security.authentication.BugTrackerAutoconnectCallback">
+          <beans:property name="bugTrackersLocalService" ref="squashtest.tm.service.BugTrackersLocalService" />
+          <beans:property name="projectFinder" ref="squashtest.tm.service.ProjectManagerService" />
+          <beans:property name="bugTrackerFinder" ref="squashtest.tm.service.BugTrackerManagerService" />
+          <beans:property name="taskExecutor" ref="core.executor.service" />
+          <beans:property name="contextHolder" ref="squashtest.core.bugtracker.BugTrackerContextHolder" />
+        </beans:bean>
+      </beans:list>
+    </beans:property>
+  </beans:bean>
+
+  <!-- NOSGI DONE -->
+  <beans:bean id="authenticationProcessingFilterEntryPoint" class="org.squashtest.tm.web.internal.security.authentication.RedirectEntryPoint">
+    <beans:property name="loginFormUrl" value="/login" />
+    <beans:property name="forceHttps" value="#{'${application.channel:any}'.equalsIgnoreCase('https')}" />
+  </beans:bean>
+
+
+  <!-- NOSGI DONE -->
+  <beans:bean id="htmlSanitizationFilter" class="org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter" />
+
+  <!-- NOSGI DONE -->
+  <beans:bean id="authenticationProvider.auxiliary.noop" class="org.squashtest.tm.web.security.authentication.NoOpAuthenticationProvider" />
+  
+  
+  <!-- 
+		the following bean provide a link to the credentials, both reading and editing. 
+		todo : create a bean configurable via a .properties file, in case we need to switch 
+		to an LDAP provider. 
+	  -->
+  <authentication-manager alias="squashtest.core.security.AuthenticationManager">
+    <authentication-provider ref="authenticationProvider.auxiliary.${authentication.provider.auxiliary:noop}" />
+    <authentication-provider ref="authenticationProvider.${authentication.provider:internal}" />
+  </authentication-manager>
+
+  <!-- NOSGI done -->
+  <beans:bean id="permissionFactory" class="org.squashtest.tm.security.acls.CustomPermissionFactory" />
+
+</beans:beans>

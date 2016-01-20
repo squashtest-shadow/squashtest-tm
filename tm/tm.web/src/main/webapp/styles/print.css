@@ -1,0 +1,198 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+ * {
+ -webkit-print-color-adjust: exact;
+ }
+ 
+.tab {
+	margin: 1%;
+}
+
+.panel {
+	border: 1px solid black;
+	border-radius: 10px 10px 10px 10px;
+	margin: 1%;
+}
+.indirectVerification {
+    color: #555555;
+    font-style: italic;
+}
+
+table.greystyle-table, table.greystyle-table td, table.greystyle-table tr, table.greystyle-table th {
+	border: 1px solid grey;
+	border-collapse: collapse;
+	margin: 1%;
+}
+
+
+table.greystyle-table {
+	background: none repeat scroll 0 0 transparent;
+    font-size: 100%;
+    margin: auto;
+    width: 96%;
+}
+
+
+table.greystyle-table th{
+	background: none repeat scroll 0 0 #EEEEEE;
+	border: 1.5px solid grey;
+	min-width: 2em;
+}
+
+th.small {
+	width: 2em;
+}
+
+tr.selected {
+    border: 2px solid grey;
+}
+
+
+h4 {
+	border-bottom: 1px solid;
+	border-radius: 10px 10px 0 0;
+	background: none repeat scroll 0 0 #DDDDDD;
+	margin: auto;
+	padding: 0.5%;
+	vertical-align: middle;
+}
+
+h3 {
+    border-bottom: 3px solid;
+    margin: auto auto 20px;
+    padding: 0.5%;
+}
+.green h3{
+        background: none repeat scroll 0 0 #ACDD4A;
+}
+
+.blue h3 {
+	background: none repeat scroll 0 0 #77D5F7;
+}
+
+.purple {
+	background-color : #982bd4;
+}
+
+p {
+	margin: 0.5%;
+}
+
+.header {
+	border-bottom: 4px solid;
+}
+
+.green.header {
+	background: none repeat scroll 0 0 #6EAC2C;
+}
+
+.blue.header {
+	
+	background:none repeat scroll 0 0 #0078AE;
+}
+
+html{
+	background: none;
+}
+
+
+body {
+	background:none;
+	width: 29cm;
+	font-size : 0.8em;
+}	
+
+.fragment-header{
+	height : 2.5em;
+	color : white;
+	margin-bottom : 2em; 
+}
+
+.fragment-body{
+	position : relative;
+	top : inherit;
+	width : inherit;
+}
+
+
+@media print{
+	.toggle-panel{
+		page-break-inside: avoid;  
+	}		
+}
+
+.toggle-panel > h3{
+	background-color : #666666;
+	color : white;
+	height : 1.3em;
+	font-size : 16px;
+	padding-top : 0.5em;
+}
+
+
+.dashboard-item-view{
+	width : 100%;
+	float : none;
+	height : 260px;
+}
+
+.dashboard-item-meta{
+	width: 100%;
+	height: auto;
+	float: none;
+	position: absolute;
+	bottom: 0;
+}
+
+
+.dashboard-item-subplot{
+	position: static;
+	display: inline-block;
+	width : auto;
+	margin-left:1em;
+}
+
+.dashboard-item-legend{
+	margin-left:1em;
+	margin-right : 1em;
+	margin-bottom : 1em;
+	position : relative;		
+	bottom : 0;
+	left : 0;	
+	display:inline-block;	
+	vertical-align:bottom;
+}
+
+.dashboard-item-legend > div{
+	display : inline-block;
+}
+
+.dashboard-item-legend > div.not-displayed{
+	display : none;
+}
+
+/**
+ we don't want that in a @media print clause because we want the user to preview in the browser
+ how the page will be printed. That's why the .no-print class belongs to the global media
+*/
+.no-print{
+	display:none !important;
+}

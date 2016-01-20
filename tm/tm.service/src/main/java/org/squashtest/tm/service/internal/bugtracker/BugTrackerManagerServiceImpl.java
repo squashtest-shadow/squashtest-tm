@@ -1,0 +1,159 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2015 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+package org.squashtest.tm.service.internal.bugtracker;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+
+import org.springframework.security.access.prepost.PostFilter;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
+import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.exception.NameAlreadyInUseException.EntityType;
+import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
+import org.squashtest.tm.service.bugtracker.BugTrackerSystemManager;
+import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
+import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
+import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.project.GenericProjectManagerService;
+import static org.squashtest.tm.service.security.Authorizations.*;
+
+@Service("squashtest.tm.service.BugTrackerManagerService")
+public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, BugTrackerSystemManager {
+
+	@Inject
+	private BugTrackerDao bugTrackerDao;
+
+	@Inject
+	private BugTrackerBindingDao bugTrackerBindingDao;
+
+	@Inject
+	private GenericProjectManagerService genericProjectManagerService;
+
+	@Inject
+	private IssueDao issueDao;
+
+	@Inject
+	private BugTrackersLocalService bugtrackersLocalService;
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void addBugTracker(BugTracker bugTracker) {
+		bugTrackerDao.checkNameAvailability(bugTracker.getName());
+		bugTrackerDao.persist(bugTracker);
+	}
+
+	@Override
+	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	public List<BugTracker> findAll() {
+		return bugTrackerDao.findAll();
+
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter) {
+		List<BugTracker> bugTrackers = bugTrackerDao.findSortedBugTrackers(filter);
+		long count = bugTrackerDao.countBugTrackers();
+		return new PagingBackedPagedCollectionHolder<List<BugTracker>>(filter, count, bugTrackers);
+	}
+
+	@Override
+	public Set<String> findBugTrackerKinds() {
+		return bugtrackersLocalService.getProviderKinds();
+	}
+
+	@Override
+	public String findBugtrackerName(Long bugtrackerId) {
+		return bugTrackerDao.findById(bugtrackerId).getName();
+	}
+
+	@Override
+	public BugTracker findById(long bugTrackerId) {
+		return bugTrackerDao.findById(bugTrackerId);
+	}
+
+	@Override
+	public List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds) {
+		return bugTrackerDao.findDistinctBugTrackersForProjects(projectIds);
+	}
+
+	@Override
+	@PreAuthorize(HAS_ROLE_ADMIN)
+	public void deleteBugTrackers(final Collection<Long> bugtrackerIds) {
+
+		for (final Long id : bugtrackerIds) {
+			deleteBugtrackerToProjectBinding(id);
+			deleteIssueLinkedToBugtracker(id);
+			deleteBugTracker(id);
+		}
+	}
+
+	private void deleteBugtrackerToProjectBinding(final Long bugtrackerId) {
+		final List<BugTrackerBinding> bugtrackerBindings = bugTrackerBindingDao.findByBugtrackerId(bugtrackerId);
+		for (final BugTrackerBinding bugtrackerBind : bugtrackerBindings) {
+			genericProjectManagerService.removeBugTracker(bugtrackerBind.getProject().getId());
+		}
+	}
+
+	private void deleteIssueLinkedToBugtracker(final long bugtrackerId) {
+		final List<Issue> issues = issueDao.getAllIssueFromBugTrackerId(bugtrackerId);
+
+		for (final Issue issue : issues) {
+			issueDao.remove(issue);
+		}
+	}
+
+	private void deleteBugTracker(final long bugtrackerId) {
+		final BugTracker bugtracker = bugTrackerDao.findById(bugtrackerId);
+		bugTrackerDao.remove(bugtracker);
+	}
+
+	/**
+	 * This is a system operation so there is no security constraint.
+	 * 
+	 * @see org.squashtest.tm.service.bugtracker.BugTrackerSystemManager#createBugTracker(org.squashtest.csp.core.bugtracker.domain.BugTracker)
+	 */
+	@Override
+	@Transactional
+	public BugTracker createBugTracker(@NotNull BugTracker bugTracker) throws NameAlreadyInUseException {
+		bugTracker.normalize();
+
+		if (bugTrackerDao.findByName(bugTracker.getName()) != null) {
+			throw new NameAlreadyInUseException(EntityType.BUG_TRACKER, bugTracker.getName());
+		}
+		bugTrackerDao.persist(bugTracker);
+		return bugTracker;
+	}
+}
