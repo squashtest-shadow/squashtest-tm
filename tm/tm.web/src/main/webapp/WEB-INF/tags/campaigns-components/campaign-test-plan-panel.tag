@@ -146,10 +146,10 @@
           <f:message key="label.Mode" />
         </th>
         <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}" 
-          data-def="map=reference, sortable, link=${testCaseUrl}">
+          data-def="map=reference, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
           <f:message key="label.Reference.short" />
         </th>
-        <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link=${testCaseUrl}">
+        <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link-cookie=workspace-prefs={tc-id}">
           <f:message key="label.TestCase.short" />
         </th>        
         <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
