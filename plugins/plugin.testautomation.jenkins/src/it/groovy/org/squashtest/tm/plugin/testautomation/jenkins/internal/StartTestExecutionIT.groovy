@@ -68,7 +68,7 @@ class StartTestExecutionIT extends Specification {
 
 		and:
 		TestAutomationServer server = Mock()
-		server.baseURL >> new URL("http://localhost:9292/stub-ta-server")
+		server.baseURL >> new URL("http://localhost:${stubTaServer.webapp.port}/stub-ta-server")
 		project.server >> server
 
 		and:

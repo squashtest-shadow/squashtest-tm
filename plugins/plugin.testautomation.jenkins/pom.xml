@@ -13,8 +13,10 @@
 	<packaging>bundle</packaging>
 
 	<properties>
+    <generatedsources.directory>${project.build.directory}/generated-sources</generatedsources.directory>
 		<squash.dependencies.version>${project.version}</squash.dependencies.version>
 		<stubTaServer.webapp.path>target/${project.artifactId}-${project.version}</stubTaServer.webapp.path>
+    <stubTaServer.webapp.port>9292</stubTaServer.webapp.port>
 	</properties>
 
 	<dependencies>
@@ -125,6 +127,33 @@
 			</plugin>
 
       <!-- ====== INTEGRATION TESTS ====== -->
+      <!--  
+			This invocation of maven-resources-plugin is useful because it allows for resources filtering.
+			In this case we need to process the port of the stub TA server
+		-->
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>add-its</id>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <phase>generate-test-sources</phase>
+      
+            <configuration>
+              <outputDirectory>${generatedsources.directory}</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/it/groovy</directory>
+                  <filtering>true</filtering>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -138,7 +167,7 @@
             </goals>
             <configuration>
               <sources>
-                <source>src/it/groovy</source>
+                <source>${generatedsources.directory}</source>
               </sources>
             </configuration>
           </execution>
@@ -231,7 +260,7 @@
               <ignorePackaging>true</ignorePackaging>
               <path>/foo</path>
               <warDirectory>${stubTaServer.webapp.path}</warDirectory>
-              <port>9292</port>
+              <port>${stubTaServer.webapp.port}</port>
               <fork>true</fork>
               <webapps>
                 <webapp>
