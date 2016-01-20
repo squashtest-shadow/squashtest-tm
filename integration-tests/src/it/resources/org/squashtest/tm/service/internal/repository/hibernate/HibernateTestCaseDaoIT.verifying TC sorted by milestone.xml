@@ -84,9 +84,6 @@
   <core_user PARTY_ID="32" LOGIN="User-1" FIRST_NAME="Charles" LAST_NAME="Dupond" EMAIL="charlesdupond@aaaa@aa" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:26:23.0"/>
   <core_user PARTY_ID="33" LOGIN="taserver" FIRST_NAME="TA" LAST_NAME="Server" EMAIL="no@where" ACTIVE="true" CREATED_BY="admin" CREATED_ON="2011-09-30 10:26:23.0"/>
   <cln_relationship ANCESTOR_ID="104" DESCENDANT_ID="105" CONTENT_ORDER="0"/>
-  <cln_relationship_closure ANCESTOR_ID="104" DESCENDANT_ID="104" DEPTH="0"/>
-  <cln_relationship_closure ANCESTOR_ID="105" DESCENDANT_ID="105" DEPTH="0"/>
-  <cln_relationship_closure ANCESTOR_ID="104" DESCENDANT_ID="105" DEPTH="1"/>
   <core_config STR_KEY="feature.milestone.enabled" VALUE="true"/>
   <core_config STR_KEY="lastindexing.campaign.date"/>
   <core_config STR_KEY="lastindexing.campaign.version"/>
@@ -211,15 +208,6 @@
   <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="6" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="243"/>
   <requirement_version_coverage REQUIREMENT_VERSION_COVERAGE_ID="7" VERIFIED_REQ_VERSION_ID="255" VERIFYING_TEST_CASE_ID="244"/>
   <rln_relationship ANCESTOR_ID="254" DESCENDANT_ID="255" CONTENT_ORDER="0"/>
-  <rln_relationship_closure ANCESTOR_ID="254" DESCENDANT_ID="254" DEPTH="0"/>
-  <rln_relationship_closure ANCESTOR_ID="255" DESCENDANT_ID="255" DEPTH="0"/>
-  <rln_relationship_closure ANCESTOR_ID="254" DESCENDANT_ID="255" DEPTH="1"/>
-  <tcln_relationship_closure ANCESTOR_ID="239" DESCENDANT_ID="239" DEPTH="0"/>
-  <tcln_relationship_closure ANCESTOR_ID="240" DESCENDANT_ID="240" DEPTH="0"/>
-  <tcln_relationship_closure ANCESTOR_ID="241" DESCENDANT_ID="241" DEPTH="0"/>
-  <tcln_relationship_closure ANCESTOR_ID="242" DESCENDANT_ID="242" DEPTH="0"/>
-  <tcln_relationship_closure ANCESTOR_ID="243" DESCENDANT_ID="243" DEPTH="0"/>
-  <tcln_relationship_closure ANCESTOR_ID="244" DESCENDANT_ID="244" DEPTH="0"/>
   <test_case_library_content LIBRARY_ID="14" CONTENT_ID="239" CONTENT_ORDER="0"/>
   <test_case_library_content LIBRARY_ID="14" CONTENT_ID="240" CONTENT_ORDER="1"/>
   <test_case_library_content LIBRARY_ID="14" CONTENT_ID="241" CONTENT_ORDER="2"/>
