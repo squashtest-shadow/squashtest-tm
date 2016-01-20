@@ -20,9 +20,13 @@
  */
 package org.squashtest.tm.web.config;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -34,16 +38,9 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
 import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 /**
  * This configures Spring Security
@@ -59,12 +56,11 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_O
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Value("${squash.security.filter.debug.enabled:false}")
 	private boolean debugSecurityFilter;
-
-	@Inject
-	private SquashManagementProperties managementProperties;
-
-	@Inject
-	private ServerProperties serverProperties;
+	/*
+	 * @Inject private SquashManagementProperties managementProperties;
+	 * 
+	 * @Inject private ServerProperties serverProperties;
+	 */
 
 	@Override
 	public void configure(WebSecurity web) throws Exception {
@@ -122,13 +118,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 		// @formatter:on
 
-
-		RequestMatcher managementRequestMatcher = new RequestMatcher() {
-			@Override
-			public boolean matches(HttpServletRequest request) {
-				return request.getLocalPort() == managementProperties.getPort();
-			}
-		};
+		/*
+		 * RequestMatcher managementRequestMatcher = new RequestMatcher() {
+		 * 
+		 * @Override public boolean matches(HttpServletRequest request) { return request.getLocalPort() ==
+		 * managementProperties.getPort(); } };
+		 */
 
 		// @formatter:off
 		// Secured namespace for the management api

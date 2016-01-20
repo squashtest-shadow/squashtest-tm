@@ -49,6 +49,6 @@ public class MantisConnectorConfig {
 			squashPathProperties.getLanguagesPath() + "/plugin.bugtracker.mantis/mantis-bugmessages",
 			squashPathProperties.getLanguagesPath() + "/plugin.bugtracker.mantis/messages"
 		);
-		return new NamespacedBugtrackerMessageSource(bean, "bugtracker.mantis");
+		return new NamespacedBugtrackerMessageSource(bean, "bugtracker.mantis.");
 	}
 }

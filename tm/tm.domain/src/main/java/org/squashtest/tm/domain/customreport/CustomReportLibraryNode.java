@@ -53,7 +53,6 @@ import org.squashtest.tm.domain.tree.TreeEntityDefinition;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.domain.tree.TreeNodeVisitor;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
@@ -222,7 +221,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		
 		if(this.childNameAlreadyUsed(newChildName)){
 			TreeLibraryNode node = getContentNodeByName(newChildName);
-			throw new NameAlreadyInUseException(node.getEntityType().getTypeName(),newChildName);
+			throw new DuplicateNameException(node.getEntityType().getTypeName(), newChildName);
 		}
 		this.getChildren().add(treeLibraryNode);
 	}

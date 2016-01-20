@@ -71,7 +71,7 @@
     <f:message var="manageTS" key='iteration.test-plan.testsuite.manage.label' />
     <f:message var="tooltipStatus" key="tooltips.changeExecutionStatuses" />
     <f:message var="tooltipAddTPI" key="tooltips.AddTPIToTP" />
-    <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />  
+    <f:message var="tooltipRemoveTPI" key="tooltips.RemoveTPIFromTP" />
     <f:message var="removeTooltip" key="label.removeFromExecutionPlan" />
     <f:message var="tooltipAssign" key="tooltips.AssignUserToTPI" />
     <f:message var="tooltipAddSuite" key="tooltips.AddTSToTPI" />
@@ -82,9 +82,9 @@
     <f:message var="tooltipReference" key="label.Reference"/>
     <f:message var="tooltipImportance" key="label.Importance"/>
 
-    
-    
-    
+
+
+
     <c:if test="${ reorderable }">
       <div class="left btn-toolbar">
         <span class="btn-group">
@@ -118,7 +118,7 @@
                 <button id="suite-manager-menu-button" class="button">
                   <f:message key="label.create" />
                 </button>
-                </div>                
+                </div>
                <comp:error-message forField="name"/>
               </li>
               <li class="suite-manager-buttonpane suite-manager-newsection ui-menu-item">
@@ -150,7 +150,7 @@
               <span class="ui-icon ui-icon-plusthick"></span>
               ${ associateLabel }
             </button>
-            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${removeTooltip}"> 
+            <button id="remove-test-plan-button" class="sq-btn btn-sm" title="${removeTooltip}">
               <span class="ui-icon ui-icon-trash"></span>
               ${removeLabel}
             </button>
@@ -164,10 +164,10 @@
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
-    
-    As per stupid specification, instead of the normal conditions the milestone dates column 
-    must be displayed if the feature is globally-enabled but not user-enabled 
-    
+
+    As per stupid specification, instead of the normal conditions the milestone dates column
+    must be displayed if the feature is globally-enabled but not user-enabled
+
     for f*** sakes
    --%>
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
@@ -179,16 +179,16 @@
         <tr>
           <th class="no-user-select"
             data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-          <th class="no-user-select tp-th-filter tp-th-project-name" 
+          <th class="no-user-select tp-th-filter tp-th-project-name"
               data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
             <f:message key="label.Location" />
           </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
-          </th>         
+          </th>
           <th title="<f:message key='label.Mode' />" class="no-user-select tp-th-filter tp-th-exec-mode"
             data-def="map=exec-mode, sortable, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode, sWidth=5%">   <f:message key="label.Mode" /></th>
-            
+
           <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
               data-def="map=reference, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
             <f:message key="label.Reference.short" />
@@ -212,7 +212,7 @@
             data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo">
             <f:message key="iteration.executions.table.column-header.user.label" />
           </th>
-          <th class="no-user-select tp-th-filter tp-th-exec-on" 
+          <th class="no-user-select tp-th-filter tp-th-exec-on"
           data-def="map=last-exec-on, sortable, sWidth=10%, sClass=exec-on">
             <f:message key="label.LastExecutionOn" />
           </th>
@@ -247,28 +247,28 @@
 
     <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.unbind-ta-project.tooltip" />">
-      
+
       <comp:notification-pane type="warning">
         <jsp:attribute name="htmlcontent">
-         
+
           <span data-def="state=unbind-single-tp" >
              <span><f:message key="dialog.remove-testcase-association.message.unbind" /></span>
              <span><f:message key="message.permissions.confirm"/></span>
-          </span>     
-        
+          </span>
+
           <span data-def="state=delete-single-tp" >
              <span><f:message key="dialog.remove-testcase-association.message.delete" /></span>
              <span><f:message key="message.permissions.confirm"/></span>
-          </span> 
+          </span>
 
         <span data-def="state=multiple-tp" >
           <span><f:message key="dialog.remove-testcase-associations.message.multiple" /></span>
           <span><f:message key="message.permissions.confirm"/></span>
         </span>
-        
-        </jsp:attribute>      
+
+        </jsp:attribute>
       </comp:notification-pane>
-      
+
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}"
           data-def="evt=confirm, mainbtn" />
@@ -320,7 +320,7 @@
 
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${confirmLabel}" data-def="state=edit, mainbtn=edit, evt=confirm" />
-        <input type="button" value="${closeLabel}" data-def="evt=cancel" />
+        <input type="button" value="${cancelLabel}" data-def="evt=cancel" />
       </div>
     </div>
 
@@ -341,7 +341,7 @@
 <script type="text/javascript">
 	require(["common"], function(){
 		require(["domReady", "iteration-management"], function(domReady, iterInit){
-			
+
 			domReady(function(){
 				var conf = {
 						permissions : {
@@ -360,10 +360,10 @@
 							statuses : ${ json:serialize(statuses)}
 						}
 					};
-					
+
 				iterInit.initTestPlanPanel(conf);
 			});
-			
+
 		});
 	});
 

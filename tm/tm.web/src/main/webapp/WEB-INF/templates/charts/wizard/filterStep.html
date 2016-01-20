@@ -69,7 +69,7 @@
 
 
 {{#equal dataType "EXECUTION_STATUS"}}
-<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;">
 
 {{#if (eq this.specializedType.entityType "ITEM_TEST_PLAN")}}
 {{>execution-status status=data.itpiExecutionStatus}}
@@ -84,7 +84,7 @@
 {{/equal}}
 
 {{#equal dataType "LEVEL_ENUM"}}
-<select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 182px;">
+<select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 151px;">
 {{#each  (lookup data.levelEnums label)}}  
 <option value="{{this.name}}">
     {{this.level}} - {{i18n this.i18nkey}}
@@ -102,7 +102,7 @@
 {{/equal}}
 
 {{#equal dataType "BOOLEAN"}}
-<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 182px;">
+<select id="first-filter-value-{{id}}" name="{{id}}"   style=" width: 151px;">
 
 <option value="TRUE">
  <span th:text="#{chart.filter.value.true}"/>
@@ -163,7 +163,7 @@
 
 <div th:fragment="chart-wizard-info-list">
  <div style="display: table-column; float:left; margin-right: 40px;">
- <select id="info-list-{{id}}" class="info-lists" name="{{id}}" style=" width: 182px;">
+ <select id="info-list-{{id}}" class="info-lists" name="{{id}}" style=" width: 151px;">
 {{#each infolists}}
  <option value="{{this.code}}">
  {{#if (eq this.createdBy "system")}} 
@@ -183,7 +183,7 @@
 
 <div th:fragment="chart-wizard-info-list-item">
  <div style="display: table-column;float:left">
- <select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 182px;">
+ <select id="first-filter-value-{{id}}" name="{{id}}" style=" width: 151px;">
 {{#each items}}
  <option value="{{this.code}}">  
  {{#if this.isSystem}} 

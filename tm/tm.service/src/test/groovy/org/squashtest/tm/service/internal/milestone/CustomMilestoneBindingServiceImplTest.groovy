@@ -78,7 +78,7 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		given :
 		def allProject = names.collect{new Project(name:it)}
 		def binded = allProject.findAll{bindedNames.contains(it.name)}
-		projectDao.findAll() >> allProject
+		projectDao.findAll(_) >> allProject
 		Milestone milestone = new Milestone(range:MilestoneRange.GLOBAL)
 		milestone.bindProjects(binded)
 		milestoneDao.findById(1L) >> milestone

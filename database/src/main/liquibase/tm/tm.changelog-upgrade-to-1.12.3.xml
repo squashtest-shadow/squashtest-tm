@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
         This file is part of the Squashtest platform.
@@ -20,10 +21,10 @@
         along with this software.  If not, see <http://www.gnu.org/licenses/>.
 
 -->
-
-<div style="text-align:center; background-position:center; background-size:100% auto; height:100%; width:100%">
-		
-	<span style="display:inline-block; font-size:2em; margin-top : 2em;">{{{this}}}</span>
-	
-</div>
-
+<databaseChangeLog
+     xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog 
+     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+ 	<include file="tm.changelog-1.12.3.xml" relativeToChangelogFile="true" />
+</databaseChangeLog> 

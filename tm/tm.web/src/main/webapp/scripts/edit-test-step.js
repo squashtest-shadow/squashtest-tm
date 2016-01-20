@@ -20,7 +20,7 @@
  */
 require([ "common" ], function(common) {
 	require([ "domReady", "jquery", "workspace.routing", "squash.basicwidgets", "test-step-editor/TestStepModificationView",
-			"app/ws/squashtm.workspace",  "./executionHelper" ],
+			"app/ws/squashtm.workspace",  "./execution-helper" ],
 			function(domReady, $, routing, basic, TestStepModificationView, WS, execHelper) {
 		
 		        var fromExec = squashtm.app.fromExec;

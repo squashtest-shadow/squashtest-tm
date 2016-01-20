@@ -93,6 +93,7 @@
 		require(['execution-page'], function(){});
 	});
 </script>
+	<%--  TODO ditch the require statement right above --%>
 
 
 <%-- ============ /module configuration ==================== --%>

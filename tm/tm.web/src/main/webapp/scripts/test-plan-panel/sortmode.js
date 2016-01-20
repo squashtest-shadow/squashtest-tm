@@ -164,7 +164,7 @@ define([ "jquery", "workspace.storage", "app/util/ButtonUtil", "squash.attribute
 		
 		this.resetTableOrder = function(table) {
 			var defSorting = StaticSortMode.defaultSorting();
-			table.fnSettings().aaSorting = defSorting;
+			table.fnSettings().aaSorting = fromNamedToIndexed(defSorting);
 			this.update();
 		};
 		

@@ -126,6 +126,7 @@
   });
 
 </script>
+    <%-- TODO find a way to ditch that requirement statement --%>
 
 
 

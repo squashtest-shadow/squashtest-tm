@@ -31,9 +31,9 @@ require(["common"], function(){
 			unionRangeForbid : "message.milestone.synchronize.warn.union.range-forbid",
 			statusForbid : "message.milestone.synchronize.warn.status-forbid",
 			rangeForbid : "message.milestone.synchronize.warn.range-forbid",
-			chooseDate : "milestone.chooseDate"	
+			chooseDate : "milestone.chooseDate"
 			});
-		
+
 		function getPostDate(localizedDate) {
 			try {
 				var postDateFormat = $.datepicker.ATOM;
@@ -49,7 +49,7 @@ require(["common"], function(){
 		function setActionsEnabled(enabled) {
 			$(".milestone-dep").prop("disabled", !enabled);
 		}
-		
+
 		function getFormValues(){
 			return	{
 					label: $( '#add-milestone-label' ).val().trim(),
@@ -86,11 +86,11 @@ require(["common"], function(){
 		console.log("domready");
 		// squashtm cannot be read before because it might be inited after this module is loaded
 		var config = squashtm.milestoneManager;
-		
+
 		function canEditMilestone(id){
 			return _.contains(config.data.editableMilestoneIds, id);
 		}
-		
+
 		function canEditAllMilestones(ids){
 			for (var i = 0; i < ids.length; i++){
 				if (!canEditMilestone(ids[i])){
@@ -99,17 +99,17 @@ require(["common"], function(){
 			}
 			return true;
 		}
-		
-		
+
+
 		function selectionHasProjectBinded(ids){
 			for (var i = 0; i < ids.length; i++){
 				if ($table().getDataById(ids[i]).nbOfProjects > 0 ) {
 					return true;
-				}	
+				}
 			}
 			return false;
 		}
-		
+
 		// When you open the dialog, change the message in it (with or without associated project)
 		$("#delete-milestone-popup").confirmDialog().on('confirmdialogopen', function(){
 			var ids = $table().getSelectedIds();
@@ -117,8 +117,8 @@ require(["common"], function(){
 				$("#delete-milestone-popup").confirmDialog("close");
 				warningWithTranslation("dialog.delete-milestone.not-allowed");
 			}
-			
-		if (ids.length == 1){		
+
+		if (ids.length == 1){
 			if (!selectionHasProjectBinded(ids)){
 					$("#errorMessageDeleteMilestone").text(translator.get("dialog.delete-milestone.message"));
 				}
@@ -136,7 +136,7 @@ require(["common"], function(){
 				}
 			}
 		});
-		
+
 		// When you click, choose dialog if a milestone is selected
 		$(document).on("click", "#delete-milestone-button", function() {
 			var ids = $table().getSelectedIds();
@@ -145,11 +145,11 @@ require(["common"], function(){
 				popup.data('entity-id', ids);
 				popup.confirmDialog('open');
 			} else {
-				var errorPopup = $("#milestone-noselection-error-dialog").messageDialog();	
+				var errorPopup = $("#milestone-noselection-error-dialog").messageDialog();
 				errorPopup.messageDialog('open');
 			}
 		});
-		
+
 		var squashSettings = {
 					functions:{
 						computeSelectionRange : function(row) {
@@ -188,12 +188,12 @@ require(["common"], function(){
 
 			//fix order
 			milestoneTable.on('order.dt search.dt', function () {
-				
+
 				 $.each(milestoneTable.fnGetNodes(), function(index, cell){
 					 cell.firstChild.innerHTML = index + 1;
 				 });
 			});
-			
+
 		var dateSettings = confman.getStdDatepicker();
 
 		$("#add-milestone-end-date").editable(function(value){
@@ -230,7 +230,7 @@ require(["common"], function(){
 			});
 
 		});
-		
+
 		//Add milestone
 
 	var addMilestoneDialog = $("#add-milestone-dialog");
@@ -243,9 +243,9 @@ require(["common"], function(){
 	}
 
 	addMilestoneDialog.on('formdialogopen', function(){
-		$( '#add-milestone-end-date' ).text(translator.get("milestone.chooseDate"));	
+		$( '#add-milestone-end-date' ).text(translator.get("milestone.chooseDate"));
 	});
-	
+
 	addMilestoneDialog.on('formdialogconfirm', function(){
 		var url = routing.buildURL('administration.milestones');
 		var params = getFormValues();
@@ -254,14 +254,14 @@ require(["common"], function(){
 			type : 'POST',
 			dataType : 'json',
 			data : params
-		}).success(function(id){ 
+		}).success(function(id){
 			config.data.editableMilestoneIds.push(id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('close');
 		});
 
 	});
-	
+
 	addMilestoneDialog.on('formdialogaddanother', function(){
 		var url = routing.buildURL('administration.milestones');
 		var params = getFormValues();
@@ -270,13 +270,13 @@ require(["common"], function(){
 			type : 'POST',
 			dataType : 'json',
 			data : params
-		}).success(function(id){ 
+		}).success(function(id){
 			config.data.editableMilestoneIds.push(id);
 			$('#milestones-table').squashTable()._fnAjaxUpdate();
 			addMilestoneDialog.formDialog('cleanup');
-			$("#clone-milestone-end-date").text("");
+			$( '#add-milestone-end-date' ).text(translator.get("milestone.chooseDate"));
 		});
-		
+
 	});
 
 	addMilestoneDialog.on('formdialogcancel', function(){
@@ -323,9 +323,9 @@ require(["common"], function(){
 		});
 		$.squash.openMessage(warn.errorTitle, warn.errorMessage);
 	}
-	
+
 	cloneMilestoneDialog.on('formdialogopen', function(){
-		$( '#clone-milestone-end-date' ).text(translator.get("milestone.chooseDate"));	
+		$( '#clone-milestone-end-date' ).text(translator.get("milestone.chooseDate"));
 	});
 
 	cloneMilestoneDialog.on('formdialogcancel', function(){
@@ -343,7 +343,7 @@ require(["common"], function(){
 				description: $( '#clone-milestone-description' ).val(),
 				bindToRequirements : cloneMilestoneDialog.find("input:checkbox[name='bindToRequirements']").prop("checked"),
 				bindToTestCases : cloneMilestoneDialog.find("input:checkbox[name='bindToTestCases']").prop("checked"),
-				
+
 			};
 		$.ajax({
 			url : url,
@@ -384,11 +384,11 @@ require(["common"], function(){
 			var mil2 = table.getDataById(ids[1]);
 			synchronizeMilestoneDialog.data('mil1', mil1);
 			synchronizeMilestoneDialog.data('mil2', mil2);
-			
+
 			if (mil1.status != trans.statusPlanned && mil2.status != trans.statusPlanned && (mil1.bindableToObject || mil2.bindableToObject)){
 				// you need at least one milestone bindable to object to synchronize
 				//and no planned milestone
-				
+
 				if (config.data.isAdmin){
 					//ok you're admin you can skip some additional check
 					configAdminSynchroPopup();
@@ -418,7 +418,7 @@ require(["common"], function(){
 				// or 1 of the milestone is PLANNED...so you loose (unfair isn't it ?)
 				warningWithTranslation('message.milestone.synchronize.wrongstatus');
 			}
-		
+
 		}
 
 		function configAdminSynchroPopup(){
@@ -430,10 +430,10 @@ require(["common"], function(){
 			$("#perim").attr("disabled", true);
 			$("#perim").hide();
 			$("#perimtxt").hide();
-		
+
 			writeMilestonesLabel();
 			writeMilestonesWarning(mil1, mil2, true);
-			
+
 
 		}
 
@@ -447,20 +447,20 @@ require(["common"], function(){
 			$("#union").attr("disabled", mil1CantBeTarget || mil2CantBeTarget);
 			writeMilestonesLabel();
 			writeMilestonesWarning(mil1, mil2, false);
-		
+
 		}
-		
+
 		function writeMilestonesWarning(mil1, mil2, isAdmin){
-			
+
 			$("#mil1warn").text("");
 			$("#mil2warn").text("");
 			$("#unionwarn").text("");
-			
+
 	    	milestoneWarn(mil1, $("#mil1Label") , $("#mil1warn"), isAdmin);
 	    	milestoneWarn(mil2, $("#mil2Label"), $("#mil2warn"), isAdmin);
-	    		
+
 		}
-		
+
 		function milestoneWarn(milestone, $milestone, $text, isAdmin){
 		 	if (!isAdmin && milestone.range == trans.rangeGlobal){
 		 		$milestone.text($milestone.text().split("(")[0]);
@@ -556,27 +556,27 @@ require(["common"], function(){
 		synchronizeMilestoneConfirmDialog.confirmDialog('open');
 		synchronizeMilestoneDialog.formDialog('close');
 		});
-	
+
 	var synchronizeMilestoneConfirmDialog = $("#synchronize-milestone-dialog-confirm");
 	synchronizeMilestoneConfirmDialog.confirmDialog();
 
-	
+
 	synchronizeMilestoneConfirmDialog.on('confirmdialogconfirm', function(){
 		var mil1 = synchronizeMilestoneConfirmDialog.data('mil1');
 		var mil2 = synchronizeMilestoneConfirmDialog.data('mil2');
 
         var source = $("#mil1").prop('checked') ? mil2["entity-id"] : mil1["entity-id"];
         var target = $("#mil1").prop('checked') ? mil1["entity-id"] : mil2["entity-id"];
-			
+
 		$.ajax({
 			url : routing.buildURL("milestone.synchronize", source, target),
 			type : 'POST',
 			data : {extendPerimeter: $("#perim").prop("checked"),
 				isUnion:$("#union").prop("checked")}
 		});
-		
+
 	});
-	
+
 	});
 	});
 });

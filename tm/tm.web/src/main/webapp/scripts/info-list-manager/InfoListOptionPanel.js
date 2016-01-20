@@ -95,6 +95,7 @@ define([ "underscore", "app/BindView", "handlebars", "backbone.validation", "squ
 		onClickChooseIcon: function(event) {
 			renderIconPicker();
 			this.iconPicker = this.iconPicker || new IconPicker({ el: "#icon-picker-dialog", model: { icon: this.model.get("iconName") } });
+			this.iconPicker.open();
 		},
 
 		onIconPicked: function(event) {

@@ -34,6 +34,7 @@ public class NamespacedBugtrackerMessageSource implements MessageSource {
 	private String namespace;
 
 	public NamespacedBugtrackerMessageSource(MessageSource source, String namespace) {
+		//TODO implement some form of control, to ensure that the namespace is well formed (the point at the end of namespace is mandotory)
 		this.source = source;
 		this.namespace = namespace;
 	}
