@@ -250,12 +250,13 @@
 	+ "where st.class = CallTestStep "
 	+ "and tc.id in (:testCaseIds) " + "group by tc.id, st.id, index(st)+1 , st.calledTestCase.id , dataset.name, st.delegateParameterValues "),
 
-		@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType "
-				+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf "
-				+ "where cfv.boundEntityId in ("
-				+ "select st.id from TestCase tc inner join tc.steps st where tc.id in (:testCaseIds)"
-				+ ") "
-				+ "and cfv.boundEntityType = 'TEST_STEP'"),
+	@NamedQuery(name = "testStep.excelExportCUF", query = "select cfv.boundEntityId, cfv.boundEntityType, cf.code, cfv.value, cfv.largeValue, cf.inputType "
+		+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf, "
+		+ "TestCase tc inner join tc.steps st "
+		+ "where cfv.boundEntityId = st.id "
+		+ "and cfv.boundEntityType = 'TEST_STEP' "
+		+ "and tc.id in (:testCaseIds) "
+		+ "group by cfv.id, cf.id"),
 
 	@NamedQuery(name = "testStep.findBasicInfosByTcId",
 	query = "select case when st.class = ActionTestStep then 'ACTION' else 'CALL' end as steptype, "
