@@ -29,7 +29,7 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
 			description : dialog.find('#add-folder-description').val()
 		};
 
-		return tree.jstree('postNewNode', 'new-folder', params, true);
+		return tree.jstree('postNewNode', 'new-folder', params, false);
 	}
 
 
