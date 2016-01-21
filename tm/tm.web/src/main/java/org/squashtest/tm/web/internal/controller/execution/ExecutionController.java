@@ -20,40 +20,25 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.BindException;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
-import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping("/executions")
 public class ExecutionController {
 
 	@Inject
-	private CampaignLibraryNavigationService campaignLibraryNavigationService;
-
-	@Inject
 	private Provider<ExecutionAssignmentComboDataBuilder> assignmentComboBuilderProvider;
 
 	@Inject
 	private Provider<ExecutionStatusComboDataBuilder> statusComboDataBuilderProvider;
-
-	@Inject
-	private InternationalizationHelper i18n;
 
 
 	@RequestMapping(value = "/assignment-combo-data", method = RequestMethod.GET)
@@ -66,25 +51,6 @@ public class ExecutionController {
 	@ResponseBody
 	public Object buildTypeComboData(Locale locale) {
 		return statusComboDataBuilderProvider.get().useLocale(locale).buildMap();
-	}
-
-	@RequestMapping(value = "/add-iteration/{campaignId}", method = RequestMethod.POST)
-	public
-	@ResponseBody
-	void addNewIteration(@PathVariable long campaignId, Locale locale,
-	                     @CurrentMilestone Milestone activeMilestone) throws BindException {
-
-		Iteration iteration = new Iteration();
-		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Date date = new Date();
-
-		iteration.setName(
-			i18n.internationalize("label.generatedIT.name", locale) + " " + dateFormat.format(date).toString());
-		iteration.setDescription(i18n.internationalize("label.generatedIT.description", locale));
-		iteration.setReference("");
-
-		campaignLibraryNavigationService.addIterationToCampaign(iteration, campaignId, false);
-
 	}
 
 }

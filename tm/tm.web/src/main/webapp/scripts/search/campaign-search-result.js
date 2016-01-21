@@ -18,7 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus", 'tree', './execution-treemenu',
+define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.routing","workspace.event-bus", "squash.dateutils", 
+         'tree', './execution-treemenu',
         "./CampaignSearchResultTable", "squash.translator", "app/ws/squashtm.notification",
         "workspace.projects", "./milestone-mass-modif-popup", 
         "jquery.squash", "jqueryui",
@@ -26,9 +27,17 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog",
 		"jquery.squash.formdialog", "jquery.squash.milestoneDialog" ], 
-		function($, Backbone, _, StringUtil, routing, eventBus, tree, treemenu, CampaignSearchResultTable, 
+		function($, Backbone, _, StringUtil, routing, eventBus, dateutils, tree, treemenu, CampaignSearchResultTable, 
 				translator, notification, projects, milestoneMassModif) {
 	
+	// locale-dependant data for the creation of new iterations (see far below)
+	var newIterationLabels = translator.get({
+		name : 'label.generatedIT.name',
+		desc : 'label.generatedIT.description'
+	});
+	
+	
+	// main view	
 	var CampaignSearchResultPanel = Backbone.View.extend({
 
 		expanded : false,
@@ -342,16 +351,16 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					 notification.showError(translator.get('message.SelectOneIteration'));
 				}
 				else {
-						$.ajax({
-							url : squashtm.app.contextRoot + "/iterations/" +  nodes.getResId() + "/test-plan"  ,
-							type : 'POST',
-							data : {
-								itpiIds : selectedIds 
-							}
-						})
-						.success(function(json) {
-							addITPIDialog.formDialog('close');
-						});
+					$.ajax({
+						url : squashtm.app.contextRoot + "/iterations/" +  nodes.getResId() + "/test-plan"  ,
+						type : 'POST',
+						data : {
+							itpiIds : selectedIds 
+						}
+					})
+					.success(function(json) {
+						addITPIDialog.formDialog('close');
+					});
 				}
 
 				
@@ -359,10 +368,24 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				
 			});
 			
+			function createIteration(){
+				// create the data for the new iteration
+				// note that by convention the date format is statically set to US standards because 
+				// iteration names themselves are not locale-dependant anyway
+				var now = dateutils.format(new Date(), "yyyy/MM/dd HH:mm:ss");
+				return {
+					name : newIterationLabels.name + " " + now,
+					description : newIterationLabels.description,
+					reference : "",
+					copyTestPlan : false
+				}			
+			}
+			
 			addITPIDialog.on('formdialogadd',function() {
 
+				var tree = $("#tp-dialog-tree");
 				// Get the place where we want to add the iteration
-				var nodes = $("#tp-dialog-tree").jstree('get_selected');
+				var nodes = tree.jstree('get_selected');
 
 				// Node must be a campaign (and only one for now)
 				if (nodes.getResType() !== "campaigns") {
@@ -371,15 +394,9 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				else if(nodes.length > 1){
 					 notification.showError(translator.get('message.SelectOneCampaign'));
 				}
-				else {
-						$.ajax({
-							url : squashtm.app.contextRoot + "/executions/add-iteration/"  + nodes.getResId() ,
-							type : 'POST'
-							})
-						.success(function() {
-						 // refresh tree
-							self.loadTree();
-						});
+				else {					
+					var postITParams = createIteration();
+					tree.jstree('postNewNode', 'new-iteration', postITParams, true);
 				}
 			});
 			
