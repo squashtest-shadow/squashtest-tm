@@ -50,7 +50,7 @@
       title: /*[[ #{dialog.settings.filter.title} ]]*/ 'Filtre de projets',
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
-    }, 
+    },
     menuBarConf: {
         boxSelector: "#menu-toggle-filter-ckbox",
         url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
@@ -58,7 +58,7 @@
         enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
         disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
         enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-      }, 
+      },
   	campaignWorkspaceConf: {
 				tree : {
 					model : /*[[${ rootModel }]]*/ '',
@@ -87,7 +87,7 @@
   <script data-main="../../scripts/campaign-search-result.js" th:attr="data-main=@{/scripts/campaign-search-result.js}"
     src="../../scripts/require.js" th:src="@{/scripts/require-min.js}">
   </script>
-  
+
   <script type="text/javascript">
 publish("reload.auto-suite-overview-popup");
 </script>
@@ -100,7 +100,7 @@ publish("reload.auto-suite-overview-popup");
   <div id="workspace">
     <div id="workspace-title">
       <div class="snap-left">
-        <h2 th:text="#{workspace.campaign.title}">Espace campagne</h2> 
+        <h2 th:text="#{workspace.campaign.title}">Espace campagne</h2>
       </div>
       <div class="snap-right">
         <div class="main-menubar " th:include="menubar.frag :: menubar">
@@ -113,78 +113,78 @@ publish("reload.auto-suite-overview-popup");
     </div>
     <div id="sub-page" class="sub-page" >
 			<div id="sub-page-header" class="sub-page-header">
-			
+
 				<div id="sub-page-title" class="sub-page-title">
-					<h2  th:text="#{title.search.campaign.result}">Recherche des exigences</h2> 
+					<h2  th:text="#{title.search.campaign.result}">Recherche des exigences</h2>
 
 				</div>
-				
+
 				<div id="sub-page-buttons" class="sub-page-buttons">
-				  	
-				  	<input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour" 
-                            onclick="document.location.href=squashtm.workspace.backurl"/>		
+
+				  	<input id="back" type="button" class="sq-btn" th:value="#{label.Back}" value="Retour"
+                            onclick="document.location.href=squashtm.workspace.backurl"/>
 				</div>
-				
+
 				<div class="unsnap"></div>
 			</div>
-			
+
 			<div id="sub-page-content" class="sub-page-content">
     <div class="fragment-body-without-upper-margin" id="campaign-search-results">
-   
+
    <div id="search-toolbar" class="toolbar-class toolbar ui-corner-all">
 			<div class="left-buttons">
-			<input type="button" 
+			<input type="button"
 							th:value="#{label.SelectAllForSelection}" id="select-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-			<input type="button" 
+			<input type="button"
 							th:value="#{label.DeselectAll}" id="deselect-all-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
 							role="button" aria-disabled="false" />
-							
+
 			</div>
 						<input type="button" th:value="#{label.ModifySearch}"
 							id="modify-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 					
+							role="button" aria-disabled="false" />
 						<input type="button" th:value="#{label.NewSearch}"
 							id="new-search-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 						
+							role="button" aria-disabled="false" />
 						<input type="button" th:value="#{label.Modify}"
 							id="modify-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 
+							role="button" aria-disabled="false" />
 						<input type="button"  th:value="#{label.Add}"
 							id="add-search-result-button"
 							class="button ui-button ui-widget ui-state-default ui-corner-all"
-							role="button" aria-disabled="false" /> 
-									
+							role="button" aria-disabled="false" />
+
 
 					<div class="unsnap"></div>
 	</div>
-				
+
 				<div id="searchModel" class="not-displayed" th:text="${searchModel}"></div>
-						
+
 				<div id="search-results">
 					<div id="search-results-panel" class="table-tab-wrap">
 						<table id="campaign-search-result-table"
 							th:attr="data-def='filter, hover,pre-sort=1-asc|2-asc|3-asc, datakeys-id=itpi-id'" class="unstyled-table">
 							<thead>
 								<tr>
-									<th th:attr="data-def='select, map=entity-index'">#</th>								
+									<th th:attr="data-def='select, map=entity-index'">#</th>
 									<th th:attr="data-def='map=project-name, sortable'"
 										th:text="#{label.project}">project name</th>
 									<th th:attr="data-def='map=campaign-name, sortable'"
 										th:text="#{label.Campaign}">campaign name</th>
 									<th th:attr="data-def='map=iteration-name, sortable'"
-										th:text="#{label.Iteration}">iteration name</th>		
+										th:text="#{label.Iteration}">iteration name</th>
 									<th th:attr="data-def='map=itpi-label, sortable'"
 										th:text="#{label.Label}">itpi label</th>
-										
+
 									<th th:attr="data-def='map=tc-weight, sortable'"
-										th:text="#{label.Importance}">tc-weight</th>	
-								
+										th:text="#{label.Importance}">tc-weight</th>
+
 									<th th:attr="data-def='map=itpi-mode, sortable, narrow, center, sClass=exec-mode'"
 										th:text="#{label.Mode}" class="no-user-select tp-th-filter tp-th-exec-mode">execution mode</th>
 									<th th:attr="data-def='map=itpi-testsuites'"
@@ -194,17 +194,17 @@ publish("reload.auto-suite-overview-popup");
 									<th th:attr="data-def='map=itpi-executed-by, sortable'"
 										th:text="#{label.execution.lastRunBy}">executed by</th>
 									<th th:attr="data-def='map=itpi-executed-on, sortable'"
-										th:text="#{label.execution.lastRunOn}">executed on</th>					
+										th:text="#{label.execution.lastRunOn}">executed on</th>
 									<th th:attr="data-def='map=itpi-datasets, sortable'"
 										th:text="#{label.datasets}">execution datasets</th>
-							
+
 									<th class="no-user-select" data-def="map=empty-openinterface2-holder, narrow, center, sClass=search-open-interface2-holder">&nbsp;</th>
 								</tr>
 							</thead>
 							<tbody>
 							</tbody>
 						</table>
-						
+
 						    <div id="shortcut-exec-menu-template" class="not-displayed">
 						      <div class="buttonmenu execute-arrow cursor-pointer"></div>
 						      <ul style="display: none">
@@ -218,7 +218,7 @@ publish("reload.auto-suite-overview-popup");
 						        </li>
 						      </ul>
 						    </div>
-    
+
 					</div>
 				</div>
 			</div>
@@ -229,9 +229,9 @@ publish("reload.auto-suite-overview-popup");
 				class="not-displayed popup-dialog" th:title="#{label.Modify}">
 				<div class="main">
                     <div id="modify-search-result-dialog-project-conf-warning"
-                         class="not-displayed" 
+                         class="not-displayed"
                          th:text="#{message.search.modify.differentInfolists}">
-                         
+
                       Warning : hey, something's wrong !
                     </div>
 					<table id="modify-search-result-dialog-table">
@@ -248,35 +248,35 @@ publish("reload.auto-suite-overview-popup");
 						type="button" value="cancel" th:value="#{label.Cancel}" />
 				</div>
 			</div>
-			
+
 			<!-- Get another popup to add the selected execution in an existing iteration and also allow user to add a new iteration where they want -->
-			
-			<div id="test-plan-dialog" 
+
+			<div id="test-plan-dialog"
 				class="not-displayed popup-dialog" th:title="#{search.campaign.testplandialog.title}" >
-				
+
 				<div class="main" style="height:100%">
 	         	 	<div id="tp-dialog-treepane" style="height:80%; overflow:auto; border-bottom:1px solid black;margin-bottom:1em;">
 			       		<div id="tp-dialog-tree" style="border:none;"></div>
-			       	</div>	
+			       	</div>
 			       	<span id="tp-dialog-hint" class="nota-bene"  th:text="#{search.campaign.testplandialog.hint}">hint</span>
 				</div>
-				
+
 				<div class="popup-dialog-buttonpane">
 					<input type="button" th:value="#{tree.button.new-iteration.label}" value="add" data-def="evt=add, mainbtn" style="float:left"/>
 					<input type="button" th:value="#{label.Add}" value="confirm" data-def="evt=confirm, mainbtn=confirm, state=confirm" />
 			        <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel, mainbtn" />
-       
+
 				</div>
 			</div>
-			
-			
+
+
 			</div>
       </div>
     </div>
-  
-  
-  
-  
+
+
+
+
 <script id="exec-info-tpl" type="text/x-handlebars-template">
 {{#each execs}}
 	<tr id="execution-info-{{id}}" class="display-table-row {{oddity @index}}">
@@ -296,7 +296,7 @@ publish("reload.auto-suite-overview-popup");
       <f:message key="message.automatedTests.ofProject" />&nbsp;<strong>{{project.label}}</strong>&nbsp;
       <f:message key="message.fromMasterNode" />&nbsp;<em>{{project.server.name}}</em>
     </legend>
-  
+
     <div>
       <label for="nodes-list-{{project.id}}"><f:message key="message.automatedTests.executedOn" /></label>
       <select id="nodes-list-{{project.id}}">
@@ -307,7 +307,7 @@ publish("reload.auto-suite-overview-popup");
         {{/each}}
       </select>
     </div>
-  
+
     <div id="tests-tl-{{project.server.id}}" class="collapse sq-tl">
       <h5 class="tl-head">
         <span class="tl-state-icon"></span><f:message key="message.automatedTestsList" />({{tests.length}} <f:message key="label.testCases.lower" />)
@@ -324,9 +324,9 @@ publish("reload.auto-suite-overview-popup");
   </fieldset>
 </p>
 {{/each}}
-</script>    
-    
-    
+</script>
+
+
     <!-- *************************POPUP*********************** -->
 <div id="execute-auto-dialog" class="popup-dialog not-displayed" th:title="#{dialog.execute-auto.title}" th:with="suiteUrl=@{/automated-suites}"
 	 th:attr="data-def='url=' + ${suiteUrl}+ ', height=490'">
@@ -346,19 +346,19 @@ publish("reload.auto-suite-overview-popup");
         </tbody>
       </table>
 		</div>
-		
+
 		<div class="executions-auto-bottom" style="min-height:45px; width: 100%;">
-		
+
 			<div id="execution-auto-progress" style="width: 80%; margin: auto; margin-top: 20px">
 				<div style="width: 80%; display: inline-block; vertical-align: middle">
 					<div id="execution-auto-progress-bar" ></div>
 				</div>
 				<div id="execution-auto-progress-amount" style="width: 10%; display: inline-block"></div>
 			</div>
-			
+
 		</div>
 	</div>
-	
+
 	<div data-def="state=warning">
 		<span th:text="#{message.CloseAutomatedSuiteOverview}"></span>
 	</div>
@@ -367,17 +367,16 @@ publish("reload.auto-suite-overview-popup");
       <div id="node-selector-pnl">
       </div>
     </div>
-    
+
 	<div class="popup-dialog-buttonpane">
 		<input type="button" th:value="#{label.Close}" data-def="evt=mainclose, state=main, mainbtn=main"/>
 		<input type="button" th:value="#{label.Confirm}" data-def="evt=warningok, state=warning"/>
-		<input type="button" th:value="#{label.Cancel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>	
+		<input type="button" th:value="#{label.Cancel}" data-def="evt=warningcancel, state=warning, mainbtn=warning"/>
     <input type="button" th:value="#{label.Confirm}" data-def="evt=submitNodes, state=node-selector"/>
     <input type="button" th:value="#{label.Cancel}" data-def="evt=discardNodes, state=node-selector"/>
 	</div>
 </div>
-    
-   
+
+
 </body>
 </html>
-
