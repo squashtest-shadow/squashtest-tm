@@ -62,7 +62,7 @@ public class CustomReportWorkspaceController {
 
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportWorkspaceController.class);
 
-	private final String cookieDelimiter = "#";
+	private final String cookieDelimiter = "-";
 
 	@Inject
 	@Named("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
@@ -158,7 +158,10 @@ public class CustomReportWorkspaceController {
 	}
 
 	private Long convertCookieId(String cookieValue){
-		cookieValue = cookieValue.replace(cookieDelimiter, "");
+		String[] cookieSplits = cookieValue.split(cookieDelimiter);
+		if (cookieSplits.length>0) {
+			return Long.parseLong(cookieSplits[cookieSplits.length-1]);
+		}
 		return Long.parseLong(cookieValue);
 	}
 
