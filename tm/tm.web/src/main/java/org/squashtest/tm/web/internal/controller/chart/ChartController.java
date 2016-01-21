@@ -133,12 +133,8 @@ public class ChartController {
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
 			@PathVariable("id") long id) {
-
-
-
 		ChartDefinition oldDef = reportNodeService.findChartDefinitionByNodeId(id);
 		chartService.updateDefinition(definition, oldDef);
-
 		return "custom-report-workspace#custom-report-chart/" + id;
 	}
 

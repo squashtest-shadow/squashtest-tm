@@ -37,8 +37,12 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 		initName : function (){
 			//var name = this.model.get('name') || "graph" ;
-			 $("#chart-name").val("");
-       this.updateModel();
+			if (this.isModify()) {
+        $("#chart-name").val(this.model.get("name"));
+			} else {
+        $("#chart-name").val("");
+        this.updateModel();
+			}
 		},
 		initChart : function (){
 			var data = this.model.get("chartData");
@@ -51,10 +55,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			var targetUrl;
 
-			if (this.model.get("chartDef") === null){
-				targetUrl = router.buildURL("chart.new", parentId);
+			if (this.isModify()){
+        targetUrl = router.buildURL("chart.update", parentId);
 			} else {
-				targetUrl = router.buildURL("chart.update", parentId);
+        targetUrl = router.buildURL("chart.new", parentId);
 			}
 
 			$.ajax({

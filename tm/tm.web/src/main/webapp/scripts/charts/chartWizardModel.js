@@ -119,7 +119,7 @@ return Backbone.Model.extend({
 		toJson : function(param) {
 			return JSON.stringify ({
 			id : this.get('updateId') || null,
-			name : param || this.get("name"),
+			name : this.get("name") || param,
 			type : this.get("type"),
 			query : {
 				axis: this.get("axis"),

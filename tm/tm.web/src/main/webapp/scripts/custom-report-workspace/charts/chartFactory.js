@@ -321,7 +321,7 @@ define(["backbone","./chart-render-utils","./customReportPieView","./customRepor
       .value();
 
 
-    //now we retrieve the
+    //now we retrieve the legends
     var seriesLegend = _.chain(comparativeSeries)
       .groupBy(function (memo) {//group by on second axis ie series on comparative chart
         return memo[1];

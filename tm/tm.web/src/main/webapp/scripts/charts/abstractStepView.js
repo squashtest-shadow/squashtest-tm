@@ -22,9 +22,9 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		backbone, _, Handlebars, translator) {
 	"use strict";
 
-	
 
-	
+
+
 	var abstractStepView = Backbone.View.extend({
 		el : "#current-step",
 
@@ -32,17 +32,17 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			this.router = wizrouter;
 			this.registerHelper();
 			this.steps = this.model.get("steps");
-			var currStep = _.findWhere(this.steps, {name : data.name});		
+			var currStep = _.findWhere(this.steps, {name : data.name});
 			this.next = currStep.nextStep;
 			this.previous = currStep.prevStep;
 			this.showViewTitle(currStep.viewTitle, currStep.stepNumber);
 			this.initButtons(currStep.buttons);
 			var missingStepNames = this.findMissingSteps(data, currStep.neededStep);
-			
+
 			if (_.isEmpty(missingStepNames)){
 				this.render(data, $(this.tmpl));
 			} else {
-				
+
 				var missingSteps = _.chain(this.steps)
 				.filter(function(step){
 					return _.contains(missingStepNames, step.name);
@@ -53,55 +53,55 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 				var model = {steps : missingSteps, totalStep : this.steps.length};
 				this.render(model, $("#missing-step-tpl"));
 			}
-			
-			
+
+
 		},
 
 		registerHelper : function(){
 			Handlebars.registerHelper("cuf-label", function(label, cufs){
-				
+
 				var cuf =_.chain(cufs).values().flatten().find(function(val){return val.code == label;});
-				
+
 				var cufLabel = cuf.result("label").value();
 				var cufName = cuf.result("name").value();
 				var html = cufLabel  + "<span class='small txt-discreet'> ("+ cufName +")</span>";
-				
+
 				return new Handlebars.SafeString(html);
 			});
-			
+
 		},
-		
+
 		findMissingSteps : function (data, neededStep) {
 			var self = this;
-			return  _.filter(neededStep, function (step) {	
+			return  _.filter(neededStep, function (step) {
 				var param = _.chain(self.model.get("validation"))
 				.find(function (val) {return val.name == step;})
 				.result("validationParam")
-				.value();	
-				
+				.value();
+
 				return _.isEmpty(_.result(data.attributes, param));
 			});
-			
-			
+
+
 		},
 		initButtons : function (buttons){
-			
+
 			var allButtons = ["previous", "next", "save", "generate"];
-			
+
 			_.each(buttons, function(button) {
 				var select = $("#" + button);
 				select.show();
 			});
-			
+
 			_.chain(allButtons).difference(buttons).each(function(button) {
 				var select = $("#" + button);
 				select.hide();
-			}			
+			}
 			);
-	
+
 		},
 
-	
+
 
 		navigateNext : function() {
 			this.updateModel();
@@ -116,8 +116,8 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 		},
 
 		showViewTitle : function(title, stepNumber) {
-			
-			
+
+
 			var text = "[" + translator.get("wizard.steps.label") +" " + stepNumber + "/" + this.steps.length + "] " + translator.get(title);
 			$("#step-title").text(text);
 		},
@@ -143,7 +143,15 @@ define([ "jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "s
 			this.$el.removeData().unbind();
 			this.remove();
 			Backbone.View.prototype.remove.call(this);
-		}
+		},
+
+    /**
+     * Check if we are modidying an existing chartDef
+     * @return {Boolean} [description]
+     */
+    isModify : function () {
+      return this.model.get("chartDef") !== null;
+    }
 
 	});
 
