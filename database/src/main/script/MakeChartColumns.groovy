@@ -264,7 +264,7 @@ def definition = [
 				label : 'CAMPAIGN_ISSUECOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
-				measures : ['isId COUNT'],
+				measures : ['isRemoteId COUNT'],
 				axes : ['cId']
 			]
 			
@@ -296,7 +296,7 @@ def definition = [
 				label : 'ITERATION_ISSUECOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
-				measures : ['isId COUNT'],
+				measures : ['isRemoteId COUNT'],
 				axes : ['itId']
 			]
 		]	
@@ -360,7 +360,7 @@ def definition = [
 				label : 'ITEM_TEST_PLAN_ISSUECOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
-				measures : ['isId COUNT'],
+				measures : ['isRemoteId COUNT'],
 				axes : ['itpId']
 			]		
 		]	
@@ -393,7 +393,7 @@ def definition = [
 				label : 'EXECUTION_ISSUECOUNT_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'SUBQUERY',
-				measures : ['isId COUNT'],
+				measures : ['isRemoteId COUNT'],
 				axes : ['exId']
 			]
 		]		
@@ -402,6 +402,7 @@ def definition = [
 	ISSUE : [
 		columns : [
 			isId : ['ID', 'NUMERIC', 'id', 'none'],
+			isRemoteId : ['REMOTE_ID', 'STRING', 'remoteIssueId', 'none'],
 			isStatus : ['STATUS', 'STRING', 'status', 'none'],
 			isSeverity : ['SEVERITY', 'STRING', 'severity', 'none'],
 			isBugtrackerLabel : ['BUGTRACKER', 'STRING', 'bugtracker', 'none']	
