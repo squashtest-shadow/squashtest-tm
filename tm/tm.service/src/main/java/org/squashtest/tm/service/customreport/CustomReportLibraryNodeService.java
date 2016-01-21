@@ -122,5 +122,12 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	List<Long> findAncestorIds(Long nodeId);
+	
+	/**
+	 * Find the {@link CustomReportLibraryNode} linked to a {@link TreeEntity}.
+	 * @param treeEntity
+	 * @return
+	 */
+	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
 
 }

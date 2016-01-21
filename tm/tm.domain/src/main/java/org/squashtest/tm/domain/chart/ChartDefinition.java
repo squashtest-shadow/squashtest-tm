@@ -74,6 +74,8 @@ public class ChartDefinition implements TreeEntity{
 
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
+	//if you change this name, don't forget to update the NODE name.
+	//name is denormalized, to avoid complex request each time we need the node name.
 	private String name;
 
 	@JoinColumn(name = "USER_ID")
@@ -173,6 +175,10 @@ public class ChartDefinition implements TreeEntity{
 		return name;
 	}
 	@Override
+	/*
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.domain.tree.TreeEntity#setName(java.lang.String)
+	 */
 	public void setName(String name) {
 		this.name = name;
 	}

@@ -199,6 +199,11 @@ public class CustomReportLibraryNodeServiceImpl implements
 		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
 
+	@Override
+	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
+		return customReportLibraryNodeDao.findNodeFromEntity(treeEntity);
+	}
+
 	
 
 	

@@ -75,7 +75,8 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	/**
 	 * To prevent no named entity as we have in {@link Requirement} / {@link RequirementVersion}
 	 * path hell, we decided to denormalize the name. 
-	 * So the entity name and node name should be the same, take care if you rename one of them !
+	 * So the entity name and node name should be the same, take care if you rename directly one of them !
+	 * Use {@link CustomReportLibraryNode#renameNode(String)} method which take care of all constraints relative to node name.
 	 */
 	@Column
 	private String name;
@@ -274,7 +275,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Override
 	public void renameNode(String newName) {
 		if (getEntityType().equals(CustomReportTreeDefinition.LIBRARY)) {
-			throw new IllegalArgumentException("Cannot rename a library, rename project");
+			throw new IllegalArgumentException("Cannot rename a library, rename the project instead");
 		}
 		if(nameAlreadyUsedBySibling(newName)){
 			throw new DuplicateNameException(newName,this.getEntityType().getTypeName());

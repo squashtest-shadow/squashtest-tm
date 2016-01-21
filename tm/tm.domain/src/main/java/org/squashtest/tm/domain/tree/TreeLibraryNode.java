@@ -38,6 +38,12 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	
 	String getName ();
 	
+	/**
+	 * Don't forget to update ENTITY name.
+	 * Name is denormalized to avoid complex inject/request each time we need the name of an entity.
+	 * Please use {@link CustomReportLibraryNode#renameNode(String)} that double check all constraint for you.
+	 * @param name
+	 */
 	void setName(String name);
 	
 	long getEntityId();
@@ -69,6 +75,10 @@ public interface TreeLibraryNode extends TreeVisitable, Identified {
 	
 	boolean hasContent();
 	
+	/**
+	 * Rename a {@link CustomReportLibraryNode}. Will also take care of renaming the linked {@link TreeEntity}. 
+	 * @param newName
+	 */
 	void renameNode(String newName);
 
 }

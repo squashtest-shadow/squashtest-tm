@@ -41,9 +41,9 @@ public interface TreeEntity extends Identified{
 	String getName();
 
 	/**
-	 *
-	 * @param name
-	 *            The name of this node. Should not be blank or null.
+	 *Don't forget to update also the NODE name
+	 *Name is denormalized to avoid complex inject/request each time we need the name of an entity.
+	 * @param name The name of this node. Should not be blank or null.
 	 */
 	void setName(String name);
 	

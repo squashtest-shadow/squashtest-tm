@@ -39,7 +39,9 @@ import org.squashtest.tm.domain.chart.ChartSeries;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.QColumnPrototype;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.service.chart.ChartModificationService;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
 
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
@@ -52,6 +54,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Inject
 	private ChartDataFinder dataFinder;
+	
+	@Inject
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
 	@Override
 	public void persist(ChartDefinition newChartDefinition) {
@@ -108,6 +113,11 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		definition.setProject(oldDef.getProject());
 		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());
 		((AuditableMixin) definition).setCreatedOn(((AuditableMixin) oldDef).getCreatedOn());
+		//rename if needed without forgot to rename the node.
+		if (!definition.getName().equals(oldDef.getName())) {
+			CustomReportLibraryNode node = customReportLibraryNodeService.findNodeFromEntity(oldDef);
+			node.renameNode(definition.getName());
+		}
 		session().flush();
 		session().clear();
 		update(definition);
