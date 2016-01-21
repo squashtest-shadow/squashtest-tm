@@ -72,6 +72,7 @@ public final class Messages {
 	public static final String ERROR_WRONG_MILESTONE_STATUS = "message.import.log.error.milestone.wrongStatus";
 	public static final String ERROR_MILESTONE_LOCKED = "message.import.log.error.milestone.locked";
 	public static final String ERROR_REQUIREMENT_VERSION_COLLISION = "message.import.log.error.requirement.version.collision";
+	// TODO if possible, remove message ERROR_REQUIREMENT_VERSION_INVALID, use 'message.import.log.error.field.notInteger' with correct parameter
 	public static final String ERROR_REQUIREMENT_VERSION_INVALID = "message.import.log.error.requirement.version.invalidVersionNumber";
 	public static final String ERROR_REQUIREMENT_VERSION_NOT_EXISTS = "message.import.log.error.requirement.version.notExists";
 	public static final String ERROR_REQUIREMENT_VERSION_STATUS = "message.import.log.error.requirement.version.statusLocked";
