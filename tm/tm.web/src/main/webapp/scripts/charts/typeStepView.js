@@ -380,6 +380,17 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		    	.find(function(col) {return col.attributeName == "id";})
 		    	.value();
 		    	measure.label = "";
+		    	
+		    	/*
+		    	 * Issue 5988 : due to shitty specs implemented right above on one hand, 
+		    	 * and the current constraint that a same column cannot appear both as 
+		    	 * measure and axis, the following should at least help the server not crashing :
+		    	 * 
+		    	 * (note : see ambiguity in the implem of getChoosenOperation() )
+		    	 */
+		    	if (axis1.column.attributeName === "id"){
+		    		axis1.operation = "NONE";
+		    	}
 
 		    	axis2 = null;
 			break;
@@ -387,9 +398,15 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			}
 			}
 
-			var axis = _.isEmpty(axis2)  ? _.isEmpty(axis1) ? [] :[axis1]:[axis1].concat(axis2);
-
-
+			var axis = [];
+			if (! _.isEmpty(axis1)){
+				axis.push(axis1);
+			}
+			if (! _.isEmpty(axis2)){
+				axis.push(axis2);
+			}
+			
+			
 			var measures = measure === undefined ? [] :[measure];
 
 			this.model.set({type : type, measures : measures, axis : axis});

@@ -52,7 +52,7 @@ return Backbone.Model.extend({
 
 	getOperations : function (chartDef){
 		return _.chain(chartDef)
-		.pick('filters', 'measures', 'axis')
+		.pick('measures', 'axis')
 		.values()
 		.flatten()
 		.map(function(val){return _(val).pick('column', 'operation');})
