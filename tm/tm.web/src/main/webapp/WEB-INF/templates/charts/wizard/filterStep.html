@@ -44,10 +44,13 @@
 <select id="filter-operation-select-{{id}}" class="filter-operation-select" name="{{id}}" style="width: 80%;">
 {{#each  operations}}  
 
-<option value="{{this}}">
+   {{!--<![CDATA[--}}
+   
+<option value="{{this}}"  {{#equal this "EQUALS"}} selected="selected"{{/equal}} >
     {{i18n this prefix="chart.operation."}}
 </option>
-
+ {{!--]]>--}}
+ 
 {{/each}}   
 </select>
 </div>
