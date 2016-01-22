@@ -27,8 +27,7 @@
  *  Those strings are keys for i18n properties.
  *
  *  The function returns the resolved object, of which the keys has been replaced by the corresponding value.
- *
- *  Note : does not support parameterized messages for the moment.
+ *  
  *
  * Example :
  *
@@ -43,6 +42,14 @@
  *			confirm : 'label.Confirm'
  *		}
  *	}
+ *
+ * 
+ * ------------ support for parameterized messages : ----------------
+ *
+ * Additionally to the 'get(object)' signature, it also supports get(string, param1,...). When used that way, the string argument will have 
+ * its placeholders filled with the extra parameters, provided the resulting string contains placeholders like {0}, {1} etc. Parameter 
+ * substitution is positional : param1 will be substituted to placeholder {0}, param2 to {1} etc.
+ *
  *
  *
  * The method `load()` takes the same *object* arg as `get()` and performs an *asunc* request to fill the cache if needed. It does not return anything.
@@ -217,17 +224,32 @@ define(["jquery", "underscore", "workspace.storage"], function($, _, storage){
 		});
 	}
 
-	function getAsString(string){
-		var res = getAsObject({ query : string });
-		return res.query;
+	function getAsString(/*string key, varargs string params*/){
+		var str = arguments[0];
+		var res = getAsObject({ query : str });
+		
+		var translated = res.query;
+		if (arguments.length > 1){
+			// here we match placeholder {0} pos with arguments[pos+1]
+			var pos = 0,
+				needle = null;
+			
+			while (pos < arguments.length -1){
+				needle = new RegExp('\\\{'+pos+'\\\}', 'g');
+				translated = translated.replace(needle, arguments[pos+1]);
+				pos++;
+			}
+		}
+		
+		return translated;
 	}
 
 	return {
-		get : function(argument){
-			if (typeof argument === "string"){
-				return getAsString(argument);
+		get : function(){
+			if (typeof arguments[0] === "string"){
+				return getAsString.apply(this, arguments);
 			} else {
-				return getAsObject(argument);
+				return getAsObject.apply(this, arguments);
 			}
 		},
 

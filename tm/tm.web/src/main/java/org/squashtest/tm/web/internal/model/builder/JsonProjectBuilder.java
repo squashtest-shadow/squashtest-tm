@@ -36,6 +36,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
+import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldBindingModel;
 import org.squashtest.tm.web.internal.model.customfield.CustomFieldJsonConverter;
 import org.squashtest.tm.web.internal.model.json.JsonInfoList;
@@ -53,6 +54,10 @@ public class JsonProjectBuilder {
 
 	@Inject
 	private JsonInfoListBuilder infoListBuilder;
+	
+	@Inject
+	protected ProjectFinder projectFinder;
+
 
 	public JsonProjectBuilder(){
 		super();
@@ -60,6 +65,20 @@ public class JsonProjectBuilder {
 
 	public JsonProject toSimpleJson(Project p){
 		return JsonProject.toJson(p);
+	}
+	
+	/**
+	 * Return all readable projects as json, extended version (see below)
+	 * 
+	 * @return
+	 */
+	public Collection<JsonProject> getExtendedReadableProjects(){
+		Collection<Project> projects = projectFinder.findAllReadable();
+		Collection<JsonProject> jsProjects = new ArrayList<>(projects.size());
+		for (Project p : projects) {
+			jsProjects.add(toExtendedProject(p));
+		}
+		return jsProjects;
 	}
 
 	public JsonProject toExtendedProject(Project p){

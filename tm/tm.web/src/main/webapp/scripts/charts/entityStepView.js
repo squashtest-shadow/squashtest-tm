@@ -18,9 +18,16 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "app/squash.handlebars.helpers", "./abstractStepView", "tree", "squash.translator", "./treePopup", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
-	function($, backbone, Handlebars, AbstractStepView, tree, translator, TreePopup) {
+define(["jquery", "backbone", "app/squash.handlebars.helpers", "workspace.projects", "./abstractStepView", "tree", "squash.translator", "./treePopup", "jquery.squash.confirmdialog", "jquery.squash.buttonmenu"],
+	function($, backbone, Handlebars, projects, AbstractStepView, tree, translator, TreePopup) {
 	"use strict";
+	
+	translator.load({
+		msgdefault : 'wizard.perimeter.msg.default',
+		msgcustomroot : 'wizard.perimeter.msg.custom.root',
+		msgcustomsingle : 'wizard.perimeter.msg.custom.singleproject',
+		msgcustommulti : 'wizard.perimeter.msg.custom.multiproject'
+	});
 
 	var entityStepView = AbstractStepView.extend({
 		
@@ -55,20 +62,42 @@ define(["jquery", "backbone", "app/squash.handlebars.helpers", "./abstractStepVi
 		},
 		
 		writeDefaultPerimeter : function (){
-			$("#selected-perim-msg").text(translator.get("wizard.perimeter.msg.default"));
-			$("#selected-perim").text(translator.get("wizard.perimeter.default"));	
+			
 			var defaultId = this.model.get("defaultProject");
+			var projectName = projects.findProject(defaultId).name;
+			
+			var mainmsg = translator.get("wizard.perimeter.msg.default");
+			var perimmsg = " " + translator.get('label.project').toLowerCase() + " " + projectName;
+			$("#selected-perim-msg").text(mainmsg);
+			$("#selected-perim").text(perimmsg);
+			
 			this.model.set({scope : [{type : "PROJECT", id : defaultId}] });
 			this.model.set({projectsScope : [defaultId]});
 			this.model.set({scopeEntity : "default"});
 		},
+		
 		writePerimeter : function (name){
-	
-			$("#selected-perim-msg").text(translator.get("wizard.perimeter.msg.selection") );
-			var link = "<a id='repopen-perim' style='cursor:pointer' name= '" + name + "'>" + translator.get("wizard.perimeter." + name) + "</a>" ;
+			
+			var rootmsg = translator.get('wizard.perimeter.msg.custom.root');
+			var entitynames = translator.get("wizard.perimeter." + name);
+			
+			var projScope = this.model.get('projectsScope'),
+				suffixmsg = null;
+				
+			if (projScope.length === 1){
+				var projectId = projects.findProject(projScope[0]).name;
+				suffixmsg = translator.get('wizard.perimeter.msg.custom.singleproject', entitynames, projectId);
+			}
+			else{
+				suffixmsg = translator.get('wizard.perimeter.msg.custom.multiproject', entitynames);
+			}
+			
+			$("#selected-perim-msg").text(rootmsg);
+			var link = "<a id='repopen-perim' style='cursor:pointer' name= '" + name + "'>" + suffixmsg + "</a>" ;
 			$("#selected-perim").html(link);
 			
 		},
+		
 		resetPerimeter : function () {	
 			this.writeDefaultPerimeter();	
 		},

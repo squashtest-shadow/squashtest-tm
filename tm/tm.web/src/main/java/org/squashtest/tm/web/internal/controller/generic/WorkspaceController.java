@@ -115,6 +115,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		populateModel(model, locale);
 
 		// also add meta data about projects
+		// TODO :replace with a simplecall to jsonProjectBuilder.getExtendedReadableProjects() ?
 		Collection<Project> projects = projectFinder.findAllReadable();
 		Collection<JsonProject> jsProjects = new ArrayList<>(projects.size());
 		for (Project p : projects) {

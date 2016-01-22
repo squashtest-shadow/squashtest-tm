@@ -53,6 +53,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.helper.JsonHelper;
 import org.squashtest.tm.web.internal.http.ContentTypes;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonChartWizardData;
 
 @Controller
@@ -79,6 +80,10 @@ public class ChartController {
 	
 	@Inject
 	private CustomFieldBindingModificationService cufBindingService;
+	
+	@Inject
+	protected JsonProjectBuilder jsonProjectBuilder;
+	
 
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
@@ -113,6 +118,10 @@ public class ChartController {
 		mav.addObject("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
 		mav.addObject("executionStatus",
 				i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
+		
+		// project metadata
+		mav.addObject("projectsMeta", jsonProjectBuilder.getExtendedReadableProjects());
+		
 		return mav;
 	}
 
