@@ -153,10 +153,10 @@ public class JsonChartWizardData {
 
 		entityTypes.put(REQUIREMENT, "icon-chart-requirement");
 		entityTypes.put(REQUIREMENT_VERSION, "icon-chart-requirement-version");
-		entityTypes.put(CAMPAIGN, "icon-chart-campaign");
-		entityTypes.put(ITEM_TEST_PLAN, "icon-chart-item-test-plan");
 		entityTypes.put(TEST_CASE, "icon-chart-test-case");
+		entityTypes.put(CAMPAIGN, "icon-chart-campaign");
 		entityTypes.put(ITERATION, "icon-chart-iteration");
+		entityTypes.put(ITEM_TEST_PLAN, "icon-chart-item-test-plan");
 		entityTypes.put(EXECUTION, "icon-chart-execution");
 
 	}

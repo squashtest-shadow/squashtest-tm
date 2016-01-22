@@ -378,7 +378,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 					description : newIterationLabels.description,
 					reference : "",
 					copyTestPlan : false
-				}			
+				};			
 			}
 			
 			addITPIDialog.on('formdialogadd',function() {
