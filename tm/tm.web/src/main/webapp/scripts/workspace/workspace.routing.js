@@ -236,6 +236,9 @@ define([], function(){
 		// server authentication
 		'servers.authentication' :			root + '/servers/{\\d+}/authentication',
 
+		// authorizations
+		'acls': root + '/acls',
+
 		// helper methods
 		buildURL : function(){
 			var args = Array.prototype.slice.call(arguments);

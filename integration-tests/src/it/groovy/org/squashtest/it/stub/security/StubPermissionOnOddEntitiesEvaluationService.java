@@ -20,12 +20,15 @@
  */
 package org.squashtest.it.stub.security;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import javax.validation.constraints.NotNull;
 
 /**
  * Stub PermissionEvaluationService which has no role and has permission on entities with an odd identifier
@@ -87,16 +90,21 @@ public class StubPermissionOnOddEntitiesEvaluationService implements PermissionE
 		if (permissionsToRefuse.contains(permissionString)) {
 			return false;
 		}
-		
-		//Simulate project manager for odd project only. 
+
+		//Simulate project manager for odd project only.
 		if (entityId % 2 == 0){
 			return false;
 		}
 		return true;
 	}
-	
+
 	@Override
 	public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
+		return null;
+	}
+
+	@Override
+	public Collection<String> permissionsOn(@NotNull String className, long id) {
 		return null;
 	}
 

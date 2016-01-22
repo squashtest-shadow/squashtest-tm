@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.service.internal.security;
 
-import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
@@ -38,7 +30,10 @@ import org.squashtest.tm.security.acls.CustomPermission;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 
-import static org.springframework.security.acls.model.Permission.*;
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.lang.reflect.Field;
+import java.util.*;
 
 /**
  * TODO this service can be queried many times by a controller outside of a tx, which means lots of shord lived tx and
@@ -47,6 +42,23 @@ import static org.springframework.security.acls.model.Permission.*;
 @Service("squashtest.core.security.PermissionEvaluationService")
 @Transactional(readOnly = true)
 public class AclPermissionEvaluationService implements PermissionEvaluationService {
+	// TODO this should be externalized and may be based on the hack from hasMoreThanRead
+	private static final String[] RIGHTS = {
+		"READ",
+		"WRITE",
+		"CREATE",
+		"DELETE",
+		"ADMINISTRATION",
+		"MANAGEMENT",
+		"EXPORT",
+		"EXECUTE",
+		"LINK",
+		"IMPORT",
+		"ATTACH",
+		"EXTENDED_DELETE",
+		"READ_UNASSIGNED"
+	};
+
 	@Inject
 	private UserContextService userContextService;
 
@@ -83,7 +95,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 
 	@Override
 	public boolean hasRoleOrPermissionOnObject(String role, String permissionName,
-			Long entityId, String entityClassName) {
+											   Long entityId, String entityClassName) {
 
 		if (userContextService.hasRole(role)) {
 			return true;
@@ -112,15 +124,16 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		} else {
 			Authentication authentication = userContextService.getPrincipal();
 			Field[] fields = CustomPermission.class.getFields();
+			// TODO below is a hacky enum of all rights, should be externalized.
 			for (int i = 0; i < fields.length; i++) {
 				try {
 					if ((!fields[i].getName().equals("READ"))
-							&& permissionEvaluator.hasPermission(authentication, object, fields[i].getName())) {
+						&& permissionEvaluator.hasPermission(authentication, object, fields[i].getName())) {
 						return true;
 					}
 				} catch (IllegalArgumentException iaexecption) {
 					List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
-							"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
+						"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
 					if (!(knownMessages.contains(iaexecption.getMessage()))) {
 						throw iaexecption;
 					}
@@ -137,7 +150,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		Authentication authentication = userContextService.getPrincipal();
 		Permission permission = permissionFactory.buildFromName(permissionName);
 
-		return permissionEvaluator.hasPermission(authentication,entityId, entityClassName, permission);
+		return permissionEvaluator.hasPermission(authentication, entityId, entityClassName, permission);
 	}
 
 	@Override
@@ -145,11 +158,28 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 		boolean hasRole = this.hasRole(role);
 		Map<String, Boolean> permByName = new HashMap<String, Boolean>(permissions.length);
 
-		for (String perm: permissions) {
+		for (String perm : permissions) {
 			permByName.put(perm, hasRole || this.hasPermissionOnObject(perm, entity));
 		}
 
 		return permByName;
+	}
+
+	@Override
+	public Collection<String> permissionsOn(@NotNull String className, long id) {
+		List<String> perms = new ArrayList<>();
+
+		if (this.hasRole("ROLE_ADMIN")) {
+			return Arrays.asList(RIGHTS);
+		}
+
+		for (String right : RIGHTS) {
+			if (this.hasPermissionOnObject(right, id, className)) {
+				perms.add(right);
+			}
+		}
+
+		return perms;
 	}
 
 }

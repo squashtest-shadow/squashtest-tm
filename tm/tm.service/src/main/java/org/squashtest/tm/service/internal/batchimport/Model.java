@@ -102,24 +102,24 @@ public class Model {
 
 	@Inject
 	private DatasetDao dsDao;
-	
+
 	@Inject
 	private RequirementVersionManagerService requirementVersionManagerService;
 
 	/* **********************************************************************************************************************************
-	 * 
+	 *
 	 * The following properties are initialized all together during
 	 * init(List<TestCaseTarget>) :
-	 * 
+	 *
 	 * - testCaseStatusByTarget - testCaseStepsByTarget - projectStatusByName -
 	 * tcCufsPerProjectname - stepCufsPerProjectname
-	 * 
+	 *
 	 * **************************************************************************
 	 * **************************************** *****************
 	 */
 
 	/**
-	 * 
+	 *
 	 * Maps a reference to a TestCase (namely a TestCaseTarget). It keeps track
 	 * of its status (see TargetStatus) and possibly its id (when there is a
 	 * concrete instance of it in the database).<br/>
@@ -136,7 +136,7 @@ public class Model {
 	 * action step whereas the target is actually a call step and conversely),
 	 * and possibly a called test case (if the step is a call step, and we want
 	 * to keep track of possible cycles).
-	 * 
+	 *
 	 */
 	private Map<TestCaseTarget, List<InternalStepModel>> testCaseStepsByTarget = new HashMap<TestCaseTarget, List<InternalStepModel>>();
 
@@ -144,32 +144,32 @@ public class Model {
 	 * Introduced with issue 4973
 	 */
 	/**
-	 * 
+	 *
 	 * <p>
 	 * This maps says whether a given test case is locked because of its
 	 * milestones or not The answer is yes if :
 	 * </p>
-	 * 
+	 *
 	 * <ul>
 	 * <li>The entity exists in the database (ie it's not new : status is
 	 * EXISTS)</li>
 	 * <li>The entity indeed belongs to a milestone which status forbids any
 	 * modification</li>
 	 * </ul>
-	 * 
+	 *
 	 * <p>
 	 * Note that when the entity doesn't exist yet the answer is always no,
 	 * because one can never add or remove an entity a locked milestone. Same
 	 * goes for entities that are deleted or plain inexistant (status NOT_EXIST
 	 * : neither in DB nor in the import file)
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * Also note that for now we make no distinction between milestones that
 	 * prevent deletion and milestones that prevent edition because they are
 	 * exactly the same at the moment
 	 * </p>
-	 * 
+	 *
 	 * @param target
 	 * @return
 	 */
@@ -234,7 +234,7 @@ public class Model {
 		}
 		return projectStatusByName.get(projectName);
 	}
-	
+
 	// ************************** Test Case status management
 	// ****************************************
 
@@ -318,7 +318,7 @@ public class Model {
 	/**
 	 * returns true if the test case is being called by another test case or
 	 * else false.
-	 * 
+	 *
 	 * Note : the problem arises only if the test case already exists in the
 	 * database (test cases instructions are all processed before
 	 * step-instructions are thus newly imported test cases aren't bound to any
@@ -397,7 +397,7 @@ public class Model {
 
 	/**
 	 * Adds a step of the specified type to the model. Not to the database.
-	 * 
+	 *
 	 * @param target
 	 * @param type
 	 * @return the index at which the step was created
@@ -661,7 +661,7 @@ public class Model {
 	 * by this test case, not just the one owner by the test case (unlike
 	 * getOwnParameters). Parameters from downstream test cases will be included
 	 * iif they are inherited in some ways.
-	 * 
+	 *
 	 * @param testCase
 	 * @return
 	 */
@@ -712,7 +712,7 @@ public class Model {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if the parameter legitimately belongs to the dataset, false
 	 *         otherwise
 	 */
@@ -736,7 +736,7 @@ public class Model {
 
 	/**
 	 * This operation is imdepotent
-	 * 
+	 *
 	 * @param target
 	 */
 	public void addDataset(DatasetTarget target) {
@@ -836,11 +836,11 @@ public class Model {
 		}
 		return requirementTree.getStatus(target);
 	}
-	
+
 	private void loadRequirement(RequirementTarget target) {
 		Long reqId = reqFinderService.findNodeIdByPath(target.getPath());
 		LOGGER.debug("ReqImport - result find by node : " + reqId);
-		//only add existing requirement in tree. 
+		//only add existing requirement in tree.
 		//New requirement will be created with good status by adding the requirement version
 		if (reqId!=null) {
 			requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqId));
@@ -1132,7 +1132,7 @@ public class Model {
 				else {
 					requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.NOT_EXISTS));
 				}
-				//now we init all existing requirement version in the same requirement we are trying to update or add, 
+				//now we init all existing requirement version in the same requirement we are trying to update or add,
 				// as we need it to make some check (milestone already used by another version...)
 				Requirement req = requirementVersionManagerService.findRequirementById(reqId);
 				List<RequirementVersion> reqVersions = req.getRequirementVersions();
@@ -1144,7 +1144,7 @@ public class Model {
 			}
 		}
 	}
-	
+
 	private void initExistingRequirementVersion(RequirementVersionTarget target, Long reqVersionId){
 		requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS,reqVersionId));
 		//here get milestone and milestoneLocked
@@ -1156,7 +1156,7 @@ public class Model {
 			}
 		}
 	}
-	
+
 	/**
 	 * Add a requirement version to model, not to database.
 	 * @param target
@@ -1164,14 +1164,14 @@ public class Model {
 	public void addRequirementVersion(RequirementVersionTarget target, TargetStatus targetStatus){
 		requirementTree.addOrUpdateNode(target, targetStatus);
 	}
-	
+
 	public void addRequirementVersion(RequirementVersionTarget target,
 			TargetStatus targetStatus, List<String> milestones) {
 		requirementTree.addOrUpdateNode(target, targetStatus);
 		requirementTree.bindMilestone(target, milestones);
 	}
 
-	
+
 	public void addRequirement(RequirementTarget target,
 			TargetStatus status) {
 		requirementTree.addOrUpdateNode(target, status);
@@ -1181,12 +1181,12 @@ public class Model {
 	public void setNotExists(RequirementVersionTarget target) {
 		requirementTree.setNotExists(target);
 	}
-	
+
 	public boolean checkMilestonesAlreadyUsedInRequirement(String milestone,
 			RequirementVersionTarget target) {
 		return requirementTree.isMilestoneUsedByOneVersion(target, milestone);
 	}
-	
+
 	public boolean isRequirementFolder(RequirementVersionTarget target) {
 		return requirementTree.isRequirementFolder(target);
 	}
@@ -1204,12 +1204,18 @@ public class Model {
 		return new ArrayList<OBJ>(filtered);
 	}
 
+	/**
+	 * note (GRF) I dont know what this is supposed to do but it does not preserve the order of the input list !
+	 * @param targets
+	 * @param <TARGET>
+	 * @return
+	 */
 	private <TARGET extends Target> List<String> collectProjects(
 			List<TARGET> targets) {
 		List<String> paths = collectPaths(targets);
 		return PathUtils.extractProjectNames(paths);
 	}
-	
+
 	private <TARGET extends Target> List<String> collectRequirementProjects(
 			List<RequirementVersionTarget> targets) {
 		List<String> paths = collectRequirementPaths(targets);
@@ -1304,9 +1310,9 @@ public class Model {
 	 * existent, or default to physically non existant.<br/>
 	 * It helps us keeping track of the fate of a test case during the import
 	 * process (which is, remember, essentially a batch processing).
-	 * 
+	 *
 	 * @author bsiri
-	 * 
+	 *
 	 */
 	static enum Existence {
 		/**
@@ -1331,7 +1337,7 @@ public class Model {
 	/**
 	 * Holds the {@link #id} and the {@link #status} of an entity concerned by
 	 * the import.
-	 * 
+	 *
 	 */
 	static class TargetStatus {// NOSONAR this class is not final so that it can
 		// be tested in ValidationFacilityTest
@@ -1339,7 +1345,7 @@ public class Model {
 		// convenient alias
 		static final TargetStatus NOT_EXISTS = new TargetStatus(
 				Existence.NOT_EXISTS);
-	
+
 		/**
 		 * The {@link Existence} status of the concerned entity.
 		 */
@@ -1498,13 +1504,13 @@ public class Model {
 
 	}
 
-	
-
-	
-	
-	
 
 
-	
+
+
+
+
+
+
 
 }

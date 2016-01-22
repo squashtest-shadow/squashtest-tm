@@ -92,7 +92,7 @@ public class ModelTest extends Specification{
 	def "should collect projects names from targets"(){
 
 		expect :
-		model.collectProjects(targets) == ["project a", "project b"]
+		model.collectProjects(targets) as Set == ["project a", "project b"] as Set
 
 		where :
 		targets = targets("/project a/test1", "/project a/test2", "/project b/test 3")

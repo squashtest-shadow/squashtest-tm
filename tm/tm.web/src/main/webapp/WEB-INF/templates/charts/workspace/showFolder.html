@@ -40,7 +40,7 @@
 				<h3 th:text="#{label.Description}">desc</h3>
 			</div>
 			<div class="tg-body" id="description-panel">
-				<div id="folder-description" class="editable rich-editable"
+				<div id="folder-description" class="{{ift (contains acls.perms 'WRITE') 'editable rich-editable'}}"
 					data-def='url=custom-report-workspace/description/{{id}}'> {{{description}}} </div>
 			</div>
 		</div>

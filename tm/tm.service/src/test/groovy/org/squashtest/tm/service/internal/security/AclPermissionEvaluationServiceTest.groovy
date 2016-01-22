@@ -20,13 +20,14 @@
  */
 package org.squashtest.tm.service.internal.security
 
-import org.springframework.security.access.PermissionEvaluator
 import org.springframework.security.acls.domain.BasePermission
 import org.springframework.security.core.Authentication
-import org.squashtest.tm.service.internal.security.AclPermissionEvaluationService;
+import org.squashtest.tm.security.acls.CustomPermission
+import org.squashtest.tm.security.acls.CustomPermissionFactory
 import org.squashtest.tm.service.security.UserContextService
-
+import spock.lang.Issue
 import spock.lang.Specification
+import spock.lang.Unroll
 
 class AclPermissionEvaluationServiceTest extends Specification {
 	AclPermissionEvaluationService service = new AclPermissionEvaluationService()
@@ -34,9 +35,11 @@ class AclPermissionEvaluationServiceTest extends Specification {
 	UserContextService userContextService = Mock()
 
 	AffirmativeBasedCompositePermissionEvaluator permissionEvaluator = Mock()
+	Authentication currentUser = Mock()
 
 	def setup() {
 		service.userContextService = userContextService
+		userContextService.getPrincipal() >> currentUser
 		service.permissionEvaluator = permissionEvaluator
 	}
 
@@ -53,10 +56,6 @@ class AclPermissionEvaluationServiceTest extends Specification {
 
 	def "user should have permission based on his acls"() {
 		given:
-		Authentication currentUser = Mock()
-		userContextService.getPrincipal() >> currentUser
-
-		and:
 		Object constrainedObject = new Object()
 		permissionEvaluator.hasPermission(currentUser, constrainedObject, BasePermission.ADMINISTRATION) >> true
 
@@ -65,5 +64,35 @@ class AclPermissionEvaluationServiceTest extends Specification {
 
 		then:
 		hasPermission
+	}
+
+	@Issue("5991")
+	def "Admin should have all rights"() {
+		given:
+		userContextService.hasRole("ROLE_ADMIN") >> true
+
+
+		expect:
+		service.permissionsOn("Foo", 10L) == AclPermissionEvaluationService.RIGHTS
+	}
+
+	@Unroll
+	@Issue("5991")
+	def "User's rights list should be #rights"() {
+		given:
+		permissionEvaluator.hasPermission((Authentication) _, 10L, "Foo", { perms.contains(it) }) >> true
+
+		and:
+		service.permissionFactory = new CustomPermissionFactory()
+
+		expect:
+		service.permissionsOn("Foo", 10L) == rights
+
+		where:
+		rights               | perms
+		["READ"]             | [BasePermission.READ]
+		["WRITE", "EXECUTE"] | [BasePermission.WRITE, CustomPermission.EXECUTE]
+		[]                   | []
+
 	}
 }

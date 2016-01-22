@@ -18,145 +18,151 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", 'backbone', "domReady","workspace.routing","./views/libraryView","./views/folderView","./views/dashboardView","./views/chartView" ],
-  function($, Backbone,domReady,urlBuilder,libraryView,folderView,dashboardView,chartView) {
-      "use strict";
+define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./views/folderView", "./views/dashboardView", "./views/chartView"],
+	function ($, Backbone, urlBuilder, libraryView, folderView, dashboardView, chartView) {
+		"use strict";
 
-      var router = Backbone.Router.extend({
+		var LibraryModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("custom-report-library-server"),
 
-      activeView : null,
+			parse: function (response) {//flattening the embeded project from server in backbone model...
+				var attr = response && _.clone(response) || {};
+				if (response.project) {
+					for (var key in response.project) {
+						if (response.project.hasOwnProperty(key)) {
+							attr["project-" + key] = response.project[key];
+						}
+					}
+					delete attr.project;
+				}
+				return attr;
+			}
+		});
 
-      initialize: function() {
-      },
+		var FolderModel = Backbone.Model.extend({
+			urlRoot: urlBuilder.buildURL("custom-report-folder-server")
+		});
 
-      routes: {
-        "":"cleanContextContent",
-        "custom-report-library/:query":"showLibraryDetails",
-        "custom-report-folder/:query":"showFolderDetails",
-        "custom-report-dashboard/:query":"showDashboardDetails",
-        "custom-report-chart/:query":"showChartDetails"
-      },
+		/**
+		 * AclModel should be initialized with dash-style resource type and id : {type: "test-case", id: 10}
+		 */
+		var AclModel = Backbone.Model.extend({
+			defaults: {
+				type: undefined
+			},
+			urlRoot: function () {
+				return urlBuilder.buildURL("acls") + "/" + this.attributes.type;
+			}
+		});
 
-      showLibraryDetails : function (id) {
-        var resourceUrl = urlBuilder.buildURL("custom-report-library-server",id);
-        this.cleanContextContent();
+		var router = Backbone.Router.extend({
 
-        var modelDef = Backbone.Model.extend({
-          defaults: {
-            id : id
-          },
-          urlRoot : function () {
-            return urlBuilder.buildURL("custom-report-library-server");
-          },
-          parse : function(response) {//flattening the embeded project from server in backbone model...
-            var attr = response && _.clone(response) || {};
-            if (response.project) {
-               for (var key in response.project) {
-                 if (response.project.hasOwnProperty(key)) {
-                   attr["project-" + key] = response.project[key];
-                 }
-               }
-               delete attr.project;
-            }
-            return attr;
-          }
-        });
+			activeView: null,
 
-        var activeModel = new modelDef();
+			initialize: function () {
+			},
 
-        this.activeView = new libraryView({
-          model : activeModel
-        });
+			routes: {
+				"": "cleanContextContent",
+				"custom-report-library/:query": "showLibraryDetails",
+				"custom-report-folder/:query": "showFolderDetails",
+				"custom-report-dashboard/:query": "showDashboardDetails",
+				"custom-report-chart/:query": "showChartDetails"
+			},
 
-      },
+			showLibraryDetails: function (id) {
+				this.cleanContextContent();
 
-      showFolderDetails : function (id) {
-        this.cleanContextContent();
-        var modelDef = Backbone.Model.extend({
-          defaults: {
-            id : id
-          },
-          urlRoot : function () {
-            return urlBuilder.buildURL("custom-report-folder-server");
-          }
-        });
+				var activeModel = new LibraryModel({id: id});
 
-        var activeModel = new modelDef();
+				this.activeView = new libraryView({
+					model: activeModel
+				});
 
-        this.activeView = new folderView({
-          model : activeModel
-        });
-      },
+			},
 
-      showDashboardDetails : function (id) {
-        this.cleanContextContent();
-        var modelDef = Backbone.Model.extend({
-          defaults: {
-            id : id
-          }
-        });
+			showFolderDetails: function (id) {
+				this.cleanContextContent();
 
-        var activeModel = new modelDef();
+				var activeModel = new FolderModel({id: id});
+				var acls = new AclModel({type: "custom-report-folder", id: id});
 
-        this.activeView = new dashboardView({
-          model : activeModel
-        });
-      },
+				this.activeView = new folderView({
+					model: activeModel,
+					acls: acls
+				});
+			},
 
-      showChartDetails : function (id) {
-        this.cleanContextContent();
-        var modelDef = Backbone.Model.extend({
-          defaults: {
-            id : id
-          }
-        });
+			showDashboardDetails: function (id) {
+				this.cleanContextContent();
+				var modelDef = Backbone.Model.extend({
+					defaults: {
+						id: id
+					}
+				});
 
-        var activeModel = new modelDef();
+				var activeModel = new modelDef();
 
-        this.activeView = new chartView({
-          model : activeModel
-        });
-      },
+				this.activeView = new dashboardView({
+					model: activeModel
+				});
+			},
 
-      //Only for forcing router to reload page after updates on selected node
-      //To navigate inside workspace and have a correct history please use router.navigateTo()
-      showNodeDetails : function (nodeType,nodeId) {
-        switch (nodeType) {
-          case "drive":
-            showLibraryDetails(nodeId);
-            break;
-          case "folder":
-            showFolderDetails(nodeId);
-            break;
-          case "dashboard":
-            showDashboardDetails(nodeId);
-            break;
-          case "chart":
-            showChartDetails(nodeId);
-            break;
-          default:
+			showChartDetails: function (id) {
+				this.cleanContextContent();
+				var modelDef = Backbone.Model.extend({
+					defaults: {
+						id: id
+					}
+				});
 
-        }
-      },
+				var activeModel = new modelDef();
 
-      //Will clean the contextual part and restore the contextual div
-      cleanContextContent : function () {
-        if (this.activeView!==null) {
-          squashtm.app.wreqr.off('dropFromTree');
-          this.activeView.remove();
-          this.activeView = null;
-        }
-        //recreating the context div to allow new view to target the context div as el
-        $("#contextual-content").html("<div id='contextual-content-wrapper' style='height: 100%; width:98%; overflow: auto;'></div>");
-      }
-    });
+				this.activeView = new chartView({
+					model: activeModel
+				});
+			},
 
-    function init() {
-      return new router();
-    }
+			//Only for forcing router to reload page after updates on selected node
+			//To navigate inside workspace and have a correct history please use router.navigateTo()
+			// TODO (GRF) could not find usage - to be removed ?
+			showNodeDetails: function (nodeType, nodeId) {
+				switch (nodeType) {
+					case "drive":
+						this.showLibraryDetails(nodeId);
+						break;
+					case "folder":
+						this.showFolderDetails(nodeId);
+						break;
+					case "dashboard":
+						this.showDashboardDetails(nodeId);
+						break;
+					case "chart":
+						this.showChartDetails(nodeId);
+						break;
+					default:
 
-    // TODO simply return the Router function
-    return {
-      init:init
-    };
-});
+				}
+			},
+
+			//Will clean the contextual part and restore the contextual div
+			cleanContextContent: function () {
+				if (this.activeView !== null) {
+					window.squashtm.app.wreqr.off('dropFromTree');
+					this.activeView.remove();
+					this.activeView = null;
+				}
+				//recreating the context div to allow new view to target the context div as el
+				$("#contextual-content").html("<div id='contextual-content-wrapper' style='height: 100%; width:98%; overflow: auto;'></div>");
+			}
+		});
+
+		function init() {
+			return new router();
+		}
+
+		// TODO simply return the Router function
+		return {
+			init: init
+		};
+	});

@@ -20,13 +20,12 @@
  */
 package org.squashtest.it.stub.security;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+
+import javax.validation.constraints.NotNull;
 
 
 public class StubPermissionEvaluationService implements PermissionEvaluationService {
@@ -93,5 +92,10 @@ public class StubPermissionEvaluationService implements PermissionEvaluationServ
 			res.put(perm, hasRoleOrPermissionOnObject(role, perm, entity));
 		}
 		return res;
+	}
+
+	@Override
+	public Collection<String> permissionsOn(@NotNull String className, long id) {
+		return null;
 	}
 }

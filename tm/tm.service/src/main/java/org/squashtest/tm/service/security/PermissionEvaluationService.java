@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.security;
 
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
 import java.util.Map;
 
 
@@ -50,9 +52,9 @@ public interface PermissionEvaluationService {
 	boolean hasPermissionOnObject(String permission, Object entity);
 
 	/**
-	 * Same as {@link #hasRoleOrPermissionOnObject(String, String, Object)}, except that Object is explicitly identified 
+	 * Same as {@link #hasRoleOrPermissionOnObject(String, String, Object)}, except that Object is explicitly identified
 	 * by its ID and classname
-	 * 
+	 *
 	 * @param role
 	 * @param permission
 	 * @param entityId
@@ -60,24 +62,24 @@ public interface PermissionEvaluationService {
 	 * @return
 	 */
 	boolean hasRoleOrPermissionOnObject(String role, String permission, Long entityId, String entityClassName);
-	
-	
+
+
 	/**
 	 * short hand for hasRoleOrPermissionOnObject('ROLE_ADMIN', 'READ', object);
-	 * 
+	 *
 	 * @param object
 	 * @return
 	 */
 	boolean canRead(Object object);
-	
-	
+
+
 	/**
 	 * return true if the user has more than readonly on the object
 	 * @param object
 	 * @return
 	 */
 	boolean hasMoreThanRead(Object object);
-	
+
 	/**
 	 * return true if the user has the given role.
 	 * @param role
@@ -87,7 +89,7 @@ public interface PermissionEvaluationService {
 
 	/**
 	 * returns <code>true</code> if the current user has the given permission on the object of the given id and classname.
-	 * 
+	 *
 	 * @param permission
 	 * @param entityId
 	 * @param entityClassName
@@ -97,10 +99,20 @@ public interface PermissionEvaluationService {
 
 	/**
 	 *
-	 * @param permission String representation of the permission.
+	 * @param permissions String representation of the permission.
 	 * @param entity
 	 * @return true if the current user has the required permission on the given object.
 	 */
 	Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity);
+
+	/**
+	 * returns the list of all permissions the curent user has on en entity refernced by its classname and identifier.
+	 * admin role is checked and grants all permisisons.
+	 *
+	 * @param className  class name of the entity
+	 * @param id identifier of the entity
+	 * @return the set of permissions for the given entity.
+	 */
+	Collection<String> permissionsOn(@NotNull String className, long id);
 
 }

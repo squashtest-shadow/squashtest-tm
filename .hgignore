@@ -166,3 +166,4 @@ syntax: regexp
 ^\.idea\/
 \/bin\/
 ^.*rjs\.js\.output.*/
+/luceneindexes/

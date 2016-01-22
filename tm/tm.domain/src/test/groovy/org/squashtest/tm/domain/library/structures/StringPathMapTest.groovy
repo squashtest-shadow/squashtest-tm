@@ -86,7 +86,7 @@ class StringPathMapTest extends Specification {
 			def result = map.getKnownChildrenPath("/")
 
 		then :
-			result == expected
+			result as Set == expected as Set
 
 	}
 

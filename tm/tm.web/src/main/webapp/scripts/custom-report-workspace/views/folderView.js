@@ -18,32 +18,34 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore","backbone","squash.translator","handlebars","squash.basicwidgets"],
-		function(_,Backbone, translator,Handlebars,basicWidgets) {
-	var View = Backbone.View.extend({
+define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "app/squash.handlebars.helpers"],
+	function (_, Backbone, translator, Handlebars, basicWidgets) {
+		var View = Backbone.View.extend({
 
-    el : "#contextual-content-wrapper",
-		tpl : "#tpl-show-folder",
+			el: "#contextual-content-wrapper",
+			tpl: "#tpl-show-folder",
 
-		initialize : function(){
-			_.bindAll(this, "render");
-			this.model.fetch({
-       success: this.render
-     });
-		},
+			initialize: function (options) {
+				this.options = options;
+				_.bindAll(this, "render");
+				this.model.fetch({})
+					.then(options.acls.fetch({}))
+					.then(this.render);
+			},
 
-		events : {
-		},
+			events: {},
 
-		render : function(){
-			var source = $("#tpl-show-folder").html();
-			var template = Handlebars.compile(source);
-			this.$el.append(template(this.model.toJSON()));
-			basicWidgets.init();
-		},
+			render: function () {
+				var source = $("#tpl-show-folder").html();
+				var template = Handlebars.compile(source);
+				var props = this.model.toJSON();
+				props.acls = this.options.acls.toJSON();
+				this.$el.append(template(props));
+				basicWidgets.init();
+			},
 
-  });
+		});
 
-	return View;
-});
+		return View;
+	});
 
