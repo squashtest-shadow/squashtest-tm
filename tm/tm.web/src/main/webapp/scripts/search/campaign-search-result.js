@@ -323,7 +323,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				var selectedIds = $("#campaign-search-result-table").squashTable().getSelectedIds();
 				if (selectedIds.length === 0){
 					addITPIDialog.formDialog('close');
-				  notification.showError(translator.get('message.NoExecutionSelected'));
+				  notification.showError(translator.get('message.noLinesSelected'));
 					
 				} 
 
