@@ -31,7 +31,6 @@ import javax.transaction.Transaction
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
-import org.springframework.boot.test.IntegrationTest
 import org.springframework.boot.test.SpringApplicationContextLoader
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
@@ -43,12 +42,13 @@ import org.squashtest.tm.service.RepositoryConfig
 import org.squashtest.tm.service.SchedulerConfig
 import org.squashtest.tm.service.TmServiceConfig
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @ContextConfiguration( classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig], loader = SpringApplicationContextLoader.class)
 @TransactionConfiguration()
-@IntegrationTest
+@Ignore
 class HibernateConfigurationIT  extends Specification {
 	@Inject SessionFactory sessionFactory;
 

@@ -34,6 +34,7 @@ import org.springframework.test.context.TestPropertySource
 import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.UnitilsConfig
+import org.squashtest.it.utils.SkipAll
 
 import spock.lang.Specification
 
@@ -44,6 +45,7 @@ import spock.lang.Specification
 @ContextConfiguration(classes = [RequirementImportServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration(defaultRollback = true)
+@SkipAll
 abstract class RequirementImportCustomDbunitServiceSpecification extends Specification {
 
 	@Inject
