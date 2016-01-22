@@ -57,8 +57,9 @@
 
 
 {{#equal dataType "NUMERIC"}} 
-<input type="text" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 40px;"/>
-<input type="text" id="second-filter-value-{{id}}" name="{{id}}" />
+<input type="text" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;"/>
+<span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;"/>
+<input type="text" id="second-filter-value-{{id}}" name="{{id}}"/>
 {{/equal}}
 
 {{#equal dataType "STRING"}}
@@ -66,7 +67,8 @@
 {{/equal}}
 
 {{#equal dataType "DATE"}}
-<input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 40px;"/>
+<input class="date-picker" id="first-filter-value-{{id}}" name="{{id}}" style="margin-right: 15px;"/>
+<span id="second-filter-value-label-{{id}}" th:text="#{label.and}" style="margin-right: 15px;"/>
 <input class="date-picker" id="second-filter-value-{{id}}" name="{{id}}"/>
 {{/equal}}
 
