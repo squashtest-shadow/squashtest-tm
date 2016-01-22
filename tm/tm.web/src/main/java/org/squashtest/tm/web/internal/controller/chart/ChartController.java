@@ -135,7 +135,7 @@ public class ChartController {
 			@PathVariable("id") long id) {
 		ChartDefinition oldDef = reportNodeService.findChartDefinitionByNodeId(id);
 		chartService.updateDefinition(definition, oldDef);
-		return "custom-report-workspace#custom-report-chart/" + id;
+		return String.valueOf(id);
 	}
 
 	@RequestMapping(value = "/new/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
@@ -144,7 +144,7 @@ public class ChartController {
 
 		definition.setOwner(userService.findCurrentUser());
 		CustomReportLibraryNode node = reportNodeService.createNewNode(id, definition);
-		return "custom-report-workspace#custom-report-chart/" + node.getId();
+		return node.getId().toString();
 	}
 
 }

@@ -39,6 +39,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -94,10 +95,10 @@ public class CustomReportWorkspaceController {
 		//Every node above selected node should be opened and it should be not necessary to get ancestors.
 		//But we have corner cases liken when we create a new chart in different screen...
 		if (StringUtils.isNotBlank(elementId)) {
+			model.addAttribute("selectedNode", elementId);
 			nodeIdToOpen.addAll(findAncestorsOfselectedNode(elementId));
 		}
 
-		//Placeholder with just library for the beginning
 		List<JsTreeNode> rootNodes = new ArrayList<JsTreeNode>();
 
 		for (CustomReportLibraryNode crl : libraries) {
@@ -145,7 +146,7 @@ public class CustomReportWorkspaceController {
 		}
 		return ancestorIds;
 	}
-
+	
 	protected String getWorkspaceViewName() {
 		return "custom-report-workspace.html";
 	}

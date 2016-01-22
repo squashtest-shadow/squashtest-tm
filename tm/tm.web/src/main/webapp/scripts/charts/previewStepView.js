@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory"],
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory",'jquery.cookie'],
 	function($, backbone, _, Handlebars, AbstractStepView, router, chart ) {
 	"use strict";
 
@@ -67,8 +67,10 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				url : targetUrl,
 				data : this.model.toJson()
 
-			}).done(function(url){
-				 window.location.href = squashtm.app.contextRoot + url;
+			}).done(function(id){
+        var nodeToSelect = "CustomReportChart-" + id;
+        $.cookie("jstree_select",nodeToSelect,{path:"/squash"});
+				window.location.href = router.buildURL("custom-report-chart-redirect");
 			});
 
 
