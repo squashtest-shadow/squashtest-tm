@@ -78,7 +78,7 @@ public class MantisExceptionConverter {
 
 	/* *************** keys that should match the Mantis error messages. Their initial values will hopefully match
 	 * the error messages if the key wasn't found in the message source. ********************* */
-	private String remoteWrongCredential = "Access Denied";
+	private String remoteWrongCredential = "Access denied";
 	private String remoteSummaryRequired = "Mandatory field \'summary\'";
 	private String remoteDescriptionRequired = "Mandatory field \'description\'";
 	private String remoteIssueNotFound = "Issue does not exist";
