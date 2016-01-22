@@ -178,7 +178,7 @@ public final class BugTrackerControllerHelper {
 	 * @return <b>"http://</b>serverName<b>:</b>serverPort/contextPath<b>/executions/</b>executionId<b>/info"</b>
 	 */
 	public static String buildExecutionUrl(HttpServletRequest request, Execution execution) {
-		StringBuffer requestUrl = new StringBuffer("http://");
+		StringBuffer requestUrl = new StringBuffer(request.getScheme()+"://");
 		requestUrl.append(request.getServerName());
 		requestUrl.append(':');
 		requestUrl.append(request.getServerPort());
