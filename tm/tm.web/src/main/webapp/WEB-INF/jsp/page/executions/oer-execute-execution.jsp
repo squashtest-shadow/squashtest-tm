@@ -182,6 +182,8 @@
   
 <%-- Wizard initialization --%> 
 <comp:init-wizards workspace="campaign"/>
+
+<f:message var="modifyTcLabel"        key="execution.execute.modify.testcase" />
   
 	<div id="execute-header" >
 			<table style="width: 100%; table-layout: fixed; white-space: nowrap;">
@@ -200,7 +202,7 @@
 				</c:if>
 				<td><h3 id="ieo-execution-title" class="ellipsis" >${ executionStep.execution.name }</h3></td>
 		<c:if test="${execution.project.allowTcModifDuringExec()}">
-		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+		<td> <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
                                  </button> </td>
                                  </c:if>

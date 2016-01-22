@@ -152,6 +152,7 @@
   <f:message var="passedTitle"          key="execute.header.button.passed.title" />
   <f:message var="previousTitle"        key="execute.header.button.previous.title" />
   <f:message var="nextTitle"            key="execute.header.button.next.title" />
+  <f:message var="modifyTcLabel"        key="execution.execute.modify.testcase" />
   <f:message  var="nextTestCaseTitle" key="execute.header.button.next-test-case.title" />
   
   <div id="execute-header">
@@ -214,7 +215,7 @@
                                 <span class="ui-icon exec-status-success"></span>
   						</button>
     							<c:if test="${execution.project.allowTcModifDuringExec()}">
-    							 <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button ">
+    							 <button  id="edit-tc" style="float: right" class="sq-btn std-btn ui-button control-button " title="${modifyTcLabel}">
                                  <span class="ui-icon ui-icon-pencil"/>
                                  </button> 
                                  </c:if>
