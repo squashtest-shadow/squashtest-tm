@@ -230,7 +230,8 @@
 						<div class="display-table-row"	id="project-bugtracker-project-name-row"
 								<c:if test="${ !adminproject.project.bugtrackerConnected }">style="display:none"</c:if>>
 							<label for="project-bugtracker-project-name"
-									class="display-table-cell">
+									class="display-table-cell" style="vertical-align: middle";
+									>
 								<f:message key="project.bugtracker.project.name.label" />
 							</label>
 
@@ -305,7 +306,7 @@
 				<div id="project-exec-option-table" class="display-table">
 						<div class="display-table-row">
 							<div class="display-table-cell">  
-								<label for="toggle-EXECUTION-checkbox" class="display-table-cell">
+								<label for="toggle-EXECUTION-checkbox" class="display-table-cell" style="vertical-align:bottom">
 									<f:message key="label.execution.modification" />
 								</label>
 							</div>
@@ -331,17 +332,17 @@
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
-							<div class="display-table-cell">  
+							<div class="display-table-cell" style="vertical-align: middle">  
 								<label for="toggle-UNTESTABLE-checkbox" class="display-table-cell">
 									<f:message key="label.status.options.optional" />
 								</label>
 							</div>
-							<div class="display-table-cell">  
+							<div class="display-table-cell" style="vertical-align: middle">  
 								<span class="display-table-cell exec-status-label exec-status-untestable">
 									<f:message key="execution.execution-status.UNTESTABLE" />
 								</span>
 							</div>
-							<div class="display-table-cell">                  		
+							<div class="display-table-cell" >                  		
 	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox" 
 	                  				data-def="width=35, on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['UNTESTABLE']}" style="display: none;"/>
 	                  		</div>
@@ -349,12 +350,12 @@
 						<div class="display-table-row">
 							<div class="display-table-cell">  
 							</div>
-							<div class="display-table-cell">  
+							<div class="display-table-cell" style="vertical-align: middle">  
 								<span class="display-table-cell exec-status-label exec-status-settled">
 									<f:message key="execution.execution-status.SETTLED" />
 								</span>
 							</div>
-							<div class="display-table-cell">                  		
+							<div class="display-table-cell" style="vertical-align: middle">                  		
 	                  			<input id="toggle-SETTLED-checkbox" type="checkbox" 
 	                  				data-def="width=35,on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['SETTLED']}" style="display: none;"/>
 	                  		</div>
