@@ -69,7 +69,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 
 			}).done(function(id){
         var nodeToSelect = "CustomReportChart-" + id;
-        $.cookie("jstree_select",nodeToSelect,{path:"/squash"});
+        $.cookie("jstree_select",nodeToSelect,{path:"/squash/custom-report-workspace"});
 				window.location.href = router.buildURL("custom-report-chart-redirect");
 			});
 
