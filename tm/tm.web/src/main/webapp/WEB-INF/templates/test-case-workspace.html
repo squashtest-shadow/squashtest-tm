@@ -730,15 +730,15 @@
       <div class="std-padding std-margin-top">
 
         <div class="grey-round-panel snap-left" style="width: 43%;">
-          <input type="radio" name="format" data-val="xls" class="centered" checked="checked" />
-          <span style="text-decoration: underline;">Excel</span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.excel.description}">export description</div>
+          <input type="radio" name="format" data-val="xls" class="centered" checked="checked" id="export-format-excel"/>
+         <label for="export-format-excel" class="ui-helper-reset"> <span style="text-decoration: underline;">Excel</span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.excel.description}">export description</div></label>
         </div>
 
         <div class="grey-round-panel snap-right" style="width: 43%;">
-          <input type="radio" name="format" data-val="csv" class="centered" />
-          <span style="text-decoration: underline;">CSV</span>
-          <div class="nota-bene" th:text="#{test-case.export.dialog.csv.description}">csv description</div>
+          <input type="radio" name="format" data-val="csv" class="centered" id="export-format-csv"/>
+           <label for="export-format-csv" class="ui-helper-reset"> <span style="text-decoration: underline;">CSV</span>
+          <div class="nota-bene" th:text="#{test-case.export.dialog.csv.description}">csv description</div></label>
         </div>
 
         <div class="unsnap"></div>

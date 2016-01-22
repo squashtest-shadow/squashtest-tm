@@ -50,6 +50,7 @@ label {
 label.ui-helper-reset {
 	font-style: inherit;
 	color: inherit;
+	white-space: inherit;
 }
 
 label:after {
