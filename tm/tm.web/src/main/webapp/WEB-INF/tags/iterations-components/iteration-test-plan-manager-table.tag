@@ -121,7 +121,7 @@
                 <input type="button" id="suite-manager-menu-ok-button" role="button" class="sq-btn btn-sm"
                   value="${confirmLabel}" />
                 <input type="button" id="suite-manager-menu-cancel-button" role="button" class="sq-btn btn-sm"
-                  value="${closeLabel}" />
+                  value="${cancelLabel}" />
               </div>
             </li>
           </ul>
