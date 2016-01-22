@@ -30,7 +30,7 @@ require([ "common" ], function(common) {
 					/* Allow the parent to be refreshed */
 					/* We can now access from informations where there's no table to refresh */
 					if (window.opener.squashtm.app.reloadSteps() !== undefined) {
-						indow.opener.squashtm.app.reloadSteps();
+						window.opener.squashtm.app.reloadSteps();
 					}
 					window.close(); 
 				};
