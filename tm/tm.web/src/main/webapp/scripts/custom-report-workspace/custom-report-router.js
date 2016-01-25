@@ -85,7 +85,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				this.cleanContextContent();
 
 				var activeModel = new FolderModel({id: id});
-				var acls = new AclModel({type: "custom-report-folder", id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
 
 				this.activeView = new folderView({
 					model: activeModel,
@@ -102,7 +102,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				});
 
 				var activeModel = new modelDef();
-				var acls = new AclModel({type: "custom-report-dashboard", id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
 
 				this.activeView = new dashboardView({
 					model: activeModel,
@@ -119,7 +119,7 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				});
 
 				var activeModel = new modelDef();
-				var acls = new AclModel({type: "chart-definition", id: id});
+				var acls = new AclModel({type: "custom-report-library-node", id: id});
 
 				this.activeView = new chartView({
 					model: activeModel,

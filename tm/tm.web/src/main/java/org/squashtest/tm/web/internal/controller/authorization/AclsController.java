@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import javax.inject.Inject;
@@ -57,6 +58,7 @@ public class AclsController {
 	static {
 		Map<String, String> map = new HashMap<>();
 		map.put("custom-report-library", CustomReportLibrary.class.getName());
+		map.put("custom-report-library-node", CustomReportLibraryNode.class.getName());
 		map.put("custom-report-folder", CustomReportFolder.class.getName());
 		map.put("custom-report-dashboard", CustomReportDashboard.class.getName());
 		map.put("chart-definition", ChartDefinition.class.getName());
