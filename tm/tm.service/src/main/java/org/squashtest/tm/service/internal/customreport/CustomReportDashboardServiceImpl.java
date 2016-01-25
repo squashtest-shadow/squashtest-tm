@@ -20,11 +20,14 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
@@ -33,6 +36,7 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")
 public class CustomReportDashboardServiceImpl implements
@@ -50,12 +54,17 @@ public class CustomReportDashboardServiceImpl implements
 	@Inject
 	private SessionFactory sessionFactory;
 	
+	@Inject
+	protected PermissionEvaluationService permissionService;
+	
 	@Override
 	public CustomReportDashboard findById(Long id) {
 		return customReportDashboardDao.findById(id);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public void bindChart(CustomReportChartBinding newBinding) {
 		bindingDao.persist(newBinding);
 		sessionFactory.getCurrentSession().flush();
@@ -71,18 +80,23 @@ public class CustomReportDashboardServiceImpl implements
 
 	private void updateBinding(CustomReportChartBinding transientBinding) {
 		CustomReportChartBinding persistedBinding = bindingDao.findById(transientBinding.getId());
-		if (persistedBinding.hasMoved(transientBinding)) {
+		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
+				&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
 		}
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#id, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public void unbindChart(Long id) {
 		CustomReportChartBinding chartBinding = bindingDao.findById(id);
 		bindingDao.remove(chartBinding);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#bindingId, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public CustomReportChartBinding changeBindedChart(long bindingId,
 			long chartNodeId) {
 		CustomReportChartBinding chartBinding = bindingDao.findById(bindingId);

@@ -34,6 +34,7 @@ import javax.validation.constraints.NotNull;
 import org.hibernate.search.annotations.DocumentId;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.chart.ChartDefinition;
+import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 public class CustomReportChartBinding implements Identified {
@@ -128,6 +129,11 @@ public class CustomReportChartBinding implements Identified {
 		setCol(transientBinding.getCol());
 		setSizeX(transientBinding.getSizeX());
 		setSizeY(transientBinding.getSizeY());
+	}
+	
+	@AclConstrainedObject
+	public CustomReportLibrary getCustomReportLibrary(){
+		return getDashboard().getProject().getCustomReportLibrary();
 	}
 
 	private boolean hasMoveSizeX(CustomReportChartBinding transientBinding) {

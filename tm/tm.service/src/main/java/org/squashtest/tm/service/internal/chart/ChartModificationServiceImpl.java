@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.chart;
 
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.Map;
 import java.util.Set;
@@ -30,6 +31,7 @@ import javax.inject.Inject;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -109,6 +111,8 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#definition.id, 'org.squashtest.tm.domain.chart.ChartDefinition' ,'WRITE') "
+			+ OR_HAS_ROLE_ADMIN)
 	public void updateDefinition(ChartDefinition definition, ChartDefinition oldDef) {
 		definition.setProject(oldDef.getProject());
 		((AuditableMixin) definition).setCreatedBy(((AuditableMixin) oldDef).getCreatedBy());

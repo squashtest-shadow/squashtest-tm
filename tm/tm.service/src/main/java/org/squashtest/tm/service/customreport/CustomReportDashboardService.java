@@ -54,6 +54,7 @@ public interface CustomReportDashboardService {
 	/**
 	 * Change the chartbinded by the {@link CustomReportChartBinding} designed by bindingId.
 	 * WARNING: the chartNodeId param is the {@link CustomReportLibraryNode} id, not the {@link ChartDefinition} id.
+	 * This is because the user manipulate the tree node not the entity directly
 	 * @param bindingId
 	 * @param chartNodeId
 	 * @return
