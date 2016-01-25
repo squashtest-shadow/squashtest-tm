@@ -142,7 +142,7 @@
                 <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}" >
                   <label for="test-step-action" class="control-label display-table-cell" th:text="#{label.action}" style="vertical-align:middle">Action</label>
                   <div th:case="${true}"  class="display-table-cell controls"><textarea class="test-step-attr" name="action" id="test-step-action" sq:unsafe-html="${testStepView.actionStep.action} ">do this</textarea>
-               	    <span  class="help-inline">&nbsp;</span></div>
+               	    <span  class="help-inline">&nbsp;</span><span>&nbsp;</span></div>
                	    <span th:case="${false}" class="display-table-cell" sq:unsafe-html="${testStepView.actionStep.action}">do this</span>
                   </div>
                   <div class="display-table-row control-group" th:if="${testStepView.actionStep}" th:switch="${writable}">
