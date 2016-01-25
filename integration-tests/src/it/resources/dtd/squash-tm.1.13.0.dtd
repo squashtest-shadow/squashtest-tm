@@ -49,6 +49,7 @@
     CUSTOM_FIELD_OPTION*,
     CUSTOM_FIELD_RENDERING_LOCATION*,
     CUSTOM_FIELD_VALUE*,   
+    CUSTOM_REPORT_LIBRARY*,
     DATABASECHANGELOG*,
     DATABASECHANGELOGLOCK*,
     DATASET*,
@@ -157,6 +158,7 @@
     custom_field_option?,
     custom_field_rendering_location?,
     custom_field_value?,
+    custom_report_library?,
     databasechangelog?,
     databasechangeloglock?,
     Dataset?,
@@ -600,6 +602,11 @@
 	VALUE CDATA #IMPLIED
 >
 
+<!ELEMENT CUSTOM_REPORT_LIBRARY EMPTY>
+<!ATTLIST CUSTOM_REPORT_LIBRARY
+	CRL_ID CDATA #REQUIRED
+>
+
 
 <!ELEMENT DATABASECHANGELOG EMPTY>
 <!ATTLIST DATABASECHANGELOG
@@ -892,6 +899,7 @@ CLIENT_SECRET CDATA #REQUIRED
     CL_ID CDATA #IMPLIED
     TCL_ID CDATA #IMPLIED
     RL_ID CDATA #IMPLIED
+    CLR_ID CDATA #IMPLIED
     ATTACHMENT_LIST_ID CDATA #REQUIRED
     PROJECT_TYPE CDATA #IMPLIED
     TA_SERVER_ID CDATA #IMPLIED
@@ -1194,6 +1202,7 @@ CLIENT_SECRET CDATA #REQUIRED
 <!ELEMENT custom_field_option EMPTY>
 <!ELEMENT custom_field_rendering_location EMPTY>
 <!ELEMENT custom_field_value EMPTY>
+<!ELEMENT custom_report_library EMPTY>
 <!ELEMENT Dataset EMPTY>
 <!ELEMENT databasechangelog EMPTY>
 <!ELEMENT databasechangeloglock EMPTY>
