@@ -31,22 +31,22 @@ import org.squashtest.tm.domain.testcase.TestCase
 class BugTrackerControllerHelperTest extends spock.lang.Specification {
 
 	def "should build execution url"(){
-		given: 
+		given:
 		HttpServletRequest request = Mock()
 		request.getServerPort()>> 8080
 		request.getContextPath()>>"/contextPath"
 		request.getServerName()>>"serverName"
+		request.getScheme() >> "http"
 		Execution execution = Mock()
 		execution.getId()>> 65
-		
-		when: 
+
+		when:
 		def result = BugTrackerControllerHelper.buildExecutionUrl(request, execution)
-		
-		then : 
+
+		then :
 		result == "http://serverName:8080/contextPath/executions/65"
-		
 	}
-	
+
 	def "should get default description for execution"(){
 		given:
 		Execution execution = Mock()
@@ -60,14 +60,14 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		messageSource.getMessage("issue.default.description.execution", null, locale) >> "Execution"
 		messageSource.getMessage("issue.default.description.description", null, locale) >> "Issue description"
 		def executionUrl = "url"
-		
+
 		when:
 		def result = BugTrackerControllerHelper.getDefaultDescription(execution, locale, messageSource, executionUrl)
-		
+
 		then:
 		result == "# Test Case: [Reference] test case name\n# Execution: url\n\n# Issue description :\n"
 	}
-	
+
 	def "should get default description for execution step"(){
 		given:
 		ExecutionStep step = Mock()
@@ -84,18 +84,18 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		Locale locale = new Locale("en");
 		MessageSource messageSource = Mock()
 		messageSource.getMessage("issue.default.description.testCase", null, locale) >> "Test Case"
-		messageSource.getMessage("issue.default.description.concernedStep", null, locale) >> "Concerned Step"		
+		messageSource.getMessage("issue.default.description.concernedStep", null, locale) >> "Concerned Step"
 		messageSource.getMessage("issue.default.description.execution", null, locale) >> "Execution"
 		messageSource.getMessage("issue.default.description.description", null, locale) >> "Issue description"
 		def executionUrl = "url"
-		
+
 		when:
 		def result = BugTrackerControllerHelper.getDefaultDescription (step, locale, messageSource, executionUrl)
-		
+
 		then:
 		result == "# Test Case: [Reference] test case name\n# Execution: url\n# Concerned Step: 1/5\n\n# Issue description :\n"
 	}
-	
+
 	def "should get default comment for execution step"(){
 		given:
 		ExecutionStep buggedStep = Mock()
@@ -108,14 +108,14 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 		buggedStep.getExecution()>> execution
 		execution.getSteps() >> steps
 		Locale locale = new Locale("en");
-		MessageSource messageSource = Mock()		
+		MessageSource messageSource = Mock()
 		messageSource.getMessage("issue.default.additionalInformation.action", null, locale) >> "-------------------Action---------------------\n"
 		messageSource.getMessage("issue.default.additionalInformation.expectedResult", null, locale) >> "\n\n----------------Expected Result---------------\n"
 		messageSource.getMessage("issue.default.additionalInformation.step", null, locale) >> "Step"
-		
+
 		when:
 		def result = BugTrackerControllerHelper.getDefaultAdditionalInformations (buggedStep, locale, messageSource)
-		
+
 		then:
 		result == "=============================================\n"+
 				"|    Step 1/1\n"+
@@ -125,5 +125,4 @@ class BugTrackerControllerHelperTest extends spock.lang.Specification {
 				"\n\n----------------Expected Result---------------\n"+
 				"expected result description\n\n\n"
 	}
-	
 }
