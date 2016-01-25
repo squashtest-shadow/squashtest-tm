@@ -41,7 +41,7 @@
 					<span th:text="#{workspace.custom-report.timestamp.label}">chart type</span>
 				</div>
 			</div>
-      {{#if (contains acls.perms 'WRITE')}}
+      {{#if canWrite}}
 			<div class="toolbar-button-panel">
 				<input type="button"
 				th:attr="value=#{label.Rename},title=#{label.Rename}"
@@ -55,7 +55,7 @@
 			{{/if}}
 		<div id="dashboard-grid" class="dashboard-grid gridster jstree-drop">
 			{{#each chartBindings}}
-   				{{> chart}}
+   				{{> chart canWrite=../canWrite}}
  			{{/each}}
 		</div>
 </div>

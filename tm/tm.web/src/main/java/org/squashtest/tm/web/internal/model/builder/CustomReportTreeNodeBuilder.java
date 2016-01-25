@@ -120,11 +120,6 @@ public class CustomReportTreeNodeBuilder {
 		return builtNode;
 	}
 
-	private void buildDescendantIfOpened() {
-		// TODO Auto-generated method stub
-
-	}
-
 	private void doLibraryBuild(JsTreeNode builtNode, CustomReportLibraryNode crln) {
 		setNodeHTMLId(builtNode, "CustomReportLibrary-"+crln.getId());
 		setNodeRel(builtNode,"drive");

@@ -63,7 +63,7 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	@Override
-	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
+	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportDashboard' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void bindChart(CustomReportChartBinding newBinding) {
 		bindingDao.persist(newBinding);
