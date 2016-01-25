@@ -41,11 +41,13 @@
 					<span th:text="#{workspace.custom-report.timestamp.label}">chart type</span>
 				</div>
 			</div>
+      {{#if (contains acls.perms 'WRITE')}}
 			<div class="toolbar-button-panel">
 				<input type="button"
 				th:attr="value=#{label.Rename},title=#{label.Rename}"
 				id="rename-dashboard-button" class="sq-btn" />
 			</div>
+      {{/if}}
 			<div class="unsnap"></div>
 		</div>
 			{{#if emptyDashboard}}

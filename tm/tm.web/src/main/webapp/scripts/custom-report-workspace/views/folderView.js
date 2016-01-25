@@ -20,6 +20,8 @@
  */
 define(["underscore", "backbone", "squash.translator", "handlebars", "squash.basicwidgets", "app/squash.handlebars.helpers"],
 	function (_, Backbone, translator, Handlebars, basicWidgets) {
+		"use strict";
+
 		var View = Backbone.View.extend({
 
 			el: "#contextual-content-wrapper",
@@ -36,13 +38,14 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 			events: {},
 
 			render: function () {
+				// TODO template should be compiled only once
 				var source = $("#tpl-show-folder").html();
 				var template = Handlebars.compile(source);
 				var props = this.model.toJSON();
 				props.acls = this.options.acls.toJSON();
 				this.$el.append(template(props));
 				basicWidgets.init();
-			},
+			}
 
 		});
 

@@ -102,9 +102,11 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				});
 
 				var activeModel = new modelDef();
+				var acls = new AclModel({type: "custom-report-dashboard", id: id});
 
 				this.activeView = new dashboardView({
-					model: activeModel
+					model: activeModel,
+					acls: acls
 				});
 			},
 
@@ -117,9 +119,11 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				});
 
 				var activeModel = new modelDef();
+				var acls = new AclModel({type: "chart-definition", id: id});
 
 				this.activeView = new chartView({
-					model: activeModel
+					model: activeModel,
+					acls: acls
 				});
 			},
 

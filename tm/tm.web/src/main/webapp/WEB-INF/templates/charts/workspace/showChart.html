@@ -36,13 +36,14 @@
 		<div class="toolbar-information-panel">
 			<div id="general-information-panel" class="information-panel">
 				<span th:text="#{label.CreatedOn}+'&nbsp;:&nbsp;'">created on </span>
-				{{createdOn}} ({{createdBy}}) <br /> 
+				{{createdOn}} ({{createdBy}}) <br />
 				<span th:text="#{label.UpdatedOn}+'&nbsp;:&nbsp;'">updated on </span>
 				{{#if lastModifiedBy}} {{lastModifiedOn}} ({{lastModifiedBy}})
-				{{else}} <span th:text="#{label.lower.Never}"></span> 
+				{{else}} <span th:text="#{label.lower.Never}"></span>
 				{{/if}} <br />
 			</div>
 		</div>
+    {{#if (contains acls.perms 'WRITE')}}
 		<div class="toolbar-button-panel">
 			<input type="button"
 				th:attr="value=#{label.Rename},title=#{label.Rename}"
@@ -51,6 +52,7 @@
 				th:attr="value=#{label.Modify},title=#{label.Modify}"
 				id="modify-chart-button" class="sq-btn" />
 		</div>
+    {{/if}}
 		<div class="unsnap"></div>
 	</div>
 
@@ -100,8 +102,8 @@
 						th:text="#{chart.label.operation}">operation</span>
 					</label>
 					<div id="chart-operation" class="display-table-cell">
-						{{#each entityOperation}} 
-							{{> entityOperationsTpl}} 
+						{{#each entityOperation}}
+							{{> entityOperationsTpl}}
 						{{/each}}</div>
 				</div>
 				<div class="display-table-row">&nbsp;</div>
@@ -111,8 +113,8 @@
 					</label>
 					<div id="chart-filter" class="display-table-cell">
 						<div class="display-table">
-							{{#each entityFilters}} 
-								{{>entityFiltersTpl}} 
+							{{#each entityFilters}}
+								{{>entityFiltersTpl}}
 							{{/each}}</div>
 					</div>
 				</div>

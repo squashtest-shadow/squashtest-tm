@@ -77,4 +77,5 @@ public class AclsController {
 
 		return new Acl(permissionEvaluator.permissionsOn(className, resId));
 	}
+
 }
