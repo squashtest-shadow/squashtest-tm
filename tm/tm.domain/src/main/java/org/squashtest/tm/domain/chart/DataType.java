@@ -38,6 +38,7 @@ import static org.squashtest.tm.domain.chart.Operation.MAX;
 import static org.squashtest.tm.domain.chart.Operation.MIN;
 import static org.squashtest.tm.domain.chart.Operation.NONE;
 import static org.squashtest.tm.domain.chart.Operation.NOT_EQUALS;
+import static org.squashtest.tm.domain.chart.Operation.IS_NULL;
 import static org.squashtest.tm.domain.chart.Operation.NOT_NULL;
 import static org.squashtest.tm.domain.chart.Operation.SUM;
 
@@ -50,7 +51,7 @@ public enum DataType {
 	NUMERIC (AVG, BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, MAX, MIN, SUM, NONE, NOT_EQUALS),
 	STRING (EQUALS, LIKE, COUNT, NONE),
 	DATE (BETWEEN, COUNT, EQUALS, GREATER, GREATER_EQUAL, LOWER, LOWER_EQUAL, BY_DAY, BY_WEEK, BY_MONTH, BY_YEAR, NOT_EQUALS),
-	EXISTENCE(NOT_NULL),
+	EXISTENCE(NOT_NULL, IS_NULL),
 	BOOLEAN(EQUALS, COUNT, NONE),
 	LEVEL_ENUM(EQUALS, IN, COUNT, NONE),
 	EXECUTION_STATUS (EQUALS, IN, COUNT, NONE),

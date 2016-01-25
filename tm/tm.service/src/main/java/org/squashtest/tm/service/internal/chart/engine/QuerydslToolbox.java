@@ -462,8 +462,8 @@ class QuerydslToolbox {
 	}
 
 	/*
-	 * There is a special treatment when operation = NOT_NULL. Indeed one cannot
-	 * write 'select attribute is not null' : although legal in most SQL database,
+	 * There is a special treatment when operation = IS_NULL / NOT_NULL. Indeed one cannot
+	 * write  for instance 'select (attribute is not null)' : although legal in most SQL database,
 	 * HQL will just not have it.
 	 * 
 	 * So we must use a case construct instead.
@@ -477,10 +477,11 @@ class QuerydslToolbox {
 
 		SimpleExpression result = null;
 
-		// the NOT_NULL case
-		if (operation == Operation.NOT_NULL){
-			Predicate notNull = Expressions.predicate(Ops.IS_NOT_NULL, baseExp);
-			result = Expressions.operation(Boolean.class, ExtOps.TRUE_IF, notNull);
+		// the IS_NULL / NOT_NULL case
+		if (operation == Operation.NOT_NULL || operation == Operation.IS_NULL){
+			Operator ops = getOperator(operation);
+			Predicate nullness = Expressions.predicate(ops, baseExp);
+			result = Expressions.operation(Boolean.class, ExtOps.TRUE_IF, nullness);
 		}
 
 		// the normal case
@@ -499,29 +500,19 @@ class QuerydslToolbox {
 	 * @param filter
 	 * @return
 	 */
-	/*
-	 * There is a special treatment when operation = NOT_NULL. Indeed one cannot
-	 * write 'where attribute is not null = true|false' : although legal in most SQL database,
-	 * HQL will just not have it.
-	 * 
-	 * So we must infer if we need operator IS_NULL or IS_NOT_NULL from the operand, and
-	 * apply this operator.
-	 * 
-	 */
+
 	BooleanExpression createPredicate(Operation operation, Expression<?> baseExp, DataType datatype,
 			Expression... operands) {
 
 		BooleanExpression predicate = null;
 
 		// special case
-		if (operation==Operation.NOT_NULL){
-			String arg = operands[0].toString();
-			Ops operator = (arg.equals("true") || arg.equals("1")) ? Ops.IS_NOT_NULL : Ops.IS_NULL;
-			predicate = Expressions.predicate(operator, baseExp);
+		if (operation == Operation.NOT_NULL || operation == Operation.IS_NULL){
+			predicate = createExistencePredicate(operation, baseExp, operands);
 		}
 
 		// special case for date
-		else if (DataType.DATE.equals(datatype)) {
+		else if (datatype == DataType.DATE) {
 			predicate = createDatePredicate(operation, baseExp, operands);
 		}
 		// normal case
@@ -536,6 +527,28 @@ class QuerydslToolbox {
 
 		return predicate;
 
+	}
+	
+	/*
+	 * There is a special treatment when operation = IS_NULL / NOT_NULL. Indeed one cannot
+	 * write 'where attribute is not null = true|false' : although legal in most SQL database,
+	 * HQL will just not have it.
+	 * 
+	 * So we must infer if we need operator IS_NULL or IS_NOT_NULL : 
+	 * 1/ from the operand (true or false), 
+	 * 2/ also from the operation stated in the column (IS_NULL or NOT_NULL) 
+	 * 
+	 * Indeed (IS_NULL == true) == (IS_NOT_NULL == false) and vice-versa 
+	 * 
+	 */
+	private BooleanExpression createExistencePredicate(Operation operation, Expression<?> baseExp, Expression... operands){
+		String arg = operands[0].toString();
+		boolean argIsTrue = (arg.equals("true") || arg.equals("1"));
+		boolean operIsIS_NULL = (operation == Operation.IS_NULL);
+		
+		// when both boolean have the same value then the actual operation is IS_NULL, else it's the other one
+		Ops actualOperator = (argIsTrue == operIsIS_NULL) ? Ops.IS_NULL : Ops.IS_NOT_NULL;  
+		return Expressions.predicate(actualOperator, baseExp);		
 	}
 
 
@@ -717,6 +730,7 @@ class QuerydslToolbox {
 		case LOWER_EQUAL: operator = Ops.LOE; break;
 		case MAX: operator = ExtOps.S_MAX; break;
 		case MIN: operator = ExtOps.S_MIN; break;
+		case IS_NULL : operator = Ops.IS_NULL; break;
 		case NOT_NULL : operator = Ops.IS_NOT_NULL; break;
 		case NOT_EQUALS:
 			operator = Ops.NE;

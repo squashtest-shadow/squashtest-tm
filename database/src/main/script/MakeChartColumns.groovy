@@ -312,7 +312,7 @@ def definition = [
 			itpDataset : ['DATASET_LABEL', 'STRING', 'referencedDataset.name', 'all'],
 			itpTester : ['TESTER', 'STRING', 'user.login', 'all'],
 			itpTcId : ['TC_ID', 'NUMERIC', 'referencedTestCase.id', 'all'],
-			itpTcExists : ['TC_EXISTS', 'BOOLEAN', 'notnull(referencedTestCase)', 'all', 'itpTcExistsSub'],
+			itpTcDeleted : ['TC_DELETED', 'BOOLEAN', 'isnull(referencedTestCase)', 'all', 'itpTcDeletedSub'],
 			itpIsExecuted : ['IS_EXECUTED', 'BOOLEAN', 'notnull(executions)', 'all', 'itpIsExecutedSub'],
 			itpManExCount : ['MANEXCOUNT', 'NUMERIC', 'count(executions[auto="false"])', 'all', 'itpManExCountSub'],
 			itpAutoExCount : ['AUTOEXCOUNT', 'NUMERIC', 'count(executions[auto="true"])', 'all', 'itpAutoExCountSub'],
@@ -322,11 +322,11 @@ def definition = [
 		subqueries : [ 
 
 			
-			itpTcExistsSub : [
-				label : 'ITEM_TEST_PLAN_TCEXISTS_SUBQUERY',
+			itpTcDeletedSub : [
+				label : 'ITEM_TEST_PLAN_TCDELETED_SUBQUERY',
 				joinStyle : 'LEFT_JOIN',
 				strategy : 'INLINED',
-				measures : ['tcId NOT_NULL'],
+				measures : ['tcId IS_NULL'],
 				axes : ['itpId']
 			],
 		
