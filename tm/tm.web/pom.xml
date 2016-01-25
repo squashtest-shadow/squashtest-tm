@@ -26,6 +26,8 @@
 
     <!-- Default jacoco dont record any coverage data -->
     <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
+    <spring-boot-maven-plugin.jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug
+      -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2</spring-boot-maven-plugin.jvmArguments>
 
     <war.css.dir>styles</war.css.dir>
     <wro4j-spring-boot.dir>${project.build.directory}/wro4j-spring-boot</wro4j-spring-boot.dir>
@@ -383,7 +385,7 @@
               <folder>${wro4j-spring-boot.dir}</folder>
               <folder>target/jasperreports-plugin</folder>
             </folders>
-            <jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2</jvmArguments>
+            <jvmArguments>${spring-boot-maven-plugin.jvmArguments}</jvmArguments>
             <!--<layout>ZIP</layout>-->
           </configuration>
           <!--<dependencies>-->
