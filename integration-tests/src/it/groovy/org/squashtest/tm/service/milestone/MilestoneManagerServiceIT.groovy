@@ -20,16 +20,17 @@
  */
 package org.squashtest.tm.service.milestone
 
+import javax.inject.Inject
+
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
+
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
-
-import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -46,9 +47,9 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		def result = manager.findAll()
 		then :
 		result.size == 4
-		result.collect{it.id} as Set == [-1, -2,-3, -4] as Set
+		result.collect{it.id} as Set == [-1, -2, -3, -4] as Set
 		result.collect{it.label} as Set == ["My milestone", "My milestone 2", "My milestone 3", "My milestone 4"] as Set
-		result.collect{it.status} as Set == [MilestoneStatus.PLANNED,MilestoneStatus.PLANNED,MilestoneStatus.IN_PROGRESS,MilestoneStatus.LOCKED] as Set
+		result.collect{it.status} as Set == [MilestoneStatus.PLANNED, MilestoneStatus.PLANNED, MilestoneStatus.IN_PROGRESS, MilestoneStatus.LOCKED] as Set
 	}
 
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
@@ -60,7 +61,6 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		def milestone = manager.findById(-1L);
 		then :
 		milestone.status == MilestoneStatus.IN_PROGRESS
-
 	}
 
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
@@ -75,8 +75,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		result.size == 2
 		result.collect{it.id} as Set == [-2, -3] as Set
 		result.collect{it.label} as Set == ["My milestone 2", "My milestone 3"]  as Set
-		result.collect{it.status}  as Set == [MilestoneStatus.PLANNED,MilestoneStatus.IN_PROGRESS]  as Set
-
+		result.collect{it.status}  as Set == [MilestoneStatus.PLANNED, MilestoneStatus.IN_PROGRESS]  as Set
 	}
 
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
@@ -88,7 +87,6 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		manager.addMilestone(milestone)
 		then :
 		thrown(MilestoneLabelAlreadyExistsException)
-
 	}
 
 
@@ -101,8 +99,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		manager.addMilestone(milestone)
 		def milestoneAdded = manager.findByName("Milestone |");
 		then :
-		thrown(org.hibernate.exception.ConstraintViolationException)
-
+		thrown(javax.validation.ConstraintViolationException)
 	}
 
 	@Unroll("for project : #id is bound to template : #boundToTemplate")
@@ -120,7 +117,6 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		-2L || true
 		-3L || true
 		-4L || false
-
 	}
 
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
@@ -146,7 +142,6 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		then:
 		res.containsAll(["My milestone", "My milestone 3"])
 		res.size() == 2
-
 	}
 
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneManagerServiceIT.xml")
@@ -161,7 +156,7 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		then:
 		res == ["My milestone 3"]
 	}
-	
+
 	/*
 	 * Please see MilestoneManagerAsProjectLeaderServiceIT for informations about the dataset
 	 */
@@ -187,16 +182,13 @@ class MilestoneManagerServiceIT extends DbunitServiceSpecification {
 		source.requirementVersions*.id as Set == sourceObjIds as Set
 		where :
 		sourceId | targetId | extendPerimeter | isUnion  ||  sourceProjectIds           |  targetProjectIds           |    sourceObjIds                   |    targetObjIds
-		   -1    |     -2    |       false     |   false ||      [-1, -2, -3, -4]       |  [-1, -2, -3, -4, -5, -6]   |	  [-1, -3, -5, -7]                |     [-1,-3, -5, -6, -7, -8, -9, -11]
-		   -1    |     -7    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]                |     [-5, -6, -7, -8, -9, -11]
-		   -6    |     -7    |       false     |   false ||      [-1, -2, -3, -4]       |  [-3, -4, -5, -6]           |	  [-1, -3, -5, -7]                |     [-5, -6, -7, -8, -9, -11]
+		-1    |     -2    |       false     |   false ||      [-1, -2, -3, -4]|  [-1, -2, -3, -4, -5, -6]|	  [-1, -3, -5, -7]|     [-1, -3, -5, -6, -7, -8, -9, -11]
+		-1    |     -7    |       false     |   false ||      [-1, -2, -3, -4]|  [-3, -4, -5, -6]|	  [-1, -3, -5, -7]|     [-5, -6, -7, -8, -9, -11]
+		-6    |     -7    |       false     |   false ||      [-1, -2, -3, -4]|  [-3, -4, -5, -6]|	  [-1, -3, -5, -7]|     [-5, -6, -7, -8, -9, -11]
 
-			
-			-1    |     -2    |       false     |   true  ||   [-1, -2, -3, -4, -5, -6] |  [-1, -2, -3, -4, -5, -6]   | [-1, -3, -5, -6, -7, -8, -9, -11] |     [-1, -3, -5, -6, -7, -8, -9, -11]
-			-1    |     -7    |       false     |   true  ||      [-1, -2, -3, -4]      |  [-3, -4, -5, -6]           |    [-1, -3, -5, -6, -7, -8]       |     [-5, -6, -7, -8, -9, -11]
-			-6    |     -7    |       false     |   true  ||      [-1, -2, -3, -4]      |  [-3, -4, -5, -6]           |    [-1, -3, -5, -6, -7, -8]       |     [-5, -6, -7, -8, -9, -11]
-			
-	
+
+		-1    |     -2    |       false     |   true  ||   [-1, -2, -3, -4, -5, -6]|  [-1, -2, -3, -4, -5, -6]| [-1, -3, -5, -6, -7, -8, -9, -11]|     [-1, -3, -5, -6, -7, -8, -9, -11]
+		-1    |     -7    |       false     |   true  ||      [-1, -2, -3, -4]|  [-3, -4, -5, -6]|    [-1, -3, -5, -6, -7, -8]|     [-5, -6, -7, -8, -9, -11]
+		-6    |     -7    |       false     |   true  ||      [-1, -2, -3, -4]|  [-3, -4, -5, -6]|    [-1, -3, -5, -6, -7, -8]|     [-5, -6, -7, -8, -9, -11]
 	}
-	
 }

@@ -23,11 +23,11 @@ package org.squashtest.tm.service.internal.deletion;
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.security.ObjectIdentityService
 import org.unitils.dbunit.annotation.DataSet
@@ -57,6 +57,7 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 
 		then :
 		!found(Project.class, -1L)
+		allDeleted ("CustomReportLibrary", [-11L])
 		allDeleted ("RequirementLibrary", [-12L])
 		allDeleted ("TestCaseLibrary", [-13L])
 		allDeleted ("CampaignLibrary", [-14L])
@@ -70,10 +71,6 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		getSession().flush();
 		then :
 		! found(Project.class, -1L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-6L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-7L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-8L)
-		! found ("ACL_RESPONSIBILITY_SCOPE_ENTRY", "ID",-9L)
 
 		//		In integration test context ObjectIdentityService is as stub
 		//		this is why i use a mock here
@@ -96,8 +93,5 @@ public class ProjectDeletionHandlerIT extends DbunitServiceSpecification {
 		allDeleted ("CampaignLibraryPluginBinding", [-31L])
 
 		newSQLQuery("select * from LIBRARY_PLUGIN_BINDING_PROPERTY").list().size() == 0
-
-
 	}
-
 }
