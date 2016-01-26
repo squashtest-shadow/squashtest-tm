@@ -56,23 +56,23 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var self = this;
 				//fetching the acls so we can adapt the view with user rights
 				//Initial data that will be set by ajax request, contains dashboard attributes and bindings. NOT UPDATED by user actions. Will be reinitialized on refresh.
-				this.dashboardInitialData = null;
-				//Map of the charts drawn on the grid. Each object inside this map is a backbone view.
-				this.dashboardChartViews = {};
-				//Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
-				//Initialy set with CustomReportChartBinding presents inside initial data
-				this.dashboardChartBindings = {};
-				this.gridster = null;
-				this.i18nString = translator.get({
-					"dateFormat": "squashtm.dateformat",
-					"dateFormatShort": "squashtm.dateformatShort"
-				});
+      this.dashboardInitialData = null;
+      //Map of the charts drawn on the grid. Each object inside this map is a backbone view.
+      this.dashboardChartViews = {};
+      //Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
+      //Initialy set with CustomReportChartBinding presents inside initial data
+      this.dashboardChartBindings = {};
+      this.gridster = null;
+      this.i18nString = translator.get({
+        "dateFormat": "squashtm.dateformat",
+        "dateFormatShort": "squashtm.dateformatShort"
+      });
 
-				_.bindAll(this, "initializeData", "render", "initGrid", "initListenerOnTree", "dropChartInGrid", "generateGridsterCss", "redrawDashboard", "serializeGridster", "canWrite");
-				this.initializeData();
-				this.initListenerOnTree();
-				this.initListenerOnWindowResize();
-				this.refreshCharts = _.throttle(this.refreshCharts, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
+      _.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard","serializeGridster","canWrite");
+      this.initializeData();
+      this.initListenerOnTree();
+      this.initListenerOnWindowResize();
+      this.refreshCharts = _.throttle(this.refreshCharts, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
 			},
 
 			events: {
@@ -146,7 +146,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					shift_larger_widgets_down: false,
 					autogenerate_stylesheet: false,//Turned off
 					serialize_params: function ($w, wgd) {
-						var chartBindingId = $w.find(".jqplot-target").attr("data-binding-id");
+						var chartBindingId = $w.find(".chart-display-area").attr("data-binding-id");
 						return {
 							id: chartBindingId,
 							col: wgd.col,
@@ -399,7 +399,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 
 			buildBindingData: function (response) {
 				this.dashboardInitialData = response;//We need to cache the initial data for templating, ie render()
-				this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
+        this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
 				this.dashboardInitialData.generatedDate = this.i18nFormatDate(new Date());
 				this.dashboardInitialData.generatedHour = this.i18nFormatHour(new Date());
 				var bindings = response.chartBindings;
