@@ -144,18 +144,7 @@ public class CustomReportNavigationController {
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
 			@CurrentMilestone Milestone activeMilestone,
 			Locale locale) {
-
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
-
-
-		List<SuppressionPreviewReport> reportList = new ArrayList<SuppressionPreviewReport>();
-		
-		Messages messages = new Messages();
-		for (SuppressionPreviewReport report : reportList) {
-			//messages.addMessage(report.toString(messageSource, locale));
-		}
-
-		return messages;
+		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything 
 	}
 	
 	//-------------- DELETE METHOD ---------------------------
