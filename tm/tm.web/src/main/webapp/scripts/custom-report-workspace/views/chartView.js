@@ -64,14 +64,16 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				var self = this;
 				var url = urlBuilder.buildURL('custom-report-chart-server', this.model.get('id'));
 
-				$.ajax({
-						'type': 'get',
-						'dataType': 'json',
-						'contentType': 'application/json',
-						'url': url
-					})
-					.then(this.options.acls.fetch())
-					.then(function (json) {
+				this.options.acls.fetch({})
+					.then(function () {
+						return $.ajax({
+							'type': 'get',
+							'dataType': 'json',
+							'contentType': 'application/json',
+							'url': url
+						})
+
+					}).then(function (json) {
 						self.setBaseModelAttributes(json);
 						self.loadI18n();
 						self.getCustomPerimeterMessage(json);

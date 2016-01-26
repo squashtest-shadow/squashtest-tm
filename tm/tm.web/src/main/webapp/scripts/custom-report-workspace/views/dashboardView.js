@@ -51,59 +51,60 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			ySizeWidget: null,//this attribute will be computed by calculateWidgetDimension
 			secureBlank: 5,//in pixel, a margin around widget to prevent inesthetics scrollbars
 
-		initialize : function(options){
-      this.options = options;
-      var self = this;
-      //fetching the acls so we can adapt the view with user rights
-    //Initial data that will be set by ajax request, contains dashboard attributes and bindings. NOT UPDATED by user actions. Will be reinitialized on refresh.
-    this.dashboardInitialData = null;
-    //Map of the charts drawn on the grid. Each object inside this map is a backbone view.
-    this.dashboardChartViews = {};
-    //Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
-    //Initialy set with CustomReportChartBinding presents inside initial data
-    this.dashboardChartBindings = {};
-    this.gridster = null;
-    this.i18nString = translator.get({
-      "dateFormat": "squashtm.dateformat",
-      "dateFormatShort": "squashtm.dateformatShort"
-    });
+			initialize: function (options) {
+				this.options = options;
+				var self = this;
+				//fetching the acls so we can adapt the view with user rights
+				//Initial data that will be set by ajax request, contains dashboard attributes and bindings. NOT UPDATED by user actions. Will be reinitialized on refresh.
+				this.dashboardInitialData = null;
+				//Map of the charts drawn on the grid. Each object inside this map is a backbone view.
+				this.dashboardChartViews = {};
+				//Map of the binding, ie all the CustomReportChartBinding for this dashboard. UPDATED by user actions and synchronized with server.
+				//Initialy set with CustomReportChartBinding presents inside initial data
+				this.dashboardChartBindings = {};
+				this.gridster = null;
+				this.i18nString = translator.get({
+					"dateFormat": "squashtm.dateformat",
+					"dateFormatShort": "squashtm.dateformatShort"
+				});
 
-  _.bindAll(this,"initializeData","render","initGrid","initListenerOnTree","dropChartInGrid","generateGridsterCss","redrawDashboard","serializeGridster","canWrite");
-  this.initializeData();
-  this.initListenerOnTree();
-  this.initListenerOnWindowResize();
-    this.refreshCharts = _.throttle(this.refreshCharts, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
-		},
+				_.bindAll(this, "initializeData", "render", "initGrid", "initListenerOnTree", "dropChartInGrid", "generateGridsterCss", "redrawDashboard", "serializeGridster", "canWrite");
+				this.initializeData();
+				this.initListenerOnTree();
+				this.initListenerOnWindowResize();
+				this.refreshCharts = _.throttle(this.refreshCharts, 1000);//throttle refresh chart to avoid costly redraw of dashboard on resize
+			},
 
-		events : {
-      "click .delete-chart-button":"unbindChart",
-      "transitionend #dashboard-grid" : "refreshCharts",
-      "webkitTransitionEnd #dashboard-grid" : "refreshCharts",
-      "oTransitionEnd #dashboard-grid" : "refreshCharts",
-      "MSTransitionEnd #dashboard-grid" : "refreshCharts",
-      "click #toggle-expand-left-frame-button" : "toggleDashboard",
-      "click #rename-dashboard-button" : "rename"
-		},
+			events: {
+				"click .delete-chart-button": "unbindChart",
+				"transitionend #dashboard-grid": "refreshCharts",
+				"webkitTransitionEnd #dashboard-grid": "refreshCharts",
+				"oTransitionEnd #dashboard-grid": "refreshCharts",
+				"MSTransitionEnd #dashboard-grid": "refreshCharts",
+				"click #toggle-expand-left-frame-button": "toggleDashboard",
+				"click #rename-dashboard-button": "rename"
+			},
 
 			/**
 			 * Initialize dashboard data from server.
 			 */
-		initializeData: function () {
-			var url = urlBuilder.buildURL("custom-report-dashboard-server", this.model.get('id'));
-			var self = this;
-      this.options.acls.fetch({}).then(function () {
-        return $.ajax({
-          url: url,
-          type: 'GET',
-          dataType: 'json'
-        });
-      }).then(function (response) {
+			initializeData: function () {
+				var url = urlBuilder.buildURL("custom-report-dashboard-server", this.model.get('id'));
+				var self = this;
+				this.options.acls.fetch({})
+					.then(function () {
+						return $.ajax({
+							url: url,
+							type: 'GET',
+							dataType: 'json'
+						});
+					}).then(function (response) {
 					self.buildBindingData(response)
 						.render()
 						.generateGridsterCss()
 						.initGrid()
 						.buildDashBoard();//templating first, then init gridster css, then init gridster, then add charts into widgets
-			});
+				});
 			},
 
 			render: function () {
@@ -132,7 +133,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			 */
 			initGrid: function () {
 				var self = this;
-        var resizeable = self.canWrite();
+				var resizeable = self.canWrite();
 				this.gridster = this.$("#dashboard-grid").gridster({
 					widget_margins: [self.gridColMargin, self.gridRowMargin],
 					widget_base_dimensions: [self.xSizeWidget, self.ySizeWidget],
@@ -155,7 +156,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 						};
 					},
 					resize: {
-					enabled : resizeable,
+						enabled: resizeable,
 						max_size: [self.maxChartSizeX, self.maxChartSizeY],
 						start: function (e, ui, $widget) {
 							self.cacheWidgetOriginalSize(e, ui, $widget);
@@ -175,9 +176,9 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 					}
 				}).data('gridster');
 
-        if (!this.canWrite()) {
-          this.gridster.disable();
-        }
+				if (!this.canWrite()) {
+					this.gridster.disable();
+				}
 
 				this.getGridScreenDimension();
 				return this;
@@ -202,9 +203,9 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				}, 50);
 			},
 
-      canWrite : function () {
-        return _.contains(this.options.acls.get("perms"),"WRITE");
-      },
+			canWrite: function () {
+				return _.contains(this.options.acls.get("perms"), "WRITE");
+			},
 
 			/**
 			 * Override of gridster generated css. The main goal is to support dynamic resize of widget size,
@@ -309,15 +310,15 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 				var wreqr = squashtm.app.wreqr;
 				var self = this;
 				wreqr.on("dropFromTree", function (data) {
-        if (self.canWrite()) {
-          var idTarget = data.r.attr('id');
-          if (idTarget === 'dashboard-grid') {
-            self.dropChartInGrid(data);
-          }
-          else {
-            self.dropChartInExistingChart(data);
-          }
-        }
+					if (self.canWrite()) {
+						var idTarget = data.r.attr('id');
+						if (idTarget === 'dashboard-grid') {
+							self.dropChartInGrid(data);
+						}
+						else {
+							self.dropChartInExistingChart(data);
+						}
+					}
 				});
 			},
 
@@ -398,7 +399,7 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 
 			buildBindingData: function (response) {
 				this.dashboardInitialData = response;//We need to cache the initial data for templating, ie render()
-      this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
+				this.dashboardInitialData.canWrite = this.canWrite;//copy rights to allow effcient templating
 				this.dashboardInitialData.generatedDate = this.i18nFormatDate(new Date());
 				this.dashboardInitialData.generatedHour = this.i18nFormatHour(new Date());
 				var bindings = response.chartBindings;
@@ -483,17 +484,17 @@ define(["jquery", "underscore", "backbone", "squash.translator", "handlebars", "
 			unbindChart: function (event) {
 				//Get id of the suppressed chart
 				if (this.canWrite()) {
-          var id = event.currentTarget.getAttribute("data-binding-id");
-          var url = urlBuilder.buildURL("custom-report-chart-binding-with-id", id);
-          var self = this;
-          //Suppress on server and if succes, update gridster and update maps properties
-          $.ajax({
-            url: url,
-            type: 'delete'
-          }).success(function (response) {
-            self.removeChart(id);
-            self.removeWidget(id);
-          });
+					var id = event.currentTarget.getAttribute("data-binding-id");
+					var url = urlBuilder.buildURL("custom-report-chart-binding-with-id", id);
+					var self = this;
+					//Suppress on server and if succes, update gridster and update maps properties
+					$.ajax({
+						url: url,
+						type: 'delete'
+					}).success(function (response) {
+						self.removeChart(id);
+						self.removeWidget(id);
+					});
 				}
 			},
 
