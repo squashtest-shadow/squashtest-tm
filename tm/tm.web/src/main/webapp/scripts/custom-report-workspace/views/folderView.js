@@ -31,8 +31,9 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.bas
 				this.options = options;
 				_.bindAll(this, "render");
 				this.model.fetch({})
-					.then(options.acls.fetch({}))
-					.then(this.render);
+					.then(function() {
+						return options.acls.fetch({});
+					}).then(this.render);
 			},
 
 			events: {},
