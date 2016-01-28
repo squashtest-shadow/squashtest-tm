@@ -20,52 +20,14 @@
  */
 package org.squashtest.tm.domain.search;
 
-import java.util.Date;
-
-public class AdvancedSearchTimeIntervalFieldModel implements AdvancedSearchFieldModel{
-
-
-	private final AdvancedSearchFieldModelType type;
-
-	private Date startDate;
-
-	private Date endDate;
-
-	private boolean ignoreBridge = false;
-
-	public AdvancedSearchTimeIntervalFieldModel() {
-		type = AdvancedSearchFieldModelType.TIME_INTERVAL;
-	}
-
-	protected AdvancedSearchTimeIntervalFieldModel(AdvancedSearchFieldModelType type) {
-		this.type = type;
-	}
-
-	@Override
-	public AdvancedSearchFieldModelType getType() {
-		return this.type;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-
-
-	@Override
-	public boolean isIgnoreBridge() {
-		return this.ignoreBridge;
+/**
+ * Specialization of AdvancedSearchTimeIntervalFieldModel which should be used for custom fields of DATE type.
+ *
+ * @author Gregory Fouquet
+ * @since 1.13.0.RELEASE
+ */
+public class SearchCustomFieldTimeIntervalFieldModel extends AdvancedSearchTimeIntervalFieldModel {
+	public SearchCustomFieldTimeIntervalFieldModel() {
+		super(AdvancedSearchFieldModelType.CF_TIME_INTERVAL);
 	}
 }

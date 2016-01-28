@@ -31,22 +31,22 @@ import spock.lang.Unroll;
  */
 class CUFBridgeTest extends Specification {
 	CUFBridge bridge = new CUFBridge()
-	
+
 	@Unroll
 	def "should format #fieldValue date as #formatted"() {
 		given:
 		CustomFieldValue value = Mock()
 		value.value >> fieldValue
-		
+
 		expect:
-		formatted == bridge.formatDate(value);
-		
+		formatted == bridge.coerceToDate(value);
+
 		where:
 		fieldValue   | formatted
 		null	     | null
 		""	         | null
 		"   "        | null
 		"abc"	     | null
-		"2013-04-01" | "20130401"
-	}	
+		"2013-04-01" | { def cal = Calendar.getInstance(); cal.clear(); cal.set(2013, 3, 1); return cal.time; }.call()
+	}
 }

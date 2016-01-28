@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.domain.search;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
@@ -35,6 +29,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.ParameterizedBridge;
+import org.hibernate.search.bridge.builtin.NumericEncodingCalendarBridge;
+import org.hibernate.search.bridge.builtin.NumericEncodingDateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -42,6 +38,13 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CUFBridge.class);
@@ -68,7 +71,7 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			entityType = BindableEntity.REQUIREMENT_VERSION;
 		}
 		Criteria crit = session.createCriteria(CustomFieldValue.class).createAlias("binding", "binding")
-				.createAlias("binding.customField", "cuf");
+			.createAlias("binding.customField", "cuf");
 		crit.add(Restrictions.eq("boundEntityId", id)).add(Restrictions.eq("boundEntityType", entityType));
 
 		SimpleExpression typeDropDownList = Restrictions.eq("cuf.inputType", InputType.DROPDOWN_LIST);
@@ -84,16 +87,16 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 	@Override
 	public void setParameterValues(Map<String, String> parameters) {
 		if (parameters.containsKey("type")) {
-			this.type = (String) parameters.get("type");
+			this.type = parameters.get("type");
 		}
 		if (parameters.containsKey("inputType")) {
-			this.inputType = (String) parameters.get("inputType");
+			this.inputType = parameters.get("inputType");
 		}
 	}
 
 	@Override
 	protected void writeFieldToDocument(String name, Session session, Object value, Document document,
-			LuceneOptions luceneOptions) {
+										LuceneOptions luceneOptions) {
 
 		List<CustomFieldValue> cufValues = findCufValuesForType(session, value);
 
@@ -104,22 +107,28 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			String val = null;
 
 			switch (inputType) {
-			case DATE_PICKER:
-				val = formatDate(cufValue);
-				break;
-			case DROPDOWN_LIST:
-				val = cufValue.getValue();
-				if ("".equals(val)) {
-					val = "$NO_VALUE";
-				}
-				break;
-			default:
-				val = cufValue.getValue();
+				case DATE_PICKER:
+					// TODO quick fix for #6031. Refactor that ugly crap !
+					Date date = coerceToDate(cufValue);
+					if (date != null) {
+						NumericEncodingDateBridge.DATE_DAY.set(code, date, document, luceneOptions);
+						return;
+					}
+					break;
+				case DROPDOWN_LIST:
+					val = cufValue.getValue();
+					if ("".equals(val)) {
+						val = "$NO_VALUE";
+					}
+					break;
+				default:
+					val = cufValue.getValue();
 			}
 
+			// TODO use the correct API
 			if (val != null) {
 				Field field = new Field(code, val, luceneOptions.getStore(), luceneOptions.getIndex(),
-						luceneOptions.getTermVector());
+					luceneOptions.getTermVector());
 				field.setBoost(luceneOptions.getBoost());
 				document.add(field);
 			}
@@ -127,29 +136,26 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 	}
 
 	/**
-	 * Formats a DATE cuf value
-	 * 
+	 * Coerce a CFV into a Calendar. The CFV should be of type DATE !
+	 *
 	 * @param fieldValue
 	 * @return
 	 */
-	private String formatDate(CustomFieldValue fieldValue) {
+	private Date coerceToDate(CustomFieldValue fieldValue) {
 		String value = fieldValue.getValue();
-		
+
 		if (StringUtils.isEmpty(value)) {
 			// wont parse as date, early exit
 			return null;
 		}
-		
+
+		// TODO either the CFV or a utility class should be responsible for the parsing because the CSV is responsible for its own string representation of the date
 		try {
-			Date inputDate = inputFormat.parse(fieldValue.getValue());
-			return dateFormat.format(inputDate);
+			return inputFormat.parse(fieldValue.getValue());
 		} catch (ParseException e) {
-			if (LOGGER.isDebugEnabled()) {
-				LOGGER.debug("Cannot parse as date custom field of value '" + fieldValue.getValue() + '\'', e);
-			}
+			LOGGER.debug("Cannot parse as date custom field of value '{}'", fieldValue.getValue(), e);
 		}
-		
+
 		return null;
 	}
-
 }

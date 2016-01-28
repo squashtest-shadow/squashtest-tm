@@ -1112,7 +1112,7 @@ public class AdvancedSearchController {
 				break;
 
 			case DATE_PICKER:
-				model.getFields().add(createDatePickerField(customField));
+				model.getFields().add(createDateCustomFieldSearchModel(customField));
 				break;
 
 			case TAG:
@@ -1127,10 +1127,10 @@ public class AdvancedSearchController {
 		return model;
 	}
 
-	private SearchInputFieldModel createDatePickerField(CustomField customField) {
+	private SearchInputFieldModel createDateCustomFieldSearchModel(CustomField customField) {
 
 		SearchInputFieldModel model = new SearchInputFieldModel();
-		model.setInputType(DATE);
+		model.setInputType("CF_TIME_INTERVAL");
 		model.setTitle(customField.getLabel());
 		model.setId(customField.getCode());
 		model.setIgnoreBridge(true);

@@ -20,23 +20,10 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -44,6 +31,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.query.dsl.QueryBuilder;
+import org.hibernate.search.query.dsl.RangeMatchingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.Identified;
@@ -52,16 +40,8 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
-import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
@@ -70,6 +50,10 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
+import javax.inject.Inject;
+import java.util.*;
+import java.util.Map.Entry;
+
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private static final String PROJECT_CRITERIA_NAME = "project.id";
@@ -77,7 +61,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchServiceImpl.class);
 
 	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
-			"milestone.endDate", "searchByMilestone");
+		"milestone.endDate", "searchByMilestone");
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -128,16 +112,16 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			String paddedMaxValue = padRawValue(maxValue);
 
 			query = qb.bool()
-					.must(qb.range().onField(fieldName).ignoreFieldBridge().below(paddedMaxValue).createQuery())
-					.createQuery();
+				.must(qb.range().onField(fieldName).ignoreFieldBridge().below(paddedMaxValue).createQuery())
+				.createQuery();
 
 		} else if (maxValue == null) {
 
 			String paddedMinValue = padRawValue(minValue);
 
 			query = qb.bool()
-					.must(qb.range().onField(fieldName).ignoreFieldBridge().above(paddedMinValue).createQuery())
-					.createQuery();
+				.must(qb.range().onField(fieldName).ignoreFieldBridge().above(paddedMinValue).createQuery())
+				.createQuery();
 
 		} else {
 
@@ -145,7 +129,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			String paddedMinValue = padRawValue(minValue);
 
 			query = qb.bool().must(qb.range().onField(fieldName).ignoreFieldBridge().from(paddedMinValue)
-					.to(paddedMaxValue).createQuery()).createQuery();
+				.to(paddedMaxValue).createQuery()).createQuery();
 		}
 
 		return query;
@@ -165,10 +149,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 				if (isTag) {
 					query = qb.bool().should(qb.phrase().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
-							.sentence(value).createQuery()).createQuery();
+						.sentence(value).createQuery()).createQuery();
 				} else {
 					query = qb.bool().should(qb.keyword().onField(fieldName).ignoreFieldBridge().ignoreAnalyzer()
-							.matching(value).createQuery()).createQuery();
+						.matching(value).createQuery()).createQuery();
 				}
 
 				if (query != null && mainQuery == null) {
@@ -193,12 +177,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 			if (value.contains("*")) {
 				query = qb.bool().must(
-						qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value).createQuery())
-						.createQuery();
+					qb.keyword().wildcard().onField(fieldName).ignoreFieldBridge().matching(value).createQuery())
+					.createQuery();
 			} else {
 
 				query = qb.bool().must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery())
-						.createQuery();
+					.createQuery();
 			}
 
 			if (query != null && mainQuery == null) {
@@ -220,7 +204,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			Query query;
 
 			query = qb.bool().must(qb.phrase().onField(fieldName).ignoreFieldBridge().sentence(value).createQuery())
-					.createQuery();
+				.createQuery();
 			if (query != null && mainQuery == null) {
 				mainQuery = query;
 			} else if (query != null) {
@@ -233,7 +217,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName, Date startdate, Date enddate) {
 
 		Query query = qb.bool().must(qb.range().onField(fieldName).from(startdate).to(enddate).createQuery())
-				.createQuery();
+			.createQuery();
 
 		return query;
 	}
@@ -253,7 +237,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb,
-			Locale locale) {
+											   Locale locale) {
 
 		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
 		if (singleModel.getValue() != null && !"".equals(singleModel.getValue().trim())) {
@@ -304,7 +288,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			// add a new token if the current character reached a delimiter
 			// and prepare the counter for the next token
 			if (isSimpleQuote(charAtPosition, charBeforePosition) || isDoubleQuote(charAtPosition, charBeforePosition)
-					|| isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)) {
+				|| isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)) {
 				addToTokens(tokens, textInput.substring(start, i).trim());
 				start = i + 1;
 			}
@@ -334,7 +318,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	private boolean isNewBlankInDoubleQuoteContext(boolean inDoubleQuoteContext, char charAtPosition,
-			char charBeforePosition) {
+												   char charBeforePosition) {
 		return charAtPosition == ' ' && charBeforePosition != ' ' && !inDoubleQuoteContext;
 	}
 
@@ -358,10 +342,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	private Query buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel,
-			QueryBuilder qb) {
+													 QueryBuilder qb) {
 		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 		Date startDate = intervalModel.getStartDate();
+
 		Date endDate = intervalModel.getEndDate();
+
 		Query query = null;
 		if (startDate != null) {
 			if (endDate != null) {
@@ -462,7 +448,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) fields
-				.get("searchByMilestone");
+			.get("searchByMilestone");
 
 		if (searchByMilestone != null && "true".equals(searchByMilestone.getValue())) {
 
@@ -500,51 +486,51 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 				switch (entry.getKey()) {
 
-				case "milestone.label":
+					case "milestone.label":
 
-					List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
+						List<String> labelValues = ((AdvancedSearchListFieldModel) model).getValues();
 
-					if (labelValues != null && !labelValues.isEmpty()) {
+						if (labelValues != null && !labelValues.isEmpty()) {
 
-						Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
-							@Override
-							public Object transform(Object val) {
-								return Long.parseLong((String) val);
-							}
-						});
+							Collection<Long> ids = CollectionUtils.collect(labelValues, new Transformer() {
+								@Override
+								public Object transform(Object val) {
+									return Long.parseLong((String) val);
+								}
+							});
 
-						crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
-					}
-					break;
+							crit.add(Restrictions.in("id", ids));// milestone.label now contains ids
+						}
+						break;
 
-				case "milestone.status":
-					List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
+					case "milestone.status":
+						List<String> statusValues = ((AdvancedSearchListFieldModel) model).getValues();
 
-					if (statusValues != null && !statusValues.isEmpty()) {
-						crit.add(Restrictions.in("status", convertStatus(statusValues)));
-					}
+						if (statusValues != null && !statusValues.isEmpty()) {
+							crit.add(Restrictions.in("status", convertStatus(statusValues)));
+						}
 
-					break;
+						break;
 
-				case "milestone.endDate":
-					Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
-					Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
+					case "milestone.endDate":
+						Date startDate = ((AdvancedSearchTimeIntervalFieldModel) model).getStartDate();
+						Date endDate = ((AdvancedSearchTimeIntervalFieldModel) model).getEndDate();
 
-					if (startDate != null) {
-						Calendar cal = Calendar.getInstance();
-						cal.setTime(startDate);
-						cal.set(Calendar.HOUR, 0);
-						crit.add(Restrictions.ge("endDate", cal.getTime()));
-					}
+						if (startDate != null) {
+							Calendar cal = Calendar.getInstance();
+							cal.setTime(startDate);
+							cal.set(Calendar.HOUR, 0);
+							crit.add(Restrictions.ge("endDate", cal.getTime()));
+						}
 
-					if (endDate != null) {
-						crit.add(Restrictions.le("endDate", endDate));
+						if (endDate != null) {
+							crit.add(Restrictions.le("endDate", endDate));
 
-					}
+						}
 
-					break;
-				default:
-					// do nothing
+						break;
+					default:
+						// do nothing
 				}
 			}
 		}
@@ -586,62 +572,108 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		});
 
 		switch (operation) {
-		case AND:
-			Query query = null;
-			for (String tag : lowerTags) {
-				// query =
-				// qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
+			case AND:
+				Query query = null;
+				for (String tag : lowerTags) {
+					// query =
+					// qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
 
-				query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
+					query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
 						.sentence(tag).createQuery()).createQuery();
 
-				if (query == null) {
-					break;
+					if (query == null) {
+						break;
+					}
+					if (main == null) {
+						main = query;
+					} else {
+						main = qb.bool().must(main).must(query).createQuery();
+					}
 				}
-				if (main == null) {
-					main = query;
-				} else {
-					main = qb.bool().must(main).must(query).createQuery();
-				}
-			}
 
-			return qb.bool().must(main).createQuery();
+				return qb.bool().must(main).createQuery();
 
-		case OR:
-			return buildLuceneValueInListQuery(qb, fieldKey, lowerTags, true);
+			case OR:
+				return buildLuceneValueInListQuery(qb, fieldKey, lowerTags, true);
 
-		default:
-			throw new IllegalArgumentException("search on tag '" + fieldKey + "' : operation unknown");
+			default:
+				throw new IllegalArgumentException("search on tag '" + fieldKey + "' : operation unknown");
 
 		}
 	}
 
 	private Query buildQueryDependingOnType(QueryBuilder qb, Locale locale, String fieldKey,
-			AdvancedSearchFieldModel fieldModel, AdvancedSearchFieldModelType type) {
+											AdvancedSearchFieldModel fieldModel, AdvancedSearchFieldModelType type) {
 		Query query = null;
 		switch (type) {
-		case SINGLE:
-			query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, locale);
-			break;
-		case LIST:
-			query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
-			break;
-		case TEXT:
-			query = buildQueryForTextCriterium(fieldKey, fieldModel, qb);
-			break;
-		case RANGE:
-			query = buildQueryForRangeCriterium(fieldKey, fieldModel, qb);
-			break;
-		case TIME_INTERVAL:
-			query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
-			break;
-		case TAGS:
-			query = buildQueryForTagsCriterium(fieldKey, fieldModel, qb);
-			break;
-		default:
-			break;
+			case SINGLE:
+				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, locale);
+				break;
+			case LIST:
+				query = buildQueryForListCriterium(fieldKey, fieldModel, qb);
+				break;
+			case TEXT:
+				query = buildQueryForTextCriterium(fieldKey, fieldModel, qb);
+				break;
+			case RANGE:
+				query = buildQueryForRangeCriterium(fieldKey, fieldModel, qb);
+				break;
+			case TIME_INTERVAL:
+				query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
+				break;
+			case CF_TIME_INTERVAL:
+				query = dateIntervalCustomFieldQuery(fieldKey, fieldModel, qb);
+				break;
+			case TAGS:
+				query = buildQueryForTagsCriterium(fieldKey, fieldModel, qb);
+				break;
+			default:
+				break;
 		}
 		return query;
+	}
+
+	private Query dateIntervalCustomFieldQuery(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
+		Date startDate = intervalModel.getStartDate();
+		Date endDate = intervalModel.getEndDate();
+
+		Query sub;
+		RangeMatchingContext range = qb.range().onField(fieldKey);
+
+		if (startDate != null && endDate != null) {
+			long start = dateToLongParam(startDate);
+			long end = dateToLongParam(endDate);
+
+			sub = range.from(start).to(end).createQuery();
+
+		} else if (startDate != null) {
+			long start = dateToLongParam(startDate);
+			sub = range.above(start).createQuery();
+
+		} else if (endDate != null) {
+			long end = dateToLongParam(endDate);
+			sub = range.below(end).createQuery();
+
+		} else {
+			// we're doomed
+			return null;
+
+		}
+
+		return qb.bool().must(sub).createQuery();
+	}
+
+	/**
+	 * Coerces a Date into a long to be used as a hibernate search query param.
+	 * This is necessary to work around a bug in NumericFieldUtils.requiresNumericRangeQuery which does not correctly
+	 * detect Calendars
+	 *
+	 * @param startDate
+	 * @return
+	 */
+	private long dateToLongParam(Date startDate) {
+		return DateTools.round(startDate.getTime(), DateTools.Resolution.DAY);
 	}
 
 	// Issue #5079 : ensure that criteria project.id contains only
@@ -684,11 +716,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			approvedIds = new ArrayList<>();
 			for (String id : selectedIds) {
 				if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "READ", Long.valueOf(id),
-						Project.class.getName())) {
+					Project.class.getName())) {
 					approvedIds.add(id);
 				} else {
 					LOGGER.info("AdvancedSearchService : removed element '" + id
-							+ "' from criteria 'project.id' because the user is not approved for 'READ' operation on it");
+						+ "' from criteria 'project.id' because the user is not approved for 'READ' operation on it");
 				}
 			}
 		}

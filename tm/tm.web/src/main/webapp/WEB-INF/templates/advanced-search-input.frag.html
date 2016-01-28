@@ -274,24 +274,37 @@
 			{{!--]]>--}}
 			</script>
 
-              <script id="date-template" type="text/x-handlebars-template">
-				<div class="display-search-table-row">
-					<label for="{{text-date-id}}" class="display-search-table-cell">{{text-date-title}}</label>
-					<div id="{{text-date-id}}" class="search-input" style="display:inline">
-					<div class="search-line" data-widgetname="Date">
-						<input type="checkbox"></input>
-						<span th:text="#{search.testcase.betweenDate.label}"></span>
-						<input class="date-search-input" type="text"></input>
-						<span th:text="#{search.testcase.andDate.label}"></span>
-						<input class="date-search-input" type="text"></input>
-					</div>
-					</div>
-				</div>
+                <script id="date-template" type="text/x-handlebars-template">
+                    <div class="display-search-table-row">
+                        <label for="{{text-date-id}}" class="display-search-table-cell">{{text-date-title}}</label>
+                        <div id="{{text-date-id}}" class="search-input" style="display:inline">
+                            <div class="search-line" data-widgetname="Date">
+                                <input type="checkbox"></input>
+                                <span th:text="#{search.testcase.betweenDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                                <span th:text="#{search.testcase.andDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                            </div>
+                        </div>
+                    </div>
+                </script>
 
-				</script>
+                <script id="cf-date-template" type="text/x-handlebars-template">
+                    <div class="display-search-table-row">
+                        <label for="{{text-date-id}}" class="display-search-table-cell">{{text-date-title}}</label>
+                        <div id="{{text-date-id}}" class="search-input" style="display:inline">
+                            <div class="search-line" data-widgetname="DateCustomField">
+                                <input type="checkbox"></input>
+                                <span th:text="#{search.testcase.betweenDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                                <span th:text="#{search.testcase.andDate.label}"></span>
+                                <input class="date-search-input" type="text"></input>
+                            </div>
+                        </div>
+                    </div>
+                </script>
 
-
-              <script id="range-template" type="text/x-handlebars-template">
+                <script id="range-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
 					<div id="{{text-range-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Range">

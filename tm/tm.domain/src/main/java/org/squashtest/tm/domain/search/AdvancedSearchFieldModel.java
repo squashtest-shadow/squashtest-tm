@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 	@Type(value = AdvancedSearchTextFieldModel.class, name = "TEXT"),
 	@Type(value = AdvancedSearchRangeFieldModel.class, name = "RANGE"),
 	@Type(value = AdvancedSearchTimeIntervalFieldModel.class, name = "TIME_INTERVAL"),
+	@Type(value = SearchCustomFieldTimeIntervalFieldModel.class, name = "CF_TIME_INTERVAL"),
 	@Type(value = AdvancedSearchTagsFieldModel.class, name = "TAGS")})
 public interface AdvancedSearchFieldModel {
 

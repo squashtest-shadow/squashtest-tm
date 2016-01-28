@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects", 
-         "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget", 
+define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects",
+         "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget",
 		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget",  "./SearchCheckboxWidget",
-		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget",
+		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
 		"jquery.squash.oneshotdialog", "jquery.squash.messagedialog",
 		"jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, translator, notification, _, projects) {
@@ -70,7 +70,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 	});
 
 
-	
+
 
 
 	var TestCaseSearchInputPanel = Backbone.View.extend({
@@ -86,22 +86,22 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			// templates are no longer needed
 			this.templates = {};
-						
-			resizePerimeter = function(event) { 
+
+			resizePerimeter = function(event) {
 				var sizeWithPadding =  $('#perimeter-panel-id').css('width');
 				var sizeWithoutPadding = parseInt(sizeWithPadding, 10) - 20;
 				$("#perimeter-multiple-custom").css('width', sizeWithoutPadding);
 				};
-				 
+
 			resizePerimeter();
 			$( window ).on('resize', resizePerimeter);
 			window.onresize = resizePerimeter;
-			
+
 		},
 
 		events : {
 			"click #advanced-search-button" : "showResults"
-				
+
 		},
 
 		getInputInterfaceModel : function() {
@@ -110,7 +110,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			var formBuilder = function(formModel) {
 				$.each(formModel.panels || {}, function(index, panel) {
 					var context = {
-						"toggle-panel-id": panel.id+"-panel-id", 
+						"toggle-panel-id": panel.id+"-panel-id",
 						"toggle-panel-table-id": panel.id+"-panel-table-id",
 						"toggle-panel-icon" : panel.cssClasses,
 						"toggle-panel-title" : panel.title,
@@ -118,9 +118,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					};
 					var tableid = panel.id+"-panel-table-id";
 					var source ;
-					
-					// First A 
-					
+
+					// First A
+
 					var panelName = panel.id;
 					// compiles the panel template
 					if ( panelName == "perimeter" ) {
@@ -155,9 +155,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 					var html = template(context);
 					self.$("#advanced-search-input-form-panel-"+panel.location).append(html);
-					self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);			
+					self.$("#advanced-search-input-form-panel-"+panel.location).addClass(searchDomain);
 
-		 // First C			
+		 // First C
 					for (var i = 0, field; i < panel.fields.length; i++){
 						field = panel.fields[i];
 						var inputType = field.inputType.toLowerCase();
@@ -166,10 +166,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 							case "textfield" :
 								self.makeTextField(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 								break;
-							case "textfieldid" : 
+							case "textfieldid" :
 								self.makeTextFieldId(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 								break;
-							case "textfieldreference" : 
+							case "textfieldreference" :
 								self.makeTextFieldReference(tableid, field.id, field.title, searchModel[field.id], field.ignoreBridge);
 								break;
 							case "textarea":
@@ -178,7 +178,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 							case "multiselect" :
 								self.makeMultiselect(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
-							case "multiselectperimeter" : 
+							case "multiselectperimeter" :
 								self.makeMultiselectPerimeter(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
 							case "multiautocomplete":
@@ -202,6 +202,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 							case "date":
 								self.makeDateField(tableid, field.id, field.title, searchModel[field.id]);
 								break;
+							case "cf_time_interval":
+								self.makeCustomFieldDateSearch(tableid, field.id, field.title, searchModel[field.id]);
+								break;
 							case "checkbox":
 								self.makeCheckboxField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
@@ -211,24 +214,24 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 							case "tags":
 								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
-						}			
+						}
 
 					}
-					// End C					
-					
+					// End C
+
 					// End A
 				});
-				
+
 			};
 
 			this._processModel(formBuilder);
 
-			
+
 		},
 
 		_processModel : function(formBuilder) {
 			if (!!squashtm.app.searchFormModel) {
-				
+
 				formBuilder(squashtm.app.searchFormModel);
 
 				// last detail, we must also hook the project selector with the nature an type selectors
@@ -238,7 +241,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				});
 				// also, update immediately
 				self._updateAvailableInfolists();
-				
+
 			} else { // TODO legacy, remove that in Squash 1.9
 				$.ajax({
 					url : squashtm.app.contextRoot + "/advanced-search/input?"+this.$("#searchDomain").text(),
@@ -246,7 +249,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					dataType : "json"
 				}).success(function() {
 					formBuilder(squashtm.app.searchFormModel);
-					
+
 					// last detail, we must also hook the project selector with the nature an type selectors
 					var self = this;
 					$("#perimeter-multiple-custom").on('change', function(){
@@ -308,7 +311,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			$fieldDom.searchExistsWidget("createDom", "F"+fieldId, options);
 			$fieldDom.searchExistsWidget("fieldvalue", enteredValue);
 		},
-		
+
 		makeExistsBeforeField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"text-exists-id": fieldId, "text-exists-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#existsbefore-template", context));
@@ -323,6 +326,14 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			$fieldDom.searchDateWidget();
 			$fieldDom.searchDateWidget("createDom", "F"+fieldId);
 			$fieldDom.searchDateWidget("fieldvalue", enteredValue);
+		},
+
+		makeCustomFieldDateSearch : function(tableId, fieldId, fieldTitle, enteredValue) {
+			var context = {"text-date-id": fieldId, "text-date-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#cf-date-template", context));
+			$fieldDom.searchDateCustomFieldWidget();
+			$fieldDom.searchDateCustomFieldWidget("createDom", "F"+fieldId);
+			$fieldDom.searchDateCustomFieldWidget("fieldvalue", enteredValue);
 		},
 
 		makeCheckboxField : function(tableId, fieldId, fieldTitle, options, enteredValue) {
@@ -346,24 +357,24 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 		makeTextFieldId : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
-				"text-field-id": fieldId, 
-				"text-field-title": fieldTitle, 
+				"text-field-id": fieldId,
+				"text-field-title": fieldTitle,
 				fieldValue : !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-id-template", context));
 			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
 		},
-		
+
 		makeTextFieldReference : function(tableId, fieldId, fieldTitle, enteredValue, ignoreBridge) {
 			var context = {
-				"text-field-id": fieldId, 
-				"text-field-title": fieldTitle, 
+				"text-field-id": fieldId,
+				"text-field-title": fieldTitle,
 				fieldValue : !!enteredValue ? enteredValue.value : ""
 			};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#textfield-reference-template", context));
 			$fieldDom.searchTextFieldWidget({"ignoreBridge" : ignoreBridge});
 		},
-		
+
 		makeTextArea : function(tableId, fieldId, fieldTitle, enteredValue) {
 			var context = {
 				"text-area-id": fieldId,
@@ -385,7 +396,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiselect-template", context));
 			$fieldDom.searchMultiSelectWidget();
 		},
-		
+
 		makeMultiselectPerimeter : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			// adds a "selected" property to options
 			enteredValue = enteredValue || {};
@@ -403,34 +414,34 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 
 		},
-		
+
 		makeMultiCascadeFlat : function(tableId, fieldId, fieldTitle, unsortedOptions, enteredValue){
 			enteredValue = enteredValue || {};
-			
+
 			// issue 4597 : sort the lists alphabetically
 			var options = unsortedOptions.sort(function(l1, l2){
 				return l1.value.localeCompare(l2.value);
 			});
-			
+
 			/*
 			 *  Setting the initial state.
 			 *  Remember that the enteredValue contains the values of the secondary select only.
 			 *	So, setting the state of the primary select must be induced from the secondary selected values
-			 */			
-			 
-			_.each(options, function(primaryOpt){				
+			 */
+
+			_.each(options, function(primaryOpt){
 				_.each(primaryOpt.subInput.possibleValues, function(secondaryOpt){
-					secondaryOpt.selected = (! enteredValue.values) || (enteredValue.values.length === 0)|| _.contains(enteredValue.values, secondaryOpt.code);					
+					secondaryOpt.selected = (! enteredValue.values) || (enteredValue.values.length === 0)|| _.contains(enteredValue.values, secondaryOpt.code);
 				});
-				
+
 				primaryOpt.selected = _.some(primaryOpt.subInput.possibleValues, function(sub){return (sub.selected === true);});
 			});
-			
+
 			var context = {"multicascadeflat-id" : fieldId, "multicascadeflat-title" : fieldTitle, options : options};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multicascadeflat-template", context));
 			$fieldDom.searchMultiCascadeFlatWidget({ lists : options });
-		},		
-		
+		},
+
 		makeMultiAutocomplete : function(tableId, fieldId, fieldTitle, options, enteredValue) {
 			var context = {"multiautocomplete-id": fieldId, "multiautocomplete-title": fieldTitle};
 			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#multiautocomplete-template", context));
@@ -457,24 +468,24 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 		},
 
 		extractSearchModel : function(){
-			
+
 			var fields = this.$el.find("div.search-input");
 			var jsonVariable = {};
-			
+
 			// A little hack for the jstree if it exists (campaign only on july 2015)
-			// We need to get the id value and stuff from the project from the tree and put them on the jsonVariable 
+			// We need to get the id value and stuff from the project from the tree and put them on the jsonVariable
 			// This method extractModel puts them in the model and it's been sent to the controller (check showResults to see the url)
 
 			if( !!$("#tree").attr("id") ){
-				var key; 
+				var key;
 				var selectedInTree = $("#tree").jstree('get_selected');
-				
+
 				//because we don't have time, we can select only one type of node in the tree, so the following will work fine.
 				// BE CAREFULL : This won't work anymore if multiple node type can be selected.
 				var type = selectedInTree.attr('restype');
-					
+
 				switch (type){
-				
+
 				case 'campaign-libraries' :
 					key =  "project.id";
 					break;
@@ -485,22 +496,22 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				case 'campaigns' :
 					key =  "campaign.id";
 					break;
-				case 'iterations' :	
+				case 'iterations' :
 					key =  "iteration.id";
 					break;
-				case 'test-suites' :	
+				case 'test-suites' :
 					key =  "testSuites.id";
 					break;
 				}
-				
+
 				var attrName = key == 'project.id' ? 'project' : 'resid';
-				
-				var ids =_.map(selectedInTree, function(node){return $(node).attr(attrName);});	
+
+				var ids =_.map(selectedInTree, function(node){return $(node).attr(attrName);});
 
 				jsonVariable[key] = {type : "LIST", values : ids};
 			}
-			
-			
+
+
 			// Looking for informations in all the widgets to check if there's something to add to the model
 
 			for (var k = 0, $field; k < fields.length; k++) {
@@ -580,7 +591,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			});
 			return !hasCriteria;
 		},
-		
+
 		// that method knows about fields 'projects', 'nature', 'type' and 'category'
 		_updateAvailableInfolists : function(){
 
@@ -589,22 +600,22 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				nature = $("#nature"),
 				type = $("#type"),
 				category = $("#category");
-			
+
 			nature.searchMultiCascadeFlatWidget("hideAll");
 			type.searchMultiCascadeFlatWidget("hideAll");
 			category.searchMultiCascadeFlatWidget("hideAll");
-			
-			var natListCodes = [], 
+
+			var natListCodes = [],
 				typListCodes = [],
 				catListCodes = [];
-			
-			// TODO : check that 
+
+			// TODO : check that
 			if (allProjects !== null) {
 			for (var i=0; i < allProjects.length; i++){
 				var project = allProjects[i],
 					pId = project.id;
-				
-				
+
+
 				// collecting which info lists are used by the current selection
 				// use of  ""+ dirty trick to cast that int to string
 				if ( $.inArray(""+pId, selectedProjectIds) !== -1) {
@@ -612,7 +623,7 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 					typListCodes.push( project.testCaseTypes.code );
 					catListCodes.push (project.requirementCategories.code);
 				}
-				
+
 			}
 			}
 			// now remove the duplicates
@@ -625,10 +636,10 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 			_.each(typListCodes, function(code) {type.searchMultiCascadeFlatWidget("showPrimary", code);});
 			_.each(catListCodes, function(code) {category.searchMultiCascadeFlatWidget("showPrimary", code);});
 
-			
+
 		}
 
-		
+
 	});
 	return TestCaseSearchInputPanel;
 });
