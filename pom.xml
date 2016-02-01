@@ -4,7 +4,7 @@
 
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squash-tm</artifactId>
-  <version>1.13.1.RC1-SNAPSHOT</version>
+  <version>1.14.0.M1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <name>squash-tm</name>
@@ -380,6 +380,7 @@
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
             <exclude>**/.hgignore</exclude>
+            <exclude>fix-versions.sh</exclude>
 
             <!-- other IDE / tools files -->
             <exclude>**/.idea/**/*</exclude>
