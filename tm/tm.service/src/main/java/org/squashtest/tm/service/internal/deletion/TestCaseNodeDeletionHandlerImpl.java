@@ -99,15 +99,15 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	}
 
 	/* *******************************************************************************
-	 * 
+	 *
 	 * DELETION SIMULATION
-	 * 
+	 *
 	 * ******************************************************************************/
 
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
 
-		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
+		List<SuppressionPreviewReport> preview = new LinkedList<>();
 
 		// check test cases that are called by other test cases
 		reportLocksByCallSteps(nodeIds, milestoneId, preview);
@@ -183,18 +183,18 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 
 	/* *******************************************************************************
-	 * 
+	 *
 	 * ACTUAL DELETION
-	 * 
+	 *
 	 * ******************************************************************************/
 
 
 	@Override
 	protected List<Long> detectLockedNodes(final List<Long> nodeIds, Long milestoneId) {
 
-		List<Long> lockedCandidateIds = new ArrayList<Long>();
+		List<Long> lockedCandidateIds = new ArrayList<>();
 
-		List<Long> lockedByMilestoneRule = new ArrayList<>();
+		List<Long> lockedByMilestoneRule;
 
 		List<Long> candidateIds = new ArrayList<>(nodeIds);
 
@@ -240,7 +240,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * Will batch-remove some TestCaseLibraryNodes. Since we may have to delete lots of nested entities we cannot afford
 	 * to use Hibernate orm abilities : you don't want one fetch-query per entity or the DB admin from hell will eat
 	 * you.
-	 * 
+	 *
 	 * Note : We only need to take care of the attachments and steps, the rest will cascade thanks to the ON CASCADE
 	 * clauses in the other tables.
 	 */
@@ -336,7 +336,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		owner.getSteps().remove(index);
 
-		List<Long> stepId = new LinkedList<Long>();
+		List<Long> stepId = new LinkedList<>();
 		stepId.add(step.getId());
 		deletionDao.setExecStepInboundReferencesToNull(stepId);
 
@@ -462,7 +462,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	/*
 	 * Just find the test cases locked by non deletable milestones. This is used
 	 * even in normal mode.
-	 * 
+	 *
 	 */
 	private List<Long> lockedByMilestoneNormalMode(List<Long> nodeIds){
 		return deletionDao.findTestCasesWhichMilestonesForbidsDeletion(nodeIds);
