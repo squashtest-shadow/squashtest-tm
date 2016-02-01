@@ -853,7 +853,7 @@
                 <phase>prepare-package</phase>
 
                 <configuration>
-                  <outputDirectory>${rjs.js.outputDir}/scripts</outputDirectory>
+                  <outputDirectory>${rjs.javascript.optimizedDir}</outputDirectory>
                   <resources>
                     <resource>
                       <directory>src/main/assembly</directory>
