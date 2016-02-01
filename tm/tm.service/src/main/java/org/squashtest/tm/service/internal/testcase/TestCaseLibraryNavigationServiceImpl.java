@@ -539,7 +539,7 @@ public class TestCaseLibraryNavigationServiceImpl
 		if (includeCalledTests) {
 			Set<Long> called = calltreeService.getTestCaseCallTree(tcIds);
 			called = securityFilterIds(called, "org.squashtest.tm.domain.testcase.TestCase", "READ");
-			tcIds.addAll(tcIds);
+			tcIds.addAll(called);
 		}
 
 		// return
