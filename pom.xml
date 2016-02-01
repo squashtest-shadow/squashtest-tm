@@ -380,6 +380,7 @@
             <exclude>**/*.orig</exclude>
             <exclude>**/.hgtags</exclude>
             <exclude>**/.hgignore</exclude>
+            <exclude>fix-versions.sh</exclude>
 
             <!-- other IDE / tools files -->
             <exclude>**/.idea/**/*</exclude>
