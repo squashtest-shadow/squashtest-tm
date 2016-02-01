@@ -20,47 +20,46 @@
  */
 /*
  * Returns the workspace-independant part of the configuration of a "workspace" tree.
- * 
- * 
+ *
+ *
  * conf : {
  *  model : model object for that tree
  * }
- * 
+ *
  */
-define(function(){
-	
-	var baseURL = squashtm.app.contextRoot;
-	
+define(function () {
+	"use strict";
+
 	return {
-		generate : function(settings){
-	
-			return { 
-				"plugins" : ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
-				"json_data" : { 
-					"data" :settings.model, 
-					"ajax" : {
+		generate: function (settings) {
+
+			return {
+				"plugins": ["json_data", "sort", "themes", "types", "cookies", "ui", "squash"],
+				"json_data": {
+					"data": settings.model,
+					"ajax": {
 						"url": function (node) {
 							return node.treeNode().getContentUrl();
-						} 
+						}
 					}
 				},
-				"core" : { 
-					"animation" : 0
-				}, 
-				"ui" : {
+				"core": {
+					"animation": 0
+				},
+				"ui": {
 					select_multiple_modifier: false
 				},
-				"themes" : {
-					"theme" : "squashtest",
-					"dots" : true,
-					"icons" : true,
-					"url" : squashtm.app.contextRoot+"/styles/squash.tree.css"					
+				"themes": {
+					"theme": "squashtest",
+					"dots": true,
+					"icons": true,
+					"url": window.squashtm.app.contextRoot + "/styles/squash.tree.css"
 				},
-				"squash" : {
-					rootUrl : squashtm.app.contextRoot,
-					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
-				}				
-				
+				"squash": {
+					rootUrl: window.squashtm.app.contextRoot,
+					opened: (!!settings.selectedNode) ? [settings.selectedNode] : []
+				}
+
 			};
 		}
 	};

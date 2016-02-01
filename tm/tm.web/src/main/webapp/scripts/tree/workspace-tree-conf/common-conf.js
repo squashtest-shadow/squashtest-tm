@@ -27,95 +27,94 @@
  * }
  *
  */
-define(function(){
+define(function () {
+	"use strict";
 
-	var baseURL = squashtm.app.contextRoot;
+	var baseURL = window.squashtm.app.contextRoot;
 
 	return {
-		generate : function(settings){
+		generate: function (settings) {
 
 			var workspace = settings.workspace;
-			var treepref = localStorage[workspace+"-tree-pref"];
+			var treepref = localStorage[workspace + "-tree-pref"];
 
 
 			var cfg = {
-				"plugins" : ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect' ],
+				"plugins": ["json_data", "ui", "types", "hotkeys", "dnd", "cookies", "themes", "squash", "workspace_tree", 'conditionalselect'],
 
-				"json_data" : {
-					"data" : settings.model,
-					"ajax" : {
+				"json_data": {
+					"data": settings.model,
+					"ajax": {
 						"url": function (node) {
 							return node.treeNode().getContentUrl();
 						}
 					}
 				},
 
-				"core" : {
-					"animation" : 0
+				"core": {
+					"animation": 0
 				},
 
 				"ui": {
-					"disable_selecting_children" : true,
-					"select_multiple_modifier" : "ctrl",
-					"select_range_modifier" : "shift",
-					"select_prev_on_delete" : false
+					"disable_selecting_children": true,
+					"select_multiple_modifier": "ctrl",
+					"select_range_modifier": "shift",
+					"select_prev_on_delete": false
 				},
 
-				"hotkeys" : {
-					"del" : function(){
-								this.get_container().trigger('suppr.squashtree');
-							},
-					"f2" : function(){
-								this.get_container().trigger('rename.squashtree');
-							},
-					"ctrl+c" : function(){
-								this.get_container().trigger('copy.squashtree');
-							},
-					"ctrl+v" : function(){
-								this.get_container().trigger('paste.squashtree');
-							},
+				"hotkeys": {
+					"del": function () {
+						this.get_container().trigger('suppr.squashtree');
+					},
+					"f2": function () {
+						this.get_container().trigger('rename.squashtree');
+					},
+					"ctrl+c": function () {
+						this.get_container().trigger('copy.squashtree');
+					},
+					"ctrl+v": function () {
+						this.get_container().trigger('paste.squashtree');
+					},
 
 
-					"up" : false,
-					"ctrl+up" : false,
-					"shift+up" : false,
-					"down" : false,
-					"ctrl+down" : false,
-					"shift+down" : false,
-					"left" : false,
-					"ctrl+left" : false,
-					"shift+left" : false,
-					"right" : false,
-					"ctrl+right" : false,
-					"shift+right" : false,
-					"space" : false,
-					"ctrl+space" : false,
-					"shift+space" : false
+					"up": false,
+					"ctrl+up": false,
+					"shift+up": false,
+					"down": false,
+					"ctrl+down": false,
+					"shift+down": false,
+					"left": false,
+					"ctrl+left": false,
+					"shift+left": false,
+					"right": false,
+					"ctrl+right": false,
+					"shift+right": false,
+					"space": false,
+					"ctrl+space": false,
+					"shift+space": false
 
 				},
 
-				"themes" : {
-					"theme" : "squashtest",
-					"dots" : true,
-					"icons" : true,
-					"url" : baseURL+"/styles/squash.tree.css"
+				"themes": {
+					"theme": "squashtest",
+					"dots": true,
+					"icons": true,
+					"url": baseURL + "/styles/squash.tree.css"
 				},
 
-				"squash" : {
-					rootUrl : baseURL,
-					opened : (!!settings.selectedNode) ? [settings.selectedNode] : []
+				"squash": {
+					rootUrl: baseURL,
+					opened: (!!settings.selectedNode) ? [settings.selectedNode] : []
 				},
-				conditionalselect : function(node) {
-					if($(node).attr("milestones-dont-allow-click")){
-						return false ;
-					}
-					return true;
+				conditionalselect: function (node) {
+					return !$(node).attr("milestones-dont-allow-click");
+
 				}
 
 			};
 
-      //Load sort by default for custom-report-workspace as we haven't positionnal select
-			if(treepref != 1 || workspace=="custom-report") {
+			//Load sort by default for custom-report-workspace as we haven't positionnal select
+			if (treepref != 1 || workspace == "custom-report") {
 				cfg.plugins.push("sort");
 			}
 

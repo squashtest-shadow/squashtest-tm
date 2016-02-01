@@ -27,108 +27,100 @@
  * }
  */
 
-define([ "jquery",
-         "./simple-tree-conf/conf-factory",
-		"./workspace-tree-conf/conf-factory",
-		"./tree-picker-conf/conf-factory",
-		"./plugins/plugin-factory",
-		"./search-tree-conf/conf-factory",
-		"workspace.contextual-content",
-		"jstree"], function($, simpleConf, wkspConf,
-		pickerConf, pluginsFactory, searchConf, ctxtcontent) {
+define(["jquery",
+	"./simple-tree-conf/conf-factory",
+	"./workspace-tree-conf/conf-factory",
+	"./tree-picker-conf/conf-factory",
+	"./plugins/plugin-factory",
+	"./search-tree-conf/conf-factory",
+	"workspace.contextual-content",
+	"jstree"], function ($, simpleConf, wkspConf,
+											 pickerConf, pluginsFactory, searchConf, ctxtcontent) {
+	"use strict";
 
-	squashtm = squashtm || {};
-	squashtm.tree = squashtm.tree || undefined;
+	window.squashtm = window.squashtm || {};
+	window.squashtm.tree = window.squashtm.tree || undefined;
 
 	return {
 
-		initWorkspaceTree : function(settings) {
+		initWorkspaceTree: function (settings) {
 			pluginsFactory.configure("workspace-tree", settings);
-      this.initWorkspaceTreeCommon(settings);
+			this.initWorkspaceTreeCommon(settings);
 		},
 
-    initCustomReportWorkspaceTree : function (settings) {
-      pluginsFactory.configure("custom-report-workspace-tree", settings);
-      this.initWorkspaceTreeCommon(settings);
-    },
+		initCustomReportWorkspaceTree: function (settings) {
+			pluginsFactory.configure("custom-report-workspace-tree", settings);
+			this.initWorkspaceTreeCommon(settings);
+		},
 
 		// TODO : move the extra event bindings into workspace-tree-plugin.js
-    initWorkspaceTreeCommon : function (settings) {
-      var conf = wkspConf.generate(settings);
+		initWorkspaceTreeCommon: function (settings) {
+			var conf = wkspConf.generate(settings);
 			var treeDiv = $(settings.treeselector);
 			//trick for [Issue 2886]
-			treeDiv.bind("loaded.jstree", function(event, data){
-					treeDiv.jstree("save_cookie", "open_node");
-				});
-			var instance = treeDiv.jstree(conf);
-			squashtm.tree = instance;
+			treeDiv.bind("loaded.jstree", function (event, data) {
+				treeDiv.jstree("save_cookie", "open_node");
+			});
+			window.squashtm.tree = treeDiv.jstree(conf);
 
 			treeDiv.bind("select_node.jstree", function (e, data) {
-		        data.rslt.obj.parents('.jstree-closed').each(function () {
-		          data.inst.open_node(this);
-		        });
+				data.rslt.obj.parents('.jstree-closed').each(function () {
+					data.inst.open_node(this);
+				});
 			});
 
 			$('#tree').bind("select_node.jstree", function (e, data) {
-		        data.rslt.obj.parents('.jstree-closed').each(function () {
-		          data.inst.open_node(this);
-		        });
+				data.rslt.obj.parents('.jstree-closed').each(function () {
+					data.inst.open_node(this);
+				});
 			});
-    },
-    initSearchTree : function(settings){
-pluginsFactory.configure("search-tree");
-		var conf = searchConf.generate(settings);
-		var instance = $(settings.treeselector).jstree(conf);
-		
-		instance.on("select_node.jstree", function(event, data) {
-			var prevSelect = $($(event.target).jstree('get_selected')[0]).attr('restype');
-			
-			if (prevSelect !== undefined && prevSelect !== data.rslt.obj.attr('restype')){
-				$(event.target).jstree('deselect_all');
-			}
-			
-			return true;
-		});
-		
-		squashtm.tree = instance;
+		},
+		initSearchTree: function (settings) {
+			pluginsFactory.configure("search-tree");
+			var conf = searchConf.generate(settings);
+			var instance = $(settings.treeselector).jstree(conf);
 
-    },
-		initLinkableTree : function(settings) {
+			instance.on("select_node.jstree", function (event, data) {
+				var prevSelect = $($(event.target).jstree('get_selected')[0]).attr('restype');
+
+				if (prevSelect !== undefined && prevSelect !== data.rslt.obj.attr('restype')) {
+					$(event.target).jstree('deselect_all');
+				}
+
+				return true;
+			});
+
+			window.squashtm.tree = instance;
+
+		},
+		initLinkableTree: function (settings) {
 			pluginsFactory.configure("tree-picker");
 			var conf = pickerConf.generate(settings);
-			var instance = $(settings.treeselector).jstree(conf);
-			squashtm.tree = instance;
+			window.squashtm.tree = $(settings.treeselector).jstree(conf);
 		},
 
-		initSimpleTree : function(settings) {
-			pluginsFactory.configure("simple-tree");
-			var conf = simpleConf.generate(settings);
-			var instance = $(settings.treeselector).jstree(conf);
-			squashtm.tree = instance;
-		},
-
-		initCallStepTree : function(settings) {
+		initCallStepTree: function (settings) {
 			pluginsFactory.configure("simple-tree");
 			var conf = simpleConf.generate(settings);
 			var instance = $(settings.treeselector).jstree(conf);
 
-			instance.on("select_node.jstree", function(event, data) {
+			instance.on("select_node.jstree", function (event, data) {
 				var resourceUrl = $(data.rslt.obj).treeNode().getResourceUrl();
 				ctxtcontent.loadWith(resourceUrl);
 				return true;
 			});
 
-			squashtm.tree = instance;
+			window.squashtm.tree = instance;
 		},
 
-		get : function(arg) {
-			if (arg===undefined){
+		get: function (arg) {
+			if (arg === undefined) {
 				return $("#tree");
 			}
-			else{
+			else {
 				return $(arg);
 			}
-			//return squashtm.tree;
+			//return window.squashtm.tree;
 		}
 	};
 

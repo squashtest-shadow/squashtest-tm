@@ -28,8 +28,7 @@
  *
  */
 define(function() {
-
-	var baseURL = squashtm.app.contextRoot;
+	"use strict";
 
 	return {
 		generate : function(settings) {
@@ -66,11 +65,11 @@ define(function() {
 					theme : "squashtest",
 					dots : true,
 					icons : true,
-					url : squashtm.app.contextRoot + "/styles/squash.tree.css"
+					url : window.squashtm.app.contextRoot + "/styles/squash.tree.css"
 				},
 
 				squash : {
-					rootUrl : squashtm.app.contextRoot,
+					rootUrl : window.squashtm.app.contextRoot,
 					opened : (!!settings.selectedNode) ? [ settings.selectedNode ] : []
 				},
 				conditionalselect : function(node) {
@@ -79,11 +78,9 @@ define(function() {
 						return true;
 					}
 
-					if($(node).is("[rel='drive']") ){
-						return false ;
-					}
+					return !$(node).is("[rel='drive']");
 
-					return true;
+
 				}
 			};
 		}
