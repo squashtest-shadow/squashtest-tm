@@ -240,13 +240,15 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 
     truncateLegends : function (legends) {
       var self = this;
-      return _.map( legends, function( legend ){
-        var truncated = legend.toString().substring(0, self.legendsMaxLength);
-          if (truncated.length === 0) {
-            truncated = translator.get("chart.label.noticks");
-          }
-          return truncated;
-      });
+
+				return _.chain(legends)
+					.map(function (legend) { // replaces empty legends with something
+						return ((!legend) || legend.length === 0) ? legend = translator.get("chart.label.noticks") : legend;
+
+					}).map(function (legend) { // truncates legends
+						return legend.toString().substring(0, self.legendsMaxLength);
+
+					}).value();
     },
 
     calculateFontSize : function (legends,ticks) {
