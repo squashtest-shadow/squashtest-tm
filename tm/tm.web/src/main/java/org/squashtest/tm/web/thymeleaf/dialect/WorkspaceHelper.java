@@ -41,6 +41,9 @@ import org.squashtest.tm.web.internal.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 
 
 /**
@@ -101,6 +104,14 @@ public class WorkspaceHelper {
 
 		WorkspaceType type = WorkspaceType.valueOf(workspaceName);
 		return wizardManager.findAllByWorkspace(type);
+	}
+	
+	
+	public String jacksonSerializer(Object toSerialize) throws JsonProcessingException{
+		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+		ObjectMapper jackson = wac.getBean(ObjectMapper.class);
+		
+		return jackson.writer().writeValueAsString(toSerialize);
 	}
 
 

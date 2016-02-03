@@ -23,6 +23,7 @@ package org.squashtest.tm.web.json;
 import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.springframework.stereotype.Component;
+import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
@@ -61,5 +62,6 @@ public class SquashModule extends SimpleModule {
 		context.setMixInAnnotations(ColumnPrototype.class, ColumnPrototypeMixin.class);
 		context.setMixInAnnotations(UsersGroup.class, UserGroupMixin.class);
 		context.setMixInAnnotations(User.class, UserMixin.class);
+		context.setMixInAnnotations(BugTracker.class, BugTrackerMixin.class);
 	}
 }
