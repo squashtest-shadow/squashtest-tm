@@ -305,6 +305,10 @@
  *	onClick : a function(table, cell) that will be called with the parameters table and clicked td
  *}
  *
+ * ============== Autoindexing =======================================
+ *
+ *	- autonum : true|false, when true the table will take the first visible column and add pseudo indexes 1-based to it.
+ *
  */
 
 define(["jquery",
@@ -1337,6 +1341,19 @@ define(["jquery",
 
 		}
 	}
+	
+	// ************************ autonum *****************************
+	
+	
+	function _autonum(){
+		var isauto = this.squashSettings.autonum;
+		if (isauto === true){
+			var cnt = 1;
+			this.find('tbody>tr').each(function(){
+				$(this).find('td:first').text(cnt++);
+			});			
+		}
+	}
 
 	// ************************ functions used by the static functions
 	// *****************************
@@ -1642,6 +1659,7 @@ define(["jquery",
 		aDrawCallbacks.push(_applyFilteredStyle);
 		aDrawCallbacks.push(_configureTooltips);
 		aDrawCallbacks.push(_configureIcons);
+		aDrawCallbacks.push(_autonum);
 
 
 
@@ -1707,6 +1725,7 @@ define(["jquery",
 		this.restoreTableSelection = _restoreTableSelection;
 		this.applyFilteredStyle = _applyFilteredStyle;
 		this.drawIcon           = _drawIcon;
+		this.autonum	=	_autonum;
 
 		this.getColumnNameByIndex = _getColumnNameByIndex;
 		this.getColumnIndexByName = _getColumnIndexByName;
@@ -1826,6 +1845,9 @@ define(["jquery",
 				'pagesize' : function(conf, value) {
 					conf.table.iDisplayLength = parseInt(value, 10);
 				},
+				'autonum' : function(conf){
+					conf.squash.autonum = true;
+				},
 				'pre-sort' : function(conf, value) {
 					// value must be an expression as follow : <columnindex>[-<asc|desc>]. If unspecified or invalid,
 					// the default sorting order will be 'asc'.
@@ -1873,7 +1895,10 @@ define(["jquery",
 					conf.current.sClass += ' ' + value;
 				},
 				'map' : function(conf, value) {
-					conf.current.mDataProp = value;
+					conf.current.mDataProp = (value!== '') ? value : null;
+				},
+				'unmapped' : function(conf, value){
+					conf.current.mDataProp = null;
 				},
 				'select' : function(conf, value) {
 					conf.current.sWidth = '2em';
