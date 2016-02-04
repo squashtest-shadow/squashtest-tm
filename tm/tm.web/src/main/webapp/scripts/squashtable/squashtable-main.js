@@ -1342,16 +1342,12 @@ define(["jquery",
 		}
 	}
 	
-	// ************************ autonum *****************************
+	// ************************ autonum  *****************************
 	
-	
-	function _autonum(){
-		var isauto = this.squashSettings.autonum;
-		if (isauto === true){
-			var cnt = 1;
-			this.find('tbody>tr').each(function(){
-				$(this).find('td:first').text(cnt++);
-			});			
+	// note that this is a row callback, and a draw callback
+	function _autonum(nRow, aData, iDisplayIndex, iDisplayIndexFull){
+		if (this.squashSettings.autonum){
+			$(nRow).find('td:first').text(iDisplayIndex+1);
 		}
 	}
 
@@ -1659,8 +1655,10 @@ define(["jquery",
 		aDrawCallbacks.push(_applyFilteredStyle);
 		aDrawCallbacks.push(_configureTooltips);
 		aDrawCallbacks.push(_configureIcons);
-		aDrawCallbacks.push(_autonum);
-
+		
+		aRowCallbacks = this.rowcallbacks;
+		aRowCallbacks.push(_autonum);
+		
 
 
 		var userDrawCallback = datatableEffective.fnDrawCallback;
