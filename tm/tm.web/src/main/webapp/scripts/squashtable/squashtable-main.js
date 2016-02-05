@@ -158,10 +158,36 @@
  * If set, will attempt to turn some cells to rich editables. If undefined, nothing will happen. the property
  * 'richEditables' is an compound object and must define at least 1 member for 'target'.
  *
- * conf : a map of key-values. A key represents a css class and the value can either represents an url supporting
- * placeholders or an url and an event name to trigger when editing the cell.
+ * conf : a map of key-values. A key represents a css class and the value can either 
+ * - represents an url supporting placeholders or 
+ * - an url and an event name to trigger when the edit is completed the cell.
+ * 
  * Any td having the given css class will be turned to a rich jeditable configured with the standard condiguration
  * and posting to the supplied url.
+ * 
+ * example : 
+ * 
+ * richEditable {
+ *   'class1' : some/url,
+ *   'class2' : {
+ *      url : some/url,
+ *      oncomplete : someeventname
+ *   }
+ * }
+ * 
+ * ============== (text) editable configuration ======================================
+ * 
+ * Just like for richEditables, but for text editable fields.
+ * 
+ * 
+ * textEditables {
+ *   'class1' : some/url,
+ *   'class2' : {
+ *      url : some/url,
+ *      oncomplete : someeventname
+ *   }
+ * }
+ *}
  *
  * ============== Execution status icons ======================================
  *
@@ -768,21 +794,34 @@ define(["jquery",
 	 * TODO : user squash.configmanager next time
 	 */
 	function _configureRichEditables() {
-
-		var targets = this.squashSettings.richEditables;
+		_configureEditables.call(this, 'richEditable');
+	}
+	
+	function _configureTextEditables(){
+		_configureEditables.call(this, 'textEditable');	
+	}
+	
+	// editableType should be 'richEditable' ou 'textEditable'
+	function _configureEditables(editableType){
+		var targets = this.squashSettings[editableType+'s'];
 		var self = this;
 		if (!targets) {
 			return;
 		}
 
-		var baseconf = confman.getJeditableCkeditor();
-
+		var baseconf = null;
+		switch(editableType){
+		case 'richEditable' : baseconf = confman.getJeditableCkeditor(); break;
+		case 'textEditable' : baseconf = confman.getStdJeditable(); break;
+		default : throw "table '"+this+"' : unsupported editable type '"+editableType+"'"; 
+		}
+		
 		for ( var css in targets) {
 
 			var cells = $('td.' + css, this);
 
 			$(cells).each(function(i, cell) {
-				var row = cell.parentNode
+				var row = cell.parentNode;
 				var data = self.fnGetData(row);
 				var editableConf_url = _.isString(targets[css]) ? targets[css] : targets[css]['url'];
 				var url = _resolvePlaceholders.call(self, editableConf_url, data);
@@ -802,10 +841,12 @@ define(["jquery",
 					};
 				}
 
-				$(cell).richEditable(finalConf);
+				$(cell)[editableType](finalConf);
 			});
-		}
+		}	
 	}
+	
+	
 
 	function _configureExecutionStatus() {
 
@@ -1645,6 +1686,7 @@ define(["jquery",
 
 		aDrawCallbacks.push(_attachButtonsCallback);
 		aDrawCallbacks.push(_configureRichEditables);
+		aDrawCallbacks.push(_configureTextEditables);
 		aDrawCallbacks.push(_configureExecutionStatus);
 		aDrawCallbacks.push(_configureButtons);
 		aDrawCallbacks.push(_configureDeleteButtons);
@@ -1714,6 +1756,7 @@ define(["jquery",
 
 		this.attachButtonsCallback = _attachButtonsCallback;
 		this.configureRichEditables = _configureRichEditables;
+		this.configureTextEditables = _configureTextEditables;
 		this.configureExecutionStatus = _configureExecutionStatus;
 		this.configureDeleteButtons = _configureDeleteButtons;
 		this.drawDeleteButton = _drawDeleteButton;
@@ -2027,6 +2070,12 @@ define(["jquery",
 					conf.current.sClass += ' ' + cls;
 					conf.squash.richEditables = conf.squash.richEditables || {};
 					conf.squash.richEditables[cls] = value;
+				},
+				'text-edit' : function(conf, value){
+					var cls = 'text-ed-' + Math.random().toString().substr(2, 3);
+					conf.current.sClass += ' ' + cls;
+					conf.squash.textEditables = conf.squash.textEditables || {};
+					conf.squash.textEditables[cls] = value;
 				},
 				'checkbox' : function(conf, value){
 					var cls = 'checkbox-' + Math.random().toString().substr(2, 3);
