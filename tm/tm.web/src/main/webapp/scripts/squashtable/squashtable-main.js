@@ -921,6 +921,7 @@ define(["jquery",
 
 				if (button.jquery){
 					instance.squashButton({
+						disabled : disabled,
 						text : false,
 						icons : {
 							primary : icon
