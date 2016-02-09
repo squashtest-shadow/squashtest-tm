@@ -236,7 +236,8 @@ define(['jquery'], function($){
 				CREATE : "creatable",
 				DELETE : "deletable",
 				EXECUTE : "executable",
-				EXPORT : "exportable"
+				EXPORT : "exportable",
+				MANAGEMENT : "manageable"
 			};
 
 			if (permission === "ANY") {

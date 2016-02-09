@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -220,13 +222,23 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 * @param wizards
 	 * @return
 	 */
+	@SuppressWarnings("all")
 	private MenuItem[] menuItems(Collection<WorkspaceWizard> wizards) {
-		MenuItem[] res = new MenuItem[wizards.size()];
+		Collection<WorkspaceWizard> effective = CollectionUtils.select(wizards, new Predicate() {			
+			@Override
+			public boolean evaluate(Object object) {
+				return (((WorkspaceWizard)object).getWizardMenu() != null);
+			}
+		});
+		
+		MenuItem[] res = new MenuItem[effective.size()];
 		int i = 0;
 
 		for (WorkspaceWizard wizard : wizards) {
-			res[i] = createMenuItem(wizard);
-			i++;
+			if (wizard.getWizardMenu()!=null){
+				res[i] = createMenuItem(wizard);
+				i++;
+			}
 		}
 
 		return res;

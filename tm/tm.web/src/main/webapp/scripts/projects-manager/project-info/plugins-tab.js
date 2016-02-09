@@ -52,7 +52,7 @@ define(
 				// TODO : use dedicated css classes once the image are available
 				var css = (data['status'] === "OK") ? 'exec-status-success' : 'exec-status-blocked';
 				var sp = $("<span>", {
-					'class' : 'exec-status-label ' + css
+					'class' : 'sq-icon ' + css
 				});
 				
 				statscell.empty().append(sp);

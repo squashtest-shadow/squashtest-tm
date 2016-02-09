@@ -28,6 +28,7 @@ public class OperationReport {
 	private Collection<Node> removed = new ArrayList<Node>();
 	private Collection<NodeRenaming> renamed = new ArrayList<NodeRenaming>();
 	private Collection<NodeMovement> moved = new ArrayList<NodeMovement>();
+	private Collection<NodeReferenceChanged> refchanges = new ArrayList<>();
 	
 	
 	public Collection<Node> getRemoved() {
@@ -41,11 +42,16 @@ public class OperationReport {
 	public Collection<NodeMovement> getMoved() {
 		return moved;
 	}
+	
+	public Collection<NodeReferenceChanged> getReferenceChanges(){
+		return refchanges;
+	}
 
 	public void mergeWith(OperationReport other){
 		this.removed.addAll(other.getRemoved());
 		this.renamed.addAll(other.getRenamed());
 		this.moved.addAll(other.getMoved());
+		this.refchanges.addAll(other.getReferenceChanges());
 	}
 	
 	public void addRemoved(Node removednode){
@@ -85,6 +91,16 @@ public class OperationReport {
 	public void addMoved(Collection<NodeMovement> movements){
 		moved.addAll(movements);
 	}
+	
+	public void addReferenceChanges(NodeReferenceChanged rerefs){
+		refchanges.add(rerefs);
+	}
+	
+	public void addReferenceChanges(Collection<NodeReferenceChanged> rerefs){
+		refchanges.addAll(rerefs);
+	}
+	
+	
 
 }
 
