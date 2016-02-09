@@ -60,7 +60,7 @@ public class RequirementLibraryExtender implements IdsCoercerExtender {
 		try {
 			Query q = sessionFactory
 				.getCurrentSession()
-				.createQuery("select distinct l.id from RequirementLibrary l where l.content.id in (:tclnIds) ");
+				.createQuery("select distinct l.id from RequirementLibrary l join l.rootContent c where c.id in (:rlnIds) ");
 			q.setParameterList("rlnIds", ids);
 			return q.list();
 

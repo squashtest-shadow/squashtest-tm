@@ -59,7 +59,7 @@ public class TestCaseLibraryExtender implements IdsCoercerExtender {
 		try {
 			Query q = sessionFactory
 				.getCurrentSession()
-				.createQuery("select distinct l.id from TestCaseLibrary l where l.content.id in (:tclnIds) ");
+				.createQuery("select distinct l.id from TestCaseLibrary l join l.rootContent c where c.id in (:tclnIds) ");
 			q.setParameterList("tclnIds", ids);
 			return q.list();
 
