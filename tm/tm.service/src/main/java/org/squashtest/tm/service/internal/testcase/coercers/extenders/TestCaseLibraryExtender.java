@@ -57,9 +57,10 @@ public class TestCaseLibraryExtender implements IdsCoercerExtender {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createSQLQuery("SELECT DISTINCT library_id FROM test_case_library_content WHERE content_id in (:tclnIds)");
-			q.setParameterList("tclnIds", (Collection<? extends Serializable>) ids);
+			Query q = sessionFactory
+				.getCurrentSession()
+				.createQuery("select distinct l.id from TestCaseLibrary l where l.content.id in (:tclnIds) ");
+			q.setParameterList("tclnIds", ids);
 			return q.list();
 
 		} finally {

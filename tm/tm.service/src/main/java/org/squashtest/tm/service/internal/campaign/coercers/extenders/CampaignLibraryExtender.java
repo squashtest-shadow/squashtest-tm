@@ -58,8 +58,8 @@ public class CampaignLibraryExtender implements IdsCoercerExtender {
 
 		try {
 			Query q = sessionFactory.getCurrentSession()
-					.createSQLQuery("SELECT DISTINCT library_id FROM campaign_library_content WHERE content_id in (:clnIds)");
-			q.setParameterList("clnIds", (Collection<? extends Serializable>) ids);
+					.createQuery("select distinct l.id from CampaignLibrary l where l.content.id in (:clnIds)");
+			q.setParameterList("clnIds", ids);
 			return q.list();
 
 		} finally {
