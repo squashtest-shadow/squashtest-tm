@@ -53,82 +53,101 @@ import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
  */
 @Configuration
 @EnableConfigurationProperties(SquashManagementProperties.class)
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-	@Value("${squash.security.filter.debug.enabled:false}")
-	private boolean debugSecurityFilter;
-	/*
-	 * @Inject private SquashManagementProperties managementProperties;
-	 * 
-	 * @Inject private ServerProperties serverProperties;
-	 */
-
-	@Override
-	public void configure(WebSecurity web) throws Exception {
-		web.debug(debugSecurityFilter);
+public class WebSecurityConfig {
+	
+	@Configuration
+	@Order(1)                                                        
+	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+		protected void configure(HttpSecurity http) throws Exception {
+			http
+				.csrf().disable()
+				.antMatcher("/automated-executions/**")                            
+				.authorizeRequests()
+					.anyRequest().access("hasRole('ROLE_TA_API_CLIENT')")
+					.and()
+				.httpBasic();
+		}
 	}
+	
+	@Configuration
+	@Order(2)
+	public static class StandardWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		// @formatter:off
-		http// When CSRF is on, a CSRF token is to be included in any POST/PUT/DELETE/PATCH request. This would require
+		@Value("${squash.security.filter.debug.enabled:false}")
+		private boolean debugSecurityFilter;
+		/*
+		 * @Inject private SquashManagementProperties managementProperties;
+		 * 
+		 * @Inject private ServerProperties serverProperties;
+		 */
+		
+		@Override
+		public void configure(WebSecurity web) throws Exception {
+			web.debug(debugSecurityFilter);
+		}
+		
+		@Override
+		protected void configure(HttpSecurity http) throws Exception {
+			// @formatter:off
+			http// When CSRF is on, a CSRF token is to be included in any POST/PUT/DELETE/PATCH request. This would require
 			// massive changes, so it's deactivated for now.
-		.csrf().disable()
-
-		.headers()
+			.csrf().disable()
+			
+			.headers()
 			.cacheControl()
 			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-
-		.and().authorizeRequests()
+			
+			.and().authorizeRequests()
 			.antMatchers(
-				"/administration",
-				"/administration/milestones",
-				"/administration/milestones/**",
-				"/administration/info-lists",
-				"/administration/info-lists/**",
-				"/administration/projects",
-				"/administration/projects/**",
-				"/milestone/**"
-			).access(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
+					"/administration",
+					"/administration/milestones",
+					"/administration/milestones/**",
+					"/administration/info-lists",
+					"/administration/info-lists/**",
+					"/administration/projects",
+					"/administration/projects/**",
+					"/milestone/**"
+					).access(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 			.antMatchers(
-				"/admin",
-				"/admin/**",
-				"/administration/**",
-				"/configuration",
-				"/configuration/**",
-				"/platform/**"
-			).access(HAS_ROLE_ADMIN)
+					"/admin",
+					"/admin/**",
+					"/administration/**",
+					"/configuration",
+					"/configuration/**",
+					"/platform/**"
+					).access(HAS_ROLE_ADMIN)
 			.antMatchers("/accessDenied").permitAll()
 			.antMatchers("/management/**").denyAll()
 			.antMatchers("/resultUpdate/**").access("hasRole('ROLE_TA_API_CLIENT')")
 			.anyRequest().authenticated()
-
-		.and().formLogin()
+			
+			.and().formLogin()
 			.permitAll()
 			.loginPage("/login")
 			.failureUrl("/login?error")
 			.defaultSuccessUrl("/home-workspace")
-
-		.and().logout()
+			
+			.and().logout()
 			.permitAll()
 			.invalidateHttpSession(true)
 			.logoutSuccessUrl("/")
-
-		.and()
+			
+			.and()
 			.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
 			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
-		// @formatter:on
-
-		/*
-		 * RequestMatcher managementRequestMatcher = new RequestMatcher() {
-		 * 
-		 * @Override public boolean matches(HttpServletRequest request) { return request.getLocalPort() ==
-		 * managementProperties.getPort(); } };
-		 */
-
-		// @formatter:off
-		// Secured namespace for the management api
-		// There is no authentication because this namespace collects system operation which cannot be done otherwise.
-		// As a consequence, is supposed to be secured at the app server / host level
+			// @formatter:on
+			
+			/*
+			 * RequestMatcher managementRequestMatcher = new RequestMatcher() {
+			 * 
+			 * @Override public boolean matches(HttpServletRequest request) { return request.getLocalPort() ==
+			 * managementProperties.getPort(); } };
+			 */
+			
+			// @formatter:off
+			// Secured namespace for the management api
+			// There is no authentication because this namespace collects system operation which cannot be done otherwise.
+			// As a consequence, is supposed to be secured at the app server / host level
 //		http.antMatcher("/management/**")
 //			// all http ports remapped to management port
 //			.portMapper()
@@ -140,7 +159,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 //				.requestMatchers(managementRequestMatcher)
 //				.requires(managementProperties.getRequiredChannel())
 //			.and().authorizeRequests().anyRequest().permitAll();
-		// @formatter:on
+			// @formatter:on
+		}
 	}
 
 	/**
