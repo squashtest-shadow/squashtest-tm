@@ -50,8 +50,8 @@ public class TestSuiteToIterationExtender implements IdsCoercerExtender {
 
 		try {
 			Query q = sessionFactory.getCurrentSession()
-					.createSQLQuery("SELECT DISTINCT iteration_id FROM iteration_test_suite WHERE test_suite_id in (:tsids)");
-			q.setParameterList("tsids", (Collection<? extends Serializable>) ids);
+					.createQuery("select distinct i.id from Iteration where i.testSuites.id in (:tsids)");
+			q.setParameterList("tsids", ids);
 			return q.list();
 
 		} finally {
