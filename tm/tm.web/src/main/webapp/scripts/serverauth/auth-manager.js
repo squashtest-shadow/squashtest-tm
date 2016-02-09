@@ -147,7 +147,7 @@ define(['jquery', 'handlebars', 'workspace.routing',
 				deferred.reject();
 			}
 			cleanup(dialog);
-		})
+		});
 		
 		dialog.formDialog('open');
 				
