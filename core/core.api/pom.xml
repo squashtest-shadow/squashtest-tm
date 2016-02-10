@@ -13,7 +13,7 @@
   <description>API offering entry points to Squash core webapp which can be used by plugins</description>
 
   <properties>
-    <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
+    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
   </properties>
 
   <dependencyManagement>

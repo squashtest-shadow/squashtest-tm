@@ -12,7 +12,7 @@
   <description>Squash TM API required to provide wizards as plugins</description>
 
   <properties>
-    <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
+    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
   </properties>
 
   <dependencyManagement>

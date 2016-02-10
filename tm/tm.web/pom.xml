@@ -25,7 +25,7 @@
     <smartsprites.outputDir>${project.build.directory}/smartsprites</smartsprites.outputDir>
 
     <!-- Default jacoco dont record any coverage data -->
-    <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
+    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
     <spring-boot-maven-plugin.jvmArguments>-Xmx512M -XX:MaxPermSize=256M -Xdebug
       -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005 -Ddebug -Dspring.profiles.active=dev,h2</spring-boot-maven-plugin.jvmArguments>
 

@@ -15,7 +15,7 @@
     <bundle.name>${project.groupId}.${project.artifactId}</bundle.name>
     <bundle.symbolicName>${bundle.name}</bundle.symbolicName>
     <project.build.sourceEncoding>ISO-8859-1</project.build.sourceEncoding>
-    <sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>
+    <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->
   </properties>
 
   <dependencyManagement>
