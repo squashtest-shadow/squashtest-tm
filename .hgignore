@@ -152,6 +152,8 @@ tm/tm.web/@lucene.dir@
 @lucene.dir@
 tm/data
 tm/tomcat-work
+.java-options
+.java-version
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
