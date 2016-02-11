@@ -223,14 +223,14 @@ public class BugTrackerController {
 
 	}
 
+	
 	/**
 	 * will prepare a bug report for an execution step. The returned json infos will populate the form.
-	 *
 	 */
 
-	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue/{projectName}")
+	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/new-issue", method = RequestMethod.GET)
 	@ResponseBody
-	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request, @PathVariable String projectName) {
+	public RemoteIssue getExecStepReportStub(@PathVariable Long stepId, Locale locale, HttpServletRequest request, @RequestParam(value="project-name", required=true) String projectName) {
 
 		ExecutionStep step = executionFinder.findExecutionStepById(stepId);
 
@@ -238,6 +238,7 @@ public class BugTrackerController {
 
 		return makeReportIssueModel(step, locale, executionUrl, projectName);
 	}
+
 
 	/**
 	 * posts a new issue (simple model)
@@ -323,11 +324,10 @@ public class BugTrackerController {
 
 	/**
 	 * will prepare a bug report for an execution. The returned json infos will populate the form.
-	 *
 	 */
-	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue/{projectName}")
+	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/new-issue")
 	@ResponseBody
-	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request, @PathVariable String projectName) {
+	public RemoteIssue getExecReportStub(@PathVariable Long execId, Locale locale, HttpServletRequest request, @RequestParam(value="project-name", required=true) String projectName) {
 		Execution execution = executionFinder.findById(execId);
 		String executionUrl = BugTrackerControllerHelper.buildExecutionUrl(request, execution);
 		return makeReportIssueModel(execution, locale, executionUrl, projectName);
