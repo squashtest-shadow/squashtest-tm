@@ -500,4 +500,10 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 		return milestoneDao.isMilestoneBoundToOneObjectOfProject(milestone.getId(), project.getId());
 	}
 
+	@Override
+	public boolean isOneUserOwnMilestone(List<Long> userdIds) {
+		long result = milestoneDao.countMilestonesForUsers(userdIds);
+		return result > 0;
+	}
+
 }

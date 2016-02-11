@@ -774,8 +774,9 @@
 	@NamedQuery(name = "Milestone.findBindableExistingNames", query = "select m.label from Milestone m where m.label in (:names) and m.status in (:status)"),
 	@NamedQuery(name = "Milestone.findAllByNamesAndStatus", query = "from Milestone m where m.label in (:names) and m.status = :status"),
 	@NamedQuery(name = "milestone.otherRequirementVersionBindToOneMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join r.versions versions join rv.milestones m where versions.id in (:reqVIds) and rv.id not in (:reqVIds) and m.id in (:milestoneIds)"),
-  @NamedQuery(name = "milestone.findProjectMilestones", query="select p.milestones from Project p where p.id = :projectId"),
-
+	@NamedQuery(name = "milestone.findProjectMilestones", query="select p.milestones from Project p where p.id = :projectId"),
+  	@NamedQuery(name = "milestone.countMilestonesForUsers", query = "select count(milestone) from Milestone milestone where milestone.owner.id in (:userIds)"),
+  
 	@NamedQuery(name = "TestCase.findAllBoundToMilestone", query = "select tc from TestCase tc join tc.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllBoundToMilestone", query = "select rv from RequirementVersion rv join rv.requirement r join rv.milestones m where m.id = :milestoneId"),
 	@NamedQuery(name = "Campaign.findAllBoundToMilestone", query = "select c from Campaign c join c.milestones m  where m.id = :milestoneId"),
