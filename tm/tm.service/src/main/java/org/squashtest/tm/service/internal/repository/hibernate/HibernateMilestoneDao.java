@@ -468,6 +468,13 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		}
 	}
 
+	@Override
+	public long countMilestonesForUsers(List<Long> userIds) {
+		Query query= currentSession().getNamedQuery("milestone.countMilestonesForUsers");
+		query.setParameterList("userIds", userIds);
+		return (long) query.uniqueResult();
+	}
+
 
 
 }

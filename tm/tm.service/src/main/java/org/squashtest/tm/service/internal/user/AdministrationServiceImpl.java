@@ -41,12 +41,15 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
+import org.squashtest.tm.exception.user.ActiveUserDeleteException;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
+import org.squashtest.tm.exception.user.MilestoneOwnerDeleteException;
 import org.squashtest.tm.security.UserContextHolder;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
@@ -57,6 +60,7 @@ import org.squashtest.tm.service.internal.repository.TeamDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.repository.UsersGroupDao;
 import org.squashtest.tm.service.internal.security.UserBuilder;
+import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.AdministrationService;
@@ -100,6 +104,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private AdministratorAuthenticationService adminAuthentService;
+
+	@Inject
+	private MilestoneManagerService milestoneManagerService;
 
 	@Inject private FeatureManager features;
 
@@ -200,8 +207,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deactivateUser(long userId) {
-		userAccountService.deactivateUser(userId);
 		User user = userDao.findById(userId);
+		checkActiveUser(user);
+		userAccountService.deactivateUser(userId);
 		adminAuthentService.deactivateAccount(user.getLogin());
 		aclService.refreshAcls();
 	}
@@ -234,17 +242,29 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteUsers(Collection<Long> userIds) {
-		String activeUserName = UserContextHolder.getUsername();
+		
 		for (Long id : userIds) {
 			User user = userDao.findById(id);
-			//checking if active user isn't in the list to prevent suicide...
-			if (!user.getLogin().equals(activeUserName)) {
-				userAccountService.deleteUser(id);
-				adminAuthentService.deleteAccount(user.getLogin());
-				userDao.remove(user);
-			}
+			checkActiveUser(user);
+			checkUsersOwnMilestones(userIds);
+			userAccountService.deleteUser(id);
+			adminAuthentService.deleteAccount(user.getLogin());
+			userDao.remove(user);
 		}
 		aclService.refreshAcls();
+	}
+
+	private void checkUsersOwnMilestones(Collection<Long> userIds) {
+		if (milestoneManagerService.isOneUserOwnMilestone(new ArrayList<Long>(userIds))) {
+			throw new MilestoneOwnerDeleteException();
+		}
+	}
+
+	private void checkActiveUser(User user) {
+		String activeUserName = UserContextHolder.getUsername();
+		if (user.getLogin().equals(activeUserName)) {
+			throw new ActiveUserDeleteException();
+		}
 	}
 
 	@Override
@@ -491,5 +511,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		query.setParameter("login", login);
 		return (String) query.uniqueResult();
 	}
+	
+	
 
 }

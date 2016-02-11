@@ -116,7 +116,8 @@ public interface CustomMilestoneManager extends MilestoneFinderService {
 
 	void unbindAllObjects(long milestoneId);
 
-
+	boolean isOneUserOwnMilestone(List<Long> userdIds);
+	
 	boolean isMilestoneBoundToOneObjectOfProject(Milestone milestone, GenericProject project);
 
 }
