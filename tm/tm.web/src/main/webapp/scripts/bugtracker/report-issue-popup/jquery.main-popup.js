@@ -390,8 +390,9 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				if (!this.mdlTemplate) {
 					flipToPleaseWait();
 					$.ajax({
-							url: self.reportUrl + '/' + self.selectedProject,
+							url: self.reportUrl,
 							type: "GET",
+              data:{"project-name" : self.selectedProject},
 							dataType: "json"
 						})
 						.done(function (response) {
@@ -478,11 +479,11 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				storage.set("bugtracker.projects-preferences", projectPrefs);
 				self.selectedProject = project;
 				self.mdlTemplate = null;
-				
+
 				// neutralize the former view before wiping it
 				self.fieldsView.undelegateEvents();
 				self.fieldsView = null;
-				
+
 				resetModel();
 
 			};
