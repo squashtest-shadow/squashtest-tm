@@ -117,7 +117,7 @@
 					</div>
 					<div class="display-table-row">
 						<label ><f:message key="label.Email"/></label>
-						<div class="display-table-cell editable text-editable" data-def="url=${userAccountUrl}, width=200"><span id="user-account-email">${user.email}</span></div>
+						<div id="user-account-email" class="display-table-cell editable text-editable" data-def="url=${userAccountUrl}, width=200"><span id="user-account-email">${user.email}</span></div>
 					</div>
 					<div class="display-table-row">
 						<label ><f:message key="label.Group"/></label>
