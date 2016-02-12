@@ -80,11 +80,11 @@ public class Milestone  {
 
 	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_BINDING", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
-	private Set<GenericProject> projects = new HashSet<GenericProject>();
+	private Set<GenericProject> projects = new HashSet<>();
 
 	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_BINDING_PERIMETER", joinColumns = @JoinColumn(name = "MILESTONE_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
-	private Set<GenericProject> perimeter = new HashSet<GenericProject>();
+	private Set<GenericProject> perimeter = new HashSet<>();
 
 	@JoinColumn(name = "USER_ID")
 	@ManyToOne(cascade=CascadeType.DETACH)
@@ -106,7 +106,7 @@ public class Milestone  {
 	private Set<Campaign> campaigns = new HashSet<>();
 
 	public List<GenericProject> getPerimeter() {
-		return new ArrayList<GenericProject>(perimeter);
+		return new ArrayList<>(perimeter);
 	}
 
 	public User getOwner() {
@@ -122,7 +122,7 @@ public class Milestone  {
 	}
 
 	public List<GenericProject> getProjects() {
-		return new ArrayList<GenericProject>(projects);
+		return new ArrayList<>(projects);
 	}
 
 	public String getDescription() {
@@ -291,19 +291,16 @@ public class Milestone  {
 
 
 		// check that no other version of this requirement is bound already to this milestone
-		Collection<RequirementVersion> allVersions = new ArrayList<RequirementVersion>(version.getRequirement().getRequirementVersions());
+		Collection<RequirementVersion> allVersions = new ArrayList<>(version.getRequirement().getRequirementVersions());
 		CollectionUtils.filter(allVersions, new Predicate() {
 
 			@Override
 			public boolean evaluate(Object reqV) {
-				return ((RequirementVersion) reqV).getMilestones().contains(this);
+				return ((RequirementVersion) reqV).getMilestones().contains(Milestone.this);
 			}
 		});
 
-		if (CollectionUtils.containsAny(requirementVersions, allVersions)) {
-			return true;
-		}
-		return false;
+		return CollectionUtils.containsAny(requirementVersions, allVersions);
 
 	}
 
@@ -316,10 +313,7 @@ public class Milestone  {
 	public boolean isBoundToATemplate() {
 
 		final boolean[] boundToTemplate = { false };
-		final Iterator<GenericProject> iter = projects.iterator();
-		while (iter.hasNext()) {
-			GenericProject proj = iter.next();
-
+		for (GenericProject proj : projects) {
 			proj.accept(new ProjectVisitor() {
 
 				@Override
@@ -333,7 +327,7 @@ public class Milestone  {
 				}
 			});
 
-			if (boundToTemplate[0]){
+			if (boundToTemplate[0]) {
 				return true;
 			}
 		}
@@ -367,7 +361,7 @@ public class Milestone  {
 		}
 	}
 
-	public static final Boolean allowsEdition(Collection<Milestone> milestones){
+	public static Boolean allowsEdition(Collection<Milestone> milestones){
 		Boolean allowed = Boolean.TRUE;
 		for (Milestone m : milestones){
 			if (! m.getStatus().isAllowObjectModification()){
@@ -379,7 +373,7 @@ public class Milestone  {
 	}
 
 
-	public static final Boolean allowsCreationOrDeletion(Collection<Milestone> milestones){
+	public static Boolean allowsCreationOrDeletion(Collection<Milestone> milestones){
 		Boolean allowed = Boolean.TRUE;
 		for (Milestone m : milestones){
 			if (! m.getStatus().isAllowObjectCreateAndDelete()){
@@ -394,15 +388,11 @@ public class Milestone  {
 
 	/**
 	 * @deprecated all hell shall break loose when this method is called
-	 * @return
 	 */
 	@Deprecated
 	public boolean isBoundToObjects() {
 
-		if (testCases.isEmpty() && requirementVersions.isEmpty() && campaigns.isEmpty()) {
-			return false;
-		}
-		return true;
+		return !(testCases.isEmpty() && requirementVersions.isEmpty() && campaigns.isEmpty());
 	}
 
 	public boolean isLocked(){

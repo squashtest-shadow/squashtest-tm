@@ -63,12 +63,12 @@ import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreation
 
 /**
  * Entity requirement
- * 
+ *
  * Note that much of its setters will throw an IllegalRequirementModificationException if a modification is attempted
  * while the status does not allow it.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 @Entity
@@ -110,7 +110,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 * Creates a new requirement which "latest version" is the given {@link RequirementVersion}
-	 * 
+	 *
 	 * @param version
 	 */
 	public Requirement(@NotNull RequirementVersion version) {
@@ -163,7 +163,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/***
 	 * Set the requirement reference
-	 * 
+	 *
 	 * @param reference
 	 */
 	public void setReference(String reference) {
@@ -194,7 +194,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 * Will create copies for all non obsolete versions older than the current version, and add it to the copy.
-	 * 
+	 *
 	 * @param copy : The requirement copy
 	 * @return a TreeMap of RequirementVersion copy by source ordered younger to older.
 	 */
@@ -224,7 +224,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/***
 	 * Set the requirement criticality
-	 * 
+	 *
 	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
@@ -240,7 +240,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/***
 	 * Set the requirement category
-	 * 
+	 *
 	 * @param category
 	 */
 	public void setCategory(InfoListItem category) {
@@ -256,7 +256,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement can be (un)linked by new verifying testcases
 	 */
 	public boolean isLinkable() {
@@ -267,7 +267,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 * Tells if this requirement's "intrinsic" properties can be modified. The following are not considered as
 	 * "intrinsic" properties" : {@link #verifyingTestCases} are governed by the {@link #isLinkable()} state,
 	 * {@link #status} is governed by itself.
-	 * 
+	 *
 	 * @return <code>true</code> if this requirement's properties can be modified.
 	 */
 	public boolean isModifiable() {
@@ -315,7 +315,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 * returns this requirement's version which should be linked to a test case by default.
-	 * 
+	 *
 	 * @return
 	 */
 	public RequirementVersion getDefaultVerifiableVersion() {
@@ -353,7 +353,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	/**
-	 * 
+	 *
 	 * @return an unmodifiable view of this requirement's versions
 	 */
 	public List<RequirementVersion> getUnmodifiableVersions() {
@@ -361,7 +361,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	/**
-	 * 
+	 *
 	 * @return false if all requirement versions are obsolete
 	 */
 	public boolean hasNonObsoleteVersion() {
@@ -522,6 +522,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 			}
 		}
 		else {
+			// FIXME never throw RuntimeEx. IllegalArgEx should be ok
 			throw new RuntimeException("RequirementVersion with version number " + newVersionNumber + " already exist in this Requirement, id : " + getId());
 		}
 	}
