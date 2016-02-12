@@ -20,21 +20,11 @@
  */
 package org.squashtest.tm.web.internal.model.builder;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import org.squashtest.tm.domain.LevelComparator;
+import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 
 import javax.validation.constraints.NotNull;
-
-import org.squashtest.tm.domain.LevelComparator;
-import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
-import org.squashtest.tm.web.internal.helper.LabelFormatter;
-import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
+import java.util.*;
 
 /**
  * Builds a serialized json data model which can be used by a Jeditable combobox. Usage : <code>
@@ -43,13 +33,13 @@ import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
  *     .useLocale(locale)
  *     .buildMarshalled()
  * </code>
- * 
+ *
  * The builder can produce a Map view instead of marshalled JSON. Selected item and comparator are optional.
- * 
+ *
  * Objects of this class are not thread-safe.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ListJeditableComboDataBuilder<T extends List<?>, B extends ListJeditableComboDataBuilder<T, B>> {
 	/**
@@ -63,20 +53,16 @@ public class ListJeditableComboDataBuilder<T extends List<?>, B extends ListJedi
 	/**
 	 * The optional comparator used to sort the model. Should be injected.
 	 */
-	private Comparator<? super T> modelComparator;
+	private LevelComparator modelComparator;
 
 	/**
 	 * The required formatter which produces item labels. Should be injected.
 	 */
-	private LabelFormatter<? super T> labelFormatter;
-	/**
-	 * The optional selected item.
-	 */
-	private T selectedItem;
+	private LevelLabelFormatter labelFormatter;
 
 	/**
 	 * The list of items used as the model for the combobox.
-	 * 
+	 *
 	 * @param userList
 	 *            The combobox model. Should not be <code>null</code>.
 	 */
@@ -85,117 +71,55 @@ public class ListJeditableComboDataBuilder<T extends List<?>, B extends ListJedi
 	}
 
 	/**
-	 * @param levelComparator
-	 *            the comparator to set
-	 */
-	public void setModelComparator(LevelComparator levelComparator) {
-		this.modelComparator = (Comparator<? super T>) levelComparator;
-	}
-
-	/**
 	 * @param formatter
 	 *            the formatter to set
 	 */
 	public void setLabelFormatter(LevelLabelFormatter formatter) {
-		this.labelFormatter = (LabelFormatter<? super T>) formatter;
+		this.labelFormatter = formatter;
 	}
 
 	/**
 	 * The array of items used as the model for the combobox.
-	 * 
+	 *
 	 * @param model
 	 *            The combobox model. Should not be <code>null</code>.
-	 * @return
 	 */
 	public void setModel(@NotNull String[] model) {
 		this.model = Arrays.asList(model);
 	}
-
 	/**
-	 * 
-	 * @return a marshalled JSON representation of the model compatible with a JEditable combobox.
+	 * @param levelComparator
+	 *            the comparator to set
 	 */
-	public String buildMarshalled() {
-		return JsonHelper.serialize(buildMap());
+	public void setModelComparator(LevelComparator levelComparator) {
+		this.modelComparator = levelComparator;
 	}
 
 	/**
-	 * 
+	 *
 	 * @return a {@link Map} representation of the model compatible with a JEditable combobox.
 	 */
 	public Map<String, String> buildMap() {
-		sortModelIfRequired();
 
-		Map<String, String> comboData = createComboData();
-
-		addSelectedItemIfRequired(comboData);
-
-		return comboData;
+		return createComboData();
 	}
 
 	private Map<String, String> createComboData() {
-		Map<String, String> comboData = new LinkedHashMap<String, String>(model.size());
+		Map<String, String> comboData = new LinkedHashMap<>(model.size());
 
 		labelFormatter.useLocale(locale);
 
 		for (String item : model) {
-			comboData.put(itemKey(item), item);
+			comboData.put(item, item);
 		}
 
 		return comboData;
-	}
-
-	/**
-	 * Returns the key which will be used in combo data for the given item. defaults to the items's name.
-	 * 
-	 * @param item
-	 * @return the key  for the given item.
-	 */
-	protected String itemKey(String item) {
-		return ((Object) item).toString();
-	}
-
-	private void addSelectedItemIfRequired(Map<String, String> comboData) {
-		if (selectedItem != null) {
-			comboData.put("selected", ((Object) selectedItem).toString());
-		}
-	}
-
-	private void sortModelIfRequired() {
-		if (modelComparator != null) {
-			// TODO Do something
-		}
-	}
-
-	/**
-	 * /!\ if no <code>selectedItem</code> is indicated, the widget will perform a selection using its label when in
-	 * unediting state. This behaviour is usually sufficient. On the other hand, adding a selected item induces boundary
-	 * effects when the combobox model is not fetched when switching to editing state (ie widget is build with a 'data'
-	 * attribute instead of a 'loadurl' attribute).
-	 * 
-	 * @param selectedItem
-	 *            The item to select. Can be <code>null</code>.
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public B selectItem(T selectedItem) {
-		this.selectedItem = selectedItem;
-		return (B) this;
 	}
 
 	@SuppressWarnings("unchecked")
 	public B useLocale(Locale locale) {
 		this.locale = locale;
 		return (B) this;
-	}
-
-	/**
-	 * For internal use only.
-	 * 
-	 * @return the selected item, might be null.
-	 */
-	protected final T getSelectedItem() {
-		return selectedItem;
 	}
 
 }

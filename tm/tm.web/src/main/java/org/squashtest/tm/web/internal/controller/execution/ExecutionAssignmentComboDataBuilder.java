@@ -36,10 +36,10 @@ import org.squashtest.tm.web.internal.model.builder.ListJeditableComboDataBuilde
  * Jeditable combo data builder which model is {@link --} Useless for the moment but could be used if the specification
  * morphs. It was written that we could change assignment user but, after thinking, it's absurd and means nothing Wait
  * for it
- * 
+ *
  * @author MF
  * @param -
- * 
+ *
  */
 @Component
 @Scope("prototype")
@@ -50,13 +50,15 @@ public class ExecutionAssignmentComboDataBuilder extends
 	public ExecutionAssignmentComboDataBuilder() {
 		super();
 
-		List<String> userList = new ArrayList<String>();
+		List<String> userList = new ArrayList<>();
 
+		// FIXME there's probably a bug here. Properly rewrite this and its shit ListJeditableComboDataBuilder supertype
 		// Get all users
 		// userList = campaignAdvancedSearchService.findAllAuthorizedUsersForACampaign();
 
 		setModel(userList);
 
+		// FIXME totally useless : model comparator not used by superclass
 		setModelComparator(LevelComparator.getInstance());
 	}
 
