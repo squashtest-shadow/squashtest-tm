@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.internal.domain.report.query.hibernate;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -33,6 +31,7 @@ import org.squashtest.tm.internal.domain.report.query.UnsupportedFlavorException
 import org.squashtest.tm.internal.repository.ReportQueryDao;
 
 import javax.inject.Inject;
+import java.util.List;
 
 @Repository
 public class HibernateReportQueryDao implements ReportQueryDao {
@@ -53,10 +52,10 @@ public class HibernateReportQueryDao implements ReportQueryDao {
 
 	@Override
 	public List<?> executeQuery(ReportQuery query) throws UnsupportedFlavorException {
-		if (! doesSupportFlavor(query.getFlavor())){
-			throw new UnsupportedFlavorException("Error : ReportQueryDao implementation does not support queries of class "+query.getClass().getName());
+		if (!doesSupportFlavor(query.getFlavor())) {
+			throw new UnsupportedFlavorException("Error : ReportQueryDao implementation does not support queries of class " + query.getClass().getName());
 		}
-		HibernateReportQuery hibQuery = (HibernateReportQuery)query;
+		HibernateReportQuery hibQuery = (HibernateReportQuery) query;
 
 		DetachedCriteria dCriteria = hibQuery.createHibernateQuery();
 
@@ -86,8 +85,7 @@ public class HibernateReportQueryDao implements ReportQueryDao {
 
 	@Override
 	public ReportQueryFlavor[] getSupportedFlavors() {
-		ReportQueryFlavor[] flavorArray = {flavor};
-		return flavorArray;
+		return new ReportQueryFlavor[]{flavor};
 	}
 
 }

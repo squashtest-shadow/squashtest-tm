@@ -21,7 +21,7 @@
 package org.squashtest.tm.security.acls;
 
 /**
- * This class represents an agregation of permissions (read, write and so on) which can be given to a user and which
+ * This class represents an aggregation of permissions (read, write and so on) which can be given to a user and which
  * have a scope of object identities.
  *
  * @author Gregory Fouquet
@@ -37,7 +37,7 @@ public class PermissionGroup {
 		super();
 		this.id = id;
 		this.qualifiedName = qualifiedName;
-		if (qualifiedName != null){
+		if (qualifiedName != null) {
 			calculateSimpleName();
 		}
 	}
@@ -55,8 +55,7 @@ public class PermissionGroup {
 	}
 
 	private void calculateSimpleName() {
-		String theName = qualifiedName.substring(qualifiedName.lastIndexOf(".")+1);
-		this.simpleName = theName;
+		this.simpleName = qualifiedName.substring(qualifiedName.lastIndexOf('.') + 1);
 	}
 
 }

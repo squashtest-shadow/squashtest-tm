@@ -20,36 +20,8 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
-import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.OrderColumn;
-import javax.persistence.PrimaryKeyJoinColumn;
-import javax.validation.constraints.NotNull;
-
+import org.hibernate.search.annotations.*;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeContainerVisitor;
@@ -60,6 +32,13 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreationException;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+
+import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
+import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
 
 /**
  * Entity requirement
@@ -79,29 +58,29 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/**
 	 * The resource of this requirement is the latest version of the requirement.
 	 */
-	@OneToOne(cascade = { CascadeType.ALL })
+	@OneToOne(cascade = {CascadeType.ALL})
 	@JoinColumn(name = "CURRENT_VERSION_ID")
 	private RequirementVersion resource;
 
-	@OneToMany(mappedBy = "requirement", cascade = { CascadeType.ALL })
+	@OneToMany(mappedBy = "requirement", cascade = {CascadeType.ALL})
 	@OrderBy("versionNumber DESC")
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private List<RequirementVersion> versions = new ArrayList<RequirementVersion>();
+	private List<RequirementVersion> versions = new ArrayList<>();
 
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	@Field(analyze=Analyze.NO, store=Store.YES)
+	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private List<Requirement> children = new ArrayList<Requirement>();
+	private List<Requirement> children = new ArrayList<>();
 
 	@Column
 	@Enumerated(EnumType.STRING)
 	private ManagementMode mode = ManagementMode.NATIVE;
 
-	@OneToOne(mappedBy="requirement", cascade = { CascadeType.REMOVE, CascadeType.PERSIST }, optional = true)
+	@OneToOne(mappedBy = "requirement", cascade = {CascadeType.REMOVE, CascadeType.PERSIST}, optional = true)
 	private RequirementSyncExtender syncExtender;
 
 	protected Requirement() {
@@ -111,7 +90,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/**
 	 * Creates a new requirement which "latest version" is the given {@link RequirementVersion}
 	 *
-	 * @param version
 	 */
 	public Requirement(@NotNull RequirementVersion version) {
 		resource = version;
@@ -124,11 +102,11 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		 * prevent the requirement from having more than
 		 * one version if this requirement is synchronized
 		 */
-		if (versions.size() >= 1 && isSynchronized()){
+		if (versions.size() >= 1 && isSynchronized()) {
 			throw new IllegalRequirementVersionCreationException();
 		}
 		// else we can add the version normally
-		else{
+		else {
 			versions.add(version);
 			version.setRequirement(this);
 		}
@@ -164,7 +142,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/***
 	 * Set the requirement reference
 	 *
-	 * @param reference
 	 */
 	public void setReference(String reference) {
 		resource.setReference(reference);
@@ -183,7 +160,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 */
 	@Override
 	public Requirement createCopy() {
-		if(!getCurrentVersion().isNotObsolete()){
+		if (!getCurrentVersion().isNotObsolete()) {
 			throw new CopyPasteObsoleteException();
 		}
 		RequirementVersion latestVersionCopy = getCurrentVersion().createPastableCopy();
@@ -198,8 +175,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 * @param copy : The requirement copy
 	 * @return a TreeMap of RequirementVersion copy by source ordered younger to older.
 	 */
-	public TreeMap<RequirementVersion, RequirementVersion> addPreviousVersionsCopiesToCopy(Requirement copy) {
-		TreeMap<RequirementVersion, RequirementVersion> copyBySource = new TreeMap<RequirementVersion, RequirementVersion>(new RequirementVersionNumberComparator());
+	public SortedMap<RequirementVersion, RequirementVersion> addPreviousVersionsCopiesToCopy(Requirement copy) {
+		TreeMap<RequirementVersion, RequirementVersion> copyBySource = new TreeMap<>(new RequirementVersionNumberComparator());
 		for (RequirementVersion sourceVersion : this.versions) {
 			if (isNotLatestVersion(sourceVersion) && sourceVersion.isNotObsolete()) {
 				RequirementVersion copyVersion = sourceVersion.createPastableCopy();
@@ -225,7 +202,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/***
 	 * Set the requirement criticality
 	 *
-	 * @param criticality
 	 */
 	public void setCriticality(RequirementCriticality criticality) {
 		resource.setCriticality(criticality);
@@ -241,7 +217,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/***
 	 * Set the requirement category
 	 *
-	 * @param category
 	 */
 	public void setCategory(InfoListItem category) {
 		resource.setCategory(category);
@@ -293,8 +268,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		return resource;
 	}
 
-	public void setCurrentVersion(RequirementVersion version){
-		this.resource =version;
+	public void setCurrentVersion(RequirementVersion version) {
+		this.resource = version;
 	}
 
 	public void increaseVersion() {
@@ -316,7 +291,6 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/**
 	 * returns this requirement's version which should be linked to a test case by default.
 	 *
-	 * @return
 	 */
 	public RequirementVersion getDefaultVerifiableVersion() {
 		RequirementVersion verifiable = findLatestApprovedVersion();
@@ -390,12 +364,10 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	/**
 	 * Modified for [Feat 5085] as we can now have non successive RequirementVersion number
-	 * @param versionNumber
-	 * @return
 	 */
 	public RequirementVersion findRequirementVersion(int versionNumber) {
 		for (RequirementVersion requirementVersion : versions) {
-			if (requirementVersion.getVersionNumber()==versionNumber) {
+			if (requirementVersion.getVersionNumber() == versionNumber) {
 				return requirementVersion;
 			}
 		}
@@ -407,23 +379,23 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@Override
 	public void addContent(@NotNull Requirement child) throws DuplicateNameException,
-	NullArgumentException {
+		NullArgumentException {
 		checkContentNameAvailable(child);
 		children.add(child);
-		children = new ArrayList<Requirement>(children);
+		children = new ArrayList<>(children);
 		child.notifyAssociatedWithProject(this.getProject());
 	}
 
 	@Override
 	public void addContent(@NotNull Requirement child, int position) throws DuplicateNameException,
-	NullArgumentException {
+		NullArgumentException {
 		checkContentNameAvailable(child);
-		if(position >= children.size()){
+		if (position >= children.size()) {
 			children.add(child);
 		} else {
 			children.add(position, child);
 		}
-		children = new ArrayList<Requirement>(children);
+		children = new ArrayList<>(children);
 		child.notifyAssociatedWithProject(this.getProject());
 	}
 
@@ -435,8 +407,8 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@Override
 	public boolean isContentNameAvailable(String name) {
-		for (Requirement child : children){
-			if (child.getName().equals(name)){
+		for (Requirement child : children) {
+			if (child.getName().equals(name)) {
 				return false;
 			}
 		}
@@ -455,20 +427,20 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@Override
 	public boolean hasContent() {
-		return (children.size()>0);
+		return (children.size() > 0);
 	}
 
 	@Override
 	public void removeContent(Requirement exChild)
-			throws NullArgumentException {
+		throws NullArgumentException {
 		children.remove(exChild);
-		children = new ArrayList<Requirement>(children);
+		children = new ArrayList<>(children);
 	}
 
 	@Override
 	public List<String> getContentNames() {
-		List<String> contentNames = new ArrayList<String>(children.size());
-		for(Requirement child : children){
+		List<String> contentNames = new ArrayList<>(children.size());
+		for (Requirement child : children) {
 			contentNames.add(child.getName());
 		}
 		return contentNames;
@@ -483,23 +455,23 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 * finds which version of this requirement is bound to the given milestone, or null
 	 * if there is none
 	 */
-	public RequirementVersion findByMilestone(Milestone milestone){
-		for (RequirementVersion version : versions){
-			if (version.isMemberOf(milestone)){
+	public RequirementVersion findByMilestone(Milestone milestone) {
+		for (RequirementVersion version : versions) {
+			if (version.isMemberOf(milestone)) {
 				return version;
 			}
 		}
 		return null;
 	}
 
-	public boolean meOrMyChildHaveAVersionBoundToMilestone(Milestone milestone){
+	public boolean meOrMyChildHaveAVersionBoundToMilestone(Milestone milestone) {
 
-		if (findByMilestone(milestone) != null){
+		if (findByMilestone(milestone) != null) {
 			return true;
 		}
 
-		for (Requirement child : children){
-			if (child.meOrMyChildHaveAVersionBoundToMilestone(milestone)){
+		for (Requirement child : children) {
+			if (child.meOrMyChildHaveAVersionBoundToMilestone(milestone)) {
 				return true;
 			}
 		}
@@ -509,19 +481,17 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	/**
 	 * Add a requirement version which is not a copy of current version.
 	 * Used by import [Feat 5085] because we need to create non successive RequirementVersion
-	 * @param requirementVersion
 	 */
-	public void addExistingRequirementVersion (RequirementVersion requirementVersion){
+	public void addExistingRequirementVersion(RequirementVersion requirementVersion) {
 		Integer newVersionNumber = requirementVersion.getVersionNumber();
-		if (findRequirementVersion(newVersionNumber)==null) {
-			versions.add(0,requirementVersion);
+		if (findRequirementVersion(newVersionNumber) == null) {
+			versions.add(0, requirementVersion);
 			requirementVersion.setRequirement(this);
 			//checking if the imported RequirementVersion has a versionNumber superior to the current version number
 			if (newVersionNumber > resource.getVersionNumber()) {
 				resource = requirementVersion;
 			}
-		}
-		else {
+		} else {
 			// FIXME never throw RuntimeEx. IllegalArgEx should be ok
 			throw new RuntimeException("RequirementVersion with version number " + newVersionNumber + " already exist in this Requirement, id : " + getId());
 		}
@@ -532,7 +502,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 *         or null if all versions are obsolete
 	 */
 	public RequirementVersion findLastNonObsoleteVersionAfterImport() {
-		SortedMap<Integer, RequirementVersion> sortedVersions = new TreeMap<Integer, RequirementVersion>();
+		SortedMap<Integer, RequirementVersion> sortedVersions = new TreeMap<>();
 
 		for (RequirementVersion version : this.versions) {
 			if (!version.getStatus().equals(OBSOLETE)) {
@@ -555,7 +525,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		this.syncExtender = syncExtender;
 	}
 
-	public boolean isSynchronized(){
+	public boolean isSynchronized() {
 		return (this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null);
 	}
 

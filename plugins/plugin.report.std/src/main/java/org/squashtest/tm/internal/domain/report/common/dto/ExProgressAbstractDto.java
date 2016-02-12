@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.internal.domain.report.common.dto;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.internal.domain.report.common.dto.ExProgressCampaignStatus;
+
+import java.util.List;
 
 
 public abstract class ExProgressAbstractDto {
@@ -36,9 +35,10 @@ public abstract class ExProgressAbstractDto {
 	protected Integer iCountStatusUntestable = 0;
 	protected Integer iCountStatusSettled = 0;
 
-	public ExProgressAbstractDto(){
+	public ExProgressAbstractDto() {
 		super();
 	}
+
 	public ExProgressAbstractDto(List<IterationTestPlanItem> testPlans) {
 		fillStatusInfos(testPlans);
 	}
@@ -47,6 +47,7 @@ public abstract class ExProgressAbstractDto {
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -54,39 +55,51 @@ public abstract class ExProgressAbstractDto {
 	public Integer getiCountStatusReady() {
 		return iCountStatusReady;
 	}
+
 	public void setiCountStatusReady(Integer iCountStatusReady) {
 		this.iCountStatusReady = iCountStatusReady;
 	}
+
 	public Integer getiCountStatusRunning() {
 		return iCountStatusRunning;
 	}
+
 	public void setiCountStatusRunning(Integer iCountStatusRunning) {
 		this.iCountStatusRunning = iCountStatusRunning;
 	}
+
 	public Integer getiCountStatusBloqued() {
 		return iCountStatusBloqued;
 	}
+
 	public void setiCountStatusBloqued(Integer iCountStatusBloqued) {
 		this.iCountStatusBloqued = iCountStatusBloqued;
 	}
+
 	public Integer getiCountStatusFailure() {
 		return iCountStatusFailure;
 	}
+
 	public void setiCountStatusFailure(Integer iCountStatusFailure) {
 		this.iCountStatusFailure = iCountStatusFailure;
 	}
+
 	public Integer getiCountStatusSettled() {
 		return iCountStatusSettled;
 	}
+
 	public void setiCountStatusSettled(Integer iCountStatusSettled) {
 		this.iCountStatusSettled = iCountStatusSettled;
 	}
+
 	public Integer getiCountStatusSuccess() {
 		return iCountStatusSuccess;
 	}
+
 	public void setiCountStatusSuccess(Integer iCountStatusSuccess) {
 		this.iCountStatusSuccess = iCountStatusSuccess;
 	}
+
 	public Integer getiCountStatusUntestable() {
 		return iCountStatusUntestable;
 	}
@@ -99,109 +112,119 @@ public abstract class ExProgressAbstractDto {
 
 	/* ****************************** computed properties **********************************/
 
-	public Integer getNumberTestCase(){
-		return    iCountStatusReady
-				+ iCountStatusRunning
-				+ iCountStatusBloqued
-				+ iCountStatusFailure
-				+ iCountStatusSettled
-				+ iCountStatusSuccess
-				+ iCountStatusUntestable;
+	public Integer getNumberTestCase() {
+		return iCountStatusReady
+			+ iCountStatusRunning
+			+ iCountStatusBloqued
+			+ iCountStatusFailure
+			+ iCountStatusSettled
+			+ iCountStatusSuccess
+			+ iCountStatusUntestable;
 	}
 
 
-
-	public float getfPercentageStatusReady(){
+	public float getfPercentageStatusReady() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusReady()/(float)total);
+		} else {
+			return ((float) getiCountStatusReady() / (float) total);
 		}
 	}
 
-	public float getfPercentageStatusRunning(){
+	public float getfPercentageStatusRunning() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusRunning()/(float)total);
+		} else {
+			return ((float) getiCountStatusRunning() / (float) total);
 		}
 	}
 
-	public float getfPercentageStatusBloqued(){
+	public float getfPercentageStatusBloqued() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusBloqued()/(float)total);
+		} else {
+			return ((float) getiCountStatusBloqued() / (float) total);
 		}
 	}
 
-	public float getfPercentageStatusFailure(){
+	public float getfPercentageStatusFailure() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusFailure()/(float)total);
+		} else {
+			return ((float) getiCountStatusFailure() / (float) total);
 		}
 	}
 
-	public float getfPercentageStatusSuccess(){
+	public float getfPercentageStatusSuccess() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusSuccess()/(float)total);
+		} else {
+			return ((float) getiCountStatusSuccess() / (float) total);
 		}
 	}
 
-	public float getfPercentageStatusUntestable(){
+	public float getfPercentageStatusUntestable() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusUntestable()/(float)total);
+		} else {
+			return ((float) getiCountStatusUntestable() / (float) total);
 		}
 	}
 
-	public float getfPercentageStatusSettled(){
+	public float getfPercentageStatusSettled() {
 		Integer total = getNumberTestCase();
-		if (total==0) {
+		if (total == 0) {
 			return 0;
-		}
-		else{
-			return ((float)getiCountStatusSettled()/(float)total);
+		} else {
+			return ((float) getiCountStatusSettled() / (float) total);
 		}
 	}
 
-	public float getfPercentageProgress(){
-		return 	  getfPercentageStatusBloqued()
-				+ getfPercentageStatusUntestable()
-				+ getfPercentageStatusFailure()
-				+ getfPercentageStatusSuccess()
-				+ getfPercentageStatusSettled();
+	public float getfPercentageProgress() {
+		return getfPercentageStatusBloqued()
+			+ getfPercentageStatusUntestable()
+			+ getfPercentageStatusFailure()
+			+ getfPercentageStatusSuccess()
+			+ getfPercentageStatusSettled();
 	}
 
-	private void fillStatusInfos(List<IterationTestPlanItem> testPlan){ // NOSONAR the switch is perfectly readable
-		for (IterationTestPlanItem testPlanItem : testPlan){
-			switch(testPlanItem.getExecutionStatus()){
-			case READY : 	iCountStatusReady++;	break;
-			case RUNNING : 	iCountStatusRunning++;	break;
-			case BLOCKED : 	iCountStatusBloqued++;	break;
-			case FAILURE : 	iCountStatusFailure++;	break;
-			case SUCCESS : 	iCountStatusSuccess++; break;
-			case UNTESTABLE: iCountStatusUntestable++; break;
-			case SETTLED: iCountStatusSettled++; break;
+	private void fillStatusInfos(List<IterationTestPlanItem> testPlan) { // NOSONAR the switch is perfectly readable
+		for (IterationTestPlanItem testPlanItem : testPlan) {
+			switch (testPlanItem.getExecutionStatus()) {
+				case READY:
+					iCountStatusReady++;
+					break;
+				case RUNNING:
+					iCountStatusRunning++;
+					break;
+				case BLOCKED:
+					iCountStatusBloqued++;
+					break;
+				case FAILURE:
+					iCountStatusFailure++;
+					break;
+				case SUCCESS:
+					iCountStatusSuccess++;
+					break;
+				case UNTESTABLE:
+					iCountStatusUntestable++;
+					break;
+				case SETTLED:
+					iCountStatusSettled++;
+					break;
+				default:
+					// NOOP
+					break;
 			}
 		}
 	}
+
 	public ExProgressCampaignStatus getStatus() {
 		if ((iCountStatusBloqued + iCountStatusFailure + iCountStatusSuccess + iCountStatusUntestable) == getNumberTestCase()) {
 			return ExProgressCampaignStatus.CAMPAIGN_OVER;
@@ -210,8 +233,8 @@ public abstract class ExProgressAbstractDto {
 
 	}
 
-	public void fillStatusInfosWithChildren(List<? extends ExProgressAbstractDto> containedExProgressDto){
-		for(ExProgressAbstractDto dto : containedExProgressDto){
+	public void fillStatusInfosWithChildren(List<? extends ExProgressAbstractDto> containedExProgressDto) {
+		for (ExProgressAbstractDto dto : containedExProgressDto) {
 			this.iCountStatusBloqued += dto.getiCountStatusBloqued();
 			this.iCountStatusFailure += dto.getiCountStatusFailure();
 			this.iCountStatusReady += dto.getiCountStatusReady();
