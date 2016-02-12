@@ -142,6 +142,14 @@
 			+ "from CustomFieldValue cfv join cfv.binding binding join binding.customField cf left join cfv.selectedOptions so "
 			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cfv.id, cf.id"),
 	
+	// Synchronized requirements	
+	@NamedQuery(name = "RequirementSyncExtender.findByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteReqId = :id)"),
+	@NamedQuery(name = "RequirementSyncExtender.findAllByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteReqId in (:ids)"),
+	@NamedQuery(name = "RequirementSyncExtender.findAllByRemoteProjectsAndFilter", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteProjectId = :pId and sync.remoteFilterName = :filter"),
+	@NamedQuery(name = "RequirementSyncExtender.findAllByServer", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.server.id = :serverId"),
+	@NamedQuery(name = "RequirementSyncExtender.deleteAllByServer", query = "delete from RequirementSyncExtender sync where sync.server.id = :serverId"),
+	
+	
 	//CampaignFolder
 	@NamedQuery(name = "campaignFolder.findAllContentById", query = "select f.content from CampaignFolder f where f.id = :folderId"),
 	@NamedQuery(name = "campaignFolder.findByContent", query = "from CampaignFolder where :content in elements(content)"),

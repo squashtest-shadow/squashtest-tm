@@ -48,7 +48,7 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 public class RequirementSyncExtender {
 
 	@Id
-	@Column(name = "REQ_SYNC_ID")
+	@Column(name = "REQ_SYNC_Id")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requiremment_sync_extender_req_sync_id_seq")
 	@SequenceGenerator(
 			name = "requiremment_sync_extender_req_sync_id_seq",
@@ -61,14 +61,17 @@ public class RequirementSyncExtender {
 	private Requirement requirement;
 
 	@ManyToOne
-	@JoinColumn(name = "BUGTRACKER_ID", referencedColumnName = "BUGTRACKER_ID")
-	private BugTracker bugtracker;
+	@JoinColumn(name = "SERVER_ID", referencedColumnName = "BUGTRACKER_ID")
+	private BugTracker server;
 
 	@Column
-	private String remoteReqID;
+	private String remoteReqId;
 
 	@Column
-	private String remoteProjectID;
+	private String remoteProjectId;
+	
+	@Column 
+	private String remoteFilterName;
 
 	@Column(name = "REMOTE_REQ_URL")
 	private URL remoteUrl;
@@ -101,28 +104,36 @@ public class RequirementSyncExtender {
 		this.requirement = requirement;
 	}
 
-	public String getRemoteReqID() {
-		return remoteReqID;
+	public String getRemoteReqId() {
+		return remoteReqId;
 	}
 
-	public void setRemoteReqID(String remoteReqID) {
-		this.remoteReqID = remoteReqID;
+	public void setRemoteReqId(String remoteReqId) {
+		this.remoteReqId = remoteReqId;
 	}
 
-	public String getRemoteProjectID() {
-		return remoteProjectID;
+	public String getRemoteProjectId() {
+		return remoteProjectId;
 	}
 
-	public void setRemoteProjectID(String remoteProjectID) {
-		this.remoteProjectID = remoteProjectID;
+	public void setRemoteProjectId(String remoteProjectId) {
+		this.remoteProjectId = remoteProjectId;
+	}
+	
+	public String getRemoteFilterName() {
+		return remoteFilterName;
 	}
 
-	public BugTracker getBugtracker() {
-		return bugtracker;
+	public void setRemoteFilterName(String remoteFilterName) {
+		this.remoteFilterName = remoteFilterName;
 	}
 
-	public void setBugtracker(BugTracker bugtracker) {
-		this.bugtracker = bugtracker;
+	public BugTracker getServer() {
+		return server;
+	}
+
+	public void setServer(BugTracker server) {
+		this.server = server;
 	}
 
 	public URL getRemoteUrl() {

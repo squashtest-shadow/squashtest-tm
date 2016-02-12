@@ -76,5 +76,37 @@
 		from ACL_RSE_TMP;
 		</sql>
 	</changeSet>
+	
+	
+	<changeSet id="tm-1.13.1-feature-5265-1" author="bsiri">
+		<comment>
+			reworking table REQUIREMENT_SYNC_EXTENDER
+		</comment>
+	
+		<addColumn tableName="REQUIREMENT_SYNC_EXTENDER">
+			<column name="REMOTE_FILTER_NAME" type="java.sql.Types.VARCHAR(150)" remarks="name of a filter (not its ID)"/>
+		</addColumn>	
+		
+		<dropForeignKeyConstraint baseTableName="REQUIREMENT_SYNC_EXTENDER" constraintName="fk_sync_extender_bugtracker"/>
+		<renameColumn tableName="REQUIREMENT_SYNC_EXTENDER" oldColumnName="BUGTRACKER_ID" newColumnName="SERVER_ID"/>
+		
+		
+		<addForeignKeyConstraint constraintName="fk_sync_extender_server" baseTableName="REQUIREMENT_SYNC_EXTENDER"  baseColumnNames="SERVER_ID" 
+		 referencedTableName="BUGTRACKER" referencedColumnNames="BUGTRACKER_ID" onDelete="CASCADE"/>
+		 
+		 <dropForeignKeyConstraint baseTableName="REQUIREMENT_SYNC_EXTENDER" constraintName="fk_sync_extender_requirement"/>
+		 
+		<addForeignKeyConstraint constraintName="fk_sync_extender_requirement" baseTableName="REQUIREMENT_SYNC_EXTENDER"  baseColumnNames="REQUIREMENT_ID" 
+		 referencedTableName="REQUIREMENT" referencedColumnNames="RLN_ID" onDelete="CASCADE"/>
+		 
+	</changeSet>
+	
+	
+	<changeSet id="tm-1.13.1-feature-5265-2" author="bsiri">
+		<comment>
+			adding the column 'filter' to the requirement sync extender
+		</comment>
+	
+	</changeSet>
 
 </databaseChangeLog>
