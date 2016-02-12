@@ -20,25 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.hibernate.Query;
-import org.hibernate.type.EnumType;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.projectfilter.ProjectFilter;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository("CustomCustomReportLibraryNodeDao")
 public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDao<CustomReportLibraryNode> implements CustomCustomReportLibraryNodeDao {
@@ -53,7 +45,7 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 	@Override
 	public List<Long> findAllDescendantIds(List<Long> nodesIds) {
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
-		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		query.setParameterList("ids", nodesIds, LongType.INSTANCE);
 		return query.list();
 	}
 
@@ -61,19 +53,19 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 	@Override
 	public List<CustomReportLibraryNode> findAllDescendants(List<Long> nodesIds) {
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
-		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		query.setParameterList("ids", nodesIds, LongType.INSTANCE);
 		return query.list();
 	}
 
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds) {
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
-		query.setParameterList("ids", nodesIds,LongType.INSTANCE);
+		query.setParameterList("ids", nodesIds, LongType.INSTANCE);
 		return query.list();
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAncestorIds(Long nodeId) {
@@ -84,7 +76,7 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(Long nodeId) {
-		List<Long> ids = new ArrayList<Long>();
+		List<Long> ids = new ArrayList<>();
 		ids.add(nodeId);
 		return findAllFirstLevelDescendantIds(ids);
 	}
@@ -93,35 +85,35 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 	public List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds) {
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibraryFiltered");
 		query.setParameterList("filteredProjectsIds", projectIds, LongType.INSTANCE);
-		return query.list();
+		return (List<CustomReportLibraryNode>) query.list();
 	}
-	
+
 	@Override
 	public List<CustomReportLibraryNode> findAllConcreteLibraries() {
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
-		return query.list();
+		return (List<CustomReportLibraryNode>) query.list();
 	}
 
 	@Override
 	public CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity) {
 		final CustomReportTreeDefinition[] type = new CustomReportTreeDefinition[1];
 		TreeEntityVisitor visitor = new TreeEntityVisitor() {
-			
+
 			@Override
 			public void visit(ChartDefinition chartDefinition) {
 				type[0] = CustomReportTreeDefinition.CHART;
 			}
-			
+
 			@Override
 			public void visit(CustomReportDashboard crf) {
 				type[0] = CustomReportTreeDefinition.DASHBOARD;
 			}
-			
+
 			@Override
 			public void visit(CustomReportLibrary crl) {
 				type[0] = CustomReportTreeDefinition.LIBRARY;
 			}
-			
+
 			@Override
 			public void visit(CustomReportFolder crf) {
 				type[0] = CustomReportTreeDefinition.FOLDER;
@@ -131,8 +123,7 @@ public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDa
 		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findNodeFromEntity");
 		query.setParameter("entityType", type[0]);
 		query.setParameter("entityId", treeEntity.getId());
-		CustomReportLibraryNode uniqueResult =(CustomReportLibraryNode) query.uniqueResult();
-		return uniqueResult;
+		return (CustomReportLibraryNode) query.uniqueResult();
 	}
-	
+
 }

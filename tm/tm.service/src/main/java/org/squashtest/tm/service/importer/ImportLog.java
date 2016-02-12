@@ -49,7 +49,7 @@ public class ImportLog{
 
 	// key : EntityType, values : LogEntry
 	@SuppressWarnings("rawtypes")
-	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), TreeSet.class);
+	private MultiValueMap logEntriesPerType = MultiValueMap.decorate(new HashMap(), TreeSet.class); // NOSONAR actual collection type required
 
 	private int testCaseSuccesses = 0;
 	private int testCaseWarnings = 0;
@@ -127,7 +127,7 @@ public class ImportLog{
 	 */
 	public void packLogs(){
 
-		LinkedList<LogEntry> listiterableLogs = new LinkedList<LogEntry>(findAllFor(DATASET));
+		LinkedList<LogEntry> listiterableLogs = new LinkedList<>(findAllFor(DATASET));
 
 		Integer precLine = null;
 		boolean okFoundOnPrecEntry = false;
@@ -209,11 +209,11 @@ public class ImportLog{
 
 		if (! entries.isEmpty()){
 
-			boolean errors = false;
-			boolean warnings = false;
+			boolean errors;
+			boolean warnings;
 
 			Iterator<LogEntry> iter = entries.iterator();
-			Integer curLine = null;
+			Integer curLine;
 
 			LogEntry entry = iter.next();
 			Integer precLine = entry.getLine();	// we move the iterator forward purposedly

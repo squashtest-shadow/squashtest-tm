@@ -171,7 +171,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		List<? extends GenericProject> resultset = genericProjectDao.findAllWithTextProperty(type, filter);
 
 		// filter on permission
-		List<? extends GenericProject> securedResultset = new LinkedList<GenericProject>(resultset);
+		List<? extends GenericProject> securedResultset = new LinkedList<>(resultset);
 		CollectionUtils.filter(securedResultset, new IsManagerOnObject());
 
 		// Consolidate projects with additional information neeeded to do the
@@ -187,8 +187,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		securedResultset = extractProjectList(projects);
 
-		return new PagingBackedPagedCollectionHolder<List<GenericProject>>(sorting, listsize,
-				(List<GenericProject>) securedResultset);
+		return new PagingBackedPagedCollectionHolder<>(sorting, listsize,
+			(List<GenericProject>) securedResultset);
 
 	}
 
@@ -365,7 +365,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	}
 
 	private void checkTAProjectNames(Collection<TestAutomationProject> taProjects, long projectId) {
-		List<DuplicateTMLabelException> dnes = new ArrayList<DuplicateTMLabelException>();
+		List<DuplicateTMLabelException> dnes = new ArrayList<>();
 		List<String> taProjectNames = genericProjectDao.findBoundTestAutomationProjectLabels(projectId);
 		for (TestAutomationProject taProject : taProjects) {
 			try {
@@ -510,7 +510,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		if (binding != null) {
 			return binding.getProperties();
 		} else {
-			return new HashMap<String, String>();
+			return new HashMap<>();
 		}
 	}
 
@@ -550,7 +550,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
 
-		Set<ExecutionStatus> statuses = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> statuses = new HashSet<>();
 		statuses.addAll(Arrays.asList(ExecutionStatus.values()));
 
 		Set<ExecutionStatus> disabledStatuses = project.getCampaignLibrary().getDisabledStatuses();
@@ -610,7 +610,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	 */
 	private List<GenericProject> extractProjectList(final List<ProjectForCustomCompare> projects) {
 
-		List<GenericProject> liste = new LinkedList<GenericProject>();
+		List<GenericProject> liste = new LinkedList<>();
 
 		for (final ProjectForCustomCompare project : projects) {
 			liste.add(project.getGenericProject());
@@ -629,7 +629,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	 */
 	private List<ProjectForCustomCompare> consolidateProjects(final List<? extends GenericProject> projects) {
 
-		List<ProjectForCustomCompare> consolidatedProjects = new LinkedList<ProjectForCustomCompare>();
+		List<ProjectForCustomCompare> consolidatedProjects = new LinkedList<>();
 
 		for (final GenericProject project : projects) {
 
@@ -682,12 +682,12 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		GenericProject firstProject = o1.getGenericProject();
 		GenericProject secondProject = o2.getGenericProject();
 
-		AuditableMixin firstAudit = firstProject;
-		AuditableMixin secondAudit = secondProject;
+		AuditableMixin firstAudit = (AuditableMixin) firstProject;
+		AuditableMixin secondAudit = (AuditableMixin) secondProject;
 		for (final Sorting sorting : sorter.getSortings()) {
 
-			Object first = null;
-			Object second = null;
+			Object first;
+			Object second;
 			String sortingAttribute = sorting.getSortedAttribute();
 
 			switch (sortingAttribute) {
@@ -820,7 +820,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 
 	private List<Milestone> getOnlyBindableMilestones(List<Milestone> milestones) {
-		List<Milestone> bindableMilestones = new ArrayList<Milestone>();
+		List<Milestone> bindableMilestones = new ArrayList<>();
 		for (Milestone m : milestones){
 			if (m.getStatus().isBindableToProject()){
 				bindableMilestones.add(m);

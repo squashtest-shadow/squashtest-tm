@@ -20,13 +20,8 @@
  */
 package org.squashtest.tm.service.internal.chart;
 
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.hibernate.Session;
@@ -35,13 +30,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.ColumnPrototype;
-import org.squashtest.tm.domain.chart.ColumnRole;
-import org.squashtest.tm.domain.chart.ColumnType;
-import org.squashtest.tm.domain.chart.DataType;
-import org.squashtest.tm.domain.chart.QColumnPrototype;
-import org.squashtest.tm.domain.chart.QFilter;
-import org.squashtest.tm.domain.chart.SpecializedEntityType;
+import org.squashtest.tm.domain.chart.*;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
@@ -52,13 +41,16 @@ import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 
-import com.querydsl.jpa.hibernate.HibernateQuery;
-import com.querydsl.jpa.hibernate.HibernateQueryFactory;
+import javax.inject.Inject;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
 
 
 /*
  * COMMENTING COLUMN PROTOTYPE HANDLING BECAUSE OUT OF SCOPE OF 1.13
- * RE-ACTIVATE WHEN DEV OF 1.14 BEGINS 
+ * RE-ACTIVATE WHEN DEV OF 1.14 BEGINS
  */
 //@Service
 public class ColumnPrototypeModification implements ApplicationListener<ColumnPrototypeEvent> {
@@ -113,17 +105,17 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		List<ColumnPrototype> prototypes = (List<ColumnPrototype>) query.fetch();
 
 		for (ColumnPrototype prototype : prototypes) {
-		prototype.setAttributeName(newCode);
-		prototype.setLabel(getColumnLabel(newCode, prototype.getEntityType()));
-		session().update(prototype);
+			prototype.setAttributeName(newCode);
+			prototype.setLabel(getColumnLabel(newCode, prototype.getEntityType()));
+			session().update(prototype);
 		}
 	}
 
 	private MultiValueMap<Long, CustomFieldBinding> populateBindingByCufId(List<Long> cufBindingIds) {
-		
+
 		List<CustomFieldBinding> bindings = cufBindingDao.findAllByIds(cufBindingIds);
 
-		MultiValueMap<Long, CustomFieldBinding> bindingByCufId = new LinkedMultiValueMap<Long, CustomFieldBinding>();
+		MultiValueMap<Long, CustomFieldBinding> bindingByCufId = new LinkedMultiValueMap<>();
 
 		for (CustomFieldBinding binding : bindings) {
 			Long id = binding.getCustomField().getId();
@@ -134,10 +126,10 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 
 
 	private void handleCUFBindingDeleteEvent(List<Long> cufBindingIds) {
-		
+
 		if (!cufBindingIds.isEmpty()) {
-		MultiValueMap<Long, CustomFieldBinding> bindingByCufId = populateBindingByCufId(cufBindingIds);
-		removeColumnPrototypes(bindingByCufId.entrySet());
+			MultiValueMap<Long, CustomFieldBinding> bindingByCufId = populateBindingByCufId(cufBindingIds);
+			removeColumnPrototypes(bindingByCufId.entrySet());
 		}
 	}
 
@@ -148,7 +140,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		allBinding.removeAll(entry.getValue());
 
 		Set<EntityType> remainingType = CollectionUtils.isEmpty(allBinding) ? EnumSet.noneOf(EntityType.class)
-				: EnumSet.copyOf(CollectionUtils.collect(allBinding, TYPE_COLLECTOR));
+			: EnumSet.copyOf(CollectionUtils.collect(allBinding, TYPE_COLLECTOR));
 
 		Set<EntityType> typeToRemove = EnumSet.copyOf(CollectionUtils.collect(entry.getValue(), TYPE_COLLECTOR));
 
@@ -158,13 +150,12 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	}
 
 	private void removeColumnPrototypes(Set<Entry<Long, List<CustomFieldBinding>>> entrySet) {
-		
+
 		for (Entry<Long, List<CustomFieldBinding>> entry : entrySet) {
 			removeColumnPrototype(entry);
 		}
 
 	}
-
 
 
 	private void removeColumnPrototype(Entry<Long, List<CustomFieldBinding>> entry) {
@@ -204,22 +195,22 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		DataType dataType;
 
 		switch (inputType) {
-		case CHECKBOX:
-			dataType = DataType.BOOLEAN;
-			break;
-		case DATE_PICKER:
-			dataType = DataType.DATE;
-			break;
-		case DROPDOWN_LIST:
-			dataType = DataType.LIST;
-			break;
-		case PLAIN_TEXT:
-		case RICH_TEXT:
-			dataType = DataType.STRING;
-			break;
-		case TAG:
-		default:
-			throw new IllegalArgumentException(inputType + "not yet supported");
+			case CHECKBOX:
+				dataType = DataType.BOOLEAN;
+				break;
+			case DATE_PICKER:
+				dataType = DataType.DATE;
+				break;
+			case DROPDOWN_LIST:
+				dataType = DataType.LIST;
+				break;
+			case PLAIN_TEXT:
+			case RICH_TEXT:
+				dataType = DataType.STRING;
+				break;
+			case TAG:
+			default:
+				throw new IllegalArgumentException(inputType + "not yet supported");
 		}
 
 		return dataType;
@@ -239,13 +230,13 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		Set<ColumnRole> roles = EnumSet.of(ColumnRole.FILTER);
 
 		ColumnPrototype newProto = new ColumnPrototype(label, entityType, dataType, ColumnType.CUF, null, code, true,
-				roles);
+			roles);
 		session().persist(newProto);
 
 	}
 
 	private String getColumnLabel(String code, EntityType type) {
-		return new StringBuilder().append(type).append("_CUF_").append(code).toString();
+		return String.valueOf(type) + "_CUF_" + code;
 	}
 
 	private boolean cufIsNotSupported(InputType inputType) {
@@ -253,25 +244,24 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		boolean result;
 
 		switch (inputType) {
-		case CHECKBOX:
-		case DATE_PICKER:
-		case DROPDOWN_LIST:
-		case PLAIN_TEXT:
-		case RICH_TEXT:
-			result = false;
-			break;
-		case TAG:
-		default:
-			result = true;
-			break;
+			case CHECKBOX:
+			case DATE_PICKER:
+			case DROPDOWN_LIST:
+			case PLAIN_TEXT:
+			case RICH_TEXT:
+				result = false;
+				break;
+			case TAG:
+			default:
+				result = true;
+				break;
 		}
 		return result;
 	}
 
 	private HibernateQuery<?> createBaseQuery() {
 		HibernateQueryFactory factory = new HibernateQueryFactory(session());
-		HibernateQuery<?> query = factory.from(PROTOTYPE).where(PROTOTYPE.columnType.eq(ColumnType.CUF));
-		return query;
+		return factory.from(PROTOTYPE).where(PROTOTYPE.columnType.eq(ColumnType.CUF));
 	}
 
 	private void deleteFilterForColumn(ColumnPrototype column) {
@@ -290,6 +280,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	private void addTypeToQuery(HibernateQuery<?> query, EntityType type) {
 		query.where(PROTOTYPE.specializedType.entityType.eq(type));
 	}
+
 	private Session session() {
 		return sessionFactory.getCurrentSession();
 	}

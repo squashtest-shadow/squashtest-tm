@@ -93,12 +93,12 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
 public class VerifiedRequirementsManagerServiceImpl implements
-		VerifiedRequirementsManagerService {
+	VerifiedRequirementsManagerService {
 
 	private static final Logger LOGGER = LoggerFactory
-			.getLogger(VerifiedRequirementsManagerServiceImpl.class);
+		.getLogger(VerifiedRequirementsManagerServiceImpl.class);
 	private static final String LINK_TC_OR_ROLE_ADMIN = "hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'LINK')"
-			+ OR_HAS_ROLE_ADMIN;
+		+ OR_HAS_ROLE_ADMIN;
 
 	@Inject
 	private TestCaseDao testCaseDao;
@@ -129,10 +129,10 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Inject
 	private IterationDao iterationDao;
-	
+
 	@Inject
 	private ExecutionStepDao executionStepDao;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
@@ -143,25 +143,25 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(
-			List<Long> requirementsIds, long testCaseId,
-			Milestone activeMilestone) {
+		List<Long> requirementsIds, long testCaseId,
+		Milestone activeMilestone) {
 
 		List<RequirementVersion> requirementVersions = findRequirementVersions(
-				requirementsIds, activeMilestone);
+			requirementsIds, activeMilestone);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (!requirementVersions.isEmpty()) {
 			return doAddVerifyingRequirementVersionsToTestCase(
-					requirementVersions, testCase);
+				requirementVersions, testCase);
 		}
 		return Collections.emptyList();
 	}
 
 	private List<RequirementVersion> extractVersions(
-			List<Requirement> requirements, Milestone activeMilestone) {
+		List<Requirement> requirements, Milestone activeMilestone) {
 
-		List<RequirementVersion> rvs = new ArrayList<RequirementVersion>(
-				requirements.size());
+		List<RequirementVersion> rvs = new ArrayList<>(
+			requirements.size());
 		for (Requirement requirement : requirements) {
 
 			// normal mode
@@ -180,13 +180,13 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public void removeVerifiedRequirementVersionsFromTestCase(
-			List<Long> requirementVersionsIds, long testCaseId) {
+		List<Long> requirementVersionsIds, long testCaseId) {
 
 		if (!requirementVersionsIds.isEmpty()) {
 
 			List<RequirementVersionCoverage> requirementVersionCoverages = requirementVersionCoverageDao
-					.byTestCaseAndRequirementVersions(requirementVersionsIds,
-							testCaseId);
+				.byTestCaseAndRequirementVersions(requirementVersionsIds,
+					testCaseId);
 
 			for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 				requirementVersionCoverageDao.delete(coverage);
@@ -194,96 +194,96 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 			indexationService.reindexTestCase(testCaseId);
 			indexationService
-					.reindexRequirementVersionsByIds(requirementVersionsIds);
+				.reindexRequirementVersionsByIds(requirementVersionsIds);
 
 			testCaseImportanceManagerService
-					.changeImportanceIfRelationsRemovedFromTestCase(
-							requirementVersionsIds, testCaseId);
+				.changeImportanceIfRelationsRemovedFromTestCase(
+					requirementVersionsIds, testCaseId);
 		}
 	}
 
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public void removeVerifiedRequirementVersionFromTestCase(
-			long requirementVersionId, long testCaseId) {
+		long requirementVersionId, long testCaseId) {
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao
-				.byRequirementVersionAndTestCase(requirementVersionId,
-						testCaseId);
+			.byRequirementVersionAndTestCase(requirementVersionId,
+				testCaseId);
 
 		requirementVersionCoverageDao.delete(coverage);
 
 		indexationService.reindexTestCase(testCaseId);
 		indexationService.reindexRequirementVersion(requirementVersionId);
 		testCaseImportanceManagerService
-				.changeImportanceIfRelationsRemovedFromTestCase(
-						Arrays.asList(requirementVersionId), testCaseId);
+			.changeImportanceIfRelationsRemovedFromTestCase(
+				Arrays.asList(requirementVersionId), testCaseId);
 	}
 
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
 	public int changeVerifiedRequirementVersionOnTestCase(
-			long oldVerifiedRequirementVersionId,
-			long newVerifiedRequirementVersionId, long testCaseId) {
+		long oldVerifiedRequirementVersionId,
+		long newVerifiedRequirementVersionId, long testCaseId) {
 		RequirementVersion newReq = requirementVersionDao
-				.findById(newVerifiedRequirementVersionId);
+			.findById(newVerifiedRequirementVersionId);
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao
-				.byRequirementVersionAndTestCase(
-						oldVerifiedRequirementVersionId, testCaseId);
+			.byRequirementVersionAndTestCase(
+				oldVerifiedRequirementVersionId, testCaseId);
 		coverage.setVerifiedRequirementVersion(newReq);
 		indexationService.reindexTestCase(testCaseId);
 		indexationService
-				.reindexRequirementVersion(oldVerifiedRequirementVersionId);
+			.reindexRequirementVersion(oldVerifiedRequirementVersionId);
 		indexationService
-				.reindexRequirementVersion(oldVerifiedRequirementVersionId);
+			.reindexRequirementVersion(oldVerifiedRequirementVersionId);
 		testCaseImportanceManagerService
-				.changeImportanceIfRelationsRemovedFromTestCase(
-						Arrays.asList(newVerifiedRequirementVersionId),
-						testCaseId);
+			.changeImportanceIfRelationsRemovedFromTestCase(
+				Arrays.asList(newVerifiedRequirementVersionId),
+				testCaseId);
 
 		return newReq.getVersionNumber();
 	}
 
 	/*
 	 * regarding the @PreAuthorize for the verified requirements :
-	 * 
+	 *
 	 * I prefer to show all the requirements that the test case refers to even
 	 * if some of those requirements belongs to a project the current user
 	 * cannot "read", rather post filtering it.
-	 * 
+	 *
 	 * The reason for that is that such policy is impractical for the same
 	 * problem in the context of Iteration-TestCase associations : filtering the
 	 * test cases wouldn't make much sense and would lead to partial executions
 	 * of a campaign.
-	 * 
+	 *
 	 * Henceforth the same policy applies to other cases of possible
 	 * inter-project associations (like TestCase-Requirement associations in the
 	 * present case), for the sake of coherence.
-	 * 
+	 *
 	 * @author bsiri
-	 * 
+	 *
 	 * (non-Javadoc)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'READ')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestCaseId(
-			long testCaseId, PagingAndSorting pagingAndSorting) {
+		long testCaseId, PagingAndSorting pagingAndSorting) {
 		List<RequirementVersionCoverage> reqVersionCoverages = requirementVersionCoverageDao
-				.findAllByTestCaseId(testCaseId, pagingAndSorting);
+			.findAllByTestCaseId(testCaseId, pagingAndSorting);
 		long verifiedCount = requirementVersionCoverageDao
-				.numberByTestCase(testCaseId);
-		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(
-				pagingAndSorting, verifiedCount,
-				convertInDirectlyVerified(reqVersionCoverages));
+			.numberByTestCase(testCaseId);
+		return new PagingBackedPagedCollectionHolder<>(
+			pagingAndSorting, verifiedCount,
+			convertInDirectlyVerified(reqVersionCoverages));
 	}
 
 	private List<VerifiedRequirement> convertInDirectlyVerified(
-			List<RequirementVersionCoverage> reqVersionCoverages) {
-		List<VerifiedRequirement> result = new ArrayList<VerifiedRequirement>(
-				reqVersionCoverages.size());
+		List<RequirementVersionCoverage> reqVersionCoverages) {
+		List<VerifiedRequirement> result = new ArrayList<>(
+			reqVersionCoverages.size());
 		for (RequirementVersionCoverage rvc : reqVersionCoverages) {
 			VerifiedRequirement convertionResult = new VerifiedRequirement(rvc,
-					true).withVerifyingStepsFrom(rvc.getVerifyingTestCase());
+				true).withVerifyingStepsFrom(rvc.getVerifyingTestCase());
 			result.add(convertionResult);
 		}
 		return result;
@@ -291,14 +291,14 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Override
 	public Collection<VerifiedRequirementException> addVerifyingRequirementVersionsToTestCase(
-			Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase) {
-		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
+		Map<TestCase, List<RequirementVersion>> requirementVersionsByTestCase) {
+		Collection<VerifiedRequirementException> rejections = new ArrayList<>();
 		for (Entry<TestCase, List<RequirementVersion>> reqVsByTc : requirementVersionsByTestCase
-				.entrySet()) {
+			.entrySet()) {
 			TestCase testCase = reqVsByTc.getKey();
 			List<RequirementVersion> requirementVersions = reqVsByTc.getValue();
 			Collection<VerifiedRequirementException> entrtyRejections = doAddVerifyingRequirementVersionsToTestCase(
-					requirementVersions, testCase);
+				requirementVersions, testCase);
 			rejections.addAll(entrtyRejections);
 		}
 		return rejections;
@@ -306,18 +306,18 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	private Collection<VerifiedRequirementException> doAddVerifyingRequirementVersionsToTestCase(
-			List<RequirementVersion> requirementVersions, TestCase testCase) {
-		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
+		List<RequirementVersion> requirementVersions, TestCase testCase) {
+		Collection<VerifiedRequirementException> rejections = new ArrayList<>();
 		Iterator<RequirementVersion> iterator = requirementVersions.iterator();
 		while (iterator.hasNext()) {
 			RequirementVersion requirementVersion = iterator.next();
 			try {
 				RequirementVersionCoverage coverage = new RequirementVersionCoverage(
-						requirementVersion, testCase);
+					requirementVersion, testCase);
 				requirementVersionCoverageDao.persist(coverage);
 				indexationService.reindexTestCase(testCase.getId());
 				indexationService.reindexRequirementVersion(requirementVersion
-						.getId());
+					.getId());
 			} catch (RequirementAlreadyVerifiedException ex) {
 				LOGGER.warn(ex.getMessage());
 				rejections.add(ex);
@@ -329,39 +329,39 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			}
 		}
 		testCaseImportanceManagerService
-				.changeImportanceIfRelationsAddedToTestCase(
-						requirementVersions, testCase);
+			.changeImportanceIfRelationsAddedToTestCase(
+				requirementVersions, testCase);
 		return rejections;
 
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(
-			List<Long> requirementsIds, long testStepId,
-			Milestone activeMilestone) {
+		List<Long> requirementsIds, long testStepId,
+		Milestone activeMilestone) {
 		List<RequirementVersion> requirementVersions = findRequirementVersions(
-				requirementsIds, activeMilestone);
+			requirementsIds, activeMilestone);
 		// init rejections
-		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>();
+		Collection<VerifiedRequirementException> rejections = new ArrayList<>();
 		// check if list not empty
 		if (!requirementVersions.isEmpty()) {
 			// collect concerned entities
 			ActionTestStep step = testStepDao
-					.findActionTestStepById(testStepId);
+				.findActionTestStepById(testStepId);
 			TestCase testCase = step.getTestCase();
 			// iterate on requirement versions
 			Iterator<RequirementVersion> iterator = requirementVersions
-					.iterator();
+				.iterator();
 			while (iterator.hasNext()) {
 				try {
 					RequirementVersion requirementVersion = iterator.next();
 					PermissionsUtils.checkPermission(permissionService,
-							new SecurityCheckableObject(requirementVersion,
-									"LINK"));
+						new SecurityCheckableObject(requirementVersion,
+							"LINK"));
 					boolean newReqCoverage = addVerifiedRequirementVersionToTestStep(
-							requirementVersion, step, testCase);
+						requirementVersion, step, testCase);
 					if (!newReqCoverage) {
 						iterator.remove();
 					}
@@ -376,8 +376,8 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				}
 			}
 			testCaseImportanceManagerService
-					.changeImportanceIfRelationsAddedToTestCase(
-							requirementVersions, testCase);
+				.changeImportanceIfRelationsAddedToTestCase(
+					requirementVersions, testCase);
 
 		}
 		return rejections;
@@ -387,26 +387,26 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * Will find the RequirementVersionCoverage for the given requirement
 	 * version and test case to add the step to it. If not found, will create a
 	 * new RequirementVersionCoverage for the test case and add the step to it.<br>
-	 * 
+	 *
 	 * @param step
 	 * @param testCase
 	 * @return true if a new RequirementVersionCoverage has been created.
 	 */
 	private boolean addVerifiedRequirementVersionToTestStep(
-			RequirementVersion requirementVersion, ActionTestStep step,
-			TestCase testCase) {
+		RequirementVersion requirementVersion, ActionTestStep step,
+		TestCase testCase) {
 
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao
-				.byRequirementVersionAndTestCase(requirementVersion.getId(),
-						testCase.getId());
+			.byRequirementVersionAndTestCase(requirementVersion.getId(),
+				testCase.getId());
 		if (coverage == null) {
 			RequirementVersionCoverage newCoverage = new RequirementVersionCoverage(
-					requirementVersion, testCase);
+				requirementVersion, testCase);
 			newCoverage.addAllVerifyingSteps(Arrays.asList(step));
 			requirementVersionCoverageDao.persist(newCoverage);
 			indexationService.reindexTestCase(testCase.getId());
 			indexationService.reindexRequirementVersion(requirementVersion
-					.getId());
+				.getId());
 			return true;
 		} else {
 			coverage.addAllVerifyingSteps(Arrays.asList(step));
@@ -421,26 +421,26 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK') and hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion' , 'LINK')"
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementVersionToTestStep(
-			long requirementVersionId, long testStepId) {
+		long requirementVersionId, long testStepId) {
 		ActionTestStep step = testStepDao.findActionTestStepById(testStepId);
 		TestCase testCase = step.getTestCase();
 		RequirementVersion version = requirementVersionDao
-				.findById(requirementVersionId);
-		Collection<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(
-				1);
+			.findById(requirementVersionId);
+		Collection<VerifiedRequirementException> rejections = new ArrayList<>(
+			1);
 		if (version == null) {
 			throw new UnknownEntityException(requirementVersionId,
-					RequirementVersion.class);
+				RequirementVersion.class);
 		}
 		try {
 			boolean newRequirementCoverageCreated = addVerifiedRequirementVersionToTestStep(
-					version, step, testCase);
+				version, step, testCase);
 			if (newRequirementCoverageCreated) {
 				testCaseImportanceManagerService
-						.changeImportanceIfRelationsAddedToTestCase(
-								Arrays.asList(version), testCase);
+					.changeImportanceIfRelationsAddedToTestCase(
+						Arrays.asList(version), testCase);
 			}
 		} catch (RequirementAlreadyVerifiedException ex) {
 			LOGGER.warn(ex.getMessage());
@@ -453,14 +453,14 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	private List<RequirementVersion> findRequirementVersions(
-			List<Long> requirementsIds, Milestone activeMilestone) {
+		List<Long> requirementsIds, Milestone activeMilestone) {
 
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao
-				.findAllByIds(requirementsIds);
+			.findAllByIds(requirementsIds);
 
 		if (!nodes.isEmpty()) {
 			List<Requirement> requirements = new RequirementNodeWalker()
-					.walk(nodes);
+				.walk(nodes);
 			if (!requirements.isEmpty()) {
 				return extractVersions(requirements, activeMilestone);
 			}
@@ -471,55 +471,55 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@Override
 	@Transactional(readOnly = true)
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllVerifiedRequirementsByTestCaseId(
-			long testCaseId, PagingAndSorting pas) {
+		long testCaseId, PagingAndSorting pas) {
 
 		LOGGER.debug("Looking for verified requirements of TestCase[id:{}]",
-				testCaseId);
+			testCaseId);
 
 		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
 
 		calleesIds.add(testCaseId);
 
 		LOGGER.debug("Fetching Requirements verified by TestCases {}",
-				calleesIds.toString());
+			calleesIds.toString());
 
 		List<RequirementVersion> pagedVersionVerifiedByCalles = requirementVersionCoverageDao
-				.findDistinctRequirementVersionsByTestCases(calleesIds, pas);
+			.findDistinctRequirementVersionsByTestCases(calleesIds, pas);
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
 		List<VerifiedRequirement> pagedVerifiedReqs = buildVerifiedRequirementList(
-				mainTestCase, pagedVersionVerifiedByCalles);
+			mainTestCase, pagedVersionVerifiedByCalles);
 
 		long totalVerified = requirementVersionCoverageDao
-				.numberDistinctVerifiedByTestCases(calleesIds);
+			.numberDistinctVerifiedByTestCases(calleesIds);
 
 		LOGGER.debug("Total count of verified requirements : {}", totalVerified);
 
-		return new PagingBackedPagedCollectionHolder<List<VerifiedRequirement>>(
-				pas, totalVerified, pagedVerifiedReqs);
+		return new PagingBackedPagedCollectionHolder<>(
+			pas, totalVerified, pagedVerifiedReqs);
 	}
 
 	@Override
 	public List<VerifiedRequirement> findAllVerifiedRequirementsByTestCaseId(
-			long testCaseId) {
+		long testCaseId) {
 		LOGGER.debug("Looking for verified requirements of TestCase[id:{}]",
-				testCaseId);
+			testCaseId);
 
 		Set<Long> calleesIds = callTreeFinder.getTestCaseCallTree(testCaseId);
 
 		calleesIds.add(testCaseId);
 
 		LOGGER.debug("Fetching Requirements verified by TestCases {}",
-				calleesIds.toString());
+			calleesIds.toString());
 
 		List<RequirementVersion> pagedVersionVerifiedByCalles = requirementVersionCoverageDao
-				.findDistinctRequirementVersionsByTestCases(calleesIds);
+			.findDistinctRequirementVersionsByTestCases(calleesIds);
 
 		TestCase mainTestCase = testCaseDao.findById(testCaseId);
 
 		return buildVerifiedRequirementList(mainTestCase,
-				pagedVersionVerifiedByCalles);
+			pagedVersionVerifiedByCalles);
 	}
 
 	/**
@@ -528,11 +528,11 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 */
 	@Override
 	public Map<Long, Boolean> findisReqCoveredOfCallingTCWhenisReqCoveredChanged(
-			long updatedTestCaseId, Collection<Long> toUpdateIds) {
+		long updatedTestCaseId, Collection<Long> toUpdateIds) {
 		Map<Long, Boolean> result;
-		result = new HashMap<Long, Boolean>(toUpdateIds.size());
+		result = new HashMap<>(toUpdateIds.size());
 		if (testCaseHasDirectCoverage(updatedTestCaseId)
-				|| testCaseHasUndirectRequirementCoverage(updatedTestCaseId)) {
+			|| testCaseHasUndirectRequirementCoverage(updatedTestCaseId)) {
 			// set isReqCovered = true for all calling test cases
 			for (Long id : toUpdateIds) {
 				result.put(id, Boolean.TRUE);
@@ -541,7 +541,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			// check each calling testCase to see if their status changed
 			for (Long id : toUpdateIds) {
 				Boolean value = testCaseHasDirectCoverage(id)
-						|| testCaseHasUndirectRequirementCoverage(id);
+					|| testCaseHasUndirectRequirementCoverage(id);
 				result.put(id, value);
 			}
 		}
@@ -555,11 +555,11 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@Override
 	public boolean testCaseHasUndirectRequirementCoverage(long updatedTestCaseId) {
 		List<Long> calledTestCaseIds = testCaseDao
-				.findAllDistinctTestCasesIdsCalledByTestCase(updatedTestCaseId);
+			.findAllDistinctTestCasesIdsCalledByTestCase(updatedTestCaseId);
 		if (!calledTestCaseIds.isEmpty()) {
 			for (Long id : calledTestCaseIds) {
 				if (testCaseHasDirectCoverage(id)
-						|| testCaseHasUndirectRequirementCoverage(id)) {
+					|| testCaseHasUndirectRequirementCoverage(id)) {
 					return true;
 				}
 			}
@@ -576,16 +576,16 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	private List<VerifiedRequirement> buildVerifiedRequirementList(
-			final TestCase main,
-			List<RequirementVersion> pagedVersionVerifiedByCalles) {
+		final TestCase main,
+		List<RequirementVersion> pagedVersionVerifiedByCalles) {
 
-		List<VerifiedRequirement> toReturn = new ArrayList<VerifiedRequirement>(
-				pagedVersionVerifiedByCalles.size());
+		List<VerifiedRequirement> toReturn = new ArrayList<>(
+			pagedVersionVerifiedByCalles.size());
 
 		for (RequirementVersion rVersion : pagedVersionVerifiedByCalles) {
 			boolean isDirect = main.verifies(rVersion);
 			toReturn.add(new VerifiedRequirement(rVersion, isDirect)
-					.withVerifyingStepsFrom(main));
+				.withVerifyingStepsFrom(main));
 		}
 
 		return toReturn;
@@ -593,15 +593,15 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Override
 	public PagedCollectionHolder<List<VerifiedRequirement>> findAllDirectlyVerifiedRequirementsByTestStepId(
-			long testStepId, PagingAndSorting paging) {
+		long testStepId, PagingAndSorting paging) {
 		TestStep step = testStepDao.findById(testStepId);
 		return findAllDirectlyVerifiedRequirementsByTestCaseId(step
-				.getTestCase().getId(), paging);
+			.getTestCase().getId(), paging);
 	}
 
 	@Override
 	public void removeVerifiedRequirementVersionsFromTestStep(
-			List<Long> requirementVersionsIds, long testStepId) {
+		List<Long> requirementVersionsIds, long testStepId) {
 		/*
 		 * List<RequirementVersionCoverage> coverages =
 		 * requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
@@ -609,8 +609,8 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		 * coverage : coverages) { coverage.removeVerifyingStep(testStepId); }
 		 */
 		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao
-				.byRequirementVersionsAndTestStep(requirementVersionsIds,
-						testStepId);
+			.byRequirementVersionsAndTestStep(requirementVersionsIds,
+				testStepId);
 
 		// if cast exception well, the input were wrong and the thread was bound
 		// to grind to halt.
@@ -623,26 +623,26 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Override
 	public void findCoverageStat(Long requirementVersionId,
-			Milestone currentMilestone, List<Long> iterationsIds, RequirementCoverageStat stats) {
+								 Milestone currentMilestone, List<Long> iterationsIds, RequirementCoverageStat stats) {
 
 		RequirementVersion mainVersion = requirementVersionDao.findById(requirementVersionId);
 		Requirement mainRequirement = mainVersion.getRequirement();
-		List<RequirementVersion> descendants = findValidDescendants(mainRequirement,currentMilestone);
-		findCoverageRate(mainRequirement,mainVersion,descendants,stats);
+		List<RequirementVersion> descendants = findValidDescendants(mainRequirement, currentMilestone);
+		findCoverageRate(mainRequirement, mainVersion, descendants, stats);
 		//if we have a valid perimeter (ie iteration(s)), we'll have to calculate verification and validation rates
 		if (iterationsIds.size() > 0) {
-			checkPerimeter(iterationsIds,stats);
+			checkPerimeter(iterationsIds, stats);
 			if (!stats.isCorruptedPerimeter()) {
-				findExecutionRate(mainRequirement,mainVersion,descendants,stats,iterationsIds);
+				findExecutionRate(mainRequirement, mainVersion, descendants, stats, iterationsIds);
 			}
 		}
 		stats.convertRatesToPercent();
 	}
 
 	private void checkPerimeter(List<Long> iterationsIds,
-			RequirementCoverageStat stats) {
+								RequirementCoverageStat stats) {
 		List<Iteration> iterations = iterationDao.findAllByIds(iterationsIds);
-		if (iterations.size()!=iterationsIds.size()) {
+		if (iterations.size() != iterationsIds.size()) {
 			stats.setCorruptedPerimeter(true);
 		}
 	}
@@ -653,7 +653,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * Constraints from specification Feat 4434 :
 	 * <code>
 	 * <ul>
-	 * <li>Requirement without linked {@link TestStep} must be treated at {@link Execution} level, for last execution. 
+	 * <li>Requirement without linked {@link TestStep} must be treated at {@link Execution} level, for last execution.
 	 * We must also include fast pass so we take the {@link IterationTestPlanItem} status</li>
 	 * <li>Requirement with linked {@link TestStep} must be treated at {@link ExecutionStep} level</li>
 	 * <li>Only last execution must be considered for a given {@link IterationTestPlanItem}</li>
@@ -669,42 +669,42 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @param iterationsIds
 	 */
 	private void findExecutionRate(Requirement mainRequirement,
-			RequirementVersion mainVersion,
-			List<RequirementVersion> descendants,
-			RequirementCoverageStat stats, List<Long> iterationsIds) {
-		boolean hasDescendant = descendants.size()>0;
+								   RequirementVersion mainVersion,
+								   List<RequirementVersion> descendants,
+								   RequirementCoverageStat stats, List<Long> iterationsIds) {
+		boolean hasDescendant = descendants.size() > 0;
 		Rate verificationRate = new Rate();
 		Rate validationRate = new Rate();
-		
+
 		//see http://javadude.com/articles/passbyvalue.htm to understand why an array (or any object) is needed here
 		Long[] mainUntestedElementsCount = new Long[]{0L};
-		Map<ExecutionStatus, Long> mainStatusMap = new HashMap<ExecutionStatus, Long>();
+		Map<ExecutionStatus, Long> mainStatusMap = new HashMap<>();
 		makeStatusMap(mainVersion.getRequirementVersionCoverages(), mainUntestedElementsCount, mainStatusMap, iterationsIds);
 		verificationRate.setRequirementVersionRate(doRateVerifiedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
 		validationRate.setRequirementVersionRate(doRateValidatedCalculation(mainStatusMap, mainUntestedElementsCount[0]));
-		
+
 		if (hasDescendant) {
 			verificationRate.setAncestor(true);
 			validationRate.setAncestor(true);
 			Set<RequirementVersionCoverage> descendantCoverages = getDescendantCoverages(descendants);
 			Long[] descendantUntestedElementsCount = new Long[]{0L};
-			Map<ExecutionStatus, Long> descendantStatusMap = new HashMap<ExecutionStatus, Long>();
+			Map<ExecutionStatus, Long> descendantStatusMap = new HashMap<>();
 			makeStatusMap(descendantCoverages, descendantUntestedElementsCount, descendantStatusMap, iterationsIds);
 			verificationRate.setRequirementVersionChildrenRate(doRateVerifiedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
 			validationRate.setRequirementVersionChildrenRate(doRateValidatedCalculation(descendantStatusMap, descendantUntestedElementsCount[0]));
-			
+
 			Long[] allUntestedElementsCount = new Long[]{0L};
 			allUntestedElementsCount[0] = mainUntestedElementsCount[0] + descendantUntestedElementsCount[0];
-			Map<ExecutionStatus, Long> allStatusMap = mergeMapResult(mainStatusMap,descendantStatusMap);
+			Map<ExecutionStatus, Long> allStatusMap = mergeMapResult(mainStatusMap, descendantStatusMap);
 			verificationRate.setRequirementVersionGlobalRate(doRateVerifiedCalculation(allStatusMap, allUntestedElementsCount[0]));
 			validationRate.setRequirementVersionGlobalRate(doRateValidatedCalculation(allStatusMap, allUntestedElementsCount[0]));
 		}
-		
+
 		stats.addRate("verification", verificationRate);
 		stats.addRate("validation", validationRate);
 	}
 
-	
+
 	/**
 	 * Return a merged map. For each {@link ExecutionStatus}, the returned value is the value in map1 + value in map 2.
 	 * The state of the two arguments maps is preserved
@@ -713,9 +713,9 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @return
 	 */
 	private Map<ExecutionStatus, Long> mergeMapResult(
-			Map<ExecutionStatus, Long> mainStatusMap,
-			Map<ExecutionStatus, Long> descendantStatusMap) {
-		Map<ExecutionStatus, Long> mergedStatusMap = new HashMap<ExecutionStatus, Long>();
+		Map<ExecutionStatus, Long> mainStatusMap,
+		Map<ExecutionStatus, Long> descendantStatusMap) {
+		Map<ExecutionStatus, Long> mergedStatusMap = new HashMap<>();
 		EnumSet<ExecutionStatus> allStatus = EnumSet.allOf(ExecutionStatus.class);
 		for (ExecutionStatus executionStatus : allStatus) {
 			Long mainCount = mainStatusMap.get(executionStatus) == null ? 0 : mainStatusMap.get(executionStatus);
@@ -725,22 +725,22 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		}
 		return mergedStatusMap;
 	}
-	
+
 	/**
 	 * As above but with no return. The second map is merged into the first map, witch orginal state is lost
 	 * @param statusMap
 	 * @param statusMapToMerge
 	 */
 	private void fusionMapResult(Map<ExecutionStatus, Long> statusMap,
-			Map<ExecutionStatus, Long> statusMapToMerge) {
-		Set<ExecutionStatus> keySetToMerge = statusMapToMerge.keySet();
-		for (ExecutionStatus executionStatus : keySetToMerge) {
+								 Map<ExecutionStatus, Long> statusMapToMerge) {
+		for (Entry<ExecutionStatus, Long> mergeEntry : statusMapToMerge.entrySet()) {
+			ExecutionStatus executionStatus = mergeEntry.getKey();
 			Long originalValue = statusMap.get(executionStatus);
-			Long mergedValue = statusMapToMerge.get(executionStatus);
-			if (mergedValue!=null && originalValue==null) {
+			Long mergedValue = mergeEntry.getValue();
+			if (mergedValue != null && originalValue == null) {
 				statusMap.put(executionStatus, mergedValue);
 			}
-			if (mergedValue!=null && originalValue!=null) {
+			if (mergedValue != null && originalValue != null) {
 				statusMap.put(executionStatus, mergedValue + originalValue);
 			}
 		}
@@ -748,11 +748,11 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 
 	private Set<RequirementVersionCoverage> getDescendantCoverages(
-			List<RequirementVersion> descendants) {
-		Set<RequirementVersionCoverage> covs = new HashSet<RequirementVersionCoverage>();
+		List<RequirementVersion> descendants) {
+		Set<RequirementVersionCoverage> covs = new HashSet<>();
 		for (RequirementVersion requirementVersion : descendants) {
 			Set<RequirementVersionCoverage> coverages = requirementVersion.getRequirementVersionCoverages();
-			if (coverages.size()>0) {
+			if (coverages.size() > 0) {
 				covs.addAll(coverages);
 			}
 		}
@@ -760,67 +760,67 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	private List<Long> filterTCIds(List<Long> TCIds,
-			List<Long> tCWithItpiIds) {
-		List<Long> filtered = new ArrayList<Long>();
+								   List<Long> tCWithItpiIds) {
+		List<Long> filtered = new ArrayList<>();
 		filtered.addAll(TCIds);
 		filtered.removeAll(tCWithItpiIds);
 		return filtered;
 	}
 
 	private List<Long> convertSetToList(Map<Long, Long> nbSimpleCoverageByTestCase) {
-		List<Long> testCaseIds = new ArrayList<Long>();
+		List<Long> testCaseIds = new ArrayList<>();
 		testCaseIds.addAll(nbSimpleCoverageByTestCase.keySet());
 		return testCaseIds;
 	}
 
 	private List<Long> findTCWithItpi(
-			List<Long> tcIds,
-			List<Long> iterationsIds) {
-		return iterationDao.findVerifiedTcIdsInIterations(tcIds,iterationsIds);
+		List<Long> tcIds,
+		List<Long> iterationsIds) {
+		return iterationDao.findVerifiedTcIdsInIterations(tcIds, iterationsIds);
 	}
-	
-	private void makeStatusMap(Set<RequirementVersionCoverage> covs, 
-			Long[]untestedElementsCount, Map<ExecutionStatus, Long> statusMap, List<Long> iterationsIds){
-		List<RequirementVersionCoverage> simpleCoverage = new ArrayList<RequirementVersionCoverage>();
-		List<RequirementVersionCoverage> stepedCoverage = new ArrayList<RequirementVersionCoverage>();
-		Map<Long, Long> nbSimpleCoverageByTestCase = new HashMap<Long, Long>();
-		Map<Long, Long> nbSteppedCoverageByTestCase = new HashMap<Long, Long>();
-		partRequirementVersionCoverage(covs,simpleCoverage,stepedCoverage,nbSimpleCoverageByTestCase,nbSteppedCoverageByTestCase);
+
+	private void makeStatusMap(Set<RequirementVersionCoverage> covs,
+							   Long[] untestedElementsCount, Map<ExecutionStatus, Long> statusMap, List<Long> iterationsIds) {
+		List<RequirementVersionCoverage> simpleCoverage = new ArrayList<>();
+		List<RequirementVersionCoverage> stepedCoverage = new ArrayList<>();
+		Map<Long, Long> nbSimpleCoverageByTestCase = new HashMap<>();
+		Map<Long, Long> nbSteppedCoverageByTestCase = new HashMap<>();
+		partRequirementVersionCoverage(covs, simpleCoverage, stepedCoverage, nbSimpleCoverageByTestCase, nbSteppedCoverageByTestCase);
 		//Find the test case with at least one itpi
 		List<Long> simpleCoverageTCIds = convertSetToList(nbSimpleCoverageByTestCase);
-		List<Long> simpleTCWithItpiIds = findTCWithItpi(simpleCoverageTCIds,iterationsIds);
+		List<Long> simpleTCWithItpiIds = findTCWithItpi(simpleCoverageTCIds, iterationsIds);
 		//Filter to have the test case without itpi
-		List<Long> mainVersionTCWithoutItpiIds = filterTCIds(simpleCoverageTCIds,simpleTCWithItpiIds);
+		List<Long> mainVersionTCWithoutItpiIds = filterTCIds(simpleCoverageTCIds, simpleTCWithItpiIds);
 		Map<ExecutionStatus, Long> statusMapForSimple = findResultsForSimpleCoverage(simpleTCWithItpiIds, iterationsIds, nbSimpleCoverageByTestCase);
-		
+
 		//STEPPED
 		//we need : TC without ITPI -> untested, TC With ITPI but no execution -> treated like fastpass (ie the status of ITPI is applied to each stepped coverage),
 		//TC with execution -> treated at test step level
 		List<Long> steppedCoverageTCIds = convertSetToList(nbSteppedCoverageByTestCase);
 		List<Long> steppedCoverageTCIdsWithITPI = iterationDao.findVerifiedTcIdsInIterations(steppedCoverageTCIds, iterationsIds);
 		List<Long> steppedCoverageTCIdsWithExecution = iterationDao.findVerifiedTcIdsInIterationsWithExecution(steppedCoverageTCIds, iterationsIds);
-		List<Long> steppedCoverageTCIdsWithoutITPI = filterTCIds(steppedCoverageTCIds,steppedCoverageTCIdsWithITPI);
-		List<Long> steppedCoverageTCIdsWithoutExecution = filterTCIds(steppedCoverageTCIdsWithITPI,steppedCoverageTCIdsWithExecution);
-		
+		List<Long> steppedCoverageTCIdsWithoutITPI = filterTCIds(steppedCoverageTCIds, steppedCoverageTCIdsWithITPI);
+		List<Long> steppedCoverageTCIdsWithoutExecution = filterTCIds(steppedCoverageTCIdsWithITPI, steppedCoverageTCIdsWithExecution);
+
 		//TC With ITPI but no execution are treated like simple testcase
-		Map<ExecutionStatus, Long> statusMapForSteppedNoExecution = findResultsForSteppedCoverageWithoutExecution(stepedCoverage,steppedCoverageTCIdsWithoutExecution, iterationsIds, nbSteppedCoverageByTestCase);
-		untestedElementsCount[0] = calculateUntestedElementCount(mainVersionTCWithoutItpiIds,nbSimpleCoverageByTestCase, stepedCoverage, steppedCoverageTCIdsWithoutITPI);
-		Map<ExecutionStatus, Long> statusMapForSteppedWithExecution = findResultsForSteppedCoverageWithExecution(stepedCoverage,steppedCoverageTCIdsWithExecution, nbSteppedCoverageByTestCase);
-		
+		Map<ExecutionStatus, Long> statusMapForSteppedNoExecution = findResultsForSteppedCoverageWithoutExecution(stepedCoverage, steppedCoverageTCIdsWithoutExecution, iterationsIds, nbSteppedCoverageByTestCase);
+		untestedElementsCount[0] = calculateUntestedElementCount(mainVersionTCWithoutItpiIds, nbSimpleCoverageByTestCase, stepedCoverage, steppedCoverageTCIdsWithoutITPI);
+		Map<ExecutionStatus, Long> statusMapForSteppedWithExecution = findResultsForSteppedCoverageWithExecution(stepedCoverage, steppedCoverageTCIdsWithExecution, nbSteppedCoverageByTestCase);
+
 		//merging the three map of results
-		fusionMapResult(statusMap,statusMapForSimple);
-		fusionMapResult(statusMap,statusMapForSteppedNoExecution);
-		fusionMapResult(statusMap,statusMapForSteppedWithExecution);
+		fusionMapResult(statusMap, statusMapForSimple);
+		fusionMapResult(statusMap, statusMapForSteppedNoExecution);
+		fusionMapResult(statusMap, statusMapForSteppedWithExecution);
 	}
-	
-	
+
+
 	@SuppressWarnings("unchecked")
-	private Map<ExecutionStatus,Long> findResultsForSteppedCoverageWithoutExecution(
-			List<RequirementVersionCoverage> stepedCoverage, List<Long> testCaseIds,
-			List<Long> iterationsIds,
-			Map<Long, Long> nbSteppedCoverageByTestCase) {
+	private Map<ExecutionStatus, Long> findResultsForSteppedCoverageWithoutExecution(
+		List<RequirementVersionCoverage> stepedCoverage, List<Long> testCaseIds,
+		List<Long> iterationsIds,
+		Map<Long, Long> nbSteppedCoverageByTestCase) {
 		MultiMap testCaseExecutionStatus = iterationDao.findVerifiedITPI(testCaseIds, iterationsIds);
-		Map<ExecutionStatus,Long> result = new HashMap<ExecutionStatus, Long>();
+		Map<ExecutionStatus, Long> result = new HashMap<>();
 		for (RequirementVersionCoverage cov : stepedCoverage) {
 			Long tcId = cov.getVerifyingTestCase().getId();
 			List<TestCaseExecutionStatus> tcsStatus = (List<TestCaseExecutionStatus>) testCaseExecutionStatus.get(tcId);
@@ -835,10 +835,10 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	@SuppressWarnings("unchecked")
-	private Map<ExecutionStatus,Long> findResultsForSteppedCoverageWithExecution(
-			List<RequirementVersionCoverage> stepedCoverage, List<Long> mainVersionTCWithItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
-		List<Long> testStepsIds = new ArrayList<Long>();
-		Map<ExecutionStatus,Long> result = new HashMap<ExecutionStatus, Long>();
+	private Map<ExecutionStatus, Long> findResultsForSteppedCoverageWithExecution(
+		List<RequirementVersionCoverage> stepedCoverage, List<Long> mainVersionTCWithItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
+		List<Long> testStepsIds = new ArrayList<>();
+		Map<ExecutionStatus, Long> result = new HashMap<>();
 		//First we compute all testStep id in a list, to allow multiple occurrence of the same step.
 		//Witch is not a good practice but is allowed by the app so we must take this possibility in account for calculations.
 		for (RequirementVersionCoverage cov : stepedCoverage) {
@@ -850,13 +850,13 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			}
 		}
 		//now retrieve a list of exec steps
-		MultiMap executionsStatus = executionStepDao.findStepExecutionsStatus(mainVersionTCWithItpiIds,testStepsIds);
+		MultiMap executionsStatus = executionStepDao.findStepExecutionsStatus(mainVersionTCWithItpiIds, testStepsIds);
 		for (Long testStepsId : testStepsIds) {
 			List<ExecutionStep> executionSteps = (List<ExecutionStep>) executionsStatus.get(testStepsId);
 			for (ExecutionStep executionStep : executionSteps) {
 				//Here come horrible code to detect if ITPI was fast passed AFTER execution.
 				//We have no attribute in model to help us, and no time to develop a proper solution.
-				//So we'll use execution date on itpi and exec. If the delta between two date is superior to 2 seconds, 
+				//So we'll use execution date on itpi and exec. If the delta between two date is superior to 2 seconds,
 				//we consider it's a fast pass
 				Execution execution = executionStep.getExecution();
 				IterationTestPlanItem itpi = execution.getTestPlan();
@@ -864,19 +864,18 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				Date execDateLastExecutedOn = execution.getLastExecutedOn();
 				ExecutionStatus status = ExecutionStatus.READY;
 				//if execution dates are null, the execution was only READY, so we don't compare dates to avoid npe
-				if (itpiDateLastExecutedOn!=null&&execDateLastExecutedOn!=null) {
+				if (itpiDateLastExecutedOn != null && execDateLastExecutedOn != null) {
 					DateTime itpiLastExecutedOn = new DateTime(itpi.getLastExecutedOn().getTime());
 					DateTime execLastExecutedOn = new DateTime(execution.getLastExecutedOn().getTime());
-					Interval interval = new Interval(execLastExecutedOn,itpiLastExecutedOn);
+					Interval interval = new Interval(execLastExecutedOn, itpiLastExecutedOn);
 					boolean fastPass = interval.toDuration().isLongerThan(new Duration(2000L));
 					//If we have a fast path use it for step status
 					status = fastPass ? itpi.getExecutionStatus() : executionStep.getExecutionStatus();
 				}
 				Long memo = result.get(status);
-				if (memo==null) {
+				if (memo == null) {
 					result.put(status, 1L);
-				}
-				else {
+				} else {
 					result.put(status, memo + 1);
 				}
 			}
@@ -884,12 +883,12 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return result;
 	}
 
-	private Long calculateUntestedElementCount(List<Long> mainVersionTCWithoutItpiIds,Map<Long, Long> nbSimpleCoverageByTestCase,
-			List<RequirementVersionCoverage> stepedCoverage, List<Long> steppedCoverageTCIdsWithoutITPI) {
+	private Long calculateUntestedElementCount(List<Long> mainVersionTCWithoutItpiIds, Map<Long, Long> nbSimpleCoverageByTestCase,
+											   List<RequirementVersionCoverage> stepedCoverage, List<Long> steppedCoverageTCIdsWithoutITPI) {
 		Long total = 0L;
 		for (Long tcId : mainVersionTCWithoutItpiIds) {
 			Long nbCovegrage = nbSimpleCoverageByTestCase.get(tcId);
-			if (nbCovegrage!=null&&nbCovegrage!=0L) {
+			if (nbCovegrage != null && nbCovegrage != 0L) {
 				total += nbCovegrage;
 			}
 		}
@@ -903,18 +902,18 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return total;
 	}
 
-	private double doRateVerifiedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount){
+	private double doRateVerifiedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount) {
 		Set<ExecutionStatus> statusSet = getVerifiedStatus();
 		return doRateCalculation(statusSet, fullCoverageResult, untestedElementsCount);
 	}
-	
+
 	private double doRateValidatedCalculation(Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount) {
 		Set<ExecutionStatus> validStatusSet = getValidatedStatus();
 		Set<ExecutionStatus> verifiedStatusSet = getVerifiedStatus();
-		return doRateCalculation(validStatusSet,verifiedStatusSet, fullCoverageResult);
+		return doRateCalculation(validStatusSet, verifiedStatusSet, fullCoverageResult);
 	}
-	
-	
+
+
 	/**
 	 * Rate calculation for two status set.
 	 * The count on the first one will be the numerator, the count one second set will be the denominator
@@ -925,7 +924,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	private double doRateCalculation(Set<ExecutionStatus> numeratorStatus, Set<ExecutionStatus> denominatorStatus, Map<ExecutionStatus, Long> fullCoverageResult) {
 		double numerator = countforStatus(fullCoverageResult, numeratorStatus);
 		double denominator = countforStatus(fullCoverageResult, denominatorStatus);
-		return numerator/denominator;
+		return numerator / denominator;
 	}
 
 	/**
@@ -935,16 +934,16 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @param untestedElementsCount
 	 * @return
 	 */
-	private double doRateCalculation(Set<ExecutionStatus> statusSet, Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount){
+	private double doRateCalculation(Set<ExecutionStatus> statusSet, Map<ExecutionStatus, Long> fullCoverageResult, Long untestedElementsCount) {
 		//Implicit conversion of all Long and Integer in floating point number to allow proper rate operation
 		double execWithRequiredStatus = countforStatus(fullCoverageResult, statusSet);
 		double allExecutionCount = getCandidateExecCount(fullCoverageResult);
 		double nbTCWithoutItpi = untestedElementsCount;
-		return execWithRequiredStatus/(allExecutionCount+nbTCWithoutItpi);
+		return execWithRequiredStatus / (allExecutionCount + nbTCWithoutItpi);
 	}
 
 	private Long getCandidateExecCount(
-			Map<ExecutionStatus, Long> fullCoverageResult) {
+		Map<ExecutionStatus, Long> fullCoverageResult) {
 		Long nbStatus = 0L;
 		for (Long countForOneStatus : fullCoverageResult.values()) {
 			nbStatus += countForOneStatus;
@@ -952,14 +951,13 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return nbStatus;
 	}
 
-	
 
 	private Long countforStatus(Map<ExecutionStatus, Long> fullCoverageResult,
-			Set<ExecutionStatus> statusSet) {
+								Set<ExecutionStatus> statusSet) {
 		Long count = 0L;
 		for (Entry<ExecutionStatus, Long> executionStatus : fullCoverageResult.entrySet()) {
 			if (statusSet.contains(executionStatus.getKey())) {
-				
+
 				count += executionStatus.getValue();
 			}
 		}
@@ -967,7 +965,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	private Set<ExecutionStatus> getVerifiedStatus() {
-		Set<ExecutionStatus> verifiedStatus = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> verifiedStatus = new HashSet<>();
 		verifiedStatus.add(ExecutionStatus.SUCCESS);
 		verifiedStatus.add(ExecutionStatus.SETTLED);
 		verifiedStatus.add(ExecutionStatus.FAILURE);
@@ -975,26 +973,25 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		verifiedStatus.add(ExecutionStatus.UNTESTABLE);
 		return verifiedStatus;
 	}
-	
+
 	private Set<ExecutionStatus> getValidatedStatus() {
-		Set<ExecutionStatus> verifiedStatus = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> verifiedStatus = new HashSet<>();
 		verifiedStatus.add(ExecutionStatus.SUCCESS);
 		verifiedStatus.add(ExecutionStatus.SETTLED);
 		return verifiedStatus;
 	}
-	
+
 	private Map<ExecutionStatus, Long> findResultsForSimpleCoverage(
-			List<Long> testCaseIds, List<Long> iterationIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
+		List<Long> testCaseIds, List<Long> iterationIds, Map<Long, Long> nbSimpleCoverageByTestCase) {
 		List<TestCaseExecutionStatus> testCaseExecutionStatus = iterationDao.findExecStatusForIterationsAndTestCases(testCaseIds, iterationIds);
-		Map<ExecutionStatus, Long> computedResults = new HashMap<ExecutionStatus, Long>();
+		Map<ExecutionStatus, Long> computedResults = new HashMap<>();
 		for (TestCaseExecutionStatus oneTCES : testCaseExecutionStatus) {
 			ExecutionStatus status = oneTCES.getStatus();
 			Long nbCoverage = nbSimpleCoverageByTestCase.get(oneTCES.getTestCaseId());
 			if (computedResults.containsKey(status)) {
-				computedResults.put(status, computedResults.get(status)+nbCoverage);
-			}
-			else {
-				computedResults.put(status,nbCoverage);
+				computedResults.put(status, computedResults.get(status) + nbCoverage);
+			} else {
+				computedResults.put(status, nbCoverage);
 			}
 		}
 		return computedResults;
@@ -1008,56 +1005,53 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @param requirementVersionCoverages
 	 * @param simpleCoverage
 	 * @param stepedCoverage
-	 * @param nbSimpleCoverageByTestCase 
+	 * @param nbSimpleCoverageByTestCase
 	 */
 	private void partRequirementVersionCoverage(
-			Set<RequirementVersionCoverage> requirementVersionCoverages, List<RequirementVersionCoverage> simpleCoverage,
-			List<RequirementVersionCoverage> stepedCoverage, Map<Long, Long> nbSimpleCoverageByTestCase,
-			Map<Long, Long> nbSteppedCoverageByTestCase) {
+		Set<RequirementVersionCoverage> requirementVersionCoverages, List<RequirementVersionCoverage> simpleCoverage,
+		List<RequirementVersionCoverage> stepedCoverage, Map<Long, Long> nbSimpleCoverageByTestCase,
+		Map<Long, Long> nbSteppedCoverageByTestCase) {
 		for (RequirementVersionCoverage requirementVersionCoverage : requirementVersionCoverages) {
 			Long tcId = requirementVersionCoverage.getVerifyingTestCase().getId();
 			if (requirementVersionCoverage.hasSteps()) {
 				stepedCoverage.add(requirementVersionCoverage);
 				if (nbSteppedCoverageByTestCase.containsKey(tcId)) {
-					nbSteppedCoverageByTestCase.put(tcId,nbSteppedCoverageByTestCase.get(tcId)+1);
-				}
-				else {
+					nbSteppedCoverageByTestCase.put(tcId, nbSteppedCoverageByTestCase.get(tcId) + 1);
+				} else {
 					nbSteppedCoverageByTestCase.put(tcId, 1L);
 				}
-			}
-			else {
+			} else {
 				simpleCoverage.add(requirementVersionCoverage);
 				if (nbSimpleCoverageByTestCase.containsKey(tcId)) {
-					nbSimpleCoverageByTestCase.put(tcId,nbSimpleCoverageByTestCase.get(tcId)+1);
-				}
-				else {
+					nbSimpleCoverageByTestCase.put(tcId, nbSimpleCoverageByTestCase.get(tcId) + 1);
+				} else {
 					nbSimpleCoverageByTestCase.put(tcId, 1L);
 				}
 			}
 		}
-		
+
 	}
 
 	private void findCoverageRate(Requirement mainRequirement, RequirementVersion mainVersion,
-			List<RequirementVersion> descendants, RequirementCoverageStat stats) {
-		
+								  List<RequirementVersion> descendants, RequirementCoverageStat stats) {
+
 		Rate coverageRate = new Rate();
-		boolean hasValidDescendant = descendants.size()>0;
+		boolean hasValidDescendant = descendants.size() > 0;
 		coverageRate.setRequirementVersionRate(calculateCoverageRate(mainVersion));
-		
+
 		if (hasValidDescendant) {
 			coverageRate.setRequirementVersionChildrenRate(calculateCoverageRate(descendants));
 			List<RequirementVersion> all = getAllRequirementVersion(mainVersion, descendants);
 			coverageRate.setRequirementVersionGlobalRate(calculateCoverageRate(all));
 			coverageRate.setAncestor(true);
 		}
-		stats.addRate("coverage",coverageRate);
+		stats.addRate("coverage", coverageRate);
 		stats.setAncestor(hasValidDescendant);
 	}
 
 	private List<RequirementVersion> getAllRequirementVersion(
-			RequirementVersion mainVersion, List<RequirementVersion> descendants) {
-		List<RequirementVersion> all = new ArrayList<RequirementVersion>();
+		RequirementVersion mainVersion, List<RequirementVersion> descendants) {
+		List<RequirementVersion> all = new ArrayList<>();
 		all.add(mainVersion);
 		all.addAll(descendants);
 		return all;
@@ -1069,7 +1063,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		for (RequirementVersion rv : rvs) {
 			total += calculateCoverageRate(rv);
 		}
-		return total/size;
+		return total / size;
 	}
 
 	/**
@@ -1078,33 +1072,33 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	 * @return
 	 */
 	private Long calculateCoverageRate(RequirementVersion mainVersion) {
-		if (mainVersion.getRequirementVersionCoverages().size()> 0) {
+		if (mainVersion.getRequirementVersionCoverages().size() > 0) {
 			return 1L;
 		}
 		return 0L;
 	}
 
-	private List<RequirementVersion> findValidDescendants(Requirement requirement, Milestone activeMilestone){
-		List<Long> candidatesIds = requirementDao.findDescendantRequirementIds(Arrays.asList( new Long[]{requirement.getId()}));
+	private List<RequirementVersion> findValidDescendants(Requirement requirement, Milestone activeMilestone) {
+		List<Long> candidatesIds = requirementDao.findDescendantRequirementIds(Arrays.asList(new Long[]{requirement.getId()}));
 		List<Requirement> candidates = requirementDao.findAllByIds(candidatesIds);
-		return extractCurrentVersions(candidates,activeMilestone);
+		return extractCurrentVersions(candidates, activeMilestone);
 	}
 
 	private List<RequirementVersion> extractCurrentVersions(
-			List<Requirement> requirements, Milestone activeMilestone) {
-		List<RequirementVersion> rvs = new ArrayList<RequirementVersion>(
-				requirements.size());
+		List<Requirement> requirements, Milestone activeMilestone) {
+		List<RequirementVersion> rvs = new ArrayList<>(
+			requirements.size());
 		for (Requirement requirement : requirements) {
 			RequirementVersion rv = requirement.getResource();
 			// normal mode
 			if (activeMilestone == null
-					&& rv.isNotObsolete()) {
+				&& rv.isNotObsolete()) {
 				rvs.add(rv);
 			}
 			// milestone mode
 			else {
 				if (rv.getMilestones().contains(activeMilestone)
-						&& rv.isNotObsolete()) {
+					&& rv.isNotObsolete()) {
 					rvs.add(rv);
 				}
 			}

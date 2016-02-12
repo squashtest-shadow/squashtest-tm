@@ -82,19 +82,6 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 
 	}
 
-	private static final class SetNameParameterCallback implements SetQueryParametersCallback {
-		private String name;
-
-		private SetNameParameterCallback(String name) {
-			this.name = name;
-		}
-
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setParameter("name", name);
-		}
-	}
-
 	@Override
 	public List<BugTracker> findDistinctBugTrackersForProjects(final List<Long> projectIds) {
 		if (!projectIds.isEmpty()) {

@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -36,7 +30,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
@@ -44,6 +37,11 @@ import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.ExecutionModificationService")
 public class ExecutionModificationServiceImpl implements ExecutionModificationService {
@@ -71,7 +69,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionDescription(Long executionId, String description) {
 		Execution execution = executionDao.findById(executionId);
 		execution.setDescription(description);
@@ -89,7 +87,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize("hasPermission(#executionStepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'EXECUTE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionStepComment(Long executionStepId, String comment) {
 		ExecutionStep executionStep = executionStepDao.findById(executionStepId);
 		executionStep.setComment(comment);
@@ -99,12 +97,12 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	public PagedCollectionHolder<List<ExecutionStep>> findExecutionSteps(long executionId, Paging filter) {
 		List<ExecutionStep> list = executionDao.findStepsFiltered(executionId, filter);
 		long count = executionDao.countExecutionSteps(executionId);
-		return new PagingBackedPagedCollectionHolder<List<ExecutionStep>>(filter, count, list);
+		return new PagingBackedPagedCollectionHolder<>(filter, count, list);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#execId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public List<SuppressionPreviewReport> simulateExecutionDeletion(Long execId) {
 		return deletionHandler.simulateExecutionDeletion(execId);
 	}
@@ -143,7 +141,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 	public PagedCollectionHolder<List<Execution>> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 		List<Execution> executions = executionDao.findAllByTestCaseId(testCaseId, pas);
 		long count = executionDao.countByTestCaseId(testCaseId);
-		return new PagingBackedPagedCollectionHolder<List<Execution>>(pas, count, executions);
+		return new PagingBackedPagedCollectionHolder<>(pas, count, executions);
 	}
 
 	@Override
@@ -153,16 +151,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 	@Override
 	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-			+ OR_HAS_ROLE_ADMIN)
-	public void setExecutionAssignment(Long executionId, User user) {
-		Execution execution = executionDao.findById(executionId);
-		// Do nothing yet 'lol'
-
-	}
-
-	@Override
-	@PreAuthorize("hasPermission(#executionId, 'org.squashtest.tm.domain.execution.Execution', 'EXECUTE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void setExecutionStatus(Long executionId, ExecutionStatus status) {
 		Execution execution = executionDao.findById(executionId);
 		execution.setExecutionStatus(status);

@@ -20,28 +20,25 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibrary;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.importer.ImportSummary;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
+import java.util.Collection;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * <p>The idea behind the implementation of this class is the following :</p>
- * 
+ *
  * parameters :
  * <ul>
  * 	<li>the receiving persistent container : D <li>
  * 	<li>the detached container containing the transient entities we want to persist : S</li>
  * </ul>
- * 
+ *
  * <ul>
  * 	<li>for each n in S :</li>
  * 		<ul>
@@ -73,9 +70,9 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
  * 			</ul>
  * 		</ul>
  * </ul>
- * 
+ *
  * Regarding the summary, may increment failures and warning, but not total test cases nor success.
- * 
+ *
  * @author bsiri
  *
  */
@@ -91,25 +88,24 @@ class TestCaseLibraryMerger {
 
 	private ImportSummaryImpl summary = new ImportSummaryImpl();
 
-	private LinkedList<FolderPair> nonTreated = new LinkedList<FolderPair>();
+	private Deque<FolderPair> nonTreated = new LinkedList<>();
 
 
-	public TestCaseLibraryMerger(){
+	public TestCaseLibraryMerger() {
 		super();
 	}
 
-	public TestCaseLibraryMerger(TestCaseLibraryNavigationService service){
+	public TestCaseLibraryMerger(TestCaseLibraryNavigationService service) {
 		this();
-		this.service=service;
-	}
-
-
-
-	public void setLibraryService(TestCaseLibraryNavigationService service){
 		this.service = service;
 	}
 
-	public ImportSummary getSummary(){
+
+	public void setLibraryService(TestCaseLibraryNavigationService service) {
+		this.service = service;
+	}
+
+	public ImportSummary getSummary() {
 		return summary;
 	}
 
@@ -119,17 +115,15 @@ class TestCaseLibraryMerger {
 	/**
 	 * the Library is the root of the hierarchy, and that's where we're importing our data. the data that couldn't be added to the root of the library
 	 * (mostly duplicate folders) will be treated in additional loops (see #mergerIntoFolder)
-	 * 
-	 * @param dest
-	 * @param src
+	 *
 	 */
-	public void mergeIntoLibrary(TestCaseLibrary dest, TestCaseFolder src){
+	public void mergeIntoLibrary(TestCaseLibrary dest, TestCaseFolder src) {
 
 		//phase 1 : add the content of the root of the library
 		merger.setMergingContext(this);
 		merger.setDestination(dest);
 
-		for (TestCaseLibraryNode node : src.getContent()){
+		for (TestCaseLibraryNode node : src.getContent()) {
 			node.accept(merger);
 		}
 
@@ -140,13 +134,13 @@ class TestCaseLibraryMerger {
 		//nonTreated may/should be modified during treatment
 		FolderPair pair;
 
-		while(! nonTreated.isEmpty()){
+		while (!nonTreated.isEmpty()) {
 
 			pair = nonTreated.removeFirst();
 
 			merger.setDestination(pair.dest);
 
-			for (TestCaseLibraryNode node : pair.src.getContent()){
+			for (TestCaseLibraryNode node : pair.src.getContent()) {
 				node.accept(merger);
 			}
 
@@ -161,9 +155,9 @@ class TestCaseLibraryMerger {
 		private TestCaseFolder dest;
 		private TestCaseFolder src;
 
-		public FolderPair(TestCaseFolder dest, TestCaseFolder src){
-			this.dest=dest;
-			this.src=src;
+		public FolderPair(TestCaseFolder dest, TestCaseFolder src) {
+			this.dest = dest;
+			this.src = src;
 		}
 
 	}
@@ -177,56 +171,56 @@ class TestCaseLibraryMerger {
 
 		protected TestCaseLibraryMerger context;
 
-		protected TestCaseLibrary destLibrary ;
+		protected TestCaseLibrary destLibrary;
 		protected TestCaseFolder destFolder;
 
 
-		public void setMergingContext(TestCaseLibraryMerger merger){
-			this.context=merger;
+		public void setMergingContext(TestCaseLibraryMerger merger) {
+			this.context = merger;
 		}
 
-		public void setDestination(TestCaseLibrary library){
-			this.destLibrary=library;
-			this.destFolder=null;
+		public void setDestination(TestCaseLibrary library) {
+			this.destLibrary = library;
+			this.destFolder = null;
 		}
 
-		public void setDestination(TestCaseFolder folder){
-			this.destFolder=folder;
-			this.destLibrary=null;
+		public void setDestination(TestCaseFolder folder) {
+			this.destFolder = folder;
+			this.destLibrary = null;
 		}
 
 
-		protected Collection<TestCaseLibraryNode> getDestinationContent(){
-			if (destLibrary!=null){
+		protected Collection<TestCaseLibraryNode> getDestinationContent() {
+			if (destLibrary != null) {
 				return destLibrary.getRootContent();
-			}else{
+			} else {
 				return destFolder.getContent();
 			}
 		}
 
 
-		protected void persistTestCase(TestCase tc){
-			if (destLibrary!=null){
+		protected void persistTestCase(TestCase tc) {
+			if (destLibrary != null) {
 				context.service.addTestCaseToLibrary(destLibrary.getId(), tc, null);
-			}else{
+			} else {
 				context.service.addTestCaseToFolder(destFolder.getId(), tc, null);
 			}
 		}
 
-		protected void persistFolder(TestCaseFolder folder){
-			if (destLibrary!=null){
+		protected void persistFolder(TestCaseFolder folder) {
+			if (destLibrary != null) {
 				context.service.addFolderToLibrary(destLibrary.getId(), folder);
-			}else{
+			} else {
 				context.service.addFolderToFolder(destFolder.getId(), folder);
 			}
 		}
 
-		protected void applyConfigurationTo(DestinationManager otherManager){
+		protected void applyConfigurationTo(DestinationManager otherManager) {
 			otherManager.setMergingContext(context);
 
-			if (destLibrary!=null){
+			if (destLibrary != null) {
 				otherManager.setDestination(destLibrary);
-			}else{
+			} else {
 				otherManager.setDestination(destFolder);
 			}
 		}
@@ -235,11 +229,9 @@ class TestCaseLibraryMerger {
 	}
 
 
+	private static class NodeMerger extends DestinationManager implements TestCaseLibraryNodeVisitor {
 
-
-	private static class NodeMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
-
-		private TestCaseMerger tcMerger= new TestCaseMerger();
+		private TestCaseMerger tcMerger = new TestCaseMerger();
 		private FolderMerger fMerger = new FolderMerger();
 
 		@Override
@@ -263,28 +255,27 @@ class TestCaseLibraryMerger {
 	}
 
 
-	private static class TestCaseMerger extends DestinationManager{
+	private static class TestCaseMerger extends DestinationManager {
 
 		private TestCase toMerge;
 
-		public void setTransientTestCase(TestCase tc){
-			toMerge=tc;
+		public void setTransientTestCase(TestCase tc) {
+			toMerge = tc;
 		}
 
 
-		public void merge(){
+		public void merge() {
 			List<String> names = collectNames(getDestinationContent());
 
-			if (names.contains(toMerge.getName())){
+			if (names.contains(toMerge.getName())) {
 				String newName = generateUniqueName(names, toMerge.getName());
 				toMerge.setName(newName);
 				context.summary.incrRenamed();
 			}
 
-			try{
+			try {
 				persistTestCase(toMerge);
-			}
-			catch(Exception ex){	// NOSONAR this is temporary, it should change once we add proper javax validators
+			} catch (Exception ex) {    // NOSONAR this is temporary, it should change once we add proper javax validators
 				context.summary.incrFailures();
 			}
 
@@ -293,24 +284,23 @@ class TestCaseLibraryMerger {
 	}
 
 
-	private static class FolderMerger extends DestinationManager implements TestCaseLibraryNodeVisitor{
+	private static class FolderMerger extends DestinationManager implements TestCaseLibraryNodeVisitor {
 
 		private TestCaseFolder toMerge;
 
 
-		public void setTransientFolder(TestCaseFolder folder){
-			this.toMerge=folder;
+		public void setTransientFolder(TestCaseFolder folder) {
+			this.toMerge = folder;
 		}
 
-		public void merge(){
+		public void merge() {
 
 			Collection<String> names = collectNames(getDestinationContent());
 
-			if (names.contains(toMerge.getName())){
+			if (names.contains(toMerge.getName())) {
 				TestCaseLibraryNode conflictingNode = getByName(getDestinationContent(), toMerge.getName());
 				conflictingNode.accept(this);
-			}
-			else{
+			} else {
 				persistFolder(toMerge);
 			}
 
@@ -345,10 +335,10 @@ class TestCaseLibraryMerger {
 	/* ******************************** util functions ************************************* */
 
 
-	private static List<String> collectNames(Collection<TestCaseLibraryNode> nodes){
-		List<String> res = new LinkedList<String>();
+	private static List<String> collectNames(Collection<TestCaseLibraryNode> nodes) {
+		List<String> res = new LinkedList<>();
 
-		for (TestCaseLibraryNode node : nodes){
+		for (TestCaseLibraryNode node : nodes) {
 			res.add(node.getName());
 		}
 
@@ -356,19 +346,19 @@ class TestCaseLibraryMerger {
 	}
 
 
-	private static String generateUniqueName(List<String> pickedNames, String baseName){
+	private static String generateUniqueName(List<String> pickedNames, String baseName) {
 		String copyToken = "-import";
-		return  LibraryUtils.generateUniqueName(pickedNames, baseName, copyToken, TestCaseLibraryNode.MAX_NAME_SIZE);
+		return LibraryUtils.generateUniqueName(pickedNames, baseName, copyToken, TestCaseLibraryNode.MAX_NAME_SIZE);
 	}
 
-	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle){
-		for (TestCaseLibraryNode node : hayStack ){
-			if (node.getName().equals(needle)){
+	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle) {
+		for (TestCaseLibraryNode node : hayStack) {
+			if (node.getName().equals(needle)) {
 				return node;
 			}
 		}
-		throw new RuntimeException("that method should never have been called if not preceeded by a preventive call to "+
-				"collectName().contains() or if this preventive call returned false - something is wrong with your code dude ");
+		throw new RuntimeException("that method should never have been called if not preceeded by a preventive call to " +
+			"collectName().contains() or if this preventive call returned false - something is wrong with your code dude ");
 
 	}
 

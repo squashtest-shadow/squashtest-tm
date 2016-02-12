@@ -89,14 +89,14 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Override
 	public List<CustomField> findAllQueryableCustomFieldsByBoundEntityType(BindableEntity entity) {
 
-		Set<CustomField> result = new LinkedHashSet<CustomField>();
+		Set<CustomField> result = new LinkedHashSet<>();
 
 		List<Project> readableProjects = projectFinder.findAllReadable();
 		for (Project project : readableProjects) {
 			result.addAll(customFieldBindingFinderService.findBoundCustomFields(project.getId(), entity));
 		}
 
-		return new ArrayList<CustomField>(result);
+		return new ArrayList<>(result);
 	}
 
 	private String padRawValue(Integer rawValue) {
@@ -105,7 +105,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private Query buildLuceneRangeQuery(QueryBuilder qb, String fieldName, Integer minValue, Integer maxValue) {
 
-		Query query = null;
+		Query query;
 
 		if (minValue == null) {
 
@@ -216,24 +216,18 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName, Date startdate, Date enddate) {
 
-		Query query = qb.bool().must(qb.range().onField(fieldName).from(startdate).to(enddate).createQuery())
+		return qb.bool().must(qb.range().onField(fieldName).from(startdate).to(enddate).createQuery())
 			.createQuery();
-
-		return query;
 	}
 
 	private Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName, Date enddate) {
 
-		Query query = qb.bool().must(qb.range().onField(fieldName).below(enddate).createQuery()).createQuery();
-
-		return query;
+		return qb.bool().must(qb.range().onField(fieldName).below(enddate).createQuery()).createQuery();
 	}
 
 	private Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName, Date startdate) {
 
-		Query query = qb.bool().must(qb.range().onField(fieldName).above(startdate).createQuery()).createQuery();
-
-		return query;
+		return qb.bool().must(qb.range().onField(fieldName).above(startdate).createQuery()).createQuery();
 	}
 
 	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb,
@@ -268,7 +262,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private List<String> parseInput(String textInput) {
 
-		List<String> tokens = new ArrayList<String>();
+		List<String> tokens = new ArrayList<>();
 		char[] input = textInput.toCharArray();
 
 		char startChar = input[0];
@@ -367,28 +361,26 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	private Query buildQueryForTagsCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
 		AdvancedSearchTagsFieldModel model = (AdvancedSearchTagsFieldModel) fieldModel;
-		Query query = null;
 
 		if (model == null) {
-			return query;
+			// TODO code cleanup lead to this statement, which reeks of impending NPE
+			return null;
 		}
 
 		List<String> tags = model.getTags();
 		Operation operation = model.getOperation();
 
-		query = buildLuceneTagsQuery(qb, fieldKey, tags, operation);
-
-		return query;
+		return buildLuceneTagsQuery(qb, fieldKey, tags, operation);
 
 	}
 
 	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList, Locale locale) {
 
 		Query mainQuery = null;
-		Query query = null;
+		Query query;
 
 		for (TestCase testcase : testcaseList) {
-			List<String> id = new ArrayList<String>();
+			List<String> id = new ArrayList<>();
 			id.add(testcase.getId().toString());
 			query = buildLuceneSingleValueQuery(qb, "id", id, locale);
 
@@ -454,7 +446,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 			Criteria crit = createMilestoneHibernateCriteria(fields);
 
-			List<String> milestoneIds = new ArrayList<String>();
+			List<String> milestoneIds = new ArrayList<>();
 			List<Long> foundIds = (List<Long>) crit.list();
 			for (Long milestoneId : foundIds) {
 				milestoneIds.add(String.valueOf(milestoneId));
@@ -551,7 +543,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 	private List<MilestoneStatus> convertStatus(List<String> values) {
-		List<MilestoneStatus> status = new ArrayList<MilestoneStatus>();
+		List<MilestoneStatus> status = new ArrayList<>();
 		for (String value : values) {
 			int level = Integer.valueOf(value.substring(0, 1));
 			status.add(MilestoneStatus.getByLevel(level));
@@ -573,11 +565,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		switch (operation) {
 			case AND:
-				Query query = null;
+				Query query;
 				for (String tag : lowerTags) {
-					// query =
-					// qb.bool().must(qb.keyword().onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer().matching(tag).createQuery()).createQuery();
-
 					query = qb.bool().must(qb.phrase().withSlop(0).onField(fieldKey).ignoreFieldBridge().ignoreAnalyzer()
 						.sentence(tag).createQuery()).createQuery();
 
@@ -668,9 +657,6 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	 * Coerces a Date into a long to be used as a hibernate search query param.
 	 * This is necessary to work around a bug in NumericFieldUtils.requiresNumericRangeQuery which does not correctly
 	 * detect Calendars
-	 *
-	 * @param startDate
-	 * @return
 	 */
 	private long dateToLongParam(Date startDate) {
 		return DateTools.round(startDate.getTime(), DateTools.Resolution.DAY);

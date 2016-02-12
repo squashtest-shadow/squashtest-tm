@@ -1,86 +1,56 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.library;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-
-import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.EntityKey;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.library.Copiable;
-import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.library.NodeContainer;
-import org.squashtest.tm.domain.library.NodeVisitor;
-import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionStepCollector;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.internal.campaign.IterationTestPlanManager;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
-import org.squashtest.tm.service.internal.repository.CampaignDao;
-import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
-import org.squashtest.tm.service.internal.repository.EntityDao;
-import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
-import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateObjectDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 
+import javax.inject.Inject;
+import java.util.*;
+import java.util.Map.Entry;
+
 @Component
 @Scope("prototype")
-public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
+public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	@Inject
 	private RequirementDao requirementDao;
 	@Inject
@@ -111,7 +81,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
 	@Inject
 	private IndexationService indexationService;
-	
+
 	@Inject
 	private HibernateObjectDao genericDao;
 	@Inject
@@ -120,11 +90,10 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private NodeContainer<? extends TreeNode> destination;
 
 
-	private List<Long> tcIdsToIndex = new ArrayList<Long>();
-	private List<Long> reqVersionIdsToIndex = new ArrayList<Long>();
-	
-	
-	
+	private List<Long> tcIdsToIndex = new ArrayList<>();
+	private List<Long> reqVersionIdsToIndex = new ArrayList<>();
+
+
 	private TreeNode copy;
 	private boolean okToGoDeeper = true;
 	private boolean projectChanged = true;
@@ -133,13 +102,13 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Override
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination) {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
-				new SecurityCheckableObject(source, "READ"));
+			new SecurityCheckableObject(source, "READ"));
 		this.okToGoDeeper = true;
 		this.destination = destination;
 		this.projectChanged = projectchanged(source);
 		copy = null;
 		source.accept(this);
-		if(projectChanged){
+		if (projectChanged) {
 			// see comment on the method flush();
 			flush();
 			copy.accept(treeNodeUpdater);
@@ -152,13 +121,13 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	@Override
 	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, int position) {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
-				new SecurityCheckableObject(source, "READ"));
+			new SecurityCheckableObject(source, "READ"));
 		this.okToGoDeeper = true;
 		this.destination = destination;
 		this.projectChanged = projectchanged(source);
 		copy = null;
 		source.accept(this);
-		if(projectChanged){
+		if (projectChanged) {
 			// see comment on the method flush();
 			flush();
 			copy.accept(treeNodeUpdater);
@@ -171,10 +140,10 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	private boolean projectchanged(TreeNode source) {
 		Project projectSource = source.getProject();
 		GenericProject projectDestination = destination.getProject();
-		return (projectSource !=null && projectDestination != null && !projectSource.getId().equals(projectDestination.getId()));
+		return (projectSource != null && projectDestination != null && !projectSource.getId().equals(projectDestination.getId()));
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
 		persistCopy(copyFolder, dao, Folder.MAX_NAME_SIZE);
@@ -209,8 +178,8 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		copyIterationTestSuites(source, copyIteration);
 		copyCustomFields(source, copyIteration);
 		this.okToGoDeeper = false;
-		if(projectChanged){
-			for(TestSuite suite : source.getTestSuites()){
+		if (projectChanged) {
+			for (TestSuite suite : source.getTestSuites()) {
 				suite.accept(treeNodeUpdater);
 			}
 		}
@@ -241,44 +210,44 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		//copy simple attributes of requirement
 		Requirement copyRequirement = source.createCopy();
 		//create copies for requirement versions and remember version's sources
-		TreeMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
-				.addPreviousVersionsCopiesToCopy(copyRequirement);
+		SortedMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
+			.addPreviousVersionsCopiesToCopy(copyRequirement);
 		persistCopy(copyRequirement, requirementDao, RequirementLibraryNode.MAX_NAME_SIZE);
 		//copy custom fields and requirement-version coverages for Current Version
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		//copy custom fields and requirement-version coverages for older versions
 		for (Entry<RequirementVersion, RequirementVersion> previousVersionCopyBySource : previousVersionsCopiesBySources
-				.entrySet()) {
+			.entrySet()) {
 			//retrieve entities from entry
 			RequirementVersion sourceVersion = previousVersionCopyBySource.getKey();
 			RequirementVersion copyVersion = previousVersionCopyBySource.getValue();
 			//copy cufs and coverages for entities
 			copyRequirementVersionCoverages(sourceVersion, copyVersion);
 			copyCustomFields(sourceVersion, copyVersion);
-			
+
 		}
-		
+
 		batchRequirement++;
-		if (batchRequirement % 10 == 0){
+		if (batchRequirement % 10 == 0) {
 			cleanSomeCache(RequirementLibraryNode.class);
 		}
-		
+
 	}
 
-	private <T> void  cleanSomeCache(Class<T> c) {
-		
+	private <T> void cleanSomeCache(Class<T> c) {
+
 		sessionFactory.getCurrentSession().flush();
-		Collection<Object> entities = new ArrayList<Object>();
-		for(Object obj : sessionFactory.getCurrentSession().getStatistics().getEntityKeys()){
+		Collection<Object> entities = new ArrayList<>();
+		for (Object obj : sessionFactory.getCurrentSession().getStatistics().getEntityKeys()) {
 			EntityKey key = (EntityKey) obj;
-			Object entity = sessionFactory.getCurrentSession().get(key.getEntityName(), key.getIdentifier());		
-			if (! c.isAssignableFrom(entity.getClass())){
+			Object entity = sessionFactory.getCurrentSession().get(key.getEntityName(), key.getIdentifier());
+			if (!c.isAssignableFrom(entity.getClass())) {
 				entities.add(entity);
 			}
-		
-		}	
-		
+
+		}
+
 		genericDao.clearFromCache(entities);
 		sessionFactory.getCurrentSession().flush();
 	}
@@ -291,7 +260,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		copyRequirementVersionCoverage(source, copyTestCase);
 
 		batchRequirement++;
-		if (batchRequirement % 10 == 0){
+		if (batchRequirement % 10 == 0) {
 			cleanSomeCache(TestCaseLibraryNode.class);
 		}
 	}
@@ -327,9 +296,9 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	}
 
 	private void bindTestPlanOfCopiedTestSuite(Iteration iterationCopy,
-			Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry, TestSuite testSuiteCopy) {
+											   Entry<TestSuite, List<Integer>> testSuitePastableCopyEntry, TestSuite testSuiteCopy) {
 		List<Integer> testSuiteTpiIndexesInIterationList = testSuitePastableCopyEntry.getValue();
-		List<IterationTestPlanItem> testPlanItemsToBind = new ArrayList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> testPlanItemsToBind = new ArrayList<>();
 		List<IterationTestPlanItem> iterationTestPlanCopy = iterationCopy.getTestPlans();
 		for (Integer testSuiteTpiIndexInIterationList : testSuiteTpiIndexesInIterationList) {
 			IterationTestPlanItem testPlanItemToBind = iterationTestPlanCopy.get(testSuiteTpiIndexInIterationList);
@@ -338,12 +307,12 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		testSuiteCopy.bindTestPlanItems(testPlanItemsToBind);
 	}
 
-	private void copyCustomFields(Iteration original, Iteration copy){
+	private void copyCustomFields(Iteration original, Iteration copy) {
 		// copy the cufs for both iterations
 		customFieldValueManagerService.copyCustomFieldValues(original, copy);
 
 		// now copy the cufs for the test suites
-		for (TestSuite originaTestSuite : original.getTestSuites()){
+		for (TestSuite originaTestSuite : original.getTestSuites()) {
 			TestSuite copyTestSuite = copy.getTestSuiteByName(originaTestSuite.getName());
 			customFieldValueManagerService.copyCustomFieldValuesContent(originaTestSuite, copyTestSuite);
 		}
@@ -363,7 +332,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		List<ActionTestStep> copySteps = collector.collect(copy.getSteps());
 		List<ActionTestStep> sourceSteps = collector.collect(source.getSteps());
 		int total = copySteps.size();
-		Map<Long, BoundEntity> copiedStepsIdsBySource = new HashMap<Long, BoundEntity>(total);
+		Map<Long, BoundEntity> copiedStepsIdsBySource = new HashMap<>(total);
 		for (int i = 0; i < total; i++) {
 			ActionTestStep copyStep = copySteps.get(i);
 			ActionTestStep sourceStep = sourceSteps.get(i);
@@ -371,7 +340,6 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 		}
 		customFieldValueManagerService.copyCustomFieldValues(copiedStepsIdsBySource, BindableEntity.TEST_STEP);
 	}
-
 
 
 	@SuppressWarnings("unchecked")
@@ -392,7 +360,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	@SuppressWarnings("unchecked")
 	private void persitIteration(Iteration copyParam) {
-		renameIfNeeded((Copiable) copyParam, Iteration.MAX_NAME_SIZE);
+		renameIfNeeded(copyParam, Iteration.MAX_NAME_SIZE);
 		iterationDao.persistIterationAndTestPlan(copyParam);
 		((NodeContainer<Iteration>) destination).addContent(copyParam);
 		this.copy = copyParam;
@@ -417,7 +385,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	}
 
 	private void indexRequirementVersionCoverageCopies(List<RequirementVersionCoverage> copies) {
-		for(RequirementVersionCoverage covCpy : copies){
+		for (RequirementVersionCoverage covCpy : copies) {
 			tcIdsToIndex.add(covCpy.getVerifyingTestCase().getId());
 			reqVersionIdsToIndex.add(covCpy.getVerifiedRequirementVersion().getId());
 		}
@@ -431,7 +399,7 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 
 	/*
 	 * Where used, that flush matters. Had it been omitted the following scenario would occur :
-	 * 
+	 *
 	 *  1/ a node is copied along with its custom field values
 	 *  2/ has it happens, the copy is created in a different project. Some additional processing is thus carried on by a TreeNodeUpdater
 	 *  3/ the custom field values are fixed during this additional step, and the former custom field values are deleted in the process.
@@ -440,12 +408,12 @@ public class TreeNodeCopier  implements NodeVisitor, PasteOperation {
 	 *  6/ Hibernate deletes those same custom field values in step 3
 	 *  7/ The embedded items for custom field values created in step 1 are persisted.
 	 *  8/ Since those entities no longer exists a ConstraintViolationException is raised.
-	 * 
+	 *
 	 * We can prevent this by flushing the session early. This will ensure that the embedded items are persisted and deleted
 	 * along with their owners.
-	 * 
+	 *
 	 */
-	private void flush(){
+	private void flush() {
 		sessionFactory.getCurrentSession().flush();
 	}
 
