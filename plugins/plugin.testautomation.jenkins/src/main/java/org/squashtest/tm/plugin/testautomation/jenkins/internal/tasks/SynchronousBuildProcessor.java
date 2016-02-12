@@ -26,29 +26,30 @@ public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildPro
 
 	@Override
 	public void run() {
-		
+
 		while( getStepSequence().hasMoreElements() && ! isCanceled()){
 			scheduleNextStep();
 		}
-		
+
 		buildResult();
 	}
 
-	
+
 	@Override
 	public void notifyStepDone() {
 		//nothing, let the method run loop
 	}
-	
-	
+
+
 	abstract public RESULT getResult();
 
-	
+
 	abstract protected void buildResult();
 
-	
+
 	@Override
 	public void notifyException(Exception ex) {
+		// TODO this is either equivalent to an instanceof or too arcane for my puny brain
 		try{
 			throw ex;
 		}

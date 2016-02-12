@@ -25,7 +25,7 @@ import org.springframework.stereotype.Component;
 
 /*
  * Ugly trick. Booh.
- * 
+ *
  * @author bsiri
  *
  */
@@ -39,7 +39,7 @@ public final class CallbackURL {
 
 	private CallbackURL() {
 		super();
-		instance = this;
+		instance = this; // NOSONAR cannot be inited otherwise, I guess
 	}
 
 	public String getValue() {

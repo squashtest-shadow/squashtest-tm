@@ -47,7 +47,7 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView;
 /**
  * Extended {@link JasperReportsMultiFormatView}. It manages the same formats as {@link JasperReportsMultiFormatView}
  * plus DOCX and ODS reports. This class is intended to reduce XML configuration in reports plugins.
- * 
+ *
  * The default mappings are:
  * <p>
  * <ul>
@@ -58,9 +58,9 @@ import org.springframework.web.servlet.view.jasperreports.JasperReportsXlsView;
  * <li><code>ods</code> - <code>JasperReportsOdsView</code></li>
  * <li><code>docx</code> - <code>JasperReportsDocxView</code></li>
  * </ul>
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatView {
 	private static final Pattern EL_TIMESTAMP_PATTERN = Pattern.compile("(\\Q${\\E([A-Za-z:]+)\\Q}\\E)");
@@ -76,7 +76,7 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 	private String reportFileName;
 
 	/**
-	 * 
+	 *
 	 */
 	private void configureContentDispositionMapping() {
 		Properties mappings = new Properties();
@@ -92,8 +92,8 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 	}
 
 	private void configureFormatMappings() {
-		Map<String, Class<? extends AbstractJasperReportsView>> formatMappings = new HashMap<String, Class<? extends AbstractJasperReportsView>>(
-				6);
+		Map<String, Class<? extends AbstractJasperReportsView>> formatMappings = new HashMap<>(
+			6);
 		formatMappings.put("csv", JasperReportsCsvView.class);
 		formatMappings.put("html", JasperReportsHtmlView.class);
 		formatMappings.put("pdf", JasperReportsPdfView.class);
@@ -106,7 +106,7 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 
 	@Override
 	protected void renderReport(JasperPrint populatedReport, Map<String, Object> model, HttpServletResponse response)
-			throws Exception {
+		throws Exception {
 		if (reportFileName != null) {
 			// TODO if users complain about weird file names, consider thread competition on contentDispositionMapping
 			Properties contentDispositionMappings = addTimestampToFilename();
@@ -130,8 +130,7 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 	}
 
 	private Properties copyContentDispositionMappings() {
-		Properties previousCDM = (Properties) getContentDispositionMappings().clone();
-		return previousCDM;
+		return (Properties) getContentDispositionMappings().clone();
 	}
 
 	private Properties addTimestampToFilename(Pattern timestampPattern) {
@@ -160,7 +159,7 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 	}
 
 	private String processDatePattern(String val, Matcher matcher, StringBuilder builder, String param,
-			String dateParamPrefix) {
+									  String dateParamPrefix) {
 		String dateformat = param.substring(dateParamPrefix.length());
 		Date date = new Date();
 		try {
@@ -181,15 +180,15 @@ public class JasperReportsExtMultiFormatView extends JasperReportsMultiFormatVie
 
 	/**
 	 * The name of the report when it is generated and downloaded.
-	 * 
+	 *
 	 * It can follow any of there pattern :
 	 * <ul>
 	 * <li>MyReport-${date:yyyyMMdd}
 	 * <li>MyReport-{{date:yyyyMMdd}}
 	 * </ul>
-	 * 
+	 *
 	 * <strong>Caveat : </strong> The <code>${}</code> pattern CANNOT be used with a <code><property-placeholder/></code> directive. It is kept for backward compatibility.
-	 * 
+	 *
 	 */
 	public void setReportFileName(String reportFileName) {
 		if (reportFileName != null) {
