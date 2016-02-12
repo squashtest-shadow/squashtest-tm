@@ -89,9 +89,9 @@ import org.squashtest.tm.web.internal.model.json.JsonInfoList;
 
 /**
  * Controller which receives requirement version management related requests.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/requirement-versions/{requirementVersionId}")
@@ -200,11 +200,6 @@ public class RequirementVersionModificationController {
 		return HtmlUtils.htmlEscape(requirementReference);
 	}
 
-	/**
-	 * @param level
-	 * @param locale
-	 * @return
-	 */
 	private String internationalize(Level level, Locale locale) {
 		return levelFormatterProvider.get().useLocale(locale).formatLabel(level);
 	}
@@ -305,8 +300,7 @@ public class RequirementVersionModificationController {
 	 * <br>
 	 * Versions having an {@link RequirementStatus#OBSOLETE} status are not included in the result.<br>
 	 * Last map entry is key= "selected", value = id of concerned requirement.
-	 * 
-	 * @param locale
+	 *
 	 * @param requirementVersionId
 	 *            : the id of the concerned requirement version.
 	 * @return a {@link Map} with key = "id" and value ="versionNumber (versionStatus)", <br>
@@ -316,7 +310,7 @@ public class RequirementVersionModificationController {
 	@RequestMapping(value = "/version-numbers", method = RequestMethod.GET)
 	@ResponseBody
 	public Map<String, String> showAllVersions(Locale locale, @PathVariable long requirementVersionId) {
-		Map<String, String> versionsNumbersById = new LinkedHashMap<String, String>();
+		Map<String, String> versionsNumbersById = new LinkedHashMap<>();
 
 		RequirementVersion requirementVersion = requirementVersionManager.findById(requirementVersionId);
 
@@ -326,7 +320,7 @@ public class RequirementVersionModificationController {
 		List<RequirementVersion> requirementVersions = requirement.getRequirementVersions();
 
 		// We duplicate the list before we sort it
-		List<RequirementVersion> cloneRequirementVersions = new ArrayList<RequirementVersion>();
+		List<RequirementVersion> cloneRequirementVersions = new ArrayList<>();
 
 		for (RequirementVersion rv : requirementVersions) {
 			cloneRequirementVersions.add(rv);
@@ -334,7 +328,7 @@ public class RequirementVersionModificationController {
 
 		Collections.sort(cloneRequirementVersions, new MyRequirementVersionsDecOrder());
 
-		String status = "";
+		String status;
 
 		for (RequirementVersion version : cloneRequirementVersions) {
 			if (version.getStatus() != RequirementStatus.OBSOLETE) {
@@ -349,9 +343,9 @@ public class RequirementVersionModificationController {
 
 	/**
 	 * Comparator for RequieredVersions
-	 * 
+	 *
 	 * @author FOG
-	 * 
+	 *
 	 */
 	public static class MyRequirementVersionsDecOrder implements Comparator<RequirementVersion> {
 
@@ -408,9 +402,9 @@ public class RequirementVersionModificationController {
 	}
 
 	/* **********************************************************************
-	 * 
+	 *
 	 * Milestones section
-	 * 
+	 *
 	 ********************************************************************** */
 
 	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
@@ -469,7 +463,7 @@ public class RequirementVersionModificationController {
 				return ((Milestone)milestone).getStatus().isBindableToObject();
 			}
 		});
-		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
+		Boolean isMilestoneInProject = mil.size() != 0;
 
 
 		// add them to the model
@@ -489,7 +483,7 @@ public class RequirementVersionModificationController {
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =
-				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+			new SinglePageCollectionHolder<>(milestones);
 
 		Locale locale = LocaleContextHolder.getLocale();
 		return new MilestoneTableModelHelper(i18nHelper, locale).buildDataModel(collectionHolder, sEcho);

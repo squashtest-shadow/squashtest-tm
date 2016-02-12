@@ -40,7 +40,7 @@ public class AccessDenied extends TestAutomationException {
 	}
 
 	public AccessDenied(Throwable cause) {
-		super(cause);
+		super("Access is denied", cause);
 	}
 
 	@Override

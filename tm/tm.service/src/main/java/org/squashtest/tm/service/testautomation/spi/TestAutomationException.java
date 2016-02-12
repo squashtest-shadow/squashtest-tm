@@ -24,7 +24,7 @@ import org.squashtest.tm.core.foundation.exception.ActionException;
 
 public class TestAutomationException extends ActionException{
 
-	
+
 	private static final String TEST_AUTOMATION_EXCEPTION_KEY = "testautomation.exceptions.generic";
 	private static final long serialVersionUID = 6313915492631424474L;
 
@@ -48,5 +48,5 @@ public class TestAutomationException extends ActionException{
 	public String getI18nKey() {
 		return TEST_AUTOMATION_EXCEPTION_KEY;
 	}
-	
+
 }

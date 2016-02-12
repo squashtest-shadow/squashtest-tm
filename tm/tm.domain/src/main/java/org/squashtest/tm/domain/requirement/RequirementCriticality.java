@@ -20,18 +20,19 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 
 import org.squashtest.tm.domain.Level;
 
-public enum RequirementCriticality implements Level {
+public enum RequirementCriticality implements Level, Serializable {
 	MINOR(2), MAJOR(1), CRITICAL(0), UNDEFINED(3);
 
 	private static final String I18N_KEY_ROOT = "requirement.criticality.";
 	private final int level;
 
-	private RequirementCriticality(int level) {
+	RequirementCriticality(int level) {
 		this.level = level;
 	}
 
@@ -57,7 +58,7 @@ public enum RequirementCriticality implements Level {
 	public static StringComparator stringComparator() {
 		return new StringComparator();
 	}
-	
+
 	public String getCode(){
 		return name();
 	}

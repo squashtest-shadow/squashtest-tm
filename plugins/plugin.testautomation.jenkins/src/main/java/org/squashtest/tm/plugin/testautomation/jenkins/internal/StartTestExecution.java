@@ -20,15 +20,6 @@
  */
 package org.squashtest.tm.plugin.testautomation.jenkins.internal;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.JsonMappingException;
@@ -53,11 +44,19 @@ import org.squashtest.tm.service.testautomation.spi.NotFoundException;
 import org.squashtest.tm.service.testautomation.spi.ServerConnectionFailed;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 /**
  * This class configure and execute a unique HTTP request.
  * This case is simple enough, we don't need to watch a full build.
- * 
- * 
+ *
+ *
  */
 
 public class StartTestExecution {
@@ -84,7 +83,7 @@ public class StartTestExecution {
 		TestAutomationServer server = project.getServer();
 
 		RestTemplate template = new RestTemplate(clientProvider.getRequestFactoryFor(
-				project.getServer()));
+			project.getServer()));
 
 		String url = createUrl(server);
 		Map<String, ?> urlParams = createUrlParams(project);
@@ -98,23 +97,21 @@ public class StartTestExecution {
 
 	}
 
-	private Object execute(RestTemplate template, String url, MultiValueMap<String, ?> postData, Map<String,?> urlParams){
-		try{
+	private Object execute(RestTemplate template, String url, MultiValueMap<String, ?> postData, Map<String, ?> urlParams) {
+		try {
 			return template.postForLocation(url, postData, urlParams);
-		}
-		catch(ResourceAccessException ex){
-			throw new ServerConnectionFailed();
-		}
-		catch(HttpClientErrorException ex){
-			switch(ex.getStatusCode()){
-			case FORBIDDEN :
-			case UNAUTHORIZED :
-			case PROXY_AUTHENTICATION_REQUIRED:
-				throw new AccessDenied();
-			case NOT_FOUND :
-				throw new NotFoundException();
-			default :
-				throw new TestAutomationException(ex.getMessage());
+		} catch (ResourceAccessException ex) {
+			throw new ServerConnectionFailed(ex);
+		} catch (HttpClientErrorException ex) {
+			switch (ex.getStatusCode()) {
+				case FORBIDDEN:
+				case UNAUTHORIZED:
+				case PROXY_AUTHENTICATION_REQUIRED:
+					throw new AccessDenied(); // NOSONAR no need for actual call stack
+				case NOT_FOUND:
+					throw new NotFoundException(ex);
+				default:
+					throw new TestAutomationException(ex.getMessage(), ex);
 			}
 		}
 	}
@@ -124,17 +121,17 @@ public class StartTestExecution {
 	}
 
 	private Map<String, ?> createUrlParams(TestAutomationProject project) {
-		Map<String, Object> params = new HashMap<String, Object>();
+		Map<String, Object> params = new HashMap<>();
 		params.put("jobName", project.getJobName());
 		return params;
 	}
 
 	private MultiValueMap<String, ?> createPostData(BuildDef buildDef, String externalId) {
 
-		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<String, Object>();
+		MultiValueMap<String, Object> parts = new LinkedMultiValueMap<>();
 
 		ParameterArray stdParams = new HttpRequestFactory().getStartTestSuiteBuildParameters(externalId,
-				buildDef.getNode());
+			buildDef.getNode());
 
 		File tmp;
 		try {
@@ -154,7 +151,7 @@ public class StartTestExecution {
 		return parts;
 	}
 
-	private File createJsonSuite(BuildDef buildDef) throws IOException, JsonGenerationException, JsonMappingException {
+	private File createJsonSuite(BuildDef buildDef) throws IOException {
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		File tmp = File.createTempFile("ta-suite", ".json");
@@ -168,9 +165,9 @@ public class StartTestExecution {
 	/**
 	 * Adapts a TestAutomationProjectContent into something which can be marshalled into a json test suite
 	 * (payload of "execute tests" request).
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 */
 	private static final class JsonSuiteAdapter {
 		private final BuildDef buildDef;
@@ -184,10 +181,10 @@ public class StartTestExecution {
 		@SuppressWarnings(UNUSED)
 		public List<JsonTestAdapter> getTest() {
 			if (tests == null) {
-				tests = new ArrayList<JsonTestAdapter>();
+				tests = new ArrayList<>();
 
 				for (Couple<AutomatedExecutionExtender, Map<String, Object>> paramdExec : buildDef
-						.getParameterizedExecutions()) {
+					.getParameterizedExecutions()) {
 					JsonTestAdapter json = new JsonTestAdapter(paramdExec);
 					tests.add(json);
 				}
@@ -200,9 +197,9 @@ public class StartTestExecution {
 	/**
 	 * Adapts a parameterized test (<code>Couple<AutomatedTest, Map></code>) into something suitable for the
 	 * "execute tests" request.
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 */
 	private static final class JsonTestAdapter {
 		private final Couple<AutomatedExecutionExtender, Map<String, Object>> paramdExec;

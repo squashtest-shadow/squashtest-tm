@@ -24,15 +24,8 @@ public class NotFoundException extends TestAutomationException {
 
 	private static final String NOT_FOUND_EXCEPTION_KEY = "testautomation.exceptions.notfound";
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = -1185667228759223292L;
 
-
-	public NotFoundException() {
-		super("project not found");
-	}
 
 	public NotFoundException(String message, Throwable cause) {
 		super(message, cause);
@@ -43,7 +36,7 @@ public class NotFoundException extends TestAutomationException {
 	}
 
 	public NotFoundException(Throwable cause) {
-		super(cause);
+		super("project not found", cause);
 	}
 
 	@Override

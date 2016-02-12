@@ -66,6 +66,7 @@ import org.squashtest.tm.web.internal.model.json.JsonIteration;
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.servlet.http.HttpServletResponse;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.util.*;
 
@@ -186,7 +187,7 @@ public class CampaignModificationController {
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
 		Collections.sort(usersList, new UserLoginComparator());
 
-		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
+		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList) {
 			jsonUsers.put(user.getId().toString(), user.getLogin());
@@ -232,25 +233,6 @@ public class CampaignModificationController {
 
 		campaignModService.rename(campaignId, newName);
 		return new RenameModel(newName);
-
-	}
-
-	/**
-	 * @deprecated does not seem to be used, should be removed (plus it's not even atomic)
-	 * @param data
-	 * @return
-	 */
-	@Deprecated
-	@RequestMapping(value = "/remove-campaigns", method = RequestMethod.POST, params = "isIteration=1")
-	@ResponseBody
-	public String removeIterations(@RequestParam("tab[]") String[] data) {
-		String retour = "";
-		for (int i = 0; i < data.length; i++) {
-			LOGGER.info("Deleting Iteration " + data[i] + " Long : " + (Long.parseLong(data[i])));
-			retour = iterationModService.delete(Long.parseLong(data[i]));
-			LOGGER.info("Deleting Iteration " + data[i]);
-		}
-		return retour;
 
 	}
 
@@ -351,9 +333,7 @@ public class CampaignModificationController {
 		campaignModService.changeActualStartAuto(campaignId, auto);
 		Campaign campaign = campaignModService.findById(campaignId);
 
-		String toreturn = dateToStr(campaign.getActualStartDate());
-
-		return toreturn;
+		return dateToStr(campaign.getActualStartDate());
 	}
 
 	@RequestMapping(value = PLANNING_URL, params = { "setActualEndAuto" })
@@ -366,9 +346,7 @@ public class CampaignModificationController {
 		campaignModService.changeActualEndAuto(campaignId, auto);
 		Campaign campaign = campaignModService.findById(campaignId);
 
-		String toreturn = dateToStr(campaign.getActualEndDate());
-
-		return toreturn;
+		return dateToStr(campaign.getActualEndDate());
 
 	}
 
@@ -434,9 +412,9 @@ public class CampaignModificationController {
 
 
 	/* **********************************************************************
-	 * 
+	 *
 	 * Milestones section
-	 * 
+	 *
 	 ********************************************************************** */
 
 	@RequestMapping(value = "/milestones", method=RequestMethod.GET)
@@ -495,7 +473,7 @@ public class CampaignModificationController {
 				return ((Milestone)milestone).getStatus().isBindableToObject();
 			}
 		});
-		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
+		Boolean isMilestoneInProject = mil.size() != 0;
 
 
 		// add them to the model
@@ -517,7 +495,7 @@ public class CampaignModificationController {
 
 
 		PagedCollectionHolder<List<Milestone>> collectionHolder =
-				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+			new SinglePageCollectionHolder<>(milestones);
 
 		Locale locale = LocaleContextHolder.getLocale();
 		return new MilestoneTableModelHelper(messageSource, locale).buildDataModel(collectionHolder, sEcho);
@@ -526,7 +504,7 @@ public class CampaignModificationController {
 	// **************************** private stuffs ***************************
 
 	private List<JsonIteration> createJsonIterations(List<Iteration> iterations) {
-		List<JsonIteration> jsonIters = new ArrayList<JsonIteration>(iterations.size());
+		List<JsonIteration> jsonIters = new ArrayList<>(iterations.size());
 		for (Iteration iter : iterations) {
 
 			JsonIteration jsonIter = new JsonIteration(iter.getId(), iter.getName(), iter.getScheduledStartDate(),
@@ -537,7 +515,7 @@ public class CampaignModificationController {
 		return jsonIters;
 	}
 
-	private static final class UserLoginComparator implements Comparator<User> {
+	private static final class UserLoginComparator implements Comparator<User>, Serializable {
 		@Override
 		public int compare(User u1, User u2) {
 			return u1.getLogin().compareTo(u2.getLogin());

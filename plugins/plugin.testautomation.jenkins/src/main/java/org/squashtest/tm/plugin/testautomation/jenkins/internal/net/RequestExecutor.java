@@ -58,10 +58,10 @@ public class RequestExecutor {
 			return handler.handleResponse(resp);
 		} catch (AccessDenied ex) {
 			throw new AccessDenied(
-					"Test automation - jenkins : operation rejected the operation because of wrong credentials");
+				"Test automation - jenkins : operation rejected the operation because of wrong credentials"); // NOSONAR no need for actual call stack
 		} catch (IOException ex) {
 			throw new ServerConnectionFailed(
-					"Test automation - jenkins : could not connect to server due to technical error : ", ex);
+				"Test automation - jenkins : could not connect to server due to technical error : ", ex);
 		}
 	}
 
@@ -73,10 +73,10 @@ public class RequestExecutor {
 		}
 
 		switch (sc) {
-		case SC_FORBIDDEN:
-		case SC_UNAUTHORIZED:
-		case SC_PROXY_AUTHENTICATION_REQUIRED:
-			throw new AccessDenied();
+			case SC_FORBIDDEN:
+			case SC_UNAUTHORIZED:
+			case SC_PROXY_AUTHENTICATION_REQUIRED:
+				throw new AccessDenied();
 		}
 	}
 

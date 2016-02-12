@@ -25,16 +25,16 @@ import org.squashtest.tm.service.internal.batchimport.Messages;
 
 /**
  * Coerces a cell to an Integer value. As values are extracted as float, they are rounded to the closest integer.
- * 
+ *
  * When a cell is of string type, this coercer shall try to parse the cell content as a number. When the cell is not
  * parseable, it throws TBD exception.
- * 
+ *
  * When a cell is empty, this coercer returns null
- * 
- * 
- * 
+ *
+ *
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class OptionalIntegerCellCoercer extends TypeBasedCellValueCoercer<Integer> implements CellValueCoercer<Integer> {
 	public static final OptionalIntegerCellCoercer INSTANCE = new OptionalIntegerCellCoercer();
@@ -44,7 +44,7 @@ public class OptionalIntegerCellCoercer extends TypeBasedCellValueCoercer<Intege
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceStringCell(org.apache.poi.ss.usermodel.Cell)
 	 */
 	@Override
@@ -57,14 +57,14 @@ public class OptionalIntegerCellCoercer extends TypeBasedCellValueCoercer<Intege
 			try {
 				res = round(Double.valueOf(val));
 			} catch (NumberFormatException ex) {
-				throw new CannotCoerceException(ex, Messages.ERROR_UNPARSABLE_INTEGER);
+				throw new CannotCoerceException(ex, Messages.ERROR_UNPARSABLE_INTEGER); // NOSONAR no need for actual call stack
 			}
 		}
 		return res;
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceNumericCell(org.apache.poi.ss.usermodel.Cell)
 	 */
 	@Override

@@ -1,54 +1,31 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.web.internal.controller.campaign;
-
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
@@ -81,6 +58,15 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.Serializable;
+import java.util.*;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/iterations/{iterationId}")
@@ -125,11 +111,9 @@ public class IterationModificationController {
 	private MilestoneUIConfigurationService milestoneConfService;
 
 
-
-
 	@RequestMapping(method = RequestMethod.GET)
 	public String showIteration(Model model, @PathVariable long iterationId,
-			@CurrentMilestone Milestone activeMilestone) {
+								@CurrentMilestone Milestone activeMilestone) {
 
 		populateIterationModel(model, iterationId, activeMilestone);
 		return "fragment/iterations/iteration";
@@ -138,13 +122,13 @@ public class IterationModificationController {
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showIterationInfo(Model model, @PathVariable long iterationId,
-			@CurrentMilestone Milestone activeMilestone) {
+									@CurrentMilestone Milestone activeMilestone) {
 
 		populateIterationModel(model, iterationId, activeMilestone);
 		return "page/campaign-workspace/show-iteration";
 	}
 
-	private void populateIterationModel(Model model, long iterationId, Milestone activeMilestone){
+	private void populateIterationModel(Model model, long iterationId, Milestone activeMilestone) {
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
@@ -167,35 +151,35 @@ public class IterationModificationController {
 
 	}
 
-	private void populateOptionalExecutionStatuses(Iteration iteration, Model model){
+	private void populateOptionalExecutionStatuses(Iteration iteration, Model model) {
 		model.addAttribute("allowsSettled",
-				iteration.getCampaign().getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
+			iteration.getCampaign().getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
 		model.addAttribute("allowsUntestable",
-				iteration.getCampaign().getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
+			iteration.getCampaign().getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
 	}
 
 	/**
 	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
 	 * @param projectId : the id of the concerned {@link Project}
-	 * @return  a map representing the active statuses for the given project with :
+	 * @return a map representing the active statuses for the given project with :
 	 * <ul><li>key: the status name</li><li>value: the status internationalized label</li></ul>
 	 */
-	private Map<String, String> getStatuses(long projectId){
+	private Map<String, String> getStatuses(long projectId) {
 		Locale locale = LocaleContextHolder.getLocale();
 		return executionStatusComboBuilderProvider.get().useContext(projectId).useLocale(locale).buildMap();
 	}
 
-	private Map<String, String> getModes(){
+	private Map<String, String> getModes() {
 		Locale locale = LocaleContextHolder.getLocale();
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
-	private Map<String, String> getWeights(){
+	private Map<String, String> getWeights() {
 		Locale locale = LocaleContextHolder.getLocale();
 		return importanceComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
-	private Map<String, String> getAssignableUsers(@PathVariable long iterationId){
+	private Map<String, String> getAssignableUsers(@PathVariable long iterationId) {
 
 		Locale locale = LocaleContextHolder.getLocale();
 
@@ -204,10 +188,10 @@ public class IterationModificationController {
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
-		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
+		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
 
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
-		for (User user : usersList){
+		for (User user : usersList) {
 			jsonUsers.put(user.getId().toString(), user.getLogin());
 		}
 
@@ -215,19 +199,21 @@ public class IterationModificationController {
 	}
 
 	//URL should have been /statistics, but that was already used by another method in this controller
-	@RequestMapping (value = "/dashboard-statistics", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
-	public @ResponseBody IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId){
+	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
+	public
+	@ResponseBody
+	IterationStatisticsBundle getStatisticsAsJson(@PathVariable("iterationId") long iterationId) {
 
 		return iterationModService.gatherIterationStatisticsBundle(iterationId);
 	}
 
-	@RequestMapping (value = "/dashboard", method = RequestMethod.GET, produces=ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId){
+	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
+	public ModelAndView getDashboard(Model model, @PathVariable("iterationId") long iterationId) {
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		IterationStatisticsBundle bundle = iterationModService.gatherIterationStatisticsBundle(iterationId);
 
-		ModelAndView mav  = new ModelAndView("fragment/iterations/iteration-dashboard");
+		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-dashboard");
 		mav.addObject("iteration", iteration);
 		mav.addObject("dashboardModel", bundle);
 
@@ -237,7 +223,7 @@ public class IterationModificationController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-description", VALUE})
 	@ResponseBody
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long iterationId) {
 
@@ -248,7 +234,7 @@ public class IterationModificationController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=iteration-reference", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=iteration-reference", VALUE})
 	@ResponseBody
 	public String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long iterationId) {
 
@@ -258,10 +244,10 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
 	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
-			@PathVariable long iterationId) {
+						 @PathVariable long iterationId) {
 
 		LOGGER.info("IterationModificationController : renaming {} as {}", iterationId, newName);
 		iterationModService.rename(iterationId, newName);
@@ -270,19 +256,20 @@ public class IterationModificationController {
 	}
 
 	@RequestMapping(value = "/duplicateTestSuite/{testSuiteId}", method = RequestMethod.POST)
-	public @ResponseBody
+	public
+	@ResponseBody
 	Long duplicateTestSuite(@PathVariable(ITERATION_ID_KEY) Long iterationId,
-			@PathVariable("testSuiteId") Long testSuiteId) {
+							@PathVariable("testSuiteId") Long testSuiteId) {
 		TestSuite duplicate = iterationModService.copyPasteTestSuiteToIteration(testSuiteId, iterationId);
 		return duplicate.getId();
 	}
 
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
-	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long iterationId){
+	public JsonGeneralInfo refreshGeneralInfos(@PathVariable long iterationId) {
 		Iteration iteration = iterationModService.findById(iterationId);
-		return new JsonGeneralInfo((AuditableMixin)iteration);
+		return new JsonGeneralInfo((AuditableMixin) iteration);
 
 	}
 
@@ -299,10 +286,11 @@ public class IterationModificationController {
 		return DateUtils.dateToMillisecondsAsString(date);
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })
-	public @ResponseBody
+	@RequestMapping(value = PLANNING_URL, params = {"scheduledStart"})
+	public
+	@ResponseBody
 	String setScheduledStart(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "scheduledStart") String strDate) {
+							 @RequestParam(value = "scheduledStart") String strDate) {
 
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
@@ -315,10 +303,10 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "scheduledEnd" })
+	@RequestMapping(value = PLANNING_URL, params = {"scheduledEnd"})
 	@ResponseBody
 	public String setScheduledEnd(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "scheduledEnd") String strDate) {
+								  @RequestParam(value = "scheduledEnd") String strDate) {
 
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
@@ -333,10 +321,10 @@ public class IterationModificationController {
 
 	/** the next functions may receive null arguments : empty string **/
 
-	@RequestMapping(value = PLANNING_URL, params = { "actualStart" })
+	@RequestMapping(value = PLANNING_URL, params = {"actualStart"})
 	@ResponseBody
 	public String setActualStart(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "actualStart") String strDate) {
+								 @RequestParam(value = "actualStart") String strDate) {
 
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
@@ -349,10 +337,10 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "actualEnd" })
+	@RequestMapping(value = PLANNING_URL, params = {"actualEnd"})
 	@ResponseBody
 	public String setActualEnd(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "actualEnd") String strDate) {
+							   @RequestParam(value = "actualEnd") String strDate) {
 
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
@@ -365,33 +353,29 @@ public class IterationModificationController {
 
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "setActualStartAuto" })
+	@RequestMapping(value = PLANNING_URL, params = {"setActualStartAuto"})
 	@ResponseBody
 	public String setActualStartAuto(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "setActualStartAuto") boolean auto) {
+									 @RequestParam(value = "setActualStartAuto") boolean auto) {
 
-		LOGGER.info("IterationModificationController : autosetting actual start date for iteration {}, new value {}" , iterationId, auto);
+		LOGGER.info("IterationModificationController : autosetting actual start date for iteration {}, new value {}", iterationId, auto);
 
 		iterationModService.changeActualStartAuto(iterationId, auto);
 		Iteration iteration = iterationModService.findById(iterationId);
 
-		String toreturn = dateToStr(iteration.getActualStartDate());
-
-		return toreturn;
+		return dateToStr(iteration.getActualStartDate());
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "setActualEndAuto" })
+	@RequestMapping(value = PLANNING_URL, params = {"setActualEndAuto"})
 	@ResponseBody
 	public String setActualEndAuto(HttpServletResponse response, @PathVariable long iterationId,
-			@RequestParam(value = "setActualEndAuto") boolean auto) {
-		LOGGER.info("IterationModificationController : autosetting actual end date for campaign {}, new value {}", iterationId , auto);
+								   @RequestParam(value = "setActualEndAuto") boolean auto) {
+		LOGGER.info("IterationModificationController : autosetting actual end date for campaign {}, new value {}", iterationId, auto);
 
 		iterationModService.changeActualEndAuto(iterationId, auto);
 		Iteration iteration = iterationModService.findById(iterationId);
 
-		String toreturn = dateToStr(iteration.getActualEndDate());
-
-		return toreturn;
+		return dateToStr(iteration.getActualEndDate());
 
 	}
 
@@ -399,8 +383,9 @@ public class IterationModificationController {
 
 
 	// returns the ID of the newly created execution
-	@RequestMapping(value = "/test-plan/{testPlanItemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
-	public @ResponseBody
+	@RequestMapping(value = "/test-plan/{testPlanItemId}/executions/new", method = RequestMethod.POST, params = {"mode=manual"})
+	public
+	@ResponseBody
 	String addManualExecution(@PathVariable long testPlanItemId, @PathVariable long iterationId) {
 		LOGGER.trace("Add manual execution : creating execution");
 
@@ -418,11 +403,11 @@ public class IterationModificationController {
 	 */
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
-			@PathVariable("itemId") long itemId,
-			@CurrentMilestone Milestone activeMilestone) {
+												 @PathVariable("itemId") long itemId,
+												 @CurrentMilestone Milestone activeMilestone) {
 
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
-				itemId);
+			itemId);
 		// get the iteraction to check access rights
 		Iteration iter = iterationModService.findById(iterationId);
 		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(itemId);
@@ -444,21 +429,23 @@ public class IterationModificationController {
 	/* ********************** test suites **************************** */
 
 	@RequestMapping(value = "/test-suites/new", params = NAME, method = RequestMethod.POST)
-	public @ResponseBody
+	public
+	@ResponseBody
 	Map<String, String> addTestSuite(@PathVariable long iterationId,
-			@Valid @ModelAttribute("new-test-suite") TestSuite suite) {
+									 @Valid @ModelAttribute("new-test-suite") TestSuite suite) {
 		iterationModService.addTestSuite(iterationId, suite);
-		Map<String, String> res = new HashMap<String, String>();
+		Map<String, String> res = new HashMap<>();
 		res.put("id", suite.getId().toString());
 		res.put(NAME, suite.getName());
 		return res;
 	}
 
 	@RequestMapping(value = "/test-suites", method = RequestMethod.GET)
-	public @ResponseBody
+	public
+	@ResponseBody
 	List<TestSuiteModel> getTestSuites(@PathVariable long iterationId) {
 		Collection<TestSuite> testSuites = iterationModService.findAllTestSuites(iterationId);
-		List<TestSuiteModel> result = new ArrayList<TestSuiteModel>();
+		List<TestSuiteModel> result = new ArrayList<>();
 		for (TestSuite testSuite : testSuites) {
 			TestSuiteModel model = new TestSuiteModel(testSuite.getId(), testSuite.getName());
 			result.add(model);
@@ -466,8 +453,9 @@ public class IterationModificationController {
 		return result;
 	}
 
-	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = { RequestParams.IDS })
-	public @ResponseBody
+	@RequestMapping(value = "/test-suites/delete", method = RequestMethod.POST, params = {RequestParams.IDS})
+	public
+	@ResponseBody
 	OperationReport removeTestSuites(@RequestParam(RequestParams.IDS) List<Long> ids) {
 		OperationReport report = iterationModService.removeTestSuites(ids);
 		LOGGER.debug("removal of {} Test Suites", report.getRemoved().size());
@@ -477,7 +465,7 @@ public class IterationModificationController {
 
 	// ******************** other stuffs ***********************
 
-	private static final class UserLoginComparator implements Comparator<User>{
+	private static final class UserLoginComparator implements Comparator<User>, Serializable {
 		@Override
 		public int compare(User u1, User u2) {
 			return u1.getLogin().compareTo(u2.getLogin());

@@ -40,7 +40,9 @@ import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpRequestF
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.RequestExecutor;
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps.BuildAbsoluteId;
 import org.squashtest.tm.service.testautomation.TestAutomationCallbackService;
-import org.squashtest.tm.service.testautomation.spi.*;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
+import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
+import org.squashtest.tm.service.testautomation.spi.UnreadableResponseException;
 
 import javax.inject.Inject;
 import java.net.MalformedURLException;
@@ -91,8 +93,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 	@Override
 	public Collection<TestAutomationProject> listProjectsOnServer(TestAutomationServer server)
-		throws ServerConnectionFailed, AccessDenied, UnreadableResponseException, BadConfiguration,
-		TestAutomationException {
+		throws TestAutomationException {
 
 		CloseableHttpClient client = clientProvider.getClientFor(server);
 
@@ -104,14 +105,14 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 			return jsonParser.readJobListFromJson(response);
 		} catch (UnreadableResponseException ex) {
 			throw new UnreadableResponseException("Test automation - jenkins : server '" + server
-				+ "' returned malformed response : ", ex.getCause());
+				+ "' returned malformed response : ", ex.getCause()); // NOSONAR (GRF) call stack broken on purpose, i guess
 		}
 
 	}
 
 	@Override
-	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws ServerConnectionFailed,
-		AccessDenied, UnreadableResponseException, NotFoundException, BadConfiguration, TestAutomationException {
+	public Collection<AutomatedTest> listTestsInProject(TestAutomationProject project) throws
+		TestAutomationException {
 
 		// first we try an optimistic approach
 		try {
