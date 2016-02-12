@@ -36,12 +36,14 @@ class BugTrackerManagerServiceImplTest extends Specification  {
     BugTrackerDao bugTrackerDao = Mock()
     GenericProjectManagerService genericProjectManagerService = Mock()
     BugTrackerManagerServiceImpl service = new BugTrackerManagerServiceImpl()
+	org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao syncreqDao = Mock()
 
     def setup(){
         service.bugTrackerBindingDao = bugTrackerBindingDao
         service.bugTrackerDao = bugTrackerDao
         service.issueDao = issueDao
         service.genericProjectManagerService =  genericProjectManagerService
+		service.syncreqDao = syncreqDao;
     }
 
     def "should delete bugtrackers"(){
@@ -60,5 +62,6 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         5 * bugTrackerDao.remove(_)
         10 * genericProjectManagerService.removeBugTracker(_)
         15 * issueDao.remove(_)
+		5 * syncreqDao.deleteAllByServer(_)
     }
 }

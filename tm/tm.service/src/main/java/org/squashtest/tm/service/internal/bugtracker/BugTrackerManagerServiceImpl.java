@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +34,6 @@ import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -46,8 +48,8 @@ import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.internal.repository.BugTrackerBindingDao;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, BugTrackerSystemManager {
@@ -66,6 +68,10 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Inject
 	private BugTrackersLocalService bugtrackersLocalService;
+	
+	@Inject
+	private RequirementSyncExtenderDao syncreqDao;
+	
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -116,6 +122,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 		for (final Long id : bugtrackerIds) {
 			deleteBugtrackerToProjectBinding(id);
 			deleteIssueLinkedToBugtracker(id);
+			deleteLinkedSyncedRequirements(id);
 			deleteBugTracker(id);
 		}
 	}
@@ -133,6 +140,10 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 		for (final Issue issue : issues) {
 			issueDao.remove(issue);
 		}
+	}
+	
+	private void deleteLinkedSyncedRequirements(final Long bugtrackerId){
+		syncreqDao.deleteAllByServer(bugtrackerId);
 	}
 
 	private void deleteBugTracker(final long bugtrackerId) {
