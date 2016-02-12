@@ -59,9 +59,9 @@ public abstract class SessionFieldBridge implements FieldBridge {
 			start = System.nanoTime();
 		}
 
-		Session currentSession = null;
+		Session currentSession;
 		Session session = null;
-		Transaction tx = null;
+		Transaction tx;
 
 		try {
 			currentSession = getSessionFactory().getCurrentSession();

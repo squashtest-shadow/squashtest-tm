@@ -127,7 +127,7 @@ public class ExecutionRunnerControllerHelper {
             attachments = attachmentHelper.findAttachments(executionStep);
         }
 
-        MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(null, executionStep.getExecution().getIteration());
+        MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(null, execution.getIteration());
 
         model.addAttribute("execution", execution);
         model.addAttribute("executionStep", executionStep);
