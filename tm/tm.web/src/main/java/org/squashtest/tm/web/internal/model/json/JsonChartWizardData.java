@@ -69,31 +69,31 @@ public class JsonChartWizardData {
 
 	private EnumSet<ChartType> chartTypes = EnumSet.allOf(ChartType.class);
 
-	private Map<ColumnRole, EnumSet<Operation>> columnRoles = new EnumMap<ColumnRole, EnumSet<Operation>>(
-			ColumnRole.class);
+	private Map<ColumnRole, EnumSet<Operation>> columnRoles = new EnumMap<>(
+		ColumnRole.class);
 
-	private Map<DataType, EnumSet<Operation>> dataTypes = new EnumMap<DataType, EnumSet<Operation>>(DataType.class);
+	private Map<DataType, EnumSet<Operation>> dataTypes = new EnumMap<>(DataType.class);
 
 	// don't use EnumMap here cuz the business want a custom order
-	private Map<EntityType, String> entityTypes = new LinkedHashMap<EntityType, String>();
+	private Map<EntityType, String> entityTypes = new LinkedHashMap<>();
 
-	private Map<String, EnumSet<? extends Level>> levelEnums = new HashMap<String, EnumSet<? extends Level>>();
+	private Map<String, EnumSet<? extends Level>> levelEnums = new HashMap<>();
 
 	private EnumSet<ExecutionStatus> executionStatus = EnumSet.allOf(ExecutionStatus.class);
 
 	private EnumSet<ExecutionStatus> itpiExecutionStatus = EnumSet
 			.complementOf(EnumSet.copyOf(ExecutionStatus.TA_STATUSES_ONLY));
 
-	private Map<String, Map<String, InfoList>> projectInfoList = new HashMap<String, Map<String, InfoList>>();
+	private Map<String, Map<String, InfoList>> projectInfoList = new HashMap<>();
 
-	private Map<String, Set<CustomField>> customFields = new HashMap<String,  Set<CustomField>>();
+	private Map<String, Set<CustomField>> customFields = new HashMap<>();
 
 	private InfoListFinderService infoListFinder;
 
 	private CustomFieldBindingModificationService cufBindingService;
-	
-	private Map<Long, Set<ExecutionStatus>> disabledStatusByProject = new HashMap<Long, Set<ExecutionStatus>>();
-	
+
+	private Map<Long, Set<ExecutionStatus>> disabledStatusByProject = new HashMap<>();
+
 
 	public JsonChartWizardData(Map<EntityType, Set<ColumnPrototype>> columnPrototypes, List<Project> projects,
 			InfoListFinderService infoListFinder, CustomFieldBindingModificationService cufBindingService) {
@@ -112,7 +112,7 @@ public class JsonChartWizardData {
 		addLevelEnums();
 		addEntityType();
 		addInfoList(projects);
-		//For 1.13 we don't support operations on the custom fields. 
+		//For 1.13 we don't support operations on the custom fields.
 		//But as it will be in next version, i don't suppress the code.
 		//addCustomFields(projects);
 		addDisabledStatus(projects);
@@ -164,7 +164,7 @@ public class JsonChartWizardData {
 	private void addInfoList(List<Project> projects) {
 		for (Project project : projects) {
 
-			Map<String, InfoList> infoLists = new HashMap<String, InfoList>();
+			Map<String, InfoList> infoLists = new HashMap<>();
 
 			infoLists.put("REQUIREMENT_VERSION_CATEGORY", project.getRequirementCategories());
 			infoLists.put("REQUIREMENT_CATEGORY", project.getRequirementCategories());
@@ -173,7 +173,7 @@ public class JsonChartWizardData {
 			projectInfoList.put(project.getId().toString(), infoLists);
 		}
 
-		Map<String, InfoList> defaultList = new HashMap<String, InfoList>();
+		Map<String, InfoList> defaultList = new HashMap<>();
 
 		defaultList.put("REQUIREMENT_VERSION_CATEGORY",
 				infoListFinder.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode()));
@@ -185,8 +185,7 @@ public class JsonChartWizardData {
 	}
 
 
-
-	private void addCustomFields(List<Project> projects) {
+	private void addCustomFields(List<Project> projects) { // NOSONAR not used yet, should be later
 
 		for (Project project : projects) {
 			List<CustomFieldBinding> cufBindings = cufBindingService.findCustomFieldsForGenericProject(project.getId());
@@ -199,7 +198,7 @@ public class JsonChartWizardData {
 					return ((CustomFieldBinding) input).getCustomField();
 				}
 			});
-			customFields.put(project.getId().toString(), new HashSet<CustomField>(cufs));
+			customFields.put(project.getId().toString(), new HashSet<>(cufs));
 		}
 	}
 

@@ -41,7 +41,7 @@ public final class JsonHelper {
 	public JsonHelper(ObjectMapper objectMapper) {
 		super();
 		this.objectMapper = objectMapper;
-		INSTANCE = this;
+		INSTANCE = this; // NOSONAR cannot be inited any other way
 	}
 
 	public static String serialize(Object value) throws JsonMarshallerException {
@@ -52,8 +52,8 @@ public final class JsonHelper {
 		}
 	}
 
-	public static Map<String, Object> deserialize(String json) throws JsonParseException, JsonMappingException,
-	IOException {
+	public static Map<String, Object> deserialize(String json) throws
+		IOException {
 		TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {
 		};
 		return INSTANCE.objectMapper.readValue(json, typeRef);
@@ -75,7 +75,7 @@ public final class JsonHelper {
 	 * @param json
 	 * @return
 	 */
-	public static Map<String, Object> unmarshall(String json) throws JsonParseException, JsonMappingException, IOException {
+	public static Map<String, Object> unmarshall(String json) throws IOException {
 		return deserialize(json);
 	}
 }

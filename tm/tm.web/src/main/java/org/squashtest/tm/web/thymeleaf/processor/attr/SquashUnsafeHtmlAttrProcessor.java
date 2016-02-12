@@ -39,9 +39,9 @@ import org.thymeleaf.templatemode.ITemplateModeHandler;
  * This processor processes "unsafe-html" attributes. The attribute value is expected to be a potentially unbalanced
  * html fragment. This processor uses the LEGACYHTML5 parser to balance the html fragment and then replace this
  * element's inner html by this balanced html fragment.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifierAttrProcessor implements IProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashUnsafeHtmlAttrProcessor.class);
@@ -55,7 +55,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 
 	/**
 	 * Returns the html attribute of the processed argument parsed using the legacy html5 (tag balancing) parser.
-	 * 
+	 *
 	 * @see org.thymeleaf.processor.attr.AbstractTextChildModifierAttrProcessor#getText(org.thymeleaf.Arguments,
 	 *      org.thymeleaf.dom.Element, java.lang.String)
 	 */
@@ -67,7 +67,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 
 		final Object fragment = StandardExpressionProcessor.processExpression(arguments, attributeValue);
 
-		
+
 		try {
 			final Configuration configuration = arguments.getConfiguration();
 			final ITemplateModeHandler templateModeHandler = configuration.getTemplateModeHandler("LEGACYHTML5");
@@ -85,7 +85,7 @@ public final class SquashUnsafeHtmlAttrProcessor extends AbstractChildrenModifie
 			return parsedFragment;
 
 		} catch (final TemplateEngineException e) {
-			throw e;
+			throw e; // NOSONAR we wanna catch any exception but TemplateEngineException
 		} catch (final Exception e) {
 			throw new TemplateProcessingException("An error happened during parsing of unsafe html: \""
 					+ element.getAttributeValue(attributeName) + "\"", e);

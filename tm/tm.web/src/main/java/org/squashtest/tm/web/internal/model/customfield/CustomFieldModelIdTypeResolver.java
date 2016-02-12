@@ -29,8 +29,8 @@ import com.fasterxml.jackson.databind.type.TypeFactory;
 
 
 /**
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -56,6 +56,7 @@ public class CustomFieldModelIdTypeResolver implements TypeIdResolver{
 
 	@Override
 	public String idFromBaseType(){
+		// FIXME (GRF) code below always issues a NPE yet I don't know what we should do
 		return idFromValueAndType(null, baseType.getRawClass());
 	}
 

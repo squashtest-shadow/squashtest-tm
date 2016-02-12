@@ -37,7 +37,7 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
  * This listener exposes various application-wide configuration properties in the ServletContext (aka Application scope)
  *
  * @author Gregory Fouquet
- */  
+ */
 @ApplicationComponent
 public class SquashConfigContextExposer implements ServletContextListener, ApplicationListener<ContextRefreshedEvent> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SquashConfigContextExposer.class);
@@ -63,7 +63,7 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 	}
 
 	private synchronized void exposeMilestoneFeatEnabled() {
-		if (this.sce == null || contextReady == false) {
+		if (this.sce == null || !contextReady) {
 			return;
 		}
 
@@ -84,10 +84,10 @@ public class SquashConfigContextExposer implements ServletContextListener, Appli
 
 	}
 
-	
+
 	/*
-	 * The ConfigManager should be ready by the time this event is fired (hopefully) 
-	 * 
+	 * The ConfigManager should be ready by the time this event is fired (hopefully)
+	 *
 	 * (non-Javadoc)
 	 * @see org.springframework.context.ApplicationListener#onApplicationEvent(org.springframework.context.ApplicationEvent)
 	 */

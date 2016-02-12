@@ -47,13 +47,11 @@ import org.squashtest.tm.domain.project.Project;
 
 /**
  * Converts the post data of a "concise" report form into a Map of Criteria which can be given to a Report.
- * 
+ * <p/>
  * The former FormToCriteriaConverter was "verbose" ie it was able to reach the max allowed sise of an http request
  * (issue #3762)
- * 
+ *
  * @author Gregory Fouquet
- * 
- * 
  */
 public class ConciseFormToCriteriaConverter {
 	/*
@@ -71,7 +69,7 @@ public class ConciseFormToCriteriaConverter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ConciseFormToCriteriaConverter.class);
 
 	private final FormToCriteriaConverter delegate = new FormToCriteriaConverter();
-	private final Map<String, Input> flattenedInputByName = new HashMap<String, Input>();
+	private final Map<String, Input> flattenedInputByName = new HashMap<>();
 	private final List<Project> projects;
 
 	public ConciseFormToCriteriaConverter(@NotNull Report report, @NotNull List<Project> projects) {
@@ -94,10 +92,6 @@ public class ConciseFormToCriteriaConverter {
 		return expandedForm;
 	}
 
-	/**
-	 * @param conciseForm
-	 * @param expandedForm
-	 */
 	private void populateExpandedForm(Map<String, Object> conciseForm, Map<String, Object> expandedForm) {
 		for (Entry<String, Object> conciseInput : conciseForm.entrySet()) {
 			// Object expandedInput = expandedForm.get(conciseInput.getKey());
@@ -107,12 +101,7 @@ public class ConciseFormToCriteriaConverter {
 
 	}
 
-	/**
-	 * @param key
-	 * @param value
-	 * @param expandedForm
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({"unchecked", "rawtypes"})
 	private void populateExpandedInput(String inputName, Object inputValue, Map<String, Object> expandedForm) {
 		Map concise = (Map) inputValue;
 		InputType type = InputType.valueOf((String) concise.get(CON_TYPE));
@@ -120,97 +109,95 @@ public class ConciseFormToCriteriaConverter {
 		Object expanded = null;
 
 		switch (type) {
-		case TEXT:
-		case DATE: {
-			Map exp = new HashMap();
-			exp.put(EXP_TYPE, concise.get(CON_TYPE));
-			exp.put(EXP_VALUE, concise.get(CON_VAL));
-			expanded = exp;
+			case TEXT:
+			case DATE: {
+				Map exp = new HashMap();
+				exp.put(EXP_TYPE, concise.get(CON_TYPE));
+				exp.put(EXP_VALUE, concise.get(CON_VAL));
+				expanded = exp;
 
-			break;
-		}
-		case CHECKBOX: {
-			Map exp = expandedCheckbox(concise);
-			expanded = exp;
-			break;
-		}
-		case RADIO_BUTTONS_GROUP: {
-			List exp = expandedRadioButtonGroup(inputName, concise);
+				break;
+			}
+			case CHECKBOX: {
+				expanded = expandedCheckbox(concise);
+				break;
+			}
+			case RADIO_BUTTONS_GROUP: {
 
-			expanded = exp;
-			break;
-		}
-
-		case DROPDOWN_LIST: {
-			List exp = expandedDropdownList(inputName, concise);
-
-			expanded = exp;
-			break;
-		}
-		case CHECKBOXES_GROUP: {
-			List exp = expandedCheckboxesGroup(inputName, concise);
-
-			expanded = exp;
-			break;
-		}
-
-		case PROJECT_PICKER: {
-			List exp = expandedProjectPicker(concise);
-
-			expanded = exp;
-			break;
-		}
-		case TREE_PICKER: {
-			Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
-
-			if (selNodes.isEmpty()) {
-				return;
+				expanded = expandedRadioButtonGroup(inputName, concise);
+				break;
 			}
 
-			List exp = new ArrayList();
+			case DROPDOWN_LIST: {
 
-			for (Map node : selNodes) {
-				Map expOpt = new HashMap();
-				expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
-				expOpt.put(EXP_VALUE, node.get("resid"));
-				expOpt.put("nodeType", node.get("restype"));
+				expanded = expandedDropdownList(inputName, concise);
+				break;
+			}
+			case CHECKBOXES_GROUP: {
 
-				exp.add(expOpt);
+				expanded = expandedCheckboxesGroup(inputName, concise);
+				break;
 			}
 
-			expanded = exp;
-			break;
-		}
+			case PROJECT_PICKER: {
 
-		case MILESTONE_PICKER : {
+				expanded = expandedProjectPicker(concise);
+				break;
+			}
+			case TREE_PICKER: {
+				Collection<Map> selNodes = (Collection<Map>) concise.get(CON_VAL);
 
-			Collection milestoneIds = (Collection) concise.get(CON_VAL);
+				if (selNodes.isEmpty()) {
+					return;
+				}
 
-			List<Object> milestones = new ArrayList<>(milestoneIds.size());
+				List exp = new ArrayList();
 
-			Map<String, Object> mMap = new HashMap<>();
-			mMap.put(EXP_TYPE, concise.get(CON_TYPE));
-			mMap.put(EXP_VALUE, milestoneIds);
+				for (Map node : selNodes) {
+					Map expOpt = new HashMap();
+					expOpt.put(EXP_TYPE, concise.get(CON_TYPE));
+					expOpt.put(EXP_VALUE, node.get("resid"));
+					expOpt.put("nodeType", node.get("restype"));
 
-			milestones.add(mMap);
+					exp.add(expOpt);
+				}
 
-			expanded = milestones;
-			break;
-		}
-		case TAG_PICKER : {
-			Collection tagsVal = (Collection) concise.get(CON_VAL);
+				expanded = exp;
+				break;
+			}
 
-			List<Object> tags = new ArrayList<>(tagsVal.size());
+			case MILESTONE_PICKER: {
 
-			Map<String, Object> mMap = new HashMap<>();
-			mMap.put(EXP_TYPE, concise.get(CON_TYPE));
-			mMap.put(EXP_VALUE, tagsVal);
+				Collection milestoneIds = (Collection) concise.get(CON_VAL);
 
-			tags.add(mMap);
+				List<Object> milestones = new ArrayList<>(milestoneIds.size());
 
-			expanded = tags;
-			break;
-		}
+				Map<String, Object> mMap = new HashMap<>();
+				mMap.put(EXP_TYPE, concise.get(CON_TYPE));
+				mMap.put(EXP_VALUE, milestoneIds);
+
+				milestones.add(mMap);
+
+				expanded = milestones;
+				break;
+			}
+			case TAG_PICKER: {
+				Collection tagsVal = (Collection) concise.get(CON_VAL);
+
+				List<Object> tags = new ArrayList<>(tagsVal.size());
+
+				Map<String, Object> mMap = new HashMap<>();
+				mMap.put(EXP_TYPE, concise.get(CON_TYPE));
+				mMap.put(EXP_VALUE, tagsVal);
+
+				tags.add(mMap);
+
+				expanded = tags;
+				break;
+			}
+			default:
+				// NOOP
+				break;
 		}
 
 		expandedForm.put(inputName, expanded);
@@ -225,7 +212,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private List expandedProjectPicker(Map concise) {
 		List exp = new ArrayList();
 		Collection selVals = (Collection) concise.get(CON_VAL);
@@ -241,7 +228,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private List expandedRadioButtonGroup(String inputName, Map concise) {
 		RadioButtonsGroup reportInput = (RadioButtonsGroup) flattenedInputByName.get(inputName);
 		List exp = new ArrayList();
@@ -258,7 +245,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private List expandedDropdownList(String inputName, Map concise) {
 		DropdownList reportInput = (DropdownList) flattenedInputByName.get(inputName);
 		List exp = new ArrayList();
@@ -275,7 +262,7 @@ public class ConciseFormToCriteriaConverter {
 		return exp;
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	private List expandedCheckboxesGroup(String inputName, Map concise) {
 		CheckboxesGroup reportInput = (CheckboxesGroup) flattenedInputByName.get(inputName);
 		List exp = new ArrayList();
@@ -293,15 +280,12 @@ public class ConciseFormToCriteriaConverter {
 	}
 
 
-	/**
-	 * @return
-	 */
 	private Map<String, Object> expandedForm() {
-		return new HashMap<String, Object>();
+		return new HashMap<>();
 	}
 
 	private Collection<Input> flattenInputs(List<Input> inputs) {
-		Collection<Input> res = new ArrayList<Input>();
+		Collection<Input> res = new ArrayList<>();
 
 		for (Input input : inputs) {
 			if (INPUTS_GROUP.equals(input.getType())) {

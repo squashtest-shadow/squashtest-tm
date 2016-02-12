@@ -62,7 +62,7 @@ public class CustomFieldJsonConverter {
 
 	// ************ simple  jsonifications ********************
 
-	public RenderingLocationModel toJson(RenderingLocation location){
+	public RenderingLocationModel toJson(RenderingLocation location) {
 
 		RenderingLocationModel model = new RenderingLocationModel();
 
@@ -73,11 +73,11 @@ public class CustomFieldJsonConverter {
 
 	}
 
-	public RenderingLocationModel[] toJson(Collection<RenderingLocation> values){
+	public RenderingLocationModel[] toJson(Collection<RenderingLocation> values) {
 		RenderingLocationModel[] modelArray = new RenderingLocationModel[values.size()];
-		int i=0;
-		for (RenderingLocation location : values){
-			modelArray[i++]=toJson(location);
+		int i = 0;
+		for (RenderingLocation location : values) {
+			modelArray[i++] = toJson(location);
 		}
 		return modelArray;
 	}
@@ -125,12 +125,13 @@ public class CustomFieldJsonConverter {
 
 	// because of Java spec 15.12 and because I don't want another Visitor bullshit
 	// we're doing an ugly downcast for multi select fields when appropriate
+	@SuppressWarnings("unchecked")
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
-		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())){//NOSONAR see comment above...
-			return toJson((TagsValue)value);
-		}
-		else{
+		// TODO expression below is either false or can be rewritten as an instanceof
+		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
+			return toJson((TagsValue) value);
+		} else {
 			CustomFieldValueModel model = createStdCustomFieldValues(value);
 			model.setValue(value.getValue());
 
@@ -138,12 +139,12 @@ public class CustomFieldJsonConverter {
 		}
 	}
 
-	public CustomFieldValueModel toJson(TagsValue value){
+	public CustomFieldValueModel toJson(TagsValue value) {
 
 		CustomFieldValueModel model = createStdCustomFieldValues(value);
 
-		List<String>  options = new ArrayList<String>(value.getSelectedOptions().size());
-		for (CustomFieldValueOption option : value.getSelectedOptions()){
+		List<String> options = new ArrayList<>(value.getSelectedOptions().size());
+		for (CustomFieldValueOption option : value.getSelectedOptions()) {
 			options.add(option.getLabel());
 		}
 		model.setOptionValues(options);
@@ -151,7 +152,7 @@ public class CustomFieldJsonConverter {
 	}
 
 
-	private <CF extends CustomFieldValue> CustomFieldValueModel createStdCustomFieldValues(CF value){
+	private <CF extends CustomFieldValue> CustomFieldValueModel createStdCustomFieldValues(CF value) {
 		CustomFieldValueModel model = new CustomFieldValueModel();
 
 		BindableEntityModel entityTypeModel = toJson(value.getBoundEntityType());
@@ -176,6 +177,7 @@ public class CustomFieldJsonConverter {
 	}
 
 
+	@SuppressWarnings("unchecked")
 	public CustomFieldValueModel toJson(DenormalizedFieldValue value) {
 
 		CustomFieldValueModel model = new CustomFieldValueModel();
@@ -206,13 +208,12 @@ public class CustomFieldJsonConverter {
 		model.setBinding(bindingModel);
 
 		// the value depends on the actual subtype
-		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())){//NOSONAR see coment above
-			model.setOptionValues(((DenormalizedMultiSelectField)value).getValues());
-		}
-		else{
+		// TODO expression below is either false or can be rewritten as an instanceof
+		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())) {
+			model.setOptionValues(((DenormalizedMultiSelectField) value).getValues());
+		} else {
 			model.setValue(value.getValue());
 		}
-
 
 
 		bindingModel.setCustomField(customFieldModel);
@@ -221,8 +222,6 @@ public class CustomFieldJsonConverter {
 		return model;
 
 	}
-
-
 
 
 	// ***************** other things ******************************
