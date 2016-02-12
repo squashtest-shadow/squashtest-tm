@@ -24,15 +24,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
-
 /**
  * Pojo class for the requirement version import process
  * @author Julien
  *
  */
 public class RequirementVersionModel {
-	
+
 	private TargetStatus status;
 	private Set<String> linkedMilestones;
 	private boolean milestoneLocked;

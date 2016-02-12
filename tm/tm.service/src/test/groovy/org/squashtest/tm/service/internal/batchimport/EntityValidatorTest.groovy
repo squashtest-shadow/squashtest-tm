@@ -21,17 +21,13 @@
 package org.squashtest.tm.service.internal.batchimport
 
 import static org.squashtest.tm.service.importer.ImportStatus.*
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*
+import static Existence.*
 
 import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.service.importer.ImportMode
-import org.squashtest.tm.service.importer.ImportStatus
-import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
-
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -62,17 +58,22 @@ class EntityValidatorTest extends Specification {
 		TestCase testCase = new TestCase(name:"test-case")
 
 		and :
-		model.getProjectStatus("project") >> new ProjectTargetStatus(EXISTS, 10l,  10l)
+		model.getProjectStatus("project") >> projectTargetStatus(status: EXISTS, id: 10l,  testCaseLibraryId: 10l)
 
 		when :
 		LogTrain train = validator.updateTestCaseChecks(target, testCase)
 
 
 		then :
-		train.hasCriticalErrors() == false
+		!train.hasCriticalErrors()
 		train.entries == []
 	}
 
+	def projectTargetStatus(args) {
+		def pts = new ProjectTargetStatus(args.status, args.testCaseLibraryId)
+		pts.testCaseLibraryId = args.testCaseLibraryId
+		return pts
+	}
 
 
 
@@ -82,7 +83,7 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L) :
 			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
@@ -114,7 +115,7 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L) :
 			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
@@ -145,7 +146,7 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L) :
 			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
@@ -173,7 +174,7 @@ class EntityValidatorTest extends Specification {
 		TestStep astep = new ActionTestStep(action:"ready for action", expectedResult : "expected")
 
 		and :
-		model.getProjectStatus("project") >> new ProjectTargetStatus(EXISTS, 10l, 10L)
+		model.getProjectStatus("project") >> projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L)
 
 		and :
 		model.getStatus(_) >> new TargetStatus(EXISTS, 10l)
@@ -183,7 +184,7 @@ class EntityValidatorTest extends Specification {
 
 
 		then :
-		train.hasCriticalErrors() == false
+		!train.hasCriticalErrors()
 		train.entries == []
 
 	}
@@ -194,7 +195,7 @@ class EntityValidatorTest extends Specification {
 		given :
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L) :
 			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
@@ -244,7 +245,7 @@ class EntityValidatorTest extends Specification {
 
 
 		then :
-		train.hasCriticalErrors() == false
+		!train.hasCriticalErrors()
 		train.entries == []
 
 		where :
@@ -300,7 +301,7 @@ class EntityValidatorTest extends Specification {
 
 		and :
 		model.getStatus(_) >> status(EXISTS, 10l)
-		model.getProjectStatus("project") >> new ProjectTargetStatus(EXISTS, 15l, 15L)
+		model.getProjectStatus("project") >> projectTargetStatus(status: EXISTS, id: 15l, testCaseLibraryId: 15L)
 
 		when :
 		LogTrain train = validator.basicParameterChecks(target)
@@ -324,7 +325,7 @@ class EntityValidatorTest extends Specification {
 
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L) :
 			new ProjectTargetStatus(NOT_EXISTS)
 		}
 
@@ -369,7 +370,7 @@ class EntityValidatorTest extends Specification {
 
 		model.getProjectStatus(_) >> {
 			return (it[0] == "project") ?
-			new ProjectTargetStatus(EXISTS, 10l, 10L) :
+			projectTargetStatus(status: EXISTS, id: 10l, testCaseLibraryId: 10L) :
 			new ProjectTargetStatus(NOT_EXISTS)
 		}
 

@@ -18,29 +18,36 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
-
-import org.apache.poi.ss.usermodel.Cell;
+package org.squashtest.tm.service.internal.batchimport;
 
 /**
- * This class liberally coerces a cell into a Boolean. Blank cells are coerced to null.
- *
- * @author Gregory Fouquet
- *
+ * @author bsiri
  */
-public final class OptionalBooleanCellCoercer extends LiberalBooleanCellCoercer {
-	public static final OptionalBooleanCellCoercer INSTANCE = new OptionalBooleanCellCoercer();
+class ProjectTargetStatus extends TargetStatus {
+    private Long testCaseLibraryId;
+    private Long requirementLibraryId;
 
-	private OptionalBooleanCellCoercer() {
-		super();
+	ProjectTargetStatus(Existence status, Long id) {
+		super(status, id);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceBlankCell(org.apache.poi.ss.usermodel.Cell)
-	 */
-	@Override
-	protected Boolean coerceBlankCell(Cell cell) {
-		return null; // NOSONAR absent optional boolean -> null value
-	}
+	ProjectTargetStatus(Existence status, Long id,
+						Long testCaseLibraryId, Long requirementLibraryId) {
+        super(status, id);
+        this.testCaseLibraryId = testCaseLibraryId;
+        this.requirementLibraryId = requirementLibraryId;
+    }
+
+    ProjectTargetStatus(Existence status) {
+        super(status);
+    }
+
+    public Long getTestCaseLibraryId() {
+        return testCaseLibraryId;
+    }
+
+    public Long getRequirementLibraryId() {
+        return requirementLibraryId;
+    }
 
 }

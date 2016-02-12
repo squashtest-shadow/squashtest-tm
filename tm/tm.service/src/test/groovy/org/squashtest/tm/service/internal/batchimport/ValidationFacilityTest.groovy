@@ -20,13 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.junit.Test
 import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.internal.batchimport.Model.Existence
-import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
 import org.squashtest.tm.service.internal.repository.UserDao
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.user.UserAccountService

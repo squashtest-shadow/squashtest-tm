@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*
+import static Existence.*
 
 import org.hibernate.Query
 import org.hibernate.Session
@@ -34,11 +34,7 @@ import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.service.internal.batchimport.Model.Existence
 import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel
-import org.squashtest.tm.service.internal.batchimport.Model.ProjectTargetStatus
-import org.squashtest.tm.service.internal.batchimport.Model.StepType
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;

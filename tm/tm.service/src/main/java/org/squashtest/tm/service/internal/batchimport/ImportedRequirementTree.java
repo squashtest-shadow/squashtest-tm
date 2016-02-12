@@ -31,9 +31,6 @@ import java.util.TreeMap;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.library.structures.GraphNode;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
-import org.squashtest.tm.service.internal.batchimport.Model.Existence;
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
-
 
 
 /**
@@ -41,10 +38,10 @@ import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
  * 	This graph may have several root nodes, each of them represent a project. That's why it is a specialization of LibraryGraph instead of LibraryTree.
  * For more detailed informations you may get the Node itself, using {@link #getNode(RequirementTarget)}
  * </p>
- * 
+ *
  * <p>While we're at it, here are the rules regarding the parent of a requirement and particularly deciding whether it is
  * a folder or a requirement. Let call this question "the type of the parent".</p>
- * 
+ *
  * <p>Considering the path /project/parent/requirement, let be 'parent' the parent entity we need
  * to know the type of :
  * 	<ul>
@@ -53,11 +50,11 @@ import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
  * 		<li>There is no such RequirementVersionTarget =&gt; then parent is actually a RequirementFolder</li>
  * 	</ul>
  * </p>
- * 
+ *
  * <p>It follows that the order in which this tree is populated has consequences over the answer to "the type of the parent".
  * Consider the following Targets :
  * </p>
- * 
+ *
  * <ol>
  * 	<li>/project/parent/requirement</li>
  * 	<li>/project/parent/requirement/childrequirement</li>
@@ -68,23 +65,23 @@ import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
  *	Now let's see what happens depending on the insertion order. If the targets are inserted in that order there
  *	are no problem. Target 1 has a parent named "parent", assumed to be a folder, and is inserted as a Requirement.
  *	Then Target 2 is inserted normally. </p>
- *	
+ *
  *<p>
  *	However a different insertion order yields different results. Target 2 is inserted first.
  *	The model will consider that '/project/parent/requirement' is folder because it is not yet known.
  *	Then Target 1 is proposed for insertion. The model will then reject it because '/project/parent/requirement'
  *	is already known as a folder.
  * </p>
- * 
+ *
  */
 class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRequirementTree.Node>{
 
 
 	/**
 	 * <p>Will add a a requirement with the given status at the location specified by the target. There are two possible scenarios :</p>
-	 * 
+	 *
 	 * <h6>No such node was found at the target location :</h6>
-	 * 
+	 *
 	 * <p>
 	 * 	In that case the node is inserted with the corresponding informations. Also, any missing nodes back up to the project node will
 	 *  be inserted. This step might be complex because parent nodes may be either folders, or other requirements.
@@ -92,20 +89,20 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 	 *  in the tree. If 'b' is a requirement, then nodes 'c' and 'd' must be created as requirements. If 'b' is a folder, then 'c' and 'd'
 	 *  are created as folders.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * 	The requirement node that is inserted here is real. However, the other nodes are
 	 * 	created by the algorithm for the sake of completedness, not because of an explicit request. Those nodes are called "virtual" for that
 	 * 	reason. This may have an importanc in the second case we discuss below.
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * <h6>There is already a node at the target location :</h6>
-	 * 
+	 *
 	 * <p>
 	 *  In that case the situation is the following :
 	 * </p>
-	 * 
+	 *
 	 * <ul>
 	 * 	<li>the node found is a requirement : we update its TargetStatus with the new one. It is no longer considered virtual if that was the case
 	 * 		previously</li>
@@ -114,11 +111,11 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 	 * 	<li>the node is folder for real (virtual == false) : throw a {@link IllegalStateException}. As per specification, no Requirement may be
 	 * 	created in that place now. (see the class-level javadoc)</li>
 	 * </ul>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param requirement
 	 * @param status
-	 * 
+	 *
 	 * @throws IllegalStateException when attempting to add or update a node which happen to be actually a folder (see the class-level javadoc).
 	 */
 	public void addOrUpdateNode(RequirementTarget requirement, TargetStatus status) {
@@ -153,16 +150,16 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		Node req = getNode(target);
 		return (req != null && req.getStatus().getStatus() != Existence.NOT_EXISTS);
 	}
-	
+
 	public boolean targetAlreadyLoaded(RequirementTarget target){
 		Node req = getNode(target);
 		return req != null;
 	}
-	
+
 	public boolean targetAlreadyLoaded(RequirementVersionTarget target){
 		Node req = getNode(target.getRequirement());
 		if (req==null) {
-			return false;//If requirement isn't loaded, the requirement version can't be loaded 
+			return false;//If requirement isn't loaded, the requirement version can't be loaded
 		}
 		return req.versionAlreadyLoaded(target.getVersion());
 	}
@@ -189,20 +186,20 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 	/*
 	 * behavior for this is commented in the javadoc on addOrUpdateNode
-	 * 
+	 *
 	 * How does it work :
-	 * 
+	 *
 	 * 1 - The requirement is created with the given status. Then, from there we walk up the hierarchy by chunking
 	 * the target.
-	 * 
+	 *
 	 * 2 - Until a parent is found :
 	 * 	2.1 : create the node, as a folder. keep track of it, we might need it later
 	 * 	2.2 : bind this parent to the latest created node (being the node from step 1, or a previous iteration over 2.1)
-	 * 
+	 *
 	 * 3 - when a parent is found :
 	 * 	3.1 : bind it to the latest created node
 	 * 	3.2 : if that parent found happens to be a requirement -> fix all the created node saved in step 2.1 and mark them as requirements.
-	 * 
+	 *
 	 */
 	private void addNode(RequirementTarget target, TargetStatus status){
 
@@ -280,7 +277,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		foundNode.updateAsRequirement(target, status);
 
 	}
-	
+
 	/**
 	 * Set a RequirementVersionTarget status to not exists
 	 * @param target
@@ -291,7 +288,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			req.setNotExists(target.getVersion());
 		}
 	}
-	
+
 
 	public Long getNodeId(RequirementTarget requirement) {
 		Node reqNode = getNode(requirement);
@@ -300,34 +297,34 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		}
 		return null;
 	}
-	
+
 	public void bindMilestone(RequirementVersionTarget target, String milestone) {
 		Node req = getNode(target.getRequirement());
 		req.bindMilestoneToVersion(target.getVersion(), milestone);
 	}
-	
+
 	public void bindMilestone(RequirementVersionTarget target,
 			List<String> milestones) {
 		for (String milestone : milestones) {
 			bindMilestone(target, milestone);
 		}
 	}
-	
+
 	public boolean isMilestoneUsedByOneVersion(RequirementVersionTarget target, String milestone){
 		Node req = getNode(target.getRequirement());
 		return req.isMilestoneUsedByOneVersion(milestone);
 	}
-	
+
 	public boolean isMilestoneLocked(RequirementVersionTarget target, String milestone){
 		Node req = getNode(target.getRequirement());
 		return req.isVersionMilestoneLocked(target.getVersion(),milestone);
 	}
-	
+
 	public void milestoneLock(RequirementVersionTarget target){
 		Node req = getNode(target.getRequirement());
 		req.setVersionMilestoneLocked(target.getVersion());
 	}
-	
+
 
 	public boolean isRequirementFolder(RequirementVersionTarget target) {
 		Node req = getNode(target.getRequirement());
@@ -346,13 +343,13 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		private boolean virtual = false;
 		private SortedMap<Integer,RequirementVersionModel> requirementVersions = new TreeMap<Integer, RequirementVersionModel>();
 		private Set<String> milestonesInVersion = new HashSet<String>();
-		
+
 		public Node(RequirementTarget target, TargetStatus status) {
 			super(target);
 			this.status = status;
 		}
 
-		
+
 		public void setNotExists(Integer version) {
 			requirementVersions.put(version,new RequirementVersionModel(TargetStatus.NOT_EXISTS));
 		}
@@ -367,7 +364,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		boolean isRequirement(){
 			return isRequirement;
 		}
-		
+
 		public boolean isRequirementFolder() {
 			return !isRequirement;
 		}
@@ -396,7 +393,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		void setStatus(TargetStatus status){
 			this.status = status;
 		}
-		
+
 		boolean versionAlreadyLoaded(Integer versionNo){
 			return requirementVersions.containsKey(versionNo);
 		}
@@ -421,15 +418,15 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		void addVersion(Integer noVersion, TargetStatus status){
 			requirementVersions.put(noVersion, new RequirementVersionModel(status));
 		}
-		
+
 		boolean isMilestoneUsedByOneVersion(String milestone){
 			return milestonesInVersion.contains(milestone);
 		}
-		
+
 		boolean isVersionMilestoneLocked(Integer noVersion, String milestone){
 			return requirementVersions.get(noVersion).isMilestoneLocked();
 		}
-		
+
 		void bindMilestoneToVersion(Integer noVersion, String milestone){
 			if (!isMilestoneUsedByOneVersion(milestone)) {
 				RequirementVersionModel rvModel = requirementVersions.get(noVersion);
@@ -437,7 +434,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 				milestonesInVersion.add(milestone);
 			}
 		}
-		
+
 		public void setVersionMilestoneLocked(Integer noVersion) {
 			RequirementVersionModel rvModel = requirementVersions.get(noVersion);
 			rvModel.setMilestoneLocked(true);
@@ -460,10 +457,10 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 
 
-	
 
 
 
 
-	
+
+
 }

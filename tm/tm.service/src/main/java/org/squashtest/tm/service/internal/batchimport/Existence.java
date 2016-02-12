@@ -18,29 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.excel;
-
-import org.apache.poi.ss.usermodel.Cell;
+package org.squashtest.tm.service.internal.batchimport;
 
 /**
- * This class liberally coerces a cell into a Boolean. Blank cells are coerced to null.
+ * That enum sort of represents the level of existence of a test case. It
+ * can be either physically present, or virtually present, or virtually non
+ * existent, or default to physically non existant.<br/>
+ * It helps us keeping track of the fate of a test case during the import
+ * process (which is, remember, essentially a batch processing).
  *
- * @author Gregory Fouquet
- *
+ * @author bsiri
  */
-public final class OptionalBooleanCellCoercer extends LiberalBooleanCellCoercer {
-	public static final OptionalBooleanCellCoercer INSTANCE = new OptionalBooleanCellCoercer();
-
-	private OptionalBooleanCellCoercer() {
-		super();
-	}
-
-	/**
-	 * @see org.squashtest.tm.service.internal.batchimport.excel.TypeBasedCellValueCoercer#coerceBlankCell(org.apache.poi.ss.usermodel.Cell)
-	 */
-	@Override
-	protected Boolean coerceBlankCell(Cell cell) {
-		return null; // NOSONAR absent optional boolean -> null value
-	}
-
+enum Existence {
+    /**
+     * exists now in the database
+     */
+    EXISTS,
+    /**
+     * will be created later on in the process
+     */
+    TO_BE_CREATED,
+    /**
+     * will be deleted later on in the process
+     */
+    TO_BE_DELETED,
+    /**
+     * at this point, doesn't exists either in DB nor in anything planned
+     * later in the process
+     */
+    NOT_EXISTS
 }

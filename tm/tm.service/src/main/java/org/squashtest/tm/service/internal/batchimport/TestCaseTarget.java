@@ -138,8 +138,6 @@ public class TestCaseTarget extends Target {
 	/**
 	 * note : return the names of each folders, including the project, of this test case. Assumes that the path is well
 	 * formed.
-	 * 
-	 * @return
 	 */
 	public String getFolder() {
 

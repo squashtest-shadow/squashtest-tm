@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.EXISTS;
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_CREATED;
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
 
@@ -57,15 +57,11 @@ import org.squashtest.tm.service.importer.LogEntry.Builder;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
-import org.squashtest.tm.service.internal.batchimport.Model.Existence;
-import org.squashtest.tm.service.internal.batchimport.Model.StepType;
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
@@ -274,7 +270,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Inject
 	private RequirementVersionCoverageDao coverageDao;
-	
+
 	@Inject
 	private ProjectDao projectDao;
 
@@ -797,35 +793,35 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		return entry;
 	}
-	
+
 	private LogEntry checkPermissionOnProject(String permission, CoverageTarget target, Target checkedTarget) {
-		
+
 		LogEntry entry = null;
-		
+
 		String tcPath = target.getTcPath();
 		Project tcProject = projectDao.findByName(PathUtils.extractProjectName(tcPath));
 		Long tcLibid = tcProject.getTestCaseLibrary().getId();
-		
+
 		if ((tcLibid != null)
 				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
 					permission, target.getPath() });
 		}
-		
+
 		String reqPath = target.getReqPath();
 		Project reqProject = projectDao.findByName(PathUtils.extractProjectName(reqPath));
 		Long reqLibid = reqProject.getRequirementLibrary().getId();
-		
+
 		if ((reqLibid != null)
 				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
 					permission, target.getPath() });
 		}
-		
+
 		return entry;
 	}
-	
-	
+
+
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
 			String optionalImpact) {
@@ -1075,7 +1071,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			instr.fatalError();
 			return logs;
 		}
-		
+
 		checkImportedRequirementVersionStatus(target, reqVersion);
 		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues,
 				model.getRequirementVersionCufs(target)));
@@ -1181,7 +1177,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		List<String> milestones = instr.getMilestones();
 		RequirementVersionTarget target = instr.getTarget();
-		
+
 		for (String milestone : milestones) {
 			//checking in model wich keep trace of change since the begining of the batch
 			if (model.checkMilestonesAlreadyUsedInRequirement(milestone,target)) {
@@ -1213,7 +1209,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_COLLISION, REQ_VERSION_NUM.header)
 					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
 		}
-		
+
 	}
 
 	private void fixVersionNumber(RequirementVersionTarget target) {
@@ -1247,13 +1243,13 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Long tcId = checkTcForCoverage(target, logs);
 		Long reqVersionId = checkRequirementVersionForCoverage(target, logs);
 		checkCoverageAlreadyExist(target, logs, tcId, reqVersionId);
-		
-		//if something is wrong here, the coverage isn't valid so 
+
+		//if something is wrong here, the coverage isn't valid so
 		//return to avoid nasty exception in nexts checks
 		if (logs.hasCriticalErrors()) {
 			return logs;
 }
-		
+
 		logs.addEntry(checkPermissionOnProject(PERM_IMPORT, target, target));
 
 		return logs;

@@ -20,10 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.squashtest.tm.service.internal.batchimport.ImportedRequirementTree.Node;
-import org.squashtest.tm.service.internal.batchimport.Model.Existence;
-import org.squashtest.tm.service.internal.batchimport.Model.TargetStatus;
-
+import org.squashtest.tm.service.internal.batchimport.ImportedRequirementTree.Node
 import spock.lang.Specification
 
 class ImportedRequirementTreeTest extends Specification {
