@@ -172,7 +172,7 @@ publish("reload.oer.urldialog");
 </script>
 
 	
-	<c:if test="${not empty bugTracker}">
+	<c:if test="${not empty bugTracker and not isOslc}">
 	<is:issue-add-popup 
   id="issue-report-dialog" 
   interfaceDescriptor="${interfaceDescriptor}"  
@@ -180,6 +180,16 @@ publish("reload.oer.urldialog");
   projectId="${projectId}"
   projectNames="${projectNames}"/>		
 	</c:if>
+
+	
+<c:if test="${not empty bugTracker and isOslc}">
+	<is:issue-add-popup-oslc id="issue-report-dialog"
+		interfaceDescriptor="${interfaceDescriptor}"  
+        bugTrackerId="${bugTracker.id}" 
+        projectId="${projectId}" 
+        projectNames="${projectNames}"/>
+</c:if>	
+	
 	
   <%-- 
    Here we define a generic error dialog, much like in the notification system

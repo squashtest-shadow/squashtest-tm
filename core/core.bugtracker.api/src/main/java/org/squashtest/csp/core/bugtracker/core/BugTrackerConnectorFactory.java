@@ -20,24 +20,31 @@
  */
 package org.squashtest.csp.core.bugtracker.core;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.PostConstruct;
+import javax.validation.constraints.NotNull;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.service.AdvancedBugtrackerConnectorAdapter;
 import org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector;
+import org.squashtest.csp.core.bugtracker.service.OslcBugtrackerConnectorAdapter;
 import org.squashtest.csp.core.bugtracker.service.SimpleBugtrackerConnectorAdapter;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.AdvancedBugTrackerConnectorProvider;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnector;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerConnectorProvider;
+import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnector;
+import org.squashtest.csp.core.bugtracker.spi.OslcBugTrackerConnectorProvider;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
-
-import javax.annotation.PostConstruct;
-import javax.validation.constraints.NotNull;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-
 
 /**
  * Factory of BugTrackerConnector objects. It delegates to {@link BugTrackerConnectorProvider} which should register to
@@ -53,9 +60,11 @@ public class BugTrackerConnectorFactory {
 	 */
 	private final Map<String, BugTrackerConnectorProvider> providerByKind = new ConcurrentHashMap<>(2);
 	private final Map<String, AdvancedBugTrackerConnectorProvider> advancedProviderByKind = new ConcurrentHashMap<>(2);
+	private final Map<String, OslcBugTrackerConnectorProvider> oslcProviderByKind = new ConcurrentHashMap<>(2);
 
 	private Collection<BugTrackerConnectorProvider> providers = Collections.emptyList();
 	private Collection<AdvancedBugTrackerConnectorProvider> advancedProviders = Collections.emptyList();
+	private Collection<OslcBugTrackerConnectorProvider> oslcProviders = Collections.emptyList();
 
 	public BugTrackerConnectorFactory() {
 	}
@@ -64,9 +73,9 @@ public class BugTrackerConnectorFactory {
 		Set<String> result = new HashSet<>();
 		result.addAll(providerByKind.keySet());
 		result.addAll(advancedProviderByKind.keySet());
+		result.addAll(oslcProviderByKind.keySet());
 		return result;
 	}
-
 
 	public InternalBugtrackerConnector createConnector(BugTracker bugTracker) {
 
@@ -81,7 +90,10 @@ public class BugTrackerConnectorFactory {
 		} else if (isAdvancedConnector(kind)) {
 			connector = createAndWrapAdvancedConnector(bugTracker);
 
+		} else if (isOslcConnector(kind)) {
+			connector = createAndWrapOslcConnector(bugTracker);
 		} else {
+
 			throw new UnknownConnectorKindException(kind);
 		}
 
@@ -99,15 +111,24 @@ public class BugTrackerConnectorFactory {
 		for (AdvancedBugTrackerConnectorProvider advancedProvider : advancedProviders) {
 			registerAdvancedProvider(advancedProvider);
 		}
+
+		Assert.notNull(oslcProviders, "'oslcProviders' property should not be null");
+		for (OslcBugTrackerConnectorProvider oslcProvider : oslcProviders) {
+			registerOslcProvider(oslcProvider);
+		}
+
 	}
 
 	private boolean isSimpleConnector(String kind) {
 		return providerByKind.containsKey(kind);
 	}
 
-
 	private boolean isAdvancedConnector(String kind) {
 		return advancedProviderByKind.containsKey(kind);
+	}
+
+	public boolean isOslcConnector(String kind) {
+		return oslcProviderByKind.containsKey(kind);
 	}
 
 	private InternalBugtrackerConnector createAndWrapSimpleConnector(BugTracker bugTracker) {
@@ -122,6 +143,13 @@ public class BugTrackerConnectorFactory {
 		AdvancedBugTrackerConnector connector = provider.createConnector(bugTracker);
 
 		return new AdvancedBugtrackerConnectorAdapter(connector);
+	}
+
+	private InternalBugtrackerConnector createAndWrapOslcConnector(BugTracker bugTracker) {
+		OslcBugTrackerConnectorProvider provider = oslcProviderByKind.get(bugTracker.getKind());
+		OslcBugTrackerConnector connector = provider.createConnector(bugTracker);
+
+		return new OslcBugtrackerConnectorAdapter(connector);
 	}
 
 	/**
@@ -140,7 +168,6 @@ public class BugTrackerConnectorFactory {
 		providerByKind.put(kind, provider);
 	}
 
-
 	/**
 	 * Registers a new kind of connector provider, making it instantiable by this factory.
 	 *
@@ -157,6 +184,18 @@ public class BugTrackerConnectorFactory {
 		advancedProviderByKind.put(kind, provider);
 	}
 
+	private void registerOslcProvider(OslcBugTrackerConnectorProvider provider) {
+		String kind = provider.getBugTrackerKind();
+
+		if (kind == null) {
+			throw new NullArgumentException("provider.bugTrackerKind");
+		}
+
+		LOGGER.info("Registering Connector provider for bug trackers of kind '{}'", kind);
+
+		oslcProviderByKind.put(kind, provider);
+
+	}
 
 	public void setProviders(@NotNull Collection<BugTrackerConnectorProvider> providers) {
 		this.providers = providers;
@@ -164,5 +203,10 @@ public class BugTrackerConnectorFactory {
 
 	public void setAdvancedProviders(@NotNull Collection<AdvancedBugTrackerConnectorProvider> advancedProviders) {
 		this.advancedProviders = advancedProviders;
+	}
+
+	public void setOslcProviders(@NotNull Collection<OslcBugTrackerConnectorProvider> oslcProviders) {
+		this.oslcProviders = oslcProviders;
+
 	}
 }

@@ -126,7 +126,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
 
-	@ManyToOne()
+	@ManyToOne
 	@JoinColumn(name = "TEST_STEP_ID")
 	private TestStep referencedTestStep;
 
