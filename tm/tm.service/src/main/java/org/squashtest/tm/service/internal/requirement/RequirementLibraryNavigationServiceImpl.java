@@ -91,6 +91,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 	AbstractLibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode> implements
 	RequirementLibraryNavigationService, RequirementLibraryFinderService {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementLibraryNavigationServiceImpl.class);
+	private static final String REQUIREMENT_ID = "requirementId";
+	private static final String SOURCE_NODES_IDS = "sourceNodesIds";
+	private static final String DESTINATION_ID = "destinationId";
+	private static final String TARGET_ID = "targetId";
+	private static final String EXPORT = "EXPORT";
+	private static final String NODE_IDS = "nodeIds";
 
 	@Inject
 	private RequirementLibraryDao requirementLibraryDao;
@@ -383,11 +389,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="requirementId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="sourceNodesIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="sourceNodesIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= SOURCE_NODES_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= SOURCE_NODES_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public List<Requirement> copyNodesToRequirement(@Id("requirementId") long requirementId, @Ids("sourceNodesIds") Long[] sourceNodesIds) {
+	public List<Requirement> copyNodesToRequirement(@Id(REQUIREMENT_ID) long requirementId, @Ids(SOURCE_NODES_IDS) Long[] sourceNodesIds) {
 		PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
 		makeCopierStrategy(pasteStrategy);
 		return pasteStrategy.pasteNodes(requirementId, Arrays.asList(sourceNodesIds));
@@ -395,11 +401,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="requirementId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="nodeIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="nodeIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= NODE_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToRequirement(@Id("requirementId")long requirementId,@Ids("nodeIds") Long[] nodeIds) {
+	public void moveNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(NODE_IDS) Long[] nodeIds) {
 		if (nodeIds.length == 0) {
 			return;
 		}
@@ -407,20 +413,18 @@ public class RequirementLibraryNavigationServiceImpl extends
 			PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(requirementId, Arrays.asList(nodeIds));
-		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		} catch (DuplicateNameException dne) {
+		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 	}
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="requirementId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="nodeIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="nodeIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= NODE_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToRequirement(@Id("requirementId")long requirementId,@Ids("nodeIds") Long[] nodeIds, int position) {
+	public void moveNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(NODE_IDS) Long[] nodeIds, int position) {
 		if (nodeIds.length == 0) {
 			return;
 		}
@@ -428,9 +432,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 			PasteStrategy<Requirement, Requirement> pasteStrategy = getPasteToRequirementStrategy();
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(requirementId, Arrays.asList(nodeIds), position);
-		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		} catch (DuplicateNameException dne) {
+		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 	}
@@ -438,14 +440,14 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromLibrary(List<Long> libraryIds) {
-		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
+		PermissionsUtils.checkPermission(permissionService, libraryIds, EXPORT, RequirementLibrary.class.getName());
 		return requirementDao.findRequirementToExportFromLibrary(libraryIds);
 	}
 
 
 	@Override
 	public List<ExportRequirementData> findRequirementsToExportFromNodes(List<Long> nodesIds) {
-		PermissionsUtils.checkPermission(permissionService, nodesIds, "EXPORT", RequirementLibraryNode.class.getName());
+		PermissionsUtils.checkPermission(permissionService, nodesIds, EXPORT, RequirementLibraryNode.class.getName());
 		return requirementDao.findRequirementToExportFromNodes(nodesIds);
 	}
 
@@ -466,11 +468,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="sourceNodesIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="sourceNodesIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= SOURCE_NODES_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= SOURCE_NODES_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public List<RequirementLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId,@Ids("sourceNodesIds") Long[] sourceNodesIds) {
+	public List<RequirementLibraryNode> copyNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(SOURCE_NODES_IDS) Long[] sourceNodesIds) {
 		try {
 			return super.copyNodesToFolder(destinationId, sourceNodesIds);
 		} catch (IllegalRequirementModificationException e) {
@@ -481,11 +483,11 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public List<RequirementLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId, @Ids("targetId") Long[] targetId) {
+	public List<RequirementLibraryNode> copyNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId) {
 		try {
 			return super.copyNodesToLibrary(destinationId, targetId);
 		} catch (IllegalRequirementModificationException e) {
@@ -497,14 +499,14 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		RequirementLibraryNode node = requirementLibraryNodeDao.findById(nodeId);
-		List<String> parents = new ArrayList<String>();
-		
+		List<String> parents = new ArrayList<>();
+
 		if (node!=null) {
 			Long librabryId = node.getLibrary().getId();
 			List<Long> ids = requirementLibraryNodeDao.getParentsIds(nodeId);
-			
+
 			parents.add("#RequirementLibrary-" + librabryId);
-			
+
 			if (ids.size() > 1) {
 				for (int i = 0; i < ids.size() - 1; i++) {
 					long currentId = ids.get(i);
@@ -621,15 +623,15 @@ public class RequirementLibraryNavigationServiceImpl extends
 	                                     List<Long> nodeIds, boolean keepRteFormat,
 	                                     MessageSource messageSource) {
 		//1. Check permissions for all librairies and all nodes selecteds
-		PermissionsUtils.checkPermission(permissionService, libraryIds, "EXPORT", RequirementLibrary.class.getName());
-		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
+		PermissionsUtils.checkPermission(permissionService, libraryIds, EXPORT, RequirementLibrary.class.getName());
+		PermissionsUtils.checkPermission(permissionService, nodeIds, EXPORT, RequirementLibraryNode.class.getName());
 
 		//2. Find the list of all req ids that belongs to library and node selection.
-		Set<Long> reqIds = new HashSet<Long>();
+		Set<Long> reqIds = new HashSet<>();
 		reqIds.addAll(findRequirementIdsFromSelection(libraryIds, nodeIds));
 
 		//3. For each req, find all versions
-		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
+		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<>(reqIds));
 
 		//4. Get exportModel from database
 		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
@@ -644,12 +646,12 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public File searchExportRequirementAsExcel(List<Long> nodeIds,
 	                                           boolean keepRteFormat, MessageSource messageSource) {
 
-		PermissionsUtils.checkPermission(permissionService, nodeIds, "EXPORT", RequirementLibraryNode.class.getName());
+		PermissionsUtils.checkPermission(permissionService, nodeIds, EXPORT, RequirementLibraryNode.class.getName());
 
-		Set<Long> reqIds = new HashSet<Long>();
+		Set<Long> reqIds = new HashSet<>();
 		reqIds.addAll(requirementDao.findAllRequirementsIdsByNodes(nodeIds));
 
-		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<Long>(reqIds));
+		List<Long> reqVersionIds = requirementDao.findIdsVersionsForAll(new ArrayList<>(reqIds));
 
 		RequirementExportModel exportModel = exportDao.findAllRequirementModel(reqVersionIds);
 
@@ -719,7 +721,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		}
 
 		List<Long> ids = findNodeIdsByPath(paths);
-		RequirementFolder folderTree = null;
+		RequirementFolder folderTree;
 
 		int position = ids.indexOf(null);
 
@@ -782,7 +784,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	private RequirementFolder makeFolderTree(Project project, int startIndex, String[] names) {
 		RequirementFolder baseFolder = null;
-		RequirementFolder childFolder = null;
+		RequirementFolder childFolder;
 		RequirementFolder parentFolder = null;
 
 		for (int i = startIndex; i < names.length; i++) {
@@ -803,7 +805,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 
 	private Requirement makeRequirementTree(Project project, int startIndex, String[] names) {
 		Requirement baseRequirement = null;
-		Requirement childRequirement = null;
+		Requirement childRequirement;
 		Requirement parentRequirement = null;
 
 		for (int i = startIndex; i < names.length; i++) {
@@ -826,7 +828,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@Override
 	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion) {
 		//if target noVersion = actual noVersion, nothing to change, return
-		if (requirement.getCurrentVersion().getVersionNumber() == noVersion.intValue()) {
+		if (requirement.getCurrentVersion().getVersionNumber() == noVersion) {
 			return;
 		}
 		if (requirement.findRequirementVersion(noVersion) == null) {
@@ -848,49 +850,49 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public RequirementLibraryNode findRequirementLibraryNodeById(Long id) {
 		return requirementLibraryNodeDao.findById(id);
 	}
-	
+
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
-	
+
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId) {
+	public void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId) {
 		super.moveNodesToFolder(destinationId, targetId);
 	}
-	
+
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position) {
+	public void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position) {
 		super.moveNodesToFolder(destinationId, targetId, position);
 	}
-	
+
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId) {
+	public void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId) {
 		super.moveNodesToLibrary(destinationId, targetId);
 	}
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	public void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position) {
+	public void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position) {
 		super.moveNodesToLibrary(destinationId, targetId, position);
 	}
-	
+
 	@Override
 	@PreventConcurrents(
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetIds", coercer=RLNAndParentIdsCoercerForList.class),
@@ -900,6 +902,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return super.deleteNodes(targetIds, milestoneId);
 	}
 
-	// ##################### PREVENT CONCURENCY OVERRIDES ##########################	
-	
+	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
+
 }

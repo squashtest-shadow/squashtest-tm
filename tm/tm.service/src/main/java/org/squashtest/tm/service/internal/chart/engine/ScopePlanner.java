@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.chart.engine;
 
@@ -32,14 +32,7 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_LIBRARY;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -62,6 +55,7 @@ import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementPathEdge;
 import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestCasePathEdge;
+import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import com.querydsl.core.BooleanBuilder;
@@ -139,7 +133,6 @@ import com.querydsl.core.types.dsl.Expressions;
 @Component()
 @Scope("prototype")
 class ScopePlanner {
-
 	// infrastructure
 	@Inject
 	private SessionFactory sessionFactory;
@@ -672,9 +665,24 @@ class ScopePlanner {
 
 
 	private static class ScopeUtils {
+		private static final Map<EntityType, String> CLASS_NAME_BY_ENTITY = new LinkedHashMap<>();
 
-		private static final String READ = "READ";
-		private static final String ROLE_ADMIN = "ROLE_ADMIN";
+		static {
+			CLASS_NAME_BY_ENTITY.put(PROJECT, "org.squashtest.tm.domain.project.Project");
+			CLASS_NAME_BY_ENTITY.put(TEST_CASE_LIBRARY, "org.squashtest.tm.domain.testcase.TestCaseLibrary");
+			CLASS_NAME_BY_ENTITY.put(TEST_CASE_FOLDER, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");
+			CLASS_NAME_BY_ENTITY.put(TEST_CASE, "org.squashtest.tm.domain.testcase.TestCaseLibraryNode");
+			CLASS_NAME_BY_ENTITY.put(REQUIREMENT_LIBRARY, "org.squashtest.tm.domain.requirement.RequirementLibrary");
+			CLASS_NAME_BY_ENTITY.put(REQUIREMENT_FOLDER, "org.squashtest.tm.domain.requirement.RequirementLibraryNode");
+			CLASS_NAME_BY_ENTITY.put(REQUIREMENT, "org.squashtest.tm.domain.requirement.RequirementLibraryNode");
+			CLASS_NAME_BY_ENTITY.put(CAMPAIGN_LIBRARY, "org.squashtest.tm.domain.campaign.CampaignLibrary");
+			CLASS_NAME_BY_ENTITY.put(CAMPAIGN_FOLDER, "org.squashtest.tm.domain.campaign.CampaignLibraryNode");
+			CLASS_NAME_BY_ENTITY.put(CAMPAIGN, "org.squashtest.tm.domain.campaign.CampaignLibraryNode");
+			CLASS_NAME_BY_ENTITY.put(ITERATION, "org.squashtest.tm.domain.campaign.Iteration");
+		}
+
+		private static final String READ = Authorizations.READ;
+		private static final String ROLE_ADMIN = Authorizations.READ_ADMIN;
 		private PermissionEvaluationService permissionService;
 		private SessionFactory sessionFactory;
 
@@ -704,39 +712,13 @@ class ScopePlanner {
 
 
 		private String classname(EntityReference ref) {
-			String classname;
-			switch (ref.getType()) {
-				case PROJECT:
-					classname = "org.squashtest.tm.domain.project.Project";
-					break;
-				case TEST_CASE_LIBRARY:
-					classname = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
-					break;
-				case TEST_CASE_FOLDER:
-				case TEST_CASE:
-					classname = "org.squashtest.tm.domain.testcase.TestCaseLibraryNode";
-					break;
-				case REQUIREMENT_LIBRARY:
-					classname = "org.squashtest.tm.domain.requirement.RequirementLibrary";
-					break;
-				case REQUIREMENT_FOLDER:
-				case REQUIREMENT:
-					classname = "org.squashtest.tm.domain.requirement.RequirementLibraryNode";
-					break;
-				case CAMPAIGN_LIBRARY:
-					classname = "org.squashtest.tm.domain.campaign.CampaignLibrary";
-					break;
-				case CAMPAIGN_FOLDER:
-				case CAMPAIGN:
-					classname = "org.squashtest.tm.domain.campaign.CampaignLibraryNode";
-					break;
-				case ITERATION:
-					classname = "org.squashtest.tm.domain.campaign.Iteration";
-					break;
-				default:
-					throw new IllegalArgumentException(ref.getType() + " is not a valid type for a chart perimeter. Please reconfigure the perimeter of your chart.");
+
+			String className = CLASS_NAME_BY_ENTITY.get(ref.getType());
+
+			if (className == null) {
+				throw new IllegalArgumentException(ref.getType() + " is not a valid type for a chart perimeter. Please reconfigure the perimeter of your chart.");
 			}
-			return classname;
+			return className;
 		}
 
 

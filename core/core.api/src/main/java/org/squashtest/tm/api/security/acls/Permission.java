@@ -21,27 +21,27 @@
 package org.squashtest.tm.api.security.acls;
 
 /**
- * Enum of Squash permission. Should match the one defined as Spring Security base / custom permissions 
+ * Enum of Squash permission. Should match the one defined as Spring Security base / custom permissions
  * @author Gregory Fouquet
  *
  */
 public enum Permission {
-	READ("readable"), 
-	WRITE("editable"), 
-	CREATE("creatable"), 
+	READ("readable"),
+	WRITE("editable"),
+	CREATE("creatable"),
 	DELETE("deletable"),
-	ADMIN("administrable"), 
-	EXECUTE("executable"), 
+	ADMIN("administrable"),
+	EXECUTE("executable"),
 	EXPORT("exportable"),
-	MANAGEMENT("manageable"), 
-	LINK("linkable"), 
-	IMPORT("importable"), 
-	ATTACH("attachable"), 
+	MANAGEMENT("manageable"),
+	LINK("linkable"),
+	IMPORT("importable"),
+	ATTACH("attachable"),
 	ANY("any");
-	
+
 	private final String quality;
 
-	private Permission(String quality) {
+	Permission(String quality) {
 		this.quality = quality;
 	}
 
@@ -51,5 +51,5 @@ public enum Permission {
 	public String getQuality() {
 		return quality;
 	}
-	
+
 }

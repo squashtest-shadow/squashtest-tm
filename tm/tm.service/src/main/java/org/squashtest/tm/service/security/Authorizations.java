@@ -31,6 +31,10 @@ public final class Authorizations {
 		super();
 	}
 
+	public static final String READ = "READ";
+
+	public static final String ROLE_ADMIN = "ROLE_ADMIN";
+
 	public static final String HAS_ROLE_ADMIN = "hasRole('ROLE_ADMIN')";
 
 	public static final String OR_HAS_ROLE_ADMIN = " or hasRole('ROLE_ADMIN')";

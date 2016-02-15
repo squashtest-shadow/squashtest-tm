@@ -52,10 +52,17 @@ public interface RequirementLibraryNavigationService extends
 LibraryNavigationService<RequirementLibrary, RequirementFolder, RequirementLibraryNode>,
 RequirementLibraryFinderService {
 
+	String REQUIREMENT_ID = "requirementId";
+	String NODE_IDS = "nodeIds";
+	String SOURCE_NODES_IDS = "sourceNodesIds";
+	String DESTINATION_ID = "destinationId";
+	String TARGET_ID = "targetId";
+	String TARGET_IDS = "targetIds";
+
 	/**
 	 * Will add a Requirement at the root of the given library and bind it to the given milestones. The custom fields
 	 * for this requirement will be created with their default value.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param requirement
 	 * @param milestoneIds
@@ -68,7 +75,7 @@ RequirementLibraryFinderService {
 	 * Given a DTO that eventually generates a RequirementVersion, will create a Requirement using this version then add it to the given
 	 * library with and bind it to the given milestones. The DTO may hold additional information for initialization of the custom fields.
 	 * On the other hand this method is not suitable for creation of synchronized Requirements.
-	 * 
+	 *
 	 * @param libraryId
 	 * @param requirement
 	 * @param milestoneIds
@@ -80,7 +87,7 @@ RequirementLibraryFinderService {
 	/**
 	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
 	 * given folder.
-	 * 
+	 *
 	 * @param folderId
 	 * @param requirement
 	 * @param milestoneIds
@@ -92,7 +99,7 @@ RequirementLibraryFinderService {
 	/**
 	 * Same than {@link #addRequirementToRequirementLibrary(long, NewRequirementVersionDto, List), except that the requirement will be added to the
 	 * given folder.
-	 * 
+	 *
 	 * @param folderId
 	 * @param requirement
 	 * @param milestoneIds
@@ -104,7 +111,7 @@ RequirementLibraryFinderService {
 	/**
 	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
 	 * given parent requirement.
-	 * 
+	 *
 	 * @param folderId
 	 * @param requirement
 	 * @param milestoneIds
@@ -116,7 +123,7 @@ RequirementLibraryFinderService {
 	/**
 	 * Same than {@link #addRequirementToRequirementLibrary(long, NewRequirementVersionDto, List), except that the requirement will be added to the
 	 * given parent requirement.
-	 * 
+	 *
 	 * @param folderId
 	 * @param requirement
 	 * @param milestoneIds
@@ -126,32 +133,32 @@ RequirementLibraryFinderService {
 	Requirement addRequirementToRequirement(@Id long requirementId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
 
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="requirementId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="sourceNodesIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="sourceNodesIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= SOURCE_NODES_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= SOURCE_NODES_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	List<Requirement> copyNodesToRequirement(@Id("requirementId")long requirementId, @Ids("sourceNodesIds") Long[] sourceNodesIds);
+	List<Requirement> copyNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(SOURCE_NODES_IDS) Long[] sourceNodesIds);
 
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="requirementId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="nodeIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="nodeIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= NODE_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToRequirement(@Id("requirementId")long requirementId,@Ids("nodeIds") Long[] nodeIds);
-	
+	void moveNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(NODE_IDS) Long[] nodeIds);
+
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="requirementId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="nodeIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="nodeIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= REQUIREMENT_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= NODE_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= NODE_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToRequirement(@Id("requirementId")long requirementId,@Ids("nodeIds") Long[] nodeIds, int position);
+	void moveNodesToRequirement(@Id(REQUIREMENT_ID)long requirementId, @Ids(NODE_IDS) Long[] nodeIds, int position);
 
 	Requirement findRequirement(long reqId);
 
 	/**
 	 * Will find all requirements found in the given projects and return their information as a list of
 	 * {@linkplain ExportRequirementData}
-	 * 
+	 *
 	 * @param libraryIds
 	 *            ids of {@linkplain Project}
 	 * @return a list of {@linkplain ExportRequirementData}
@@ -161,7 +168,7 @@ RequirementLibraryFinderService {
 	/**
 	 * Will find all requirements of the given ids and contained in folders of the given ids, and return their
 	 * information as a list of {@linkplain ExportRequirementData}
-	 * 
+	 *
 	 * @param nodesIds
 	 *            ids of {@linkplain RequirementLibraryNode}
 	 * @return a list of {@linkplain ExportRequirementData}
@@ -230,62 +237,62 @@ RequirementLibraryFinderService {
 
 	public RequirementLibraryNode findRequirementLibraryNodeById(Long id);
 
-	
+
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="sourceNodesIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="sourceNodesIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= SOURCE_NODES_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= SOURCE_NODES_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	List<RequirementLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId,@Ids("sourceNodesIds") Long[] sourceNodesIds);
-	
-	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
-			)
-	List<RequirementLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
-	
-	@Override
-	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
-			)
-	void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
+	List<RequirementLibraryNode> copyNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(SOURCE_NODES_IDS) Long[] sourceNodesIds);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position);
+	List<RequirementLibraryNode> copyNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
+	void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
 
 	@Override
 	@PreventConcurrents(
-			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName="destinationId")},
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetId", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetId", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibraryNode.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position);
-	
+	void moveNodesToFolder(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position);
+
 	@Override
 	@PreventConcurrents(
-			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetIds", coercer=RLNAndParentIdsCoercerForArray.class),
-					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetIds", coercer=RequirementLibraryIdsCoercerForArray.class)}
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId);
-	
+	void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId);
+
+	@Override
+	@PreventConcurrents(
+			simplesLocks={@PreventConcurrent(entityType=RequirementLibrary.class, paramName= DESTINATION_ID)},
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_ID, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_ID, coercer=RequirementLibraryIdsCoercerForArray.class)}
+			)
+	void moveNodesToLibrary(@Id(DESTINATION_ID) long destinationId, @Ids(TARGET_ID) Long[] targetId, int position);
+
+	@Override
+	@PreventConcurrents(
+			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
+					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
+			)
+	OperationReport deleteNodes(@Ids(TARGET_IDS) List<Long> targetIds, Long milestoneId);
+
 	// #################### /PREVENT CONCURENCY OVERRIDES ##########################
 }
