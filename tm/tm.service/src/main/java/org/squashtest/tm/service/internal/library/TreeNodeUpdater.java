@@ -128,7 +128,6 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	@Override
 	public void visit(Requirement requirement) {
-		updateCustomFields(requirement.getCurrentVersion());
 		for (RequirementVersion version : requirement.getRequirementVersions()) {
 			updateCustomFields(version);
 			updateCategory(version);
