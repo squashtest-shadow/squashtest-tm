@@ -682,7 +682,7 @@ class ScopePlanner {
 		}
 
 		private static final String READ = Authorizations.READ;
-		private static final String ROLE_ADMIN = Authorizations.READ_ADMIN;
+		private static final String ROLE_ADMIN = Authorizations.ROLE_ADMIN;
 		private PermissionEvaluationService permissionService;
 		private SessionFactory sessionFactory;
 

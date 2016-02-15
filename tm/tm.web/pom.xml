@@ -51,7 +51,6 @@
   </dependencyManagement>
 
   <dependencies>
-
     <dependency>
       <groupId>org.beanshell</groupId>
       <artifactId>bsh</artifactId>
