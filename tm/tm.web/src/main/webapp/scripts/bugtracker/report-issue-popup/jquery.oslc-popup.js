@@ -21,7 +21,8 @@
 define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable",
 		"workspace.event-bus", "handlebars", "text!./oslc-view-template.html!strip",
 		"jqueryui", "squashtest/jquery.squash.popuperror", "jquery.squash.formdialog"],
-	function ($, _, storage, SelectJEditable,  eventBus, Handlebars, source) {
+	function ($, _, storage, SelectJEditable, eventBus, Handlebars, source) {
+		"use strict";
 
 		squashtm.eventBus = eventBus;
 
@@ -68,7 +69,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 
 			this.issueCreate = this.find('#issue-create');
-		    this.issueSearch = this.find('#issue-search');
+			this.issueSearch = this.find('#issue-search');
 			//the error display
 			this.error = this.find(".issue-report-error");
 			this.error.popupError();
@@ -80,17 +81,18 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				$(this).prev("input[type='radio']").click();
 			});
 
-            var self = this;
+			var self = this;
 			var listener = function (e) {
-			        var HEADER = "oslc-response:";
-			        if (e.data.indexOf(HEADER) === 0) {
-			            self.submitIssue(e.data.substr(HEADER.length));
-			            self.formDialog("close");
-			        }};
-			 
-					
+				var HEADER = "oslc-response:";
+				if (e.data.indexOf(HEADER) === 0) {
+					self.submitIssue(e.data.substr(HEADER.length));
+					self.formDialog("close");
+				}
+			};
+
+
 			window.addEventListener('message', listener, false);
-			
+
 		}
 
 		$.fn.btOslcIssueDialog = function (settings) {
@@ -143,7 +145,6 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			}, self);
 
 
-
 			/* ********************** model and view management ************ */
 
 			var setModel = $.proxy(function (newModel) {
@@ -152,11 +153,11 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			}, self);
 
 
-			var createViewForModel = $.proxy(function () {	
+			var createViewForModel = $.proxy(function () {
 				var template = Handlebars.compile(source);
 				this.issueCreate.html(template(this.model.attributes.createDialog));
-				this.issueSearch.html(template(this.model.attributes.selectDialog));	
-	
+				this.issueSearch.html(template(this.model.attributes.selectDialog));
+
 			}, self);
 
 
@@ -176,21 +177,21 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				if (!this.mdlTemplate) {
 					flipToPleaseWait();
 					$.ajax({
-						url: self.reportUrl,
-						type: "GET",
-          data:{"project-name" : self.selectedProject},
-						dataType: "json"
+							url: self.reportUrl,
+							type: "GET",
+							data: {"project-name": self.selectedProject},
+							dataType: "json"
 						})
 						.done(function (response) {
 							self.mdlTemplate = response;
 							flipToMain();
 							jobDone.resolve();
 						})
-						.fail(function(){
+						.fail(function () {
 							jobDone.reject();
 							self.issueCreate.html('');
 							self.issueSearch.html('');
-							;});
+						});
 				}
 				else {
 					jobDone.resolve();
@@ -215,7 +216,6 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				this.error.popupError('show');
 			}, self);
 
-	
 
 			/* ************* events ************************ */
 
@@ -229,27 +229,27 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				resetModel();
 			};
 
-			this.submitIssue = function(data){
+			this.submitIssue = function (data) {
 				var issue = JSON.parse(data);
 				var issueData = issue["oslc:results"][0];
-				
-				if (issueData !== undefined){
+
+				if (issueData !== undefined) {
 					var issueId = issueData["rdf:resource"].split("/").pop();
-					
-					var json = {"issueId" : issueId, "url" : issueData["rdf:resource"]};
-					
-					
+
+					var json = {"issueId": issueId, "url": issueData["rdf:resource"]};
+
+
 					$.ajax({
 						url: this.reportUrl.replace(/new-issue/, "new-oslc-issue"),
 						type: 'POST',
-						data:  issueId,
+						data: issueId,
 						contentType: 'application/json',
 						dataType: 'json'
-					}).done(function(){
+					}).done(function () {
 						eventBus.trigger('context.bug-reported', json);
-					});	
+					});
 				}
-				
+
 			};
 			this.open = function (settings) {
 				var self = this;
@@ -278,7 +278,6 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				self.mdlTemplate = null;
 			});
 
-			
 
 			// the project selector
 			this.find("#project-selector").on("change", function () {
