@@ -322,13 +322,23 @@ require([ "common" ], function() {
 
 
 <%-------------------------------- add issue popup code -----------------------------------%>
-<c:if test="${executable and not useParentContextPopup}">
+<c:if test="${executable and not useParentContextPopup and not isOslc}">
 	<is:issue-add-popup id="issue-report-dialog"
 		interfaceDescriptor="${interfaceDescriptor}"  
         bugTrackerId="${bugTracker.id}" 
         projectId="${projectId}" 
         projectNames="${projectNames}"/>
 </c:if>
+
+<c:if test="${executable and not useParentContextPopup and isOslc}">
+	<is:issue-add-popup-oslc id="issue-report-dialog"
+		interfaceDescriptor="${interfaceDescriptor}"  
+        bugTrackerId="${bugTracker.id}" 
+        projectId="${projectId}" 
+        projectNames="${projectNames}"/>
+</c:if>
+
+
 <%-------------------------------- /add issue popup code -----------------------------------%>
 
 

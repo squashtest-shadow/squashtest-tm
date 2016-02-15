@@ -30,6 +30,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.squashtest.csp.core.bugtracker.core.BugTrackerConnectorFactory;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 import org.squashtest.tm.domain.project.Project;
@@ -47,6 +48,9 @@ import org.squashtest.tm.web.internal.helper.JsonHelper;
 public class TestCaseExecutionRunnerController {
 
 	private static final String OPTIMIZED_RUNNER_MAIN = "page/executions/oer-main-page";
+
+	@Inject
+	private BugTrackerConnectorFactory btFactory;
 
 	@Inject
 	private ExecutionRunnerControllerHelper helper;
@@ -92,6 +96,7 @@ public class TestCaseExecutionRunnerController {
 			model.addAttribute("bugTracker", bugtracker);
 			model.addAttribute("projectId", project.getId());
 			model.addAttribute("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
+			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
 		}
 		catch(NoBugTrackerBindingException ex){
 			//well, no bugtracker then. It's fine.

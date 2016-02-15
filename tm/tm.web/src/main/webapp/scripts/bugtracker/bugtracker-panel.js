@@ -23,7 +23,7 @@ define([ "jquery", "app/util/ButtonUtil",
          "app/ws/squashtm.notification",
          "workspace.event-bus",
          "jqueryui",
-         "./report-issue-popup/jquery.main-popup" ], function($, btn, translator, notification, eventBus) {
+         "./report-issue-popup/jquery.main-popup", "./report-issue-popup/jquery.oslc-popup" ], function($, btn, translator, notification, eventBus) {
 	
 	
 	function makeAndShowError(xhr){

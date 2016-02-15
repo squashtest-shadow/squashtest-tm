@@ -63,8 +63,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 
 	@Override
 	public URL getViewIssueUrl(String issueId, BugTracker bugTracker) {
-		InternalBugtrackerConnector connector = bugTrackerConnectorFactory.createConnector(bugTracker);
-		return connector.makeViewIssueUrl(bugTracker, issueId);
+		return connect(bugTracker).makeViewIssueUrl(bugTracker, issueId);
 	}
 
 	private BugTrackerContext getBugTrackerContext() {// TODO BugTrackersContext
