@@ -26,11 +26,9 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 		squashtm.eventBus = eventBus;
 
-		/*
-		 * init always called with a context object
-		 * jshint validthis: true
-		 */
 		function init(settings) {
+			/* jshint validthis: true */
+			//init always called with a context object
 
 			// turn to dialog
 			this.formDialog({
