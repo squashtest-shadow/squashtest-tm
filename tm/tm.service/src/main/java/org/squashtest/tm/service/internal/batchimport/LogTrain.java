@@ -58,7 +58,7 @@ public class LogTrain {
 	}
 
 
-	boolean hasCriticalErrors(){
+	public boolean hasCriticalErrors(){
 		return criticalErrors;
 	}
 

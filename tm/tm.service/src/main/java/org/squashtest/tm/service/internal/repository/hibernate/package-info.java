@@ -143,7 +143,7 @@
 			+ "where cfv.boundEntityId=:requirementVersionId and cfv.boundEntityType = 'REQUIREMENT_VERSION' group by cfv.id, cf.id"),
 	
 	// Synchronized requirements	
-	@NamedQuery(name = "RequirementSyncExtender.findByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteReqId = :id)"),
+	@NamedQuery(name = "RequirementSyncExtender.findByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteReqId = :id"),
 	@NamedQuery(name = "RequirementSyncExtender.findAllByRemoteKey", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteReqId in (:ids)"),
 	@NamedQuery(name = "RequirementSyncExtender.findAllByRemoteProjectsAndFilter", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.remoteProjectId = :pId and sync.remoteFilterName = :filter"),
 	@NamedQuery(name = "RequirementSyncExtender.findAllByServer", query = "select sync from RequirementSyncExtender sync join fetch sync.requirement where sync.server.id = :serverId"),
