@@ -57,20 +57,20 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService
-	
+
 	@Inject
 	private RequirementVersionDao requirementVersionDao
-	
+
 	@Inject
 	private RequirementDao requirementDao
 
 	def setup (){
 		def ids = [-11L,-21L,-210L,-211L,-22L,-23L,-31L,-41L,-42L,-43L,-44L,-441L,-442L,-51L,-511L]
-		ids.each { 
+		ids.each {
 			setBidirectionalReqReqVersion(it,it)
 		}
 	}
-	
+
 	def setBidirectionalReqReqVersion(Long reqVersionId, Long reqId) {
 		def reqVer = requirementVersionDao.findById(reqVersionId)
 		def req = requirementDao.findById(reqId)
@@ -84,24 +84,24 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		def perimeter = [-1L]
 		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
 		def result = new RequirementCoverageStat();
-		
+
 		when:
 		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,null,perimeter,result)
-		
+
 		then:
 		result.getRates().get("coverage").requirementVersionRate == selfRate
 		result.getRates().get("coverage").requirementVersionGlobalRate == globalRate
 		result.getRates().get("coverage").requirementVersionChildrenRate == childrenRate
-		
+
 		where:
 		reqVersionId 		|| selfRate | globalRate 	| childrenRate
 		-11L				||		100	|	80			| 75
 		-211L				||		100	|	0			| 0
 		-22L				||		100	|	0			| 0
 		-21L				||		100	|	100			| 100
-	
+
 	}
-	
+
 	@DataSet("RequirementCoverageStat.sandbox.xml")
 	def "shouldCalculateCoverageRateMilestoneMode"() {
 		given :
@@ -110,7 +110,7 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
 		def currentMilestone = findEntity(Milestone.class, milestoneId);
 		def result = new RequirementCoverageStat();
-		
+
 		when:
 		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,currentMilestone,perimeter,result)
 
@@ -124,7 +124,7 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		-21L				|		-1L		||		100	|	100			| 100
 		-11L				|		-1L		||		100	|	75			| 67
 	}
-	
+
 	@DataSet("RequirementCoverageStat.sandbox.xml")
 	def "shouldCalculateVerificationRate"() {
 		given :
@@ -132,27 +132,26 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		def perimeter = [-1L]
 		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
 		def result = new RequirementCoverageStat();
-		
+
 		when:
 		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,currentMilestoneId,perimeter,result)
-		
+
 		then:
 		result.getRates().get("verification").requirementVersionRate == selfRate
 		result.getRates().get("verification").requirementVersionGlobalRate == globalRate
 		result.getRates().get("verification").requirementVersionChildrenRate == childrenRate
-		
+
 		where:
 		reqVersionId 	| currentMilestoneId 	|| selfRate | globalRate 	| childrenRate
 		-210L			|			null		||		100	|	0			| 0
 		-211L			|			null		||		0	|	0			| 0
 		-21L			|			null		||		50	|	75			| 100
-		-11L			|			null		||		100	|	71			| 67
+		-11L			|			null		||		100	|	83			| 80
 		-42L			|			null		||		100	|	0			| 0
-		-43L			|			null		||		50	|	0			| 0
-		-44L			|			null		||		75	|	67			| 60
-		-51L			|			null		||		100	|	50			| 0
+		-43L			|			null		||		0	|	0			| 0
+		-51L			|			null		||		100	|	100			| 0
 	}
-	
+
 	@DataSet("RequirementCoverageStat.sandbox.xml")
 	def "shouldCalculateValidationRate"() {
 		given :
@@ -173,11 +172,9 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		reqVersionId 	| currentMilestoneId 	|| selfRate | globalRate 	| childrenRate
 		-210L			|			null		||		50	|	0			| 0
 		-211L			|			null		||		0	|	0			| 0
-		-21L			|			null		||		50	|	50			| 50
-		-11L			|			null		||		100	|	43			| 33
+		-21L			|			null		||		100	|	67			| 50
+		-11L			|			null		||		100	|	60			| 50
 		-42L			|			null		||		0	|	0			| 0
-		-43L			|			null		||		50	|	0			| 0
-		-44L			|			null		||		25	|	22			| 20
 	}
 
 

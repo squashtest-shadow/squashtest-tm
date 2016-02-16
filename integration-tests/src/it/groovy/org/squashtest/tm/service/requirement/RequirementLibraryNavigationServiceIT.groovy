@@ -66,6 +66,19 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect.aspectOf().setAuditor(null)
 	}
 
+
+	def linkReqToVersion(long reqId, long currentVersionId, Long[] versionIds){
+		Requirement req = findEntity(Requirement.class, reqId)
+		RequirementVersion current = findEntity(RequirementVersion.class, currentVersionId)
+
+		versionIds.each {
+			RequirementVersion version = findEntity(RequirementVersion.class, it)
+			version.setRequirement(req)
+			req.addVersion(version)
+		}
+		req.setCurrentVersion(current);
+	}
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should return all the requirements in a hierarchy given some ids.xml")
 	def "should return all the requirements in a hierarchy given some ids"(){
 
@@ -178,7 +191,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		destination.content.size() == 1
 	}
 
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should copy paste folder with requirements.xml")
 	def "should copy paste folder with requirements"(){
 		given:
@@ -218,6 +231,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		given:
 		Long[] sourceIds = [-10L]
 		Long destinationId = -2L
+		Long[] versions = [-100L,-101L,-102L]
+		this.linkReqToVersion(-10L,-102L,versions)
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -235,6 +250,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		given:
 		Long[] sourceIds = [-10L]
 		Long destinationId = -2L
+		Long[] versions = [-100L,-101L,-102L]
+		this.linkReqToVersion(-10L,-102L,versions)
 
 		when: navService.moveNodesToFolder(destinationId, sourceIds)
 
@@ -247,6 +264,8 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		given:
 		Long[] sourceIds = [-10L]
 		Long destinationId = -2L
+		Long[] versions = [-100L,-101L,-102L]
+		this.linkReqToVersion(-10L,-102L,versions)
 
 		when:
 		List<RequirementLibraryNode> nodes = navService.copyNodesToFolder(destinationId, sourceIds)
@@ -284,12 +303,16 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	@ExpectedDataSet("RequirementLibraryNavigationServiceIT.should move reqs to project with cufs-result.xml")
 	def "should move req to other project and update cufs"(){
 		given:
-		Requirement req = findEntity(Requirement.class, -10L)
-		RequirementVersion cur = req.getCurrentVersion()
-		use(ReflectionCategory){
-			RequirementVersion.set field: "requirement", of:cur, to: req
-		}
-		req.getCurrentVersion().setRequirement(req)
+		Long[] versions = [-100L,-101L,-102L]
+		this.linkReqToVersion(-10L,-102L,versions)
+//		Requirement req = findEntity(Requirement.class, -10L)
+//		RequirementVersion current = findEntity(RequirementVersion.class, -102L)
+//		def versions = findAll("RequirementVersion")
+//		versions.each {
+//			it.setRequirement(req)
+//			req.addVersion(it)
+//		}
+//		req.setCurrentVersion(current);
 		Long[] sourceIds = [-1L]
 		Long destinationId = -2L
 
@@ -399,17 +422,17 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		RequirementFolder parentFolder = (RequirementFolder) folderDao.findById(-2L)
 		parentFolder.content*.id.containsAll([-20L, -21L, -1L])
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
 	def "should find one requirement by path"(){
 		given :
-		
+
 		when:
 		Long result = navService.findNodeIdByPath(path)
-		
+
 		then:
 		result == id
-		
+
 		where:
 		path                                       	|| id
 		"/projet1/folder/subfolder/req2"			||-200L
@@ -417,18 +440,18 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		"/projet1/folder"							||-3L
 		"/projet1/folder/subfolder"					||-100L
 	}
-	
+
 	@Unroll("Should not found requirement with path #path. Id founded #id")
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
 	def "should find no requirement by path"(){
 		given :
-		
+
 		when:
 		Long result = navService.findNodeIdByPath(path)
 
 		then:
-		result == id 
-		
+		result == id
+
 		where:
 		path                                       	|| id
 		"/projet1/folder/req2"                     	|| null
@@ -438,19 +461,19 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		"/projet1/subfolder/folder/req2"			|| null
 		"/projet1"									|| null
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
 	def "should find RLN ids by paths"(){
 		given :
 			def path = ["/projet1","/projet1/folder","/projet1/folder/subfolder","/projet1/folder/subfolder/req2"]
-			
+
 			when:
 			Long[] result = navService.findNodeIdsByPath(path)
-				
+
 			then:
 			result == [-3,-100,-200]
 	}
-	
+
 	@DataSet("RequirementLibraryNavigationServiceIT.should find one requirement by path.xml")
 	def "should find RLN ids by paths and a null at the end"(){
 		given :
