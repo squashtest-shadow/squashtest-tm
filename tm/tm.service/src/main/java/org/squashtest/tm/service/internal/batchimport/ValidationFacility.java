@@ -1274,18 +1274,22 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private Long checkRequirementVersionExist(CoverageTarget target, LogTrain logs) {
+		
+		RequirementTarget reqTarget = new RequirementTarget(target.getReqPath());
+		RequirementVersionTarget reqVersionTarget = new RequirementVersionTarget(reqTarget,target.getReqVersion());
+		Existence reqVersionStatus = getModel().getStatus(reqVersionTarget).getStatus();
+		Existence reqStatus = getModel().getStatus(reqTarget).getStatus();
 
-		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
-
-		if (reqId != null) {
-			Requirement req = reqLibNavigationService.findRequirement(reqId);
-			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
-			if (reqVersion != null) {
+		if (reqStatus != Existence.NOT_EXISTS) {
+			if (reqVersionStatus.equals(Existence.EXISTS)) {
+				Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
+				Requirement req = reqLibNavigationService.findRequirement(reqId);
+				RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
 				if (!req.getStatus().isRequirementLinkable()) {
 					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
 				}
 				return reqVersion.getId();
-			} else {
+			} else if(reqVersionStatus.equals(Existence.NOT_EXISTS)){
 				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
 			}
 		} else {
