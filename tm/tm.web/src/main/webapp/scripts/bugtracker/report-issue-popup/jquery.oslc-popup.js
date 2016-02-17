@@ -86,7 +86,8 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			        if (e.data.indexOf(HEADER) === 0) {
 			            self.submitIssue(e.data.substr(HEADER.length));
 			            self.formDialog("close");
-			        }};
+				}
+			};
 			 
 					
 			window.addEventListener('message', listener, false);
@@ -191,7 +192,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 							jobDone.reject();
 							self.issueCreate.html('');
 							self.issueSearch.html('');
-							;});
+						});
 				}
 				else {
 					jobDone.resolve();
