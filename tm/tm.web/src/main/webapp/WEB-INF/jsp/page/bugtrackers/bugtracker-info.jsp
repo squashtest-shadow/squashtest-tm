@@ -41,19 +41,19 @@
 
 
 <layout:info-page-layout titleKey="workspace.bugtracker.info.title" isSubPaged="true">
-	<jsp:attribute name="head">	
-		<comp:sq-css name="squash.grey.css" />	
+	<jsp:attribute name="head">
+		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane"><h2 class="admin"><f:message key="label.administration" /></h2></jsp:attribute>
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.bugtracker.info.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${bugtrackersUrl}'"/>	
-	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="document.location.href= '${bugtrackersUrl}'"/>
+
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 
@@ -72,13 +72,13 @@
 			<div class="unsnap"></div>
 
 		</div>
-	
+
 		<div class="fragment-body">
 			<%------------------------------------------------ BODY -----------------------------------------------%>
-	
+
 			<div id="bugtracker-toolbar" classes="toolbar-class ui-corner-all">
 				<%--- Toolbar ---------------------%>
-				
+
 			<div class="toolbar-button-panel">
 				<f:message var="rename" key="rename" />
 				<input type="button" value="${ rename }" id="rename-bugtracker-button"
@@ -89,13 +89,13 @@
 			</div>
 			</div>
 			<%--------End Toolbar ---------------%>
-		
+
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<br />
 			<br />
 			<comp:toggle-panel id="bugtracker-info-panel"
 				titleKey="label.BugtrackerInformations" open="true">
-	
+
 				<jsp:attribute name="body">
 					<div id="bugtracker-description-table" class="display-table">
 					<div class="display-table-row">
@@ -109,14 +109,14 @@
 							<label for="bugtracker-url" class="display-table-cell">
 							<f:message key="label.Url" />
 							</label>
-							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}, callback=changeBugTrackerUrlCallback" id="bugtracker-url">${ bugtracker.url }</div>		
+							<div class="display-table-cell editable text-editable" data-def="url=${bugtrackerUrl}, callback=changeBugTrackerUrlCallback" id="bugtracker-url">${ bugtracker.url }</div>
 						</div>
 						<div class="display-table-row">
 							<label for="bugtracker-iframeFriendly" class="display-table-cell">
 							<f:message key="label.DisplaysInIframe" />
 							</label>
 							<div class="display-table-cell" id="bugtracker-iframeFriendly" style="cursor:pointer">
-								<input id="bugtracker-iframeFriendly-checkbx" type="checkbox" 
+								<input id="bugtracker-iframeFriendly-checkbx" type="checkbox"
 								<c:if test="${bugtracker.iframeFriendly}">
 								checked="checked"
 								</c:if>
@@ -126,8 +126,8 @@
 					</div>
 				</jsp:attribute>
 			</comp:toggle-panel>
-			
-			
+
+
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
 			</div>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
@@ -136,25 +136,25 @@
 
 
 <!-- --------------------------------RENAME POPUP--------------------------------------------------------- -->
-  
+
     <f:message var="renameBTTitle" key="dialog.rename-bugtracker.title" />
     <div id="rename-bugtracker-dialog" class="not-displayed popup-dialog"
         title="${renameBTTitle}">
-  
+
         <label><f:message key="dialog.rename.label" /></label>
         <input type="text" id="rename-bugtracker-input" maxlength="255" size="50" />
         <br />
         <comp:error-message forField="name" />
-  
-        
+
+
         <div class="popup-dialog-buttonpane">
           <input type="button" value="${renameLabel}" data-def="mainbtn, evt=confirm"/>
           <input type="button" value="${cancelLabel}" data-def="evt=cancel"/>
-        </div>        
+        </div>
     </div>
 
 
-  
+
 <!-- ------------------------------------END RENAME POPUP------------------------------------------------------- -->
 
 <f:message var="deleteBugtrackerTitle" key="dialog.delete-bugtracker.title" />
@@ -166,22 +166,22 @@
 
 		<div class="popup-dialog-buttonpane">
 		    <input class="confirm" type="button" value="${confirmLabel}" />
-		    <input class="cancel" type="button" value="${cancelLabel}" />				
+		    <input class="cancel" type="button" value="${cancelLabel}" />
 		</div>
-	
+
 
 
 
 <script type="text/javascript">
 
-  //*****************Back button  
-  
+  //*****************Back button
+
   function clickBugtackerBackButton(){
     document.location.href = "${bugtrackersUrl}";
   }
-  
+
   function clickBugTrackerIframeFriendly(){
-    
+
     $.ajax({
       type : 'post',
       data : {
@@ -191,21 +191,21 @@
       url : "${ bugtrackerUrl }"
     });
    }
-  
+
   function changeBugTrackerUrlCallback(){
-    
+
   }
 
-  
+
   function initRenameDialog(){
     var renameDialog = $("#rename-bugtracker-dialog");
     renameDialog.formDialog();
-    
+
     renameDialog.on('formdialogopen', function(){
           var name = $.trim($('#bugtracker-name-header').text());
-          $("#rename-bugtracker-input").val($.trim(name));    
+          $("#rename-bugtracker-input").val($.trim(name));
     });
-    
+
     renameDialog.on('formdialogconfirm', function(){
       var params = { newName : $("#rename-bugtracker-input").val() };
       $.ajax({
@@ -215,22 +215,22 @@
         data : params
       }).success(function(data){
   	    $('#bugtracker-name-header').html(data.newName);
-  	    renameDialog.formDialog('close');   	  
+  	    renameDialog.formDialog('close');
       });
     });
-    
+
     renameDialog.on('formdialogcancel', function(){
     	renameDialog.formDialog('close');
     });
-    
+
     $("#rename-bugtracker-button").on('click', function(){
     	renameDialog.formDialog('open');
     });
-    
+
   }
-  
+
   function initDeletePopup(){
-		
+
   $("#delete-bugtracker-popup").confirmDialog().on('confirmdialogconfirm', function() {
 
 
@@ -239,18 +239,19 @@
 		$.ajax({
 			url : url,
 			type : 'delete'
+		}).success(function () {
+      document.location.href = squashtm.app.contextRoot + '/administration/bugtrackers'
 		});
-		
-		document.location.href = squashtm.app.contextRoot + '/administration/bugtrackers'
+
 
 	});
-  
+
   $("#delete-bugtracker-button").on('click', function() {
 		var popup = $("#delete-bugtracker-popup");
 		popup.confirmDialog('open');
 	});
   }
-  
+
   require(["common"], function(){
 	  require(["jquery", "squash.basicwidgets", "jquery.squash.formdialog"], function(jquery, basic){
 	    $(function(){
@@ -258,9 +259,9 @@
 	      $("#back").click(clickBugtackerBackButton);
 	      $("#bugtracker-iframeFriendly-checkbx").change(clickBugTrackerIframeFriendly);
 	      initRenameDialog();
-	      initDeletePopup();  
+	      initDeletePopup();
 	    });
-	  });	  
+	  });
   });
 
 
