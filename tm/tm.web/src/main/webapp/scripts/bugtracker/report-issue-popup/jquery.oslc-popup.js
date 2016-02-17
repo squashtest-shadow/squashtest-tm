@@ -107,7 +107,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			/* ************** some events ****************** */
 
 			this.attachRadio.click(function () {
-				toAttachMode();
+				toAttachMode();			
 			});
 
 			this.reportRadio.click(function () {
@@ -121,13 +121,15 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			var toAttachMode = $.proxy(function () {
 				flipToMain();
 				this.issueCreate.hide();
-				this.issueSearch.show();
+				this.issueSearch.show();				
+				this.issueSearch.html(this.template(this.model.attributes.selectDialog));	
 			}, self);
 
 			var toReportMode = $.proxy(function () {
 				flipToMain();
 				this.issueCreate.show();
 				this.issueSearch.hide();
+				this.issueCreate.html(this.template(this.model.attributes.createDialog));
 			}, self);
 
 
@@ -154,9 +156,8 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 			var createViewForModel = $.proxy(function () {	
 				var template = Handlebars.compile(source);
-				this.issueCreate.html(template(this.model.attributes.createDialog));
-				this.issueSearch.html(template(this.model.attributes.selectDialog));	
-	
+				this.template = template;
+
 			}, self);
 
 
