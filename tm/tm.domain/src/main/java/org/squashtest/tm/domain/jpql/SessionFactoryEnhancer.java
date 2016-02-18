@@ -206,7 +206,7 @@ public class SessionFactoryEnhancer {
 		}
 
 		protected String createSqlQuery(List<?> arguments, String direction, String separator) {
-			return "group_concat(" + arguments.get(0) + " order by " + arguments.get(2) + " " + direction + " separator '" + separator + "')";
+			return "group_concat( distinct " + arguments.get(0) + " order by " + arguments.get(2) + " " + direction + " separator '" + separator + "')";
 		}
 
 	}
@@ -227,7 +227,7 @@ public class SessionFactoryEnhancer {
 
 		@Override
 		public String createSqlQuery(List<?> arguments, String direction, String separator) {
-			return "string_agg( cast(" + arguments.get(0) + " as text),'" + separator + "' order by " + arguments.get(2)
+			return "string_agg( distinct cast(" + arguments.get(0) + " as text),'" + separator + "' order by " + arguments.get(2)
 				+ " " + direction + ")";
 		}
 	}

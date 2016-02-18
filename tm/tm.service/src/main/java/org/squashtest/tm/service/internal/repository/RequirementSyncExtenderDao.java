@@ -32,10 +32,10 @@ public interface RequirementSyncExtenderDao {
 
 	void persist(RequirementSyncExtender extender);
 	
-	RequirementSyncExtender findByRemoteKey(@QueryParam("id") String remoteId);
-	Collection<RequirementSyncExtender> findAllByRemoteKey(@QueryParam("ids") Collection<String> remoteId);
-	Collection<RequirementSyncExtender> findAllByRemoteProjectsAndFilter(@QueryParam("pId") String remoteProjectId, @QueryParam("filter") String filterName);
-	Collection<RequirementSyncExtender> findAllByServer(@QueryParam("serverId") Long serverId);
+	RequirementSyncExtender retrieveByRemoteKey(@QueryParam("id") String remoteId);
+	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@QueryParam("ids") Collection<String> remoteId);
+	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@QueryParam("pId") String remoteProjectId, @QueryParam("filter") String filterName);
+	Collection<RequirementSyncExtender> retrieveAllByServer(@QueryParam("serverId") Long serverId);
 	
 
 	void delete(RequirementSyncExtender extender);
