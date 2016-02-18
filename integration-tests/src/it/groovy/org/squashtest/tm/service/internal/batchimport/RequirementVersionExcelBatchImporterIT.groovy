@@ -57,7 +57,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 	private RequirementLibraryNavigationService navService
 	@Inject
 	private CustomFieldValueFinderService cufService
-	
+
 	def importFile = {
 		fileName ->
 		URL url = RequirementExcelBatchImporter.class.getClassLoader().getResource(fileName)
@@ -65,7 +65,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		ImportLog summary = importer.performImport(file)
 		return summary
 	}
-	
+
 	def simulateImportFile = {
 		fileName ->
 		URL url = RequirementExcelBatchImporter.class.getClassLoader().getResource(fileName)
@@ -73,16 +73,16 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		ImportLog summary = importer.simulateImport(file)
 		return summary
 	}
-	
+
 	def findVersion = {
 		id -> findEntity(RequirementVersion.class, id)
 	}
 	def findReq = {
 		id -> findEntity(Requirement.class, id)
 	}
-	
+
 	def attachRequirementVersionMap(reqVersionMap){
-		
+
 		def attachVersionToReq = { reqId, vId ->
 			Requirement req = findReq(reqId); req.addVersion(findVersion(vId))
 		}
@@ -94,8 +94,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		}
 	}
 
-	
-	
+
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement hierarchy test"(){
 		given:
@@ -121,21 +121,21 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 			"/Projet1/Dossier1/Dossier2/Dossier2/Dossier3/Exigence2/Exi1/Exi2/Exigence2",
 			"/Projet1/Dossier1/Dossier2/Dossier2/Dossier3/Exigence1/Exi1/Exi2/Exigence2"
 			]
-		
+
 		when:
-		
+
 		ImportLog summary = importFile("import/requirements/requirement-hierarchy.xls")
 		summary.recompute()
-		
+
 		then:
 		summary.requirementVersionSuccesses == 19
 		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
 		paths.collect {navService.findNodeIdByPath(it)!=null}
 	}
-	
+
 	/**
-	 * Checking version number collision for root requirement, 
+	 * Checking version number collision for root requirement,
 	 * requirement under folder, requirement under requirement
 	 * @return
 	 */
@@ -152,15 +152,15 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def check = version == null
 
 		then:
-		
+
 		summary.requirementVersionSuccesses == 13
 		summary.requirementVersionWarnings == 11
 		summary.requirementVersionFailures == 0
 		check == result
-		
-		
+
+
 		where:
-		
+
 		path							| versionNumber  	|| 	result
 		"/Projet1/Exigence1"			|	1				||	false
 		"/Projet1/Exigence1"			|	2				||	false
@@ -191,7 +191,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		"/Projet1/Dossier1/Exigence"	|	22				||	false
 		"/Projet1/Dossier1/Exigence"	|	40				||	false
 	}
-	
+
 	/**
 	 * Checking escaping "/" in import for root requirement,
 	 * requirement under folder, requirement under requirement
@@ -211,7 +211,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 
 		then:
 
-		summary.requirementVersionSuccesses == 5
+		summary.requirementVersionSuccesses == 6
 		summary.requirementVersionWarnings == 4
 		summary.requirementVersionFailures == 0
 		check == result
@@ -219,18 +219,19 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 
 		where:
 
-		path												| versionNumber  	|| 	result
-		"/Projet1/Dos\\/sier/Exigence"						|	1				||	false
-		"/Projet1/Dos\\/sier/Exigence"						|	6				||	false
-		"/Projet1/Dos\\/sier/Exigence"						|	98				||	false
-		"/Projet1/Dossier/Dossier/Dos\\/sier/Exigence"		|	6				||	false
-		"/Projet1/Dossier/Dossier/Dos\\/sier/Exigence"		|	7				||	false
-		"/Projet1/Dossier/Dossier/Dos\\/sier/Exigence"		|	8				||	false
-		"/Projet1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"|	6				||	false
-		"/Projet1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"|	7				||	false
-		"/Projet1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"|	8				||	false
+		path													| versionNumber  	|| 	result
+		"/Projet1/Dos\\/sier/Exigence"							|	1				||	false
+		"/Projet1/Dos\\/sier/Exigence"							|	98				||	false
+		"/Projet1/Dos\\/sier/Exigence"							|	6				||	false
+		"/Projet1/Dossier/Dossier/Dos\\/sier/Exigence"			|	6				||	false
+		"/Projet1/Dossier/Dossier/Dos\\/sier/Exigence"			|	7				||	false
+		"/Projet1/Dossier/Dossier/Dos\\/sier/Exigence"			|	8				||	false
+		"/Projet1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"	|	6				||	false
+		"/Projet1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"	|	7				||	false
+		"/Projet1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"	|	8				||	false
+		"/Proj\\/et1/Dos\\/sier/Dossier/Dos\\/sier/Exig\\/ence"	|	1				||	false
 	}
-	
+
 
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement and truncate long path"(){
@@ -240,7 +241,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		ImportLog summary = importFile("import/requirements/requirement_test_truncate.xls")
 		summary.recompute()
 		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		
+
 		then:
 		summary.requirementVersionSuccesses == 0
 		summary.requirementVersionWarnings == 2
@@ -249,7 +250,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 			it.i18nError==Messages.ERROR_MAX_SIZE;
 		}
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement crit and status test"(){
 		given:
@@ -283,8 +284,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		"/Projet1/Exigence"		|	6			 ||	RequirementCriticality.MAJOR		|RequirementStatus.OBSOLETE
 		"/Projet1/Exigence"		|	7			 ||	RequirementCriticality.MAJOR		|RequirementStatus.WORK_IN_PROGRESS
 	}
-	
-	
+
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : should import requirement crit and status test"(){
 		given:
@@ -302,8 +303,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		id == null
 
 	}
-	
-	
+
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement with inconsistent createdby"(){
 		given:
@@ -320,7 +321,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		errors*.i18nError == [null,Messages.ERROR_REQ_USER_NOT_FOUND]
 
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : should import requirement with inconsistent createdby"(){
 		given:
@@ -338,7 +339,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		errors*.i18nError == [null, Messages.ERROR_REQ_USER_NOT_FOUND]
 		id == null
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement with inconsistent version number"(){
 		given:
@@ -357,10 +358,10 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionWarnings == 5
 		summary.requirementVersionFailures == 0
 		desc == description
-		errors.each { 
+		errors.each {
 			it.i18nError == [Messages.ERROR_REQUIREMENT_VERSION_NULL]
 			}
-		
+
 		where :
 		index 	|		path			|| description
 		0		| "/Projet1/exigenceC"	||"ceci est un test d'exigence version 1"
@@ -369,7 +370,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		3		| "/Projet1/exigenceC"	||"ceci est un test d'exigence version 4"
 		0		| "/Projet1/exigenceD"	||"ceci est un test d'exigence version 1"
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : should import requirement with inconsistent version number"(){
 		given:
@@ -388,16 +389,16 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		errors.each {
 			it.i18nError == [Messages.ERROR_REQUIREMENT_VERSION_NULL]
 		}
-		
+
 		where :
-			index 	|		path			
-			0		| "/Projet1/exigenceC"	
-			1		| "/Projet1/exigenceC"	
-			2		| "/Projet1/exigenceC"	
-			3		| "/Projet1/exigenceC"	
-			0		| "/Projet1/exigenceD"	
+			index 	|		path
+			0		| "/Projet1/exigenceC"
+			1		| "/Projet1/exigenceC"
+			2		| "/Projet1/exigenceC"
+			3		| "/Projet1/exigenceC"
+			0		| "/Projet1/exigenceD"
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement category test"(){
 		given:
@@ -409,8 +410,8 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def req = navService.findRequirement(id)
 		def version = req.findRequirementVersion(versionNumber)
 		def categoryCode = version.getCategory().getCode();
-		
-		
+
+
 		then:
 		summary.requirementVersionSuccesses == 1
 		summary.requirementVersionWarnings == 1
@@ -419,28 +420,28 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 
 		where:
 
-		path					| versionNumber  || expectedCode							
+		path					| versionNumber  || expectedCode
 		"/Projet1/Exigence"		|	1			 ||	"CAT_BUSINESS"
 		"/Projet1/Exigence"		|	2			 ||	"CAT_UNDEFINED"
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "shouldn't import requirement because milestone isn't binded to project"(){
 		given:
 		def path = "/Projet1/Exigence"
-		
+
 		when:
 		ImportLog summary = importFile("import/requirements/requirement_failed_milestone_not_exist.xls")
 		summary.recompute()
 		def id = navService.findNodeIdByPath(path)
-		
+
 		then:
 		summary.requirementVersionSuccesses == 0
 		summary.requirementVersionWarnings == 0
 		summary.requirementVersionFailures == 1
 		id == null
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : shouldn't import requirement because milestone isn't binded to project"(){
 		given:
@@ -451,25 +452,25 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		ImportLog summary = importFile("import/requirements/requirement_failed_milestone_not_exist.xls")
 		summary.recompute()
 		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		
+
 		then:
 		summary.requirementVersionSuccesses == 0
 		summary.requirementVersionWarnings == 0
 		summary.requirementVersionFailures == 1
 		errors*.i18nError == expectedErrors
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import requirement and bind milestone"(){
 		given:
 		def path = "/Projet1/Exigence"
-		
+
 		when:
 		ImportLog summary = importFile("import/requirements/requirement_milestone_ok.xls")
 		summary.recompute()
 		def id = navService.findNodeIdByPath(path)
 		def requirementVersion = navService.findRequirement(id).findRequirementVersion(1);
-		
+
 		then:
 		summary.requirementVersionSuccesses == 1
 		summary.requirementVersionWarnings == 0
@@ -478,7 +479,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		requirementVersion.getMilestones().size()==1
 		requirementVersion.getMilestones()*.id == [-3]
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : should import requirement and bind milestone"(){
 		given:
@@ -495,7 +496,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionFailures == 0
 		id == null
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "should import 2 requirement version and bind only one time the same milestone"(){
 		given:
@@ -508,7 +509,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def requirementVersionWithMilestoneBinded = navService.findRequirement(id).findRequirementVersion(1);
 		def requirementVersionWithoutMilestone = navService.findRequirement(id).findRequirementVersion(2);
 		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		
+
 		then:
 		summary.requirementVersionSuccesses == 1
 		summary.requirementVersionWarnings == 1
@@ -519,7 +520,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		requirementVersionWithoutMilestone.getMilestones().size()==0
 		errors*.i18nError == [null,Messages.WARN_MILESTONE_USED]
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : should import 2 requirement version and bind only one time the same milestone"(){
 		given:
@@ -530,17 +531,17 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.recompute()
 		def id = navService.findNodeIdByPath(path)
 		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		
+
 		then:
 		summary.requirementVersionSuccesses == 1
 		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
-		
+
 		id == null
-		
+
 		errors*.i18nError == [null,Messages.WARN_MILESTONE_USED]
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "shouldn't import requirement because milestone status"(){
 		given:
@@ -564,7 +565,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 			Messages.ERROR_WRONG_MILESTONE_STATUS,
 			Messages.ERROR_WRONG_MILESTONE_STATUS]
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement.xml")
 	def "simulate : shouldn't import requirement because milestone status"(){
 		given:
@@ -585,7 +586,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		}
 		errors*.i18nError == [Messages.ERROR_WRONG_MILESTONE_STATUS, Messages.ERROR_WRONG_MILESTONE_STATUS, Messages.ERROR_WRONG_MILESTONE_STATUS, Messages.ERROR_WRONG_MILESTONE_STATUS]
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement with cuf.xml")
 	def "should import requirement with cuf"(){
 		given:
@@ -596,14 +597,14 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def id = navService.findNodeIdByPath("/Projet1/Exigence1")
 		def requirementVersion = navService.findRequirement(id).findRequirementVersion(1);
 		def cufValues = cufService.findAllCustomFieldValues(requirementVersion)
-		
+
 		then:
 		summary.requirementVersionSuccesses == 1
 		summary.requirementVersionWarnings == 0
 		summary.requirementVersionFailures == 0
 		cufValues*.value == ["titi","true","2015-05-20"]
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement with cuf.xml")
 	def "simulate : should import requirement with cuf"(){
 		given:
@@ -619,7 +620,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionFailures == 0
 		id == null;
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement with cuf.xml")
 	def "should import requirement with mandatory text cuf empty"(){
 		given:
@@ -631,16 +632,16 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		def requirementVersion = navService.findRequirement(id).findRequirementVersion(1);
 		def cufValues = cufService.findAllCustomFieldValues(requirementVersion)
 		def errors = summary.findAllFor(EntityType.REQUIREMENT_VERSION);
-		
+
 		then:
 		summary.requirementVersionSuccesses == 0
 		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
 		cufValues*.value == ["NOSEC","true","2015-05-20"]
 		errors*.i18nError == [Messages.ERROR_MANDATORY_CUF]
-		
+
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should import requirement with cuf.xml")
 	def "simulate : should import requirement with mandatory text cuf empty"(){
 		given:
@@ -657,11 +658,11 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionFailures == 0
 		errors*.i18nError == [Messages.ERROR_MANDATORY_CUF]
 		id == null
-							
+
 	}
-	
+
 	//************************ UPDATE MODE ************************//
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "shouldn't modify core attribute because path is unknown"(){
 		given:
@@ -684,7 +685,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 			it.i18nError==Messages.ERROR_REQUIREMENT_NOT_EXISTS
 		}
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "simulate : shouldn't modify core attribute because path is unknown"(){
 		given:
@@ -707,7 +708,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 			it.i18nError==Messages.ERROR_REQUIREMENT_NOT_EXISTS
 		}
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "should modify core attribute"(){
 		given:
@@ -727,12 +728,12 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionFailures == 0
 		requirementVersion.getReference()=="ref_modif"
 		requirementVersion.getDescription()=="description_modif"
-		
+
 	}
-	
-	
-	
-	
+
+
+
+
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "simulate : should modify core attribute"(){
 		given:
@@ -754,7 +755,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		requirementVersion.getDescription()!="description_modif"
 
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "should modify status and criticality"(){
 		given:
@@ -778,7 +779,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		requirementVersion.getStatus()==RequirementStatus.APPROVED
 
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should update requirement.xml")
 	def "simulate : should modify status and criticality"(){
 		given:
@@ -802,7 +803,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		requirementVersion.getStatus() != RequirementStatus.APPROVED
 
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should clear milestone binding from requirement.xml")
 	def "should clear milestone binding from requirement"(){
 		given:
@@ -820,10 +821,10 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
 		requirementVersion.getMilestones().size()==0
-									
+
 	}
-	
-	
+
+
 	@DataSet("RequirementExcelBatchImportIT.should update milestone binding.xml")
 	def "should update milestone binding from requirement"(){
 		given:
@@ -845,7 +846,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		milestones*.label as Set==["My milestone","My milestone 3"] as Set
 
 	}
-	
+
 	@DataSet("RequirementExcelBatchImportIT.should update milestone binding.xml")
 	def "shouldn't update milestone binding from requirement because unknown milestone"(){
 		given:

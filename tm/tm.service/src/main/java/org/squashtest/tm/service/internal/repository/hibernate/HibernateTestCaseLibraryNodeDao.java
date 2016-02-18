@@ -118,7 +118,7 @@ TestCaseLibraryNodeDao {
 		query.setParameterList("paths", new String[] { effectiveParameters });
 		List<Object[]> result = query.list();
 
-		if (result.isEmpty() || ! path.equals(result.get(0)[0])) {
+		if (result.isEmpty() || ! effectiveParameters.equals(result.get(0)[0])) {
 			return null;
 		}
 

@@ -72,13 +72,15 @@ LibraryNodeDao<RequirementLibraryNode> {
 		return result;
 	}
 	
-	// Naive and suboptimzed implementation but request on closure table don't give expected results
+	// Naive and probably sub optimized implementation but request on closure table don't give expected results, so we have to do it by recursive algorithm.
+	// Hibernate or the RDBS seems to not be able to do the proper group concat on polymorphic associations.
 	@Override
 	public Long findNodeIdByPath(String path){
 		String projectName = PathUtils.extractProjectName(path);
+		String projectUnescapedName = PathUtils.unescapePathPartSlashes(projectName);
 		List<String> splits = new ArrayList<String>(Arrays.asList (PathUtils.splitPath(path)));
 		List<String> effectiveSplits = unescapeSlashes(splits);
-		GenericProject project = projectDao.findByName(projectName);
+		GenericProject project = projectDao.findByName(projectUnescapedName);
 		
 		//checks
 		if (effectiveSplits.size() < 2 || project == null) {
