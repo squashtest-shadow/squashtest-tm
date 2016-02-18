@@ -73,7 +73,10 @@ public class ChartDefinition implements TreeEntity{
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	//TODO Changing the database script to ensure that the limitation is TreeEntity.MAX_NAME_SIZE (ie 255).
+	//Presently, the column is declared as a VARCHAR(50)
+	//We can't do that in 1.13.3 because short delays, and we don't want to do a migration script just for that
+	@Size(min = 0, max = 50)
 	//if you change this name, don't forget to update the NODE name.
 	//name is denormalized, to avoid complex request each time we need the node name.
 	private String name;
