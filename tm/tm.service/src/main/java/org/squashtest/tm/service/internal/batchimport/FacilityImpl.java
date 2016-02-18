@@ -515,6 +515,9 @@ public class FacilityImpl implements Facility {
 			//CREATE REQUIREMENT VERSION IN DB
 			createReqVersionRoutine(train, instr);
 			//Assign the create requirement strategy to postProcessHandler
+			
+			
+			// XXX and what if the same import file define both a creation and an update ? 
 			postProcessHandler = new CreateRequirementVersionPostProcessStrategy();
 		}
 		return train;
@@ -525,6 +528,8 @@ public class FacilityImpl implements Facility {
 		LogTrain train = validator.updateRequirementVersion(instr);
 		if (!train.hasCriticalErrors()) {
 			updateRequirementVersionRoutine(train, instr);
+			
+			// XXX and what if the same import file define both a creation and an update ? 
 			postProcessHandler = new UpdateRequirementVersionPostProcessStrategy();
 		}
 		return train;
@@ -1447,6 +1452,10 @@ public class FacilityImpl implements Facility {
 		void doPostProcess(List<Instruction<?>> instructions);
 	}
 
+	
+	// TODO : this will not work as intended (see the XXX  "and what if")
+	// unless I've missed a catch, better have a unique strategy that can handle both create and update, 
+	// using instruction.getImportMode() to know which case it is
 	private class CreateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
 
 		@Override
