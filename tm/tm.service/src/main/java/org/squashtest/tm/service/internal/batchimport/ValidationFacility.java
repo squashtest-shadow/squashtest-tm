@@ -803,7 +803,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogEntry entry = null;
 		
 		String tcPath = target.getTcPath();
-		Project tcProject = projectDao.findByName(PathUtils.extractProjectName(tcPath));
+		Project tcProject = getProjectFromPath(tcPath);
 		Long tcLibid = tcProject.getTestCaseLibrary().getId();
 		
 		if ((tcLibid != null)
@@ -813,7 +813,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 		
 		String reqPath = target.getReqPath();
-		Project reqProject = projectDao.findByName(PathUtils.extractProjectName(reqPath));
+		Project reqProject = getProjectFromPath(reqPath);
 		Long reqLibid = reqProject.getRequirementLibrary().getId();
 		
 		if ((reqLibid != null)
@@ -825,7 +825,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		return entry;
 	}
 	
-	
+	private Project getProjectFromPath(String path) {
+		String projectName = PathUtils.extractProjectName(path);
+		projectName = PathUtils.unescapePathPartSlashes(projectName);
+		return projectDao.findByName(projectName);
+	}
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
 			String optionalImpact) {

@@ -229,6 +229,7 @@ public class Model {
 	// *****************************************************
 
 	public ProjectTargetStatus getProjectStatus(String projectName) {
+		projectName = PathUtils.unescapePathPartSlashes(projectName);
 		if (!projectStatusByName.containsKey(projectName)) {
 			initProject(projectName);
 		}
@@ -1015,10 +1016,12 @@ public class Model {
 	}
 
 	private void initProjectsByName(List<String> allNames) {
+		//[Issue 6032] unescaping the projects names
+		List<String> allUnescapedNames = PathUtils.unescapePathPartSlashes(allNames);
 
 		// filter out projects we already know of
 		List<String> projectNames = new LinkedList<String>();
-		for (String name : allNames) {
+		for (String name : allUnescapedNames) {
 			if (!projectStatusByName.containsKey(name)) {
 				projectNames.add(name);
 			}
@@ -1239,9 +1242,10 @@ public class Model {
 
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
+		List <String> unescapedNames = PathUtils.unescapePathPartSlashes(names);
 		Query q = sessionFactory.getCurrentSession().getNamedQuery(
 				"Project.findAllByName");
-		q.setParameterList("names", names);
+		q.setParameterList("names", unescapedNames);
 		return q.list();
 	}
 

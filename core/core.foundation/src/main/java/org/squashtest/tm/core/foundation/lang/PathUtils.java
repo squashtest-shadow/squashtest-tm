@@ -205,4 +205,17 @@ public final class PathUtils {
 	public static String unescapePathPartSlashes(String pathPart){
 		return pathPart.replaceAll("\\\\/", "/");
 	}
+	
+	/**
+	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
+	 * @param pathPart
+	 * @return
+	 */
+	public static List<String> unescapePathPartSlashes(List<String> pathParts){
+		List<String> unescapedParts = new ArrayList<>();
+		for (String part : pathParts) {
+			unescapedParts.add(PathUtils.unescapePathPartSlashes(part));
+		}
+		return unescapedParts;
+	}
 }

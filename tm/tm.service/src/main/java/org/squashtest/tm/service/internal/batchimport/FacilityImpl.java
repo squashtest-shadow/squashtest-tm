@@ -648,6 +648,7 @@ public class FacilityImpl implements Facility {
 		//convenient references as the process is complex...
 		final RequirementVersionTarget target = instruction.getTarget();
 		String projectName = PathUtils.extractProjectName(target.getPath());
+		projectName = PathUtils.unescapePathPartSlashes(projectName);
 		RequirementVersion requirementVersion = instruction.getRequirementVersion();
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
 

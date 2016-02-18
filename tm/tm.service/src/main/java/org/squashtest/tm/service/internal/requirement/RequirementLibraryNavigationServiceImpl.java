@@ -708,7 +708,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public Long mkdirs(String folderpath) {
 		List<String> paths = PathUtils.scanPath(folderpath);
 		String[] splits = PathUtils.splitPath(folderpath);
-		Project project = projectDao.findByName(splits[0]);
+		Project project = projectDao.findByName(PathUtils.unescapePathPartSlashes(splits[0]));
 
 		if (splits.length < 2) {
 			throw new IllegalArgumentException("Folder path for mkdir must contains at least a valid /projectName/folder");
