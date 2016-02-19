@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.inject.Inject;
 
 import org.springframework.context.annotation.Scope;
@@ -118,10 +121,15 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	public void visit(TestCase testCase) {
 		testCase.notifyAssociatedWithProject((Project)destination.getProject());
 	}
+
 	@Override
-	public void reindexAfterCopy() {
-		// do nothing
-		
+	public List<Long> getRequirementVersionToIndex() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Long> getTestCaseToIndex() {
+		return Collections.emptyList();
 	}
 
 }

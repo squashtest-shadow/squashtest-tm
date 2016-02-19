@@ -377,9 +377,13 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	}
 
 	@Override
-	public void reindexAfterCopy() {
-		// do nothing
+	public List<Long> getRequirementVersionToIndex() {
+		return Collections.emptyList();
+	}
 
+	@Override
+	public List<Long> getTestCaseToIndex() {
+		return Collections.emptyList();
 	}
 
 }

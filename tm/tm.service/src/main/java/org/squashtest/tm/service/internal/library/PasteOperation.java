@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 
@@ -42,6 +44,8 @@ public interface PasteOperation {
 	 */
 	boolean isOkToGoDeeper();
 	
-	void reindexAfterCopy();
+	List<Long> getRequirementVersionToIndex();
+	
+	List<Long> getTestCaseToIndex();
 	
 }
