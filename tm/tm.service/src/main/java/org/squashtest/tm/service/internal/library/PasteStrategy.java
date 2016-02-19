@@ -27,12 +27,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
+import org.hibernate.SessionFactory;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
 import org.squashtest.tm.service.internal.repository.GenericDao;
@@ -85,6 +88,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
 	private EntityDao<NODE> nodeDao;
+	
+	@Inject
+	private IndexationService indexationService;
+	
+	@Inject
+	private SessionFactory sessionFactory;
 
 	public void setGenericDao(GenericDao<Object> genericDao) {
 		this.genericDao = genericDao;
@@ -116,6 +125,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayer;
 	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayerParents;
+	private Set<Long> tcIdsToIndex = new HashSet<>();
+	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
 
 	// ******************* code *****************************
 	@CacheScope
@@ -140,7 +151,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			processLayer();
 
 		}
-
+		reindexAfterCopy();
 		return outputList;
 	}
 
@@ -166,7 +177,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			processLayer();
 
 		}
-
+		
+		reindexAfterCopy();
 		return outputList;
 	}
 
@@ -219,7 +231,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				appendNextLayerNodes(srcNode, outputNode);
 			}
 		}
-		firstOperation.reindexAfterCopy();
+		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
+		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -234,7 +247,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				appendNextLayerNodes(srcNode, outputNode);
 			}
 		}
-		firstOperation.reindexAfterCopy();
+		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
+		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
 	/**
@@ -249,14 +263,15 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 			for (TreeNode source : sources) {
 				TreeNode outputNode = nextsOperation.performOperation(source, destination);
+				
 				if (nextsOperation.isOkToGoDeeper()) {
 					appendNextLayerNodes(source, outputNode);
 				}
 			}
 		}
 
-		nextsOperation.reindexAfterCopy();
-
+		reqVersionIdsToIndex.addAll(nextsOperation.getRequirementVersionToIndex());
+		tcIdsToIndex.addAll(nextsOperation.getTestCaseToIndex());
 	}
 
 
@@ -277,6 +292,13 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private void appendNextLayerNodes(TreeNode sourceNode, TreeNode destNode) {
 		NextLayerFeeder feeder = nextLayerFeederOperationFactory.get();
 		feeder.feedNextLayer(destNode, sourceNode, this.nextLayer, this.outputList);
+	}
+	
+	private void reindexAfterCopy() {
+		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
+		sessionFactory.getCurrentSession().flush();
+		indexationService.batchReindexTc(new ArrayList<>(tcIdsToIndex));
+		indexationService.batchReindexReqVersion(new ArrayList<>(reqVersionIdsToIndex));
 	}
 
 }

@@ -79,8 +79,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private PermissionEvaluationService permissionService;
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
-	@Inject
-	private IndexationService indexationService;
+	
 
 	@Inject
 	private HibernateObjectDao genericDao;
@@ -418,11 +417,13 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	}
 
 	@Override
-	public void reindexAfterCopy() {
-		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
-		flush();
-		indexationService.batchReindexTc(tcIdsToIndex);
-		indexationService.batchReindexReqVersion(reqVersionIdsToIndex);
+	public List<Long> getRequirementVersionToIndex() {
+		return reqVersionIdsToIndex;
+	}
+
+	@Override
+	public List<Long> getTestCaseToIndex() {
+		return tcIdsToIndex;
 	}
 
 }
