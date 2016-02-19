@@ -501,7 +501,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	@Override
-	public boolean isOneUserOwnMilestone(List<Long> userdIds) {
+	public boolean hasMilestone(List<Long> userdIds) {
 		long result = milestoneDao.countMilestonesForUsers(userdIds);
 		return result > 0;
 	}

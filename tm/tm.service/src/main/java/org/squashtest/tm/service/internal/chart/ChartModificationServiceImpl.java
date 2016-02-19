@@ -24,13 +24,16 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
 
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.type.LongType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
@@ -45,6 +48,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.chart.engine.ChartDataFinder;
+import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 
 import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
@@ -56,6 +60,9 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Inject
 	private ChartDataFinder dataFinder;
+	
+	@Inject
+	private CustomChartDefinitionDao chartDefinitionDao;
 	
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
@@ -125,6 +132,11 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 		session().flush();
 		session().clear();
 		update(definition);
+	}
+
+	@Override
+	public boolean hasChart(List<Long> userIds) {
+		return chartDefinitionDao.hasChart(userIds);
 	}
 
 }

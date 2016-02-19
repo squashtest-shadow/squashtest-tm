@@ -48,9 +48,11 @@ import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.domain.users.UsersGroup;
 import org.squashtest.tm.exception.user.ActiveUserDeleteException;
+import org.squashtest.tm.exception.user.ChartOwnerDeleteException;
 import org.squashtest.tm.exception.user.LoginAlreadyExistsException;
 import org.squashtest.tm.exception.user.MilestoneOwnerDeleteException;
 import org.squashtest.tm.security.UserContextHolder;
+import org.squashtest.tm.service.chart.ChartModificationService;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
@@ -107,6 +109,9 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private MilestoneManagerService milestoneManagerService;
+	
+	@Inject
+	private ChartModificationService chartModificationService;
 
 	@Inject private FeatureManager features;
 
@@ -243,10 +248,12 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteUsers(Collection<Long> userIds) {
 		
+		checkUsersOwnMilestones(userIds);
+		checkUsersOwnCharts(userIds);
+		
 		for (Long id : userIds) {
 			User user = userDao.findById(id);
 			checkActiveUser(user);
-			checkUsersOwnMilestones(userIds);
 			userAccountService.deleteUser(id);
 			adminAuthentService.deleteAccount(user.getLogin());
 			userDao.remove(user);
@@ -254,8 +261,15 @@ public class AdministrationServiceImpl implements AdministrationService {
 		aclService.refreshAcls();
 	}
 
+	private void checkUsersOwnCharts(Collection<Long> userIds) {
+		if (chartModificationService.hasChart(new ArrayList<Long>(userIds))){
+			throw new ChartOwnerDeleteException();
+		}
+		
+	}
+
 	private void checkUsersOwnMilestones(Collection<Long> userIds) {
-		if (milestoneManagerService.isOneUserOwnMilestone(new ArrayList<Long>(userIds))) {
+		if (milestoneManagerService.hasMilestone(new ArrayList<Long>(userIds))) {
 			throw new MilestoneOwnerDeleteException();
 		}
 	}

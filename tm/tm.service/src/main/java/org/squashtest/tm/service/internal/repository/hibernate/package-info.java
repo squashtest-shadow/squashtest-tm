@@ -836,6 +836,8 @@
 	@NamedQuery(name="infoList.setProjectTypeToDefaultItem", query = "update TestCase tc set tc.type = :default where tc.project.id = :id"),
 	
 	// ChartDefinition
+	@NamedQuery(name="ChartDefinition.selectChartsOwnedByUsers",query="from ChartDefinition chart join chart.owner user where user.id in (:userIds)"),
+
 	
 	// ChartLibraryNode
 	@NamedQuery(name="CustomReportLibraryNode.findAllByEntityType",query="from CustomReportLibraryNode crln where crln.entityType = ?1"),

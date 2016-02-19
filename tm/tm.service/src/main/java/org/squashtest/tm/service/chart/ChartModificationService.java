@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.chart;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +36,8 @@ public interface ChartModificationService {
 	void persist(ChartDefinition newChartDefinition);
 
 	ChartDefinition findById(long id);
+	
+	boolean hasChart(List<Long> userIds);
 
 	/**
 	 * Returns all the ColumnPrototypes known in the database, indexed by EntityType.
