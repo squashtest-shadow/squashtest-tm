@@ -54,21 +54,21 @@ import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
 @Configuration
 @EnableConfigurationProperties(SquashManagementProperties.class)
 public class WebSecurityConfig {
-	
+
 	@Configuration
-	@Order(1)                                                        
+	@Order(1)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
 		protected void configure(HttpSecurity http) throws Exception {
 			http
 				.csrf().disable()
-				.antMatcher("/automated-executions/**")                            
+				.antMatcher("/automated-executions/**")
 				.authorizeRequests()
 					.anyRequest().access("hasRole('ROLE_TA_API_CLIENT')")
 					.and()
 				.httpBasic();
 		}
 	}
-	
+
 	@Configuration
 	@Order(2)
 	public static class StandardWebSecurityConfigurerAdapter extends WebSecurityConfigurerAdapter {
@@ -77,26 +77,26 @@ public class WebSecurityConfig {
 		private boolean debugSecurityFilter;
 		/*
 		 * @Inject private SquashManagementProperties managementProperties;
-		 * 
+		 *
 		 * @Inject private ServerProperties serverProperties;
 		 */
-		
+
 		@Override
 		public void configure(WebSecurity web) throws Exception {
 			web.debug(debugSecurityFilter);
 		}
-		
+
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http// When CSRF is on, a CSRF token is to be included in any POST/PUT/DELETE/PATCH request. This would require
 			// massive changes, so it's deactivated for now.
 			.csrf().disable()
-			
+
 			.headers()
 			.cacheControl()
 			.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-			
+
 			.and().authorizeRequests()
 			.antMatchers(
 					"/administration",
@@ -120,30 +120,30 @@ public class WebSecurityConfig {
 			.antMatchers("/management/**").denyAll()
 			.antMatchers("/resultUpdate/**").access("hasRole('ROLE_TA_API_CLIENT')")
 			.anyRequest().authenticated()
-			
+
 			.and().formLogin()
 			.permitAll()
 			.loginPage("/login")
 			.failureUrl("/login?error")
 			.defaultSuccessUrl("/home-workspace")
-			
+
 			.and().logout()
 			.permitAll()
 			.invalidateHttpSession(true)
 			.logoutSuccessUrl("/")
-			
+
 			.and()
 			.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)
 			.addFilterAfter(new HtmlSanitizationFilter(), SecurityContextPersistenceFilter.class);
 			// @formatter:on
-			
+
 			/*
 			 * RequestMatcher managementRequestMatcher = new RequestMatcher() {
-			 * 
+			 *
 			 * @Override public boolean matches(HttpServletRequest request) { return request.getLocalPort() ==
 			 * managementProperties.getPort(); } };
 			 */
-			
+
 			// @formatter:off
 			// Secured namespace for the management api
 			// There is no authentication because this namespace collects system operation which cannot be done otherwise.
@@ -174,7 +174,7 @@ public class WebSecurityConfig {
 		@Override
 		public void init(AuthenticationManagerBuilder auth) throws Exception {
 			auth.userDetailsService(squashUserDetailsManager).passwordEncoder(passwordEncoder);
-
+			auth.eraseCredentials(false);
 		}
 
 		@Inject
