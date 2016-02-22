@@ -45,11 +45,7 @@ import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationExcepti
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
-import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
-import org.squashtest.tm.service.annotation.Id;
-import org.squashtest.tm.service.annotation.Ids;
-import org.squashtest.tm.service.annotation.PreventConcurrent;
-import org.squashtest.tm.service.annotation.PreventConcurrents;
+import org.squashtest.tm.service.annotation.*;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
