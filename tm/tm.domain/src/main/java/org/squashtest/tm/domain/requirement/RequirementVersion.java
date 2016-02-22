@@ -68,6 +68,7 @@ import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException;
+import org.squashtest.tm.exception.requirement.MilestoneForbidModificationException;
 import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedException;
 import org.squashtest.tm.exception.requirement.RequirementVersionNotLinkableException;
 import org.squashtest.tm.security.annotation.InheritsAcls;
@@ -267,6 +268,9 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 	private void checkModifiable() {
+		if(!milestonesAllowEdit()){
+			throw new MilestoneForbidModificationException();
+		}
 		if (!isModifiable()) {
 			throw new IllegalRequirementModificationException();
 		}
