@@ -126,7 +126,7 @@ public class SessionFactoryEnhancer {
 				case STR_AGG:
 					hibConfig.addSqlFunction(FN_NAME_GROUP_CONCAT, new StringAggFunction(FN_NAME_GROUP_CONCAT, StringType.INSTANCE));
 					break;
-				case EXTRACT_WEEK: 
+				case EXTRACT_WEEK:
 					hibConfig.addSqlFunction(FN_NAME_WEEK, new ExtractWeek(FN_NAME_WEEK, IntegerType.INSTANCE));
 			}
 		}
@@ -206,7 +206,7 @@ public class SessionFactoryEnhancer {
 		}
 
 		protected String createSqlQuery(List<?> arguments, String direction, String separator) {
-			return "group_concat( distinct " + arguments.get(0) + " order by " + arguments.get(2) + " " + direction + " separator '" + separator + "')";
+			return "group_concat(" + arguments.get(0) + " order by " + arguments.get(2) + " " + direction + " separator '" + separator + "')";
 		}
 
 	}
@@ -227,14 +227,14 @@ public class SessionFactoryEnhancer {
 
 		@Override
 		public String createSqlQuery(List<?> arguments, String direction, String separator) {
-			return "string_agg( distinct cast(" + arguments.get(0) + " as text),'" + separator + "' order by " + arguments.get(2)
+			return "string_agg(cast(" + arguments.get(0) + " as text),'" + separator + "' order by " + arguments.get(2)
 				+ " " + direction + ")";
 		}
 	}
-	
+
 	/**
 	 * Support for week(timestamp) function
-	 * 
+	 *
 	 */
 	private static final class ExtractWeek extends  StandardSQLFunction{
 
@@ -246,13 +246,13 @@ public class SessionFactoryEnhancer {
 			super(name, registeredType);
 			// TODO Auto-generated constructor stub
 		}
-		
+
 		@Override
 		public final String render(Type firstArgumentType, List arguments, SessionFactoryImplementor sessionFactory) {
 			return "extract(week from "+arguments.get(0) +")";
 		}
-		
-		
+
+
 	}
 
 
