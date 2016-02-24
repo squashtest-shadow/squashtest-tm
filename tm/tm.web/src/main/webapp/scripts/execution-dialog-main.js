@@ -74,13 +74,14 @@ define(['module',
 
 		function refreshParent(){
 			if (!!window.opener) {
-	            if (window.opener.squashtm.execution){
+				var openerSize = Object.keys(window.opener).length;
+	      if (openerSize > 0 && window.opener.squashtm.execution){
 					window.opener.squashtm.execution.refresh();
 				}
-				if (window.opener.progressWindow) {
+				if (openerSize > 0 && window.opener.progressWindow) {
 					window.opener.progressWindow.close();
 				}
-	        }
+	    }
 		}
 
 
