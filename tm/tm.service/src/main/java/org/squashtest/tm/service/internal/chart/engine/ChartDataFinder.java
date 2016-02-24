@@ -39,48 +39,51 @@ import org.squashtest.tm.domain.chart.ColumnType;
 import org.squashtest.tm.domain.chart.DataType;
 import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.Tuple;
+import org.squashtest.tm.service.internal.repository.InfoListDao;
+import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 
 /**
  * <p>This is the class that will find the data matching the criteria supplied as a {@link ChartDefinition}, using the Querydsl engine.</p>
- * 
+ *
  * <h1>What is this ?</h1>
- * 
+ *
  * <p>A ChartDefinition defines what you need to formulate the query :
- * 
+ *
  * <ul>
  * 	<li>What data you want to find (the {@link MeasureColumn}s)</li>
  * 	<li>On what basis you want them (the {@link AxisColumn}s)</li>
  * 	<li>How specific you need the data to be (the {@link Filter}s)</li>
  * </ul>
  * </p>
- * 
+ *
  * <p>Based on this specification the {@link ChartDataFinder} will design the query plan and run it. The rest of this javadoc
  * is a technical documentation of its internal processes.</p>
- * 
+ *
  * <h1>Column roles</h1>
- * 
+ *
  * <p>Here we explain how these roles will be used in a query :</p>
- * 
+ *
  * <h3>Filters</h3>
- * 
+ *
  * <p>
  * 	In a query they naturally fit the role of a where clause. However a regular where clause is a simple case : sometimes you would have
  * 	it within a Having clause, and in other times it could be a whole subquery.
  * </p>
- * 
+ *
  * <h3>AxisColumns</h3>
- * 
+ *
  * <p>
  *	These columns will be grouped on (in the group by clause). They also appear in the select clause and should of course not
  *	be subject to any aggregation. In the select clause, they will appear first, and keep the same order as in the list defined in the ChartDefinition.
  * </p>
- * 
+ *
  * <h3>MeasureColumn</h3>
- * 
+ *
  * <p>
  * 	These columns appear in the select clause and will be subject to an aggregation method. The aggregation is specified in the MeasureColumn.
  * 	They appear in the select clause, after the axis columns, and keep the same order as in the list defined in the ChartDefinition.
@@ -92,15 +95,15 @@ import com.querydsl.core.Tuple;
  * 	becomes how many different labels exist within the test cases that match the filter. This, of course, is a problem for the tool that will design
  * 	the ChartDefinition : the current class will just create and process the query.
  * </p>
- * 
+ *
  * <h1>Query plan</h1>
- * 
+ *
  * <p>
  * 	The global query is composed of one main query and several optional subqueries depending on the filters.
  * </p>
- * 
+ *
  * <h3>Domain</h3>
- * 
+ *
  * <p>
  * 	The total domain covered by any possible ChartDefinition is the following : </br></br>
  *
@@ -136,17 +139,17 @@ import com.querydsl.core.Tuple;
  * </table>
  *
  *  </p>
- * 
+ *
  * 	<p>Depending on the ChartDefinition, a main query will be generated as
  * 	a subset of this domain. The specifics of its construction depend on the "Root entity", "Target entities" and
  * 	"Support entities", those concepts are defined below. </p>
- * 
+ *
  * 	<h3>Main query</h3>
- * 
+ *
  * <p>
  *	see {@link QueryPlanner}.
  * 	The main building blocks that defines the main query are the following :
- * 
+ *
  * 	<ul>
  * 		<li><b>Root Entity</b> : This is the entity from which the query plan begins the entity traversal. The root entity is the
  * 		entity targeted by the AxisColumn.  When multiple target entities are eligible, the one with the lowest rank will be the Root entity.</li>
@@ -156,31 +159,31 @@ import com.querydsl.core.Tuple;
  * 			then IterationTestPlanItem and Iteration are Support entities. </li>
  * 	</ul>
  * </p>
- * 
+ *
  * <p>The main query is thus defined as the minimal subset of the domain that join all the Target entities together via
  * Support Entities, starting with the Root entity. All joins in this query will be inner joins (no left nor right joins).</p>
- * 
- * 
+ *
+ *
  * <h3>Select clause generation</h3>
- * 
+ *
  * <p>
  * 	The select clause must of course contain the MeasureColumns with their appropriate aggregation function (like count(distinct ), avg(distinct ) etc).
  * 	For technical reasons they must also include the AxisColumns, because theses are the column on which a row is grouped by.
  * </p>
- * 
+ *
  * <h3>Filter application</h3>
- * 
+ *
  * <p>
  * 	Filters are restriction applied on the tuples returned by the main query.
  * 	At the atomic level a filter is a combination of a column, an comparison operator, and
  * 	one/several operands. They are translated in the appropriate Querydsl expression,
  * 	bound together by appropriate logical operators then inserted in the main query.
  * </p>
- * 
+ *
  * <p>
  * 	Mostly they are no more complex than "where" clauses, but in some cases
  * 	a subquery is required. Filters are treated according to the following process :
- * 
+ *
  *  <ol>
  *  	<li>Filters are first grouped by Target Entity</li>
  *  	<li>Filters from each groups are then combined in a logical combination</li>
@@ -192,15 +195,15 @@ import com.querydsl.core.Tuple;
  *  	</li>
  *  </ol>
  * </p>
- * 
- * 
+ *
+ *
  * <h4>logical combination</h4>
- * 
+ *
  * <p>
  * 	Each Filter apply on one column (eg, TestCase.label). Typically, multiple filters will apply on several
  * 	columns. However one can stack multiple Filters on the same column, (eg TestCase.label = 'bob', TestCase.label = 'mike').
  * </p>
- * 
+ *
  * <p>
  * 	For each entity, the filters are thus combined according to the following rules :
  * 	<ul>
@@ -209,90 +212,93 @@ import com.querydsl.core.Tuple;
  * 	</ul>
  *
  * </p>
- * 
- * 
+ *
+ *
  * <h4>Inlined where clause strategy</h4>
- * 
+ *
  * <p>
  * 	In the simplest cases the filters will be inlined in the main query, if the column is of type {@link ColumnType#ATTRIBUTE}
  * </p>
- * 
+ *
  * <h4>Subquery strategy</h4>
- * 
+ *
  * <p>In more complex cases a subquery will be required. The decision is driven by the attribute 'columnType' of the {@link ColumnPrototype}
  * 	referenced by the filters : if at least one of them is of type {@link ColumnType#CUF} or {@link ColumnType#CALCULATED}
  * then one/several subqueries will be used. We need them for the following reasons :
- * 
+ *
  * 	<ol>
  * 		<li>Custom fields : joining on them in the main query would cause massive tuples growth and headaches about how grouping on what</li>
  * 		<li>Aggregation operations (calculated attributes) : count(), avg() etc + Having clauses would be incorrect here because the result would be affected by the
  * 			other filters applied on the main query.</li>
  * 	</ol>
- * 
+ *
  * </p>
- * 
+ *
  * <p>
- * 	Subqueries have them own Query plan, and are joined with the main query as follow : the bean of the outer query that defines the 
- * calculated attribute will join with the root entity of the subquery (usually its axis). 
- * 	We choose to use correlated subqueries (joining them as described above) even when an uncorellated would do fine, because in 
- * practice a clause 
+ * 	Subqueries have them own Query plan, and are joined with the main query as follow : the bean of the outer query that defines the
+ * calculated attribute will join with the root entity of the subquery (usually its axis).
+ * 	We choose to use correlated subqueries (joining them as described above) even when an uncorellated would do fine, because in
+ * practice a clause
  * 	<pre> where exists (select 1 from ... where ... and inner_col = outer_col) </pre>
- * will outperform 
+ * will outperform
  * 	<pre> where bean.id in (select id from .... where ...) </pre>
- * by several order of magnitude (especially because in the former the DB can then use the indexed primary keys). 
+ * by several order of magnitude (especially because in the former the DB can then use the indexed primary keys).
  * </p>
- * 
+ *
  * <h3>Grouping</h3>
- * 
+ *
  * <p>
  * 	Data will be grouped on each {@link AxisColumn} in the given order. Special care is given for columns of
  * 	type {@link DataType#DATE} : indeed the desired level of aggregation may be day, month etc. We must be watchful
  * 	of not grouping together every month of December accross the years. For this reason data grouped by Day will
  * 	actually grouped by (year,month,day). Same goes for grouping by month, which actually mean grouping by (year,month)
  * </p>
- * 
+ *
  * <h1>Result </h1>
- * 
+ *
  * <p>
  * 	The result will be an array of array of Object. Each row represents a tuple of (x+m) cells, where x = card(AxisColumn)
  * 	and y = card(MeasureColumn). The first batch of cells are those of the AxisColumns, the second batch are those of the
  * 	MeasureColumns.
  * </p>
- * 
+ *
  * <p>
  * 	Note : a more appropriate representation would be one serie per MeasureColumn, with each tuple made of the x axis cells
  * 	and 1 measure cell. However we prefer to remain agnostic on how the resultset will be interpreted : series might not
  * 	be the preferred way to consume the data after all.
  * </p>
- * 
+ *
  * <h1>Scope and ACLs</h1>
- * 
+ *
  * <p>
- * 	Additionally, another special filter will be processed : the Scope, ie the subset of RootEntity on which 
+ * 	Additionally, another special filter will be processed : the Scope, ie the subset of RootEntity on which
  *  the chart query will be applied to. At runtime it is refined into an Effective Scope, which is the conjunction of :
  * 	<ul>
  * 		<li>the content of the projects/folders/nodes selected by the user <b>who designed</b> the ChartDefinition (the scope part)</li>
  * 		<li>the nodes that can actually be READ by the user <b>who is running</b> the ChartDataFinder (the acl part)</li>
  * 	</ul>
- * 
+ *
  * 	An amusing side effect of this is that the user may end up with no data available for plot.
  * </p>
- * 
+ *
  * <p>
  * 	 The Effective Scope will be computed then added to the query after is has been generated. See {@link ScopePlanner} for details on what is going on.
  * </p>
- * 
+ *
  * @author bsiri
  *
  */
 @Component
 @SuppressWarnings(value={"rawtypes", "unchecked"})
 public class ChartDataFinder {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);
 
 	@Inject
 	private SessionFactory sessionFactory;
+
+	@Inject
+	private InfoListItemDao infoListItemDao;
 
 	@Inject
 	Provider<ScopePlanner> scopePlannerProvider;
@@ -304,9 +310,9 @@ public class ChartDataFinder {
 
 
 		// *********** step 1 : create the query ************************
-		
+
 		ExtendedHibernateQuery detachedQuery = new QueryBuilder(enhancedDefinition).createQuery();
-		
+
 		// *********** step 2 : determine scope and ACL **********************
 
 		ScopePlanner scopePlanner = scopePlannerProvider.get();
@@ -316,7 +322,7 @@ public class ChartDataFinder {
 		scopePlanner.appendScope();
 
 		// ******************* step 3 : run the query*************************
-		
+
 		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
 
 		try{
@@ -366,7 +372,7 @@ public class ChartDataFinder {
 
 		// now build the serie
 		ChartSeries chartSeries = new ChartSeries();
-		chartSeries.setAbscissa(abscissa);
+		generateAbsciss(abscissa, chartSeries,definition);
 
 		for (int m=0; m < measize; m++){
 			MeasureColumn measure = definition.getMeasures().get(m);
@@ -374,6 +380,29 @@ public class ChartDataFinder {
 		}
 
 		return chartSeries;
+	}
+
+	/**
+	 * [Issue 6047] When one the axis is INFOLIST_ITEM.LABEL we must adapt the absciss. The sql generator engine make a request like
+	 * select count(*), CODE from INFOLIST_ITEM group by CODE, and we want the label :
+	 * with i18n support if the INFOLIST_ITEM is in default system list
+	 * @param abscissa
+	 * @param chartSeries
+	 * @param definition
+     */
+	private void generateAbsciss(List<Object[]> abscissa, ChartSeries chartSeries, DetailedChartQuery definition) {
+		List<AxisColumn> columns = definition.getAxis();
+		for (int i = 0; i < columns.size(); i++) {
+			AxisColumn axisColumn =  columns.get(i);
+			if (axisColumn.getDataType().equals(DataType.INFO_LIST_ITEM)){
+				for (Object[] obj : abscissa) {
+					String code = obj[i].toString();
+					InfoListItem infoListItem = infoListItemDao.findByCode(code);
+					obj[i] = infoListItem.getLabel();
+				}
+			}
+		}
+		chartSeries.setAbscissa(abscissa);
 	}
 
 
