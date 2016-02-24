@@ -143,25 +143,9 @@ define(["jquery", "backbone", "squash.attributeparser", "workspace.event-bus", "
 			},
 
 			_getI18nInfoListLegends: function (protoLabel, legends, i18nLegends) {
-				var prefix = "";
-
-				switch (protoLabel) {
-					case "TEST_CASE_NATURE":
-						prefix = "test-case.nature.";
-						break;
-					case "TEST_CASE_TYPE":
-						prefix = "test-case.type.";
-						break;
-					case "REQUIREMENT_VERSION_CATEGORY":
-					case "REQUIREMENT_CATEGORY":
-						prefix = "requirement.category.";
-						break;
-					default:
-				}
-
 				return _.map(legends, function (legend) {
-					if (i18nLegends[prefix + legend]) {
-						return i18nLegends[prefix + legend];
+					if (i18nLegends[legend]) {
+						return i18nLegends[legend];
 					}
 					return legend;
 				});
