@@ -43,7 +43,6 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 
 import com.querydsl.core.Tuple;
-import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 
@@ -372,7 +371,7 @@ public class ChartDataFinder {
 
 		// now build the serie
 		ChartSeries chartSeries = new ChartSeries();
-		generateAbsciss(abscissa, chartSeries,definition);
+		postProcessAbsciss(abscissa, chartSeries,definition);
 
 		for (int m=0; m < measize; m++){
 			MeasureColumn measure = definition.getMeasures().get(m);
@@ -382,27 +381,36 @@ public class ChartDataFinder {
 		return chartSeries;
 	}
 
+	private void postProcessAbsciss(List<Object[]> abscissa, ChartSeries chartSeries, DetailedChartQuery definition) {
+		List<AxisColumn> columns = definition.getAxis();
+		for (int i = 0; i < columns.size(); i++) {
+			postProcessColumn(abscissa, columns, i);
+		}
+		chartSeries.setAbscissa(abscissa);
+	}
+
+	/**
+	 * As 1.13.3 we only need to postprocess infolist items. If another fancy business rule appears,
+	 * change the if to switch, and branch other absciss post process here
+     */
+	private void postProcessColumn(List<Object[]> abscissa, List<AxisColumn> columns, int i) {
+		AxisColumn axisColumn =  columns.get(i);
+		if (axisColumn.getDataType().equals(DataType.INFO_LIST_ITEM)){
+			postProcessInfoListItem(abscissa, i);
+		}
+	}
+
 	/**
 	 * [Issue 6047] When one the axis is INFOLIST_ITEM.LABEL we must adapt the absciss. The sql generator engine make a request like
 	 * select count(*), CODE from INFOLIST_ITEM group by CODE, and we want the label :
 	 * with i18n support if the INFOLIST_ITEM is in default system list
-	 * @param abscissa
-	 * @param chartSeries
-	 * @param definition
      */
-	private void generateAbsciss(List<Object[]> abscissa, ChartSeries chartSeries, DetailedChartQuery definition) {
-		List<AxisColumn> columns = definition.getAxis();
-		for (int i = 0; i < columns.size(); i++) {
-			AxisColumn axisColumn =  columns.get(i);
-			if (axisColumn.getDataType().equals(DataType.INFO_LIST_ITEM)){
-				for (Object[] obj : abscissa) {
-					String code = obj[i].toString();
-					InfoListItem infoListItem = infoListItemDao.findByCode(code);
-					obj[i] = infoListItem.getLabel();
-				}
-			}
-		}
-		chartSeries.setAbscissa(abscissa);
+	private void postProcessInfoListItem(List<Object[]> abscissa, int i) {
+		for (Object[] obj : abscissa) {
+            String code = obj[i].toString();
+            InfoListItem infoListItem = infoListItemDao.findByCode(code);
+            obj[i] = infoListItem.getLabel();
+        }
 	}
 
 

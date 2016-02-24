@@ -123,7 +123,7 @@ class ChartDataFinderTest extends Specification {
 		finder.infoListItemDao = infoListItemDao;
 
 		when :
-		finder.generateAbsciss(abscissa,series,definition)
+		finder.postProcessAbsciss(abscissa,series,definition)
 
 		then :
 		series.abscissa == [
