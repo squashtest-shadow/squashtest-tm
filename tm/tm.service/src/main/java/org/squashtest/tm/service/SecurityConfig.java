@@ -35,6 +35,7 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.acls.domain.*;
 import org.springframework.security.acls.jdbc.BasicLookupStrategy;
+import org.springframework.security.acls.model.AclService;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -53,7 +54,6 @@ import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerProxy
 import org.squashtest.tm.service.internal.spring.ArgumentPositionParameterNameDiscoverer;
 import org.squashtest.tm.service.internal.spring.CompositeDelegatingParameterNameDiscoverer;
 import org.squashtest.tm.service.security.acls.ExtraPermissionEvaluator;
-import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -133,7 +133,9 @@ public class SecurityConfig {
 	@Inject
 	private AuthenticationManager authenticationManager;
 
-    @Inject private JdbcManageableAclService aclService;
+	@Inject
+	@Named("squashtest.core.security.AclService")
+	private AclService aclService;
 
 	@Autowired(required = false)
 	private Collection<ExtraPermissionEvaluator> extraPermissionEvaluators = Collections.emptyList();
@@ -146,6 +148,8 @@ public class SecurityConfig {
 	@Bean
 	public BasicLookupStrategy lookupStrategy() {
 		BasicLookupStrategy strategy = new BasicLookupStrategy(dataSource, aclCache(), aclAuthorizationStrategy(), grantingStrategy());
+
+		// formatter:off
 		strategy.setSelectClause(
 			"select oid.IDENTITY as object_id_identity,\n" +
 				"  gp.PERMISSION_ORDER,\n" +
@@ -172,6 +176,7 @@ public class SecurityConfig {
 				"  left join CORE_TEAM_MEMBER tmemb on tmemb.TEAM_ID = team.PARTY_ID,\n" +
 				"  CORE_USER u \n" +
 				"where((u.PARTY_ID = tmemb.USER_ID) or (u.PARTY_ID = party.PARTY_ID)) and u.ACTIVE = true and (\n");
+		// formatter:on
 
 		strategy.setLookupObjectIdentitiesWhereClause("(oid.IDENTITY = ? and ocl.CLASSNAME = ?)");
 		strategy.setLookupPrimaryKeysWhereClause("(oid.ID = ?)");
