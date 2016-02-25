@@ -53,4 +53,5 @@
 	<include file="upgrade/upgrade.changelog-up-to-1.12.3.xml" relativeToChangelogFile="true" />	
 	<include file="upgrade/upgrade.changelog-up-to-1.13.0.xml" relativeToChangelogFile="true" />
 	<include file="upgrade/upgrade.changelog-up-to-1.13.1.xml" relativeToChangelogFile="true" />	
+	<include file="upgrade/upgrade.changelog-up-to-1.13.3.xml" relativeToChangelogFile="true" />	
 </databaseChangeLog> 
