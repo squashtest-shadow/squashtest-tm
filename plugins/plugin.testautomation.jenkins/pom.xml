@@ -12,7 +12,7 @@
   <description>Squash TM Connector for Squash TA on Jenkins</description>
 
   <properties>
-    <generatedsources.directory>${project.build.directory}/generated-sources</generatedsources.directory>
+    <generated-test-sources.directory>${project.build.directory}/generated-test-sources</generated-test-sources.directory>
     <squash.dependencies.version>${project.version}</squash.dependencies.version>
     <stubTaServer.webapp.path>target/${project.artifactId}-${project.version}</stubTaServer.webapp.path>
     <stubTaServer.webapp.port>9292</stubTaServer.webapp.port>
@@ -65,6 +65,7 @@
       <artifactId>log4j</artifactId>
       <scope>test</scope>
     </dependency>
+
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
@@ -122,7 +123,7 @@
     </pluginManagement>
 
     <plugins>
-      <!--  
+      <!--
 			This invocation of maven-resources-plugin is useful because it allows for resources filtering.
 			In this case we need to process the port of the stub TA server
 		-->
@@ -136,7 +137,7 @@
             </goals>
             <phase>generate-test-sources</phase>
             <configuration>
-              <outputDirectory>${generatedsources.directory}</outputDirectory>
+              <outputDirectory>${generated-test-sources.directory}</outputDirectory>
               <resources>
                 <resource>
                   <directory>src/it/groovy</directory>
@@ -161,7 +162,7 @@
             <phase>generate-test-sources</phase>
             <configuration>
               <sources>
-                <source>${generatedsources.directory}</source>
+                <source>${generated-test-sources.directory}</source>
               </sources>
             </configuration>
           </execution>
@@ -277,7 +278,6 @@
             <phase>post-integration-test</phase>
             <configuration>
               <skip>${skipITs}</skip>
-              <ignorePackaging>true</ignorePackaging>
               <path>/foo</path>
             </configuration>
           </execution>
