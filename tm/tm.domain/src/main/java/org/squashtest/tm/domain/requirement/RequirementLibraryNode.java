@@ -22,15 +22,21 @@ package org.squashtest.tm.domain.requirement;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Persister;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -39,6 +45,7 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
+import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
@@ -61,6 +68,40 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	public Project getProject() {
 		return project;
 	}
+	
+	
+	/**
+	 * <p>This is not a business attribute and should not be used in services. This mapping 
+	 * exists solely to make hql queries on it. It allows for fast retrieval of the 
+	 * name (of a folder, or of the newest version of a requirement).</p> 
+	 * 
+	 *	<p>Technical note : although the mapping is one to one is amusing to see that 
+	 * a persister usually meant for collections (ie one to many) works fine nonetheless </p>
+	 */
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinTable(name="RLN_RESOURCE",
+	joinColumns=@JoinColumn(name="RLN_ID", insertable=false, updatable=false ),
+	inverseJoinColumns = @JoinColumn(name="RES_ID"))
+	@Persister(impl = ReadOnlyCollectionPersister.class)
+	@Immutable	
+	private Resource mainResource;
+	
+	
+	public Resource getMainResource(){
+		return mainResource;
+	}
+	
+	/**
+	 * This basically corresponds to :
+	 * <ul>
+	 * 	<li>if this node is a folder -&gt; return resource.name</li>
+	 * 	<li>if this node is a requirement -&gt; return the name of its latest version</li>
+	 *  </ul>
+	 * 
+	 * and waiting for the day we can end this bullshit
+	 * @return
+	 */
+
 
 	/**
 	 * Notifies this object it is now a resource of the given project.

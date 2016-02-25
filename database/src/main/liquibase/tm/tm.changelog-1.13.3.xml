@@ -86,4 +86,28 @@
 	</changeSet>
 	
 
+	<changeSet id="tm-1.13.3-feature-5265-4" author="bsiri">
+		
+		<comment>
+			This view maps a requirement library node to its main resource. Some would say 
+			it is redundant with what can be found in tables REQUIREMENT or REQUIREMENT_FOLDER
+			but seriously it makes simple things likes getting the name of a generic 
+			REQUIREMENT_LIBRARY_NODE much simpler. 
+		</comment>
+		<!--  
+			Actually it's much more that a question of simplicity : it's a matter of sanity
+			until we can refactor that part of the model.		
+		-->
+
+		<createView viewName="RLN_RESOURCE">
+			select fold.rln_id as rln_id, fold.res_id as res_id
+			from REQUIREMENT_FOLDER fold 
+			UNION
+			select req.rln_id as rln_id, req.current_version_id as res_id
+			from REQUIREMENT req
+		</createView>
+
+	</changeSet>	
+	
+
 </databaseChangeLog>
