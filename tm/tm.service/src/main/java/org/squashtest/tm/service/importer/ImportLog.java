@@ -98,6 +98,10 @@ public class ImportLog{
 		}
 	}
 
+	public boolean isEmpty(){
+		return logEntriesPerType.isEmpty();
+	}
+
 
 	/**
 	 *

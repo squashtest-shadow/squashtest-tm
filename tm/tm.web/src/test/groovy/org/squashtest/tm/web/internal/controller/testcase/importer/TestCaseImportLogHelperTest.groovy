@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase.importer
 
+import org.squashtest.tm.service.importer.EntityType
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet
+
 import java.io.FileInputStream
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook
@@ -38,6 +41,8 @@ import org.squashtest.tm.web.internal.controller.testcase.importer.TestCaseImpor
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 
 import spock.lang.Specification
+
+import java.lang.reflect.Method
 
 /**
  * @author Gregory Fouquet
@@ -109,5 +114,73 @@ class TestCaseImportLogHelperTest extends Specification {
 		f.deleteOnExit()
 
 	}
+
+	def "should create workbook with several sheet and several report rows"(){
+		given:
+		LogEntry entry = Mock()
+		entry.getLine() >> { Math.round(Math.random() * 10) }
+		entry.getMode() >> ImportMode.UPDATE
+		entry.getStatus() >> ImportStatus.WARNING
+
+		and:
+		Set <String> sheetNames = new HashSet<String>()
+		sheetNames << "TEST CASE"
+		sheetNames << "TEST STEP"
+		sheetNames << "PARAMETER"
+		sheetNames << "DATASET"
+		sheetNames << "LINK_REQ_TC"
+
+		and:
+		ImportLog log = Mock()
+		log.findAllFor(_) >> [entry, entry, entry]
+
+		when:
+		def clazz = ImportLogHelper.class
+		def method = clazz.getDeclaredMethod("buildWorkbook", ImportLog.class)
+		method.setAccessible(true)
+		Workbook workbook = method.invoke(helper,log)
+
+		then:
+		sheetNames.each {
+			def sheet = workbook.getSheet(it)
+			assert sheet != null
+			sheet.getRow(3) != null
+		}
+	}
+
+	def "should create workbook with several sheet even with nothing imported"(){
+		given:
+		LogEntry entry = Mock()
+		entry.getLine() >> { Math.round(Math.random() * 10) }
+		entry.getMode() >> ImportMode.UPDATE
+		entry.getStatus() >> ImportStatus.WARNING
+
+		and:
+		Set <String> sheetNames = new HashSet<String>()
+		sheetNames << "TEST CASE"
+		sheetNames << "TEST STEP"
+		sheetNames << "PARAMETER"
+		sheetNames << "DATASET"
+		sheetNames << "LINK_REQ_TC"
+
+		and:
+		ImportLog log = Mock()
+		log.findAllFor(_) >> []
+
+		when:
+		def clazz = ImportLogHelper.class
+		def method = clazz.getDeclaredMethod("buildWorkbook", ImportLog.class)
+		method.setAccessible(true)
+		def workbook = method.invoke(helper,log)
+
+		then:
+		sheetNames.each {
+			def sheet = workbook.getSheet(it)
+			assert sheet != null
+			sheet.getRow(3) != null
+		}
+	}
+
+
 
 }
