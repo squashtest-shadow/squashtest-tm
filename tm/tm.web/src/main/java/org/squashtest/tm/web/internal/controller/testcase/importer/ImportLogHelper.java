@@ -44,6 +44,7 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
+import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 
@@ -60,13 +61,13 @@ public abstract class ImportLogHelper {
 	private File tempDir;
 
 	private void writeToTab(Collection<LogEntry> entries, Workbook workbook, String sheetName, Locale locale) {
-		if (entries.size() > 0) {
-			// Create a blank sheet
-			Sheet sheet = workbook.createSheet(sheetName);
 
-			writeHeaderToTab(sheet);
-			writeEntriesToTab(entries, sheet, locale);
-		}
+		// Create a blank sheet
+		Sheet sheet = workbook.createSheet(sheetName);
+
+		writeHeaderToTab(sheet);
+		writeEntriesToTab(entries, sheet, locale);
+
 	}
 
 	private void writeHeaderToTab(Sheet sheet) {
@@ -89,24 +90,43 @@ public abstract class ImportLogHelper {
 	@SuppressWarnings("deprecation")
 	private void writeEntriesToTab(Collection<LogEntry> entries, Sheet sheet, Locale locale) {
 
+		if (entries.isEmpty()) {
+			writeEntriesForEmptyLog(sheet, locale);
+		} else {
+			writeEntriesForLog(entries, sheet, locale);
+		}
+	}
+
+	private void writeEntriesForLog(Collection<LogEntry> entries, Sheet sheet, Locale locale) {
 		int rownum = 1;
 		for (LogEntry entry : entries) {
-			Row row = sheet.createRow(rownum++);
-			int cellnum = 0;
-			Cell cell = row.createCell(cellnum++);
-			writeValueToCell(cell, entry.getLine());
-			cell = row.createCell(cellnum++);
-			writeValueToCell(cell, entry.getStatus().shortName());
+            Row row = sheet.createRow(rownum++);
+            int cellnum = 0;
+            Cell cell = row.createCell(cellnum++);
+            writeValueToCell(cell, entry.getLine());
+            cell = row.createCell(cellnum++);
+            writeValueToCell(cell, entry.getStatus().shortName());
 
-			cell = row.createCell(cellnum++);
-			if (entry.getI18nError() != null) {
-				writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
-			}
-			cell = row.createCell(cellnum++);
-			if (entry.getI18nImpact() != null) {
-				writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), entry.getImpactArgs(), locale));
-			}
-		}
+            cell = row.createCell(cellnum++);
+            if (entry.getI18nError() != null) {
+                writeValueToCell(cell, messageSource.getMessage(entry.getI18nError(), entry.getErrorArgs(), locale));
+            }
+            cell = row.createCell(cellnum++);
+            if (entry.getI18nImpact() != null) {
+                writeValueToCell(cell, messageSource.getMessage(entry.getI18nImpact(), entry.getImpactArgs(), locale));
+            }
+        }
+	}
+
+	private void writeEntriesForEmptyLog(Sheet sheet, Locale locale) {
+		Row row = sheet.createRow(1);
+		int cellnum = 0;
+		Cell cell = row.createCell(cellnum++);
+		writeValueToCell(cell, 0);
+		cell = row.createCell(cellnum++);
+		writeValueToCell(cell, ImportStatus.FAILURE.toString());
+		cell = row.createCell(cellnum++);
+		writeValueToCell(cell, messageSource.internationalize("message.import.log.error.empty", locale));
 	}
 
 	protected void writeToFile(ImportLog importLog, File emptyFile) throws IOException {
