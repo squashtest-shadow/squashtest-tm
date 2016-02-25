@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.requirement;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,9 +35,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
+import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -78,18 +81,18 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	 *	<p>Technical note : although the mapping is one to one is amusing to see that 
 	 * a persister usually meant for collections (ie one to many) works fine nonetheless </p>
 	 */
-	@OneToOne(fetch=FetchType.LAZY)
+/*	@OneToOne(fetch=FetchType.LAZY)
 	@JoinTable(name="RLN_RESOURCE",
 	joinColumns=@JoinColumn(name="RLN_ID", insertable=false, updatable=false ),
 	inverseJoinColumns = @JoinColumn(name="RES_ID"))
-	@Persister(impl = ReadOnlyCollectionPersister.class)
-	@Immutable	
+	@EntityPer
+	@Immutable
 	private Resource mainResource;
 	
 	
 	public Resource getMainResource(){
 		return mainResource;
-	}
+	}*/
 	
 	/**
 	 * This basically corresponds to :
