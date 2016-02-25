@@ -24,6 +24,7 @@ import java.net.URL;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -60,7 +61,7 @@ public class RequirementSyncExtender {
 	@JoinColumn(name = "REQUIREMENT_ID", referencedColumnName = "RLN_ID")
 	private Requirement requirement;
 
-	@ManyToOne
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name = "SERVER_ID", referencedColumnName = "BUGTRACKER_ID")
 	private BugTracker server;
 
