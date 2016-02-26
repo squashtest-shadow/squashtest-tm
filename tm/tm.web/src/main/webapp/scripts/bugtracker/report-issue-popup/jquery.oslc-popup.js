@@ -187,8 +187,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 							data: {"project-name": self.selectedProject},
 							dataType: "json"
 						})
-						.done(function (response) {
-							console.log('ajax complete')
+						.done(function (response) {		
 							self.mdlTemplate = response;
 							flipToMain();
 							jobDone.resolve();
