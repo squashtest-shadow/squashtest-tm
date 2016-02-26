@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.batchimport
 
 import static org.squashtest.tm.service.importer.ImportStatus.*
 import static org.squashtest.tm.service.internal.batchimport.Messages.*
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.*
+import static org.squashtest.tm.service.internal.batchimport.Model.StepType.*
 
 import javax.inject.Inject
 import javax.inject.Provider
