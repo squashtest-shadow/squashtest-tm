@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -65,19 +66,51 @@ public class HibernatePathService implements PathService {
 		return sessionFactory.getCurrentSession();
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<String> findPathById(long id) {
-		Query query = currentSession().getNamedQuery("TestCasePathEdge.findPathById");
-		query.setParameter("nodeId", id);
-		return query.list();
-	}
-
 	/**
 	 * @see org.squashtest.tm.service.internal.library.PathService#buildTestCasePath(long)
 	 */
 	@Override
 	public String buildTestCasePath(long id) {
-		List<String> paths = findPathById(id);
+		return buildPath("TestCasePathEdge.findPathById", id);
+	}
+
+	/**
+	 * @see org.squashtest.tm.service.internal.library.PathService#buildTestCasesPaths(java.util.List)
+	 */
+	@Override
+	public List<String> buildTestCasesPaths(List<Long> ids) {
+		return buildAllPaths("TestCasePathEdge.findPathsByIds", ids);
+	}
+	
+	
+	@Override
+	public String buildRequirementPath(long id) {
+		return buildPath("RequirementPathEdge.findPathById", id);
+	}
+
+
+	@Override
+	public List<String> buildRequirementsPaths(List<Long> ids) {
+		return buildAllPaths("RequirementPathEdge.findPathsByIds", ids);
+	}
+
+
+
+
+	/**
+	 * @param string
+	 * @return
+	 */
+	public static String escapePath(String fetchedPath) {
+		return fetchedPath != null ? fetchedPath.replace("/", "\\/").replace(PATH_SEPARATOR, "/") : null;
+	}
+
+	
+	
+	// ************************* private methods *************************************
+	
+	private String buildPath(String queryname, long id) {
+		List<String> paths = findPathById(queryname, id);
 
 		if (paths.size() == 0) {
 			return null;
@@ -86,12 +119,14 @@ public class HibernatePathService implements PathService {
 		return escapePath(paths.get(0));
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.library.PathService#buildTestCasesPaths(java.util.List)
-	 */
-	@Override
-	public List<String> buildTestCasesPaths(List<Long> ids) {
-		List<Object[]> paths = findPathsByIds(ids);
+
+	private List<String> buildAllPaths(String queryname, List<Long> ids) {
+		
+		// the DB dies if you query with an empty list argument
+		if (ids.isEmpty()){
+			return new ArrayList<>();
+		}
+		List<Object[]> paths = findPathsByIds(queryname, ids);
 
 		String[] res = new String[ids.size()];
 
@@ -103,23 +138,26 @@ public class HibernatePathService implements PathService {
 
 		return Arrays.asList(res);
 	}
+	
 
-	/**
-	 * @param string
-	 * @return
-	 */
-	public static String escapePath(String fetchedPath) {
-		return fetchedPath != null ? fetchedPath.replace("/", "\\/").replace(PATH_SEPARATOR, "/") : null;
+	@SuppressWarnings("unchecked")
+	private List<String> findPathById(String queryname, long id) {
+		Query query = currentSession().getNamedQuery(queryname);
+		query.setParameter("nodeId", id);
+		return query.list();
 	}
-
+	
 	/**
 	 * @param ids
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	private List<Object[]> findPathsByIds(List<Long> ids) {
-		Query query = currentSession().getNamedQuery("TestCasePathEdge.findPathsByIds");
+	private List<Object[]> findPathsByIds(String queryname, List<Long> ids) {
+		Query query = currentSession().getNamedQuery(queryname/*"TestCasePathEdge.findPathsByIds"*/);
 		query.setParameterList("nodeIds", ids);
 		return query.list();
 	}
+
+
+
 }
