@@ -136,7 +136,6 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 				this.issueCreate.html(this.template(this.model.attributes.createDialog));
 			}, self);
 
-
 			var flipToPleaseWait = $.proxy(function () {
 				this.pleaseWait.show();
 				this.content.hide();
@@ -165,15 +164,15 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 
 			var resetModel = $.proxy(function () {
-				var jobDone = $.Deferred();
+				var resetModelJob = $.Deferred();
 				getIssueModelTemplate()
 					.done(function () {
 						var copy = $.extend(true, {}, self.mdlTemplate);
 						setModel(copy);
-						jobDone.resolve();
+						resetModelJob.resolve();
 					})
 					.fail(bugReportError);
-				return jobDone.promise();
+				return resetModelJob.promise();
 			}, self);
 
 
@@ -189,6 +188,7 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 							dataType: "json"
 						})
 						.done(function (response) {
+							console.log('ajax complete')
 							self.mdlTemplate = response;
 							flipToMain();
 							jobDone.resolve();
@@ -226,13 +226,16 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 			/* ************* events ************************ */
 
 			this.changeBugTrackerProject = function (project) {
-
+				var self = this;
 				var projectPrefs = storage.get("bugtracker.projects-preferences") || {};
 				projectPrefs[this.currentProjectId] = project;
 				storage.set("bugtracker.projects-preferences", projectPrefs);
 				self.selectedProject = project;
 				self.mdlTemplate = null;
-				resetModel();
+				resetModel().done(function(){
+					self.issueSearch.html(self.template(self.model.attributes.selectDialog));
+					self.issueCreate.html(self.template(self.model.attributes.createDialog));	
+				});
 			};
 
 			this.submitIssue = function (data) {
