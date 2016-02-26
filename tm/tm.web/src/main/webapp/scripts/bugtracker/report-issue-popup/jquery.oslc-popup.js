@@ -163,12 +163,15 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 
 			var resetModel = $.proxy(function () {
+				var jobDone = $.Deferred();
 				getIssueModelTemplate()
 					.done(function () {
 						var copy = $.extend(true, {}, self.mdlTemplate);
 						setModel(copy);
+						jobDone.resolve();
 					})
 					.fail(bugReportError);
+				return jobDone.promise();
 			}, self);
 
 
@@ -263,10 +266,10 @@ define(["jquery", "underscore", "workspace.storage", "jeditable.selectJEditable"
 
 				var template = Handlebars.compile(self.find("#project-selector-tpl").html());
 				self.find("#project-selector").html(template({options: data}));
-				resetModel();
-				self.reportRadio.click();
-				this.formDialog("open");
-
+				resetModel().done(function(){
+					self.reportRadio.click();	
+				});
+				self.formDialog("open");
 
 				self.find("#project-selector").find("option").each(function (idx, opt) {
 					if (opt.value == self.selectedProject) {
