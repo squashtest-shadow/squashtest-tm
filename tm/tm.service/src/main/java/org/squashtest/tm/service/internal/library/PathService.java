@@ -56,5 +56,21 @@ public interface PathService {
 	 * @return
 	 */
 	List<String> buildTestCasesPaths(List<Long> ids);
+	
+	/**
+	 * same thing than {@link #buildTestCasePath(long)}, but for requirement library nodes
+	 * 
+	 * @param id
+	 * @return
+	 */
+	String buildRequirementPath(long id);
+	
+	/**
+	 * same thing than {@link #buildTestCasesPaths(List)}, but for requirement library nodes
+	 * 
+	 * @param id
+	 * @return
+	 */
+	List<String> buildRequirementsPaths(List<Long> ids);
 
 }

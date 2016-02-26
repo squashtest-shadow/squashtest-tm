@@ -97,6 +97,8 @@
 	@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
 	@NamedQuery(name = "requirement.findRequirementParentIds", query = "select reqParent.id from Requirement reqParent , RequirementPathEdge closure  where closure.descendantId in :nodeIds and closure.ancestorId = reqParent.id and closure.depth != 0"),
 	@NamedQuery(name = "requirement.findRequirementDescendantIds", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id and closure.depth != 0"),
+	
+	// deprecated, see RequirementPathEdge.findPathsByIds
 	@NamedQuery(name = "requirement.findReqPaths", query = "select requirement1.id , "
 	+ " group_concat(requirement.resource.name, 'order by', closure.depth, 'desc', '"
 	+ HibernatePathService.PATH_SEPARATOR
@@ -104,6 +106,8 @@
 	+ " from Requirement requirement, Requirement requirement1,RequirementPathEdge closure "
 	+ " where closure.ancestorId = requirement.id  and  closure.descendantId = requirement1.id and requirement1.id in :requirementIds and closure.depth != 0 "
 	+ " group by requirement1.id"),
+	
+	// deprecated, see RequirementPathEdge.findPathsByIds
 	@NamedQuery(name = "requirement.findFolderPaths", query = "select requirement1.id , "
 	+ " group_concat(folder.resource.name, 'order by', closure.depth, 'desc', '"
 	+ HibernatePathService.PATH_SEPARATOR
@@ -111,6 +115,30 @@
 	+ " from Requirement requirement1, RequirementFolder folder, RequirementPathEdge closure "
 	+ " where closure.ancestorId = folder.id  and closure.descendantId = requirement1.id and requirement1.id in :requirementIds and closure.depth != 0 "
 	+ " group by requirement1.id"),
+	
+	
+	@NamedQuery(name = "RequirementPathEdge.findPathById", query=
+			"select concat('" +
+	HibernatePathService.PATH_SEPARATOR + "', proj.name, '" + HibernatePathService.PATH_SEPARATOR +
+	"', group_concat(res.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR +
+	"')) " +
+	"from RequirementPathEdge edge, "+
+	"RequirementLibraryNode rln inner join rln.mainResource res inner join rln.project proj "+
+	"where edge.ancestorId = rln.id "+
+	"and edge.descendantId = :nodeId "+
+	"group by edge.descendantId, proj.id"),
+	
+	@NamedQuery(name = "RequirementPathEdge.findPathsByIds", query=
+		"select edge.descendantId, concat('" +
+	HibernatePathService.PATH_SEPARATOR + "', proj.name, '" + HibernatePathService.PATH_SEPARATOR +
+	"', group_concat(res.name, 'order by', edge.depth, 'desc', '" + HibernatePathService.PATH_SEPARATOR +
+	"')) " +
+	"from RequirementPathEdge edge, "+
+	"RequirementLibraryNode rln inner join rln.mainResource res inner join rln.project proj "+
+	"where edge.ancestorId = rln.id "+
+	"and edge.descendantId in (:nodeIds)  "+
+	"group by edge.descendantId, proj.id"),
+	
 	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
 	@NamedQuery(name = "requirement.findRequirementHavingManyVersions", query = "select r.id from Requirement r join r.versions v where r.id in (:requirementIds) group by r.id having count(v) > 1"),
 	@NamedQuery(name = "requirement.findByRequirementVersion", query = "select r.id from Requirement r join r.versions versions where versions.id in (:versionIds)"),
