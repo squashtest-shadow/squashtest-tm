@@ -62,17 +62,16 @@
     <div class="pleasewait" >
       <comp:waiting-pane/>    
     </div>
-    
     <div class="content"> 
   
       <div class="issue-report-error">
         <comp:error-message forField="bugtracker" />
       </div>
-      <form>
+          
       
-         
-       <div> 
-             <span id="project-selector" style="float:right"/>
+        <div id="project-selector" style="float:right"></div>
+        
+        
         <div class="attach-issue">
           <span class="issue-radio">
             <input type="radio" name="add-issue-mode" class="attach-radio"
@@ -89,7 +88,7 @@
             <f:message key="dialog.issue.radio.new.label" />
           </span>        
          </span>
-         </div>    
+           
          
            <script id="project-selector-tpl" type="text/x-handlebars-template">         
                <select>
@@ -100,7 +99,7 @@
            </script>
         <div id="issue-create"/>
         <div id="issue-search"/>
-      </form>
+     
     </div>
   </div>
 
