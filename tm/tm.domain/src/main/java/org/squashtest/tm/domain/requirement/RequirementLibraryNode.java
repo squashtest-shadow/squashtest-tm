@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -32,14 +31,17 @@ import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.SecondaryTable;
+import javax.persistence.SecondaryTables;
 import javax.persistence.SequenceGenerator;
-import javax.persistence.Transient;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLInsert;
+import org.hibernate.annotations.SQLUpdate;
+import org.hibernate.annotations.Table;
+import org.hibernate.annotations.Tables;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.search.annotations.IndexedEmbedded;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -48,13 +50,21 @@ import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.Resource;
-import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 @Auditable
 @Indexed
+
+/*
+ *  the following tells hibernate additional informations about the join table RLN_RESOURCE, that we want to be readonly. Hence we give
+ *  it a custom sql string that is effectively useless and hopefully crossplatform. 
+ *  
+ *  Note that, because RLN_RESOURCE is a view and shall not be targeted by any insert/update/delete command, we have to 
+ *  find another table for which the database will not be such a pussy about. Why not the table Requirement itself then ?
+ */
+@Table(appliesTo="RLN_RESOURCE", sqlDelete=@SQLDelete(sql="delete from REQUIREMENT where RLN_ID=null and RLN_ID=?"))
 public abstract class RequirementLibraryNode<RESOURCE extends Resource> implements LibraryNode {
 	@Id
 	@Column(name = "RLN_ID")
@@ -78,34 +88,18 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	 * exists solely to make hql queries on it. It allows for fast retrieval of the 
 	 * name (of a folder, or of the newest version of a requirement).</p> 
 	 * 
-	 *	<p>Technical note : although the mapping is one to one is amusing to see that 
-	 * a persister usually meant for collections (ie one to many) works fine nonetheless </p>
 	 */
-/*	@OneToOne(fetch=FetchType.LAZY)
-	@JoinTable(name="RLN_RESOURCE",
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinTable(name="RLN_RESOURCE", 
 	joinColumns=@JoinColumn(name="RLN_ID", insertable=false, updatable=false ),
 	inverseJoinColumns = @JoinColumn(name="RES_ID"))
-	@EntityPer
 	@Immutable
 	private Resource mainResource;
 	
-	
 	public Resource getMainResource(){
 		return mainResource;
-	}*/
+	}
 	
-	/**
-	 * This basically corresponds to :
-	 * <ul>
-	 * 	<li>if this node is a folder -&gt; return resource.name</li>
-	 * 	<li>if this node is a requirement -&gt; return the name of its latest version</li>
-	 *  </ul>
-	 * 
-	 * and waiting for the day we can end this bullshit
-	 * @return
-	 */
-
-
 	/**
 	 * Notifies this object it is now a resource of the given project.
 	 *
@@ -150,4 +144,5 @@ public abstract class RequirementLibraryNode<RESOURCE extends Resource> implemen
 	public abstract void accept(RequirementLibraryNodeVisitor visitor);
 
 	public abstract RESOURCE getResource();
+	
 }
