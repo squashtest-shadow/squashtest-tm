@@ -32,6 +32,9 @@ public class RequirementTarget extends Target{
 	
 	//convenient attribute to keep the id of the requirement in database
 	private Long id;
+	
+	// for synchronizerd requirements, the remote key is also part of the key.
+	private String remoteKey;
 
 
 	public RequirementTarget(){
@@ -89,37 +92,51 @@ public class RequirementTarget extends Target{
 		this.id = id;
 	}
 
+	public String getRemoteKey() {
+		return remoteKey;
+	}
+
+
+	public void setRemoteKey(String remoteKey) {
+		this.remoteKey = remoteKey;
+	}
+	
+	public boolean isSynchronized(){
+		return this.remoteKey != null;
+	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + ((remoteKey == null) ? 0 : remoteKey.hashCode());
 		return result;
 	}
 
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj) {
+		if (this == obj)
 			return true;
-		}
-		if (obj == null) {
+		if (obj == null)
 			return false;
-		}
-		if (getClass() != obj.getClass()) {
+		if (getClass() != obj.getClass())
 			return false;
-		}
 		RequirementTarget other = (RequirementTarget) obj;
 		if (path == null) {
-			if (other.path != null) {
+			if (other.path != null)
 				return false;
-			}
-		} else if (!path.equals(other.path)) {
+		} else if (!path.equals(other.path))
 			return false;
-		}
+		if (remoteKey == null) {
+			if (other.remoteKey != null)
+				return false;
+		} else if (!remoteKey.equals(other.remoteKey))
+			return false;
 		return true;
 	}
+
 
 	public boolean isRootRequirement() {
 		String[] names = PathUtils.splitPath(path);

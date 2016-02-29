@@ -603,7 +603,7 @@ public class FacilityImpl implements Facility {
 	private RequirementVersion doCreateRequirementVersion(
 		RequirementVersionInstruction instruction) {
 		RequirementVersionTarget target = instruction.getTarget();
-		Long reqId = reqFinderService.findNodeIdByPath(target.getPath());
+		Long reqId = validator.getModel().getRequirementId(target);
 		if (reqId == null) {
 			return doCreateRequirementAndVersion(instruction);
 		} else {
@@ -694,6 +694,11 @@ public class FacilityImpl implements Facility {
 		if (target.getRequirement().isRootRequirement()) {
 			Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
 
+			
+			Collection<String> siblingNames = reqLibNavigationService.findNamesInLibraryStartingWith(requirementLibrairyId,
+					dto.getName());
+			renameIfNeeded(dto, siblingNames);
+			
 			finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementLibrary(
 				requirementLibrairyId, dto, Collections.EMPTY_LIST);
 			moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
@@ -701,17 +706,35 @@ public class FacilityImpl implements Facility {
 		} else {
 			List<String> paths = PathUtils.scanPath(target.getPath());
 			String parentPath = paths.get(paths.size() - 2); //we know that path is composite of at least 3 elements
+				
+				// note : the following instruction might lead to horribe result if the parent path 
+				// is ambiguous due to duplicate names (which is possible for now for requirements)
+				// due to lazy business analysts
 			finalParentId[0] = reqFinderService.findNodeIdByPath(parentPath);
+		
 			//if parent doesn't exist, we must create it and all needed hierarchy above
 			if (finalParentId[0] == null) {
 				finalParentId[0] = reqLibNavigationService.mkdirs(parentPath);
 			}
+				
+				Collection<String> siblingNames = reqLibNavigationService.findNamesInNodeStartingWith(finalParentId[0],
+						dto.getName());
+				renameIfNeeded(dto, siblingNames);	
+				
 			RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(finalParentId[0]);
 			parent.accept(visitor);
 		}
 
 		return doAfterCreationProcess(finalRequirement[0], instruction, requirementVersion);
 	}
+	
+	private void renameIfNeeded(NewRequirementVersionDto version, Collection<String> siblingNames) {
+		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, TestCase.MAX_NAME_SIZE);
+		if (!newName.equals(version.getName())) {
+			version.setName(newName);
+		}
+	}
+	
 
 	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
 									Integer order) {
@@ -1540,6 +1563,8 @@ public class FacilityImpl implements Facility {
 
 		return train;
 	}
+	
+
 
 }
 

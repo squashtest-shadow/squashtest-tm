@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 

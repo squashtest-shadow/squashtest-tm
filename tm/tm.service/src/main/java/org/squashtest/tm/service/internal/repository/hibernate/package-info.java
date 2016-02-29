@@ -54,6 +54,8 @@
 	@NamedQuery(name = "requirementLibraryNode.findParentFolderIfExists", query = "select fold from RequirementFolder as fold join fold.content fcontent where fcontent.id = :libraryNodeId "),
 	@NamedQuery(name = "requirementLibraryNode.findParentRequirementIfExists", query = "select req from Requirement as req join req.children fcontent where fcontent.id = :libraryNodeId "),
 	@NamedQuery(name = "requirementLibraryNode.remove", query = "delete RequirementLibraryNode rln where rln.id in (:nodeIds)"),
+	@NamedQuery(name = "requirementLibraryNode.findNamesInNodeStartingWith", query = "select r.name from RequirementLibraryNode node join node.mainResource r where r.name like :nameStart and node.id in "
+			+ "				(select edge.descendantId from RequirementPathEdge edge where edge.ancestorId = :containerId and edge.depth = 1)"),
 
 	//CampaignLibraryNode
 	@NamedQuery(name = "campaignLibraryNode.findById", query = "select cln from CampaignLibraryNode as cln where cln.id = :libraryNodeId "),
@@ -97,6 +99,11 @@
 	@NamedQuery(name = "requirement.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.requirement.id in (:requirementIds)"),
 	@NamedQuery(name = "requirement.findRequirementParentIds", query = "select reqParent.id from Requirement reqParent , RequirementPathEdge closure  where closure.descendantId in :nodeIds and closure.ancestorId = reqParent.id and closure.depth != 0"),
 	@NamedQuery(name = "requirement.findRequirementDescendantIds", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id and closure.depth != 0"),
+	
+	// synchronized requirements
+	@NamedQuery(name = "requirement.findNodeIdByRemoteKey", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId = :key"),
+	@NamedQuery(name = "requirement.findNodeIdsByRemoteKeys", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId in (:keys)"),
+		
 	
 	// deprecated, see RequirementPathEdge.findPathsByIds
 	@NamedQuery(name = "requirement.findReqPaths", query = "select requirement1.id , "

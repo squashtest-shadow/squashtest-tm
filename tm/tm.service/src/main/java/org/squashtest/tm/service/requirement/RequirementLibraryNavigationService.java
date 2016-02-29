@@ -237,6 +237,10 @@ RequirementLibraryFinderService {
 
 	public RequirementLibraryNode findRequirementLibraryNodeById(Long id);
 
+	public List<String> findNamesInNodeStartingWith(final long folderId, final String nameStart);
+
+	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
+	
 
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 	@Override

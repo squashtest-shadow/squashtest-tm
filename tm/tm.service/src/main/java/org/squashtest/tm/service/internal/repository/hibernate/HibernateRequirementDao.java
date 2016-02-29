@@ -39,12 +39,17 @@ import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.requirement.ExportRequirementData;
+import org.squashtest.tm.domain.requirement.QRequirement;
+import org.squashtest.tm.domain.requirement.QRequirementSyncExtender;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.requirement.VerificationCriterion;
 import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.service.internal.repository.RequirementDao;
+
+import com.querydsl.core.group.GroupBy;
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
@@ -411,4 +416,43 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		}
 	}
 
+	@Override
+	public Long findNodeIdByRemoteKey(String remoteKey) {
+		Query q = currentSession()
+				.getNamedQuery("requirement.findNodeIdByRemoteKey")
+				.setParameter("key", remoteKey);
+		return (Long)q.uniqueResult();
+				
+	}
+
+	@Override
+	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys) {
+		
+		if (remoteKeys.isEmpty()){
+			return new ArrayList<>();
+		}
+		
+		QRequirement req = QRequirement.requirement;
+		QRequirementSyncExtender sync = QRequirementSyncExtender.requirementSyncExtender;
+		
+		Map<String, Long> idsByKeys = new HibernateQuery<>(currentSession())
+															.select(req.id)
+															.from(req)
+															.innerJoin(req.syncExtender, sync)
+															.where(sync.remoteReqId.in(remoteKeys))
+															.transform(GroupBy.groupBy(sync.remoteReqId).as(req.id));
+		
+		// now build a result with an order consistent with the input order
+		List<Long> res = new ArrayList<>(remoteKeys.size());
+		
+		for (String key : remoteKeys){
+			Long id = idsByKeys.get(key);
+			res.add(id);
+		}
+		
+		return res;
+			
+	}
+
+	
 }
