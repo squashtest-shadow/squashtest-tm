@@ -49,8 +49,8 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	 * @see org.squashtest.tm.service.internal.repository.RequirementDao#findNamesInFolderStartingWith(long,
 	 *      java.lang.String)
 	 */
-	// @Override
-	public List<String> findNamesInFolderStartingWith(long folderId, String nameStart) {
+	//@Override
+	public List<String> findNamesInNodeStartingWith(long folderId, String nameStart) {
 		return null;
 	}
 
@@ -182,6 +182,18 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	@Override
 	public List<Long> findDescendantRequirementIds(
 			Collection<Long> requirementIds) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Long findNodeIdByRemoteKey(String remoteKey) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys) {
 		// TODO Auto-generated method stub
 		return null;
 	}

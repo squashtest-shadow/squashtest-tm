@@ -134,5 +134,10 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<Long> findDescendantRequirementIds(Collection<Long> requirementIds);
+	
+	
+	Long findNodeIdByRemoteKey(String remoteKey);
+	
+	List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys);
 
 }

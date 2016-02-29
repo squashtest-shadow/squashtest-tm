@@ -20,9 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 
 @SuppressWarnings("rawtypes")
 public interface RequirementFolderDao extends FolderDao<RequirementFolder, RequirementLibraryNode>, EntityDao<RequirementFolder> {
+	
+	List<String> findNamesInNodeStartingWith(final long nodeId, final String nameStart);
+	
 }

@@ -98,6 +98,8 @@ public final class Messages {
 	public static final String IMPACT_COLUMN_IGNORED = "message.import.log.impact.columnIgnored";
 	public static final String IMPACT_VALUE_IGNORED = "message.import.log.impact.valueIgnored";
 	public static final String IMPACT_VERSION_NUMBER_MODIFIED = "message.import.log.impact.versionModified";
+	
+	// XXX perhaps "Binded" might be a globish word but definitely not english. Use "Bound" instead. 
 	public static final String IMPACT_MILESTONE_NOT_BINDED = "message.import.log.impact.milestone.notBinded";
 	public static final String IMPACT_REQ_RENAMED = "message.import.log.impact.requirement.reqRenamed";
 	public static final String IMPACT_COVERAGE_FAILURE = "message.import.log.impact.line.ignored";

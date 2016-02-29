@@ -673,6 +673,16 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public Long findNodeIdByPath(String path) {
 		return StringUtils.isBlank(path) ? null : requirementLibraryNodeDao.findNodeIdByPath(path);
 	}
+	
+	@Override
+	public Long findNodeIdByRemoteKey(String remoteKey) {
+		return requirementDao.findNodeIdByRemoteKey(remoteKey);
+	}
+	
+	@Override	
+	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys){
+		return requirementDao.findNodeIdsByRemoteKeys(remoteKeys);
+	}
 
 	@Override
 	public Collection<Long> findRequirementIdsFromSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
@@ -845,6 +855,21 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return requirementLibraryNodeDao.findById(id);
 	}
 	
+
+	@Override
+	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementLibraryNode', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
+	public List<String> findNamesInNodeStartingWith(long folderId, String nameStart) {
+		return requirementFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#libraryId, 'org.squashtest.tm.domain.requirement.RequirementLibrary', 'READ')"
+			+ OR_HAS_ROLE_ADMIN)
+	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
+		return requirementFolderDao.findNamesInLibraryStartingWith(libraryId, nameStart);
+	}
+	
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 	
 	@Override
@@ -895,6 +920,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId) {
 		return super.deleteNodes(targetIds, milestoneId);
 	}
+
+
 
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################	
 	

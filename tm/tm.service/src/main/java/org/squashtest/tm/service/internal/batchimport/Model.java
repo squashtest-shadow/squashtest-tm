@@ -839,7 +839,15 @@ public class Model {
 	}
 
 	private void loadRequirement(RequirementTarget target) {
-		Long reqId = reqFinderService.findNodeIdByPath(target.getPath());
+		Long reqId;
+		if (target.isSynchronized()){
+			LOGGER.debug("ReqImport - looking for synchronized requirement key : '"+target.getRemoteKey()+"'");
+			reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey());
+		}
+		else{
+			LOGGER.debug("ReqImport - looking for native requirement by path : '"+target.getPath()+"'");
+			reqId = reqFinderService.findNodeIdByPath(target.getPath());
+		}
 		LOGGER.debug("ReqImport - result find by node : " + reqId);
 		//only add existing requirement in tree.
 		//New requirement will be created with good status by adding the requirement version
@@ -1178,6 +1186,10 @@ public class Model {
 	public void addRequirement(RequirementTarget target,
 			TargetStatus status) {
 		requirementTree.addOrUpdateNode(target, status);
+	}
+	
+	public Long getRequirementId(RequirementVersionTarget target){
+		return requirementTree.getNodeId(target.getRequirement());
 	}
 
 	// ********************* REQUIREMENT STATUS METHOD *****************

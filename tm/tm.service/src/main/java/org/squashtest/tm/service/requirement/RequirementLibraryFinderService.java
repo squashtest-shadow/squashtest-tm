@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -66,6 +67,27 @@ public interface RequirementLibraryFinderService {
 	 * @return the id or null if no {@link RequirementLibraryNode} have the path
 	 */
 	Long findNodeIdByPath(String path);
+	
+	/**
+	 * Return the id of a (synchronized) {@link Requirement}, identified by its remote key.
+	 * 
+	 * @return the id or null if no {@link Requirement} have such remote key
+	 * 
+	 * @param remoyeKey
+	 * @return
+	 */
+	Long findNodeIdByRemoteKey(String remoteKey);
+	
+
+	/**
+	 * Return a list of synchronized Requirement, given their remote key. The ids will be returned in the same order than
+	 * the input list. The resulting list might contain null entries if no synchronized Requirement was found for some remote keys. 
+	 * 
+	 * @param remoteKeys
+	 * @return
+	 */
+	List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys);
+	
 
 	/**
 	 * Passing the ids of some selected RequirementLibrary and RequirementLibraryNodes (in separate collections), will return
