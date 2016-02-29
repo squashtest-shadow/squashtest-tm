@@ -28,7 +28,7 @@ define([ "jquery", "backbone", "underscore",
          "squash.translator",
          "custom-field-values",
          "squashtable"], function($,
-		Backbone, _, GeneralInfosPanel, PrerequisitePanel, testcaseTestAutomation,  
+		Backbone, _, GeneralInfosPanel, PrerequisitePanel, testcaseTestAutomation,
 		TestCaseVerifiedRequirementsPanel, bugtrackerPanel, eventBus, translator, cufvalues) {
 
 
@@ -89,7 +89,7 @@ define([ "jquery", "backbone", "underscore",
 			// application-wide events
 
 			eventBus.onContextual("testStepsTable.pastedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
-			eventBus.onContextual("testStepsTable.deletedCallSteps", this.verifiedRequirementsPanel.table.refreshRestore);
+			eventBus.onContextual("testStepsTable.removedSteps", this.verifiedRequirementsPanel.table.refreshRestore);
 			eventBus.onContextual("testStepsTable.changedCallStepParamMode", this.verifiedRequirementsPanel.table.refreshRestore);
 			eventBus.onContextual("testStepsTable.noMoreSteps", function(){self.sendUpdateHasStepsToTree(false);});
 			eventBus.onContextual("testStepsTable.stepAdded", function(){self.sendUpdateHasStepsToTree(true);});
@@ -109,16 +109,16 @@ define([ "jquery", "backbone", "underscore",
 		_initTestAutomation : function(){
 
 			if (this.settings.isAutomated){
-				
+
 				var conf = {
 					canModify			: this.settings.writable,
 					testAutomationURL	: this.settings.urls.automationUrl + '/tests'
 				};
-				
+
 				testcaseTestAutomation.init(conf);
-				
+
 			}
-			
+
 		},
 
 		_sendUpdateReqToTree : function(){
