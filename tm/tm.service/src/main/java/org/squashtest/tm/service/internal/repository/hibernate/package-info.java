@@ -76,8 +76,8 @@
 	@NamedQuery(name = "testCaseFolder.removeFromLibrary", query = "delete TestCaseFolder tcf where tcf.id in (:nodeIds)"),
 	@NamedQuery(name = "testCaseFolder.findAllAttachmentLists", query = "select folder.attachmentList.id from TestCaseFolder folder where folder.id in (:folderIds)"),
 	//a RequirementFolder
-	@NamedQuery(name = "requirementFolder.findNamesInFolderStartingWith", query = "select c.resource.name from RequirementFolder f join f.content c where f.id = :containerId and c.resource.name like :nameStart"),
-	@NamedQuery(name = "requirementFolder.findNamesInLibraryStartingWith", query = "select c.resource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.resource.name like :nameStart"),
+	@NamedQuery(name = "requirementFolder.findNamesInFolderStartingWith", query = "select c.mainResource.name from RequirementFolder f join f.content c where f.id = :containerId and c.mainResource.name like :nameStart"),
+	@NamedQuery(name = "requirementFolder.findNamesInLibraryStartingWith", query = "select c.mainResource.name from RequirementLibrary l join l.rootContent c where l.id = :containerId and c.mainResource.name like :nameStart"),
 	@NamedQuery(name = "requirementFolder.findAllContentById", query = "select f.content from RequirementFolder f where f.id = :folderId"),
 	@NamedQuery(name = "requirementFolder.findByContent", query = "from RequirementFolder where :content in elements(content)"),
 	@NamedQuery(name = "requirementFolder.findParentOf", query = "select f from RequirementFolder f join f.content c where c.id = :contentId "),
@@ -85,7 +85,7 @@
 
 	//a Requirement
 	@NamedQuery(name = "requirement.findAllById", query="from Requirement r where r.id in (:requirementIds)"),
-	@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.resource.name like :requirementName order by r.resource.name asc"),
+	@NamedQuery(name = "requirement.findRequirementByName", query = "from RequirementLibraryNode r where r.mainResource.name like :requirementName order by r.mainResource.name asc"),
 	@NamedQuery(name = "requirement.findRequirementWithParentFolder", query = "select r, rf from RequirementFolder rf join rf.content r where r.id in (:requirementIds)"),
 	@NamedQuery(name = "requirement.findRootContentRequirement", query = "select r from RequirementLibrary rl join rl.rootContent r where r.id in (:paramIds) and r in (from Requirement)"),
 	@NamedQuery(name = "requirement.findAllRootContent", query = "select r.id from RequirementLibraryNode r where r.project.requirementLibrary.id in (:libraryIds)"),
@@ -145,6 +145,7 @@
 	"where edge.ancestorId = rln.id "+
 	"and edge.descendantId in (:nodeIds)  "+
 	"group by edge.descendantId, proj.id"),
+	
 	
 	@NamedQuery(name = "requirement.findNonBoundRequirement", query = "select r.id from Requirement r join r.versions v where r.id in (:nodeIds) and v.id not in (select rvs.id from Milestone m join m.requirementVersions rvs where m.id = :milestoneId)"),
 	@NamedQuery(name = "requirement.findRequirementHavingManyVersions", query = "select r.id from Requirement r join r.versions v where r.id in (:requirementIds) group by r.id having count(v) > 1"),
