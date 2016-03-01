@@ -860,7 +860,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.requirement.RequirementLibraryNode', 'READ')"
 			+ OR_HAS_ROLE_ADMIN)
 	public List<String> findNamesInNodeStartingWith(long folderId, String nameStart) {
-		return requirementFolderDao.findNamesInFolderStartingWith(folderId, nameStart);
+		return requirementFolderDao.findNamesInNodeStartingWith(folderId, nameStart);
 	}
 
 	@Override
