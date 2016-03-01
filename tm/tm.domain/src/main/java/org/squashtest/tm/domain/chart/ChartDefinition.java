@@ -95,7 +95,7 @@ public class ChartDefinition implements TreeEntity{
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
-	
+
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
@@ -185,7 +185,7 @@ public class ChartDefinition implements TreeEntity{
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
@@ -204,7 +204,58 @@ public class ChartDefinition implements TreeEntity{
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
+
+	public void setVisibility(Visibility visibility) {
+		this.visibility = visibility;
+	}
+
+	public void setType(ChartType type) {
+		this.type = type;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setScope(List<EntityReference> scope) {
+		this.scope = scope;
+	}
+
+	public void setQuery(ChartQuery query) {
+		this.query = query;
+	}
+
+	@Override
+	public TreeEntity createCopy() {
+		ChartDefinition copy = new ChartDefinition();
+		copy.setName(this.getName());
+		copy.setOwner(this.getOwner());
+		copy.setProject(this.getProject());
+		copy.setProjectScope(copyProjectScope());
+		copy.setDescription(this.getDescription());
+		copy.setQuery(this.copyQuery());
+		copy.setType(this.getType());
+		copy.setScope(this.copyScope());
+		copy.setVisibility(this.getVisibility());
+		return copy;
+	}
+
+	private ChartQuery copyQuery() {
+		return this.getQuery().createCopy();
+	}
+
+	private List<EntityReference> copyScope() {
+		List<EntityReference> copy = new ArrayList<>();
+		copy.addAll(this.getScope());
+		return  copy;
+	}
+
+	private List<String> copyProjectScope() {
+		List<String> copy = new ArrayList<>();
+		copy.addAll(this.getProjectScope());
+		return copy;
+	}
+
 	@AclConstrainedObject
 	public CustomReportLibrary getCustomReportLibrary(){
 		return getProject().getCustomReportLibrary();

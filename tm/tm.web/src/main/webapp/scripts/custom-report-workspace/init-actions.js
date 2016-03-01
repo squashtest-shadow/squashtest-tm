@@ -131,6 +131,28 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
         document.location.href = url;
       });
 
+      // *************** copy paste ****************
+
+			$("#copy-node-tree-button").on("click", function(){
+				copyIfOk(tree);
+			});
+
+			tree.on("copy.squashtree", function(evt){
+				if (evt.namespace==="squashtree"){
+					copyIfOk(tree);
+				}
+			});
+
+			$("#paste-node-tree-button").on("click", function(){
+				pasteIfOk(tree);
+			});
+
+			tree.on("paste.squashtree", function(evt){
+				if (evt.namespace === "squashtree"){
+					pasteIfOk(tree);
+				}
+			});
+
 
 			// ***************** rename **********************
 

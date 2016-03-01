@@ -46,21 +46,21 @@ public class CustomReportFolder implements TreeEntity {
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_folder_crf_id_seq")
 	@SequenceGenerator(name="custom_report_folder_crf_id_seq", sequenceName="custom_report_folder_crf_id_seq")
 	private Long id;
-	
+
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	@Column
 	private String name;
-	
+
 	@Column
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
-	
+
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
-	
+
 	@Override
 	public Long getId() {
 		return id;
@@ -80,20 +80,20 @@ public class CustomReportFolder implements TreeEntity {
 	public void setId(Long id) {
 		this.id = id;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
-	
+
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	@Override
 	public void accept(TreeEntityVisitor visitor) {
 		visitor.visit(this);
 	}
-	
+
 	@AclConstrainedObject
 	public CustomReportLibrary getCustomReportLibrary() {
 		return project.getCustomReportLibrary();
@@ -108,6 +108,15 @@ public class CustomReportFolder implements TreeEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
-	
+
+	@Override
+	public TreeEntity createCopy() {
+		CustomReportFolder copy = new CustomReportFolder();
+		copy.setName(this.getName());
+		copy.setDescription(this.getDescription());
+		copy.setProject(this.getProject());
+		return copy;
+	}
+
+
 }

@@ -52,20 +52,20 @@ public class CustomReportDashboard implements TreeEntity {
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_dashboard_crd_id_seq")
 	@SequenceGenerator(name="custom_report_dashboard_crd_id_seq", sequenceName="custom_report_dashboard_crd_id_seq")
 	private Long id;
-	
+
 	@NotBlank
 	@Size(min = 0, max = MAX_NAME_SIZE)
 	@Column
 	private String name;
-	
+
 	@OneToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="PROJECT_ID")
 	private Project project;
-	
+
 	@NotNull
-	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
-	private Set<CustomReportChartBinding> chartBindings = new HashSet<CustomReportChartBinding>();
-	
+	@OneToMany(fetch=FetchType.LAZY,mappedBy="dashboard", cascade = { CascadeType.ALL})
+	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
+
 	@Override
 	public Long getId() {
 		return id;
@@ -95,7 +95,26 @@ public class CustomReportDashboard implements TreeEntity {
 	public void setProject(Project project) {
 		this.project = project;
 	}
-	
+
+	@Override
+	public TreeEntity createCopy() {
+		CustomReportDashboard copy = new CustomReportDashboard();
+		copy.setProject(this.getProject());
+		copy.setName(this.getName());
+		copy.getChartBindings().addAll(this.copyBindingsToAnotherDashboard(copy));
+		return copy;
+	}
+
+	private Set<CustomReportChartBinding> copyBindingsToAnotherDashboard(CustomReportDashboard target) {
+		Set<CustomReportChartBinding> copy = new HashSet<>();
+		for (CustomReportChartBinding chartBinding : this.chartBindings) {
+			CustomReportChartBinding chartBindingCopy = chartBinding.createCopy();
+			chartBindingCopy.setDashboard(target);
+			copy.add(chartBindingCopy);
+		}
+		return copy;
+	}
+
 	@AclConstrainedObject
 	public CustomReportLibrary getCustomReportLibrary(){
 		return getProject().getCustomReportLibrary();

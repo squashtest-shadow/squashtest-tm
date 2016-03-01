@@ -22,10 +22,13 @@ package org.squashtest.tm.service.internal.customreport;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.lucene.util.CollectionUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PostFilter;
@@ -53,19 +56,22 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 @Transactional
 public class CustomReportLibraryNodeServiceImpl implements
 		CustomReportLibraryNodeService {
-	
+
 	@Inject
 	protected PermissionEvaluationService permissionService;
-	
-	@Inject 
+
+	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@Inject
 	private CRLNDeletionHandler deletionHandler;
-	
+
+	@Inject
+	private TreeLibraryNodeCopier treeLibraryNodeCopier;
+
 	@Override
 	public CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
 		return customReportLibraryNodeDao.findById(id);
@@ -79,7 +85,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.LIBRARY);
 		return (CustomReportLibrary) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
-	
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
@@ -87,7 +93,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return customReportLibraryNodeDao.findAllByIds(treeNodeIds);
 	}
 
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -96,7 +102,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.FOLDER);
 		return (CustomReportFolder) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -105,7 +111,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.CHART);
 		return (ChartDefinition) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#treeNodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'READ') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -114,7 +120,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.DASHBOARD);
 		return (CustomReportDashboard) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -130,12 +136,12 @@ public class CustomReportLibraryNodeServiceImpl implements
 		session.clear();//needed to force hibernate to reload the persisted entities...
 		return customReportLibraryNodeDao.findById(newNode.getId());
 	}
-	
+
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> nodeIds) {
 		return deletionHandler.simulateDeletion(nodeIds);
 	}
-	
+
 	@Override
 	public OperationReport delete(List<Long> nodeIds) {
 		for (Long id : nodeIds) {
@@ -144,8 +150,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		return deletionHandler.deleteNodes(nodeIds);
 	}
-	
-	
+
+
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds) {
@@ -156,7 +162,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	public List<Long> findDescendantIds(List<Long> nodeIds) {
 		return customReportLibraryNodeDao.findAllDescendantIds(nodeIds);
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#nodeId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'CREATE') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -165,29 +171,29 @@ public class CustomReportLibraryNodeServiceImpl implements
 		CustomReportLibraryNode crln = customReportLibraryNodeDao.findById(nodeId);
 		crln.renameNode(newName);
 	}
-	
+
 	@Override
-	
+
 	public List<Long> findAncestorIds(Long nodeId) {
 		return customReportLibraryNodeDao.findAncestorIds(nodeId);
 	}
-	
-	
-	
+
+
+
 	//--------------- PRIVATE METHODS --------------
-	
-	
-	
+
+
+
 	private TreeEntity findEntityAndCheckType(Long nodeId, CustomReportTreeDefinition entityDef){
 		TreeLibraryNode node = findCustomReportLibraryNodeById(nodeId);
-		
+
 		if (node==null||node.getEntityType()!=entityDef) {
 			String message = "the node for given id %d doesn't exist or doesn't represent a %s entity";
 			throw new IllegalArgumentException(String.format(message, nodeId,entityDef.getTypeName()));
 		}
-		
+
 		TreeEntity entity = node.getEntity();
-		
+
 		if (entity==null) {
 			String message = "the node for given id %d represent a null entity";
 			throw new IllegalArgumentException(String.format(message,nodeId));
@@ -204,10 +210,23 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return customReportLibraryNodeDao.findNodeFromEntity(treeEntity);
 	}
 
-	
+	@Override
+	public List<TreeLibraryNode> copyNodes(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target) {
+		return makeCopy(nodes, target);
+	}
 
-	
+	@Override
+	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId) {
+		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllByIds(nodeIds);
+		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(targetId);
+		return makeCopy(nodes, target);
+	}
 
+	private List<TreeLibraryNode> makeCopy(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target) {
+		List<TreeLibraryNode> copies = new ArrayList<>();
+		copies.addAll(treeLibraryNodeCopier.copyNodes(nodes, target));
+		return copies;
+	}
 
 
 }

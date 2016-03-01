@@ -31,10 +31,11 @@ import javax.persistence.SequenceGenerator;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.GenericTreeLibrary;
+import org.squashtest.tm.domain.tree.TreeEntity;
 
 @Entity
 public class CustomReportLibrary extends GenericTreeLibrary {
-	
+
 	private static final String CLASS_NAME = "org.squashtest.tm.domain.customreport.CustomReportLibrary";
 	private static final String SIMPLE_CLASS_NAME = "CustomReportLibrary";
 
@@ -43,7 +44,7 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_library_crl_id_seq")
 	@SequenceGenerator(name="custom_report_library_crl_id_seq", sequenceName="custom_report_library_crl_id_seq")
 	private Long id;
-	
+
 	@OneToOne(mappedBy = "customReportLibrary")
 	private GenericProject project;
 
@@ -58,8 +59,8 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 		 * We have a conflict here because this class mixes two roles :
 		 * - as a structural component of a project : it could belong to a project template, hence the use of type GenericProject
 		 * - as its own representation in a tree (in the GUI) : it should then not possibly belong to a project template, just as Charts and Folder do
-		 * 
-		 * Because those two roles are not properly separated we find ourselves with a method getProjet() that must 
+		 *
+		 * Because those two roles are not properly separated we find ourselves with a method getProjet() that must
 		 * very unsafely downcast from GenericProject to Project. I'm confident it'll be just fine, but cannot ascertain this.
 		 */
 		return (Project)project;
@@ -89,5 +90,10 @@ public class CustomReportLibrary extends GenericTreeLibrary {
 	public void setProject(Project project) {
 		throw new UnsupportedOperationException("A library shouldn't have his project setted after project creation");
 	}
-	
+
+	@Override
+	public TreeEntity createCopy() {
+		throw new UnsupportedOperationException("Cannot copy library, how did you call this method ?");
+	}
+
 }

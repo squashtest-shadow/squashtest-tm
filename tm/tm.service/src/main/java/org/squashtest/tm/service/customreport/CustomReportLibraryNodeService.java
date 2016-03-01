@@ -20,31 +20,31 @@
  */
 package org.squashtest.tm.service.customreport;
 
-import java.util.List;
-
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.tree.TreeEntity;
+import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
+import java.util.List;
+
 public interface CustomReportLibraryNodeService {
-	
+
 	/**
 	 * Return a {@link CustomReportLibraryNode} given an id
 	 * @param treeNodeId
 	 * @return
 	 */
 	CustomReportLibraryNode findCustomReportLibraryNodeById(Long treeNodeId);
-	
+
 	/**
 	 * Return a list of {@link CustomReportLibraryNode} given a list of ids
-	 * @param treeNodeId
 	 * @return
 	 */
 	List<CustomReportLibraryNode> findAllCustomReportLibraryNodeById(List<Long> treeNodeIds);
@@ -56,7 +56,7 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	CustomReportLibrary findLibraryByTreeNodeId(Long treeNodeId);
-	
+
 	/**
 	 * Return a {@link CustomReportFolder}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
 	 * representing this entity
@@ -64,7 +64,7 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	CustomReportFolder findFolderByTreeNodeId(Long treeNodeId);
-	
+
 	/**
 	 * Return a {@link ChartDefinition}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
 	 * representing this entity
@@ -72,7 +72,7 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	ChartDefinition findChartDefinitionByNodeId(Long treeNodeId);
-	
+
 	/**
 	 * Return a {@link CustomReportDashboard}. The given treeNodeId is the NODE's id, ie the id of the {@link CustomReportLibraryNode}
 	 * representing this entity
@@ -80,7 +80,7 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	CustomReportDashboard findCustomReportDashboardById(Long treeNodeId);
-	
+
 	/**
 	 * Service to add a new {@link CustomReportLibraryNode}. The caller is responsible for giving a
 	 * a not null, named {@link TreeEntity}. The service will persist the entity, create and persist the node and make links.
@@ -89,31 +89,30 @@ public interface CustomReportLibraryNodeService {
 	 * WARNING :
 	 * This method clear the hibernate session. The @any mapping in {@link CustomReportLibraryNode}
 	 * require a proper persist and reload to have an updated node and entity.
-	 * 
+	 *
 	 * @param parentId Id of parent node. Can't be null.
-	 * @param node A valid {@link CustomReportLibraryNode} with it's {@link TreeEntity}.
 	 * @return
 	 */
 	CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) throws NameAlreadyInUseException;
-	
+
 	List<SuppressionPreviewReport> simulateDeletion (List<Long> nodeIds);
-	
+
 	OperationReport delete(List<Long> nodeIds);
-	
+
 	/**
 	 * Find all descendant of a given list of node id's. The returned list will include the nodes witch id's are given in arguments
 	 * @param nodeIds
 	 * @return
 	 */
 	List<CustomReportLibraryNode> findDescendant(List<Long> nodeIds);
-	
+
 	/**
 	 * Find all descendant id's of a given list of node id's. The returned list will include the nodes id's given in arguments
 	 * @param nodeIds
 	 * @return
 	 */
 	List<Long> findDescendantIds(List<Long> nodeIds);
-	
+
 	void renameNode(Long nodeId, String newName) throws DuplicateNameException;
 
 	/**
@@ -122,12 +121,17 @@ public interface CustomReportLibraryNodeService {
 	 * @return
 	 */
 	List<Long> findAncestorIds(Long nodeId);
-	
+
 	/**
 	 * Find the {@link CustomReportLibraryNode} linked to a {@link TreeEntity}.
 	 * @param treeEntity
 	 * @return
 	 */
 	CustomReportLibraryNode findNodeFromEntity(TreeEntity treeEntity);
+
+	List<TreeLibraryNode> copyNodes(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target);
+
+	List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId);
+
 
 }

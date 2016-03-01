@@ -54,23 +54,25 @@ import org.squashtest.tm.domain.EntityType;
  *  they implement the business of a {@link ColumnPrototype} which has a {@link ColumnType}=CALCULATED. The query is thus a dependency of
  *  a main query. They way it is plugged into the main query depends on a strategy :
  *  </p>
- * 
+ *
  *  <ul>
  *     	<li>SUBQUERY : this query is indeed a subquery : a subcontext is created then joined with the relevant entity of the main query</li>
  *     	<li>INLINED : the extra tables will be joined within the main query.</li>
  *  </ul>
- * 
+ *
  * <p>
  * 	A main query always has a strategy = MAIN and a NaturalJoinStyle = INNER. For the other, for now these attributes are hardcoded in the
  * database and cannot be set yet.
  * </p>
- * 
+ *
  * @author bsiri
  *
  */
 @Entity
 @Table(name = "CHART_QUERY")
 public class ChartQuery {
+
+
 
 	public enum NaturalJoinStyle{
 		/*
@@ -197,6 +199,24 @@ public class ChartQuery {
 
 		return result;
 
+	}
+
+	public ChartQuery createCopy() {
+		ChartQuery copy = new ChartQuery();
+		copy.getAxis().addAll(this.getAxis());
+		copy.getMeasures().addAll(this.getMeasures());
+		copy.getFilters().addAll(this.copyFilters());
+		copy.setJoinStyle(this.getJoinStyle());
+		copy.setStrategy(this.getStrategy());
+		return copy;
+	}
+
+	private List<Filter> copyFilters() {
+		List<Filter> copy = new ArrayList<>();
+		for (Filter filter : getFilters()) {
+			copy.add(filter.createCopy());
+		}
+		return copy;
 	}
 
 	private Set<SpecializedEntityType> collectTypes(Collection<? extends ColumnPrototypeInstance> columns){

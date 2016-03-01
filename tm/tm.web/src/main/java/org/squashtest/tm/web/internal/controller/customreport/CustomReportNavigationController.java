@@ -20,10 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -33,13 +31,9 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
@@ -47,6 +41,7 @@ import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.deletion.OperationReport;
@@ -61,7 +56,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
  * This controller is bloated because the tree client side is made for {@link LibraryNode}.
  * The tree send several distinct requests for the different type of node. This way had sense with the initial tree model,
  * but isn't optimized for the new tree model.
- * As we haven't the time to redefine the client tree, this controller just follow the client jstree requests... 
+ * As we haven't the time to redefine the client tree, this controller just follow the client jstree requests...
  * Also, no milestones for v1, but we require active milestone as it probably will be in v2 and the tree give it anyway
  * @author jthebault
  *
@@ -69,20 +64,20 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 @Controller
 @RequestMapping("/custom-report-browser")
 public class CustomReportNavigationController {
-	
+
 	@Inject
 	private CustomReportWorkspaceService workspaceService;
-	
+
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
-	
+
 	@Inject
 	private CustomReportListTreeNodeBuilder listBuilder;
-	
+
 	@Inject
 	@Named("customReport.nodeBuilder")
 	private Provider<CustomReportTreeNodeBuilder> builderProvider;
-	
+
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomReportNavigationController.class);
 
 	//----- CREATE NODE METHODS -----
@@ -92,47 +87,68 @@ public class CustomReportNavigationController {
 	public @ResponseBody JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId,@Valid @RequestBody CustomReportFolder customReportFolder){
 		return createNewCustomReportLibraryNode(libraryId, customReportFolder);
 	}
-	
+
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/folders/{folderId}/content/new-folder", method=RequestMethod.POST)
 	public @ResponseBody JsTreeNode createNewFolderInFolder(@PathVariable Long folderId,@Valid @RequestBody CustomReportFolder customReportFolder){
 		return createNewCustomReportLibraryNode(folderId, customReportFolder);
 	}
-	
+
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/drives/{libraryId}/content/new-dashboard", method=RequestMethod.POST)
 	public @ResponseBody JsTreeNode createNewDashboardInLibrary(@PathVariable Long libraryId,@Valid @RequestBody CustomReportDashboard customReportDashboard){
 		return createNewCustomReportLibraryNode(libraryId, customReportDashboard);
 	}
-	
+
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/folders/{folderId}/content/new-dashboard", method=RequestMethod.POST)
 	public @ResponseBody JsTreeNode createNewDashboardInFolder(@PathVariable Long folderId,@Valid @RequestBody CustomReportDashboard customReportDashboard){
 		return createNewCustomReportLibraryNode(folderId, customReportDashboard);
 	}
-	
+
 	//-------------- SHOW-NODE-CHILDREN METHODS ---------------
-	
+
 	@RequestMapping(value = "/drives/{nodeId}/content", method = RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId,
 			@CurrentMilestone Milestone activeMilestone) {
 		return getNodeContent(nodeId, activeMilestone);
 	}
-	
+
 	@RequestMapping(value = "/folders/{nodeId}/content", method = RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId,
 			@CurrentMilestone Milestone activeMilestone) {
 		return getNodeContent(nodeId, activeMilestone);
 	}
-	
+
 	@RequestMapping(value = "/dashboard/{nodeId}/content", method = RequestMethod.GET)
 	public @ResponseBody List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId,
 			@CurrentMilestone Milestone activeMilestone) {
 		return getNodeContent(nodeId, activeMilestone);
 	}
-	
+
+	//-------------- COPY-NODES ------------------------------
+	//Two Request mappings for the same function, as we have to follow the jstree logic... or re do the tree :-(
+
+	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
+	public @ResponseBody List<JsTreeNode> copyNodesTofolder(@RequestParam("nodeIds[]") Long[] nodeIds,
+													@PathVariable("destinationId") long destinationId) {
+		return copyNodes(nodeIds, destinationId);
+	}
+
+	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
+	public @ResponseBody List<JsTreeNode> copyNodesToDrives(@RequestParam("nodeIds[]") Long[] nodeIds,
+													@PathVariable("destinationId") long destinationId) {
+		return copyNodes(nodeIds, destinationId);
+	}
+
+	private List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, @PathVariable("destinationId") long destinationId) {
+		List<TreeLibraryNode> nodeList;
+		nodeList = customReportLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
+		return listBuilder.build(nodeList);
+	}
+
 	//-------------- DELETE-SIMULATION METHODS ---------------
-	
+
 	/**
 	 * No return for V1, we delete all nodes inside container.
 	 * @param nodeIds
@@ -144,11 +160,11 @@ public class CustomReportNavigationController {
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
 			@CurrentMilestone Milestone activeMilestone,
 			Locale locale) {
-		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything 
+		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything
 	}
-	
+
 	//-------------- DELETE METHOD ---------------------------
-	
+
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
 	public @ResponseBody OperationReport confirmNodeDeletion(
 			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
@@ -156,25 +172,25 @@ public class CustomReportNavigationController {
 
 		return customReportLibraryNodeService.delete(nodeIds);
 	}
-	
-	
+
+
 	//-------------- PRIVATE STUFF ---------------------------
 	private JsTreeNode createNewCustomReportLibraryNode(Long libraryId, TreeEntity entity){
 		CustomReportLibraryNode newNode = customReportLibraryNodeService.createNewNode(libraryId, entity);
 		return builderProvider.get().build(newNode);
 	}
-	
+
 	private List<JsTreeNode> getNodeContent( long folderId,
 			@CurrentMilestone Milestone activeMilestone) {
 		List<TreeLibraryNode> children = workspaceService.findContent(folderId);
 		return listBuilder.build(children);
 	}
-	
+
 	//Class for messages
-	
+
 	protected static class Messages {
 
-		private Collection<String> messages = new ArrayList<String>();
+		private Collection<String> messages = new ArrayList<>();
 
 		public Messages() {
 			super();
@@ -189,5 +205,5 @@ public class CustomReportNavigationController {
 		}
 
 	}
-	
+
 }

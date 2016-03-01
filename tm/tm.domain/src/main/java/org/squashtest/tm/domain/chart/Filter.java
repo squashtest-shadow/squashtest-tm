@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.chart;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.CollectionTable;
@@ -59,7 +60,7 @@ public class Filter implements ColumnPrototypeInstance {
 	@ElementCollection
 	@CollectionTable(name = "CHART_FILTER_VALUES", joinColumns = @JoinColumn(name = "FILTER_ID") )
 	@Column(name="FILTER_VALUE")
-	private List<String> values;
+	private List<String> values = new ArrayList<>();
 
 	@Override
 	public Operation getOperation() {
@@ -99,5 +100,13 @@ public class Filter implements ColumnPrototypeInstance {
 	@Override
 	public DataType getDataType() {
 		return getColumn().getDataType();
+	}
+
+	public Filter createCopy(){
+		Filter copy = new Filter();
+		copy.setColumn(this.getColumn());
+		copy.setOperation(this.getOperation());
+		copy.getValues().addAll(this.getValues());
+		return copy;
 	}
 }

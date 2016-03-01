@@ -58,49 +58,49 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 @Table(appliesTo="CUSTOM_REPORT_LIBRARY_NODE")
 public class CustomReportLibraryNode  implements TreeLibraryNode {
-	
+
 	@Id
 	@Column(name = "CRLN_ID")
 	@GeneratedValue(strategy=GenerationType.AUTO, generator="custom_report_library_node_crln_id_seq")
 	@SequenceGenerator(name="custom_report_library_node_crln_id_seq", sequenceName="custom_report_library_node_crln_id_seq")
 	private Long id;
-	
+
 	@Enumerated(EnumType.STRING)
 	@Column(insertable=false, updatable=false)
 	private CustomReportTreeDefinition entityType;
-	
+
 	@Column(insertable=false, updatable=false)
 	private Long entityId;
-	
+
 	/**
 	 * To prevent no named entity as we have in {@link Requirement} / {@link RequirementVersion}
-	 * path hell, we decided to denormalize the name. 
+	 * path hell, we decided to denormalize the name.
 	 * So the entity name and node name should be the same, take care if you rename directly one of them !
 	 * Use {@link CustomReportLibraryNode#renameNode(String)} method which take care of all constraints relative to node name.
 	 */
 	@Column
 	private String name;
-	
+
 	@JoinTable(name="CRLN_RELATIONSHIP",
 			joinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName="CRLN_ID", insertable=false, updatable=false)},
 			inverseJoinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName="CRLN_ID", insertable=false, updatable=false)})
 	@ManyToOne(fetch = FetchType.LAZY,targetEntity=CustomReportLibraryNode.class)
 	private TreeLibraryNode parent;
-	
+
 	@JoinTable(name="CRLN_RELATIONSHIP",
 			joinColumns={@JoinColumn(name="ANCESTOR_ID", referencedColumnName="CRLN_ID")},
 			inverseJoinColumns={@JoinColumn(name="DESCENDANT_ID", referencedColumnName="CRLN_ID")})
 	@OneToMany(cascade={ CascadeType.ALL },fetch = FetchType.LAZY,
 			targetEntity=CustomReportLibraryNode.class)
 	@IndexColumn(name="CONTENT_ORDER")
-	private List<TreeLibraryNode> children;
-	
+	private List<TreeLibraryNode> children = new ArrayList<>();
+
 	//for the @MetaValue we cannot use the Tree Entity Definition
 	//as value must be a constant so constant names are in an interface
 	@Any( metaColumn = @Column( name = "ENTITY_TYPE" ), fetch=FetchType.LAZY)
-	@AnyMetaDef( 
-	    idType = "long", 
-	    metaType = "string", 
+	@AnyMetaDef(
+	    idType = "long",
+	    metaType = "string",
 	    metaValues = {
 	        @MetaValue( value = CustomReportNodeType.CHART_NAME, targetEntity = ChartDefinition.class ),
 	        @MetaValue( value = CustomReportNodeType.FOLDER_NAME, targetEntity = CustomReportFolder.class ),
@@ -110,15 +110,15 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@JoinColumn( name = "ENTITY_ID" )
 	@Cascade(value=org.hibernate.annotations.CascadeType.ALL)
 	private TreeEntity entity;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CRL_ID")
 	private CustomReportLibrary library;
-	
+
 	public CustomReportLibraryNode() {
 		super();
 	}
-	
+
 	public CustomReportLibraryNode(CustomReportTreeDefinition entityType,
 			Long entityId, String name, CustomReportLibrary library) {
 		super();
@@ -137,12 +137,12 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	public TreeLibraryNode getParent() {
 		return parent;
 	}
-	
+
 	@Override
 	public void setParent(TreeLibraryNode parent) {
 		this.parent = parent;
 	}
-	
+
 	@Override
 	public List<TreeLibraryNode> getChildren() {
 		return children;
@@ -152,7 +152,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	public GenericTreeLibrary getLibrary() {
 		return library;
 	}
-	
+
 	/**
 	 * concrete class getter for @AclConstrainedObject
 	 * @return
@@ -165,12 +165,12 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	public void setLibrary(CustomReportLibrary library) {
 		this.library = library;
 	}
-	
+
 	@Override
 	public void accept(TreeNodeVisitor visitor) {
 		throw new UnsupportedOperationException("NO IMPLEMENTATION... YET...");
 	}
-	
+
 	@Override
 	public long getEntityId() {
 		return entityId;
@@ -180,7 +180,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public void setName(String name) {
 		this.name=name;
@@ -189,6 +189,11 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Override
 	public TreeEntityDefinition getEntityType() {
 		return entityType;
+	}
+
+	@Override
+	public void setEntityType(CustomReportTreeDefinition entityType) {
+		this.entityType = entityType;
 	}
 
 	/**
@@ -217,9 +222,9 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		}
 
 		treeLibraryNode.isCoherentWithEntity();
-		
+
 		String newChildName = treeLibraryNode.getName();
-		
+
 		if(this.childNameAlreadyUsed(newChildName)){
 			TreeLibraryNode node = getContentNodeByName(newChildName);
 			throw new DuplicateNameException(node.getEntityType().getTypeName(), newChildName);
@@ -237,7 +242,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		}
 	}
 
-	private boolean childNameAlreadyUsed(String newChildName) {
+	public boolean childNameAlreadyUsed(String newChildName) {
 		for (TreeLibraryNode child : children) {
 			if (child.getName().equals(newChildName)) {
 				return true;
@@ -245,7 +250,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		}
 		return false;
 	}
-	
+
 	private TreeLibraryNode getContentNodeByName (String name){
 		for (TreeLibraryNode child : children) {
 			if (child.getName().equals(name)) {
@@ -258,9 +263,9 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	@Override
 	public void removeChild(TreeLibraryNode treeLibraryNode) {
 		children.remove(treeLibraryNode);
-		//forcing hibernate to clean it's children list, 
+		//forcing hibernate to clean it's children list,
 		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
-		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation constraint... 
+		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation constraint...
 		children = new ArrayList<TreeLibraryNode>(children);
 	}
 

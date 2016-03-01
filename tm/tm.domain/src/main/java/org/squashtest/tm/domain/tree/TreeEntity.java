@@ -32,9 +32,9 @@ import org.squashtest.tm.domain.project.Project;
  *
  */
 public interface TreeEntity extends Identified{
-	
+
 	final int MAX_NAME_SIZE = 255;
-	
+
 	/**
 	 * @return Name of this node.
 	 */
@@ -46,10 +46,14 @@ public interface TreeEntity extends Identified{
 	 * @param name The name of this node. Should not be blank or null.
 	 */
 	void setName(String name);
-	
+
 	void accept(TreeEntityVisitor visitor);
-	
+
 	Project getProject();
-	
+
 	void setProject(Project project);
+
+	TreeEntity createCopy();
+
+
 }

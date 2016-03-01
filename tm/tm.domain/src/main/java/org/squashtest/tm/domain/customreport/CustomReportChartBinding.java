@@ -38,7 +38,7 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Entity
 public class CustomReportChartBinding implements Identified {
-	
+
 	@Id
 	@Column(name = "CRCB_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "custom_report_chart_binding_crcb_id_seq")
@@ -54,13 +54,13 @@ public class CustomReportChartBinding implements Identified {
 	@ManyToOne
 	@JoinColumn(name = "CHART_ID", referencedColumnName = "CHART_ID")
 	private ChartDefinition chart;
-	
+
 	private int row;
-	
+
 	private int col;
-	
+
 	private int sizeX;
-	
+
 	private int sizeY;
 
 	public CustomReportDashboard getDashboard() {
@@ -70,7 +70,7 @@ public class CustomReportChartBinding implements Identified {
 	public void setDashboard(CustomReportDashboard dashboard) {
 		this.dashboard = dashboard;
 	}
-	
+
 	public ChartDefinition getChart() {
 		return chart;
 	}
@@ -130,7 +130,7 @@ public class CustomReportChartBinding implements Identified {
 		setSizeX(transientBinding.getSizeX());
 		setSizeY(transientBinding.getSizeY());
 	}
-	
+
 	@AclConstrainedObject
 	public CustomReportLibrary getCustomReportLibrary(){
 		return getDashboard().getProject().getCustomReportLibrary();
@@ -151,5 +151,12 @@ public class CustomReportChartBinding implements Identified {
 	private boolean hasMoveRow(CustomReportChartBinding transientBinding) {
 		return getCol()!=transientBinding.getCol();
 	}
-	
+
+	public CustomReportChartBinding createCopy() {
+		CustomReportChartBinding copy = new CustomReportChartBinding();
+		copy.setChart(this.getChart());
+		copy.setDashboard(this.getDashboard());
+		copy.move(this);
+		return copy;
+	}
 }
