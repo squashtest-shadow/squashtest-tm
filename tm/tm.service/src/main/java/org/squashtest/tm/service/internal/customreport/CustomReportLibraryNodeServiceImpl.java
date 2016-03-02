@@ -211,11 +211,15 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#target, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
 	public List<TreeLibraryNode> copyNodes(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target) {
 		return makeCopy(nodes, target);
 	}
 
 	@Override
+	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
 	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId) {
 		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllByIds(nodeIds);
 		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(targetId);
