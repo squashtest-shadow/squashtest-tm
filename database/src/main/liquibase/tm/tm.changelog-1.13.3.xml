@@ -109,5 +109,44 @@
 
 	</changeSet>	
 	
+	<changeSet id="tm-1.13.3-feature-5265-5" author="bsiri">
+	
+		<comment>
+			new requirement audit trail tables for synchronization events
+		</comment>
+		
+		<createTable tableName="SYNC_REQUIREMENT_CREATION">
+			
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_SYNC_CREATE"
+				foreignKeyName="fk_sync_create_audit" 
+				references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+			
+			<column name="SOURCE" type="java.sql.Types.VARCHAR(255)" remarks="the url of the synchronized requirement at the time of creation">
+				<constraints nullable="false"/>
+			</column>
+			
+		</createTable>
+		
+				
+		<createTable tableName="SYNC_REQUIREMENT_UPDATE">
+			
+			<column name="EVENT_ID" type="BIGINT"
+				remarks="primary key, which is also a foreign key to REQUIREMENT_AUDIT_EVENT (they share that key : do not make this table autoincrement it).">
+				<constraints primaryKey="true" nullable="false" primaryKeyName="PK_SYNC_UPDATE"
+				foreignKeyName="fk_sync_update_audit" 
+				references="REQUIREMENT_AUDIT_EVENT(EVENT_ID)" />		
+			</column>
+			
+			<column name="SOURCE" type="java.sql.Types.VARCHAR(255)" remarks="the url of the synchronized requirement at the time of update">
+				<constraints nullable="false"/>
+			</column>
+			
+		</createTable>
+	
+	</changeSet>
+	
 
 </databaseChangeLog>
