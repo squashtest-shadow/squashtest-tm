@@ -269,6 +269,20 @@ define(["module", "jquery", "app/pubsub", "squash.basicwidgets", "app/ws/squasht
 
 						$( 'td.event-message-cell', row ).append( proto );
 					}
+					// synchronized requirements
+					if (data['event-type'] === 'sync-creation' || data['event-type'] === 'sync-update'){
+						
+						var msgcell = $(row).find('.event-message-cell');
+						
+						var srclabel = translator.get('label.source');
+						var url = data['event-meta'];
+						
+						var link='<a href="'+url+'">'+srclabel+'</a>';
+						
+						var msgTemplate = msgcell.html();
+						var newmsg = msgTemplate.replace('{url}', link);
+						msgcell.html(newmsg);
+					}
 
 					return row;
 				}

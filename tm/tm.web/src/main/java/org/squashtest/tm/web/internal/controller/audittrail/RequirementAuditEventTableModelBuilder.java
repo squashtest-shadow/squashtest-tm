@@ -37,6 +37,8 @@ import org.squashtest.tm.domain.event.RequirementCreation;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.domain.event.RequirementPropertyChange;
 import org.squashtest.tm.domain.event.RequirementVersionModification;
+import org.squashtest.tm.domain.event.SyncRequirementCreation;
+import org.squashtest.tm.domain.event.SyncRequirementUpdate;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -92,8 +94,24 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 	public void visit(RequirementCreation event) {
 		String message = i18nHelper.internationalize("label.Creation", locale);
 		populateCurrentItemData(message, "creation", event);
-
 	}
+	
+	
+	@Override
+	public void visit(SyncRequirementCreation event) {
+		String message = i18nHelper.internationalize("label.CreationBySynchronization", locale);
+		populateCurrentItemData(message, "sync-creation", event);
+		currentItemData.put("event-meta", event.getSource());
+		
+	}
+	
+	@Override
+	public void visit(SyncRequirementUpdate event) {
+		String message = i18nHelper.internationalize("label.UpdateBySynchronization", locale);
+		populateCurrentItemData(message, "sync-update", event);		
+		currentItemData.put("event-meta", event.getSource());
+	}
+	
 
 	/**
 	 * @see org.squashtest.tm.domain.event.RequirementAuditEventVisitor#visit(org.squashtest.tm.domain.event.RequirementPropertyChange)
@@ -185,6 +203,7 @@ public class RequirementAuditEventTableModelBuilder extends DataTableModelBuilde
 		populateCurrentItemData(message, "fat-prop", event);
 
 	}
+
 
 	private void populateCurrentItemData(String message, String eventType, RequirementAuditEvent event) {
 

@@ -25,4 +25,6 @@ public interface RequirementAuditEventVisitor {
 	void visit(RequirementCreation event);
 	void visit(RequirementPropertyChange event);
 	void visit(RequirementLargePropertyChange event);
+	void visit(SyncRequirementCreation event);
+	void visit(SyncRequirementUpdate event);
 }
