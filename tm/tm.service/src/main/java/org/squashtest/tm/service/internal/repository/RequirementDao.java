@@ -138,6 +138,6 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	
 	Long findNodeIdByRemoteKey(String remoteKey);
 	
-	List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys);
+	List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys);
 
 }

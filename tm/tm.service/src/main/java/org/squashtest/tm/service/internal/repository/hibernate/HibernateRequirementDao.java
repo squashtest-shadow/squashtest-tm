@@ -426,7 +426,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@Override
-	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys) {
+	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys) {
 		
 		if (remoteKeys.isEmpty()){
 			return new ArrayList<>();
@@ -435,12 +435,13 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		QRequirement req = QRequirement.requirement;
 		QRequirementSyncExtender sync = QRequirementSyncExtender.requirementSyncExtender;
 		
-		Map<String, Long> idsByKeys = new HibernateQuery<>(currentSession())
-															.select(req.id)
-															.from(req)
-															.innerJoin(req.syncExtender, sync)
-															.where(sync.remoteReqId.in(remoteKeys))
-															.transform(GroupBy.groupBy(sync.remoteReqId).as(req.id));
+		
+		HibernateQuery<Map<String, Long>> query = new HibernateQuery<>(currentSession()); 
+		
+		Map<String, Long> idsByKeys = query.select(req.id)
+											.from(req).innerJoin(req.syncExtender, sync)
+											.where(sync.remoteReqId.in(remoteKeys))
+											.transform(GroupBy.groupBy(sync.remoteReqId).as(req.id));
 		
 		// now build a result with an order consistent with the input order
 		List<Long> res = new ArrayList<>(remoteKeys.size());

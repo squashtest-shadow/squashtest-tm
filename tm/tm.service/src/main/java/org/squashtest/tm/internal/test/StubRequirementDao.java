@@ -193,7 +193,7 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	}
 
 	@Override
-	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys) {
+	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys) {
 		// TODO Auto-generated method stub
 		return null;
 	}
