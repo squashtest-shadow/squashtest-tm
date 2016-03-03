@@ -97,8 +97,8 @@
                 {{/each}}
                 </select>
            </script>
-        <div id="issue-create"/>
-        <div id="issue-search"/>
+        <div id="issue-create"></div>
+        <div id="issue-search"></div>
      
     </div>
   </div>
