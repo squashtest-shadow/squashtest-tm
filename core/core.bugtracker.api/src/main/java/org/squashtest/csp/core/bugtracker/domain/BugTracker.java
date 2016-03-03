@@ -110,7 +110,7 @@ public class BugTracker {
 	}
 
 	public void setUrl(String url) {
-		this.url = url;
+		this.url = StringUtils.trim(url);
 	}
 
 	public String getKind() {
