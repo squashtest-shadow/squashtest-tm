@@ -31,7 +31,7 @@ import spock.lang.Specification
 /**
  * Created by jthebault on 29/02/2016.
  */
-class TreeLibraryNodeCopierTest extends Specification {
+class CRLNCopierTest extends Specification {
 
 	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
 
@@ -76,11 +76,11 @@ class TreeLibraryNodeCopierTest extends Specification {
 		origin2.setName('name2')
 
 		and:
-		TreeLibraryNodeCopier treeLibraryNodeCopier = new TreeLibraryNodeCopier()
+		NameResolver resolver = new NameResolver()
 
 		when:
-		treeLibraryNodeCopier.resolveNewName(origin,target)
-		treeLibraryNodeCopier.resolveNewName(origin2,target)
+		resolver.resolveNewName(origin,target)
+		resolver.resolveNewName(origin2,target)
 
 		then:
 		origin.getName().equals("name1-copy-1")
@@ -93,7 +93,8 @@ class TreeLibraryNodeCopierTest extends Specification {
 		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(2L)
 
 		and:
-		TreeLibraryNodeCopier treeLibraryNodeCopier = new TreeLibraryNodeCopier()
+		CRLNCopier treeLibraryNodeCopier = new CRLNCopier()
+		treeLibraryNodeCopier.nameResolver = Mock(NameResolver)
 
 		when:
 		treeLibraryNodeCopier.copyNodes([source],target)

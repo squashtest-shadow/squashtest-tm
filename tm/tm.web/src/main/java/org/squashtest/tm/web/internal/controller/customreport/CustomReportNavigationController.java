@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import javax.inject.Inject;
@@ -31,7 +30,6 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
@@ -41,11 +39,9 @@ import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
-import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.builder.CustomReportListTreeNodeBuilder;
@@ -141,10 +137,28 @@ public class CustomReportNavigationController {
 		return copyNodes(nodeIds, destinationId);
 	}
 
-	private List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, @PathVariable("destinationId") long destinationId) {
-		List<TreeLibraryNode> nodeList;
-		nodeList = customReportLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
-		return listBuilder.build(nodeList);
+	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodesToFolderWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+										@PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
+		moveNodes(nodeIds, destinationId);
+	}
+
+	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodesToDriveWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+										@PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
+		moveNodes(nodeIds, destinationId);
+	}
+
+	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodesToFolder(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+												@PathVariable("destinationId") long destinationId) {
+		moveNodes(nodeIds, destinationId);
+	}
+
+	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
+	public @ResponseBody void moveNodesToDrive(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+											   @PathVariable("destinationId") long destinationId) {
+		moveNodes(nodeIds, destinationId);
 	}
 
 	//-------------- DELETE-SIMULATION METHODS ---------------
@@ -158,8 +172,7 @@ public class CustomReportNavigationController {
 	 */
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CurrentMilestone Milestone activeMilestone,
-			Locale locale) {
+			@CurrentMilestone Milestone activeMilestone, Locale locale) {
 		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything
 	}
 
@@ -185,6 +198,16 @@ public class CustomReportNavigationController {
 		List<TreeLibraryNode> children = workspaceService.findContent(folderId);
 		return listBuilder.build(children);
 	}
+
+	private void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds, @PathVariable("destinationId") long destinationId) {
+		customReportLibraryNodeService.moveNodes(Arrays.asList(nodeIds),destinationId);
+	}
+	private List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds, @PathVariable("destinationId") long destinationId) {
+		List<TreeLibraryNode> nodeList;
+		nodeList = customReportLibraryNodeService.copyNodes(Arrays.asList(nodeIds), destinationId);
+		return listBuilder.build(nodeList);
+	}
+
 
 	//Class for messages
 

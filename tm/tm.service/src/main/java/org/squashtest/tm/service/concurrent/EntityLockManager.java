@@ -133,7 +133,7 @@ public final class EntityLockManager {
 	 */
 	public static synchronized Collection<Lock> lock(Collection<EntityRef> refs) {
 		LOGGER.trace("Batch locking entities {}", refs);
-		ArrayList<Lock> locks = new ArrayList<Lock>(refs.size());
+		ArrayList<Lock> locks = new ArrayList<>(refs.size());
 
 		for (EntityRef ref : refs) {
 			Lock lock = getLock(ref);

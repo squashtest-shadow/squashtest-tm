@@ -27,8 +27,6 @@ import java.util.List;
 
 import javax.inject.Inject;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.lucene.util.CollectionUtil;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PostFilter;
@@ -70,7 +68,10 @@ public class CustomReportLibraryNodeServiceImpl implements
 	private CRLNDeletionHandler deletionHandler;
 
 	@Inject
-	private TreeLibraryNodeCopier treeLibraryNodeCopier;
+	private CRLNCopier nodeCopier;
+
+	@Inject
+	private CRLNMover nodeMover;
 
 	@Override
 	public CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
@@ -120,6 +121,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 		TreeEntity entity = findEntityAndCheckType(treeNodeId, CustomReportTreeDefinition.DASHBOARD);
 		return (CustomReportDashboard) entity;//NOSONAR cast is checked by findEntityAndCheckType method
 	}
+
+
 
 	@Override
 	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
@@ -173,36 +176,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	}
 
 	@Override
-
 	public List<Long> findAncestorIds(Long nodeId) {
 		return customReportLibraryNodeDao.findAncestorIds(nodeId);
-	}
-
-
-
-	//--------------- PRIVATE METHODS --------------
-
-
-
-	private TreeEntity findEntityAndCheckType(Long nodeId, CustomReportTreeDefinition entityDef){
-		TreeLibraryNode node = findCustomReportLibraryNodeById(nodeId);
-
-		if (node==null||node.getEntityType()!=entityDef) {
-			String message = "the node for given id %d doesn't exist or doesn't represent a %s entity";
-			throw new IllegalArgumentException(String.format(message, nodeId,entityDef.getTypeName()));
-		}
-
-		TreeEntity entity = node.getEntity();
-
-		if (entity==null) {
-			String message = "the node for given id %d represent a null entity";
-			throw new IllegalArgumentException(String.format(message,nodeId));
-		}
-		return entity;
-	}
-
-	private void checkPermission(SecurityCheckableObject... checkableObjects) {
-		PermissionsUtils.checkPermission(permissionService, checkableObjects);
 	}
 
 	@Override
@@ -226,9 +201,43 @@ public class CustomReportLibraryNodeServiceImpl implements
 		return makeCopy(nodes, target);
 	}
 
+	@Override
+	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
+		+ OR_HAS_ROLE_ADMIN)
+	public void moveNodes(List<Long> nodeIds, Long targetId) {
+		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllByIds(nodeIds);
+		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(targetId);
+		nodeMover.moveNodes(nodes,target);
+	}
+
+	//--------------- PRIVATE METHODS --------------
+
+	private TreeEntity findEntityAndCheckType(Long nodeId, CustomReportTreeDefinition entityDef){
+		TreeLibraryNode node = findCustomReportLibraryNodeById(nodeId);
+
+		if (node==null||node.getEntityType()!=entityDef) {
+			String message = "the node for given id %d doesn't exist or doesn't represent a %s entity";
+			throw new IllegalArgumentException(String.format(message, nodeId,entityDef.getTypeName()));
+		}
+
+		TreeEntity entity = node.getEntity();
+
+		if (entity==null) {
+			String message = "the node for given id %d represent a null entity";
+			throw new IllegalArgumentException(String.format(message,nodeId));
+		}
+		return entity;
+	}
+
+	private void checkPermission(SecurityCheckableObject... checkableObjects) {
+		PermissionsUtils.checkPermission(permissionService, checkableObjects);
+	}
+
+
+
 	private List<TreeLibraryNode> makeCopy(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target) {
 		List<TreeLibraryNode> copies = new ArrayList<>();
-		copies.addAll(treeLibraryNodeCopier.copyNodes(nodes, target));
+		copies.addAll(nodeCopier.copyNodes(nodes, target));
 		return copies;
 	}
 

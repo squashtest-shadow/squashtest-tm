@@ -469,9 +469,9 @@ define([],function () {
 		//For V1.13 we don't want copy/past or drag/drop inside tree. Cannot do it in workspace conf because we override some core function of jstree
     //with custom plugin so the conf will be overriden
     //It's safer to put deactivation here because of it's temporary nature and remove the line when copy/pasta will be done in custom-report-workspace
-    $.jstree._fn.check_move = function(){
-      return false;
-    };
+    // $.jstree._fn.check_move = function(){
+    //   return false;
+    // };
  };
 });
 //*/

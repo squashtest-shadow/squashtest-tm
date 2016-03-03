@@ -230,11 +230,6 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 				return false;
 			}
 
-			// check that destination isn't locked by milestones
-			if (! milestonesAllowCreation(newparent)){
-				return false;
-			}
-
 			return true;
 
 		};
@@ -247,11 +242,7 @@ define(['jquery', 'workspace.tree-node-copier', 'tree', 'milestone-manager/miles
 			'copy-node-tree-button' : this.canCopy,
 			'paste-node-tree-button' : this.canPaste,
 			'rename-node-tree-button' : this.canRename,
-			'import-excel-tree-button' : this.canImport,
-			'import-links-excel-tree-button' : this.canImport,
-			'export-tree-button' : this.canExport,
-			'delete-node-tree-button' : this.canDelete,
-			'search-tree-button' : this.canSearch
+			'delete-node-tree-button' : this.canDelete
 		};
 
 	}

@@ -68,11 +68,7 @@ define(["jquery", "./utils", "./permissions-rules",
 			"#new-chart-tree-button",
       "#new-dashboard-tree-button",
 			"#rename-node-tree-button",
-			"#import-excel-tree-button",
-			"#import-links-excel-tree-button",
-			"#export-tree-button",
-			"#delete-node-tree-button",
-			"#search-tree-button"
+			"#delete-node-tree-button"
 		].join(", ");
 
 		var buttons = [];
@@ -165,7 +161,6 @@ define(["jquery", "./utils", "./permissions-rules",
 	function init(settings){
 		createWidgets();
 		bindTreeEvents();
-	//	createWizardMenu(settings.wizards);
 		initExportPlugins();
 
 		$("#tree_element_menu").removeClass("unstyled-pane");

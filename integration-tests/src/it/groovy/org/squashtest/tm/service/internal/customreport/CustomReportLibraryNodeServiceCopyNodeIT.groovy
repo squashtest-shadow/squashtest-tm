@@ -218,6 +218,145 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 
 	}
 
+	def "should move a folder and it's content"(){
+		when:
+		service.moveNodes([-10L], -2L);
+		session.flush()
+		session.clear()
 
+		then:
+		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)
+		CustomReportLibraryNode originalParentNode = findEntity(CustomReportLibraryNode.class,-1L)
+		List<CustomReportLibraryNode> childrens = targetFolderNode.getChildren()
+		childrens.size() == 2
+
+		//verify content order and ids
+		childrens.get(0).getId() == -20L
+		CustomReportLibraryNode baseFolderNode = childrens.get(1)
+		CustomReportFolder baseFolder = baseFolderNode.getEntity()
+		baseFolderNode.getId() == -10L
+		baseFolder.getId() == -1L
+		baseFolderNode.getParent().equals(targetFolderNode)
+		originalParentNode.getChildren().size()==1
+		!originalParentNode.getChildren().contains(baseFolderNode)
+
+		//checking root baseFolder attributes
+		baseFolderNode.getName().equals("folder1")
+		baseFolderNode.getEntityType().equals(CustomReportTreeDefinition.FOLDER)
+		baseFolderNode.getEntityId()==baseFolder.getId()
+		baseFolderNode.getLibrary().getId() == -2L
+		baseFolderNode.getParent().equals(targetFolderNode)
+		baseFolder.getName().equals("folder1")
+		baseFolder.getDescription().equals("un joli folder")
+		baseFolder.getProject().getId() == -2L
+
+		//checking children of baseFolder, witch should have been copied with their parent
+		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
+		copiedChildrens.size().equals(3)
+	}
+
+	def "should move a folder and check folder child"(){
+		when:
+		service.moveNodes([-10L], -2L);
+		session.flush()
+		session.clear()
+
+		then:
+		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)
+		CustomReportLibraryNode originalParentNode = findEntity(CustomReportLibraryNode.class,-1L)
+		List<CustomReportLibraryNode> childrens = targetFolderNode.getChildren()
+		childrens.size() == 2
+		CustomReportLibraryNode baseFolderNode = childrens.get(1)
+		CustomReportFolder baseFolder = baseFolderNode.getEntity()
+
+		//checking children of baseFolder, witch should have been copied with their parent
+		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
+		copiedChildrens.size().equals(3)
+
+		CustomReportLibraryNode childFolderNode = copiedChildrens.get(0)
+		childFolderNode.getId() == -100L
+		childFolderNode.getName().equals("folder1-1")
+		childFolderNode.getParent().equals(baseFolderNode)
+		childFolderNode.getLibrary().getId()== -2L
+		CustomReportFolder childFolder = childFolderNode.getEntity()
+		childFolder.getId() == -2L
+		childFolder.getCustomReportLibrary().getId().equals(-2L)
+	}
+
+	def "should move a folder and check dashboard child"(){
+		when:
+		service.moveNodes([-10L], -2L);
+		session.flush()
+		session.clear()
+
+		then:
+		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)
+		List<CustomReportLibraryNode> childrens = targetFolderNode.getChildren()
+		childrens.size() == 2
+
+		//verify content order and ids
+		CustomReportLibraryNode baseFolderNode = childrens.get(1)
+		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
+
+
+		//checking second child, it should be a dashboard
+		CustomReportLibraryNode childDashboardNode = copiedChildrens.get(1)
+		childDashboardNode.getId() == -101L
+		childDashboardNode.getName().equals("dashboard1")
+		childDashboardNode.getParent().equals(baseFolderNode)
+		CustomReportDashboard childDashboard = childDashboardNode.getEntity()
+		childDashboard.getId() == -1L
+		childDashboard.getCustomReportLibrary().getId().equals(-2L)
+		childDashboard.getChartBindings().size() == 1
+		CustomReportChartBinding binding = childDashboard.getChartBindings().getAt(0)
+		binding.getId()==-1L
+		binding.getChart().getId() == -1L
+	}
+
+	def "should move a folder and check chart def child"(){
+		when:
+		service.moveNodes([-10L], -2L);
+		session.flush()
+		session.clear()
+
+		then:
+		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)
+		List<CustomReportLibraryNode> childrens = targetFolderNode.getChildren()
+
+		//verify content order and ids
+		CustomReportLibraryNode baseFolderNode = childrens.get(1)
+		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
+
+		//checking chart copy
+		ChartDefinition originalchart = findEntity(ChartDefinition.class,-1L)
+		CustomReportLibraryNode childChartNode = copiedChildrens.get(2)
+		childChartNode.getId() == -102L
+		childChartNode.getName().equals("chart1")
+		childChartNode.getParent().equals(baseFolderNode)
+		ChartDefinition childChart = childChartNode.getEntity()
+		childChart.getId() == -1L
+		childChart.getCustomReportLibrary().getId().equals(-2L)
+		ChartQuery chartQuery = childChart.getQuery()
+		chartQuery.id == originalchart.getQuery().id
+
+
+		//checking that all linked entities are properly copied and not the original one relinked
+		childChart.getAxis().containsAll(originalchart.getAxis())
+		childChart.getFilters().containsAll(originalchart.getFilters())
+		childChart.getMeasures().containsAll(originalchart.getMeasures())
+
+		AxisColumn copiedColumn = childChart.getAxis().get(0)
+		AxisColumn originalColumn = originalchart.getAxis().get(0)
+		copiedColumn.getColumn().getId().equals(originalColumn.getColumn().getId())
+
+		MeasureColumn copiedMeasure = childChart.getMeasures().get(0)
+		MeasureColumn originalMeasure = originalchart.getMeasures().get(0)
+		copiedMeasure.getColumn().getId().equals(originalMeasure.getColumn().getId())
+
+		Filter copiedFilter = childChart.getFilters().get(0)
+		Filter originalFilter = originalchart.getFilters().get(0)
+		copiedFilter.getColumn().equals(originalFilter.getColumn())
+		copiedFilter.getValues().containsAll(originalFilter.getValues())
+	}
 
 }

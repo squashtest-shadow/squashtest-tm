@@ -20,12 +20,14 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,16 +35,17 @@ import java.util.List;
  * Created by jthebault on 29/02/2016.
  */
 @Component
-public class TreeLibraryNodeCopier {
+public class CRLNCopier {
 
-	private final String copySuffix = "-copy-";
+	@Inject
+	private NameResolver nameResolver;
 
 	public List<CustomReportLibraryNode> copyNodes(List<CustomReportLibraryNode> nodes, CustomReportLibraryNode target){
 		List<CustomReportLibraryNode> copiedNodes = new ArrayList();
 		for (CustomReportLibraryNode node : nodes) {
 			CustomReportLibraryNode copy = createFirstLayerCopy(node, target);
 			//resolve naming conflict only for first layer.
-			resolveNewName(copy,target);
+			nameResolver.resolveNewName(copy, target);
 			target.addChild(copy);
 			copiedNodes.add(copy);
 		}
@@ -72,22 +75,6 @@ public class TreeLibraryNodeCopier {
 		copy.setName(node.getName());
 		copyTreeEntity(node, copy);
 		return copy;
-	}
-
-	private void resolveNewName(CustomReportLibraryNode node, CustomReportLibraryNode target) {
-		if (target.childNameAlreadyUsed(node.getName())) {
-			resolveNameConflict(target,node,1);
-		}
-	}
-
-	private void resolveNameConflict(CustomReportLibraryNode target, CustomReportLibraryNode node, int i) {
-		String testedName  = node.getName() + copySuffix + i;
-		if (target.childNameAlreadyUsed(testedName)) {
-			resolveNameConflict(target, node,i+1);
-		} else {
-			node.setName(testedName);
-			node.getEntity().setName(testedName);
-		}
 	}
 
 	private void copyTreeEntity(CustomReportLibraryNode node, CustomReportLibraryNode copy) {
