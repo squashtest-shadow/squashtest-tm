@@ -37,6 +37,7 @@ import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
+import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
@@ -49,6 +50,7 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
 import org.squashtest.tm.service.infolist.InfoListItemManagerService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
@@ -58,9 +60,10 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
  * <li>custom fields (see {@linkplain #updateCustomFields(BoundEntity)})</li>
  * <li>issues (see {@linkplain #updateIssues(List)})</li>
  * <li>automated scripts (see {@linkplain #updateAutomationParams(TestCase)})</li>
+ * <li>requirement synchronization extenders (see {@linkplain #stripSyncExtender(Requirement)})</li>
  * </ul>
  *
- * @author mpagnon
+ * @author mpagnon, bsiri
  *
  */
 @Component
@@ -78,10 +81,11 @@ public class TreeNodeUpdater implements NodeVisitor {
 	@Inject
 	private InfoListItemManagerService infoListItemService;
 
-
 	@Inject
 	private MilestoneManagerService milestoneService;
 
+	@Inject
+	private RequirementSyncExtenderDao syncreqDao;
 
 	@Override
 	public void visit(CampaignFolder campaignFolder) {
@@ -133,6 +137,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 			updateCategory(version);
 			updateMilestones(version);
 		}
+		stripSyncExtender(requirement);
 	}
 
 	@Override
@@ -248,6 +253,14 @@ public class TreeNodeUpdater implements NodeVisitor {
 
 	private void updateMilestones(MilestoneHolder element){
 		milestoneService.migrateMilestones(element);
+	}
+	
+	private void stripSyncExtender(Requirement req){
+		if (req.isSynchronized()){
+			RequirementSyncExtender extender = req.getSyncExtender();
+			req.setSyncExtender(null);
+			syncreqDao.delete(extender);
+		}
 	}
 
 }

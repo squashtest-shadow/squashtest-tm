@@ -101,6 +101,17 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 			logEvent(event);
 		}
 	}
+	
+
+	@Override
+	public void visit(SyncRequirementCreation event) {
+		// NOOP
+	}
+
+	@Override
+	public void visit(SyncRequirementUpdate event) {
+		// NOOP
+	}
 
 	/**
 	 * @return the current hibernate session
@@ -108,4 +119,5 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	private Session currentSession() {
 		return sessionFactory.getCurrentSession();
 	}
+
 }
