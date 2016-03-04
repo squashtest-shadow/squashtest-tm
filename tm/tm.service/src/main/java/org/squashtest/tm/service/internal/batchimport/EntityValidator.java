@@ -69,11 +69,11 @@ class EntityValidator {
 
 	/**
 	 * Prerforms Test Case entity check before modifying a test case.
-	 * 
+	 *
 	 * It checks : - the path is well formed (failure) - the test case has a name (failure) - the test case name has
 	 * length between 0 and 255 - the project exists (failure) - the size of fields that are restricted in size
 	 * (warning)
-	 * 
+	 *
 	 * @param target
 	 * @param testCase
 	 * @return
@@ -97,7 +97,7 @@ class EntityValidator {
 
 	/**
 	 * Performs Test Case entity check before creating a test case.
-	 * 
+	 *
 	 * @param target
 	 * @param testCase
 	 * @return
@@ -143,14 +143,13 @@ class EntityValidator {
 
 	/**
 	 * those checks are run for a test step for any type of operations.
-	 * 
+	 *
 	 * It checks : - the path of the test case is well formed (failure) - the project exists (failure) - the format of
 	 * the custom fields (lists, dates and checkbox) (warning)
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * @param target
-	 * @param testStep
 	 * @return
 	 */
 	LogTrain basicTestStepChecks(TestStepTarget target) {
@@ -281,7 +280,7 @@ class EntityValidator {
 	 * Basics check commons to create and update requirements
 	 * @param target
 	 * @param reqVersion
-	 * @param logs 
+	 * @param logs
 	 * @return
 	 */
 	private LogTrain basicReqVersionTests(RequirementVersionTarget target,
@@ -308,9 +307,9 @@ class EntityValidator {
 		if (!target.isWellFormed()){
 			return;
 		}
-		
+
 		boolean hasTruncate = false;
-		
+
 		String path = target.getRequirement().getPath();
 		String[] names = PathUtils.splitPath(path);
 		for (int i = 1; i < names.length; i++) {//begin to 1 as first split is project name
@@ -320,13 +319,13 @@ class EntityValidator {
 				hasTruncate = true;
 			}
 		}
-		
+
 		if (hasTruncate) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
 					.withMessage(Messages.ERROR_MAX_SIZE, REQ_PATH.header).build());
 			rebuildPathAfterTrucate(target, names);
 		}
-		
+
 	}
 
 	private void rebuildPathAfterTrucate(RequirementVersionTarget target,
@@ -366,10 +365,20 @@ class EntityValidator {
 
 	private void checkMalformedPath(RequirementVersionTarget target,
 			LogTrain logs) {
-		if (!target.isWellFormed()) {
+		if (!target.isWellFormed()|| pathHasEmptyParts(target.getPath())) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
 					.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
 		}
+	}
+
+	private boolean pathHasEmptyParts(String path) {
+		String[] splits = PathUtils.splitPath(path);
+		for (String split : splits) {
+			if (split.length()==0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void logMustExistAndBeValidCalledTest(TestStepTarget target, ImportMode mode, LogTrain logs, String message) {
@@ -497,7 +506,7 @@ class EntityValidator {
 	 * This method will check that, in case a nature and/or a type were supplied,
 	 * this element is consistent with the set of natures/types available in the
 	 * given project.
-	 * 
+	 *
 	 */
 	private LogTrain checkNatureAndTypeAndFixIfNeeded(TestCaseTarget target, TestCase testCase){
 

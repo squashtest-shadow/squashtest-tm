@@ -40,8 +40,8 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
  * This is an optional dependency to a Requirement. A Requirement having this extender
  * will be treated as synchronized. The extension holds additional informations
  * regarding the source of this synchronized requirement.
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -50,10 +50,10 @@ public class RequirementSyncExtender {
 
 	@Id
 	@Column(name = "REQ_SYNC_Id")
-	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requiremment_sync_extender_req_sync_id_seq")
+	@GeneratedValue(strategy = GenerationType.AUTO, generator = "requirement_sync_extender_req_sync_id_seq")
 	@SequenceGenerator(
-			name = "requiremment_sync_extender_req_sync_id_seq",
-			sequenceName = "requiremment_sync_extender_req_sync_id_seq"
+			name = "requirement_sync_extender_req_sync_id_seq",
+			sequenceName = "requirement_sync_extender_req_sync_id_seq"
 			)
 	private Long id;
 
@@ -70,8 +70,8 @@ public class RequirementSyncExtender {
 
 	@Column
 	private String remoteProjectId;
-	
-	@Column 
+
+	@Column
 	private String remoteFilterName;
 
 	@Column(name = "REMOTE_REQ_URL")
@@ -85,7 +85,7 @@ public class RequirementSyncExtender {
 	/**
 	 * synchronize the core attributes of the synchronized Requirement with the
 	 * attributes of the arguments. Custom Fields have to be treated separately.
-	 * 
+	 *
 	 * @param v
 	 */
 	public void synchronize(RequirementVersion v){
@@ -120,7 +120,7 @@ public class RequirementSyncExtender {
 	public void setRemoteProjectId(String remoteProjectId) {
 		this.remoteProjectId = remoteProjectId;
 	}
-	
+
 	public String getRemoteFilterName() {
 		return remoteFilterName;
 	}
