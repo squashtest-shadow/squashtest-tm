@@ -183,6 +183,7 @@ define([ 'jquery', 'underscore', 'squash.translator', "jquery.squash.oneshotdial
 					}
 				}
 				
+				
 				oneshot.show('Info', msg)
 				.done(function() {
 					defer.resolve();

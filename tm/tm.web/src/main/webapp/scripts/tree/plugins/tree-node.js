@@ -328,7 +328,10 @@ define(['jquery'], function($){
 			return (children.length) ? children.treeNode() : $();
 		};
 
-
+		this.getFlatSubtree = function(){
+			var subtree= this.find('li');
+			return (subtree.length) ? subtree.treeNode() : $();
+		}
 
 		this.getAncestors = function() {
 			return this.parents('li', this.tree).add(this).treeNode();
@@ -393,6 +396,8 @@ define(['jquery'], function($){
 		this.moveTo = function(target){
 
 			if (this.length===0) {return;}
+			
+			var oldParents = this.all('getParent');
 
 			// remove me from my former parent
 			this.removeMe();
@@ -411,8 +416,27 @@ define(['jquery'], function($){
 					target.append(ul);
 				}
 				this.appendTo(ul);
+				this.afterMove(target, oldParents);
 			}
 
+		};
+		
+		
+		/*
+		 * post processing after movements. For now, only synchronized requirements needs that.
+		 */ 
+		this.afterMove = function(newParent, oldParents){			
+			var requirements = this.getFlatSubtree().add(this).filter(':requirement[synchronized="true"]');
+			
+			var parents = $(newParent).add(oldParents);
+			if (parents.length === 0){
+				// this is not supposed to happen, but meh.
+				return; 
+			}
+			parents = parents.treeNode();
+			if (! parents.areSameLibs()){
+				requirements.removeAttr('synchronized');
+			}
 		};
 
 		this.select = function() {
@@ -430,7 +454,7 @@ define(['jquery'], function($){
 			});
 		};
 
-		// *********** tests
+		// *********** tests **********************
 
 		this.match = function(matchObject) {
 			for ( var ppt in matchObject) {

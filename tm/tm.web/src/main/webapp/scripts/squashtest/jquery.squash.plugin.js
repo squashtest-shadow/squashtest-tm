@@ -85,6 +85,9 @@ var squashtm = squashtm || {};
 		},
 		'milestone-editable' : function(a){
 			return $(a).attr('milestone-editable') === 'true';
+		},
+		'synchronized' : function(a){
+			return $(a).attr('synchronized') === 'true';
 		}
 	});
 
