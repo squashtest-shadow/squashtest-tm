@@ -200,6 +200,8 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 			srcProjects = _.unique($(moveObject.op).treeNode().all('getProjectId')),
 			isCrossProject = false;
 		
+		var moved = moveObject.o;
+		
 
 		// check if cross project
 		for ( var i = 0; i < srcProjects.length; i++) {
@@ -240,6 +242,16 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 					msg = msg.replace('</ul>', addendum + '</ul>');
 				}
 			}
+			
+			// check if synchronized requirements might lose synchronization
+			// note : if there are subnodes that are synchronized requirements 
+			// and not yet loaded, this selector will not find them. 
+			var syncreqs = moved.treeNode().getFlatSubtree().add(moved).is(':requirement:synchronized');
+			if (syncreqs === true){
+				addendum = translator.get('message.warnCopyToDifferentLibrary.syncreqlost');
+				msg = msg.replace('</ul>', addendum + '</ul>');
+			}
+			
 			oneshot.show('Info', msg)
 			.done(function() {
 				defer.resolve();
@@ -308,6 +320,9 @@ define(['jquery', 'underscore', 'workspace.tree-node-copier', 'workspace.permiss
 			type : 'PUT',
 			url : url,
 			dataType : 'json'
+		})
+		.success(function(){
+			nodes.treeNode().afterMove(target, nodeData.op);
 		})
 		.fail(function(){
 			$.jstree.rollback(data.rlbk);
