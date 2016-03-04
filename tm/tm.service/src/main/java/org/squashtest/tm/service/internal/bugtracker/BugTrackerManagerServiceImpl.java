@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.bugtracker;
 
 import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 import java.util.Collection;
 import java.util.List;
@@ -30,7 +30,6 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
-import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -81,7 +80,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	}
 
 	@Override
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public List<BugTracker> findAll() {
 		return bugTrackerDao.findAll();
 
