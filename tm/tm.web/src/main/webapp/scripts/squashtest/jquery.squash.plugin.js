@@ -77,9 +77,6 @@ var squashtm = squashtm || {};
 		manageable : function(a){
 			return $(a).attr('manageable') === 'true';
 		},
-		synchronized : function(a){
-			return $(a).attr('synchronized') === 'true';
-		},
 		'milestone-creatable' : function(a){
 			return $(a).attr('milestone-creatable-deletable') === 'true';
 		},

@@ -331,7 +331,7 @@ define(['jquery'], function($){
 		this.getFlatSubtree = function(){
 			var subtree= this.find('li');
 			return (subtree.length) ? subtree.treeNode() : $();
-		}
+		};
 
 		this.getAncestors = function() {
 			return this.parents('li', this.tree).add(this).treeNode();
