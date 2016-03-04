@@ -147,7 +147,6 @@ class EntityValidator {
 	 *
 	 *
 	 * @param target
-	 * @param testStep
 	 * @return
 	 */
 	LogTrain basicTestStepChecks(TestStepTarget target) {
@@ -363,10 +362,20 @@ class EntityValidator {
 
 	private void checkMalformedPath(RequirementVersionTarget target,
 			LogTrain logs) {
-		if (!target.isWellFormed()) {
+		if (!target.isWellFormed()|| pathHasEmptyParts(target.getPath())) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
 					.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
 		}
+	}
+
+	private boolean pathHasEmptyParts(String path) {
+		String[] splits = PathUtils.splitPath(path);
+		for (String split : splits) {
+			if (split.length()==0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void logMustExistAndBeValidCalledTest(TestStepTarget target, ImportMode mode, LogTrain logs, String message) {
