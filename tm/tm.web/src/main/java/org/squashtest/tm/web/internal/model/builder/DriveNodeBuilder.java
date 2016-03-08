@@ -57,8 +57,11 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 	protected JsTreeNode doBuild(JsTreeNode node, Library<LN> model) {
 
 		boolean manageable = getPermissionEvaluationService().hasRoleOrPermissionOnObject("ROLE_ADMIN", Permission.MANAGEMENT.name(), model);
+		boolean importable = getPermissionEvaluationService().hasRoleOrPermissionOnObject("ROLE_ADMIN", Permission.IMPORT.name(), model);
+
 
 		node.addAttr("manageable", Boolean.toString(manageable));
+		node.addAttr("importable", Boolean.toString(importable));
 		node.addAttr("rel", "drive");
 		node.addAttr("resId", String.valueOf(model.getId()));
 		node.addAttr("resType", buildResourceType(model.getClassSimpleName()));

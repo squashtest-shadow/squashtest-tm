@@ -237,6 +237,9 @@ define(['jquery'], function($){
 				DELETE : "deletable",
 				EXECUTE : "executable",
 				EXPORT : "exportable",
+        //Issue 6138 for jirareq
+        //We now need to have the import right directly in the library node
+        IMPORT : "importable",
 				MANAGEMENT : "manageable"
 			};
 
@@ -396,7 +399,7 @@ define(['jquery'], function($){
 		this.moveTo = function(target){
 
 			if (this.length===0) {return;}
-			
+
 			var oldParents = this.all('getParent');
 
 			// remove me from my former parent
@@ -420,18 +423,18 @@ define(['jquery'], function($){
 			}
 
 		};
-		
-		
+
+
 		/*
 		 * post processing after movements. For now, only synchronized requirements needs that.
-		 */ 
-		this.afterMove = function(newParent, oldParents){			
+		 */
+		this.afterMove = function(newParent, oldParents){
 			var requirements = this.getFlatSubtree().add(this).filter(':requirement[synchronized="true"]');
-			
+
 			var parents = $(newParent).add(oldParents);
 			if (parents.length === 0){
 				// this is not supposed to happen, but meh.
-				return; 
+				return;
 			}
 			parents = parents.treeNode();
 			if (! parents.areSameLibs()){
