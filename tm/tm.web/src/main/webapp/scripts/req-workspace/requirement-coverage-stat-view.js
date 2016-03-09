@@ -102,11 +102,9 @@ define(["jquery", "backbone", "handlebars", "underscore", "workspace.routing", "
             workspace: "campaign-it"
         };
         //[Issue 6039] giving focus back to workspace tree after initialize the tree picker
-        //Has to keep workspace tree reference as initialize overide global var window.squashtm.tree
-       /* var workspaceTree = window.squashtm.tree;
-        tree.initLinkableTree(treeConfig);
-        $.jstree._reference(workspaceTree).set_focus();*/
+        //Has to keep workspace tree reference before init, and regive focus back to the first tree after instanciation of the second tree
         var worksptree= tree.get();
+        tree.initLinkableTree(treeConfig);
         if (!! worksptree){
         	worksptree.jstree('set_focus');
         }
