@@ -451,4 +451,76 @@ class TestCaseModificationServiceImplIT extends DbunitServiceSpecification {
 		[-40L]     		| [-30L,-20L]
 		[-20L, -40L]    | [-20L, -30L]
 	}
+
+	def "should paste a bunch of steps to end of list"(){
+
+		given :
+		def step1 = new ActionTestStep("first step", "first result")
+		def step2 = new ActionTestStep("second step", "second result")
+		def step3 = new ActionTestStep("third step", "third result")
+		def step4 = new ActionTestStep("fourth step", "fourth result")
+		def step5 = new ActionTestStep("fifth step", "fifth result")
+		def step6 = new ActionTestStep("sixth step", "sixth result")
+		def steps = [step1, step3, step2, step4, step6, step5]
+
+		and :
+		service.addActionTestStep(testCaseId, step1)
+		service.addActionTestStep(testCaseId, step3)
+		service.addActionTestStep(testCaseId, step2)
+		service.addActionTestStep(testCaseId, step4)
+		service.addActionTestStep(testCaseId, step6)
+		service.addActionTestStep(testCaseId, step5)
+		session.flush();
+		session.clear();
+
+		when :
+
+
+		service.pasteCopiedTestStepToLastIndex(testCaseId, steps.collect{it.id})
+		session.flush()
+		session.clear()
+		TestCase result = findEntity(TestCase.class,testCaseId)
+
+		then :
+		result.getSteps().size() == 12;
+		def expectedActionList = steps.collect({it.getAction()})
+		expectedActionList.addAll(expectedActionList)
+		def stepsResults = result.getSteps().collect({it.getAction()})
+		stepsResults.asList() == expectedActionList.asList()
+
+	}
+
+	def "should paste a bunch of steps to position 3"(){
+
+		given :
+		def step1 = new ActionTestStep("first step", "first result")
+		def step2 = new ActionTestStep("second step", "second result")
+		def step3 = new ActionTestStep("third step", "third result")
+		def step4 = new ActionTestStep("fourth step", "fourth result")
+		def step5 = new ActionTestStep("fifth step", "fifth result")
+		def step6 = new ActionTestStep("sixth step", "sixth result")
+
+
+		and :
+		service.addActionTestStep(testCaseId, step1)
+		service.addActionTestStep(testCaseId, step3)
+		service.addActionTestStep(testCaseId, step2)
+		service.addActionTestStep(testCaseId, step4)
+		service.addActionTestStep(testCaseId, step6)
+		service.addActionTestStep(testCaseId, step5)
+
+
+		def steps = [step1, step3, step2, step4, step6, step5]
+
+		when :
+		service.pasteCopiedTestSteps(testCaseId, step2.getId(),steps.collect{it.getId()})
+		TestCase result = findEntity(TestCase.class,testCaseId)
+
+		then :
+		result.getSteps().size() == 12;
+		def expectedActionList = [step1, step3, step2, step1, step3, step2, step4, step6, step5, step4, step6, step5].collect {it.getAction()}
+		def stepsResults = result.getSteps().collect({it.getAction()})
+		stepsResults == expectedActionList
+
+	}
 }

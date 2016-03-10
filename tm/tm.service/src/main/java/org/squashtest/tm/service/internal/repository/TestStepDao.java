@@ -30,26 +30,34 @@ public interface TestStepDao extends EntityDao<TestStep>{
 	void removeById(long testStepId);
 
 	List<TestStep> findListById(List<Long> testStepIds);
-	
+
 	/**
-	 * returns the position (ie index) of a step within the 
-	 * list of step of its test case 
-	 * 
+	 * returns the position (ie index) of a step within the
+	 * list of step of its test case
+	 *
 	 * @param testStepId the id of the step
 	 * @return
 	 */
 	int findPositionOfStep(Long testStepId);
 
 	ActionTestStep findActionTestStepById(long testStepId);
-	
+
 	/**
 	 * Will check if the string appears at least once in at least one step of the test case matching the given id.
-	 * 
+	 *
 	 * @param stringToFind : the string to look for in the step
 	 * @param testCaseId : the id of the concerned TestCase
 	 * @return true if the string is found in one step of the concerned test case
 	 */
 	boolean stringIsFoundInStepsOfTestCase(String stringToFind, long testCaseId);
-	
+
+	/**
+	 * Find all {@link TestStep}, ordered by their index in the test case. This method MUST be used for steps that belong to the
+	 * the same test case. Typical use case : select the steps in good order for a copy.
+	 * @param testStepIds
+	 * @return
+     */
+	List<TestStep> findByIdOrderedByIndex(List<Long> testStepIds);
+
 
 }
