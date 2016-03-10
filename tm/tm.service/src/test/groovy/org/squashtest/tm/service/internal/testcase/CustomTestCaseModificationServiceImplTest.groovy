@@ -130,7 +130,8 @@ class CustomTestCaseModificationServiceImplTest extends Specification {
 		testCase.addStep step2
 		testCaseDao.findById(0) >> testCase
 		testStepDao.findAllByIds([1]) >> [step2]
-		testStepDao.findPositionOfStep(0) >> 1;
+		testStepDao.findPositionOfStep(0) >> 1
+		testStepDao.findByIdOrderedByIndex(_) >> [step1, step2]
 
 
 		when:
