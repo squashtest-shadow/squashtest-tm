@@ -23,10 +23,15 @@ define([], function() {
    * Check if a path is conform to the following pattern :
    * name1/name2/name3...
    * no "/" are allowed as first or last character
+   * "//" are rejecteds
+   * empty string is correct as this method is used for partial path.
    * @param  String path [description]
    * @return Boolean
    */
 	function validatePartialPath(path){
+    if (path.length===0) {
+      return true;
+    }
     var regEx = new RegExp ("^(?!/)(.+?[^\\]/)+.*?(\/|[^\/])$");
     if (!regEx.test(path)) {
       return false;

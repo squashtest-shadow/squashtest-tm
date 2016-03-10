@@ -22,13 +22,7 @@ package org.squashtest.tm.service.internal.testcase;
 
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -93,7 +87,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service("CustomTestCaseModificationService")
 @Transactional
@@ -179,13 +173,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		parameterModificationService.createParamsForStep(newTestStep.getId());
 		return newTestStep;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType=TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep, int index) {
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
-		
+
 		testStepDao.persist(newTestStep);
 		// will throw a nasty NullPointerException if the parent test case can't
 		// be found
@@ -206,13 +200,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		parameterModificationService.createParamsForStep(step.getId());
 		return step;
 	}
-	
+
 	@Override
 	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType=TestCase.class)
 	public ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep,
 			Map<Long, RawValue> customFieldValues, int index) {
-		
+
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep,index);
 		initCustomFieldValues((ActionTestStep) step, customFieldValues);
 		parameterModificationService.createParamsForStep(step.getId());
@@ -282,7 +276,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	/*
 	 * given a TestCase, will search for a TestStep in the steps list (identified with its testStepId)
-	 * 
+	 *
 	 * returns : the index if found, -1 if not found or if the provided TestCase is null
 	 */
 	@Transactional(readOnly = true)
@@ -334,14 +328,14 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
 		return pasteTestStepAtPosition(testCaseId, copiedTestStepIds, position);
 	}
-	
+
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId) {
 		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), null);
 	}
-	
+
 	@Override
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=TestCase.class)
@@ -350,30 +344,39 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 
-	// FIXME : check for potential cycle with call steps. For now it's being checked 
+	// FIXME : check for potential cycle with call steps. For now it's being checked
 	// on the controller but it is obviously less safe.
+	// FIXME : Refactor the method for null and not null position... it shouldn't be in the same method.
 	/**
-	 * 
+	 *
 	 * @param testCaseId
-	 * @param copiedTestStepId
+	 * @param copiedStepIds
 	 * @param position
 	 * @return true if copied step is instance of CallTestStep
 	 */
 	private boolean pasteTestStepAtPosition(long testCaseId, List<Long> copiedStepIds, Integer position) {
-		
+
 		boolean hasCallstep = false;
-		
-		List<TestStep> originals = testStepDao.findAllByIds(copiedStepIds);
-		
+
+		List<TestStep> originals = testStepDao.findByIdOrderedByIndex(copiedStepIds);
+
+		// Issue 6146
+		// If position is null we add at the end of list, so the index is correct
+		// If position is not null we add several time at the same index. The list push
+		// the content to the right, so we need to invert the order...
+		if (position!=null) {
+			Collections.reverse(originals);
+		}
+
 		for (TestStep original : originals){
-			
+
 			// first, create the step
 			TestStep copyStep = original.createCopy();
 			testStepDao.persist(copyStep);
-			
+
 			// attach it to a test case
 			TestCase testCase = testCaseDao.findById(testCaseId);
-			
+
 			if (position != null) {
 				try {
 					testCase.addStep(position, copyStep);
@@ -383,22 +386,22 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			} else {
 				testCase.addStep(copyStep);
 			}
-	
+
 			// now special treatment if the steps are from another source
 			if (!testCase.getSteps().contains(original)) {
 				updateImportanceIfCallStep(testCase, copyStep);
 				parameterModificationService.createParamsForStep(copyStep);
 			}
-	
+
 			copyStep.accept(new TestStepCustomFieldCopier(original));
-			
+
 			// last, update that weird variable
 			hasCallstep = hasCallstep || (copyStep instanceof CallTestStep);
 		}
-		
+
 		return hasCallstep;
 	}
-	
+
 	private void updateImportanceIfCallStep(TestCase parentTestCase, TestStep copyStep) {
 		if (copyStep instanceof CallTestStep) {
 			TestCase called = ((CallTestStep) copyStep).getCalledTestCase();
@@ -497,7 +500,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 * initialCustomFieldValues maps the id of a CustomField to the value of the corresponding CustomFieldValues for
 	 * that BoundEntity. read it again until it makes sense. it assumes that the CustomFieldValues instances already
 	 * exists.
-	 * 
+	 *
 	 * @param entity
 	 * @param initialCustomFieldValues
 	 */
@@ -578,7 +581,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, Milestone activeMilestone){
 
 		List<Long> milestoneIds =  new ArrayList<Long>();
-		
+
 		if (activeMilestone  != null){
 			milestoneIds.add(activeMilestone.getId());
 		}
@@ -638,9 +641,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	}
 
 	/* ********************************************************************************
-	 * 
+	 *
 	 * Milestones section
-	 * 
+	 *
 	 * *******************************************************************************
 	 */
 
@@ -686,10 +689,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		filterLockedAndPlannedStatus(milestones);
 		return milestones;
 	}
-	
-	
+
+
 	private void filterLockedAndPlannedStatus(Collection<Milestone> milestones){
-		CollectionUtils.filter(milestones, new Predicate() {		
+		CollectionUtils.filter(milestones, new Predicate() {
 			@Override
 			public boolean evaluate(Object milestone) {
 
@@ -698,8 +701,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 		});
 	}
-	
-	
+
+
 	@Override
 	public Collection<Long> findBindedMilestonesIdForMassModif(List<Long> testCaseIds) {
 
@@ -716,19 +719,19 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			}
 		}
 		filterLockedAndPlannedStatus(milestones);
-	
+
 		return 	CollectionUtils.collect(milestones, new Transformer() {
-			
+
 			@Override
 			public Object transform(Object milestone) {
-				
+
 				return ((Milestone) milestone).getId();
 			}
 		});
 	}
 
-	
-	
+
+
 	@Override
 	public boolean haveSamePerimeter(List<Long> testCaseIds) {
 		if (testCaseIds.size() != 1) {
@@ -748,9 +751,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return true;
 	}
 
-	
-	/* *******************************************************	
-		private stuffs and shit etc	
+
+	/* *******************************************************
+		private stuffs and shit etc
 	**********************************************************/
 
 	// returns a tuple-2 with first element : project ID, second element : test name
@@ -783,7 +786,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		return new Couple<Long, String>(tap.getId(), testName);
 	}
 
-	
+
 	private static final class HasSuchLabel implements Predicate {
 		private String label;
 
@@ -797,9 +800,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			return (tap.getLabel().equals(label));
 		}
 	}
-	
-	
-	
+
+
+
 	private final class TestStepCustomFieldCopier implements TestStepVisitor {
 		TestStep original;
 
@@ -825,7 +828,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	}
 
-	
+
 
 
 }

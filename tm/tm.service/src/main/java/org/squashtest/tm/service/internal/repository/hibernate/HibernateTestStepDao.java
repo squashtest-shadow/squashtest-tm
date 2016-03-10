@@ -36,7 +36,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao;
 
 @Repository
 public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implements TestStepDao {
-	
+
 	/*
 	 * Because of the -yet- unidirectional mapping : TestCase -- OneToMany --> TestStep, we can't remove the TestStep
 	 * directly because it would violate the foreign key constraint.
@@ -85,24 +85,24 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 		}
 	}
 
-	
+
 	@Override
 	public List<TestStep> findListById(final List<Long> testStepIds){
 		SetQueryParametersCallback callback = new TestStepIdsQueryParametersCallback(testStepIds);
-		
+
 		return executeListNamedQuery("testStep.findOrderedListById", callback);
-		
+
 	}
-	
+
 	@Override
 	public int findPositionOfStep(Long testStepId) {
 		Query query = currentSession().getNamedQuery("testStep.findPositionOfStep");
 		query.setParameter("stepId", testStepId, LongType.INSTANCE);
 		return (Integer)query.uniqueResult();
 	}
-	
+
 	private static final class TestStepIdsQueryParametersCallback implements SetQueryParametersCallback  {
-		
+
 		private List<Long> testStepIds;
 		private TestStepIdsQueryParametersCallback(List<Long> testStepIds) {
 			this.testStepIds = testStepIds;
@@ -110,9 +110,9 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 		@Override
 		public void setQueryParameters(Query query) {
 			query.setParameterList("testStepIds", testStepIds, LongType.INSTANCE);
-			
+
 		}
-		
+
 	}
 
 	@Override
@@ -131,5 +131,12 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 		return (Long) query.uniqueResult() > 0;
 	}
 
-	
+	@Override
+	public List<TestStep> findByIdOrderedByIndex(List<Long> testStepIds) {
+		Query query = currentSession().getNamedQuery("testStep.findByIdOrderedByIndex");
+		query.setParameterList("testStepIds", testStepIds);
+		return  query.list();
+	}
+
+
 }
