@@ -184,15 +184,25 @@
       <plugin>
         <groupId>org.codehaus.gmaven</groupId>
         <artifactId>gmaven-plugin</artifactId>
-        <configuration />
         <executions>
           <execution>
+            <id>verify-postgre-changelogs</id>
             <goals>
               <goal>execute</goal>
             </goals>
             <phase>integration-test</phase>
             <configuration>
               <source>${pom.basedir}/src/it/script/VerifyPostgreChangelogs.groovy</source>
+            </configuration>
+          </execution>
+          <execution>
+            <id>verify-upper-case</id>
+            <goals>
+              <goal>execute</goal>
+            </goals>
+            <phase>integration-test</phase>
+            <configuration>
+              <source>${pom.basedir}/src/it/script/VerifyUpperCaseInScript.groovy</source>
             </configuration>
           </execution>
         </executions>
