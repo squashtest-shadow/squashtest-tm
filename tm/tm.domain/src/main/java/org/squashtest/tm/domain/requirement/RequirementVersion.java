@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.requirement;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +40,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -146,6 +148,9 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
 	private Set<Milestone> milestones = new HashSet<Milestone>();
+
+	@Transient
+	private PropertiesSetter propertiesSetter = new PropertiesSetter();
 
 	public RequirementVersion() {
 		super();
@@ -565,4 +570,68 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		}
 		return allowed;
 	};
+
+	public PropertiesSetter getPropertySetter()
+
+	{
+		return propertiesSetter;
+	}
+
+
+	public class PropertiesSetter {
+
+
+
+		public void setName(String name) {
+			RequirementVersion.super.setName(name);
+		}
+
+		public void setDescription(String description) {
+			RequirementVersion.super.setDescription(description);
+		}
+
+		public void setReference(String reference) {
+			RequirementVersion.this.reference = reference;
+		}
+
+		public void setCriticality(RequirementCriticality criticality) {
+			RequirementVersion.this.criticality = criticality;
+		}
+
+		public void setCategory(InfoListItem category) {
+			RequirementVersion.this.category = category;
+		}
+
+		public void setStatus(RequirementStatus status) {
+			RequirementVersion.this.status = status;
+		}
+
+		public void setVersionNumber(int versionNumber) {
+			RequirementVersion.this.versionNumber = versionNumber;
+		}
+
+		public void setCreatedBy(String createdBy) {
+			AuditableMixin audit = (AuditableMixin) RequirementVersion.this;
+			audit.setCreatedBy(createdBy);
+		}
+
+		public void setCreatedOn(Date createdOn) {
+			AuditableMixin audit = (AuditableMixin) RequirementVersion.this;
+			audit.setCreatedOn(createdOn);
+
+		}
+
+		public void setLastModifiedBy(String lastModifiedBy) {
+			AuditableMixin audit = (AuditableMixin) RequirementVersion.this;
+			audit.setLastModifiedBy(lastModifiedBy);
+
+		}
+
+		public void setLastModifiedOn(Date lastModifiedOn) {
+			AuditableMixin audit = (AuditableMixin) RequirementVersion.this;
+			audit.setLastModifiedOn(lastModifiedOn);
+
+		}
+	}
+
 }
