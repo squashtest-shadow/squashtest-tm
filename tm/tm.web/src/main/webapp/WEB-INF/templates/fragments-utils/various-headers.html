@@ -23,7 +23,6 @@
 <script th:fragment="env-setup" th:remove="tag">
 /*<![CDATA[*/
 	var require = require || {};
-	require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";       
 	require.baseUrl = /*[[@{/scripts}]]*/;     
            
 	var squashtm = squashtm || {};
