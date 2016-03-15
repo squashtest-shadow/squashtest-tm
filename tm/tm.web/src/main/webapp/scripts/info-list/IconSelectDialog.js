@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", "jquery.squash.confirmdialog" ], function($, Backbone, Handlebars, _, routing) {
+define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", "jquery.squash.formdialog" ], function($, Backbone, Handlebars, _, routing) {
 	"use strict";
 	var ICON_PREFIX = "sq-icon-";
 
@@ -32,17 +32,17 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 			}
 
 			this.initIcon();
-			this.$el.confirmDialog({
+			this.$el.formDialog({
 				autoOpen : true,
-				width : 800,
+				width : 800
 			});
 		},
 
 		events : {
 			"click .sq-icon" : "selectIcon",
-			"confirmdialogcancel" : "cancel",
-			"confirmdialogconfirm" : "confirm",
-
+			"formdialogcancel" : "cancel",
+			"formdialogconfirm" : "confirm",
+			"formdialogclose" : "close"
 		},
 
 		initIcon : function(){
@@ -78,10 +78,14 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 			}
 		},
 		
+		
 		open : function(){
-			this.$el.confirmDialog("open");
+			this.$el.formDialog("open");
 		},
 
+		close : function(event){
+			this.cancel(event);			
+		},
 
 		cancel : function(event) {
 			this.cleanup();
@@ -127,7 +131,7 @@ define([ "jquery", "backbone", "handlebars", "underscore", "workspace.routing", 
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			// if we destroy twice, jqui blows up
-			this.$el.hasClass("ui-dialog-content") && this.$el.confirmDialog("destroy");
+			this.$el.hasClass("ui-dialog-content") && this.$el.formDialog("destroy");
 		},
 
 		remove : function() {
