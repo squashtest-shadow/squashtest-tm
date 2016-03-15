@@ -42,12 +42,12 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentIn
 /**
  * This class is an abstract Spring bean factory for "dynamic components". A "dynamic component" is a Spring managed
  * singleton (@Component) defined by its interface and which behaviour is dynamically determined by this interface.
- * 
+ *
  * For example, a "dynamic manager" would define a <code>void changeXxx(entityId, newValue)</code>. This method would
  * fetch an entity from a predetermined type and change its <code>xxx</code> property to <code>newValue</code>.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <COMPONENT>
  */
 public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements FactoryBean<COMPONENT>,
@@ -172,13 +172,14 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 			return false;
 		}
 
-		if (lookupCustomImplementation && cannotDetermineCustomComponentType()) {
+		// lookupCustomImplementation is true
+		if (cannotDetermineCustomComponentType()) {
 			LOGGER.warn(
 					"No custom implementation type could be found in Dynamic component {}, will not apply custom implementation lookup",
 					componentType.getSimpleName());
 			return false;
 		}
-		
+
 		return true;
 	}
 

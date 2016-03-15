@@ -1,36 +1,24 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -45,19 +33,14 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.DatasetModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.ParameterModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestCaseModel;
-import org.squashtest.tm.service.internal.batchexport.ExportModel.TestStepModel;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.DatasetSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.ParameterSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
+import org.squashtest.tm.service.internal.batchexport.ExportModel.*;
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.*;
+
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * @author bsiri
@@ -73,7 +56,7 @@ class ExcelExporter {
 
 	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
 	// that map will remember which column index is
-	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
+	private Map<String, Integer> cufColumnsByCode = new HashMap<>();
 
 	protected Workbook workbook;
 
@@ -107,42 +90,42 @@ class ExcelExporter {
 		ParameterSheetColumn.TC_PARAM_DESCRIPTION);
 
 	private static final List<StepSheetColumn> ST_COLUMNS = Arrays.asList(StepSheetColumn.TC_OWNER_PATH,
-			StepSheetColumn.TC_OWNER_ID,
-			StepSheetColumn.TC_STEP_ID,
-			StepSheetColumn.TC_STEP_NUM,
-			StepSheetColumn.TC_STEP_IS_CALL_STEP,
-			StepSheetColumn.TC_STEP_CALL_DATASET,
-			StepSheetColumn.TC_STEP_ACTION,
-			StepSheetColumn.TC_STEP_EXPECTED_RESULT,
-			StepSheetColumn.TC_STEP_NB_REQ,
-			StepSheetColumn.TC_STEP_NB_ATTACHMENT);
+		StepSheetColumn.TC_OWNER_ID,
+		StepSheetColumn.TC_STEP_ID,
+		StepSheetColumn.TC_STEP_NUM,
+		StepSheetColumn.TC_STEP_IS_CALL_STEP,
+		StepSheetColumn.TC_STEP_CALL_DATASET,
+		StepSheetColumn.TC_STEP_ACTION,
+		StepSheetColumn.TC_STEP_EXPECTED_RESULT,
+		StepSheetColumn.TC_STEP_NB_REQ,
+		StepSheetColumn.TC_STEP_NB_ATTACHMENT);
 
 
-	private static final TestCaseSheetColumn[] BASIC_TC_COLUMNS = { TestCaseSheetColumn.PROJECT_ID,
-	TestCaseSheetColumn.PROJECT_NAME,
-	TestCaseSheetColumn.TC_PATH,
-	TestCaseSheetColumn.TC_NUM,
-	TestCaseSheetColumn.TC_ID,
-	TestCaseSheetColumn.TC_REFERENCE,
-    TestCaseSheetColumn.TC_NAME,
-	TestCaseSheetColumn.TC_WEIGHT_AUTO,
-	TestCaseSheetColumn.TC_WEIGHT,
-	TestCaseSheetColumn.TC_NATURE,
-	TestCaseSheetColumn.TC_TYPE,
-	TestCaseSheetColumn.TC_STATUS,
-	TestCaseSheetColumn.TC_DESCRIPTION,
-	TestCaseSheetColumn.TC_PRE_REQUISITE,
-	TestCaseSheetColumn.TC_NB_REQ,
-	TestCaseSheetColumn.TC_NB_CALLED_BY,
-	TestCaseSheetColumn.TC_NB_ATTACHMENT,
-	TestCaseSheetColumn.TC_CREATED_ON,
-	TestCaseSheetColumn.TC_CREATED_BY,
-	TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
-	TestCaseSheetColumn.TC_LAST_MODIFIED_BY};
+	private static final TestCaseSheetColumn[] BASIC_TC_COLUMNS = {TestCaseSheetColumn.PROJECT_ID,
+		TestCaseSheetColumn.PROJECT_NAME,
+		TestCaseSheetColumn.TC_PATH,
+		TestCaseSheetColumn.TC_NUM,
+		TestCaseSheetColumn.TC_ID,
+		TestCaseSheetColumn.TC_REFERENCE,
+		TestCaseSheetColumn.TC_NAME,
+		TestCaseSheetColumn.TC_WEIGHT_AUTO,
+		TestCaseSheetColumn.TC_WEIGHT,
+		TestCaseSheetColumn.TC_NATURE,
+		TestCaseSheetColumn.TC_TYPE,
+		TestCaseSheetColumn.TC_STATUS,
+		TestCaseSheetColumn.TC_DESCRIPTION,
+		TestCaseSheetColumn.TC_PRE_REQUISITE,
+		TestCaseSheetColumn.TC_NB_REQ,
+		TestCaseSheetColumn.TC_NB_CALLED_BY,
+		TestCaseSheetColumn.TC_NB_ATTACHMENT,
+		TestCaseSheetColumn.TC_CREATED_ON,
+		TestCaseSheetColumn.TC_CREATED_BY,
+		TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
+		TestCaseSheetColumn.TC_LAST_MODIFIED_BY};
 
-	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<TestCaseSheetColumn>(Arrays.asList((TestCaseSheetColumn[])ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
+	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList((TestCaseSheetColumn[]) ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
 
-	private static final List<TestCaseSheetColumn> TC_COLUMNS =  Arrays.asList(BASIC_TC_COLUMNS);
+	private static final List<TestCaseSheetColumn> TC_COLUMNS = Arrays.asList(BASIC_TC_COLUMNS);
 
 
 	@Inject
@@ -155,9 +138,9 @@ class ExcelExporter {
 
 	}
 
-	void setMessageSource(MessageSource messageSource){
+	void setMessageSource(MessageSource messageSource) {
 		this.messageSource = messageSource;
-		errorCellTooLargeMessage = this.messageSource.getMessage("test-case.export.errors.celltoolarge",null, LocaleContextHolder.getLocale());
+		errorCellTooLargeMessage = this.messageSource.getMessage("test-case.export.errors.celltoolarge", null, LocaleContextHolder.getLocale());
 	}
 
 	public void appendToWorkbook(ExportModel model, boolean keepRteFormat) {
@@ -227,7 +210,7 @@ class ExcelExporter {
 
 			r = tcSheet.createRow(rIdx);
 
-			try{
+			try {
 				r.createCell(cIdx++).setCellValue(tcm.getProjectId());
 				r.createCell(cIdx++).setCellValue(tcm.getProjectName());
 				r.createCell(cIdx++).setCellValue(tcm.getPath());
@@ -254,10 +237,9 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tcm.getLastModifiedBy());
 
 				appendCustomFields(r, "TC_CUF_", tcm.getCufs());
-				cIdx = doOptionnalAppendTestCases(r,cIdx,tcm);
+				cIdx = doOptionnalAppendTestCases(r, cIdx, tcm);
 
-			}
-			catch(IllegalArgumentException wtf){
+			} catch (IllegalArgumentException wtf) {
 
 				tcSheet.removeRow(r);
 				r = tcSheet.createRow(rIdx);
@@ -288,7 +270,7 @@ class ExcelExporter {
 
 			r = stSheet.createRow(rIdx);
 
-			try{
+			try {
 				r.createCell(cIdx++).setCellValue(tsm.getTcOwnerPath());
 				r.createCell(cIdx++).setCellValue(tsm.getTcOwnerId());
 				r.createCell(cIdx++).setCellValue(tsm.getId());
@@ -301,8 +283,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(tsm.getNbAttach());
 
 				appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
-			}
-			catch(IllegalArgumentException wtf){
+			} catch (IllegalArgumentException wtf) {
 
 				stSheet.removeRow(r);
 				r = stSheet.createRow(rIdx);
@@ -328,14 +309,13 @@ class ExcelExporter {
 		for (ParameterModel pm : models) {
 			r = pSheet.createRow(rIdx);
 
-			try{
+			try {
 				r.createCell(cIdx++).setCellValue(pm.getTcOwnerPath());
 				r.createCell(cIdx++).setCellValue(pm.getTcOwnerId());
 				r.createCell(cIdx++).setCellValue(pm.getId());
 				r.createCell(cIdx++).setCellValue(pm.getName());
 				r.createCell(cIdx++).setCellValue(pm.getDescription());
-			}
-			catch(IllegalArgumentException wtf){
+			} catch (IllegalArgumentException wtf) {
 
 				pSheet.removeRow(r);
 				r = pSheet.createRow(rIdx);
@@ -361,7 +341,7 @@ class ExcelExporter {
 		for (DatasetModel dm : models) {
 			r = dsSheet.createRow(rIdx);
 
-			try{
+			try {
 				r.createCell(cIdx++).setCellValue(dm.getTcOwnerPath());
 				r.createCell(cIdx++).setCellValue(dm.getOwnerId());
 				r.createCell(cIdx++).setCellValue(dm.getId());
@@ -370,8 +350,7 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(dm.getParamOwnerId());
 				r.createCell(cIdx++).setCellValue(dm.getParamName());
 				r.createCell(cIdx++).setCellValue(dm.getParamValue());
-			}
-			catch(IllegalArgumentException wtf){
+			} catch (IllegalArgumentException wtf) {
 
 				dsSheet.removeRow(r);
 				r = dsSheet.createRow(rIdx);
@@ -405,7 +384,6 @@ class ExcelExporter {
 	}
 
 
-
 	private void appendCoverage(ExportModel model) {
 		List<CoverageModel> models = model.getCoverages();
 		Sheet covSheet = workbook.getSheet(COV_SHEET);
@@ -417,9 +395,9 @@ class ExcelExporter {
 		for (CoverageModel cm : models) {
 			r = covSheet.createRow(rIdx);
 
-				r.createCell(cIdx++).setCellValue(cm.getReqPath());
-				r.createCell(cIdx++).setCellValue(cm.getReqVersion());
-				r.createCell(cIdx++).setCellValue(cm.getTcPath());
+			r.createCell(cIdx++).setCellValue(cm.getReqPath());
+			r.createCell(cIdx++).setCellValue(cm.getReqVersion());
+			r.createCell(cIdx++).setCellValue(cm.getTcPath());
 
 			rIdx++;
 			cIdx = 0;
@@ -477,11 +455,11 @@ class ExcelExporter {
 		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
 	}
 
-	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols){
+	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols) {
 		Sheet dsSheet = workbook.getSheet(sheetName);
 		Row h = dsSheet.createRow(0);
 		int cIdx = 0;
-		for (TemplateColumn t : cols){
+		for (TemplateColumn t : cols) {
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
 	}

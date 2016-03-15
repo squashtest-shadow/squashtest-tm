@@ -59,11 +59,11 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 
 /*
  * TODO :
- * 
+ *
  * omg the amount of data processed here can become huge quickly and holding the whole model in memory might not be
  * workable anymore in the future. I suggest a more low level implementation using specific services, instead of being
  * lazy like here :
- * 
+ *
  * - using hibernate cursors to maintain the size of the cache to an acceptable level, - iterate over the execution
  * steps directly instead of the clumsy iterator mechanics, - The datacells should return data only when requested -
  * fetch the number of issues for itp and test steps more efficiently !!
@@ -103,7 +103,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 	public CampaignExportCSVFullModelImpl() {
 		super();
-	
+
 	}
 
 	public void setCampaign(Campaign campaign) {
@@ -163,7 +163,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 	private List<TestCase> collectAllTestCases(List<Iteration> iterations) {
 		// aggregate the test cases in one collection
-		List<TestCase> allTestCases = new ArrayList<TestCase>();
+		List<TestCase> allTestCases = new ArrayList<>();
 		for (Iteration iteration : iterations) {
 			addIterationTestCases(iteration, allTestCases);
 		}
@@ -179,7 +179,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	}
 
 	private List<ExecutionStep> collectLatestExecutionStep(List<Iteration> iterations) {
-		List<ExecutionStep> execSteps = new ArrayList<ExecutionStep>();
+		List<ExecutionStep> execSteps = new ArrayList<>();
 		for (Iteration iteration : iterations) {
 			for (IterationTestPlanItem item : iteration.getTestPlans()) {
 				if (!item.isTestCaseDeleted() && item.getLatestExecution() != null) {
@@ -213,7 +213,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	@Override
 	public Row getHeader() {
 
-		List<CellImpl> headerCells = new ArrayList<CellImpl>(nbColumns);
+		List<CellImpl> headerCells = new ArrayList<>(nbColumns);
 
 		// campaign fixed fields (4)
 		headerCells.add(new CellImpl("CPG_SCHEDULED_START_ON"));
@@ -315,8 +315,8 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		// ** caching **
 		// slight optimization, but will not make up for the need for refactoring (see comments on top)
 
-		private List<CellImpl> cachedItpcellFixed = new ArrayList<CellImpl>(16);
-		private List<CellImpl> cachedItpcellCuf = new ArrayList<CellImpl>(iterCUFModel.size());
+		private List<CellImpl> cachedItpcellFixed = new ArrayList<>(16);
+		private List<CellImpl> cachedItpcellCuf = new ArrayList<>(iterCUFModel.size());
 		private boolean cachedItpcellReady = false;
 
 		private int logcount = 0;
@@ -334,7 +334,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		@Override
 		public Row next() {
 
-			List<CellImpl> dataCells = new ArrayList<CellImpl>(nbColumns);
+			List<CellImpl> dataCells = new ArrayList<>(nbColumns);
 
 			// the campaign
 			populateCampaignFixedRowData(dataCells);
@@ -685,7 +685,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private List<ActionTestStep> getActionTestStepList(TestCase testCase) {
 
-			List<ActionTestStep> result = new ArrayList<ActionTestStep>();
+			List<ActionTestStep> result = new ArrayList<>();
 			List<TestStep> steps = testCase.getSteps();
 
 			result.addAll(getActionTestStepListRec(steps));
@@ -695,7 +695,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private List<ActionTestStep> getActionTestStepListRec(List<TestStep> steps) {
 
-			List<ActionTestStep> result = new ArrayList<ActionTestStep>();
+			List<ActionTestStep> result = new ArrayList<>();
 			TestStepExaminer examiner = new TestStepExaminer();
 
 			for (TestStep step : steps) {
@@ -733,7 +733,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private boolean moveToNextTestCase() {
 
-			boolean foundNextTC = false;
+			boolean foundNextTC;
 			boolean nextIterSucc;
 
 			do {

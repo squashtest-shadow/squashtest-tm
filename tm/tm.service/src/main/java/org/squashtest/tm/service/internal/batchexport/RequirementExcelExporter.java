@@ -1,36 +1,24 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2015 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2015 Henix, henix.fr
+ * <p/>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p/>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p/>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p/>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchexport;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -53,9 +41,14 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageShe
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 
+import javax.inject.Inject;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.*;
+
 /**
  * @author jthebault
- *
  */
 @Component
 @Scope("prototype")
@@ -64,9 +57,9 @@ public class RequirementExcelExporter {
 	private static final String COV_SHEET = TemplateWorksheet.COVERAGE_SHEET.sheetName;
 
 	private static final List<CoverageSheetColumn> COVERAGE_COLUMNS = Arrays.asList(
-			CoverageSheetColumn.REQ_PATH,
-			CoverageSheetColumn.REQ_VERSION_NUM,
-			CoverageSheetColumn.TC_PATH);
+		CoverageSheetColumn.REQ_PATH,
+		CoverageSheetColumn.REQ_VERSION_NUM,
+		CoverageSheetColumn.TC_PATH);
 
 	private static final RequirementSheetColumn[] BASIC_REQ_COLUMNS = {
 		RequirementSheetColumn.PROJECT_ID,
@@ -87,11 +80,11 @@ public class RequirementExcelExporter {
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_ON,
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_BY};
 
-	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList((RequirementSheetColumn[])ArrayUtils.add(BASIC_REQ_COLUMNS,  RequirementSheetColumn.REQ_VERSION_MILESTONE));
+	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList((RequirementSheetColumn[]) ArrayUtils.add(BASIC_REQ_COLUMNS, RequirementSheetColumn.REQ_VERSION_MILESTONE));
 
 	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS = Arrays.asList(BASIC_REQ_COLUMNS);
 	// that map will remember which column index is
-	private Map<String, Integer> cufColumnsByCode = new HashMap<String, Integer>();
+	private Map<String, Integer> cufColumnsByCode = new HashMap<>();
 
 	private Workbook workbook;
 
@@ -111,10 +104,10 @@ public class RequirementExcelExporter {
 
 	}
 
-	void setMessageSource(MessageSource messageSource){
+	void setMessageSource(MessageSource messageSource) {
 
 		this.messageSource = messageSource;
-		errorCellTooLargeMessage = this.messageSource.getMessage("test-case.export.errors.celltoolarge",null, LocaleContextHolder.getLocale());
+		errorCellTooLargeMessage = this.messageSource.getMessage("test-case.export.errors.celltoolarge", null, LocaleContextHolder.getLocale());
 
 	}
 
@@ -144,9 +137,9 @@ public class RequirementExcelExporter {
 			r = covSheet.createRow(rIdx);
 
 
-				r.createCell(cIdx++).setCellValue(cm.getReqPath());
+			r.createCell(cIdx++).setCellValue(cm.getReqPath());
 			r.createCell(cIdx++).setCellValue(cm.getRequirementVersionNumber());
-				r.createCell(cIdx++).setCellValue(cm.getTcPath());
+			r.createCell(cIdx++).setCellValue(cm.getTcPath());
 
 			rIdx++;
 			cIdx = 0;
@@ -157,30 +150,29 @@ public class RequirementExcelExporter {
 	private void appendRequirementModel(RequirementExportModel model) {
 		List<RequirementModel> models = model.getRequirementsModels();
 		Sheet reqSheet = workbook.getSheet(REQUIREMENT_SHEET);
-		int rowIndex = reqSheet.getLastRowNum()+1;
+		int rowIndex = reqSheet.getLastRowNum() + 1;
 
 		for (RequirementModel reqModel : models) {
-			appendOneRequirement(reqSheet,rowIndex,reqModel);
+			appendOneRequirement(reqSheet, rowIndex, reqModel);
 			rowIndex++;
 		}
 
 	}
 
 
-
 	private void createCoverageHeaders() {
 		createSheetHeaders(COV_SHEET, COVERAGE_COLUMNS);
 	}
 
-	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols){
+	private void createSheetHeaders(String sheetName, List<? extends TemplateColumn> cols) {
 		Sheet dsSheet = workbook.getSheet(sheetName);
 		Row h = dsSheet.createRow(0);
 		int cIdx = 0;
-		for (TemplateColumn t : cols){
+		for (TemplateColumn t : cols) {
 			h.createCell(cIdx++).setCellValue(t.getHeader());
 		}
 		//call extension point and get the new column index in return
-		doOptionalCreateSheetHeader(h,cIdx);
+		doOptionalCreateSheetHeader(h, cIdx);
 	}
 
 	protected int doOptionalCreateSheetHeader(Row h, int cIdx) {
@@ -194,7 +186,7 @@ public class RequirementExcelExporter {
 	}
 
 	private void appendOneRequirement(Sheet reqSheet, int rowIndex,
-			RequirementModel reqModel) {
+									  RequirementModel reqModel) {
 		Row row = reqSheet.createRow(rowIndex);
 		int colIndex = 0;
 
@@ -218,7 +210,7 @@ public class RequirementExcelExporter {
 			row.createCell(colIndex++).setCellValue(reqModel.getLastModifiedBy());
 			if (milestonesEnabled) {
 				row.createCell(colIndex++).setCellValue(reqModel.getMilestonesLabels());
-				}
+			}
 			appendCustomFields(row, "REQ_VERSION_CUF_", reqModel.getCufs());
 			//call extension point and get the new column index in return
 			colIndex = doOptionnalAppendRequirement(row, colIndex, reqModel);
@@ -230,7 +222,7 @@ public class RequirementExcelExporter {
 	}
 
 	protected int doOptionnalAppendRequirement(Row row, int colIndex,
-			RequirementModel reqModel) {
+											   RequirementModel reqModel) {
 		// Extension point for additional export columns (example : search columns)
 		return colIndex;
 	}
@@ -240,7 +232,7 @@ public class RequirementExcelExporter {
 	}
 
 	private void removeRteFormatFromRequirement(
-			List<RequirementModel> requirementsModels) {
+		List<RequirementModel> requirementsModels) {
 		for (RequirementModel requirementModel : requirementsModels) {
 			requirementModel.setDescription(removeHtml(requirementModel.getDescription()));
 		}

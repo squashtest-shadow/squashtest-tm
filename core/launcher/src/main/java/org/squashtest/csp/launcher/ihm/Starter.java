@@ -55,23 +55,21 @@ public class Starter {
 				e.printStackTrace();
 			}
 		}
-		if(stop){
-			try {
-				Desktop.getDesktop().browse(new URI(Starter.SQUASH_URL));
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (URISyntaxException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			//close window
-			System.exit(0);
-		}
+		try {
+            Desktop.getDesktop().browse(new URI(Starter.SQUASH_URL));
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+		//close window
+		System.exit(0);
 	}
 
 	public static boolean myTask(){
-		HttpURLConnection http = null;
+		HttpURLConnection http;
 		String response = "";
 		try {
 			http = (HttpURLConnection) new URL(Starter.SQUASH_URL).openConnection();
@@ -83,6 +81,6 @@ public class Starter {
 		}
 		// System.out.println("response : " + response);
 
-		return response.equalsIgnoreCase("ok")?true:false;
+		return response.equalsIgnoreCase("ok");
 	}
 }

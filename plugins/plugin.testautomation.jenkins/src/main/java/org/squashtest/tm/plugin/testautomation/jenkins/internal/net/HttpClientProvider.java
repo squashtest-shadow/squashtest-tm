@@ -51,7 +51,7 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 /*
  * TODO : have the client shutdown and disposed of when it is not needed after a certain amount
  * of time passed. See http://hc.apache.org/httpclient-3.x/performance.html#Reuse_of_HttpClient_instance
- * 
+ *
  */
 @Component
 @SuppressWarnings("deprecation") // spring support of httpclient 3.1 is deprecated yet we heavily rely on httpclient 3.1
@@ -70,14 +70,12 @@ public class HttpClientProvider {
 				AuthScheme authScheme = new BasicScheme();
 				CredentialsProvider credsProvider = (CredentialsProvider) context.getAttribute(HttpClientContext.CREDS_PROVIDER);
 				HttpHost targetHost = (HttpHost) context.getAttribute(HttpCoreContext.HTTP_TARGET_HOST);
-				if (authScheme != null) {
-					Credentials creds = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
-					if (creds == null) {
-						throw new HttpException("No credentials for preemptive authentication");
-					}
-					authState.setAuthScheme(authScheme);
-					authState.setCredentials(creds);
-				}
+				Credentials creds = credsProvider.getCredentials(new AuthScope(targetHost.getHostName(), targetHost.getPort()));
+				if (creds == null) {
+                    throw new HttpException("No credentials for preemptive authentication");
+                }
+				authState.setAuthScheme(authScheme);
+				authState.setCredentials(creds);
 			}
 
 		}
@@ -104,7 +102,7 @@ public class HttpClientProvider {
 	/**
 	 * Returns the instance of HttpClient, registering the required informations from the TestAutomationServer instance
 	 * first if needed
-	 * 
+	 *
 	 * @param server
 	 * @return
 	 */

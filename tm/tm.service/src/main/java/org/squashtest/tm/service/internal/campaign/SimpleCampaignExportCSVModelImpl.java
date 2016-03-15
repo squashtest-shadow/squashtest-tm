@@ -59,7 +59,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 	@Inject
 	private FeatureManager featureManager;
-	
+
 	private char separator = ';';
 
 	private Campaign campaign;
@@ -73,7 +73,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 	private MultiValueMap tcCUFValues; // same here
 
 	private int nbColumns;
-	
+
 	private boolean milestonesEnabled;
 
 	public SimpleCampaignExportCSVModelImpl() {
@@ -127,7 +127,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 	private List<TestCase> collectAllTestCases(List<Iteration> iterations) {
 		// aggregate the test cases in one collection
-		List<TestCase> allTestCases = new ArrayList<TestCase>();
+		List<TestCase> allTestCases = new ArrayList<>();
 		for (Iteration iteration : iterations) {
 			addIterationTestCases(iteration, allTestCases);
 		}
@@ -159,7 +159,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 	@Override
 	public Row getHeader() {
 
-		List<CellImpl> headerCells = new ArrayList<CellImpl>(nbColumns);
+		List<CellImpl> headerCells = new ArrayList<>(nbColumns);
 
 		// campaign fixed fields
 		headerCells.add(new CellImpl("CPG_SCHEDULED_START_ON"));
@@ -253,7 +253,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		@Override
 		public Row next() {
 
-			List<CellImpl> dataCells = new ArrayList<CellImpl>(nbColumns);
+			List<CellImpl> dataCells = new ArrayList<>(nbColumns);
 
 			// the campaign
 			populateCampaignRowData(dataCells);
@@ -324,14 +324,14 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 		}
 
 		private String formatMilestone(Set<Milestone> milestones) {
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (Milestone m : milestones){
 				sb.append(m.getLabel());
 				sb.append("|");
 			}
 			sb.setLength(Math.max(sb.length() - 1, 0));
-			
+
 			return sb.toString();
 		}
 
@@ -458,7 +458,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 					nextITP = item;
 				}
 
-			} while (nextITP == null && nbItems > itpIndex);
+			} while (nextITP == null && nbItems > itpIndex); // NOSONAR might always be true but I dont wanna induce bugs
 
 			itp = nextITP;
 
@@ -500,7 +500,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 				String value = cell.getValue();
 				// escape separators from the cell content or it could spurriously mess with the column layout
 				String escaped = value.replaceAll(strSeparator, " ");
-				builder.append(escaped + separator);
+				builder.append(escaped).append(separator);
 			}
 
 			return builder.toString().replaceAll(separator + "$", "");
