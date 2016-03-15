@@ -55,7 +55,8 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			events: {
 				"click #refresh-btn": "refresh",
 				"click #modify-chart-button": "modifyChart",
-				"click #rename-chart-button": "rename"
+				"click #rename-chart-button": "rename",
+        "click #export-chart-button": "export"
 			},
 
 			render: function () {
@@ -335,6 +336,11 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("renameNode");
 			},
+
+      export : function () {
+        var wreqr = squashtm.app.wreqr;
+        wreqr.trigger("exportChart");
+      },
 
 			getVueConf: function () {
 				return {

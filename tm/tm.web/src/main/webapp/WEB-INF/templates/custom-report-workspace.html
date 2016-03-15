@@ -453,6 +453,22 @@
   <!-- /BACKBONE VIEWS TEMPLATES -->
 
 
+  <!-- EXPORT CHART POPUP -->
+
+  <div id="export-chart-dialog" class="popup-dialog not-displayed" th:title="#{title.export.chart}"
+               title="export chart">
+
+       <div data-def="state=confirm">
+          <div id="exported-chart"></div>
+          <div class="popup-dialog-buttonpane">
+            <input type="button" th:value="#{label.Close}" value="cancel" data-def="evt=cancel" />
+          </div>
+        </div>
+  </div>
+
+    <!-- /EXPORT CHART POPUP -->
+
+
 
 
   <!-- _____________________TREE POPUPS______________________________ -->

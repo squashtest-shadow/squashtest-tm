@@ -18,15 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['./add-folder-popup','./add-dashboard-popup','./delete-node-popup','./rename-node-popup','./export-chart-popup'],
-		function(folderPopup,dashboardPopup,deleteNodePopup,renameNodePopup,exportChartPopup){
+define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], function($, zetree, rules){
+
 
 	function init(){
-		folderPopup.init();
-		dashboardPopup.init();
-		deleteNodePopup.init();
-		renameNodePopup.init();
-    exportChartPopup.init();
+
+    var minHeight = $(document).height()*0.75;
+    var minWidth = $(document).width()*0.75;
+
+		var dialog = $("#export-chart-dialog").formDialog({
+      minHeight: minHeight,
+      minWidth : minWidth,
+    });
+
+		// Added to cancel the open if no rights
+		dialog.on('formdialogopen', function(){
+	     var str = '<img src='+$("#chart-display-area").jqplotToImageStr({})+' />';
+       $("#exported-chart").html(str);
+		});
+
+		dialog.on('formdialogcancel', function(){
+			dialog.formDialog('close');
+		});
+
 	}
 
 	return {

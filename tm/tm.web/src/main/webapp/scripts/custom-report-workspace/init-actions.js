@@ -187,6 +187,16 @@ define(["jquery", "tree","./permissions-rules", "workspace.contextual-content", 
 			$("#delete-node-tree-button").on("click", openDeleteDialogIfDeletable);
 
 			tree.on("suppr.squashtree", openDeleteDialogIfDeletable);
+
+
+      // ***************** chart export ********************
+
+      function openExportChartPopup() {
+        	$("#export-chart-dialog").formDialog("open");
+      }
+
+      wreqr.on("exportChart",openExportChartPopup);
+
 		}
 	};
 

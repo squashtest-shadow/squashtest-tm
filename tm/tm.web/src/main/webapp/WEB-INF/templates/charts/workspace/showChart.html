@@ -45,6 +45,9 @@
 		</div>
     {{#if (contains acls.perms 'WRITE')}}
 		<div class="toolbar-button-panel">
+      <input type="button"
+				th:attr="value=#{label.Export},title=#{title.export.chart}"
+				id="export-chart-button" class="sq-btn" />
 			<input type="button"
 				th:attr="value=#{label.Rename},title=#{label.Rename}"
 				id="rename-chart-button" class="sq-btn" />
@@ -55,6 +58,8 @@
     {{/if}}
 		<div class="unsnap"></div>
 	</div>
+
+  <div id="export"></div>
 
 	<div class="sq-tg expand">
 		<div class="tg-head">
@@ -122,4 +127,3 @@
 		</div>
 	</div>
 </div>
-
