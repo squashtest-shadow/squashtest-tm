@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.squashtest.tm</groupId>
     <artifactId>squashtest-csp-core</artifactId>
-    <version>1.13.3.RC7</version>
+    <version>1.13.3.RC8-SNAPSHOT</version>
   </parent>
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squashtest-csp-launcher</artifactId>
