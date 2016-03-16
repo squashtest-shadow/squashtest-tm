@@ -19,12 +19,12 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "require", "squash.translator", "./campaign-progression-view", "./test-inventory-table",
-		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "./success-rate-view", "../SuperMasterView" ],
+		"./nonexecuted-testcase-importance-pie", "./testcase-status-pie", "../basic-objects/success-rate-view", "../SuperMasterView" ],
 		function(require, translator, ProgressionPlot, InventoryTable, ImportancePie, StatusPie, SuccessRateDonut,
 				SuperMasterView) {
 
 			function initCharts() {
-				
+
 				 var res = [];
 
 				 var impPie = new ImportancePie({
@@ -39,19 +39,22 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 
 				var succesDonut = new SuccessRateDonut({
 					el : this.$("#dashboard-success-rate"),
-					model : this.model
+					model : this.model,
+					fetchStats: function(model) {
+						return model.get("campaignTestCaseSuccessRateStatistics");
+					}
 				});
 
 				var inventoryTable = new InventoryTable({
 					el : this.$("#dashboard-test-inventory"),
 					model : this.model
-				}); 
-				 
+				});
+
 				 res.push(impPie);
 				 res.push(statusPie);
 				 res.push(succesDonut);
 				 res.push(inventoryTable);
-				
+
 				 if ( this.$("#dashboard-cumulative-progression").length > 0 ) {
 					 res.push(
 							 new ProgressionPlot({
@@ -59,19 +62,19 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 									model : this.model
 								}));
 				 }
-				 
+
 				 addClickSearchEvent(impPie, "nonexecuted-testcase-importance");
 				 addClickSearchEvent(statusPie, "status");
 				 addClickSearchEvent(succesDonut ,"succesDonut");
-				 
+
 				 return res;
 			}
 
-			
+
 			function addClickSearchEvent(pie, type) {
 
 				var item = $(pie.el);
-				
+
 				item.bind('jqplotDataHighlight', function(ev, seriesIndex, pointIndex, data) {
 					var $this = $(this);
 					$this.attr('title', translator.get("dashboard.test-cases.search"));
@@ -88,7 +91,7 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				});
 
 				item.bind('jqplotDataClick', function(ev, seriesIndex, pointIndex, data) {
-					
+
 					//Special case for full pie.
 					if (pie.getData().isFull) {
 						pointIndex = pie.getData().nonzeroindex;
@@ -97,24 +100,24 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 					if (pie.getData().isEmpty){
 						return;
 					}
-					
+
 					var ids = pie.model.get('selectedIds') || [pie.model.get('selectedId')];
-					
+
 					var search = {fields : {}};
-					
+
 					search.fields['campaign.id'] = {type : 'LIST', values : ids};
 
-					
+
 					switch (type) {
 					case "nonexecuted-testcase-importance":
 						addNonexcTcImportanceToSearch(search, pointIndex);
 						break;
-				
-					
+
+
 					case "status" :
 						addStatusToSearch(search, pointIndex);
 						break;
-						
+
 					case "succesDonut" :
 						addSuccesDonutToSearch(search, seriesIndex, pointIndex);
 						break;
@@ -125,56 +128,56 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 
 				});
 			}
-			
+
 			function addSuccesDonutToSearch(search, seriesIndex, pointIndex){
-				
+
 				var importanceType =  "LIST";
 			    var	statusType = "LIST";
-				
+
 			    var statusValues;
 			    var importanceValues;
-			    
+
 				var importance =  seriesIndex;
 				var status =	pointIndex;
-				
+
 				switch (importance){
-				case 0 : 
-					importanceValues = [ "1-VERY_HIGH" ];	
+				case 0 :
+					importanceValues = [ "1-VERY_HIGH" ];
 				break;
-				case 1 : 
+				case 1 :
 					importanceValues = [ "2-HIGH" ];
 				break;
-				case 2 : 
+				case 2 :
 					importanceValues = [ "3-MEDIUM" ];
 				break;
 				case 3 :
 					importanceValues = [ "4-LOW" ];
-				break;		
+				break;
 				}
-					
-				
+
+
 				switch (status){
-				
+
 				case 0 :
 					statusValues = [ "3-SUCCESS","4-WARNING", "10-SETTLED"];
 					break;
-					
+
 				case 1 :
 					statusValues = [ "5-FAILURE", "7-ERROR"];
 					break;
-					
-				case 2 : 
+
+				case 2 :
 					statusValues = ["6-BLOCKED","8-NOT_RUN","9-UNTESTABLE","9-NOT_FOUND"];
 					break;
-				
+
 				}
-			
+
 		        search.fields['referencedTestCase.importance'] = {type : importanceType, values : importanceValues};
 				search.fields['executionStatus'] =  {type : statusType, values : statusValues};
 			}
-			
+
 			function addStatusToSearch(search, pointIndex){
-				
+
 
 				var type  = "LIST";
 				var values;
@@ -192,34 +195,34 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				case 3:
 					values = [ "10-SETTLED" ];
 					break;
-					
+
 				case 4:
 					values = [ "5-FAILURE"];
 					break;
-					
+
 				case 5:
 					values = [ "6-BLOCKED" ];
 					break;
-					
+
 				case 6:
 					values = [ "9-UNTESTABLE" ];
 					break;
-					
+
 				}
-				
+
 				search.fields['executionStatus'] =  {type : type, values : values};
-				
+
 			}
-			
+
 			function addNonexcTcImportanceToSearch(search, pointIndex) {
-				
+
 				search.fields.executionStatus = {};
 				search.fields.executionStatus.type  = "LIST";
 				search.fields.executionStatus.values = ["1-READY","2-RUNNING"];
-								
+
 				var type = "LIST";
 				var values;
-				
+
 				switch (pointIndex) {
 				case 0:
 					values = [ "4-LOW" ];
@@ -236,9 +239,9 @@ define([ "require", "squash.translator", "./campaign-progression-view", "./test-
 				}
 				search.fields['referencedTestCase.importance'] = {type : type, values : values};
 			}
-			
-			
-			
+
+
+
 			function doInit(settings) {
 				new SuperMasterView({
 					el : "#dashboard-master",
