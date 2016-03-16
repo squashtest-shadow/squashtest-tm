@@ -486,6 +486,7 @@
 					<thead>
 						<tr>
 							<th th:text="${interfaceDescriptor.tableIssueIDHeader}">Id</th>
+							<th th:text="#{bugtracker.project}">Projet BT</th>
 							<th th:text="${interfaceDescriptor.tableSummaryHeader}">Résumé</th>
 							<th th:text="${interfaceDescriptor.tablePriorityHeader}">Priorité</th>
 							<th th:text="${interfaceDescriptor.tableStatusHeader}">Statut</th>
@@ -499,6 +500,7 @@
 					<tbody>
 						<tr th:each="issueOwner : ${issuesOwnerShipList}" th:object="${issueOwner.ownership}">
 							<td th:text="*{issue.id}">1</td>
+							<td th:text="*{issue.project.name}">projetbug</td>
 							<td th:text="*{issue.summary}">erreur 500 à l'ajout d'une anomalie</td>
 							<td th:text="*{issue.priority.name}">high</td>
 							<td th:text="*{issue.status.name}">ouverte</td>
