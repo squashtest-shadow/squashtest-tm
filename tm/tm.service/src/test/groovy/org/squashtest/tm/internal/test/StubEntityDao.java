@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
+ * IGNOREVIOLATIONS:FILE This is for test purpose
  * @author Gregory Fouquet
  *
  */
