@@ -1,6 +1,6 @@
 ====
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2015 Henix, henix.fr
+        Copyright (C) 2010 - 2016 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -24,15 +24,15 @@ The icons are free for personal use and also free for commercial use, but we req
 http://creativecommons.org/licenses/by-sa/3.0/
 
 You are free:
-* to Share — to copy, distribute and transmit the work
+* to Share ï¿½ to copy, distribute and transmit the work
 
 Under the following conditions:
-Attribution — You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
+Attribution ï¿½ You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
 
 Attribute this work:
 What does "Attribute this work" mean?
 The page you came from contained embedded licensing metadata, including how the creator wishes to be attributed for re-use. You can use the HTML here to cite the work. Doing so will also include metadata on your page so that others can find the original work as well.
-Share Alike — If you alter, transform, or build upon this work, you may distribute the resulting work only under the same, similar or a compatible license.
+Share Alike ï¿½ If you alter, transform, or build upon this work, you may distribute the resulting work only under the same, similar or a compatible license.
 
 led24.de
 31/05/2009

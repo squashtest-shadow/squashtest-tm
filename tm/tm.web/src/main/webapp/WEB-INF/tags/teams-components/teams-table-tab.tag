@@ -1,7 +1,7 @@
 <%--
 
         This file is part of the Squashtest platform.
-        Copyright (C) 2010 - 2015 Henix, henix.fr
+        Copyright (C) 2010 - 2016 Henix, henix.fr
 
         See the NOTICE file distributed with this work for additional
         information regarding copyright ownership.
@@ -108,8 +108,8 @@
                  <comp:notification-pane type="error">
                   <jsp:attribute name="htmlcontent">
                     <div class="display-table-cell">
-                <p th:text="#{dialog.remove-team  }">Confirmez vous la suppression de ces équipes ?</p>
-                      <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-être annulée.</p>
+                <p th:text="#{dialog.remove-team  }">Confirmez vous la suppression de ces ï¿½quipes ?</p>
+                      <p th:text="#{dialog.label.delete-node.label.cantbeundone}">Cette action ne peut-ï¿½tre annulï¿½e.</p>
                       <p th:text="#{dialog.label.delete-node.label.confirm }">Confirmez-vous la suppression ?</p>
               </div>        
                   </jsp:attribute>
