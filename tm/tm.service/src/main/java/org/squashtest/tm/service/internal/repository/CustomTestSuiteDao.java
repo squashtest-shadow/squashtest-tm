@@ -42,7 +42,7 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
 	 * making it the launchable test plan of the test suite
 	 * </p>
-	 * 
+	 *
 	 * @param testSuiteId
 	 * @return
 	 */
@@ -51,7 +51,7 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	/**
 	 * Will fill a {@link TestPlanStatistics} bean with infos taken from the test plan of the {@link TestSuite} matching
 	 * the given id.
-	 * 
+	 *
 	 * @param testSuitId
 	 *            : the id of the concerned {@link TestSuite}
 	 * @return the filled {@link TestPlanStatistics} bean
@@ -62,7 +62,7 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	 * Will fill a {@link TestPlanStatistics} bean with the infos taken from the test plan of the {@link TestSuite}
 	 * matching the given id. But the infos will be taken only from the {@link IterationTestPlanItem} that are assigned
 	 * to the user matching the given login.
-	 * 
+	 *
 	 * @param suiteId
 	 *            : the id of the concerned {@link TestSuite}
 	 * @param userLogin
@@ -75,15 +75,12 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 
 	List<Execution> findAllExecutionByTestSuite(long testSuiteId);
 
-	@Deprecated
-	List<IterationTestPlanItem> findAllTestPlanItemsPaged(long testSuiteId, Paging paging);
-
 	List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filter,
 			ColumnFiltering columnFiltering);
 
 	/**
 	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
-	 * 
+	 *
 	 * @param iterationId
 	 * @param sorting
 	 * @param filtering
@@ -94,7 +91,7 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 
 	/**
 	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
-	 * 
+	 *
 	 * @param iterationId
 	 * @param sorting
 	 * @param filtering
@@ -111,7 +108,7 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 
 	/**
 	 * Will find the distinct ids of the test cases referenced in the suite matching the given id
-	 * 
+	 *
 	 * @param suiteId
 	 *            : the id of the concerned TestSuite
 	 * @return the distinct ids of the TestCases referenced in the suite's test plan.

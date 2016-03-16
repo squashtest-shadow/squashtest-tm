@@ -305,11 +305,6 @@ public class Milestone  {
 	}
 
 
-	public void bindCampaign(Campaign campaign) {
-		campaigns.add(campaign);
-	}
-
-
 	public boolean isBoundToATemplate() {
 
 		final boolean[] boundToTemplate = { false };
@@ -384,16 +379,6 @@ public class Milestone  {
 		return allowed;
 	}
 
-
-
-	/**
-	 * @deprecated all hell shall break loose when this method is called
-	 */
-	@Deprecated
-	public boolean isBoundToObjects() {
-
-		return !(testCases.isEmpty() && requirementVersions.isEmpty() && campaigns.isEmpty());
-	}
 
 	public boolean isLocked(){
 		return MilestoneStatus.LOCKED == status;

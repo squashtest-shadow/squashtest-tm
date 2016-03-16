@@ -141,18 +141,6 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return model;
 	}
 
-	@Deprecated
-	@RequestMapping(value = "/folders/{folderId}", method = RequestMethod.POST, params = { "newName" })
-	public @ResponseBody Object renameFolder(@RequestParam("newName") String newName, @PathVariable Long folderId) {
-
-		final String reNewName = newName;
-		getLibraryNavigationService().renameFolder(folderId, reNewName);
-		return new Object() {
-			public String newName = reNewName;  // NOSONAR readable by json marshaller
-		};
-
-	}
-
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
 			@CurrentMilestone Milestone activeMilestone,

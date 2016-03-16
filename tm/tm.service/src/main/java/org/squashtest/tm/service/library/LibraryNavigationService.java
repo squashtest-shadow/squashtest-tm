@@ -35,18 +35,18 @@ import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 
 /**
  * Defines common methods for a library navigation service, mainly library access and folder manipulation.
- * 
+ *
  * TODO Move all methods which modify a folder's content to another service
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE>, FOLDER extends Folder<? extends NODE>, NODE extends LibraryNode> {
 
 	/**
 	 * will create a deep copy of the given LibraryNodes, paste them in the destination folder, and return the copies.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param destinationId
 	 *            the id of the folder where you need to copy to.
 	 * @param sourceNodesIds
@@ -57,8 +57,8 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	/**
 	 * same, when the destination is a Library.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param destinationId
 	 *            the id of the library where you need to copy to.
 	 * @param targetId
@@ -76,14 +76,14 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	void moveNodesToLibrary(long destinationId, Long[] targetId, int position);
 
 	/**
-	 *{@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes 
+	 *{@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
 	 * @param destinationId
 	 * @param newFolder
 	 */
 	void addFolderToLibrary(@Id long destinationId, FOLDER newFolder);
 
 	/**
-	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes 
+	 * {@link Id} annotation is used by {@link PreventConcurrent}, {@link BatchPreventConcurrent} and {@link PreventConcurrents} in sub classes
 	 * @param destinationId
 	 * @param newFolder
 	 */
@@ -101,16 +101,13 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 */
 	List<NODE> findFolderContent(long folderId);
 
-	@Deprecated
-	void renameFolder(long folderId, String newName);
-
 	LIBRARY findLibrary(long libraryId);
 	LIBRARY findCreatableLibrary(long libraryId);
 
 	/**
 	 * that method should investigate the consequences of the deletion request, and return a report about what will
 	 * happen.
-	 * 
+	 *
 	 * @param targetIds
 	 * @Param milestoneId. If non null, the simulation will carry on using the milestone mode.
 	 * @return
@@ -120,8 +117,8 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	/**
 	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
 	 * filter out the ids who can't be deleted.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param targetIds
 	 * @return
 	 */
@@ -129,7 +126,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	/**
 	 * That method should find the parentFolder of the library Node if it has one
-	 * 
+	 *
 	 * @param node
 	 * @return the parent node or null if do not exists
 	 */
@@ -137,7 +134,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 
 	/**
 	 * That method should find the library of the root node
-	 * 
+	 *
 	 * @param id
 	 * @return the library or null
 	 */

@@ -216,7 +216,6 @@
 
 
 	// TestSuite
-	@NamedQuery(name = "TestSuite.findAllTestPlanItemsPaged", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id order by index(tp)"),
 	@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = ?1 and ts.id = tss.id"),
 	@NamedQuery(name = "TestSuite.countTestPlanItemsForUsers", query = "select count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss join tp.user user where ts.id = :id and ts.id = tss.id and user.login = :login"),
 	@NamedQuery(name = "testSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = :id and :id2 = tss.id group by tp.executionStatus"),

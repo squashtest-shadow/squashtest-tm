@@ -33,36 +33,28 @@ import org.squashtest.tm.domain.users.User;
 //@Transactional(readOnly = true)
 @Transactional
 public interface IterationTestPlanFinder {
-	
-	
+
+
 	PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId, PagingAndSorting filter);
-	
+
 	IterationTestPlanItem findTestPlanItem(long itemTestPlanId);
-	
+
 	List<IterationTestPlanItem> findTestPlanItems(List<Long> ids);
 
 	/**
 	 * Returns a collection of {@link TestCaseLibrary}, the test cases of which may be added to the campaign
 	 */
 	List<TestCaseLibrary> findLinkableTestCaseLibraries();
-	
+
 	List<TestCase> findPlannedTestCases(Long iterationId);
-	
+
 	/**
 	 * Get Users with Execute Access for an Iteration and its TestPlan.
-	 * 
+	 *
 	 * @param testCaseId
 	 * @param campaignId
 	 */
 	List<User> findAssignableUserForTestPlan(long iterationId);
-	/**
-	 * @deprecated used only in IntegrationTests
-	 * @param iterationId
-	 * @param testCaseId
-	 * @return
-	 */
-	@Deprecated
-	IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId);
 
 
 }

@@ -61,7 +61,7 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)
 			AbstractLibraryNavigationService.set(field: "customFieldValuesService", of: service, to: customFieldService)
 		}
-		
+
 		customFieldService.findAllCustomFieldValues(_) >> []
 		customFieldService.findAllCustomFieldValues(_, _) >> []
 	}
@@ -146,39 +146,6 @@ class CampaignLibraryNavigationServiceImplTest extends Specification {
 		found == content
 	}
 
-
-	def "should rename a folder"(){
-		given:
-		CampaignFolder folder = new CampaignFolder(name:"Mike")
-		campaignFolderDao.findById(10) >> folder
-		and:
-		CampaignLibrary lib = Mock()
-		campaignLibraryDao.findByRootContent(folder) >> lib
-		lib.isContentNameAvailable("Bob") >> true
-
-		when :
-		service.renameFolder(10,"Bob")
-
-		then :
-		folder.name=="Bob"
-	}
-
-
-	def "should not rename a folder"(){
-		given:
-		CampaignFolder folder = Mock()
-		campaignFolderDao.findById(10) >> folder
-		and:
-		CampaignLibrary lib = Mock()
-		campaignLibraryDao.findByRootContent(folder) >> lib
-		lib.isContentNameAvailable("Bob") >> false
-
-		when :
-		service.renameFolder(10,"Bob")
-
-		then :
-		thrown(DuplicateNameException)
-	}
 
 	def "should add campaign to campaign folder"(){
 		given:

@@ -28,10 +28,10 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 
-public class DataTableColumnFiltering implements ColumnFiltering{
+public class DataTableColumnFiltering implements ColumnFiltering {
 
 	private final DataTableDrawParameters params;
-	private Map<Object, Integer> dataProps = new HashMap<Object, Integer>();
+	private Map<Object, Integer> dataProps = new HashMap<>();
 
 	public DataTableColumnFiltering(DataTableDrawParameters params) {
 		super();
@@ -39,9 +39,9 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 		createDataProps();
 	}
 
-	private void createDataProps(){
-		Map<Integer,Object> mDataProp = params.getmDataProp();
-		for(Entry<Integer, Object>entry	: mDataProp.entrySet()){
+	private void createDataProps() {
+		Map<Integer, Object> mDataProp = params.getmDataProp();
+		for (Entry<Integer, Object> entry : mDataProp.entrySet()) {
 			dataProps.put(entry.getValue(), entry.getKey());
 		}
 	}
@@ -49,8 +49,8 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	@Override
 	public boolean isDefined() {
 		Collection<String> values = params.getsSearches().values();
-		for(String value : values){
-			if(!StringUtils.isBlank(value)){
+		for (String value : values) {
+			if (!StringUtils.isBlank(value)) {
 				return true;
 			}
 		}
@@ -74,22 +74,9 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 
 	@Override
 	public boolean hasFilter(String mDataProp) {
-		if(this.dataProps.containsKey(mDataProp)){
+		if (this.dataProps.containsKey(mDataProp)) {
 			return hasFilter(this.dataProps.get(mDataProp));
-		}else{
-			return false;
-		}
-	}
-
-	@Override
-	@Deprecated
-	/**
-	 * @deprecated does not seem to be used any longer
-	 */
-	public boolean hasFilter(String mDataProp, int offset) {
-		if(this.dataProps.containsKey(mDataProp)){
-			return hasFilter(this.dataProps.get(mDataProp)+offset);
-		}else{
+		} else {
 			return false;
 		}
 	}
@@ -100,6 +87,6 @@ public class DataTableColumnFiltering implements ColumnFiltering{
 	 * @deprecated does not seem to be used any longer
 	 */
 	public String getFilter(String mDataProp, int offset) {
-		return getFilter(this.dataProps.get(mDataProp)+offset);
+		return getFilter(this.dataProps.get(mDataProp) + offset);
 	}
 }

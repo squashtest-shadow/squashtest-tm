@@ -95,15 +95,10 @@ import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMI
 
 @Transactional
 public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<NODE>, FOLDER extends Folder<NODE>, NODE extends LibraryNode>
-implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
+	implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractLibraryNavigationService.class);
 	private static final String CREATE = "CREATE";
 	private static final String READ = "READ";
-
-	/**
-	 * token appended to the name of a copy
-	 */
-	protected static final String COPY_TOKEN = "-Copie";
 
 	@Inject
 	protected PermissionEvaluationService permissionService;
@@ -173,33 +168,6 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		checkPermission(new SecurityCheckableObject(folder, READ));
 		// proceed
 		return getFolderDao().findById(folderId);
-	}
-
-	@Deprecated
-	@SuppressWarnings("unchecked")
-	@Override
-	public final void renameFolder(long folderId, String newName) {
-		// fetch
-		FOLDER folder = getFolderDao().findById(folderId);
-		// check
-		checkPermission(new SecurityCheckableObject(folder, "WRITE"));
-
-		// proceed
-		LIBRARY library = getLibraryDao().findByRootContent((NODE) folder);
-
-		if (library != null) {
-			if (!library.isContentNameAvailable(newName)) {
-				throw new DuplicateNameException(folder.getName(), newName);
-			}
-		} else {
-			FOLDER parentFolder = getFolderDao().findByContent((NODE) folder);
-
-			if (parentFolder != null && !parentFolder.isContentNameAvailable(newName)) {
-				throw new DuplicateNameException(folder.getName(), newName);
-			}
-		}
-
-		folder.setName(newName);
 	}
 
 	@Override
@@ -279,9 +247,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
-		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		} catch (DuplicateNameException dne) {
+		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 
@@ -296,9 +262,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
-		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		} catch (DuplicateNameException dne) {
+		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 
@@ -313,9 +277,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			PasteStrategy<FOLDER, NODE> pasteStrategy = getPasteToFolderStrategy();
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds), position);
-		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		} catch (DuplicateNameException dne) {
+		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 
@@ -330,9 +292,7 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 			PasteStrategy<LIBRARY, NODE> pasteStrategy = getPasteToLibraryStrategy();
 			makeMoverStrategy(pasteStrategy);
 			pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds), position);
-		} catch (NullArgumentException dne) {
-			throw new NameAlreadyExistsAtDestinationException(dne);
-		} catch (DuplicateNameException dne) {
+		} catch (NullArgumentException | DuplicateNameException dne) {
 			throw new NameAlreadyExistsAtDestinationException(dne);
 		}
 
@@ -354,10 +314,6 @@ implements LibraryNavigationService<LIBRARY, FOLDER, NODE> {
 		return pasteStrategy.pasteNodes(destinationId, Arrays.asList(targetIds));
 
 	}
-
-
-
-
 
 	/* ***************************** deletion operations *************************** */
 

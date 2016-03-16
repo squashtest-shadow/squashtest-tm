@@ -241,29 +241,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 	}
 
 	@Override
-	public List<IterationTestPlanItem> findAllTestPlanItemsPaged(final long testSuiteId, Paging paging) {
-
-		final int firstIndex = paging.getFirstItemIndex();
-		final int lastIndex = paging.getFirstItemIndex() + paging.getPageSize() - 1;
-
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-
-				query.setParameter("testSuiteId", testSuiteId);
-				query.setParameter("firstIndex", firstIndex);
-				query.setParameter("lastIndex", lastIndex);
-
-			}
-
-		};
-
-		return executeListNamedQuery("testSuite.findTestPlanFiltered", callback);
-
-	}
-
-	@Override
 	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering,
 			ColumnFiltering columnFiltering) {
 		List<Object[]> tuples = findIndexedTestPlanAsTuples(suiteId, sorting, filtering, columnFiltering);

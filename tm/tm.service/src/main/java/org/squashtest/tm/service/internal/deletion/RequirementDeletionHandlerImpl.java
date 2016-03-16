@@ -163,15 +163,15 @@ RequirementNodeDeletionHandler {
 	/*
 	 * The milestone mode for requirement is a bit different from the other entities.
 	 * It applies on the requirement versions, instead of the requirement themselves.
-	 * 
+	 *
 	 * However the abstract superclass expects to know which requirements cannot be deleted.
-	 * 
+	 *
 	 * So, we must return requirement ids, no version ids.
-	 * 
+	 *
 	 * Here is how we compute this : at the end of the day, a requirement will be deleted
 	 * only if it has only one version and that version will be deleted because it
 	 * belong to the given milestone only.
-	 * 
+	 *
 	 */
 	@Override
 	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
@@ -197,7 +197,7 @@ RequirementNodeDeletionHandler {
 			 * b) a requirement that can be deleted must :
 			 * 	1 - have a deletable version AND
 			 *  2 - have only one version
-			 * 
+			 *
 			 *  Thus, non deletable requirements are the set of candidates minus requirement that can be
 			 *  deleted.
 			 */
@@ -226,7 +226,7 @@ RequirementNodeDeletionHandler {
 	 * 	Because nowaday deleting requirements is highly toxic for brain cells here is a method that will help out with
 	 * 	deciding if a node should :
 	 * </p>
-	 * 
+	 *
 	 * <ol>
 	 * 	<li>be deleted as a folder (which is simpler)</li>
 	 * 	<li>be deleted totally as a requirement (with all its versions). Note : a requirement that wont be deleted is said to be <strong>locked</strong></li>
@@ -234,13 +234,13 @@ RequirementNodeDeletionHandler {
 	 * 	<li>delete only a version which happen to belong to a given milestone</li>
 	 * 	<li>unbind only a version from a given milestone</li>
 	 * </ol>
-	 * 
+	 *
 	 * <p>
 	 * 	The generic name for those different situations is <strong>contextual-deletion</strong>.
 	 * 	Nodes that fall under one of those situations are thus referred to as
 	 *  <strong>contextually-deleted</strong>.
 	 * </p>
-	 * 
+	 *
 	 * <p>Another concern now : the fate of the selected nodes depend on what the user specifically picked.
 	 * For each node picked by the user :
 	 * 	<ul>
@@ -248,12 +248,12 @@ RequirementNodeDeletionHandler {
 	 * 		<p><strong>rule D2</strong> : if it is a requirement : <strong>contextual-delete</strong> that requirement alone</p>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>Then, we can safely proceed with peace in mind knowing which node requires which treatment.</p>
-	 * 
-	 * 
+	 *
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
 	 */
 	protected TargetsSortedByAppropriatePunishment sortThatMess(List<Long> nodeIds, Long milestoneId){
@@ -283,7 +283,7 @@ RequirementNodeDeletionHandler {
 		 * The tree considers that if r2 is locked (non deletable) then r1 is locked too.
 		 * However according to our spec this is not the case : if r2 is deletable, r1 can
 		 * still be deleted, and it entails that r2 will be attached to the parent of r1.
-		 * 
+		 *
 		 * So we need just recompute the whole thing : find which requirements are actually
 		 * deletable on an individual basis.
 		 */
@@ -310,7 +310,7 @@ RequirementNodeDeletionHandler {
 		/*
 		 * find the nodes which need special actions on
 		 * their versions in milestone mode.
-		 * 
+		 *
 		 * Those, if applied, are performed on the requirements
 		 * encompassed by the selection minus those that
 		 * must be deleted
@@ -341,7 +341,7 @@ RequirementNodeDeletionHandler {
 
 
 	/**
-	 * 
+	 *
 	 * <p>The following method is overridden from the abstract class because the business rule is special :
 	 * for each node selected by the user :
 	 * 	<ul>
@@ -349,18 +349,18 @@ RequirementNodeDeletionHandler {
 	 * 		<li>b/ if it is a requirement : delete it and bind its children to its parent.</li>
 	 * </ul>
 	 * </p>
-	 * 
+	 *
 	 * <p>Another concern is the milestone mode. When regular entities such as test cases are deleted,
 	 * they are either deleted, either spared because of business or sec rules. For requirements the
 	 * problem is a bit more complex because of their versions. A version can be deleted, and also
 	 * if that deleted version was the only one in a requirement then only that requirement can
 	 * be deleted.</p>
-	 * 
-	 * 
+	 *
+	 *
 	 * <p>All of this is is handled for a good part by the logic in {@link #sortThatMess(List, Long)}</p>
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
 	 */
 	@Override
@@ -664,7 +664,7 @@ RequirementNodeDeletionHandler {
 	private static final class ImpossibleSuppression extends ActionException{
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 4901610054565947807L;
 		private static final String impossibleSuppressionException = "squashtm.action.exception.impossiblerequirementsuppression.label";
@@ -757,64 +757,23 @@ RequirementNodeDeletionHandler {
 	 * 												Legacy code
 	 ************************************************************************************************************** */
 
-	/*
+	/**
 	 * Removing a list of RequirementLibraryNodes means : - find all the attachment lists, - remove them, - remove the
 	 * nodes themselves
-	 */
-	/*
-	 * Deprecation notice
-	 * 
+	 *
+	 * NOOP notice
+	 *
 	 * This method is deprecated because it is no longer called by the super class : the method #deleteNodes has
 	 * been overridden in the present subclass, that now calls more specific methods.
-	 * 
+	 *
 	 * However the class must still provide an implementation. So we leave this code as history, but marked as deprecated.
 	 * Note that it doesn't support the milestone mode nor some other specific rules regarding requirement rewiring etc.
-	 * 
+	 *
 	 */
 	@Override
-	@Deprecated
 	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
-
-		OperationReport report = new OperationReport();
-
-		if (!ids.isEmpty()) {
-
-			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(ids);
-
-			TestCaseImportanceManagerForRequirementDeletion testCaseImportanceManager = provider.get();
-			testCaseImportanceManager.prepareRequirementDeletion(ids);
-
-			// remove the custom fields
-			List<Long> allVersionIds = deletionDao.findVersionIds(ids);
-			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_VERSION, allVersionIds);
-
-			// save the attachment list ids for later reference
-			List<Long> requirementAttachmentIds = deletionDao.findRequirementAttachmentListIds(ids);
-			List<Long> requirementFolderAttachmentIds = deletionDao.findRequirementFolderAttachmentListIds(ids);
-
-			// remove the changelog
-			deletionDao.deleteRequirementAuditEvents(ids);
-
-			// remove binds to other entities
-			deletionDao.removeTestStepsCoverageByRequirementVersionIds(allVersionIds);
-
-
-			// remove the elements now
-			deletionDao.removeEntities(ids);
-
-
-			// finally delete the attachment lists
-			requirementAttachmentIds.addAll(requirementFolderAttachmentIds);
-			deletionDao.removeAttachmentsLists(requirementAttachmentIds);
-
-			testCaseImportanceManager.changeImportanceAfterRequirementDeletion();
-
-			// fill the report
-			report.addRemoved(separatedIds[0], "folder");
-			report.addRemoved(separatedIds[1], "requirement");
-		}
-
-		return report;
+		// NOOP see javadoc
+		return null;
 	}
 
 

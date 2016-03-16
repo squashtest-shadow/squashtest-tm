@@ -42,7 +42,7 @@ public final class DateUtils {
 	/**
 	 * Formats a date into a an ISO 8601 string. <strong>The date will be formatted using the jvm default
 	 * timezone</strong>
-	 * 
+	 *
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 Date (no time info)
 	 */
@@ -62,7 +62,7 @@ public final class DateUtils {
 	/**
 	 * Formats a timestamp into a an ISO 8601 string. <strong>The date will be formatted using the jvm default
 	 * timezone</strong>
-	 * 
+	 *
 	 * @param date
 	 * @return returns that date formatted according to the ISO 8601 DateTime (with time and timezone info)
 	 */
@@ -102,7 +102,7 @@ public final class DateUtils {
 	/**
 	 * full check of whether the date is a valid iso 8601 date or not. Potentially slower than
 	 * #weakCheckIso8601Date but safer.
-	 * 
+	 *
 	 */
 	public static boolean strongCheckIso8601Date(String date) {
 		if (date == null) {
@@ -147,12 +147,13 @@ public final class DateUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param milliseconds
 	 * @return <code>null</code> if the string is empty, or a date otherwise. No check regarding the actual content of
 	 *         strDate.
 	 * @deprecated when you feel the urge to marshall a date into ms, consider using atom / iso instead
 	 */
+	@Deprecated
 	public static Date millisecondsToDate(String milliseconds) {
 		Date newDate = null;
 
@@ -165,11 +166,12 @@ public final class DateUtils {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 * @deprecated when you feel the urge to marshall a date into ms, consider using atom / iso instead
 	 */
+	@Deprecated
 	public static String dateToMillisecondsAsString(Date date) {
 		if (date != null) {
 			return Long.valueOf(date.getTime()).toString();

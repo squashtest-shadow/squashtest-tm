@@ -23,11 +23,11 @@ package org.squashtest.tm.core.foundation.collection;
 public final class DefaultColumnFiltering implements ColumnFiltering{
 
 	public static final DefaultColumnFiltering NO_FILTERING = new DefaultColumnFiltering();
-	
+
 	public DefaultColumnFiltering() {
 		super();
 	}
-	
+
 	@Override
 	public boolean isDefined() {
 		return false;
@@ -50,11 +50,6 @@ public final class DefaultColumnFiltering implements ColumnFiltering{
 
 	@Override
 	public boolean hasFilter(String mDataProp) {
-		return false;
-	}
-
-	@Override
-	public boolean hasFilter(String mDataProp, int offset) {
 		return false;
 	}
 

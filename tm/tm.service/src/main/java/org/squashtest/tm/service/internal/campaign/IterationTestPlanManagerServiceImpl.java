@@ -457,24 +457,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 	}
 
-	/**
-	 * @deprecated method used only in Integration tests should be removed
-	 * @param iterationId
-	 * @param testCaseId
-	 * @return
-	 */
-	@Deprecated
-	@Override
-	public IterationTestPlanItem findTestPlanItemByTestCaseId(long iterationId, long testCaseId) {
-		Iteration iteration = iterationDao.findById(iterationId);
-		for (IterationTestPlanItem item : iteration.getTestPlans()) {
-			if (!item.isTestCaseDeleted() && item.getReferencedTestCase().getId() == testCaseId) {
-				return item;
-			}
-		}
-		return null;
-	}
-
 	@Override
 	@PreAuthorize("hasPermission(#itemTestPlanId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'READ') "
 			+ OR_HAS_ROLE_ADMIN)

@@ -21,17 +21,17 @@
 package org.squashtest.tm.core.foundation.collection;
 /**
  * Interface for column-filtering instructions.
- * Because filtering requires significantly more processing, services and dao using it should first check {@link #isDefined()} first before triggering the additional 
- * filtering mecanisms.
- * 
- * 
+ * Because filtering requires significantly more processing, services and dao using it should first check {@link #isDefined()} first before triggering the additional
+ * filtering mechanisms.
+ *
+ *
  * @author flaurens
  *
  */
 public interface ColumnFiltering {
 
 	/**
-	 * @return true if any filtering is required. 
+	 * @return true if any filtering is required.
 	 */
 	boolean isDefined();
 
@@ -39,16 +39,13 @@ public interface ColumnFiltering {
 	 * @return the filter String for a column given its index
 	 */
 	String getFilter(Integer index);
-	
+
 	String getFilter(String mDataProp);
-	
+
 	boolean hasFilter(String mDataProp);
 
 	boolean hasFilter(Integer index);
-	
-	@Deprecated
-	boolean hasFilter(String mDataProp, int offset);
-	
+
 	@Deprecated
 	String getFilter(String mDataProp, int offset);
 }

@@ -22,18 +22,15 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 /**
  * thanks to the Hibernate support to pure scalar native queries, let's create another query respository.
- * 
+ *
  * TODO 2015/09/25 : that's not true anymore with @NamedNativeQuery. Maybe move them all to this annotation
  * when applicable ?
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 public final class NativeQueries {
-	private NativeQueries() {
-
-	}
 
 	public static final String ATTACHMENT_LIST_SQL_REMOVE_FROM_ATTACHMENT_LIST_CONTENT = " delete from ATTACHMENT_LIST_CONTENT where al_id in (:alIds)";
 
@@ -221,6 +218,9 @@ public final class NativeQueries {
 			"order by clos.depth desc";
 
 
+	private NativeQueries() {
+		super();
+	}
 
 
 }

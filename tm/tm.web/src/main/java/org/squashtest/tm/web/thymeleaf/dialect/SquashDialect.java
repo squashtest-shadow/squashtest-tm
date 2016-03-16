@@ -30,7 +30,6 @@ import javax.servlet.ServletContext;
 import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashCssAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashIso8601DateAttrProcessor;
-import org.squashtest.tm.web.thymeleaf.processor.attr.SquashTogglePanelAttrProcessor;
 import org.squashtest.tm.web.thymeleaf.processor.attr.SquashUnsafeHtmlAttrProcessor;
 import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.IProcessingContext;
@@ -41,9 +40,9 @@ import org.thymeleaf.processor.IProcessor;
 
 /**
  * Squash dialect for Thmymeleaf
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @WebComponent("thymeleaf.dialect.squash")
 public class SquashDialect extends AbstractDialect implements IExpressionEnhancingDialect {
@@ -72,7 +71,6 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 		Set<IProcessor> processors = new HashSet<IProcessor>(3);
 		processors.add(new SquashUnsafeHtmlAttrProcessor());
 		processors.add(new SquashCssAttrProcessor());
-		processors.add(new SquashTogglePanelAttrProcessor());
 		processors.add(new SquashIso8601DateAttrProcessor());
 		return processors;
 	}

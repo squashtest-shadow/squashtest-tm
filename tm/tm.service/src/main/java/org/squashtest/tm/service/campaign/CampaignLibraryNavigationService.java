@@ -126,14 +126,6 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
 	List<Iteration> copyIterationsToCampaign(@Id long campaignId, Long[] iterationsIds);
 
-	/**
-	 * @deprecated use {@linkplain IterationFinder#findById(long)} instead
-	 * @param iterationId
-	 * @return
-	 */
-	@Deprecated
-	Iteration findIteration(long iterationId);
-
 	//FIXME move to TestSuiteFinder
 	List<TestSuite> findIterationContent(long iterationId);
 
