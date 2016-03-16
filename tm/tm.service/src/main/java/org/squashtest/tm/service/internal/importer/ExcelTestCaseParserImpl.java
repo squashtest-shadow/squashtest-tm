@@ -20,20 +20,8 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -43,28 +31,33 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.SheetCorruptedException;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /*
  * TODO : 1) move remaining methods to PseudoTestCase (parseRow etc)
  * 		  2) make the description a list of description
  * 		  2')separate the list of description from the list of additionalDescription
  * 		  3) make the prerequesite a list of prerequesites
  * 		  4) remplacer les balises <b></b> par des <strong></strong> dans la génération des supplément de description
- * 
- * 
+ *
+ *
  */
 public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	/**
 	 * Superclass of strategy objects which populate a pseudo test case using data from a worksheet row.
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 */
 	private static abstract class FieldPopulator {
 		protected final String managedFieldTag;
 
-		/**
-		 * @param managedFieldTag
-		 */
 		public FieldPopulator(String managedFieldTag) {
 			this.managedFieldTag = managedFieldTag;
 		}
@@ -72,10 +65,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		/**
 		 * Checks the row tag and if it matches this populator's managed tag, it populates pseudo test case using row
 		 * data. Template method which calls {@link #doPopulate(PseudoTestCase, Row)}
-		 * 
-		 * @param pseudoTestCase
-		 * @param row
-		 * @return
+		 *
 		 */
 		public final boolean populate(PseudoTestCase pseudoTestCase, Row row) {
 
@@ -102,16 +92,14 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		/**
 		 * Populates pseudo test case using row without tag checking.
-		 * 
-		 * @param pseudoTestCase
-		 * @param row
+		 *
 		 */
 		protected abstract void doPopulate(PseudoTestCase pseudoTestCase, Row row);
 	}
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelTestCaseParserImpl.class);
 
-	private final List<FieldPopulator> fieldPopulators = new ArrayList<ExcelTestCaseParserImpl.FieldPopulator>(6);
+	private final List<FieldPopulator> fieldPopulators = new ArrayList<>(6);
 
 	private final FieldPopulator defaultPopulator = new FieldPopulator("") {
 		public void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
@@ -177,12 +165,14 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		// created on populator
 		fieldPopulators.add(new FieldPopulator(CREATED_ON_TAG) {
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
-				try {
-					String value = valueCell(row).getStringCellValue();
-					pseudoTestCase.setCreatedOn(value);
-				} catch (IllegalStateException e) {
+				Cell cell = valueCell(row);
+				if (Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
+					// When a cell is numeric, we read it as a Date (which is legal fo excel)
 					Date value = valueCell(row).getDateCellValue();
 					pseudoTestCase.setCreatedOnDate(value);
+				} else {
+					String value = valueCell(row).getStringCellValue();
+					pseudoTestCase.setCreatedOn(value);
 				}
 			}
 		});
@@ -199,7 +189,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 				String action = valueCell(row).getStringCellValue();
 				String expectation = "";
 				Cell cell2 = row.getCell(2);
-				if(cell2 != null){
+				if (cell2 != null) {
 					expectation = cell2.getStringCellValue();
 				}
 				String[] stepInfo = pairedString(action, expectation);
@@ -216,13 +206,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 			return parseFile(workbook, summary);
 
-		} catch (InvalidFormatException e) {
-			LOGGER.warn(e.getMessage());
-			throw new SheetCorruptedException(e);
-		} catch (IOException e) {
-			LOGGER.warn(e.getMessage());
-			throw new SheetCorruptedException(e);
-		} catch (IllegalArgumentException e) {
+		} catch (InvalidFormatException | IOException | IllegalArgumentException e) {
 			LOGGER.warn(e.getMessage());
 			throw new SheetCorruptedException(e);
 		}
@@ -241,9 +225,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			parseRow(row, pseudoTestCase);
 		}
 
-		TestCase testCase = generateTestCase(pseudoTestCase, summary);
-
-		return testCase;
+		return generateTestCase(pseudoTestCase, summary);
 
 	}
 
@@ -305,7 +287,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	}
 
 	private TestCase setTestCaseCreatedOnByInfos(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary,
-			TestCase testCase) {
+												 TestCase testCase) {
 		if ((pseudoTestCase.getCreatedOnDate() != null) && (pseudoTestCase.getCreatedBy() != null)) {
 			testCase = new TestCase(pseudoTestCase.getCreatedOnDate(), pseudoTestCase.getCreatedBy());
 
@@ -347,7 +329,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private void setTestCaseType(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary, TestCase testCase) {
 		try {
 			InfoListItem type = pseudoTestCase.formatType();
-			if (type != null){
+			if (type != null) {
 				testCase.setType(type);
 			}
 
@@ -361,7 +343,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		try {
 
 			InfoListItem nature = pseudoTestCase.formatNature();
-			if (nature != null){
+			if (nature != null) {
 				testCase.setNature(nature);
 			}
 
@@ -399,8 +381,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 	/**
 	 * A Row will pass the validation if the row contains exactly two basic cells
-	 * 
-	 * @param row
+	 *
 	 * @return true if the row is valid, false otherwise
 	 */
 	private boolean validateRow(Row row) {
@@ -422,7 +403,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 	private boolean validateRegularRow(Row row) {
 
-		boolean validated = true;
+		boolean validated;
 
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
@@ -444,7 +425,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		Date date2 = null;
 		String text2 = "";
 		try {
-			if(row.getCell(1) != null){
+			if (row.getCell(1) != null) {
 				text2 = row.getCell(1).getStringCellValue();
 			}
 		} catch (IllegalStateException ise) {
@@ -455,14 +436,14 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		boolean keyIsPresent = !text1.isEmpty();
 		boolean keyIsCreatedOn = text1.equalsIgnoreCase(CREATED_ON_TAG);
 		boolean valueIsTextOrDateDependingOnKey = ((keyIsCreatedOn && (!text2.isEmpty() || date2 != null)) || !text2
-				.isEmpty());
+			.isEmpty());
 
 		return keyIsPresent && valueIsTextOrDateDependingOnKey;
 	}
 
 	private String findFirstCellValue(Row row) {
 		String text1 = "";
-		if (row.getCell(0) != null){
+		if (row.getCell(0) != null) {
 			text1 = row.getCell(0).getStringCellValue();
 		}
 		return text1;
@@ -477,16 +458,19 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	 */
 	private boolean validateStepRow(Row row) {
 
-		boolean validated = true;
+		boolean validated;
 
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
 
 		String text1 = (row.getCell(0) != null) ? row.getCell(0).getStringCellValue() : "";
 		String text2 = "";
-		try {
-			text2 = (row.getCell(1) != null) ? row.getCell(1).getStringCellValue() : "";
-		} catch (IllegalStateException ise) {
+		Cell cell2 = row.getCell(1);
+
+		if (cell2 != null && Cell.CELL_TYPE_STRING == cell2.getCellType()) {
+			text2 = cell2.getStringCellValue();
+		} else {
+			LOGGER.debug("validateStepRow : Cell 1 of row {} was not of string type, empty string will be used", row);
 		}
 
 		validated = (text1.equals(ACTION_STEP_TAG)) && (!text2.isEmpty()) && ((lastCell >= 3) && (nbCell >= 3));
