@@ -24,7 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -33,7 +33,6 @@ import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.service.annotation.ArrayIdsCoercer;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.Ids;
@@ -45,7 +44,6 @@ import org.squashtest.tm.service.internal.campaign.coercers.CLNAndParentIdsCoerc
 import org.squashtest.tm.service.internal.campaign.coercers.CLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForArray;
 import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForList;
-import org.squashtest.tm.service.internal.campaign.coercers.IterationToCampaignIdsCoercer;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
 import org.squashtest.tm.service.library.LibraryNavigationService;
 
@@ -176,7 +174,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 
 	/**
 	 * that method should delete test suites, and remove its references in iteration and iteration test plan item
-	 * 
+	 *
 	 * @param removeFromIter
 	 *
 	 * @param testSuites
@@ -195,9 +193,9 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	CampaignExportCSVModel exportCampaignToCSV(Long campaignId, String exportType);
 
 	List<String> getParentNodesAsStringList(Long elementId);
-	
+
 	// ####################### PREVENT CONCURRENCY OVERIDES ############################
-	
+
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
@@ -205,7 +203,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="sourceNodesIds",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
 	List<CampaignLibraryNode> copyNodesToFolder(@Id("destinationId") long destinationId,@Ids("sourceNodesIds") Long[] sourceNodesIds);
-	
+
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
@@ -213,7 +211,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
 	List<CampaignLibraryNode> copyNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
-	
+
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
@@ -221,7 +219,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
 	void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
-	
+
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")},
@@ -229,7 +227,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
 	void moveNodesToFolder(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position);
-	
+
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
@@ -237,7 +235,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
 	void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId);
-	
+
 	@Override
 	@PreventConcurrents(
 			simplesLocks={@PreventConcurrent(entityType=CampaignLibrary.class,paramName="destinationId")},
@@ -245,14 +243,14 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetId",coercer=CLNAndParentIdsCoercerForArray.class)}
 			)
 	void moveNodesToLibrary(@Id("destinationId") long destinationId,@Ids("targetId") Long[] targetId, int position);
-	
+
 	@Override
 	@PreventConcurrents(
 			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetIds",coercer=CampaignLibraryIdsCoercerForList.class),
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetIds",coercer=CLNAndParentIdsCoercerForList.class)}
 			)
 	OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId);
-	
+
 	// ###################### /PREVENT CONCURRENCY OVERIDES ############################
 
 }

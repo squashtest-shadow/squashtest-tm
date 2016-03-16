@@ -40,7 +40,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -65,6 +65,10 @@ import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCo
 import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForList;
 import org.squashtest.tm.service.internal.campaign.coercers.IterationToCampaignIdsCoercer;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
+import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVFullModelImpl;
+import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVModelImpl;
+import org.squashtest.tm.service.internal.campaign.export.SimpleCampaignExportCSVModelImpl;
+import org.squashtest.tm.service.internal.campaign.export.WritableCampaignCSVModel;
 import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
@@ -394,7 +398,7 @@ public class CampaignLibraryNavigationServiceImpl
 	public List<String> getParentNodesAsStringList(Long nodeId) {
 		CampaignLibraryNode node = campaignLibraryNodeDao.findById(nodeId);
 		List<String> parents = new ArrayList<String>();
-		
+
 		if (node != null) {
 
 			List<Long> ids = campaignLibraryNodeDao.getParentsIds(nodeId);

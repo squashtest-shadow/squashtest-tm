@@ -18,17 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.campaign;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
+package org.squashtest.tm.service.internal.campaign.export;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
@@ -36,7 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.CampaignExportCSVModel;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
@@ -44,11 +34,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
 import org.squashtest.tm.service.customfield.CustomFieldHelper;
@@ -56,6 +42,10 @@ import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.customfield.DenormalizedFieldHelper;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+
+import javax.inject.Inject;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /*
  * TODO :
@@ -191,7 +181,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	}
 
 	private void createCustomFieldValuesIndex(List<CustomFieldValue> iterValues, List<CustomFieldValue> tcValues,
-			List<DenormalizedFieldValue> esValues) {
+											  List<DenormalizedFieldValue> esValues) {
 
 		iterCUFValues = new MultiValueMap();
 		tcCUFValues = new MultiValueMap();
@@ -284,7 +274,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			headerCells.add(new CellImpl("STEP_CUF_" + cufModel.getCode()));
 		}
 
-		return new RowImpl(headerCells);
+		return new RowImpl(headerCells, separator);
 
 	}
 
@@ -367,10 +357,10 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			logcount++;
 			if (logcount % 99 == 0) {
 				LOGGER.info("campaign full export : processed " + (logcount + 1) + " lines out of " + (nbRows + 1)
-						+ " (maximum estimate)");
+					+ " (maximum estimate)");
 			}
 
-			return new RowImpl(dataCells);
+			return new RowImpl(dataCells, separator);
 
 		}
 
@@ -380,7 +370,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 			if (eStep != null) {
 
 				Collection<DenormalizedFieldValue> esValues = (Collection<DenormalizedFieldValue>) esCUFValues
-						.get(execStep.getId());
+					.get(execStep.getId());
 				for (CustomField model : esCUFModel) {
 					String strValue = getDenormalizedValue(esValues, model);
 					dataCells.add(new CellImpl(strValue));
@@ -397,7 +387,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				TestCase testCase = itp.getReferencedTestCase();
 
 				Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues
-						.get(testCase.getId());
+					.get(testCase.getId());
 
 				for (CustomField model : tcCUFModel) {
 					String strValue = getValue(tcValues, model);
@@ -448,7 +438,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
 				dataCells.add(new CellImpl(formatUser(execStep.getLastExecutedBy())));
 				dataCells.add(new CellImpl(Integer.toString(getNbIssues(execStep)))); // XXX THIS IS WAAAAAAAY TOO
-																						// EXPENSIVE !
+				// EXPENSIVE !
 				dataCells.add(new CellImpl(formatLongText(execStep.getComment())));
 			}
 		}
@@ -479,11 +469,11 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 				}
 				cachedItpcellFixed.add(new CellImpl(testCase.getImportance().toString()));
 				cachedItpcellFixed.add(new CellImpl(itp.getTestSuiteNames().replace(", ", ",").replace("<", "&lt;")
-						.replace(">", "&gt;")));
+					.replace(">", "&gt;")));
 
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(itp.getExecutions().size())));
 				cachedItpcellFixed
-						.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
+					.add(new CellImpl(Integer.toString(testCase.getRequirementVersionCoverages().size())));
 				cachedItpcellFixed.add(new CellImpl(Integer.toString(getNbIssues(itp))));
 
 				cachedItpcellFixed.add(new CellImpl(itp.getExecutionStatus().toString()));
@@ -808,45 +798,5 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 	}
 
 	// ******************** implementation for the rows and cells **********************
-
-	public static class CellImpl implements Cell {
-		private String value;
-
-		public CellImpl(String value) {
-			this.value = value;
-		}
-
-		public String getValue() {
-			return value;
-		}
-	}
-
-	public class RowImpl implements Row {
-		private List<? extends Cell> cells;
-
-		@SuppressWarnings("unchecked")
-		public List<Cell> getCells() {
-			return (List<Cell>) cells;
-		}
-
-		public RowImpl(List<? extends Cell> cells) {
-			this.cells = cells;
-		}
-
-		@Override
-		public String toString() {
-			StringBuilder builder = new StringBuilder();
-			String strSeparator = String.valueOf(separator);
-
-			for (Cell cell : cells) {
-				String value = cell.getValue();
-				// escape separators from the cell content or it could spurriously mess with the column layout
-				String escaped = value.replaceAll(strSeparator, " ");
-				builder.append(escaped + separator);
-			}
-
-			return builder.toString().replaceAll(separator + "$", "");
-		}
-	}
 
 }
