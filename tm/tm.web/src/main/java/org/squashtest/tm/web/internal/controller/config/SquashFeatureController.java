@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.config;
 
-import org.omg.CORBA.Object;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
@@ -49,7 +48,7 @@ public class SquashFeatureController {
 	 * Note that we do **not** want to synchronize ServletContext for a
 	 * potentially long time.
 	 */
-	private final Object monitor = new Object;
+	private final Object monitor = new Object();
 
 	@Inject
 	private FeatureManager featureManager;
