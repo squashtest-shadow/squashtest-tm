@@ -35,7 +35,7 @@ define(function() {
 
 			return {
 
-				plugins : [ "json_data", "sort", "themes", "types", "cookies", "ui", "squash", "treepicker",
+				plugins : [ "json_data", "sort", "themes", "types", "dnd", "cookies", "ui", "squash", "treepicker",
 						'conditionalselect' ],
 
 				json_data : {
@@ -54,6 +54,15 @@ define(function() {
 
 				core : {
 					animation : 0
+				},
+				
+				dnd : {
+					drop_finish : function(data){
+						// attention : extra lazy implementation
+						// don't do the same at home kids !
+						data.o.treeNode().select();
+						$("#add-items-button").click();
+					}
 				},
 
 				ui : {

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery'], function($){
-	
+		
 	return function(){
 		
 		/*
@@ -60,6 +60,17 @@ define(['jquery'], function($){
 					});
 
 					return sorted;
+				},
+				
+				/*
+				 * that function will prevent drop of a node in the same tree (that should be 
+				 * possible only for workspace tree).
+				 * 
+				 * The actual handler for the drop is declared in the common-conf of the 
+				 * package tree-picker
+				 */ 
+				check_move : function(){
+					return false;
 				}
 			}
 

@@ -138,7 +138,7 @@
 	
 	<jsp:attribute name="tablePane">
 	<comp:opened-object otherViewers="${ otherViewers }" objectUrl="${ testCaseUrl }"/>
-		<tc:steps-verified-requirements-table  testStep="${ testStep }" containerId="contextual-content" />
+		<tc:steps-verified-requirements-table  testStep="${ testStep }" containerId="contextual-content" droppable="true"/>
 		<div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
 			<ul><li>summary message here</li></ul>
 		</div>

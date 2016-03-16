@@ -27,6 +27,8 @@
 
 <%@ attribute name="testStep" required="true"  type="java.lang.Object" description="the concerned test step" %>
 <%@ attribute name="containerId" required="true" description="if of dom container that will hold the table events" %>
+<%@ attribute name="droppable" required="false" description="can drop tree nodes in the table, default is false"  type="java.lang.Boolean"%>
+
 
 <%--
 <%@ attribute name="milestoneConf" required="true" type="java.lang.Object" description="an instance of MilestoneFeatureConfiguration"%>
@@ -77,7 +79,7 @@
 				type="button" value="<f:message key='label.removeRequirementsFromTestCase'/>"
 				class="button" />
 				</div>
-<table id="verified-requirements-table" 
+<table id="verified-requirements-table" class="unstyled-table ${(not empty droppable and droppable) ? 'jstree-drop' : ''}"
 data-def='datakeys-id=entity-id ,ajaxsource=${ stepVerifiedRequirementsUrl }'>
 	<thead>
 		<tr>

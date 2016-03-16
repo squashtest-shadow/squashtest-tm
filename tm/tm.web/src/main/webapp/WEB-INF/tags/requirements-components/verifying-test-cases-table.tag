@@ -27,6 +27,8 @@
 <%@ attribute name="model" type="java.lang.Object" required="true" description="the initial rows of the table"%>
 <%@ attribute name="milestoneConf" type="java.lang.Object" required="true" description="an instance of MilestoneFeatureConfiguration" %>
 <%@ attribute name="coverageStats" type="java.lang.Boolean" description="Show or " %>
+<%@ attribute name="droppable" required="false" description="can drop tree nodes in the table, default is false"  type="java.lang.Boolean"%>
+
 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -53,7 +55,7 @@
 
 <c:set var="milestoneVisibility" value="${(milestoneConf.milestoneDatesColumnVisible) ? '' : ', invisible'}"/> 
    
-<table id="verifying-test-cases-table" class="unstyled-table" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
+<table id="verifying-test-cases-table" class="unstyled-table ${(not empty droppable and droppable) ? 'jstree-drop' : ''}" data-def="ajaxsource=${tableModelUrl}, deferloading=${model.iTotalRecords}, 
   datakeys-id=tc-id, pre-sort=2-asc, pagesize=50 ">
   <thead>
     <tr> 
