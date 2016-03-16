@@ -29,6 +29,7 @@ import java.net.URL;
 
 import org.squashtest.csp.launcher.ihm.window.SimpleWindow;
 
+// IGNOREVIOLATIONS:FILE Don't bother rule-checking this app, it is pretty useless anyway
 public class Starter {
 
 	//Squash url
@@ -36,9 +37,6 @@ public class Starter {
 	//Number of milliseconds until new http request
 	static int intervals = 5000;
 
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 
 
@@ -57,11 +55,7 @@ public class Starter {
 		}
 		try {
             Desktop.getDesktop().browse(new URI(Starter.SQUASH_URL));
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } catch (URISyntaxException e) {
-            // TODO Auto-generated catch block
+        } catch (IOException | URISyntaxException e) {
             e.printStackTrace();
         }
 		//close window
@@ -79,7 +73,6 @@ public class Starter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		// System.out.println("response : " + response);
 
 		return response.equalsIgnoreCase("ok");
 	}

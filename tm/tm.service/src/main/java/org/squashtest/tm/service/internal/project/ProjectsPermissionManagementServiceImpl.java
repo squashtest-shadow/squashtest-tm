@@ -20,28 +20,14 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.project.GenericProject;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.project.ProjectPermission;
-import org.squashtest.tm.domain.project.ProjectTemplate;
-import org.squashtest.tm.domain.project.ProjectVisitor;
+import org.squashtest.tm.domain.project.*;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.users.Party;
@@ -54,13 +40,18 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @Service("squashtest.tm.service.ProjectsPermissionManagementService")
 @Transactional
 public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissionManagementService {
 
 	private static final String NAMESPACE = "squashtest.acl.group.tm";
-	private static final List<String> PROJECT_CLASS_NAMES = new ArrayList<String>(Arrays.asList(
-			"org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"));
+	private static final List<String> PROJECT_CLASS_NAMES = new ArrayList<>(Arrays.asList(
+		"org.squashtest.tm.domain.project.Project", "org.squashtest.tm.domain.project.ProjectTemplate"));
 
 	@Inject
 	private ObjectAclService aclService;
@@ -97,14 +88,14 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getId(), clibraryRef);
-		
+
 		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
 		aclService.removeAllResponsibilities(user.getId(), crlibraryRef);
 	}
 
 	private ObjectIdentity createProjectIdentity(long projectId) {
 		GenericProject project = genericProjectFinder.findById(projectId);
-		final Class<?>[] projectType = { null };
+		final Class<?>[] projectType = {null};
 
 		project.accept(new ProjectVisitor() {
 
@@ -128,13 +119,13 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	private ObjectIdentity createTestCaseLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(TestCaseLibrary.class, project.getTestCaseLibrary()
-				.getId());
+			.getId());
 	}
 
 	private ObjectIdentity createRequirementLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(RequirementLibrary.class, project.getRequirementLibrary().getId());
 	}
-	
+
 	private ObjectIdentity createCustomReportLibraryIdentity(GenericProject project) {
 		return new ObjectIdentityImpl(CustomReportLibrary.class, project.getCustomReportLibrary().getId());
 	}
@@ -142,7 +133,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProjectPermission> findProjectPermissionByParty(long partyId) {
-		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
+		List<ProjectPermission> newResult = new ArrayList<>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
 			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
@@ -154,7 +145,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Transactional(readOnly = true)
 	@Override
 	public List<GenericProject> findProjectWithPermissionByParty(long partyId) {
-		List<GenericProject> newResult = new ArrayList<GenericProject>();
+		List<GenericProject> newResult = new ArrayList<>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
 			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
@@ -166,7 +157,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Transactional(readOnly = true)
 	@Override
 	public List<ProjectPermission> findProjectPermissionByUserLogin(String userLogin) {
-		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
+		List<ProjectPermission> newResult = new ArrayList<>();
 		List<Object[]> result = aclService.retrieveClassAclGroupFromUserLogin(userLogin, PROJECT_CLASS_NAMES);
 		for (Object[] objects : result) {
 			GenericProject project = genericProjectFinder.findById((Long) objects[0]);
@@ -178,12 +169,12 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Transactional(readOnly = true)
 	@Override
 	public PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId,
-			PagingAndSorting sorting, Filtering filtering) {
+																					   PagingAndSorting sorting, Filtering filtering) {
 
-		List<ProjectPermission> newResult = new ArrayList<ProjectPermission>();
+		List<ProjectPermission> newResult = new ArrayList<>();
 
 		List<Object[]> result = aclService.retrieveClassAclGroupFromPartyId(partyId, PROJECT_CLASS_NAMES, sorting,
-				filtering);
+			filtering);
 		int total = result.size();
 
 		for (Object[] objects : result) {
@@ -191,7 +182,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 			newResult.add(new ProjectPermission(project, (PermissionGroup) objects[1]));
 		}
 
-		return new PagingBackedPagedCollectionHolder<List<ProjectPermission>>(sorting, total, newResult);
+		return new PagingBackedPagedCollectionHolder<>(sorting, total, newResult);
 	}
 
 	@Transactional(readOnly = true)
@@ -231,7 +222,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.addNewResponsibility(party.getId(), clibraryRef, permissionName);
-		
+
 		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
 		aclService.addNewResponsibility(party.getId(), crlibraryRef, permissionName);
 
@@ -253,7 +244,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		ObjectIdentity clibraryRef = createCampaignLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, clibraryRef);
-		
+
 		ObjectIdentity crlibraryRef = createCustomReportLibraryIdentity(project);
 		aclService.removeAllResponsibilities(partyId, crlibraryRef);
 	}
@@ -268,7 +259,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	public List<PartyProjectPermissionsBean> findPartyPermissionsBeanByProject(long projectId) {
 
 		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class
-				: Project.class;
+			: Project.class;
 
 		return findPartyPermissionBeanByProjectOfGivenType(projectId, projectClass);
 
@@ -277,10 +268,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 	@Transactional(readOnly = true)
 	@Override
 	public PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionsBeanByProject(
-			PagingAndSorting sorting, Filtering filtering, long projectId) {
+		PagingAndSorting sorting, Filtering filtering, long projectId) {
 
 		Class<?> projectClass = genericProjectFinder.isProjectTemplate(projectId) ? ProjectTemplate.class
-				: Project.class;
+			: Project.class;
 
 		return findPartyPermissionBeanByProjectOfGivenType(projectId, projectClass, sorting, filtering);
 
@@ -308,8 +299,8 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	// clearly suboptimal, on the other hand this method is seldomely invoked
 	private List<PartyProjectPermissionsBean> findPartyPermissionBeanByProjectOfGivenType(long projectId,
-			Class<?> projectType) {
-		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>();
+																						  Class<?> projectType) {
+		List<PartyProjectPermissionsBean> newResult = new ArrayList<>();
 
 		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType);
 		for (Object[] objects : result) {
@@ -323,10 +314,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 	// clearly suboptimal, on the other hand this method is seldomely invoked
 	private PagedCollectionHolder<List<PartyProjectPermissionsBean>> findPartyPermissionBeanByProjectOfGivenType(
-			long projectId, Class<?> projectType, PagingAndSorting sorting, Filtering filtering) {
+		long projectId, Class<?> projectType, PagingAndSorting sorting, Filtering filtering) {
 
 		List<Object[]> result = aclService.retrievePartyAndAclGroupNameFromIdentityAndClass(projectId, projectType,
-				sorting, filtering);
+			sorting, filtering);
 
 		int total = result.size();
 
@@ -335,14 +326,14 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		result = result.subList(startIndex, lastIndex);
 
-		List<PartyProjectPermissionsBean> newResult = new ArrayList<PartyProjectPermissionsBean>(result.size());
+		List<PartyProjectPermissionsBean> newResult = new ArrayList<>(result.size());
 
 		for (Object[] objects : result) {
 			Party party = partyDao.findById((Long) objects[0]);
 			newResult.add(new PartyProjectPermissionsBean(party, (PermissionGroup) objects[1]));
 		}
 
-		return new PagingBackedPagedCollectionHolder<List<PartyProjectPermissionsBean>>(sorting, total, newResult);
+		return new PagingBackedPagedCollectionHolder<>(sorting, total, newResult);
 
 	}
 
@@ -361,7 +352,7 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 			addNewPermissionToProject(userId, projectId, permissionName);
 		}
 	}
-	
+
 	/**
 	 * @see org.squashtest.tm.service.project.ProjectsPermissionManagementService#copyAssignedUsers(org.squashtest.tm.domain.project.GenricProject,
 	 *      org.squashtest.tm.domain.project.GenricProject)
@@ -412,10 +403,10 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 
 		return isInGroup;
 	}
-	
+
 	//****************************************** PRIVATE METHOD *************************************************//
-	
-	private void copyAssignedUsers(GenericProject targetProject, long sourceId){
+
+	private void copyAssignedUsers(GenericProject targetProject, long sourceId) {
 		List<PartyProjectPermissionsBean> templatePartyPermissions = findPartyPermissionsBeanByProject(sourceId);
 
 		for (PartyProjectPermissionsBean partyPermission : templatePartyPermissions) {

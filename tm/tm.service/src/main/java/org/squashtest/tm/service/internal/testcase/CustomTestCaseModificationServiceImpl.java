@@ -279,7 +279,6 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 *
 	 * returns : the index if found, -1 if not found or if the provided TestCase is null
 	 */
-	@Transactional(readOnly = true)
 	private int findTestStepInTestCase(TestCase testCase, long testStepId) {
 		return testCase.getPositionOfStep(testStepId);
 	}

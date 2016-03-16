@@ -20,43 +20,26 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.Target;
-import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
-import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
-import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
-import org.squashtest.tm.service.internal.batchimport.DatasetValue;
-import org.squashtest.tm.service.internal.batchimport.Instruction;
-import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
-import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
-import org.squashtest.tm.service.internal.batchimport.RequirementTarget;
-import org.squashtest.tm.service.internal.batchimport.RequirementVersionInstruction;
-import org.squashtest.tm.service.internal.batchimport.RequirementVersionTarget;
-import org.squashtest.tm.service.internal.batchimport.StepInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
-import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
-import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
+import org.squashtest.tm.service.internal.batchimport.*;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertyHolderFinder;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
+
+import javax.validation.constraints.NotNull;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Repository of {@link PropertyHolderFinder}s in the context of a specific {@link TemplateWorksheet}.
  *
  * @author Gregory Fouquet
- *
  */
 final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColumn> {
-	private static final Map<TemplateWorksheet, PropertyHolderFinderRepository<?>> FINDER_REPO_BY_WORKSHEET = new HashMap<TemplateWorksheet, PropertyHolderFinderRepository<?>>(
-			TemplateWorksheet.values().length);
+	private static final Map<TemplateWorksheet, PropertyHolderFinderRepository<?>> FINDER_REPO_BY_WORKSHEET = new HashMap<>(
+		TemplateWorksheet.values().length);
 
 	static {
 		FINDER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesWorksheetRepo());
@@ -69,7 +52,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	private static PropertyHolderFinderRepository<TestCaseSheetColumn> createTestCasesWorksheetRepo() {
-		PropertyHolderFinderRepository<TestCaseSheetColumn> r = new PropertyHolderFinderRepository<TestCaseSheetColumn>();
+		PropertyHolderFinderRepository<TestCaseSheetColumn> r = new PropertyHolderFinderRepository<>();
 
 		PropertyHolderFinder<TestCaseInstruction, TestCaseTarget> targetFinder = new PropertyHolderFinder<TestCaseInstruction, TestCaseTarget>() {
 			@Override
@@ -103,8 +86,8 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	private static PropertyHolderFinderRepository<?> createCoverageWorksheetRepo() {
-		PropertyHolderFinderRepository<CoverageSheetColumn> r = new PropertyHolderFinderRepository<CoverageSheetColumn>();
-		PropertyHolderFinder<CoverageInstruction, CoverageTarget> targetFinder = new PropertyHolderFinder<CoverageInstruction, CoverageTarget>(){
+		PropertyHolderFinderRepository<CoverageSheetColumn> r = new PropertyHolderFinderRepository<>();
+		PropertyHolderFinder<CoverageInstruction, CoverageTarget> targetFinder = new PropertyHolderFinder<CoverageInstruction, CoverageTarget>() {
 
 			@Override
 			public CoverageTarget find(CoverageInstruction instruction) {
@@ -118,16 +101,16 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 
 	private static PropertyHolderFinderRepository<?> createRequirementWorksheetRepo() {
 
-		PropertyHolderFinderRepository<RequirementSheetColumn> r = new PropertyHolderFinderRepository<RequirementSheetColumn>();
+		PropertyHolderFinderRepository<RequirementSheetColumn> r = new PropertyHolderFinderRepository<>();
 
-		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget> targetFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget>(){
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget> targetFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersionTarget>() {
 
 			@Override
 			public RequirementVersionTarget find(RequirementVersionInstruction instruction) {
 				return instruction.getTarget();
 			}
 		};
-		PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget> targetRequirementFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget>(){
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget> targetRequirementFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementTarget>() {
 
 			@Override
 			public RequirementTarget find(RequirementVersionInstruction instruction) {
@@ -136,8 +119,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 		};
 
 
-
-		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion> requirementVersionFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion>(){
+		PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion> requirementVersionFinder = new PropertyHolderFinder<RequirementVersionInstruction, RequirementVersion>() {
 
 			@Override
 			public RequirementVersion find(RequirementVersionInstruction instruction) {
@@ -167,7 +149,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	 * @return
 	 */
 	private static PropertyHolderFinderRepository<?> createDatasetsWorksheetRepo() {
-		PropertyHolderFinderRepository<DatasetSheetColumn> r = new PropertyHolderFinderRepository<DatasetSheetColumn>();
+		PropertyHolderFinderRepository<DatasetSheetColumn> r = new PropertyHolderFinderRepository<>();
 
 		PropertyHolderFinder<DatasetInstruction, DatasetTarget> targetFinder = new PropertyHolderFinder<DatasetInstruction, DatasetTarget>() {
 			@Override
@@ -198,7 +180,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	 * @return
 	 */
 	private static PropertyHolderFinderRepository<?> createDatasetParamValuesWorksheetRepo() {
-		PropertyHolderFinderRepository<DatasetParamValuesSheetColumn> r = new PropertyHolderFinderRepository<DatasetParamValuesSheetColumn>();
+		PropertyHolderFinderRepository<DatasetParamValuesSheetColumn> r = new PropertyHolderFinderRepository<>();
 
 		PropertyHolderFinder<DatasetParamValueInstruction, DatasetTarget> targetFinder = new PropertyHolderFinder<DatasetParamValueInstruction, DatasetTarget>() {
 			@Override
@@ -235,7 +217,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	 * @return
 	 */
 	private static PropertyHolderFinderRepository<?> createParamsWorksheetRepo() {
-		PropertyHolderFinderRepository<ParameterSheetColumn> r = new PropertyHolderFinderRepository<ParameterSheetColumn>();
+		PropertyHolderFinderRepository<ParameterSheetColumn> r = new PropertyHolderFinderRepository<>();
 
 		PropertyHolderFinder<ParameterInstruction, ParameterTarget> targetFinder = new PropertyHolderFinder<ParameterInstruction, ParameterTarget>() {
 			@Override
@@ -271,7 +253,7 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	 * @return the {@link PropertyHolderFinderRepository<StepSheetColumn>} for Steps worksheet
 	 */
 	private static PropertyHolderFinderRepository<?> createStepsWorksheetRepo() {
-		PropertyHolderFinderRepository<StepSheetColumn> stepsWorksheetRepo = new PropertyHolderFinderRepository<StepSheetColumn>();
+		PropertyHolderFinderRepository<StepSheetColumn> stepsWorksheetRepo = new PropertyHolderFinderRepository<>();
 
 		PropertyHolderFinder<StepInstruction, TestStepTarget> targetFinder = new PropertyHolderFinder<StepInstruction, TestStepTarget>() {
 			@Override
@@ -331,17 +313,16 @@ final class PropertyHolderFinderRepository<COL extends Enum<COL> & TemplateColum
 	}
 
 	/**
-	 *
 	 * @param worksheet
 	 * @return the {@link PropertyHolderFinderRepository} suitable for the given worksheet.
 	 */
 	@SuppressWarnings("unchecked")
 	public static <C extends Enum<C> & TemplateColumn> PropertyHolderFinderRepository<C> forWorksheet(
-			@NotNull TemplateWorksheet worksheet) {
+		@NotNull TemplateWorksheet worksheet) {
 		return (PropertyHolderFinderRepository<C>) FINDER_REPO_BY_WORKSHEET.get(worksheet);
 	}
 
-	private final Map<COL, PropertyHolderFinder<?, ?>> finderByColumn = new HashMap<COL, PropertyHolderFinder<?, ?>>();
+	private final Map<COL, PropertyHolderFinder<?, ?>> finderByColumn = new HashMap<>();
 	/**
 	 * the default finder is to be used when no finder could be found from {@link #finderByColumn}
 	 */

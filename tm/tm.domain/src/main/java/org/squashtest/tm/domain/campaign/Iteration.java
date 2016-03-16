@@ -53,7 +53,7 @@ import java.util.*;
 @Auditable
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
-BoundEntity, MilestoneMember {
+	BoundEntity, MilestoneMember {
 	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
 	public static final int MAX_REF_SIZE = 50;
@@ -104,28 +104,28 @@ BoundEntity, MilestoneMember {
 	/*
 	 * FIXME TEST_PLAN might be a little more appropriate. Don't forget to fix the hql/criteria queries as well
 	 */
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "ITEM_TEST_PLAN_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_LIST", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"))
-	private final List<IterationTestPlanItem> testPlans = new ArrayList<IterationTestPlanItem>();
+	private final List<IterationTestPlanItem> testPlans = new ArrayList<>();
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	/* *********************** Test suites ********************************** */
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@JoinTable(name = "ITERATION_TEST_SUITE", joinColumns = @JoinColumn(name = ITERATION_ID), inverseJoinColumns = @JoinColumn(name = "TEST_SUITE_ID"))
-	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
+	private List<TestSuite> testSuites = new ArrayList<>();
 
 	/**
 	 * flattened list of the executions
 	 */
 	public List<Execution> getExecutions() {
-		List<Execution> listExec = new ArrayList<Execution>();
+		List<Execution> listExec = new ArrayList<>();
 		for (IterationTestPlanItem testplan : testPlans) {
 			listExec.addAll(testplan.getExecutions());
 		}
@@ -315,7 +315,7 @@ BoundEntity, MilestoneMember {
 	public List<TestCase> getPlannedTestCase() {
 		// FIXME (GRF) I think it's broken because it may return several times the same test case. Cannot fix without
 		// checking side effects on campagne epargne wizard beforehand. Note : w wrote a test which i deactivated
-		List<TestCase> list = new ArrayList<TestCase>(testPlans.size());
+		List<TestCase> list = new ArrayList<>(testPlans.size());
 
 		for (IterationTestPlanItem iterTestPlan : testPlans) {
 			TestCase testCase = iterTestPlan.getReferencedTestCase();
@@ -363,7 +363,7 @@ BoundEntity, MilestoneMember {
 			IterationTestPlanItem itemTestPlan = iterator.next();
 
 			if ((!itemTestPlan.isTestCaseDeleted())
-					&& (itemTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
+				&& (itemTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
 				return iterator.previousIndex();
 			}
 		}
@@ -427,10 +427,9 @@ BoundEntity, MilestoneMember {
 	public int getIndexOf(IterationTestPlanItem item) {
 
 		int i = 0;
-		ListIterator<IterationTestPlanItem> iterator = testPlans.listIterator();
 
-		while (iterator.hasNext()) {
-			if (item.equals(iterator.next())) {
+		for (IterationTestPlanItem testPlan : testPlans) {
+			if (item.equals(testPlan)) {
 				return i;
 			}
 			i++;
@@ -460,7 +459,7 @@ BoundEntity, MilestoneMember {
 	public void addTestSuite(TestSuite suite) {
 		if (!checkSuiteNameAvailable(suite.getName())) {
 			throw new DuplicateNameException("cannot add suite to iteration " + getName() + " : suite named "
-					+ suite.getName() + " already exists");
+				+ suite.getName() + " already exists");
 		}
 		testSuites.add(suite);
 		suite.setIteration(this);
@@ -469,7 +468,7 @@ BoundEntity, MilestoneMember {
 	public void addTestSuite(TestSuite suite, int position) {
 		if (!checkSuiteNameAvailable(suite.getName())) {
 			throw new DuplicateNameException("cannot add suite to iteration " + getName() + " : suite named "
-					+ suite.getName() + " already exists");
+				+ suite.getName() + " already exists");
 		}
 		testSuites.add(position, suite);
 		suite.setIteration(this);
@@ -611,7 +610,7 @@ BoundEntity, MilestoneMember {
 			return null;
 		} else {
 			IterationTestPlanItem firstTestPlan = Collections.min(getTestPlans(),
-					CascadingAutoDateComparatorBuilder.buildTestPlanFirstDateSorter());
+				CascadingAutoDateComparatorBuilder.buildTestPlanFirstDateSorter());
 			return firstTestPlan.getLastExecutedOn();
 		}
 	}
@@ -621,7 +620,7 @@ BoundEntity, MilestoneMember {
 			return null;
 		} else {
 			IterationTestPlanItem lastTestPlan = Collections.max(getTestPlans(),
-					CascadingAutoDateComparatorBuilder.buildTestPlanLastDateSorter());
+				CascadingAutoDateComparatorBuilder.buildTestPlanLastDateSorter());
 			return lastTestPlan.getLastExecutedOn();
 		}
 	}
@@ -637,13 +636,13 @@ BoundEntity, MilestoneMember {
 	 *         <em>(taking into account test_plan_items that are test_case deleted)</em></li>
 	 */
 	public Map<TestSuite, List<Integer>> createTestSuitesPastableCopy() {
-		Map<TestSuite, List<Integer>> resultMap = new HashMap<TestSuite, List<Integer>>();
+		Map<TestSuite, List<Integer>> resultMap = new HashMap<>();
 		List<IterationTestPlanItem> testPlanWithoutDeletedTestCases = getTestPlanWithoutDeletedTestCases();
 
 		for (TestSuite testSuite : getTestSuites()) {
 			List<IterationTestPlanItem> testSuiteTestPlan = testSuite.getTestPlan();
 			TestSuite testSuiteCopy = testSuite.createCopy();
-			List<Integer> testPlanIndex = new ArrayList<Integer>();
+			List<Integer> testPlanIndex = new ArrayList<>();
 
 			for (IterationTestPlanItem iterationTestPlanItem : testSuiteTestPlan) {
 				int testPlanItemIndex = testPlanWithoutDeletedTestCases.indexOf(iterationTestPlanItem);
@@ -661,12 +660,9 @@ BoundEntity, MilestoneMember {
 
 	private List<IterationTestPlanItem> getTestPlanWithoutDeletedTestCases() {
 
-		List<IterationTestPlanItem> testPlanResult = new LinkedList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> testPlanResult = new LinkedList<>();
 
-		Iterator<IterationTestPlanItem> iterator = getTestPlans().iterator();
-
-		while (iterator.hasNext()) {
-			IterationTestPlanItem itpi = iterator.next();
+		for (IterationTestPlanItem itpi : getTestPlans()) {
 			if (!itpi.isTestCaseDeleted()) {
 				testPlanResult.add(itpi);
 			}
@@ -733,7 +729,7 @@ BoundEntity, MilestoneMember {
 
 	@Override
 	public void addContent(@NotNull TestSuite testSuite, int position) throws DuplicateNameException,
-	NullArgumentException {
+		NullArgumentException {
 		this.addTestSuite(testSuite, position);
 
 	}
@@ -775,7 +771,7 @@ BoundEntity, MilestoneMember {
 
 	@Override
 	public List<String> getContentNames() {
-		List<String> testSuitesNames = new ArrayList<String>(testSuites.size());
+		List<String> testSuitesNames = new ArrayList<>(testSuites.size());
 		for (TestSuite suite : testSuites) {
 			testSuitesNames.add(suite.getName());
 		}
@@ -794,9 +790,9 @@ BoundEntity, MilestoneMember {
 
 	@Override
 	public Boolean doMilestonesAllowCreation() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectCreateAndDelete()){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : getMilestones()) {
+			if (!m.getStatus().isAllowObjectCreateAndDelete()) {
 				allowed = Boolean.FALSE;
 				break;
 			}
@@ -806,14 +802,16 @@ BoundEntity, MilestoneMember {
 
 	@Override
 	public Boolean doMilestonesAllowEdition() {
-		Boolean allowed=Boolean.TRUE;
-		for (Milestone m : getMilestones()){
-			if (! m.getStatus().isAllowObjectModification()){
+		Boolean allowed = Boolean.TRUE;
+		for (Milestone m : getMilestones()) {
+			if (!m.getStatus().isAllowObjectModification()) {
 				allowed = Boolean.FALSE;
 				break;
 			}
 		}
 		return allowed;
-	};
+	}
+
+	;
 
 }

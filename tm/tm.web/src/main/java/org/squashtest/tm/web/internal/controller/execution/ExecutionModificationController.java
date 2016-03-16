@@ -25,25 +25,12 @@ package org.squashtest.tm.web.internal.controller.execution;
  *
  *
  */
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
-
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -84,15 +71,20 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
 import org.squashtest.tm.web.internal.model.json.JsonExecutionInfo;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
 @Controller
 @RequestMapping("/executions/{executionId}")
 public class ExecutionModificationController {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExecutionModificationController.class);
-
-
-
-
 
 
 	@Inject
@@ -130,7 +122,7 @@ public class ExecutionModificationController {
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getExecution(@PathVariable long executionId,
-			@CurrentMilestone Milestone activeMilestone) {
+									 @CurrentMilestone Milestone activeMilestone) {
 
 		// execution properties
 		Execution execution = executionModService.findAndInitExecution(executionId);
@@ -145,7 +137,7 @@ public class ExecutionModificationController {
 		List<AoColumnDef> columnDefs;
 
 		columnDefs = findColumnDefForSteps(execution);
-		List<CustomFieldModel> stepCufsModels = new LinkedList<CustomFieldModel>();
+		List<CustomFieldModel> stepCufsModels = new LinkedList<>();
 
 		if (!execution.getSteps().isEmpty()) {
 
@@ -174,7 +166,6 @@ public class ExecutionModificationController {
 	}
 
 
-
 	private List<AoColumnDef> findColumnDefForSteps(Execution execution) {
 		List<AoColumnDef> columnDefs;
 		boolean editable = permissionEvaluationService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "EXECUTE", execution);
@@ -186,7 +177,7 @@ public class ExecutionModificationController {
 	@RequestMapping(value = "/steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
-			final Locale locale) {
+											 final Locale locale) {
 		LOGGER.trace("execsteps table : entering controller");
 
 		Execution exec = executionModService.findById(executionId);
@@ -194,20 +185,20 @@ public class ExecutionModificationController {
 
 		LOGGER.trace("execsteps table : fetching steps");
 		PagedCollectionHolder<List<ExecutionStep>> holder = executionModService.findExecutionSteps(executionId,
-				filter);
+			filter);
 		LOGGER.trace("execsteps table : finished steps");
 
 
 		LOGGER.trace("execsteps table : fetching cufs / deno");
 		CustomFieldHelper<ExecutionStep> cufHelper = cufHelperService.newHelper(holder.getPagedItems())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).
+			.setRenderingLocations(RenderingLocation.STEP_TABLE).
 				restrictToCommonFields();
 
 		List<CustomFieldValue> cufValues = cufHelper.getCustomFieldValues();
 		int nbCufs = cufHelper.getCustomFieldConfiguration().size();
 
 		DenormalizedFieldHelper<ExecutionStep> denoHelper = cufHelperService.newDenormalizedHelper(holder.getPagedItems())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE);
+			.setRenderingLocations(RenderingLocation.STEP_TABLE);
 
 		List<DenormalizedFieldValue> denoValues = denoHelper.getDenormalizedFieldValues();
 		int nbDeno = denoHelper.getCustomFieldConfiguration().size();
@@ -220,7 +211,7 @@ public class ExecutionModificationController {
 		tableHelper.usingCustomFields(cufValues, nbCufs);
 		tableHelper.usingDenormalizedFields(denoValues, nbDeno);
 
-		DataTableModel model = tableHelper.buildDataModel(holder,  params.getsEcho());
+		DataTableModel model = tableHelper.buildDataModel(holder, params.getsEcho());
 		LOGGER.trace("execsteps table : finished model");
 
 		return model;
@@ -231,14 +222,15 @@ public class ExecutionModificationController {
 	@RequestMapping(value = "/auto-steps", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
 	public DataTableModel getAutoStepsTableModel(@PathVariable long executionId, DataTableDrawParameters params,
-			final Locale locale) {
+												 final Locale locale) {
 
 		return getStepsTableModel(executionId, params, locale);
 	}
 
 
 	private static final class ExecutionStepTableColumnDefHelper extends DataTableColumnDefHelper {
-		private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(5);
+		private static final List<AoColumnDef> baseColumns = new ArrayList<>(5);
+
 		static {
 			String smallWidth = "2em";
 			// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, mDataProp))
@@ -256,7 +248,8 @@ public class ExecutionModificationController {
 			baseColumns.add(new AoColumnDef(true, false, "centered has-attachment-cell", smallWidth, "attach-list-id"));// 11
 			baseColumns.add(new AoColumnDef(true, false, "centered run-step-button", smallWidth, "run-step-button"));// 12
 		}
-		private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
+
+		private List<AoColumnDef> columns = new ArrayList<>();
 
 		private ExecutionStepTableColumnDefHelper() {
 			columns.addAll(baseColumns);
@@ -288,7 +281,7 @@ public class ExecutionModificationController {
 		return new DataTablePaging(params);
 	}
 
-	@RequestMapping(value = "/steps/{stepId}/comment", method = RequestMethod.POST, params = { "id", VALUE })
+	@RequestMapping(value = "/steps/{stepId}/comment", method = RequestMethod.POST, params = {"id", VALUE})
 	@ResponseBody
 	String updateStepComment(@PathVariable Long stepId, @RequestParam(VALUE) String newComment) {
 		executionModService.setExecutionStepComment(stepId, newComment);
@@ -306,7 +299,7 @@ public class ExecutionModificationController {
 		return messageSource.getMessage(status.getI18nKey(), null, locale);
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-description", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=execution-description", VALUE})
 	@ResponseBody
 	public String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
 
@@ -316,7 +309,7 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-assignment", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=execution-assignment", VALUE})
 	@ResponseBody
 	public String updateAssignment(@RequestParam(VALUE) String newDescription, @PathVariable long executionId) {
 
@@ -326,10 +319,10 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=execution-status", VALUE })
+	@RequestMapping(method = RequestMethod.POST, params = {"id=execution-status", VALUE})
 	@ResponseBody
 	public String updateStatus(@RequestParam(VALUE) ExecutionStatus newStatus, @PathVariable long executionId,
-			Locale locale) {
+							   Locale locale) {
 
 		executionModService.setExecutionStatus(executionId, newStatus);
 		LOGGER.trace("Execution " + executionId + ": updated status to " + newStatus);
@@ -337,7 +330,7 @@ public class ExecutionModificationController {
 
 	}
 
-	@RequestMapping(value = "/general", method = RequestMethod.GET, produces=ContentTypes.APPLICATION_JSON)
+	@RequestMapping(value = "/general", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
 	public JsonExecutionInfo refreshGeneralInfos(@PathVariable long executionId) {
 
@@ -347,7 +340,8 @@ public class ExecutionModificationController {
 	}
 
 	@RequestMapping(method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
+	@ResponseBody
 	Object removeExecution(@PathVariable("executionId") long executionId) {
 		Execution execution = executionModService.findById(executionId);
 		IterationTestPlanItem testPlan = execution.getTestPlan();
@@ -377,22 +371,22 @@ public class ExecutionModificationController {
 	// ************* private stuffs *************
 
 
-	private List<CustomFieldModel> getStepDenormalizedFieldModels(Execution exec){
+	private List<CustomFieldModel> getStepDenormalizedFieldModels(Execution exec) {
 		List<DenormalizedFieldValue> firstStepDfv = denormalizedFieldValueFinder.findAllForEntityAndRenderingLocation(exec.getSteps().get(0), RenderingLocation.STEP_TABLE);
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(firstStepDfv.size());
+		List<CustomFieldModel> models = new ArrayList<>(firstStepDfv.size());
 		for (DenormalizedFieldValue field : firstStepDfv) {
 			models.add(converter.toCustomFieldJsonModel(field));
 		}
 		return models;
 	}
 
-	private List<CustomFieldModel> getStepCustomFieldModels(Execution exec){
+	private List<CustomFieldModel> getStepCustomFieldModels(Execution exec) {
 		CustomFieldHelper<ExecutionStep> helper = cufHelperService.newHelper(exec.getSteps())
-				.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
+			.setRenderingLocations(RenderingLocation.STEP_TABLE).restrictToCommonFields();
 
 		List<CustomField> stepCufs = helper.getCustomFieldConfiguration();
 
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(stepCufs.size());
+		List<CustomFieldModel> models = new ArrayList<>(stepCufs.size());
 
 		for (CustomField field : stepCufs) {
 			models.add(converter.toJson(field));
@@ -402,42 +396,41 @@ public class ExecutionModificationController {
 	}
 
 
-	private List<CustomFieldValueModel> getExecutionCustomFieldValueModels(Execution exec){
+	private List<CustomFieldValueModel> getExecutionCustomFieldValueModels(Execution exec) {
 		List<CustomFieldValue> customFieldValues = cufHelperService.newHelper(exec).getCustomFieldValues();
-		List<CustomFieldValueModel> cufModels = new ArrayList<CustomFieldValueModel>(customFieldValues.size());
-		for (CustomFieldValue v : customFieldValues){
+		List<CustomFieldValueModel> cufModels = new ArrayList<>(customFieldValues.size());
+		for (CustomFieldValue v : customFieldValues) {
 			cufModels.add(converter.toJson(v));
 		}
 		return cufModels;
 	}
 
-	private List<CustomFieldValueModel> getExecutionDenormalizedFieldValueModels(Execution exec){
+	private List<CustomFieldValueModel> getExecutionDenormalizedFieldValueModels(Execution exec) {
 		List<DenormalizedFieldValue> values = denormalizedFieldValueFinder.findAllForEntity(exec);
-		List<CustomFieldValueModel> denoModels = new ArrayList<CustomFieldValueModel>(values.size());
-		for (DenormalizedFieldValue deno : values){
+		List<CustomFieldValueModel> denoModels = new ArrayList<>(values.size());
+		for (DenormalizedFieldValue deno : values) {
 			denoModels.add(converter.toJson(deno));
 		}
 		return denoModels;
 	}
 
-	private JsonExecutionInfo toJson(Execution exec){
-		if (exec.isAutomated()){
+	private JsonExecutionInfo toJson(Execution exec) {
+		if (exec.isAutomated()) {
 			return new JsonExecutionInfo(
-					exec.getLastExecutedOn(),
-					exec.getLastExecutedBy(),
-					exec.getExecutionStatus().getCanonicalStatus(),
-					exec.getExecutionStatus(),
-					exec.getAutomatedExecutionExtender().getResultURL()
-					);
-		}
-		else{
+				exec.getLastExecutedOn(),
+				exec.getLastExecutedBy(),
+				exec.getExecutionStatus().getCanonicalStatus(),
+				exec.getExecutionStatus(),
+				exec.getAutomatedExecutionExtender().getResultURL()
+			);
+		} else {
 			return new JsonExecutionInfo(
-					exec.getLastExecutedOn(),
-					exec.getLastExecutedBy(),
-					exec.getExecutionStatus(),
-					null,
-					null
-					);
+				exec.getLastExecutedOn(),
+				exec.getLastExecutedBy(),
+				exec.getExecutionStatus(),
+				null,
+				null
+			);
 		}
 	}
 

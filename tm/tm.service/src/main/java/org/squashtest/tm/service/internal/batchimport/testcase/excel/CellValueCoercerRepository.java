@@ -53,8 +53,8 @@ import org.squashtest.tm.service.internal.batchimport.requirement.excel.Requirem
  */
 @Component
 final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
-	private static final Map<TemplateWorksheet, CellValueCoercerRepository<?>> COERCER_REPO_BY_WORKSHEET = new HashMap<TemplateWorksheet, CellValueCoercerRepository<?>>(
-			TemplateWorksheet.values().length);
+	private static final Map<TemplateWorksheet, CellValueCoercerRepository<?>> COERCER_REPO_BY_WORKSHEET = new HashMap<>(
+		TemplateWorksheet.values().length);
 
 	static {
 		COERCER_REPO_BY_WORKSHEET.put(TemplateWorksheet.TEST_CASES_SHEET, createTestCasesSheetRepo());
@@ -79,13 +79,13 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	}
 
 	private static CellValueCoercerRepository<?> createCoverageSheetRepo() {
-		CellValueCoercerRepository<CoverageSheetColumn> repo = new CellValueCoercerRepository<CoverageSheetColumn>();
+		CellValueCoercerRepository<CoverageSheetColumn> repo = new CellValueCoercerRepository<>();
 		repo.coercerByColumn.put(CoverageSheetColumn.REQ_VERSION_NUM, OptionalIntegerCellCoercer.INSTANCE);
 		return repo;
 	}
 
 	private static CellValueCoercerRepository<?> createRequirementSheetRepo() {
-		CellValueCoercerRepository<RequirementSheetColumn> repo = new CellValueCoercerRepository<RequirementSheetColumn>();
+		CellValueCoercerRepository<RequirementSheetColumn> repo = new CellValueCoercerRepository<>();
 		repo.coercerByColumn.put(RequirementSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
 		repo.coercerByColumn.put(RequirementSheetColumn.REQ_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
@@ -104,7 +104,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 * @return
 	 */
 	private static CellValueCoercerRepository<?> createDatasetsSheetRepo() {
-		CellValueCoercerRepository<DatasetSheetColumn> repo = new CellValueCoercerRepository<DatasetSheetColumn>();
+		CellValueCoercerRepository<DatasetSheetColumn> repo = new CellValueCoercerRepository<>();
 
 		repo.coercerByColumn.put(DatasetSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
@@ -115,7 +115,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 * @return
 	 */
 	private static CellValueCoercerRepository<?> createDatasetParamValuesSheetRepo() {
-		CellValueCoercerRepository<DatasetParamValuesSheetColumn> repo = new CellValueCoercerRepository<DatasetParamValuesSheetColumn>();
+		CellValueCoercerRepository<DatasetParamValuesSheetColumn> repo = new CellValueCoercerRepository<>();
 
 		repo.coercerByColumn.put(DatasetParamValuesSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
@@ -126,7 +126,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 * @return
 	 */
 	private static CellValueCoercerRepository<ParameterSheetColumn> createParamsSheetRepo() {
-		CellValueCoercerRepository<ParameterSheetColumn> repo = new CellValueCoercerRepository<ParameterSheetColumn>();
+		CellValueCoercerRepository<ParameterSheetColumn> repo = new CellValueCoercerRepository<>();
 
 		repo.coercerByColumn.put(ParameterSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 
@@ -137,7 +137,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 * @return a {@link CellValueCoercerRepository} suitable for the steps worksheet.
 	 */
 	private static CellValueCoercerRepository<StepSheetColumn> createStepsSheetRepo() {
-		CellValueCoercerRepository<StepSheetColumn> repo = new CellValueCoercerRepository<StepSheetColumn>();
+		CellValueCoercerRepository<StepSheetColumn> repo = new CellValueCoercerRepository<>();
 
 		repo.coercerByColumn.put(StepSheetColumn.ACTION, ImportModeCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(StepSheetColumn.TC_STEP_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
@@ -151,7 +151,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 * @return a {@link CellValueCoercerRepository} suitable for the test cases worksheet.
 	 */
 	private static CellValueCoercerRepository<TestCaseSheetColumn> createTestCasesSheetRepo() {
-		CellValueCoercerRepository<TestCaseSheetColumn> repo = new CellValueCoercerRepository<TestCaseSheetColumn>();
+		CellValueCoercerRepository<TestCaseSheetColumn> repo = new CellValueCoercerRepository<>();
 
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_NUM, OptionalOneBasedIndexCellCoercer.INSTANCE);
 		repo.coercerByColumn.put(TestCaseSheetColumn.TC_WEIGHT_AUTO, OptionalBooleanCellCoercer.INSTANCE);
@@ -173,7 +173,7 @@ final class CellValueCoercerRepository<COL extends Enum<COL> & TemplateColumn> {
 	 */
 	private static final CellValueCoercer<String> DEFAULT_COERCER = StringCellCoercer.INSTANCE;
 
-	private Map<COL, CellValueCoercer<?>> coercerByColumn = new HashMap<COL, CellValueCoercer<?>>();
+	private Map<COL, CellValueCoercer<?>> coercerByColumn = new HashMap<>();
 
 	private CellValueCoercerRepository() {
 		super();

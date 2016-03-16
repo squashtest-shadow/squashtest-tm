@@ -137,7 +137,7 @@ public final class EntityLockManager {
 
 		for (EntityRef ref : refs) {
 			Lock lock = getLock(ref);
-			lock.lock();
+			lock.lock(); // NOSONAR this is unlocked someplace else
 			locks.add(lock);
 		}
 

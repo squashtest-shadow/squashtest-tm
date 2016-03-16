@@ -20,14 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
-import java.text.ParseException;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
@@ -39,6 +31,9 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+
+import java.text.ParseException;
+import java.util.*;
 
 class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionStep> { // NOSONAR this cannot be made final because there are subclasses of it already
 
@@ -56,7 +51,6 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 	private Map<Long, Map<String, CustomFieldValueTableModel>> denormalizedFieldValuesById;
 
 
-
 	ExecutionStepDataTableModelHelper(Locale locale, InternationalizationHelper messageSource, boolean isAutomated) {
 		this.locale = locale;
 		this.messageSource = messageSource;
@@ -66,7 +60,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 	@Override
 	public Map<Object, Object> buildItemData(ExecutionStep item) {
 
-		Map<Object, Object> res = new HashMap<Object, Object>(13 + nbCufsPerEntity + nbDenoPerEntity);
+		Map<Object, Object> res = new HashMap<>(13 + nbCufsPerEntity + nbDenoPerEntity);
 
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, item.getExecutionStepOrder() + 1);
@@ -99,7 +93,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 	}
 
 	public void usingCustomFields(Collection<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
-		customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
+		customFieldValuesById = new HashMap<>();
 		nbCufsPerEntity = nbFieldsPerEntity;
 
 		for (CustomFieldValue value : cufValues) {
@@ -107,7 +101,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 			Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(entityId);
 
 			if (values == null) {
-				values = new HashMap<String, CustomFieldValueTableModel>(nbCufsPerEntity);
+				values = new HashMap<>(nbCufsPerEntity);
 				customFieldValuesById.put(entityId, values);
 			}
 
@@ -125,13 +119,13 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 	private Map<String, CustomFieldValueTableModel> getCustomFieldsFor(Long id) {
 		if (customFieldValuesById == null) {
-			return new HashMap<String, CustomFieldValueTableModel>();
+			return new HashMap<>();
 		}
 
 		Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);
 
 		if (values == null) {
-			values = new HashMap<String, CustomFieldValueTableModel>();
+			values = new HashMap<>();
 		}
 		return values;
 
@@ -146,7 +140,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 	public void usingDenormalizedFields(Collection<DenormalizedFieldValue> dfvValues, int nbFieldsPerEntity) {
 
-		denormalizedFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
+		denormalizedFieldValuesById = new HashMap<>();
 		nbDenoPerEntity = nbFieldsPerEntity;
 
 		for (DenormalizedFieldValue value : dfvValues) {
@@ -154,7 +148,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 			Map<String, CustomFieldValueTableModel> values = denormalizedFieldValuesById.get(entityId);
 
 			if (values == null) {
-				values = new HashMap<String, CustomFieldValueTableModel>(nbDenoPerEntity);
+				values = new HashMap<>(nbDenoPerEntity);
 				denormalizedFieldValuesById.put(entityId, values);
 			}
 
@@ -172,13 +166,13 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 	private Map<String, CustomFieldValueTableModel> getDenoFieldsFor(Long id) {
 		if (denormalizedFieldValuesById == null) {
-			return new HashMap<String, CustomFieldValueTableModel>();
+			return new HashMap<>();
 		}
 
 		Map<String, CustomFieldValueTableModel> values = denormalizedFieldValuesById.get(id);
 
 		if (values == null) {
-			values = new HashMap<String, CustomFieldValueTableModel>();
+			values = new HashMap<>();
 		}
 		return values;
 
@@ -223,9 +217,8 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 			this.id = value.getId();
 
 			if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-				this.values = ((MultiValuedCustomFieldValue)value).getValues();
-			}
-			else{
+				this.values = ((MultiValuedCustomFieldValue) value).getValues();
+			} else {
 				this.value = value.getValue();
 			}
 		}
@@ -233,9 +226,8 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 		private CustomFieldValueTableModel(DenormalizedFieldValue value) {
 			this.id = value.getId();
 			if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())) {
-				this.values = ((DenormalizedMultiSelectField)value).getValues();
-			}
-			else{
+				this.values = ((DenormalizedMultiSelectField) value).getValues();
+			} else {
 				this.value = value.getValue();
 			}
 		}

@@ -33,20 +33,11 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 public class LoginLogoutController {
 
 	@Inject private ConfigurationService configService;
-	
+
 	@Value("${info.app.version}")
     private String version;
-	
+
 	private final static String LOGIN_MESSAGE = "LOGIN_MESSAGE";
-
-//	@Inject
-//	@Value("${authentication.application.welcomePage:/home-workspace}")
-//	private String homeUrl;
-
-//	@Inject
-//	public void setConfigurationService(ConfigurationService confService) {
-//		this.configService = confService;
-//	}
 
 	@RequestMapping("/login")
 	public String login(Model model) {
@@ -56,8 +47,4 @@ public class LoginLogoutController {
 		return "page/authentication/login";
 	}
 
-//	@RequestMapping("/")
-//	public String home() {
-//		return "redirect:" + homeUrl;
-//	}
 }

@@ -85,7 +85,7 @@ import org.squashtest.tm.exception.requirement.RequirementAlreadyVerifiedExcepti
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Entity
 @Indexed
@@ -126,28 +126,28 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "STEP_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze = Analyze.NO, store = Store.YES)
-	private List<TestStep> steps = new ArrayList<TestStep>();
+	private List<TestStep> steps = new ArrayList<>();
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
 	@JoinColumn(name = "VERIFYING_TEST_CASE_ID")
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(name = "requirements", analyze = Analyze.NO, store = Store.YES)
-	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>(0);
+	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private Set<Parameter> parameters = new HashSet<Parameter>(0);
+	private Set<Parameter> parameters = new HashSet<>(0);
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "testCase")
 	@OrderBy("name")
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private Set<Dataset> datasets = new HashSet<Dataset>(0);
+	private Set<Dataset> datasets = new HashSet<>(0);
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
@@ -197,7 +197,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany(cascade=CascadeType.DETACH)
 	@JoinTable(name = "MILESTONE_TEST_CASE", joinColumns = @JoinColumn(name = "TEST_CASE_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
-	private Set<Milestone> milestones = new HashSet<Milestone>();
+	private Set<Milestone> milestones = new HashSet<>();
 
 	// *************************** CODE *************************************
 
@@ -225,7 +225,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
-	 * 
+	 *
 	 */
 	public String getFullName() {
 		if (StringUtils.isBlank(reference)) {
@@ -237,7 +237,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/***
 	 * Set the test-case reference
-	 * 
+	 *
 	 * @param reference
 	 */
 	public void setReference(String reference) {
@@ -290,7 +290,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Will move a list of steps to a new position.
-	 * 
+	 *
 	 * @param newIndex
 	 *            the position we want the first element of movedSteps to be once the operation is complete
 	 * @param movedSteps
@@ -313,7 +313,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 * Will create a copy from this instance. <br>
 	 * Will copy all properties, steps, automated scripts, parameters, datasets.<br>
 	 * ! Will not copy {@link RequirementVersionCoverage}s !
-	 * 
+	 *
 	 * @return a copy of this {@link TestCase}
 	 */
 	@Override
@@ -339,13 +339,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * will add to this parameters, datasets and dataParamValues copied from the given source.
-	 * 
+	 *
 	 * @param source
 	 *            : the source test case to copy the params, datasets and dataparamvalues from.
 	 */
 	private void addCopiesOfParametersAndDatasets(TestCase source) {
 		// create copy of parameters and remember the association original/copy
-		Map<Parameter, Parameter> copyByOriginalParam = new HashMap<Parameter, Parameter>(source.getParameters().size());
+		Map<Parameter, Parameter> copyByOriginalParam = new HashMap<>(source.getParameters().size());
 		for (Parameter parameter : source.getParameters()) {
 			Parameter paramCopy = parameter.detachedCopy();
 			paramCopy.setTestCase(this);
@@ -417,7 +417,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Will compare id of test-case steps with given id and return the index of the matching step. Otherwise throw an
 	 * exception.
-	 * 
+	 *
 	 * @param stepId
 	 * @return the step index (starting at 0)
 	 * @throws UnknownEntityException
@@ -544,11 +544,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the list of {@link ActionTestStep} or empty list
 	 */
 	public List<ActionTestStep> getActionSteps() {
-		List<ActionTestStep> result = new ArrayList<ActionTestStep>();
+		List<ActionTestStep> result = new ArrayList<>();
 		ActionStepRetreiver retriever = new ActionStepRetreiver(result);
 		for (TestStep step : this.getSteps()) {
 			step.accept(retriever);
@@ -585,11 +585,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	// =====================Requirement verifying section====================
 
 	/**
-	 * 
+	 *
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
-		Set<RequirementVersion> verified = new HashSet<RequirementVersion>();
+		Set<RequirementVersion> verified = new HashSet<>();
 		for (RequirementVersionCoverage coverage : requirementVersionCoverages) {
 			verified.add(coverage.getVerifiedRequirementVersion());
 		}
@@ -597,9 +597,9 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/**
-	 * 
+	 *
 	 * Checks if the given version is already verified, avoiding to look at the given requirementVersionCoverage.
-	 * 
+	 *
 	 * @param requirementVersionCoverage
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
@@ -620,7 +620,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Set the verifying test case as this, and add the coverage the the this.requirementVersionCoverage
-	 * 
+	 *
 	 * @param requirementVersionCoverage
 	 */
 	public void addRequirementCoverage(RequirementVersionCoverage requirementVersionCoverage) {
@@ -630,13 +630,13 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Copy this.requirementVersionCoverages . All {@link RequirementVersionCoverage} having for verifying test case the
 	 * copy param.
-	 * 
+	 *
 	 * @param copy
 	 *            : the {@link TestCase} that will verify the copied coverages
 	 * @return : the copied {@link RequirementVersionCoverage}s
 	 */
 	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(TestCase copy) {
-		List<RequirementVersionCoverage> createdCoverages = new ArrayList<RequirementVersionCoverage>();
+		List<RequirementVersionCoverage> createdCoverages = new ArrayList<>();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			RequirementVersionCoverage covCopy = coverage.copyForTestCase(copy);
 			if (covCopy != null) {
@@ -649,7 +649,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Returns true if a step of the same id is found in this.steps.
-	 * 
+	 *
 	 * @param step
 	 *            : the step to check
 	 * @return true if this {@link TestCase} has the given step.
@@ -665,9 +665,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Simply remove the RequirementVersionCoverage from this.requirementVersionCoverages.
-	 * 
+	 *
 	 * @param requirementVersionCoverage
 	 *            : the entity to remove from this test case's {@link RequirementVersionCoverage}s list.
+	 *
+	 * @deprecated does not seem to be used in 1.14 - to be removed
 	 */
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		this.requirementVersionCoverages.remove(requirementVersionCoverage);
@@ -675,7 +677,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	/***
-	 * 
+	 *
 	 * @return an unmodifiable set of the test case {@link RequirementVersionCoverage}s
 	 */
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
@@ -697,7 +699,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * checks if the given version is already verified.
-	 * 
+	 *
 	 * @param version
 	 * @throws RequirementAlreadyVerifiedException
 	 */
@@ -719,7 +721,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * If the given parameter doesn't already exists in this.parameters, and, if the given parameter's name is not found
 	 * in this.parmeters : will add the given parameter to this.parameters.
-	 * 
+	 *
 	 * @throws NameAlreadyInUseException
 	 * @param parameter
 	 */
@@ -788,7 +790,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Will go through this.parameters and return the Parameter matching the given name
-	 * 
+	 *
 	 * @param name
 	 *            : the name of the parameter to return
 	 * @return the parameter matching the given name or <code>null</code>
@@ -804,11 +806,11 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Will find the names of all parameters used in this test case's steps.
-	 * 
+	 *
 	 * @return a Set of Sting empty or containing all used parameter names in this steps.
 	 */
 	public Set<String> findUsedParamsNamesInSteps() {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		for (ActionTestStep step : this.getActionSteps()) {
 			result.addAll(step.findUsedParametersNames());
 		}
@@ -817,7 +819,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 
 	/**
 	 * Creates a test case which non-collection, non-primitive type fields are set to null.
-	 * 
+	 *
 	 * @return
 	 */
 	public static TestCase createBlankTestCase() {
@@ -837,7 +839,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	/**
 	 * Same as {@link #isImportanceAuto()}, required as per javabean spec since it returns a Boolean instead of a
 	 * boolean.
-	 * 
+	 *
 	 */
 	public Boolean getImportanceAuto() {
 		return isImportanceAuto();

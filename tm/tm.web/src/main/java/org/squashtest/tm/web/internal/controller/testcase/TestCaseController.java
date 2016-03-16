@@ -20,25 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsFinderService;
@@ -48,9 +31,14 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.json.JsonTestCase;
 import org.squashtest.tm.web.internal.model.json.JsonTestCaseBuilder;
 
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.util.*;
+import java.util.Map.Entry;
+
 /**
  * @author Gregory Fouquet, mpagnon
- * 
+ *
  */
 @RequestMapping("/test-cases")
 @Controller
@@ -78,20 +66,20 @@ public class TestCaseController {
 	private Provider<TestCaseStatusJeditableComboDataBuilder> statusComboBuilderProvider;
 
 
-
 	@Inject
 	private VerifiedRequirementsFinderService verifiedRequirementsFinderService;
 
 	/**
 	 * Fetches and returns a list of json test cases from their ids
-	 * 
+	 *
 	 * @param testCaseIds
 	 *            non null list of test cases ids.
 	 * @return
-	 * 
+	 *
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = IDS, headers = AcceptHeaders.CONTENT_JSON)
-	public @ResponseBody
+	public
+	@ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByIds(testCaseIds);
 		return builder.get().locale(locale).entities(testCases).toJson();
@@ -99,14 +87,15 @@ public class TestCaseController {
 
 	/**
 	 * Fetches and returns a list of json test cases from their containers
-	 * 
+	 *
 	 * @param foldersIds
 	 *            non null list of folders ids.
 	 * @return
-	 * 
+	 *
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = FOLDER_IDS, headers = AcceptHeaders.CONTENT_JSON)
-	public @ResponseBody
+	public
+	@ResponseBody
 	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		return buildJsonTestCasesFromAncestorIds(folderIds, locale);
 	}
@@ -118,17 +107,18 @@ public class TestCaseController {
 
 	/**
 	 * Fetches and returns a list of json test cases from their ids and containers
-	 * 
+	 *
 	 * @param testCaseIds
 	 * @param folderIds
 	 * @param locale
 	 * @return
 	 */
-	@RequestMapping(method = RequestMethod.GET, params = { IDS, FOLDER_IDS }, headers = AcceptHeaders.CONTENT_JSON)
-	public @ResponseBody
+	@RequestMapping(method = RequestMethod.GET, params = {IDS, FOLDER_IDS}, headers = AcceptHeaders.CONTENT_JSON)
+	public
+	@ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds,
-			@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
-		List<Long> consolidatedIds = new ArrayList<Long>(testCaseIds.size() + folderIds.size());
+										@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
+		List<Long> consolidatedIds = new ArrayList<>(testCaseIds.size() + folderIds.size());
 		consolidatedIds.addAll(testCaseIds);
 		consolidatedIds.addAll(folderIds);
 
@@ -138,11 +128,12 @@ public class TestCaseController {
 	/**
 	 * @see ...\scripts\workspace\workspace.tree-event-handler.js Request when a tree node has it's requirement property
 	 *      updated, the importance and requirement property of the calling test cases must be updated to.
-	 * 
+	 *
 	 */
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/tree-infos", method = RequestMethod.POST)
-	public @ResponseBody
+	public
+	@ResponseBody
 	List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(@RequestBody Map<String, Object> form) {
 		// get form content
 		Map<String, String> updatedIdsAndOldReqString = (Map<String, String>) form.get("updatedIdsAndOldReq");
@@ -160,23 +151,23 @@ public class TestCaseController {
 		Map<Long, Boolean> newIsReqCoveredById = findNodesWithReqCoverageThatChanged(updatedIdsAndOldReq);
 
 		// find their calling test case and their new 'isReqCoveredProperty'
-		Set<Long> newIsReqCoveredIdsAndCalling = new HashSet<Long>();
+		Set<Long> newIsReqCoveredIdsAndCalling = new HashSet<>();
 
-		for (Long idChange : new HashSet<Long>(newIsReqCoveredById.keySet())) {
+		for (Long idChange : new HashSet<>(newIsReqCoveredById.keySet())) {
 			newIsReqCoveredIdsAndCalling.add(idChange);
 
 			// in the meantime the calling nodes 'isReqCoveredProperty'
 			Set<Long> callingOpenedNodesIds = finder.findCallingTCids(idChange, openedNodesIds);
 			callingOpenedNodesIds.removeAll(newIsReqCoveredIdsAndCalling);
 			newIsReqCoveredById.putAll(verifiedRequirementsFinderService
-					.findisReqCoveredOfCallingTCWhenisReqCoveredChanged(idChange, callingOpenedNodesIds));
+				.findisReqCoveredOfCallingTCWhenisReqCoveredChanged(idChange, callingOpenedNodesIds));
 
 
 			newIsReqCoveredIdsAndCalling.addAll(callingOpenedNodesIds);
 		}
 
 		// deduce nodes with same 'isReqCovered'
-		Set<Long> sameIsReqCoveredIds = new HashSet<Long>();
+		Set<Long> sameIsReqCoveredIds = new HashSet<>();
 		sameIsReqCoveredIds.addAll(updatedIds);
 		sameIsReqCoveredIds.removeAll(newIsReqCoveredById.keySet());
 
@@ -184,7 +175,7 @@ public class TestCaseController {
 		Set<Long> sameIsReqCoveredIdsWCalling = addCallingNodesIds(openedNodesIds, sameIsReqCoveredIds);
 
 		// get importances to update infos
-		Set<Long> toUpdateImportanceId = new HashSet<Long>();
+		Set<Long> toUpdateImportanceId = new HashSet<>();
 		toUpdateImportanceId.addAll(sameIsReqCoveredIdsWCalling);
 		toUpdateImportanceId.addAll(newIsReqCoveredIdsAndCalling);
 		Map<Long, TestCaseImportance> importancesToUpdate = finder.findImpTCWithImpAuto(toUpdateImportanceId);
@@ -195,7 +186,7 @@ public class TestCaseController {
 	}
 
 	private Set<Long> transformToLongSet(Collection<String> openedNodesIdsString) {
-		Set<Long> openedNodesIds = new HashSet<Long>();
+		Set<Long> openedNodesIds = new HashSet<>();
 		for (String nodeId : openedNodesIdsString) {
 			openedNodesIds.add(Long.parseLong(nodeId));
 		}
@@ -203,7 +194,7 @@ public class TestCaseController {
 	}
 
 	private Map<Long, Boolean> transformToLongBooleanMap(Map<String, String> map) {
-		Map<Long, Boolean> result = new HashMap<Long, Boolean>(map.size());
+		Map<Long, Boolean> result = new HashMap<>(map.size());
 		for (Entry<String, String> entry : map.entrySet()) {
 			result.put(Long.parseLong(entry.getKey()), Boolean.parseBoolean(entry.getValue()));
 		}
@@ -211,12 +202,12 @@ public class TestCaseController {
 	}
 
 	private Map<Long, Boolean> findNodesWithReqCoverageThatChanged(Map<Long, Boolean> updatedIdsAndOldReq) {
-		Map<Long, Boolean> result = new HashMap<Long, Boolean>();
+		Map<Long, Boolean> result = new HashMap<>();
 		for (Entry<Long, Boolean> entry : updatedIdsAndOldReq.entrySet()) {
 			long id = entry.getKey();
 			boolean oldReqbool = updatedIdsAndOldReq.get(id);
 			boolean newReq = verifiedRequirementsFinderService.testCaseHasDirectCoverage(id)
-					|| verifiedRequirementsFinderService.testCaseHasUndirectRequirementCoverage(id);
+				|| verifiedRequirementsFinderService.testCaseHasUndirectRequirementCoverage(id);
 			if (newReq != oldReqbool) {// then 'isReqCovered' changed
 				result.put(id, newReq);
 			}
@@ -225,7 +216,7 @@ public class TestCaseController {
 	}
 
 	private Set<Long> addCallingNodesIds(Collection<Long> openedNodesIds, Collection<Long> nodesIds) {
-		Set<Long> idsToUpdate = new HashSet<Long>();
+		Set<Long> idsToUpdate = new HashSet<>();
 		for (Long id : nodesIds) {
 			idsToUpdate.add(id);
 			Set<Long> callingOpenedNodesIds = finder.findCallingTCids(id, openedNodesIds);
@@ -235,8 +226,8 @@ public class TestCaseController {
 	}
 
 	private List<TestCaseTreeIconsUpdate> mergeImportanceAndReqCoverage(Map<Long, Boolean> areReqCoveredToUpdate,
-			Map<Long, TestCaseImportance> importancesToUpdate) {
-		List<TestCaseTreeIconsUpdate> result = new ArrayList<TestCaseTreeIconsUpdate>();
+																		Map<Long, TestCaseImportance> importancesToUpdate) {
+		List<TestCaseTreeIconsUpdate> result = new ArrayList<>();
 		// go through importances to update and merge with matching reqCover to update
 		for (Entry<Long, TestCaseImportance> importanceToUpdate : importancesToUpdate.entrySet()) {
 			Long testCaseId = importanceToUpdate.getKey();
