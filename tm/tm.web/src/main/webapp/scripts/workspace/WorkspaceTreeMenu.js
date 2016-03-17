@@ -25,36 +25,35 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
 	 * @param btnSelector jquery selector of all of the tree buttons
 	 * @param permissions s
 	 * @constructor
-     */
+	 */
 	function WorkspaceTreeMenu(btnSelector, permissions) {
 		function decorateEnablingMethods(buttons) {
-			/* jshint validthis: true */
-			var i, len = buttons.length, self = this;
+			var i, len = buttons.length;
 
 			function cssenable() {
-				self.removeClass("disabled ui-state-disabled");
+				this.removeClass("disabled ui-state-disabled");
 			}
 
 			function cssdisable() {
-				self.addClass("disabled ui-state-disabled");
+				this.addClass("disabled ui-state-disabled");
 			}
 
 			function menuenable() {
-				self.buttonmenu('enable');
+				this.buttonmenu('enable');
 			}
 
 			function menudisable() {
-				self.buttonmenu('disable');
+				this.buttonmenu('disable');
 			}
 
 			for (i = 0; i < len; i++) {
 				var jqbtn = buttons[i];
 				if (jqbtn.attr('role') === "buttonmenu") {
-					jqbtn.enable = menuenable;
-					jqbtn.disable = menudisable;
+					jqbtn.enable = menuenable.bind(jqbtn);
+					jqbtn.disable = menudisable.bind(jqbtn);
 				} else {
-					jqbtn.enable = cssenable;
-					jqbtn.disable = cssdisable;
+					jqbtn.enable = cssenable.bind(jqbtn);
+					jqbtn.disable = cssdisable.bind(jqbtn);
 				}
 			}
 		}
@@ -157,16 +156,16 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
 				}
 			});
 		}
+
+		this.init = function init(settings) {
+			createWidgets();
+			bindTreeEvents();
+			createWizardMenu(settings.wizards);
+			initExportPlugins();
+
+			$("#tree_element_menu").removeClass("unstyled-pane");
+		}
 	}
-
-	WorkspaceTreeMenu.prototype.init = function init(settings) {
-		createWidgets();
-		bindTreeEvents();
-		createWizardMenu(settings.wizards);
-		initExportPlugins();
-
-		$("#tree_element_menu").removeClass("unstyled-pane");
-	};
 
 	return WorkspaceTreeMenu;
 
