@@ -28,6 +28,7 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
      */
 	function WorkspaceTreeMenu(btnSelector, permissions) {
 		function decorateEnablingMethods(buttons) {
+			/* jshint validthis: true */
 			var i, len = buttons.length, self = this;
 
 			function cssenable() {
