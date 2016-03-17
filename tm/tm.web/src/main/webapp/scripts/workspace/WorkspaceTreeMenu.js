@@ -31,18 +31,22 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
 			var i, len = buttons.length;
 
 			function cssenable() {
+				/*jshint validthis: true */
 				this.removeClass("disabled ui-state-disabled");
 			}
 
 			function cssdisable() {
+				/*jshint validthis: true */
 				this.addClass("disabled ui-state-disabled");
 			}
 
 			function menuenable() {
+				/*jshint validthis: true */
 				this.buttonmenu('enable');
 			}
 
 			function menudisable() {
+				/*jshint validthis: true */
 				this.buttonmenu('disable');
 			}
 
