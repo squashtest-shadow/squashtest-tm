@@ -168,7 +168,7 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
 			initExportPlugins();
 
 			$("#tree_element_menu").removeClass("unstyled-pane");
-		}
+		};
 	}
 
 	return WorkspaceTreeMenu;
