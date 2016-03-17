@@ -36,6 +36,6 @@ define(["jquery", "./utils", "./permissions-rules", "workspace/WorkspaceTreeMenu
 			"#search-tree-button"
 		].join(", ");
 
-		return WorkspaceTreeMenu(btnselector, permissions);
+		return new WorkspaceTreeMenu(btnselector, permissions);
 
 	});
