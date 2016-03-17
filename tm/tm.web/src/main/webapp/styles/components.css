@@ -18,10 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
- /** 
+ /**
  * smartsprites directive :
  */
- 
+
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
 .popup-label-error {
@@ -96,7 +96,7 @@ a.tg-panel-button span.ui-button-text {
 	padding: 0;
 }
 
-/* we override the overflow property with whatever values, as long as 
+/* we override the overflow property with whatever values, as long as
 the div stops displaying a useless scrollbar (that thing autoresize with content anyway)*/
 div.toggle-panel  div.ui-accordion-content {
 	padding: 0.7em 0.7em;
@@ -140,13 +140,13 @@ table.datepicker-table td.datepicker-table-col {
 }
 
 /*******************************
-	exec statuses - adds background icon  
+	exec statuses - adds background icon
 ********************************/
 
 .exec-status-option{
 	padding-left : 20px;
 	background-repeat : no-repeat;
-	background-color : transparent;	
+	background-color : transparent;
 }
 
 .exec-status-label {
@@ -159,7 +159,7 @@ table.datepicker-table td.datepicker-table-col {
 }
 
 
-.ui-button .ui-icon.exec-status-untestable, 
+.ui-button .ui-icon.exec-status-untestable,
 .sq-btn .ui-icon.exec-status-untestable,
 .exec-status-untestable{
 	background-image: url("../images/Icon_White.png");  /** sprite-ref: sprites-icons; */
@@ -281,7 +281,7 @@ table.datepicker-table td.datepicker-table-col {
 	background: none;
 }
 
-/* the clause display:block is needed for IE. The word-wrap will be rendered on IE8 only if the element have the property hasLayout, 
+/* the clause display:block is needed for IE. The word-wrap will be rendered on IE8 only if the element have the property hasLayout,
 the display:block trick will implicitly add that property */
 .breakwords {
 	word-wrap: break-word;
@@ -366,7 +366,7 @@ div.issue-report-dialog span.issue-radio{
 }
 
 span.issue-radio span.issue-radio-label{
-	cursor:pointer;	
+	cursor:pointer;
 }
 
 div.issue-report-dialog div.issue-report-break{
@@ -375,21 +375,21 @@ div.issue-report-dialog div.issue-report-break{
 }
 
 div.issue-panel-container{
-	margin-top : 0.2em;	
+	margin-top : 0.2em;
 	width : 98%;
 }
 
 div.issue-field{
-	line-height : 3;	
+	line-height : 3;
 }
 
 label.issue-field-label{
-	width : 25%;	
+	width : 25%;
 	vertical-align:middle;
 }
 
 div.issue-field-control-wrapper{
-	vertical-align : middle;	
+	vertical-align : middle;
 }
 
 span.issue-field-control-holder{
@@ -461,7 +461,7 @@ span.issue-field-message-holder{
 	display: inline-block;
 }
 
-/* ***************************** 
+/* *****************************
 	test suite menu
 ********************************/
 .suite-manager-menu-mainlist {
@@ -480,7 +480,7 @@ span.issue-field-message-holder{
 }
 
 
-/* ***************************** 
+/* *****************************
 	popupError
 ********************************/
 
@@ -492,7 +492,7 @@ div.error-overlay{
 	left : 0;
 	right : 0;
     z-index: 1000;
-	
+
 	background-color: lightgray;
 	opacity : 0.8;	/* we wont set the filter alpha for IE because it'll mess up the text */
 
@@ -511,9 +511,9 @@ div.error-style{
 	-webkit-box-shadow: 5px 5px 5px #111111;
 	box-shadow: 5px 5px 5px #111111;
 	cursor : pointer;
-	text-align : center;	
+	text-align : center;
 	opacity : 1.0;/* we wont set the filter alpha for IE because it'll mess up the text */
-	
+
 	position:absolute;
 	background-color:white;
 }
@@ -533,7 +533,7 @@ div.error-inner{
 
 div.ta-main-div .ta-block{
 	margin-top	: 0.8em;
-	margin-bottom : 0.8em;	
+	margin-bottom : 0.8em;
 	padding-top	:	0.2em;
 	padding-bottom : 0.2em;
 }
@@ -627,7 +627,7 @@ td.editable:HOVER {
 }
 
 span.span-red {
-	.txt-error()
+	.txt-error();
 }
 
 span.span-bold {
@@ -767,7 +767,7 @@ span.span-green {
 }
 
 .associated-icon-testcase {
-	background-position : center;	
+	background-position : center;
 	background-image: url("../images/tick_green.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
@@ -777,7 +777,7 @@ span.span-green {
 }
 
 .associated-icon-campaign {
-	background-position : center;	
+	background-position : center;
 	background-image: url("../images/tick_purple.png");  /** sprite-ref: sprites-icons;  */
 	background-color : transparent;
 	background-repeat : no-repeat;
@@ -787,7 +787,7 @@ span.span-green {
 }
 
 /*******************************
-	search table icons - adds background icon  
+	search table icons - adds background icon
 ********************************/
 .search-open-tree {
 	background-position : center;
@@ -800,7 +800,7 @@ span.span-green {
 }
 
 /*******************************
- * test case / execution mode 
+ * test case / execution mode
  *******************************/
 .exec-mode-automated {
 	background-position : center center;
@@ -820,10 +820,10 @@ span.span-green {
 }
 
 /*******************************
- * Projects 
+ * Projects
  *******************************/
 .type-project {
-	
+
 }
 .type-template {
 	background-position : center center;
@@ -850,14 +850,14 @@ span.span-green {
 	border-bottom : 3px solid white;
 }
 
-/********************* 
+/*********************
  * ATTACHMENT DIALOG
  *********************/
 #attachment-progress-dialog > div, #attachment-progress-message {
 	text-align: center;
 }
 
-/********************* 
+/*********************
  * NOTIFICATION PANEL
  *********************/
 .notification-pane {
@@ -901,7 +901,7 @@ predefined for future evolutions :
  ****************************************/
 
 .red-warning-message {
-	color: red; 
+	color: red;
 }
 
 .bold-warning-message {
@@ -928,14 +928,14 @@ predefined for future evolutions :
 }
 
 /*****************************************
- * plots and statistics 
+ * plots and statistics
  ****************************************/
 
 
 /*
  * The rules right below are overrides of the standard jqplot.css.
  * Note : they are used only when jqplot generates the legend by itself, but as of today this is not the case.
- * 			In short, they are unused. 
+ * 			In short, they are unused.
  */
 
 /* override of the default */
@@ -957,11 +957,11 @@ predefined for future evolutions :
 }
 
 /*
- * The rules defined from now are for our own classes now. 
- */ 
+ * The rules defined from now are for our own classes now.
+ */
 .dashboard-item {
 	width : 48%;
-	height : 300px;	
+	height : 300px;
 	float : left;
 	border : 1px solid lightgray;
 	margin : 0.5%;
@@ -971,7 +971,7 @@ predefined for future evolutions :
 	width : 32%;
 	float : left;
 	border : 1px solid lightgray;
-	height : 300px;	
+	height : 300px;
 	margin : 0.5%;
 	position: relative;
 }
@@ -1031,7 +1031,7 @@ predefined for future evolutions :
 .dashboard-legend-sample-color, .dashboard-legend-icon{
 	height : 15px;
 	width : 15px;
-	display : inline-block;	
+	display : inline-block;
 }
 
 .dashboard-item-legend span{
@@ -1052,8 +1052,8 @@ predefined for future evolutions :
 	font-size: 1.5em;
 }
 
-.dashboard-table{	
-	text-align : center;	
+.dashboard-table{
+	text-align : center;
 	border-collapse : collapse;
 }
 
@@ -1090,7 +1090,7 @@ predefined for future evolutions :
 /*****************************************
  * various icons
  ****************************************/
- 
+
 .ui-icon-wizard {
 	background-image: url("../images/icon_wizard.gif") !important; /** sprite-ref: sprites-icons; */
 	background-repeat: no-repeat;

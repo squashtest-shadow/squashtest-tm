@@ -395,9 +395,11 @@
             <exclude>**/*.swp</exclude>
             <exclude>**/.settings/**</exclude>
             <exclude>**/*.iml</exclude>
+            <exclude>**/*.editorconfig</exclude>
             <!-- third-party javascript libraries -->
             <exclude>**/bower_modules/**/*</exclude>
             <exclude>**/node_modules/**/*</exclude>
+            <exclude>**/node/**/*</exclude>
             <exclude>**/js/**/*.*</exclude>
             <exclude>**/scripts/ckeditor/**/*.*</exclude>
             <exclude>**/scripts/datatables/**/*.*</exclude>

@@ -20,18 +20,18 @@
  */
  /*
   * Put there any class definition that aren't related to a specific component of the UI. It's what's the name says : features that
-  * will be applied regardless of the business meaning of the component.  
-  */ 
+  * will be applied regardless of the business meaning of the component.
+  */
 
-/** 
+/**
  * smartsprites directive :
  */
- 
+
  /** sprite: sprites-icons; sprite-image: url('../images/sprites-icons.png'); sprite-layout: vertical */
 
 
 .linkWise:HOVER {
-	
+
     text-decoration: underline;
     cursor: pointer;
 }
@@ -44,7 +44,7 @@
 }
 
 select option,select {
-	
+
 }
 
 .error-message {
@@ -97,11 +97,11 @@ select option,select {
 }
 
 .y-scrollable{
-	overflow-y : auto;	
+	overflow-y : auto;
 }
 
 .medium-height{
-	max-height : 300px; 	
+	max-height : 300px;
 }
 
 .icon {
@@ -153,7 +153,7 @@ tr.nodrop td.drag-handle {
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
-	user-select: none;	
+	user-select: none;
 }
 
 .loading{
@@ -179,11 +179,11 @@ tr.nodrop td.drag-handle {
 .waiting-loading{
 	background-color: #EBEAE5;
 	background-position: center center;
-	background-image: url('../images/ajax-loader.gif');	
+	background-image: url('../images/ajax-loader.gif');
 	background-repeat: no-repeat;
 	background-size : 70px 70px;
 	min-height : 50px;
-	opacity: 0.2;	
+	opacity: 0.2;
 	filter: alpha(opacity=20);
 	overflow-y:hidden;
 }
@@ -197,15 +197,15 @@ tr.nodrop td.drag-handle {
 }
 
 .normal-warning-message{
-	font-weight : bold;	
+	font-weight : bold;
 }
 
 .minimal-height{
-	min-height : 50px;	
+	min-height : 50px;
 }
 
 .full-width{
-	width : 100%;	
+	width : 100%;
 }
 
 .searched-project {
@@ -216,7 +216,7 @@ tr.nodrop td.drag-handle {
 
 
 .cursor-arrow{
-	cursor : default;	
+	cursor : default;
 }
 
 .cursor-pointer{
@@ -230,7 +230,7 @@ tr.nodrop td.drag-handle {
 
 .icon-helper{
 	cursor : help;
-	background-image: url("../images/icon-help.png"); /** sprite-ref: sprites-icons; */	
+	background-image: url("../images/icon-help.png"); /** sprite-ref: sprites-icons; */
 	height : 16px;
 	width : 16px;
 	display : inline-block;
@@ -245,11 +245,11 @@ span.little-text {
 }
 
 th.narrow, td.narrow{
-	width : 2em;	
+	width : 2em;
 }
 
 th.double-narrow, td.double-narrow{
-	width : 4em;	
+	width : 4em;
 }
 
 th.width-tenperc, td.width-tenperc {
@@ -257,7 +257,7 @@ th.width-tenperc, td.width-tenperc {
 }
 
 .blue-borders{
-	border : 1px solid #80B2FF;	
+	border : 1px solid #80B2FF;
 }
 
 .std-padding{
@@ -265,7 +265,7 @@ th.width-tenperc, td.width-tenperc {
 }
 
 .std-margin-top {
-	margin-top : 1em;	
+	margin-top : 1em;
 }
 
 .extra-small-margin-top {
@@ -427,12 +427,12 @@ th.width-tenperc, td.width-tenperc {
 
 .toggle-row-label{
 	padding-left: 10px;
-	cursor : pointer; 
+	cursor : pointer;
 }
 
 .small-down-arrow{
 	background-image:url(../images/arrow_down.png);	/** sprite-ref: sprites-icons; */
-	background-repeat : no-repeat;	
+	background-repeat : no-repeat;
 	width: 7px;
 	height : 4px;
 	display : inline-block;
@@ -440,7 +440,7 @@ th.width-tenperc, td.width-tenperc {
 
 .small-down-white-arrow{
 	background-image:url(../images/white-arrow-down.png);	/** sprite-ref: sprites-icons; */
-	background-repeat : no-repeat;	
+	background-repeat : no-repeat;
 	width: 15px;
 	height : 11px;
 	display : inline-block;
@@ -479,7 +479,7 @@ th.width-tenperc, td.width-tenperc {
 /* CONSIDER USING .disabled ON .sq-btn OR .sq-icon-btn */
 .disabled-transparent{
 	opacity : 0.35;
-	filter:alpha(opacity=35);	
+	filter:alpha(opacity=35);
 }
 
 /* To get squared icons */
@@ -490,14 +490,14 @@ th.width-tenperc, td.width-tenperc {
 }
 
   /* To get icons with a correct size close to text buttons */
-  
+
 .decent-icons{
-  vertical-align: sub; 
+  vertical-align: sub;
   margin: 0.5em 0.3em;
 }
 
 .entity-edit-general-warning{
-	color: #7E0426; 
+	color: #7E0426;
 	text-align: center;
 }
 
@@ -590,7 +590,7 @@ p {
 
 .wizard-step-fail {
 	background-image : url(../images/Raccourcis_Error-24.png); /** sprite-ref: sprites-icons; */
-	background-repeat : no-repeat;	
+	background-repeat : no-repeat;
 }
 
 
@@ -617,4 +617,5 @@ p {
 	background-image : url(../images/chart_trend.png); /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
 }
+
 

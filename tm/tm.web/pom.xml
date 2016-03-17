@@ -430,6 +430,9 @@
           <rules>
             <banDuplicateClasses />
             <findAllDuplicate>true</findAllDuplicate>
+            <requireMavenVersion>
+              <version>3.1.0</version>
+            </requireMavenVersion>
           </rules>
         </configuration>
         <dependencies>
@@ -734,27 +737,23 @@
           </plugin>
 
           <plugin>
-            <groupId>ro.isdc.wro4j</groupId>
-            <artifactId>wro4j-maven-plugin</artifactId>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <version>0.0.29</version>
             <executions>
               <execution>
-                <id>wro</id>
+                <id>npm install</id>
                 <goals>
-                  <goal>run</goal>
+                  <goal>npm</goal>
                 </goals>
                 <phase>prepare-package</phase>
-                <configuration>
-                  <skip>${wro4j.skip}</skip>
-                  <!-- dont break line or add spaces or maven will scream in horror -->
-                  <targetGroups>squash.core,squash.blue,squash.green,squash.grey,squash.purple,squash.wine,squash.blue.green,squash.green.blue,squash.tree,squash.core.override,squash.subpage.override,squash.print</targetGroups>
-                  <minimize>true</minimize>
-                  <contextFolder>${wro4j.inputDir}</contextFolder>
-                  <cssDestinationFolder>${wro4j.css.outputDir}</cssDestinationFolder>
-                  <!-- ConfigurableWroManagerFactory is configured (d'uh) through wro.properties -->
-                  <wroManagerFactory>ro.isdc.wro.maven.plugin.manager.factory.ConfigurableWroManagerFactory</wroManagerFactory>
-                  <parallelProcessing>true</parallelProcessing>
-                  <incrementalBuildEnabled>true</incrementalBuildEnabled>
-                </configuration>
+              </execution>
+              <execution>
+                <id>gulp build</id>
+                <goals>
+                  <goal>gulp</goal>
+                </goals>
+                <phase>prepare-package</phase>
               </execution>
             </executions>
           </plugin>
@@ -782,21 +781,21 @@
                 </configuration>
               </execution>
 
-              <execution>
-                <id>copy-wro4j-to-spring-boot</id>
-                <goals>
-                  <goal>copy-resources</goal>
-                </goals>
-                <phase>prepare-package</phase>
-                <configuration>
-                  <resources>
-                    <resource>
-                      <directory>${wro4j.css.outputDir}</directory>
-                    </resource>
-                  </resources>
-                  <outputDirectory>${wro4j-spring-boot.dir}/styles</outputDirectory>
-                </configuration>
-              </execution>
+              <!--<execution>-->
+              <!--<id>copy-wro4j-to-spring-boot</id>-->
+              <!--<goals>-->
+              <!--<goal>copy-resources</goal>-->
+              <!--</goals>-->
+              <!--<phase>prepare-package</phase>-->
+              <!--<configuration>-->
+              <!--<resources>-->
+              <!--<resource>-->
+              <!--<directory>${wro4j.css.outputDir}</directory>-->
+              <!--</resource>-->
+              <!--</resources>-->
+              <!--<outputDirectory>${wro4j-spring-boot.dir}/styles</outputDirectory>-->
+              <!--</configuration>-->
+              <!--</execution>-->
             </executions>
           </plugin>
 
