@@ -37,14 +37,10 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 final class TestPlanFilteringHelper {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestPlanFilteringHelper.class);
-
-	public TestPlanFilteringHelper() {
-		super();
-	}
 
 	public static final String PROJECT_FILTER = "projectFilter";
 	public static final String REFERENCE_FILTER = "referenceFilter";
@@ -137,7 +133,7 @@ final class TestPlanFilteringHelper {
 		if (columnFiltering.hasFilter(USER_DATA) && !"0".equals(columnFiltering.getFilter(USER_DATA))) {
 			query.setParameter(USER_FILTER, Long.parseLong(columnFiltering.getFilter(USER_DATA)));
 		}
-		
+
 		if (columnFiltering.hasFilter(TestPlanFilteringHelper.LASTEXEC_DATA)) {
 			setQueryStartAndEndDateParameters(columnFiltering, query);
 		}
@@ -179,5 +175,9 @@ final class TestPlanFilteringHelper {
 				hqlbuilder.append(filterClause);
 			}
 		}
+	}
+
+	public TestPlanFilteringHelper() {
+		super();
 	}
 }

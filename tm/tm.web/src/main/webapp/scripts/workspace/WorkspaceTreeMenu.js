@@ -28,22 +28,22 @@ define(['jquery', 'workspace/WorkspaceWizardMenu', 'jquery.squash.buttonmenu'], 
      */
 	function WorkspaceTreeMenu(btnSelector, permissions) {
 		function decorateEnablingMethods(buttons) {
-			var i, len = buttons.length;
+			var i, len = buttons.length, self = this;
 
 			function cssenable() {
-				this.removeClass("disabled ui-state-disabled");
+				self.removeClass("disabled ui-state-disabled");
 			}
 
 			function cssdisable() {
-				this.addClass("disabled ui-state-disabled");
+				self.addClass("disabled ui-state-disabled");
 			}
 
 			function menuenable() {
-				this.buttonmenu('enable');
+				self.buttonmenu('enable');
 			}
 
 			function menudisable() {
-				this.buttonmenu('disable');
+				self.buttonmenu('disable');
 			}
 
 			for (i = 0; i < len; i++) {
