@@ -812,7 +812,7 @@ public class BugTrackerController {
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForCampaignFolder(id, paging);
 				break;
 			case CAMPAIGN_TYPE:
-				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaigns(id, paging);
+				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipsForCampaign(id, paging);
 				break;
 			case ITERATION_TYPE:
 				filteredCollection = bugTrackersLocalService.findSortedIssueOwnershipForIteration(id, paging);

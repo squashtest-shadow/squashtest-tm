@@ -31,6 +31,7 @@ import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
@@ -39,7 +40,7 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> implements BugTrackerDao {
 
 	/**
-	 * @see BugTrackerEntityDao#findSortedBugTrackers(String)
+	 * @see BugTrackerEntityDao#findSortedBugTrackers()
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -64,7 +65,7 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	}
 
 	/**
-	 * @see BugTrackerDao#countBugTrackers(String)
+	 * @see BugTrackerDao#countBugTrackers()
 	 */
 	@Override
 	public long countBugTrackers() {
@@ -112,5 +113,13 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 			query.setParameterList("projects", projectIds, LongType.INSTANCE);
 		}
 	}
+
+	@Override
+	public BugTracker findByCampaign(Campaign campaign) {
+		return (BugTracker) currentSession()
+			.createQuery("select bt from Campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where c = :camp")
+			.setParameter("camp", campaign)
+			.uniqueResult();
+}
 
 }

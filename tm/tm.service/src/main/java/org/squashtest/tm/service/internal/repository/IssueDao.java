@@ -27,9 +27,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.bugtracker.Pair;
 
 public interface IssueDao extends EntityDao<Issue> {
 
@@ -59,17 +61,28 @@ public interface IssueDao extends EntityDao<Issue> {
 	Integer countIssuesfromIssueList(Collection<Long> issueListIds, Long bugTrackerId);
 	
 	/**
+	 * Finds all issues for a campaign along with the declaring execution and returns them as pairs.
+	 * Issues declared on execution steps are also picked.
+	 */
+	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaign(Campaign campaign, PagingAndSorting sorter);
+
+	/**
+	 * Counts all issues for a campaign
+	 */
+	long countIssueByCampaign(Campaign campaign);
+
+	/**
 	 * Will find all issues belonging to the issue-lists of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId, Issue.id]
 	 * <br><br>The issues are also filtered over the bug-tracker parameter: only issues linked to the bug-tracker of the given id are retained.
 	 * 
 	 * 
-	 * @param issueListIds
+	 * @param issueListId
 	 *            the list of the ids of the IssueList
 	 * 
 	 * @param sorter
 	 *           : will sort and filter the result set
 	 *            
-	 * @param bugtrackerId 
+	 * @param bugTrackerId
 	 * 			 the id of the bug-tracker we want the issues to be connected-to
 	 * 
 	 * @return  non-null but possibly empty list of <code>Issue</code> 

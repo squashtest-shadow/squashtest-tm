@@ -20,56 +20,13 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderColumn;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.collections.ListUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
+import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -98,18 +55,21 @@ import org.squashtest.tm.domain.search.LevelEnumBridge;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedSuite;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.exception.NotAutomatedException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoRunnableStepException;
 import org.squashtest.tm.exception.execution.ExecutionHasNoStepsException;
 import org.squashtest.tm.exception.execution.IllegalExecutionStatusException;
 import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.net.URL;
+import java.util.*;
+
+import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 
 @Auditable
 @Indexed
@@ -129,7 +89,7 @@ DenormalizedFieldHolder, BoundEntity {
 	public static final String NO_DATASET_APPLICABLE_LABEL = null;
 
 	static {
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.BLOCKED);
 		set.add(ExecutionStatus.FAILURE);
@@ -204,11 +164,11 @@ DenormalizedFieldHolder, BoundEntity {
 	private String datasetLabel;
 
 	// TODO rename as testPlanItem
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "EXECUTION_ID", insertable = false, updatable = false), inverseJoinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID", insertable = false, updatable = false))
 	private IterationTestPlanItem testPlan;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TCLN_ID", referencedColumnName = "TCLN_ID")
 	// @IndexedEmbedded
 	private TestCase referencedTestCase;
@@ -216,7 +176,7 @@ DenormalizedFieldHolder, BoundEntity {
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "EXECUTION_STEP_ORDER")
 	@JoinTable(name = "EXECUTION_EXECUTION_STEPS", joinColumns = @JoinColumn(name = "EXECUTION_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_STEP_ID"))
-	private final List<ExecutionStep> steps = new ArrayList<ExecutionStep>();
+	private final List<ExecutionStep> steps = new ArrayList<>();
 
 	@Formula("(select ITEM_TEST_PLAN_EXECUTION.EXECUTION_ORDER from ITEM_TEST_PLAN_EXECUTION where ITEM_TEST_PLAN_EXECUTION.EXECUTION_ID = EXECUTION_ID)")
 	private Integer executionOrder;
@@ -265,7 +225,7 @@ DenormalizedFieldHolder, BoundEntity {
 	inverseJoinColumns = @JoinColumn(name="ISSUE_ID"))
 	@Persister(impl = ReadOnlyCollectionPersister.class)
 	@Immutable
-	private List<Issue> issues = new ArrayList<Issue>();
+	private List<Issue> issues = new ArrayList<>();
 
 
 	/* *********************** /issues attributes ************************ */
@@ -318,8 +278,7 @@ DenormalizedFieldHolder, BoundEntity {
 		// case two : there are datasets available but none was choosen for that execution
 		else if (dataset == null){
 			label = "";
-		}
-		else{
+		} else {
 			label = dataset.getName();
 		}
 
@@ -620,7 +579,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@Override
 	public List<Long> getAllIssueListId() {
-		List<Long> list = new LinkedList<Long>();
+		List<Long> list = new LinkedList<>();
 
 		list.add(issueList.getId());
 

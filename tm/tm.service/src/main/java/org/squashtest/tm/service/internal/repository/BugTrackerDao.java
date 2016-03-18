@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
 
 public interface BugTrackerDao extends EntityDao<BugTracker> {
@@ -63,4 +64,12 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	 * @return
 	 */
 	BugTracker findByName(String bugtrackerName);
+
+	/**
+	 *
+	 * @param campaign
+	 * @return the bugtracker bound to the campaign's project
+     */
+	BugTracker findByCampaign(Campaign campaign);
+
 }

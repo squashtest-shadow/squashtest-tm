@@ -45,7 +45,6 @@ import spock.lang.Specification
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @TransactionConfiguration( defaultRollback = true)
 @Transactional
-@SkipAll
 abstract class DbunitDaoSpecification extends Specification {
 
 	@Inject

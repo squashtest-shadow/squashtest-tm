@@ -147,7 +147,7 @@ public interface BugTrackersLocalService {
 	 * @return a PagedCollectionHolder containing a non-null but possibly empty list of IssueOwnership<Issue>, sorted
 	 *         and filtered according to the PagingAndSorting.
 	 */
-	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(Long campId,
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaign(Long campId,
 			PagingAndSorting sorter);
 
 	/**

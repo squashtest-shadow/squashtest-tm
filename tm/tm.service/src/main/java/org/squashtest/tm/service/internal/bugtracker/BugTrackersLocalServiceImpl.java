@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.bugtracker;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
+import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -121,6 +122,9 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Inject
 	private BugTrackerContextHolder contextHolder;
+
+	@Inject
+	private SessionFactory sessionFactory;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -395,18 +399,52 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	/* ------------------------Campaign--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ')" + OR_HAS_ROLE_ADMIN)
-	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaigns(
+	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaign(
 		Long campId, PagingAndSorting sorter) {
-		// find bug-tracker
 		Campaign campaign = campaignDao.findById(campId);
-		BugTracker bugTracker = campaign.getProject().findBugTracker();
+		List<Pair<Execution, Issue>> pairs = issueDao.findAllExecutionIssuePairsByCampaign(campaign, sorter);
 
-		// Find all concerned IssueDetector
-		List<Execution> executions = campaignDao.findAllExecutionsByCampaignId(campId);
-		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
+		List<String> remoteIssueIds = new ArrayList<>(pairs.size());
+		for (Pair<Execution, Issue> pair : pairs) {
+			remoteIssueIds.add(pair.right.getRemoteIssueId());
+		}
 
-		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+		BugTracker bugTracker = bugTrackerDao.findByCampaign(campaign);
+
+		List<IssueOwnership<RemoteIssueDecorator>> ownerships = findRemoteIssues(pairs, remoteIssueIds, bugTracker);
+
+		long issuesCount = issueDao.countIssueByCampaign(campaign);
+
+		return new PagingBackedPagedCollectionHolder<>(sorter, issuesCount, ownerships);
+	}
+
+	private List<IssueOwnership<RemoteIssueDecorator>> findRemoteIssues(List<Pair<Execution, Issue>> pairs, List<String> remoteIssueIds, BugTracker bugTracker) {
+		List<IssueOwnership<RemoteIssueDecorator>> ownerships;
+
+		try {
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, contextHolder.getContext(), getLocaleContext());
+			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
+
+			Map<String, RemoteIssue> remoteById = new HashMap<>(btIssues.size());
+
+			for (RemoteIssue remote : btIssues) {
+				remoteById.put(remote.getId(), remote);
+			}
+
+			ownerships = new ArrayList<>(remoteIssueIds.size());
+
+			for (Pair<Execution, Issue> pair : pairs) {
+				Issue ish = pair.right;
+				RemoteIssue remote = remoteById.get(ish.getRemoteIssueId());
+
+				IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
+				ownerships.add(ownership);
+			}
+		} catch (TimeoutException | ExecutionException | InterruptedException ex) {
+			throw new BugTrackerRemoteException(ex);
+		}
+
+		return ownerships;
 	}
 
 	/* ------------------------- CampaignFolder ---------------------------------*/

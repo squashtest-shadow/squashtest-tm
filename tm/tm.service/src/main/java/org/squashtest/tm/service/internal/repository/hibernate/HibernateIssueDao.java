@@ -32,9 +32,11 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
+import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -94,7 +96,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 					") ";
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.repository.IssueDao#countIssuesfromIssueList(java.util.List)
 	 */
 	@Override
@@ -113,7 +115,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.repository.IssueDao#countIssuesfromIssueList(java.util.Collection,
 	 *      java.lang.Long)
 	 */
@@ -130,10 +132,25 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			return 0;
 		}
 	}
+	@Override
+	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaign(Campaign campaign, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues Issue where c = :camp", sorter);
 
-	/**
-	 * @see {@linkplain IssueDao#findSortedIssuesFromIssuesLists(List, PagingAndSorting, Long)
-	 */
+		return currentSession().createQuery(hql)
+			.setParameter("camp", campaign)
+			.setFirstResult(sorter.getFirstItemIndex())
+			.setMaxResults(sorter.getPageSize())
+			.list();
+	}
+
+
+	@Override
+	public long countIssueByCampaign(Campaign campaign) {
+		return (long) currentSession().createQuery("select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues ish  where c = :camp")
+			.setParameter("camp", campaign)
+			.uniqueResult();
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Issue> findSortedIssuesFromIssuesLists(final Collection<Long> issueListIds,
@@ -252,7 +269,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 		return testCase;
 	}
-    
+
     @Override
     public Execution findExecutionRelatedToIssue(long id) {
     	 Execution exec = executeEntityNamedQuery("Issue.findExecution", new SetIdParameter("id", id));
@@ -279,7 +296,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
 				.add(Restrictions.eq("Issue.remoteIssueId", remoteid))
 				.add(Restrictions.eq("Issue.bugtracker.id", bugtracker.getId()));
-			
+
 		return crit.list();
 	}
 
