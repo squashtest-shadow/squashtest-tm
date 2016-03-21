@@ -22,9 +22,7 @@
  * Datatables customization classes *
  ************************************/
 
-@import url("datatables.css");
 
- 
 tr.even {
 	background-color: #F1F3F7;
 }
@@ -37,13 +35,13 @@ tr.ui-state-row-selected, tr.even.row_selected td, tr.odd.row_selected td {
     color: black;
 }
 
-tr.ui-state-row-selected a{ 
-	color: black !important; 
+tr.ui-state-row-selected a{
+	color: black !important;
 }
 
 div.dataTables_wrapper tr.ui-state-highlight{
 	background-image:none;
-	background-color:#CCD4E1;	
+	background-color:#CCD4E1;
 	color:black;
 }
 

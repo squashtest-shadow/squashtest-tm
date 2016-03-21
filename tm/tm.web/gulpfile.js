@@ -28,9 +28,12 @@ var plumber = require('gulp-plumber');
 var rename = require("gulp-rename");
 var runSequence = require('run-sequence');
 var gulpCopy = require('gulp-copy');
-var spritesmith = require('gulp.spritesmith');
+var sprite = require('gulp-sprite-generator');
+var del = require('del');
+var merge = require('merge-stream');
+var buffer = require('vinyl-buffer')
 
-var source = './src/main/webapp'; // work directory
+var source = './src/main/webapp'; // source directory of web assets in tm.web project
 // Maven target directory
 // Please note that spring boot is configured to reload from src/webapp/style but it cannot process less sources...
 var destination = './target';
@@ -58,7 +61,8 @@ gulp.task('prod', function () {production.task()});
 //###################################### PROCESSING STYLES #########################################
 
 var styleSource = source + '/styles'
-var styleDestination = destination + '/wro4j-spring-boot/styles'
+var wro4jDestination =  destination + '/wro4j-spring-boot'
+var styleDestination = wro4jDestination + '/styles'
 var styleProdDestination = destination + '/styles'
 
 gulp.task('css',['coreCss','themesCss','squashTree','squashCoreOveride','squashSubPageOveride','squashPrint']);
@@ -72,16 +76,17 @@ gulp.task('coreCss', function () {
   	.pipe(plumber())
     .pipe(less())
     .pipe(concatCss("squash.core.css"))
-    .pipe(production(csso("squash.core.css")))
     .pipe(gulp.dest(styleDestination))
 });
 
 function makeLessFile(src, targetName){
 	var source = concatFileNameAndPaths(src,styleSource);
+    console.log('Make Less File');
+    console.log(source);
+    console.log(styleDestination);
 	return gulp.src(source)
     	.pipe(plumber())
       .pipe(less())
-      .pipe(production(csso(targetName)))
       .pipe(rename(targetName))
       .pipe(gulp.dest(styleDestination))
 };
@@ -135,45 +140,135 @@ gulp.task('squashPrint', function () {
 	return makeLessFile('print.less','squash.print.css');
 });
 
-gulp.task('copyCss', function () {
+gulp.task('copyCssToProdDirectory', function () {
+	return gulp.src(styleSource + '/**/*')
+    	.pipe(plumber())
+        .pipe(gulpCopy(styleProdDestination,{prefix: 4}))
+});
+
+gulp.task('minifyCss', function () {
 	return gulp.src(styleDestination + '/*.css')
     	.pipe(plumber())
-        .pipe(gulpCopy(styleProdDestination,{prefix: 3}))
+        .pipe(csso())
+        .pipe(gulp.dest(styleProdDestination))
 });
+
+
 
 //###################################### /PROCESSING STYLES #########################################
 
 
 
 //###################################### WATCHER FOR CSS ############################################
+// Watch all the files in style, if change, copy all file to working directory and process them
 gulp.task('watch', function() {
-		var toWatch =  styleSource + '/*';
-    gulp.watch(toWatch, ['css']);  // Watch all the .less files, then run the less task
+	var toWatch =  styleSource + '/*';
+    gulp.watch(toWatch, function () {
+        runSequence('copyCssToProdDirectory','css');
+    });  
 });
 //###################################### /WATCHER FOR CSS ###########################################
 
 
 //###################################### PROCESSING ICON IMAGES #####################################
-var sourceImage = [source + '/images/**/*.png',]
-var destImage = destination + '/test/'
 
-gulp.task('sprites', function () {
-	return gulp.src(sourceImage)
+var sourceImages = source + '/images/**/*.png';
+var destinationImage = wro4jDestination;
+//only spriting the images in /images. We don't want to proccess de Jquery image or worst.. the ugly ckeditor
+var sourceImageToBeSprited = [wro4jDestination + '/images/**/*.png',wro4jDestination + '/images/*.png'];
+var sourceCssToBeSprited = styleDestination + '/*.css';
+
+gulp.task('copyImagesToWro4j', function () {
+	return gulp.src(sourceImages)
     	.pipe(plumber())
-        .pipe(spritesmith({
-            imgName: 'sprite.png',
-            cssName: 'sprite.css'
-        }))
-        .pipe(gulp.dest(destImage));
+        .pipe(gulpCopy(wro4jDestination,{prefix: 3}))
 });
+
+gulp.task('copyImages', function () {
+	return gulp.src(sourceImageToBeSprited)
+    	.pipe(plumber())
+        .pipe(gulpCopy(destination,{prefix: 2}))
+});
+
+function spriteCss(sourceCssSprited, prefix){
+    var spriteOutput;
+    var path = concatFileNameAndPaths(sourceCssSprited, styleDestination);
+	spriteOutput = gulp.src(path)
+		.pipe(sprite({
+            spriteSheetName: 'sprite_'+ prefix +'.png',
+            spriteSheetPath: '../images',
+            filter: [
+                function(image) {
+                    return !image.meta.skip;
+                }
+            ],
+		}));
+
+    var imgStream = spriteOutput.img
+    .pipe(plumber())
+    .pipe(gulp.dest(destination + '/images'));
+ 
+    var cssStream = spriteOutput.css
+    .pipe(plumber())
+    .pipe(gulp.dest(styleDestination));
+ 
+    return merge(imgStream, cssStream);
+
+}
+
+gulp.task('sprites',function(){
+    runSequence('spritesBlue','spritesBlueGreen','spritesGreen','spritesGreenBlue','spritesGrey','spritesPurple','spritesWine','spritesCore','spritesPrint','spritesTree');
+});
+
+gulp.task('spritesBlue', function () {
+	return spriteCss('squash.blue.css','blue');
+});
+
+gulp.task('spritesBlueGreen', function () {
+	return spriteCss('squash.blue-green.css','blue_green');
+});
+
+gulp.task('spritesGreen', function () {
+	return spriteCss('squash.green.css','green');
+});
+
+gulp.task('spritesGreenBlue', function () {
+	return spriteCss('squash.green-blue.css','green_blue');
+});
+
+gulp.task('spritesGrey', function () {
+	return spriteCss('squash.grey.css','grey');
+});
+
+gulp.task('spritesPurple', function () {
+	return spriteCss('squash.purple.css','purple');
+});
+
+gulp.task('spritesWine', function () {
+	return spriteCss('squash.wine.css','wine');
+});
+
+gulp.task('spritesCore', function () {
+	return spriteCss('squash.core.css','core');
+});
+
+gulp.task('spritesPrint', function () {
+	return spriteCss('squash.print.css','print');
+});
+
+gulp.task('spritesTree', function () {
+	return spriteCss('squash.tree.css','tree');
+});
+
 
 //###################################### /PROCESSING ICON IMAGES ####################################
 
 
+
 //###################################### MAIN BUILD TASK ############################################
-//By default perform a full prod build
+//By default perform a full prod build, use dev task to perform a dev build.
 gulp.task('default', function () {
-    runSequence('prod', 'css', 'copyCss');
+    runSequence('copyCssToProdDirectory','css','copyImagesToWro4j','sprites','copyImages','minifyCss');
 });
 
 //###################################### /MAIN BUILD TASK ###########################################

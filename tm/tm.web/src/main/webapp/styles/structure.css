@@ -1526,85 +1526,85 @@ div.admin-message-page-content{
 /* ----------------  attachments file images  --------------*/
 
 .attachment-file{
-	background-image:url("../images/file_blank.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_blank.png"); /* @meta {"sprite": {"skip": true}} */
 	width : 48px;
 	height : 48px;
 	display : inline-block;
 }
 
 .attachment-file.file-avi{
-	background-image:url("../images/file_avi.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_avi.png");/* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-bmp{
-	background-image:url("../images/file_bmp.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_bmp.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-doc{
-	background-image:url("../images/file_doc.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_doc.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-edit{
-	background-image:url("../images/file_edit.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_edit.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-gif{
-	background-image:url("../images/file_gif.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_gif.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-html{
-	background-image:url("../images/file_html.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_html.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-jpg{
-	background-image:url("../images/file_jpg.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_jpg.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-mp3{
-	background-image:url("../images/file_mp3.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_mp3.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-png{
-	background-image:url("../images/file_png.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_png.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-ppt{
-	background-image:url("../images/file_ppt.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_ppt.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-rar{
-	background-image:url("../images/file_rar.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_rar.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 
 .attachment-file.file-rtf{
-	background-image:url("../images/file_rtf.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_rtf.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-tif{
-	background-image:url("../images/file_tif.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_tif.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 
 .attachment-file.file-txt{
-	background-image:url("../images/file_txt.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_txt.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 
 .attachment-file.file-xls{
-	background-image:url("../images/file_xls.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_xls.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-xlsx{
-	background-image:url("../images/file_xls.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_xls.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-xml{
-	background-image:url("../images/file_xml.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_xml.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 .attachment-file.file-zip{
-	background-image:url("../images/file_zip.png"); /** sprite-ref: sprites-icons; */
+	background-image:url("../images/file_zip.png"); /* @meta {"sprite": {"skip": true}} */
 }
 
 
@@ -1712,33 +1712,25 @@ background-color:#969696;
 /* ---------------- test case importance and status icon-----------------*/
 
 .test-case-importance-VERY_HIGH {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 0px;
-															 sprite-margin-left: 240px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png"); 
 background-position : -240px -0px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-HIGH {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 16px;
-															 sprite-margin-left: 240px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png"); 
 background-position : -240px -16px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-MEDIUM {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 32px;
-															 sprite-margin-left: 240px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 background-position : -240px -32px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-LOW {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 48px;
-															 sprite-margin-left: 240px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 background-position : -240px -48px ;
 width: 24px;
 height: 16px;
@@ -1748,43 +1740,31 @@ height: 16px;
 
 
 .test-case-status-WORK_IN_PROGRESS{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 48px;
-															 sprite-margin-left: 120px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 background-position : -129px -48px ;
 width: 24px;
 height: 16px;
 }
 .test-case-status-UNDER_REVIEW{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 0px;
-															 sprite-margin-left: 144px;*/
-background-position : -153px -0px ;
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 width: 24px;
 height: 16px;
 }
 
 .test-case-status-APPROVED{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 0px;
-															 sprite-margin-left: 168px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 background-position : -177px -0px ;
 width: 24px;
 height: 16px;
 }
 .test-case-status-OBSOLETE{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 0px;
-															 sprite-margin-left: 192px;*/
-background-position : -201px -0px ;
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 width: 24px;
 height: 16px;
 }
 
 .test-case-status-TO_BE_UPDATED{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  /** sprite-ref: sprites-icons;
-															 sprite-margin-top: 0px;
-															 sprite-margin-left: 216px;*/
+background-image: url("../images/Icon_Tree_TestCase_map.png");  
 background-position : -225px -0px ;
 width: 24px;
 height: 16px;

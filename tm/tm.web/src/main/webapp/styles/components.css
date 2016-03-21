@@ -758,7 +758,7 @@ span.span-green {
 
 .associated-icon-requirement {
 	background-position : center;
-	background-image: url("../images/tick_blue.png");  /** sprite-ref: sprites-icons;  */
+	background-image: url("../images/tick_blue.png");
 	background-color : transparent;
 	background-repeat : no-repeat;
 	width : 16px;
@@ -768,7 +768,7 @@ span.span-green {
 
 .associated-icon-testcase {
 	background-position : center;
-	background-image: url("../images/tick_green.png");  /** sprite-ref: sprites-icons;  */
+	background-image: url("../images/tick_green.png");
 	background-color : transparent;
 	background-repeat : no-repeat;
 	width : 16px;
@@ -778,7 +778,7 @@ span.span-green {
 
 .associated-icon-campaign {
 	background-position : center;
-	background-image: url("../images/tick_purple.png");  /** sprite-ref: sprites-icons;  */
+	background-image: url("../images/tick_purple.png");
 	background-color : transparent;
 	background-repeat : no-repeat;
 	width : 16px;
@@ -791,7 +791,7 @@ span.span-green {
 ********************************/
 .search-open-tree {
 	background-position : center;
-	background-image : url("../images/folder_search.png"); /** sprite-ref: sprites-icons;  */
+	background-image : url("../images/folder_search.png");
 	background-color : transparent;
 	background-repeat : no-repeat;
 	width : 16px;
@@ -804,7 +804,7 @@ span.span-green {
  *******************************/
 .exec-mode-automated {
 	background-position : center center;
-	background-image : url("../images/cog.png"); /** sprite-ref: sprites-icons;  */
+	background-image : url("../images/cog.png");
 	background-repeat : no-repeat;
 }
 
@@ -827,7 +827,7 @@ span.span-green {
 }
 .type-template {
 	background-position : center center;
-	background-image: url("../images/icon_template.png"); /** sprite-ref: sprites-icons;  */
+	background-image: url("../images/icon_template.png");
 	background-repeat : no-repeat;
 }
 .type-project, .type-template {
