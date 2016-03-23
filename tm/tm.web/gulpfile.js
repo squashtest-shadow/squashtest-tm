@@ -176,7 +176,8 @@ var sourceImages = source + '/images/**/*.png';
 var destinationImage = wro4jDestination;
 //only spriting the images in /images. We don't want to proccess de Jquery image or worst.. the ugly ckeditor
 var sourceImageToBeSprited = [wro4jDestination + '/images/**/*.png',wro4jDestination + '/images/*.png'];
-var sourceCssToBeSprited = styleDestination + '/*.css';
+var treeCss = '!'+ styleDestination + '/squash.tree.css';
+var sourceCssToBeSprited = [styleDestination + '/*.css',treeCss];
 
 gulp.task('copyImagesToWro4j', function () {
 	return gulp.src(sourceImages)
@@ -216,10 +217,11 @@ function spriteCss(sourceCssSprited, prefix){
     return merge(imgStream, cssStream);
 }
 
+/*
 gulp.task('sprites',function(){
     runSequence('spritesBlue','spritesBlueGreen','spritesGreen','spritesGreenBlue','spritesGrey','spritesPurple','spritesWine','spritesCore','spritesPrint','spritesTree');
-});
-/*
+});*/
+
 gulp.task('sprites',function(){
      var spriteOutput;
 	spriteOutput = gulp.src(sourceCssToBeSprited)
@@ -244,7 +246,7 @@ gulp.task('sprites',function(){
  
     return merge(imgStream, cssStream);
     
-});*/
+});
 
 gulp.task('spritesBlue', function () {
 	return spriteCss('squash.blue.css','blue');

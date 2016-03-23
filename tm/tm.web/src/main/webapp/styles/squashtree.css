@@ -127,7 +127,7 @@ div#tree-pane li a.ui-state-default, div#tree-pane li a.ui-state-active{	 border
 }
 
 #vakata-dragged.jstree-squashtest .jstree-invalid { 
-	background :url("../images/squashtree.png") -18px -53px no-repeat !important ; 
+	background :url("../images/squashtree.png") -18px -53px no-repeat !important ;
 }
 
 #jstree-marker.jstree-squashtest { 
