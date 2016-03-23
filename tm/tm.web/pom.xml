@@ -474,16 +474,6 @@
               <targetPath>images</targetPath>
             </resource>
 
-            <!--<resource>-->
-            <!--&lt;!&ndash; ckeditor config (which is in styles, d'uh) has to be filtered &ndash;&gt;-->
-            <!--<directory>src/main/webapp/styles</directory>-->
-            <!--<targetPath>${war.css.dir}</targetPath>-->
-            <!--<includes>-->
-            <!--<include>ckeditor/**/*.js</include>-->
-            <!--</includes>-->
-            <!--<filtering>true</filtering>-->
-            <!--</resource>-->
-
             <resource>
               <!-- includes processed / minified css -->
               <directory>${wro4j.css.outputDir}</directory>
@@ -652,16 +642,6 @@
                   <failNever>true</failNever>
                 </configuration>
               </execution>
-              <!--<execution>-->
-              <!--<id>csslint</id>-->
-              <!--<goals>-->
-              <!--<goal>csslint</goal>-->
-              <!--</goals>-->
-              <!--<configuration>-->
-              <!--<targetGroups>csslint</targetGroups>-->
-              <!--<failNever>false</failNever>-->
-              <!--</configuration>-->
-              <!--</execution>-->
             </executions>
           </plugin>
         </plugins>
@@ -715,26 +695,6 @@
 
       <build>
         <plugins>
-          <!--<plugin>-->
-          <!--<groupId>net.jangaroo</groupId>-->
-          <!--<artifactId>smartsprites-maven-plugin</artifactId>-->
-
-          <!--<configuration>-->
-          <!--<rootDirPath>${smartsprites.inputDir}</rootDirPath>-->
-          <!--<outputDirPath>${smartsprites.outputDir}/styles</outputDirPath>-->
-          <!--</configuration>-->
-
-          <!--<executions>-->
-          <!--<execution>-->
-          <!--<id>smartsprites</id>-->
-          <!--<goals>-->
-          <!--<goal>createSprites</goal>-->
-          <!--</goals>-->
-          <!--<phase>prepare-package</phase>-->
-          <!--</execution>-->
-          <!--</executions>-->
-          <!--</plugin>-->
-
           <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
@@ -756,47 +716,6 @@
               </execution>
             </executions>
           </plugin>
-
-          <!--<plugin>-->
-          <!--<artifactId>maven-resources-plugin</artifactId>-->
-          <!--<executions>-->
-          <!--<execution>-->
-          <!--<id>prepare-web-resources-optimization</id>-->
-          <!--<goals>-->
-          <!--<goal>copy-resources</goal>-->
-          <!--</goals>-->
-          <!--<phase>process-resources</phase>-->
-          <!--<configuration>-->
-          <!--<outputDirectory>${smartsprites.outputDir}</outputDirectory>-->
-          <!--<resources>-->
-          <!--<resource>-->
-          <!--<directory>src/main/webapp</directory>-->
-          <!--<includes>-->
-          <!--<include>images/**</include>-->
-          <!--<include>styles/**</include>-->
-          <!--</includes>-->
-          <!--</resource>-->
-          <!--</resources>-->
-          <!--</configuration>-->
-          <!--</execution>-->
-
-          <!--<execution>-->
-          <!--<id>copy-wro4j-to-spring-boot</id>-->
-          <!--<goals>-->
-          <!--<goal>copy-resources</goal>-->
-          <!--</goals>-->
-          <!--<phase>prepare-package</phase>-->
-          <!--<configuration>-->
-          <!--<resources>-->
-          <!--<resource>-->
-          <!--<directory>${wro4j.css.outputDir}</directory>-->
-          <!--</resource>-->
-          <!--</resources>-->
-          <!--<outputDirectory>${wro4j-spring-boot.dir}/styles</outputDirectory>-->
-          <!--</configuration>-->
-          <!--</execution>-->
-          <!--</executions>-->
-          <!--</plugin>-->
 
           <plugin>
             <groupId>com.github.skwakman.nodejs-maven-plugin</groupId>

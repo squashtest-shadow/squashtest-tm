@@ -23,7 +23,6 @@ var path = require('path');
 var less = require('gulp-less');
 var concatCss = require('gulp-concat-css');
 var csso = require('gulp-csso');
-var environments = require('gulp-environments');
 var plumber = require('gulp-plumber');
 var rename = require("gulp-rename");
 var runSequence = require('run-sequence');
@@ -45,18 +44,6 @@ function concatFileNameAndPaths (file,destination){
 	return (destination + '/' + file);
 };
 
-
-//###################################### ENV SETTINGS ##############################################
-
-var development = environments.development;
-var production = environments.production;
-
-//env tasks
-gulp.task('dev', function () {development.task()});
-gulp.task('prod', function () {production.task()});
-
-//###################################### /ENV SETTINGS #############################################
-
 //###################################### PROCESSING STYLES #########################################
 
 var styleSource = source + '/styles'
@@ -64,9 +51,10 @@ var wro4jDestination =  destination + '/wro4j-spring-boot'
 var styleDestination = wro4jDestination + '/styles'
 var styleProdDestination = destination + '/styles'
 
+//LESS PROCESSING
 gulp.task('css',['coreCss','themesCss','squashTree','squashCoreOveride','squashSubPageOveride','squashPrint']);
 gulp.task('themesCss',['squashBlue','squashGreen','squashGrey','squashPurple','squashWine','squashBlueGreen','squashGreenBlue']);
-//squash.core.css
+
 
 var squashCoreSources = ['structure.css','ckeditor.override.css','bootstrap.override.css']
 var squashCorePaths = concatFilesNameAndPaths(squashCoreSources,styleSource);
@@ -158,15 +146,7 @@ gulp.task('minifyCss', function () {
 
 
 
-//###################################### WATCHER FOR CSS ############################################
-// Watch all the files in style, if change, copy all file to working directory and process them
-gulp.task('watch', function() {
-	var toWatch =  styleSource + '/*';
-    gulp.watch(toWatch, function () {
-        runSequence('copyCssToProdDirectory','css');
-    });  
-});
-//###################################### /WATCHER FOR CSS ###########################################
+
 
 
 //###################################### PROCESSING ICON IMAGES #####################################
@@ -175,6 +155,7 @@ var sourceImages = source + '/images/**/*.png';
 var destinationImage = wro4jDestination;
 //only spriting the images in /images. We don't want to proccess de Jquery image or worst.. the ugly ckeditor
 var sourceImageToBeSprited = [wro4jDestination + '/images/**/*.png',wro4jDestination + '/images/*.png'];
+//We exclude the tree css from sprite, because it's already sprited with jsTree.
 var treeCss = '!'+ styleDestination + '/squash.tree.css';
 var sourceCssToBeSprited = [styleDestination + '/*.css',treeCss];
 
@@ -189,37 +170,6 @@ gulp.task('copyImages', function () {
     	.pipe(plumber())
         .pipe(gulpCopy(destination,{prefix: 2}))
 });
-
-
-function spriteCss(sourceCssSprited, prefix){
-    var spriteOutput;
-    var path = concatFileNameAndPaths(sourceCssSprited, styleDestination);
-	spriteOutput = gulp.src(path)
-		.pipe(sprite({
-            spriteSheetName: 'sprite_'+ prefix +'.png',
-            spriteSheetPath: '../images',
-            filter: [
-                function(image) {
-                    return !image.meta.skip;
-                }
-            ],
-		}));
-
-    var imgStream = spriteOutput.img
-    .pipe(plumber())
-    .pipe(gulp.dest(wro4jDestination + '/images'));
- 
-    var cssStream = spriteOutput.css
-    .pipe(plumber())
-    .pipe(gulp.dest(styleDestination));
- 
-    return merge(imgStream, cssStream);
-}
-
-/*
-gulp.task('sprites',function(){
-    runSequence('spritesBlue','spritesBlueGreen','spritesGreen','spritesGreenBlue','spritesGrey','spritesPurple','spritesWine','spritesCore','spritesPrint','spritesTree');
-});*/
 
 gulp.task('sprites',function(){
      var spriteOutput;
@@ -246,56 +196,31 @@ gulp.task('sprites',function(){
     return merge(imgStream, cssStream);
     
 });
-
-gulp.task('spritesBlue', function () {
-	return spriteCss('squash.blue.css','blue');
-});
-
-gulp.task('spritesBlueGreen', function () {
-	return spriteCss('squash.blue-green.css','blue_green');
-});
-
-gulp.task('spritesGreen', function () {
-	return spriteCss('squash.green.css','green');
-});
-
-gulp.task('spritesGreenBlue', function () {
-	return spriteCss('squash.green-blue.css','green_blue');
-});
-
-gulp.task('spritesGrey', function () {
-	return spriteCss('squash.grey.css','grey');
-});
-
-gulp.task('spritesPurple', function () {
-	return spriteCss('squash.purple.css','purple');
-});
-
-gulp.task('spritesWine', function () {
-	return spriteCss('squash.wine.css','wine');
-});
-
-gulp.task('spritesCore', function () {
-	return spriteCss('squash.core.css','core');
-});
-
-gulp.task('spritesPrint', function () {
-	return spriteCss('squash.print.css','print');
-});
-
-gulp.task('spritesTree', function () {
-	return spriteCss('squash.tree.css','tree');
-});
-
-
 //###################################### /PROCESSING ICON IMAGES ####################################
 
 
 
 //###################################### MAIN BUILD TASK ############################################
 //By default perform a full prod build, use dev task to perform a dev build.
+
+// 1. Copy Css to prod directory, as we ned to copy all files for ckeditor, jqueryui... so we take all style directory.
+// 2. Perform less build. Input: src/styles -> Output : target/wro4j-spring-boot/styles
+// 3. Copy the image to /wro4j-spring-boot/images, ie working directory
+// 4. Generate the sprites, inside sprite directory
+// 5. Copy images from target/wro4j-spring-boot/images to target/images
+// 6. MinifyCss and put result in target/styles, with other asset we copied in step 1
 gulp.task('default', function () {
     runSequence('copyCssToProdDirectory','css','copyImagesToWro4j','sprites','copyImages','minifyCss');
 });
 
 //###################################### /MAIN BUILD TASK ###########################################
+
+//###################################### WATCHER FOR CSS ############################################
+// Watch all the files in style, if change, copy all file to working directory and process them
+gulp.task('watch', function() {
+	var toWatch =  styleSource + '/*';
+    gulp.watch(toWatch, function () {
+        runSequence('copyCssToProdDirectory','css');
+    });  
+});
+//###################################### /WATCHER FOR CSS ###########################################
