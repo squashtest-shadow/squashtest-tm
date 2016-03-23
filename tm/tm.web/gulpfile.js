@@ -29,9 +29,8 @@ var rename = require("gulp-rename");
 var runSequence = require('run-sequence');
 var gulpCopy = require('gulp-copy');
 var sprite = require('gulp-sprite-generator');
-var del = require('del');
 var merge = require('merge-stream');
-var buffer = require('vinyl-buffer')
+
 
 var source = './src/main/webapp'; // source directory of web assets in tm.web project
 // Maven target directory
