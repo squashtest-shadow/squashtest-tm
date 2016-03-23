@@ -190,6 +190,7 @@ gulp.task('copyImages', function () {
         .pipe(gulpCopy(destination,{prefix: 2}))
 });
 
+
 function spriteCss(sourceCssSprited, prefix){
     var spriteOutput;
     var path = concatFileNameAndPaths(sourceCssSprited, styleDestination);
@@ -206,19 +207,44 @@ function spriteCss(sourceCssSprited, prefix){
 
     var imgStream = spriteOutput.img
     .pipe(plumber())
-    .pipe(gulp.dest(destination + '/images'));
+    .pipe(gulp.dest(wro4jDestination + '/images'));
  
     var cssStream = spriteOutput.css
     .pipe(plumber())
     .pipe(gulp.dest(styleDestination));
  
     return merge(imgStream, cssStream);
-
 }
 
 gulp.task('sprites',function(){
     runSequence('spritesBlue','spritesBlueGreen','spritesGreen','spritesGreenBlue','spritesGrey','spritesPurple','spritesWine','spritesCore','spritesPrint','spritesTree');
 });
+/*
+gulp.task('sprites',function(){
+     var spriteOutput;
+	spriteOutput = gulp.src(sourceCssToBeSprited)
+		.pipe(sprite({
+            spriteSheetName: 'sprite.png',
+            spriteSheetPath:'../images',
+            accumulate :true,
+            filter: [
+                function(image) {
+                    return !image.meta.skip;
+                }
+            ],
+		}));
+
+    var imgStream = spriteOutput.img
+    .pipe(plumber())
+    .pipe(gulp.dest(wro4jDestination + '/images'));
+ 
+    var cssStream = spriteOutput.css
+    .pipe(plumber())
+    .pipe(gulp.dest(styleDestination));
+ 
+    return merge(imgStream, cssStream);
+    
+});*/
 
 gulp.task('spritesBlue', function () {
 	return spriteCss('squash.blue.css','blue');
