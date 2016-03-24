@@ -110,11 +110,13 @@ public class WebSecurityConfig {
 				.csrf().disable()
 
 				.headers()
+				.defaultsDisabled()
 				// w/o cache control, some browser's cache policy is too aggressive
 				.cacheControl()
-				.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
-
+				.and().frameOptions().sameOrigin()
 				.and()
+				//.addHeaderWriter(new XFrameOptionsHeaderWriter(XFrameOptionsHeaderWriter.XFrameOptionsMode.SAMEORIGIN))
+
 				.authorizeRequests()
 					// Administration namespace. Some of which can be accessed by PMs
 					.antMatchers(
@@ -147,17 +149,17 @@ public class WebSecurityConfig {
 					.anyRequest().authenticated()
 
 				.and()
-				.formLogin()
-					.permitAll()
-					.loginPage("/login")
-					.failureUrl("/login?error")
-					.defaultSuccessUrl("/home-workspace")
+					.formLogin()
+						.permitAll()
+						.loginPage("/login")
+						.failureUrl("/login?error")
+						.defaultSuccessUrl("/home-workspace")
 
 				.and()
-				.logout()
-					.permitAll()
-					.invalidateHttpSession(true)
-					.logoutSuccessUrl("/")
+					.logout()
+						.permitAll()
+						.invalidateHttpSession(true)
+						.logoutSuccessUrl("/")
 
 				.and()
 				.addFilterAfter(new HttpPutFormContentFilter(), SecurityContextPersistenceFilter.class)

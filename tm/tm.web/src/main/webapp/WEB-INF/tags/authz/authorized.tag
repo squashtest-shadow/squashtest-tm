@@ -26,7 +26,7 @@
 <%@ attribute name="domainObject" required="true" type="java.lang.Object" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="ss" uri="http://www.springframework.org/security/tags" %>
-<ss:authorize ifAllGranted="${ hasRole }">
+<ss:authorize access="hasRole('${ hasRole }')">
 	<c:set var="accessGranted" value="true" />
 </ss:authorize>
 <c:if test="${ not accessGranted }">

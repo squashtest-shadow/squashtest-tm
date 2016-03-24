@@ -34,11 +34,12 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.audit.Auditable;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
  * An AutomatedTestServer represents both a repository of automated tests, and an automated test execution platform.
- * 
+ *
  * @author bsiri
  *
  */
@@ -64,7 +65,7 @@ public class TestAutomationServer {
 
 	/**
 	 * this is the ID (technical information)
-	 * 
+	 *
 	 */
 	@Id
 	@Column(name = "SERVER_ID")
@@ -180,7 +181,10 @@ public class TestAutomationServer {
 	}
 
 	public String toString(){
-		return baseURL.toExternalForm();
+		if (baseURL!=null){
+			return baseURL.toExternalForm();
+		}
+		return super.toString();
 	}
 
 

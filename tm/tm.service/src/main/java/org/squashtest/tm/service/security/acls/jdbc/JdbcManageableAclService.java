@@ -361,7 +361,8 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		}
 
 		try {
-			return jdbcTemplate.queryForLong(SELECT_OBJECT_IDENTITY_PRIMARY_KEY, objectIdentity.getType(), objectIdentity.getIdentifier());
+			//return jdbcTemplate.queryForLong(SELECT_OBJECT_IDENTITY_PRIMARY_KEY, objectIdentity.getType(), objectIdentity.getIdentifier());
+			return jdbcTemplate.queryForObject(SELECT_OBJECT_IDENTITY_PRIMARY_KEY, new Object[] {objectIdentity.getType(), objectIdentity.getIdentifier()},Long.class);
 		} catch (DataAccessException notFound) {
 			return null;
 		}
@@ -560,9 +561,9 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 				aclgroupMapper);
 
 	}
-	
+
 	/* (non-Javadoc)
-	 * 
+	 *
 	 */
 	@Override
 	public List<Object[]> retrieveUsersFromIdentityAndClass(long entityId) {
@@ -571,7 +572,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 				aclgroupMapper);
 
 	}
-	
+
 
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#findUsersWithoutPermissionByObject(long, java.lang.String)

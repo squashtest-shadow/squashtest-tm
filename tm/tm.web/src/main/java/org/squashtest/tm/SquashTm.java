@@ -37,7 +37,7 @@ import org.squashtest.tm.web.config.ResourceResolverProperties;
  * Application bootstrapper. Uses spring boot to start a Spring MVC webapp.
  * This class both bootstraps the app and replaces web.xml
  * <p/>
- * Important : @EnableWebSecurity should be here and ont on spring-sec config class, otherwise the servlet context is
+ * Important : @EnableWebSecurity should be here and not on spring-sec config class, otherwise the servlet context is
  * initialized *after* ServletContextAware components, leading to the app to crash.
  *
  * @author Gregory Fouquet

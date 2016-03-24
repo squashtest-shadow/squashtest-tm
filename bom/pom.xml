@@ -34,9 +34,9 @@
     <poi.version>3.12</poi.version>
     <postgresql.version>9.1-901-1.jdbc4</postgresql.version>
     <querydsl.version>4.0.4</querydsl.version>
-    <spock.version>1.0-groovy-2.3</spock.version>
+    <spock.version>1.0-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
-    <spring-security.version>3.2.7.RELEASE</spring-security.version>
+    <spring-security.version>4.0.4.RELEASE</spring-security.version>
     <thymeleaf-extras-springsecurity3.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity3.version>
     <tomcat-embed.version>8.0.23</tomcat-embed.version>
     <unitils.version>3.4.2</unitils.version>

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+import com.fasterxml.jackson.databind.DatabindContext;
 import org.squashtest.tm.domain.customfield.InputType;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
@@ -94,6 +95,11 @@ public class CustomFieldModelIdTypeResolver implements TypeIdResolver{
 		}
 
 		return toReturn;
+	}
+
+	@Override
+	public JavaType typeFromId(DatabindContext databindContext, String s) {
+		return null;
 	}
 
 

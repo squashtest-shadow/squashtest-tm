@@ -23,12 +23,13 @@ package org.squashtest.tm.web.internal.controller.administration;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import org.apache.commons.lang.StringUtils;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.WrongUrlException;
 
 /**
  * @author mpagnon
- * 
+ *
  */
 public class NewTestAutomationServer extends TestAutomationServer {
 	private String baseUrl;
@@ -62,7 +63,11 @@ public class NewTestAutomationServer extends TestAutomationServer {
 		}
 	}
 
-
-
-
+	@Override
+	public String toString() {
+		if (StringUtils.isNotBlank(baseUrl)){
+			return baseUrl;
+		}
+		return super.toString();
+	}
 }

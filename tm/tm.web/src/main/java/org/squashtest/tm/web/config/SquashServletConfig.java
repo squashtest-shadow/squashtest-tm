@@ -105,7 +105,7 @@ public class SquashServletConfig {
 		res.setPrefix(thymeleafProperties.getPrefix());
 		res.setSuffix(".html");
 		res.setTemplateMode(thymeleafProperties.getMode());
-		res.setCharacterEncoding(thymeleafProperties.getEncoding());
+		res.setCharacterEncoding(thymeleafProperties.getEncoding().name());
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
 	}
@@ -117,7 +117,7 @@ public class SquashServletConfig {
 		res.setPrefix("classpath:/templates/");
 		res.setSuffix("");
 		res.setTemplateMode(thymeleafProperties.getMode());
-		res.setCharacterEncoding(thymeleafProperties.getEncoding());
+		res.setCharacterEncoding(thymeleafProperties.getEncoding().name());
 		res.setCacheable(thymeleafProperties.isCache());
 		return res;
 	}

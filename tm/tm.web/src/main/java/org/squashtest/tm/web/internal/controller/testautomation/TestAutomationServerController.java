@@ -118,6 +118,7 @@ public class TestAutomationServerController {
 	@ResponseStatus(HttpStatus.CREATED)
 	@ResponseBody
 	public void createNew(@RequestBody NewTestAutomationServer server) {
+
 		if (LOGGER.isInfoEnabled()) { // w/o this test string rep is always build
 			LOGGER.info("Add new Test automation server : {}", ToStringBuilder.reflectionToString(server));
 		}
@@ -143,7 +144,7 @@ public class TestAutomationServerController {
 				tABoolean = new TAUsageStatus(false);
 			}
 		}
-		
+
 		return tABoolean;
 	}
 
