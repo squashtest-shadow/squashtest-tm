@@ -11,7 +11,9 @@
   <description>Squash Test Manager - Test repository management application</description>
 
   <modules>
-    <!-- tools is a parent-pom dep so it needs to built first -->
+    <!-- bom is used almost everywhere, we build it first -->
+    <module>bom</module>
+    <!-- tools is a parent-pom dep so it needs to build first -->
     <module>tools</module>
     <module>parent-pom</module>
     <module>dependencies</module>
@@ -20,7 +22,6 @@
     <module>core</module>
     <module>tm</module>
     <module>plugins</module>
-    <module>bom</module>
   </modules>
 
   <properties>
