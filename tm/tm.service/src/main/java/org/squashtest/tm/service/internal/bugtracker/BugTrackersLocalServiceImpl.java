@@ -46,9 +46,7 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.*;
-import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
@@ -385,7 +383,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return res;
 	}
 
-	/* ------------------------Campaign--------------------------------------- */
 	@Override
 	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaign(
@@ -393,28 +390,12 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return issueFinder("campaignIssueFinder").findSorted(campId, sorter);
 	}
 
-	/* ------------------------- CampaignFolder ---------------------------------*/
-
 	@Override
 	@PreAuthorize("hasPermission(#cfId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForCampaignFolder(
 		Long cfId, PagingAndSorting sorter) {
-
-		// find bug-tracker
-		CampaignFolder cf = campaignFolderDao.findById(cfId);
-		BugTracker bt = cf.getProject().findBugTracker();
-
-		// Find all concerned IssueDetector
-		List<Execution> executions = campaignFolderDao.findAllExecutionsByCampaignFolder(cfId);
-		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
-
-		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bt);
-
+		return issueFinder("campaignFolderIssueFinder").findSorted(cfId, sorter);
 	}
-
-
-	/* ------------------------TestCase--------------------------------------- */
 
 	@Override
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)

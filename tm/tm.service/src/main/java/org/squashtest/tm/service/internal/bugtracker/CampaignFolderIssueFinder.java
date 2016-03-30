@@ -24,9 +24,9 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -36,27 +36,27 @@ import java.util.List;
  * @since 1.14.0  30/03/16
  */
 @Component
-class TestSuiteIssueFinder extends  IssueOwnershipFinderStrategy<TestSuite> {
+class CampaignFolderIssueFinder extends IssueOwnershipFinderStrategy<CampaignFolder> {
 	@Inject
-	private TestSuiteDao testSuiteDao;
+	private CampaignFolderDao campaignFolderDao;
 
 	@Override
-	protected TestSuite findEntity(long id) {
-		return testSuiteDao.findById(id);
+	protected CampaignFolder findEntity(long id) {
+		return campaignFolderDao.findById(id);
 	}
 
 	@Override
-	protected List<Pair<Execution, Issue>> findExecutionIssuePairs(TestSuite testSuite, PagingAndSorting sorter) {
-		return issueDao.findAllExecutionIssuePairsByTestSuite(testSuite, sorter);
+	protected List<Pair<Execution, Issue>> findExecutionIssuePairs(CampaignFolder folder, PagingAndSorting sorter) {
+		return issueDao.findAllExecutionIssuePairsByCampaignFolder(folder, sorter);
 	}
 
 	@Override
-	protected BugTracker findBugTracker(TestSuite testSuite) {
-		return bugTrackerDao.findByTestSuite(testSuite);
+	protected BugTracker findBugTracker(CampaignFolder folder) {
+		return bugTrackerDao.findByCampaignLibraryNode(folder);
 	}
 
 	@Override
-	protected long countIssues(TestSuite testSuite) {
-		return issueDao.countByTestSuite(testSuite);
+	protected long countIssues(CampaignFolder folder) {
+		return issueDao.countByCampaignFolder(folder);
 	}
 }

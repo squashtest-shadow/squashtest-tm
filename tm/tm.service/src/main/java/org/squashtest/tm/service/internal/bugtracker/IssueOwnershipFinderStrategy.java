@@ -140,9 +140,9 @@ abstract class IssueOwnershipFinderStrategy<H> {
 
 	protected abstract H findEntity(long id);
 
-	protected abstract List<Pair<Execution, Issue>> findExecutionIssuePairs(H holder, PagingAndSorting sorter);
+	protected abstract List<Pair<Execution, Issue>> findExecutionIssuePairs(H h, PagingAndSorting sorter);
 
-	protected abstract BugTracker findBugTracker(H holder);
+	protected abstract BugTracker findBugTracker(H h);
 
-	protected abstract long countIssues(H holder);
+	protected abstract long countIssues(H h);
 }

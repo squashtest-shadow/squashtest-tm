@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -293,6 +294,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker) {
 		final Criteria crit = currentSession().createCriteria(Issue.class, "Issue")
 				.add(Restrictions.eq("Issue.remoteIssueId", remoteid))
@@ -302,6 +304,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex = :execution", sorter);
 
@@ -319,6 +322,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues Issue where i = :iteration", sorter);
 
@@ -336,6 +340,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.testSuites ts join ex.issues Issue where ts = :testSuite", sorter);
 
@@ -349,6 +354,24 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public long countByTestSuite(TestSuite testSuite) {
 		return (long) currentSession().getNamedQuery("issue.countByTestSuite")
 			.setParameter("testSuite", testSuite)
+			.uniqueResult();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex.testPlan.iteration.campaign.id in (select cpe.descendantId from CampaignPathEdge cpe where cpe.ancestorId = :folderId)", sorter);
+
+		Query query = currentSession().createQuery(hql).setParameter("folderId", folder.getId());
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+	}
+
+	@Override
+	public long countByCampaignFolder(CampaignFolder folder) {
+		return (long) currentSession().getNamedQuery("issue.countByCampaignFolder")
+			.setParameter("folderId", folder.getId())
 			.uniqueResult();
 	}
 

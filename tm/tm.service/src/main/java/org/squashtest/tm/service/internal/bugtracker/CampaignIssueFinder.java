@@ -52,7 +52,7 @@ class CampaignIssueFinder extends IssueOwnershipFinderStrategy<Campaign> {
 
 	@Override
 	protected BugTracker findBugTracker(Campaign campaign) {
-		return bugTrackerDao.findByCampaign(campaign);
+		return bugTrackerDao.findByCampaignLibraryNode(campaign);
 	}
 
 	@Override

@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -62,8 +62,9 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	/**
 	 *
 	 * @return the bugtracker bound to the campaign's project
+	 * @param node
      */
-	BugTracker findByCampaign(Campaign campaign);
+	BugTracker findByCampaignLibraryNode(CampaignLibraryNode node);
 
 	/**
 	 *

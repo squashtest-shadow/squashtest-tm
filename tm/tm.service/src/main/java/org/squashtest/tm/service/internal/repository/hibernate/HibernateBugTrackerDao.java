@@ -28,7 +28,7 @@ import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
@@ -118,10 +118,10 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	}
 
 	@Override
-	public BugTracker findByCampaign(Campaign campaign) {
+	public BugTracker findByCampaignLibraryNode(CampaignLibraryNode node) {
 		return (BugTracker) currentSession()
-			.getNamedQuery("bugtracker.findByCampaign")
-			.setParameter("campaign", campaign)
+			.getNamedQuery("bugtracker.findByCampaignLibraryNode")
+			.setParameter("node", node)
 			.uniqueResult();
 	}
 

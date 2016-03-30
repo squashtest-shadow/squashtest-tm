@@ -24,6 +24,7 @@ import org.hibernate.SessionFactory
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
@@ -317,6 +318,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 	}
 
+
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "[#6062] should return all execution - ish pairs for a test suite"() {
 		given:
@@ -340,4 +342,26 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 	}
 
+	@DataSet("HibernateIssueDaoIT.folders.xml")
+	def "[#6062] should return all execution - ish pairs for a folder"() {
+		given:
+		CampaignFolder folder = sessionFactory.currentSession.load(CampaignFolder, 100000104L)
+
+		when:
+		def result = issueDao.findAllExecutionIssuePairsByCampaignFolder(folder, sorter(firstItemIndex: 0))
+
+		then:
+		result*.left.id as Set == [10000083, 10000083, 10000083, 10000083, 10000085, 100000107, 100000107, 10000098, 10000098, 10000098] as Set
+		result*.right.id as Set == [1000001, 1000002, 1000003, 1000004, 10000033, 10000034, 10000035, 10000065, 10000066, 10000067] as Set
+	}
+
+	@DataSet("HibernateIssueDaoIT.folders.xml")
+	def "[#6062] should count issues for a folder"() {
+		given:
+		CampaignFolder folder = sessionFactory.currentSession.load(CampaignFolder, 100000104L)
+
+		expect:
+		issueDao.countByCampaignFolder(folder) == 14
+
+	}
 }
