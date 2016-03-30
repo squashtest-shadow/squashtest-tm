@@ -364,16 +364,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForTestSuite(
 		Long testSuiteId, PagingAndSorting sorter) {
-		// find bug-tracker
-		TestSuite testSuite = testSuiteDao.findById(testSuiteId);
-		BugTracker bugTracker = testSuite.getIteration().getProject().findBugTracker();
-
-		// Find all concerned IssueDetector
-		List<Execution> executions = testSuiteDao.findAllExecutionByTestSuite(testSuiteId);
-		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
-
-		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+		return issueFinder("testSuiteIssueFinder").findSorted(testSuiteId, sorter);
 	}
 
 	/* ------------------------Iteration--------------------------------------- */
@@ -385,10 +376,11 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 		return issueFinder("iterationIssueFinder").findSorted(iterId, sorter);
 	}
 
-	private <R> IssueOwnershipFinderStrategy<R> issueFinder(String iterationIssueFinder) {
-		IssueOwnershipFinderStrategy<R> res = issueOwnershipFinderByBeanName.get(iterationIssueFinder);
+	@SuppressWarnings("unchecked")
+	private <R> IssueOwnershipFinderStrategy<R> issueFinder(String finderBeanName) {
+		IssueOwnershipFinderStrategy<R> res = issueOwnershipFinderByBeanName.get(finderBeanName);
 		if (res == null) {
-			throw new IllegalArgumentException("Bean of type 'IssueOwnershipFinderStrategy' and named '" + iterationIssueFinder + "' could not be found. This either means the bean was not instanciated by Spring or it has another name");
+			throw new IllegalArgumentException("Bean of type 'IssueOwnershipFinderStrategy' and named '" + finderBeanName + "' could not be found. This either means the bean was not instanciated by Spring or it has another name");
 		}
 		return res;
 	}
@@ -399,35 +391,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaign(
 		Long campId, PagingAndSorting sorter) {
 		return issueFinder("campaignIssueFinder").findSorted(campId, sorter);
-	}
-
-	private List<IssueOwnership<RemoteIssueDecorator>> findRemoteIssues(List<Pair<Execution, Issue>> pairs, List<String> remoteIssueIds, BugTracker bugTracker) {
-		List<IssueOwnership<RemoteIssueDecorator>> ownerships;
-
-		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, contextHolder.getContext(), getLocaleContext());
-			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
-
-			Map<String, RemoteIssue> remoteById = new HashMap<>(btIssues.size());
-
-			for (RemoteIssue remote : btIssues) {
-				remoteById.put(remote.getId(), remote);
-			}
-
-			ownerships = new ArrayList<>(remoteIssueIds.size());
-
-			for (Pair<Execution, Issue> pair : pairs) {
-				Issue ish = pair.right;
-				RemoteIssue remote = remoteById.get(ish.getRemoteIssueId());
-
-				IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
-				ownerships.add(ownership);
-			}
-		} catch (TimeoutException | ExecutionException | InterruptedException ex) {
-			throw new BugTrackerRemoteException(ex);
-		}
-
-		return ownerships;
 	}
 
 	/* ------------------------- CampaignFolder ---------------------------------*/

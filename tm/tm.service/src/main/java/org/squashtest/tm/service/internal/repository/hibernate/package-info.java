@@ -514,6 +514,7 @@
 
 	@NamedQuery(name = "issue.countByCampaign", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues ish  where c = :campaign"),
 	@NamedQuery(name = "issue.countByIteration", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues ish  where i = :iteration"),
+	@NamedQuery(name = "issue.countByTestSuite", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.testSuites ts join ex.issues ish  where ts = :testSuite"),
 	@NamedQuery(name = "issue.countByExecution", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
 
 
@@ -524,6 +525,7 @@
 	@NamedQuery(name = "bugtracker.findByName", query = "from BugTracker where name = :name"),
 	@NamedQuery(name = "bugtracker.findByCampaign", query = "select bt from Campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where c = :campaign"),
 	@NamedQuery(name = "bugtracker.findByIteration", query = "select bt from Iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where it = :iteration"),
+	@NamedQuery(name = "bugtracker.findByTestSuite", query = "select bt from TestSuite ts join ts.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ts = :testSuite"),
 	@NamedQuery(name = "bugtracker.findByExecution", query = "select bt from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex = :execution"),
 
 	//BugTrackerBinding

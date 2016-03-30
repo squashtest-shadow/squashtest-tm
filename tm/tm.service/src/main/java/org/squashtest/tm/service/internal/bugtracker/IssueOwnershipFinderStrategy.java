@@ -48,7 +48,7 @@ import java.util.concurrent.TimeoutException;
  * @author Gregory Fouquet
  * @since 1.14.0  29/03/16
  */
-abstract class IssueOwnershipFinderStrategy<HOLDER> {
+abstract class IssueOwnershipFinderStrategy<H> {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
 	@Inject
@@ -66,7 +66,7 @@ abstract class IssueOwnershipFinderStrategy<HOLDER> {
 
 	public final PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(
 		long entityId, PagingAndSorting sorter) {
-		HOLDER holder = findEntity(entityId);
+		H holder = findEntity(entityId);
 		List<Pair<Execution, Issue>> pairs = findExecutionIssuePairs(holder, sorter);
 		BugTracker bugTracker = findBugTracker(holder);
 
@@ -138,11 +138,11 @@ abstract class IssueOwnershipFinderStrategy<HOLDER> {
 		return ownerships;
 	}
 
-	protected abstract HOLDER findEntity(long id);
+	protected abstract H findEntity(long id);
 
-	protected abstract List<Pair<Execution, Issue>> findExecutionIssuePairs(HOLDER holder, PagingAndSorting sorter);
+	protected abstract List<Pair<Execution, Issue>> findExecutionIssuePairs(H holder, PagingAndSorting sorter);
 
-	protected abstract BugTracker findBugTracker(HOLDER holder);
+	protected abstract BugTracker findBugTracker(H holder);
 
-	protected abstract long countIssues(HOLDER holder);
+	protected abstract long countIssues(H holder);
 }

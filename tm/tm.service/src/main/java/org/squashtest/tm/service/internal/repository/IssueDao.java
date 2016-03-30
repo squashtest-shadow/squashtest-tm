@@ -29,19 +29,20 @@ import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 
 public interface IssueDao extends EntityDao<Issue> {
 
-	
+
     List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId);
-    
+
     /**
 	 * Will count the total number of issues related to the given IssueList.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param issueListIds
 	 *            the id of the issue lists.
 	 * @return how many issues they hold.
@@ -50,8 +51,8 @@ public interface IssueDao extends EntityDao<Issue> {
 
 	/**
 	 * Will count the total number of issues related to the given IssueList, for the given bugtracker
-	 * 
-	 * 
+	 *
+	 *
 	 * @param issueListIds
 	 *            the id of the issue lists.
 	 * @param bugTrackerId
@@ -59,7 +60,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return how many issues they hold.
 	 */
 	Integer countIssuesfromIssueList(Collection<Long> issueListIds, Long bugTrackerId);
-	
+
 	/**
 	 * Finds all issues for a campaign along with the declaring execution and returns them as pairs.
 	 * Issues declared on execution steps are also picked.
@@ -74,26 +75,26 @@ public interface IssueDao extends EntityDao<Issue> {
 	/**
 	 * Will find all issues belonging to the issue-lists of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId, Issue.id]
 	 * <br><br>The issues are also filtered over the bug-tracker parameter: only issues linked to the bug-tracker of the given id are retained.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param issueListId
 	 *            the list of the ids of the IssueList
-	 * 
+	 *
 	 * @param sorter
 	 *           : will sort and filter the result set
-	 *            
+	 *
 	 * @param bugTrackerId
 	 * 			 the id of the bug-tracker we want the issues to be connected-to
-	 * 
-	 * @return  non-null but possibly empty list of <code>Issue</code> 
+	 *
+	 * @return  non-null but possibly empty list of <code>Issue</code>
 	 **/
 	List<Issue> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, PagingAndSorting sorter,
 			Long bugTrackerId);
-	
+
 	/**
 	 * Will find all issues belonging to the executions/executionSteps of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]
 	 * <br><br>The issues are also filtered over the bug-tracker parameter: only issues linked to the bug-tracker active for the given execution/executionSteps's project's bug-tracker are retained.
-	 * 
+	 *
 	 * @param executionIds : ids of executions we will extract Issues from
 	 * @param executionStepsIds : ids of executionSteps we will extract Issues from
 	 * @param sorter : holds the sort parameters for the query
@@ -105,7 +106,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	/**
 	 * Will count all Issues from the given executions and execution-steps <b>concerned by the active bug-tracker</b> for each
 	 * execution/execution-step's project.
-	 * 
+	 *
 	 * @param executionsIds
 	 * @param executionStepsIds
 	 * @return the number of Issues detected by the given execution / execution Steps
@@ -125,14 +126,14 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return the list of the suite's {@link Issue}s
 	 */
 	List<Issue> findAllForTestSuite(Long id);
-	
+
 	/**
 	 * Self explanatory
 	 * @param executionStepsIds
 	 * @return
 	 */
 	Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds);
-	
+
 	/**
 	 * Will return the Execution or the ExecutionStep that holds the Issue of the given id.
 	 * @param id : the id of the Issue we want the owner of.
@@ -141,7 +142,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	IssueDetector findIssueDetectorByIssue(long id);
 
 	TestCase findTestCaseRelatedToIssue(long issueId);
-	
+
 	Execution findExecutionRelatedToIssue(long issueId);
 
 	List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker);
@@ -160,4 +161,8 @@ public interface IssueDao extends EntityDao<Issue> {
 	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter);
 
 	long countByIteration(Iteration iteration);
+
+	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter);
+
+	long countByTestSuite(TestSuite testSuite);
 }

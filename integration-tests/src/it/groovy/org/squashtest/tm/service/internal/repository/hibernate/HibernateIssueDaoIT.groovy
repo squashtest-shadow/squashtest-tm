@@ -25,6 +25,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.unitils.dbunit.annotation.DataSet
@@ -256,7 +257,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		then:
 		result.size() == 5
 		result*.left.id as Set == [10000100L, 10000100L, 10000101L, 10000200L, 10000201L] as Set
-		result*.right.id as Set == 100001..100005 as Set
+		result*.right.id as Set == 100001L..100005L as Set
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -280,7 +281,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		then:
 		result.size() == 2
 		result*.left.id as Set == [10000100L, 10000100L] as Set
-		result*.right.id as Set == 100001..100002 as Set
+		result*.right.id as Set == 100001L..100002L as Set
 }
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -303,7 +304,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		then:
 		result*.left.id as Set == [10000100L, 10000100L, 10000101L] as Set
-		result*.right.id as Set == 100001..100003 as Set
+		result*.right.id as Set == 100001L..100003L as Set
 }
 
 	@DataSet("HibernateIssueDaoIT.xml")
@@ -315,4 +316,28 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		issueDao.countByIteration(iter) == 3
 
 	}
+
+	@DataSet("HibernateIssueDaoIT.test suite.xml")
+	def "[#6062] should return all execution - ish pairs for a test suite"() {
+		given:
+		TestSuite ts = sessionFactory.currentSession.load(TestSuite, 1000030L)
+
+		when:
+		def result = issueDao.findAllExecutionIssuePairsByTestSuite(ts, sorter(firstItemIndex: 0))
+
+		then:
+		result*.left.id as Set == [10000100L, 10000100L, 10000101L, 10000120L] as Set
+		result*.right.id as Set == [100001L, 100002L, 100003L, 100008L] as Set
+	}
+
+	@DataSet("HibernateIssueDaoIT.test suite.xml")
+	def "[#6062] should count issues for a test suite"() {
+		given:
+		TestSuite ts = sessionFactory.currentSession.load(TestSuite, 1000030L)
+
+		expect:
+		issueDao.countByTestSuite(ts) == 4
+
+	}
+
 }

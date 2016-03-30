@@ -24,35 +24,36 @@ import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 
 import java.util.List;
 
 public interface BugTrackerDao extends EntityDao<BugTracker> {
-	
-	
+
+
 	/**
 	 * @return number of all bugtrackers in squash database
 	 */
 	long countBugTrackers();
-	
+
 	/**
 	 * @return a page of bugtrackers according to the filter
 	 */
 	List<BugTracker> findSortedBugTrackers(PagingAndSorting filter);
-	
+
 	/**
 	 * checks if there is a Bugtracker of the same name in the database.<br>
 	 * If so, raises a {@linkplain org.squashtest.tm.exception.NameAlreadyInUseException}
 	 */
 	void checkNameAvailability(String name);
-	
+
 	/**
-	 * 
+	 *
 	 * @return the list of distinct BugTrackers concerned by the given projects;
 	 */
 	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
-	
+
 	/**
 	 * Given its name, returns a bugtracker
 	 */
@@ -75,4 +76,6 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
      * @return the bugtracker bound to the iteration's project
      */
 	BugTracker findByIteration(Iteration iteration);
+
+	BugTracker findByTestSuite(TestSuite testSuite);
 }
