@@ -156,4 +156,8 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * Counts all issues for an execution
 	 */
 	long countByExecution(Execution execution);
+
+	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter);
+
+	long countByIteration(Iteration iteration);
 }

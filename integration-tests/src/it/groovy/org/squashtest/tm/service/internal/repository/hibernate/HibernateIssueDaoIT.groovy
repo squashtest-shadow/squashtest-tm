@@ -24,6 +24,7 @@ import org.hibernate.SessionFactory
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.unitils.dbunit.annotation.DataSet
@@ -289,6 +290,29 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		expect:
 		issueDao.countByExecution(exec) == 2
+
+	}
+
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "[#6062] should return all execution - ish pairs for an iteration"() {
+		given:
+		def iter = sessionFactory.currentSession.load(Iteration, 100001L)
+
+		when:
+		def result = issueDao.findAllExecutionIssuePairsByIteration(iter, sorter(firstItemIndex: 0, pageSize: 5))
+
+		then:
+		result*.left.id as Set == [10000100L, 10000100L, 10000101L] as Set
+		result*.right.id as Set == 100001..100003 as Set
+}
+
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "[#6062] should count issues for an iteration"() {
+		given:
+		def iter = sessionFactory.currentSession.load(Iteration, 100001L)
+
+		expect:
+		issueDao.countByIteration(iter) == 3
 
 	}
 }

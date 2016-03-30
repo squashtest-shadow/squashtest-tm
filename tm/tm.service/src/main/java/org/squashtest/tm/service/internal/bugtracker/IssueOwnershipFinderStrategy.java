@@ -95,7 +95,6 @@ abstract class IssueOwnershipFinderStrategy<HOLDER> {
 	 *
 	 * @param pairs      execution-issue pairs which remote issues should be fetched
 	 * @param bugTracker non-null bugtracker where to fetch issues
-	 * @return
 	 */
 	private List<IssueOwnership<RemoteIssueDecorator>> findRemoteIssues(List<Pair<Execution, Issue>> pairs, BugTracker bugTracker) {
 		List<IssueOwnership<RemoteIssueDecorator>> ownerships;

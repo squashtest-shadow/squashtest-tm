@@ -134,4 +134,11 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 			.uniqueResult();
 }
 
+	@Override
+	public BugTracker findByIteration(Iteration iteration) {
+		return (BugTracker) currentSession()
+			.getNamedQuery("bugtracker.findByIteration")
+			.setParameter("iteration", iteration)
+			.uniqueResult();
+}
 }

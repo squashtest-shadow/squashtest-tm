@@ -46,7 +46,9 @@ import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionH
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.bugtracker.*;
-import org.squashtest.tm.domain.campaign.*;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.project.Project;
@@ -126,9 +128,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Inject
 	private SessionFactory sessionFactory;
 
-	@Inject private CampaignIssueFinder campaignIssueFinder;
-	@Inject private ExecutionIssueFinder executionIssueFinder;
-	@Inject private IterationIssueFinder iterationIssueFinder;
+	@Inject
+	private Map<String, IssueOwnershipFinderStrategy> issueOwnershipFinderByBeanName;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -355,7 +356,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsforExecution(
 		Long execId, PagingAndSorting sorter) {
 		// FIXME : SHOULD RETURN EXECS AND STEPS PAIRS !
-		return executionIssueFinder.findSorted(execId, sorter);
+		return issueFinder("executionIssueFinder").findSorted(execId, sorter);
 	}
 
 	/* ------------------------TestSuite--------------------------------------- */
@@ -381,16 +382,15 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#iterId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForIteration(
 		Long iterId, PagingAndSorting sorter) {
-		// find bug-tracker
-		Iteration iteration = iterationDao.findById(iterId);
-		BugTracker bugTracker = iteration.getProject().findBugTracker();
+		return issueFinder("iterationIssueFinder").findSorted(iterId, sorter);
+	}
 
-		// Find all concerned IssueDetector
-		List<Execution> executions = iterationDao.findAllExecutionByIterationId(iterId);
-		List<IssueDetector> issueDetectors = collectIssueDetectorsFromExecution(executions);
-
-		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, issueDetectors, bugTracker);
+	private <R> IssueOwnershipFinderStrategy<R> issueFinder(String iterationIssueFinder) {
+		IssueOwnershipFinderStrategy<R> res = issueOwnershipFinderByBeanName.get(iterationIssueFinder);
+		if (res == null) {
+			throw new IllegalArgumentException("Bean of type 'IssueOwnershipFinderStrategy' and named '" + iterationIssueFinder + "' could not be found. This either means the bean was not instanciated by Spring or it has another name");
+		}
+		return res;
 	}
 
 	/* ------------------------Campaign--------------------------------------- */
@@ -398,7 +398,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#campId, 'org.squashtest.tm.domain.campaign.Campaign' ,'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipsForCampaign(
 		Long campId, PagingAndSorting sorter) {
-		return campaignIssueFinder.findSorted(campId, sorter);
+		return issueFinder("campaignIssueFinder").findSorted(campId, sorter);
 	}
 
 	private List<IssueOwnership<RemoteIssueDecorator>> findRemoteIssues(List<Pair<Execution, Issue>> pairs, List<String> remoteIssueIds, BugTracker bugTracker) {
@@ -498,7 +498,6 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	/**
-	 *
 	 * @param sorter
 	 * @param issueDetectors
 	 * @param bugTracker
@@ -568,9 +567,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	 * With this request there is no need to check the project-bug-tracker connection before the request, and for a
 	 * test-case, it can return a list of issues coming from different bug-trackers.
 	 *
-	 *
 	 * @param sorter
-	 * @param issueDetectors
 	 * @return
 	 */
 	private PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> createOwnershipsCollection(

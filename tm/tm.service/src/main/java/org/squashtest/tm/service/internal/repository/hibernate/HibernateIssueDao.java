@@ -29,6 +29,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -313,6 +314,23 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public long countByExecution(Execution execution) {
 		return (long) currentSession().getNamedQuery("issue.countByExecution")
 			.setParameter("execution", execution)
+			.uniqueResult();
+	}
+
+	@Override
+	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues Issue where i = :iteration", sorter);
+
+		Query query = currentSession().createQuery(hql).setParameter("iteration", iteration);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+}
+
+	@Override
+	public long countByIteration(Iteration iteration) {
+		return (long) currentSession().getNamedQuery("issue.countByIteration")
+			.setParameter("iteration", iteration)
 			.uniqueResult();
 	}
 

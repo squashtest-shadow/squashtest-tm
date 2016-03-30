@@ -24,8 +24,9 @@ import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -35,27 +36,25 @@ import java.util.List;
  * @since 1.14.0  29/03/16
  */
 @Component
-class ExecutionIssueFinder extends IssueOwnershipFinderStrategy<Execution> {
-	@Inject
-	private ExecutionDao executionDao;
-
+class IterationIssueFinder extends IssueOwnershipFinderStrategy<Iteration> {
+	@Inject private IterationDao iterationDao;
 	@Override
-	protected Execution findEntity(long id) {
-		return executionDao.findById(id);
+	protected Iteration findEntity(long id) {
+		return iterationDao.findById(id);
 	}
 
 	@Override
-	protected List<Pair<Execution, Issue>> findExecutionIssuePairs(Execution execution, PagingAndSorting sorter) {
-		return issueDao.findAllExecutionIssuePairsByExecution(execution, sorter);
+	protected List<Pair<Execution, Issue>> findExecutionIssuePairs(Iteration iteration, PagingAndSorting sorter) {
+		return issueDao.findAllExecutionIssuePairsByIteration(iteration, sorter);
 	}
 
 	@Override
-	protected BugTracker findBugTracker(Execution execution) {
-		return bugTrackerDao.findByExecution(execution);
+	protected BugTracker findBugTracker(Iteration iteration) {
+		return bugTrackerDao.findByIteration(iteration);
 	}
 
 	@Override
-	protected long countIssues(Execution execution) {
-		return issueDao.countByExecution(execution);
+	protected long countIssues(Iteration iteration) {
+		return issueDao.countByIteration(iteration);
 	}
 }
