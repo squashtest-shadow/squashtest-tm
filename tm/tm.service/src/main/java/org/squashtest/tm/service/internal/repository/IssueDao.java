@@ -69,7 +69,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	/**
 	 * Counts all issues for a campaign
 	 */
-	long countIssueByCampaign(Campaign campaign);
+	long countByCampaign(Campaign campaign);
 
 	/**
 	 * Will find all issues belonging to the issue-lists of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId, Issue.id]
@@ -146,4 +146,14 @@ public interface IssueDao extends EntityDao<Issue> {
 
 	List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker);
 
+	/**
+	 * Finds all issues for a execution along with this execution and returns them as pairs.
+	 * Issues declared on execution steps are also picked.
+	 */
+	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
+
+	/**
+	 * Counts all issues for an execution
+	 */
+	long countByExecution(Execution execution);
 }

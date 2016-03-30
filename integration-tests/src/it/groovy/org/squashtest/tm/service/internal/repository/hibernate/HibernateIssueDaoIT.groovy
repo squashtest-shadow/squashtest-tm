@@ -24,6 +24,7 @@ import org.hibernate.SessionFactory
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.campaign.Campaign
+import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
@@ -244,7 +245,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should return all execution - ish pairs for a campaign"() {
+	def "[#6062] should return all execution - ish pairs for a campaign"() {
 		given:
 		def camp = sessionFactory.currentSession.load(Campaign, 100001L)
 
@@ -258,12 +259,36 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should count issues for a campaign"() {
+	def "[#6062] should count issues for a campaign"() {
 		given:
 		def camp = sessionFactory.currentSession.load(Campaign, 100001L)
 
 		expect:
-		issueDao.countIssueByCampaign(camp) == 7
+		issueDao.countByCampaign(camp) == 7
+
+	}
+
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "[#6062] should return all execution - ish pairs for an execution"() {
+		given:
+		def exec = sessionFactory.currentSession.load(Execution, 10000100L)
+
+		when:
+		def result = issueDao.findAllExecutionIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
+
+		then:
+		result.size() == 2
+		result*.left.id as Set == [10000100L, 10000100L] as Set
+		result*.right.id as Set == 100001..100002 as Set
+}
+
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "[#6062] should count issues for an execution"() {
+		given:
+		def exec = sessionFactory.currentSession.load(Execution, 10000100L)
+
+		expect:
+		issueDao.countByExecution(exec) == 2
 
 	}
 }

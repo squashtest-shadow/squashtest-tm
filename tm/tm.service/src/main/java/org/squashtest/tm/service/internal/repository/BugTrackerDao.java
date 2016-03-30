@@ -20,56 +20,52 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
+import org.squashtest.tm.domain.execution.Execution;
+
+import java.util.List;
 
 public interface BugTrackerDao extends EntityDao<BugTracker> {
 	
 	
 	/**
-	 * 
 	 * @return number of all bugtrackers in squash database
 	 */
 	long countBugTrackers();
 	
 	/**
-	 * 
-	 * @param filter
 	 * @return a page of bugtrackers according to the filter
 	 */
 	List<BugTracker> findSortedBugTrackers(PagingAndSorting filter);
 	
 	/**
 	 * checks if there is a Bugtracker of the same name in the database.<br>
-	 * If so, raises a {@linkplain BugTrackerNameAlreadyExistsException}
-	 * @param name
+	 * If so, raises a {@linkplain org.squashtest.tm.exception.NameAlreadyInUseException}
 	 */
 	void checkNameAvailability(String name);
 	
 	/**
 	 * 
-	 * @param projectIds
 	 * @return the list of distinct BugTrackers concerned by the given projects;
 	 */
 	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
 	
 	/**
 	 * Given its name, returns a bugtracker
-	 * 
-	 * @param bugtrackerName
-	 * @return
 	 */
 	BugTracker findByName(String bugtrackerName);
 
 	/**
 	 *
-	 * @param campaign
 	 * @return the bugtracker bound to the campaign's project
      */
 	BugTracker findByCampaign(Campaign campaign);
 
+	/**
+	 *
+	 * @return the bugtracker bound to the excution's project
+     */
+	BugTracker findByExecution(Execution execution);
 }

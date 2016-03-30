@@ -1,46 +1,50 @@
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
+ * 
  *     See the NOTICE file distributed with this work for additional
  *     information regarding copyright ownership.
- *
+ * 
  *     This is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU Lesser General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
  *     (at your option) any later version.
- *
+ * 
  *     this software is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU Lesser General Public License for more details.
- *
+ * 
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.annotations.NamedQueries;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.exception.BugTrackerNameAlreadyExistsException;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> implements BugTrackerDao {
 
 	/**
-	 * @see BugTrackerEntityDao#findSortedBugTrackers()
+	 * @see BugTrackerDao#findSortedBugTrackers(PagingAndSorting)
 	 */
 	@Override
 	@SuppressWarnings("unchecked")
@@ -78,7 +82,7 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	@Override
 	public void checkNameAvailability(String name) {
 		if (findByName(name) != null) {
-			throw new BugTrackerNameAlreadyExistsException();
+			throw new NameAlreadyInUseException(NameAlreadyInUseException.EntityType.BUG_TRACKER, name);
 		}
 
 	}
@@ -117,8 +121,16 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 	@Override
 	public BugTracker findByCampaign(Campaign campaign) {
 		return (BugTracker) currentSession()
-			.createQuery("select bt from Campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where c = :camp")
-			.setParameter("camp", campaign)
+			.getNamedQuery("bugtracker.findByCampaign")
+			.setParameter("campaign", campaign)
+			.uniqueResult();
+	}
+
+	@Override
+	public BugTracker findByExecution(Execution execution) {
+		return (BugTracker) currentSession()
+			.getNamedQuery("bugtracker.findByExecution")
+			.setParameter("execution", execution)
 			.uniqueResult();
 }
 

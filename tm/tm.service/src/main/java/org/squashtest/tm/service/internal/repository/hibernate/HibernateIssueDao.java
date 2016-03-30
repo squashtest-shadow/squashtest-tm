@@ -20,10 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -40,6 +36,10 @@ import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 @Repository
 public class HibernateIssueDao extends HibernateEntityDao<Issue> implements IssueDao {
@@ -136,18 +136,17 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaign(Campaign campaign, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues Issue where c = :camp", sorter);
 
-		return currentSession().createQuery(hql)
-			.setParameter("camp", campaign)
-			.setFirstResult(sorter.getFirstItemIndex())
-			.setMaxResults(sorter.getPageSize())
-			.list();
+		Query query = currentSession().createQuery(hql).setParameter("camp", campaign);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
 	}
 
 
 	@Override
-	public long countIssueByCampaign(Campaign campaign) {
-		return (long) currentSession().createQuery("select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues ish  where c = :camp")
-			.setParameter("camp", campaign)
+	public long countByCampaign(Campaign campaign) {
+		return (long) currentSession().getNamedQuery("issue.countByCampaign")
+			.setParameter("campaign", campaign)
 			.uniqueResult();
 	}
 
@@ -298,6 +297,23 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 				.add(Restrictions.eq("Issue.bugtracker.id", bugtracker.getId()));
 
 		return crit.list();
+	}
+
+	@Override
+	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex = :execution", sorter);
+
+		Query query = currentSession().createQuery(hql).setParameter("execution", execution);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+}
+
+	@Override
+	public long countByExecution(Execution execution) {
+		return (long) currentSession().getNamedQuery("issue.countByExecution")
+			.setParameter("execution", execution)
+			.uniqueResult();
 	}
 
 }
