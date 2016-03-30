@@ -70,7 +70,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Configuration
 @EnableTransactionManagement(order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
 @Import(AspectJTransactionManagementConfiguration.class)
-public class RepositoryConfig implements TransactionManagementConfigurer {
+public class RepositoryConfig implements TransactionManagementConfigurer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
 	@Inject
@@ -130,19 +130,23 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 	    factory.setPersistenceProvider(provider);
 
 	    factory.setDataSource(dataSource);
-	   /* factory.setAnnotatedPackages("org.squashtest.tm.service.internal.repository.hibernate",
-				"org.squashtest.tm.service.internal.hibernate");*/
-	    factory.setPackagesToScan("org.squashtest.tm.domain",
-				"org.squashtest.csp.core.bugtracker.domain");	   
+	    factory.setPackagesToScan(
+	    		// annotated packages (scanned in this method since Spring 4.1)
+	    		"org.squashtest.tm.service.internal.repository.hibernate", 
+	    		"org.squashtest.tm.service.internal.hibernate",
+	    		
+	    		// annotated classes
+	    		"org.squashtest.tm.domain",
+				"org.squashtest.csp.core.bugtracker.domain"
+	    );	   
 	    
 	    // naming strategy and interceptor are set in SquashEntityManagerFactoryBuilderImpl
 	    
 	    // setting the properties
 	    Properties hibProperties = hibernateProperties();
-	    Map<String, Object> jpaProperties = factory.getJpaPropertyMap();
-	    for (Entry hibprop : hibProperties.entrySet()){
-	    	jpaProperties.put((String)hibprop.getKey(), hibprop.getValue());
-	    }
+	    factory.setJpaProperties(hibProperties);
+
+	    factory.getJpaPropertyMap().put("hibernate.current_session_context_class", "org.springframework.orm.hibernate4.SpringSessionContext");
 	    
 	    factory.afterPropertiesSet();
 
@@ -151,7 +155,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 	
 	
 	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
-	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	@DependsOn("entityManagerFactory")
 	public SessionFactory sessionFactory(){
 		HibernateJpaSessionFactoryBean fbean = new HibernateJpaSessionFactoryBean();
@@ -159,8 +163,9 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 		return fbean.getObject();
 	}
 
+	
 	@Bean
-	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	@DependsOn("squashtest.tm.persistence.hibernate.SessionFactory")
 	public HibernateTransactionManager transactionManager() {
 		HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager(sessionFactory());

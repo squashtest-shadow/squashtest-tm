@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.hibernate
 
-import org.squashtest.tm.service.SquashSessionFactoryBean;
+import org.squashtest.tm.service.SquashEntityManagerFactoryBuilderImpl;
 import spock.lang.Specification;
 import spock.lang.Unroll
 
@@ -30,32 +30,50 @@ import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.GRO
 
 import java.util.Properties
 
-import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport;
+import org.hibernate.cfg.Configuration
+import org.hibernate.jpa.boot.spi.PersistenceUnitDescriptor;
+import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport
+import org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy;;
 
 /**
  * @author Gregory Fouquet
  *
  */
-class SquashSessionFactoryBeanTest extends Specification {
-	SquashSessionFactoryBean factoryBean = new SquashSessionFactoryBean()
+class SquashEntityManagerFactoryBuilderImplTest extends Specification {
+	SquashEntityManagerFactoryBuilderImpl mgrFactBuilder = new SquashEntityManagerFactoryBuilderImpl(Mock(PersistenceUnitDescriptor), null)
 	Properties hibernateProps = Mock()
 
 	def setup() {
-		factoryBean.setHibernateProperties(hibernateProps)
+		
 	}
 
 	@Unroll
 	def "should substitute placeholder with system prop #dialect"() {
-		when:
-		def func = factoryBean.configureFunctionSupport(dialect)
 
-		then:
-		func as Set == type as Set
+		expect:
+		mgrFactBuilder.configureFunctionSupport(dialect) as Set == type as Set
 
 		where:
 		dialect								| type
 		"org.hibernate.dialect.PostgreSQL"	| [STR_AGG, EXTRACT_WEEK]
 		"org.hibernate.dialect.MySQL"		| [GROUP_CONCAT]
 		"org.hibernate.dialect.H2"			| [GROUP_CONCAT]
+	}
+	
+	def "should extend the configuration"(){
+		
+		given :
+			Configuration conf = new Configuration()
+			conf.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQL")
+			
+		when :
+			Configuration res = mgrFactBuilder.extendConfiguration(conf)
+			
+		then :
+			res.namingStrategy instanceof UppercaseUnderscoreNamingStrategy
+			res.interceptor instanceof AuditLogInterceptor
+			
+			res.sqlFunctions.collect{k,v -> k} as Set == ["s_sum", "s_count", "s_min", "s_max", "s_avg", "group_concat", "week"] as Set
+		
 	}
 }

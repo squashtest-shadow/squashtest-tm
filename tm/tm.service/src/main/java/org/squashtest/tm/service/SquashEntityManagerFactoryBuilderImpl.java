@@ -82,14 +82,19 @@ public class SquashEntityManagerFactoryBuilderImpl extends EntityManagerFactoryB
 		
 		Configuration conf = super.buildHibernateConfiguration(serviceRegistry);
 		
+		return extendConfiguration(conf);
+		
+	}
+	
+	protected Configuration extendConfiguration(Configuration conf){
 		String dialect = conf.getProperty("hibernate.dialect");		
-				
+		
 		SessionFactoryEnhancer.registerExtensions(conf, configureFunctionSupport(dialect));
 		
 		conf.setNamingStrategy(new UppercaseUnderscoreNamingStrategy());
 		conf.setInterceptor(new AuditLogInterceptor());
 		
-		return conf;
+		return conf;	
 	}
 	
 	/**
