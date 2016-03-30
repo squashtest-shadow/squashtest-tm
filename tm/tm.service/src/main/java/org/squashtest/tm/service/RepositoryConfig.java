@@ -20,13 +20,28 @@
  */
 package org.squashtest.tm.service;
 
-import org.apache.commons.lang3.StringUtils;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.sql.DataSource;
+import javax.validation.ValidatorFactory;
+
+import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.AdviceMode;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Role;
 import org.springframework.context.annotation.aspectj.SpringConfiguredConfiguration;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
@@ -34,21 +49,14 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
-import org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy;
-import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
-import javax.validation.ValidatorFactory;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
 
 /**
  * Configuration for repository layer.
@@ -83,6 +91,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 		return new DefaultLobHandler();
 	}
 
+	/*
 	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
@@ -104,11 +113,57 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 
 		return sessionFactoryBean;
 	}
+	*/
+	
+	@Bean(name="entityManagerFactory")
+	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	public EntityManagerFactory entityManagerFactory(){
+
+		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+		SquashSpringHibernateJpaPersistenceProvider provider = new SquashSpringHibernateJpaPersistenceProvider();
+		
+		
+	    LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
+
+	    factory.setJpaVendorAdapter(vendorAdapter);
+	    factory.setPersistenceProvider(provider);
+
+	    factory.setDataSource(dataSource);
+	   /* factory.setAnnotatedPackages("org.squashtest.tm.service.internal.repository.hibernate",
+				"org.squashtest.tm.service.internal.hibernate");*/
+	    factory.setPackagesToScan("org.squashtest.tm.domain",
+				"org.squashtest.csp.core.bugtracker.domain");	   
+	    
+	    // naming strategy and interceptor are set in SquashEntityManagerFactoryBuilderImpl
+	    
+	    // setting the properties
+	    Properties hibProperties = hibernateProperties();
+	    Map<String, Object> jpaProperties = factory.getJpaPropertyMap();
+	    for (Entry hibprop : hibProperties.entrySet()){
+	    	jpaProperties.put((String)hibprop.getKey(), hibprop.getValue());
+	    }
+	    
+	    factory.afterPropertiesSet();
+
+	    return factory.getObject();
+	  }
+	
+	
+	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
+	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	@DependsOn("entityManagerFactory")
+	public SessionFactory sessionFactory(){
+		HibernateJpaSessionFactoryBean fbean = new HibernateJpaSessionFactoryBean();
+		fbean.setEntityManagerFactory(entityManagerFactory());
+		return fbean.getObject();
+	}
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	@DependsOn("squashtest.tm.persistence.hibernate.SessionFactory")
 	public HibernateTransactionManager transactionManager() {
-		HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager(sessionFactory().getObject());
+		HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager(sessionFactory());
 		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
 		hibernateTransactionManager.setDataSource(dataSource);
 		return hibernateTransactionManager;
@@ -155,7 +210,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer {
 		return new LocalValidatorFactoryBean();
 	}
 
-	@Override
+	@Override	
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return transactionManager();
 	}
