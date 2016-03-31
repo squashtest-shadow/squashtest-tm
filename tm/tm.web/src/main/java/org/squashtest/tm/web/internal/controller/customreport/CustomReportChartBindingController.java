@@ -45,41 +45,42 @@ import org.squashtest.tm.web.internal.model.json.FormCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportChartBinding;
 import org.squashtest.tm.web.internal.model.json.JsonCustomReportGridElement;
 
+
 @Controller
 public class CustomReportChartBindingController {
-	
+
 	@Inject
 	CustomReportLibraryNodeService crlnservice;
-	
+
 	@Inject
 	CustomReportDashboardService dashboardService;
-	
+
 	@Inject
 	@Named("customReport.chartBindingBuilder")
 	private Provider<JsonCustomReportChartBindingBuilder> builderProvider;
-	
+
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.POST)
 	public @ResponseBody JsonCustomReportChartBinding createCustomReportChartBinding(@RequestBody FormCustomReportChartBinding formChartBinding){
 		CustomReportChartBinding crcb = formChartBinding.convertToEntity();
-		
+
 		//setting the nested entities.
 		ChartDefinition chartDefinition = crlnservice.findChartDefinitionByNodeId(formChartBinding.getChartNodeId());
 		CustomReportDashboard dashboard = crlnservice.findCustomReportDashboardById(formChartBinding.getDashboardNodeId());
 		crcb.setChart(chartDefinition);
 		crcb.setDashboard(dashboard);
-		
+
 		//do binding and return.
 		dashboardService.bindChart(crcb);
 		return  builderProvider.get().build(crcb);
 	}
-	
+
 	@RequestMapping(value="/custom-report-chart-binding-replace-chart/{bindingId}/{chartNodeId}", method=RequestMethod.POST)
 	public @ResponseBody JsonCustomReportChartBinding changeBindedChart(@PathVariable long bindingId,@PathVariable long chartNodeId){
 		CustomReportChartBinding crcb = dashboardService.changeBindedChart(bindingId,chartNodeId);
 		return  builderProvider.get().build(crcb);
 	}
-	
+
 	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.PUT)
 	public @ResponseBody void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
 		List<CustomReportChartBinding> bindings = new ArrayList<CustomReportChartBinding>();
@@ -88,7 +89,7 @@ public class CustomReportChartBindingController {
 		}
 		dashboardService.updateGridPosition(bindings);
 	}
-	
+
 	@RequestMapping(value="/custom-report-chart-binding/{id}", method=RequestMethod.DELETE)
 	public @ResponseBody void unbindChart(@PathVariable long id){
 		dashboardService.unbindChart(id);

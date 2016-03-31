@@ -108,6 +108,8 @@ define([], function(){
 
 		// url names mapping
 		'home': 	root + '/home-workspace/',
+        'home.content.message': 	        root + '/home-workspace/choose-message',
+        'home.content.dashboard': 	        root + '/home-workspace/choose-dashboard',
 		'attachments.manager':				root + '/attach-list/{\\d+}/attachments/manager',
 		'search' :							root + '/advanced-search',
 		'search.results' :					root + '/advanced-search/results',
@@ -221,10 +223,11 @@ define([], function(){
 		'custom-report-folder' :			'/custom-report-folder/{\\d+}',
 		'custom-report-dashboard' :			'/custom-report-dashboard/{\\d+}',
 		'custom-report-chart' :				'/custom-report-chart/{\\d+}',
-    'custom-report-chart-redirect' :	root + '/custom-report-workspace/#custom-report-chart/{\\d+}',
+        'custom-report-chart-redirect' :	root + '/custom-report-workspace/#custom-report-chart/{\\d+}',
 		'custom-report-library-server' :	root + '/custom-report-library',
 		'custom-report-folder-server' :		root + '/custom-report-folder',
 		'custom-report-dashboard-server' :	root + '/custom-report-dashboard/{\\d+}',
+        'custom-report-dashboard-favorite' :    root + '/custom-report-dashboard/favorite/{\\d+}',
 		'custom-report-chart-server' :		root + '/custom-report-chart/{\\d+}',
 		'custom-report-chart-binding' :		root + '/custom-report-chart-binding',
 		'custom-report-chart-binding-with-id' : root + '/custom-report-chart-binding/{\\d+}',

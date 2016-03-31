@@ -39,7 +39,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -57,6 +56,9 @@ import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
+/**
+ * This controller is dedicated to the initial page of Custom Reports
+ */
 @Controller
 @RequestMapping("/custom-report-workspace")
 public class CustomReportWorkspaceController {
@@ -146,7 +148,7 @@ public class CustomReportWorkspaceController {
 		}
 		return ancestorIds;
 	}
-	
+
 	protected String getWorkspaceViewName() {
 		return "custom-report-workspace.html";
 	}

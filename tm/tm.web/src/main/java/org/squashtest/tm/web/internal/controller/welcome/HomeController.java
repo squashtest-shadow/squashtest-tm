@@ -23,6 +23,8 @@ package org.squashtest.tm.web.internal.controller.welcome;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -35,10 +37,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.IdentifiedUtil;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.requirement.RequirementCriticality;
+import org.squashtest.tm.domain.requirement.RequirementStatus;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
+import org.squashtest.tm.service.customreport.CustomReportDashboardService;
+import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.user.AdministrationService;
+import org.squashtest.tm.service.user.PartyPreferenceService;
+import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 
 @Controller
 public class HomeController {
@@ -51,6 +62,17 @@ public class HomeController {
 	@Inject
 	protected BugTrackerFinderService  bugtrackerService;
 
+	@Inject
+	private PartyPreferenceService partyPreferenceService;
+
+	@Inject
+	private I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
+
+	@Inject
+	private CustomReportLibraryNodeService customReportLibraryNodeService;
+
+	@Inject
+	private CustomReportDashboardService customReportDashboardService;
 
 
 	@Inject
@@ -59,23 +81,48 @@ public class HomeController {
 	}
 
 	@RequestMapping("/home-workspace")
-	public ModelAndView home() {
-			
+	public ModelAndView home(Locale locale) {
+
 		String welcomeMessage = administrationService.findWelcomeMessage();
+		Map<String,String> userPrefs = partyPreferenceService.findPreferencesForCurrentUser();
+		boolean canShowDashboard = customReportDashboardService.canShowDashboardOnHomePage();
+		boolean shouldShowDashboard = customReportDashboardService.shouldShowDashboardOnHomePage();
 
-		ModelAndView mav = new ModelAndView("page/home-workspace");
+		ModelAndView model = new ModelAndView("home-workspace.html");
 
-		mav.addObject("welcomeMessage", welcomeMessage);
+		model.addObject("welcomeMessage", welcomeMessage);
+		model.addObject("userPrefs", userPrefs);
+		model.addObject("canShowDashboard", canShowDashboard);
+		model.addObject("shouldShowDashboard", shouldShowDashboard);
 
 		// put the available bugtrackers too
 		List<Project> projects = projectFinder.findAllReadable();
 		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
 		List<BugTracker> visibleBugtrackers = bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
 
-		mav.addObject("visibleBugtrackers", visibleBugtrackers);
+		model.addObject("visibleBugtrackers", visibleBugtrackers);
+		model.addObject("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
+		model.addObject("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
+		model.addObject("testCaseStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseStatus.class,locale));
+		model.addObject("requirementStatus", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementStatus.class,locale));
+		model.addObject("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
+		model.addObject("executionStatus",
+			i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
 
 
-		return mav;
+		return model;
+	}
+
+	@RequestMapping(value = "/home-workspace/choose-message", method=RequestMethod.POST)
+	public @ResponseBody
+	void chooseWelcomeMessageAsHomeContent(){
+		partyPreferenceService.chooseWelcomeMessageAsHomeContentForCurrentUser();
+	}
+
+	@RequestMapping(value = "/home-workspace/choose-dashboard", method=RequestMethod.POST)
+	public @ResponseBody
+	void chooseFavoriteDashboardAsHomeContent(){
+		partyPreferenceService.chooseFavoriteDashboardAsHomeContentForCurrentUser();
 	}
 
 	@RequestMapping(value = "/administration/modify-welcome-message", method=RequestMethod.POST)

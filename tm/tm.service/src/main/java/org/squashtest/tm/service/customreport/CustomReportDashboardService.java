@@ -30,21 +30,21 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 
 @Transactional
 public interface CustomReportDashboardService {
-	
+
 	/**
 	 * Update all bindings position given in argument.
 	 * @param bindings
 	 */
 	void updateGridPosition(List<CustomReportChartBinding> bindings);
-	
+
 	CustomReportDashboard findById(Long id);
-	
+
 	/**
 	 * Bind a chart to a dashboard
 	 * @param newBinding
 	 */
 	void bindChart(CustomReportChartBinding newBinding);
-	
+
 	/**
 	 * remove designed binding from database
 	 * @param newBinding
@@ -60,4 +60,21 @@ public interface CustomReportDashboardService {
 	 * @return
 	 */
 	CustomReportChartBinding changeBindedChart(long bindingId, long chartNodeId);
+
+	/**
+	 * Set the dashboard as favorite.
+	 * @param nodeId This is the {@link CustomReportLibraryNode} id not the {@link CustomReportDashboard} id
+	 * */
+	void chooseFavoriteDashboardForCurrentUser(long nodeId);
+
+	/**
+	 * Check if user prefs said that we should show a dashboard on home page
+     */
+	boolean shouldShowDashboardOnHomePage();
+
+	/**
+	 * Check if dashboard id in user prefs is valid
+	 */
+	boolean canShowDashboardOnHomePage();
+
 }

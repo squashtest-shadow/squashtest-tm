@@ -49,11 +49,13 @@ import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
- * This controller is bloated because the tree client side is made for {@link LibraryNode}.
- * The tree send several distinct requests for the different type of node. This way had sense with the initial tree model,
- * but isn't optimized for the new tree model.
+ * This controller is dedicated to the operations in the tree of Custom Reports
+ * It's bloated because the tree client side is made for {@link LibraryNode}.
+ * The tree send several distinct requests for the different type of node.
+ * This organisation had sense with the initial tree model (tree node and business entity are in same object),
+ * but isn't optimized for the new tree model (tree node and business entity are distinct objects)
  * As we haven't the time to redefine the client tree, this controller just follow the client jstree requests...
- * Also, no milestones for v1, but we require active milestone as it probably will be in v2 and the tree give it anyway
+ * Also, no milestones for v1, but we require active milestone as it probably will be here someday and the tree give it anyway
  * @author jthebault
  *
  */

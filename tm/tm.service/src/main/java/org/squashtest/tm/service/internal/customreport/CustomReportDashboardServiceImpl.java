@@ -23,40 +23,50 @@ package org.squashtest.tm.service.internal.customreport;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.users.PartyPreference;
+import org.squashtest.tm.domain.users.preferences.CorePartyPreference;
+import org.squashtest.tm.domain.users.preferences.HomeContentValues;
 import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.user.PartyPreferenceService;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")
 public class CustomReportDashboardServiceImpl implements
 		CustomReportDashboardService {
-	
+
 	@Inject
 	CustomReportDashboardDao customReportDashboardDao;
-	
+
 	@Inject
 	CustomReportChartBindingDao bindingDao;
-	
+
 	@Inject
 	CustomReportLibraryNodeService crlnService;
-	
+
 	@Inject
 	private SessionFactory sessionFactory;
-	
+
 	@Inject
 	protected PermissionEvaluationService permissionService;
-	
+
+	@Inject
+	private PartyPreferenceService partyPreferenceService;
+
 	@Override
 	public CustomReportDashboard findById(Long id) {
 		return customReportDashboardDao.findById(id);
@@ -75,7 +85,7 @@ public class CustomReportDashboardServiceImpl implements
 		for (CustomReportChartBinding transientBinding : transientBindings) {
 			updateBinding(transientBinding);
 		}
-		
+
 	}
 
 	private void updateBinding(CustomReportChartBinding transientBinding) {
@@ -104,5 +114,46 @@ public class CustomReportDashboardServiceImpl implements
 		chartBinding.setChart(chartDefinition);
 		return chartBinding;
 	}
-	
+
+	@Override
+	public void chooseFavoriteDashboardForCurrentUser(long nodeId) {
+		CustomReportLibraryNode node = crlnService.findCustomReportLibraryNodeById(nodeId);
+		if (node != null){
+			partyPreferenceService.addOrUpdatePreferenceForCurrentUser(
+				CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey(),String.valueOf(node.getId()));
+		}
+	}
+
+	@Override
+	public boolean shouldShowDashboardOnHomePage() {
+		String key = CorePartyPreference.HOME_WORKSPACE_CONTENT.getPreferenceKey();
+		PartyPreference pref = partyPreferenceService.findPreferenceForCurrentUser(key);
+		if (pref == null){
+			return false;
+		}
+		String content = pref.getPreferenceValue();
+		if (StringUtils.isEmpty(content) || content.equals(HomeContentValues.MESSAGE.getPreferenceValue())){
+			return false;
+		}
+		if (content.equals(HomeContentValues.DASHBOARD.getPreferenceValue())) {
+			return true;
+		}
+		return false;
+	}
+
+	@Override
+	public boolean canShowDashboardOnHomePage() {
+		String key = CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey();
+		PartyPreference pref = partyPreferenceService.findPreferenceForCurrentUser(key);
+		if (pref == null){
+			return false;
+		}
+		String candidateDashboardId = pref.getPreferenceValue();
+		if (StringUtils.isEmpty(candidateDashboardId)){
+			return false;
+		}
+		Long dashboardId = Long.parseLong(candidateDashboardId);
+		CustomReportLibraryNode node = crlnService.findCustomReportLibraryNodeById(dashboardId);
+		return node != null;
+	}
 }

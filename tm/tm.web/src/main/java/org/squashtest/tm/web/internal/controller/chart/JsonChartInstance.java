@@ -43,33 +43,31 @@ import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 
-/*
- * THIS CLASS IS DISPOSABLE AND WAS CREATED FOR QUCIK'N DIRTY RESTITUTION PURPOSES
- */
+
 public class JsonChartInstance {
 
 	private String name;
 
 	private ChartType type;
-	
+
 	private String createdBy;
-	
+
 	private String lastModifiedBy;
-	
+
 	private Date createdOn;
-	
+
 	private Date lastModifiedOn;
 
 	private List<JsonMeasureColumn> measures = new ArrayList<>();
 
 	private List<JsonAxisColumn> axes = new ArrayList<>();
-	
+
 	private List<JsonFilter> filters = new ArrayList<>();
 
 	private List<Object[]> abscissa = new ArrayList<>();
 
 	private Map<String, List<Object>> series = new HashMap<>();
-	
+
 	private List<JsonEntityReference> scope = new ArrayList<>();
 
 	public JsonChartInstance() {
@@ -89,21 +87,21 @@ public class JsonChartInstance {
 		for (MeasureColumn me : def.getMeasures()){
 			measures.add(new JsonMeasureColumn(me));
 		}
-		
+
 		for (Filter filter : def.getFilters()) {
 			filters.add(new JsonFilter(filter));
 		}
-		
+
 		for (EntityReference ref : def.getScope()) {
 			scope.add(new JsonEntityReference(ref,def));
 		}
 
 		ChartSeries series = instance.getSeries();
-		
+
 		this.abscissa = series.getAbscissa();
 
 		this.series = series.getSeries();
-		
+
 	}
 
 	private void doAuditableAttributes(ChartDefinition def) {
@@ -217,11 +215,11 @@ public class JsonChartInstance {
 	public static final class JsonMeasureColumn{
 
 		private String label;
-		
+
 		private JsonColumnPrototype columnPrototype;
-		
+
 		private JsonOperation operation;
-		
+
 		public JsonMeasureColumn() {
 			super();
 		}
@@ -302,15 +300,15 @@ public class JsonChartInstance {
 		}
 
 	}
-	
+
 	public static final class JsonColumnPrototype{
-		
+
 		private String label;
-		
+
 		private JsonSpecializedEntityType specializedEntityType;
-		
+
 		private DataType dataType;
-		
+
 		public JsonColumnPrototype(ColumnPrototype column) {
 			this.label = column.getLabel();
 			this.specializedEntityType = new JsonSpecializedEntityType(column.getSpecializedType());
@@ -341,13 +339,13 @@ public class JsonChartInstance {
 		public void setDataType(DataType dataType) {
 			this.dataType = dataType;
 		}
-		
+
 	}
-	
+
 	public static final class JsonOperation{
 
 		private String name;
-		
+
 		public JsonOperation(Operation operation) {
 			this.name = operation.name();
 		}
@@ -359,20 +357,20 @@ public class JsonChartInstance {
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 	}
-	
+
 	public static final class JsonEntityReference{
 		private EntityType entityType;
 		private long id;
 		private String name;
-		
+
 		public JsonEntityReference(EntityReference entityReference, ChartDefinition def) {
 			this.entityType = entityReference.getType();
 			this.id = entityReference.getId();
 			findName(def);
 		}
-		
+
 		private void findName(ChartDefinition def) {
 			if (entityType.equals(EntityType.PROJECT)&&def.getProject()!=null) {
 				name = def.getProject().getName();
@@ -382,15 +380,15 @@ public class JsonChartInstance {
 		public EntityType getEntityType() {
 			return entityType;
 		}
-		
+
 		public void setEntityType(EntityType entityType) {
 			this.entityType = entityType;
 		}
-		
+
 		public long getId() {
 			return id;
 		}
-		
+
 		public void setId(long id) {
 			this.id = id;
 		}
@@ -403,11 +401,11 @@ public class JsonChartInstance {
 			this.name = name;
 		}
 	}
-	
+
 	public static final class JsonSpecializedEntityType {
 		private EntityType entityType;
 		private EntityRole entityRole;
-		
+
 		public JsonSpecializedEntityType(SpecializedEntityType specializedEntityType) {
 			this.entityRole = specializedEntityType.getEntityRole();
 			this.entityType = specializedEntityType.getEntityType();
@@ -429,19 +427,19 @@ public class JsonChartInstance {
 			this.entityRole = entityRole;
 		}
 	}
-	
+
 	public static final class JsonFilter{
-		
+
 		private List<String> values;
 		private JsonColumnPrototype columnPrototype;
 		private JsonOperation operation;
-		
+
 		public JsonFilter(Filter filter) {
 			this.columnPrototype = new JsonColumnPrototype(filter.getColumn());
 			this.operation = new JsonOperation(filter.getOperation());
 			this.values = filter.getValues();
 		}
-		
+
 		public List<String> getValues() {
 			return values;
 		}

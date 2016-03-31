@@ -18,13 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-/**
- * controller for the Home workspace
- */
-require([ "common" ], function() {
-	require([ "app/ws/squashtm.workspace","./home-workspace/home-workspace-main",'backbone.wreqr' ], function(WS,homeWS,wreqr) {
-        //setting the event bus at global level so it will be avaible for all objects in workspace
-		window.squashtm.app.wreqr = new wreqr.EventAggregator();
-        homeWS.init(window.squashtm.app.homeWorkspaceConf);
-	});
-});
+define(['./home-main-view'],
+    function (mainView) {
+        "use strict";
+        
+        var mainView;
+         
+         function init() {
+             mainView = new mainView();
+         }
+         
+         return {
+             init : init
+         };
+    });

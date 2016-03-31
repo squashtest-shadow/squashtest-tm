@@ -19,12 +19,30 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /**
- * controller for the Home workspace
+ * view used if user haven't defined a favorite dashboard or if the defined dashboard doesn't exist anymore
  */
-require([ "common" ], function() {
-	require([ "app/ws/squashtm.workspace","./home-workspace/home-workspace-main",'backbone.wreqr' ], function(WS,homeWS,wreqr) {
-        //setting the event bus at global level so it will be avaible for all objects in workspace
-		window.squashtm.app.wreqr = new wreqr.EventAggregator();
-        homeWS.init(window.squashtm.app.homeWorkspaceConf);
-	});
-});
+define(["jquery", "underscore", "backbone", "handlebars"],
+	function ($, _, Backbone,Handlebars) {
+		"use strict";
+
+	    var View = Backbone.View.extend({
+            el: "#contextual-content-wrapper",
+            initialize :  function () {
+                this.render();
+            },
+            
+            events: {
+               
+            },
+            
+            render : function () {
+                this.$el.html("");
+                var source = $("#tpl-default-dashboard").html();
+				var template = Handlebars.compile(source);
+                this.$el.append(template());
+            }
+        
+        });
+       
+        return View 
+    });

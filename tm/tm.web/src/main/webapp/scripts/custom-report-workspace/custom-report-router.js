@@ -102,11 +102,11 @@ define(["jquery", 'backbone', "workspace.routing", "./views/libraryView", "./vie
 				});
 
 				var activeModel = new modelDef();
-        var acls = new AclModel({type: "custom-report-library-node", id: id});
+                var acls = new AclModel({type: "custom-report-library-node", id: id});
 
 				this.activeView = new dashboardView({
 					model: activeModel,
-          acls: acls
+                    acls: acls
 				});
 			},
 

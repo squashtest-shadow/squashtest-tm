@@ -28,17 +28,20 @@
 <%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <layout:info-page-layout titleKey="workspace.home.title" highlightedWorkspace="home" main="home-workspace">
-	<jsp:attribute  name="head">	
-		<comp:sq-css name="squash.blue.css" />	
-		<comp:sq-css name="squash.core.override.css" />	
+	<jsp:attribute  name="head">
+		<comp:sq-css name="squash.grey.css" />
+		<comp:sq-css name="squash.core.override.css" />
+		<script>
+
+		</script>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="titlePane">
-		<h2><f:message key="workspace.home.title" /></h2>	
+		<h2><f:message key="workspace.home.title" /></h2>
 	</jsp:attribute>
-	
-	<jsp:attribute name="informationContent">	
-		<div id="welcome-message" class="ui-widget ui-widget-content ui-corner-all" 
+
+	<jsp:attribute name="informationContent">
+		<div id="welcome-message" class="ui-widget ui-widget-content ui-corner-all"
 					style="margin: auto; margin-top: 50px; padding-left: 0.5em; padding-right: 0.5em; width: 80%">
 					<p>${ welcomeMessage }</p>
 		</div>
