@@ -34,5 +34,25 @@
 		</update>
 	</changeSet>
 
+  <changeSet id="tm-1.14.0-feature-5416" author="jthebault">
+
+    <createTable tableName="PARTY_PREFERENCE">
+      <column name="PREFERENCE_ID" type="BIGINT"
+              autoIncrement="true">
+        <constraints primaryKey="true" nullable="false" />
+      </column>
+
+      <column name="PARTY_ID" type="BIGINT" remarks="foreign key to the core_party table">
+        <constraints nullable="false"
+                     foreignKeyName="fk_party_preference_core_party_party_id"
+                     references="CORE_PARTY(PARTY_ID)" />
+      </column>
+
+      <column name="PREFERENCE_KEY" type="VARCHAR(50)"/>
+
+      <column name="PREFERENCE_VALUE" type="VARCHAR(255)"/>
+
+    </createTable>
+  </changeSet>
 
 </databaseChangeLog>

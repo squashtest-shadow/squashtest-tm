@@ -553,6 +553,10 @@
 	@NamedQuery(name = "party.findAllActive", query = "select party from Party party where party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team)"),
 	@NamedQuery(name = "party.findAllActiveByIds", query = "select party from Party party where party.id in (:partyIds) and (party.id in (select user.id from User user where user.active = true) or party.id in (select team.id from Team team))"),
 
+	//Party preferences
+	@NamedQuery(name = "partyPreference.findAllForParty", query = "select pref from PartyPreference pref join pref.party party where party.id=:partyId"),
+	@NamedQuery(name = "partyPreference.findByPartyAndKey", query = "select pref from PartyPreference pref join pref.party party where party.id=:partyId and pref.preferenceKey=:preferenceKey"),
+
 	//RequirementAuditEvent
 	//XXX RequirementVersion
 	@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?1 order by rae.date desc"),
