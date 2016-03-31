@@ -107,7 +107,6 @@ define(["jquery", "./abstractCustomReportChart",
         axesDefaults: {
           min : 0,
           pad: 1.1,
-          tickInterval: 1,
           tickOptions: {
 
           }
