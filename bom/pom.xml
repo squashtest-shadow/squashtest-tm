@@ -37,7 +37,7 @@
     <spock.version>1.0-groovy-2.4</spock.version>
     <spring-security-oauth2.version>2.0.7.RELEASE</spring-security-oauth2.version>
     <spring-security.version>4.0.4.RELEASE</spring-security.version>
-    <thymeleaf-extras-springsecurity3.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity3.version>
+    <thymeleaf-extras-springsecurity4.version>2.1.2.RELEASE</thymeleaf-extras-springsecurity4.version>
     <tomcat-embed.version>8.0.23</tomcat-embed.version>
     <unitils.version>3.4.2</unitils.version>
     <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
@@ -306,8 +306,8 @@
 
       <dependency>
         <groupId>org.thymeleaf.extras</groupId>
-        <artifactId>thymeleaf-extras-springsecurity3</artifactId>
-        <version>${thymeleaf-extras-springsecurity3.version}</version>
+        <artifactId>thymeleaf-extras-springsecurity4</artifactId>
+        <version>${thymeleaf-extras-springsecurity4.version}</version>
       </dependency>
 
       <dependency>
