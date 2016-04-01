@@ -118,7 +118,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		iteration.addTestPlan(itp2)
 		iteration.addTestPlan(itp3)
 		iterDao.findById(_) >> iteration
-		itemDao.findAllByIds(_)>> [itp3]
+		itemDao.findAllByIdIn(_)>> [itp3]
 
 		when:
 		service.changeTestPlanPosition(5, 0, [600])

@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.hibernate
 
-import org.squashtest.tm.service.SquashEntityManagerFactoryBuilderImpl;
 import spock.lang.Specification;
 import spock.lang.Unroll
 

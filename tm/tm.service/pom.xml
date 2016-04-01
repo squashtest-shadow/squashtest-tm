@@ -226,7 +226,13 @@
 						to properly work -->
           <excludes>
             <exclude>**/PreventConcurrentAspect.java</exclude>
+           
           </excludes>
+          <!-- 
+          <includes>
+            <include>org.hibernate.jpa.internal.EntityManagerFactoryImpl</include>
+          </includes>
+           -->
           <aspectLibraries>
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>
@@ -242,6 +248,12 @@
               <artifactId>tm.domain</artifactId>
             </aspectLibrary>
           </aspectLibraries>
+          <weaveDependencies>
+            <weaveDependency>
+              <groupId>org.hibernate</groupId>
+              <artifactId>hibernate-entitymanager</artifactId>
+            </weaveDependency>
+          </weaveDependencies>
         </configuration>
       </plugin>
 

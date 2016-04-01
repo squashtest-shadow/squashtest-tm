@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service;
+package org.squashtest.tm.service.internal.hibernate;
 
 import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.EXTRACT_WEEK;
 import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.GROUP_CONCAT;
@@ -26,18 +26,27 @@ import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.STR
 
 import java.util.Map;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.commons.lang3.StringUtils;
+import org.hibernate.MappingException;
+import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
+import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
+import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.ServiceRegistryCloser;
 import org.hibernate.jpa.boot.spi.PersistenceUnitDescriptor;
+import org.hibernate.jpa.internal.EntityManagerFactoryImpl;
+import org.hibernate.jpa.internal.schemagen.JpaSchemaGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer;
 import org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport;
 import org.squashtest.tm.infrastructure.hibernate.UppercaseUnderscoreNamingStrategy;
-import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor;
+import org.squashtest.tm.service.RepositoryConfig;
 
 
 
@@ -45,9 +54,11 @@ import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor;
  * <p>
  * Porting the former SquashSessionFactoryBean to the equivalent as a EntityManagerFactoryBuilder. Legacy comments
  * are included below. Note that some elements of the configuration had to be set there because 
- * we couldn't access the configuration from {@link RepositoryConfig}.
+ * we couldn't access the configuration from {@link RepositoryConfig}.</p>
  * 
- * </p>
+ * <p>Note that it is critical that the hibernate configuration is properly set before the session factory is created by 
+ * the code in the super class : we cannot prostprocess the session factory afterward. This is why this class exists.</p>
+
  * 
  * <hr/>
  * 
@@ -59,6 +70,10 @@ import org.squashtest.tm.service.internal.hibernate.AuditLogInterceptor;
  * constructor of an inner / anonymous class is a 1-param ctor which receives the outer instance. This leads to
  * arcane reflection errors (NoSuchMethodException "There is no no-arg ctor") in lines that seem completely unrelated
  *
+ * @see #extendConfiguration(Configuration)
+ * @see #configureFunctionSupport(String)
+ * 
+ * 
  * @author Gregory Fouquet
  * @author bsiri
  * @since 1.14.0
@@ -76,7 +91,6 @@ public class SquashEntityManagerFactoryBuilderImpl extends EntityManagerFactoryB
 		super(persistenceUnit, integrationSettings);
 	}
 
-	
 	@Override
 	public Configuration buildHibernateConfiguration(ServiceRegistry serviceRegistry) {
 		
@@ -137,5 +151,7 @@ public class SquashEntityManagerFactoryBuilderImpl extends EntityManagerFactoryB
 			return new FnSupport[]{GROUP_CONCAT};		
 		}
 	}
+
+
 	
 }

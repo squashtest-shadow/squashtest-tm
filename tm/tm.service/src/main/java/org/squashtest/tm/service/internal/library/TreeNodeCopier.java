@@ -198,7 +198,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		Iteration iteration = (Iteration) destination;
 		List<IterationTestPlanItem> copyOfTestPlan = source.createPastableCopyOfTestPlan();
 		for (IterationTestPlanItem itp : copyOfTestPlan) {
-			iterationTestPlanItemDao.persist(itp);
+			iterationTestPlanItemDao.save(itp);
 			iteration.addTestPlan(itp);
 		}
 		copy.bindTestPlanItems(copyOfTestPlan);

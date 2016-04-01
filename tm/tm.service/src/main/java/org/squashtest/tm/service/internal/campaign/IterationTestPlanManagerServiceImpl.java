@@ -203,8 +203,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Dataset ds = (datasetId!=null) ? datasetDao.findById(datasetId) : null;
 
 		IterationTestPlanItem itp = new IterationTestPlanItem(testCase, ds);
-		iterationTestPlanDao.persist(itp);
 		iteration.addTestPlan(itp);
+		iterationTestPlanDao.save(itp);
 
 		// and frack the reindexation
 	}
@@ -250,8 +250,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
-			iterationTestPlanDao.persist(itp);
 			iteration.addTestPlan(itp);
+			iterationTestPlanDao.save(itp);
 		}
 	}
 
@@ -263,7 +263,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 			+ OR_HAS_ROLE_ADMIN)
 	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(itemIds);
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(itemIds);
 
 		iteration.moveTestPlans(newPosition, items);
 	}
@@ -303,7 +303,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public boolean removeTestPlansFromIterationObj(List<Long> testPlanItemsIds, Iteration iteration) {
 		boolean unauthorizedDeletion = false;
 
-		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanItemsIds);
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(testPlanItemsIds);
 
 		for (IterationTestPlanItem item : items) {
 			// We do not allow deletion if there are execution and the user does not have sufficient rights
@@ -446,7 +446,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public void assignUserToTestPlanItems(List<Long> testPlanIds, long userId) {
 		//check permission
 		PermissionsUtils.checkPermission(permissionEvaluationService, testPlanIds, "WRITE", IterationTestPlanItem.class.getName());
-		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIds(testPlanIds);
+		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(testPlanIds);
 
 		User user = (userId == 0) ? null : userDao.findById(userId);
 
@@ -480,7 +480,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	public List<IterationTestPlanItem> forceExecutionStatus(List<Long> testPlanIds, String statusName) {
 		PermissionsUtils.checkPermission(permissionEvaluationService, testPlanIds, "WRITE", IterationTestPlanItem.class.getName());
-		List<IterationTestPlanItem> testPlanItems = iterationTestPlanDao.findAllByIds(testPlanIds);
+		List<IterationTestPlanItem> testPlanItems = iterationTestPlanDao.findAllByIdIn(testPlanIds);
 		ExecutionStatus status = ExecutionStatus.valueOf(statusName);
 		String login = UserContextHolder.getUsername();
 		User user = userDao.findUserByLogin(login);
@@ -551,6 +551,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlanItems(List<Long> ids) {
-		return iterationTestPlanDao.findAllByIds(ids);
+		return iterationTestPlanDao.findAllByIdIn(ids);
 	}
 }

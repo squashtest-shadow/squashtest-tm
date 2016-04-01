@@ -23,24 +23,25 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
-@DynamicDao(entity=IterationTestPlanItem.class, hasCustomImplementation=false)
+//@DynamicDao(entity=IterationTestPlanItem.class, hasCustomImplementation=false)
+@RepositoryDefinition(domainClass=IterationTestPlanItem.class, idClass = Long.class)
 public interface IterationTestPlanDao {
-	void persist(IterationTestPlanItem item);
+	void save(IterationTestPlanItem item);
 
 	IterationTestPlanItem findById(long itemTestPlanId);
 
-	List<IterationTestPlanItem> findAllByIds(Collection<Long> ids);
+	List<IterationTestPlanItem> findAllByIdIn(Collection<Long> ids);
 
 	/**
 	 * Fetches the test plan items which match the given ids ordered according to their iteration's test plan.
 	 * @param testPlanIds
 	 * @return
 	 */
-	List<IterationTestPlanItem> findAllByIdsOrderedByIterationTestPlan(@QueryParam("testPlanIds") List<Long> testPlanIds);
+	List<IterationTestPlanItem> findAllByIdsOrderedByIterationTestPlan(@Param("testPlanIds") List<Long> testPlanIds);
 
 	/**
 	 * Fetches the test plan items which match the given ids ordered according to the given test suite's test plan.
@@ -48,6 +49,6 @@ public interface IterationTestPlanDao {
 	 * @param testSuiteId
 	 * @return
 	 */
-	List<IterationTestPlanItem> findAllByIdsOrderedBySuiteTestPlan(@QueryParam("testPlanIds") List<Long> testPlanIds, @QueryParam("suiteId") long testSuiteId);
+	List<IterationTestPlanItem> findAllByIdsOrderedBySuiteTestPlan(@Param("testPlanIds") List<Long> testPlanIds, @Param("suiteId") long testSuiteId);
 
 }

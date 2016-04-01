@@ -21,8 +21,6 @@
 package org.squashtest.tm.service;
 
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
@@ -47,6 +45,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -57,6 +56,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.TransactionManagementConfigurer;
 import org.springframework.transaction.aspectj.AspectJTransactionManagementConfiguration;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import org.squashtest.tm.service.internal.hibernate.UberCustomPersistenceProvider;
 
 /**
  * Configuration for repository layer.
@@ -70,6 +70,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 @Configuration
 @EnableTransactionManagement(order = Ordered.HIGHEST_PRECEDENCE + 100, mode = AdviceMode.PROXY, proxyTargetClass = false)
 @Import(AspectJTransactionManagementConfiguration.class)
+@EnableJpaRepositories("org.squashtest.tm.service.internal.repository")
 public class RepositoryConfig implements TransactionManagementConfigurer{
 	private static final Logger LOGGER = LoggerFactory.getLogger(RepositoryConfig.class);
 
@@ -121,7 +122,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	public EntityManagerFactory entityManagerFactory(){
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
-		SquashSpringHibernateJpaPersistenceProvider provider = new SquashSpringHibernateJpaPersistenceProvider();
+		UberCustomPersistenceProvider provider = new UberCustomPersistenceProvider();
 		
 		
 	    LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
