@@ -24,6 +24,9 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode
 import org.squashtest.tm.domain.users.PartyPreference
 import org.squashtest.tm.domain.users.preferences.HomeContentValues
 import org.squashtest.tm.service.internal.customreport.CustomReportDashboardServiceImpl
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
+import org.squashtest.tm.service.internal.security.AclPermissionEvaluationService
+import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.user.PartyPreferenceService
 import spock.lang.Specification
 
@@ -38,9 +41,16 @@ class CustomReportDashboardServiceImplTest extends Specification {
 
 	PartyPreferenceService partyPreferenceService= Mock();
 
+	PermissionEvaluationService permissionService = Mock();
+
+	CustomReportLibraryNodeDao customReportLibraryNodeDao =Mock();
+
 	def setup(){
 		service.crlnService = crlnService;
 		service.partyPreferenceService = partyPreferenceService;
+		service.permissionService = permissionService;
+		service.customReportLibraryNodeDao = customReportLibraryNodeDao;
+
 	}
 
 	def "should not show dashboard"(){
@@ -98,7 +108,7 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		def preference = new PartyPreference()
 		preference.setPreferenceValue('12')
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference;
-		crlnService.findCustomReportLibraryNodeById(_)>>null
+		customReportLibraryNodeDao.findById(_)>>null
 
 		when:
 		boolean result = service.canShowDashboardOnHomePage();
@@ -107,12 +117,29 @@ class CustomReportDashboardServiceImplTest extends Specification {
 		result == false;
 	}
 
+	def "can't show dashboard because rights have been revoked"(){
+		given:
+		def preference = new PartyPreference()
+		preference.setPreferenceValue('12')
+		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference
+		def node = new CustomReportLibraryNode()
+		customReportLibraryNodeDao.findById(_) >> node
+		permissionService.hasRoleOrPermissionOnObject(_,_,_,) >> false
+
+		when:
+		boolean result = service.canShowDashboardOnHomePage()
+
+		then:
+		result == false
+	}
+
 	def "can show dashboard"(){
 		given:
 		def preference = new PartyPreference()
 		preference.setPreferenceValue('12')
 		partyPreferenceService.findPreferenceForCurrentUser(_) >> preference
-		crlnService.findCustomReportLibraryNodeById(_)>> new CustomReportLibraryNode()
+		customReportLibraryNodeDao.findById(_)>> new CustomReportLibraryNode()
+		permissionService.hasRoleOrPermissionOnObject(_,_,_,) >> true
 
 		when:
 		boolean result = service.canShowDashboardOnHomePage()

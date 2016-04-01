@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.SessionFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -42,8 +35,14 @@ import org.squashtest.tm.service.customreport.CustomReportDashboardService;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportChartBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomReportDashboardDao;
+import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")
 public class CustomReportDashboardServiceImpl implements
@@ -66,6 +65,9 @@ public class CustomReportDashboardServiceImpl implements
 
 	@Inject
 	private PartyPreferenceService partyPreferenceService;
+
+	@Inject
+	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
 
 	@Override
 	public CustomReportDashboard findById(Long id) {
@@ -135,25 +137,22 @@ public class CustomReportDashboardServiceImpl implements
 		if (StringUtils.isEmpty(content) || content.equals(HomeContentValues.MESSAGE.getPreferenceValue())){
 			return false;
 		}
-		if (content.equals(HomeContentValues.DASHBOARD.getPreferenceValue())) {
-			return true;
-		}
-		return false;
+		return content.equals(HomeContentValues.DASHBOARD.getPreferenceValue());
 	}
 
 	@Override
 	public boolean canShowDashboardOnHomePage() {
 		String key = CorePartyPreference.FAVORITE_DASHBOARD.getPreferenceKey();
 		PartyPreference pref = partyPreferenceService.findPreferenceForCurrentUser(key);
-		if (pref == null){
+		if (pref == null) {
 			return false;
 		}
 		String candidateDashboardId = pref.getPreferenceValue();
-		if (StringUtils.isEmpty(candidateDashboardId)){
+		if (StringUtils.isEmpty(candidateDashboardId)) {
 			return false;
 		}
 		Long dashboardId = Long.parseLong(candidateDashboardId);
-		CustomReportLibraryNode node = crlnService.findCustomReportLibraryNodeById(dashboardId);
-		return node != null;
+		CustomReportLibraryNode node = customReportLibraryNodeDao.findById(dashboardId);
+		return node != null && permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","READ",node);
 	}
 }
