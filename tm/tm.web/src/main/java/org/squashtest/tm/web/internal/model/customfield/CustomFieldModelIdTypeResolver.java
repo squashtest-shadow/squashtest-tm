@@ -97,10 +97,9 @@ public class CustomFieldModelIdTypeResolver implements TypeIdResolver{
 		return toReturn;
 	}
 
+	//new in Spring Boot 1.3
 	@Override
-	public JavaType typeFromId(DatabindContext databindContext, String s) {
-		return null;
+	public JavaType typeFromId(DatabindContext databindContext, String type) {
+		return typeFromId(type);
 	}
-
-
 }
