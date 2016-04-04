@@ -20,50 +20,26 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-
 import org.apache.commons.collections.ListUtils;
-import org.hibernate.Criteria;
-import org.hibernate.Hibernate;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
+import org.hibernate.*;
+import org.apache.commons.collections.ListUtils;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.DefaultSorting;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseFolder;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 
+import java.util.*;
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase
  * 
@@ -103,7 +79,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static List<DefaultSorting> defaultVerifiedTcSorting;
 
 	static {
-		defaultVerifiedTcSorting = new LinkedList<DefaultSorting>();
+		defaultVerifiedTcSorting = new LinkedList<>();
 		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.reference"));
 		defaultVerifiedTcSorting.add(new DefaultSorting("TestCase.name"));
 		ListUtils.unmodifiableList(defaultVerifiedTcSorting);
@@ -311,7 +287,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 	@SuppressWarnings("unchecked")
-	public List<NamedReference> findTestCaseDetails(Collection<Long> ids){
+	private List<NamedReference> findTestCaseDetails(Collection<Long> ids){
 		if (ids.isEmpty()){
 			return Collections.emptyList();
 		}
@@ -332,7 +308,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		List<NamedReferencePair> result =  findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallerDetails");
 
 		// now we must also add dummy Object[] for the test case ids that hadn't any caller
-		Collection<Long> remainingIds = new HashSet<Long>(testCaseIds);
+		Collection<Long> remainingIds = new HashSet<>(testCaseIds);
 		for (NamedReferencePair pair : result){
 			remainingIds.remove(pair.getCalled().getId());
 		}
@@ -354,7 +330,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		List<NamedReferencePair> result = findTestCaseCallsDetails(testCaseIds, "testCase.findTestCasesHavingCallStepsDetails");
 
 		// now we must also add dummy Object[] for the test case ids that hadn't any caller
-		Collection<Long> remainingIds = new HashSet<Long>(testCaseIds);
+		Collection<Long> remainingIds = new HashSet<>(testCaseIds);
 		for (NamedReferencePair pair : result){
 			remainingIds.remove(pair.getCaller().getId());
 		}
@@ -483,15 +459,14 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		return Collections.min(tc.getMilestones(), new Comparator<Milestone>(){
 			@Override
 			public int compare(Milestone m1, Milestone m2) {
-				int result = m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
-				return result;
+				return m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
 			}	
 		}).getEndDate();
 	}
 	
 	
 	/**
-	 * @param sorting
+	 * @param userSorting
 	 * @return
 	 */
 	/*
@@ -598,7 +573,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 		// Case 1. Only root leafs are found
 		if (descendantIds == null || descendantIds.isEmpty()) {
-			List<Object[]> testCasesWithParentFolder = new ArrayList<Object[]>();
+			List<Object[]> testCasesWithParentFolder = new ArrayList<>();
 			return formatExportResult(mergeRootWithTestCasesWithParentFolder(rootTestCases, testCasesWithParentFolder));
 		}
 
@@ -656,7 +631,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	private List<ExportTestCaseData> formatExportResult(List<Object[]> list) {
 		if (!list.isEmpty()) {
-			List<ExportTestCaseData> exportList = new ArrayList<ExportTestCaseData>();
+			List<ExportTestCaseData> exportList = new ArrayList<>();
 
 			for (Object[] tuple : list) {
 				TestCase tc = (TestCase) tuple[0];
@@ -692,7 +667,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	public List<Long> findAllTestCasesIdsByLibrary(long libraryId) {
 		Session session = currentSession();
 		SQLQuery query = session.createSQLQuery(FIND_ALL_FOR_LIBRARY_QUERY);
-		query.setParameter("libraryId", Long.valueOf(libraryId));
+		query.setParameter("libraryId", libraryId);
 		query.setResultTransformer(new SqLIdResultTransformer());
 		return query.list();
 	}
@@ -706,7 +681,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 
 	@Override
 	public Map<Long, TestCaseImportance> findAllTestCaseImportanceWithImportanceAuto(Collection<Long> testCaseIds) {
-		Map<Long, TestCaseImportance> resultMap = new HashMap<Long, TestCaseImportance>();
+		Map<Long, TestCaseImportance> resultMap = new HashMap<>();
 		if(testCaseIds.isEmpty()){
 			return resultMap;
 		}
