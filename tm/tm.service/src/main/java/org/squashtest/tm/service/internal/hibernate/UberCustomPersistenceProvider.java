@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.hibernate;
 
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +34,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.engine.spi.SessionOwner;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
+import org.hibernate.jpa.internal.EntityManagerFactoryImpl;
 import org.hibernate.jpa.internal.EntityManagerImpl;
 import org.springframework.orm.hibernate3.support.OpenSessionInterceptor;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
@@ -114,8 +116,25 @@ public class UberCustomPersistenceProvider  extends HibernatePersistenceProvider
 				}, properties).build();
 		
 		
+		managerFactory = proxify(managerFactory);
+		
 		
 		return managerFactory;
+	}
+	
+	private EntityManagerFactory proxify(EntityManagerFactory original){
+		EntityManagerFactoryImpl hib = (EntityManagerFactoryImpl) original;
+		
+		Class<?>[] interfaces = new Class<?>[]{
+			org.hibernate.ejb.HibernateEntityManagerFactory.class,
+			org.hibernate.jpa.HibernateEntityManagerFactory.class,
+			javax.persistence.EntityManagerFactory.class,
+			java.io.Serializable.class
+		} ;
+		
+		ClassLoader loader = EntityManagerFactoryImpl.class.getClassLoader();
+		
+		return (EntityManagerFactory)Proxy.newProxyInstance(loader, interfaces, new SessionOverrideEntityManagerFactoryProxy(hib));
 	}
 	
 }

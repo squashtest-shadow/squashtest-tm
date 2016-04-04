@@ -32,9 +32,11 @@ import org.hibernate.jpa.internal.EntityManagerFactoryImpl;
 import org.hibernate.jpa.internal.EntityManagerImpl;
 
 /**
- * This proxy on an EntityManager will delegate any call to internalGetSession to its {@link SessionFactory}
+ * This implementation on EntityManager will delegate any call to internalGetSession to its {@link SessionFactory}
  * 
  * @author bsiri
+ *
+ * NOTE : UNUSED FOR NOW. Will be useful if we activate org.squashtest.tm.service.internal.hibernate.DelegatingEntityManagerFactoryAspect 
  *
  */
 public class DelegatingEntityManager extends EntityManagerImpl{

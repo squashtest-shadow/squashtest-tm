@@ -21,7 +21,10 @@
 
 /**
  * This aspect will make Hibernate EntityManagerFactory call our implementation 
- * of EntityManager instead of his
+ * of EntityManager instead of his.
+ * 
+ * NOTE : UNUSED FOR NOW. Will be useful if want to use DelegatingEntityManager.
+ *
  * 
  */
 
