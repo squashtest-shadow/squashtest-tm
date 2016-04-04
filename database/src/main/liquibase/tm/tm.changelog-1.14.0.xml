@@ -50,7 +50,7 @@
 
       <column name="PREFERENCE_KEY" type="VARCHAR(50)"/>
 
-      <column name="PREFERENCE_VALUE" type="VARCHAR(255)"/>
+      <column name="PREFERENCE_VALUE" type="VARCHAR(5000)"/>
 
     </createTable>
   </changeSet>
