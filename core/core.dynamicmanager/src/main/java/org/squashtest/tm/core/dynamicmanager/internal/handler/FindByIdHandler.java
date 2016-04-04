@@ -24,9 +24,10 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
@@ -35,15 +36,15 @@ import org.springframework.core.annotation.AnnotationUtils;
  * 
  */
 public class FindByIdHandler implements DynamicComponentInvocationHandler {
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 
 	/**
 	 * @param entityType
-	 * @param sessionFactory
+	 * @param em
 	 */
-	public FindByIdHandler(@NotNull SessionFactory sessionFactory) {
+	public FindByIdHandler(@NotNull EntityManager em) {
 		super();
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 	}
 
 	/**
@@ -51,7 +52,7 @@ public class FindByIdHandler implements DynamicComponentInvocationHandler {
 	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
-		return sessionFactory.getCurrentSession().load(method.getReturnType(), (Serializable) args[0]);
+		return  em.unwrap(Session.class).load(method.getReturnType(), (Serializable) args[0]);
 	}
 
 	/**

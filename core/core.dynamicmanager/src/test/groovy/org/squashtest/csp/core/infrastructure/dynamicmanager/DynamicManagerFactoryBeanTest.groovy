@@ -21,6 +21,8 @@
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Query
 import org.hibernate.SessionFactory
 import org.hibernate.Session
@@ -35,18 +37,18 @@ import spock.lang.Specification
 class DynamicManagerFactoryBeanTest extends Specification{
 	
 	DynamicManagerFactoryBean factory = new DynamicManagerFactoryBean()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session currentSession = Mock()
 	BeanFactory beanFactory = Mock()
 
 	def setup() {
-		sessionFactory.getCurrentSession() >> currentSession
+		em.unwrap(_) >> currentSession
 		
 		factory.beanFactory = beanFactory
 		factory.lookupCustomImplementation = false
 		factory.componentType = DummyManager
 		factory.entityType = DummyEntity
-		factory.sessionFactory = sessionFactory		
+		factory.em = em		
 	}
 
 	def "factory should create a unique dynamic DummyManager"() {

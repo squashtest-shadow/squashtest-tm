@@ -25,10 +25,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.Criteria;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 import org.squashtest.tm.core.foundation.collection.Sorting;
@@ -43,16 +44,16 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what
 	// JDK interfaces throw
 	private final Class<ENTITY> entityType;
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 
 	/**
 	 * @param entityType
-	 * @param sessionFactory
+	 * @param em
 	 */
-	public FindAllByIdsHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public FindAllByIdsHandler(@NotNull Class<ENTITY> entityType, @NotNull EntityManager em) {
 		super();
 		this.entityType = entityType;
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 	}
 
 	/**
@@ -66,7 +67,7 @@ public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHa
 		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		}
-		Criteria crit = sessionFactory.getCurrentSession().createCriteria(entityType);
+		Criteria crit = em.unwrap(Session.class).createCriteria(entityType);
 		crit.add(Restrictions.in("id", ids));
 		if(method.getParameterTypes().length >1){
 			Sorting sorting = (Sorting) args[1];

@@ -25,6 +25,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
+import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -39,6 +40,9 @@ import org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExpo
 import org.squashtest.tm.web.internal.interceptor.openedentity.*;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+
 import java.util.List;
 
 /**
@@ -52,8 +56,8 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Value("${info.app.version}")
 	private String appVersion;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceUnit
+	private EntityManagerFactory emf;
 
 	@Inject
 	private ResourceProperties resourceProperties;
@@ -87,10 +91,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		ndc.setIncludeClientInfo(true);
 		registry.addWebRequestInterceptor(ndc);
 
-		// OSIV
-		OpenSessionInViewInterceptor osiv = new OpenSessionInViewInterceptor();
-		osiv.setSessionFactory(sessionFactory);
+		// OSIV		
+		OpenEntityManagerInViewInterceptor osiv = new OpenEntityManagerInViewInterceptor();
+		osiv.setEntityManagerFactory(emf);
 		registry.addWebRequestInterceptor(osiv);
+		
 
 		// #sec in thymeleaf
 		registry.addInterceptor(securityExpressionResolverExposerInterceptor)

@@ -24,11 +24,11 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Collection;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.squashtest.tm.core.dynamicmanager.exception.NamedQueryLookupException;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
@@ -40,20 +40,20 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * @param <ENTITY>
  */
 abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvocationHandler {
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 	/**
 	 * This property is prepended to the invoked method's name for query lookup.
 	 */
 	private final String queryNamespace;
 
 	/**
-	 * @param sessionFactory
+	 * @param em
 	 * @param entityType
 	 *            this class's simple name will be used as this object's {@link #queryNamespace}
 	 */
-	public AbstractNamedQueryHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public AbstractNamedQueryHandler(@NotNull Class<ENTITY> entityType, @NotNull EntityManager em) {
 		super();
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 		this.queryNamespace = entityType.getSimpleName();
 	}
 
@@ -108,7 +108,7 @@ abstract class AbstractNamedQueryHandler<ENTITY> implements DynamicComponentInvo
 	}
 
 	private Query lookupNamedQuery(Method method) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Query query = session.getNamedQuery(queryName(method));
 
 		if (query == null) {

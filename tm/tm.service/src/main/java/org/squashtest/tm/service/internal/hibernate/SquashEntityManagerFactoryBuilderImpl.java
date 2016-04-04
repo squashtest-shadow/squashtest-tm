@@ -56,7 +56,7 @@ import org.squashtest.tm.service.RepositoryConfig;
  * are included below. Note that some elements of the configuration had to be set there because 
  * we couldn't access the configuration from {@link RepositoryConfig}.</p>
  * 
- * <p>Note that it is critical that the hibernate configuration is properly set before the session factory is created by 
+ * <p>Also note that it is critical that the hibernate configuration is properly set before the session factory is created by 
  * the code in the super class : we cannot prostprocess the session factory afterward. This is why this class exists.</p>
 
  * 

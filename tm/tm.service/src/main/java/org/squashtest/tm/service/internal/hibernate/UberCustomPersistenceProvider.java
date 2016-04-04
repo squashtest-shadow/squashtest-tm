@@ -42,44 +42,10 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 
 /**
  * <p>
- * 	This class must create an EntityManagerFactory of our own. It does so by two complementary mechanisms : 
- * 		<ul>
- * 			<li>invoke an EntityManagerFactoryBuilder that will configure the underlying session factory </li>
- * 			<li>decorate the resulting hibernate EntityManagerFactory so that it creates the EntityManagers we want it to. </li>
- * 		</ul>
- *  </p>
- * 
- * <h2> Details : </h2>
- * 
- * 	<h3>The session factory</h3>
- * 
- * 	<p>we need to instruct the session factory with extra functions and it must be done before the session factory is created.
+ * 	This class must create an EntityManagerFactory that rely on our definition of a SessionFactory. Indeed we need to provide
+ * the session factory with extra functions and it must be done before the session factory is created.
  * It is done by stuffing the HibernateConfiguration with our code (@see #{SquashEntityManagerFactoryBuilderImpl}).  </p>
  * 
- * 
- * 	<h3>Our custom EntityManagerFactory</h3>
- * 
- * 	<p>The default implementation of Hibernate {@link EntityManagerImpl}s will ask the {@link SessionFactory} for a new {@link Session} regardless of any other 
- * Session in the context (including the one created by the {@link OpenEntityManagerInViewInterceptor}). 
- * 
- * The sad result is that beans coming from the {@link EntityManager} cannot interact with beans coming straight from the SessionFactory because they 
- * are managed by different sessions.
- * 
- *   <p>To overcome this we must supply a custom implementation of EntityManager that will fully delegate to the session factory, 
- *   and so we must also supply the EntityManagerFactory that create them.</p>
- * 
- * </p>
- * 
- * <p>A major problem with that is that a {@link Session} may belong to only one {@link SessionOwner} - in our case the {@link OpenSessionInterceptor} assigns it 
- * to the SessionFactory. This means that if one day Spring tries to ask the TransactionManager to retrieve the session owned by an EntityManager 
- * via a third party manager (like a service registry), it is 
- * likely to fail.</p>
- * 
- *  <p>An even bigger problem is the transaction management a la JPA itself, because the EntityManager will not be aware of how they are managed - only 
- *  the session factory knows. This might lead to other unknown problems. I'm not literate enough on that matter to tell you better.</p>
- *  
- *  <p>Bottom line : generalize the usage of an EntityManager everywhere ASAP and get rid of all this boilerplate 
- * before awful bugs arise.</p>
  * 
  * @author bsiri
  *
@@ -88,16 +54,7 @@ import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 
 public class UberCustomPersistenceProvider  extends HibernatePersistenceProvider {
 
-	
-	public UberCustomPersistenceProvider() {
-		super();
-		try{
-			this.getClass().getClassLoader().loadClass("org.squashtest.tm.service.internal.hibernate.DelegatingEntityManager");
-		}catch(Exception e){
-			//fuck
-			System.out.println("fuck");
-		}
-	}
+
 	
 	@Override
 	@SuppressWarnings("rawtypes")
@@ -107,34 +64,14 @@ public class UberCustomPersistenceProvider  extends HibernatePersistenceProvider
 			mergedClassesAndPackages.addAll(((SmartPersistenceUnitInfo) info).getManagedPackages());
 		}
 		
-		EntityManagerFactory managerFactory = new SquashEntityManagerFactoryBuilderImpl(
+		return new SquashEntityManagerFactoryBuilderImpl(
 				new PersistenceUnitInfoDescriptor(info) {
 					@Override
 					public List<String> getManagedClassNames() {
 						return mergedClassesAndPackages;
 					}
 				}, properties).build();
-		
-		
-		managerFactory = proxify(managerFactory);
-		
-		
-		return managerFactory;
 	}
 	
-	private EntityManagerFactory proxify(EntityManagerFactory original){
-		EntityManagerFactoryImpl hib = (EntityManagerFactoryImpl) original;
-		
-		Class<?>[] interfaces = new Class<?>[]{
-			org.hibernate.ejb.HibernateEntityManagerFactory.class,
-			org.hibernate.jpa.HibernateEntityManagerFactory.class,
-			javax.persistence.EntityManagerFactory.class,
-			java.io.Serializable.class
-		} ;
-		
-		ClassLoader loader = EntityManagerFactoryImpl.class.getClassLoader();
-		
-		return (EntityManagerFactory)Proxy.newProxyInstance(loader, interfaces, new SessionOverrideEntityManagerFactoryProxy(hib));
-	}
-	
+
 }

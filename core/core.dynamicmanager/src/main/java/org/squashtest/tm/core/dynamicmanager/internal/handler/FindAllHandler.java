@@ -23,10 +23,11 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -43,13 +44,13 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 public class FindAllHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(FindAllHandler.class);
 
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 	private final String queryRoot;
 	private static final Object[] NO_ARGS = {};
 
-	public FindAllHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public FindAllHandler(@NotNull Class<ENTITY> entityType, @NotNull EntityManager em) {
 		super();
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 		queryRoot = "from " + entityType.getSimpleName();
 	}
 
@@ -81,7 +82,7 @@ public class FindAllHandler<ENTITY> implements DynamicComponentInvocationHandler
 
 		LOGGER.debug("Created HQL query '{}' using args {}", hql, args);
 
-		return sessionFactory.getCurrentSession().createQuery(hql);
+		return  em.unwrap(Session.class).createQuery(hql);
 	}
 
 	private StringBuilder appendSorting(StringBuilder hql, Object[] args) {

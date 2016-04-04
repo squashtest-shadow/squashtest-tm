@@ -23,7 +23,6 @@ package org.squashtest.tm.tools.annotation.processor;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 
@@ -52,6 +51,11 @@ public class DynamicManagerProcessor extends DynamicComponentProcessor<DynamicMa
 	@Override
 	protected String generatedFileName() {
 		return "dynamicmanager-context.xml";
+	}
+	
+	@Override
+	protected String getEntityManagerName() {
+		return "dynamicManagerEntityManager";
 	}
 
 	/**
@@ -83,16 +87,5 @@ public class DynamicManagerProcessor extends DynamicComponentProcessor<DynamicMa
 		return definition.primary() ? "primary=\"true\"" : "";
 	}
 
-	/**
-	 * @see org.squashtest.tm.tools.annotation.processor.DynamicComponentProcessor#sessionFactoryName(java.lang.annotation.Annotation)
-	 */
-	@Override
-	protected CharSequence sessionFactoryName(DynamicManager definition, Element component) {
-		String name = definition.sessionFactoryName();
-
-		checkSessionFactoryName(name, component);
-
-		return name;
-	}
-
+	
 }

@@ -22,10 +22,10 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
 import java.lang.reflect.Method;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 
 /**
  * This {@link DynamicComponentInvocationHandler} handles any method of signature <code>ENTITY find*(..)</code> by
@@ -38,12 +38,12 @@ public class EntityFinderNamedQueryHandler<ENTITY> extends AbstractNamedQueryHan
 	private final Class<ENTITY> entityType;
 
 	/**
-	 * @param sessionFactory
+	 * @param em
 	 * @param entityType
 	 * @param queryNamespace
 	 */
-	public EntityFinderNamedQueryHandler(Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
-		super(entityType, sessionFactory);
+	public EntityFinderNamedQueryHandler(Class<ENTITY> entityType, @NotNull EntityManager em) {
+		super(entityType, em);
 		this.entityType = entityType;
 	}
 

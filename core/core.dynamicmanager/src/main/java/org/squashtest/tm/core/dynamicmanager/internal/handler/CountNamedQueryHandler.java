@@ -22,10 +22,10 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
 import java.lang.reflect.Method;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 
 /**
  * @author Gregory Fouquet
@@ -35,10 +35,10 @@ public class CountNamedQueryHandler<ENTITY> extends AbstractNamedQueryHandler<EN
 
 	/**
 	 * @param entityType
-	 * @param sessionFactory
+	 * @param em
 	 */
-	public CountNamedQueryHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
-		super(entityType, sessionFactory);
+	public CountNamedQueryHandler(@NotNull Class<ENTITY> entityType, @NotNull EntityManager em) {
+		super(entityType, em);
 	}
 
 	/**

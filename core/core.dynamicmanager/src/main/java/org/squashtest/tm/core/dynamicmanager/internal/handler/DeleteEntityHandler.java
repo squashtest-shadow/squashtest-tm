@@ -22,9 +22,10 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
 import java.lang.reflect.Method;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 
 /**
  * @author Gregory Fouquet
@@ -32,16 +33,16 @@ import org.hibernate.SessionFactory;
  */
 public class DeleteEntityHandler<ENTITY> extends Object implements DynamicComponentInvocationHandler {
 	private final Class<ENTITY> entityType;
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 
 	/**
 	 * @param entityType
-	 * @param sessionFactory
+	 * @param em
 	 */
-	public DeleteEntityHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public DeleteEntityHandler(@NotNull Class<ENTITY> entityType, @NotNull EntityManager em) {
 		super();
 		this.entityType = entityType;
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 	}
 
 	/**
@@ -49,7 +50,7 @@ public class DeleteEntityHandler<ENTITY> extends Object implements DynamicCompon
 	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) { 
-		sessionFactory.getCurrentSession().delete(args[0]);
+		 em.unwrap(Session.class).delete(args[0]);
 		return null;
 	}
 

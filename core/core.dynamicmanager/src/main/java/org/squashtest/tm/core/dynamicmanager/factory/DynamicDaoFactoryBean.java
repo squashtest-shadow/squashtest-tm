@@ -23,7 +23,10 @@ package org.squashtest.tm.core.dynamicmanager.factory;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.SessionFactory;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.ArbitraryQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.CountNamedQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DeleteEntityHandler;
@@ -80,7 +83,7 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  */
 public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponentFactoryBean<DAO> {
 	private static final int HANDLERS_COUNT = 9;
-	private SessionFactory sessionFactory;
+	private EntityManager em;
 	private Class<ENTITY> entityType;
 
 	/**
@@ -96,25 +99,21 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		ArrayList<DynamicComponentInvocationHandler> handlers = new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
 
-		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new FindByIdHandler(sessionFactory));
-		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new FindAllHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new CountNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new PersistEntityHandler<ENTITY>(entityType, em));
+		handlers.add(new DeleteEntityHandler<ENTITY>(entityType, em));
+		handlers.add(new FindByIdHandler(em));
+		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, em));
+		handlers.add(new FindAllHandler<ENTITY>(entityType, em));
+		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, em));
+		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, em));
+		handlers.add(new CountNamedQueryHandler<ENTITY>(entityType, em));
+		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, em));
 
 		return handlers;
 	}
 
-	/**
-	 * @param sessionFactory the sessionFactory to set
-	 */
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
+	public void setEntityManager(EntityManager em){
+		this.em = em;
 	}
-
 
 }

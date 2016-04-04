@@ -20,6 +20,22 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +43,6 @@ import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -40,8 +55,16 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.*;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchModel;
+import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
+import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
@@ -49,10 +72,6 @@ import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-
-import javax.inject.Inject;
-import java.util.*;
-import java.util.Map.Entry;
 
 public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
@@ -69,8 +88,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	private FeatureManager featureManager;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private CustomFieldBindingFinderService customFieldBindingFinderService;
@@ -468,7 +487,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	protected Criteria createMilestoneHibernateCriteria(Map<String, AdvancedSearchFieldModel> fields) {
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Criteria crit = session.createCriteria(Milestone.class, "milestone");
 
 		for (Entry<String, AdvancedSearchFieldModel> entry : fields.entrySet()) {

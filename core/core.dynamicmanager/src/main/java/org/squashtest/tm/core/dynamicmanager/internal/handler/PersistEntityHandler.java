@@ -22,9 +22,8 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
 import java.lang.reflect.Method;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
-
-import org.hibernate.SessionFactory;
 
 /**
  * @author Gregory Fouquet
@@ -32,16 +31,16 @@ import org.hibernate.SessionFactory;
  */
 public class PersistEntityHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	private final Class<ENTITY> entityType;
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 
 	/**
 	 * @param entityType
-	 * @param sessionFactory
+	 * @param em
 	 */
-	public PersistEntityHandler(@NotNull Class<ENTITY> entityType, @NotNull SessionFactory sessionFactory) {
+	public PersistEntityHandler(@NotNull Class<ENTITY> entityType, @NotNull EntityManager em) {
 		super();
 		this.entityType = entityType;
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 	}
 
 	/**
@@ -49,7 +48,7 @@ public class PersistEntityHandler<ENTITY> implements DynamicComponentInvocationH
 	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
-		sessionFactory.getCurrentSession().persist(args[0]);
+		em.persist(args[0]);
 		return null;
 	}
 

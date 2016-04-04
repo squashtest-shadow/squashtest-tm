@@ -23,7 +23,10 @@ package org.squashtest.tm.core.dynamicmanager.factory;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.SessionFactory;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.ArbitraryQueryHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.DynamicComponentInvocationHandler;
 import org.squashtest.tm.core.dynamicmanager.internal.handler.EntityFinderNamedQueryHandler;
@@ -88,7 +91,7 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	/**
 	 * Session factory used by dynamic method handler. Should be initialized.
 	 */
-	private SessionFactory sessionFactory;
+	private EntityManager em;
 	/**
 	 * Type of entities which are manipulated by the Dynamic manager. Should be initialized.
 	 */
@@ -104,13 +107,13 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
 
-		handlers.add(new PersistEntityHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new EntityModifierHandler<ENTITY>(sessionFactory, entityType));
-		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new FindByIdHandler(sessionFactory));
-		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, sessionFactory));
-		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, sessionFactory));
+		handlers.add(new PersistEntityHandler<ENTITY>(entityType, em));
+		handlers.add(new EntityModifierHandler<ENTITY>(em, entityType));
+		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, em));
+		handlers.add(new FindByIdHandler(em));
+		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, em));
+		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, em));
+		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, em));
 
 		return handlers;
 	}
@@ -118,8 +121,8 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	/**
 	 * @param sessionFactory the sessionFactory to set
 	 */
-	public void setSessionFactory(SessionFactory sessionFactory) {
-		this.sessionFactory = sessionFactory;
+	public void setEntityManager(EntityManager em){
+		this.em = em;
 	}
 
 }

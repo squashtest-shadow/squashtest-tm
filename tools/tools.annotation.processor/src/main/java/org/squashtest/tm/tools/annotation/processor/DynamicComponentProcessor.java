@@ -51,14 +51,23 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 
 	private static final String FILE_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
 			+ "<beans xmlns=\"http://www.springframework.org/schema/beans\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
-			+ "  xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd\">\n";
+			+ "  xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd\">\n\n";
 
+	/*
+	 *  this will create a shared entity manager (a proxy that ensures that the injected entity manager is indeed thread safe).
+	 *  Just as would the annotation @PersistenceContext would do.
+	 */
+	private static final String THREAD_SAFE_EM_CONF = 
+			"  <bean id=\"{0}\"  class = \"org.springframework.orm.jpa.support.SharedEntityManagerBean\">\n" +
+	        "    <property name=\"entityManagerFactory\" ref=\"entityManagerFactory\"/>\n" +  
+	        "  </bean>\n\n";
+	
 	private static final String FILE_FOOTER = "</beans>\n";
 
 	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {6} class=\"{1}\">\n"
 			+ "    <property name=\"componentType\" value=\"{2}\" />\n"
 			+ "    <property name=\"entityType\" value=\"{3}\" />\n"
-			+ "    <property name=\"sessionFactory\" ref=\"{4}\" />\n"
+			+ "    <property name=\"entityManager\" ref=\"{4}\" />\n"
 			+ "    <property name=\"lookupCustomImplementation\" value=\"{5}\" />\n" 
 			+ "  </bean>\n";
 
@@ -143,6 +152,8 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 
 	private void outputSpringContextFile(Writer writer) throws IOException {
 		writer.append(FILE_HEADER);
+		
+		writer.append(MessageFormat.format(THREAD_SAFE_EM_CONF, getEntityManagerName()));
 
 		for (Element manager : dynamicComponents) {
 //			messager.printMessage(Kind.NOTE,
@@ -183,13 +194,13 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 				: beanName(definition);
 		CharSequence managerClass = ((TypeElement) component).getQualifiedName();
 		TypeMirror entityClass = extractEntityClass(definition);
+		String entityManagerName = getEntityManagerName();
 
-		CharSequence sessionFactoryName = sessionFactoryName(definition, component);
 		boolean lookupCustomImplementation = lookupCustomImplementation(definition);
 		String primary = primaryAttribute(definition);
 
 		String beanDefinition = MessageFormat.format(DYNAMIC_COMPONENT_TEMPLATE, beanName, beanFactoryClass(),
-				managerClass, entityClass, sessionFactoryName, lookupCustomImplementation, primary);
+				managerClass, entityClass, entityManagerName, lookupCustomImplementation, primary);
 		return beanDefinition;
 	}
 
@@ -239,14 +250,7 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	 */
 	protected abstract boolean lookupCustomImplementation(ANNOTATION definition);
 
-	/**
-	 * This method should issue an error if no sessionFactoryName is extractible from annotation.
-	 * 
-	 * @param definition
-	 * @param component 
-	 * @return the bean name of the session factory which should be used.
-	 */
-	protected abstract CharSequence sessionFactoryName(ANNOTATION definition, Element component);
+	protected abstract String getEntityManagerName();
 
 	/**
 	 * @return the messager
@@ -255,10 +259,5 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 		return messager;
 	}
 
-	protected void checkSessionFactoryName(String name, Element component) {
-		if (StringUtils.isBlank(name)) {
-			getMessager().printMessage(Kind.ERROR, "ERROR Session factory name should not be blank", component);
-		}
-	}
 
 }

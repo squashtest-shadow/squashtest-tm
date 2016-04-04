@@ -23,8 +23,9 @@ package org.squashtest.tm.core.dynamicmanager.internal.handler;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 
 /**
  * This {@link DynamicComponentInvocationHandler} handles any method which signature matches
@@ -39,10 +40,10 @@ public class ListOfEntitiesFinderNamedQueryHandler<ENTITY> extends
 
 	/**
 	 * @param entityType
-	 * @param sessionFactory
+	 * @param em
 	 */
-	public ListOfEntitiesFinderNamedQueryHandler(Class<ENTITY> entityType, SessionFactory sessionFactory) {
-		super(entityType, sessionFactory);
+	public ListOfEntitiesFinderNamedQueryHandler(Class<ENTITY> entityType, EntityManager em) {
+		super(entityType, em);
 	}
 
 	/**

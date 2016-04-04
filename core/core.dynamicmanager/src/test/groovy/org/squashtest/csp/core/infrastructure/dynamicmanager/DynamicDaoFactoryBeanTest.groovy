@@ -20,6 +20,8 @@
  */
 package org.squashtest.csp.core.infrastructure.dynamicmanager;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Query
 import org.hibernate.SessionFactory
 import org.hibernate.Session
@@ -44,14 +46,14 @@ import spock.lang.Specification
  */
 class DynamicDaoFactoryBeanTest extends Specification {
 	DynamicDaoFactoryBean<DummyDao, DummyEntity> factory = new DynamicDaoFactoryBean()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session currentSession = Mock()
 	BeanFactory beanFactory = Mock()
 
 	def setup() {
-		sessionFactory.getCurrentSession() >> currentSession
+		em.unwrap(_) >> currentSession
 
-		factory.sessionFactory = sessionFactory
+		factory.em = em
 		factory.entityType = DummyEntity
 		factory.beanFactory = beanFactory
 		factory.lookupCustomImplementation = false
@@ -103,7 +105,7 @@ class DynamicDaoFactoryBeanTest extends Specification {
 	def "should not lookup the delegate manager when dao does not have superinterface"() {
 		given:
 		DynamicDaoFactoryBean<NoSuperclassDummyDao> factory = new DynamicDaoFactoryBean()
-		factory.sessionFactory = sessionFactory
+		factory.em = em
 		factory.entityType = DummyEntity
 
 		use(ReflectionCategory) {
@@ -203,7 +205,7 @@ class DynamicDaoFactoryBeanTest extends Specification {
 		factory.object.persist entity
 
 		then:
-		1 * currentSession.persist(entity)
+		1 * em.persist(entity)
 	}
 
 	def "should dynamically delete an entity"() {

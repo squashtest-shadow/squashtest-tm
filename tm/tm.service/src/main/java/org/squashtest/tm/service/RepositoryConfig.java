@@ -92,30 +92,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 		return new DefaultLobHandler();
 	}
 
-	/*
-	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
-	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
-	public LocalSessionFactoryBean sessionFactory() {
-		if (StringUtils.defaultString(hibernateDialect).toLowerCase().contains("h2")) {
-			LOGGER.warn("I'm configured to use the '{}' H2 dialect. H2 is not to be used as a production database !", hibernateDialect);
-		}
 
-		LocalSessionFactoryBean sessionFactoryBean = new SquashSessionFactoryBean();
-
-		sessionFactoryBean.setDataSource(dataSource);
-		sessionFactoryBean.setAnnotatedPackages("org.squashtest.tm.service.internal.repository.hibernate",
-				"org.squashtest.tm.service.internal.hibernate");
-		sessionFactoryBean.setPackagesToScan("org.squashtest.tm.domain",
-				"org.squashtest.csp.core.bugtracker.domain");
-		sessionFactoryBean.setNamingStrategy(new UppercaseUnderscoreNamingStrategy());
-		sessionFactoryBean.setEntityInterceptor(new AuditLogInterceptor());
-		sessionFactoryBean.setHibernateProperties(hibernateProperties());
-
-		return sessionFactoryBean;
-	}
-	*/
-	
 	@Bean(name="entityManagerFactory")
 	@DependsOn(SpringConfiguredConfiguration.BEAN_CONFIGURER_ASPECT_BEAN_NAME)
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)

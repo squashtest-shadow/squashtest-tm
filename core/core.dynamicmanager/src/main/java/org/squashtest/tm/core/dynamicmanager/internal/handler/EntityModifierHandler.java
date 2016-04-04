@@ -25,9 +25,10 @@ import java.lang.reflect.Method;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.util.ReflectionUtils;
 import org.squashtest.tm.core.foundation.lang.PrimitiveTypeUtils;
 
@@ -45,13 +46,13 @@ public class EntityModifierHandler<ENTITY> implements DynamicComponentInvocation
 	 */
 	private static final Pattern ENTITY_MODIFIER_SERVICE_PATTERN = Pattern.compile("^change(.*)");
 
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 
 	private final Class<ENTITY> entityType;
 
-	public EntityModifierHandler(@NotNull SessionFactory sessionFactory, @NotNull Class<ENTITY> entityType) {
+	public EntityModifierHandler(@NotNull EntityManager em, @NotNull Class<ENTITY> entityType) {
 		super();
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 		this.entityType = entityType;
 	}
 
@@ -86,7 +87,7 @@ public class EntityModifierHandler<ENTITY> implements DynamicComponentInvocation
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what
 																						// JDK interfaces throw
-		ENTITY entity = (ENTITY) sessionFactory.getCurrentSession().load(entityType, (Long) args[0]);
+		ENTITY entity = (ENTITY)  em.unwrap(Session.class).load(entityType, (Long) args[0]);
 
 		String prop = extractModifiedPropertyName(method);
 		Method setter = findSetter(prop, method.getParameterTypes()[1]);

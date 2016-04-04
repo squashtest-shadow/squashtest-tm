@@ -25,9 +25,11 @@ import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
@@ -91,12 +93,12 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	private static final Logger LOGGER = LoggerFactory.getLogger(ArbitraryQueryHandler.class);
 
 	private final Class<ENTITY> entityType;
-	private final SessionFactory sessionFactory;
+	private final EntityManager em;
 
-	public ArbitraryQueryHandler(Class<ENTITY> entityType, SessionFactory sessionFactory) {
+	public ArbitraryQueryHandler(Class<ENTITY> entityType, EntityManager em) {
 		super();
 		this.entityType = entityType;
-		this.sessionFactory = sessionFactory;
+		this.em = em;
 	}
 
 	@Override
@@ -120,7 +122,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 
 	private Query findQuery(Method method) {
 		String queryName = entityType.getSimpleName() + "." + method.getName();
-		return sessionFactory.getCurrentSession().getNamedQuery(queryName);
+		return  em.unwrap(Session.class).getNamedQuery(queryName);
 	}
 
 	private QueryParam findQueryParam(Annotation[] paramAnnotations) {

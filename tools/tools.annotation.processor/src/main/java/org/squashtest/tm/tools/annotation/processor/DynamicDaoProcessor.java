@@ -23,7 +23,6 @@ package org.squashtest.tm.tools.annotation.processor;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
-import javax.lang.model.element.Element;
 
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
@@ -78,6 +77,11 @@ public class DynamicDaoProcessor extends DynamicComponentProcessor<DynamicDao> {
 	protected String generatedFileName() {
 		return "dynamicdao-context.xml";
 	}
+	
+	@Override
+	protected String getEntityManagerName() {
+		return "dynamicDaoEntityManager";
+	}
 
 	/**
 	 * (non-Javadoc)
@@ -95,18 +99,5 @@ public class DynamicDaoProcessor extends DynamicComponentProcessor<DynamicDao> {
 		return definition.primary() ? "primary=\"true\"" : "";
 	}
 
-	/**
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.squashtest.tm.tools.annotation.processor.DynamicComponentProcessor#sessionFactoryName(java.lang.annotation
-	 * .Annotation)
-	 */
-	@Override
-	protected CharSequence sessionFactoryName(DynamicDao definition, Element component) {
-		String name = definition.sessionFactoryName();
-		checkSessionFactoryName(name, component);
-		return name;
-	}
 
 }

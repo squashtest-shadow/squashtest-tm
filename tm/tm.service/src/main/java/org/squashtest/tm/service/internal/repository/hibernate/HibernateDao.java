@@ -20,17 +20,18 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.service.internal.repository.GenericDao;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.service.internal.repository.GenericDao;
 
 /**
  * To implement an Hibernate DAO, subclass this class, annotate it with @Repository and work with the Hibernate session
@@ -49,11 +50,19 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 		entityType = (Class<ENTITY_TYPE>) type.getActualTypeArguments()[0];
 	}
 
-	@Inject
-	private SessionFactory sessionFactory;
+	/*
+	 * Note : it is fine that all dao here share the same entity manager 
+	 * because we only have one DB (one persistence unit). If we did we would have to 
+	 * deambiguate and make sure that each dao gets the correct entity manager that handle 
+	 * the domain class they must deal with.  
+	 */
+	@PersistenceContext
+	private EntityManager em;
 
+	// transitional method, replace underlying code by direct uses of the 
+	// EntityManager when possible.
 	protected /*final*/ Session currentSession() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	@Override
