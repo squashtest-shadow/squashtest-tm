@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.user;
 
-import org.squashtest.tm.domain.users.User;
 import java.util.Collection;
 
 import org.squashtest.tm.domain.milestone.Milestone;
+import org.squashtest.tm.domain.users.User;
 
 //TODO : same methods but with no parameters (UserContextService will give us the user)
 public interface UserAccountService {

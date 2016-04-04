@@ -56,8 +56,7 @@ public class TestCaseLibraryNodePathEdgeExtender implements IdsCoercerExtender {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createQuery("select distinct edge.ancestorId from TestCasePathEdge edge where edge.descendantId in (:tclnIds) and depth=1");
+			Query q = s.createQuery("select distinct edge.ancestorId from TestCasePathEdge edge where edge.descendantId in (:tclnIds) and depth=1");
 			q.setParameterList("tclnIds", coercedIds);
 			coercedIds.addAll(q.list());
 			return coercedIds;

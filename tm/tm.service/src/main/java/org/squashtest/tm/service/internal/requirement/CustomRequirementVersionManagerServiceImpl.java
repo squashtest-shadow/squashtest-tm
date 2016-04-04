@@ -28,16 +28,17 @@ import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicManager;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -90,8 +91,8 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Inject
 	private PrivateCustomFieldValueService customFieldValueService;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 	
 	@SuppressWarnings("rawtypes")
 	@Inject
@@ -113,7 +114,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		RequirementVersion previousVersion = req.getCurrentVersion();
 
 		req.increaseVersion();
-		sessionFactory.getCurrentSession().persist(req.getCurrentVersion());
+		em.unwrap(Session.class).persist(req.getCurrentVersion());
 		RequirementVersion newVersion = req.getCurrentVersion();
 		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);

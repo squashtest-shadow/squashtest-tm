@@ -21,6 +21,9 @@
 package org.squashtest.tm.service.event;
 
 import org.hibernate.SessionFactory
+
+import javax.persistence.EntityManager;
+
 import org.hibernate.Session
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.event.RequirementAuditEvent
@@ -35,12 +38,12 @@ import spock.lang.Unroll
 
 class StatusBasedRequirementAuditorTest extends Specification {
 	StatusBasedRequirementAuditor auditor= new StatusBasedRequirementAuditor()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session session = Mock()
 
 	def setup() {
-		auditor.sessionFactory = sessionFactory
-		sessionFactory.currentSession >> session
+		auditor.em = em
+		em.unwrap(_) >> session
 	}
 	
 	@Unroll("should audit status change from #initialStatus to #newStatus")

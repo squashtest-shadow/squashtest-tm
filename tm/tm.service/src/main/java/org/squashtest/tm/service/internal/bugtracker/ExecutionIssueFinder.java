@@ -20,15 +20,16 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
+import java.util.List;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
-
-import javax.inject.Inject;
-import java.util.List;
 
 /**
  * @author Gregory Fouquet

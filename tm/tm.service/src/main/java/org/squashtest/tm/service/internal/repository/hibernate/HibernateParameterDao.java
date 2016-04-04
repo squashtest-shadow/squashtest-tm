@@ -25,10 +25,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -37,13 +38,13 @@ import org.squashtest.tm.service.internal.repository.CustomParameterDao;
 @Repository("CustomParameterDao")
 public class HibernateParameterDao implements CustomParameterDao {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 
 	public List<Parameter> findOwnParametersByTestCase(Long testcaseId) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParameters");
+		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParameters");
 		query.setParameter("testCaseId", testcaseId);
 		return (List<Parameter>) query.list();
 	}
@@ -52,7 +53,7 @@ public class HibernateParameterDao implements CustomParameterDao {
 	@Override
 	public List<Parameter> findOwnParametersByTestCases(List<Long> testcaseIds) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParametersForList");
+		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParametersForList");
 		query.setParameterList("testCaseIds", testcaseIds);
 		return (List<Parameter>) query.list();
 	}
@@ -66,7 +67,7 @@ public class HibernateParameterDao implements CustomParameterDao {
 		List<Long> srcTc = new LinkedList<Long>();
 		List<Long> destTc;
 
-		Query next = sessionFactory.getCurrentSession().getNamedQuery("parameter.findTestCasesThatDelegatesParameters");
+		Query next = em.unwrap(Session.class).getNamedQuery("parameter.findTestCasesThatDelegatesParameters");
 
 		srcTc.add(testcaseId);
 
@@ -92,7 +93,7 @@ public class HibernateParameterDao implements CustomParameterDao {
 	@Override
 	public List<Parameter> findOwnParametersByNameAndTestCases(String name, List<Long> testcaseIds){
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParametersByNameAndTestCases");
+		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParametersByNameAndTestCases");
 		query.setParameter("name", name);
 		query.setParameterList("testCaseIds", testcaseIds);
 		return (List<Parameter>) query.list();
@@ -102,7 +103,7 @@ public class HibernateParameterDao implements CustomParameterDao {
 	@Override
 	public Parameter findOwnParameterByNameAndTestCase(String name, Long testcaseId){
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("parameter.findOwnParametersByNameAndTestCase");
+		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParametersByNameAndTestCase");
 		query.setParameter("name", name);
 		query.setParameter("testCaseId", testcaseId);
 		return (Parameter) query.uniqueResult();

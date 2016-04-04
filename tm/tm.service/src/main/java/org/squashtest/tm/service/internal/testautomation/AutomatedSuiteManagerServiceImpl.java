@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -79,7 +81,6 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 @Service("squashtest.tm.service.AutomatedSuiteManagementService")

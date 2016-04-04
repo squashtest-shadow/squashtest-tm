@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
+import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -28,15 +30,12 @@ import javax.inject.Inject;
 
 import org.springframework.core.task.AsyncTaskExecutor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
-
-import static org.springframework.transaction.annotation.Propagation.SUPPORTS;
 
 /**
  *

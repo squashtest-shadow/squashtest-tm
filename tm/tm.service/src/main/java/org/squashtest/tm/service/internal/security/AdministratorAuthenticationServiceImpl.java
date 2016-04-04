@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.service.internal.security;
 
+import java.util.Collection;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
@@ -28,10 +33,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.security.AdministratorAuthenticationService;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Collection;
 
 @Component("squashtest.core.security.AdministratorAuthenticationService")
 public class AdministratorAuthenticationServiceImpl implements AdministratorAuthenticationService {

@@ -23,8 +23,10 @@ package org.squashtest.tm.service.internal.audit;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -43,8 +45,9 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	@Inject
 	private RequirementAuditEventDao auditEventDao;
 
-	@Inject
-	private SessionFactory sessionFactory;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	/**
 	 * @see org.squashtest.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionIdOrderedByDate(long,
@@ -90,8 +93,7 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	 */
 	@Override
 	public RequirementLargePropertyChange findLargePropertyChangeById(long eventId) {
-		return (RequirementLargePropertyChange) sessionFactory.getCurrentSession().load(
-				RequirementLargePropertyChange.class, eventId);
+		return (RequirementLargePropertyChange) em.find(RequirementLargePropertyChange.class, eventId);
 	}
 
 	

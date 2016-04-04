@@ -22,8 +22,8 @@ package org.squashtest.tm.service.internal.campaign.export;
 
 import java.util.List;
 
-import static org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Cell;
-import static org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Cell;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 
 /**
  * Factored out of WhateverCampaignCSVModelImplImpl

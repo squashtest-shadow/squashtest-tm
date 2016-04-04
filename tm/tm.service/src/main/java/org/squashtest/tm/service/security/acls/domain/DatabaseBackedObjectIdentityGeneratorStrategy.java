@@ -24,9 +24,10 @@ import java.io.Serializable;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityGenerator;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
@@ -77,8 +78,8 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 
 	}
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	@Named("squashtest.core.security.ObjectIdentityRetrievalStrategy")
@@ -95,9 +96,8 @@ public class DatabaseBackedObjectIdentityGeneratorStrategy implements ObjectIden
 	public ObjectIdentity createObjectIdentity(Serializable id, String type) {
 		try {
 			Class<?> clazz = Thread.currentThread().getContextClassLoader().loadClass(type);
-			Session session = sessionFactory.getCurrentSession();
 
-			Object instance = session.get(clazz, id);
+			Object instance = em.find(clazz, id);
 
 			if (instance == null) {
 				return new UnknownObjectIdentity(type);

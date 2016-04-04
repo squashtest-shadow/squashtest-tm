@@ -24,10 +24,11 @@ import java.math.BigInteger;
 import java.util.Collection;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,8 +84,8 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			+ "where tc.tcln_id in (:testCaseIds) "
 			+ "group by tc.tcln_id ) as coverage " + "group by coverage.sizeclass";
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	public TestCaseBoundRequirementsStatistics gatherBoundRequirementStatistics(
@@ -94,7 +95,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			return new TestCaseBoundRequirementsStatistics();
 		}
 
-		Query query = sessionFactory.getCurrentSession().createSQLQuery(SQL_BOUND_REQS_STATISTICS);
+		Query query = em.unwrap(Session.class).createSQLQuery(SQL_BOUND_REQS_STATISTICS);
 		query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
 
 		List<Object[]> tuples = query.list();
@@ -130,7 +131,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			return new TestCaseImportanceStatistics();
 		}
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
+		Query query = em.unwrap(Session.class).getNamedQuery(
 				"TestCaseStatistics.importanceStatistics");
 		query.setParameterList("testCaseIds", testCaseIds);
 
@@ -174,7 +175,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			return new TestCaseStatusesStatistics();
 		}
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
+		Query query = em.unwrap(Session.class).getNamedQuery(
 				"TestCaseStatistics.statusesStatistics");
 		query.setParameterList("testCaseIds", testCaseIds);
 
@@ -219,7 +220,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			return new TestCaseSizeStatistics();
 		}
 
-		Query query = sessionFactory.getCurrentSession().createSQLQuery(SQL_SIZE_STATISTICS);
+		Query query = em.unwrap(Session.class).createSQLQuery(SQL_SIZE_STATISTICS);
 		query.setParameterList("testCaseIds", testCaseIds, LongType.INSTANCE);
 
 		List<Object[]> tuples = query.list();

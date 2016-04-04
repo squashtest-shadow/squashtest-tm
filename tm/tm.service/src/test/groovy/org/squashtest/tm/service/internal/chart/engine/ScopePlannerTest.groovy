@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.chart.engine
 
+import javax.persistence.EntityManager;
+
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.EntityReference;
@@ -62,7 +64,7 @@ class ScopePlannerTest extends Specification {
 		ISS : "ISSUE"
 	]
 
-	SessionFactory sessionFactory
+	EntityManager em
 	PermissionEvaluationService permissionService
 	ScopeUtils utils
 
@@ -70,12 +72,12 @@ class ScopePlannerTest extends Specification {
 	ScopePlanner scopePlanner = Mock()
 
 	def setup(){
-		sessionFactory = Mock()
+		em = Mock()
 		permissionService = Mock()
 		utils = Mock()
 
 		scopePlanner = new ScopePlanner();
-		scopePlanner.sessionFactory = sessionFactory
+		scopePlanner.em = em
 		scopePlanner.permissionService = permissionService
 		scopePlanner.utils = utils
 	}

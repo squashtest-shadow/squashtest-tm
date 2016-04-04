@@ -22,9 +22,9 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS;
 import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_DELETED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_PATH;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NAME;
 import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_REFERENCE;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_PATH;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
 

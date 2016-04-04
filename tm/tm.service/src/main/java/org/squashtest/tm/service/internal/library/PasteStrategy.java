@@ -31,8 +31,10 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
@@ -92,8 +94,8 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	@Inject
 	private IndexationService indexationService;
 	
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	public void setGenericDao(GenericDao<Object> genericDao) {
 		this.genericDao = genericDao;
@@ -296,7 +298,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	
 	private void reindexAfterCopy() {
 		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
-		sessionFactory.getCurrentSession().flush();
+		em.unwrap(Session.class).flush();
 		indexationService.batchReindexTc(new ArrayList<>(tcIdsToIndex));
 		indexationService.batchReindexReqVersion(new ArrayList<>(reqVersionIdsToIndex));
 	}

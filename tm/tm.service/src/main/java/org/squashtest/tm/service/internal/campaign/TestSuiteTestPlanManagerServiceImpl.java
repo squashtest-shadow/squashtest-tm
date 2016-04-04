@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -52,7 +54,6 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.TestSuiteTestPlanManagerService")
 @Transactional

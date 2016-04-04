@@ -56,8 +56,7 @@ public class CampaignLibraryNodePathEdgeExtender implements IdsCoercerExtender {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createQuery("select distinct edge.ancestorId from CampaignPathEdge edge where edge.descendantId in (:clnIds) and depth=1");
+			Query q = s.createQuery("select distinct edge.ancestorId from CampaignPathEdge edge where edge.descendantId in (:clnIds) and depth=1");
 			q.setParameterList("clnIds", (Collection<? extends Serializable>) coercedIds);
 			coercedIds.addAll(q.list());
 			return coercedIds;

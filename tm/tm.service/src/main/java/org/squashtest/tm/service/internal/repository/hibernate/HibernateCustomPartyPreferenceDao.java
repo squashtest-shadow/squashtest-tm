@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.service.internal.repository.CustomPartyPreferenceDao;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Repository("CustomPartyPreferenceDao")
 public class HibernateCustomPartyPreferenceDao extends HibernateEntityDao<PartyPreference> implements CustomPartyPreferenceDao {

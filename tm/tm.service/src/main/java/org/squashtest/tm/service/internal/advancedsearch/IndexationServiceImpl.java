@@ -29,6 +29,9 @@ import java.util.List;
 import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.CacheMode;
 import org.hibernate.Criteria;
@@ -36,7 +39,7 @@ import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.search.FullTextSession;
@@ -64,8 +67,8 @@ public class IndexationServiceImpl implements IndexationService {
 
 	private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(IndexationServiceImpl.class);
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private ConfigurationService configurationService;
@@ -158,7 +161,7 @@ public class IndexationServiceImpl implements IndexationService {
 	}
 
 	private void reindexEntity(Class<?> T, long id) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		Object obj = ftSession.load(T, id);
 		ftSession.index(obj);
@@ -186,7 +189,7 @@ public class IndexationServiceImpl implements IndexationService {
 	}
 
 	private void indexEntities(Class<?>... T) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 		FullTextSession ftSession = Search.getFullTextSession(session);
 		MassIndexerProgressMonitor monitor = new AdvancedSearchIndexingMonitor(Arrays.asList(T),
 				this.configurationService);
@@ -239,7 +242,7 @@ public class IndexationServiceImpl implements IndexationService {
 	}
 
 	private FullTextSession getFullTextSession() {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 
 		// get FullText session
 		FullTextSession ftSession = Search.getFullTextSession(session);
@@ -283,6 +286,10 @@ public class IndexationServiceImpl implements IndexationService {
 			e.printStackTrace();
 		}
 
+	}
+	
+	private Session getCurrentSession(){
+		return em.unwrap(Session.class);
 	}
 
 }

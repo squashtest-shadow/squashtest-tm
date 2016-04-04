@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.security.acls.domain;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.SessionFactory
+
+import javax.persistence.EntityManager;
+
 import org.hibernate.Session;
 import org.ietf.jgss.Oid;
 import org.springframework.security.acls.model.ObjectIdentity;
@@ -36,21 +39,21 @@ import spock.lang.Specification;
  */
 class DatabaseBackedObjectIdentityGeneratorStrategyTest  extends Specification {
 	DatabaseBackedObjectIdentityGeneratorStrategy objectIdentityGenerator = new DatabaseBackedObjectIdentityGeneratorStrategy()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session session = Mock()
 	ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy = Mock()
 
 	def setup() {
-		sessionFactory.getCurrentSession() >> session
+		em.unwrap(_) >> session
 
-		objectIdentityGenerator.sessionFactory = sessionFactory
+		objectIdentityGenerator.em = em
 		objectIdentityGenerator.objectRetrievalStrategy = objectIdentityRetrievalStrategy
 	}
 
 	def "should fetch the entity and delegate object identity generation"() {
 		given:
 		Object entity = Mock()
-		session.get(Object, 10L) >> entity
+		em.find(Object, 10L) >> entity
 
 		and:
 		ObjectIdentity expectedOid = Mock()

@@ -57,8 +57,7 @@ public class CampaignLibraryExtender implements IdsCoercerExtender {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createQuery("select distinct l.id from CampaignLibrary l join l.rootContent c where c.id in (:clnIds)");
+			Query q = s.createQuery("select distinct l.id from CampaignLibrary l join l.rootContent c where c.id in (:clnIds)");
 			q.setParameterList("clnIds", ids);
 			return q.list();
 

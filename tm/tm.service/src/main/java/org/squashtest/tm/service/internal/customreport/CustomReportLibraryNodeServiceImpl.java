@@ -26,9 +26,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
@@ -61,8 +63,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private CRLNDeletionHandler deletionHandler;
@@ -134,7 +136,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		CustomReportLibraryNode newNode = new CustomReportLibraryNodeBuilder(parentNode, entity).build();
 		customReportLibraryNodeDao.persist(newNode);
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		session.flush();
 		session.clear();//needed to force hibernate to reload the persisted entities...
 		return customReportLibraryNodeDao.findById(newNode.getId());

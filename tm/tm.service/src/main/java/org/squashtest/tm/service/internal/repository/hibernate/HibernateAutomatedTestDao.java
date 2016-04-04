@@ -24,12 +24,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
@@ -41,8 +42,8 @@ import org.squashtest.tm.service.internal.repository.AutomatedTestDao;
 @Repository
 public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
@@ -56,7 +57,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return persisted;
 		}
 		else{
-			sessionFactory.getCurrentSession().persist(newTest);
+			em.unwrap(Session.class).persist(newTest);
 			return newTest;
 		}
 	}
@@ -80,14 +81,14 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 		}
 
 		if (countReferences(persisted.getId()) == 0l){
-			sessionFactory.getCurrentSession().delete(persisted);
+			em.unwrap(Session.class).delete(persisted);
 		}
 
 	}
 
 
 	public void pruneOrphans(){
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		Collection<AutomatedTest> orphans = session.getNamedQuery("automatedTest.findOrphans").list();
 
@@ -104,7 +105,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Override
 	public long countReferences(long testId) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		Query qCountTC = session.getNamedQuery("automatedTest.countReferencesByTestCases");
 		qCountTC.setParameter("autoTestId", testId);
@@ -120,7 +121,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Override
 	public AutomatedTest findById(Long testId) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		return (AutomatedTest) session.load(AutomatedTest.class, testId);
 	}
 
@@ -130,7 +131,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return Collections.emptyList();
 		}
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findByTestCase");
+		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findByTestCase");
 		query.setParameter("testCaseIds", testCaseIds);
 		return query.list();
 	}
@@ -138,7 +139,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	@Override
 	public AutomatedTest findByExample(AutomatedTest example) {
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(AutomatedTest.class);
+		Criteria criteria = em.unwrap(Session.class).createCriteria(AutomatedTest.class);
 		criteria = criteria.add(Example.create(example));
 		criteria = criteria.add(Restrictions.eq("project", example.getProject()));
 
@@ -160,7 +161,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return Collections.emptyList();
 		}
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenderIds");
+		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findAllByExtenderIds");
 		query.setParameterList("extenderIds", extenderIds, LongType.INSTANCE);
 		return (List<AutomatedTest>) query.list();
 
@@ -173,7 +174,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return Collections.emptyList();
 		}
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("automatedTest.findAllByExtenders");
+		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findAllByExtenders");
 		query.setParameterList("extenders", extenders);
 		return (List<AutomatedTest>) query.list();
 

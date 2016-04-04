@@ -19,26 +19,25 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.statistics.campaign
-import org.squashtest.tm.service.internal.campaign.CampaignStatisticsServiceImpl;
-
-import spock.lang.Specification
+import javax.persistence.EntityManager
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*
+import org.squashtest.tm.service.internal.campaign.CampaignStatisticsServiceImpl;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.*;
+import spock.lang.Specification
 
 
 class CampaignStatisticsServiceImplTest extends Specification {
 
 	CampaignStatisticsServiceImpl service = new CampaignStatisticsServiceImpl()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 
 	def sessionMocks = []
 
 
 	def setup(){
-		service.sessionFactory = sessionFactory
+		service.em = em
 	}
 
 
@@ -57,7 +56,7 @@ class CampaignStatisticsServiceImplTest extends Specification {
 			[3l, "robert", SUCCESS, 8l] as Object[]
 		])
 
-		sessionFactory.getCurrentSession() >>> sessionMocks
+		em.unwrap(_) >>> sessionMocks
 
 		when :
 		List<IterationTestInventoryStatistics> res = service.gatherCampaignTestInventoryStatistics([1l])

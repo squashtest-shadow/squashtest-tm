@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +39,6 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
 import org.squashtest.tm.service.library.SearchService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.SearchService")
 @Transactional(readOnly = true)

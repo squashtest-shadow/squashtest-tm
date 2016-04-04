@@ -20,23 +20,50 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostFilter;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.campaign.*;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
-import org.squashtest.tm.service.annotation.*;
+import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
+import org.squashtest.tm.service.annotation.Id;
+import org.squashtest.tm.service.annotation.Ids;
+import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.tm.service.internal.campaign.coercers.*;
+import org.squashtest.tm.service.internal.campaign.coercers.CLNAndParentIdsCoercerForArray;
+import org.squashtest.tm.service.internal.campaign.coercers.CLNAndParentIdsCoercerForList;
+import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForArray;
+import org.squashtest.tm.service.internal.campaign.coercers.CampaignLibraryIdsCoercerForList;
+import org.squashtest.tm.service.internal.campaign.coercers.IterationToCampaignIdsCoercer;
+import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
 import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVFullModelImpl;
 import org.squashtest.tm.service.internal.campaign.export.CampaignExportCSVModelImpl;
 import org.squashtest.tm.service.internal.campaign.export.SimpleCampaignExportCSVModelImpl;
@@ -45,17 +72,16 @@ import org.squashtest.tm.service.internal.library.AbstractLibraryNavigationServi
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.library.PasteStrategy;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
+import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.*;
-
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional

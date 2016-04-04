@@ -20,17 +20,22 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.*;
+import org.squashtest.tm.domain.customreport.CustomReportDashboard;
+import org.squashtest.tm.domain.customreport.CustomReportFolder;
+import org.squashtest.tm.domain.customreport.CustomReportLibrary;
+import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
+import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
+import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Repository("CustomCustomReportLibraryNodeDao")
 public class HibernateCustomCustomReportLibraryNodeDao extends HibernateEntityDao<CustomReportLibraryNode> implements CustomCustomReportLibraryNodeDao {

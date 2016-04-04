@@ -24,11 +24,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao;
@@ -59,11 +60,11 @@ public class HibernatePathService implements PathService {
 	 **/
 	public static final String PATH_SEPARATOR = "\u001F";
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	private Session currentSession() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	/**

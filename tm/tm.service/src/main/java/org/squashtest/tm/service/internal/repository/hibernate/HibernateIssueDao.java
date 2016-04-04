@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.Restrictions;
@@ -39,10 +43,6 @@ import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IssueDao;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 @Repository
 public class HibernateIssueDao extends HibernateEntityDao<Issue> implements IssueDao {

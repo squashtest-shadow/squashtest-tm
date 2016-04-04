@@ -20,12 +20,13 @@
  */
 package org.squashtest.tm.service.internal.configuration;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -39,8 +40,8 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	private static final String FIND_VALUE_BY_KEY_SQL = "select VALUE from CORE_CONFIG where STR_KEY = ?";
 	private static final String UPDATE_KEY_SQL = "update CORE_CONFIG set VALUE = ? where STR_KEY = ?";
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	public void createNewConfiguration(String key, String value) {
@@ -62,7 +63,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	private Session currentSession() throws HibernateException {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	@Override

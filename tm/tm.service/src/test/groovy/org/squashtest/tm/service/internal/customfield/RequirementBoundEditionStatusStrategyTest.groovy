@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.customfield
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
@@ -38,12 +40,12 @@ import spock.lang.Unroll;
 class RequirementBoundEditionStatusStrategyTest extends Specification {
 	RequirementBoundEditionStatusStrategy strategy = new RequirementBoundEditionStatusStrategy()
 	PermissionEvaluationService permService = Mock()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session session = Mock()
 	
 	def setup() {
-		sessionFactory.getCurrentSession() >> session
-		strategy.sessionFactory = sessionFactory
+		em.unwrap(_) >> session
+		strategy.em = em
 		use(ReflectionCategory) {
 			ValueEditionStatusHelper.set field: "permissionEvaluator", of: strategy, to: permService
 		}

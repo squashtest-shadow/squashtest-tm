@@ -22,11 +22,12 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -36,11 +37,11 @@ import org.squashtest.tm.service.internal.repository.InfoListDao;
 @Repository
 public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	@Override

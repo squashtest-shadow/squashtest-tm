@@ -25,11 +25,14 @@ import java.util.List;
 import java.util.ListIterator;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
@@ -46,8 +49,9 @@ import org.squashtest.tm.service.internal.repository.hibernate.EasyConstructorRe
 @Repository
 public class ExportDao {
 
-	@Inject
-	private SessionFactory factory;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private PathService pathService;
@@ -199,7 +203,7 @@ public class ExportDao {
 	}
 
 	private Session getStatelessSession(){
-		Session s = factory.getCurrentSession();
+		Session s = em.unwrap(Session.class);
 		s.setFlushMode(FlushMode.MANUAL);
 		return s;
 	}

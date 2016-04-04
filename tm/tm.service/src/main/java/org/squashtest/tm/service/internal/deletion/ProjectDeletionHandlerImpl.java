@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -73,8 +75,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	private ObjectIdentityService objectIdentityService;
 	@Inject
 	private ProjectsPermissionManagementService projectPermissionManagementService;
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
 
@@ -133,7 +135,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		CustomReportLibrary customReportLibrary = project.getCustomReportLibrary();
 		deleteCustomReportLibraryNode(customReportLibrary);
 
-		sessionFactory.getCurrentSession().evict(project);
+		em.unwrap(Session.class).evict(project);
 		project = genericProjectDao.findById(projectId);
 		project.accept(new ProjectVisitor() {
 			@Override
@@ -156,8 +158,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		CustomReportLibraryNode node = crlnDao.findNodeFromEntity(customReportLibrary);
 		node.setLibrary(null);
 		node.setEntity(null);
-		sessionFactory.getCurrentSession().delete(node);
-		sessionFactory.getCurrentSession().flush();
+		em.unwrap(Session.class).delete(node);
+		em.unwrap(Session.class).flush();
 	}
 
 	private void removeACLsForProjectAndLibraries(GenericProject project) {

@@ -49,8 +49,7 @@ public class TestSuiteToIterationExtender implements IdsCoercerExtender {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createQuery("select distinct i.id from Iteration i join i.testSuites ts where ts.id in (:tsids)");
+			Query q = s.createQuery("select distinct i.id from Iteration i join i.testSuites ts where ts.id in (:tsids)");
 			q.setParameterList("tsids", ids);
 			return q.list();
 

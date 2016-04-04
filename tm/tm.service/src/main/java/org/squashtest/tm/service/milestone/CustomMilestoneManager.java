@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.milestone;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.MILESTONE_FEAT_ENABLED;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -28,8 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.project.GenericProject;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Transactional
 public interface CustomMilestoneManager extends MilestoneFinderService {

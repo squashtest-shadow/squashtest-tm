@@ -20,8 +20,9 @@
  */
 package org.squashtest.tm.service.bugtracker;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 import org.springframework.security.access.prepost.PreAuthorize;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 
 public interface CustomBugTrackerModificationService {

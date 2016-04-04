@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.project;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.inject.Inject;
@@ -34,7 +36,6 @@ import org.squashtest.tm.service.internal.repository.ProjectFilterDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.security.UserContextService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ProjectFilterModificationService")
 @Transactional

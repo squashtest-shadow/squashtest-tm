@@ -50,8 +50,6 @@ import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 
-import static org.squashtest.tm.service.security.Authorizations.*;
-
 /**
  * Implementations for (non dynamically generated) custom-field management services.
  * 

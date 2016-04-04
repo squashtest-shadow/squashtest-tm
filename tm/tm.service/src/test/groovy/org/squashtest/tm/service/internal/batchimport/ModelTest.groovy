@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import static Existence.*
+import static Existence
+
+import javax.persistence.EntityManager;
 
 import org.hibernate.Query
 import org.hibernate.Session
@@ -39,13 +41,14 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
+import static org.squashtest.tm.service.internal.batchimport.Existence.*;
 
 import spock.lang.Specification
 
 
 public class ModelTest extends Specification{
 
-	SessionFactory factory
+	EntityManager em
 	CustomFieldDao cufDao
 	TestCaseLibraryFinderService finderService
 	TestCaseCallTreeFinder calltreeFinder
@@ -55,14 +58,14 @@ public class ModelTest extends Specification{
 
 	def setup(){
 
-		factory = Mock(SessionFactory)
+		em = Mock(EntityManager)
 		cufDao = Mock(CustomFieldDao)
 		finderService = Mock(TestCaseLibraryFinderService)
 		calltreeFinder = Mock(TestCaseCallTreeFinder)
 		milestoneMemberFinder = Mock(MilestoneMembershipFinder)
 
 		model = new Model()
-		model.sessionFactory = factory
+		model.em = em
 		model.cufDao = cufDao
 		model.finderService = finderService
 		model.calltreeFinder = calltreeFinder
@@ -673,7 +676,7 @@ public class ModelTest extends Specification{
 
 		q.list() >> queryResults
 		s.getNamedQuery(_) >> q
-		factory.getCurrentSession() >> s
+		em.unwrap(_) >> s
 	}
 
 	def targets(String... paths){

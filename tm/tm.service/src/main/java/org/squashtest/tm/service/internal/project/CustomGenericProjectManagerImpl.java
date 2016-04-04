@@ -39,13 +39,16 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -118,8 +121,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	private BugTrackerBindingDao bugTrackerBindingDao;
 	@Inject
 	private BugTrackerDao bugTrackerDao;
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private PartyDao partyDao;
@@ -198,7 +201,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void persist(GenericProject project) {
-		Session session = sessionFactory.getCurrentSession();
 
 		if (genericProjectDao.countByName(project.getName()) > 0) {
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
@@ -206,25 +208,25 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		CampaignLibrary cl = new CampaignLibrary();
 		project.setCampaignLibrary(cl);
-		session.persist(cl);
+		em.persist(cl);
 
 		RequirementLibrary rl = new RequirementLibrary();
 		project.setRequirementLibrary(rl);
-		session.persist(rl);
+		em.persist(rl);
 
 		TestCaseLibrary tcl = new TestCaseLibrary();
 		project.setTestCaseLibrary(tcl);
-		session.persist(tcl);
+		em.persist(tcl);
 
 		CustomReportLibrary crl = new CustomReportLibrary();
 		project.setCustomReportLibrary(crl);
-		session.persist(crl);
+		em.persist(crl);
 
 		//add the tree node for the CustomReportLibrary as for custom report workspace library
 		//object and their representation in tree are distinct entities
 		CustomReportLibraryNode crlNode = new CustomReportLibraryNode(CustomReportTreeDefinition.LIBRARY, crl.getId(), project.getName(), crl);
 		crlNode.setEntity(crl);
-		session.persist(crlNode);
+		em.persist(crlNode);
 
 		// plug-in the default info lists
 		// TODO : extract the code lists to some meaningful place
@@ -238,8 +240,8 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		project.setTestCaseTypes(defaultTypes);
 
 		// now persist it
-		session.persist(project);
-		session.flush(); // otherwise ids not available
+		em.persist(project);
+		em.flush(); // otherwise ids not available
 
 		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
 		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());

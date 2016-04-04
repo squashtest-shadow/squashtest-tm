@@ -20,8 +20,16 @@
  */
 package org.squashtest.tm.service.internal.customreport;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.chart.ChartDefinition;
@@ -39,11 +47,6 @@ import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 
-import javax.inject.Inject;
-import java.util.List;
-
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
 @Service("org.squashtest.tm.service.customreport.CustomReportDashboardService")
 public class CustomReportDashboardServiceImpl implements
 		CustomReportDashboardService {
@@ -57,8 +60,8 @@ public class CustomReportDashboardServiceImpl implements
 	@Inject
 	CustomReportLibraryNodeService crlnService;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	protected PermissionEvaluationService permissionService;
@@ -79,7 +82,7 @@ public class CustomReportDashboardServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public void bindChart(CustomReportChartBinding newBinding) {
 		bindingDao.persist(newBinding);
-		sessionFactory.getCurrentSession().flush();
+		em.unwrap(Session.class).flush();
 	}
 
 	@Override

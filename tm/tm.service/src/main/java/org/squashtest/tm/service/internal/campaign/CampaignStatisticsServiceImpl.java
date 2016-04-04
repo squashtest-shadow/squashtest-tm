@@ -31,10 +31,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,8 +67,8 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignStatisticsService.class);
 
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private CampaignDao campaignDao;
@@ -221,7 +223,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		Query query = session.getNamedQuery("CampaignStatistics.findScheduledIterations");
 		query.setParameter("id", campaignId, LongType.INSTANCE);
@@ -260,7 +262,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherCampaignTestInventoryStatistics(long campaignId) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventory");
+		Query query = em.unwrap(Session.class).getNamedQuery("CampaignStatistics.testinventory");
 		query.setParameter("id", campaignId);
 		List<Object[]> tuples = query.list();
 
@@ -275,7 +277,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics(long milestoneId) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignStatistics.testinventorybymilestone");
+		Query query = em.unwrap(Session.class).getNamedQuery("CampaignStatistics.testinventorybymilestone");
 		query.setParameter("id", milestoneId);
 		List<Object[]> tuples = query.list();
 
@@ -291,7 +293,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		List<Object[]> tuples = Collections.emptyList();
 		if (campaignIds.size() > 0) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("CampaignFolderStatistics.testinventory");
+		Query query = em.unwrap(Session.class).getNamedQuery("CampaignFolderStatistics.testinventory");
 		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 			tuples = query.list();
 		}
@@ -314,7 +316,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		List<Object[]> res = Collections.emptyList();
 
 		if (campaignIds.size() > 0) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(queryName);
+		Query query = em.unwrap(Session.class).getNamedQuery(queryName);
 		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 			res = query.list();
 		}

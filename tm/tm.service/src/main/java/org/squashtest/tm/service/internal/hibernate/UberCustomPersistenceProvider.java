@@ -20,25 +20,16 @@
  */
 package org.squashtest.tm.service.internal.hibernate;
 
-import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.spi.PersistenceUnitInfo;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.engine.spi.SessionOwner;
 import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.hibernate.jpa.boot.internal.PersistenceUnitInfoDescriptor;
-import org.hibernate.jpa.internal.EntityManagerFactoryImpl;
-import org.hibernate.jpa.internal.EntityManagerImpl;
-import org.springframework.orm.hibernate3.support.OpenSessionInterceptor;
 import org.springframework.orm.jpa.persistenceunit.SmartPersistenceUnitInfo;
-import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 
 /**
  * <p>

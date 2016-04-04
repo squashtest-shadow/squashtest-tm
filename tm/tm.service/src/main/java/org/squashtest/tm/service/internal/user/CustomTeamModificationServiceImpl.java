@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -42,7 +44,6 @@ import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.CustomTeamFinderService;
 import org.squashtest.tm.service.user.CustomTeamModificationService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomTeamModificationService")
 @PreAuthorize(HAS_ROLE_ADMIN)

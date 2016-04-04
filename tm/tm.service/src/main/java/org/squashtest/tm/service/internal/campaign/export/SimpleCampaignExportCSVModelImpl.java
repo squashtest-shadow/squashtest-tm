@@ -20,6 +20,16 @@
  */
 package org.squashtest.tm.service.internal.campaign.export;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -36,10 +46,6 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
-
-import javax.inject.Inject;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Component
 @Scope("prototype")

@@ -20,17 +20,33 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.importer.Target;
-import org.squashtest.tm.service.internal.batchimport.*;
+import org.squashtest.tm.service.internal.batchimport.ActionStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.CallStepInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetParamValueInstruction;
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
+import org.squashtest.tm.service.internal.batchimport.DatasetValue;
+import org.squashtest.tm.service.internal.batchimport.Instruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterInstruction;
+import org.squashtest.tm.service.internal.batchimport.ParameterTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementTarget;
+import org.squashtest.tm.service.internal.batchimport.RequirementVersionInstruction;
+import org.squashtest.tm.service.internal.batchimport.RequirementVersionTarget;
+import org.squashtest.tm.service.internal.batchimport.StepInstruction;
+import org.squashtest.tm.service.internal.batchimport.TestCaseInstruction;
+import org.squashtest.tm.service.internal.batchimport.TestCaseTarget;
+import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertyHolderFinder;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
-
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Repository of {@link PropertyHolderFinder}s in the context of a specific {@link TemplateWorksheet}.

@@ -916,6 +916,6 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
-import org.squashtest.tm.service.internal.library.HibernatePathService;
 import org.squashtest.tm.domain.infolist.SystemListItem;
+import org.squashtest.tm.service.internal.library.HibernatePathService;
 

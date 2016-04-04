@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.project;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import org.springframework.security.access.prepost.PostFilter;
@@ -29,7 +31,6 @@ import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.GenericProject;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Finder service for Generic Projects ie both Projects and ProjectTemplates

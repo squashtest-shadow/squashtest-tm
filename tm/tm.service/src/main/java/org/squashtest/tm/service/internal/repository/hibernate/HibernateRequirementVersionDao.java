@@ -22,12 +22,13 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -44,11 +45,11 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao
  */
 @Repository("CustomRequirementVersionDao")
 public class HibernateRequirementVersionDao implements CustomRequirementVersionDao {
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	private Session currentSession() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	/**

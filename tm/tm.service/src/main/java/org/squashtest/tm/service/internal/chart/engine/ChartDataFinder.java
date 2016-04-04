@@ -25,8 +25,12 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -41,9 +45,9 @@ import org.squashtest.tm.domain.chart.Filter;
 import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
+import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 import com.querydsl.core.Tuple;
-import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 
 /**
@@ -293,8 +297,8 @@ public class ChartDataFinder {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ChartDataFinder.class);
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private InfoListItemDao infoListItemDao;
@@ -322,7 +326,7 @@ public class ChartDataFinder {
 
 		// ******************* step 3 : run the query*************************
 
-		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(sessionFactory.getCurrentSession());
+		ExtendedHibernateQuery finalQuery = (ExtendedHibernateQuery)detachedQuery.clone(em.unwrap(Session.class));
 
 		try{
 			List<Tuple> tuples = finalQuery.fetch();

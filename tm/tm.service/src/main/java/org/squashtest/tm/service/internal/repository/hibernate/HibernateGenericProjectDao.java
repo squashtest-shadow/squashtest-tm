@@ -22,7 +22,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
@@ -30,7 +31,7 @@ import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -48,8 +49,8 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
  */
 @Repository("CustomGenericProjectDao")
 public class HibernateGenericProjectDao implements CustomGenericProjectDao {
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	/**
 	 * @return the coerced project
@@ -57,7 +58,7 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 	 */
 	@Override
 	public Project coerceTemplateIntoProject(long templateId) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		ProjectTemplate template = (ProjectTemplate) session.load(ProjectTemplate.class, templateId);
 		session.flush();
@@ -78,7 +79,7 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 
 	@Override
 	public boolean isProjectTemplate(long projectId) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("GenericProject.findProjectTypeOf");
+		Query query = em.unwrap(Session.class).getNamedQuery("GenericProject.findProjectTypeOf");
 		query.setParameter(ParameterNames.PROJECT_ID, projectId);
 
 		String type = (String) query.uniqueResult();
@@ -93,7 +94,7 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering) {
-		Criteria allEntities = sessionFactory.getCurrentSession().createCriteria(entity);
+		Criteria allEntities = em.unwrap(Session.class).createCriteria(entity);
 
 		if (filtering.isDefined() && StringUtils.isNotEmpty(filtering.getFilter())) {
 			final String ex = filtering.getFilter();

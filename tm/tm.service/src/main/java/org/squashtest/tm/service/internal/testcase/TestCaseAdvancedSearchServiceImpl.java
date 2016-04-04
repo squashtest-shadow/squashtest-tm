@@ -30,12 +30,14 @@ import java.util.Locale;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -68,8 +70,8 @@ public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 TestCaseAdvancedSearchService {
 
 
-	@Inject
-	protected SessionFactory sessionFactory;
+	@PersistenceContext
+	protected EntityManager em;
 
 	@Inject
 	private ProjectDao projectDao;
@@ -169,7 +171,7 @@ TestCaseAdvancedSearchService {
 	@Override
 	public List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale) {
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		Query luceneQuery = searchTestCasesQuery(model, ftSession, locale);
@@ -255,7 +257,7 @@ TestCaseAdvancedSearchService {
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
@@ -280,7 +282,7 @@ TestCaseAdvancedSearchService {
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model,
 			PagingAndMultiSorting sorting, Locale locale) {
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		Query luceneQuery = searchTestCasesQuery(model, ftSession, locale);

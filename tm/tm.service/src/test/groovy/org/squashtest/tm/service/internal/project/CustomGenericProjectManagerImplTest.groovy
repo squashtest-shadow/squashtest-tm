@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.project;
 
-import static org.junit.Assert.*
+import javax.persistence.EntityManager;
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -51,7 +51,7 @@ import spock.lang.Specification
  */
 class CustomGenericProjectManagerImplTest extends Specification {
 	CustomGenericProjectManagerImpl manager = new CustomGenericProjectManagerImpl()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session session = Mock()
 	ObjectIdentityService objectIdentityService = Mock()
 	GenericProjectDao genericProjectDao = Mock()
@@ -63,8 +63,8 @@ class CustomGenericProjectManagerImplTest extends Specification {
 	CustomReportLibraryNodeDao customReportLibraryNodeDao = Mock()
 
 	def setup() {
-		manager.sessionFactory = sessionFactory
-		sessionFactory.currentSession >> session
+		manager.em = em
+		em.unwrap(_) >> session
 		manager.objectIdentityService = Mock(ObjectIdentityService)
 		manager.genericProjectDao = genericProjectDao
 		manager.infoListService = infoListService
@@ -100,7 +100,7 @@ class CustomGenericProjectManagerImplTest extends Specification {
 		manager.persist(candidate)
 
 		then:
-		1 * session.persist(candidate)
+		1 * em.persist(candidate)
 		// missing ids of entities will throw a NPE after the persist(). we retort to this workaround which is simpler than trying to set an id on unknown objects
 		thrown NullPointerException
 	}

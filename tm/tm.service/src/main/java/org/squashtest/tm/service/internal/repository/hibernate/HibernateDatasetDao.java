@@ -26,10 +26,13 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Dataset;
@@ -38,14 +41,14 @@ import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
 @Repository("CustomDatasetDao")
 public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements CustomDatasetDao {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Dataset> findOwnDatasetsByTestCase(Long testCaseId) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findOwnDatasetsByTestCase");
+		Query query = em.unwrap(Session.class).getNamedQuery("dataset.findOwnDatasetsByTestCase");
 		query.setParameter("testCaseId", testCaseId);
 		return (List<Dataset>) query.list();
 	}
@@ -56,7 +59,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	@Override
 	public List<Dataset> findOwnDatasetsByTestCases(List<Long> testCaseIds) {
 		if (!testCaseIds.isEmpty()) {
-			Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findOwnDatasetsByTestCases");
+			Query query = em.unwrap(Session.class).getNamedQuery("dataset.findOwnDatasetsByTestCases");
 			query.setParameterList("testCaseIds", testCaseIds);
 			return (List<Dataset>) query.list();
 		} else {
@@ -68,7 +71,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	@Override
 	public List<Dataset> findImmediateDelegateDatasets(Long testCaseId) {
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("dataset.findTestCasesThatInheritParameters");
+		Query q = em.unwrap(Session.class).getNamedQuery("dataset.findTestCasesThatInheritParameters");
 		q.setParameter("srcIds", LongType.INSTANCE);
 
 		List<Long> tcids = q.list();
@@ -84,7 +87,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 		List<Long> srcTc = new LinkedList<Long>();
 		List<Long> destTc;
 
-		Query next = sessionFactory.getCurrentSession().getNamedQuery("dataset.findTestCasesThatInheritParameters");
+		Query next = em.unwrap(Session.class).getNamedQuery("dataset.findTestCasesThatInheritParameters");
 
 		srcTc.add(testCaseId);
 
@@ -120,7 +123,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	@Override
 	public Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name) {
 
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.findDatasetsByTestCaseAndByName");
+		Query query = em.unwrap(Session.class).getNamedQuery("dataset.findDatasetsByTestCaseAndByName");
 		query.setParameter("testCaseId", testCaseId);
 		query.setParameter("name", name);
 		return (Dataset) query.uniqueResult();
@@ -128,11 +131,11 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 
 	@Override
 	public void removeDatasetFromTestPlanItems(Long datasetId) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
+		Query query = em.unwrap(Session.class).getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
 		query.setParameter("datasetId", datasetId);
 		query.executeUpdate();
 
-		Query query2 = sessionFactory.getCurrentSession().getNamedQuery("dataset.removeDatasetFromItsCampaignTestPlanItems");
+		Query query2 = em.unwrap(Session.class).getNamedQuery("dataset.removeDatasetFromItsCampaignTestPlanItems");
 		query2.setParameter("datasetId", datasetId);
 		query2.executeUpdate();
 	}

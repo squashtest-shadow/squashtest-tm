@@ -25,12 +25,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -43,15 +44,15 @@ import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 @Repository
 public class HibernateTestAutomationServerDao implements TestAutomationServerDao {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.TestAutomationServerDao#persist(TestAutomationServer)
 	 */
 	@Override
 	public void persist(TestAutomationServer server) {
-		sessionFactory.getCurrentSession().persist(server);
+		em.unwrap(Session.class).persist(server);
 	}
 
 	/**
@@ -60,7 +61,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationServer> findAllOrderedByName() {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Query q = session.getNamedQuery("testAutomationServer.findAllOrderedByName");
 		return q.list();
 	}
@@ -70,7 +71,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	 */
 	@Override
 	public long countAll() {
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.countAll");
+		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationServer.countAll");
 		return ((Long) q.iterate().next()).longValue();
 	}
 
@@ -81,7 +82,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	@Override
 	public List<TestAutomationServer> findPagedServers(PagingAndSorting pas) {
 
-		Criteria criteria = sessionFactory.getCurrentSession().createCriteria(TestAutomationServer.class,
+		Criteria criteria = em.unwrap(Session.class).createCriteria(TestAutomationServer.class,
 				"TestAutomationServer");
 		SortingUtils.addOrder(criteria, pas);
 		PagingUtils.addPaging(criteria, pas);
@@ -103,7 +104,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	 */
 	@Override
 	public boolean hasBoundProjects(long serverId) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Query q = session.getNamedQuery("testAutomationServer.hasBoundProjects");
 		q.setParameter(ParameterNames.SERVER_ID, serverId);
 		Long count = (Long) q.uniqueResult();
@@ -115,7 +116,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	 */
 	@Override
 	public TestAutomationServer findById(Long id) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Query query = session.getNamedQuery("testAutomationServer.findById");
 		query.setParameter(ParameterNames.SERVER_ID, id);
 		return (TestAutomationServer) query.uniqueResult();
@@ -126,7 +127,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	 */
 	@Override
 	public TestAutomationServer findByName(String serverName) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Query query = session.getNamedQuery("testAutomationServer.findByName");
 		query.setParameter("serverName", serverName);
 		return (TestAutomationServer) query.uniqueResult();
@@ -134,7 +135,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 
 	@Override
 	public TestAutomationServer findByUrlAndLogin(URL url, String login) {
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		Query query = session.getNamedQuery("testAutomationServer.findByUrlAndLogin");
 		query.setParameter("url", url);
 		query.setParameter("login", login);
@@ -148,22 +149,22 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	@Override
 	public void deleteServer(long serverId) {
 		dereferenceProjects(serverId);
-		sessionFactory.getCurrentSession().flush();
+		em.unwrap(Session.class).flush();
 		deleteServerById(serverId);
-		sessionFactory.getCurrentSession().flush();
+		em.unwrap(Session.class).flush();
 	}
 
 	// ***************** private stuffs ***************
 
 	private void dereferenceProjects(long serverId) {
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.dereferenceProjects");
+		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationServer.dereferenceProjects");
 		q.setParameter(ParameterNames.SERVER_ID, serverId, LongType.INSTANCE);
 		q.executeUpdate();
 
 	}
 
 	private void deleteServerById(long serverId) {
-		Query q = sessionFactory.getCurrentSession().getNamedQuery("testAutomationServer.deleteServer");
+		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationServer.deleteServer");
 		q.setParameter(ParameterNames.SERVER_ID, serverId, LongType.INSTANCE);
 		q.executeUpdate();
 	}

@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.type.LongType;
+import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.EntityType;
@@ -55,8 +55,8 @@ import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 @Service("squashtest.tm.service.ChartModificationService")
 public class ChartModificationServiceImpl implements ChartModificationService {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private ChartDataFinder dataFinder;
@@ -108,7 +108,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 
 	private Session session(){
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	@Override

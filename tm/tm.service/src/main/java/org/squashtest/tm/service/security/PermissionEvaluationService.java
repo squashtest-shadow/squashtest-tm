@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.service.security;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Map;
+
+import javax.validation.constraints.NotNull;
 
 
 /**

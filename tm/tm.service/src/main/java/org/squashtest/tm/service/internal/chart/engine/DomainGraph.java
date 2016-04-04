@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.chart.engine;
 
 
 
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
+import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_TEST;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.CAMPAIGN;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.EXECUTION;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.ISSUE;
@@ -38,8 +40,6 @@ import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_NATURE;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_STEP;
 import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.TEST_CASE_TYPE;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_TEST;
-import static org.squashtest.tm.service.internal.chart.engine.InternalEntityType.AUTOMATED_EXECUTION_EXTENDER;
 
 import java.util.ArrayList;
 import java.util.Arrays;

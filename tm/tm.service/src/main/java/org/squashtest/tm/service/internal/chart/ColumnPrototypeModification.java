@@ -20,17 +20,30 @@
  */
 package org.squashtest.tm.service.internal.chart;
 
-import com.querydsl.jpa.hibernate.HibernateQuery;
-import com.querydsl.jpa.hibernate.HibernateQueryFactory;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.squashtest.tm.domain.EntityType;
-import org.squashtest.tm.domain.chart.*;
+import org.squashtest.tm.domain.chart.ColumnPrototype;
+import org.squashtest.tm.domain.chart.ColumnRole;
+import org.squashtest.tm.domain.chart.ColumnType;
+import org.squashtest.tm.domain.chart.DataType;
+import org.squashtest.tm.domain.chart.QColumnPrototype;
+import org.squashtest.tm.domain.chart.QFilter;
+import org.squashtest.tm.domain.chart.SpecializedEntityType;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
@@ -41,11 +54,8 @@ import org.squashtest.tm.event.CreateCustomFieldBindingEvent;
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 
-import javax.inject.Inject;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Set;
+import com.querydsl.jpa.hibernate.HibernateQuery;
+import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 
 
 /*
@@ -67,8 +77,8 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	private final static QColumnPrototype PROTOTYPE = QColumnPrototype.columnPrototype;
 	private final static QFilter FILTER = QFilter.filter;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private CustomFieldBindingDao cufBindingDao;
@@ -282,7 +292,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	}
 
 	private Session session() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	private static EntityType convertBindableEntityToEntityType(BindableEntity bind) {

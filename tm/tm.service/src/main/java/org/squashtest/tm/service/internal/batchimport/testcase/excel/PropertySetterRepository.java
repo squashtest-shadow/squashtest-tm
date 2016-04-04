@@ -20,15 +20,16 @@
  */
 package org.squashtest.tm.service.internal.batchimport.testcase.excel;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.validation.constraints.NotNull;
+
 import org.squashtest.tm.service.internal.batchimport.excel.NullPropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionFieldSetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionMutatorSetter;
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn;
-
-import javax.validation.constraints.NotNull;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Repository of {@link PropertySetter}s in the context of a specific {@link TemplateWorksheet}

@@ -21,10 +21,8 @@
 package org.squashtest.tm.service.internal.campaign.coercers;
 
 import java.io.Serializable;
-import java.util.Collection;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -32,8 +30,6 @@ import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdCoercer;
-import org.squashtest.tm.service.annotation.IdsCoercerExtender;
-import org.squashtest.tm.service.annotation.ListIdsCoercerAdapter;
 
 /**
  * @author Julien Thebault
@@ -51,8 +47,7 @@ public class TestSuiteToIterationCoercerForUniqueId implements IdCoercer {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createSQLQuery("SELECT DISTINCT iteration_id FROM iteration_test_suite WHERE test_suite_id = :suiteId");
+			Query q = s.createSQLQuery("SELECT DISTINCT iteration_id FROM iteration_test_suite WHERE test_suite_id = :suiteId");
 			q.setParameter("suiteId", id);
 			return (Serializable) q.uniqueResult();
 

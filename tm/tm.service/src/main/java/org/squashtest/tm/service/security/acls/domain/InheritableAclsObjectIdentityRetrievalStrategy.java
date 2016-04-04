@@ -25,10 +25,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -112,8 +114,8 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 	/**
 	 * Session factory, used to retrieve constrained objects.
 	 */
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 	/**
 	 * Cache of hql queries used to retrieved constrained objects.
 	 */
@@ -155,7 +157,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 			cacheQuery(domainObject, inherits, hql);
 		}
 
-		Query query = sessionFactory.getCurrentSession().createQuery(hql);
+		Query query = em.unwrap(Session.class).createQuery(hql);
 		query.setParameter("heir", domainObject);
 
 		return query.uniqueResult();

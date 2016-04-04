@@ -26,20 +26,11 @@ import static org.squashtest.tm.domain.jpql.SessionFactoryEnhancer.FnSupport.STR
 
 import java.util.Map;
 
-import javax.persistence.EntityManagerFactory;
-
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.MappingException;
-import org.hibernate.boot.registry.classloading.internal.ClassLoaderServiceImpl;
-import org.hibernate.boot.registry.classloading.spi.ClassLoaderService;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.engine.spi.SessionFactoryImplementor;
 import org.hibernate.internal.util.config.ConfigurationHelper;
 import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl;
-import org.hibernate.jpa.boot.internal.EntityManagerFactoryBuilderImpl.ServiceRegistryCloser;
 import org.hibernate.jpa.boot.spi.PersistenceUnitDescriptor;
-import org.hibernate.jpa.internal.EntityManagerFactoryImpl;
-import org.hibernate.jpa.internal.schemagen.JpaSchemaGenerator;
 import org.hibernate.service.ServiceRegistry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

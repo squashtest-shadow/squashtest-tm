@@ -28,12 +28,14 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -60,8 +62,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	@Inject
 	protected ProjectManagerService projectFinder;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
@@ -118,7 +120,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			PagingAndMultiSorting paging, Locale locale) {
 
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();

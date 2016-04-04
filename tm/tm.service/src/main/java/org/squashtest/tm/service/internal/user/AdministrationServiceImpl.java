@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -28,10 +31,12 @@ import java.util.Date;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +46,6 @@ import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.Team;
@@ -68,8 +72,6 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.AdministrationService;
 import org.squashtest.tm.service.user.AuthenticatedUser;
 import org.squashtest.tm.service.user.UserAccountService;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  *
@@ -115,7 +117,8 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject private FeatureManager features;
 
-	@Inject private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
 	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
@@ -513,7 +516,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> findAllDuplicateLogins() {
-		return sessionFactory.getCurrentSession().getNamedQuery("User.findAllDuplicateLogins").list();
+		return em.unwrap(Session.class).getNamedQuery("User.findAllDuplicateLogins").list();
 	}
 
 	/**
@@ -521,7 +524,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	 */
 	@Override
 	public String findCaseAwareLogin(String login) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("User.findCaseAwareLogin");
+		Query query = em.unwrap(Session.class).getNamedQuery("User.findCaseAwareLogin");
 		query.setParameter("login", login);
 		return (String) query.uniqueResult();
 	}

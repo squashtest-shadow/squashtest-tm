@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import org.springframework.security.access.prepost.PostFilter;
@@ -30,7 +32,6 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.service.internal.repository.LibraryDao;
 import org.squashtest.tm.service.library.WorkspaceService;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Generic service for workspace access. This service must be configured through XML.

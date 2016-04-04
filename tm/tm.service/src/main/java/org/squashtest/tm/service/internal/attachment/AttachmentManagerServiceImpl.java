@@ -31,10 +31,13 @@ import java.util.ListIterator;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -71,8 +74,8 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	 */
 	private static final int EOF = -1;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private AttachmentDao attachmentDao;
@@ -124,7 +127,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	private Session currentSession() throws HibernateException {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	@Override

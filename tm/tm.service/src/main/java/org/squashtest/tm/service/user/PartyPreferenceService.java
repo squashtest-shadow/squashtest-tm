@@ -20,12 +20,10 @@
  */
 package org.squashtest.tm.service.user;
 
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.Map;
+
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
-
-import java.util.Map;
 
 /**
  * Created by jthebault on 29/03/2016.

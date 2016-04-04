@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -41,7 +43,6 @@ import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.user.UserAccountService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomTestSuiteModificationService")
 public class CustomTestSuiteModificationServiceImpl implements CustomTestSuiteModificationService {

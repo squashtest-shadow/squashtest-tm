@@ -32,12 +32,23 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_LIBRARY;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
@@ -134,8 +145,8 @@ import com.querydsl.core.types.dsl.Expressions;
 @Scope("prototype")
 class ScopePlanner {
 	// infrastructure
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -169,7 +180,7 @@ class ScopePlanner {
 
 	@PostConstruct
 	void afterPropertiesSet() {
-		utils = new ScopeUtils(sessionFactory, permissionService);
+		utils = new ScopeUtils(em, permissionService);
 	}
 
 	// *********************** main method **********************************
@@ -684,12 +695,12 @@ class ScopePlanner {
 		private static final String READ = Authorizations.READ;
 		private static final String ROLE_ADMIN = Authorizations.ROLE_ADMIN;
 		private PermissionEvaluationService permissionService;
-		private SessionFactory sessionFactory;
+		private EntityManager em;
 
-		ScopeUtils(SessionFactory sessionFactory, PermissionEvaluationService permService) {
+		ScopeUtils(EntityManager entityManager, PermissionEvaluationService permService) {
 			super();
 			this.permissionService = permService;
-			this.sessionFactory = sessionFactory;
+			this.em = entityManager;
 		}
 
 		boolean checkPermissions(EntityReference ref) {
@@ -707,7 +718,7 @@ class ScopePlanner {
 
 
 		private Session getSession() {
-			return sessionFactory.getCurrentSession();
+			return em.unwrap(Session.class);
 		}
 
 

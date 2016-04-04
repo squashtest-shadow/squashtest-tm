@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.List;
+
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
-
-import java.util.List;
 
 public interface BugTrackerDao extends EntityDao<BugTracker> {
 

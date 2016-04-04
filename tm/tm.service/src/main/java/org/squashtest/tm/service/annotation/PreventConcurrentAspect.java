@@ -20,6 +20,15 @@
  */
 package org.squashtest.tm.service.annotation;
 
+import java.io.Serializable;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -30,15 +39,6 @@ import org.springframework.core.Ordered;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.concurrent.EntityLockManager;
 import org.squashtest.tm.service.concurrent.EntityLockManager.EntityRef;
-
-import java.io.Serializable;
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * This aspect manages @PreventConcurrent annotations.

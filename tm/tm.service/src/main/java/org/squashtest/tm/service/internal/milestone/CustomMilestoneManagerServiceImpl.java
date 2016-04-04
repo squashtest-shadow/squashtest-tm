@@ -20,11 +20,21 @@
  */
 package org.squashtest.tm.service.internal.milestone;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
@@ -40,9 +50,6 @@ import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.UserAccountService;
-
-import javax.inject.Inject;
-import java.util.*;
 
 @Service("CustomMilestoneManager")
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
@@ -66,8 +73,8 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	public void addMilestone(Milestone milestone) {
@@ -466,7 +473,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 			}
 		});
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 		List<Milestone> milestones = session.createQuery("from Milestone").list();
 
 		for (Milestone milestone : milestones) {

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Date;
 import java.util.List;
 
@@ -44,7 +46,6 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
 import org.squashtest.tm.service.security.UserContextService;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("squashtest.tm.service.ExecutionProcessingService")
 @Transactional

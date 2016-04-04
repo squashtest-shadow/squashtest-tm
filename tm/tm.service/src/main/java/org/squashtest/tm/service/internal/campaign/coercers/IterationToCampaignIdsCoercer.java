@@ -47,7 +47,7 @@ public class IterationToCampaignIdsCoercer implements IdsCoercer {
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession().createQuery("select distinct c.id from Iteration i join i.campaign c where i.id in (:iterIds)");
+			Query q = s.createQuery("select distinct c.id from Iteration i join i.campaign c where i.id in (:iterIds)");
 			q.setParameterList("iterIds", (Collection<? extends Serializable>) ids);
 			return q.list();
 

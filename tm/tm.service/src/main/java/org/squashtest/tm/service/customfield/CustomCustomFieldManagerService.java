@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.customfield;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
@@ -34,7 +36,6 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.exception.customfield.CannotDeleteDefaultOptionException;
 import org.squashtest.tm.exception.customfield.DefaultValueRequiredException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 /**
  * Custom-Field manager services which cannot be dynamically generated.

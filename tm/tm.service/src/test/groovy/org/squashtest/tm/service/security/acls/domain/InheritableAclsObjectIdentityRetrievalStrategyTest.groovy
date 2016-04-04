@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.security.acls.domain
 
+import javax.persistence.EntityManager;
+
 import org.hibernate.Query
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
@@ -31,14 +33,14 @@ import spock.lang.Specification
 class InheritableAclsObjectIdentityRetrievalStrategyTest extends Specification {
 	InheritableAclsObjectIdentityRetrievalStrategy strategy = new InheritableAclsObjectIdentityRetrievalStrategy()
 	ObjectIdentityRetrievalStrategy delegate = Mock()
-	org.hibernate.SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	org.hibernate.Session session = Mock()
 	Query query = Mock()
 
 	def setup() {
 		strategy.delegate = delegate
-		strategy.sessionFactory = sessionFactory
-		sessionFactory.currentSession >> session
+		strategy.em = em
+		em.unwrap(_) >> session
 	}
 
 	def "should fetch parent and retrieve its object id from multi-valued heir"() {

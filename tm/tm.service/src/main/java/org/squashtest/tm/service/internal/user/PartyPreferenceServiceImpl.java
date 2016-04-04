@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.service.internal.user;
 
-import org.hibernate.SessionFactory;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Party;
@@ -30,9 +35,6 @@ import org.squashtest.tm.domain.users.preferences.HomeContentValues;
 import org.squashtest.tm.service.internal.repository.PartyPreferenceDao;
 import org.squashtest.tm.service.user.PartyPreferenceService;
 import org.squashtest.tm.service.user.UserAccountService;
-
-import javax.inject.Inject;
-import java.util.Map;
 
 /**
  * Created by jthebault on 29/03/2016.
@@ -47,8 +49,8 @@ public class PartyPreferenceServiceImpl implements PartyPreferenceService{
 	@Inject
 	private PartyPreferenceDao partyPreferenceDao;
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	public PartyPreference findPreference(Party party, String preferenceKey) {

@@ -20,17 +20,31 @@
  */
 package org.squashtest.tm.service.internal.requirement;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
@@ -39,15 +53,12 @@ import org.squashtest.tm.service.internal.infolist.InfoListItemComparatorSource;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
 
-import javax.inject.Inject;
-import java.util.*;
-
 @Service("squashtest.tm.service.RequirementVersionAdvancedSearchService")
 public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
 		RequirementVersionAdvancedSearchService {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private ProjectDao projectDao;
@@ -85,7 +96,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Override
 	public List<RequirementVersion> searchForRequirementVersions(AdvancedSearchModel model, Locale locale) {
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
@@ -148,7 +159,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	public PagedCollectionHolder<List<RequirementVersion>> searchForRequirementVersions(AdvancedSearchModel model,
 			PagingAndMultiSorting sorting, MessageSource source, Locale locale) {
 
-		Session session = sessionFactory.getCurrentSession();
+		Session session = em.unwrap(Session.class);
 
 		FullTextSession ftSession = Search.getFullTextSession(session);
 

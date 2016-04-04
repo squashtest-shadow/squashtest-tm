@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.user;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+
 import java.util.Collection;
 
 import javax.inject.Inject;
@@ -42,8 +44,6 @@ import org.squashtest.tm.service.security.UserContextService;
 import org.squashtest.tm.service.user.TeamModificationService;
 import org.squashtest.tm.service.user.UserAccountService;
 import org.squashtest.tm.service.user.UserManagerService;
-
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.UserAccountService")
 @Transactional

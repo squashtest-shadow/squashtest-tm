@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
+
 import java.util.Collection;
 import java.util.List;
 
@@ -43,8 +45,6 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
-
-import static org.squashtest.tm.service.security.Authorizations.*;
 
 @Service("CustomCampaignModificationService")
 @Transactional

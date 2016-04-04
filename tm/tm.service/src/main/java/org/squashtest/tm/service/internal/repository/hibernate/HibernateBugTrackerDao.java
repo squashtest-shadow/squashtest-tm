@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -35,9 +38,6 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
-
-import java.util.Collections;
-import java.util.List;
 
 @Repository
 public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> implements BugTrackerDao {

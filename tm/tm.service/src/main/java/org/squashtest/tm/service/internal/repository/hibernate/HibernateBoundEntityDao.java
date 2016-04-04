@@ -34,11 +34,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -76,8 +77,8 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 		BOUND_ENTITIES_IN_PROJECT_QUERY = Collections.unmodifiableMap(queriesByBindable);
 	}
 
-	@Inject
-	private SessionFactory factory;
+	@PersistenceContext
+	private EntityManager em;
 
 
 	@Override
@@ -93,7 +94,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 
 
 	private Session currentSession() {
-		return factory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	@Override

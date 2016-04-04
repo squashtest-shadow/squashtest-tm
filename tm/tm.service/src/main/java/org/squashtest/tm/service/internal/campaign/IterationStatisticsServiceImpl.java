@@ -26,11 +26,13 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +59,8 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	private static final String ID = "id";
 	private static final Logger LOGGER = LoggerFactory.getLogger(IterationStatisticsService.class);
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 
 
@@ -69,7 +71,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		CampaignTestCaseStatusStatistics result = new CampaignTestCaseStatusStatistics();
 
 		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.globaltestinventory");
+		Query query = getCurrentSession().getNamedQuery("IterationStatistics.globaltestinventory");
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
@@ -92,7 +94,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		CampaignNonExecutedTestCaseImportanceStatistics result = new CampaignNonExecutedTestCaseImportanceStatistics();
 
 		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.nonexecutedTestcaseImportance");
+		Query query = getCurrentSession().getNamedQuery("IterationStatistics.nonexecutedTestcaseImportance");
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
@@ -119,7 +121,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		CampaignTestCaseSuccessRateStatistics result = new CampaignTestCaseSuccessRateStatistics();
 
 		//get the data
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.successRate");
+		Query query = getCurrentSession().getNamedQuery("IterationStatistics.successRate");
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
@@ -171,12 +173,12 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		// ****************** gather the model *******************
 
 		// get the test suites and their tests
-		Query query = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics");
+		Query query = getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics");
 		query.setParameter(ID, iterationId);
 		List<Object[]> res = query.list();
 
 		// get tests that belongs to no test suite
-		Query requery = sessionFactory.getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics-testsLeftover");
+		Query requery = getCurrentSession().getNamedQuery("IterationStatistics.testSuiteStatistics-testsLeftover");
 		requery.setParameter(ID, iterationId);
 		List<Object[]> reres = requery.list();
 
@@ -278,7 +280,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	@Override
 	public IterationProgressionStatistics gatherIterationProgressionStatistics(long iterationId) {
 		IterationProgressionStatistics progression = new IterationProgressionStatistics();
-		Session session = sessionFactory.getCurrentSession();
+		Session session = getCurrentSession();
 		Query query = session.getNamedQuery("IterationStatistics.findScheduledIterations");
 		query.setParameter("id", iterationId, LongType.INSTANCE);
 		ScheduledIteration scheduledIteration = (ScheduledIteration) query.uniqueResult();
@@ -305,5 +307,9 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 		}
 
 		return progression;
+	}
+	
+	private Session getCurrentSession(){
+		return em.unwrap(Session.class);
 	}
 }

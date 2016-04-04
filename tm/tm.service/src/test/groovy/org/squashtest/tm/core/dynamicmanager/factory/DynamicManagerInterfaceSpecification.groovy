@@ -21,6 +21,9 @@
 package org.squashtest.tm.core.dynamicmanager.factory
 
 import org.hibernate.SessionFactory
+
+import javax.persistence.EntityManager;
+
 import org.hibernate.Session
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicManagerFactoryBean
 
@@ -51,9 +54,9 @@ abstract class DynamicManagerInterfaceSpecification extends Specification {
 		Session session = Mock()
 		session.load(entityType, _) >> entityInstance()
 
-		SessionFactory sessionFactory = Mock()
-		sessionFactory.currentSession >> session
-		factory.sessionFactory = sessionFactory
+		EntityManager em = Mock()
+		em.unwrap(_) >> session
+		factory.em = em
 
 		factory.initializeFactory()
 	}

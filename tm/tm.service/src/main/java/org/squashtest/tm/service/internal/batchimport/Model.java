@@ -20,11 +20,31 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.singletonList;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +61,11 @@ import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.internal.batchimport.TestCaseCallGraph.Node;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
@@ -54,18 +78,13 @@ import org.squashtest.tm.service.testcase.ParameterFinder;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService;
 
-import javax.inject.Inject;
-import java.util.*;
-
-import static java.util.Collections.emptyList;
-import static java.util.Collections.singletonList;
-
 @Component
 @Scope("prototype")
 public class Model {
 
-	@Inject
-	private SessionFactory sessionFactory;
+
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private CustomFieldDao cufDao;
@@ -549,7 +568,8 @@ public class Model {
 			return null;
 		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+		
+		Query q = getCurrentSession().getNamedQuery(
 			"testStep.findIdByTestCaseAndPosition");
 		q.setParameter(":tcId", tcId);
 		q.setParameter("position", index);
@@ -572,7 +592,7 @@ public class Model {
 			return null;
 		}
 
-		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+		Query q = getCurrentSession().getNamedQuery(
 			"testStep.findByTestCaseAndPosition");
 		q.setParameter("tcId", tcId);
 		q.setParameter("position", index);
@@ -1235,7 +1255,7 @@ public class Model {
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
 		List <String> unescapedNames = PathUtils.unescapePathPartSlashes(names);
-		Query q = sessionFactory.getCurrentSession().getNamedQuery(
+		Query q = getCurrentSession().getNamedQuery(
 			"Project.findAllByName");
 		q.setParameterList("names", unescapedNames);
 		return q.list();
@@ -1243,7 +1263,7 @@ public class Model {
 
 	@SuppressWarnings("unchecked")
 	private List<InternalStepModel> loadStepsModel(Long tcId) {
-		Query query = sessionFactory.getCurrentSession().getNamedQuery(
+		Query query = getCurrentSession().getNamedQuery(
 			"testStep.findBasicInfosByTcId");
 		query.setParameter("tcId", tcId, LongType.INSTANCE);
 
@@ -1297,6 +1317,10 @@ public class Model {
 
 	}
 
+	private Session getCurrentSession(){
+		return em.unwrap(Session.class);
+	}
+	
 	// ************************ internal types for TestCase Management
 	// **********************************
 

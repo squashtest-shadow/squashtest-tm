@@ -20,15 +20,19 @@
  */
 package org.squashtest.tm.service.internal.importer;
 
-import org.squashtest.tm.domain.testcase.*;
-import org.squashtest.tm.service.importer.ImportSummary;
-import org.squashtest.tm.service.internal.library.LibraryUtils;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-
 import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseLibrary;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNodeVisitor;
+import org.squashtest.tm.service.importer.ImportSummary;
+import org.squashtest.tm.service.internal.library.LibraryUtils;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 /**
  * <p>The idea behind the implementation of this class is the following :</p>

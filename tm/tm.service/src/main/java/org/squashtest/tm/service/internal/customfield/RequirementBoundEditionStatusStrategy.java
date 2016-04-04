@@ -20,9 +20,10 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -35,8 +36,8 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
  */
 @Component
 class RequirementBoundEditionStatusStrategy extends ValueEditionStatusHelper implements ValueEditionStatusStrategy {
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 	
 	/**
 	 * 
@@ -58,7 +59,7 @@ class RequirementBoundEditionStatusStrategy extends ValueEditionStatusHelper imp
 	}
 
 	private boolean entityIsEditable(long boundEntityId) {
-		RequirementVersion ver = (RequirementVersion) sessionFactory.getCurrentSession().load(RequirementVersion.class, boundEntityId);
+		RequirementVersion ver = (RequirementVersion) em.unwrap(Session.class).load(RequirementVersion.class, boundEntityId);
 		return ver.isModifiable();
 	}
 }

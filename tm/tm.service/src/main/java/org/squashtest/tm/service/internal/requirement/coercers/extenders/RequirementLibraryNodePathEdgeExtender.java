@@ -56,8 +56,7 @@ public class RequirementLibraryNodePathEdgeExtender implements IdsCoercerExtende
 		Transaction tx = s.beginTransaction();
 
 		try {
-			Query q = sessionFactory.getCurrentSession()
-					.createQuery("select distinct edge.ancestorId from RequirementPathEdge edge where edge.descendantId in (:rlnIds) and depth=1");
+			Query q = s.createQuery("select distinct edge.ancestorId from RequirementPathEdge edge where edge.descendantId in (:rlnIds) and depth=1");
 			q.setParameterList("rlnIds", (Collection<? extends Serializable>) coercedIds);
 			coercedIds.addAll(q.list());
 			return coercedIds;

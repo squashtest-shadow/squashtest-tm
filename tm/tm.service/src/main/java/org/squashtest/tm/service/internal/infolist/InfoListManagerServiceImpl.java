@@ -28,10 +28,12 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.validation.constraints.NotNull;
 
 import org.apache.commons.lang3.StringUtils;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,16 +41,16 @@ import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
-import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.service.infolist.InfoListManagerService;
+import org.squashtest.tm.service.infolist.IsBoundInfoListAdapter;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
 @Transactional
 @Service("squashtest.tm.service.InfoListManagerService")
 public class InfoListManagerServiceImpl implements InfoListManagerService {
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Inject
 	private InfoListDao infoListDao;
@@ -222,7 +224,7 @@ public class InfoListManagerServiceImpl implements InfoListManagerService {
 	 */
 	@Override
 	public InfoList findByUniqueProperty(@NotNull String prop, @NotNull String value) {
-		return (InfoList) sessionFactory.getCurrentSession()
+		return (InfoList) em.unwrap(Session.class)
 			.createCriteria(InfoList.class)
 			.add(Restrictions.eq(prop, value))
 			.uniqueResult();

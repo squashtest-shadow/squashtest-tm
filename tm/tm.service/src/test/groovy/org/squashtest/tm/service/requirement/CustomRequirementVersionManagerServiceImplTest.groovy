@@ -20,7 +20,8 @@
  */
 package org.squashtest.tm.service.requirement;
 
-import static org.junit.Assert.*
+
+import javax.persistence.EntityManager;
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -36,17 +37,17 @@ import spock.lang.Specification
 class CustomRequirementVersionManagerServiceImplTest extends Specification {
 	CustomRequirementVersionManagerServiceImpl service = new CustomRequirementVersionManagerServiceImpl()
 	RequirementVersionDao requirementVersionDao = Mock()
-	SessionFactory sessionFactory = Mock()
+	EntityManager em = Mock()
 	Session currentSession = Mock()
 	PrivateCustomFieldValueService customFieldService = Mock()
 	IndexationService indexationService = Mock()
 
 	def setup() {
 		service.requirementVersionDao = requirementVersionDao
-		service.sessionFactory = sessionFactory
+		service.em = em
 		service.indexationService = indexationService;
 
-		sessionFactory.currentSession >> currentSession
+		em.unwrap(_) >> currentSession
 		service.customFieldValueService = customFieldService
 	}
 

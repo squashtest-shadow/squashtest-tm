@@ -20,14 +20,23 @@
  */
 package org.squashtest.tm.service;
 
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
-import org.springframework.context.annotation.*;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured;
 import org.springframework.security.authentication.encoding.PasswordEncoder;
 import org.springframework.transaction.config.TransactionManagementConfigUtils;
-import org.squashtest.tm.domain.campaign.*;
-import org.squashtest.tm.domain.event.RequirementModificationEventPublisherAspect;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.CampaignFolder;
+import org.squashtest.tm.domain.campaign.CampaignLibrary;
+import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -37,16 +46,30 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.event.RequirementAuditor;
-import org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect;
-import org.squashtest.tm.service.internal.library.*;
-import org.squashtest.tm.service.internal.repository.*;
+import org.squashtest.tm.service.internal.library.GenericFolderModificationService;
+import org.squashtest.tm.service.internal.library.GenericNodeManagementService;
+import org.squashtest.tm.service.internal.library.GenericWorkspaceService;
+import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
+import org.squashtest.tm.service.internal.library.PasteStrategy;
+import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
+import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
+import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.internal.repository.RequirementDao;
+import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
+import org.squashtest.tm.service.internal.repository.RequirementLibraryDao;
+import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
+import org.squashtest.tm.service.internal.repository.TestSuiteDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateCampaignLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateObjectDao;
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementLibraryNodeDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-
-import javax.inject.Inject;
+import org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect;
+import org.squashtest.tm.domain.event.RequirementModificationEventPublisherAspect;
 
 /**
  * Spring configuration for tm.service subsystem

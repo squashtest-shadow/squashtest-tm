@@ -20,17 +20,25 @@
  */
 package org.squashtest.tm.service.internal.event;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.event.*;
+import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import org.squashtest.tm.domain.event.RequirementAuditEventVisitor;
+import org.squashtest.tm.domain.event.RequirementCreation;
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
+import org.squashtest.tm.domain.event.RequirementPropertyChange;
+import org.squashtest.tm.domain.event.RequirementVersionModification;
+import org.squashtest.tm.domain.event.SyncRequirementCreation;
+import org.squashtest.tm.domain.event.SyncRequirementUpdate;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.event.RequirementAuditor;
-
-import javax.inject.Inject;
 
 /**
  * Audits Requirement events and persists them according to the Requirement's
@@ -50,8 +58,8 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	 *  1. we only need SessionFactory.persist(...)
 	 *  2. injecting a dao might induce circular refs through the usage of aspects
 	 */
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	@Transactional
@@ -117,7 +125,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	 * @return the current hibernate session
 	 */
 	private Session currentSession() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 }
