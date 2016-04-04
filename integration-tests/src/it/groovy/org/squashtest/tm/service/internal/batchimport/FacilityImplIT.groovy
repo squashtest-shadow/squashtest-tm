@@ -25,6 +25,8 @@ import static org.squashtest.tm.service.internal.batchimport.Messages.*
 
 import javax.inject.Inject
 import javax.inject.Provider
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.SessionFactory
 import org.junit.runner.RunWith
@@ -101,8 +103,8 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	@Inject
 	private CustomFieldValueFinderService cufFinder
 
-	@Inject
-	private SessionFactory sessionFactory
+	@PersistenceContext 
+	EntityManager em
 
 	@Inject
 	Provider<FacilityImpl> implProvider
@@ -630,7 +632,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		train.hasCriticalErrors() == true
 
 		long id = finder.findNodeIdByPath("/Test Project-1/test 3")
-		TestCase found = sessionFactory.currentSession.load(TestCase, id)
+		TestCase found = em.find(TestCase, id)
 
 		found.steps.size() == 3
 		found.steps[1].calledTestCase.id == -242L // and not -246L
@@ -664,7 +666,7 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		train.hasCriticalErrors() == true
 
 		long id = finder.findNodeIdByPath("/Test Project-1/test 3")
-		TestCase found = sessionFactory.currentSession.load(TestCase, id)
+		TestCase found = em.find(TestCase, id)
 
 		found.getSteps().size() == 3
 		found.getSteps()[1].calledTestCase.id == -242L // and not -246L

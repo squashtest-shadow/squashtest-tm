@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.campaign
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query
 import org.hibernate.SessionFactory
@@ -49,8 +51,9 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	IterationModificationService iterService
 
-	@Inject
-	SessionFactory sessionFactory
+	
+	@PersistenceContext 
+	EntityManager em
 
 	@DataSet("IterationModificationServiceIT.should copy-paste a TestSuite.xml")
 	def "should copy-paste a TestSuite"(){
@@ -193,7 +196,7 @@ class IterationModificationServiceIT extends DbunitServiceSpecification {
 
 		def createSuite = {
 			iterService.addTestSuite(-1L, suite)
-			sessionFactory.currentSession.flush()
+			em.flush()
 			true
 		}
 

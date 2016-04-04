@@ -33,6 +33,8 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext;;
 
 /**
  * @author Gregory Fouquet
@@ -42,10 +44,11 @@ import javax.inject.Inject
 @Transactional
 @DataSet
 class CustomFieldBindingMappingIT extends DbunitDaoSpecification {
-	@Inject SessionFactory sessionFactory
+	@PersistenceContext 
+	EntityManager em
 
 	Session getSession() {
-		sessionFactory.currentSession
+		em.unwrap(Session.class)
 	}
 
 	def "should persist and fetch a custom field binding"() {

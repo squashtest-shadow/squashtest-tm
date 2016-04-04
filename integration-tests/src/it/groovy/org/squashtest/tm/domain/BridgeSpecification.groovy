@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.domain
 
-import javax.inject.Inject;
+import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field.Index;
@@ -39,12 +41,14 @@ import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecific
  *
  */
 abstract class BridgeSpecification extends DbunitDaoSpecification {
-	@Inject SessionFactory sessionFactory
+	@PersistenceContext
+	EntityManager em;
+	
 	LuceneOptions lucene = Mock()
 	Document doc = new Document()
 
 	Session getSession() {
-		sessionFactory.currentSession
+		em.unwrap(Session.class)
 	}	
 	
 	def setup() {

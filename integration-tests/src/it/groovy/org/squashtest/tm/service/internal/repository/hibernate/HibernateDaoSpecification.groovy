@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -46,14 +48,15 @@ import spock.lang.Specification
 @Deprecated
 @SkipAll
 abstract class HibernateDaoSpecification extends Specification {
-	@Inject SessionFactory sessionFactory;
+	@PersistenceContext 
+	EntityManager em
 	/**
 	 * Runs action closure in a new transaction created from a new session.
 	 * @param action
 	 * @return propagates closure result.
 	 */
 	def final doInTransaction(def action) {
-		Session s = sessionFactory.openSession()
+		Session s = em.unwrap(Session.class)
 		Transaction tx = s.beginTransaction()
 
 		try {
@@ -68,7 +71,7 @@ abstract class HibernateDaoSpecification extends Specification {
 	}
 
 	def final Session getCurrentSession() {
-		sessionFactory.currentSession
+		em.unwrap(Session.class)
 	}
 	/**
 	 * Persists a fixture in a separate session / transaction

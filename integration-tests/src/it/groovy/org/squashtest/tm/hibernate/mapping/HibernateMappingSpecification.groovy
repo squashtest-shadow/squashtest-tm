@@ -21,6 +21,8 @@
 package org.squashtest.tm.hibernate.mapping
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -43,14 +45,15 @@ import spock.lang.Specification
 @TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @SkipAll
 abstract class HibernateMappingSpecification extends Specification {
-	@Inject SessionFactory sessionFactory;
+		@PersistenceContext 
+	EntityManager em
 	/**
 	 * Runs action closure in a new transaction created from a new session.
 	 * @param action
 	 * @return propagates closure result.
 	 */
 	def final doInTransaction(def action) {
-		Session s = sessionFactory.openSession()
+		Session s = em.unwrap(Session.class)
 		Transaction tx = s.beginTransaction()
 
 		try {

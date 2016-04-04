@@ -21,6 +21,8 @@
 package org.squashtest.tm.service
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Session
 import org.hibernate.SessionFactory
@@ -43,10 +45,10 @@ import spock.lang.Specification
 @Deprecated
 @SkipAll //Skip all child test for the moment
 abstract class HibernateServiceSpecification extends Specification {
-	@Inject
-	SessionFactory sessionFactory
+	@PersistenceContext 
+	EntityManager em
 
 	Session getCurrentSession() {
-		sessionFactory.currentSession
+		em.unwrap(Session.class)
 	}
 }

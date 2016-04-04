@@ -53,7 +53,6 @@ import spock.unitils.UnitilsSupport
 @Transactional
 class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	@Inject TestCaseDao testCaseDao
-	@Inject SessionFactory sessionFactory
 
 	def setupSpec() {
 		List.metaClass.containsSameIdentifiers << { ids ->

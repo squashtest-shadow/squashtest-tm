@@ -21,6 +21,10 @@
 package org.squashtest.tm.service
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.ObjectNotFoundException
 import org.hibernate.Query
@@ -46,11 +50,11 @@ import spock.lang.Specification
 @TransactionConfiguration(defaultRollback = true)
 abstract class DbunitServiceSpecification extends Specification {
 
-	@Inject
-	private SessionFactory sessionFactory
+	@PersistenceContext 
+	EntityManager em
 
 	protected Session getSession() {
-		return sessionFactory.getCurrentSession()
+		return em.unwrap(Session.class)
 	}
 
 	/*-------------------------------------------Private stuff-----------------------------------*/

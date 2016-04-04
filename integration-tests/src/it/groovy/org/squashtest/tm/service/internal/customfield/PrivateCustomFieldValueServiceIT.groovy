@@ -43,8 +43,6 @@ public class PrivateCustomFieldValueServiceIT extends DbunitServiceSpecification
 	@Inject
 	PrivateCustomFieldValueService service
 
-	@Inject
-	SessionFactory factory
 
 	@Inject
 	TestCaseDao tcDao

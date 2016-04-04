@@ -27,6 +27,8 @@ package org.squashtest.tm.spring
 
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.transaction.Transaction
 
 import org.hibernate.Session
@@ -50,7 +52,8 @@ import spock.lang.Specification
 @TransactionConfiguration()
 @Ignore
 class HibernateConfigurationIT  extends Specification {
-	@Inject SessionFactory sessionFactory;
+	@PersistenceContext 
+	EntityManager em
 
 
 	def "should have injected session factory"() {
@@ -61,7 +64,7 @@ class HibernateConfigurationIT  extends Specification {
 
 	def "should open a session"() {
 		when:
-		def session = sessionFactory.openSession()
+		def session = em.unwrap(Session.class)
 
 		then:
 		session != null
@@ -72,7 +75,7 @@ class HibernateConfigurationIT  extends Specification {
 
 	def "should open a transaction"() {
 		given:
-		Session session = sessionFactory.openSession()
+		Session session = em.unwrap(Session.class)
 
 		when:
 		Transaction tx = session.beginTransaction()

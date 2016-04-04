@@ -64,8 +64,6 @@ class HibernateCustomFieldValueDaoIT extends DbunitDaoSpecification{
 	@Inject
 	CustomFieldValueDao dao;
 	
-	@Inject
-	SessionFactory factory;
 	
 	def "should find all the custom field values for test case 1"(){
 		

@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query
 import org.hibernate.Session
@@ -47,11 +49,11 @@ import spock.lang.Specification
 @Transactional
 abstract class DbunitDaoSpecification extends Specification {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext 
+	EntityManager em
 
 	protected Session getSession(){
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	protected boolean found(Class<?> entityClass, Long id){

@@ -34,6 +34,9 @@ import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 @SuppressWarnings("GroovyUnusedDeclaration")
 @UnitilsSupport
@@ -41,8 +44,8 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@Inject
 	IssueDao issueDao
 
-	@Inject
-	SessionFactory sessionFactory
+	@PersistenceContext 
+	EntityManager em
 
 /**
  *
@@ -250,7 +253,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all execution - ish pairs for a campaign"() {
 		given:
-		def camp = sessionFactory.currentSession.load(Campaign, 100001L)
+		def camp = em.find(Campaign, 100001L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByCampaign(camp, sorter(firstItemIndex: 0, pageSize: 5))
@@ -264,7 +267,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for a campaign"() {
 		given:
-		def camp = sessionFactory.currentSession.load(Campaign, 100001L)
+		def camp = em.find(Campaign, 100001L)
 
 		expect:
 		issueDao.countByCampaign(camp) == 7
@@ -274,7 +277,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all execution - ish pairs for an execution"() {
 		given:
-		def exec = sessionFactory.currentSession.load(Execution, 10000100L)
+		def exec = em.find(Execution, 10000100L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
@@ -288,7 +291,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for an execution"() {
 		given:
-		def exec = sessionFactory.currentSession.load(Execution, 10000100L)
+		def exec = em.find(Execution, 10000100L)
 
 		expect:
 		issueDao.countByExecution(exec) == 2
@@ -298,7 +301,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all execution - ish pairs for an iteration"() {
 		given:
-		def iter = sessionFactory.currentSession.load(Iteration, 100001L)
+		def iter = em.find(Iteration, 100001L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByIteration(iter, sorter(firstItemIndex: 0, pageSize: 5))
@@ -311,7 +314,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for an iteration"() {
 		given:
-		def iter = sessionFactory.currentSession.load(Iteration, 100001L)
+		def iter = em.find(Iteration, 100001L)
 
 		expect:
 		issueDao.countByIteration(iter) == 3
@@ -322,7 +325,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "[#6062] should return all execution - ish pairs for a test suite"() {
 		given:
-		TestSuite ts = sessionFactory.currentSession.load(TestSuite, 1000030L)
+		TestSuite ts = em.find(TestSuite, 1000030L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByTestSuite(ts, sorter(firstItemIndex: 0))
@@ -335,7 +338,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "[#6062] should count issues for a test suite"() {
 		given:
-		TestSuite ts = sessionFactory.currentSession.load(TestSuite, 1000030L)
+		TestSuite ts = em.find(TestSuite, 1000030L)
 
 		expect:
 		issueDao.countByTestSuite(ts) == 4
@@ -345,7 +348,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.folders.xml")
 	def "[#6062] should return all execution - ish pairs for a folder"() {
 		given:
-		CampaignFolder folder = sessionFactory.currentSession.load(CampaignFolder, 100000104L)
+		CampaignFolder folder = em.find(CampaignFolder, 100000104L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByCampaignFolder(folder, sorter(firstItemIndex: 0))
@@ -358,7 +361,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.folders.xml")
 	def "[#6062] should count issues for a folder"() {
 		given:
-		CampaignFolder folder = sessionFactory.currentSession.load(CampaignFolder, 100000104L)
+		CampaignFolder folder = em.find(CampaignFolder, 100000104L)
 
 		expect:
 		issueDao.countByCampaignFolder(folder) == 14

@@ -21,6 +21,8 @@
 package org.squashtest.tm.service.internal.customfield
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
@@ -40,9 +42,6 @@ class CustomCustomFieldManagerServiceIT extends DbunitServiceSpecification {
 	@Inject
 	CustomFieldManagerService service
 
-
-	@Inject
-	SessionFactory sessionFactory
 
 	def "should add default value to custom fields without a value"(){
 

@@ -35,9 +35,6 @@ import javax.inject.Inject
 @Transactional
 @DataSet("AdvancedSearchServiceIT.xml")
 class AdvancedSearchServiceIT extends DbunitServiceSpecification {
-
-	@Inject
-	SessionFactory sessionFactory;
 	
 	@Inject 
 	IndexationService service;

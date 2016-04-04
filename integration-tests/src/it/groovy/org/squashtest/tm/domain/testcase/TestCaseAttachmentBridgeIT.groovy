@@ -33,6 +33,8 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * @author Gregory Fouquet
@@ -43,7 +45,8 @@ import javax.inject.Inject
 class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
 	TestCaseAttachmentBridge bridge = new TestCaseAttachmentBridge()
 	
-	@Inject SessionFactory sessionFactory
+	@PersistenceContext
+	EntityManager em;
 	
 	LuceneOptions lucene = Mock()
 	Document doc = new Document()
@@ -51,7 +54,7 @@ class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
 	@DataSet("TestCaseBridgeIT.dataset.xml")
 	def "should index the test case's attachemnt count"() {
 		given:
-		Session session = sessionFactory.currentSession
+		Session session = em.unwrap(Session.class)
 		TestCase tc = session.load(TestCase, -10L)
 		
 		and:

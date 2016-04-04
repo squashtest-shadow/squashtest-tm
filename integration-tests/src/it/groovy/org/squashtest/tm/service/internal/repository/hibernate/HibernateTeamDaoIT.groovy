@@ -68,7 +68,6 @@ import spock.unitils.UnitilsSupport;
 @Transactional
 class HibernateTeamDaoIT extends DbunitDaoSpecification{
 	
-	@Inject SessionFactory sessionFactory
 	@Inject HibernateTeamDao dao
 	
 	
