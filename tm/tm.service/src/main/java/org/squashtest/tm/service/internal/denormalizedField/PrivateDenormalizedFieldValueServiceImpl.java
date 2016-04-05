@@ -129,7 +129,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				dfv = new DenormalizedFieldValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 			}
 
-			denormalizedFieldValueDao.persist(dfv);
+			denormalizedFieldValueDao.save(dfv);
 
 		}
 

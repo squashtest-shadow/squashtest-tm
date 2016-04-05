@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.RepositoryDefinition;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
@@ -33,12 +33,14 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
  * @author Gregory Fouquet
  * 
  */
-@DynamicDao(entity = AutomatedExecutionExtender.class, hasCustomImplementation = false)
+@RepositoryDefinition(domainClass=AutomatedExecutionExtender.class, idClass = Long.class)
 public interface AutomatedExecutionExtenderDao {
 
+	// note : uses the Spring JPA dsl 
 	AutomatedExecutionExtender findById(long executionId);
 
-	void persist(AutomatedExecutionExtender extender);
+	// note : native method from JPA repositories
+	void save(AutomatedExecutionExtender extender);
 
 	/**
 	 * Returns the {@link AutomatedExecution}s which match the {@link AutomatedExecutionSetIdentifier}.
@@ -47,8 +49,10 @@ public interface AutomatedExecutionExtenderDao {
 	 * 
 	 * @return
 	 */
+	// note : uses a named query in package-info or elsewhere
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName,
 			@NotNull String projectName);
-
+	
+	// note : uses a named query in package-info or elsewhere
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
 }

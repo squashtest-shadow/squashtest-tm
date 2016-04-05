@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.RepositoryDefinition;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 
-@DynamicDao(entity = ActionTestStep.class, hasCustomImplementation = false)
+@RepositoryDefinition(domainClass=ActionTestStep.class, idClass = Long.class)
 public interface ActionTestStepDao {
 	ActionTestStep findById(long id);
 }

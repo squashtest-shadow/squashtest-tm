@@ -23,8 +23,8 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
@@ -37,14 +37,16 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
  * @author mpagnon
  * 
  */
-@DynamicDao(entity = DenormalizedFieldValue.class, hasCustomImplementation=false)
+@RepositoryDefinition(domainClass=DenormalizedFieldValue.class, idClass = Long.class)
 public interface DenormalizedFieldValueDao {
 
 	public static final String PARAM_ENTITY_TYPE = "entityType";
 	public static final String PARAM_ENTITY_ID = "entityId";
 
-	void persist(DenormalizedFieldValue newValue);
+	// note : native method from JPA repositorie
+	void save(DenormalizedFieldValue newValue);
 
+	// note : uses the Spring JPA dsl 
 	DenormalizedFieldValue findById(long denormalizedFieldHolderId);
 
 	/**
@@ -54,8 +56,9 @@ public interface DenormalizedFieldValueDao {
 	 * @param denormalizedFieldHolderId
 	 * @param denormalizedFieldHolderType
 	 */
-	void deleteAllForEntity(@QueryParam(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
-			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
+	// note : uses a named query in package-info or elsewhere
+	void deleteAllForEntity(@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
 	/**
 	 * Return all denormalized field values related to the denormalizedFieldHolder matching params. The list is ordered
@@ -65,8 +68,9 @@ public interface DenormalizedFieldValueDao {
 	 * @param denormalizedFieldHolderType
 	 * @return the list of corresponding {@link DenormalizedFieldValue} ordered by position asc.
 	 */
-	List<DenormalizedFieldValue> findDFVForEntity(@QueryParam(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
-			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
+	// note : uses a named query in package-info or elsewhere
+	List<DenormalizedFieldValue> findDFVForEntity(@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
 	/**
 	 * Return all denormalized field values related to the denormalizedFieldHolder matching params. The list is ordered
@@ -77,20 +81,24 @@ public interface DenormalizedFieldValueDao {
 	 * @param renderingLocation
 	 * @return
 	 */
+	// note : uses a named query in package-info or elsewhere
 	List<DenormalizedFieldValue> findDFVForEntityAndRenderingLocation(
-			@QueryParam(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
-			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
-			@QueryParam("renderingLocation") RenderingLocation renderingLocation);
+			@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
+			@Param("renderingLocation") RenderingLocation renderingLocation);
 
 
-	List<DenormalizedFieldValue> findDFVForEntities(@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType type, @QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities);
+	// note : uses a named query in package-info or elsewhere
+	List<DenormalizedFieldValue> findDFVForEntities(@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType type, @Param(ParameterNames.ENTITY_IDS) Collection<Long> entities);
 
 
+	// note : uses a named query in package-info or elsewhere
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
-			@QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
-			@QueryParam(ParameterNames.ENTITY_IDS) Collection<Long> entities,
-			@QueryParam("locations") Collection<RenderingLocation> locations);
+			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
+			@Param(ParameterNames.ENTITY_IDS) Collection<Long> entities,
+			@Param("locations") Collection<RenderingLocation> locations);
 
-	public long countDenormalizedFields(@QueryParam(PARAM_ENTITY_ID) long entityId, @QueryParam(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);
+	// note : uses a named query in package-info or elsewhere
+	public long countDenormalizedFields(@Param(PARAM_ENTITY_ID) long entityId, @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);
 
 }

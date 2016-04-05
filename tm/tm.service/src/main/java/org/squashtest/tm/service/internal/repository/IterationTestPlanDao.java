@@ -27,7 +27,7 @@ import org.springframework.data.repository.RepositoryDefinition;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
-//@DynamicDao(entity=IterationTestPlanItem.class, hasCustomImplementation=false)
+
 @RepositoryDefinition(domainClass=IterationTestPlanItem.class, idClass = Long.class)
 public interface IterationTestPlanDao {
 	void save(IterationTestPlanItem item);

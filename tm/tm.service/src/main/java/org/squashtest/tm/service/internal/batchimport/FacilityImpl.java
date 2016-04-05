@@ -1348,7 +1348,7 @@ public class FacilityImpl implements Facility {
 		// facility for that
 		// so we have to do it from scratch here. Tsss, lazy conception again.
 		DatasetParamValue dpv = new DatasetParamValue(dsParam, dbDs);
-		paramvalueDao.persist(dpv);
+		paramvalueDao.save(dpv);
 		dbDs.addParameterValue(dpv);
 
 		return dpv;

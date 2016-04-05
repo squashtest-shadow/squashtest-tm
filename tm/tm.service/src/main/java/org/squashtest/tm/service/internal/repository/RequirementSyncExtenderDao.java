@@ -22,23 +22,29 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.Collection;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 
-@DynamicDao(entity = RequirementSyncExtender.class, hasCustomImplementation = false)
+@RepositoryDefinition(domainClass=RequirementSyncExtender.class, idClass = Long.class)
 public interface RequirementSyncExtenderDao {
 
-
-	void persist(RequirementSyncExtender extender);
+	// note : native method from JPA repositories
+	void save(RequirementSyncExtender extender);
 	
-	RequirementSyncExtender retrieveByRemoteKey(@QueryParam("id") String remoteId);
-	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@QueryParam("ids") Collection<String> remoteId);
-	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@QueryParam("pId") String remoteProjectId, @QueryParam("filter") String filterName);
-	Collection<RequirementSyncExtender> retrieveAllByServer(@QueryParam("serverId") Long serverId);
+	// note : uses a named query in package-info or elsewhere
+	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId);
+	// note : uses a named query in package-info or elsewhere
+	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId);
+	// note : uses a named query in package-info or elsewhere
+	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@Param("pId") String remoteProjectId, @Param("filter") String filterName);
+	// note : uses a named query in package-info or elsewhere
+	Collection<RequirementSyncExtender> retrieveAllByServer(@Param("serverId") Long serverId);
 	
-
+	// note : native method from JPA repositories
 	void delete(RequirementSyncExtender extender);
-	void deleteAllByServer(@QueryParam("serverId") Long serverId);
+	
+	// note : uses a named query in package-info or elsewhere
+	void deleteAllByServer(@Param("serverId") Long serverId);
 	
 }

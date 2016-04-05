@@ -20,16 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.RepositoryDefinition;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
-@DynamicDao(entity = DatasetParamValue.class, hasCustomImplementation = false)
+@RepositoryDefinition(domainClass=DatasetParamValue.class, idClass = Long.class)
 public interface DatasetParamValueDao {
 
-	void persist(DatasetParamValue newValue);
+	// note : native method from JPA repositories
+	void save(DatasetParamValue newValue);
 	
-	void remove(DatasetParamValue value);
+	// note : native method from JPA repositories
+	void delete(DatasetParamValue value);
 	
+	// note : uses the Spring JPA dsl 
 	DatasetParamValue findById(Long id);
 }
 
