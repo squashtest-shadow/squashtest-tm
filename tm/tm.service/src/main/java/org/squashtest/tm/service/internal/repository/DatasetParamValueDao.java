@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
-@RepositoryDefinition(domainClass=DatasetParamValue.class, idClass = Long.class)
-public interface DatasetParamValueDao {
+public interface DatasetParamValueDao extends Repository<DatasetParamValue, Long>{
 
 	// note : native method from JPA repositories
 	void save(DatasetParamValue newValue);

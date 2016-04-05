@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 
-@RepositoryDefinition(domainClass=ActionTestStep.class, idClass = Long.class)
-public interface ActionTestStepDao {
+public interface ActionTestStepDao extends Repository<ActionTestStep, Long>{
 	ActionTestStep findById(long id);
 }

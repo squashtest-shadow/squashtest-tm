@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldDao;
 
 @Repository("CustomCustomFieldDao")
-public class HibernateCustomCustomFieldDao extends HibernateEntityDao<CustomField> implements CustomCustomFieldDao {
+public class CustomFieldDaoImpl extends HibernateEntityDao<CustomField> implements CustomCustomFieldDao {
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.CustomCustomFieldDao#findSortedCustomFields(org.squashtest.tm.core.foundation.collection.PagingAndSorting)

@@ -22,12 +22,11 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.Collection;
 
-import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
 
-@RepositoryDefinition(domainClass=RequirementSyncExtender.class, idClass = Long.class)
-public interface RequirementSyncExtenderDao {
+public interface RequirementSyncExtenderDao extends Repository<RequirementSyncExtender, Long> {
 
 	// note : native method from JPA repositories
 	void save(RequirementSyncExtender extender);

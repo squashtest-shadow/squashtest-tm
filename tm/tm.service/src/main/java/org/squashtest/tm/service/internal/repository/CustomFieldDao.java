@@ -24,12 +24,12 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
-@DynamicDao(entity = CustomField.class)
-public interface CustomFieldDao extends CustomCustomFieldDao {
+public interface CustomFieldDao extends Repository<CustomField, Long>, CustomCustomFieldDao {
 
+	// note : native method from JPA repositories
 	List<CustomField> findAll();
 
 	/**
@@ -41,6 +41,7 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @param bindableEntity
 	 * @return
 	 */
+	// note : uses a named query in package-info or elsewhere
 	List<CustomField> findAllBindableCustomFields(Long projectId, BindableEntity bindableEntity);
 	
 	
@@ -51,13 +52,17 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @param bindableEntity
 	 * @return
 	 */
+	// note : uses a named query in package-info or elsewhere
 	List<CustomField> findAllBoundCustomFields(Long projectId, BindableEntity bindableEntity);
+	
+	// note : native method from JPA repositories
+	void save(CustomField customField);
 
-	void persist(CustomField customField);
-
+	// note : uses the Spring JPA dsl 
 	CustomField findById(long id);
-
-	void remove(CustomField customField);
+	
+	// note : native method from JPA repositories
+	void delete(CustomField customField);
 
 	/**
 	 * Returns the field matching the name if it exists.
@@ -65,6 +70,7 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @param name
 	 * @return
 	 */
+	// note : uses the Spring JPA dsl 
 	CustomField findByName(@NotNull String name);
 
 	/**
@@ -72,14 +78,17 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * 
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
-	List<CustomField> findAllOrderedByName();
+	// note : uses the Spring JPA dsl
+	// note : the extra 'By' in 'findAllByOrderBy' is necessary, see http://stackoverflow.com/questions/19733464/order-by-date-desc-with-spring-data
+	List<CustomField> findAllByOrderByNameAsc();
 
 	/**
 	 * Will count all existing custom fields
 	 * 
 	 * @return the number of custom fields
 	 */
-	long countCustomFields();
+	// note : native method from JPA repositories
+	long count();
 
 	/**
 	 * Will find the CustomField having a code value matching the parameter.
@@ -87,5 +96,6 @@ public interface CustomFieldDao extends CustomCustomFieldDao {
 	 * @param code
 	 * @return the {@link CustomField} matching the code param.
 	 */
+	// note : uses the Spring JPA dsl 
 	CustomField findByCode(@NotNull String code);
 }

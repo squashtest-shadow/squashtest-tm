@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 
 @Repository("CustomChartDefinitionDao")
-public class HibernateCustomChartDefinitionDao extends HibernateEntityDao<ChartDefinition> implements CustomChartDefinitionDao{
+public class ChartDefinitionDaoImpl extends HibernateEntityDao<ChartDefinition> implements CustomChartDefinitionDao{
 
 	@Override
 	public boolean hasChart(List<Long> userIds) {

@@ -20,10 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 
-@DynamicDao(entity = ChartDefinition.class)
-public interface ChartDefinitionDao extends CustomChartDefinitionDao {
+public interface ChartDefinitionDao extends CustomChartDefinitionDao, Repository<ChartDefinition, Long> {
 	
 }

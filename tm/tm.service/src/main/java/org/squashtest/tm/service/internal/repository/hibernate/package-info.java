@@ -645,11 +645,9 @@
 	@NamedQuery(name = "automatedTest.findAllByExtenders", query = "select distinct test from AutomatedExecutionExtender ext join ext.automatedTest test where ext in (:extenders)"),
 
 	//CustomField
-	@NamedQuery(name = "CustomField.findAll", query = "from CustomField"),
 	@NamedQuery(name = "CustomField.findAllBindableCustomFields", query = "select cf from CustomField cf where cf not in (select cf2 from CustomFieldBinding binding join binding.customField cf2 "
 	+ "where binding.boundProject.id = ?1 and binding.boundEntity = ?2)"),
 	@NamedQuery(name = "CustomField.findAllBoundCustomFields", query = "select cf from CustomFieldBinding binding join binding.customField cf where binding.boundProject.id = ?1 and binding.boundEntity = ?2 order by cf.name asc "),
-	@NamedQuery(name = "CustomField.findByName", query = "from CustomField where name = ?1"),
 
 	//CustomFieldBinding
 	@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject, cfb.id order by cfb.position asc"),

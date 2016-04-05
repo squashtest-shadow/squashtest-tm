@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
@@ -37,8 +37,8 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
  * @author mpagnon
  * 
  */
-@RepositoryDefinition(domainClass=DenormalizedFieldValue.class, idClass = Long.class)
-public interface DenormalizedFieldValueDao {
+
+public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldValue, Long>{
 
 	public static final String PARAM_ENTITY_TYPE = "entityType";
 	public static final String PARAM_ENTITY_ID = "entityId";

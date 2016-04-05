@@ -23,13 +23,12 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 
 
-@RepositoryDefinition(domainClass=IterationTestPlanItem.class, idClass = Long.class)
-public interface IterationTestPlanDao {
+public interface IterationTestPlanDao extends Repository<IterationTestPlanItem, Long>{
 	void save(IterationTestPlanItem item);
 
 	IterationTestPlanItem findById(long itemTestPlanId);

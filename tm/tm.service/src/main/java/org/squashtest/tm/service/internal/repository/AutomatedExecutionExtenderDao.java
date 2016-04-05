@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.data.repository.RepositoryDefinition;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 
@@ -33,8 +33,7 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
  * @author Gregory Fouquet
  * 
  */
-@RepositoryDefinition(domainClass=AutomatedExecutionExtender.class, idClass = Long.class)
-public interface AutomatedExecutionExtenderDao {
+public interface AutomatedExecutionExtenderDao extends Repository<AutomatedExecutionExtender, Long>{
 
 	// note : uses the Spring JPA dsl 
 	AutomatedExecutionExtender findById(long executionId);

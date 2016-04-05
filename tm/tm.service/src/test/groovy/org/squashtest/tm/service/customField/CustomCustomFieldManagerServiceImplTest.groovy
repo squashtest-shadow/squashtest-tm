@@ -67,7 +67,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 
 		and:
 		def counted = 3
-		customFieldDao.countCustomFields()>> counted
+		customFieldDao.count()>> counted
 
 		when:
 		PagedCollectionHolder<Collection<CustomField>> result = service.findSortedCustomFields(cs)
@@ -75,7 +75,7 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		then:
 		result != null
 		1* customFieldDao.findSortedCustomFields(cs)
-		1* customFieldDao.countCustomFields()
+		1* customFieldDao.count()
 	}
 
 	def "should change code to available code"() {

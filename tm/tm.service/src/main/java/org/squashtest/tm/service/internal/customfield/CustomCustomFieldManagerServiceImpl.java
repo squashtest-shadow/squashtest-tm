@@ -80,7 +80,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter) {
 		List<CustomField> customFields = customFieldDao.findSortedCustomFields(filter);
-		long count = customFieldDao.countCustomFields();
+		long count = customFieldDao.count();
 		return new PagingBackedPagedCollectionHolder<List<CustomField>>(filter, count, customFields);
 	}
 
@@ -98,7 +98,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		if(bindingIds.size() > 0){
 			customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
 		}
-		customFieldDao.remove(customField);
+		customFieldDao.delete(customField);
 	}
 
 	/**
@@ -118,7 +118,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	public void persist(CustomField newCustomField) {
 		checkDuplicateName(newCustomField);
 		checkDuplicateCode(newCustomField);
-		customFieldDao.persist(newCustomField);
+		customFieldDao.save(newCustomField);
 
 	}
 
