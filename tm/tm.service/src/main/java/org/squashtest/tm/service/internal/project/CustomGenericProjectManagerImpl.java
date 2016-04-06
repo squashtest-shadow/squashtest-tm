@@ -202,6 +202,9 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void persist(GenericProject project) {
 
+		// plug-in the default info lists
+		assignDefaultInfolistToProject(project);
+
 		if (genericProjectDao.countByName(project.getName()) > 0) {
 			throw new NameAlreadyInUseException(project.getClass().getSimpleName(), project.getName());
 		}
@@ -228,8 +231,20 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 		crlNode.setEntity(crl);
 		em.persist(crlNode);
 
-		// plug-in the default info lists
-		// TODO : extract the code lists to some meaningful place
+		// now persist it
+		em.persist(project);
+		em.flush(); // otherwise ids not available
+
+
+		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
+		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
+		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
+		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
+		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
+
+	}
+
+	private void assignDefaultInfolistToProject(GenericProject project) {
 		InfoList defaultCategories = infoListService.findByCode("DEF_REQ_CAT");
 		project.setRequirementCategories(defaultCategories);
 
@@ -238,17 +253,6 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		InfoList defaultTypes = infoListService.findByCode("DEF_TC_TYP");
 		project.setTestCaseTypes(defaultTypes);
-
-		// now persist it
-		em.persist(project);
-		em.flush(); // otherwise ids not available
-
-		objectIdentityService.addObjectIdentity(project.getId(), project.getClass());
-		objectIdentityService.addObjectIdentity(tcl.getId(), tcl.getClass());
-		objectIdentityService.addObjectIdentity(rl.getId(), rl.getClass());
-		objectIdentityService.addObjectIdentity(cl.getId(), cl.getClass());
-		objectIdentityService.addObjectIdentity(crl.getId(), crl.getClass());
-
 	}
 
 	/**
