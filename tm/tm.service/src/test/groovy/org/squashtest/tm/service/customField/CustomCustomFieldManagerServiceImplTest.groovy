@@ -50,13 +50,13 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		CustomField cuf = Mock()
 		List<Long> bindingIds = new ArrayList<Long>();
 		customFieldDao.findById(1L) >> cuf
-		customFieldBindingDao.findAllForCustomField(1L) >> bindingIds;
+		customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(1L) >> bindingIds;
 
 		when :
 		service.deleteCustomField(1L);
 
 		then:
-		1* customFieldDao.remove(cuf)
+		1* customFieldDao.delete(cuf)
 	}
 
 	def "should find sorted "(){
