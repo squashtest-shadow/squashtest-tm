@@ -34,18 +34,6 @@ import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
 public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 
-	List<TestSuite> findAllByIterationId(long iterationId);
-
-	/**
-	 * <p>
-	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
-	 * making it the launchable test plan of the test suite
-	 * </p>
-	 *
-	 * @param testSuiteId
-	 * @return
-	 */
-	List<IterationTestPlanItem> findLaunchableTestPlan(long testSuiteId);
 
 	/**
 	 * Will fill a {@link TestPlanStatistics} bean with infos taken from the test plan of the {@link TestSuite} matching
@@ -70,9 +58,7 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	 */
 	TestPlanStatistics getTestSuiteStatistics(long suiteId, String userLogin);
 
-	List<IterationTestPlanItem> findTestPlanPartition(long testSuiteId, List<Long> testPlanItemIds);
-
-	List<Execution> findAllExecutionByTestSuite(long testSuiteId);
+	
 
 	List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filter,
 			ColumnFiltering columnFiltering);
@@ -99,18 +85,8 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filter,
 			ColumnFiltering columnFiltering);
 
-	long countTestPlans(Long suiteId, Filtering filtering);
 
 	long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering);
 
-	long findProjectIdBySuiteId(long suiteId);
 
-	/**
-	 * Will find the distinct ids of the test cases referenced in the suite matching the given id
-	 *
-	 * @param suiteId
-	 *            : the id of the concerned TestSuite
-	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
-	 */
-	List<Long> findPlannedTestCasesIds(Long suiteId);
 }

@@ -20,13 +20,59 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import java.util.List;
 
-@DynamicDao(entity=TestSuite.class)
-public interface TestSuiteDao extends CustomTestSuiteDao {
- 
+import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.execution.Execution;
+
+
+public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSuiteDao {
+	
+	// note : uses a named query in package-info or elsewhere
 	long countTestPlanItems(long testSuiteId);
 
+	// note : uses the Spring JPA dsl 	
+	TestSuite findById(long id);
+	
+	// note : native method from JPA repositories
+	 void save(TestSuite ts);
 
+	// note : uses the Spring JPA dsl 	
+	List<TestSuite> findAllByIterationId(long iterationId);
+	
+	
+	/**
+	 * <p>
+	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
+	 * making it the launchable test plan of the test suite
+	 * </p>
+	 *
+	 * @param testSuiteId
+	 * @return
+	 */
+	// note : uses a named query in package-info or elsewhere
+	List<IterationTestPlanItem> findLaunchableTestPlan(@Param("suiteId") long testSuiteId);
+	
+	// note : uses a named query in package-info or elsewhere
+	List<IterationTestPlanItem> findTestPlanPartition(@Param("suiteId") long testSuiteId, @Param("itemIds") List<Long> testPlanItemIds);
+	
+	// note : uses a named query in package-info or elsewhere
+	List<Execution> findAllExecutions(long testSuiteId);
+	
+	// note : uses a named query in package-info or elsewhere
+	long findProjectIdBySuiteId(long suiteId);
+
+
+	/**
+	 * Will find the distinct ids of the test cases referenced in the suite matching the given id
+	 *
+	 * @param suiteId
+	 *            : the id of the concerned TestSuite
+	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
+	 */
+	// note : uses a named query in package-info or elsewhere
+	List<Long> findPlannedTestCasesIds(Long suiteId);
 }

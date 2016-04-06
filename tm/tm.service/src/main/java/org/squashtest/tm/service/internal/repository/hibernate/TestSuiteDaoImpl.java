@@ -52,9 +52,9 @@ import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
  * todo : make it a dynamic call
  */
 @Repository("CustomTestSuiteDao")
-public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
+public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateTestSuiteDao.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteDaoImpl.class);
 
 	/*
 	 * Because it is impossible to sort over the indices of ordered collection in a criteria query we must then build an
@@ -69,57 +69,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 			+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
 			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
 
-	@Override
-	public List<TestSuite> findAllByIterationId(final long iterationId) {
-
-		return executeListNamedQuery("testSuite.findAllByIterationId", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("1", iterationId);
-			}
-
-		});
-	}
-
-	@Override
-	public List<IterationTestPlanItem> findLaunchableTestPlan(final long testSuiteId) {
-		return executeListNamedQuery("testSuite.findLaunchableTestPlan", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("1", testSuiteId);
-				query.setParameter("2", testSuiteId);
-			}
-
-		});
-	}
-
-	public List<IterationTestPlanItem> findTestPlanPaged(final long testSuiteId, final Paging paging) {
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-
-				query.setParameter("id", testSuiteId);
-				query.setParameter("id2", testSuiteId);
-				query.setFirstResult(paging.getFirstItemIndex());
-				query.setMaxResults(paging.getPageSize());
-			}
-
-		};
-
-		return executeListNamedQuery("TestSuite.findAllTestPlanItemsPaged", callback);
-	}
-
-	private Long countTestPlanItems(long testSuiteId) {
-		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItems", idParameter(testSuiteId));
-	}
-
-	private Long countTestPlanItems(long testSuiteId, String userLogin) {
-		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItemsForUsers",
-				idLoginParameter(testSuiteId, userLogin));
-	}
 
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
@@ -128,7 +77,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = new IdId2ParameterCallback(testSuiteId);
-		List<Object[]> result = executeListNamedQuery("testSuite.countStatuses", newCallBack);
+		List<Object[]> result = executeListNamedQuery("TestSuite.countStatuses", newCallBack);
 
 		return fillTestPlanStatistics(nbTestPlans, result);
 	}
@@ -140,7 +89,7 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 
 		// Add number of testCase for each ExecutionStatus
 		SetQueryParametersCallback newCallBack = new IdId2LoginParameterCallback(testSuiteId, userLogin);
-		List<Object[]> result = executeListNamedQuery("testSuite.countStatusesForUser", newCallBack);
+		List<Object[]> result = executeListNamedQuery("TestSuite.countStatusesForUser", newCallBack);
 
 		return fillTestPlanStatistics(nbTestPlans, result);
 	}
@@ -185,21 +134,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		}
 	}
 
-	@Override
-	public List<IterationTestPlanItem> findTestPlanPartition(final long testSuiteId, final List<Long> testPlanItemIds) {
-
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("suiteId", testSuiteId);
-				query.setParameterList("itemIds", testPlanItemIds);
-			}
-		};
-
-		return executeListNamedQuery("testSuite.findTestPlanPartition", callback);
-	}
-
 	private SetQueryParametersCallback idParameter(final long id) {
 		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
 
@@ -223,22 +157,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return newCallBack;
 	}
 
-	private SetQueryParametersCallback idAndLoginParameter(final long id, final String login) {
-
-		return new SetQueryParametersCallback() {
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter("suiteId", id);
-				query.setParameter("userLogin", login);
-			}
-		};
-	}
-
-	@Override
-	public List<Execution> findAllExecutionByTestSuite(long testSuiteId) {
-		SetQueryParametersCallback callback = idParameter(testSuiteId);
-		return executeListNamedQuery("testSuite.findAllExecutions", callback);
-	}
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filtering,
@@ -336,20 +254,6 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return query.list();
 	}
 
-	@Override
-	public long countTestPlans(Long suiteId, Filtering filtering) {
-		if (!filtering.isDefined()) {
-			return countTestPlanItems(suiteId);
-		} else {
-			return (Long) executeEntityNamedQuery("testSuite.countTestPlansFiltered",
-					idAndLoginParameter(suiteId, filtering.getFilter()));
-		}
-	}
-
-	@Override
-	public long findProjectIdBySuiteId(long suiteId) {
-		return (Long) executeEntityNamedQuery("testSuite.findProjectIdBySuiteId", idParameter(suiteId));
-	}
 
 	// ************************ utils ********************
 
@@ -387,8 +291,17 @@ public class HibernateTestSuiteDao extends HibernateEntityDao<TestSuite> impleme
 		return query.list().size();
 	}
 
-	@Override
-	public List<Long> findPlannedTestCasesIds(Long suiteId) {
-		return executeListNamedQuery("TestSuite.findReferencedTestCasesIds", idParameter(suiteId));
+
+	private Long countTestPlanItems(long testSuiteId) {
+		Query q = currentSession().getNamedQuery("TestSuite.countTestPlanItems");
+		q.setLong("1", testSuiteId);
+		return (Long)q.uniqueResult();
 	}
+
+	private Long countTestPlanItems(long testSuiteId, String userLogin) {
+		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItemsForUsers",
+				idLoginParameter(testSuiteId, userLogin));
+	}
+
+	
 }
