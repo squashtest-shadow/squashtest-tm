@@ -170,4 +170,8 @@ public interface IssueDao extends EntityDao<Issue> {
 	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter);
 
 	long countByCampaignFolder(CampaignFolder folder);
+
+	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter);
+
+	long countByTestCase(TestCase testCase);
 }

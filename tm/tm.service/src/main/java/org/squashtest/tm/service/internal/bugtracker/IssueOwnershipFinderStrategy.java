@@ -20,18 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.inject.Inject;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerRemoteException;
@@ -49,11 +37,20 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 
+import javax.inject.Inject;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 /**
  * @author Gregory Fouquet
  * @since 1.14.0  29/03/16
  */
-abstract class IssueOwnershipFinderStrategy<H> {
+abstract class IssueOwnershipFinderStrategy<H> implements IssueOwnershipFinder<H> {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
 	@Inject
@@ -69,6 +66,7 @@ abstract class IssueOwnershipFinderStrategy<H> {
 		super();
 	}
 
+	@Override
 	public final PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(
 		long entityId, PagingAndSorting sorter) {
 		H holder = findEntity(entityId);
@@ -76,7 +74,7 @@ abstract class IssueOwnershipFinderStrategy<H> {
 		BugTracker bugTracker = findBugTracker(holder);
 
 		List<IssueOwnership<RemoteIssueDecorator>> ownerships;
-		if (bugTracker == null) {
+		if (bugTracker == null || pairs.isEmpty()) {
 			ownerships = Collections.emptyList();
 		} else {
 			ownerships = findRemoteIssues(pairs, bugTracker);
@@ -88,11 +86,7 @@ abstract class IssueOwnershipFinderStrategy<H> {
 	}
 
 	private List<String> collectRemoteIssueIds(List<Pair<Execution, Issue>> pairs) {
-		List<String> remoteIssueIds = new ArrayList<>(pairs.size());
-		for (Pair<Execution, Issue> pair : pairs) {
-			remoteIssueIds.add(pair.right.getRemoteIssueId());
-		}
-		return remoteIssueIds;
+		return IssueOwnershipFinderUtils.collectRemoteIssueIds(pairs);
 	}
 
 	/**
@@ -111,7 +105,7 @@ abstract class IssueOwnershipFinderStrategy<H> {
 
 			Map<String, RemoteIssue> remoteById = createRemoteIssueByRemoteIdMap(btIssues);
 
-			ownerships = coerceIntoIssueOwnerships(pairs, remoteIssueIds, remoteById);
+			ownerships = coerceIntoIssueOwnerships(pairs, remoteById);
 		} catch (TimeoutException | ExecutionException | InterruptedException ex) {
 			throw new BugTrackerRemoteException(ex);
 		}
@@ -120,27 +114,14 @@ abstract class IssueOwnershipFinderStrategy<H> {
 	}
 
 	private Map<String, RemoteIssue> createRemoteIssueByRemoteIdMap(List<RemoteIssue> btIssues) {
-			Map<String, RemoteIssue> remoteById = new HashMap<>(btIssues.size());
 
-			for (RemoteIssue remote : btIssues) {
-				remoteById.put(remote.getId(), remote);
-			}
-		return remoteById;
+		return IssueOwnershipFinderUtils.createRemoteIssueByRemoteIdMap(btIssues);
 	}
 
 
-	private List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(List<Pair<Execution, Issue>> pairs, List<String> remoteIssueIds, Map<String, RemoteIssue> remoteIssueByRemoteId) {
-		List<IssueOwnership<RemoteIssueDecorator>> ownerships;
-			ownerships = new ArrayList<>(remoteIssueIds.size());
+	private List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(List<Pair<Execution, Issue>> pairs, Map<String, RemoteIssue> remoteIssueByRemoteId) {
 
-			for (Pair<Execution, Issue> pair : pairs) {
-				Issue ish = pair.right;
-            RemoteIssue remote = remoteIssueByRemoteId.get(ish.getRemoteIssueId());
-
-				IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
-				ownerships.add(ownership);
-			}
-		return ownerships;
+		return IssueOwnershipFinderUtils.coerceIntoIssueOwnerships(pairs, remoteIssueByRemoteId);
 	}
 
 	protected abstract H findEntity(long id);

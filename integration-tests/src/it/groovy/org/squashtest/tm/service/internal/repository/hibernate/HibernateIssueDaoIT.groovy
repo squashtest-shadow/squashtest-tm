@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
@@ -348,14 +349,14 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.folders.xml")
 	def "[#6062] should return all execution - ish pairs for a folder"() {
 		given:
-		CampaignFolder folder = em.find(CampaignFolder, 100000104L)
+		def folder = em.find(CampaignFolder, 100000104L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByCampaignFolder(folder, sorter(firstItemIndex: 0))
 
 		then:
-		result*.left.id as Set == [10000083, 10000083, 10000083, 10000083, 10000085, 100000107, 100000107, 10000098, 10000098, 10000098] as Set
-		result*.right.id as Set == [1000001, 1000002, 1000003, 1000004, 10000033, 10000034, 10000035, 10000065, 10000066, 10000067] as Set
+		result*.left.id as Set == [10000083L, 10000083L, 10000083L, 10000083L, 10000085L, 100000107L, 100000107L, 10000098L, 10000098L, 10000098L] as Set
+		result*.right.id as Set == [1000001L, 1000002L, 1000003L, 1000004L, 10000033L, 10000034L, 10000035L, 10000065L, 10000066L, 10000067L] as Set
 	}
 
 	@DataSet("HibernateIssueDaoIT.folders.xml")
@@ -365,6 +366,29 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 		expect:
 		issueDao.countByCampaignFolder(folder) == 14
+
+	}
+
+	@DataSet("HibernateIssueDaoIT.testcases.xml")
+	def "[#6062] should return all execution - ish pairs for a test case"() {
+		given:
+		def testCase = sessionFactory.currentSession.load(TestCase, 100000238L)
+
+		when:
+		def result = issueDao.findAllExecutionIssuePairsByTestCase(testCase, sorter(firstItemIndex: 0))
+
+		then:
+		result*.left.id as Set == [10000083L, 10000083L, 10000083L, 10000083L, 10000085L, 100000107L, 100000107L, 10000098L, 10000098L, 10000098L] as Set
+		result*.right.id as Set == [1000001L, 1000002L, 1000003L, 1000004L, 10000033L, 10000034L, 10000035L, 10000065L, 10000066L, 10000067L] as Set
+	}
+
+	@DataSet("HibernateIssueDaoIT.testcases.xml")
+	def "[#6062] should count issues for a test case"() {
+		given:
+		def testCase = sessionFactory.currentSession.load(TestCase, 100000238L)
+
+		expect:
+		issueDao.countByTestCase(testCase) == 14
 
 	}
 }

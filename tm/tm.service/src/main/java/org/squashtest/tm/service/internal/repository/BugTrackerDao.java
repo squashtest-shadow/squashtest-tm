@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+
+import java.util.Collection;
+import java.util.List;
 
 public interface BugTrackerDao extends EntityDao<BugTracker> {
 
@@ -62,7 +63,6 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	/**
 	 *
 	 * @return the bugtracker bound to the campaign's project
-	 * @param node
      */
 	BugTracker findByCampaignLibraryNode(CampaignLibraryNode node);
 
@@ -79,4 +79,6 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	BugTracker findByIteration(Iteration iteration);
 
 	BugTracker findByTestSuite(TestSuite testSuite);
+
+	List findAllPairsByExecutions(Collection<Execution> executions);
 }

@@ -20,23 +20,10 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
@@ -62,11 +49,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.IdCollector;
 import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.bugtracker.Issue;
-import org.squashtest.tm.domain.bugtracker.IssueDetector;
-import org.squashtest.tm.domain.bugtracker.IssueList;
-import org.squashtest.tm.domain.bugtracker.IssueOwnership;
-import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
+import org.squashtest.tm.domain.bugtracker.*;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
@@ -76,16 +59,21 @@ import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.IssueAlreadyBoundException;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.bugtracker.BugTrackersLocalService;
-import org.squashtest.tm.service.internal.repository.BugTrackerDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
-import org.squashtest.tm.service.internal.repository.IssueDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.ProjectDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.BugTrackersLocalService")
 public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
@@ -130,7 +118,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	private BugTrackerContextHolder contextHolder;
 
 	@Inject
-	private Map<String, IssueOwnershipFinderStrategy> issueOwnershipFinderByBeanName;
+	private Map<String, IssueOwnershipFinder> issueOwnershipFinderByBeanName;
 
 	@Override
 	public BugTrackerInterfaceDescriptor getInterfaceDescriptor(BugTracker bugTracker) {
@@ -378,8 +366,8 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <R> IssueOwnershipFinderStrategy<R> issueFinder(String finderBeanName) {
-		IssueOwnershipFinderStrategy<R> res = issueOwnershipFinderByBeanName.get(finderBeanName);
+	private <R> IssueOwnershipFinder<R> issueFinder(String finderBeanName) {
+		IssueOwnershipFinder<R> res = issueOwnershipFinderByBeanName.get(finderBeanName);
 		if (res == null) {
 			throw new IllegalArgumentException("Bean of type 'IssueOwnershipFinderStrategy' and named '" + finderBeanName + "' could not be found. This either means the bean was not instanciated by Spring or it has another name");
 		}
@@ -404,13 +392,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#tcId, 'org.squashtest.tm.domain.testcase.TestCase', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnershipForTestCase(
 		Long tcId, PagingAndSorting sorter) {
-
-		// Find all concerned IssueDetector
-		List<Execution> executions = testCaseDao.findAllExecutionByTestCase(tcId);
-		List<ExecutionStep> executionSteps = collectExecutionStepsFromExecution(executions);
-
-		// create filtredCollection of IssueOwnership<BTIssue>
-		return createOwnershipsCollection(sorter, executions, executionSteps);
+		return issueFinder("testCaseIssueFinder").findSorted(tcId, sorter);
 	}
 
 

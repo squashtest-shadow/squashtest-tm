@@ -136,6 +136,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 		}
 	}
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaign(Campaign campaign, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues Issue where c = :camp", sorter);
 
@@ -372,6 +373,24 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	public long countByCampaignFolder(CampaignFolder folder) {
 		return (long) currentSession().getNamedQuery("issue.countByCampaignFolder")
 			.setParameter("folderId", folder.getId())
+			.uniqueResult();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase", sorter);
+
+		Query query = currentSession().createQuery(hql).setParameter("testCase", testCase);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+	}
+
+	@Override
+	public long countByTestCase(TestCase testCase) {
+		return (long) currentSession().getNamedQuery("issue.countByTestCase")
+			.setParameter("testCase", testCase)
 			.uniqueResult();
 	}
 

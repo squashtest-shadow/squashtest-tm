@@ -512,6 +512,7 @@
 	@NamedQuery(name = "issue.countByIteration", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues ish  where i = :iteration"),
 	@NamedQuery(name = "issue.countByTestSuite", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.testSuites ts join ex.issues ish  where ts = :testSuite"),
 	@NamedQuery(name = "issue.countByExecution", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
+	@NamedQuery(name = "issue.countByTestCase", query = "select count(ish) from Execution ex join ex.issues ish join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase"),
 
 
 	//BugTrackersEntities
@@ -523,6 +524,7 @@
 	@NamedQuery(name = "bugtracker.findByIteration", query = "select bt from Iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where it = :iteration"),
 	@NamedQuery(name = "bugtracker.findByTestSuite", query = "select bt from TestSuite ts join ts.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ts = :testSuite"),
 	@NamedQuery(name = "bugtracker.findByExecution", query = "select bt from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex = :execution"),
+	@NamedQuery(name = "bugtracker.findAllPairsByExecutions", query = "select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, bt) from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex in (:executions)"),
 
 	//BugTrackerBinding
 	@NamedQuery(name = "bugTrackerBinding.findByBugtrackerId", query = "from BugTrackerBinding where bugtracker_id= :bugtrackerId"),

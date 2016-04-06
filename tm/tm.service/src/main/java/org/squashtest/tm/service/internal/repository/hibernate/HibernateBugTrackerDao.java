@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -36,8 +33,15 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
+import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
+
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+import static org.squashtest.tm.domain.campaign.QTestSuite.testSuite;
 
 @Repository
 public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> implements BugTrackerDao {
@@ -147,5 +151,14 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 			.getNamedQuery("bugtracker.findByTestSuite")
 			.setParameter("testSuite", testSuite)
 			.uniqueResult();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public List<Pair<Execution, BugTracker>> findAllPairsByExecutions(Collection<Execution> executions) {
+		return  currentSession()
+			.getNamedQuery("bugtracker.findAllPairsByExecutions")
+			.setParameterList("executions", executions)
+			.list();
 	}
 }
