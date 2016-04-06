@@ -1287,7 +1287,7 @@ public class FacilityImpl implements Facility {
 		Long tcid = validator.getModel().getId(dataset.getTestCase());
 
 		String truncated = helper.truncate(dataset.getName());
-		Dataset found = datasetDao.findDatasetByTestCaseAndByName(tcid, truncated);
+		Dataset found = datasetDao.findByTestCaseIdAndName(tcid, truncated);
 
 		if (found != null) {
 			return found;
@@ -1317,7 +1317,7 @@ public class FacilityImpl implements Facility {
 
 			Long tcid = validator.getModel().getId(tc);
 			String dsname = helper.truncate(paramInfo.getCalledDatasetName());
-			Dataset ds = datasetDao.findDatasetByTestCaseAndByName(tcid, dsname);
+			Dataset ds = datasetDao.findByTestCaseIdAndName(tcid, dsname);
 
 			// if the dataset exists we can actually bind the step to it.
 			// otherwise we fallback to the default mode (nothing).

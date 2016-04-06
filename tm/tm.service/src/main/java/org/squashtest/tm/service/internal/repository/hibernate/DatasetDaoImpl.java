@@ -27,11 +27,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -39,7 +37,7 @@ import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
 
 @Repository("CustomDatasetDao")
-public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements CustomDatasetDao {
+public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements CustomDatasetDao {
 
 	@PersistenceContext
 	private EntityManager em;
@@ -48,7 +46,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	@Override
 	public List<Dataset> findOwnDatasetsByTestCase(Long testCaseId) {
 
-		Query query = em.unwrap(Session.class).getNamedQuery("dataset.findOwnDatasetsByTestCase");
+		Query query = em.unwrap(Session.class).getNamedQuery("Dataset.findOwnDatasetsByTestCase");
 		query.setParameter("testCaseId", testCaseId);
 		return (List<Dataset>) query.list();
 	}
@@ -59,7 +57,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	@Override
 	public List<Dataset> findOwnDatasetsByTestCases(List<Long> testCaseIds) {
 		if (!testCaseIds.isEmpty()) {
-			Query query = em.unwrap(Session.class).getNamedQuery("dataset.findOwnDatasetsByTestCases");
+			Query query = em.unwrap(Session.class).getNamedQuery("Dataset.findOwnDatasetsByTestCases");
 			query.setParameterList("testCaseIds", testCaseIds);
 			return (List<Dataset>) query.list();
 		} else {
@@ -71,7 +69,7 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	@Override
 	public List<Dataset> findImmediateDelegateDatasets(Long testCaseId) {
 
-		Query q = em.unwrap(Session.class).getNamedQuery("dataset.findTestCasesThatInheritParameters");
+		Query q = em.unwrap(Session.class).getNamedQuery("Dataset.findTestCasesThatInheritParameters");
 		q.setParameter("srcIds", LongType.INSTANCE);
 
 		List<Long> tcids = q.list();
@@ -118,16 +116,6 @@ public class HibernateDatasetDao extends HibernateEntityDao<Dataset> implements 
 	}
 
 
-
-
-	@Override
-	public Dataset findDatasetByTestCaseAndByName(Long testCaseId, String name) {
-
-		Query query = em.unwrap(Session.class).getNamedQuery("dataset.findDatasetsByTestCaseAndByName");
-		query.setParameter("testCaseId", testCaseId);
-		query.setParameter("name", name);
-		return (Dataset) query.uniqueResult();
-	}
 
 	@Override
 	public void removeDatasetFromTestPlanItems(Long datasetId) {

@@ -23,26 +23,52 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.Dataset;
 
-@DynamicDao(entity = Dataset.class)
-public interface DatasetDao extends CustomDatasetDao{
 
-	void persist(Dataset newValue);
+public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao{
 
+	// note : native method from JPA repositorie
+	void save(Dataset newValue);
+
+	// note : uses the Spring JPA dsl 
 	Dataset findById(Long id);
 
-	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
 
-	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
+	/**
+	 * Will return the dataset matching the given name and belonging to the test case matchine the given id.
+	 * 
+	 * @param testCaseId : the id of the concerned test case
+	 * @param name : the name of the dataset to find
+	 * @return the test case's dataset matching the given id or <code>null</code>
+	 */
+	// note : uses a named query in package-info or elsewhere
+	// note : this name is a valid jpa dsl expression, but to be fully ok with the named query it should be 
+	// findByTestCaseIdAndNameOrderByNameAsc, which is less cool
+	Dataset findByTestCaseIdAndName(@Param("testCaseId") Long testCaseId, @Param("name") String name);
+
+
+	// note : uses a named query in package-info or elsewhere
+	@Modifying
+	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
+
+	// note : uses a named query in package-info or elsewhere
+	@Modifying
+	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
+	
 	/**
 	 * Simply remove the given dataset
 	 * 
 	 * @param dataset : the dataset to remove
 	 */
-	void remove(Dataset dataset);
+	// note : native method from JPA repositorie
+	void delete(Dataset dataset);
 
-	Collection<Dataset> findAllByTestCase(@QueryParam("testCaseId") Long testCaseId);
+	// note : uses the Spring JPA dsl 
+	Collection<Dataset> findAllByTestCaseId(Long testCaseId);
+	
+	
 }

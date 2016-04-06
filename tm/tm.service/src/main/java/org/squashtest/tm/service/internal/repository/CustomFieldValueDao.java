@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 
-public interface CustomFieldValueDao extends Repository<CustomFieldValueDao, Long>{
+public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long>{
 	String ENTITY_TYPE = "entityType";
 
 	/**

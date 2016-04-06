@@ -58,13 +58,13 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	 *  Just as would the annotation @PersistenceContext would do.
 	 */
 	private static final String THREAD_SAFE_EM_CONF = 
-			"  <bean id=\"{0}\"  class = \"org.springframework.orm.jpa.support.SharedEntityManagerBean\">\n" +
+			"  <bean id=\"{0}\"  class = \"org.springframework.orm.jpa.support.SharedEntityManagerBean\" depends-on=\"entityManagerFactory\">\n" +
 	        "    <property name=\"entityManagerFactory\" ref=\"entityManagerFactory\"/>\n" +  
 	        "  </bean>\n\n";
 	
 	private static final String FILE_FOOTER = "</beans>\n";
 
-	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {6} class=\"{1}\">\n"
+	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {6} class=\"{1}\" depends-on=\"{4}\">\n"
 			+ "    <property name=\"componentType\" value=\"{2}\" />\n"
 			+ "    <property name=\"entityType\" value=\"{3}\" />\n"
 			+ "    <property name=\"entityManager\" ref=\"{4}\" />\n"

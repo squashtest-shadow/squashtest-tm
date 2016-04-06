@@ -25,6 +25,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import javax.validation.ValidatorFactory;
@@ -49,6 +50,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -131,6 +133,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	    return factory.getObject();
 	  }
 	
+
 	
 	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
 	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)

@@ -62,7 +62,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public void persist(Dataset dataset, long testCaseId) {
-		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(testCaseId, dataset.getName());
+		Dataset sameName = datasetDao.findByTestCaseIdAndName(testCaseId, dataset.getName());
 
 		if(sameName != null ){
 			throw new DuplicateNameException(dataset.getName(), dataset.getName());
@@ -81,14 +81,14 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 
 	@Override
 	public Collection<Dataset> findAllForTestCase(long testCaseId) {
-		return datasetDao.findAllByTestCase(testCaseId);
+		return datasetDao.findAllByTestCaseId(testCaseId);
 	}
 
 
 	@Override
 	public void remove(Dataset dataset) {
 		this.datasetDao.removeDatasetFromTestPlanItems(dataset.getId());
-		this.datasetDao.remove(dataset);
+		this.datasetDao.delete(dataset);
 	}
 
 
@@ -110,7 +110,7 @@ public class DatasetModificationServiceImpl implements DatasetModificationServic
 	public void changeName(long datasetId, String newName) {
 
 		Dataset dataset = this.datasetDao.findById(datasetId);
-		Dataset sameName = datasetDao.findDatasetByTestCaseAndByName(dataset.getTestCase().getId(), dataset.getName());
+		Dataset sameName = datasetDao.findByTestCaseIdAndName(dataset.getTestCase().getId(), dataset.getName());
 		if(sameName != null && (! sameName.getId().equals(dataset.getId()))){
 			throw new DuplicateNameException(dataset.getName(), newName);
 		} else {
