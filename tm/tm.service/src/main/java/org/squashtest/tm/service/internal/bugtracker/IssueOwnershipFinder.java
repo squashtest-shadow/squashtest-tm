@@ -29,7 +29,7 @@ import java.util.List;
 
 /**
  * @author Gregory Fouquet
- * @since x.y.z  04/04/16
+ * @since 1.14.0  04/04/16
  */
 public interface IssueOwnershipFinder<H> {
 	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(

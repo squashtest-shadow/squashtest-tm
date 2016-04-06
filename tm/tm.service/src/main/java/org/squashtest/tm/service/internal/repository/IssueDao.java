@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 
@@ -108,8 +109,6 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * Will count all Issues from the given executions and execution-steps <b>concerned by the active bug-tracker</b> for each
 	 * execution/execution-step's project.
 	 *
-	 * @param executionsIds
-	 * @param executionStepsIds
 	 * @return the number of Issues detected by the given execution / execution Steps
 	 */
 	Integer countIssuesfromExecutionAndExecutionSteps(List<Long> executionsIds, List<Long> executionStepsIds);
@@ -128,11 +127,6 @@ public interface IssueDao extends EntityDao<Issue> {
 	 */
 	List<Issue> findAllForTestSuite(Long id);
 
-	/**
-	 * Self explanatory
-	 * @param executionStepsIds
-	 * @return
-	 */
 	Integer countIssuesfromExecutionSteps(List<Long> executionStepsIds);
 
 	/**
@@ -174,4 +168,6 @@ public interface IssueDao extends EntityDao<Issue> {
 	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter);
 
 	long countByTestCase(TestCase testCase);
+
+	List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter);
 }

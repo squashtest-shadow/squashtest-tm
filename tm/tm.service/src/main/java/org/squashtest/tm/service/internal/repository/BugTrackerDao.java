@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 
 import java.util.Collection;
 import java.util.List;
@@ -81,4 +82,6 @@ public interface BugTrackerDao extends EntityDao<BugTracker> {
 	BugTracker findByTestSuite(TestSuite testSuite);
 
 	List findAllPairsByExecutions(Collection<Execution> executions);
+
+	BugTracker findByExecutionStep(ExecutionStep executionStep);
 }

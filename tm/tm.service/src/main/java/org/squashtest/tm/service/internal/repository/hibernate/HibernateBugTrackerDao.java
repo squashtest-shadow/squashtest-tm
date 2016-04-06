@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
@@ -40,8 +41,6 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-
-import static org.squashtest.tm.domain.campaign.QTestSuite.testSuite;
 
 @Repository
 public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> implements BugTrackerDao {
@@ -161,4 +160,12 @@ public class HibernateBugTrackerDao extends HibernateEntityDao<BugTracker> imple
 			.setParameterList("executions", executions)
 			.list();
 	}
+
+	@Override
+	public BugTracker findByExecutionStep(ExecutionStep executionStep) {
+		return (BugTracker) currentSession()
+			.getNamedQuery("bugtracker.findByExecutionStep")
+			.setParameter("step", executionStep)
+			.uniqueResult();
+}
 }

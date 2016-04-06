@@ -311,15 +311,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@PreAuthorize("hasPermission(#stepId, 'org.squashtest.tm.domain.execution.ExecutionStep', 'READ')" + OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSortedIssueOwnerShipsForExecutionStep(
 		Long stepId, PagingAndSorting sorter) {
-
-		ExecutionStep step = executionStepDao.findById(stepId);
-
-		List<IssueDetector> detectors = new ArrayList<>(1);
-		detectors.add(step);
-
-		BugTracker bt = step.getBugTracker();
-
-		return createOwnershipsCollection(sorter, detectors, bt);
+		return issueFinder("executionStepIssueFinder").findSorted(stepId, sorter);
 
 	}
 

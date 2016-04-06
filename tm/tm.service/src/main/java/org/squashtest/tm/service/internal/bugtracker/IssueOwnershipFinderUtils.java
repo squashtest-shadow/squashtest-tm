@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.bugtracker;
 
 import org.squashtest.tm.bugtracker.definition.RemoteIssue;
 import org.squashtest.tm.domain.bugtracker.Issue;
+import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.execution.Execution;
@@ -59,6 +60,19 @@ final class IssueOwnershipFinderUtils {
 			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, ish.getId()), pair.left);
 			ownerships.add(ownership);
 		}
+
+		return ownerships;
+	}
+
+	static List<IssueOwnership<RemoteIssueDecorator>> coerceIntoIssueOwnerships(IssueDetector holder, Collection<Issue> issues, Map<String, RemoteIssue> remoteIssueByRemoteId) {
+		List<IssueOwnership<RemoteIssueDecorator>> ownerships = new ArrayList<>(issues.size());
+
+		for (Issue issue : issues) {
+			RemoteIssue remote = remoteIssueByRemoteId.get(issue.getRemoteIssueId());
+
+			IssueOwnership<RemoteIssueDecorator> ownership = new IssueOwnership<>(new RemoteIssueDecorator(remote, issue.getId()), holder);
+			ownerships.add(ownership);
+}
 
 		return ownerships;
 	}

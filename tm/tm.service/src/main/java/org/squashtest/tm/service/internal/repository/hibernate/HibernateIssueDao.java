@@ -394,4 +394,14 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 			.uniqueResult();
 	}
 
+	@Override
+	public List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select Issue from ExecutionStep s join s.issueList il join il.issues Issue where s = :step", sorter);
+
+		Query query = currentSession().createQuery(hql).setParameter("step", executionStep);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+}
+
 }

@@ -347,12 +347,10 @@ DenormalizedFieldHolder, BoundEntity {
 
 		// the nature and type now
 		InfoListItem nature = testCase.getNature();
-		DenormalizedNature denoNature = new DenormalizedNature(nature.getLabel(), nature.getCode(), nature.getIconName());
-		this.nature = denoNature;
+		this.nature = new DenormalizedNature(nature.getLabel(), nature.getCode(), nature.getIconName());
 
 		InfoListItem type = testCase.getType();
-		DenormalizedType denoType = new DenormalizedType(type.getLabel(), type.getCode(), type.getIconName());
-		this.type = denoType;
+		this.type = new DenormalizedType(type.getLabel(), type.getCode(), type.getIconName());
 
 	}
 
@@ -689,7 +687,6 @@ DenormalizedFieldHolder, BoundEntity {
 	/**
 	 * returns the index of the step matching the given id or <code>-1</code> if step is not found.
 	 *
-	 * @param stepId
 	 * @return index of step or -1
 	 */
 	public int getStepIndex(long stepId) {

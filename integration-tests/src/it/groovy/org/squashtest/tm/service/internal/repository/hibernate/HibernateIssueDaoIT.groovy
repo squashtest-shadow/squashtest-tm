@@ -28,6 +28,7 @@ import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
 import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.service.internal.repository.IssueDao
 import org.unitils.dbunit.annotation.DataSet
@@ -391,4 +392,16 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		issueDao.countByTestCase(testCase) == 14
 
 	}
+
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "should fetch issues by execution steps"(){
+		given :
+		def step = sessionFactory.currentSession.load(ExecutionStep, 100002010L)
+
+		when:
+		def result = issueDao.findAllByExecutionStep(step, sorter())
+
+		then :
+		result*.id == [100005L, 100006L]
+}
 }

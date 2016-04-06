@@ -20,36 +20,6 @@
  */
 package org.squashtest.tm.domain.execution;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import javax.persistence.Basic;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Type;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -67,13 +37,13 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.library.HasExecutionStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.domain.testcase.TestStepVisitor;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
+
+import javax.persistence.*;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Entity
 @Auditable
@@ -86,7 +56,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private static final String PARAM_PATTERN = PARAM_PREFIX + "([A-Za-z0-9_-]{1,255})" + PARAM_SUFFIX;
 	private static final String NO_PARAM = "&lt;no_value&gt;";
 	static {
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.UNTESTABLE);
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.BLOCKED);
@@ -148,7 +118,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private IssueList issueList = new IssueList();
 
 	@Transient
-	private Map<String, String> dataset = new HashMap<String,String>();
+	private Map<String, String> dataset = new HashMap<>();
 
 	/**
 	 * Hibernate needs this.
@@ -355,7 +325,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 
 	@Override
 	public List<Long> getAllIssueListId() {
-		List<Long> ids = new LinkedList<Long>();
+		List<Long> ids = new LinkedList<>();
 		ids.add(issueList.getId());
 		return ids;
 	}
