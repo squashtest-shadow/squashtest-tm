@@ -23,9 +23,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
@@ -45,7 +43,6 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -422,30 +419,12 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
-
-		Map<String, Integer> statusMap = new HashMap<String, Integer>();
-
-		fillStatusMapWithQueryResult(campaignId, statusMap);
-
-		return new TestPlanStatistics(statusMap);
-	}
-
-	private void fillStatusMapWithQueryResult(final long campaignId, Map<String, Integer> statusMap) {
-		// Add Total number of TestCases
-		Integer nbTestPlans = countIterationsTestPlanItems(campaignId).intValue();
-		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-
-		// Add number of testCase for each ExecutionStatus
-		SetQueryParametersCallback newCallBack = idParameter(campaignId);
-		List<Object[]> result = executeListNamedQuery("campaign.countStatuses", newCallBack);
-		for (Object[] objTab : result) {
-			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
-		}
-	}
-
-	private Long countIterationsTestPlanItems(long campaignId) {
-		SetQueryParametersCallback callback = idParameter(campaignId);
-		return (Long) executeEntityNamedQuery("campaign.countIterationsTestPlanItems", callback);
+		
+		Query q = currentSession().getNamedQuery("campaign.countStatuses");
+		q.setParameter("campaignId", campaignId);
+		List<Object[]> result = q.list();
+		
+		return new TestPlanStatistics(result);
 	}
 
 	@Override

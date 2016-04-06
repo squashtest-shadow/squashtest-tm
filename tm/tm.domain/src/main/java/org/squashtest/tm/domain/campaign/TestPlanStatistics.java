@@ -22,6 +22,8 @@ package org.squashtest.tm.domain.campaign;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -46,7 +48,7 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
  */
 // made "final" because SONAR complained about constructors and overridable methods used in there
 public final class TestPlanStatistics {
-	public static final String TOTAL_NUMBER_OF_TEST_CASE_KEY = "total";
+	private int nbTestCases;
 	private int progression;
 	private TestPlanStatus status;
 	private int nbDone ;
@@ -54,7 +56,7 @@ public final class TestPlanStatistics {
 
 
 	public int getNbTestCases() {
-		return findIntValue(TOTAL_NUMBER_OF_TEST_CASE_KEY);
+		return nbTestCases;
 	}
 
 	public int getProgression() {
@@ -103,15 +105,37 @@ public final class TestPlanStatistics {
 	}
 
 	public TestPlanStatistics() {
-
+		super();
+	}
+	
+	/*
+	 * The format for Object[] is : [executionStatus : String, nbItems : Long ]
+	 * 
+	 * 
+	 */
+	public TestPlanStatistics(Iterable<Object[]> statisticValues){
+		super();
+		Map<String, Integer> statMaps = new HashMap<>();
+		for (Object[] tuple : statisticValues){
+			statMaps.put((String)tuple[0], ((Long) tuple[1]).intValue());
+		}
+		this.statisticValues = statMaps;
+		init();
 	}
 
 	public TestPlanStatistics(Map<String, Integer> statisticValues) {
 		super();
 		this.statisticValues = statisticValues;
+		init();
+	}
+	
+	// **************************** ***************************
+	
+	private void init(){
+		computeNbTestCases();
 		computeDone();
 		computeProgression();
-		this.status = TestPlanStatus.getStatus(this);
+		this.status = TestPlanStatus.getStatus(this);		
 	}
 
 	private int findIntValue( String key){
@@ -132,6 +156,15 @@ public final class TestPlanStatistics {
 		}
 	}
 
+	private void computeNbTestCases(){
+		Collection<Integer> all = statisticValues.values();
+		int acc=0;
+		for (Integer count : all){
+			acc+=count;
+		}
+		nbTestCases = acc;
+	}
+	
 	private void computeDone() {
 		nbDone = getNbSettled() + getNbUntestable()  + getNbBlocked() +  getNbFailure() + getNbSuccess() ;
 	}

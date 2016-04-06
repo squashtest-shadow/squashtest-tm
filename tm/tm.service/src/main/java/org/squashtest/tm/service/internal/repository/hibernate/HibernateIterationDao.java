@@ -109,6 +109,23 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	private final String hqlUserFilteredIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE_START.replace("{whereClause}",
 			"and User.login = :userLogin ");
 
+	
+	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
+	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+	static {
+		Map<String, String> modeDataMap = new HashMap<String, String>(2);
+		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
+				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
+
+		Map<String, String> userData = new HashMap<String, String>(2);
+		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
+
+	}
+	
 	@Override
 	public List<Iteration> findAllByCampaignId(long campaignId) {
 
@@ -253,25 +270,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public TestPlanStatistics getIterationStatistics(long iterationId) {
 
-		Map<String, Integer> statusMap = new HashMap<String, Integer>();
-
-		fillStatusMapWithQueryResult(iterationId, statusMap);
-
-		return new TestPlanStatistics(statusMap);
+		Query q = currentSession().getNamedQuery("iteration.countStatuses");
+		q.setParameter("iterationId", iterationId);
+		List<Object[]> result = q.list();
+		
+		return new TestPlanStatistics(result);
 	}
 
-	private void fillStatusMapWithQueryResult(final long iterationId, Map<String, Integer> statusMap) {
-		// Add Total number of TestCases
-		Integer nbTestPlans = ((Long) countTestPlans(iterationId, DefaultFiltering.NO_FILTERING)).intValue();
-		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-
-		// Add number of testCase for each ExecutionStatus
-		SetQueryParametersCallback newCallBack = idParameter(iterationId);
-		List<Object[]> result = executeListNamedQuery("iteration.countStatuses", newCallBack);
-		for (Object[] objTab : result) {
-			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
-		}
-	}
 
 	@Override
 	public long countRunningOrDoneExecutions(long iterationId) {
@@ -324,21 +329,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	}
 
-	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
-	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
-	static {
-		Map<String, String> modeDataMap = new HashMap<String, String>(2);
-		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
-				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
-		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
-		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
-
-		Map<String, String> userData = new HashMap<String, String>(2);
-		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
-		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
-
-	}
 
 	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering,
 			MultiSorting multiSorting) {

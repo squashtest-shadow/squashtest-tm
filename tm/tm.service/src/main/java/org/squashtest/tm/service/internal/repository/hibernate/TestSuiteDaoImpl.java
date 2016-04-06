@@ -32,14 +32,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
@@ -48,9 +46,6 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 
-/*
- * todo : make it a dynamic call
- */
 @Repository("CustomTestSuiteDao")
 public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
@@ -70,92 +65,47 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
 
 
+	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
+	
+	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+	
+	static {
+		Map<String, String> modeDataMap = new HashMap<String, String>(2);
+		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
+				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
+
+		Map<String, String> userData = new HashMap<String, String>(2);
+		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
+		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
+		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
+
+	}
+	
+	
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
-		// Add Total number of TestCases
-		Integer nbTestPlans = countTestPlanItems(testSuiteId).intValue();
+		
+		Query q = currentSession().getNamedQuery("TestSuite.countStatuses");
+		q.setParameter("id", testSuiteId);
+		List<Object[]> result = q.list();
 
-		// Add number of testCase for each ExecutionStatus
-		SetQueryParametersCallback newCallBack = new IdId2ParameterCallback(testSuiteId);
-		List<Object[]> result = executeListNamedQuery("TestSuite.countStatuses", newCallBack);
-
-		return fillTestPlanStatistics(nbTestPlans, result);
+		return new TestPlanStatistics(result);
 	}
 
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
-		// Add Total number of TestCases
-		Integer nbTestPlans = countTestPlanItems(testSuiteId, userLogin).intValue();
+		
+		Query q = currentSession().getNamedQuery("TestSuite.countStatusesForUser");
+		q.setParameter("id", testSuiteId);
+		q.setParameter("login", userLogin);
+		List<Object[]> result = q.list();
 
-		// Add number of testCase for each ExecutionStatus
-		SetQueryParametersCallback newCallBack = new IdId2LoginParameterCallback(testSuiteId, userLogin);
-		List<Object[]> result = executeListNamedQuery("TestSuite.countStatusesForUser", newCallBack);
+		return new TestPlanStatistics(result);
 
-		return fillTestPlanStatistics(nbTestPlans, result);
 	}
 
-	private TestPlanStatistics fillTestPlanStatistics(Integer nbTestPlans, List<Object[]> queryResult) {
-		Map<String, Integer> statusMap = new HashMap<String, Integer>();
-		statusMap.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, nbTestPlans);
-		for (Object[] objTab : queryResult) {
-			statusMap.put(((ExecutionStatus) objTab[0]).name(), ((Long) objTab[1]).intValue());
-		}
-		return new TestPlanStatistics(statusMap);
-	}
-
-	private static class IdId2ParameterCallback implements SetQueryParametersCallback {
-		private long id;
-
-		public IdId2ParameterCallback(long id) {
-			this.id = id;
-		}
-
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setLong("id", id);
-			query.setLong("id2", id);
-		}
-	}
-
-	private static class IdId2LoginParameterCallback implements SetQueryParametersCallback {
-		private long id;
-		private String login;
-
-		public IdId2LoginParameterCallback(long id, String login) {
-			this.id = id;
-			this.login = login;
-		}
-
-		@Override
-		public void setQueryParameters(Query query) {
-			query.setLong("id", id);
-			query.setLong("id2", id);
-			query.setParameter("login", login);
-		}
-	}
-
-	private SetQueryParametersCallback idParameter(final long id) {
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("1", id);
-			}
-		};
-		return newCallBack;
-	}
-
-	private SetQueryParametersCallback idLoginParameter(final long id, final String login) {
-		SetQueryParametersCallback newCallBack = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setLong("id", id);
-				query.setParameter("login", login);
-			}
-		};
-		return newCallBack;
-	}
 
 
 	@Override
@@ -180,22 +130,19 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 		return buildIndexedItems(tuples);
 
 	}
+	
 
-	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
-	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
-	static {
-		Map<String, String> modeDataMap = new HashMap<String, String>(2);
-		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
-				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
-		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
-		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
+	@Override
+	public long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering) {
 
-		Map<String, String> userData = new HashMap<String, String>(2);
-		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
-		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
-		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
+		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
 
+		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
+
+		return query.list().size();
 	}
+
+
 
 	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering) {
 
@@ -281,27 +228,5 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 		return indexedItems;
 	}
 
-	@Override
-	public long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering) {
 
-		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering);
-
-		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), suiteId, filtering, columnFiltering);
-
-		return query.list().size();
-	}
-
-
-	private Long countTestPlanItems(long testSuiteId) {
-		Query q = currentSession().getNamedQuery("TestSuite.countTestPlanItems");
-		q.setLong("1", testSuiteId);
-		return (Long)q.uniqueResult();
-	}
-
-	private Long countTestPlanItems(long testSuiteId, String userLogin) {
-		return (Long) executeEntityNamedQuery("TestSuite.countTestPlanItemsForUsers",
-				idLoginParameter(testSuiteId, userLogin));
-	}
-
-	
 }

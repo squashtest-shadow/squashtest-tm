@@ -33,7 +33,6 @@ class TestPlanStatisticsTest extends Specification {
 		
 		when :
 			Map<String, Integer> mapStats = new HashMap<String, Integer>(7)
-			mapStats.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, 10)
 			mapStats.put(ExecutionStatus.UNTESTABLE.name(), 0)
 			mapStats.put(ExecutionStatus.BLOCKED.name(), 2)
 			mapStats.put(ExecutionStatus.FAILURE.name(), 1)
@@ -60,7 +59,6 @@ class TestPlanStatisticsTest extends Specification {
 		
 		when :
 		Map<String, Integer> mapStats = new HashMap<String, Integer>(7)
-		mapStats.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, 10)
 		mapStats.put(ExecutionStatus.UNTESTABLE.name(), 0)
 		mapStats.put(ExecutionStatus.BLOCKED.name(), 0)
 		mapStats.put(ExecutionStatus.FAILURE.name(), 0)
@@ -87,7 +85,6 @@ class TestPlanStatisticsTest extends Specification {
 		
 		when :
 		Map<String, Integer> mapStats = new HashMap<String, Integer>(7)
-		mapStats.put(TestPlanStatistics.TOTAL_NUMBER_OF_TEST_CASE_KEY, 10)
 		mapStats.put(ExecutionStatus.UNTESTABLE.name(), 0)
 		mapStats.put(ExecutionStatus.BLOCKED.name(), 3)
 		mapStats.put(ExecutionStatus.FAILURE.name(), 2)
