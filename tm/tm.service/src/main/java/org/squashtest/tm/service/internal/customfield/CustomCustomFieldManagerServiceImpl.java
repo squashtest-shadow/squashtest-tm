@@ -34,6 +34,7 @@ import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
@@ -90,7 +91,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public void deleteCustomField(long customFieldId) {
 		CustomField customField = customFieldDao.findById(customFieldId);
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForCustomField(customFieldId);
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
 		List<Long> bindingIds = new ArrayList<Long>();
 		for(CustomFieldBinding binding : bindings) {
 			bindingIds.add(binding.getId());
@@ -173,7 +174,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	}
 
 	private void addDefaultValueToCustomFields(Long customFieldId,String defaulfValue){
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForCustomField(customFieldId);
+		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
 		for(CustomFieldBinding binding : bindings) {
 			List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
 			for(CustomFieldValue value : values) {
@@ -267,7 +268,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	@Override
 	public List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds) {
 		
-		return customFieldValueDao.getAvailableTagsForEntity(boundEntityType, projectIds);
+		return customFieldValueDao.findAllAvailableTagForEntityInProjects(BindableEntity.valueOf(boundEntityType), projectIds);
 	}
 
 
