@@ -507,8 +507,14 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 				var attrName = key == 'project.id' ? 'project' : 'resid';
 
 				var ids =_.map(selectedInTree, function(node){return $(node).attr(attrName);});
+                if (ids!=undefined&&ids.length>0) {
+                    jsonVariable[key] = {type : "LIST", values : ids};
+                }
+                else {
+                    jsonVariable["project.id"] = {type : "LIST", values : []};
+                }
 
-				jsonVariable[key] = {type : "LIST", values : ids};
+				
 			}
 
 
