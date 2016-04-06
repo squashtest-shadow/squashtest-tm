@@ -196,7 +196,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		newBinding.setCustomField(field);
 		newBinding.setPosition(newIndex.intValue());
 
-		customFieldBindingDao.persist(newBinding);
+		customFieldBindingDao.save(newBinding);
 		eventPublisher.publishEvent(new CreateCustomFieldBindingEvent(newBinding));
 	}
 

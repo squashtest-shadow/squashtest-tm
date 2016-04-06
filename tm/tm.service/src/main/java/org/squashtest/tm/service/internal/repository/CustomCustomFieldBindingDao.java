@@ -20,29 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
 import java.util.List;
 
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 
 public interface CustomCustomFieldBindingDao {
 
 	void removeCustomFieldBindings(List<Long> bindingIds);
 
-	/**
-	 * returns the bindings grouped by project and entity, sorted by position
-	 * @param ids
-	 * @return
-	 */
-	List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
-
-	
-	/**
-	 * returns the bindings grouped by project and entity, sorted by position
-	 * @param ids
-	 * @return
-	 */
-	List<CustomFieldBinding> findAllByIds(List<Long> ids);
-	
+	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
 
 }

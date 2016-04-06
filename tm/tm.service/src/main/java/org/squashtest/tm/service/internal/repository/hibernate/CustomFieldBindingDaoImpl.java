@@ -20,21 +20,34 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
 import org.springframework.stereotype.Repository;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldBindingDao;
 
 
 @Repository("CustomCustomFieldBindingDao")
-public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<CustomFieldBinding> implements CustomCustomFieldBindingDao {
+public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBinding> implements CustomCustomFieldBindingDao {
 
+	@Override
+	public List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity,
+			Paging paging) {
+		Query q = currentSession().getNamedQuery("CustomFieldBinding.findAllForProjectAndEntity");
+		q.setParameter(0, projectId);
+		q.setParameter(1, boundEntity);
+		
+		PagingUtils.addPaging(q, paging);
+		return q.list();
+	}
+	
+	
 	@Override
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
 
@@ -46,15 +59,6 @@ public class HibernateCustomCustomFieldBindingDao extends HibernateEntityDao<Cus
 			updateBindingPositions(newPositions);
 
 		}
-	}
-
-	@Override
-	public List<CustomFieldBinding> findAllByIds(Collection<Long> ids){
-		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(new ArrayList<Long>(ids)));
-	}
-
-	public List<CustomFieldBinding> findAllByIds(List<Long> ids){
-		return executeListNamedQuery("CustomFieldBinding.findAllByIds", new SetBindingIdsParameterCallback(ids));
 	}
 
 

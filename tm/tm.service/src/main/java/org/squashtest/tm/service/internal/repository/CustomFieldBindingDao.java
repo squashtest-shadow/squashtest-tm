@@ -20,30 +20,41 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.core.foundation.collection.Paging;
+import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-@DynamicDao(entity=CustomFieldBinding.class)
-public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 
+public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Long>, CustomCustomFieldBindingDao {
 
+	// note : uses the Spring JPA dsl 
 	CustomFieldBinding findById(long bindingId);
-
+	
+	/**
+	 * returns the bindings grouped by project and entity, sorted by position
+	 * @param ids
+	 * @return
+	 */
+	// note : uses a named query in package-info or elsewhere
+	// cannot really use the dsl findAllByIdIn(collection) because of the presence of grouping in the desired output
+	List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
+	
+	// note : uses a named query in package-info or elsewhere
 	List<CustomFieldBinding> findAllForGenericProject(long projectId);
 
-
+	// note : uses a named query in package-info or elsewhere
 	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
+	
+	// note : uses the Spring JPA dsl 
+	List<CustomFieldBinding> findAllByCustomFieldIdOrderByPositionAsc(long customFieldId);
 
-	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity, Paging paging);
-
-	List<CustomFieldBinding> findAllForCustomField(long customFieldId);
-
-	void persist(CustomFieldBinding binding);
-
+	// note : native method from JPA repositorie
+	void save(CustomFieldBinding binding);
+	
+	// note : uses a named query in package-info or elsewhere
 	Long countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
 
 	/**
@@ -52,6 +63,7 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	 * @param id
 	 * @return
 	 */
+	// note : uses a named query in package-info or elsewhere
 	List<CustomFieldBinding> findAllAlike(long id);
 
 	/**
@@ -63,8 +75,9 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	 * @param boundEntityType
 	 * @return
 	 */
-	List<CustomFieldBinding> findEffectiveBindingsForEntity(@QueryParam("entityId") long entityId,
-			@QueryParam("entityType") BindableEntity entityType);
+	// note : uses a named query in package-info or elsewhere
+	List<CustomFieldBinding> findEffectiveBindingsForEntity(@Param("entityId") long entityId,
+			@Param("entityType") BindableEntity entityType);
 
 
 	/**
@@ -80,8 +93,9 @@ public interface CustomFieldBindingDao extends CustomCustomFieldBindingDao {
 	 * @param entityType
 	 * @return
 	 */
-	List<Object[]> findEffectiveBindingsForEntities(@QueryParam(ParameterNames.ENTITY_IDS) List<Long> entityIds,
-			@QueryParam("entityType") BindableEntity entityType);
+	// note : uses a named query in package-info or elsewhere
+	List<Object[]> findEffectiveBindingsForEntities(@Param(ParameterNames.ENTITY_IDS) List<Long> entityIds,
+			@Param("entityType") BindableEntity entityType);
 
 
 

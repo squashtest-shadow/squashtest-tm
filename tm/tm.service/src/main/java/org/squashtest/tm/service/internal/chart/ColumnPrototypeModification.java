@@ -146,7 +146,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 	@SuppressWarnings("unchecked")
 	private Set<EntityType> findTypeToRemove(Entry<Long, List<CustomFieldBinding>> entry) {
 
-		List<CustomFieldBinding> allBinding = cufBindingDao.findAllForCustomField(entry.getKey());
+		List<CustomFieldBinding> allBinding = cufBindingDao.findAllByCustomFieldIdOrderByPositionAsc(entry.getKey());
 		allBinding.removeAll(entry.getValue());
 
 		Set<EntityType> remainingType = CollectionUtils.isEmpty(allBinding) ? EnumSet.noneOf(EntityType.class)

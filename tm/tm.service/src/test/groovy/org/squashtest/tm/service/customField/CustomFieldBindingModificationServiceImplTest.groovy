@@ -77,7 +77,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		when:
 		service.copyCustomFieldsSettingsFromTemplate(project, template)
 		then:
-		2*customFieldBindingDao.persist(_)
+		2*customFieldBindingDao.save(_)
 		2*customValueService.cascadeCustomFieldValuesCreation(_)
 	}
 }
