@@ -82,7 +82,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Size(max = MAX_NAME_SIZE)
 	private String name;
 
 	@Lob
@@ -100,7 +100,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "TEST_PLAN_ORDER")
 	@JoinTable(name = "TEST_SUITE_TEST_PLAN_ITEM", inverseJoinColumns = @JoinColumn(name = "TPI_ID", referencedColumnName = "ITEM_TEST_PLAN_ID"), joinColumns = @JoinColumn(name = "SUITE_ID", referencedColumnName = "ID"))
-	private List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
+	private List<IterationTestPlanItem> testPlan = new LinkedList<>();
 
 	@Override
 	public Long getId() {
@@ -138,7 +138,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * When one needs to create a suite in the scope of an iteration, it should use
 	 * {@link Iteration#addTestSuite(TestSuite)}. This method is for internal use only.
 	 * 
-	 * @param iteration
 	 */
 	/* package */void setIteration(@NotNull Iteration iteration) {
 		this.iteration = iteration;
@@ -162,8 +161,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * Compares 2 suites, for internal use.
 	 * 
-	 * @param that
-	 * @return
 	 */
 	private boolean hasSame(List<TestSuite> suites) {
 
@@ -176,9 +173,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 					result = true;
 				}
 			} else {
-				// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals()
-				// would
-				// return false
+				// id not null -> persistent entity -> we cant use equals() because "that" might be a proxy so equals() would return false
 				if (this.id.equals(suite.getId())) {
 					result = true;
 				}
@@ -209,7 +204,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * Binds the test plan items to this test suite
 	 * 
-	 * @param items
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
@@ -240,7 +234,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
 	 * 
-	 * @param itemIds
 	 */
 	public void bindTestPlanItemsById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
@@ -276,7 +269,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * @return an ordered copy of the test-suite test plan
 	 */
 	public List<IterationTestPlanItem> createPastableCopyOfTestPlan() {
-		List<IterationTestPlanItem> testPlanCopy = new LinkedList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> testPlanCopy = new LinkedList<>();
 		List<IterationTestPlanItem> testPlanOriginal = this.getTestPlan();
 
 		for (IterationTestPlanItem iterationTestPlanItem : testPlanOriginal) {
@@ -348,8 +341,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	public boolean isFirstExecutableTestPlanItem(long itemId) {
 
 		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
-			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) { // &&
-				// iterationTestPlanItem.isExecutableThroughTestSuite()
+			if (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) {
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
@@ -362,15 +354,14 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * 
 	 * @param itemId
 	 *            : the id of the item to determine if it is the first executable test plan item
-	 * @param testerlogin
+	 * @param testerLogin
 	 *            : the id of the current user if he is a Test runner
 	 */
 	public boolean isFirstExecutableTestPlanItem(long itemId, String testerLogin) {
 
 		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
 			if ((testerLogin == null || iterationTestPlanItem.isAssignedToUser(testerLogin))
-					&& (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted())) { // &&
-				// iterationTestPlanItem.isExecutableThroughTestSuite()
+					&& (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted())) {
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
@@ -386,7 +377,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 *             if no item is found
 	 * @throws IllegalArgumentException
 	 *             if id does not correspond to an item of the test suite
-	 * @param testPlanItemId
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId) {
 		return findNextExecutableTestPlanItem(testPlanItemId, null);
@@ -401,7 +391,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 *             if no item is found
 	 * @throws IllegalArgumentException
 	 *             if id does not correspond to an item of the test suite
-	 * @param testPlanItemId
 	 * @param testerLogin : the login of the connected user if he is a Test Runner
 	 */
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId, String testerLogin) {
@@ -416,20 +405,10 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	}
 
-	/**
-	 * @throws {@link TestPlanItemNotExecutableException}
-	 * @throws {@link EmptyTestSuiteTestPlanException}
-	 * @return
-	 */
 	public IterationTestPlanItem findFirstExecutableTestPlanItem() {
 		return findFirstExecutableTestPlanItem(null);
 	}
 
-	/**
-	 * @throws {@link TestPlanItemNotExecutableException}
-	 * @throws {@link EmptyTestSuiteTestPlanException}
-	 * @return
-	 */
 	public IterationTestPlanItem findFirstExecutableTestPlanItem(String testerLogin) {
 		IterationTestPlanItem firstTestPlanItem = getFirstTestPlanItem(testerLogin);
 		if (firstTestPlanItem.isExecutableThroughTestSuite()) {
@@ -451,8 +430,6 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 		throw new IllegalArgumentException("Item[" + testPlanItemId + "] does not belong to test plan of TestSuite["
 				+ id + ']');
 	}
-
-	// ***************** (detached) custom field section *************
 
 	@Override
 	public Long getBoundEntityId() {
@@ -519,5 +496,5 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 			}
 		}
 		return allowed;
-	};
+}
 }

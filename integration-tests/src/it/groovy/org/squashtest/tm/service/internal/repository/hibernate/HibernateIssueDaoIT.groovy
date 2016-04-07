@@ -333,8 +333,8 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def result = issueDao.findAllExecutionIssuePairsByTestSuite(ts, sorter(firstItemIndex: 0))
 
 		then:
-		result*.left.id as Set == [10000100L, 10000100L, 10000101L, 10000120L] as Set
-		result*.right.id as Set == [100001L, 100002L, 100003L, 100008L] as Set
+		result*.left.id as Set == [10000100L, 10000100L, 10000101L] as Set
+		result*.right.id as Set == [100001L, 100002L, 100003L] as Set
 	}
 
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
@@ -343,7 +343,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		TestSuite ts = em.find(TestSuite, 1000030L)
 
 		expect:
-		issueDao.countByTestSuite(ts) == 4
+		issueDao.countByTestSuite(ts) == 3
 
 	}
 

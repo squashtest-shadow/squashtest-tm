@@ -343,7 +343,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter) {
-		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.testPlan tp join tp.iteration i join i.testSuites ts join ex.issues Issue where ts = :testSuite", sorter);
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues Issue where ts = :testSuite", sorter);
 
 		Query query = currentSession().createQuery(hql).setParameter("testSuite", testSuite);
 		PagingUtils.addPaging(query, sorter);
