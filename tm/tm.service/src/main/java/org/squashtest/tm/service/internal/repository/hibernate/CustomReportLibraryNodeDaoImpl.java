@@ -20,63 +20,62 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.chart.ChartDefinition;
-import org.squashtest.tm.domain.customreport.CustomReportDashboard;
-import org.squashtest.tm.domain.customreport.CustomReportFolder;
-import org.squashtest.tm.domain.customreport.CustomReportLibrary;
-import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-import org.squashtest.tm.domain.customreport.TreeEntityVisitor;
+import org.squashtest.tm.domain.customreport.*;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.internal.repository.CustomCustomReportLibraryNodeDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.ArrayList;
+import java.util.List;
 
-public class CustomReportLibraryNodeDaoImpl extends HibernateEntityDao<CustomReportLibraryNode> implements CustomCustomReportLibraryNodeDao {
+
+public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibraryNodeDao {
+
+	@PersistenceContext
+	EntityManager em;
 
 	@Override
 	public List<TreeLibraryNode> findChildren(Long parentId) {
-		CustomReportLibraryNode node = findById(parentId);
+		CustomReportLibraryNode node = em.find(CustomReportLibraryNode.class,parentId);
 		return node.getChildren();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllDescendantIds(List<Long> nodesIds) {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
-		query.setParameterList("ids", nodesIds, LongType.INSTANCE);
-		return query.list();
+		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
+		query.setParameter("ids", nodesIds);
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CustomReportLibraryNode> findAllDescendants(List<Long> nodesIds) {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
-		query.setParameterList("ids", nodesIds, LongType.INSTANCE);
-		return query.list();
+		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
+		query.setParameter("ids", nodesIds);
+		return query.getResultList();
 	}
 
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds) {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
-		query.setParameterList("ids", nodesIds, LongType.INSTANCE);
-		return query.list();
+		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
+		query.setParameter("ids", nodesIds);
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAncestorIds(Long nodeId) {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
+		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
 		query.setParameter("id", nodeId);
-		return query.list();
+		return query.getResultList();
 	}
 
 	@Override
@@ -88,15 +87,15 @@ public class CustomReportLibraryNodeDaoImpl extends HibernateEntityDao<CustomRep
 
 	@Override
 	public List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds) {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibraryFiltered");
-		query.setParameterList("filteredProjectsIds", projectIds, LongType.INSTANCE);
-		return (List<CustomReportLibraryNode>) query.list();
+		Query query = em.createQuery("CustomReportLibraryNode.findConcreteLibraryFiltered");
+		query.setParameter("filteredProjectsIds", projectIds);
+		return query.getResultList();
 	}
 
 	@Override
 	public List<CustomReportLibraryNode> findAllConcreteLibraries() {
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
-		return (List<CustomReportLibraryNode>) query.list();
+		Query query = em.createQuery("CustomReportLibraryNode.findConcreteLibrary");
+		return query.getResultList();
 	}
 
 	@Override
@@ -125,10 +124,10 @@ public class CustomReportLibraryNodeDaoImpl extends HibernateEntityDao<CustomRep
 			}
 		};
 		treeEntity.accept(visitor);
-		Query query = currentSession().getNamedQuery("CustomReportLibraryNode.findNodeFromEntity");
+		Query query = em.createQuery("CustomReportLibraryNode.findNodeFromEntity");
 		query.setParameter("entityType", type[0]);
 		query.setParameter("entityId", treeEntity.getId());
-		return (CustomReportLibraryNode) query.uniqueResult();
+		return (CustomReportLibraryNode) query.getSingleResult();
 	}
 
 }

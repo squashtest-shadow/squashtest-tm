@@ -77,7 +77,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 
 	@Override
 	public CustomReportLibraryNode findCustomReportLibraryNodeById (Long id){
-		return customReportLibraryNodeDao.findById(id);
+		return customReportLibraryNodeDao.findOne(id);
 	}
 
 	@Override
@@ -93,7 +93,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<CustomReportLibraryNode> findAllCustomReportLibraryNodeById(List<Long> treeNodeIds) {
-		return customReportLibraryNodeDao.findAllByIds(treeNodeIds);
+		return customReportLibraryNodeDao.findAll(treeNodeIds);
 	}
 
 
@@ -130,16 +130,16 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PreAuthorize("hasPermission(#parentId,'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public CustomReportLibraryNode createNewNode(Long parentId, TreeEntity entity) {
-		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.findById(parentId);
+		CustomReportLibraryNode parentNode = customReportLibraryNodeDao.findOne(parentId);
 		if (parentNode == null) {
 			throw new IllegalArgumentException("The node designed by parentId doesn't exist, can't add new node");
 		}
 		CustomReportLibraryNode newNode = new CustomReportLibraryNodeBuilder(parentNode, entity).build();
-		customReportLibraryNodeDao.persist(newNode);
+		customReportLibraryNodeDao.save(newNode);
 		Session session = em.unwrap(Session.class);
 		session.flush();
 		session.clear();//needed to force hibernate to reload the persisted entities...
-		return customReportLibraryNodeDao.findById(newNode.getId());
+		return customReportLibraryNodeDao.findOne(newNode.getId());
 	}
 
 	@Override
@@ -150,7 +150,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@Override
 	public OperationReport delete(List<Long> nodeIds) {
 		for (Long id : nodeIds) {
-			TreeLibraryNode node = customReportLibraryNodeDao.findById(id);
+			TreeLibraryNode node = customReportLibraryNodeDao.findOne(id);
 			checkPermission(new SecurityCheckableObject(node, "DELETE"));
 		}
 		return deletionHandler.deleteNodes(nodeIds);
@@ -173,7 +173,7 @@ public class CustomReportLibraryNodeServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public void renameNode(Long nodeId, String newName)
 			throws DuplicateNameException {
-		CustomReportLibraryNode crln = customReportLibraryNodeDao.findById(nodeId);
+		CustomReportLibraryNode crln = customReportLibraryNodeDao.findOne(nodeId);
 		crln.renameNode(newName);
 	}
 
@@ -198,8 +198,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public List<TreeLibraryNode> copyNodes(List<Long> nodeIds, Long targetId) {
-		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllByIds(nodeIds);
-		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(targetId);
+		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAll(nodeIds);
+		CustomReportLibraryNode target = customReportLibraryNodeDao.findOne(targetId);
 		return makeCopy(nodes, target);
 	}
 
@@ -207,8 +207,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 	@PreAuthorize("hasPermission(#targetId, 'org.squashtest.tm.domain.customreport.CustomReportLibraryNode' ,'WRITE') "
 		+ OR_HAS_ROLE_ADMIN)
 	public void moveNodes(List<Long> nodeIds, Long targetId) {
-		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAllByIds(nodeIds);
-		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(targetId);
+		List<CustomReportLibraryNode> nodes = customReportLibraryNodeDao.findAll(nodeIds);
+		CustomReportLibraryNode target = customReportLibraryNodeDao.findOne(targetId);
 		nodeMover.moveNodes(nodes,target);
 	}
 

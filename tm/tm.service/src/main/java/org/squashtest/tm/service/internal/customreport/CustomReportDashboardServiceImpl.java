@@ -154,7 +154,7 @@ public class CustomReportDashboardServiceImpl implements
 			return false;
 		}
 		Long dashboardId = Long.parseLong(candidateDashboardId);
-		CustomReportLibraryNode node = customReportLibraryNodeDao.findById(dashboardId);
+		CustomReportLibraryNode node = customReportLibraryNodeDao.findOne(dashboardId);
 		return node != null && permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","READ",node);
 	}
 }

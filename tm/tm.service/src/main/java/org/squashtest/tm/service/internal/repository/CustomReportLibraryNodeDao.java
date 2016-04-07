@@ -20,14 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import org.springframework.data.repository.Repository;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 
-public interface CustomReportLibraryNodeDao extends Repository<CustomReportLibraryNode, Long>, CustomCustomReportLibraryNodeDao {
+import java.util.List;
+
+public interface CustomReportLibraryNodeDao extends JpaRepository<CustomReportLibraryNode, Long>, CustomCustomReportLibraryNodeDao {
 
 	List<CustomReportLibraryNode> findByEntityType(CustomReportTreeDefinition type);
+
 }
