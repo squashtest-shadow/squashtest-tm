@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,6 +40,15 @@ import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
 
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
 @Service("squashtest.tm.service.BugTrackerManagerService")
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, BugTrackerSystemManager {
 
@@ -67,10 +66,10 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Inject
 	private BugTrackersLocalService bugtrackersLocalService;
-	
+
 	@Inject
 	private RequirementSyncExtenderDao syncreqDao;
-	
+
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
@@ -91,7 +90,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	public PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter) {
 		List<BugTracker> bugTrackers = bugTrackerDao.findSortedBugTrackers(filter);
 		long count = bugTrackerDao.countBugTrackers();
-		return new PagingBackedPagedCollectionHolder<List<BugTracker>>(filter, count, bugTrackers);
+		return new PagingBackedPagedCollectionHolder<>(filter, count, bugTrackers);
 	}
 
 	@Override
@@ -140,8 +139,8 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 			issueDao.remove(issue);
 		}
 	}
-	
-	private void deleteLinkedSyncedRequirements(final Long bugtrackerId){
+
+	private void deleteLinkedSyncedRequirements(final Long bugtrackerId) {
 		syncreqDao.deleteAllByServer(bugtrackerId);
 	}
 
@@ -152,7 +151,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	/**
 	 * This is a system operation so there is no security constraint.
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.bugtracker.BugTrackerSystemManager#createBugTracker(org.squashtest.csp.core.bugtracker.domain.BugTracker)
 	 */
 	@Override

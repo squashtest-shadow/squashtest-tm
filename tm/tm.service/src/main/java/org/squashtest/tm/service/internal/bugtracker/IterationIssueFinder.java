@@ -37,7 +37,7 @@ import org.squashtest.tm.service.internal.repository.IterationDao;
  * @since 1.14.0  29/03/16
  */
 @Component
-class IterationIssueFinder extends IssueOwnershipFinderStrategy<Iteration> {
+class IterationIssueFinder extends IssueOwnershipFinderSupport<Iteration> {
 	@Inject private IterationDao iterationDao;
 	@Override
 	protected Iteration findEntity(long id) {

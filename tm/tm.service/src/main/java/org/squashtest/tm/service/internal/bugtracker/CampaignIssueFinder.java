@@ -37,7 +37,7 @@ import org.squashtest.tm.service.internal.repository.CampaignDao;
  * @since 1.14.0  29/03/16
  */
 @Component
-class CampaignIssueFinder extends IssueOwnershipFinderStrategy<Campaign> {
+class CampaignIssueFinder extends IssueOwnershipFinderSupport<Campaign> {
 	@Inject
 	private CampaignDao campaignDao;
 

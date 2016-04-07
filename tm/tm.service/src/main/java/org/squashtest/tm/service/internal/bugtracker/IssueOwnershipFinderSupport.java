@@ -47,10 +47,15 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
+ * Implementation of IssueOwnershipFinder using template mehod pattern.
+ *
+ * This object collects all the issues (local and remote) "held" by an entity and coerces them into a list of IssueOwnership.
+ * All issues are considered declared on the Execution (ie an ExecutionStep will be substituted by its Execution)
+ *
  * @author Gregory Fouquet
  * @since 1.14.0  29/03/16
  */
-abstract class IssueOwnershipFinderStrategy<H> implements IssueOwnershipFinder<H> {
+abstract class IssueOwnershipFinderSupport<H> implements IssueOwnershipFinder {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
 	@Inject
@@ -62,13 +67,12 @@ abstract class IssueOwnershipFinderStrategy<H> implements IssueOwnershipFinder<H
 	@Inject
 	protected BugTrackerDao bugTrackerDao;
 
-	public IssueOwnershipFinderStrategy() {
+	IssueOwnershipFinderSupport() {
 		super();
 	}
 
 	@Override
-	public final PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(
-		long entityId, PagingAndSorting sorter) {
+	public final PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, PagingAndSorting sorter) {
 		H holder = findEntity(entityId);
 		List<Pair<Execution, Issue>> pairs = findExecutionIssuePairs(holder, sorter);
 		BugTracker bugTracker = findBugTracker(holder);
@@ -100,7 +104,8 @@ abstract class IssueOwnershipFinderStrategy<H> implements IssueOwnershipFinder<H
 		List<String> remoteIssueIds = collectRemoteIssueIds(pairs);
 
 		try {
-			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker, contextHolder.getContext(), LocaleContextHolder.getLocaleContext());
+			Future<List<RemoteIssue>> futureIssues = remoteBugTrackersService.getIssues(remoteIssueIds, bugTracker,
+				contextHolder.getContext(), LocaleContextHolder.getLocaleContext());
 			List<RemoteIssue> btIssues = futureIssues.get(timeout, TimeUnit.SECONDS);
 
 			Map<String, RemoteIssue> remoteById = createRemoteIssueByRemoteIdMap(btIssues);
@@ -124,10 +129,25 @@ abstract class IssueOwnershipFinderStrategy<H> implements IssueOwnershipFinder<H
 		return IssueOwnershipFinderUtils.coerceIntoIssueOwnerships(pairs, remoteIssueByRemoteId);
 	}
 
+	/**
+	 * This method should return the holder entity of the given id
+	 * @param id id of the entity which holds the issues
+     * @return the holder entity
+     */
 	protected abstract H findEntity(long id);
 
+	/**
+	 * This should find all issues declared on the holder entity and return them as [Exec, Issue] pairs
+	 * @param h the holder entity
+	 * @param sorter paging / sorting data
+     */
 	protected abstract List<Pair<Execution, Issue>> findExecutionIssuePairs(H h, PagingAndSorting sorter);
 
+	/**
+	 * This should
+	 * @param h
+     * @return
+     */
 	protected abstract BugTracker findBugTracker(H h);
 
 	protected abstract long countIssues(H h);

@@ -37,7 +37,7 @@ import org.squashtest.tm.service.internal.repository.TestSuiteDao;
  * @since 1.14.0  30/03/16
  */
 @Component
-class TestSuiteIssueFinder extends  IssueOwnershipFinderStrategy<TestSuite> {
+class TestSuiteIssueFinder extends IssueOwnershipFinderSupport<TestSuite> {
 	@Inject
 	private TestSuiteDao testSuiteDao;
 

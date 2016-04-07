@@ -1,22 +1,22 @@
 /**
- * This file is part of the Squashtest platform.
- * Copyright (C) 2010 - 2016 Henix, henix.fr
- * <p>
- * See the NOTICE file distributed with this work for additional
- * information regarding copyright ownership.
- * <p>
- * This is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * <p>
- * this software is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Lesser General Public License for more details.
- * <p>
- * You should have received a copy of the GNU Lesser General Public License
- * along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2016 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
@@ -108,6 +108,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Inject
 	private BugTrackerContextHolder contextHolder;
 
+	@SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
 	@Inject
 	private Map<String, IssueOwnershipFinder> issueOwnershipFinderByBeanName;
 
@@ -334,10 +335,10 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <R> IssueOwnershipFinder<R> issueFinder(String finderBeanName) {
-		IssueOwnershipFinder<R> res = issueOwnershipFinderByBeanName.get(finderBeanName);
+	private IssueOwnershipFinder issueFinder(String finderBeanName) {
+		IssueOwnershipFinder res = issueOwnershipFinderByBeanName.get(finderBeanName);
 		if (res == null) {
-			throw new IllegalArgumentException("Bean of type 'IssueOwnershipFinderStrategy' and named '" + finderBeanName + "' could not be found. This either means the bean was not instanciated by Spring or it has another name");
+			throw new IllegalArgumentException("Bean of type 'IssueOwnershipFinderSupport' and named '" + finderBeanName + "' could not be found. This either means the bean was not instanciated by Spring or it has another name");
 		}
 		return res;
 	}

@@ -28,10 +28,10 @@ import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import java.util.List;
 
 /**
+ *
  * @author Gregory Fouquet
  * @since 1.14.0  04/04/16
  */
-public interface IssueOwnershipFinder<H> {
-	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(
-		long entityId, PagingAndSorting sorter);
+interface IssueOwnershipFinder {
+	PagedCollectionHolder<List<IssueOwnership<RemoteIssueDecorator>>> findSorted(long entityId, PagingAndSorting sorter);
 }

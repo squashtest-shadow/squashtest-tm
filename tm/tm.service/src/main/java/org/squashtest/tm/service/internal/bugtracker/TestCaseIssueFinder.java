@@ -54,7 +54,7 @@ import java.util.concurrent.TimeoutException;
  * @since 1.14.0  04/04/16
  */
 @Component
-public class TestCaseIssueFinder implements IssueOwnershipFinder<TestCase> {
+public class TestCaseIssueFinder implements IssueOwnershipFinder {
 	@Value("${squashtm.bugtracker.timeout:15}")
 	private long timeout;
 	@Inject
@@ -77,7 +77,7 @@ public class TestCaseIssueFinder implements IssueOwnershipFinder<TestCase> {
 	}
 
 	/**
-	 * Mostly the same implementation as IssueOwnershipFinderStrategy but with delayed BugTracker fetching : executions
+	 * Mostly the same implementation as IssueOwnershipFinderSupport but with delayed BugTracker fetching : executions
 	 * can come from different projects, which means issues can be declared in different bugtrackers.
 	 */
 	@Override
