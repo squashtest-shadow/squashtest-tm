@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.repository.CrudRepository;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.customreport.CustomReportChartBinding;
 
-@DynamicDao(entity = CustomReportChartBinding.class)
-public interface CustomReportChartBindingDao extends CustomCustomReportChartBindingDao {
-	
+public interface CustomReportChartBindingDao extends CrudRepository<CustomReportChartBinding,Long> {
+
 }

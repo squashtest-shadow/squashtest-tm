@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.repository.CrudRepository;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 
-@DynamicDao(entity = CustomReportDashboard.class)
-public interface CustomReportDashboardDao extends CustomCustomReportDashboardDao {
-	
+public interface CustomReportDashboardDao extends CrudRepository<CustomReportDashboard,Long> {
+
 }

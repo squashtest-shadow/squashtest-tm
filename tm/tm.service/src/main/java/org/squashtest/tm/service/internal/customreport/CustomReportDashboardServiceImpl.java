@@ -74,14 +74,14 @@ public class CustomReportDashboardServiceImpl implements
 
 	@Override
 	public CustomReportDashboard findById(Long id) {
-		return customReportDashboardDao.findById(id);
+		return customReportDashboardDao.findOne(id);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#newBinding.dashboard.id, 'org.squashtest.tm.domain.customreport.CustomReportDashboard' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void bindChart(CustomReportChartBinding newBinding) {
-		bindingDao.persist(newBinding);
+		bindingDao.save(newBinding);
 		em.unwrap(Session.class).flush();
 	}
 
@@ -94,7 +94,7 @@ public class CustomReportDashboardServiceImpl implements
 	}
 
 	private void updateBinding(CustomReportChartBinding transientBinding) {
-		CustomReportChartBinding persistedBinding = bindingDao.findById(transientBinding.getId());
+		CustomReportChartBinding persistedBinding = bindingDao.findOne(transientBinding.getId());
 		if(permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN","WRITE",persistedBinding.getDashboard())
 				&& persistedBinding.hasMoved(transientBinding)){
 			persistedBinding.move(transientBinding);
@@ -105,8 +105,7 @@ public class CustomReportDashboardServiceImpl implements
 	@PreAuthorize("hasPermission(#id, 'org.squashtest.tm.domain.customreport.CustomReportChartBinding' ,'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void unbindChart(Long id) {
-		CustomReportChartBinding chartBinding = bindingDao.findById(id);
-		bindingDao.remove(chartBinding);
+		bindingDao.delete(id);
 	}
 
 	@Override
@@ -114,7 +113,7 @@ public class CustomReportDashboardServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public CustomReportChartBinding changeBindedChart(long bindingId,
 			long chartNodeId) {
-		CustomReportChartBinding chartBinding = bindingDao.findById(bindingId);
+		CustomReportChartBinding chartBinding = bindingDao.findOne(bindingId);
 		ChartDefinition chartDefinition = crlnService.findChartDefinitionByNodeId(chartNodeId);
 		chartBinding.setChart(chartDefinition);
 		return chartBinding;
