@@ -28,14 +28,19 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 
-@Repository("CustomChartDefinitionDao")
-public class ChartDefinitionDaoImpl extends HibernateEntityDao<ChartDefinition> implements CustomChartDefinitionDao{
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+public class ChartDefinitionDaoImpl implements CustomChartDefinitionDao{
+
+	@PersistenceContext
+	EntityManager em;
 
 	@Override
 	public boolean hasChart(List<Long> userIds) {
-		Query q = currentSession().getNamedQuery("ChartDefinition.selectChartsOwnedByUsers");
-		q.setParameterList("userIds", userIds, LongType.INSTANCE);
-		return !q.list().isEmpty();
+		javax.persistence.Query q = em.createNamedQuery("ChartDefinition.selectChartsOwnedByUsers");
+		q.setParameter("userIds", userIds);
+		return !q.getResultList().isEmpty();
 	}
-	
+
 }

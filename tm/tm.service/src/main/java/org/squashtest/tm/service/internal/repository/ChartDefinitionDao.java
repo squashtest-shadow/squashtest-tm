@@ -24,5 +24,5 @@ import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 
 public interface ChartDefinitionDao extends CustomChartDefinitionDao, Repository<ChartDefinition, Long> {
-	
+
 }
