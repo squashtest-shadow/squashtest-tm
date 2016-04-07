@@ -20,10 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 
-@DynamicDao(entity = CustomReportLibrary.class)
-public interface CustomReportLibraryDao extends CustomCustomReportLibraryDao {
-	
+import java.util.List;
+
+public interface CustomReportLibraryDao extends Repository<CustomReportLibrary, Long> {
+
+	List<CustomReportLibrary> findAll();
 }
