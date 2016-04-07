@@ -65,7 +65,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	@Ignore("broken yet tested method will probably not be used anymore")
-	def "should return sorted issues from execs/exec-steps"(){
+	def "should return sorted issues from execs/exec-steps"() {
 		given:
 		List<Long> execIds = [10000101L, 10000400L, 10000201L, 10000100L]
 		List<Long> execStepIds = [100001010L, 100001011L, 100002010L, 100001000L]
@@ -114,7 +114,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should return sorted issues from execs/exec-steps2"(){
+	def "should return sorted issues from execs/exec-steps2"() {
 		given:
 		List<Long> execIds = [10000101L, 10000400L, 10000201L, 10000100L]
 		List<Long> execStepIds = [100001010L, 100001011L, 100002010L, 100001000L]
@@ -136,7 +136,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should count issues for execution and execution steps"(){
+	def "should count issues for execution and execution steps"() {
 		given:
 		List<Long> execIds = [10000101L, 10000400L, 10000201L, 10000100L]
 		List<Long> execStepIds = [100001010L, 100001011L, 100002010L, 100001000L]
@@ -149,7 +149,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should return sorted issues from issue list ids"(){
+	def "should return sorted issues from issue list ids"() {
 		given:
 		List<Long> issueListIds = [
 			10000101L,
@@ -179,7 +179,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should count issues for issue list ids and bugtracker id"(){
+	def "should count issues for issue list ids and bugtracker id"() {
 		given:
 		List<Long> issueListIds = [
 			10000101L,
@@ -201,53 +201,53 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should return issues for iteration"(){
-		given :
+	def "should return issues for iteration"() {
+		given:
 		def iterationId = 100001L
 
 		when:
 		def result = issueDao.findAllForIteration(iterationId)
 
-		then :
+		then:
 		result.size() == 3;
 		result*.id.containsAll([100001L, 100002L, 100003L]);
 	}
 
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
-	def "should return issues for test suite"(){
-		given :
+	def "should return issues for test suite"() {
+		given:
 		def testSuiteId = 1000030L
 
 		when:
 		def result = issueDao.findAllForTestSuite(testSuiteId)
 
-		then :
+		then:
 		result.size() == 3;
 		result*.id.containsAll([100001L, 100002L, 100003L]);
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should return execution as issue detector"(){
-		given :
+	def "should return execution as issue detector"() {
+		given:
 		def issueId = 100007L
 
 		when:
 		def result = issueDao.findIssueDetectorByIssue(issueId)
 
-		then :
+		then:
 		result != null
 		result.issueListId == 10000400L
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should return execution step as issue detector"(){
-		given :
+	def "should return execution step as issue detector"() {
+		given:
 		def issueId = 100005L
 
 		when:
 		def result = issueDao.findIssueDetectorByIssue(issueId)
 
-		then :
+		then:
 		result != null
 		result.issueListId == 100002010L
 	}
@@ -282,13 +282,26 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def exec = em.find(Execution, 10000100L)
 
 		when:
-		def result = issueDao.findAllExecutionIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
+		def result = issueDao.findAllDeclaredExecutionIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
 
 		then:
-		result.size() == 2
-		result*.left.id as Set == [10000100L, 10000100L] as Set
-		result*.right.id as Set == 100001L..100002L as Set
-}
+		result*.left.id as Set == [10000100L] as Set
+		result*.right.id as Set == [100001L] as Set
+	}
+
+	@DataSet("HibernateIssueDaoIT.xml")
+	def "[#6062] should return all step - ish pairs for an execution"() {
+		given:
+		def exec = sessionFactory.currentSession.load(Execution, 10000100L)
+
+		when:
+		def result = issueDao.findAllExecutionStepIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
+
+		then:
+		result*.left.id as Set == [100001000L] as Set
+		result*.right.id as Set == [100002L] as Set
+	}
+
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for an execution"() {
@@ -296,7 +309,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		def exec = em.find(Execution, 10000100L)
 
 		expect:
-		issueDao.countByExecution(exec) == 2
+		issueDao.countByExecutionAndSteps(exec) == 2
 
 	}
 
@@ -311,7 +324,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 		then:
 		result*.left.id as Set == [10000100L, 10000100L, 10000101L] as Set
 		result*.right.id as Set == 100001L..100003L as Set
-}
+	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for an iteration"() {
@@ -394,14 +407,14 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateIssueDaoIT.xml")
-	def "should fetch issues by execution steps"(){
-		given :
+	def "should fetch issues by execution steps"() {
+		given:
 		def step = sessionFactory.currentSession.load(ExecutionStep, 100002010L)
 
 		when:
 		def result = issueDao.findAllByExecutionStep(step, sorter())
 
-		then :
+		then:
 		result*.id == [100005L, 100006L]
-}
+	}
 }

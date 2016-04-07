@@ -1,27 +1,24 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.repository;
-
-import java.util.Collection;
-import java.util.List;
 
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -36,12 +33,15 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.internal.bugtracker.Pair;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface IssueDao extends EntityDao<Issue> {
 
 
-    List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId);
+	List<Issue> getAllIssueFromBugTrackerId(Long bugtrackerId);
 
-    /**
+	/**
 	 * Will count the total number of issues related to the given IssueList.
 	 *
 	 *
@@ -88,10 +88,10 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @param bugTrackerId
 	 * 			 the id of the bug-tracker we want the issues to be connected-to
 	 *
-	 * @return  non-null but possibly empty list of <code>Issue</code>
+	 * @return non-null but possibly empty list of <code>Issue</code>
 	 **/
 	List<Issue> findSortedIssuesFromIssuesLists(Collection<Long> issueListId, PagingAndSorting sorter,
-			Long bugTrackerId);
+												Long bugTrackerId);
 
 	/**
 	 * Will find all issues belonging to the executions/executionSteps of the given ids, and, return a list of <code>Object[]</code> that have the following structure :  [IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]
@@ -103,7 +103,7 @@ public interface IssueDao extends EntityDao<Issue> {
 	 * @return non-null but possibly empty list of <code>Object[]</code> which have the following structure <b>[IssueList.id, Issue.remoteIssueId , Issue.bugtracker.id]</b>
 	 */
 	List<Issue> findSortedIssuesFromExecutionAndExecutionSteps(List<Long> executionIds,
-			List<Long> executionStepsIds, PagingAndSorting sorter);
+															   List<Long> executionStepsIds, PagingAndSorting sorter);
 
 	/**
 	 * Will count all Issues from the given executions and execution-steps <b>concerned by the active bug-tracker</b> for each
@@ -143,31 +143,34 @@ public interface IssueDao extends EntityDao<Issue> {
 	List<Issue> findIssueListByRemoteIssue(String remoteid, BugTracker bugtracker);
 
 	/**
-	 * Finds all issues for a execution along with this execution and returns them as pairs.
+	 * Finds all issues for a execution (not execution and steps !) along with this execution and returns them as pairs.
 	 * Issues declared on execution steps are also picked.
 	 */
-	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
+	List<Pair<Execution, Issue>> findAllDeclaredExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
 
 	/**
-	 * Counts all issues for an execution
+	 * Counts all issues for an execution and its steps
 	 */
-	long countByExecution(Execution execution);
+	long countByExecutionAndSteps(Execution execution);
 
-	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter);
+	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByIteration(Iteration iteration, PagingAndSorting sorter);
 
 	long countByIteration(Iteration iteration);
 
-	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter);
+	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestSuite(TestSuite testSuite, PagingAndSorting sorter);
 
 	long countByTestSuite(TestSuite testSuite);
 
-	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter);
+	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByCampaignFolder(CampaignFolder folder, PagingAndSorting sorter);
 
 	long countByCampaignFolder(CampaignFolder folder);
 
-	List<Pair<Execution,Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter);
+	List<Pair<Execution, Issue>> findAllExecutionIssuePairsByTestCase(TestCase testCase, PagingAndSorting sorter);
 
 	long countByTestCase(TestCase testCase);
 
 	List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter);
+
+
+	List<Pair<? extends IssueDetector, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
 }

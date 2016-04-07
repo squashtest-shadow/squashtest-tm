@@ -511,7 +511,7 @@
 	@NamedQuery(name = "issue.countByCampaign", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join i.campaign c join ex.issues ish  where c = :campaign"),
 	@NamedQuery(name = "issue.countByIteration", query = "select count(ish) from Execution ex join ex.testPlan tp join tp.iteration i join ex.issues ish  where i = :iteration"),
 	@NamedQuery(name = "issue.countByTestSuite", query = "select count(ish) from TestSuite ts join ts.testPlan tp join tp.executions ex join ex.issues ish  where ts = :testSuite"),
-	@NamedQuery(name = "issue.countByExecution", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
+	@NamedQuery(name = "issue.countByExecutionAndSteps", query = "select count(ish) from Execution ex join ex.issues ish where ex = :execution"),
 	@NamedQuery(name = "issue.countByTestCase", query = "select count(ish) from Execution ex join ex.issues ish join ex.testPlan tp join tp.referencedTestCase tc where tc = :testCase"),
 
 

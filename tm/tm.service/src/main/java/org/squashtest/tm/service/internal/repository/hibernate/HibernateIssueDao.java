@@ -306,8 +306,8 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 	@Override
 	@SuppressWarnings("unchecked")
-	public List<Pair<Execution, Issue>> findAllExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
-		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issues Issue where ex = :execution", sorter);
+	public List<Pair<Execution, Issue>> findAllDeclaredExecutionIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, Issue) from Execution ex join ex.issueList il join il.issues Issue where ex = :execution", sorter);
 
 		Query query = currentSession().createQuery(hql).setParameter("execution", execution);
 		PagingUtils.addPaging(query, sorter);
@@ -316,8 +316,8 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 }
 
 	@Override
-	public long countByExecution(Execution execution) {
-		return (long) currentSession().getNamedQuery("issue.countByExecution")
+	public long countByExecutionAndSteps(Execution execution) {
+		return (long) currentSession().getNamedQuery("issue.countByExecutionAndSteps")
 			.setParameter("execution", execution)
 			.uniqueResult();
 	}
@@ -403,5 +403,15 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 
 		return query.list();
 }
+
+	@Override
+	public List<Pair<? extends IssueDetector, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
+		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(s, Issue) from ExecutionStep s join s.issueList il join il.issues Issue join s.execution ex where ex = :execution", sorter);
+
+		Query query = currentSession().createQuery(hql).setParameter("execution", execution);
+		PagingUtils.addPaging(query, sorter);
+
+		return query.list();
+	}
 
 }
