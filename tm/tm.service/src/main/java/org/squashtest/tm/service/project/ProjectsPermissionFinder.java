@@ -22,10 +22,10 @@ package org.squashtest.tm.service.project;
 
 import java.util.List;
 
+import org.springframework.data.domain.Sort;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.Party;
@@ -46,7 +46,7 @@ public interface ProjectsPermissionFinder {
 
 	PagedCollectionHolder<List<ProjectPermission>> findProjectPermissionByParty(long partyId, PagingAndSorting sorting, Filtering filtering);
 
-	List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sorting defaultSorting);
+	List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sort sorting);
 
 	List<GenericProject> findProjectWithoutPermissionByParty(long partyId);
 

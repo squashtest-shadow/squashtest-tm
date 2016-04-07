@@ -466,8 +466,6 @@
 
 	//Generic Project
 	@NamedQuery(name = "GenericProject.findAllOrderedByName", query = "from GenericProject fetch all properties order by name"),
-	@NamedQuery(name = "GenericProject.findProjectsFiltered", query = "from GenericProject gp where gp.name like :filter or gp.label like :filter or gp.audit.createdBy like :filter or gp.audit.lastModifiedBy like :filter"),
-	@NamedQuery(name = "GenericProject.countGenericProjects", query = "select count(p) from GenericProject p"),
 	@NamedQuery(name = "GenericProject.findProjectTypeOf", query = "select p.class from GenericProject p where p.id = :projectId"),
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjects", query = "select tap from GenericProject p join p.testAutomationProjects tap where p.id = :projectId order by tap.label"),
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectJobNames", query = "select tap.jobName from GenericProject p join p.testAutomationProjects tap where p.id = :projectId order by tap.label"),

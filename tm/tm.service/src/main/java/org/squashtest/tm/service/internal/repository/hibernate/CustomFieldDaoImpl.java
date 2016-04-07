@@ -22,13 +22,11 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldDao;
 
-@Repository("CustomCustomFieldDao")
 public class CustomFieldDaoImpl extends HibernateEntityDao<CustomField> implements CustomCustomFieldDao {
 
 	/**

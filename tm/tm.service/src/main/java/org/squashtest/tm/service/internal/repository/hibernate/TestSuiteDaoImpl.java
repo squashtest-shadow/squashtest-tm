@@ -29,7 +29,6 @@ import java.util.Map.Entry;
 import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
@@ -46,7 +45,6 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestSuiteDao;
 
-@Repository("CustomTestSuiteDao")
 public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements CustomTestSuiteDao {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteDaoImpl.class);

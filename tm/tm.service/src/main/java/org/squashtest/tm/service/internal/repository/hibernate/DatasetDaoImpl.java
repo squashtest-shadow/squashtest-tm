@@ -32,11 +32,10 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
 
-@Repository("CustomDatasetDao")
+
 public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements CustomDatasetDao {
 
 	@PersistenceContext

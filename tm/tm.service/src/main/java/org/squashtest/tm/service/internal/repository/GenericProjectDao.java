@@ -22,10 +22,9 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -34,46 +33,51 @@ import org.squashtest.tm.domain.testautomation.TestAutomationServer;
  * @author Gregory Fouquet
  * 
  */
-@DynamicDao(entity = GenericProject.class)
-public interface GenericProjectDao extends CustomGenericProjectDao {
-	long countGenericProjects();
+public interface GenericProjectDao extends Repository<GenericProject, Long>,  CustomGenericProjectDao {
 
+	// note : uses the Spring JPA dsl 
+	long countByName(String name);
+	
+	// note : native method from JPA repositorie
+	long count();
+
+	// note : native method from JPA repositorie
 	List<GenericProject> findAll();
+
+	// note : native method from JPA repositorie
+	List<GenericProject> findAll(Iterable<Long> ids);
+		
+	// note : native method from JPA repositorie	
+	List<GenericProject> findAll(Sort sorting);
 	
-	List<GenericProject> findAll(PagingAndSorting pagingAndSorting);
-	
-	List<GenericProject> findAll(Sorting sorting);
-
-	List<GenericProject> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);
-
-
+	// note : uses the Spring JPA dsl 
 	GenericProject findById(long projectId);
-
-	// ************************* test automation section **********************
-
-	List<TestAutomationProject> findBoundTestAutomationProjects(@QueryParam(ParameterNames.PROJECT_ID) long id);
-
-	List<String> findBoundTestAutomationProjectJobNames(@QueryParam(ParameterNames.PROJECT_ID) long id);
-
-	List<String> findBoundTestAutomationProjectLabels(@QueryParam(ParameterNames.PROJECT_ID) long projectId);
-
-	/**
-	 * @param idList
-	 * @return
-	 */
-	List<GenericProject> findAllByIds(List<Long> ids);
-
-	List<GenericProject> findAllByIds(List<Long> idList, Sorting defaultSorting);
 
 	/**
 	 * Simply remove entity
 	 * @param project : the {@link GenericProject} to remove
 	 */
-	void remove(GenericProject project);
+	// note : native method from JPA repositorie	
+	void delete(GenericProject project);
 
-	long countByName(String name);
+	
+	// ************************* test automation section **********************
 
-	TestAutomationServer findTestAutomationServer(@QueryParam(ParameterNames.PROJECT_ID) long projectId);
+	
+	// note : uses a named query in package-info or elsewhere
+	List<TestAutomationProject> findBoundTestAutomationProjects(@Param(ParameterNames.PROJECT_ID) long id);
 
+	// note : uses a named query in package-info or elsewhere
+	List<String> findBoundTestAutomationProjectJobNames(@Param(ParameterNames.PROJECT_ID) long id);
+
+	// note : uses a named query in package-info or elsewhere
+	List<String> findBoundTestAutomationProjectLabels(@Param(ParameterNames.PROJECT_ID) long projectId);
+
+	// note : uses the Spring JPA dsl 
+	List<GenericProject> findAllByIdIn(List<Long> idList, Sort sorting);
+
+	// note : uses a named query in package-info or elsewhere
+	TestAutomationServer findTestAutomationServer(@Param(ParameterNames.PROJECT_ID) long projectId);
+	
 
 }

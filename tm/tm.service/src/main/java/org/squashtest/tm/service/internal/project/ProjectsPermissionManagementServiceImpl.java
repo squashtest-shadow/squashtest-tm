@@ -26,6 +26,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
@@ -201,18 +202,18 @@ public class ProjectsPermissionManagementServiceImpl implements ProjectsPermissi
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
-		return genericProjectFinder.findAllByIds(idList);
+		return genericProjectFinder.findAll(idList);
 
 	}
 
 	@Transactional(readOnly = true)
 	@Override
-	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sorting defaultSorting) {
+	public List<GenericProject> findProjectWithoutPermissionByParty(long partyId, Sort sorting) {
 		List<Long> idList = aclService.findObjectWithoutPermissionByPartyId(partyId, PROJECT_CLASS_NAMES);
 		if (idList == null || idList.isEmpty()) {
 			return null;
 		}
-		return genericProjectFinder.findAllByIds(idList, defaultSorting);
+		return genericProjectFinder.findAllByIdIn(idList, sorting);
 	}
 
 	@Override

@@ -33,7 +33,6 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldBindingDao;
 
 
-@Repository("CustomCustomFieldBindingDao")
 public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBinding> implements CustomCustomFieldBindingDao {
 
 	@Override

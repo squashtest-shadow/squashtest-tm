@@ -150,7 +150,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		});
 
 		removeACLsForProjectAndLibraries(project);
-		genericProjectDao.remove(project);
+		genericProjectDao.delete(project);
 	}
 
 	private void deleteCustomReportLibraryNode(

@@ -24,18 +24,16 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Criteria;
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.criterion.Disjunction;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
@@ -47,26 +45,24 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
  * @author Gregory Fouquet
  *
  */
-@Repository("CustomGenericProjectDao")
-public class HibernateGenericProjectDao implements CustomGenericProjectDao {
+
+public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 	@PersistenceContext
 	private EntityManager em;
 
 	/**
 	 * @return the coerced project
-	 * @see org.squashtest.tm.service.internal.repository.org.squashtest.tm.service.internal.repository.CustomGenericProjectDao#coerceTemplateIntoProject(long)
+	 * @see org.squashtest.tm.service.internal.repository.CustomGenericProjectDao.squashtest.tm.service.internal.repository.CustomGenericProjectDao#coerceTemplateIntoProject(long)
 	 */
 	@Override
 	public Project coerceTemplateIntoProject(long templateId) {
-		Session session = em.unwrap(Session.class);
+		Session session = getCurrentSession();
 
-		ProjectTemplate template = (ProjectTemplate) session.load(ProjectTemplate.class, templateId);
+		ProjectTemplate template = (ProjectTemplate)session.load(ProjectTemplate.class, templateId);
 		session.flush();
 		session.evict(template);
 
-		// TODO replace PROJECt_ID by PROJECT_ID in 1.10.0 Dont seem to break
-		// (even on case sensitive mysql) yet its not correct
-		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'P' where PROJECt_ID = :id");
+		SQLQuery query = session.createSQLQuery("update PROJECT set PROJECT_TYPE = 'P' where PROJECT_ID = :id");
 		query.setParameter("id", templateId);
 		final int changedRows = query.executeUpdate();
 		if (changedRows != 1) {
@@ -79,10 +75,11 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 
 	@Override
 	public boolean isProjectTemplate(long projectId) {
-		Query query = em.unwrap(Session.class).getNamedQuery("GenericProject.findProjectTypeOf");
+		
+		Query query = em.createNamedQuery("GenericProject.findProjectTypeOf");
 		query.setParameter(ParameterNames.PROJECT_ID, projectId);
 
-		String type = (String) query.uniqueResult();
+		String type = (String) query.getSingleResult();
 
 		return type.equals("T");
 	}
@@ -94,7 +91,8 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 	 */
 	@SuppressWarnings("unchecked")
 	public <T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering) {
-		Criteria allEntities = em.unwrap(Session.class).createCriteria(entity);
+		
+		Criteria allEntities = getCurrentSession().createCriteria(entity);
 
 		if (filtering.isDefined() && StringUtils.isNotEmpty(filtering.getFilter())) {
 			final String ex = filtering.getFilter();
@@ -109,5 +107,9 @@ public class HibernateGenericProjectDao implements CustomGenericProjectDao {
 		}
 
 		return allEntities.list();
+	}
+
+	private Session getCurrentSession() {
+		return em.unwrap(Session.class);
 	}
 }
