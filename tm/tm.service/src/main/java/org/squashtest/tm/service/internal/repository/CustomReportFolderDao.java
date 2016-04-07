@@ -20,10 +20,11 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 
-@DynamicDao(entity = CustomReportFolder.class)
-public interface CustomReportFolderDao extends CustomCustomReportFolderDao {
-	
+
+public interface CustomReportFolderDao extends Repository<CustomReportFolder,Long> {
+	CustomReportFolder findById(Long id);
 }
