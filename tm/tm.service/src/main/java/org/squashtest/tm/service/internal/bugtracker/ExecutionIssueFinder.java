@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.bugtracker.IssueDetector;
 import org.squashtest.tm.domain.bugtracker.IssueOwnership;
 import org.squashtest.tm.domain.bugtracker.RemoteIssueDecorator;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
@@ -127,7 +128,7 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 		return sorter.getSortOrder().equals(SortOrder.ASCENDING) ?  ASC_PAIR_COMPARATOR : DESC_PAIR_COMPARATOR;
 	}
 
-	private List<Pair<? extends IssueDetector, Issue>> findExecutionStepIssuePairs(Execution execution, PagingAndSorting sorter) {
+	private List<Pair<ExecutionStep, Issue>> findExecutionStepIssuePairs(Execution execution, PagingAndSorting sorter) {
 		return issueDao.findAllExecutionStepIssuePairsByExecution(execution, sorter);
 	}
 

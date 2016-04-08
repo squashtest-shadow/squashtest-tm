@@ -405,7 +405,7 @@ public class HibernateIssueDao extends HibernateEntityDao<Issue> implements Issu
 }
 
 	@Override
-	public List<Pair<? extends IssueDetector, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
+	public List<Pair<ExecutionStep, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter) {
 		String hql = SortingUtils.addOrder("select new org.squashtest.tm.service.internal.bugtracker.Pair(s, Issue) from ExecutionStep s join s.issueList il join il.issues Issue join s.execution ex where ex = :execution", sorter);
 
 		Query query = currentSession().createQuery(hql).setParameter("execution", execution);

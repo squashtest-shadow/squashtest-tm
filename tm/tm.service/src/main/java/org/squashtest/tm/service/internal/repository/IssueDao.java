@@ -172,5 +172,5 @@ public interface IssueDao extends EntityDao<Issue> {
 	List<Issue> findAllByExecutionStep(ExecutionStep executionStep, PagingAndSorting sorter);
 
 
-	List<Pair<? extends IssueDetector, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
+	List<Pair<ExecutionStep, Issue>> findAllExecutionStepIssuePairsByExecution(Execution execution, PagingAndSorting sorter);
 }
