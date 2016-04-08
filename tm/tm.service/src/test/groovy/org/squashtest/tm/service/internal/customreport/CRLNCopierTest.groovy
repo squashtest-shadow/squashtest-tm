@@ -46,7 +46,7 @@ class CRLNCopierTest extends Specification {
 		nodeFolder1.setName("Folder1")
 		nodeFolder1.setEntity(folder1)
 		nodeFolder1.setLibrary(library)
-		customReportLibraryNodeDao.findById(1L) >> nodeFolder1
+		customReportLibraryNodeDao.findOne(1L) >> nodeFolder1
 
 		CustomReportLibraryNode targetNode = new CustomReportLibraryNode()
 		CustomReportFolder targetFolder = new CustomReportFolder()
@@ -56,7 +56,7 @@ class CRLNCopierTest extends Specification {
 		targetNode.setEntity(targetFolder)
 		targetNode.setLibrary(library)
 		targetNode.entityType = CustomReportTreeDefinition.FOLDER
-		customReportLibraryNodeDao.findById(2L) >> targetNode
+		customReportLibraryNodeDao.findOne(2L) >> targetNode
 
 	}
 
@@ -89,8 +89,8 @@ class CRLNCopierTest extends Specification {
 
 	def "should copy a single node"(){
 		given:
-		CustomReportLibraryNode source = customReportLibraryNodeDao.findById(1L)
-		CustomReportLibraryNode target = customReportLibraryNodeDao.findById(2L)
+		CustomReportLibraryNode source = customReportLibraryNodeDao.findOne(1L)
+		CustomReportLibraryNode target = customReportLibraryNodeDao.findOne(2L)
 
 		and:
 		CRLNCopier treeLibraryNodeCopier = new CRLNCopier()

@@ -52,13 +52,13 @@ public class CustomReportDashboardServiceImpl implements
 		CustomReportDashboardService {
 
 	@Inject
-	CustomReportDashboardDao customReportDashboardDao;
+	private CustomReportDashboardDao customReportDashboardDao;
 
 	@Inject
-	CustomReportChartBindingDao bindingDao;
+	private CustomReportChartBindingDao bindingDao;
 
 	@Inject
-	CustomReportLibraryNodeService crlnService;
+	private CustomReportLibraryNodeService crlnService;
 
 	@PersistenceContext
 	private EntityManager em;

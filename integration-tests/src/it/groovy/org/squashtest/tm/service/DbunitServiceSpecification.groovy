@@ -42,7 +42,7 @@ import javax.persistence.PersistenceContext
  */
 @ContextConfiguration(classes = [ServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@Rollback
+@TransactionConfiguration(defaultRollback = true)
 abstract class DbunitServiceSpecification extends Specification {
 
 	@PersistenceContext

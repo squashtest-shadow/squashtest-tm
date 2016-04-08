@@ -41,9 +41,9 @@ public class CRLNDeletionHandler implements
 
 	@Inject
 	private CustomReportLibraryNodeDao customReportLibraryNodeDao;
-	
+
 	/**
-	 * For customReport workspace v1 all descendant nodes are suppressed. 
+	 * For customReport workspace v1 all descendant nodes are suppressed.
 	 * No milestones or other stuff
 	 */
 	@Override
@@ -61,37 +61,37 @@ public class CRLNDeletionHandler implements
 		final OperationReport operationReport = new OperationReport();
 		LockedFolderInferenceTree tree = createTree(targetIds);
 		Closure closure = new Closure() {
-			
+
 			@Override
 			public void execute(Object input) {
 				Node node = (Node) input;
 				doOneDelete(node.getKey(), operationReport);
 			}
 		};
-		
+
 		tree.doBottomUp(closure);
 		return operationReport;
 	}
-	
+
 	private void doOneDelete(Long nodeId, OperationReport operationReport){
-		CustomReportLibraryNode targetNode = customReportLibraryNodeDao.findById(nodeId);
+		CustomReportLibraryNode targetNode = customReportLibraryNodeDao.findOne(nodeId);
 		TreeLibraryNode parentNode = targetNode.getParent();
 		parentNode.removeChild(targetNode);
 		CRLNDeletionVisitor visitor = new CRLNDeletionVisitor(operationReport, targetNode);
 		targetNode.getEntity().accept(visitor);
-		customReportLibraryNodeDao.remove(targetNode);
+		customReportLibraryNodeDao.delete(targetNode);
 	}
-	
-	
+
+
 	private LockedFolderInferenceTree createTree(List<Long> targetIds){
 		int descendantNumber = targetIds.size();
 		List<Long> currentLayerIds = targetIds;
-		LockedFolderInferenceTree tree = new LockedFolderInferenceTree(); 
+		LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
 		List<Long[]> pairedIds = new ArrayList<Long[]>();
-		
+
 		//adding the root nodes to tree
 		addMultipleChildToParent(null,targetIds,pairedIds);
-		
+
 		while (descendantNumber>0) {
 			for (Long id : currentLayerIds) {
 				List<Long> descendantIds = customReportLibraryNodeDao
@@ -104,16 +104,16 @@ public class CRLNDeletionHandler implements
 		tree.build(pairedIds);
 		return tree;
 	}
-	
+
 	private void addMultipleChildToParent(Long parentId, List<Long> childIds, List<Long[]> pairs){
 		for (Long id : childIds) {
 			addPairToList(parentId, id, pairs);
 		}
 	}
-	
+
 	private void addPairToList(Long parentId, Long childId, List<Long[]> pairs){
 		Long[] pair = { parentId, childId };
 		pairs.add(pair);
 	}
-	
+
 }

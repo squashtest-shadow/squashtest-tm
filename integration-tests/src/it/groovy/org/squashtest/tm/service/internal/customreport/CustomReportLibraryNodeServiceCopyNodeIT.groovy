@@ -33,6 +33,8 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.EntityTransaction
+import javax.transaction.Transaction
 
 @UnitilsSupport
 @Transactional
@@ -48,11 +50,13 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 	@Inject
 	CustomReportLibraryDao crlDao;
 
+
 	def "should copy a folder and it's content"(){
+
 		when:
 		def result = service.copyNodes([-10L], -2L);
-		session.flush()
-		session.clear()
+		em.flush()
+		em.clear()
 
 		then:
 		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)

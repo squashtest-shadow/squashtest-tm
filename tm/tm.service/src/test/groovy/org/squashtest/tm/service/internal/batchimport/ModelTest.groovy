@@ -20,31 +20,27 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import static Existence
-
-import javax.persistence.EntityManager;
-
 import org.hibernate.Query
 import org.hibernate.Session
-import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
+import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.batchimport.Model.InternalStepModel
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
-import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
-import static org.squashtest.tm.service.internal.batchimport.Existence.*;
-
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
+
+import static org.squashtest.tm.service.internal.batchimport.Existence.*
 
 public class ModelTest extends Specification{
 
