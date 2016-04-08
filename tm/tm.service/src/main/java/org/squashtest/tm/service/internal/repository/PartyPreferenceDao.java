@@ -20,13 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.users.PartyPreference;
 
 /**
  * Created by jthebault on 29/03/2016.
  */
-@DynamicDao(entity = PartyPreference.class)
-public interface PartyPreferenceDao extends CustomPartyPreferenceDao{
-	void persist(PartyPreference partyPreference);
+public interface PartyPreferenceDao extends JpaRepository<PartyPreference,Long>, CustomPartyPreferenceDao{
+
 }

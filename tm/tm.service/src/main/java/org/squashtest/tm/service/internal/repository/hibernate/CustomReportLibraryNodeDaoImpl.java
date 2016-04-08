@@ -48,7 +48,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllDescendantIds(List<Long> nodesIds) {
-		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
+		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendantIds");
 		query.setParameter("ids", nodesIds);
 		return query.getResultList();
 	}
@@ -56,7 +56,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<CustomReportLibraryNode> findAllDescendants(List<Long> nodesIds) {
-		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
+		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllDescendant");
 		query.setParameter("ids", nodesIds);
 		return query.getResultList();
 	}
@@ -65,7 +65,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAllFirstLevelDescendantIds(List<Long> nodesIds) {
-		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
+		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllFirstLevelDescendantIds");
 		query.setParameter("ids", nodesIds);
 		return query.getResultList();
 	}
@@ -73,7 +73,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findAncestorIds(Long nodeId) {
-		Query query = em.createQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
+		Query query = em.createNamedQuery("CustomReportLibraryNodePathEdge.findAllAncestorIds");
 		query.setParameter("id", nodeId);
 		return query.getResultList();
 	}
@@ -87,14 +87,14 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 
 	@Override
 	public List<CustomReportLibraryNode> findAllConcreteLibraries(List<Long> projectIds) {
-		Query query = em.createQuery("CustomReportLibraryNode.findConcreteLibraryFiltered");
+		Query query = em.createNamedQuery("CustomReportLibraryNode.findConcreteLibraryFiltered");
 		query.setParameter("filteredProjectsIds", projectIds);
 		return query.getResultList();
 	}
 
 	@Override
 	public List<CustomReportLibraryNode> findAllConcreteLibraries() {
-		Query query = em.createQuery("CustomReportLibraryNode.findConcreteLibrary");
+		Query query = em.createNamedQuery("CustomReportLibraryNode.findConcreteLibrary");
 		return query.getResultList();
 	}
 

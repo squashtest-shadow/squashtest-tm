@@ -25,6 +25,8 @@ import java.util.Map;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 
+import javax.persistence.NoResultException;
+
 /**
  * Created by jthebault on 29/03/2016.
  */

@@ -49,9 +49,6 @@ public class PartyPreferenceServiceImpl implements PartyPreferenceService{
 	@Inject
 	private PartyPreferenceDao partyPreferenceDao;
 
-	@PersistenceContext
-	private EntityManager em;
-
 	@Override
 	public PartyPreference findPreference(Party party, String preferenceKey) {
 		return partyPreferenceDao.findByPartyAndPreferenceKey(party,preferenceKey);
@@ -82,7 +79,7 @@ public class PartyPreferenceServiceImpl implements PartyPreferenceService{
 			pref.setParty(party);
 			pref.setPreferenceKey(preferenceKey);
 			pref.setPreferenceValue(preferenceValue);
-			partyPreferenceDao.persist(pref);
+			partyPreferenceDao.save(pref);
 		}
 		else{
 			pref.setPreferenceValue(preferenceValue);

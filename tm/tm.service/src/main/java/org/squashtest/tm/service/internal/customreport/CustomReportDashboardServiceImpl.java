@@ -82,7 +82,7 @@ public class CustomReportDashboardServiceImpl implements
 			+ OR_HAS_ROLE_ADMIN)
 	public void bindChart(CustomReportChartBinding newBinding) {
 		bindingDao.save(newBinding);
-		em.unwrap(Session.class).flush();
+		em.flush();
 	}
 
 	@Override
