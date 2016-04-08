@@ -20,24 +20,25 @@
  */
 package org.squashtest.tm.hibernate.mapping.testcase
 
-
-import org.springframework.test.context.transaction.TransactionConfiguration
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.springframework.test.annotation.Rollback
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
-class TestCaseFolderIT extends HibernateMappingSpecification  {
+@Rollback
+@Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+class TestCaseFolderIT extends HibernateMappingSpecification {
 	def "should persist and retrieve a folder"() {
 		given: "a persistent folder"
-		TestCaseFolder f = new TestCaseFolder(name:"to retrieve")
+		TestCaseFolder f = new TestCaseFolder(name: "to retrieve")
 		persistFixture f
-		
+
 		when:
-		def gotten = doInTransaction ({ it.get(TestCaseFolder, f.id)}) 
-		
+		def gotten = doInTransaction({ it.get(TestCaseFolder, f.id) })
+
 		then:
 		gotten.name == f.name
-		
+
 		cleanup:
 		deleteFixture f
 	}

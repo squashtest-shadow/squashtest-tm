@@ -20,25 +20,27 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Data access methods for {@link DenormalizedFieldValue}. Methods are all dynamically generated: see
  * {@link DynamicDaoFactoryBean}.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 
-public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldValue, Long>{
+public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldValue, Long> {
 
 	public static final String PARAM_ENTITY_TYPE = "entityType";
 	public static final String PARAM_ENTITY_ID = "entityId";
@@ -46,36 +48,40 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 	// note : native method from JPA repositorie
 	void save(DenormalizedFieldValue newValue);
 
-	// note : uses the Spring JPA dsl 
+	// note : uses the Spring JPA dsl
 	DenormalizedFieldValue findById(long denormalizedFieldHolderId);
 
 	/**
 	 * Delete all the denormalized field values related to a DenormalizedFieldHolder, identified by its id and
 	 * DenormalizedFieldHolderType
-	 * 
+	 *
 	 * @param denormalizedFieldHolderId
 	 * @param denormalizedFieldHolderType
+	 * @deprecated does not seem to be used as per 1.14
 	 */
 	// note : uses a named query in package-info or elsewhere
+	@Modifying
+	@Transactional
+	@Deprecated
 	void deleteAllForEntity(@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
-			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
+							@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
 	/**
 	 * Return all denormalized field values related to the denormalizedFieldHolder matching params. The list is ordered
 	 * by position asc.
-	 * 
+	 *
 	 * @param denormalizedFieldHolderId
 	 * @param denormalizedFieldHolderType
 	 * @return the list of corresponding {@link DenormalizedFieldValue} ordered by position asc.
 	 */
 	// note : uses a named query in package-info or elsewhere
 	List<DenormalizedFieldValue> findDFVForEntity(@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
-			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
+												  @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
 	/**
 	 * Return all denormalized field values related to the denormalizedFieldHolder matching params. The list is ordered
 	 * by position asc.
-	 * 
+	 *
 	 * @param denormalizedFieldHolderId
 	 * @param denormalizedFieldHolderType
 	 * @param renderingLocation
@@ -83,9 +89,9 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 	 */
 	// note : uses a named query in package-info or elsewhere
 	List<DenormalizedFieldValue> findDFVForEntityAndRenderingLocation(
-			@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
-			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
-			@Param("renderingLocation") RenderingLocation renderingLocation);
+		@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
+		@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
+		@Param("renderingLocation") RenderingLocation renderingLocation);
 
 
 	// note : uses a named query in package-info or elsewhere
@@ -94,9 +100,9 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 
 	// note : uses a named query in package-info or elsewhere
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
-			@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
-			@Param(ParameterNames.ENTITY_IDS) Collection<Long> entities,
-			@Param("locations") Collection<RenderingLocation> locations);
+		@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
+		@Param(ParameterNames.ENTITY_IDS) Collection<Long> entities,
+		@Param("locations") Collection<RenderingLocation> locations);
 
 	// note : uses a named query in package-info or elsewhere
 	public long countDenormalizedFields(@Param(PARAM_ENTITY_ID) long entityId, @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);

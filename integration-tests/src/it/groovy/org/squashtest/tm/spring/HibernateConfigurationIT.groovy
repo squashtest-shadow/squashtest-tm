@@ -20,39 +20,34 @@
  */
 package org.squashtest.tm.spring
 
-
-
-
-
-
-
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transaction
-
 import org.hibernate.Session
-import org.hibernate.SessionFactory
 import org.springframework.boot.test.SpringApplicationContextLoader
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.tm.service.BugTrackerConfig
 import org.squashtest.tm.service.RepositoryConfig
 import org.squashtest.tm.service.SchedulerConfig
 import org.squashtest.tm.service.TmServiceConfig
-
 import spock.lang.Ignore
 import spock.lang.Specification
 
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
+import javax.transaction.Transaction
+
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
-@ContextConfiguration( classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig], loader = SpringApplicationContextLoader.class)
-@TransactionConfiguration()
+@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig], loader = SpringApplicationContextLoader.class)
+@Rollback
 @Ignore
-class HibernateConfigurationIT  extends Specification {
-	@PersistenceContext 
+@Deprecated
+/**
+ * @deprecated should be either retired or check the entitymanager / EMF
+ */
+class HibernateConfigurationIT extends Specification {
+	@PersistenceContext
 	EntityManager em
 
 

@@ -20,20 +20,17 @@
  */
 package org.squashtest.tm.service
 
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Session
-import org.hibernate.SessionFactory
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.it.utils.SkipAll
-
 import spock.lang.Specification
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 /**
  * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.
@@ -41,11 +38,12 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
-@TransactionConfiguration()
+@Rollback
 @Deprecated
-@SkipAll //Skip all child test for the moment
+@SkipAll
+//Skip all child test for the moment
 abstract class HibernateServiceSpecification extends Specification {
-	@PersistenceContext 
+	@PersistenceContext
 	EntityManager em
 
 	Session getCurrentSession() {

@@ -20,26 +20,21 @@
  */
 package org.squashtest.tm.service
 
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.ObjectNotFoundException
 import org.hibernate.Query
 import org.hibernate.Session
-import org.hibernate.SessionFactory
 import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.it.config.UnitilsConfig
-
 import spock.lang.Specification
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
@@ -47,10 +42,10 @@ import spock.lang.Specification
  */
 @ContextConfiguration(classes = [ServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration(defaultRollback = true)
+@Rollback
 abstract class DbunitServiceSpecification extends Specification {
 
-	@PersistenceContext 
+	@PersistenceContext
 	EntityManager em
 
 	protected Session getSession() {

@@ -146,10 +146,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
-	/**
-	 *
-	 * @see org.squashtest.tm.service.campaign.CustomIterationModificationService#findAssignedTestPlan(long, Paging)
-	 */
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
 			PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
@@ -158,7 +154,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
 
 		try {
-			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(iterationId),
+			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(iterationId),
 					"READ_UNASSIGNED", Iteration.class.getName());
 		} catch (AccessDeniedException ade) {
 			String userLogin = userService.findCurrentUser().getLogin();
@@ -169,8 +165,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 				userFiltering, columnFiltering);
 		long testPlanSize = iterationDao.countTestPlans(iterationId, userFiltering, columnFiltering);
 
-		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize,
-				indexedItems);
+		return new PagingBackedPagedCollectionHolder<>(sorting, testPlanSize,
+			indexedItems);
 	}
 
 	/*
@@ -222,7 +218,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
 
-		List<IterationTestPlanItem> testPlan = new LinkedList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> testPlan = new LinkedList<>();
 
 		for (TestCase testCase : testCases) {
 			addTestCaseToTestPlan(testCase, testPlan);
@@ -255,9 +251,6 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		}
 	}
 
-	/**
-	 * @see CustomIterationModificationService#changeTestPlanPosition(long, int, List)
-	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 			+ OR_HAS_ROLE_ADMIN)
@@ -290,12 +283,9 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
 			+ OR_HAS_ROLE_ADMIN)
 	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId) {
-		boolean unauthorizedDeletion = false;
 		Iteration it = iterationDao.findById(iterationId);
 
-		unauthorizedDeletion = removeTestPlansFromIterationObj(testPlanIds, it);
-
-		return unauthorizedDeletion;
+		return removeTestPlansFromIterationObj(testPlanIds, it);
 	}
 
 	@Override
@@ -349,14 +339,11 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'LINK') "
 			+ OR_HAS_ROLE_ADMIN)
 	public boolean removeTestPlanFromIteration(long testPlanItemId) {
-		boolean unauthorizedDeletion = false;
 		IterationTestPlanItem item = iterationTestPlanDao.findById(testPlanItemId);
 		Iteration iteration = item.getIteration();
 
 		// We do not allow deletion if there are execution and the user isn't authorized to do that
-		unauthorizedDeletion = removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
-
-		return unauthorizedDeletion;
+		return removeTestPlanItemIfOkWithExecsAndRights(iteration, item);
 
 	}
 
@@ -402,7 +389,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter,
 				DefaultFiltering.NO_FILTERING, DefaultColumnFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
-		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(filter, count, testPlan);
+		return new PagingBackedPagedCollectionHolder<>(filter, count, testPlan);
 	}
 
 	@Override
@@ -410,15 +397,14 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		Iteration iteration = iterationDao.findById(iterationId);
 
-		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
+		List<ObjectIdentity> entityRefs = new ArrayList<>();
 
 		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(iteration);
 		entityRefs.add(oid);
 
 		List<String> loginList = aclService.findUsersWithExecutePermission(entityRefs);
-		List<User> usersList = userDao.findUsersByLoginList(loginList);
 
-		return usersList;
+		return userDao.findUsersByLoginList(loginList);
 
 	}
 
@@ -467,7 +453,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@Override
 	public List<ExecutionStatus> getExecutionStatusList() {
 
-		List<ExecutionStatus> statusList = new LinkedList<ExecutionStatus>();
+		List<ExecutionStatus> statusList = new LinkedList<>();
 		statusList.addAll(ExecutionStatus.getCanonicalStatusSet());
 		return statusList;
 	}
@@ -503,12 +489,10 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 *
 	 * <strong>Note :</strong> The returned test plan fragment is in a transient state.
 	 *
-	 * @param referenced
-	 * @param assignee
 	 * @return
 	 */
 	private Collection<IterationTestPlanItem> createTestPlanFragment(TestCase testCase) {
-		List<IterationTestPlanItem> fragment = new ArrayList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> fragment = new ArrayList<>();
 		addTestCaseToTestPlan(testCase, fragment);
 		return fragment;
 	}

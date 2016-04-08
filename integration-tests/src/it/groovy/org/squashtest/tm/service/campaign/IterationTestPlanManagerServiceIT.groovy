@@ -20,29 +20,19 @@
  */
 package org.squashtest.tm.service.campaign
 
-import java.util.List
-
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting
-import org.squashtest.tm.core.foundation.collection.Sorting
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.project.ProjectsPermissionFinder
-import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.tm.service.project.ProjectsPermissionFinder
-import org.squashtest.tm.service.internal.campaign.IterationTestPlanManagerServiceImpl
-import org.squashtest.tm.core.foundation.collection.DefaultSorting
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
-import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
-import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.user.UserAccountService
-import spock.lang.Unroll
-import spock.unitils.UnitilsSupport
 import org.squashtest.it.infrastructure.AopSquashProxyUtil
 import org.squashtest.it.utils.CollectionComparisonUtils
+import org.squashtest.tm.core.foundation.collection.*
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.users.User
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.unitils.dbunit.annotation.DataSet
+import spock.lang.Unroll
+import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport

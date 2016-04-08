@@ -20,51 +20,48 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Query
 import org.hibernate.Session
-import org.hibernate.SessionFactory
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.DynamicDaoConfig
 import org.squashtest.it.config.RepositorySpecConfig
 import org.squashtest.it.config.UnitilsConfig
-import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.RepositoryConfig
-
 import spock.lang.Specification
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(classes = [ RepositorySpecConfig, UnitilsConfig, DynamicDaoConfig, RepositoryConfig ])
+@ContextConfiguration(classes = [RepositorySpecConfig, UnitilsConfig, DynamicDaoConfig, RepositoryConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration( defaultRollback = true)
 @Transactional
+@Rollback
 abstract class DbunitDaoSpecification extends Specification {
 
-	@PersistenceContext 
+	@PersistenceContext
 	EntityManager em
 
-	protected Session getSession(){
+	protected Session getSession() {
 		return em.unwrap(Session.class);
 	}
 
-	protected boolean found(Class<?> entityClass, Long id){
+	protected boolean found(Class<?> entityClass, Long id) {
 		return (getSession().get(entityClass, id) != null)
 	}
-	protected Object findEntity(Class<?> entityClass, Long id){
+
+	protected Object findEntity(Class<?> entityClass, Long id) {
 		return getSession().get(entityClass, id);
 	}
 
-	protected boolean found(String tableName, String idColumnName, Long id){
-		String sql = "select count(*) from "+tableName+" where "+idColumnName+" = :id";
+	protected boolean found(String tableName, String idColumnName, Long id) {
+		String sql = "select count(*) from " + tableName + " where " + idColumnName + " = :id";
 		Query query = getSession().createSQLQuery(sql);
 		query.setParameter("id", id);
 

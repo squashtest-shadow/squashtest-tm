@@ -20,15 +20,12 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
-import javax.inject.Inject
-import javax.sql.DataSource
-
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.core.context.SecurityContextHolder
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.SecuritySpecConfig
 import org.squashtest.it.config.UnitilsConfig
@@ -40,10 +37,12 @@ import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
-
 import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import javax.sql.DataSource
 
 //@ContextConfiguration(classes = [ServiceSpecConfig,
 //	UnitilsConfig,
@@ -54,14 +53,18 @@ import spock.unitils.UnitilsSupport
 //@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
 @Transactional
-@ContextConfiguration(classes = [ UnitilsConfig, SecurityConfig, SecuritySpecConfig ])
+@ContextConfiguration(classes = [UnitilsConfig, SecurityConfig, SecuritySpecConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@Rollback
+@Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @SkipAll
 class JdbcManageableAclServiceIT extends Specification {
-	@Inject DataSource dataSource
-	@Inject ManageableAclService manageableService
-	@Inject ObjectAclService service
+	@Inject
+	DataSource dataSource
+	@Inject
+	ManageableAclService manageableService
+	@Inject
+	ObjectAclService service
 
 	def setup() {
 		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication())
@@ -145,13 +148,13 @@ class JdbcManageableAclServiceIT extends Specification {
 		then:
 		res != null
 		!res.isEmpty()
-		res.collectAll{it[0]}.containsAll( -102L, -101L)
+		res.collectAll { it[0] }.containsAll(-102L, -101L)
 	}
 
 	@DataSet("JdbcManageableAclServiceIT.should retrieve acl group user.xml")
 	def "sould fiind object without permission"() {
 		when:
-		def res = service.findObjectWithoutPermissionByPartyId (-10, "batmobile")
+		def res = service.findObjectWithoutPermissionByPartyId(-10, "batmobile")
 		System.out.println(res.toString())
 
 		then:

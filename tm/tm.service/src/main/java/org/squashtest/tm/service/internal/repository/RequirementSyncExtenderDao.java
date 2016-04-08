@@ -20,30 +20,37 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
+
+import java.util.Collection;
 
 public interface RequirementSyncExtenderDao extends Repository<RequirementSyncExtender, Long> {
 
 	// note : native method from JPA repositories
 	void save(RequirementSyncExtender extender);
-	
+
 	// note : uses a named query in package-info or elsewhere
 	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId);
+
 	// note : uses a named query in package-info or elsewhere
 	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId);
+
 	// note : uses a named query in package-info or elsewhere
 	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@Param("pId") String remoteProjectId, @Param("filter") String filterName);
+
 	// note : uses a named query in package-info or elsewhere
 	Collection<RequirementSyncExtender> retrieveAllByServer(@Param("serverId") Long serverId);
-	
+
 	// note : native method from JPA repositories
 	void delete(RequirementSyncExtender extender);
-	
+
 	// note : uses a named query in package-info or elsewhere
+	@Modifying
+	@Transactional
 	void deleteAllByServer(@Param("serverId") Long serverId);
-	
+
 }

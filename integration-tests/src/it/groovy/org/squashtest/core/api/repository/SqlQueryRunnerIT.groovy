@@ -20,18 +20,17 @@
  */
 package org.squashtest.core.api.repository
 
-import javax.inject.Inject
-
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.api.repository.SqlQueryRunner
 import org.unitils.database.annotations.Transactional
 import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 /**
  * Nore : isolation=Isolation.READ_UNCOMMITTED because SqlQueryRunner explicitely opens a tx and does not contribute to theone opened by test method. Which means it is not able to see injected data otherwise.
@@ -40,13 +39,15 @@ import spock.unitils.UnitilsSupport
  *
  */
 @UnitilsSupport
-@ContextConfiguration(["classpath:repository/dependencies-scan-context.xml",  "classpath*:META-INF/**/repository-context.xml"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager", defaultRollback = true)
+@ContextConfiguration(["classpath:repository/dependencies-scan-context.xml", "classpath*:META-INF/**/repository-context.xml"])
+@Rollback
+@org.springframework.transaction.annotation.Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @Transactional(TransactionMode.DISABLED)
 @DataSet("SqlQueryRunnerIT.should select all active core users.xml")
 @SkipAll
 class SqlQueryRunnerIT extends Specification {
-	@Inject SqlQueryRunner runner
+	@Inject
+	SqlQueryRunner runner
 
 	def "should select all active core user logins"() {
 		when:
@@ -63,8 +64,8 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect("select LOGIN, LAST_NAME from CORE_USER where ACTIVE = true")
 
 		then:
-		res.find{it[0] == "daniel.bryan"}[1] == "bryan"
-		res.find{it[0] == "chris.jericho"}[1] =="jericho"
+		res.find { it[0] == "daniel.bryan" }[1] == "bryan"
+		res.find { it[0] == "chris.jericho" }[1] == "jericho"
 		res.size() == 2
 	}
 
@@ -73,8 +74,8 @@ class SqlQueryRunnerIT extends Specification {
 		def res = runner.executeSelect('select LOGIN "logname", LAST_NAME "name" from CORE_USER where ACTIVE = true')
 
 		then:
-		res.find{it[0] == "daniel.bryan"}[1] == "bryan"
-		res.find{it[0] == "chris.jericho"}[1] =="jericho"
+		res.find { it[0] == "daniel.bryan" }[1] == "bryan"
+		res.find { it[0] == "chris.jericho" }[1] == "jericho"
 		res.size() == 2
 	}
 

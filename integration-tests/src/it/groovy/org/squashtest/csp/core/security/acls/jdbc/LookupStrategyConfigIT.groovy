@@ -20,32 +20,35 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
-import javax.inject.Inject
-
 import org.springframework.security.acls.domain.PrincipalSid
 import org.springframework.security.acls.jdbc.BasicLookupStrategy
 import org.springframework.security.acls.model.ObjectIdentity
+import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.transaction.TransactionConfiguration
+import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.utils.SkipAll
 import org.squashtest.test.unitils.dbunit.datasetloadstrategy.DeleteInsertLoadStrategy
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @ContextConfiguration(["classpath:service/dependencies-scan-context.xml",
 	, "classpath*:META-INF/**/bundle-context.xml",
 	"classpath*:META-INF/**/repository-context.xml", "classpath*:META-INF/**/dynamicdao-context.xml",
 	"classpath*:META-INF/**/dynamicmanager-context.xml",
-	"classpath:it-config-context.xml"])
-@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+	"classpath:it-config-context.xml" ] )
+
+@Rollback
+@Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
 @SkipAll
 class LookupStrategyConfigIT extends Specification {
-	@Inject BasicLookupStrategy lookupStrategy
+	@Inject
+	BasicLookupStrategy lookupStrategy
 
-	@DataSet(value="LookupStrategyConfigIT.should read acl on an object identity for a user.xml", loadStrategy=DeleteInsertLoadStrategy)
+	@DataSet(value = "LookupStrategyConfigIT.should read acl on an object identity for a user.xml", loadStrategy = DeleteInsertLoadStrategy)
 	def "should read acl on an object identity for a user"() {
 		given:
 		ObjectIdentity oid = Mock()
@@ -63,7 +66,8 @@ class LookupStrategyConfigIT extends Specification {
 		then:
 		acls.size() == 1
 	}
-	@DataSet(value="LookupStrategyConfigIT.should read no acl on an object identity for a user.xml", loadStrategy=DeleteInsertLoadStrategy)
+
+	@DataSet(value = "LookupStrategyConfigIT.should read no acl on an object identity for a user.xml", loadStrategy = DeleteInsertLoadStrategy)
 	def "should read no acl on an object identity for a user with no permissions"() {
 		given:
 		ObjectIdentity oid = Mock()
@@ -82,7 +86,7 @@ class LookupStrategyConfigIT extends Specification {
 		acls.size() == 0
 	}
 
-	@DataSet(value="LookupStrategyConfigIT.should read no acl for deactivated user.xml", loadStrategy=DeleteInsertLoadStrategy)
+	@DataSet(value = "LookupStrategyConfigIT.should read no acl for deactivated user.xml", loadStrategy = DeleteInsertLoadStrategy)
 	def "should read no acl on an object identity for a deactivated user"() {
 		given:
 		ObjectIdentity oid = Mock()
