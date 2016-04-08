@@ -28,6 +28,7 @@ import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
+import org.springframework.test.context.transaction.TransactionConfiguration
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.it.config.UnitilsConfig
@@ -42,7 +43,7 @@ import javax.persistence.PersistenceContext
  */
 @ContextConfiguration(classes = [ServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
-@TransactionConfiguration(defaultRollback = true)
+@Rollback
 abstract class DbunitServiceSpecification extends Specification {
 
 	@PersistenceContext

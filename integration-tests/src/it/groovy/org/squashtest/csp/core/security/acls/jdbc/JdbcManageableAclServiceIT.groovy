@@ -52,7 +52,6 @@ import javax.sql.DataSource
 //@TestPropertySource(["classpath:no-validation-hibernate.properties"])
 //@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
-@Transactional
 @ContextConfiguration(classes = [UnitilsConfig, SecurityConfig, SecuritySpecConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties"])
 @Rollback
