@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.hibernate.SessionFactory
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.domain.campaign.Campaign
@@ -36,9 +35,8 @@ import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
-import javax.persistence.PersistenceContext;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 @SuppressWarnings("GroovyUnusedDeclaration")
 @UnitilsSupport
@@ -46,7 +44,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@Inject
 	IssueDao issueDao
 
-	@PersistenceContext 
+	@PersistenceContext
 	EntityManager em
 
 /**
@@ -255,7 +253,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all execution - ish pairs for a campaign"() {
 		given:
-		def camp = em.find(Campaign, 100001L)
+		def camp = em.getReference(Campaign, 100001L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByCampaign(camp, sorter(firstItemIndex: 0, pageSize: 5))
@@ -269,7 +267,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for a campaign"() {
 		given:
-		def camp = em.find(Campaign, 100001L)
+		def camp = em.getReference(Campaign, 100001L)
 
 		expect:
 		issueDao.countByCampaign(camp) == 7
@@ -279,7 +277,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all execution - ish pairs for an execution"() {
 		given:
-		def exec = em.find(Execution, 10000100L)
+		def exec = em.getReference(Execution, 10000100L)
 
 		when:
 		def result = issueDao.findAllDeclaredExecutionIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
@@ -292,7 +290,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all step - ish pairs for an execution"() {
 		given:
-		def exec = sessionFactory.currentSession.load(Execution, 10000100L)
+		def exec = em.getReference(Execution, 10000100L)
 
 		when:
 		def result = issueDao.findAllExecutionStepIssuePairsByExecution(exec, sorter(firstItemIndex: 0, pageSize: 5))
@@ -306,7 +304,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for an execution"() {
 		given:
-		def exec = em.find(Execution, 10000100L)
+		def exec = em.getReference(Execution, 10000100L)
 
 		expect:
 		issueDao.countByExecutionAndSteps(exec) == 2
@@ -316,7 +314,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should return all execution - ish pairs for an iteration"() {
 		given:
-		def iter = em.find(Iteration, 100001L)
+		def iter = em.getReference(Iteration, 100001L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByIteration(iter, sorter(firstItemIndex: 0, pageSize: 5))
@@ -329,7 +327,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "[#6062] should count issues for an iteration"() {
 		given:
-		def iter = em.find(Iteration, 100001L)
+		def iter = em.getReference(Iteration, 100001L)
 
 		expect:
 		issueDao.countByIteration(iter) == 3
@@ -340,7 +338,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "[#6062] should return all execution - ish pairs for a test suite"() {
 		given:
-		TestSuite ts = em.find(TestSuite, 1000030L)
+		TestSuite ts = em.getReference(TestSuite, 1000030L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByTestSuite(ts, sorter(firstItemIndex: 0))
@@ -353,7 +351,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.test suite.xml")
 	def "[#6062] should count issues for a test suite"() {
 		given:
-		TestSuite ts = em.find(TestSuite, 1000030L)
+		TestSuite ts = em.getReference(TestSuite, 1000030L)
 
 		expect:
 		issueDao.countByTestSuite(ts) == 3
@@ -363,7 +361,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.folders.xml")
 	def "[#6062] should return all execution - ish pairs for a folder"() {
 		given:
-		def folder = em.find(CampaignFolder, 100000104L)
+		def folder = em.getReference(CampaignFolder, 100000104L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByCampaignFolder(folder, sorter(firstItemIndex: 0))
@@ -376,7 +374,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.folders.xml")
 	def "[#6062] should count issues for a folder"() {
 		given:
-		CampaignFolder folder = em.find(CampaignFolder, 100000104L)
+		CampaignFolder folder = em.getReference(CampaignFolder, 100000104L)
 
 		expect:
 		issueDao.countByCampaignFolder(folder) == 14
@@ -386,7 +384,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.testcases.xml")
 	def "[#6062] should return all execution - ish pairs for a test case"() {
 		given:
-		def testCase = sessionFactory.currentSession.load(TestCase, 100000238L)
+		def testCase = em.getReference(TestCase, 100000238L)
 
 		when:
 		def result = issueDao.findAllExecutionIssuePairsByTestCase(testCase, sorter(firstItemIndex: 0))
@@ -399,7 +397,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.testcases.xml")
 	def "[#6062] should count issues for a test case"() {
 		given:
-		def testCase = sessionFactory.currentSession.load(TestCase, 100000238L)
+		def testCase = em.getReference(TestCase, 100000238L)
 
 		expect:
 		issueDao.countByTestCase(testCase) == 14
@@ -409,7 +407,7 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateIssueDaoIT.xml")
 	def "should fetch issues by execution steps"() {
 		given:
-		def step = sessionFactory.currentSession.load(ExecutionStep, 100002010L)
+		def step = em.getReference(ExecutionStep, 100002010L)
 
 		when:
 		def result = issueDao.findAllByExecutionStep(step, sorter())
