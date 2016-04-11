@@ -1,34 +1,24 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
@@ -40,19 +30,8 @@ import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.MultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
-import org.squashtest.tm.domain.campaign.TestPlanStatistics;
-import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.domain.campaign.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -64,6 +43,9 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 
+import java.util.*;
+import java.util.Map.Entry;
+
 @Repository
 public class HibernateIterationDao extends HibernateEntityDao<Iteration> implements IterationDao {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HibernateIterationDao.class);
@@ -73,17 +55,17 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * hql string which will let us do that.
 	 */
 	private static final String HQL_INDEXED_TEST_PLAN_TEMPLATE_START = "select index(IterationTestPlanItem), " +
-			"IterationTestPlanItem, " +
-			"coalesce(group_concat(TestSuite.name, 'order by', TestSuite.name), '') as suitenames, " +
-			"(select min(m.endDate) from IterationTestPlanItem itpi " +
-			"left join itpi.referencedTestCase ctc left join ctc.milestones m where itpi.id = IterationTestPlanItem.id) as endDate "
-			+ "from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "
-			+ "left outer join IterationTestPlanItem.referencedTestCase as TestCase "
-			+ "left outer join TestCase.project as Project "
-			+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
-			+ "left outer join IterationTestPlanItem.user as User "
-			+ "left outer join IterationTestPlanItem.testSuites as TestSuite "
-			+ "where Iteration.id = :iterationId {whereClause} ";
+		"IterationTestPlanItem, " +
+		"coalesce(group_concat(TestSuite.name, 'order by', TestSuite.name), '') as suitenames, " +
+		"(select min(m.endDate) from IterationTestPlanItem itpi " +
+		"left join itpi.referencedTestCase ctc left join ctc.milestones m where itpi.id = IterationTestPlanItem.id) as endDate "
+		+ "from Iteration as Iteration inner join Iteration.testPlans as IterationTestPlanItem "
+		+ "left outer join IterationTestPlanItem.referencedTestCase as TestCase "
+		+ "left outer join TestCase.project as Project "
+		+ "left outer join IterationTestPlanItem.referencedDataset as Dataset "
+		+ "left outer join IterationTestPlanItem.user as User "
+		+ "left outer join IterationTestPlanItem.testSuites as TestSuite "
+		+ "where Iteration.id = :iterationId {whereClause} ";
 
 	/*
 	 * note : group by Iteration, ITPI is broken : produces `GROUP BY ITERATION.ID, null` SQL (HHH-1615)
@@ -98,7 +80,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * the following collection will forbid group by on certain columns
 	 * because Hibernate would not call those columns as we asked it to.
 	 */
-	private static final Collection<String> HQL_NO_GROUP_BY_COLUMNS =  Arrays.asList(new String[]{"suitenames","endDate"});
+	private static final Collection<String> HQL_NO_GROUP_BY_COLUMNS = Arrays.asList("suitenames", "endDate");
 	/**
 	 * HQL query which looks up the whole iteration test plan
 	 */
@@ -107,25 +89,26 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	 * HQL query which looks up the test plan assigned to a given user
 	 */
 	private final String hqlUserFilteredIndexedTestPlan = HQL_INDEXED_TEST_PLAN_TEMPLATE_START.replace("{whereClause}",
-			"and User.login = :userLogin ");
+		"and User.login = :userLogin ");
 
-	
-	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
+
+	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<>();
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
+
 	static {
-		Map<String, String> modeDataMap = new HashMap<String, String>(2);
+		Map<String, String> modeDataMap = new HashMap<>(2);
 		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
-				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
+			TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
 		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
 		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
 
-		Map<String, String> userData = new HashMap<String, String>(2);
+		Map<String, String> userData = new HashMap<>(2);
 		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
 		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
 
 	}
-	
+
 	@Override
 	public List<Iteration> findAllByCampaignId(long campaignId) {
 
@@ -135,15 +118,15 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public List<Iteration> findAllIterationContainingTestCase(long testCaseId) {
 		return executeListNamedQuery("iterationDao.findAllIterationContainingTestCase", new SetIdParameter(
-				"testCaseId", testCaseId));
+			"testCaseId", testCaseId));
 	}
 
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitly reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.csp.tm.internal.repository.IterationDao#findOrderedExecutionsByIterationId(long)
 	 */
 	@Override
@@ -175,7 +158,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	/*
 	 * Returns a Campaign if it contains an Iteration with the provided Id Returns null otherwise
-	 * 
+	 *
 	 * Note : as long as the relation between Campaign and Iteration is OneToMany, there will be either 0 either 1
 	 * results, no more.
 	 */
@@ -184,7 +167,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		Session session = currentSession();
 
 		List<Campaign> tcList = session.createCriteria(Campaign.class).createCriteria("iterations")
-				.add(Restrictions.eq("id", iterationId)).list();
+			.add(Restrictions.eq("id", iterationId)).list();
 
 		if (tcList.size() > 0) {
 			Campaign ca = tcList.get(0);
@@ -268,12 +251,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public TestPlanStatistics getIterationStatistics(long iterationId) {
 
 		Query q = currentSession().getNamedQuery("iteration.countStatuses");
 		q.setParameter("iterationId", iterationId);
 		List<Object[]> result = q.list();
-		
+
 		return new TestPlanStatistics(result);
 	}
 
@@ -287,13 +271,13 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<IterationTestPlanItem> findTestPlan(long iterationId, PagingAndMultiSorting sorting,
-			Filtering filtering, ColumnFiltering columnFiltering) {
+													Filtering filtering, ColumnFiltering columnFiltering) {
 
 		// get the data
 		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
 
 		// filter them
-		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
+		List<IterationTestPlanItem> items = new ArrayList<>(tuples.size());
 
 		for (Object[] tuple : tuples) {
 			IterationTestPlanItem itpi = (IterationTestPlanItem) tuple[1];
@@ -305,19 +289,19 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long iterationId, PagingAndSorting sorting,
-			Filtering filtering, ColumnFiltering columnFiltering) {
+																  Filtering filtering, ColumnFiltering columnFiltering) {
 		return findIndexedTestPlan(iterationId, new SingleToMultiSortingAdapter(sorting), filtering, columnFiltering);
 	}
 
 	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long iterationId,
-			PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
+																  PagingAndMultiSorting sorting, Filtering filtering, ColumnFiltering columnFiltering) {
 
 		/* get the data */
 		List<Object[]> tuples = findIndexedTestPlanData(iterationId, sorting, filtering, columnFiltering);
 
 		/* format them */
-		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
+		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<>(tuples.size());
 
 		for (Object[] tuple : tuples) {
 			Integer index = (Integer) tuple[0];
@@ -331,7 +315,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 
 	private StringBuilder buildTestPlanQueryBody(Filtering filtering, ColumnFiltering columnFiltering,
-			MultiSorting multiSorting) {
+												 MultiSorting multiSorting) {
 		StringBuilder hqlBuilder = new StringBuilder();
 
 		String hql = filtering.isDefined() ? hqlUserFilteredIndexedTestPlan : hqlFullIndexedTestPlan;
@@ -358,7 +342,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 
 		// Strict SQL (postgres) : sort colums have to appear in group by clause.
 		for (Sorting sorting : multiSorting.getSortings()) {
-			if (! HQL_NO_GROUP_BY_COLUMNS.contains(sorting.getSortedAttribute())){
+			if (!HQL_NO_GROUP_BY_COLUMNS.contains(sorting.getSortedAttribute())) {
 				hqlBuilder.append(", ").append(sorting.getSortedAttribute());
 			}
 		}
@@ -371,7 +355,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	private String buildIndexedTestPlanQueryString(PagingAndMultiSorting sorting, Filtering filtering,
-			ColumnFiltering columnFiltering) {
+												   ColumnFiltering columnFiltering) {
 
 		StringBuilder hqlbuilder = buildTestPlanQueryBody(filtering, columnFiltering, sorting);
 
@@ -386,7 +370,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	// this method will use one or another strategy to fetch its data depending on what the user is requesting.
 	@SuppressWarnings("unchecked")
 	private List<Object[]> findIndexedTestPlanData(final long iterationId, PagingAndMultiSorting sorting,
-			Filtering filtering, ColumnFiltering columnFiltering) {
+												   Filtering filtering, ColumnFiltering columnFiltering) {
 
 		String queryString = buildIndexedTestPlanQueryString(sorting, filtering, columnFiltering);
 
@@ -403,12 +387,12 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			return (Long) executeEntityNamedQuery("iteration.countTestPlans", idParameter(iterationId));
 		} else {
 			return (Long) executeEntityNamedQuery("iteration.countTestPlansFiltered",
-					idAndLoginParameter(iterationId, filtering.getFilter()));
+				idAndLoginParameter(iterationId, filtering.getFilter()));
 		}
 	}
 
 	private Query assignParameterValuesToTestPlanQuery(String queryString, Long iterationId, Filtering filtering,
-			ColumnFiltering columnFiltering) {
+													   ColumnFiltering columnFiltering) {
 		Query query = currentSession().createQuery(queryString);
 		query.setParameter(ParameterNames.ITERATION_ID, iterationId);
 		TestPlanFilteringHelper.setFilters(query, filtering, columnFiltering);
@@ -428,7 +412,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		});
 
 		Query query = assignParameterValuesToTestPlanQuery(hqlbuilder.toString(), iterationId, filtering,
-				columnFiltering);
+			columnFiltering);
 
 		return query.list().size();
 	}
@@ -436,33 +420,33 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestCaseExecutionStatus> findExecStatusForIterationsAndTestCases(
-			List<Long> testCasesIds, List<Long> iterationsIds) {
-		if (testCasesIds.size()==0) {
+		List<Long> testCasesIds, List<Long> iterationsIds) {
+		if (testCasesIds.size() == 0) {
 			return Collections.EMPTY_LIST;
 		}
 		Query q = currentSession().getNamedQuery("iteration.findITPIByTestCaseGroupByStatus");
 		q.setParameterList("testCasesIds", testCasesIds, LongType.INSTANCE);
 		q.setParameterList("iterationsIds", iterationsIds, LongType.INSTANCE);
-		HashMap<ExecutionStatus,Long> map = new HashMap<ExecutionStatus, Long>();
-		List<TestCaseExecutionStatus> formatedResult = new ArrayList<TestCaseExecutionStatus>();
+		List<TestCaseExecutionStatus> formatedResult = new ArrayList<>();
 		List<Object[]> results = q.list();
 		for (Object[] result : results) {
-			formatedResult.add(new TestCaseExecutionStatus((ExecutionStatus)result[0], (Long) result[1]));
+			formatedResult.add(new TestCaseExecutionStatus((ExecutionStatus) result[0], (Long) result[1]));
 		}
 		return formatedResult;
 	}
 
 	@Override
 	public Map<ExecutionStatus, Integer> findRequirementSteppedVersionCoverageExecutionStats(
-			List<Long> testStepsIds, List<Long> iterationsIds) {
+		List<Long> testStepsIds, List<Long> iterationsIds) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findVerifiedTcIdsInIterations(List<Long> testCasesIds,
-			List<Long> iterationsIds) {
-		if (testCasesIds.size()==0) {
+													List<Long> iterationsIds) {
+		if (testCasesIds.size() == 0) {
 			return Collections.emptyList();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findVerifiedTcIdsInIterations");
@@ -474,8 +458,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findVerifiedTcIdsInIterationsWithExecution(
-			List<Long> tcIds, List<Long> iterationsIds) {
-		if (tcIds.size()==0) {
+		List<Long> tcIds, List<Long> iterationsIds) {
+		if (tcIds.size() == 0) {
 			return Collections.emptyList();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findVerifiedAndExecutedTcIdsInIterations");
@@ -484,10 +468,10 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		return q.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public MultiMap findVerifiedITPI(List<Long> tcIds,
-			List<Long> iterationsIds) {
-		if (tcIds.size()==0) {
+	public MultiMap findVerifiedITPI(List<Long> tcIds, List<Long> iterationsIds) {
+		if (tcIds.size() == 0) {
 			return new MultiValueMap();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findITPIByTestCaseGroupByStatus");
@@ -496,10 +480,10 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		List<Object[]> itpis = q.list();
 		MultiMap result = new MultiValueMap();
 		for (Object[] itpi : itpis) {
-			TestCaseExecutionStatus tcStatus = new TestCaseExecutionStatus((ExecutionStatus)itpi[0], (Long) itpi[1]);
+			TestCaseExecutionStatus tcStatus = new TestCaseExecutionStatus((ExecutionStatus) itpi[0], (Long) itpi[1]);
 			result.put(tcStatus.getTestCaseId(), tcStatus);
 		}
-		return result; 
+		return result;
 	}
 
 }
