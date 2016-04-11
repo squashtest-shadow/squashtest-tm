@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.domain.campaign;
 
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.squashtest.tm.domain.execution.ExecutionStatus;
-
 /**
- * 
+ *
  * Dto for Test-plan statistics <br>
  * Properties :
  * <ul>
@@ -44,14 +44,14 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
  * <li>{@linkplain TestPlanStatus} status</li>
  * <li>int nbDone</li>
  * </ul>
- * 
+ *
  */
 // made "final" because SONAR complained about constructors and overridable methods used in there
 public final class TestPlanStatistics {
 	private int nbTestCases;
 	private int progression;
 	private TestPlanStatus status;
-	private int nbDone ;
+	private int nbDone;
 	private Map<String, Integer> statisticValues;
 
 
@@ -80,7 +80,7 @@ public final class TestPlanStatistics {
 	}
 
 	public int getNbBlocked() {
-		return findIntValue(ExecutionStatus.BLOCKED.name())+ findIntValue(ExecutionStatus.ERROR.name());
+		return findIntValue(ExecutionStatus.BLOCKED.name()) + findIntValue(ExecutionStatus.ERROR.name());
 	}
 
 	public int getNbReady() {
@@ -96,7 +96,7 @@ public final class TestPlanStatistics {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return summ of Test-plan-items with status of "untestable", "blocked", "failure" or "success".<br>
 	 * Nb : (success = success + warning) and (blocked = blocked + error)
 	 */
@@ -107,17 +107,17 @@ public final class TestPlanStatistics {
 	public TestPlanStatistics() {
 		super();
 	}
-	
+
 	/*
 	 * The format for Object[] is : [executionStatus : String, nbItems : Long ]
-	 * 
-	 * 
+	 *
+	 *
 	 */
-	public TestPlanStatistics(Iterable<Object[]> statisticValues){
+	public TestPlanStatistics(Iterable<Object[]> statisticValues) {
 		super();
 		Map<String, Integer> statMaps = new HashMap<>();
-		for (Object[] tuple : statisticValues){
-			statMaps.put((String)tuple[0], ((Long) tuple[1]).intValue());
+		for (Object[] tuple : statisticValues) {
+			statMaps.put(((ExecutionStatus) tuple[0]).name(), ((Long) tuple[1]).intValue());
 		}
 		this.statisticValues = statMaps;
 		init();
@@ -128,44 +128,44 @@ public final class TestPlanStatistics {
 		this.statisticValues = statisticValues;
 		init();
 	}
-	
+
 	// **************************** ***************************
-	
-	private void init(){
+
+	private void init() {
 		computeNbTestCases();
 		computeDone();
 		computeProgression();
-		this.status = TestPlanStatus.getStatus(this);		
+		this.status = TestPlanStatus.getStatus(this);
 	}
 
-	private int findIntValue( String key){
+	private int findIntValue(String key) {
 		Integer integer = statisticValues.get(key);
-		if(integer == null){
+		if (integer == null) {
 			return 0;
-		}else{
+		} else {
 			return integer;
 		}
 	}
 
 	private void computeProgression() {
-		if (getNbTestCases() != 0 ) {
-			BigDecimal progressionBD = new BigDecimal(nbDone).divide(new BigDecimal(getNbTestCases()), 2,	RoundingMode.HALF_UP).multiply(new BigDecimal(100));
+		if (getNbTestCases() != 0) {
+			BigDecimal progressionBD = new BigDecimal(nbDone).divide(new BigDecimal(getNbTestCases()), 2, RoundingMode.HALF_UP).multiply(new BigDecimal(100));
 			progression = progressionBD.intValue();
 		} else {
 			progression = 0;
 		}
 	}
 
-	private void computeNbTestCases(){
+	private void computeNbTestCases() {
 		Collection<Integer> all = statisticValues.values();
-		int acc=0;
-		for (Integer count : all){
-			acc+=count;
+		int acc = 0;
+		for (Integer count : all) {
+			acc += count;
 		}
 		nbTestCases = acc;
 	}
-	
+
 	private void computeDone() {
-		nbDone = getNbSettled() + getNbUntestable()  + getNbBlocked() +  getNbFailure() + getNbSuccess() ;
+		nbDone = getNbSettled() + getNbUntestable() + getNbBlocked() + getNbFailure() + getNbSuccess();
 	}
 }
