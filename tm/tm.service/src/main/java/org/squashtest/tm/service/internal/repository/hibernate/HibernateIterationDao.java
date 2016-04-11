@@ -184,20 +184,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	}
 
 	@Override
-	public List<Execution> findOrderedExecutionsByIterationAndTestCase(final long iterationId, final long testCaseId) {
-		return executeListNamedQuery("iteration.findAllExecutionsByTestCase", new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(ParameterNames.ITERATION_ID, iterationId);
-				query.setParameter("testCaseId", testCaseId);
-
-			}
-		});
-
-	}
-
-	@Override
 	public List<Execution> findOrderedExecutionsByIterationAndTestPlan(final long iterationId, final long testPlanId) {
 		return executeListNamedQuery("iteration.findAllExecutionsByTestPlan", new SetQueryParametersCallback() {
 
@@ -433,13 +419,6 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 			formatedResult.add(new TestCaseExecutionStatus((ExecutionStatus) result[0], (Long) result[1]));
 		}
 		return formatedResult;
-	}
-
-	@Override
-	public Map<ExecutionStatus, Integer> findRequirementSteppedVersionCoverageExecutionStats(
-		List<Long> testStepsIds, List<Long> iterationsIds) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 	@SuppressWarnings("unchecked")
