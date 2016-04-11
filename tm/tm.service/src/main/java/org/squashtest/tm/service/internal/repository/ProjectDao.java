@@ -22,32 +22,18 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
-@DynamicDao(entity = Project.class)
-public interface ProjectDao extends CustomProjectDao {
+public interface ProjectDao extends CustomProjectDao, JpaRepository<Project,Long> {
 
-	Project findByName(String projectname);
+	Project findByName(String name);
 
 	Project findById(long id);
 
-	void persist(Project project);
-
-	List<Project> findAll();
-
-	List<Project> findAllByIds(List<Long> ids);
-
-	List<Project> findAllOrderedByName();
-
-	long countProjects();
-
-	List<ProjectFilter> findProjectFiltersContainingProject(@QueryParam(ParameterNames.PROJECT_ID) long id);
-
-	List<Project> findAll(PagingAndSorting pagingAndSorting);
-
-	List<Project> findProjectsFiltered(PagingAndSorting pagingAndSorting, @QueryParam("filter") String filter);
+	List<Project> findByIdIn(List<Long> ids);
 }

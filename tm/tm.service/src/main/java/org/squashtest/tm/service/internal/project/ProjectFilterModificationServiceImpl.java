@@ -55,7 +55,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	/***
 	 * This method checks whether this user uses a project filter. If so, it returns it. If not, it returns a default - empty- one.
-	 * 
+	 *
 	 * @return what I just said
 	 */
 	@Override
@@ -74,7 +74,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 		ProjectFilter projectFilter = findOrCreateProjectFilter();
 
-		projectFilter.setProjects(projectDao.findAllByIds(projectIdList));
+		projectFilter.setProjects(projectDao.findByIdIn(projectIdList));
 		projectFilter.setActivated(isActive);
 	}
 

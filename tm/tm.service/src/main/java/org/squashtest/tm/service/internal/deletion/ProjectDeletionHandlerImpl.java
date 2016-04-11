@@ -195,10 +195,10 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	}
 
 	private void removeProjectFromFilters(Project project) {
-		List<ProjectFilter> projectFilters = projectDao.findProjectFiltersContainingProject(project.getId());
-		for (ProjectFilter projectFilter : projectFilters) {
-			projectFilter.removeProject(project);
-		}
+//		List<ProjectFilter> projectFilters = projectDao.findProjectFiltersContainingProject(project.getId());
+//		for (ProjectFilter projectFilter : projectFilters) {
+//			projectFilter.removeProject(project);
+//		}
 	}
 
 	private void deleteLibraryContent(Library<? extends LibraryNode> library, NodeDeletionHandler<?, ?> deletionHandler) {
