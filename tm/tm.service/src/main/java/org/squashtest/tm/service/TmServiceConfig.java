@@ -22,6 +22,7 @@ package org.squashtest.tm.service;
 
 import javax.inject.Inject;
 
+import org.aspectj.lang.Aspects;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.context.config.ConfigFileApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -37,6 +38,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.event.RequirementCreationEventPublisherAspect;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementFolder;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
@@ -68,7 +70,6 @@ import org.squashtest.tm.service.internal.repository.hibernate.HibernateObjectDa
 import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementLibraryNodeDao;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
-import org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect;
 import org.squashtest.tm.domain.event.RequirementModificationEventPublisherAspect;
 
 /**
@@ -166,20 +167,18 @@ public class TmServiceConfig {
 
 		return listener;
 	}
-	
-	
-	// Issue #5776 : disabling @Lazy for the requirement audit event aspects
-	@Bean /*@Lazy*/
+
+
+	@Bean
 	public RequirementCreationEventPublisherAspect requirementCreationEventPublisherAspect() {
-		RequirementCreationEventPublisherAspect aspect = RequirementCreationEventPublisherAspect.aspectOf();
+		RequirementCreationEventPublisherAspect aspect = Aspects.aspectOf(RequirementCreationEventPublisherAspect.class);
 		aspect.setAuditor(statusBasedRequirementAuditor);
 		return aspect;
 	}
 
-	// Issue #5776 : disabling @Lazy for the requirement audit event aspects
-	@Bean /*@Lazy*/
+	@Bean
 	public RequirementModificationEventPublisherAspect requirementModificationEventPublisherAspect() {
-		RequirementModificationEventPublisherAspect aspect = RequirementModificationEventPublisherAspect.aspectOf();
+		RequirementModificationEventPublisherAspect aspect = Aspects.aspectOf(RequirementModificationEventPublisherAspect.class);
 		aspect.setAuditor(statusBasedRequirementAuditor);
 		return aspect;
 	}
