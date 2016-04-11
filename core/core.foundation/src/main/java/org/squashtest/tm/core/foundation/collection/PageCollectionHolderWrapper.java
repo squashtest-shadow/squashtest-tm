@@ -20,21 +20,21 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
+
+import java.util.List;
 
 public class PageCollectionHolderWrapper<ENTITY> implements PagedCollectionHolder<List<ENTITY>> {
 
 	private Page<ENTITY> page;
-	
-	public PageCollectionHolderWrapper(Page<ENTITY> page){
+
+	public PageCollectionHolderWrapper(Page<ENTITY> page) {
 		this.page = page;
 	}
-	
+
 	@Override
 	public long getFirstItemIndex() {
-		return page.getNumber()*page.getSize();
+		return page.getNumber() * (long) page.getSize();
 	}
 
 	@Override

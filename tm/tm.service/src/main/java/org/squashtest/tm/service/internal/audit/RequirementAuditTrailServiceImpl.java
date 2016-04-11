@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.audit;
 
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,9 +32,14 @@ import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service("squashtest.tm.service.audit.RequirementAuditTrailService")
 public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailService {
@@ -57,32 +56,29 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	 */
 	@Override
 	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(
-			long requirementVersionId, Paging paging) {
-		
-		Pageable pageRequest = new PageRequest(paging.getFirstItemIndex()/paging.getPageSize(), paging.getPageSize()); 
+		long requirementVersionId, Paging paging) {
+
+		Pageable pageRequest = new PageRequest(paging.getFirstItemIndex() / paging.getPageSize(), paging.getPageSize());
 
 		Page<RequirementAuditEvent> page = auditEventDao.findAllByRequirementVersionIdOrderByDateDesc(
-				requirementVersionId, pageRequest);
-		
-		return new PageCollectionHolderWrapper<RequirementAuditEvent>(page);
+			requirementVersionId, pageRequest);
+
+		return new PageCollectionHolderWrapper<>(page);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionsIdOrderedByDate(long)
-	 */
 	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId) {
 		Paging paging = new Paging() {
-			
+
 			@Override
 			public boolean shouldDisplayAll() {
 				return true;
 			}
-			
+
 			@Override
 			public int getPageSize() {
 				return 0;
 			}
-			
+
 			@Override
 			public int getFirstItemIndex() {
 				return 0;
@@ -96,8 +92,8 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	 */
 	@Override
 	public RequirementLargePropertyChange findLargePropertyChangeById(long eventId) {
-		return (RequirementLargePropertyChange) em.find(RequirementLargePropertyChange.class, eventId);
+		return em.find(RequirementLargePropertyChange.class, eventId);
 	}
 
-	
+
 }
