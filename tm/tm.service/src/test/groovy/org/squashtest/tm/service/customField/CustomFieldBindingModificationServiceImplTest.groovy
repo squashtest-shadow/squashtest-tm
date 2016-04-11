@@ -20,7 +20,9 @@
  */
 package org.squashtest.tm.service.customField
 
-import org.springframework.context.ApplicationEventPublisher;
+import net.sf.cglib.asm.Opcodes
+import org.springframework.context.ApplicationEventPublisher
+import org.springframework.util.ReflectionUtils
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
@@ -31,6 +33,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao
 import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
+import spock.lang.IgnoreIf
 import spock.lang.Specification
 
 class CustomFieldBindingModificationServiceImplTest extends Specification {
@@ -41,7 +44,7 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 	GenericProjectDao genericProjectDao = Mock()
 	PrivateCustomFieldValueService customValueService = Mock()
 	ApplicationEventPublisher eventPublisher = Mock()
-	
+
 	def setup() {
 		service.customFieldDao = customFieldDao
 		service.customFieldBindingDao = customFieldBindingDao
@@ -50,17 +53,19 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		service.eventPublisher = eventPublisher
 	}
 
-	def "should copy paste cuf binding from template"(){ 
-		given:"a project"
+	// Test is ignored until cglib properly handles java 8
+	@IgnoreIf({ !ReflectionUtils.findField(Opcodes, "ASM5") })
+	def "should copy paste cuf binding from template"() {
+		given: "a project"
 		Project project = Mock()
-		project.getId()>>3L
-		genericProjectDao.findById(3L)>>project
-		and:"a template"
+		project.getId() >> 3L
+		genericProjectDao.findById(3L) >> project
+		and: "a template"
 		ProjectTemplate template = Mock()
-		template.getId()>>2L
+		template.getId() >> 2L
 		CustomField cuf = Mock()
 		cuf.getId() >> 4L
-		customFieldDao.findById(4L)>>cuf
+		customFieldDao.findById(4L) >> cuf
 		BindableEntity entity1 = Mock()
 		customFieldBindingDao.countAllForProjectAndEntity(3L, entity1) >> 1
 		BindableEntity entity2 = Mock()
@@ -72,12 +77,12 @@ class CustomFieldBindingModificationServiceImplTest extends Specification {
 		binding2.getBoundEntity() >> entity2
 		binding2.getCustomField() >> cuf
 		List<CustomFieldBinding> bindings = [binding1, binding2]
-		customFieldBindingDao.findAllForGenericProject(2L)>> bindings
-		
+		customFieldBindingDao.findAllForGenericProject(2L) >> bindings
+
 		when:
 		service.copyCustomFieldsSettingsFromTemplate(project, template)
 		then:
-		2*customFieldBindingDao.save(_)
-		2*customValueService.cascadeCustomFieldValuesCreation(_)
+		2 * customFieldBindingDao.save(_)
+		2 * customValueService.cascadeCustomFieldValuesCreation(_)
 	}
 }
