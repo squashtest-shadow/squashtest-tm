@@ -27,6 +27,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Long>, CustomCustomFieldBindingDao {
 
@@ -40,13 +41,14 @@ public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Lo
 	 */
 	// note : uses a named query in package-info or elsewhere
 	// cannot really use the dsl findAllByIdIn(collection) because of the presence of grouping in the desired output
+	@EmptyCollectionGuard
 	List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
 	
 	// note : uses a named query in package-info or elsewhere
 	List<CustomFieldBinding> findAllForGenericProject(long projectId);
 
 	// note : uses a named query in package-info or elsewhere
-	List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
+	List<CustomFieldBinding> findAllForProjectAndEntity(@Param("projectId") long projectId, @Param("entityType") BindableEntity boundEntity);
 	
 	// note : uses the Spring JPA dsl 
 	List<CustomFieldBinding> findAllByCustomFieldIdOrderByPositionAsc(long customFieldId);
@@ -94,6 +96,7 @@ public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Lo
 	 * @return
 	 */
 	// note : uses a named query in package-info or elsewhere
+	@EmptyCollectionGuard
 	List<Object[]> findEffectiveBindingsForEntities(@Param(ParameterNames.ENTITY_IDS) List<Long> entityIds,
 			@Param("entityType") BindableEntity entityType);
 

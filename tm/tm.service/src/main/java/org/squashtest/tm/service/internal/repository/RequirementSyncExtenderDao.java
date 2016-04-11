@@ -25,6 +25,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.requirement.RequirementSyncExtender;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.Collection;
 
@@ -37,6 +38,7 @@ public interface RequirementSyncExtenderDao extends Repository<RequirementSyncEx
 	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId);
 
 	// note : uses a named query in package-info or elsewhere
+	@EmptyCollectionGuard
 	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId);
 
 	// note : uses a named query in package-info or elsewhere

@@ -39,8 +39,8 @@ public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBin
 	public List<CustomFieldBinding> findAllForProjectAndEntity(long projectId, BindableEntity boundEntity,
 			Paging paging) {
 		Query q = currentSession().getNamedQuery("CustomFieldBinding.findAllForProjectAndEntity");
-		q.setParameter(0, projectId);
-		q.setParameter(1, boundEntity);
+		q.setParameter("projectId", projectId);
+		q.setParameter("entityType", boundEntity);
 		
 		PagingUtils.addPaging(q, paging);
 		return q.list();

@@ -26,6 +26,7 @@ import java.util.List;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
 public interface IterationTestPlanDao extends Repository<IterationTestPlanItem, Long>{
@@ -33,6 +34,7 @@ public interface IterationTestPlanDao extends Repository<IterationTestPlanItem, 
 
 	IterationTestPlanItem findById(long itemTestPlanId);
 
+	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findAllByIdIn(Collection<Long> ids);
 
 	/**
@@ -40,6 +42,7 @@ public interface IterationTestPlanDao extends Repository<IterationTestPlanItem, 
 	 * @param testPlanIds
 	 * @return
 	 */
+	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findAllByIdsOrderedByIterationTestPlan(@Param("testPlanIds") List<Long> testPlanIds);
 
 	/**
@@ -48,6 +51,7 @@ public interface IterationTestPlanDao extends Repository<IterationTestPlanItem, 
 	 * @param testSuiteId
 	 * @return
 	 */
+	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findAllByIdsOrderedBySuiteTestPlan(@Param("testPlanIds") List<Long> testPlanIds, @Param("suiteId") long testSuiteId);
 
 }

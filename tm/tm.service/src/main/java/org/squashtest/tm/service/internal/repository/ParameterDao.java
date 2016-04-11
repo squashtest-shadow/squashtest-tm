@@ -22,21 +22,80 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
-@DynamicDao(entity = Parameter.class)
-public interface ParameterDao extends CustomParameterDao {
+public interface ParameterDao extends Repository<Parameter, Long>, CustomParameterDao {
 	
-	void persist(Parameter parameter);
+	// note : native method from JPA repositorie
+	void save(Parameter parameter);
 	
-	void remove(Parameter parameter);
+	// note : native method from JPA repositorie
+	void delete(Parameter parameter);
 	
-	void removeAllByTestCaseIds(@QueryParam("testCaseIds") List<Long> removeAllByTestCaseIds);
-	
-	void removeAllValuesByTestCaseIds(@QueryParam("testCaseIds") List<Long> testCaseIds);
-
+	// note : uses the Spring JPA dsl 
 	Parameter findById(Long id);
+
+	// note : uses a named query in package-info or elsewhere
+	@Modifying
+	@EmptyCollectionGuard
+	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> removeAllByTestCaseIds);
+
+	// note : uses a named query in package-info or elsewhere
+	@Modifying
+	@EmptyCollectionGuard
+	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
+
+	/**
+	 * Given a test case ID, returns the list of parameters that directly belong to that test case
+	 * (inherited parameters are ignored).
+	 * 
+	 * @param testcaseId
+	 * @return
+	 */
+	// note : uses a named query in package-info or elsewhere
+	// corresponds to JPA dsl : findByTestCaseIdOrderByNameAndTestCaseNameAsc, but this would be less expressive
+	List<Parameter> findOwnParametersByTestCase(@Param("testCaseId") Long testcaseId);
+
+	/**
+	 * Same than {@link #findOwnParametersByTestCase(Long)}, for a whole list of test cases ids.
+	 * @param testcaseIds
+	 * @return
+	 */
+	// note : uses a named query in package-info or elsewhere
+	// corresponds to JPA dsl : findByTestCaseIdInOrderByNameAndTestCaseNameAsc, but this would be less expressive
+	@EmptyCollectionGuard
+	List<Parameter> findOwnParametersByTestCases(@Param("testCaseIds") List<Long> testcaseIds);
+	
+	/**
+	 * For a given test case, finds the parameter bearing the given name. Note that the test case must 
+	 * own the parameter, ie the query wont search for delegated parameters. 
+	 * 
+	 * @param name
+	 * @param testcaseId
+	 * @return
+	 */
+	// note : uses a named query in package-info or elsewhere
+	// corresponds to JPA dsl : findByNameAndTestCaseId, but this would be less expressive
+	Parameter findOwnParameterByNameAndTestCase(@Param("name") String name, @Param("testCaseId") Long testcaseId);
+
+	/**
+	 * same than {@link #findOwnParameterByNameAndTestCase(String, Long)}, for a list of test case.
+	 * 
+	 * @param name
+	 * @param testcaseIds
+	 * @return
+	 */
+	// note : uses a named query in package-info or elsewhere
+	// corresponds to JPA dsl : findByNameAndTestCaseIdIn, but this would be less expressive
+	@EmptyCollectionGuard
+	List<Parameter> findOwnParametersByNameAndTestCases(@Param("name") String name, @Param("testCaseIds") List<Long> testcaseIds);
+
+	
+
+	
 }

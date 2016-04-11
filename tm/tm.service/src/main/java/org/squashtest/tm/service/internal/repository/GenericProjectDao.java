@@ -28,6 +28,7 @@ import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 /**
  * @author Gregory Fouquet
@@ -45,6 +46,7 @@ public interface GenericProjectDao extends Repository<GenericProject, Long>,  Cu
 	List<GenericProject> findAll();
 
 	// note : native method from JPA repositorie
+	@EmptyCollectionGuard
 	List<GenericProject> findAll(Iterable<Long> ids);
 		
 	// note : native method from JPA repositorie	
@@ -74,6 +76,7 @@ public interface GenericProjectDao extends Repository<GenericProject, Long>,  Cu
 	List<String> findBoundTestAutomationProjectLabels(@Param(ParameterNames.PROJECT_ID) long projectId);
 
 	// note : uses the Spring JPA dsl 
+	@EmptyCollectionGuard
 	List<GenericProject> findAllByIdIn(List<Long> idList, Sort sorting);
 
 	// note : uses a named query in package-info or elsewhere

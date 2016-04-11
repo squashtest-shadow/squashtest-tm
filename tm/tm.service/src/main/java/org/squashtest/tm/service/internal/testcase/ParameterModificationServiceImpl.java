@@ -113,7 +113,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	 */
 	@Override
 	public void remove(Parameter parameter) {
-		this.parameterDao.remove(parameter);
+		this.parameterDao.delete(parameter);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public class ParameterModificationServiceImpl implements ParameterModificationSe
 	public void removeById(long parameterId) {
 
 		Parameter parameter = this.parameterDao.findById(parameterId);
-		this.parameterDao.remove(parameter);
+		this.parameterDao.delete(parameter);
 	}
 
 	/**

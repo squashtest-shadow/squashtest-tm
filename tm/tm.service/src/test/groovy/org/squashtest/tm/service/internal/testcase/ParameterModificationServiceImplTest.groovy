@@ -44,6 +44,6 @@ public class ParameterModificationServiceImplTest extends Specification {
 		service.removeById(1L)
 		
 		then:
-		1* parameterDao.remove(parameter)
+		1* parameterDao.delete(parameter)
 	}
 }

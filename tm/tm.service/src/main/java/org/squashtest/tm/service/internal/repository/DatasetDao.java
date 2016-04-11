@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
 public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao{
@@ -53,10 +54,12 @@ public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao
 
 	// note : uses a named query in package-info or elsewhere
 	@Modifying
+	@EmptyCollectionGuard
 	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
 
 	// note : uses a named query in package-info or elsewhere
 	@Modifying
+	@EmptyCollectionGuard
 	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
 	
 	/**

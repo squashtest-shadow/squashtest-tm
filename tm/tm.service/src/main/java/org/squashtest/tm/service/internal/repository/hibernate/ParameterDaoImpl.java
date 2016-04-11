@@ -31,32 +31,15 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.repository.CustomParameterDao;
 
-@Repository("CustomParameterDao")
-public class HibernateParameterDao implements CustomParameterDao {
+
+public class ParameterDaoImpl implements CustomParameterDao {
 
 	@PersistenceContext
 	private EntityManager em;
 
-
-	public List<Parameter> findOwnParametersByTestCase(Long testcaseId) {
-
-		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParameters");
-		query.setParameter("testCaseId", testcaseId);
-		return (List<Parameter>) query.list();
-	}
-
-
-	@Override
-	public List<Parameter> findOwnParametersByTestCases(List<Long> testcaseIds) {
-
-		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParametersForList");
-		query.setParameterList("testCaseIds", testcaseIds);
-		return (List<Parameter>) query.list();
-	}
 
 	@Override
 	public List<Parameter> findAllParametersByTestCase(Long testcaseId) {
@@ -73,7 +56,7 @@ public class HibernateParameterDao implements CustomParameterDao {
 
 		while(! srcTc.isEmpty()){
 
-			allParameters.addAll( findOwnParametersByTestCases(srcTc));
+			allParameters.addAll( findTestCaseParameters(srcTc));
 
 			next.setParameterList("srcIds", srcTc, LongType.INSTANCE);
 			destTc = next.list();
@@ -87,25 +70,16 @@ public class HibernateParameterDao implements CustomParameterDao {
 		return allParameters;
 
 	}
+	
+	
 
+	// note that this is the same queery than ParameterDao#findOwnParametersByTestCases
+	// duplicate here because of the inheritance between the interfaces is what it is
+	private List<Parameter> findTestCaseParameters(List<Long> testcaseIds) {
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Parameter> findOwnParametersByNameAndTestCases(String name, List<Long> testcaseIds){
-
-		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParametersByNameAndTestCases");
-		query.setParameter("name", name);
+		Query query = em.unwrap(Session.class).getNamedQuery("Parameter.findOwnParametersByTestCases");
 		query.setParameterList("testCaseIds", testcaseIds);
 		return (List<Parameter>) query.list();
 	}
 
-
-	@Override
-	public Parameter findOwnParameterByNameAndTestCase(String name, Long testcaseId){
-
-		Query query = em.unwrap(Session.class).getNamedQuery("parameter.findOwnParametersByNameAndTestCase");
-		query.setParameter("name", name);
-		query.setParameter("testCaseId", testcaseId);
-		return (Parameter) query.uniqueResult();
-	}
 }

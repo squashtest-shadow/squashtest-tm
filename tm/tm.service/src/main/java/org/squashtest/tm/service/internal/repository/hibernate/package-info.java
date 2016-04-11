@@ -416,10 +416,10 @@
 
 
 	//TestParameters
-	@NamedQuery(name = "parameter.findOwnParametersForList", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
-	@NamedQuery(name = "parameter.findOwnParameters", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
-	@NamedQuery(name = "parameter.findOwnParametersByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
-	@NamedQuery(name = "parameter.findOwnParametersByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
+	@NamedQuery(name = "Parameter.findOwnParametersByTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) order by testCase.name,  parameter.name "),
+	@NamedQuery(name = "Parameter.findOwnParametersByTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId order by parameter.name "),
+	@NamedQuery(name = "Parameter.findOwnParameterByNameAndTestCase", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id = :testCaseId and parameter.name = :name "),
+	@NamedQuery(name = "Parameter.findOwnParametersByNameAndTestCases", query = "select parameter from Parameter as parameter join parameter.testCase testCase where testCase.id in (:testCaseIds) and parameter.name = :name "),
 	@NamedQuery(name = "Parameter.removeAllByTestCaseIds", query = "delete Parameter pm where pm.testCase.id in (:testCaseIds)"),
 	@NamedQuery(name = "Parameter.removeAllValuesByTestCaseIds", query = "delete DatasetParamValue dpv where dpv.parameter in (select pm from Parameter pm where pm.testCase.id in (:testCaseIds))"),
 	@NamedQuery(name = "parameter.excelExport", query = "select tc.id, param.id, param.name, param.description from TestCase tc inner join tc.parameters param where tc.id in (:testCaseIds)"),
@@ -648,7 +648,7 @@
 	//CustomFieldBinding
 	@NamedQuery(name = "CustomFieldBinding.findAllByIds", query = "select cfb from CustomFieldBinding cfb where cfb.id in (:cfbIds) group by cfb.boundEntity, cfb.boundProject, cfb.id order by cfb.position asc"),
 	@NamedQuery(name = "CustomFieldBinding.findAllForGenericProject", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ?1 group by cfb.boundEntity, cfb.id order by cfb.position asc"),
-	@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = ?1 and cfb.boundEntity = ?2 order by cfb.position asc"),
+	@NamedQuery(name = "CustomFieldBinding.findAllForProjectAndEntity", query = "select cfb from CustomFieldBinding cfb join cfb.boundProject bp where bp.id = :projectId and cfb.boundEntity = :entityType order by cfb.position asc"),
 	@NamedQuery(name = "CustomFieldBinding.countAllForProjectAndEntity", query = "select count(cfb) from CustomFieldBinding cfb where cfb.boundProject.id = ?1 and cfb.boundEntity = ?2"),
 	@NamedQuery(name = "CustomFieldBinding.removeCustomFieldBindings", query = "delete CustomFieldBinding cfb where cfb.id in (:cfbIds)"),
 	@NamedQuery(name = "CustomFieldBinding.recomputeBindingPositions", query = "select cfb1.id as bindingId, cfb1.position as formerPosition, count(cfb1.id) as newPosition from CustomFieldBinding cfb1, CustomFieldBinding cfb2 where cfb1.boundEntity=cfb2.boundEntity "

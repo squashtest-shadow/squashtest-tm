@@ -28,6 +28,7 @@ import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 import java.util.Collection;
 import java.util.List;
@@ -95,10 +96,12 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 
 
 	// note : uses a named query in package-info or elsewhere
+	@EmptyCollectionGuard
 	List<DenormalizedFieldValue> findDFVForEntities(@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType type, @Param(ParameterNames.ENTITY_IDS) Collection<Long> entities);
 
 
 	// note : uses a named query in package-info or elsewhere
+	@EmptyCollectionGuard
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
 		@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
 		@Param(ParameterNames.ENTITY_IDS) Collection<Long> entities,

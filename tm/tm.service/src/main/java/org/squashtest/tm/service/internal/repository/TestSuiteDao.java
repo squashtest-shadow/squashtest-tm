@@ -27,6 +27,7 @@ import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
 public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSuiteDao {
@@ -57,6 +58,7 @@ public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSui
 	List<IterationTestPlanItem> findLaunchableTestPlan(@Param("suiteId") long testSuiteId);
 	
 	// note : uses a named query in package-info or elsewhere
+	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findTestPlanPartition(@Param("suiteId") long testSuiteId, @Param("itemIds") List<Long> testPlanItemIds);
 	
 	// note : uses a named query in package-info or elsewhere

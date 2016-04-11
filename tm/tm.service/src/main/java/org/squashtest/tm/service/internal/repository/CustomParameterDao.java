@@ -26,16 +26,7 @@ import org.squashtest.tm.domain.testcase.Parameter;
 
 public interface CustomParameterDao {
 
-	/**
-	 * Given a test case ID, returns the list of parameters that directly belong to that test case
-	 * (inherited parameters are ignored).
-	 * 
-	 * @param testcaseId
-	 * @return
-	 */
-	List<Parameter> findOwnParametersByTestCase(Long testcaseId);
 
-	List<Parameter> findOwnParametersByTestCases(List<Long> testcaseIds);
 
 	/**
 	 * Given a test case ID, return the list of parameters that belongs to that test case
@@ -46,7 +37,4 @@ public interface CustomParameterDao {
 	 */
 	List<Parameter> findAllParametersByTestCase(Long testcaseId);
 
-	List<Parameter> findOwnParametersByNameAndTestCases(String name, List<Long> testcaseIds);
-
-	Parameter findOwnParameterByNameAndTestCase(String name, Long testcaseId);
 }
