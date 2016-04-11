@@ -310,7 +310,6 @@ class AutomatedSuiteManagerServiceTest extends Specification {
 
 class ExtenderSorterTest extends Specification {
 
-	// TODO Test fails under java 8 which means our code is probably broken
 	def "extender sorter should sort extenders "(){
 		given :
 		AutomatedSuite suite = makeSomeSuite()
@@ -327,7 +326,6 @@ class ExtenderSorterTest extends Specification {
 
 		col1.value.size() == 10
 
-		// TODO it looks suspicious that a test on a sorter relies on a "Set" to check its results...
 		col1.value.collect{ it.automatedTest.project }.unique()*.name as Set == [
 			"project-jenkins-1",
 			"project-jenkins-2"] as Set

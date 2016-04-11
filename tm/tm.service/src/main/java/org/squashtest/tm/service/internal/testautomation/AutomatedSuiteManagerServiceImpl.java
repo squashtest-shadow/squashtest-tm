@@ -20,22 +20,6 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.Transformer;
@@ -66,11 +50,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
-import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
-import org.squashtest.tm.service.internal.repository.ExecutionDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
@@ -81,6 +61,14 @@ import org.squashtest.tm.service.testautomation.model.TestAutomationProjectConte
 import org.squashtest.tm.service.testautomation.spi.TestAutomationConnector;
 import org.squashtest.tm.service.testautomation.spi.TestAutomationException;
 import org.squashtest.tm.service.testautomation.spi.UnknownConnectorKind;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.net.URL;
+import java.util.*;
+import java.util.Map.Entry;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Transactional
 @Service("squashtest.tm.service.AutomatedSuiteManagementService")
@@ -145,38 +133,42 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	public void setTimeoutMillis(int timeoutMillis) {
 		this.timeoutMillis = timeoutMillis;
 	}
+
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#findById(java.lang.String)
 	 */
 	@Override
 	public AutomatedSuite findById(String id) {
 		return autoSuiteDao.findById(id);
 	}
+
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromIterationTestPlan(long)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public AutomatedSuite createFromIterationTestPlan(long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
-		List<IterationTestPlanItem> items =  iteration.getTestPlans();
+		List<IterationTestPlanItem> items = iteration.getTestPlans();
 		return createFromItems(items);
 	}
+
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#createFromTestSuiteTestPlan(long)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testSuiteId, 'org.squashtest.tm.domain.campaign.TestSuite', 'EXECUTE')" + OR_HAS_ROLE_ADMIN)
 	public AutomatedSuite createFromTestSuiteTestPlan(long testSuiteId) {
 		TestSuite suite = testSuiteDao.findById(testSuiteId);
-		List<IterationTestPlanItem> items =  suite.getTestPlan();
+		List<IterationTestPlanItem> items = suite.getTestPlan();
 		return createFromItems(items);
 	}
+
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(java.lang.String)
 	 */
 	@Override
@@ -185,12 +177,13 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		AutomatedSuite suite = findById(autoSuiteId);
 		return sortByProject(suite);
 	}
+
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#sortByProject(org.squashtest.tm.domain.testautomation.AutomatedSuite)
 	 */
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public Collection<TestAutomationProjectContent> sortByProject(AutomatedSuite suite) {
 		// security handled by in the code
@@ -202,8 +195,8 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		// first sort them using a map
 		MultiMap testsByProjects = new MultiValueMap();
 
-		for (AutomatedExecutionExtender extender : extenders){
-			if (extender.isProjectDisassociated()){
+		for (AutomatedExecutionExtender extender : extenders) {
+			if (extender.isProjectDisassociated()) {
 				continue;
 			}
 			TestAutomationProject project = extender.getAutomatedProject();
@@ -214,12 +207,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 
 		// now make a friendly bean of it
-		Collection<TestAutomationProjectContent> projectContents = new LinkedList<TestAutomationProjectContent>();
+		Collection<TestAutomationProjectContent> projectContents = new LinkedList<>();
 
 		Set<Entry> entries = testsByProjects.entrySet();
-		for (Entry e : entries){
-			TestAutomationProject project = (TestAutomationProject)e.getKey();
-			Collection<AutomatedTest> tests = (Collection)e.getValue();
+		for (Entry e : entries) {
+			TestAutomationProject project = (TestAutomationProject) e.getKey();
+			Collection<AutomatedTest> tests = (Collection) e.getValue();
 			TestAutomationConnector connector = connectorRegistry.getConnectorForKind(project.getServer().getKind());
 			boolean orderGuaranteed = connector.testListIsOrderGuaranteed(tests);
 			projectContents.add(new TestAutomationProjectContent(project, tests, orderGuaranteed));
@@ -230,7 +223,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#delete(java.lang.String)
 	 */
 	@Override
@@ -239,8 +232,9 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		AutomatedSuite suite = findById(automatedSuiteId);
 		delete(suite);
 	}
+
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.testautomation.AutomatedSuiteManagerService#delete(org.squashtest.tm.domain.testautomation.AutomatedSuite)
 	 */
 	@SuppressWarnings("unchecked")
@@ -250,11 +244,11 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		PermissionsUtils.checkPermission(permissionService, suite.getExecutionExtenders(), DELETE);
 
-		List<AutomatedExecutionExtender> toremove = new ArrayList<AutomatedExecutionExtender>(suite.getExecutionExtenders());
+		List<AutomatedExecutionExtender> toremove = new ArrayList<>(suite.getExecutionExtenders());
 		suite.getExecutionExtenders().clear();
 
 		List<Execution> execs =
-				new ArrayList<Execution>(CollectionUtils.collect(toremove, new ExecutionCollector()));
+			new ArrayList<>(CollectionUtils.collect(toremove, new ExecutionCollector()));
 
 		deletionHandler.deleteExecutions(execs);
 
@@ -262,14 +256,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 
-
-
 	@Override
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
 	public List<Execution> findExecutionsByAutomatedTestSuiteId(String automatedTestSuiteId) {
 
-		List<Execution> executions = new ArrayList<Execution>();
+		List<Execution> executions = new ArrayList<>();
 		AutomatedSuite suite = autoSuiteDao.findById(automatedTestSuiteId);
 		for (AutomatedExecutionExtender e : suite.getExecutionExtenders()) {
 			executions.add(e.getExecution());
@@ -313,12 +305,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 			Entry<String, Collection<AutomatedExecutionExtender>> extendersByKind = sorter.getNextEntry();
 
-			TestAutomationConnector connector = null;
+			TestAutomationConnector connector;
 
 			try {
 				connector = connectorRegistry.getConnectorForKind(extendersByKind.getKey());
 				Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = collectAutomatedExecs(extendersByKind
-						.getValue());
+					.getValue());
 				connector.executeParameterizedTests(tests, suite.getId(), securedCallback);
 			} catch (UnknownConnectorKind ex) {
 				if (LOGGER.isErrorEnabled()) {
@@ -339,9 +331,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	// ******************* create suite private methods ***************************
 
 
-
-
-	private AutomatedSuite createFromItems(List<IterationTestPlanItem> items){
+	private AutomatedSuite createFromItems(List<IterationTestPlanItem> items) {
 
 		AutomatedSuite newSuite = autoSuiteDao.createNewSuite();
 
@@ -371,7 +361,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		return execution;
 	}
 
-	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution){
+	private void createCustomFieldsForExecutionAndExecutionSteps(Execution execution) {
 		customFieldValuesService.createAllCustomFieldValues(execution, execution.getProject());
 		customFieldValuesService.createAllCustomFieldValues(execution.getSteps(), execution.getProject());
 	}
@@ -389,10 +379,10 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	// ******************* execute suite private methods **************************
 
 	private Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> collectAutomatedExecs(
-			Collection<AutomatedExecutionExtender> extenders) {
+		Collection<AutomatedExecutionExtender> extenders) {
 
-		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = new ArrayList<Couple<AutomatedExecutionExtender, Map<String, Object>>>(
-				extenders.size());
+		Collection<Couple<AutomatedExecutionExtender, Map<String, Object>>> tests = new ArrayList<>(
+			extenders.size());
 
 		for (AutomatedExecutionExtender extender : extenders) {
 			tests.add(createAutomatedExecAndParams(extender));
@@ -406,17 +396,17 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 		Execution execution = extender.getExecution();
 
 		Collection<CustomFieldValue> tcFields = customFieldValueFinder.findAllCustomFieldValues(execution
-				.getReferencedTestCase());
+			.getReferencedTestCase());
 		Collection<CustomFieldValue> iterFields = customFieldValueFinder.findAllCustomFieldValues(execution
-				.getIteration());
+			.getIteration());
 		Collection<CustomFieldValue> campFields = customFieldValueFinder.findAllCustomFieldValues(execution
-				.getCampaign());
+			.getCampaign());
 
 		Map<String, Object> params = paramBuilder.get().testCase().addEntity(execution.getReferencedTestCase())
-				.addCustomFields(tcFields).iteration().addCustomFields(iterFields).campaign()
-				.addCustomFields(campFields).build();
+			.addCustomFields(tcFields).iteration().addCustomFields(iterFields).campaign()
+			.addCustomFields(campFields).build();
 
-		return new Couple<AutomatedExecutionExtender, Map<String, Object>>(extender, params);
+		return new Couple<>(extender, params);
 	}
 
 	private void notifyExecutionError(Collection<AutomatedExecutionExtender> failedExecExtenders, String message) {
@@ -427,13 +417,12 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 
-
 	/**
 	 * That wrapper is a TestAutomationCallbackService, that ensures that the security context is properly set for any
 	 * thread that requires its services.
-	 * 
+	 *
 	 * @author bsiri
-	 * 
+	 *
 	 */
 	private static class CallbackServiceSecurityWrapper implements TestAutomationCallbackService {
 
@@ -472,7 +461,6 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 	}
 
 
-
 	private static class ExtenderSorter {
 
 		private Map<Long, SuiteExecutionConfiguration> configurationByProject;
@@ -483,14 +471,15 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 		public ExtenderSorter(AutomatedSuite suite, Collection<SuiteExecutionConfiguration> configuration) {
 
-			configurationByProject = new HashMap<Long, SuiteExecutionConfiguration>(configuration.size());
+			configurationByProject = new HashMap<>(configuration.size());
 
-			for (SuiteExecutionConfiguration conf : configuration){
+			for (SuiteExecutionConfiguration conf : configuration) {
 				configurationByProject.put(conf.getProjectId(), conf);
 			}
 
-			extendersByKind = new HashMap<String, Collection<AutomatedExecutionExtender>>(suite.getExecutionExtenders()
-					.size());
+			// rem : previous impl relied on a HashMap, which broke the tests on java 8. as I have no damn clue about
+			// the desired order, let's retort to keys natural order using a TreeMap
+			extendersByKind = new TreeMap();
 
 			for (AutomatedExecutionExtender extender : suite.getExecutionExtenders()) {
 
@@ -521,7 +510,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 			}
 
 			SuiteExecutionConfiguration conf = configurationByProject.get(extender.getAutomatedProject().getId());
-			if (conf != null){
+			if (conf != null) {
 				extender.setNodeName(conf.getNode());
 			}
 
@@ -531,7 +520,7 @@ public class AutomatedSuiteManagerServiceImpl implements AutomatedSuiteManagerSe
 
 	}
 
-	private static final class ExecutionCollector implements Transformer{
+	private static final class ExecutionCollector implements Transformer {
 		@Override
 		public Object transform(Object input) {
 			return ((AutomatedExecutionExtender) input).getExecution();
