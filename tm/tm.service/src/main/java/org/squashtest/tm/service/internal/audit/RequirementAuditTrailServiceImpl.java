@@ -24,13 +24,15 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.squashtest.tm.core.foundation.collection.PageCollectionHolderWrapper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
@@ -56,12 +58,13 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 	@Override
 	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(
 			long requirementVersionId, Paging paging) {
+		
+		Pageable pageRequest = new PageRequest(paging.getFirstItemIndex()/paging.getPageSize(), paging.getPageSize()); 
 
-		List<RequirementAuditEvent> pagedEvents = auditEventDao.findAllByRequirementVersionIdOrderedByDate(
-				requirementVersionId, paging);
-		long nbOfEvents = auditEventDao.countByRequirementVersionId(requirementVersionId);
-
-		return new PagingBackedPagedCollectionHolder<List<RequirementAuditEvent>>(paging, nbOfEvents, pagedEvents);
+		Page<RequirementAuditEvent> page = auditEventDao.findAllByRequirementVersionIdOrderByDateDesc(
+				requirementVersionId, pageRequest);
+		
+		return new PageCollectionHolderWrapper<RequirementAuditEvent>(page);
 	}
 
 	/**

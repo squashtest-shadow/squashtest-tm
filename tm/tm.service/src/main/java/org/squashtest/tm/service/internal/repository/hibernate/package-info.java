@@ -551,7 +551,7 @@
 
 	//RequirementAuditEvent
 	//XXX RequirementVersion
-	@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderedByDate", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?1 order by rae.date desc"),
+	//@NamedQuery(name = "RequirementAuditEvent.findAllByRequirementVersionIdOrderByDateDesc", query = "select rae from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?1 order by rae.date desc"),
 	//XXX RequirementVersion
 	@NamedQuery(name = "RequirementAuditEvent.countByRequirementVersionId", query = "select count(rae) from RequirementAuditEvent rae join rae.requirementVersion r where r.id = ?1"),
 	//XXX RequirementVersion

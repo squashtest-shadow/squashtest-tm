@@ -18,23 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.core.foundation.collection;
+
+import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.Repository;
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
 
-//@DynamicDao(entity = RequirementAuditEvent.class, hasCustomImplementation = false)
-public interface RequirementAuditEventDao extends Repository<RequirementAuditEvent, Long>{
+public class PageCollectionHolderWrapper<ENTITY> implements PagedCollectionHolder<List<ENTITY>> {
+
+	private Page<ENTITY> page;
 	
-	// note : native method from JPA repositorie
-	void save(RequirementAuditEvent event);
+	public PageCollectionHolderWrapper(Page<ENTITY> page){
+		this.page = page;
+	}
+	
+	@Override
+	public long getFirstItemIndex() {
+		return page.getNumber()*page.getSize();
+	}
 
-	// note : uses the Spring JPA dsl
-	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderByDateDesc(long requirementVersionId, Pageable paging);
+	@Override
+	public long getTotalNumberOfItems() {
+		return page.getTotalElements();
+	}
 
-	// note : uses a named query in package-info or elsewhere
-	long countByRequirementVersionId(long requirementVersionId);
+	@Override
+	public List<ENTITY> getPagedItems() {
+		return page.getContent();
+	}
 
 }

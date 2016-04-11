@@ -47,7 +47,7 @@ class RequirementAuditTrailServiceImplTest extends Specification {
 		
 		and:
 		def events = [new RequirementCreation(), new RequirementCreation()] 
-		dao.findAllByRequirementVersionIdOrderedByDate(10L, paging) >> events
+		dao.findAllByRequirementVersionIdOrderByDateDesc(10L, paging) >> events
 		
 		and:
 		dao.countByRequirementVersionId(10L) >> 20L
