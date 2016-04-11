@@ -84,7 +84,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			throws NameAlreadyInUseException {
 		genericProjectManager.persist(newProject);
 
-		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
+		ProjectTemplate projectTemplate = projectTemplateDao.findOne(templateId);
 		genericProjectManager.synchronizeGenericProject(newProject, projectTemplate, params);
 
 		return newProject;

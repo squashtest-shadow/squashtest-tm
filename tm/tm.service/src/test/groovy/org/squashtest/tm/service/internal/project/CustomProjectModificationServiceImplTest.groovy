@@ -51,7 +51,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		given: "a template project"
 		ProjectTemplate template = Mock()
 		template.isTestAutomationEnabled() >> Boolean.TRUE
-		projectTemplateDao.findById(1L) >> template
+		projectTemplateDao.findOne(1L) >> template
 
 		TestAutomationProject automationProject = Mock()
 		TestAutomationProject automationCopy = Mock()
@@ -68,7 +68,7 @@ class CustomProjectModificationServiceImplTest extends Specification {
 		Project project = Mock()
 		project.getId()>> 2L
 		project.getClass()>> Project.class
-		
+
 		and:"a conf object"
 		GenericProjectCopyParameter params = new GenericProjectCopyParameter()
 		params.setCopyPermissions(true)
