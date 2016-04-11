@@ -419,6 +419,12 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+
+        <plugin>
+          <groupId>com.github.eirslett</groupId>
+          <artifactId>frontend-maven-plugin</artifactId>
+          <version>0.0.29</version>
+        </plugin>
       </plugins>
     </pluginManagement>
 
@@ -588,6 +594,20 @@
       <build>
         <plugins>
           <plugin>
+            <groupId>com.github.eirslett</groupId>
+            <artifactId>frontend-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>prepare-package</phase>
+              </execution>
+            </executions>
+          </plugin>
+
+          <plugin>
             <groupId>ro.isdc.wro4j</groupId>
             <artifactId>wro4j-maven-plugin</artifactId>
 
@@ -698,15 +718,7 @@
           <plugin>
             <groupId>com.github.eirslett</groupId>
             <artifactId>frontend-maven-plugin</artifactId>
-            <version>0.0.29</version>
             <executions>
-              <execution>
-                <id>npm install</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <phase>prepare-package</phase>
-              </execution>
               <execution>
                 <id>gulp build</id>
                 <goals>
