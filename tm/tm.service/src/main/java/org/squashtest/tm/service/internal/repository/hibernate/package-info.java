@@ -474,11 +474,9 @@
 	@NamedQuery(name = "GenericProject.findBoundTestAutomationProjectLabels", query = "select tap.label from GenericProject p join p.testAutomationProjects tap where p.id = :projectId"),
 
 	//Project
-	@NamedQuery(name = "Project.findByName", query = "from Project where name = ?1"),
 	@NamedQuery(name = "Project.findAllByName", query = "from Project where name in (:names)"),
 	@NamedQuery(name = "Project.findAllOrderedByName", query = "from Project fetch all properties order by name"),
 	@NamedQuery(name = "Project.findProjectsFiltered", query = "from Project p where p.name like :filter or p.label like :filter or p.audit.createdBy like :filter or p.audit.lastModifiedBy like :filter"),
-	@NamedQuery(name = "Project.countProjects", query = "select count(p) from Project p"),
 	@NamedQuery(name = "project.countNonFolderInCampaign", query = "select count(camp) from Campaign camp where camp.project.id = :projectId"),
 	@NamedQuery(name = "project.countNonFolderInTestCase", query = "select count(tc) from  TestCase tc where tc.project.id = :projectId "),
 	@NamedQuery(name = "project.countNonFolderInRequirement", query = "select count(req) from Requirement req where req.project.id = :projectId "),
