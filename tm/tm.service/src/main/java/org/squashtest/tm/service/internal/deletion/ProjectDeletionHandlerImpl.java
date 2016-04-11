@@ -51,6 +51,7 @@ import org.squashtest.tm.service.internal.project.ProjectDeletionHandler;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.GenericProjectDao;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
+import org.squashtest.tm.service.internal.repository.ProjectFilterDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
 import org.squashtest.tm.service.milestone.MilestoneBindingManagerService;
@@ -83,6 +84,9 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	@Inject
 	private CustomFieldBindingModificationService bindingService;
 	@Inject private MilestoneBindingManagerService milestoneBindingManager;
+
+	@Inject
+	ProjectFilterDao projectFilterDao;
 
 	@Override
 	public void deleteProject(long projectId) {
@@ -195,10 +199,10 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	}
 
 	private void removeProjectFromFilters(Project project) {
-//		List<ProjectFilter> projectFilters = projectDao.findProjectFiltersContainingProject(project.getId());
-//		for (ProjectFilter projectFilter : projectFilters) {
-//			projectFilter.removeProject(project);
-//		}
+		List<ProjectFilter> projectFilters = projectFilterDao.findByProjectsId(project.getId());
+		for (ProjectFilter projectFilter : projectFilters) {
+			projectFilter.removeProject(project);
+		}
 	}
 
 	private void deleteLibraryContent(Library<? extends LibraryNode> library, NodeDeletionHandler<?, ?> deletionHandler) {

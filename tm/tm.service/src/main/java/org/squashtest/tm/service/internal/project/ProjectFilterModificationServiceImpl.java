@@ -97,7 +97,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 	private ProjectFilter findPersistentProjectFilter(){
 		String userLogin = userContextService.getUsername();
-		return projectFilterDao.findProjectFilterByUserLogin(userLogin);
+		return projectFilterDao.findByUserLogin(userLogin);
 	}
 
 	private ProjectFilter createDefaultProjectFilter(){
@@ -117,7 +117,7 @@ public class ProjectFilterModificationServiceImpl implements ProjectFilterModifi
 
 		if (filter == null) {
 			filter = createDefaultProjectFilter();
-			projectFilterDao.persist(filter);
+			projectFilterDao.save(filter);
 		}
 
 		return filter;

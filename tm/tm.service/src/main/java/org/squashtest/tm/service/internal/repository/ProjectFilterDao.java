@@ -20,16 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
-public interface ProjectFilterDao {
+import java.util.List;
+
+public interface ProjectFilterDao extends JpaRepository<ProjectFilter, Long>{
 
 	/***
 	 * Method which returns a given user single ProjectFilter
 	 * @param givenUserLogin the user login (String)
 	 * @return null or a ProjectFilter
 	 */
-	ProjectFilter findProjectFilterByUserLogin(String givenUserLogin);
+	ProjectFilter findByUserLogin(String givenUserLogin);
 
-	void persist(ProjectFilter transientFilter);
+	List<ProjectFilter> findByProjectsId(long id);
 }

@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.project
 
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
-import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl;
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.internal.repository.ProjectFilterDao
 import org.squashtest.tm.service.security.UserContextService
@@ -34,29 +33,29 @@ class ProjectFilterModificationServiceImplTest extends Specification {
 	UserContextService userContextService = Mock()
 	ProjectDao projectDao = Mock()
 	def user = "current_user"
-	
+
 	def setup()
 	{
 		service.projectDao = projectDao
 		service.projectFilterDao = projectFilterDao
 		service.userContextService = userContextService
 	}
-	
+
 	def "should update projectFilterStatus"(){
 		given:
 		ProjectFilter projectFilter = new ProjectFilter()
 		projectFilter.setUserLogin(user)
 		//set the status to false, should be changed with the test
 		projectFilter.setActivated(false)
-		projectFilterDao.findProjectFilterByUserLogin(user) >> projectFilter 
+		projectFilterDao.findByUserLogin(user) >> projectFilter
 		userContextService.getUsername() >> "current_user"
-		
+
 		when:
 		service.updateProjectFilterStatus(true)
-		
+
 		then:
 		projectFilter.getActivated() == true
-		
+
 	}
-	
+
 }
