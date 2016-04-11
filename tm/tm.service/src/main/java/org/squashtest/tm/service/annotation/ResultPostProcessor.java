@@ -18,22 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository;
+package org.squashtest.tm.service.annotation;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.Repository;
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
+/**
+ * Specifies how a result, straight from the DB, should be transformed before being returned
+ * 
+ * @author bsiri
+ *
+ */
+public interface ResultPostProcessor {
 
-public interface RequirementAuditEventDao extends Repository<RequirementAuditEvent, Long>{
 	
-	// note : native method from JPA repositorie
-	void save(RequirementAuditEvent event);
-
-	// note : uses the Spring JPA dsl
-	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderByDateDesc(long requirementVersionId, Pageable paging);
-
-	// note : uses a named query in package-info or elsewhere
-	long countByRequirementVersionId(long requirementVersionId);
-
+	Object postprocess(Object dbresult, Object[] processingArgs);
+	
 }

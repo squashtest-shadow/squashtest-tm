@@ -23,7 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -37,8 +37,7 @@ import org.squashtest.tm.domain.testcase.TestCase;
  * @author mpagnon
  * 
  */
-@DynamicDao(entity = RequirementVersionCoverage.class)
-public interface RequirementVersionCoverageDao extends CustomRequirementVersionCoverageDao{
+public interface RequirementVersionCoverageDao extends Repository<RequirementVersionCoverage, Long>, CustomRequirementVersionCoverageDao{
 	/**
 	 * Will persist a new requirementVersionCoverage.
 	 * 

@@ -581,11 +581,14 @@
 	@NamedQuery(name = "RequirementVersion.findByRequirementIdAndVersionNumber", query = "from RequirementVersion rv where rv.requirement.id=:requirementId and rv.versionNumber=:versionNumber"),
 
 	/*
+	 * 	This query names explicitly each joined entities, because the table sorting we apply on it 
+	 * needs them.
+	 * 
 	 *  The following query uses pretty long aliases. They MUST match the
 	 *  name of the class, because the client code assumes this will be the
 	 *  case.
 	 */
-	@NamedQuery(name = "requirementVersionCoverage.findAllByTestCaseId",
+	@NamedQuery(name = "RequirementVersionCoverage.findAllByTestCaseId",
 				query = "select RequirementVersionCoverage," +
 						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
 						"inner join v.requirementVersionCoverages cov where cov.id = RequirementVersionCoverage.id" +

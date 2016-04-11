@@ -50,7 +50,7 @@ CustomRequirementVersionCoverageDao {
 	public List<RequirementVersionCoverage> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
 
 		// we have to fetch our query and modify the hql a bit, hence the weird operation below
-		Query namedquery = currentSession().getNamedQuery("requirementVersionCoverage.findAllByTestCaseId");
+		Query namedquery = currentSession().getNamedQuery("RequirementVersionCoverage.findAllByTestCaseId");
 		String hql = namedquery.getQueryString();
 		hql = SortingUtils.addOrder(hql, pas);
 
