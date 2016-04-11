@@ -30,7 +30,8 @@ import javax.inject.Inject;
 
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -91,7 +92,7 @@ public abstract class PartyControllerSupport {
 
 	protected List<ProjectModel> getProjectModels(long partyId){
 
-		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId, new DefaultSorting("name"));
+		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId, new Sort(Direction.ASC, "name"));
 
 		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
 		if (projectList != null) {
