@@ -20,7 +20,10 @@
  */
 package org.squashtest.tm.service.audit
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.squashtest.tm.core.foundation.collection.Paging
+import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementCreation
 import org.squashtest.tm.service.internal.audit.RequirementAuditTrailServiceImpl
 import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
@@ -42,22 +45,30 @@ class RequirementAuditTrailServiceImplTest extends Specification {
 	def "should return an correctly paged resultset"() {
 		given:
 		Paging paging = Mock() 
-		paging.firstItemIndex >> 1
+		paging.firstItemIndex >> 0
 		paging.pageSize >> 2
 		
-		and:
+		and :
+		PageRequest request = new PageRequest(0,2)
+		
+		and : 
 		def events = [new RequirementCreation(), new RequirementCreation()] 
-		dao.findAllByRequirementVersionIdOrderByDateDesc(10L, paging) >> events
+		Page<RequirementAuditEvent> pageres = Mock()
+		pageres.getNumber() >> 0
+		pageres.getSize() >> 2
+		pageres.getTotalElements() >> 20L
+		pageres.getContent() >> events
 		
 		and:
-		dao.countByRequirementVersionId(10L) >> 20L
+		dao.findAllByRequirementVersionIdOrderByDateDesc(10L, request) >> pageres
+		
 		
 		when:
 		def res = service.findAllByRequirementVersionIdOrderedByDate(10L, paging)
 		
 		then:
-		res.items == events
-		res.firstItemIndex == 1
+		res.pagedItems == events
+		res.firstItemIndex == 0
 		res.totalNumberOfItems == 20L
 		
 	}
