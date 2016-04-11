@@ -20,15 +20,14 @@
  */
 package org.squashtest.tm.service.execution
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport
@@ -40,54 +39,54 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 
 
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
-	def "should update action and expected result"(){
+	def "should update action and expected result"() {
 
-		given :
+		given:
 
-		when :
+		when:
 		execService.updateSteps(-1L)
 		def steps = findAll("ExecutionStep")
 
-		then :
-		steps.action as Set == (1..5).collect{"action " + it} as Set
-		steps.expectedResult.each {assert it == ""}
+		then:
+		steps.action as Set == (1..5).collect { "action " + it } as Set
+		steps.expectedResult.each { assert it == "" }
 	}
 
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
-	def "denormalization was merely a setback"(){
+	def "denormalization was merely a setback"() {
 
-		given :
+		given:
 
-		when :
+		when:
 		execService.updateSteps(-1L)
 		def denoCufs = findAll("DenormalizedFieldValue")
 
-		then :
-		denoCufs.value.each {assert it == "cuf 1"}
+		then:
+		denoCufs.value.each { assert it == "cuf 1" }
 	}
 
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
-	def "should find index of first modif"(){
-		given :
+	def "should find index of first modif"() {
+		given:
 
-		when :
+		when:
 		def indexOfFirstModif = execService.updateSteps(-1L)
 
-		then :
-		indexOfFirstModif == 2
+		then:
+		indexOfFirstModif == 2L
 	}
 
 	@DataSet("ExecutionModificationServiceIT.updateStep.xml")
-	def "should update attachment"(){
+	def "should update attachment"() {
 
-		given :
+		given:
 
-		when :
+		when:
 		execService.updateSteps(-1L)
 		def steps = findAll("ExecutionStep")
 
-		then :
-		steps.attachmentList.inject([]){result, val -> result.addAll(val.attachments); result}.each {
+		then:
+		steps.attachmentList.inject([]) { result, val -> result.addAll(val.attachments); result }.each {
 			assert it.size == 1
 			assert it.name == "lol.zip"
 		}
@@ -95,31 +94,31 @@ class ExecutionModificationServiceIT extends DbunitServiceSpecification {
 
 
 	@DataSet("ExecutionModificationServiceIT.execution.xml")
-	def "should update execution description"(){
+	def "should update execution description"() {
 
-		given :
+		given:
 		def executionId = -1L
 		def updatedDescription = "wooohooo I just updated the description here !"
 
-		when :
+		when:
 		execService.setExecutionDescription(executionId, updatedDescription)
 
-		Execution execution = findEntity(Execution.class, executionId)
+		def execution = findEntity(Execution.class, executionId)
 
-		then :
-		execution.getDescription()==updatedDescription
+		then:
+		execution.description == updatedDescription
 	}
 
 	@DataSet("ExecutionModificationServiceIT.3executions.xml")
-	def "should tell that the requested execution is the second one of the set"(){
+	def "should tell that the requested execution is the second one of the set"() {
 
-		given :
+		given:
 		def executionId = -3L
 
-		when :
+		when:
 		def rank = execService.findExecutionRank(executionId)
 
-		then :
-		rank==1
+		then:
+		rank == 1
 	}
 }
