@@ -31,16 +31,13 @@ import org.squashtest.tm.domain.project.Project;
 
 /**
  * @author mpagnon
- * 
+ *
  */
 @Transactional(readOnly = true)
 public interface CustomProjectFinder {
 
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	List<Project> findAllReadable();
-
-	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
-	List<Project> findByExecutionId(long Id);
 
 	List<GenericProject> findAllICanManage();
 }

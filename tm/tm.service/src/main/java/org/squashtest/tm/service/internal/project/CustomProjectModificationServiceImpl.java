@@ -45,9 +45,9 @@ import org.squashtest.tm.service.project.GenericProjectManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 /**
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Service("CustomProjectModificationService")
 @Transactional
@@ -86,7 +86,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 
 		ProjectTemplate projectTemplate = projectTemplateDao.findById(templateId);
 		genericProjectManager.synchronizeGenericProject(newProject, projectTemplate, params);
-		
+
 		return newProject;
 	}
 
@@ -102,17 +102,6 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 			}
 		}
 		return manageableProjects;
-	}
-
-
-	@Override
-	@PostFilter("hasPermission(filterObject, 'READ') or hasRole('ROLE_ADMIN')")
-	@Transactional(readOnly = true)
-	public List<Project> findByExecutionId(long Id) {
-		Project project = projectDao.findByExecutionId(Id);
-		List<Project> projectList = new ArrayList<Project>();
-		projectList.add(project);
-		return projectList;
 	}
 
 }
