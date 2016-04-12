@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.domain.event;
 
-import org.apache.catalina.Session;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
@@ -32,7 +31,7 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 /**
  * This aspect advises a RequirementVersion's state change from transient to persistent and raises a creation event.
  *
- * FIXME probabli doesn't work since jpa / spring data migration
+ * FIXME probably doesn't work since jpa / spring data migration
  *
  * @author Gregory Fouquet
  * @since 1.4.0  11/04/16 (port from .aj file)
@@ -41,16 +40,18 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 public class RequirementCreationEventPublisherAspect extends AbstractRequirementEventPublisher {
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementCreationEventPublisherAspect.class);
 
-	@Pointcut("call(public void org.hibernate.Session+.persist(Object)) && target(session) && args(requirement)")
-	private void callRequirementPersister(Session session, Requirement requirement) {
+	@Pointcut("call(public void org.hibernate.Session+.persist(Object)) && args(requirement)")
+	private void callRequirementPersister(Requirement requirement) {
+		// NOOP
 	}
 
-	@Pointcut("call(public void org.hibernate.Session+.persist(Object)) && target(session) && args(requirementVersion)")
-	private void callRequirementVersionPersister(Session session, RequirementVersion requirementVersion) {
+	@Pointcut("call(public void org.hibernate.Session+.persist(Object)) && args(requirementVersion)")
+	private void callRequirementVersionPersister(RequirementVersion requirementVersion) {
+		// NOOP
 	}
 
-	@After("callRequirementPersister(session, requirement)")
-	public void listenRequirementCreation(Session session, Requirement requirement) {
+	@After("callRequirementPersister(requirement)")
+	public void listenRequirementCreation(Requirement requirement) {
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirement.getCurrentVersion(), currentUser());
 			publish(event);
@@ -58,8 +59,8 @@ public class RequirementCreationEventPublisherAspect extends AbstractRequirement
 		}
 	}
 
-	@After("callRequirementVersionPersister(session, requirementVersion)")
-	public void listenRequirementVersionCreation(Session session, RequirementVersion requirementVersion) {
+	@After("callRequirementVersionPersister(requirementVersion)")
+	public void listenRequirementVersionCreation(RequirementVersion requirementVersion) {
 		if (aspectIsEnabled()) {
 			RequirementCreation event = new RequirementCreation(requirementVersion, currentUser());
 			publish(event);

@@ -49,10 +49,12 @@ public class RequirementModificationEventPublisherAspect extends AbstractRequire
 
 	@Pointcut("execution(public void org.squashtest.tm.domain.requirement.RequirementVersion.setDescription(*))")
 	private void executeLargePropertySetter() {
+		// NOOP
 	}
 
 	@Pointcut("execution(public void org.squashtest.tm.domain.requirement.RequirementVersion.set*(*)) && !executeLargePropertySetter()")
 	private void executeSimplePropertySetter() {
+		// NOOP
 	}
 
 	/**
@@ -61,7 +63,7 @@ public class RequirementModificationEventPublisherAspect extends AbstractRequire
 	 * disabled, does nothing.
 	 */
 	@Around("executeSimplePropertySetter() && target(req) && args(newValue)")
-	public void listenRequirementModification(ProceedingJoinPoint joinPoint, RequirementVersion req, Object newValue) throws Throwable {
+	public void listenRequirementModification(ProceedingJoinPoint joinPoint, RequirementVersion req, Object newValue) throws Throwable { // NOSONAR propagated exception
 		if (eventsAreEnabled(req)) {
 			String propertyName = extractModifiedPropertyName(joinPoint);
 			Object oldValue = readOldValue(req, propertyName);
@@ -84,7 +86,7 @@ public class RequirementModificationEventPublisherAspect extends AbstractRequire
 	 * disabled, does nothing.
 	 */
 	@Around("executeLargePropertySetter() && target(req) && args(newValue)")
-	public void listenLargeRequirementModification(ProceedingJoinPoint joinPoint, RequirementVersion req, Object newValue) throws Throwable {
+	public void listenLargeRequirementModification(ProceedingJoinPoint joinPoint, RequirementVersion req, Object newValue) throws Throwable { // NOSONAR propagated exception
 		if (eventsAreEnabled(req)) {
 			String propertyName = extractModifiedPropertyName(joinPoint);
 			Object oldValue = readOldValue(req, propertyName);
