@@ -564,7 +564,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 		// if no category set -> set the default one
 		if (category == null) {
 			ReflectionUtils.setField(categoryField, newReq.getResource(), newReq.getProject().getRequirementCategories().getDefaultItem());
-			//	newReq.setCategory( newReq.getProject().getRequirementCategories().getDefaultItem() );
 		} else {
 
 			// validate the code
@@ -577,7 +576,6 @@ public class RequirementLibraryNavigationServiceImpl extends
 			// a persistent instance
 			if (category instanceof ListItemReference) {
 				ReflectionUtils.setField(categoryField, newReq.getResource(), infoListItemService.findReference((ListItemReference) category));
-				//	newReq.setCategory( infoListItemService.findReference((ListItemReference)category));
 			}
 		}
 
@@ -698,13 +696,13 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public Long findNodeIdByPath(String path) {
 		return StringUtils.isBlank(path) ? null : requirementLibraryNodeDao.findNodeIdByPath(path);
 	}
-	
+
 	@Override
 	public Long findNodeIdByRemoteKey(String remoteKey) {
 		return requirementDao.findNodeIdByRemoteKey(remoteKey);
 	}
-	
-	@Override	
+
+	@Override
 	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys){
 		return requirementDao.findNodeIdsByRemoteKeys(remoteKeys);
 	}
@@ -894,7 +892,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 	public List<String> findNamesInLibraryStartingWith(long libraryId, String nameStart) {
 		return requirementFolderDao.findNamesInLibraryStartingWith(libraryId, nameStart);
 	}
-	
+
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 
 	@Override

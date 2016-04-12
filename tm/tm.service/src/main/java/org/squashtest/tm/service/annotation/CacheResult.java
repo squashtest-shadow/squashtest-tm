@@ -26,8 +26,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-
-@Target({ ElementType.METHOD })
+// TODO consider using spring cace abstraction (@Cacheable)
+@Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CacheResult {
 	CachableType type();
