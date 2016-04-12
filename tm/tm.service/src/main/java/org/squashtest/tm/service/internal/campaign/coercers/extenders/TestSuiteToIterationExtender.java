@@ -32,6 +32,7 @@ import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
+import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
 
 /**
  * @author Julien Thebault
@@ -40,12 +41,13 @@ import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 @Configurable
 @Named("testSuiteToIterationExtender")
 public class TestSuiteToIterationExtender implements IdsCoercerExtender {
+
 	@Inject
-	private SessionFactory sessionFactory;
+	private HibernateStatelessSessionHelper hibernateStatelessSessionHelper;
 
 	@Override
 	public Collection<? extends Serializable> doCoerce (Collection<? extends Serializable>  ids) {
-		StatelessSession s = sessionFactory.openStatelessSession();
+		StatelessSession s = hibernateStatelessSessionHelper.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 
 		try {

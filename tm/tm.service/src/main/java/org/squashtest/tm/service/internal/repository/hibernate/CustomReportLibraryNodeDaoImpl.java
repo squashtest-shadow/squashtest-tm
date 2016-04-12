@@ -124,7 +124,7 @@ public class CustomReportLibraryNodeDaoImpl implements CustomCustomReportLibrary
 			}
 		};
 		treeEntity.accept(visitor);
-		Query query = em.createQuery("CustomReportLibraryNode.findNodeFromEntity");
+		Query query = em.createNamedQuery("CustomReportLibraryNode.findNodeFromEntity");
 		query.setParameter("entityType", type[0]);
 		query.setParameter("entityId", treeEntity.getId());
 		return (CustomReportLibraryNode) query.getSingleResult();

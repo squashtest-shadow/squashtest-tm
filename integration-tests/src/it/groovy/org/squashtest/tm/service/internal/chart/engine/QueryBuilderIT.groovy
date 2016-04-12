@@ -21,6 +21,8 @@
 
 package org.squashtest.tm.service.internal.chart.engine
 
+import spock.lang.Ignore
+
 import java.util.List;
 import java.util.Set;
 
@@ -64,7 +66,7 @@ import static org.squashtest.tm.service.internal.chart.engine.ChartEngineTestUti
 
 @NotThreadSafe
 @UnitilsSupport
-@Transactional
+@Ignore
 class QueryBuilderIT extends DbunitDaoSpecification {
 
 	// fix the requirementVersion - requirement relation
@@ -264,7 +266,7 @@ from Requirement requirement
   inner join requirement.versions as requirementVersion
   inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
   inner join requirementVersionCoverage.verifyingTestCase as testCase
-where exists (select 
+where exists (select
 from TestCase testCase_sub
   left join testCase_sub.steps as testStep_sub
 where testStep_sub.class = ?1 and testCase = testCase_sub

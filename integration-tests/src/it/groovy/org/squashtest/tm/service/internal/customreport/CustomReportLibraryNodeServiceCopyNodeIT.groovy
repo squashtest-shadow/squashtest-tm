@@ -20,10 +20,11 @@
  */
 package org.squashtest.tm.service.internal.customreport
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.context.ApplicationContext
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.chart.*
 import org.squashtest.tm.domain.customreport.*
-import org.squashtest.tm.domain.tree.TreeEntityDefinition
 import org.squashtest.tm.domain.tree.TreeLibraryNode
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
@@ -31,14 +32,14 @@ import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
+import org.springframework.orm.jpa.JpaTransactionManager
 
 import javax.inject.Inject
-import javax.persistence.EntityTransaction
-import javax.transaction.Transaction
+
 
 @UnitilsSupport
-@Transactional
 @DataSet("CustomReportLibraryNodeServiceIT.sandboxCopyNode.xml")
+@Transactional
 class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecification {
 
 	@Inject
@@ -50,10 +51,16 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 	@Inject
 	CustomReportLibraryDao crlDao;
 
+	@Autowired
+	private ApplicationContext applicationContext;
+
+
 
 	def "should copy a folder and it's content"(){
 
 		when:
+		JpaTransactionManager jpaTransactionManager = applicationContext.getBean(JpaTransactionManager.class);
+		jpaTransactionManager.getEntityManagerFactory().unwrap();
 		def result = service.copyNodes([-10L], -2L);
 		em.flush()
 		em.clear()

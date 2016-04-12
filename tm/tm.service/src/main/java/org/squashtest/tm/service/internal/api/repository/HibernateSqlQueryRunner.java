@@ -24,22 +24,21 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceContext;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.SessionFactory;
-import org.hibernate.StatelessSession;
-import org.hibernate.Transaction;
+import org.hibernate.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.repository.SqlQueryRunner;
 
 /**
  * Hinernate based implementation of {@link SqlQueryRunner}. Plugins can query Squash's database through SQL using this
  * service.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service("squash.api.repository.SqlQueryRunner")
 public class HibernateSqlQueryRunner implements SqlQueryRunner {
@@ -59,11 +58,12 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 		}
 	};
 
+
 	@Inject
-	private SessionFactory sessionFactory;
+	EntityManagerFactory entityManagerFactory;
 
 	/**
-	 * @see org.squashtest.tm.api.repository.SqlQueryRunner#executeSql(java.lang.String)
+	 * @see org.squashtest.tm.api.repository.SqlQueryRunner
 	 */
 	@Override
 	public <T> List<T> executeSelect(String selectQuery) {
@@ -71,6 +71,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	}
 
 	private <T> T executeQuery(String selectQuery, QueryExecution<Query> execution) {
+		SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
 		StatelessSession s = sessionFactory.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 

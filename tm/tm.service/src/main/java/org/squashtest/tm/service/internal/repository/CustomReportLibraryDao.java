@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.customreport.CustomReportLibrary;
 
 import java.util.List;
 
-public interface CustomReportLibraryDao extends Repository<CustomReportLibrary, Long> {
+public interface CustomReportLibraryDao extends JpaRepository<CustomReportLibrary, Long> {
 
 	List<CustomReportLibrary> findAll();
 }

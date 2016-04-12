@@ -26,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
+import org.squashtest.it.config.UnitilsConfig
 import org.squashtest.it.utils.SkipAll
 import spock.lang.Specification
 
@@ -36,11 +37,10 @@ import javax.persistence.PersistenceContext
  * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.
  * @deprecated Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
  */
-@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
+@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig, UnitilsConfig])
 @TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @Rollback
 @Deprecated
-@SkipAll
 //Skip all child test for the moment
 abstract class HibernateServiceSpecification extends Specification {
 	@PersistenceContext

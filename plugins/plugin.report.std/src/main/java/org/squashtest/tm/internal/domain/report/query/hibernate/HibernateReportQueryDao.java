@@ -31,16 +31,18 @@ import org.squashtest.tm.internal.domain.report.query.UnsupportedFlavorException
 import org.squashtest.tm.internal.repository.ReportQueryDao;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 
 @Repository
 public class HibernateReportQueryDao implements ReportQueryDao {
 
-	@Inject
-	private SessionFactory sessionFactory;
+	@PersistenceContext
+	private EntityManager em;
 
 	private Session currentSession() {
-		return sessionFactory.getCurrentSession();
+		return em.unwrap(Session.class);
 	}
 
 	private final ReportQueryFlavor flavor = new HibernateQueryFlavor();

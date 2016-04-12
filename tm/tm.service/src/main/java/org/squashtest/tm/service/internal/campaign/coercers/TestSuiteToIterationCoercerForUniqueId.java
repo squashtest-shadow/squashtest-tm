@@ -25,11 +25,11 @@ import java.io.Serializable;
 import javax.inject.Inject;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdCoercer;
+import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
 
 /**
  * @author Julien Thebault
@@ -37,13 +37,13 @@ import org.squashtest.tm.service.annotation.IdCoercer;
  */
 @Configurable
 public class TestSuiteToIterationCoercerForUniqueId implements IdCoercer {
-	
+
 	@Inject
-	private SessionFactory sessionFactory;
+	private HibernateStatelessSessionHelper hibernateStatelessSessionHelper;
 
 	@Override
 	public Serializable coerce(Object id) {
-		StatelessSession s = sessionFactory.openStatelessSession();
+		StatelessSession s = hibernateStatelessSessionHelper.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 
 		try {
@@ -56,5 +56,5 @@ public class TestSuiteToIterationCoercerForUniqueId implements IdCoercer {
 			s.close();
 		}
 	}
-	
+
 }

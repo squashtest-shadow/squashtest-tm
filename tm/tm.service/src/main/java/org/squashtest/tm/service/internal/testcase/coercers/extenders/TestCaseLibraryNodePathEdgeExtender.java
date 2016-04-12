@@ -34,25 +34,27 @@ import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
+import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
 
 /**
  * {@link IdsCoercerExtender} used for move operations. This class is used with {@link PreventConcurrents} and {@link BatchPreventConcurrent} annotations.
- * 
- * Will give the ids of the nodes and the ids of the parents. 
+ *
+ * Will give the ids of the nodes and the ids of the parents.
  * Note that another coercer will be used for retrieve the ids of LIBRARY parents.
- * 
+ *
  * @author Julien Thebault
  * @since 1.13
  */
 @Configurable
 @Named("testCaseLibraryNodePathEdgeExtender")
 public class TestCaseLibraryNodePathEdgeExtender implements IdsCoercerExtender {
+
 	@Inject
-	private SessionFactory sessionFactory;
-	
+	private HibernateStatelessSessionHelper hibernateStatelessSessionHelper;
+
 	@Override
 	public Collection<? extends Serializable> doCoerce(Collection<? extends Serializable> coercedIds) {
-		StatelessSession s = sessionFactory.openStatelessSession();
+		StatelessSession s = hibernateStatelessSessionHelper.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 
 		try {

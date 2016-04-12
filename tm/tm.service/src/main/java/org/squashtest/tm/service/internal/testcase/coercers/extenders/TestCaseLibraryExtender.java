@@ -35,25 +35,27 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
 import org.squashtest.tm.service.annotation.IdsCoercerExtender;
 import org.squashtest.tm.service.annotation.PreventConcurrents;
+import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
 
 /**
  * Extender used for move operations. This class is used with {@link PreventConcurrents} and {@link BatchPreventConcurrent} annotations.
- * 
- * Will give the ids of the libraries that we need to lock when we move the {@link TestCaseLibraryNode}. 
+ *
+ * Will give the ids of the libraries that we need to lock when we move the {@link TestCaseLibraryNode}.
  * Each library witch content can be changed by the operation must be locked to prevent weird concurrency results.
- * 
+ *
  * @author Julien Thebault
  * @since 1.13
  */
 @Configurable
 @Named("testCaseLibraryExtender")
 public class TestCaseLibraryExtender implements IdsCoercerExtender {
+
 	@Inject
-	private SessionFactory sessionFactory;
+	private HibernateStatelessSessionHelper hibernateStatelessSessionHelper;
 
 	@Override
 	public Collection<? extends Serializable> doCoerce (Collection<? extends Serializable>  ids) {
-		StatelessSession s = sessionFactory.openStatelessSession();
+		StatelessSession s = hibernateStatelessSessionHelper.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 
 		try {

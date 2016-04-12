@@ -31,6 +31,7 @@ import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.squashtest.tm.service.annotation.IdsCoercer;
+import org.squashtest.tm.service.internal.hibernate.HibernateStatelessSessionHelper;
 
 /**
  * @author Gregory Fouquet
@@ -38,12 +39,13 @@ import org.squashtest.tm.service.annotation.IdsCoercer;
  */
 @Configurable
 public class IterationToCampaignIdsCoercer implements IdsCoercer {
+
 	@Inject
-	private SessionFactory sessionFactory;
+	private HibernateStatelessSessionHelper hibernateStatelessSessionHelper;
 
 	@Override
 	public Collection<? extends Serializable> coerce(Object ids) {
-		StatelessSession s = sessionFactory.openStatelessSession();
+		StatelessSession s = hibernateStatelessSessionHelper.openStatelessSession();
 		Transaction tx = s.beginTransaction();
 
 		try {

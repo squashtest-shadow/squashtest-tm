@@ -49,6 +49,7 @@ import org.springframework.core.env.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.support.SharedEntityManagerBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaSessionFactoryBean;
@@ -102,8 +103,8 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		UberCustomPersistenceProvider provider = new UberCustomPersistenceProvider();
-		
-		
+
+
 	    LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 
 	    factory.setJpaVendorAdapter(vendorAdapter);
@@ -112,47 +113,48 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	    factory.setDataSource(dataSource);
 	    factory.setPackagesToScan(
 	    		// annotated packages (scanned in this method since Spring 4.1)
-	    		"org.squashtest.tm.service.internal.repository.hibernate", 
+	    		"org.squashtest.tm.service.internal.repository.hibernate",
 	    		"org.squashtest.tm.service.internal.hibernate",
-	    		
+
 	    		// annotated classes
 	    		"org.squashtest.tm.domain",
 				"org.squashtest.csp.core.bugtracker.domain"
-	    );	   
-	    
+	    );
+
 	    // naming strategy and interceptor are set in SquashEntityManagerFactoryBuilderImpl
-	    
+
 	    // setting the properties
 	    Properties hibProperties = hibernateProperties();
 	    factory.setJpaProperties(hibProperties);
 
 	    factory.getJpaPropertyMap().put("hibernate.current_session_context_class", "org.springframework.orm.hibernate4.SpringSessionContext");
-	    
+
 	    factory.afterPropertiesSet();
 
 	    return factory.getObject();
 	  }
-	
 
-	
-	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
-	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	@DependsOn("entityManagerFactory")
-	public SessionFactory sessionFactory(){
-		HibernateJpaSessionFactoryBean fbean = new HibernateJpaSessionFactoryBean();
-		fbean.setEntityManagerFactory(entityManagerFactory());
-		return fbean.getObject();
-	}
 
-	
+
+//	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
+//	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+//	@DependsOn("entityManagerFactory")
+//	public SessionFactory sessionFactory(){
+//		HibernateJpaSessionFactoryBean fbean = new HibernateJpaSessionFactoryBean();
+//		fbean.setEntityManagerFactory(entityManagerFactory());
+//		return fbean.getObject();
+//	}
+
+
 	@Bean
 	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-	@DependsOn("squashtest.tm.persistence.hibernate.SessionFactory")
-	public HibernateTransactionManager transactionManager() {
-		HibernateTransactionManager hibernateTransactionManager = new HibernateTransactionManager(sessionFactory());
+	@DependsOn("entityManagerFactory")
+	public JpaTransactionManager transactionManager() {
+		JpaTransactionManager jpaTransactionManager = new JpaTransactionManager();
+		jpaTransactionManager.setEntityManagerFactory(entityManagerFactory());
 		// Below is useful to be able to perform direct JDBC operations using this same tx mgr.
-		hibernateTransactionManager.setDataSource(dataSource);
-		return hibernateTransactionManager;
+		jpaTransactionManager.setDataSource(dataSource);
+		return jpaTransactionManager;
 	}
 
 	/**
@@ -196,7 +198,7 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 		return new LocalValidatorFactoryBean();
 	}
 
-	@Override	
+	@Override
 	public PlatformTransactionManager annotationDrivenTransactionManager() {
 		return transactionManager();
 	}
