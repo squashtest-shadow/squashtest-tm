@@ -53,10 +53,6 @@ public class DynamicManagerProcessor extends DynamicComponentProcessor<DynamicMa
 		return "dynamicmanager-context.xml";
 	}
 	
-	@Override
-	protected String getEntityManagerName() {
-		return "dynamicManagerEntityManager";
-	}
 
 	/**
 	 * @see org.squashtest.tm.tools.annotation.processor.DynamicComponentProcessor#entityClass(java.lang.annotation.Annotation)

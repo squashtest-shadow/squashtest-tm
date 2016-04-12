@@ -21,6 +21,7 @@
 package org.squashtest.tm.domain.search;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 
 import org.apache.lucene.document.Document;
 import org.hibernate.HibernateException;
@@ -46,7 +47,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	private SessionFactory getSessionFactory() {
 		// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
 		// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
-		return beanFactory.getBean(SessionFactory.class);
+		return beanFactory.getBean(EntityManager.class).unwrap(SessionFactory.class);
 	}
 
 	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document,

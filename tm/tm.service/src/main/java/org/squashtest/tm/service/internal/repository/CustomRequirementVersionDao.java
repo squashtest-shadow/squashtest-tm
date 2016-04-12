@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
@@ -46,13 +43,6 @@ public interface CustomRequirementVersionDao {
 	 */
 	RequirementVersion findByRequirementIdAndMilestone(long requirementId, Long milestoneId);
 
-	/**
-	 * @param requirementId
-	 * @param pas
-	 * @return the paged, sorted versions of the given requirement.
-	 */
-	List<RequirementVersion> findAllByRequirement(long requirementId, PagingAndSorting pas);
 
-	RequirementVersion findByRequirementIdAndVersionNumber(Long requirementId,
-			Integer versionNumber);
+	
 }

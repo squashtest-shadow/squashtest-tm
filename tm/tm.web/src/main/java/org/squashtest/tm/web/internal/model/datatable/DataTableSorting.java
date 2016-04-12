@@ -22,8 +22,10 @@ package org.squashtest.tm.web.internal.model.datatable;
 
 import javax.validation.constraints.NotNull;
 
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 
 public class DataTableSorting extends DataTablePaging implements PagingAndSorting {
@@ -47,6 +49,11 @@ public class DataTableSorting extends DataTablePaging implements PagingAndSortin
 	@Override
 	public SortOrder getSortOrder() {
 		return SortOrder.coerceFromCode(params.getsSortDir_0());
+	}
+	
+	@Override
+	public Pageable toPageable() {
+		return SpringPaginationUtils.toPageable(this);
 	}
 	
 

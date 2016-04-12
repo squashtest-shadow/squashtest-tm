@@ -20,14 +20,45 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
- * Paging and Sorting specifications.
- * 
- * @author Gregory Fouquet
- * 
+ * Transitional : this toolbox bridge the gap between our old messy API and 
+ * the Pageable API from Spring
  */
-public interface PagingAndSorting extends Paging, Sorting {
-	Pageable toPageable();
+public class SpringPaginationUtils {
+
+	private SpringPaginationUtils(){
+		
+	}
+	
+	public static Pageable toPageable(PagingAndSorting pas){
+		
+		// 1 - pagination
+		// default for "should display all"
+		int pagenum = 0;
+		int pagesize = Integer.MAX_VALUE;
+		
+		if (! pas.shouldDisplayAll()){
+			pagenum = pas.getFirstItemIndex() / pas.getPageSize();
+			pagesize = pas.getPageSize();
+		}
+		
+		
+		// 2 - sorting
+		Sort sort = null;
+		if (! StringUtils.isBlank(pas.getSortedAttribute())){
+			Direction dir = (SortOrder.DESCENDING == pas.getSortOrder()) ? Direction.DESC : Direction.ASC;
+			sort = new Sort(dir, pas.getSortedAttribute());
+		}
+		
+		PageRequest request = new PageRequest(pagenum, pagesize, sort);
+		
+		return request;
+	}
+	
 }

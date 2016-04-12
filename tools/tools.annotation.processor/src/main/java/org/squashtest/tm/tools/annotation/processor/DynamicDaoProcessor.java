@@ -78,11 +78,6 @@ public class DynamicDaoProcessor extends DynamicComponentProcessor<DynamicDao> {
 		return "dynamicdao-context.xml";
 	}
 	
-	@Override
-	protected String getEntityManagerName() {
-		return "dynamicDaoEntityManager";
-	}
-
 	/**
 	 * (non-Javadoc)
 	 * 

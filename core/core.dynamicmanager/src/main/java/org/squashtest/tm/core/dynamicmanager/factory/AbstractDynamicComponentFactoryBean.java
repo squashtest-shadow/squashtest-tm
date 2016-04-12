@@ -26,6 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +58,9 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDynamicComponentFactoryBean.class);
 
 	private BeanFactory beanFactory;
+	
+	@PersistenceContext
+	protected EntityManager em;
 
 	/**
 	 * Type of Manager service interface which should be instanciated. Should be configured by Spring.

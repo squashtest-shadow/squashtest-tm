@@ -570,7 +570,7 @@
 	@NamedQuery(name = "requirementVersion.findLatestRequirementVersion", query = "select version from Requirement req join req.resource version where req.id = :requirementId"),
 	@NamedQuery(name = "requirementVersion.findVersionByRequirementAndMilestone", query = "select version from Requirement req join req.versions version join version.milestones milestone where req.id = :requirementId and milestone.id = :milestoneId"),
 	@NamedQuery(name = "RequirementVersion.findAllWithMilestones", query = "from RequirementVersion rv where rv.milestones is empty"),
-	@NamedQuery(name = "RequirementVersion.findByRequirementIdAndVersionNumber", query = "from RequirementVersion rv where rv.requirement.id=:requirementId and rv.versionNumber=:versionNumber"),
+//	@NamedQuery(name = "RequirementVersion.findByRequirementIdAndVersionNumber", query = "from RequirementVersion rv where rv.requirement.id=:requirementId and rv.versionNumber=:versionNumber"),
 
 	/*
 	 * 	This query names explicitly each joined entities, because the table sorting we apply on it
@@ -593,7 +593,7 @@
 						"inner join Requirement.project Project " +
 						"where TestCase.id = :testCaseId "),
 
-	@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
+	//@NamedQuery(name = "RequirementVersion.countByRequirement", query = "select count(rv) from RequirementVersion rv join rv.requirement r where r.id = ?1"),
 	@NamedQuery(name = "requirementDeletionDao.findVersionIds", query = "select rv.id from RequirementVersion rv join rv.requirement r where r.id in (:reqIds)"),
 	@NamedQuery(name = "requirementVersion.findAllAttachmentLists", query = "select v.attachmentList.id from RequirementVersion v where v.id in (:versionIds)"),
 

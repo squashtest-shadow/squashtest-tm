@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.jpa.HibernateEntityManagerFactory;
@@ -83,7 +84,9 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  */
 public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponentFactoryBean<DAO> {
 	private static final int HANDLERS_COUNT = 9;
-	private EntityManager em;
+	
+
+	
 	private Class<ENTITY> entityType;
 
 	/**
@@ -112,8 +115,5 @@ public class DynamicDaoFactoryBean<DAO, ENTITY> extends AbstractDynamicComponent
 		return handlers;
 	}
 
-	public void setEntityManager(EntityManager em){
-		this.em = em;
-	}
 
 }

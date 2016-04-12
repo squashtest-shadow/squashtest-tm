@@ -22,7 +22,6 @@ package org.squashtest.tm.internal.domain.report.query.hibernate;
 
 import org.hibernate.Criteria;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.criterion.DetachedCriteria;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
@@ -30,7 +29,6 @@ import org.squashtest.tm.internal.domain.report.query.ReportQueryFlavor;
 import org.squashtest.tm.internal.domain.report.query.UnsupportedFlavorException;
 import org.squashtest.tm.internal.repository.ReportQueryDao;
 
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;

@@ -20,22 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
-import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao;
 
 /**
@@ -43,8 +34,8 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao
  * @author Gregory Fouquet
  * 
  */
-@Repository("CustomRequirementVersionDao")
-public class HibernateRequirementVersionDao implements CustomRequirementVersionDao {
+
+public class RequirementVersionDaoImpl implements CustomRequirementVersionDao {
 	@PersistenceContext
 	private EntityManager em;
 
@@ -52,23 +43,6 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		return em.unwrap(Session.class);
 	}
 
-	/**
-	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao#findAllByRequirement(long,
-	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<RequirementVersion> findAllByRequirement(long requirementId, PagingAndSorting pas) {
-		Criteria crit = currentSession().createCriteria(RequirementVersion.class, "RequirementVersion");
-		crit.createAlias("requirement", "Requirement");
-		crit.add(Restrictions.eq("Requirement.id", Long.valueOf(requirementId)));
-		if (!pas.shouldDisplayAll()) {
-			PagingUtils.addPaging(crit, pas);
-		}
-		SortingUtils.addOrder(crit, pas);
-
-		return crit.list();
-	}
 
 	@Override
 	public Requirement findRequirementById(long requirementId) {
@@ -90,19 +64,5 @@ public class HibernateRequirementVersionDao implements CustomRequirementVersionD
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public RequirementVersion findByRequirementIdAndVersionNumber(
-			Long requirementId, Integer versionNumber) {
-		Query q = currentSession().getNamedQuery("RequirementVersion.findByRequirementIdAndVersionNumber");
-		q.setLong("requirementId", requirementId);
-		q.setInteger("versionNumber", versionNumber);
-		List<RequirementVersion> result = q.list();
-		if (result.size() == 0) {
-			return null;
-		}
-		else {
-			return result.get(0);
-		}
-	}
+
 }

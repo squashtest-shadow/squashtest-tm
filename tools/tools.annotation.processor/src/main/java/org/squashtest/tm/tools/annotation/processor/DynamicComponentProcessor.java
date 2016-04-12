@@ -53,22 +53,13 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 			+ "<beans xmlns=\"http://www.springframework.org/schema/beans\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\"\n"
 			+ "  xsi:schemaLocation=\"http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd\">\n\n";
 
-	/*
-	 *  this will create a shared entity manager (a proxy that ensures that the injected entity manager is indeed thread safe).
-	 *  Just as would the annotation @PersistenceContext would do.
-	 */
-	private static final String THREAD_SAFE_EM_CONF = 
-			"  <bean id=\"{0}\"  class = \"org.springframework.orm.jpa.support.SharedEntityManagerBean\" depends-on=\"entityManagerFactory\">\n" +
-	        "    <property name=\"entityManagerFactory\" ref=\"entityManagerFactory\"/>\n" +  
-	        "  </bean>\n\n";
 	
 	private static final String FILE_FOOTER = "</beans>\n";
 
-	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {6} class=\"{1}\" depends-on=\"{4}\">\n"
+	protected static final String DYNAMIC_COMPONENT_TEMPLATE = "  <bean id=\"{0}\" {5} class=\"{1}\" depends-on=\"entityManagerFactory\">\n"
 			+ "    <property name=\"componentType\" value=\"{2}\" />\n"
 			+ "    <property name=\"entityType\" value=\"{3}\" />\n"
-			+ "    <property name=\"entityManager\" ref=\"{4}\" />\n"
-			+ "    <property name=\"lookupCustomImplementation\" value=\"{5}\" />\n" 
+			+ "    <property name=\"lookupCustomImplementation\" value=\"{4}\" />\n" 
 			+ "  </bean>\n";
 
 	private Filer filer;
@@ -153,8 +144,6 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	private void outputSpringContextFile(Writer writer) throws IOException {
 		writer.append(FILE_HEADER);
 		
-		writer.append(MessageFormat.format(THREAD_SAFE_EM_CONF, getEntityManagerName()));
-
 		for (Element manager : dynamicComponents) {
 //			messager.printMessage(Kind.NOTE,
 //					"INFO Processing @" + annotationClass().getSimpleName() + ' ' + manager.getSimpleName(), manager);
@@ -194,13 +183,12 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 				: beanName(definition);
 		CharSequence managerClass = ((TypeElement) component).getQualifiedName();
 		TypeMirror entityClass = extractEntityClass(definition);
-		String entityManagerName = getEntityManagerName();
 
 		boolean lookupCustomImplementation = lookupCustomImplementation(definition);
 		String primary = primaryAttribute(definition);
 
 		String beanDefinition = MessageFormat.format(DYNAMIC_COMPONENT_TEMPLATE, beanName, beanFactoryClass(),
-				managerClass, entityClass, entityManagerName, lookupCustomImplementation, primary);
+				managerClass, entityClass, lookupCustomImplementation, primary);
 		return beanDefinition;
 	}
 
@@ -250,7 +238,6 @@ public abstract class DynamicComponentProcessor<ANNOTATION extends Annotation> e
 	 */
 	protected abstract boolean lookupCustomImplementation(ANNOTATION definition);
 
-	protected abstract String getEntityManagerName();
 
 	/**
 	 * @return the messager

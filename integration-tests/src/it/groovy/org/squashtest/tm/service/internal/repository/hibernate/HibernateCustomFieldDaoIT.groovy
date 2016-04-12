@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.domain.customfield.InputType
@@ -83,6 +84,11 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 			public boolean shouldDisplayAll() {
 				return false;
 			}
+			
+			org.springframework.data.domain.Pageable toPageable(){
+				return SpringPaginationUtils.toPageable(this);
+			}
+			
 	}
 
 	@Ignore("un-comment when deletion is handled")

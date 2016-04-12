@@ -100,7 +100,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: rv15, to: 15L
 		}
 
-		requirementVersionDao.findAllByIds([5, 15]) >> [rv5, rv15]
+		requirementVersionDao.findAll([5, 15]) >> [rv5, rv15]
 
 		and:
 		Requirement req5 = new Requirement(rv5)
@@ -135,7 +135,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: rv15, to: 15L
 		}
 
-		requirementVersionDao.findAllByIds([5, 15]) >> [rv5, rv15]
+		requirementVersionDao.findAll([5, 15]) >> [rv5, rv15]
 
 		and:"2 requirements having same ids as their current versions (5L and 15L)"
 		Requirement req5 = new Requirement(rv5)
@@ -171,7 +171,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: rv15, to: 15L
 		}
 
-		requirementVersionDao.findAllByIds([5, 15]) >> [rv5, rv15]
+		requirementVersionDao.findAll([5, 15]) >> [rv5, rv15]
 
 		and:
 		Requirement req5 = new Requirement(rv5)
@@ -196,7 +196,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 			Resource.set field: "id", of: req5, to: 5L
 			Resource.set field: "id", of: req15, to: 15L
 		}
-		requirementVersionDao.findAllByIds([15L])>> [req15]
+		requirementVersionDao.findAll([15L])>> [req15]
 		and: "a test case which verifies these requirements"
 		TestCase testCase = new TestCase()
 		RequirementVersionCoverage rvc5 = new RequirementVersionCoverage(req5, testCase)
