@@ -138,7 +138,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public AuthenticationStatus checkBugTrackerStatus(Long projectId) {
-		Project project = projectDao.findById(projectId);
+		Project project = projectDao.getOne(projectId);
 		return checkBugTrackerStatus(project);
 	}
 
