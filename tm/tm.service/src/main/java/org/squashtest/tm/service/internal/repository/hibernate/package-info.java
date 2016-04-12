@@ -613,7 +613,7 @@
 	/*
 	 * Issue 4927 : have to add the project name in the select clause, whatever if we don't want it
 	 */
-	@NamedQuery(name = "requirementVersion.findDistinctRequirementVersionsByTestCases",
+	@NamedQuery(name = "RequirementVersion.findDistinctRequirementVersionsByTestCases",
 				query = "select distinct RequirementVersion, " +
 						"(select min(m.endDate) from RequirementVersion v left join v.milestones m " +
 						"where v.id = RequirementVersion.id) as endDate," +

@@ -24,12 +24,13 @@ import java.util.Collection;
 import java.util.List;
 
 import org.springframework.data.repository.Repository;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 /**
  * Data access methods for {@link RequirementVersionCoverage}s. Methods are all dynamically generated: see {@link DynamicDaoFactoryBean}.
@@ -38,30 +39,8 @@ import org.squashtest.tm.domain.testcase.TestCase;
  * 
  */
 public interface RequirementVersionCoverageDao extends Repository<RequirementVersionCoverage, Long>, CustomRequirementVersionCoverageDao{
-	/**
-	 * Will persist a new requirementVersionCoverage.
-	 * 
-	 * @param requirementVersionCoverage
-	 *            : the new requirementVersionCoverage to persist
-	 */
-	void persist(RequirementVersionCoverage requirementVersionCoverage);
-
-	/**
-	 * Simply retrieve the {@link RequirementVersionCoverage} of the given id
-	 * 
-	 * @param requirementVersionCoverageId
-	 * @return
-	 */
-	RequirementVersionCoverage findById(long requirementVersionCoverageId);
 
 
-	/**
-	 * Find all requirementVersionCoverages matching the given ids
-	 * 
-	 * @param requirementVersionCoverageIds : ids of {@link RequirementVersionCoverage}s to return
-	 * @return List of matching {@link RequirementVersionCoverage}s.
-	 */
-	List<RequirementVersionCoverage> findAllByIds(List<Long> requirementVersionCoverageIds);
 
 	/**
 	 * Will return the {@link RequirementVersionCoverage} entity matching the given verifying and verified params.
@@ -69,7 +48,8 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param verifyingTestCaseId : the id of the verifying {@link TestCase}
 	 * @return the corresponding {@link RequirementVersionCoverage}
 	 */
-	RequirementVersionCoverage byRequirementVersionAndTestCase(@QueryParam("rvId") long verifiedRequirementVersionId, @QueryParam("tcId") long verifyingTestCaseId);
+	// note : uses a named query in package-info or elsewhere	
+	RequirementVersionCoverage byRequirementVersionAndTestCase(@Param("rvId") long verifiedRequirementVersionId, @Param("tcId") long verifyingTestCaseId);
 
 	/**
 	 * Will return the {@link RequirementVersionCoverage} entities matching the verified requirementVersion and one of the verifying test case params.
@@ -77,8 +57,10 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param verifiedRequirementVersionId : the id of the concerned {@link RequirementVersion}
 	 * @return a list of matching {@link RequirementVersionCoverage}
 	 */
-	List<RequirementVersionCoverage> byRequirementVersionAndTestCases(@QueryParam("tcIds") List<Long> verifyingTestCasesIds,
-			@QueryParam("rvId")	long verifiedRequirementVersionId);
+	// note : uses a named query in package-info or elsewhere	
+	@EmptyCollectionGuard
+	List<RequirementVersionCoverage> byRequirementVersionAndTestCases(@Param("tcIds") List<Long> verifyingTestCasesIds,
+			@Param("rvId")	long verifiedRequirementVersionId);
 
 	/**
 	 * Will return the {@link RequirementVersionCoverage} entities matching the verifying test-case and one of the verified requirement versions
@@ -86,8 +68,10 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param verifyingTestCaseId : the id of the concerned {@link TestCase}
 	 * @return a list of matching {@link RequirementVersionCoverage}
 	 */
-	List<RequirementVersionCoverage> byTestCaseAndRequirementVersions(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds,
-			@QueryParam("tcId")	long verifyingTestCaseId);
+	// note : uses a named query in package-info or elsewhere	
+	@EmptyCollectionGuard
+	List<RequirementVersionCoverage> byTestCaseAndRequirementVersions(@Param("rvIds") List<Long> verifiedRequirementVersionsIds,
+			@Param("tcId")	long verifyingTestCaseId);
 
 	/**
 	 * will return the {@link RequirementVersionCoverage} entities matching one of the verified requirement version and linked to the test step.
@@ -95,7 +79,9 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param testStepId : the id of the concerned {@link ActionTestStep}
 	 * @return the list of matching {@link RequirementVersionCoverage}
 	 */
-	List<RequirementVersionCoverage> byRequirementVersionsAndTestStep(@QueryParam("rvIds") List<Long> verifiedRequirementVersionsIds, @QueryParam("stepId")long testStepId);
+	// note : uses a named query in package-info or elsewhere	
+	@EmptyCollectionGuard
+	List<RequirementVersionCoverage> byRequirementVersionsAndTestStep(@Param("rvIds") List<Long> verifiedRequirementVersionsIds, @Param("stepId")long testStepId);
 
 	/**
 	 * Returns the total amount of {@link RequirementVersionCoverage} witch verifying {@link TestCase}'s id matches the given param.
@@ -103,7 +89,8 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param testCaseId : the id of the verifying {@link TestCase}
 	 * @return the amount of {@link RequirementVersionCoverage} for this test case
 	 */
-	long numberByTestCase(@QueryParam("tcId") long testCaseId);
+	// note : uses a named query in package-info or elsewhere	
+	long numberByTestCase(@Param("tcId") long testCaseId);
 
 	/**
 	 * Returns the total amount of {@link RequirementVersion} witch verifying {@link TestCase}'s id matches on of the given id params.
@@ -111,7 +98,9 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param testCaseIds : the ids of verifying {@link TestCase}s
 	 * @return the amount of distinct {@link RequirementVersion} for these test cases
 	 */
-	long numberDistinctVerifiedByTestCases(@QueryParam("tcIds") Collection<Long> testCaseIds);
+	// note : uses a named query in package-info or elsewhere	
+	@EmptyCollectionGuard
+	long numberDistinctVerifiedByTestCases(@Param("tcIds") Collection<Long> testCaseIds);
 
 	/**
 	 * Returns the total amount of distinct {@link RequirementVersionCover} witch verifying {@link TestCase}'s id matches on of the given id params.
@@ -119,7 +108,9 @@ public interface RequirementVersionCoverageDao extends Repository<RequirementVer
 	 * @param testCaseIds : the ids of verifying {@link TestCase}s
 	 * @return the amount of {@link RequirementVersionCoverage} for these test cases
 	 */
-	long numberByTestCases(@QueryParam("tcIds") Collection<Long> testCaseIds);
+	// note : uses a named query in package-info or elsewhere	
+	@EmptyCollectionGuard
+	long numberByTestCases(@Param("tcIds") Collection<Long> testCaseIds);
 
 
 

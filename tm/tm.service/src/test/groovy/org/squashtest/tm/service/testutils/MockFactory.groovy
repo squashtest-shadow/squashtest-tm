@@ -38,17 +38,17 @@ class MockFactory extends Specification {
 		p.getId() >> id
 
 		InfoList natures = new InfoList()
-		InfoListItem nat = new 	ListItemReference()
+		InfoListItem nat = new 	ListItemReference("NAT")
 		nat.setDefault(true)
 		natures.items << nat
 
 		InfoList types = new InfoList()
-		InfoListItem typ = new 	ListItemReference()
+		InfoListItem typ = new 	ListItemReference("TYP")
 		typ.setDefault(true)
 		types.items << typ
 
 		InfoList categories = new InfoList()
-		InfoListItem cat = new ListItemReference();
+		InfoListItem cat = new ListItemReference("CAT_BUSINESS");
 		cat.setDefault(true)
 		categories.items << cat
 

@@ -52,6 +52,7 @@ import org.springframework.util.ReflectionUtils;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.project.Project;
@@ -64,6 +65,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.requirement.RequirementVersion.PropertiesSetter;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.library.NameAlreadyExistsAtDestinationException;
@@ -553,29 +555,36 @@ public class RequirementLibraryNavigationServiceImpl extends
 		new CustomFieldValuesFixer().fix(folder);
 	}
 
-
+	/*
+	 * 12/04/16 : about Category and ListItemReferences : 
+	 * 	
+	 * cannot use services 
+	 * 	- infoListItemService.isCategoryConsistent
+	 *  - infoListItemService.findReference
+	 * 
+	 * anymore because this would trigger here an autoflush / persist  
+	 * before we have a chance to replace the ListItemReference by actual entities
+	 */
 	private void replaceInfoListReferences(Requirement newReq) {
 
-		Field categoryField = ReflectionUtils.findField(RequirementVersion.class, "category");
-		categoryField.setAccessible(true);
+		PropertiesSetter ppt = newReq.getResource().getPropertySetter();
+		InfoList projectCategories = newReq.getProject().getRequirementCategories();
 
 		InfoListItem category = newReq.getCategory();
 
 		// if no category set -> set the default one
 		if (category == null) {
-			ReflectionUtils.setField(categoryField, newReq.getResource(), newReq.getProject().getRequirementCategories().getDefaultItem());
+			ppt.setCategory(projectCategories.getDefaultItem());
 		} else {
-
 			// validate the code
-			String categCode = category.getCode();
-			if (!infoListItemService.isCategoryConsistent(newReq.getProject().getId(), categCode)) {
-				throw new InconsistentInfoListItemException("category", categCode);
+			if (! projectCategories.contains(category)) {
+				throw new InconsistentInfoListItemException("category", category.getCode());
 			}
 
 			// in case the item used here is merely a reference we need to replace it with
 			// a persistent instance
 			if (category instanceof ListItemReference) {
-				ReflectionUtils.setField(categoryField, newReq.getResource(), infoListItemService.findReference((ListItemReference) category));
+				ppt.setCategory(projectCategories.getItem(category));
 			}
 		}
 

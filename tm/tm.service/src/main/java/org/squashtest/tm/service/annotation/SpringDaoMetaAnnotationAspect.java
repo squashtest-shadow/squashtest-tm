@@ -38,8 +38,21 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.stereotype.Component;
 
 /**
+ * <p>This aspect will handle the following meta annotations : 
+ * 	<ul>
+ * 		<li>EmptyCollectionGuard</li>
+ * 		<li>Maybe more to come ?</li>
+ * 	</ul> 
+ *  which are all intended to refine the default behaviour dynamically-generated Spring JPA DAO.
+ * </p>
  * <p>
- * A mathod of a Spring JPA repository will not fail when passed 
+ * See below for details.
+ * </p>
+ * 
+ * <h3>EmptyCollectionGuard</h3
+ * 
+ * <p>
+ * A method of a Spring JPA repository will not fail when passed 
  * empty {@link Iterable}, if that method has the annotation {@link EmptyCollectionGuard}.</p>
  * 
  * <p>When this aspect is triggered, any argument of type/subtype of {@link Iterable} will be checked against emptyness.</p>
@@ -48,32 +61,31 @@ import org.springframework.stereotype.Component;
  *  If the test passes the call will be forwared to the target method. Otherwise it will be aborted and a value semantically meaning
  *  "no results" will be returned. The actual result depend on the expected returned type : </p> 
  * <ul>
- * <li>void : returns null</li>
- * <li>Collection (or subclass) : returns an empty List/Set, or throw {@link UnsupportedReturnTypeException} for other subtypes of Collection</li>
- * <li>Object : returns null </li>
- * 	<li> primitive : 0/false etc</li>
+ * 		<li>void : returns null</li>
+ * 		<li>Collection (or subclass) : returns an empty List/Set, or throw {@link UnsupportedReturnTypeException} for other subtypes of Collection</li>
+ * 		<li>Object : returns null </li>
+ * 		<li> primitive : 0/false etc</li>
  * </ul>
  * </p> 
  * 
  * <p>
  *  History note : part of the code is scrapped from @link ArbitraryQueryHandler (core.dynamicmanagers)
  * </p>
+ *
  */
-@Component
 @Aspect
-public class EmptyCollectionGuardAspect{
-	
-	
-	@Pointcut(value="@annotation(org.squashtest.tm.service.annotation.EmptyCollectionGuard)")
-	public void annotated(){
+public class SpringDaoMetaAnnotationAspect{
+
+	@Pointcut(value="call(@org.squashtest.tm.service.annotation.EmptyCollectionGuard * org.springframework.data.repository.Repository+.*(..))")
+	public void callEmptyCollectionGuard(){
 		
 	}
 	
 	// NOSONAR yes I know I throw a Throwable but that's usual stuff with reflection
-	@Around(value="annotated()")
+	@Around(value="callEmptyCollectionGuard()")
 	public Object guardAgainstEmptyness(ProceedingJoinPoint pjp) throws Throwable{
 		Object[] args = pjp.getArgs();
-		
+				
 		// abort if one argument is an empty collection
 		for (Object arg : args){
 			if (isEmptyIterable(arg)){

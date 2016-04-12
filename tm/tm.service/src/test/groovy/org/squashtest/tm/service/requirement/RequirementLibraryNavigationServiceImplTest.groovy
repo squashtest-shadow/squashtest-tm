@@ -132,7 +132,6 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		RequirementLibrary lib = Mock(RequirementLibrary)
 		def proj =  mockFactory.mockProject()
 		requirementLibraryDao.findById(1) >> lib
-		infoListItemService.isCategoryConsistent(_,_) >> true
 
 		and:
 		def req = new NewRequirementVersionDto(name:"name", description: "desc", reference: "ref", category : "CAT_BUSINESS")
@@ -162,7 +161,6 @@ class RequirementLibraryNavigationServiceImplTest extends Specification {
 		RequirementFolder folder = Mock(RequirementFolder)
 		def proj =  mockFactory.mockProject()
 		requirementFolderDao.findById(1) >> folder
-		infoListItemService.isCategoryConsistent(_,_) >> true
 
 		and:
 		def req = new NewRequirementVersionDto(name:"name", category : "CAT_BUSINESS")

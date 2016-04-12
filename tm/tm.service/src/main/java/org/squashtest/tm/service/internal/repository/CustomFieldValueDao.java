@@ -95,6 +95,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	// note : uses a named query in package-info or elsewhere
 	@Modifying
 	@Transactional
+	@EmptyCollectionGuard
 	void deleteAllForEntities(@Param(ENTITY_TYPE) BindableEntity entityType, @Param(ParameterNames.ENTITY_IDS) List<Long> entityIds);
 
 

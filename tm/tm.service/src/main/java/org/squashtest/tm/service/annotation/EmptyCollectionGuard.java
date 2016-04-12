@@ -39,7 +39,7 @@ import java.lang.annotation.Target;
  *  
  *  <p>
  *   If you want to reduce this boilerplate you may annotate a DAO method with this annotation, in which case the behavior specified
- *   in {@link EmptyCollectionGuardAspect} will be applied, essentially returning 'no results'. The meaning of 'no results' may 
+ *   in {@link SpringDaoMetaAnnotationAspect} will be applied, essentially returning 'no results'. The meaning of 'no results' may 
  *   vary depending on the expected return type : Object, primitive type, or a collection of these (see the doc on the aspect for 
  *   details). 
  *  </p>

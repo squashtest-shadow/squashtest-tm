@@ -107,6 +107,40 @@ public class InfoList implements Comparable<InfoList> {
 	public List<InfoListItem> getItems() {
 		return items;
 	}
+	
+	/**
+	 * Returns an item that matches the argument (which may be 
+	 * a transient reference) if belong to the list, or null.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	public InfoListItem getItem(InfoListItem item){
+		Iterator<InfoListItem> iter = items.iterator();
+		while (iter.hasNext()) {
+			InfoListItem thisitem = iter.next();
+			if (item.references(thisitem)){
+				return thisitem;
+			}
+		}
+		return null;
+	}
+	/**
+	 * Returns an item having such code if belong to the list, or null.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	public InfoListItem getItem(String code){
+		Iterator<InfoListItem> iter = items.iterator();
+		while (iter.hasNext()) {
+			InfoListItem thisitem = iter.next();
+			if (thisitem.getCode().equals(code)){
+				return thisitem;
+			}
+		}
+		return null;		
+	}
 
 	public void addItem(InfoListItem item) {
 		items.add(item);
@@ -161,6 +195,8 @@ public class InfoList implements Comparable<InfoList> {
 		items.addAll(newIndex, addedItems);
 	}
 
+	// XXX seriously two lists would be the same if they have 
+	// the same label ?
 	@Override
 	public int compareTo(InfoList infoList) {
 

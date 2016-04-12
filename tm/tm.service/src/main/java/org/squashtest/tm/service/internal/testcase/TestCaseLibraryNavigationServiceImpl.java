@@ -44,6 +44,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -631,25 +632,38 @@ public class TestCaseLibraryNavigationServiceImpl
 		}
 	}
 
+	/*
+	 * 12/04/16 : about Nature and Type, and ListItemReferences : 
+	 * 	
+	 * cannot use services 
+	 * 	- infoListItemService.isNatureConsistent
+	 * 	- infoListItemService.isTypeConsistent 
+	 *  - infoListItemService.findReference
+	 * 
+	 * anymore because this would trigger here an autoflush / persist  
+	 * before we have a chance to replace the ListItemReference by actual entities
+	 */
 	private void replaceInfoListReferences(TestCase testCase) {
 
+		InfoList projectNatures = testCase.getProject().getTestCaseNatures();
+		InfoList projectTypes = testCase.getProject().getTestCaseTypes();
+		
 		InfoListItem nature = testCase.getNature();
 
 		// if no nature set -> use the default item configured for the project
 		if (nature == null) {
-			testCase.setNature(testCase.getProject().getTestCaseNatures().getDefaultItem());
+			testCase.setNature(projectNatures.getDefaultItem());
 		} else {
 			// validate the code
-			String natureCode = nature.getCode();
-			if (!infoListItemService.isNatureConsistent(testCase.getProject().getId(), natureCode)) {
-				throw new InconsistentInfoListItemException("nature", natureCode);
+			if (! projectNatures.contains(nature)) {
+				throw new InconsistentInfoListItemException("nature", nature.getCode());
 			}
 
 			// in case the item used here is merely a reference we need to
 			// replace it with
 			// a persistent instance
 			if (nature instanceof ListItemReference) {
-				testCase.setNature(infoListItemService.findReference((ListItemReference) nature));
+				testCase.setNature(projectNatures.getItem(nature));
 			}
 		}
 
@@ -657,14 +671,13 @@ public class TestCaseLibraryNavigationServiceImpl
 		InfoListItem type = testCase.getType();
 
 		if (type == null) {
-			testCase.setType(testCase.getProject().getTestCaseTypes().getDefaultItem());
+			testCase.setType(projectTypes.getDefaultItem());
 		} else {
-			String typeCode = type.getCode();
-			if (!infoListItemService.isTypeConsistent(testCase.getProject().getId(), typeCode)) {
-				throw new InconsistentInfoListItemException("type", typeCode);
+			if (! projectTypes.contains(type)) {
+				throw new InconsistentInfoListItemException("type", type.getCode());
 			}
 			if (type instanceof ListItemReference) {
-				testCase.setType(infoListItemService.findReference((ListItemReference) type));
+				testCase.setType(projectTypes.getItem(type));
 			}
 		}
 	}

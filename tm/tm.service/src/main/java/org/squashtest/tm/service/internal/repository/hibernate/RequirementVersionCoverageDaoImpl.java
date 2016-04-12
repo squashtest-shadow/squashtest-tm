@@ -42,7 +42,7 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao;
 
 @Repository("CustomRequirementVersionCoverageDao")
-public class HibernateRequirementVersionCoverageDao extends HibernateEntityDao<RequirementVersionCoverage> implements
+public class RequirementVersionCoverageDaoImpl extends HibernateEntityDao<RequirementVersionCoverage> implements
 CustomRequirementVersionCoverageDao {
 
 	@SuppressWarnings("unchecked")
@@ -70,8 +70,6 @@ CustomRequirementVersionCoverageDao {
 			res.add((RequirementVersionCoverage)tuple[0]);
 		}
 
-		
-		
 		return res;
 	}
 
@@ -89,7 +87,7 @@ CustomRequirementVersionCoverageDao {
 		}
 
 		// we have to fetch our query and modify the hql a bit, hence the weird operation below
-		Query namedquery = currentSession().getNamedQuery("requirementVersion.findDistinctRequirementVersionsByTestCases");
+		Query namedquery = currentSession().getNamedQuery("RequirementVersion.findDistinctRequirementVersionsByTestCases");
 		String hql = namedquery.getQueryString();
 		hql = SortingUtils.addOrder(hql, pagingAndSorting);
 
