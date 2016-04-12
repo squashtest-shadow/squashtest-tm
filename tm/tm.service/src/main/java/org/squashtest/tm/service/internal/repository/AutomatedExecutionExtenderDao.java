@@ -35,23 +35,23 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
  */
 public interface AutomatedExecutionExtenderDao extends Repository<AutomatedExecutionExtender, Long>{
 
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	AutomatedExecutionExtender findById(long executionId);
 
-	// note : native method from JPA repositories
+	@NativeMethodFromJpaRepository
 	void save(AutomatedExecutionExtender extender);
 
 	/**
-	 * Returns the {@link AutomatedExecution}s which match the {@link AutomatedExecutionSetIdentifier}.
+	 * Returns the {@link AutomatedExecutionExtender}s which match the {@link AutomatedExecutionSetIdentifier}.
 	 * 
 	 * @param projectName
 	 * 
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName,
 			@NotNull String projectName);
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
 }

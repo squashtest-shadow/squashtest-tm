@@ -32,16 +32,16 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSuiteDao {
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	long countTestPlanItems(long testSuiteId);
 
-	// note : uses the Spring JPA dsl 	
+	@UsesTheSpringJpaDsl
 	TestSuite findById(long id);
 	
-	// note : native method from JPA repositories
+	@NativeMethodFromJpaRepository
 	 void save(TestSuite ts);
 
-	// note : uses the Spring JPA dsl 	
+	@UsesTheSpringJpaDsl
 	List<TestSuite> findAllByIterationId(long iterationId);
 	
 	
@@ -54,17 +54,17 @@ public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSui
 	 * @param testSuiteId
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<IterationTestPlanItem> findLaunchableTestPlan(@Param("suiteId") long testSuiteId);
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findTestPlanPartition(@Param("suiteId") long testSuiteId, @Param("itemIds") List<Long> testPlanItemIds);
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Execution> findAllExecutions(long testSuiteId);
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	long findProjectIdBySuiteId(long suiteId);
 
 
@@ -75,6 +75,6 @@ public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSui
 	 *            : the id of the concerned TestSuite
 	 * @return the distinct ids of the TestCases referenced in the suite's test plan.
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Long> findPlannedTestCasesIds(Long suiteId);
 }

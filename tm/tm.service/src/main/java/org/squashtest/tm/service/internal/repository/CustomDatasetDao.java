@@ -39,7 +39,7 @@ public interface CustomDatasetDao {
 	 * 
 	 * @return the list of all test cases's datasets.
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Dataset> findOwnDatasetsByTestCase(@Param("testCaseId") Long testCaseId);
 
 	

@@ -25,13 +25,13 @@ import org.squashtest.tm.domain.testcase.DatasetParamValue;
 
 public interface DatasetParamValueDao extends Repository<DatasetParamValue, Long>{
 
-	// note : native method from JPA repositories
+	@NativeMethodFromJpaRepository
 	void save(DatasetParamValue newValue);
 	
-	// note : native method from JPA repositories
+	@NativeMethodFromJpaRepository
 	void delete(DatasetParamValue value);
 	
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	DatasetParamValue findById(Long id);
 }
 

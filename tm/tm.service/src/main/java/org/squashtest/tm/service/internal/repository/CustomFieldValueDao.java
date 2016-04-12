@@ -39,7 +39,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 *
 	 * @param newValue
 	 */
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void save(CustomFieldValue newValue);
 
 
@@ -48,7 +48,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 *
 	 * @param value
 	 */
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void delete(CustomFieldValue value);
 
 
@@ -57,7 +57,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 *
 	 * @param ids
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@Transactional
 	@EmptyCollectionGuard	
@@ -69,7 +69,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 *
 	 * @param bindingId
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@Transactional
 	void deleteAllForBinding(@Param("bindingId") Long bindingId);
@@ -81,7 +81,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param entityId
 	 * @param entity
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@Transactional
 	void deleteAllForEntity(@Param("entityId") Long entityId, @Param("entityType") BindableEntity entity);
@@ -92,7 +92,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 *
 	 * @param entityIds
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@Transactional
 	@EmptyCollectionGuard
@@ -117,7 +117,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param entityType
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldValue> findAllCustomValues(@Param("entityId") long entityId, @Param("entityType") BindableEntity entityType);
 
 
@@ -128,7 +128,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param entityType
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<CustomFieldValue> batchedFindAllCustomValuesFor(@Param(ParameterNames.ENTITY_IDS) Collection<Long> entityIds, @Param(ENTITY_TYPE) BindableEntity entityType);
 
@@ -140,7 +140,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param entityType
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<CustomFieldValue> batchedInitializedFindAllCustomValuesFor(@Param(ParameterNames.ENTITY_IDS) List<Long> entityIds, @Param(ENTITY_TYPE) BindableEntity entityType);
 
@@ -150,7 +150,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 *
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard	
 	List<CustomFieldValue> batchedRestrictedFindAllCustomValuesFor(@Param(ParameterNames.ENTITY_IDS) List<Long> entityIds,
 																   @Param(ENTITY_TYPE) BindableEntity entityType,
@@ -164,7 +164,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param customFieldBindingId
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldValue> findAllCustomValuesOfBinding(@Param("bindingId") long customFieldBindingId);
 
 
@@ -175,7 +175,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param customFieldBindingIds
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<CustomFieldValue> findAllCustomValuesOfBindings(@Param("bindingIds") List<Long> customFieldBindingIds);
 
@@ -190,7 +190,7 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param copyEntityId
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldValuesPair> findPairedCustomFieldValues(@Param(ENTITY_TYPE) BindableEntity entity,
 															@Param("origEntityId") Long origEntityId, @Param("copyEntityId") Long copyEntityId);
 
@@ -203,21 +203,21 @@ public interface CustomFieldValueDao extends Repository<CustomFieldValue, Long> 
 	 * @param bindableEntity       : the type of the {@link BoundEntity}
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldValue> findAllCustomFieldValueOfBindingAndEntity(
 		long customFieldBindingId,
 		long boundEntityId,
 		BindableEntity bindableEntity);
 
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	Long findBoundEntityId(@Param("customFieldValueId") Long customFieldValueId);
 
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldValue> findAllForEntityAndRenderingLocation(@Param("entityId") long entityId, @Param("entityType") BindableEntity entityType, @Param("location") RenderingLocation renderingLocation);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<String> findAllAvailableTagForEntityInProjects(@Param("boundEntityType") BindableEntity boundEntityType, @Param("projectsIds") List<Long> projectIds);
 

@@ -20,17 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public interface RequirementAuditEventDao extends JpaRepository<RequirementAuditEvent, Long> {
-
-	@NativeMethodFromJpaRepository
-	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderByDateDesc(long requirementVersionId, Pageable paging);
-
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	long countByRequirementVersionId(long requirementVersionId);
-
+/**
+ * @author Gregory Fouquet
+ * @since 1.14.0 12/04/16
+ */
+@Retention(RetentionPolicy.SOURCE)
+@Target(ElementType.METHOD)
+public @interface UsesANamedQueryInPackageInfoOrElsewhere {
 }

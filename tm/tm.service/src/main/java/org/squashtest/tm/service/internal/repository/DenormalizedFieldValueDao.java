@@ -46,7 +46,7 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 	public static final String PARAM_ENTITY_TYPE = "entityType";
 	public static final String PARAM_ENTITY_ID = "entityId";
 
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void save(DenormalizedFieldValue newValue);
 
 	// note : uses the Spring JPA dsl
@@ -60,7 +60,7 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 	 * @param denormalizedFieldHolderType
 	 * @deprecated does not seem to be used as per 1.14
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@Transactional
 	@Deprecated
@@ -75,7 +75,7 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 	 * @param denormalizedFieldHolderType
 	 * @return the list of corresponding {@link DenormalizedFieldValue} ordered by position asc.
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<DenormalizedFieldValue> findDFVForEntity(@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
 												  @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType);
 
@@ -88,26 +88,26 @@ public interface DenormalizedFieldValueDao extends Repository<DenormalizedFieldV
 	 * @param renderingLocation
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<DenormalizedFieldValue> findDFVForEntityAndRenderingLocation(
 		@Param(PARAM_ENTITY_ID) long denormalizedFieldHolderId,
 		@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
 		@Param("renderingLocation") RenderingLocation renderingLocation);
 
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<DenormalizedFieldValue> findDFVForEntities(@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType type, @Param(ParameterNames.ENTITY_IDS) Collection<Long> entities);
 
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<DenormalizedFieldValue> findDFVForEntitiesAndLocations(
 		@Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType denormalizedFieldHolderType,
 		@Param(ParameterNames.ENTITY_IDS) Collection<Long> entities,
 		@Param("locations") Collection<RenderingLocation> locations);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	public long countDenormalizedFields(@Param(PARAM_ENTITY_ID) long entityId, @Param(PARAM_ENTITY_TYPE) DenormalizedFieldHolderType entityType);
 
 }

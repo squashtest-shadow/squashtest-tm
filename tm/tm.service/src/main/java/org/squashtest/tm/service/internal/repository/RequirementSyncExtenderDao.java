@@ -31,26 +31,26 @@ import java.util.Collection;
 
 public interface RequirementSyncExtenderDao extends Repository<RequirementSyncExtender, Long> {
 
-	// note : native method from JPA repositories
+	@NativeMethodFromJpaRepository
 	void save(RequirementSyncExtender extender);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@Param("pId") String remoteProjectId, @Param("filter") String filterName);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	Collection<RequirementSyncExtender> retrieveAllByServer(@Param("serverId") Long serverId);
 
-	// note : native method from JPA repositories
+	@NativeMethodFromJpaRepository
 	void delete(RequirementSyncExtender extender);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@Transactional
 	void deleteAllByServer(@Param("serverId") Long serverId);

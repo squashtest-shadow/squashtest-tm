@@ -31,41 +31,37 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Long>, CustomCustomFieldBindingDao {
 
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	CustomFieldBinding findById(long bindingId);
 	
 	/**
 	 * returns the bindings grouped by project and entity, sorted by position
-	 * @param ids
-	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	// cannot really use the dsl findAllByIdIn(collection) because of the presence of grouping in the desired output
 	@EmptyCollectionGuard
 	List<CustomFieldBinding> findAllByIds(Collection<Long> ids);
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldBinding> findAllForGenericProject(long projectId);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldBinding> findAllForProjectAndEntity(@Param("projectId") long projectId, @Param("entityType") BindableEntity boundEntity);
 	
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	List<CustomFieldBinding> findAllByCustomFieldIdOrderByPositionAsc(long customFieldId);
 
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void save(CustomFieldBinding binding);
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	Long countAllForProjectAndEntity(long projectId, BindableEntity boundEntity);
 
 	/**
 	 * Given an id, returns the list of all the entities binding the same project to the same entity.
 	 * 
-	 * @param id
-	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldBinding> findAllAlike(long id);
 
 	/**
@@ -73,11 +69,8 @@ public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Lo
 	 * Indeed there is no constraints on the database that forces an entity to perfectly
 	 * match the custom field bindings that were defined at the project level for that entity.
 	 * 
-	 * @param boundEntityId
-	 * @param boundEntityType
-	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomFieldBinding> findEffectiveBindingsForEntity(@Param("entityId") long entityId,
 			@Param("entityType") BindableEntity entityType);
 
@@ -90,12 +83,8 @@ public interface CustomFieldBindingDao extends Repository<CustomFieldBinding, Lo
 	 * If an entity (of a given id) has multiple binding actually honored, multiple tuples will be
 	 * returned for that entity.
 	 * 
-	 * 
-	 * @param entityIds
-	 * @param entityType
-	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<Object[]> findEffectiveBindingsForEntities(@Param(ParameterNames.ENTITY_IDS) List<Long> entityIds,
 			@Param("entityType") BindableEntity entityType);

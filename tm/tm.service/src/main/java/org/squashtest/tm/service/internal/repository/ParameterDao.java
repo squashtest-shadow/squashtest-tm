@@ -31,21 +31,21 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 public interface ParameterDao extends Repository<Parameter, Long>, CustomParameterDao {
 	
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void save(Parameter parameter);
 	
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void delete(Parameter parameter);
 	
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	Parameter findById(Long id);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@EmptyCollectionGuard
 	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> removeAllByTestCaseIds);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@EmptyCollectionGuard
 	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
@@ -57,7 +57,7 @@ public interface ParameterDao extends Repository<Parameter, Long>, CustomParamet
 	 * @param testcaseId
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	// corresponds to JPA dsl : findByTestCaseIdOrderByNameAndTestCaseNameAsc, but this would be less expressive
 	List<Parameter> findOwnParametersByTestCase(@Param("testCaseId") Long testcaseId);
 
@@ -66,7 +66,7 @@ public interface ParameterDao extends Repository<Parameter, Long>, CustomParamet
 	 * @param testcaseIds
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	// corresponds to JPA dsl : findByTestCaseIdInOrderByNameAndTestCaseNameAsc, but this would be less expressive
 	@EmptyCollectionGuard
 	List<Parameter> findOwnParametersByTestCases(@Param("testCaseIds") List<Long> testcaseIds);
@@ -79,7 +79,7 @@ public interface ParameterDao extends Repository<Parameter, Long>, CustomParamet
 	 * @param testcaseId
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	// corresponds to JPA dsl : findByNameAndTestCaseId, but this would be less expressive
 	Parameter findOwnParameterByNameAndTestCase(@Param("name") String name, @Param("testCaseId") Long testcaseId);
 
@@ -90,7 +90,7 @@ public interface ParameterDao extends Repository<Parameter, Long>, CustomParamet
 	 * @param testcaseIds
 	 * @return
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	// corresponds to JPA dsl : findByNameAndTestCaseIdIn, but this would be less expressive
 	@EmptyCollectionGuard
 	List<Parameter> findOwnParametersByNameAndTestCases(@Param("name") String name, @Param("testCaseIds") List<Long> testcaseIds);

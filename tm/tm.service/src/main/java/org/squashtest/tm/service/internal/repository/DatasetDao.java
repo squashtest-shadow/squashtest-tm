@@ -32,10 +32,10 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao{
 
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void save(Dataset newValue);
 
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	Dataset findById(Long id);
 
 
@@ -46,18 +46,18 @@ public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao
 	 * @param name : the name of the dataset to find
 	 * @return the test case's dataset matching the given id or <code>null</code>
 	 */
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	// note : this name is a valid jpa dsl expression, but to be fully ok with the named query it should be 
 	// findByTestCaseIdAndNameOrderByNameAsc, which is less cool
 	Dataset findByTestCaseIdAndName(@Param("testCaseId") Long testCaseId, @Param("name") String name);
 
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@EmptyCollectionGuard
 	void removeAllByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	@Modifying
 	@EmptyCollectionGuard
 	void removeAllValuesByTestCaseIds(@Param("testCaseIds") List<Long> testCaseIds);
@@ -67,10 +67,10 @@ public interface DatasetDao extends Repository<Dataset, Long> , CustomDatasetDao
 	 * 
 	 * @param dataset : the dataset to remove
 	 */
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	void delete(Dataset dataset);
 
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	Collection<Dataset> findAllByTestCaseId(Long testCaseId);
 	
 	

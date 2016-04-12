@@ -36,50 +36,50 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
  */
 public interface GenericProjectDao extends Repository<GenericProject, Long>,  CustomGenericProjectDao {
 
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	long countByName(String name);
 	
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	long count();
 
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	List<GenericProject> findAll();
 
-	// note : native method from JPA repositorie
+	@NativeMethodFromJpaRepository
 	@EmptyCollectionGuard
 	List<GenericProject> findAll(Iterable<Long> ids);
 		
-	// note : native method from JPA repositorie	
+	@NativeMethodFromJpaRepository
 	List<GenericProject> findAll(Sort sorting);
 	
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	GenericProject findById(long projectId);
 
 	/**
 	 * Simply remove entity
 	 * @param project : the {@link GenericProject} to remove
 	 */
-	// note : native method from JPA repositorie	
+	@NativeMethodFromJpaRepository
 	void delete(GenericProject project);
 
 	
 	// ************************* test automation section **********************
 
 	
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<TestAutomationProject> findBoundTestAutomationProjects(@Param(ParameterNames.PROJECT_ID) long id);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<String> findBoundTestAutomationProjectJobNames(@Param(ParameterNames.PROJECT_ID) long id);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<String> findBoundTestAutomationProjectLabels(@Param(ParameterNames.PROJECT_ID) long projectId);
 
-	// note : uses the Spring JPA dsl 
+	@UsesTheSpringJpaDsl
 	@EmptyCollectionGuard
 	List<GenericProject> findAllByIdIn(List<Long> idList, Sort sorting);
 
-	// note : uses a named query in package-info or elsewhere
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	TestAutomationServer findTestAutomationServer(@Param(ParameterNames.PROJECT_ID) long projectId);
 	
 
