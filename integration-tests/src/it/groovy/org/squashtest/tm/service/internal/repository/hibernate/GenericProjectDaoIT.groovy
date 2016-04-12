@@ -20,12 +20,7 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import static org.squashtest.tm.core.foundation.collection.SortOrder.*
-
-import javax.inject.Inject
-
-import org.squashtest.tm.core.foundation.collection.DefaultSorting
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting
+import org.springframework.data.domain.Sort
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.service.internal.repository.GenericProjectDao
@@ -34,36 +29,36 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
+
+import static org.springframework.data.domain.Sort.Direction.ASC
+import static org.springframework.data.domain.Sort.Direction.DESC
+
 /**
  * @author Gregory Fouquet
  *
  */
 @UnitilsSupport
 class GenericProjectDaoIT extends DbunitDaoSpecification {
-	@Inject GenericProjectDao dao
+	@Inject
+	GenericProjectDao dao
 
 	@Unroll
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should return a list of existing project" () {
 		given:
-		PagingAndSorting paging = Mock()
-		paging.firstItemIndex >> start
-		paging.pageSize >> pageSize
-		paging.sortedAttribute >> sortAttr
-		paging.sortOrder >> sortOrder
+		Sort sort = new Sort(sortOrder, sortAttr)
 
 		when:
-		List<GenericProject> list = dao.findAll(paging)
+		List<GenericProject> list = dao.findAll(sort)
 
 		then:
 		list*.name == expected
 
 		where:
-		start | pageSize | sortAttr | sortOrder		| expected
-		0     | 4        | "id"     | ASCENDING		| ["ONE", "TWO", "THREE", "FOUR"]
-		0     | 4        | "name"   | DESCENDING	| ["twobis", "TWO", "THREE", "ONE"]
-		0     | 2        | "id"     | ASCENDING		| ["ONE", "TWO"]
-		2     | 4        | "id"     | ASCENDING		| ["THREE", "FOUR", "twobis"]
+		sortAttr | sortOrder | expected
+		"id"     | ASC       | ["ONE", "TWO", "THREE", "FOUR", "twobis"]
+		"name"   | DESC      | ["twobis", "TWO", "THREE", "ONE", "FOUR"]
 
 	}
 
@@ -72,7 +67,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 		given :
 		def ids = [100001L, 100002L, 100003L, 100004L, 100005L]
 		when :
-		List<GenericProject> result = dao.findAllByIds(ids, new DefaultSorting("name"))
+		List<GenericProject> result = dao.findAllByIdIn(ids, new Sort(ASC, "name"))
 		then:
 		result*.name == ["FOUR", "ONE", "THREE", "TWO", "twobis"]
 	}
@@ -80,7 +75,7 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 	@DataSet("GenericProjectDaoIT.xml")
 	def "should count existing projects" () {
 		expect:
-		dao.countGenericProjects() == 5
+		dao.count() == 5
 	}
 
 	@Unroll
@@ -118,7 +113,8 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 
 	@DataSet("GenericProjectDaoIT.server.xml")
 	def "should find a project's server"(){
-		given: def pId = 100001L
+		given:
+		def pId = 100001L
 		when :
 		def res = dao.findTestAutomationServer(pId)
 		then :
@@ -128,7 +124,8 @@ class GenericProjectDaoIT extends DbunitDaoSpecification {
 
 	@DataSet("GenericProjectDaoIT.taprojects.xml")
 	def "should find a project's taprojects jobNames"(){
-		given: def pId = 100001L
+		given:
+		def pId = 100001L
 		when :
 		Collection<String> res = dao.findBoundTestAutomationProjectJobNames(pId)
 		then :
