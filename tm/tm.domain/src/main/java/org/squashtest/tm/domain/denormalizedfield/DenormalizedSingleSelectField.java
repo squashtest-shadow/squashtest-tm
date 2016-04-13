@@ -20,21 +20,6 @@
  */
 package org.squashtest.tm.domain.denormalizedfield;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OrderColumn;
-import javax.validation.Valid;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -44,9 +29,15 @@ import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
 
+import javax.persistence.*;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * An Editable Denormalized Custom Field which stores a single option selected from a list.
- * 
+ *
  * @author Frederic Laurens
  */
 
@@ -58,7 +49,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	@CollectionTable(name = "DENORMALIZED_FIELD_OPTION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@OrderColumn(name = "POSITION")
 	@Valid
-	private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
+	private List<CustomFieldOption> options = new ArrayList<>();
 
 	/**
 	 * Created a SingleSelectField with a
@@ -68,10 +59,10 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	}
 
 	public DenormalizedSingleSelectField(CustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
-			DenormalizedFieldHolderType denormalizedFieldHolderType) {
+										 DenormalizedFieldHolderType denormalizedFieldHolderType) {
 		super(customFieldValue, denormalizedFieldHolderId, denormalizedFieldHolderType);
 		SingleSelectField singleSelectField = (SingleSelectField) customFieldValue.getCustomField();
-		for(CustomFieldOption option : singleSelectField.getOptions()){
+		for (CustomFieldOption option : singleSelectField.getOptions()) {
 			this.addOption(option);
 		}
 	}
@@ -80,8 +71,7 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	/**
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the
 	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
-	 * 
-	 * @throws OptionAlreadyExistsException
+	 *
 	 * @param option
 	 *            : the new option
 	 */
@@ -130,10 +120,8 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	}
 
 	private int findIndexOfCode(String newCode) {
-		Iterator<CustomFieldOption> it = options.iterator();
 
-		while (it.hasNext()) {
-			CustomFieldOption option = it.next();
+		for (CustomFieldOption option : options) {
 			if (newCode.equals(option.getCode())) {
 				return options.indexOf(option);
 			}
@@ -142,10 +130,8 @@ public class DenormalizedSingleSelectField extends DenormalizedFieldValue {
 	}
 
 	private int findIndexOfLabel(String previousLabel) {
-		Iterator<CustomFieldOption> it = options.iterator();
 
-		while (it.hasNext()) {
-			CustomFieldOption option = it.next();
+		for (CustomFieldOption option : options) {
 			if (previousLabel.equals(option.getLabel())) {
 				return options.indexOf(option);
 			}

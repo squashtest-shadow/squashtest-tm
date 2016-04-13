@@ -20,22 +20,14 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import javax.persistence.*;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
-
 /**
  * A CustomField which stores a multi option selected from a list.
- * 
+ *
  * @author Karim Drifi
  */
 
@@ -48,7 +40,7 @@ public class MultiSelectField extends CustomField {
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
-	private Set<CustomFieldOption> options = new HashSet<CustomFieldOption>();
+	private Set<CustomFieldOption> options = new HashSet<>();
 
 	/**
 	 * Created a SingleSelectField with a
@@ -66,15 +58,15 @@ public class MultiSelectField extends CustomField {
 	}
 
 
-	public void addOption(String label){
+	public void addOption(String label) {
 		CustomFieldOption newOption = new CustomFieldOption(label);
 		options.add(newOption);
 	}
 
 	@Override
-	public void setDefaultValue(String defaultValue){
+	public void setDefaultValue(String defaultValue) {
 		String[] values = defaultValue.split(SEPARATOR_EXPR);
-		for (String v : values){
+		for (String v : values) {
 			addOption(v);
 		}
 		this.defaultValue = defaultValue;

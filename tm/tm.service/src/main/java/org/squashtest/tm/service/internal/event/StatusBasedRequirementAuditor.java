@@ -54,7 +54,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	private static final Logger LOGGER = LoggerFactory.getLogger(StatusBasedRequirementAuditor.class);
 
 	/**
-	 *  we do not use a dao here because : 
+	 *  we do not use a dao here because :
 	 *  1. we only need SessionFactory.persist(...)
 	 *  2. injecting a dao might induce circular refs through the usage of aspects
 	 */
@@ -75,9 +75,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	}
 
 	private void logEvent(RequirementCreation event) {
-		if (LOGGER.isTraceEnabled()) {
 			LOGGER.trace("Requirement was created");
-		}
 	}
 
 	@Override
@@ -90,9 +88,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	}
 
 	private void logEvent(RequirementVersionModification event) {
-		if (LOGGER.isTraceEnabled()) {
-			LOGGER.trace("Requirement was modified");
-		}
+		LOGGER.trace("Requirement was modified");
 	}
 
 	private boolean shouldAuditModification(RequirementVersionModification event) {
@@ -109,7 +105,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 			logEvent(event);
 		}
 	}
-	
+
 
 	@Override
 	public void visit(SyncRequirementCreation event) {

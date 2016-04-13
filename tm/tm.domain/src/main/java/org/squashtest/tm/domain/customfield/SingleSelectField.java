@@ -20,21 +20,6 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OrderColumn;
-import javax.validation.Valid;
-
-import org.hibernate.annotations.NamedQueries;
-import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.exception.WrongStringSizeException;
 import org.squashtest.tm.exception.customfield.CannotDeleteDefaultOptionException;
@@ -42,9 +27,16 @@ import org.squashtest.tm.exception.customfield.CodeAlreadyExistsException;
 import org.squashtest.tm.exception.customfield.CodeDoesNotMatchesPatternException;
 import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
 
+import javax.persistence.*;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * A CustomField which stores a single option selected from a list.
- * 
+ *
  * @author Gregory Fouquet
  */
 
@@ -56,7 +48,7 @@ public class SingleSelectField extends CustomField {
 	@CollectionTable(name = "CUSTOM_FIELD_OPTION", joinColumns = @JoinColumn(name = "CF_ID"))
 	@OrderColumn(name = "POSITION")
 	@Valid
-	private List<CustomFieldOption> options = new ArrayList<CustomFieldOption>();
+	private List<CustomFieldOption> options = new ArrayList<>();
 
 	/**
 	 * Created a SingleSelectField with a
@@ -68,10 +60,8 @@ public class SingleSelectField extends CustomField {
 	/**
 	 * Will check if label and the code are available among the existing options. If so, will add the new option at the
 	 * end of the list. Else will throw a NameAlreadyInUseException or CodeAlreadyExistsException.
-	 * 
-	 * @throws OptionAlreadyExistsException
-	 * @param option
-	 *            : the new option
+	 *
+	 * @param option : the new option
 	 */
 	public void addOption(CustomFieldOption option) {
 		checkLabelAvailable(option.getLabel());
@@ -84,7 +74,7 @@ public class SingleSelectField extends CustomField {
 	// TODO fix [Task 1682] and remove this method
 	// Also, aded a way to check if code is not only spaces
 	private void checkCodeMatchesPattern(String code) {
-		if (!code.matches(CODE_REGEXP) ||  "".equals(code.trim())) {
+		if (!code.matches(CODE_REGEXP) || "".equals(code.trim())) {
 			throw new CodeDoesNotMatchesPatternException(code, CODE_REGEXP, "optionCode");
 		}
 		if (code.length() > MAX_CODE_SIZE || code.length() < MIN_CODE_SIZE) {
@@ -111,8 +101,7 @@ public class SingleSelectField extends CustomField {
 
 	/**
 	 * Checks first if the option is the default one. If so: throw a CannotDeleteDefaultOptionException
-	 * 
-	 * @param label
+	 *
 	 * @throws CannotDeleteDefaultOptionException
 	 */
 	public void removeOption(@NotBlank String label) {
@@ -122,7 +111,7 @@ public class SingleSelectField extends CustomField {
 		removeOptionWithoutCheck(label);
 	}
 
-	public void removeOptionWithoutCheck(@NotBlank String label) {
+	private void removeOptionWithoutCheck(@NotBlank String label) {
 		Iterator<CustomFieldOption> it = options.iterator();
 		while (it.hasNext()) {
 			if (label.equals(it.next().getLabel())) {
@@ -131,14 +120,12 @@ public class SingleSelectField extends CustomField {
 			}
 		}
 	}
-	
+
 	/**
 	 * Checks if the newlabel is available among all options. <br>
 	 * If so, will change the defaultValue if needed, remove the option and add a new one at the vacant position. Else
 	 * throws OptionAlreadyExistException.
-	 * 
-	 * @param previousLabel
-	 * @param newlabel
+	 *
 	 * @throws OptionAlreadyExistException
 	 */
 	public void changeOptionLabel(String previousLabel, String newlabel) {
@@ -156,12 +143,9 @@ public class SingleSelectField extends CustomField {
 	/**
 	 * Checks if the newCode is available among all options. <br>
 	 * If so, will remove the option and add a new one at the vacant position. Else throws CodeAlreadyExistException.
-	 * 
-	 * @param optionLabel
-	 *            : the label to identify the concerned option.
-	 * @param newCode
-	 *            : the new code for the concerned option.
-	 * @throws CodeAlreadyExistException
+	 *
+	 * @param optionLabel : the label to identify the concerned option.
+	 * @param newCode     : the new code for the concerned option.
 	 */
 	public void changeOptionCode(String optionLabel, String newCode) {
 		checkCodeAvailable(newCode);
@@ -175,10 +159,8 @@ public class SingleSelectField extends CustomField {
 	}
 
 	private String findCodeOf(String previousLabel) {
-		Iterator<CustomFieldOption> it = options.iterator();
 
-		while (it.hasNext()) {
-			CustomFieldOption option = it.next();
+		for (CustomFieldOption option : options) {
 			if (previousLabel.equals(option.getLabel())) {
 				return option.getCode();
 			}
@@ -195,10 +177,8 @@ public class SingleSelectField extends CustomField {
 	}
 
 	private int findIndexOfCode(String newCode) {
-		Iterator<CustomFieldOption> it = options.iterator();
 
-		while (it.hasNext()) {
-			CustomFieldOption option = it.next();
+		for (CustomFieldOption option : options) {
 			if (newCode.equals(option.getCode())) {
 				return options.indexOf(option);
 			}
@@ -211,10 +191,8 @@ public class SingleSelectField extends CustomField {
 	}
 
 	private int findIndexOfLabel(String previousLabel) {
-		Iterator<CustomFieldOption> it = options.iterator();
 
-		while (it.hasNext()) {
-			CustomFieldOption option = it.next();
+		for (CustomFieldOption option : options) {
 			if (previousLabel.equals(option.getLabel())) {
 				return options.indexOf(option);
 			}
@@ -228,11 +206,9 @@ public class SingleSelectField extends CustomField {
 
 	/**
 	 * Will remove all options and recreate them at their right-full positions.
-	 * 
-	 * @param newIndex
-	 *            : the lowest index for the moved selection
-	 * @param optionsLabels
-	 *            : the labels of the moved options
+	 *
+	 * @param newIndex      : the lowest index for the moved selection
+	 * @param optionsLabels : the labels of the moved options
 	 */
 	public void moveOptions(int newIndex, List<String> optionsLabels) {
 		List<CustomFieldOption> newOptions = copyOptionList(optionsLabels);
@@ -241,7 +217,7 @@ public class SingleSelectField extends CustomField {
 	}
 
 	private List<CustomFieldOption> copyOptionList(List<String> optionsLabels) {
-		List<CustomFieldOption> newOptions = new ArrayList<CustomFieldOption>(optionsLabels.size());
+		List<CustomFieldOption> newOptions = new ArrayList<>(optionsLabels.size());
 		for (String optionLabel : optionsLabels) {
 			String code = findCodeOf(optionLabel);
 			newOptions.add(new CustomFieldOption(optionLabel, code));
