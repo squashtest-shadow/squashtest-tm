@@ -20,181 +20,176 @@
  */
 package org.squashtest.tm.service.campaign
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.TestSuite
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService
-import org.squashtest.tm.service.internal.repository.IterationDao;
+import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.TestSuiteDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
+	class TestSuiteTestPlanManagerServiceIT extends DbunitServiceSpecification {
 
 	@Inject
 	private TestSuiteTestPlanManagerService service
 
 	@Inject
 	private TestSuiteDao testSuiteDao;
-	
+
 	@Inject
 	private IterationDao iterationDao
-	
-	Paging paging = Mock()
-	
-	def setup(){
-		paging.firstItemIndex >> 0
-		paging.pageSize >> 10
+
+	def findTestPlan(testSuite) {
+		entityManager.createQuery("from IterationTestPlanItem it  join it.testSuites ts where ts = :suite")
+			.setParameter("suite", testSuite)
+			.resultList
 	}
-	
+
 	@DataSet("TestSuiteTestPlanManager.should link test plan to test Suite.xml")
-	def "should add the test plan items to the iteration as they are bound to the test suite"(){
-		
-		given :
-			long testSuiteId = -1L
+	def "should add the test plan items to the iteration as they are bound to the test suite"() {
 
-		when :
-			service.addTestCasesToIterationAndTestSuite([-1L, -2L, -3L, -4L], testSuiteId);
-			TestSuite ts = testSuiteDao.findById(-1L)
-			Iteration iter = ts.getIteration()
-		
-		then :
-			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==4
-			iter.getTestPlans().size()==4
-	}
-	
-	@DataSet("TestSuiteTestPlanManager.should keep test plan on iteration.xml")
-	def "should keep test plan on iteration"(){
-		
-		given :
-			long testSuiteId = -1L
-
-		when :
-			service.detachTestPlanFromTestSuite([-1L, -2L], testSuiteId)
-			TestSuite ts = testSuiteDao.findById(-1L)
-			Iteration iter = ts.getIteration()
-		
-		then :
-			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==2
-			iter.getTestPlans().size()==4
-	}
-	
-	@DataSet("TestSuiteTestPlanManager.should keep test plan on iteration.xml")
-	def "should take away test plan from iteration as well as test suite"(){
-		
-		given :
-			long testSuiteId = -1L
-
-		when :
-			service.detachTestPlanFromTestSuiteAndRemoveFromIteration([-1L, -2L], testSuiteId)
-			TestSuite ts = testSuiteDao.findById(-1L)
-			Iteration iter = ts.getIteration()
-		
-		then :
-			testSuiteDao.findAllTestPlanItemsPaged(testSuiteId, paging).size()==2
-			iter.getTestPlans().size()==2
-	}
-	
-	
-	@DataSet("TestSuiteTestPlanManager.should add one test plan item to two test suites.xml")
-	def "should add one test plan item to two test suites"(){
-		
 		given:
-		
+		long testSuiteId = -1L
+
+		when:
+		service.addTestCasesToIterationAndTestSuite([-1L, -2L, -3L, -4L], testSuiteId);
+		TestSuite ts = testSuiteDao.findById(-1L)
+		Iteration iter = ts.getIteration()
+
+		then:
+		findTestPlan(ts).size() == 4
+		iter.getTestPlans().size() == 4
+	}
+
+	@DataSet("TestSuiteTestPlanManager.should keep test plan on iteration.xml")
+	def "should keep test plan on iteration"() {
+
+		given:
+		long testSuiteId = -1L
+
+		when:
+		service.detachTestPlanFromTestSuite([-1L, -2L], testSuiteId)
+		TestSuite ts = testSuiteDao.findById(-1L)
+		Iteration iter = ts.getIteration()
+
+		then:
+		findTestPlan(ts).size() == 2
+		iter.getTestPlans().size() == 4
+	}
+
+	@DataSet("TestSuiteTestPlanManager.should keep test plan on iteration.xml")
+	def "should take away test plan from iteration as well as test suite"() {
+
+		given:
+		long testSuiteId = -1L
+
+		when:
+		service.detachTestPlanFromTestSuiteAndRemoveFromIteration([-1L, -2L], testSuiteId)
+		TestSuite ts = testSuiteDao.findById(-1L)
+		Iteration iter = ts.getIteration()
+
+		then:
+		findTestPlan(ts).size() == 2
+		iter.getTestPlans().size() == 2
+	}
+
+
+	@DataSet("TestSuiteTestPlanManager.should add one test plan item to two test suites.xml")
+	def "should add one test plan item to two test suites"() {
+
+		given:
+
 		long testSuiteId1 = -1L
 		long testSuiteId2 = -2L
 		long itemId = -1L
-		 
+
 		when:
-		
 		List<Long> testSuiteIds = new ArrayList<Long>();
 		testSuiteIds.add(testSuiteId1);
 		testSuiteIds.add(testSuiteId2);
-		
+
 		List<Long> itemIds = new ArrayList<Long>();
 		itemIds.add(itemId);
-		
+
 		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
-		
+
 		then:
-		
+
 		TestSuite suite1 = testSuiteDao.findById(-1L);
 		suite1.getTestPlan().size() == 1;
-		
+
 		TestSuite suite2 = testSuiteDao.findById(-2L);
 		suite2.getTestPlan().size() == 1;
 	}
-	
+
 	@DataSet("TestSuiteTestPlanManager.should add two test plan items to two test suites.xml")
-	def "should add two test plan item to two test suites"(){
-		
+	def "should add two test plan item to two test suites"() {
+
 		given:
-		
-		long testSuiteId1 = -1L
-		long testSuiteId2 = -2L
-		long itemId1 = -1L
-		long itemId2 = -2L
-		
-		when:
-		
-		List<Long> testSuiteIds = new ArrayList<Long>();
-		testSuiteIds.add(testSuiteId1);
-		testSuiteIds.add(testSuiteId2);
-		
-		List<Long> itemIds = new ArrayList<Long>();
-		itemIds.add(itemId1);
-		itemIds.add(itemId2);
-		
-		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
-		
-		then:
-		
-		TestSuite suite1 = testSuiteDao.findById(-1L);
-		suite1.getTestPlan().size() == 2;
-		
-		TestSuite suite2 = testSuiteDao.findById(-2L);
-		suite2.getTestPlan().size() == 2;
-	}
-	
-	@DataSet("TestSuiteTestPlanManager.should add two test plan items to two test suites with test plan items.xml")
-	def "should add two test plan item to two test suites with test plan items"(){
-		
-		given:
-		
+
 		long testSuiteId1 = -1L
 		long testSuiteId2 = -2L
 		long itemId1 = -1L
 		long itemId2 = -2L
 
 		when:
-		
+
 		List<Long> testSuiteIds = new ArrayList<Long>();
 		testSuiteIds.add(testSuiteId1);
 		testSuiteIds.add(testSuiteId2);
-		
+
 		List<Long> itemIds = new ArrayList<Long>();
 		itemIds.add(itemId1);
 		itemIds.add(itemId2);
-		
+
 		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
-		
+
 		then:
-		
+
+		TestSuite suite1 = testSuiteDao.findById(-1L);
+		suite1.getTestPlan().size() == 2;
+
+		TestSuite suite2 = testSuiteDao.findById(-2L);
+		suite2.getTestPlan().size() == 2;
+	}
+
+	@DataSet("TestSuiteTestPlanManager.should add two test plan items to two test suites with test plan items.xml")
+	def "should add two test plan item to two test suites with test plan items"() {
+
+		given:
+
+		long testSuiteId1 = -1L
+		long testSuiteId2 = -2L
+		long itemId1 = -1L
+		long itemId2 = -2L
+
+		when:
+
+		List<Long> testSuiteIds = new ArrayList<Long>();
+		testSuiteIds.add(testSuiteId1);
+		testSuiteIds.add(testSuiteId2);
+
+		List<Long> itemIds = new ArrayList<Long>();
+		itemIds.add(itemId1);
+		itemIds.add(itemId2);
+
+		service.bindTestPlanToMultipleSuites(testSuiteIds, itemIds);
+
+		then:
+
 		TestSuite suite1 = testSuiteDao.findById(-1L);
 		suite1.getTestPlan().size() == 3;
-		
+
 		TestSuite suite2 = testSuiteDao.findById(-2L);
 		suite2.getTestPlan().size() == 3;
-		
+
 		Iteration iteration = iterationDao.findById(-1L);
 		iteration.getTestPlans().size() == 4;
 		iteration.getTestSuites().size() == 2;
