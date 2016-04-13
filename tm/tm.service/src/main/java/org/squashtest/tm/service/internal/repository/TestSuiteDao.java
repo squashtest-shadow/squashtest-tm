@@ -31,39 +31,21 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
 public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSuiteDao {
-	
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	long countTestPlanItems(long testSuiteId);
 
 	@UsesTheSpringJpaDsl
 	TestSuite findById(long id);
-	
+
 	@NativeMethodFromJpaRepository
 	 void save(TestSuite ts);
 
 	@UsesTheSpringJpaDsl
 	List<TestSuite> findAllByIterationId(long iterationId);
-	
-	
-	/**
-	 * <p>
-	 * return a list of ordered iteration_test_plan_items that are linked to a test case or have an execution<br>
-	 * making it the launchable test plan of the test suite
-	 * </p>
-	 *
-	 * @param testSuiteId
-	 * @return
-	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	List<IterationTestPlanItem> findLaunchableTestPlan(@Param("suiteId") long testSuiteId);
-	
+
+
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findTestPlanPartition(@Param("suiteId") long testSuiteId, @Param("itemIds") List<Long> testPlanItemIds);
-	
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	List<Execution> findAllExecutions(long testSuiteId);
-	
+
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	long findProjectIdBySuiteId(long suiteId);
 

@@ -32,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
@@ -64,9 +62,9 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 
 	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
-	
+
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
-	
+
 	static {
 		Map<String, String> modeDataMap = new HashMap<String, String>(2);
 		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
@@ -80,11 +78,11 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
 
 	}
-	
-	
+
+
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(final long testSuiteId) {
-		
+
 		Query q = currentSession().getNamedQuery("TestSuite.countStatuses");
 		q.setParameter("id", testSuiteId);
 		List<Object[]> result = q.list();
@@ -94,7 +92,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 	@Override
 	public TestPlanStatistics getTestSuiteStatistics(long testSuiteId, String userLogin) {
-		
+
 		Query q = currentSession().getNamedQuery("TestSuite.countStatusesForUser");
 		q.setParameter("id", testSuiteId);
 		q.setParameter("login", userLogin);
@@ -114,13 +112,6 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 	}
 
 	@Override
-	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting,
-			Filtering filtering, ColumnFiltering columnFiltering) {
-
-		return findIndexedTestPlan(suiteId, new SingleToMultiSortingAdapter(sorting), filtering, columnFiltering);
-	}
-
-	@Override
 	public List<IndexedIterationTestPlanItem> findIndexedTestPlan(final long suiteId, PagingAndMultiSorting sorting,
 			Filtering filtering, ColumnFiltering columnFiltering) {
 
@@ -128,7 +119,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 		return buildIndexedItems(tuples);
 
 	}
-	
+
 
 	@Override
 	public long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering) {

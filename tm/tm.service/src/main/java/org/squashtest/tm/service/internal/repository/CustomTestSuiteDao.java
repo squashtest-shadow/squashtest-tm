@@ -20,17 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
+
+import java.util.List;
 
 public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 
@@ -58,32 +56,16 @@ public interface CustomTestSuiteDao extends EntityDao<TestSuite> {
 	 */
 	TestPlanStatistics getTestSuiteStatistics(long suiteId, String userLogin);
 
-	
 
 	List<IterationTestPlanItem> findTestPlan(long suiteId, PagingAndMultiSorting sorting, Filtering filter,
-			ColumnFiltering columnFiltering);
+		ColumnFiltering columnFiltering);
 
 	/**
 	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
 	 *
-	 * @param iterationId
-	 * @param sorting
-	 * @param filtering
-	 * @return
 	 */
 	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndMultiSorting sorting,
-			Filtering filtering, ColumnFiltering columnFiltering);
-
-	/**
-	 * Returns the paged list of [index, IterationTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
-	 *
-	 * @param iterationId
-	 * @param sorting
-	 * @param filtering
-	 * @return
-	 */
-	List<IndexedIterationTestPlanItem> findIndexedTestPlan(long suiteId, PagingAndSorting sorting, Filtering filter,
-			ColumnFiltering columnFiltering);
+		Filtering filtering, ColumnFiltering columnFiltering);
 
 
 	long countTestPlans(Long suiteId, Filtering filtering, ColumnFiltering columnFiltering);

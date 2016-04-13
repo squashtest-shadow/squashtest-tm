@@ -211,7 +211,6 @@
 
 
 	// TestSuite
-	@NamedQuery(name = "TestSuite.countTestPlanItems", query = "select count(tp) from TestSuite ts join ts.testPlan tp where ts.id = ?1"),
 	@NamedQuery(name = "TestSuite.countStatuses", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp where ts.id = :id group by tp.executionStatus"),
 	@NamedQuery(name = "TestSuite.countStatusesForUser", query = "select tp.executionStatus, count(tp) from TestSuite ts join ts.testPlan tp join tp.user user where ts.id = :id and  user.login = :login group by tp.executionStatus"),
 	@NamedQuery(name = "testSuite.findTestPlanFiltered", query = "select tpi from TestSuite ts join ts.testPlan tpi where ts.id = :testSuiteId and index(tpi) between :firstIndex and :lastIndex order by index(tpi)"),
@@ -219,7 +218,6 @@
 	@NamedQuery(name = "TestSuite.findTestPlanPartition", query = "select plan from TestSuite ts join ts.testPlan plan where plan.id in (:itemIds) and ts.id = :suiteId order by index(plan)"),
 	@NamedQuery(name = "TestSuite.findAllExecutions", query = "select itpi.executions from IterationTestPlanItem itpi join itpi.testSuites tss where ?1 = tss.id "),
 
-	@NamedQuery(name = "TestSuite.findLaunchableTestPlan", query = "select tp from TestSuite ts join ts.testPlan tp join tp.testSuites tss where ts.id = :suiteId and :suiteId = tss.id and ((tp.referencedTestCase is not null) or (tp.executions is not empty)) order by index(tp)"),
 	@NamedQuery(name = "TestSuite.findProjectIdBySuiteId", query = "select project.id from TestSuite ts join ts.iteration it join it.campaign camp join camp.project project where ts.id = ?1"),
 
 	@NamedQuery(name = "TestSuite.findPlannedTestCasesIds", query = "select distinct tc.id from TestSuite ts join ts.testPlan tpi join tpi.referencedTestCase tc where ts.id = ?1"),
