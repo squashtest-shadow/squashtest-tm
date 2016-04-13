@@ -22,18 +22,20 @@ package org.squashtest.tm.domain.search;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.lucene.document.Document;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.hibernate.jpa.HibernateEntityManagerFactory;
 import org.hibernate.search.bridge.FieldBridge;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.annotation.Configurable;
+import org.springframework.context.annotation.Lazy;
 import org.squashtest.tm.domain.Identified;
 
 @Configurable
@@ -41,13 +43,34 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionFieldBridge.class);
 
 	// TODO nosgi @Inject @Lazy sessionFactory instead
+	/*@Inject
+	private BeanFactory beanFactory;*/
+	
+	
+	/*
+	 * 2016-04-13
+	 * 
+	 * Note : This is not supposed to be @Inject, rather @PersistenceContext. However the later doesn't work well with @Lazy, which we really need because of 
+	 * avoiding circular dependencies during the creation of the entity manager factory.
+	 * 
+	 *  Using @Inject here seems to be ok because the bean actually injected is a shared entitymanager factorybean, which is the same result of using @PersistenceContext. 
+	 *  But I am not 100% sure there would be no problems (like, not thread-safe instances etc) so I'm leaving here this comment.
+	 *  
+	 *  --
+	 *  
+	 *  Note : if there are new instances of theses created everytime then maybe thread safety won't be an issue after all.  
+	 * 
+	 */
 	@Inject
-	private BeanFactory beanFactory;
+	@Lazy
+	private EntityManager em;
 
+	private Session getCurrentSession(){
+		return em.unwrap(Session.class);
+	}
+	
 	private SessionFactory getSessionFactory() {
-		// We cannot inject the SessionFactory because it creates a cyclic dependency injection problem :
-		// SessionFactory -> Hibernate Search -> this bridge -> SessionFactory
-		return beanFactory.getBean(EntityManager.class).unwrap(SessionFactory.class);
+		return ((HibernateEntityManagerFactory)em.getEntityManagerFactory()).getSessionFactory();
 	}
 
 	protected abstract void writeFieldToDocument(String name, Session session, Object value, Document document,
@@ -60,18 +83,16 @@ public abstract class SessionFieldBridge implements FieldBridge {
 			start = System.nanoTime();
 		}
 
-		Session currentSession;
 		Session session = null;
 		Transaction tx;
 
-		try {
-			currentSession = getSessionFactory().getCurrentSession();
-			session = currentSession;
+		try {			
+			session = getCurrentSession();
 		} catch (HibernateException ex) {
-			currentSession = null;
+			session = null;
 		}
 
-		if (currentSession == null) {
+		if (session == null) {
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
 			try {
