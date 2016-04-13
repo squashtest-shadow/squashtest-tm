@@ -20,26 +20,19 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.unitils.dbunit.annotation.DataSet
-
+import org.squashtest.tm.service.internal.repository.ParameterDao
+import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.testcase.DatasetModificationService
 import org.squashtest.tm.service.testcase.ParameterFinder
 import org.squashtest.tm.service.testcase.ParameterModificationService
-import org.squashtest.tm.service.internal.repository.ParameterDao
-import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.domain.testcase.ActionTestStep
-import org.squashtest.tm.domain.testcase.DatasetParamValue
-import org.squashtest.tm.domain.testcase.Parameter
-import org.squashtest.tm.domain.testcase.Dataset
-import org.squashtest.tm.domain.testcase.TestCase
-
+import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @UnitilsSupport
 @Transactional
@@ -61,110 +54,110 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 	ParameterDao parameterDao
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should return the parameter list for a given test case"(){
+	def "should return the parameter list for a given test case"() {
 
-		when :
+		when:
 		List<Parameter> params = service.findAllParameters(-100L)
-		then :
+		then:
 		params.size() == 1
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should return the parameter list for a given test case with call step"(){
+	def "should return the parameter list for a given test case with call step"() {
 
 
-		when :
+		when:
 		List<Parameter> params = service.findAllParameters(-101L)
-		then :
+		then:
 		params.size() == 3
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should change parameter name"(){
+	def "should change parameter name"() {
 
-		when :
+		when:
 		service.changeName(-10100L, "newName")
-		then :
+		then:
 		parameterDao.findById(-10100L).name == "newName"
 	}
 
 	@DataSet("ParameterModificationServiceIT.should change parameter name.xml")
-	def "should change parameter name and update step"(){
-		given : "a test step with one parameter that ocurs once in it's steps"
+	def "should change parameter name and update step"() {
+		given: "a test step with one parameter that ocurs once in it's steps"
 		long parameterId = -1L
 		String newParamName = "newName"
-		when :
-		service.changeName(parameterId,newParamName)
-		then :
-		ActionTestStep editedStep = session.get(ActionTestStep.class, -1L)
+		when:
+		service.changeName(parameterId, newParamName)
+		then:
+		ActionTestStep editedStep = entityManager.getReference(ActionTestStep.class, -1L)
 		String newStep = "do this \${newName}"
 		editedStep.action.equals(newStep)
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should change parameter description"(){
+	def "should change parameter description"() {
 
-		when :
+		when:
 		service.changeDescription(-10100L, "newDescription")
-		then :
+		then:
 		parameterDao.findById(-10100L).description == "newDescription"
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should remove parameter"(){
+	def "should remove parameter"() {
 
-		when :
+		when:
 		TestCase testCase = testCaseDao.findById(-100L)
 		Parameter param = parameterDao.findById(-10100L)
-		parameterDao.remove(param)
-		then :
-		session.flush()
+		parameterDao.delete(param)
+		then:
+		entityManager.flush()
 		testCase.getParameters().size() == 0
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should find parameter in step"(){
-		when :
+	def "should find parameter in step"() {
+		when:
 		service.createParamsForStep(-101L)
-		then :
-		TestCase testCase = session.get(TestCase.class, -100L)
-		testCase.parameters.collect {it.name}.contains("parameter")
+		then:
+		TestCase testCase = entityManager.getReference(TestCase.class, -100L)
+		testCase.parameters.collect { it.name }.contains("parameter")
 
 	}
 
 	@Unroll
 	@DataSet("ParameterModificationServiceIT.should find if parameter is used.xml")
-	def "should find whether a parameter is used in a test case"(){
-		given :
+	def "should find whether a parameter is used in a test case"() {
+		given:
 		long parameterId = paramId
-		when :
+		when:
 		boolean result = service.isUsed(parameterId)
-		then :
+		then:
 		result == paramResult
 		where:
 		paramId | paramResult
-		-1L	    | true
-		-2L      | false
-		-3L      |false
+		-1L     | true
+		-2L     | false
+		-3L     | false
 
 	}
 
 	@DataSet("ParameterModificationServiceIT.xml")
-	def "should update datasets when a parameter is created"(){
-		given :"a test case with a datataset"
-		Dataset dataset = new Dataset(name:"dataset2")
+	def "should update datasets when a parameter is created"() {
+		given: "a test case with a datataset"
+		Dataset dataset = new Dataset(name: "dataset2")
 		datasetService.persist(dataset, -100L)
-		and : "a new parameter"
+		and: "a new parameter"
 		Parameter parameter = new Parameter()
 		parameter.name = "parameter2"
-		when :
+		when:
 		service.addNewParameterToTestCase(parameter, -100L)
-		then :
+		then:
 		TestCase testCase = testCaseDao.findById(-100L)
 		testCase.getDatasets().size() == 1
-		for(Dataset data : testCase.getDatasets()){
+		for (Dataset data : testCase.getDatasets()) {
 			data.parameterValues.size() == 1
-			for(DatasetParamValue param : data.parameterValues){
+			for (DatasetParamValue param : data.parameterValues) {
 				param.parameter.name == "parameter2"
 				param.paramValue == ""
 			}

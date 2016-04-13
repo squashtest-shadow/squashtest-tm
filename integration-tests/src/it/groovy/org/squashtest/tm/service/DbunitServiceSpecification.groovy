@@ -49,6 +49,10 @@ abstract class DbunitServiceSpecification extends Specification {
 	@PersistenceContext
 	EntityManager entityManager
 
+	/**
+	 * @deprecated use entityManager instead
+     */
+	@Deprecated
 	protected Session getSession() {
 		return entityManager.unwrap(Session.class)
 	}
