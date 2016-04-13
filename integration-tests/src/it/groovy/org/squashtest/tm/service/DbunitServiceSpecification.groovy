@@ -127,8 +127,8 @@ abstract class DbunitServiceSpecification extends Specification {
 
 		Query query
 
-		public NewSQLQuery(String query,EntityManager em) {
-			this.query = entityManager.createSQLQuery(query)
+		public NewSQLQuery(String query, Session session) {
+			this.query = session.createSQLQuery(query)
 			this.query.setResultTransformer new EasyResultTransformer()
 		}
 
