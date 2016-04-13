@@ -34,6 +34,7 @@ import org.squashtest.it.config.UnitilsConfig
 import spock.lang.Specification
 
 import javax.persistence.EntityManager
+import javax.persistence.EntityNotFoundException
 import javax.persistence.PersistenceContext
 
 /**
@@ -46,10 +47,10 @@ import javax.persistence.PersistenceContext
 abstract class DbunitServiceSpecification extends Specification {
 
 	@PersistenceContext
-	EntityManager em
+	EntityManager entityManager
 
 	protected Session getSession() {
-		return em.unwrap(Session.class)
+		return entityManager.unwrap(Session.class)
 	}
 
 	/*-------------------------------------------Private stuff-----------------------------------*/
@@ -64,15 +65,16 @@ abstract class DbunitServiceSpecification extends Specification {
 	}
 
 	protected Integer countAll(String className) {
-		return (Integer) getSession().createQuery("select count(entity) from " + className + " entity").uniqueResult()
+		entityManager.createQuery("select count(entity) from " + className + " entity")
+			.singleResult
 	}
 
 	protected boolean found(Class<?> entityClass, Object id) {
 		boolean found = false
 
 		try {
-			found = (getSession().get(entityClass, id) != null)
-		} catch (ObjectNotFoundException ex) {
+			found = (entityManager.find(entityClass, id) != null)
+		} catch (EntityNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
 		}
@@ -80,11 +82,13 @@ abstract class DbunitServiceSpecification extends Specification {
 	}
 
 	protected boolean allDeleted(String className, List<Long> ids) {
-		Query query = getSession().createQuery("from " + className + " where id in (:ids)")
-		query.setParameterList("ids", ids, new LongType())
-		List<?> result = query.list()
+		def result = entityManager.createQuery("from " + className + " where id in (:ids)")
+			.setParameter("ids", ids)
+			.resultList*.id
 
-		return result.isEmpty()
+		ids.each { assert !result.contains(it) }
+
+		return true
 	}
 
 	protected Object findEntity(Class<?> entityClass, Long id) {
@@ -123,8 +127,8 @@ abstract class DbunitServiceSpecification extends Specification {
 
 		Query query
 
-		public NewSQLQuery(String query, Session session) {
-			this.query = session.createSQLQuery(query)
+		public NewSQLQuery(String query,EntityManager em) {
+			this.query = entityManager.createSQLQuery(query)
 			this.query.setResultTransformer new EasyResultTransformer()
 		}
 

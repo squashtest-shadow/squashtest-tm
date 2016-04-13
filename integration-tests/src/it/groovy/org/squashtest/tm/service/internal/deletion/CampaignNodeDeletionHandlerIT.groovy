@@ -20,25 +20,19 @@
  */
 package org.squashtest.tm.service.internal.deletion
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.domain.campaign.Campaign
-import org.squashtest.tm.domain.campaign.CampaignFolder
-import org.squashtest.tm.domain.campaign.CampaignLibrary
-import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.campaign.IterationTestPlanItem
+import org.squashtest.tm.domain.campaign.*
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport
 
-
+import javax.inject.Inject
 
 /*
  *
