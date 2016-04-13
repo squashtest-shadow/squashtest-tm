@@ -20,19 +20,18 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.repository.CustomParameterDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 
 public class ParameterDaoImpl implements CustomParameterDao {
@@ -44,19 +43,19 @@ public class ParameterDaoImpl implements CustomParameterDao {
 	@Override
 	public List<Parameter> findAllParametersByTestCase(Long testcaseId) {
 
-		List<Parameter> allParameters = new LinkedList<Parameter>();
+		List<Parameter> allParameters = new LinkedList<>();
 
-		Set<Long> exploredTc = new HashSet<Long>();
-		List<Long> srcTc = new LinkedList<Long>();
+		Set<Long> exploredTc = new HashSet<>();
+		List<Long> srcTc = new LinkedList<>();
 		List<Long> destTc;
 
 		Query next = em.unwrap(Session.class).getNamedQuery("parameter.findTestCasesThatDelegatesParameters");
 
 		srcTc.add(testcaseId);
 
-		while(! srcTc.isEmpty()){
+		while (!srcTc.isEmpty()) {
 
-			allParameters.addAll( findTestCaseParameters(srcTc));
+			allParameters.addAll(findTestCaseParameters(srcTc));
 
 			next.setParameterList("srcIds", srcTc, LongType.INSTANCE);
 			destTc = next.list();
@@ -70,8 +69,7 @@ public class ParameterDaoImpl implements CustomParameterDao {
 		return allParameters;
 
 	}
-	
-	
+
 
 	// note that this is the same queery than ParameterDao#findOwnParametersByTestCases
 	// duplicate here because of the inheritance between the interfaces is what it is

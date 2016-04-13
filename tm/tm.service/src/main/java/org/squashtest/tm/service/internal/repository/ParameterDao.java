@@ -30,13 +30,13 @@ import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
 public interface ParameterDao extends Repository<Parameter, Long>, CustomParameterDao {
-	
+
 	@NativeMethodFromJpaRepository
 	void save(Parameter parameter);
-	
+
 	@NativeMethodFromJpaRepository
 	void delete(Parameter parameter);
-	
+
 	@UsesTheSpringJpaDsl
 	Parameter findById(Long id);
 
@@ -53,49 +53,20 @@ public interface ParameterDao extends Repository<Parameter, Long>, CustomParamet
 	/**
 	 * Given a test case ID, returns the list of parameters that directly belong to that test case
 	 * (inherited parameters are ignored).
-	 * 
-	 * @param testcaseId
-	 * @return
+	 *
 	 */
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	// corresponds to JPA dsl : findByTestCaseIdOrderByNameAndTestCaseNameAsc, but this would be less expressive
 	List<Parameter> findOwnParametersByTestCase(@Param("testCaseId") Long testcaseId);
 
 	/**
-	 * Same than {@link #findOwnParametersByTestCase(Long)}, for a whole list of test cases ids.
-	 * @param testcaseIds
-	 * @return
-	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	// corresponds to JPA dsl : findByTestCaseIdInOrderByNameAndTestCaseNameAsc, but this would be less expressive
-	@EmptyCollectionGuard
-	List<Parameter> findOwnParametersByTestCases(@Param("testCaseIds") List<Long> testcaseIds);
-	
-	/**
-	 * For a given test case, finds the parameter bearing the given name. Note that the test case must 
-	 * own the parameter, ie the query wont search for delegated parameters. 
-	 * 
-	 * @param name
-	 * @param testcaseId
-	 * @return
+	 * For a given test case, finds the parameter bearing the given name. Note that the test case must
+	 * own the parameter, ie the query wont search for delegated parameters.
+	 *
 	 */
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	// corresponds to JPA dsl : findByNameAndTestCaseId, but this would be less expressive
 	Parameter findOwnParameterByNameAndTestCase(@Param("name") String name, @Param("testCaseId") Long testcaseId);
 
-	/**
-	 * same than {@link #findOwnParameterByNameAndTestCase(String, Long)}, for a list of test case.
-	 * 
-	 * @param name
-	 * @param testcaseIds
-	 * @return
-	 */
-	@UsesANamedQueryInPackageInfoOrElsewhere
-	// corresponds to JPA dsl : findByNameAndTestCaseIdIn, but this would be less expressive
-	@EmptyCollectionGuard
-	List<Parameter> findOwnParametersByNameAndTestCases(@Param("name") String name, @Param("testCaseIds") List<Long> testcaseIds);
 
-	
-
-	
 }

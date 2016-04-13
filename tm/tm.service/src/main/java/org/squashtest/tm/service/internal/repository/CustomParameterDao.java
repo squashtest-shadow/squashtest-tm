@@ -31,9 +31,7 @@ public interface CustomParameterDao {
 	/**
 	 * Given a test case ID, return the list of parameters that belongs to that test case
 	 * AND thoses (transitively) delegated via call steps using the parameter delegation mode
-	 * 
-	 * @param testcaseIds
-	 * @return
+	 *
 	 */
 	List<Parameter> findAllParametersByTestCase(Long testcaseId);
 
