@@ -46,26 +46,29 @@ import javax.persistence.PersistenceContext
 abstract class DbunitDaoSpecification extends Specification {
 
 	@PersistenceContext
-	EntityManager em
+	EntityManager entityManager
 
+	/**
+	 * @deprecated use entityManager instead
+     */
+	@Deprecated
 	protected Session getSession() {
-		return em.unwrap(Session.class);
+		entityManager.unwrap(Session.class);
 	}
 
 	protected boolean found(Class<?> entityClass, Long id) {
-		return (getSession().get(entityClass, id) != null)
+		entityManager.find(entityClass, id) != null
 	}
 
 	protected Object findEntity(Class<?> entityClass, Long id) {
-		return getSession().get(entityClass, id);
+		entityManager.getReference(entityClass, id)
 	}
 
 	protected boolean found(String tableName, String idColumnName, Long id) {
 		String sql = "select count(*) from " + tableName + " where " + idColumnName + " = :id";
-		Query query = getSession().createSQLQuery(sql);
-		query.setParameter("id", id);
 
-		def result = query.uniqueResult();
-		return (result != 0)
+		entityManager.createNativeQuery(sql)
+			.setParameter("id", id)
+			.getSingleResult() != 0
 	}
 }

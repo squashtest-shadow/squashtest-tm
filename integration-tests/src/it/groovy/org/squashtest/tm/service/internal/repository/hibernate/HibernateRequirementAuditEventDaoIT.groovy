@@ -20,19 +20,20 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.domain.event.*
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.event.RequirementAuditEvent
+import org.squashtest.tm.domain.event.RequirementCreation
+import org.squashtest.tm.domain.event.RequirementLargePropertyChange
+import org.squashtest.tm.domain.event.RequirementPropertyChange
+import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.service.internal.repository.RequirementAuditEventDao
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
 
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport
@@ -43,87 +44,90 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	RequirementAuditEventDao eventDao;
 
 
-	def setupSpec(){
-		List.metaClass.init = { howmany, item -> return (1..howmany).collect{ return item
-			} }
+	def setupSpec() {
+		List.metaClass.init = { howmany, item ->
+			return (1..howmany).collect {
+				return item
+			}
+		}
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
-	def "should persist a RequirementCreation event"(){
-		given :
-		RequirementVersion requirement = getSession().load(RequirementVersion.class, -1L);
+	def "should persist a RequirementCreation event"() {
+		given:
+		RequirementVersion requirement = entityManager.getReference(RequirementVersion.class, -1L);
 
-		when :
+		when:
 		def createEvent = new RequirementCreation(requirement, requirement.createdBy);
-		eventDao.persist(createEvent);
+		eventDao.save(createEvent);
 
-		session.flush()
-		session.evict(createEvent)
+		entityManager.flush()
+		entityManager.clear()
 
-		def revent = getSession().createQuery("from RequirementCreation rc where rc.requirementVersion.id=:req")
-				.setParameter("req", requirement.id)
-				.uniqueResult();
+		def revent = entityManager.createQuery("from RequirementCreation rc where rc.requirementVersion.id=:req")
+			.setParameter("req", requirement.id)
+			.singleResult
 
-		then :
+		then:
 		revent.id != null
-		revent.requirementVersion == requirement
+		revent.requirementVersion.id == requirement.id
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
-	def "should persist a RequirementPropertyChange event"(){
-		given :
-		RequirementVersion requirement = getSession().load(RequirementVersion.class, -1L);
+	def "should persist a RequirementPropertyChange event"() {
+		given:
+		RequirementVersion requirement = entityManager.getReference(RequirementVersion.class, -1L);
 
-		when :
+		when:
 		RequirementPropertyChange pptChangeEvent = RequirementPropertyChange.builder()
-				.setSource(requirement)
-				.setAuthor(requirement.createdBy)
-				.setModifiedProperty("property")
-				.setOldValue("oldValue")
-				.setNewValue("newValue")
-				.build()
-		eventDao.persist(pptChangeEvent);
+			.setSource(requirement)
+			.setAuthor(requirement.createdBy)
+			.setModifiedProperty("property")
+			.setOldValue("oldValue")
+			.setNewValue("newValue")
+			.build()
+		eventDao.save(pptChangeEvent);
 
-		session.flush()
-		session.evict(pptChangeEvent)
+		entityManager.flush()
+		entityManager.clear()
 
-		def revent = getSession().createQuery("from RequirementPropertyChange rpc where rpc.requirementVersion=:req")
-				.setParameter("req", requirement)
-				.uniqueResult();
+		def revent = entityManager.createQuery("from RequirementPropertyChange rpc where rpc.requirementVersion=:req")
+			.setParameter("req", requirement)
+			.singleResult
 
-		then :
+		then:
 		revent.id != null
-		revent.requirementVersion == requirement
+		revent.requirementVersion.id == requirement.id
 		revent.propertyName == "property"
 		revent.oldValue == "oldValue"
 		revent.newValue == "newValue"
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
-	def "should persist a RequirementLargeProperty event"(){
-		given :
-		RequirementVersion requirement = getSession().load(RequirementVersion.class, -1L);
+	def "should persist a RequirementLargeProperty event"() {
+		given:
+		RequirementVersion requirement = entityManager.getReference(RequirementVersion.class, -1L);
 
-		when :
+		when:
 		def pptChangeEvent = RequirementLargePropertyChange.builder()
-				.setSource(requirement)
-				.setAuthor(requirement.createdBy)
-				.setModifiedProperty("property")
-				.setOldValue("oldValue")
-				.setNewValue("newValue")
-				.build()
-		eventDao.persist(pptChangeEvent);
+			.setSource(requirement)
+			.setAuthor(requirement.createdBy)
+			.setModifiedProperty("property")
+			.setOldValue("oldValue")
+			.setNewValue("newValue")
+			.build()
+		eventDao.save(pptChangeEvent);
 
-		session.flush()
-		session.evict(pptChangeEvent);
+		entityManager.flush()
+		entityManager.clear()
 
-		def revent = getSession().createQuery("from RequirementLargePropertyChange rpc where rpc.requirementVersion=:req")
-				.setParameter("req", requirement)
-				.uniqueResult();
+		def revent = entityManager.createQuery("from RequirementLargePropertyChange rpc where rpc.requirementVersion=:req")
+			.setParameter("req", requirement)
+			.singleResult
 
-		then :
+		then:
 		revent.id != null
-		revent.requirementVersion == requirement
+		revent.requirementVersion.id == requirement.id
 		revent.propertyName == "property"
 		revent.oldValue == "oldValue"
 		revent.newValue == "newValue"
@@ -131,20 +135,18 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
-	def "should fetch list of event for a requirement sorted by date"(){
-		given :
-		def requirementId=-1L
+	def "should fetch list of event for a requirement sorted by date"() {
+		given:
+		def requirementId = -1L
 
 		and:
-		Paging paging = Mock()
-		paging.getPageSize() >> 10
-		paging.getFirstItemIndex() >> 0
+		PageRequest paging = new PageRequest(0, 10)
 
-		when :
-		List<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
+		when:
+		Page<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderByDateDesc(requirementId, paging);
 
-		then :
-		events.size()==4
+		then:
+		events.content.size() == 4
 
 
 		events*.date == [
@@ -152,7 +154,6 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 			parse("2010-06-03"),
 			parse("2010-04-02"),
 			parse("2010-02-01")
-
 
 
 		]
@@ -173,40 +174,34 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
-	def "should fetch paged list of event for a requirement"(){
-		given :
-		def requirementId=-1L
+	def "should fetch paged list of event for a requirement"() {
+		given:
+		def requirementId = -1L
 
 		and:
-		Paging paging = Mock()
-		paging.getPageSize() >> 2
-		paging.getFirstItemIndex() >> 1
+		PageRequest paging = new PageRequest(1, 2)
 
-		when :
-		List<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
+		when:
+		Page<RequirementAuditEvent> events = eventDao.findAllByRequirementVersionIdOrderByDateDesc(requirementId, paging);
 
-		then :
-		events*.id.containsAll([ -12L, -14L ])
+		then:
+		events.content*.id as Set == [-11L, -14L] as Set
 	}
 
 	@DataSet("HibernateRequirementAuditEventDaoIT.should fetch lists of events.xml")
-	def "should count events for a requirement"(){
-		given :
-		def requirementId=-1L
-
-		when :
+	def "should count events for a requirement"() {
+		when:
 		def res = eventDao.countByRequirementVersionId(-1L)
 
 
-		then :
-		res == 4
+		then:
+		res == 4L
 	}
 
 	//the method parse looks deprecated for java.util.Date, but the actual Date class is provided by the Groovy JDK
-	private Date parse(String arg){
+	private static Date parse(String arg) {
 		return Date.parse("yyyy-MM-dd", arg);
 	}
-
 
 
 }

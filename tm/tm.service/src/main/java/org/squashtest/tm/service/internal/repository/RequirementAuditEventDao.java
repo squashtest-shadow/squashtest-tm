@@ -22,13 +22,10 @@ package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.Repository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 
-public interface RequirementAuditEventDao extends Repository<RequirementAuditEvent, Long>{
-	
-	// note : native method from JPA repositorie
-	void save(RequirementAuditEvent event);
+public interface RequirementAuditEventDao extends JpaRepository<RequirementAuditEvent, Long> {
 
 	// note : uses the Spring JPA dsl
 	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderByDateDesc(long requirementVersionId, Pageable paging);

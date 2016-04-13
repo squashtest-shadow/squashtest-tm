@@ -107,19 +107,15 @@ public class InfoList implements Comparable<InfoList> {
 	public List<InfoListItem> getItems() {
 		return items;
 	}
-	
+
 	/**
-	 * Returns an item that matches the argument (which may be 
+	 * Returns an item that matches the argument (which may be
 	 * a transient reference) if belong to the list, or null.
-	 * 
-	 * @param item
-	 * @return
+	 *
 	 */
 	public InfoListItem getItem(InfoListItem item){
-		Iterator<InfoListItem> iter = items.iterator();
-		while (iter.hasNext()) {
-			InfoListItem thisitem = iter.next();
-			if (item.references(thisitem)){
+		for (InfoListItem thisitem : items) {
+			if (item.references(thisitem)) {
 				return thisitem;
 			}
 		}
@@ -127,19 +123,15 @@ public class InfoList implements Comparable<InfoList> {
 	}
 	/**
 	 * Returns an item having such code if belong to the list, or null.
-	 * 
-	 * @param item
-	 * @return
+	 *
 	 */
 	public InfoListItem getItem(String code){
-		Iterator<InfoListItem> iter = items.iterator();
-		while (iter.hasNext()) {
-			InfoListItem thisitem = iter.next();
-			if (thisitem.getCode().equals(code)){
+		for (InfoListItem thisitem : items) {
+			if (thisitem.getCode().equals(code)) {
 				return thisitem;
 			}
 		}
-		return null;		
+		return null;
 	}
 
 	public void addItem(InfoListItem item) {
@@ -195,19 +187,17 @@ public class InfoList implements Comparable<InfoList> {
 		items.addAll(newIndex, addedItems);
 	}
 
-	// XXX seriously two lists would be the same if they have 
+	// XXX seriously two lists would be the same if they have
 	// the same label ?
+	// answer : not recommended but legal. yet not too sure in this very case
 	@Override
 	public int compareTo(InfoList infoList) {
 
 		if (this.label != null && infoList.label != null) {
 			return this.label.compareToIgnoreCase(infoList.label);
 		}
+		// FIXME srsly a null label compares to a non-null label
 		return 0;
-	}
-
-	public int compare(final InfoList object1, final InfoList object2) {
-		return object1.getLabel().compareTo(object2.getLabel());
 	}
 
 }
