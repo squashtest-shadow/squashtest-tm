@@ -25,16 +25,14 @@ import org.apache.lucene.document.Field.Index
 import org.apache.lucene.document.Field.Store
 import org.apache.lucene.document.Field.TermVector
 import org.hibernate.Session
-import org.hibernate.SessionFactory
 import org.hibernate.search.bridge.LuceneOptions
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 /**
  * @author Gregory Fouquet
@@ -44,27 +42,27 @@ import javax.persistence.PersistenceContext;
 @Transactional
 class TestCaseAttachmentBridgeIT extends DbunitDaoSpecification {
 	TestCaseAttachmentBridge bridge = new TestCaseAttachmentBridge()
-	
+
 	@PersistenceContext
 	EntityManager em;
-	
+
 	LuceneOptions lucene = Mock()
 	Document doc = new Document()
-	
+
 	@DataSet("TestCaseBridgeIT.dataset.xml")
 	def "should index the test case's attachemnt count"() {
 		given:
 		Session session = em.unwrap(Session.class)
 		TestCase tc = session.load(TestCase, -10L)
-		
+
 		and:
-		lucene.getStore() >> Mock(Store)
-		lucene.getIndex() >> Mock(Index)
-		lucene.getTermVector() >> Mock(TermVector)
-		
+		lucene.getStore() >> Store.YES
+		lucene.getIndex() >> Index.ANALYZED
+		lucene.getTermVector() >> TermVector.YES
+
 		when:
 		bridge.writeFieldToDocument("foo", session, tc, doc, lucene)
-		
+
 		then:
 		doc.fields.size() == 1
 		doc.fields[0].name == "foo"
