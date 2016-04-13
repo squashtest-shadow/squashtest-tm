@@ -38,7 +38,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @NamedQueries({
 	@NamedQuery(name = "testAutomationProject.findHostedProjectIds", query = "select project.id from TestAutomationProject project where project.server.id = :serverId"),
-	@NamedQuery(name = "testAutomationProject.findById", query = "from TestAutomationProject where id = :projectId"),
 	@NamedQuery(name = "testAutomationProject.findAllKnownTests", query = "select t from AutomatedTest t join t.project p where p.id = :projectId"),
 	@NamedQuery(name = "testAutomationProject.findAllByTMPRoject", query = "select tap.id from TestAutomationProject tap join tap.tmProject tmp where tmp.id = :tmProjectId"),
 	@NamedQuery(name = "testAutomationProject.haveExecutedTestsByIds", query = "select count(ext) from AutomatedExecutionExtender ext join ext.automatedTest test join test.project p where p.id in (:projectIds)"),

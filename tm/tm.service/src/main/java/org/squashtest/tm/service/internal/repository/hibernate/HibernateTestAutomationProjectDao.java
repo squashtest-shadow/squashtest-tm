@@ -56,10 +56,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	 */
 	@Override
 	public TestAutomationProject findById(Long id) {
-		Session session = em.unwrap(Session.class);
-		Query query = session.getNamedQuery("testAutomationProject.findById");
-		query.setParameter(ParameterNames.PROJECT_ID, id);
-		return (TestAutomationProject) query.uniqueResult();
+		return em.getReference(TestAutomationProject.class, id);
 	}
 
 	/**

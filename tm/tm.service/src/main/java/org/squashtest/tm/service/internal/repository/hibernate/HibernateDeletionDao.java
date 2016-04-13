@@ -20,18 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.squashtest.tm.domain.attachment.Attachment;
@@ -39,13 +30,28 @@ import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.service.internal.repository.DeletionDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
 public abstract class HibernateDeletionDao implements DeletionDao {
 
 	@PersistenceContext
 	private EntityManager em;
 
+	/**
+	 * @deprecated use an entity manager instead
+	 */
+	@Deprecated
 	protected Session getSession() {
 		return em.unwrap(Session.class);
+	}
+
+	protected final EntityManager entityManager() {
+		return em;
 	}
 
 	@Override

@@ -39,7 +39,6 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 @NamedQueries({
 	@NamedQuery(name="automatedSuite.findAll", query="from AutomatedSuite"),
-	@NamedQuery(name="automatedSuite.findById", query="from AutomatedSuite where id = :suiteId"),
 	@NamedQuery(name="automatedSuite.findAllById", query="from AutomatedSuite where id in (:suiteIds)"),
 	@NamedQuery(name="automatedSuite.findAllExtenders", query="select ext from AutomatedExecutionExtender ext join ext.automatedSuite s where s.id = :suiteId"),
 	@NamedQuery(name="automatedSuite.findAllExtendersHavingStatus", query="select ext from AutomatedExecutionExtender ext join ext.execution exe join ext.automatedSuite s where s.id = :suiteId and exe.executionStatus in (:statusList)")

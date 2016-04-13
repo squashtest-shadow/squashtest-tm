@@ -48,7 +48,6 @@ import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
  * @author Gregory Fouquet
  */
 
-@NamedQueries({ @NamedQuery(name = "singleSelectField.findById", query = "from SingleSelectField ssf where ssf.id = :id"), })
 @Entity
 @DiscriminatorValue("SSF")
 public class SingleSelectField extends CustomField {

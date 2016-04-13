@@ -27,7 +27,12 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.service.internal.repository.CustomCustomFieldDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 public class CustomFieldDaoImpl extends HibernateEntityDao<CustomField> implements CustomCustomFieldDao {
+	@PersistenceContext
+	private EntityManager entityManager;
 
 	/**
 	 * @see org.squashtest.tm.service.internal.repository.CustomCustomFieldDao#findSortedCustomFields(org.squashtest.tm.core.foundation.collection.PagingAndSorting)
@@ -39,6 +44,6 @@ public class CustomFieldDaoImpl extends HibernateEntityDao<CustomField> implemen
 
 	@Override
 	public SingleSelectField findSingleSelectFieldById(Long customFieldId) {
-		return executeEntityNamedQuery("singleSelectField.findById", "id", customFieldId );
+		return entityManager.getReference(SingleSelectField.class, customFieldId);
 	}
 }

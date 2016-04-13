@@ -39,7 +39,6 @@ import org.hibernate.annotations.NamedQuery;
  * @author Karim Drifi
  */
 
-@NamedQueries({ @NamedQuery(name = "multiSelectField.findById", query = "from MultiSelectField msf where msf.id = :id"), })
 @Entity
 @DiscriminatorValue("MSF")
 public class MultiSelectField extends CustomField {

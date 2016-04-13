@@ -116,10 +116,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	 */
 	@Override
 	public TestAutomationServer findById(Long id) {
-		Session session = em.unwrap(Session.class);
-		Query query = session.getNamedQuery("testAutomationServer.findById");
-		query.setParameter(ParameterNames.SERVER_ID, id);
-		return (TestAutomationServer) query.uniqueResult();
+		return em.getReference(TestAutomationServer.class, id);
 	}
 
 	/**

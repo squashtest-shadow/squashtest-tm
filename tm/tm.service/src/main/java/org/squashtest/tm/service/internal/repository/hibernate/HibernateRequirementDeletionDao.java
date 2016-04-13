@@ -39,6 +39,9 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 @Repository
 public class HibernateRequirementDeletionDao extends HibernateDeletionDao implements RequirementDeletionDao {
 
@@ -67,12 +70,8 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
 
-			Query query = null;
 			for(Long entityId : entityIds){
-
-				query = getSession().getNamedQuery("requirementLibraryNode.findById");
-				query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
-				RequirementLibraryNode node = (RequirementLibraryNode) query.uniqueResult();
+				RequirementLibraryNode node = entityManager().getReference(RequirementLibraryNode.class, entityId);
 
 				removeEntitiesFromParentLibraryIfExists(entityId, node);
 
@@ -81,8 +80,8 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 				removeEntitiesFromParentRequirementIfExists(entityId, node);
 
 				if(node!=null){
-					getSession().delete(node);
-					getSession().flush();
+					entityManager().remove(node);
+					entityManager().flush();
 				}
 			}
 		}
@@ -150,8 +149,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		for (Long oId : originalIds){
 			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
-			}
-			else{
+			} else {
 				requirementIds.add(oId);
 			}
 		}
@@ -301,7 +299,9 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 		deletableVersions.removeAll(lockedVersions);
 
 		return deletableVersions;
-	};
+	}
+
+	;
 
 
 	/**
@@ -349,8 +349,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			query.setParameterList(REQUIREMENT_IDS, requirementIds, LongType.INSTANCE);
 			query.setParameterList("lockedStatuses", lockedStatuses);
 			return query.list();
-		}
-		else{
+		} else {
 			return new ArrayList<>();
 		}
 	}
@@ -377,8 +376,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			Query q = getSession().getNamedQuery("requirementDeletionDao.findVersionIdsHavingMultipleMilestones");
 			q.setParameterList(VERSION_IDS, versionIds, LongType.INSTANCE);
 			return q.list();
-		}
-		else{
+		} else {
 			return new ArrayList<>();
 		}
 	}
@@ -391,8 +389,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			query.setParameterList("nodeIds", requirementIds, LongType.INSTANCE);
 			query.setParameter("milestoneId", milestoneId);
 			return query.list();
-		}
-		else{
+		} else {
 			return new ArrayList<>();
 		}
 	}
@@ -445,8 +442,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 			Query q = getSession().getNamedQuery("requirement.findByRequirementVersion");
 			q.setParameterList(VERSION_IDS, versionIds, LongType.INSTANCE);
 			return q.list();
-		}
-		else{
+		} else {
 			return new ArrayList<>();
 		}
 	}

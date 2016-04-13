@@ -50,7 +50,6 @@ import org.squashtest.tm.exception.customfield.OptionAlreadyExistException;
  * @author Frederic Laurens
  */
 
-@NamedQueries({ @NamedQuery(name = "denormalizedSingleSelectField.findById", query = "from DenormalizedSingleSelectField dssf where dssf.id = :id")})
 @Entity
 @DiscriminatorValue("SSF")
 public class DenormalizedSingleSelectField extends DenormalizedFieldValue {

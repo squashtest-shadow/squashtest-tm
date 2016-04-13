@@ -74,9 +74,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	@Override
 	public AutomatedSuite findById(String id) {
-		Query query = currentSession().getNamedQuery("automatedSuite.findById");
-		query.setString("suiteId", id);
-		return (AutomatedSuite) query.uniqueResult();
+		return em.getReference(AutomatedSuite.class, id);
 	}
 
 	@SuppressWarnings("unchecked")

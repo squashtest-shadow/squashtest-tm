@@ -20,11 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
-
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -34,6 +29,11 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.service.internal.repository.CampaignDeletionDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
+
+import java.math.BigInteger;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 @Repository
 public class HibernateCampaignDeletionDao extends HibernateDeletionDao
@@ -45,20 +45,17 @@ implements CampaignDeletionDao {
 	public void removeEntities(List<Long> entityIds) {
 		if (!entityIds.isEmpty()) {
 
-			Query query = null;
 			for(Long entityId : entityIds){
 
-				query = getSession().getNamedQuery("campaignLibraryNode.findById");
-				query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
-				CampaignLibraryNode node = (CampaignLibraryNode) query.uniqueResult();
+				CampaignLibraryNode node = entityManager().getReference(CampaignLibraryNode.class, entityId);
 
 				removeEntityFromParentLibraryIfExists(entityId, node);
 
 				removeEntityFromParentFolderIfExists(entityId, node);
 
 				if(node != null){
-					getSession().delete(node);
-					getSession().flush();
+					entityManager().remove(node);
+					entityManager().flush();
 				}
 			}
 
@@ -109,8 +106,7 @@ implements CampaignDeletionDao {
 		for (Long oId : originalIds){
 			if (filtredFolderIds.contains(BigInteger.valueOf(oId))){
 				folderIds.add(oId);
-			}
-			else{
+			} else {
 				campaignIds.add(oId);
 			}
 		}
