@@ -18,13 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.event;
+package org.squashtest.tm.service.event
 
-import org.hibernate.SessionFactory
+import javax.persistence.EntityManager
 
-import javax.persistence.EntityManager;
-
-import org.hibernate.Session
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.event.RequirementAuditEvent
 import org.squashtest.tm.domain.event.RequirementCreation
@@ -38,14 +35,12 @@ import spock.lang.Unroll
 
 class StatusBasedRequirementAuditorTest extends Specification {
 	StatusBasedRequirementAuditor auditor= new StatusBasedRequirementAuditor()
-	EntityManager em = Mock()
-	Session session = Mock()
+	EntityManager entityManager = Mock()
 
 	def setup() {
-		auditor.em = em
-		em.unwrap(_) >> session
+		auditor.entityManager = entityManager
 	}
-	
+
 	@Unroll("should audit status change from #initialStatus to #newStatus")
 	def "should audit any status change"() {
 		given:
@@ -56,29 +51,29 @@ class StatusBasedRequirementAuditorTest extends Specification {
 			RequirementPropertyChange.set field: "oldValue", of: event, to: initialStatus.toString()
 			RequirementPropertyChange.set field: "newValue", of: event, to: newStatus.toString()
 		}
-		
+
 		when:
 		auditor.notify(event)
-		
+
 		then:
-		1 * session.persist(event)
-		
+		1 * entityManager.persist(event)
+
 		where:
 		initialStatus                      | newStatus
-		RequirementStatus.WORK_IN_PROGRESS | RequirementStatus.UNDER_REVIEW  
-		RequirementStatus.UNDER_REVIEW     | RequirementStatus.APPROVED  
-		RequirementStatus.APPROVED         | RequirementStatus.OBSOLETE  
+		RequirementStatus.WORK_IN_PROGRESS | RequirementStatus.UNDER_REVIEW
+		RequirementStatus.UNDER_REVIEW     | RequirementStatus.APPROVED
+		RequirementStatus.APPROVED         | RequirementStatus.OBSOLETE
 	}
-	
+
 	def "should audit any requirement creation"() {
 		given:
 		RequirementCreation event = new RequirementCreation()
-		
+
 		when:
 		auditor.notify(event)
-		
+
 		then:
-		1 * session.persist(event)
+		1 * entityManager.persist(event)
 	}
 
 	@Unroll("should audit #changedProperty property change of an 'under review' requirement")
@@ -86,45 +81,45 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		given:
 		RequirementVersion req = Mock()
 		req.status >> RequirementStatus.UNDER_REVIEW
-		
+
 		and:
 		RequirementPropertyChange event = new RequirementPropertyChange()
-		
+
 		use (ReflectionCategory) {
 			RequirementPropertyChange.set field: "propertyName", of: event, to: changedProperty
 			RequirementAuditEvent.set field: "requirementVersion", of: event, to: req
 		}
-		
+
 		when:
 		auditor.notify(event)
-		
+
 		then:
-		1 * session.persist(event)
-		
+		1 * entityManager.persist(event)
+
 		where:
 		changedProperty << ["name", "reference", "description", "criticality"]
 	}
-	
+
 	@Unroll("should not audit #changedProperty property change of a requirement not under review")
 	def "should not audit any property change of a requirement not under review"() {
 		given:
 		RequirementVersion req = Mock()
 		req.status >> requirementStatus
-		
+
 		and:
 		RequirementPropertyChange event = new RequirementPropertyChange()
-		
+
 		use (ReflectionCategory) {
 			RequirementPropertyChange.set field: "propertyName", of: event, to: changedProperty
 			RequirementAuditEvent.set field: "requirementVersion", of: event, to: req
 		}
-		
+
 		when:
 		auditor.notify(event)
-		
+
 		then:
-		0 * session.persist(_)
-		
+		0 * entityManager.persist(_)
+
 		where:
 		changedProperty | requirementStatus
 		"name"          | RequirementStatus.APPROVED
@@ -140,5 +135,5 @@ class StatusBasedRequirementAuditorTest extends Specification {
 		"description"   | RequirementStatus.WORK_IN_PROGRESS
 		"criticality"   | RequirementStatus.WORK_IN_PROGRESS
 	}
-	
+
 }

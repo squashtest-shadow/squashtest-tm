@@ -1,44 +1,35 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
  *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
  *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.event;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.hibernate.Session;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.tm.domain.event.RequirementAuditEventVisitor;
-import org.squashtest.tm.domain.event.RequirementCreation;
-import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
-import org.squashtest.tm.domain.event.RequirementPropertyChange;
-import org.squashtest.tm.domain.event.RequirementVersionModification;
-import org.squashtest.tm.domain.event.SyncRequirementCreation;
-import org.squashtest.tm.domain.event.SyncRequirementUpdate;
+import org.squashtest.tm.domain.event.*;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.event.RequirementAuditor;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 /**
  * Audits Requirement events and persists them according to the Requirement's
@@ -59,7 +50,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	 *  2. injecting a dao might induce circular refs through the usage of aspects
 	 */
 	@PersistenceContext
-	private EntityManager em;
+	private EntityManager entityManager;
 
 	@Override
 	@Transactional
@@ -69,19 +60,19 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 
 	@Override
 	public void visit(RequirementCreation event) {
-		currentSession().persist(event);
+		entityManager.persist(event);
 		logEvent(event);
 
 	}
 
 	private void logEvent(RequirementCreation event) {
-			LOGGER.trace("Requirement was created");
+		LOGGER.trace("Requirement was created");
 	}
 
 	@Override
 	public void visit(RequirementPropertyChange event) {
 		if (shouldAuditModification(event)) {
-			currentSession().persist(event);
+			entityManager.persist(event);
 			logEvent(event);
 		}
 
@@ -101,7 +92,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	@Override
 	public void visit(RequirementLargePropertyChange event) {
 		if (shouldAuditModification(event)) {
-			currentSession().persist(event);
+			entityManager.persist(event);
 			logEvent(event);
 		}
 	}
@@ -116,12 +107,4 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 	public void visit(SyncRequirementUpdate event) {
 		// NOOP
 	}
-
-	/**
-	 * @return the current hibernate session
-	 */
-	private Session currentSession() {
-		return em.unwrap(Session.class);
-	}
-
 }

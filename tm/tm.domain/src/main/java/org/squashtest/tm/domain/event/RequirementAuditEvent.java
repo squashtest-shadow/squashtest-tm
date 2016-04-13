@@ -60,7 +60,7 @@ public abstract class RequirementAuditEvent {
 	private Date date;
 
 	@NotNull
-	@Size(min = 0, max = 255)
+	@Size(max = 255)
 	private String author;
 
 
