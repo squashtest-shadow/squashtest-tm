@@ -33,7 +33,7 @@ class EntityDaoIT extends DbunitDaoSpecification {
 	//EntityDao is a generic class. Let's use the Project as the specific implementation.
 
 	@Inject
-	private ParameterDaoImpl projectDao;
+	private ProjectDaoImpl projectDao;
 
 	private EntityDao<Project> entityDao;
 
