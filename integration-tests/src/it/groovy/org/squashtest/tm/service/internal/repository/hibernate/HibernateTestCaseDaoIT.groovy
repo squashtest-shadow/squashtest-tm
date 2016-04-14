@@ -28,6 +28,7 @@ import javax.inject.Inject
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
@@ -46,6 +47,7 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils
 
 import spock.unitils.UnitilsSupport
 
@@ -164,6 +166,10 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 					boolean shouldDisplayAll() {
 						return false;
 					};
+				
+					Pageable toPageable(){
+						return SpringPaginationUtils.toPageable(this);
+					}
 				};
 
 		and :

@@ -94,12 +94,12 @@ public class RequirementVersionManagerController {
 
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
-	.mapAttribute("version-number", "versionNumber", RequirementVersion.class)
-	.mapAttribute("reference", "reference", RequirementVersion.class)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", RequirementVersion.class)
-	.mapAttribute("status", "status", RequirementVersion.class)
-	.mapAttribute("criticality", "criticality", RequirementVersion.class)
-	.mapAttribute("category", "category", RequirementVersion.class);
+	.map("version-number", "versionNumber")
+	.map("reference", "reference")
+	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
+	.map("status", "status")
+	.map("criticality", "criticality")
+	.map("category", "category");
 
 
 

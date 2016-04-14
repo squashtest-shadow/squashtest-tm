@@ -237,6 +237,7 @@
   <ACL_OBJECT_IDENTITY ID="-21" IDENTITY="-15" CLASS_ID="-4" />
   <CORE_PARTY PARTY_ID="-1" />
   <CORE_PARTY PARTY_ID="-2" />
+  <CORE_PARTY PARTY_ID="-3" />
 
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-901" />
   <ATTACHMENT_LIST ATTACHMENT_LIST_ID="-902" />
@@ -367,6 +368,8 @@
   <CORE_USER PARTY_ID="-1" LOGIN="admin" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org"
     ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2014-03-03 14:48:41.0" />
   <CORE_USER PARTY_ID="-2" LOGIN="StubUserContextService" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org"
+    ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2014-03-03 14:48:41.0" />
+  <CORE_USER PARTY_ID="-3" LOGIN="chef" FIRST_NAME="chef" LAST_NAME="Squash chef" EMAIL="chef@squashtest.org"
     ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2014-03-03 14:48:41.0" />
   <CORE_CONFIG STR_KEY="lastindexing.campaign.date" />
   <CORE_CONFIG STR_KEY="lastindexing.campaign.version" />

@@ -20,8 +20,10 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignFolder
 import org.squashtest.tm.domain.campaign.Iteration
@@ -40,7 +42,8 @@ import javax.persistence.PersistenceContext
 
 @SuppressWarnings("GroovyUnusedDeclaration")
 @UnitilsSupport
-class HibernateIssueDaoIT extends DbunitDaoSpecification {
+class HibernateIssueDaoIT
+ extends DbunitDaoSpecification {
 	@Inject
 	IssueDao issueDao
 
@@ -107,6 +110,10 @@ class HibernateIssueDaoIT extends DbunitDaoSpecification {
 			@Override
 			SortOrder getSortOrder() {
 				(props.sortOrder ?: SortOrder.ASCENDING)
+			}
+			
+			Pageable toPageable(){
+				return SpringPaginationUtils.toPageable(this);
 			}
 		}
 	}
