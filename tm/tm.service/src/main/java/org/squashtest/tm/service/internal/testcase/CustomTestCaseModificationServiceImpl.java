@@ -159,8 +159,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Transactional(readOnly = true)
 	public List<TestStep> findStepsByTestCaseId(long testCaseId) {
 
-		TestCase testCase = testCaseDao.findByIdWithInitializedSteps(testCaseId);
-		return testCase.getSteps();
+		return testCaseDao.findTestSteps(testCaseId);
 
 	}
 

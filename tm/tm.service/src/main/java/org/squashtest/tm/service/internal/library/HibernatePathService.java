@@ -32,10 +32,10 @@ import org.hibernate.Session;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateTestCaseDao;
+import org.squashtest.tm.service.internal.repository.hibernate.TestCaseDaoImpl;
 
 /**
- * DAO for computing nodes paths. Factored out of {@link HibernateTestCaseDao}
+ * DAO for computing nodes paths. Factored out of {@link TestCaseDaoImpl}
  * 
  * @author Gregory Fouquet
  * 

@@ -23,13 +23,15 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.Collection;
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
+import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
-@DynamicDao(entity = TestCase.class)
-public interface TestCaseDao extends CustomTestCaseDao {
-	TestCase findByIdWithInitializedSteps(long testCaseId);
+
+public interface TestCaseDao extends Repository<TestCase, Long>, CustomTestCaseDao {
+	
 
 	/**
 	 * Counts the calling test steps of a test case
@@ -37,19 +39,31 @@ public interface TestCaseDao extends CustomTestCaseDao {
 	 * @param testCaseId
 	 * @return
 	 */
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	long countCallingTestSteps(long testCaseId);
 
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Long> findAllDistinctTestCasesIdsCalledByTestCase(long testCaseId);
-
+	
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Long> findAllDistinctTestCasesIdsCallingTestCase(long testCaseId);
 
-	List<Long> findAllTestCaseIdsByLibraries(@QueryParam("libraryIds") Collection<Long> libraryIds);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	@EmptyCollectionGuard
+	List<Long> findAllTestCaseIdsByLibraries(@Param("libraryIds") Collection<Long> libraryIds);
 
-	List<Long> findNodeIdsHavingMultipleMilestones(@QueryParam("nodeIds") Collection<Long> nodeIds);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	@EmptyCollectionGuard
+	List<Long> findNodeIdsHavingMultipleMilestones(@Param("nodeIds") Collection<Long> nodeIds);
+	
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	@EmptyCollectionGuard
+	List<Long> findNonBoundTestCases(@Param("nodeIds") Collection<Long> nodeIds, @Param("milestoneId") Long milestoneId);
 
-	List<Long> findNonBoundTestCases(@QueryParam("nodeIds") Collection<Long> nodeIds, @QueryParam("milestoneId") Long milestoneId);
-
-	List<Long> findAllTestCasesLibraryForMilestone(@QueryParam("milestoneId") Collection<Long> milestoneIds);
-
-	List<Long> findAllTestCasesLibraryNodeForMilestone(@QueryParam("milestoneIds") Collection<Long> milestoneIds);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	List<Long> findAllTestCasesLibraryForMilestone(@Param("milestoneId") Collection<Long> milestoneIds);
+	
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	@EmptyCollectionGuard
+	List<Long> findAllTestCasesLibraryNodeForMilestone(@Param("milestoneIds") Collection<Long> milestoneIds);
 }

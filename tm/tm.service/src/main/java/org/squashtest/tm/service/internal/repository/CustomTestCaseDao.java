@@ -32,7 +32,6 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.ExportTestCaseData;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.testcase.TestStep;
 
 /**
@@ -41,6 +40,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
  */
 public interface CustomTestCaseDao extends EntityDao<TestCase> {
 
+	
 	/**
 	 * That method exists because hibernate doesn't quite respect the cascade persist for a set of test case and steps
 	 * 
@@ -56,15 +56,15 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	void safePersist(TestCase testCase);
 
 	TestCase findAndInit(Long testCaseId);
+	
 
 	/**
-	 * Finds all {@link TestCaseLibraryNode} which name contains the given token.
+	 * Given a test case id, return its steps ordered by their index
 	 * 
-	 * @param tokenInName
-	 * @param groupByProject
-	 * @return
 	 */
-	List<TestCaseLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
+	List<TestStep> findTestSteps(long testCaseId);
+	
+
 
 	List<Long> findAllTestCaseIdsByNodeIds(Collection<Long> nodeIds);
 
@@ -216,17 +216,8 @@ public interface CustomTestCaseDao extends EntityDao<TestCase> {
 	 */
 	List<Execution> findAllExecutionByTestCase(Long tcId);
 
-	List<ExportTestCaseData> findTestCaseToExportFromLibrary(List<Long> projectIds);
 
 	List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> nodesIds);
-
-	/**
-	 * Return all test case ids contained by the library of the given id. Not only root ones
-	 * 
-	 * @param libraryId
-	 * @return
-	 */
-	List<Long> findAllTestCasesIdsByLibrary(long libraryId);
 
 	/**
 	 * Return all test-cases that are linked to an iteration-test-plan-item

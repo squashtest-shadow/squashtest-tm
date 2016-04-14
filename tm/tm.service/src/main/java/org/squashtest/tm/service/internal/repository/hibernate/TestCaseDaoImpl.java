@@ -20,26 +20,42 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+
 import org.apache.commons.collections.ListUtils;
-import org.hibernate.*;
-import org.apache.commons.collections.ListUtils;
-import org.hibernate.criterion.MatchMode;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.Session;
 import org.hibernate.type.LongType;
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.*;
+import org.squashtest.tm.core.foundation.collection.DefaultSorting;
+import org.squashtest.tm.core.foundation.collection.Paging;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SortOrder;
+import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.NamedReferencePair;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseFolder;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
-
-import java.util.*;
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase
  * 
@@ -47,8 +63,7 @@ import java.util.*;
  * 
  */
 
-@Repository("CustomTestCaseDao")
-public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implements CustomTestCaseDao {
+public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements CustomTestCaseDao {
 
 
 	/**
@@ -58,17 +73,12 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	private static final String TEST_CASE_IDS_PARAM_NAME = "testCaseIds";
 
 
-	private static final String PROJECT = "project";
-
 	private static final String FIND_DESCENDANT_QUERY = "select DESCENDANT_ID from TCLN_RELATIONSHIP where ANCESTOR_ID in (:list)";
 
 	private static final String FIND_ALL_DESCENDANT_TESTCASE_QUERY = "select tc.tcln_id from TCLN_RELATIONSHIP_CLOSURE tclnrc "+
 			"inner join TEST_CASE tc on tclnrc.DESCENDANT_ID = tc.tcln_id "+
 			"where tclnrc.ANCESTOR_ID in (:nodeIds)";
 
-	private static final String FIND_ALL_FOR_LIBRARY_QUERY = "select distinct testCase.TCLN_ID"
-			+ " from TEST_CASE testCase " + " join TEST_CASE_LIBRARY_NODE tcln on tcln.TCLN_ID = testCase.TCLN_ID"
-			+ " join PROJECT project on project.PROJECT_ID = tcln.PROJECT_ID" + " where project.TCL_ID = :libraryId";
 	private static final String FIND_ALL_CALLING_TEST_CASE_MAIN_HQL = "select distinct TestCase from TestCase as TestCase left join TestCase.project as Project "
 			+ " join TestCase.steps as Steps where Steps.calledTestCase.id = :" + TEST_CASE_ID_PARAM_NAME;
 
@@ -114,6 +124,29 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		Hibernate.initialize(tc.getSteps());
 
 		return tc;
+	}
+	
+	/*
+	 * Implementation note : the query :
+	 * 
+	 *  select steps from TestStep steps left join fetch steps.attachmentList al left join fetch al.attachments where steps.testCase.id = :tcId order by index(steps)
+	 *  
+	 *  or any other variant would not work : we need the left join, the fetch joins and order by index etc. The only way to make it work is to fetch the test case with all the required 
+	 *  features then return the hibernate collection of steps...
+	 * 
+	 * 
+	 * (non-Javadoc)
+	 * @see org.squashtest.tm.service.internal.repository.CustomTestCaseDao#findTestSteps(long)
+	 */
+	@Override
+	public List<TestStep> findTestSteps(long testCaseId) {
+		TestCase tc = (TestCase)currentSession().getNamedQuery("TestCase.findInitialized").setParameter("tcId", testCaseId).uniqueResult();
+		if (tc == null){
+			return null;
+		}
+		else{
+			return new ArrayList<>(tc.getSteps());
+		}
 	}
 
 	private SetQueryParametersCallback idParameter(final long testCaseId) {
@@ -168,26 +201,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<TestCaseLibraryNode> findAllByNameContaining(final String tokenInName, boolean groupByProject) {
-		List<TestCaseLibraryNode> result;
 
-		Criteria criteria = currentSession().createCriteria(TestCaseLibraryNode.class, "testCaseLibraryNode")
-				.createAlias("testCaseLibraryNode.project", PROJECT)
-				.add(Restrictions.ilike("testCaseLibraryNode.name", tokenInName, MatchMode.ANYWHERE));
-
-		if (groupByProject) {
-			criteria = criteria.addOrder(Order.asc("project.id"));
-
-		}
-
-		criteria = criteria.addOrder(Order.asc("testCaseLibraryNode.name"));
-
-		result = criteria.list();
-
-		return result;
-	}
 
 	// dynamic
 	@Override
@@ -540,19 +554,7 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 	/* ----------------------------------------------------EXPORT METHODS----------------------------------------- */
-	// TODO try to avoid duplicate code with requirementExport
-	// XXX actually it helps Ctrl-F'ing for multiple occurences of the same bug because they use the exact same pieces of code :P Just kidding of course.
-	@Override
-	public List<ExportTestCaseData> findTestCaseToExportFromLibrary(List<Long> projectIds) {
-		if (!projectIds.isEmpty()) {
-			SetLibraryIdsCallback newCallBack1 = new SetLibraryIdsCallback(projectIds);
-			List<Long> result = executeListNamedQuery("testCase.findAllRootContent", newCallBack1);
 
-			return findTestCaseToExportFromNodes(result);
-		} else {
-			return Collections.emptyList();
-		}
-	}
 
 	@Override
 	public List<ExportTestCaseData> findTestCaseToExportFromNodes(List<Long> params) {
@@ -661,17 +663,6 @@ public class HibernateTestCaseDao extends HibernateEntityDao<TestCase> implement
 	}
 
 	/* ----------------------------------------------------/EXPORT METHODS----------------------------------------- */
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public List<Long> findAllTestCasesIdsByLibrary(long libraryId) {
-		Session session = currentSession();
-		SQLQuery query = session.createSQLQuery(FIND_ALL_FOR_LIBRARY_QUERY);
-		query.setParameter("libraryId", libraryId);
-		query.setResultTransformer(new SqLIdResultTransformer());
-		return query.list();
-	}
-
 
 
 	@Override
