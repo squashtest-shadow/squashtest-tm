@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
 import org.squashtest.tm.domain.project.ProjectTemplate;
 
 public interface ProjectTemplateDao extends JpaRepository<ProjectTemplate, Long>{

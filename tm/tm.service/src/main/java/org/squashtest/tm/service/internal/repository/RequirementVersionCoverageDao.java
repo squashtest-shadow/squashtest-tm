@@ -25,7 +25,6 @@ import java.util.List;
 
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;

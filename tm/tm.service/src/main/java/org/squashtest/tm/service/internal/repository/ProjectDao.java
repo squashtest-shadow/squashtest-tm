@@ -23,11 +23,7 @@ package org.squashtest.tm.service.internal.repository;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 
 public interface ProjectDao extends CustomProjectDao, JpaRepository<Project,Long> {
 
