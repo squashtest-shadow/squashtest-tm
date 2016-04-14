@@ -22,25 +22,26 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.core.dynamicmanager.annotation.DynamicDao;
-import org.squashtest.tm.core.dynamicmanager.factory.DynamicDaoFactoryBean;
+import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.users.Team;
+import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 /**
- * Data access methods for {@link Team}s. Methods are all dynamically generated: see {@link DynamicDaoFactoryBean}.
+ * Data access methods for {@link Team}s. 
  * 
  * @author mpagnon
  * 
  */
-@DynamicDao(entity = Team.class)
-public interface TeamDao extends CustomTeamDao{
+
+public interface TeamDao extends Repository<Team, Long>,  CustomTeamDao{
 	/**
 	 * Will persist a new team.
 	 * 
 	 * @param team
 	 *            : the new team to persist
 	 */
-	void persist(Team team);
+	@NativeMethodFromJpaRepository
+	void save(Team team);
 
 	/**
 	 * Simply retrieve the {@link Team} of the given id
@@ -48,6 +49,7 @@ public interface TeamDao extends CustomTeamDao{
 	 * @param teamId
 	 * @return
 	 */
+	@UsesTheSpringJpaDsl
 	Team findById(long teamId);
 
 	/**
@@ -55,6 +57,7 @@ public interface TeamDao extends CustomTeamDao{
 	 * 
 	 * @param team
 	 */
+	@NativeMethodFromJpaRepository
 	void delete(Team team);
 
 	/**
@@ -63,6 +66,7 @@ public interface TeamDao extends CustomTeamDao{
 	 * @param name
 	 * @return list of team with same name as param
 	 */
+	@UsesTheSpringJpaDsl
 	List<Team> findAllByName(String name);
 
 	/**
@@ -70,6 +74,7 @@ public interface TeamDao extends CustomTeamDao{
 	 * 
 	 * @return amount of {@link Team} in database
 	 */
+	@NativeMethodFromJpaRepository
 	long count();
 	
 	/**
@@ -78,13 +83,16 @@ public interface TeamDao extends CustomTeamDao{
 	 * @param teamIds : ids of {@link Team}s to return
 	 * @return List of matching {@link Team}s.
 	 */
-	List<Team> findAllByIds(List<Long> teamIds);
+	@UsesTheSpringJpaDsl
+	@EmptyCollectionGuard
+	List<Team> findAllByIdIn(List<Long> teamIds);
 	
 	/**
 	 * Will count the number of Teams where the concerned user is member.
 	 * @param userId : id of the concerned user
 	 * @return the total number of teams associated to the user
 	 */
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	long countAssociatedTeams(long userId);
 	
 	/**
@@ -92,6 +100,7 @@ public interface TeamDao extends CustomTeamDao{
 	 * @param userId : the id of the concerned user
 	 * @return
 	 */
+	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Team> findAllNonAssociatedTeams(long userId);
 
 }

@@ -41,7 +41,6 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao;
 
-@Repository("CustomRequirementVersionCoverageDao")
 public class RequirementVersionCoverageDaoImpl extends HibernateEntityDao<RequirementVersionCoverage> implements
 CustomRequirementVersionCoverageDao {
 

@@ -96,7 +96,7 @@ public class TeamController extends PartyControllerSupport {
 	private DatatableMapper<String> teamsMapper = new NameBasedMapper(9)
 	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name", Team.class)
 	.mapAttribute("description", "description", Team.class)
-	.mapAttribute("nb-associated-users", "size", Team.class)
+	.mapAttribute("nb-associated-users", "members.size", Team.class)
 	.mapAttribute("created-on", "audit.createdOn", Team.class)
 	.mapAttribute("created-by", "audit.createdBy", Team.class)
 	.mapAttribute("last-mod-on", "audit.lastModifiedOn", Team.class)

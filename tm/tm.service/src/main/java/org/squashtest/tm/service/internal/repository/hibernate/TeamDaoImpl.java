@@ -24,11 +24,9 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
@@ -37,97 +35,31 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTeamDao;
 
-@Repository("CustomTeamDao")
-public class HibernateTeamDao extends HibernateEntityDao<Team> implements CustomTeamDao {
-
-	/*
-	 * See #1968
-	 */
+public class TeamDaoImpl extends HibernateEntityDao<Team> implements CustomTeamDao {
 
 	private static final String HQL_FIND_TEAMS_BASE = "from Team Team ";
 	private static final String HQL_FIND_TEAMS_FILTER = "where Team.name like :filter or Team.audit.createdBy like :filter or Team.audit.lastModifiedBy like :filter ";
 
-	/*
-	 * Returns the list of teams according to various criterion.
-	 * 
-	 * 
-	 * Issue #1968 :
-	 * 
-	 * One of those criterion is the size of the team, ie how many members it has. The problem is that Hibernate doesn't
-	 * offer a simple way to sort by size of a collection using Critieria queries. So here is what we do here : for that
-	 * special case we rely on a special query, and for any other cases we deal with it as usual.
-	 * 
-	 * 
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.squashtest.tm.service.internal.repository.CustomTeamDao#findSortedTeams(org.squashtest.tm.core.foundation
-	 * .collection.PagingAndSorting, org.squashtest.tm.core.foundation.collection.Filtering)
-	 */
 
 	@Override
 	public List<Team> findSortedTeams(PagingAndSorting paging, Filtering filter) {
 
-		String sortedAttribute = paging.getSortedAttribute();
-		if (sortedAttribute != null && sortedAttribute.equals("Team.size")) {
-			return hqlFindSortedTeams(paging, filter);
-			
-		} else {
-			return criteriaFindSortedTeams(paging, filter);
-		}
-
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Team> criteriaFindSortedTeams(PagingAndSorting paging, Filtering filter) {
-		Session session = currentSession();
-		Criteria crit = session.createCriteria(Team.class, "Team");
-
-		/* add ordering */
-		String sortedAttribute = paging.getSortedAttribute();
-		if (sortedAttribute != null) {
-			SortingUtils.addOrder(crit, paging);
-		}
-
-		/* add filtering */
+		StringBuilder sQuery = new StringBuilder(HQL_FIND_TEAMS_BASE);
+		
 		if (filter.isDefined()) {
-			crit = crit.add(addFiltering(filter));
+			sQuery.append(HQL_FIND_TEAMS_FILTER);
 		}
 
-		/* result range */
-		PagingUtils.addPaging(crit, paging);
-
-		return crit.list();
-
-	}
-
-	private Criterion addFiltering(Filtering filtering) {
-		String filter = filtering.getFilter();
-		return Restrictions.disjunction().add(Restrictions.like("Team.name", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("Team.audit.createdBy", filter, MatchMode.ANYWHERE))
-				.add(Restrictions.like("Team.audit.lastModifiedBy", filter, MatchMode.ANYWHERE));
-	}
-
-	@SuppressWarnings("unchecked")
-	private List<Team> hqlFindSortedTeams(PagingAndSorting paging, Filtering filter) {
-
-		String sQuery = HQL_FIND_TEAMS_BASE;
-
-		if (filter.isDefined()) {
-			sQuery += HQL_FIND_TEAMS_FILTER;
-		}
-
-		// that method is called in the specific case of sorting by members size, hence we don't need to test if or how
-		// we sort here.
-		sQuery += "order by Team.members.size " + paging.getSortOrder().getCode();
-
-		Query hQuery = currentSession().createQuery(sQuery);
+		SortingUtils.addOrder(sQuery, paging);
+		
+		Query hQuery = currentSession().createQuery(sQuery.toString());
+		
 		if (filter.isDefined()) {
 			hQuery.setParameter("filter", "%" + filter.getFilter() + "%");
 		}
 
 		PagingUtils.addPaging(hQuery, paging);
-
+		
 		return hQuery.list();
 
 	}
@@ -138,6 +70,7 @@ public class HibernateTeamDao extends HibernateEntityDao<Team> implements Custom
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Team> findSortedAssociatedTeams(long userId, PagingAndSorting paging, Filtering filtering) {
+		
 
 		Criteria crit = currentSession().createCriteria(User.class, "User").add(Restrictions.eq("User.id", userId))
 				.createCriteria("User.teams", "Team").setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);

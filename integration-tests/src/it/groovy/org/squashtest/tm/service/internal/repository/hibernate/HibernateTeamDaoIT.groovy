@@ -68,7 +68,7 @@ import spock.unitils.UnitilsSupport;
 @Transactional
 class HibernateTeamDaoIT extends DbunitDaoSpecification{
 	
-	@Inject HibernateTeamDao dao
+	@Inject TeamDaoImpl dao
 	
 	
 	@DataSet("HibernateTeamDaoIT.setup.xml")
