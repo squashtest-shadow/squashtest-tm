@@ -34,6 +34,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 		for (i = 0; i < total; i++) {
 
 			var code = cufDefinitions[i].code;
+			var type = cufDefinitions[i].itype;
 			var newColumn;
 
 			if(cufDefinitions[i].denormalized){
@@ -41,7 +42,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 						'bVisible' : true,
 						'bSortable' : false,
 						'mDataProp' : "denormalizedFields." + code + ".value",
-						'sClass' : 'denormalized-field-value denormalized-field-' + code,
+						'sClass' : 'denormalized-field-value denormalized-field-' + code + " cft-" + type,
 						'sWidth' : "5em",
 						'aTargets' : [ 'denormalized-field-' + code ]
 					};
@@ -50,13 +51,13 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 					'bVisible' : true,
 					'bSortable' : false,
 					'mDataProp' : "customFields." + code + ".value",
-					'sClass' : 'custom-field-value custom-field-' + code,
+					'sClass' : 'custom-field-value custom-field-' + code + " cft-" + type,
 					'sWidth' : "5em",
 					'aTargets' : [ 'custom-field-' + code ]
 				};
 			}
-			
-			// special delivery for tags : 
+
+			// special delivery for tags :
 			if (cufDefinitions[i].itype === "TAG"){
 				newColumn.mRender = function ( data, type, full ) {
 					if (data != null){ // check for call step
@@ -71,7 +72,7 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 					}
 				};
 			}
-			
+
 			columns.push(newColumn);
 
 		}
@@ -176,15 +177,15 @@ define([ "jquery", "./lib/cuf-values-utils", "./lib/jquery.staticCustomfield", "
 			for ( var code in defMap) {
 
 				var def = defMap[code];
-				
+
 				var cufselts;
 				if (def.itype === "TAG"){
-					cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');	
+					cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');
 				}
 				else{
-					cufselts = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');	
+					cufselts = table.find('td.custom-field-' + code + '>span, td.denormalized-field-' + code + '>span');
 				}
-				
+
 				if (isEditable) {
 					var postFunction = makePostFunction(code, table);
 					cufselts.jeditableCustomfield(def, postFunction);

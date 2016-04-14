@@ -2,13 +2,13 @@
 
 /* style for the ??? which contains the title of a page */
 .page-title {
-	
+
 }
 
 /* style for the div which holds the title of a "contextual content" pane */
 .ctx-title {
 	.cf;
-	
+
 	:first-child {
 		float: left;
 		height: 100%;
@@ -28,4 +28,12 @@
 #dashboard-doc {
 	text-align: center;
 	margin-top: 2%;
+}
+
+/* custom field type (cft) specific styles */
+td.cft-DATE_PICKER {
+	/* properly renders confirm / cancel buttons when jeditable is opened */
+	form {
+		white-space: nowrap;
+	}
 }
