@@ -75,29 +75,29 @@
         {{#each attributes.chartTypes}}
         <li style="float:left;width:20%">
           <div style='display: table;height: 36px;width: 100%; '>
-          
-          
+
+
           <div style="display: table-cell; vertical-align: middle;">
         {{!--<![CDATA[--}}
-        <input  type="radio" name="chart-type" class="chart-type" value="{{this}}"  
-        
-        {{#if ../attributes.type}}     
-        {{#equal this ../attributes.type}} checked="checked" {{/equal}} 
+        <input  type="radio" name="chart-type" class="chart-type" value="{{this}}"
+
+        {{#if ../attributes/type}}
+        {{#equal this ../attributes/type}} checked="checked" {{/equal}}
         {{else}}
         {{#unless @index}} checked="checked" {{/unless}}
-        {{/if}}            
-        />   
-        {{!--]]>--}}	     
+        {{/if}}
+        />
+        {{!--]]>--}}
         </div>
          <span    style="min-height: 36px; width:20%;
-    min-width: 36px; display: table-cell;     " class="chart-{{this}}" />  
-      
+    min-width: 36px; display: table-cell;     " class="chart-{{this}}" />
+
       <span   style="width:65%; display: table-cell; vertical-align: middle;">
-        {{i18n this prefix="chart.chartType." }}    
+        {{i18n this prefix="chart.chartType." }}
         </span>
-        </div>         
+        </div>
         </li>
-        {{/each}}     
+        {{/each}}
 </ul>
 </div>
 
@@ -123,4 +123,4 @@
 </div>
 
 </div>
- 
+
