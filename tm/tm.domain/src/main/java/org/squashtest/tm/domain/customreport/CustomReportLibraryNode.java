@@ -266,7 +266,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		//forcing hibernate to clean it's children list,
 		//without that clean, suppression can fail because hibernate do not update correctly the RELATIONSHIP table
 		//so the triggers fails to update CLOSURE table and the whole suppression fail on integrity violation constraint...
-		children = new ArrayList<TreeLibraryNode>(children);
+		children = new ArrayList<>(children);
 	}
 
 	@Override
@@ -301,7 +301,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 
 	private List<String> getSiblingsNames() {
 		List<TreeLibraryNode> siblings = getSiblings();
-		List<String> siblingNames = new ArrayList<String>();
+		List<String> siblingNames = new ArrayList<>();
 		for (TreeLibraryNode sibling : siblings) {
 			siblingNames.add(sibling.getName());
 		}

@@ -167,7 +167,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 				childrenBuilder.setMilestoneMembershipFinder(milestoneMembershipFinder);
 				childrenBuilder.filterByMilestone(milestoneFilter);
 
-				List<JsTreeNode> children = new JsTreeNodeListBuilder<TestCaseLibraryNode>(childrenBuilder)
+				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 						.expand(getExpansionCandidates()).setModel(visited.getOrderedContent()).build();
 
 				builtNode.setChildren(children);

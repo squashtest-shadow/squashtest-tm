@@ -40,11 +40,11 @@ public class JsTreeNode {
 	private JsTreeNodeData data = new JsTreeNodeData();
 
 	// Attributes of the node (e.g. : id, class...)
-	private Map<String, Object> attr = new HashMap<String, Object>();
+	private Map<String, Object> attr = new HashMap<>();
 
 	private State state = State.closed;
 
-	private List<JsTreeNode> children = new ArrayList<JsTreeNode>();
+	private List<JsTreeNode> children = new ArrayList<>();
 
 	public JsTreeNodeData getData() {
 		return data;

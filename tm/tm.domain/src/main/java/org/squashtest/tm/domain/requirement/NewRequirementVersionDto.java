@@ -101,7 +101,7 @@ public class NewRequirementVersionDto {
 	/*@NotNull
 	@NotEmpty*/
 	//maps a CustomField id to the value of a corresponding CustomFieldValue
-	private Map<Long, RawValue> customFields = new HashMap<Long, RawValue>();
+	private Map<Long, RawValue> customFields = new HashMap<>();
 
 
 	public RequirementVersion toRequirementVersion() {

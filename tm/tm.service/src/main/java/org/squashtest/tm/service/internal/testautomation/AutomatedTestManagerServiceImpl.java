@@ -107,7 +107,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 	// ****************************** fetch test list methods ****************************************
 
 	private Collection<FetchTestListTask> prepareAllFetchTestListTasks(Collection<TestAutomationProject> projects) {
-		Collection<FetchTestListTask> tasks = new ArrayList<FetchTestListTask>();
+		Collection<FetchTestListTask> tasks = new ArrayList<>();
 
 		for (TestAutomationProject project : projects) {
 			tasks.add(new FetchTestListTask(connectorRegistry, project));
@@ -118,7 +118,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 	private Collection<FetchTestListFuture> submitAllFetchTestListTasks(Collection<FetchTestListTask> tasks) {
 
-		Collection<FetchTestListFuture> futures = new ArrayList<FetchTestListFuture>();
+		Collection<FetchTestListFuture> futures = new ArrayList<>();
 
 		for (FetchTestListTask task : tasks) {
 			futures.add(executor.sumbitFetchTestListTask(task));
@@ -129,7 +129,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 
 	private Collection<TestAutomationProjectContent> collectAllTestLists(Collection<FetchTestListFuture> futures) {
 
-		Collection<TestAutomationProjectContent> results = new ArrayList<TestAutomationProjectContent>();
+		Collection<TestAutomationProjectContent> results = new ArrayList<>();
 
 		for (FetchTestListFuture future : futures) {
 

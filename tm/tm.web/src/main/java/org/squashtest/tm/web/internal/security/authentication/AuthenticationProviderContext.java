@@ -53,7 +53,7 @@ public class AuthenticationProviderContext {
 	 * list of configured provider features.
 	 */
 	@Inject
-	private List<AuthenticationProviderFeatures> providersFeatures = new ArrayList<AuthenticationProviderFeatures>();
+	private List<AuthenticationProviderFeatures> providersFeatures = new ArrayList<>();
 
 	/**
 	 * 

@@ -164,7 +164,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 	// TODO add check for permission MANAGEMENT on the project id
 	public void removeCustomFieldBindings(Long projectId) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForGenericProject(projectId);
-		List<Long> bindingIds = new LinkedList<Long>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
+		List<Long> bindingIds = new LinkedList<>(CollectionUtils.collect(bindings, BINDING_ID_COLLECTOR));
 		removeCustomFieldBindings(bindingIds);
 	}
 

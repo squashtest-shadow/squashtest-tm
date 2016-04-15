@@ -58,7 +58,7 @@ public abstract class DataTableModelBuilder<X> {
 	}
 
 	public List<Object> buildRawModel(Collection<X> pagedItems) {
-		List<Object> model = new ArrayList<Object>(pagedItems.size());
+		List<Object> model = new ArrayList<>(pagedItems.size());
 
 		for (X item : pagedItems) {
 			Object itemData = buildItemData(item);

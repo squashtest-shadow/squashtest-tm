@@ -58,7 +58,7 @@ public class ImportFormatFailure {
 			Set<String> columnNames = columnMismatch.getValue();
 			Set<String> alreadyStoredColumnNames = mismatches.get(columnMismatch.getKey());
 			if (alreadyStoredColumnNames == null) {
-				alreadyStoredColumnNames = new HashSet<String>();
+				alreadyStoredColumnNames = new HashSet<>();
 			}
 			alreadyStoredColumnNames.addAll(columnNames);
 			mismatches.put(columnMismatch.getKey(), alreadyStoredColumnNames);

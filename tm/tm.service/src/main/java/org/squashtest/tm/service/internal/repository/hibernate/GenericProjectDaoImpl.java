@@ -89,6 +89,7 @@ public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 	 * @see org.squashtest.tm.service.internal.repository.CustomGenericProjectDao#findAllWithTextProperty(java.lang.Class,
 	 *      org.squashtest.tm.core.foundation.collection.Filtering)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering) {
 		

@@ -86,7 +86,7 @@ public class RequirementExcelExporter {
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_ON,
 		RequirementSheetColumn.REQ_VERSION_LAST_MODIFIED_BY};
 
-	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList((RequirementSheetColumn[]) ArrayUtils.add(BASIC_REQ_COLUMNS, RequirementSheetColumn.REQ_VERSION_MILESTONE));
+	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS_MILESTONES = Arrays.asList(ArrayUtils.add(BASIC_REQ_COLUMNS, RequirementSheetColumn.REQ_VERSION_MILESTONE));
 
 	private static final List<RequirementSheetColumn> REQUIREMENT_COLUMNS = Arrays.asList(BASIC_REQ_COLUMNS);
 	// that map will remember which column index is

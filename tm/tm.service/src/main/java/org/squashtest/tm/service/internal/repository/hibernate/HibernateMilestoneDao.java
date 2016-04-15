@@ -343,7 +343,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	@Override
 	public void unbindAllObjectsForProject(Long milestoneId, Long projectId) {
-		List<Long> projectIds = new ArrayList<Long>();
+		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
 		unbindAllObjectsForProjects(milestoneId, projectIds);
 	}
@@ -428,7 +428,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	@Override
 	public boolean isMilestoneBoundToOneObjectOfProject(Long milestoneId, Long projectId) {
 
-		List<Long> projectIds = new ArrayList<Long>();
+		List<Long> projectIds = new ArrayList<>();
 		projectIds.add(projectId);
 
 		Query queryTc = currentSession().getNamedQuery("milestone.findAllTestCasesForProjectAndMilestone");

@@ -73,7 +73,7 @@ public class HandlerBindExceptionResolver extends AbstractHandlerExceptionResolv
 	}
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(BindException bex) {
-		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
+		List<FieldValidationErrorModel> ves = new ArrayList<>();
 		List<FieldError> oes = bex.getFieldErrors();
 
 		for (FieldError oe : oes) {

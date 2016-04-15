@@ -49,8 +49,6 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.EntityReference;

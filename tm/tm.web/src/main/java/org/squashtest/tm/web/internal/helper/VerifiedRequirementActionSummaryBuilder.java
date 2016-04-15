@@ -52,7 +52,7 @@ public final class VerifiedRequirementActionSummaryBuilder {
 	 * @return
 	 */
 	public static Map<String, Object> buildAddActionSummary(Collection<VerifiedRequirementException> rejections) {
-		Map<String, Object> summary = new HashMap<String, Object>();
+		Map<String, Object> summary = new HashMap<>();
 
 		for (VerifiedRequirementException rejection : rejections) {
 			if (rejection instanceof RequirementAlreadyVerifiedException) {

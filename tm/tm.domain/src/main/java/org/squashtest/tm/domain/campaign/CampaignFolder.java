@@ -49,12 +49,12 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	 * Delegate implementation of folder responsibilities.
 	 */
 	@Transient
-	private final FolderSupport<CampaignLibraryNode, CampaignFolder> folderSupport = new FolderSupport<CampaignLibraryNode, CampaignFolder>(this);
+	private final FolderSupport<CampaignLibraryNode, CampaignFolder> folderSupport = new FolderSupport<>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private List<CampaignLibraryNode> content = new ArrayList<CampaignLibraryNode>();
+	private List<CampaignLibraryNode> content = new ArrayList<>();
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CampaignLibrary.class);
 
@@ -76,7 +76,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 	@Override
 	public void removeContent(CampaignLibraryNode node) throws NullArgumentException {
 		content.remove(node);
-		content =  new ArrayList<CampaignLibraryNode>(content);
+		content =  new ArrayList<>(content);
 		LOGGER.info(content.toString());
 
 	}
@@ -92,7 +92,7 @@ public class CampaignFolder extends CampaignLibraryNode implements Folder<Campai
 		folderSupport.addContent(node, position);
 		// the following enforces that hibernate reinsert the data with their index,
 		// and makes sure it works along the triggers.
-		content = new ArrayList<CampaignLibraryNode>(content);
+		content = new ArrayList<>(content);
 	}
 
 	@Override

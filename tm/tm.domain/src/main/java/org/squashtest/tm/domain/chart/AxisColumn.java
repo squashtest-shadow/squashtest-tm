@@ -58,6 +58,7 @@ public class AxisColumn implements ColumnPrototypeInstance{
 		this.label = label;
 	}
 
+	@Override
 	public ColumnPrototype getColumn() {
 		return column;
 	}

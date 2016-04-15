@@ -23,6 +23,7 @@ package org.squashtest.tm.web.internal.controller.generic;
 import net.sf.jasperreports.engine.JRExporterParameter;
 import net.sf.jasperreports.engine.JRParameter;
 import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
 import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.MessageSourceResourceBundle;
@@ -96,7 +97,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes, Milestone activeMilestone) {
-		List<JsTreeNode> jstreeNodes = new ArrayList<JsTreeNode>();
+		List<JsTreeNode> jstreeNodes = new ArrayList<>();
 
 		for (NODE node : nodes) {
 			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node, activeMilestone);
@@ -273,10 +274,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			// exporter parameters
 			// TODO : defining an export parameter specific to csv while in the future we could export to other formats
 			// is unsatisfying. Find something else.
-			Map<JRExporterParameter, Object> exportParameter = new HashMap<JRExporterParameter, Object>();
+			Map<JRExporterParameter, Object> exportParameter = new HashMap<>();
 			exportParameter.put(JRCsvExporterParameter.FIELD_DELIMITER, ";");
 			exportParameter.put(JRExporterParameter.CHARACTER_ENCODING, "ISO-8859-1");
-			exportParameter.put(JRXlsExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
+			exportParameter.put(JRXlsAbstractExporterParameter.IS_WHITE_PAGE_BACKGROUND, Boolean.FALSE);
 
 			InputStream jsStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(jasperFile);
 			InputStream reportStream = jrServices.getReportAsStream(jsStream, format, dataSource, reportParameters,
@@ -316,7 +317,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	protected static class Messages {
 
-		private Collection<String> messages = new ArrayList<String>();
+		private Collection<String> messages = new ArrayList<>();
 
 		public Messages() {
 			super();

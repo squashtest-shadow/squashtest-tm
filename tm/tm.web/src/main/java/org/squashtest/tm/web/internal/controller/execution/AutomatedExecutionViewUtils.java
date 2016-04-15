@@ -40,7 +40,7 @@ public final class AutomatedExecutionViewUtils {
 
 	public static AutomatedSuiteOverview buildExecInfo(AutomatedSuite suite, Locale locale, InternationalizationHelper messageSource) {
 		Collection<AutomatedExecutionExtender> executions = suite.getExecutionExtenders();
-		List<ExecutionAutoView> executionsViews = new ArrayList<ExecutionAutoView>(executions.size());
+		List<ExecutionAutoView> executionsViews = new ArrayList<>(executions.size());
 		int totalExec = executions.size();
 		int totalTerminated = 0;
 		for (AutomatedExecutionExtender autoExec : executions) {

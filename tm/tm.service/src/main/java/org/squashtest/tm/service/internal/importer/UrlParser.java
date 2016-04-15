@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
 	 * </ul>
 	 */
 	public static List<String> extractFoldersNames(String path) {
-		LinkedList<String> nameList = new LinkedList<String>();
+		LinkedList<String> nameList = new LinkedList<>();
 		String trimedPath = path.trim();
 		StringReader pathReader = new StringReader(trimedPath);
 		try {

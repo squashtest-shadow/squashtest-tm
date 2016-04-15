@@ -83,6 +83,7 @@ public abstract class LibraryTreeNodeBuilder<LN extends LibraryNode> extends Gen
 	 * 
 	 * @return
 	 */
+	@Override
 	public final JsTreeNode doBuild(JsTreeNode builtNode, LN model) {
 		this.builtNode = builtNode;
 		this.node = model;

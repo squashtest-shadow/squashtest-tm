@@ -45,6 +45,7 @@ import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.library.Copiable;
 import org.squashtest.tm.domain.library.Folder;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.NodeVisitor;
 import org.squashtest.tm.domain.library.TreeNode;
@@ -176,14 +177,14 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
-		persistCopy(copyFolder, dao, Folder.MAX_NAME_SIZE);
+		persistCopy(copyFolder, dao, LibraryNode.MAX_NAME_SIZE);
 
 	}
 
 	@Override
 	public void visit(Campaign source) {
 		Campaign copyCampaign = source.createCopy();
-		persistCopy(copyCampaign, campaignDao, Campaign.MAX_NAME_SIZE);
+		persistCopy(copyCampaign, campaignDao, LibraryNode.MAX_NAME_SIZE);
 		copyCustomFields(source, copyCampaign);
 
 	}
@@ -242,7 +243,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		//create copies for requirement versions and remember version's sources
 		SortedMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
 			.addPreviousVersionsCopiesToCopy(copyRequirement);
-		persistCopy(copyRequirement, requirementDao, RequirementLibraryNode.MAX_NAME_SIZE);
+		persistCopy(copyRequirement, requirementDao, LibraryNode.MAX_NAME_SIZE);
 		//copy custom fields and requirement-version coverages for Current Version
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
@@ -382,7 +383,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	@SuppressWarnings("unchecked")
 	private void persistTestCase(TestCase testCase) {
-		renameIfNeeded(testCase, TestCase.MAX_NAME_SIZE);
+		renameIfNeeded(testCase, LibraryNode.MAX_NAME_SIZE);
 		testCaseDao.persistTestCaseAndSteps(testCase);
 		((NodeContainer<TestCase>) destination).addContent(testCase);
 		this.copy = testCase;

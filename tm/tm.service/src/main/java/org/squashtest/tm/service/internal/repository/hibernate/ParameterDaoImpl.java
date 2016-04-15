@@ -77,7 +77,7 @@ public class ParameterDaoImpl implements CustomParameterDao {
 
 		Query query = em.unwrap(Session.class).getNamedQuery("Parameter.findOwnParametersByTestCases");
 		query.setParameterList("testCaseIds", testcaseIds);
-		return (List<Parameter>) query.list();
+		return query.list();
 	}
 
 }

@@ -379,7 +379,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	}
 
 	protected Set<Long> securityFilterIds(Collection<Long> original, String entityType, String permission) {
-		Set<Long> effective = new HashSet<Long>();
+		Set<Long> effective = new HashSet<>();
 		for (Long id : original) {
 			if (permissionService.hasRoleOrPermissionOnObject("ROLE_ADMIN", permission, id, entityType)) {
 				effective.add(id);

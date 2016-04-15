@@ -124,7 +124,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private BugTrackerBinding bugtrackerBinding;
 
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy = "tmProject")
-	private Set<TestAutomationProject> testAutomationProjects = new HashSet<TestAutomationProject>();
+	private Set<TestAutomationProject> testAutomationProjects = new HashSet<>();
 
 	@JoinColumn(name = "TA_SERVER_ID")
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -150,7 +150,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 
 
 	@ManyToMany(mappedBy = "projects")
-	private Set<Milestone> milestones = new HashSet<Milestone>();
+	private Set<Milestone> milestones = new HashSet<>();
 
 	private boolean allowTcModifDuringExec = false;
 

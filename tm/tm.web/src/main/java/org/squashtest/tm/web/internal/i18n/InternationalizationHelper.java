@@ -122,6 +122,7 @@ public class InternationalizationHelper implements MessageSource {
 	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.lang.String,
 	 *      java.util.Locale)
 	 */
+	@Override
 	public String getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
 		return messageSource.getMessage(code, args, defaultMessage, locale);
 	}
@@ -131,10 +132,13 @@ public class InternationalizationHelper implements MessageSource {
 	 * @see org.springframework.context.MessageSource#getMessage(java.lang.String, java.lang.Object[], java.util.Locale)
 	 * @deprecated if args array is empty or null, condider {@link #internationalize(String, Locale)}
 	 */
+	@Deprecated
+	@Override
 	public String getMessage(String code, Object[] args, Locale locale) throws NoSuchMessageException {
 		return messageSource.getMessage(code, args, locale);
 	}
 
+	@Override
 	public String getMessage(MessageSourceResolvable resolvable, Locale locale) throws NoSuchMessageException {
 		return messageSource.getMessage(resolvable, locale);
 	}

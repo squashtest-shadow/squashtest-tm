@@ -158,7 +158,7 @@ public class TestStepController {
 		}
 
 
-		List<CustomFieldValueModel> cufModels = new ArrayList<CustomFieldValueModel>(values.size());
+		List<CustomFieldValueModel> cufModels = new ArrayList<>(values.size());
 		for (CustomFieldValue value : values){
 			cufModels.add(cufJsonConverter.toJson(value));
 		}

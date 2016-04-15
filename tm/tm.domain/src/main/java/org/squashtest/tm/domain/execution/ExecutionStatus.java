@@ -409,7 +409,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 	static {
 
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>(6);
+		Set<ExecutionStatus> set = new HashSet<>(6);
 		set.add(BLOCKED);
 		set.add(FAILURE);
 		set.add(SUCCESS);
@@ -419,7 +419,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		CANONICAL_STATUSES = Collections.unmodifiableSet(set);
 
-		Set<ExecutionStatus> terms = new HashSet<ExecutionStatus>(9);
+		Set<ExecutionStatus> terms = new HashSet<>(9);
 		terms.add(BLOCKED);
 		terms.add(FAILURE);
 		terms.add(SUCCESS);
@@ -432,19 +432,19 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 		TERMINAL_STATUSES = Collections.unmodifiableSet(terms);
 
-		Set<ExecutionStatus> nonTerms = new HashSet<ExecutionStatus>(2);
+		Set<ExecutionStatus> nonTerms = new HashSet<>(2);
 		nonTerms.add(RUNNING);
 		nonTerms.add(READY);
 
 		NON_TERMINAL_STATUSES = Collections.unmodifiableSet(nonTerms);
 
 
-		Set<ExecutionStatus> disabled = new HashSet<ExecutionStatus>(1);
+		Set<ExecutionStatus> disabled = new HashSet<>(1);
 		disabled.add(SETTLED);
 
 		DEFAULT_DISABLED_STATUSES = Collections.unmodifiableSet(disabled);
 
-		Set<ExecutionStatus> TAStatuses = new HashSet<ExecutionStatus>(4);
+		Set<ExecutionStatus> TAStatuses = new HashSet<>(4);
 		TAStatuses.add(ERROR);
 		TAStatuses.add(WARNING);
 		TAStatuses.add(NOT_FOUND);
@@ -495,7 +495,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	/* **************************** static methods ***************************** */
 
 	public static List<ExecutionStatus> toCanonicalStatusList(List<ExecutionStatus> nonCanonical) {
-		List<ExecutionStatus> canonical = new ArrayList<ExecutionStatus>();
+		List<ExecutionStatus> canonical = new ArrayList<>();
 		for (ExecutionStatus nStatus : nonCanonical) {
 			canonical.add(nStatus.getCanonicalStatus());
 		}
@@ -516,6 +516,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 	/* **************************** public instance methods ***************************** */
 
+	@Override
 	public int getLevel() {
 		return level;
 	}

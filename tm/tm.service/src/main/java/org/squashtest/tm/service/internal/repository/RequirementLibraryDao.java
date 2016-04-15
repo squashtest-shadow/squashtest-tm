@@ -26,6 +26,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 @SuppressWarnings("rawtypes")
 public interface RequirementLibraryDao extends LibraryDao<RequirementLibrary, RequirementLibraryNode>, EntityDao<RequirementLibrary> {
 
-    void persist(RequirementLibrary library);
+    @Override
+	void persist(RequirementLibrary library);
 
 }

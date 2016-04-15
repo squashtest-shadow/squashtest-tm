@@ -245,6 +245,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	/* (non-Javadoc)
 	 * @see org.squashtest.tm.service.security.acls.jdbc.ManageableAclService#removeObjectIdentity(org.springframework.security.acls.model.ObjectIdentity)
 	 */
+	@Override
 	public void removeObjectIdentity(ObjectIdentity objectIdentity) {
 		LOGGER.info("Attempting to delete the Object Identity " + objectIdentity);
 
@@ -289,6 +290,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 	 * @param partyId
 	 * @param entityRef
 	 */
+	@Override
 	public void removeAllResponsibilities(@NotNull long partyId, @NotNull ObjectIdentity entityRef) {
 		jdbcTemplate.update(DELETE_PARTY_RESPONSABILITY_ENTRY, partyId, entityRef.getIdentifier(), entityRef.getType());
 
@@ -298,6 +300,7 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 		evictFromCache(entityRef);
 	}
 
+	@Override
 	public void updateDerivedPermissions(long partyId){
 		derivedManager.updateDerivedPermissions(partyId);
 		aclCache.clearCache();

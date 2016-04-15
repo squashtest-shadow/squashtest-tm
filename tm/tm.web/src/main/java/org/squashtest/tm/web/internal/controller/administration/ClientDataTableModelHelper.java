@@ -63,7 +63,7 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDet
 
 	@Override
 	protected Object buildItemData(ClientDetails item) {
-		Map<String, Object> row = new HashMap<String, Object>(3);
+		Map<String, Object> row = new HashMap<>(3);
 		row.put("entity-id", item.getClientId());
 		row.put("index", getCurrentIndex() +1);
 		row.put("name", item.getClientId());

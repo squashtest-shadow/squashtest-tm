@@ -162,7 +162,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	@Override
 	public Map<String, Boolean> hasRoleOrPermissionsOnObject(String role, String[] permissions, Object entity) {
 		boolean hasRole = this.hasRole(role);
-		Map<String, Boolean> permByName = new HashMap<String, Boolean>(permissions.length);
+		Map<String, Boolean> permByName = new HashMap<>(permissions.length);
 
 		for (String perm : permissions) {
 			permByName.put(perm, hasRole || this.hasPermissionOnObject(perm, entity));

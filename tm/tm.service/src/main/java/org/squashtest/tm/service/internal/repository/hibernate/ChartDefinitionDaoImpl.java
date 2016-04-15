@@ -22,10 +22,6 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
-import org.hibernate.Query;
-import org.hibernate.type.LongType;
-import org.springframework.stereotype.Repository;
-import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.service.internal.repository.CustomChartDefinitionDao;
 
 import javax.persistence.EntityManager;

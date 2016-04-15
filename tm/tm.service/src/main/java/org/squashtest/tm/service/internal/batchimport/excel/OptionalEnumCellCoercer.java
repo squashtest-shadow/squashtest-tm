@@ -53,7 +53,7 @@ CellValueCoercer<ENUM> {
 	protected ENUM coerceStringCell(Cell cell) {
 		String name = cell.getStringCellValue();
 		try {
-			return (ENUM) Enum.valueOf(enumType, name);
+			return Enum.valueOf(enumType, name);
 		} catch (IllegalArgumentException e) {
 			throw new CannotCoerceException(e, Messages.ERROR_UNPARSABLE_OPTION, Messages.IMPACT_FIELD_NOT_CHANGED, Messages.IMPACT_DEFAULT_VALUE);
 		}

@@ -201,7 +201,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 	public void detachTestPlanFromTestSuite(List<Long> testPlanIds, long suiteId) {
 
 		TestSuite testSuite = testSuiteDao.findById(suiteId);
-		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> listTestPlanItems = new ArrayList<>();
 
 		for (long testPlanId : testPlanIds) {
 			IterationTestPlanItem iterTestPlanItem = itemTestPlanDao.findById(testPlanId);

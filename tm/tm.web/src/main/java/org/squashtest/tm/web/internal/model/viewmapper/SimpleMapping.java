@@ -32,6 +32,7 @@ class SimpleMapping implements Mapping{
 	}
 
 
+	@Override
 	public String getMapping() {
 		return this.expression;
 	}

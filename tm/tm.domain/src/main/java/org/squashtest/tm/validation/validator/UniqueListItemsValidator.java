@@ -53,7 +53,7 @@ public class UniqueListItemsValidator implements ConstraintValidator<UniqueItems
 			return true;
 		}
 		
-		Set<Object> uniqueItems = new HashSet<Object>(value.size());
+		Set<Object> uniqueItems = new HashSet<>(value.size());
 		uniqueItems.addAll(value);
 		
 		return uniqueItems.size() == value.size();

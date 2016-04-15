@@ -69,7 +69,7 @@ public class User extends Party {
 
 	@NotNull
 	@ManyToMany(mappedBy = "members")
-	private final Set<Team> teams = new HashSet<Team>();
+	private final Set<Team> teams = new HashSet<>();
 
 	public User() {
 		super();
@@ -158,6 +158,7 @@ public class User extends Party {
 		return builder;
 	}
 
+	@Override
 	public String getType() {
 		return TYPE;
 	}

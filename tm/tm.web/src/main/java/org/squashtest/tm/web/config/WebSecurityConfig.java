@@ -31,7 +31,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.context.SecurityContextPersistenceFilter;
-import org.springframework.security.web.header.writers.frameoptions.XFrameOptionsHeaderWriter;
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
@@ -75,6 +74,7 @@ public class WebSecurityConfig {
 	@Configuration
 	@Order(10)
 	public static class SquashTAWebSecurityConfigurationAdapter extends WebSecurityConfigurerAdapter {
+		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			// @formatter:off
 			http

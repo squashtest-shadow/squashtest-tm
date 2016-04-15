@@ -77,7 +77,7 @@ public final class LevelImplementorSorter implements PagingAndMultiSorting{
 
 	@Override
 	public List<Sorting> getSortings() {
-		List<Sorting> newSortings = new ArrayList<Sorting>(multiSorting.getSortings());
+		List<Sorting> newSortings = new ArrayList<>(multiSorting.getSortings());
 
 		ListIterator<Sorting> iterSorting = newSortings.listIterator();
 

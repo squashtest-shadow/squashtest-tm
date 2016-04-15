@@ -32,11 +32,9 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;

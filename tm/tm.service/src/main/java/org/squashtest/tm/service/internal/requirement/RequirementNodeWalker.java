@@ -52,7 +52,7 @@ public class RequirementNodeWalker implements RequirementLibraryNodeVisitor {
 	private boolean firstNodesAreDirectory;
 
 	public RequirementNodeWalker() {
-		outputList = new LinkedList<Requirement>();
+		outputList = new LinkedList<>();
 	}
 
 	public List<Requirement> walk(List<RequirementLibraryNode> nodes) {

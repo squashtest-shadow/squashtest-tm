@@ -72,7 +72,7 @@ public class TestAutomationProjectController {
 	@ResponseBody
 	public TAUsageStatus getTestAutomationUsageStatus(@PathVariable List<Long> projectId) {
 		LOGGER.info("Delete test automation server of id #{}", projectId);
-		List<TAUsageStatus> liste = new ArrayList<TAUsageStatus>();
+		List<TAUsageStatus> liste = new ArrayList<>();
 		for (Long id : projectId) {
 			boolean hasExecutedTests = service.hasExecutedTests(id);
 			TAUsageStatus taUsage = new TAUsageStatus(hasExecutedTests);

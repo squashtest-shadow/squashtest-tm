@@ -64,7 +64,7 @@ public final class FilterModel {
 		}
 
 		//remember that projectData.toArray() actually returns an Object[][]
-		setProjectData((Object[][]) pData);
+		setProjectData(pData);
 	}
 
 	public FilterModel(List<Project> projects) {

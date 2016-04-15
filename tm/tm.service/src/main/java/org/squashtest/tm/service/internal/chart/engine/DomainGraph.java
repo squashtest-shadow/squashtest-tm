@@ -414,6 +414,7 @@ class DomainGraph {
 			return new TraversedEntity(type);
 		}
 
+		@Override
 		public String toString(){
 			return type.toString();
 		}

@@ -226,7 +226,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 		Campaign campaign = campaignDao.findById(campaignId);
 
-		List<ObjectIdentity> entityRefs = new ArrayList<ObjectIdentity>();
+		List<ObjectIdentity> entityRefs = new ArrayList<>();
 		ObjectIdentity oid = objIdRetrievalStrategy.getObjectIdentity(campaign);
 		entityRefs.add(oid);
 

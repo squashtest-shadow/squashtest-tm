@@ -120,7 +120,7 @@ public class IterationFormModel {
 
 	@JsonIgnore
 	public Map<Long, RawValue> getCufs(){
-		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(customFields.size());
+		Map<Long, RawValue> cufs = new HashMap<>(customFields.size());
 		for (Entry<Long, RawValueModel> entry : customFields.entrySet()){
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}

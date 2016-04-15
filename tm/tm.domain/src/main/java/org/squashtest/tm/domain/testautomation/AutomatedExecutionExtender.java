@@ -58,7 +58,7 @@ public class AutomatedExecutionExtender {
 	private static final Set<ExecutionStatus> AUTOMATED_EXEC_STATUS;
 
 	static {
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.WARNING);
 		set.add(ExecutionStatus.NOT_RUN);

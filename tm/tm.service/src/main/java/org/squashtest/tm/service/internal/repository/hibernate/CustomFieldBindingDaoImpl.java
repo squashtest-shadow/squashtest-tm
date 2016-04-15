@@ -25,7 +25,6 @@ import java.util.List;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;

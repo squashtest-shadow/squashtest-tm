@@ -27,11 +27,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
@@ -167,7 +165,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	@PreAuthorize(PERM_CAN_READ_ITERATION + OR_HAS_ROLE_ADMIN)
 	public List<TestSuiteTestInventoryStatistics> gatherTestSuiteTestInventoryStatistics(long iterationId) {
 
-		List<TestSuiteTestInventoryStatistics> result = new LinkedList<TestSuiteTestInventoryStatistics>();
+		List<TestSuiteTestInventoryStatistics> result = new LinkedList<>();
 
 
 		// ****************** gather the model *******************

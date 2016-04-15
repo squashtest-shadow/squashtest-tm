@@ -143,7 +143,7 @@ public abstract class SearchInterfaceDescription {
 
 		private List<SearchInputPossibleValueModel> decorate(Map<String, String> map) {
 			OptionBuilder optionBuilder = new OptionBuilder(locale);
-			ArrayList<SearchInputPossibleValueModel> res = new ArrayList<SearchInputPossibleValueModel>(map.size());
+			ArrayList<SearchInputPossibleValueModel> res = new ArrayList<>(map.size());
 
 			for (Entry<String, String> entry : map.entrySet()) {
 				res.add(optionBuilder.optionKey(entry.getKey()).label(entry.getValue()).build());
@@ -326,7 +326,7 @@ public abstract class SearchInterfaceDescription {
 	}
 
 	protected final <T extends Enum<?> & Level, B extends LevelComboDataBuilder<T, B>> EnumJeditableComboDataBuilder<T, B> delegateLevelComboBuilder(T[] values) {
-		EnumJeditableComboDataBuilder<T, B> builder = new LevelComboDataBuilder<T, B>();
+		EnumJeditableComboDataBuilder<T, B> builder = new LevelComboDataBuilder<>();
 		builder.setLabelFormatter(levelLabelFormatter.get().plainText());
 		builder.setModel(values);
 		builder.setModelComparator(LevelComparator.getInstance());
@@ -339,7 +339,7 @@ public abstract class SearchInterfaceDescription {
 
 	protected final <T extends Enum<?> & Level, B extends EnumJeditableComboDataBuilder<T, B>> EnumJeditableComboDataBuilder<T, B> delegateInternationalizableComboBuilder(
 			T[] values) {
-		EnumJeditableComboDataBuilder<T, B> builder = new EnumJeditableComboDataBuilder<T, B>();
+		EnumJeditableComboDataBuilder<T, B> builder = new EnumJeditableComboDataBuilder<>();
 		builder.setLabelFormatter(internationalizableLabelFormatter.get().plainText());
 		builder.setModel(values);
 		builder.setModelComparator(new InternationalizableComparator());

@@ -53,7 +53,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.api.report.Report;
 import org.squashtest.tm.api.report.criteria.Criteria;
-import org.squashtest.tm.api.report.form.ContainerOption;
 import org.squashtest.tm.api.report.form.Input;
 import org.squashtest.tm.api.report.form.InputType;
 import org.squashtest.tm.api.report.form.OptionInput;

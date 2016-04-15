@@ -46,7 +46,7 @@ class VerifyingTestCasesTableModelHelper extends DataTableModelBuilder<TestCase>
 
 		String type = formatExecutionMode(tc.getExecutionMode());
 
-		Map<String, String> row = new HashMap<String, String>(7);
+		Map<String, String> row = new HashMap<>(7);
 
 		row.put("tc-id", tc.getId().toString());
 		row.put("tc-index", Long.toString(getCurrentIndex()));

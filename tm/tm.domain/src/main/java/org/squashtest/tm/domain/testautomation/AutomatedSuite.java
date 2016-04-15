@@ -54,7 +54,7 @@ public class AutomatedSuite  {
 
 	@OneToMany(mappedBy="automatedSuite", cascade = {CascadeType.ALL})
 	@OrderColumn(name = "EXECUTION_EXTENDER_ORDER")
-	private List<AutomatedExecutionExtender> executionExtenders = new ArrayList<AutomatedExecutionExtender>();
+	private List<AutomatedExecutionExtender> executionExtenders = new ArrayList<>();
 
 	/**
 	 * it's transient because we do not want to persist neither do we want to compute it too often.

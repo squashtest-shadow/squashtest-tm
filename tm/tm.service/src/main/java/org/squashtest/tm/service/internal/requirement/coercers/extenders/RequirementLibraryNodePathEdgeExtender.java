@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;
@@ -59,7 +58,7 @@ public class RequirementLibraryNodePathEdgeExtender implements IdsCoercerExtende
 
 		try {
 			Query q = s.createQuery("select distinct edge.ancestorId from RequirementPathEdge edge where edge.descendantId in (:rlnIds) and depth=1");
-			q.setParameterList("rlnIds", (Collection<? extends Serializable>) coercedIds);
+			q.setParameterList("rlnIds", coercedIds);
 			coercedIds.addAll(q.list());
 			return coercedIds;
 

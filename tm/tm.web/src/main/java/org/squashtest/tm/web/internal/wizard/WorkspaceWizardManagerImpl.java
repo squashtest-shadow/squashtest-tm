@@ -26,7 +26,6 @@ import org.apache.commons.collections.map.MultiValueMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Required;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
@@ -36,8 +35,6 @@ import org.squashtest.tm.service.project.GenericProjectFinder;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -131,7 +128,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 	@Override
 	public Collection<WorkspaceWizard> findEnabledWizards(long projectId, WorkspaceType... workspaces) {
-		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>(wizards.size());
+		Collection<WorkspaceWizard> allWizards = new HashSet<>(wizards.size());
 		for (WorkspaceType workspace : workspaces) {
 			allWizards.addAll(findEnabledWizards(projectId, workspace));
 		}
@@ -157,7 +154,7 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 
 	@Override
 	public Collection<WorkspaceWizard> findDisabledWizards(long projectId, WorkspaceType... workspaces) {
-		Collection<WorkspaceWizard> allWizards = new HashSet<WorkspaceWizard>();
+		Collection<WorkspaceWizard> allWizards = new HashSet<>();
 
 		for (WorkspaceType workspace : workspaces) {
 			allWizards.addAll(findDisabledWizards(projectId, workspace));

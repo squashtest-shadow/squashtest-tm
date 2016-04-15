@@ -44,7 +44,7 @@ private Collection<String> i18nErrors;
 	
 	public void addi18nErrorMessage(String i18nErrorMessage){
 		if (i18nErrors==null){
-			i18nErrors = new LinkedList<String>();
+			i18nErrors = new LinkedList<>();
 		}
 		i18nErrors.add(i18nErrorMessage);
 	}
@@ -80,7 +80,7 @@ private Collection<String> i18nErrors;
 		if (! dates.isEmpty()){
 			// we use here a modified list with a dummy element at the end that will 
 			// help us to work around a corner case : handling the last element of the loop
-			List<Date> trickedDates = new LinkedList<Date>(dates);
+			List<Date> trickedDates = new LinkedList<>(dates);
 			trickedDates.add(null);
 			
 			Iterator<Date> dateIter = trickedDates.iterator();

@@ -48,7 +48,7 @@ public class I18nLevelEnumInfolistHelper {
 	
 	public MessageObject getInternationalizedDefaultList(Locale locale){
 		//default infolist values
-		Map<String, InfoList> listMap = new HashMap<String, InfoList>();
+		Map<String, InfoList> listMap = new HashMap<>();
 		listMap.put("REQUIREMENT_VERSION_CATEGORY",infoListFinder.findByCode(SystemInfoListCode.REQUIREMENT_CATEGORY.getCode()));
 		listMap.put("TEST_CASE_NATURE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_NATURE.getCode()));
 		listMap.put("TEST_CASE_TYPE", infoListFinder.findByCode(SystemInfoListCode.TEST_CASE_TYPE.getCode()));

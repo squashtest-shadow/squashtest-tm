@@ -162,7 +162,7 @@ TestCaseLibraryNodeDao {
 
 
 	private List<String> unescapeSlashes(List<String> paths) {
-		List<String> unescaped = new ArrayList<String>(paths.size());
+		List<String> unescaped = new ArrayList<>(paths.size());
 		for (String orig : paths) {
 			unescaped.add(orig.replaceAll("\\\\/", "/"));
 		}

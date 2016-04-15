@@ -27,5 +27,6 @@ import java.util.List;
 
 public interface CustomReportLibraryDao extends JpaRepository<CustomReportLibrary, Long> {
 
+	@Override
 	List<CustomReportLibrary> findAll();
 }

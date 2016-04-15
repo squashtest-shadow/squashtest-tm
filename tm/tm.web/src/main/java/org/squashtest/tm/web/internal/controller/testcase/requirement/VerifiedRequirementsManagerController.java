@@ -231,9 +231,9 @@ public class VerifiedRequirementsManagerController {
 	public int changeVersion(@PathVariable long testCaseId, @PathVariable long oldVersionId,
 			@RequestParam(VALUE) long newVersionId) {
 
-		List<Long> oldVersion = new ArrayList<Long>();
+		List<Long> oldVersion = new ArrayList<>();
 		oldVersion.add(oldVersionId);
-		List<Long> newVersion = new ArrayList<Long>();
+		List<Long> newVersion = new ArrayList<>();
 		newVersion.add(newVersionId);
 
 		int newVersionNumber = verifiedRequirementsManagerService.changeVerifiedRequirementVersionOnTestCase(
@@ -346,7 +346,7 @@ public class VerifiedRequirementsManagerController {
 
 		@Override
 		public Map<String, Object> buildItemData(VerifiedRequirement item) {
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());

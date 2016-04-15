@@ -77,7 +77,7 @@ public class ExtendedHibernateQuery<T> extends HibernateQuery<T> implements Exte
 
 	@Override
 	protected ExtendedHibernateQuery<T> clone(SessionHolder sessionHolder) {
-		ExtendedHibernateQuery<T> q = new ExtendedHibernateQuery<T>(sessionHolder,
+		ExtendedHibernateQuery<T> q = new ExtendedHibernateQuery<>(sessionHolder,
 				getTemplates(), getMetadata().clone());
 		q.clone(this);
 		return q;

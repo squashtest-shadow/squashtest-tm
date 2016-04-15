@@ -78,7 +78,7 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 	 */
 	@Override
 	public <X extends BoundEntity> CustomFieldHelper<X> newHelper(X entity) {
-		CustomFieldHelperImpl<X> helper = new CustomFieldHelperImpl<X>(entity);
+		CustomFieldHelperImpl<X> helper = new CustomFieldHelperImpl<>(entity);
 		helper.setCufBindingService(cufBindingService);
 		helper.setCufValuesService(cufValuesService);
 		return helper;
@@ -91,7 +91,7 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 	 */
 	@Override
 	public <X extends BoundEntity> CustomFieldHelper<X> newHelper(List<X> entities) {
-		CustomFieldHelperImpl<X> helper = new CustomFieldHelperImpl<X>(entities);
+		CustomFieldHelperImpl<X> helper = new CustomFieldHelperImpl<>(entities);
 		helper.setCufBindingService(cufBindingService);
 		helper.setCufValuesService(cufValuesService);
 		return helper;
@@ -99,14 +99,14 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 
 	@Override
 	public <X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(X entity) {
-		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<X>(entity);
+		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<>(entity);
 		helper.setDenormalizedFieldValueFinder(denormalizedFinder);
 		return helper;
 	}
 
 	@Override
 	public <X extends DenormalizedFieldHolder> DenormalizedFieldHelper<X> newDenormalizedHelper(List<X> entities) {
-		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<X>(entities);
+		DenormalizedFieldHelper<X> helper = new DenormalizedFieldHelper<>(entities);
 		helper.setDenormalizedFieldValueFinder(denormalizedFinder);
 		return helper;
 	}
@@ -122,9 +122,9 @@ public class CustomFieldHelperServiceImpl implements CustomFieldHelperService {
 		List<ActionTestStep> actionSteps = new ActionStepCollector().collect(steps);
 
 		if (actionSteps.isEmpty()) {
-			helper = new NoValuesCustomFieldHelper<ActionTestStep>(container, BindableEntity.TEST_STEP);
+			helper = new NoValuesCustomFieldHelper<>(container, BindableEntity.TEST_STEP);
 		} else {
-			helper = new CustomFieldHelperImpl<ActionTestStep>(actionSteps);
+			helper = new CustomFieldHelperImpl<>(actionSteps);
 		}
 
 		helper.setCufBindingService(cufBindingService);

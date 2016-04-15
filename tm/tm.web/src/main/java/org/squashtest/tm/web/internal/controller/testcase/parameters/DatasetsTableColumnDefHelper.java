@@ -34,7 +34,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
  *
  */
 public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper {
-	private static final List<AoColumnDef> baseColumns = new ArrayList<AoColumnDef>(4);
+	private static final List<AoColumnDef> baseColumns = new ArrayList<>(4);
 	static {
 		String smallWidth = "2em";
 		// columns.add(new AoColumnDef(bVisible, bSortable, sClass, sWidth, mDataProp))
@@ -45,7 +45,7 @@ public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper
 		baseColumns.add(new AoColumnDef(true, false, "delete-button", smallWidth,
 				DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY));// 3
 	}
-	private List<AoColumnDef> columns = new ArrayList<AoColumnDef>();
+	private List<AoColumnDef> columns = new ArrayList<>();
 
 	public DatasetsTableColumnDefHelper() {
 		columns.addAll(baseColumns);
@@ -60,7 +60,7 @@ public final class DatasetsTableColumnDefHelper extends DataTableColumnDefHelper
 	public List<AoColumnDef> getAoColumnDefs(List<Long> parameterIds, boolean editable) {
 		columns.get(columns.size() - 1).setbVisible(editable);
 		if (!parameterIds.isEmpty()) {
-			List<AoColumnDef> parameterColumns = new ArrayList<AoColumnDef>(parameterIds.size());
+			List<AoColumnDef> parameterColumns = new ArrayList<>(parameterIds.size());
 			for (Long parameterId : parameterIds) {
 				AoColumnDef aoColumn = new AoColumnDef(true, false, "parameter", null, "parameter-" + parameterId);
 				parameterColumns.add(aoColumn);

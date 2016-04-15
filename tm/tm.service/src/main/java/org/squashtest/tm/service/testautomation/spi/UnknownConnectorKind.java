@@ -35,7 +35,7 @@ public class UnknownConnectorKind extends TestAutomationException {
 	private static final String UNKNOWN_KIND_EXCEPTION = "testautomation.exceptions.unknownkind";
 	
 	
-	private List<String> args = new LinkedList<String>();
+	private List<String> args = new LinkedList<>();
 
 	public UnknownConnectorKind() {
 		super();

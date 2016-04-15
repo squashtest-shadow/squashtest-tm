@@ -49,6 +49,7 @@ public interface TeamDao extends Repository<Team, Long>,  CustomTeamDao{
 	 * @param teamId
 	 * @return
 	 */
+	@Override
 	@UsesTheSpringJpaDsl
 	Team findById(long teamId);
 

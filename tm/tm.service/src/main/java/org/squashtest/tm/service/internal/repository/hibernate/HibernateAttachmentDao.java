@@ -26,6 +26,7 @@ import java.util.Set;
 import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -53,7 +54,7 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 		Criteria crit = currentSession().createCriteria(AttachmentList.class)
 										.add(Restrictions.eq("id", attachmentListId))
 										.createAlias("attachments", "Attachment")
-										.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+										.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		return collectFromMapListToSet(crit);
 
@@ -84,7 +85,7 @@ public class HibernateAttachmentDao extends HibernateEntityDao<Attachment>
 		Criteria crit = session.createCriteria(AttachmentList.class,"AttachmentList")
 		.add(Restrictions.eq("id",attachmentListId))
 		.createAlias("attachments", "Attachment")
-		.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+		.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		
 		PagingUtils.addPaging(crit, pas);

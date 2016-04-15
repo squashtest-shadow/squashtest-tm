@@ -24,6 +24,7 @@ import java.util.List;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
@@ -73,7 +74,7 @@ public class TeamDaoImpl extends HibernateEntityDao<Team> implements CustomTeamD
 		
 
 		Criteria crit = currentSession().createCriteria(User.class, "User").add(Restrictions.eq("User.id", userId))
-				.createCriteria("User.teams", "Team").setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+				.createCriteria("User.teams", "Team").setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		/* add ordering */
 		String sortedAttribute = paging.getSortedAttribute();

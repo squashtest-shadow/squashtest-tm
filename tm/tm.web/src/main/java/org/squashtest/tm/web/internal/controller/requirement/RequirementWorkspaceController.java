@@ -31,7 +31,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.requirement.RequirementLibrary;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;
@@ -74,6 +73,7 @@ public class RequirementWorkspaceController extends WorkspaceController<Requirem
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
 	 */
+	@Override
 	protected WorkspaceType getWorkspaceType() {
 		return WorkspaceType.REQUIREMENT_WORKSPACE;
 	}

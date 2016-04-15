@@ -70,7 +70,7 @@ DataTableModelBuilder<Execution> {
 		IterationTestPlanItem testPlanItem = item.getTestPlan();
 		Iteration iteration = testPlanItem.getIteration();
 
-		Map<String, Object> data = new HashMap<String, Object>(12);
+		Map<String, Object> data = new HashMap<>(12);
 
 		data.put("exec-id", 		item.getId());
 		data.put(DataTableModelConstants.PROJECT_NAME_KEY, 	iteration.getProject().getName());

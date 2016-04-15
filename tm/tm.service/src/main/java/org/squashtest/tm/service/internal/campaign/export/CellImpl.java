@@ -35,6 +35,7 @@ class CellImpl implements Cell {
 		this.value = value;
 	}
 
+	@Override
 	public String getValue() {
 		return value;
 	}

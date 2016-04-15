@@ -68,7 +68,7 @@ public class TestAutomationProjectContentModel {
 	public TestAutomationProjectContentModel(TestAutomationProjectContent content){
 		this.project = new TestAutomationProjectModel(content.getProject());
 		this.orderGuaranteed = content.isOrderGuaranteed();
-		Collection<AutomatedTestModel> tmodels = new ArrayList<AutomatedTestModel>(content.getTests().size());
+		Collection<AutomatedTestModel> tmodels = new ArrayList<>(content.getTests().size());
 		for (AutomatedTest test : content.getTests()){
 			tmodels.add(new AutomatedTestModel(test));
 		}

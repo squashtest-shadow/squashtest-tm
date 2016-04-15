@@ -56,7 +56,7 @@ public class WorkbookMetaData {
 	 *             all encountered mismatches.
 	 */
 	public void validate() throws TemplateMismatchException {
-		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<WorksheetFormatStatus>();
+		List<WorksheetFormatStatus> worksheetKOStatuses = new ArrayList<>();
 
 		for (WorksheetDef<?> wd : worksheetDefByType.values()) {
 

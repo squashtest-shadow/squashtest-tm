@@ -75,6 +75,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		getContent().add(node);
 
 		getProject().accept(new ProjectVisitor() {
+			@Override
 			public void visit(Project project) {
 				node.notifyAssociatedWithProject(project);
 
@@ -101,6 +102,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		}
 
 		getProject().accept(new ProjectVisitor() {
+			@Override
 			public void visit(Project project) {
 				node.notifyAssociatedWithProject(project);
 
@@ -120,7 +122,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 		 * data are inserted with their correct index (INSERT only, we don't want messy UPDATE)
 		 */
 		List<NODE> orig = getContent();
-		List<NODE> reindexed = new ArrayList<NODE>(orig);
+		List<NODE> reindexed = new ArrayList<>(orig);
 		orig.clear();
 		for (NODE n : reindexed) {
 			orig.add(n);
@@ -146,7 +148,7 @@ public abstract class GenericLibrary<NODE extends LibraryNode> implements Librar
 
 	@Override
 	public List<String> getContentNames() {
-		List<String> contentNames = new ArrayList<String>(getContent().size());
+		List<String> contentNames = new ArrayList<>(getContent().size());
 		for (NODE node : getContent()) {
 			contentNames.add(node.getName());
 		}

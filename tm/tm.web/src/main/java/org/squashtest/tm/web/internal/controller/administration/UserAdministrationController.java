@@ -359,7 +359,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 				}
 			}
 
-			Map<Object, Object> result = new HashMap<Object, Object>();
+			Map<Object, Object> result = new HashMap<>();
 			result.put("user-id", item.getId());
 			result.put("user-active", item.getActive());
 			result.put("user-index", getCurrentIndex());

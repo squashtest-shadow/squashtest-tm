@@ -53,7 +53,7 @@ public class DataTablesController {
 	@ResponseBody
 	public Map<String, Object> getInternationalizedMessages(Locale locale) {
 		if (legacyMessages == null) {
-			legacyMessages = new HashMap<String, Object>();
+			legacyMessages = new HashMap<>();
 
 			legacyMessages.put("sLengthMenu", messageSource.getMessage("generics.datatable.lengthMenu", null, locale));
 			legacyMessages
@@ -64,7 +64,7 @@ public class DataTablesController {
 					messageSource.getMessage("generics.datatable.infoFiltered", null, locale));
 			legacyMessages.put("sSearch", messageSource.getMessage("generics.datatable.search", null, locale));
 
-			Map<String, Object> pagination = new HashMap<String, Object>();
+			Map<String, Object> pagination = new HashMap<>();
 			legacyMessages.put("oPaginate", pagination);
 
 			pagination.put("sFirst", messageSource.getMessage("generics.datatable.paginate.first", null, locale));
@@ -86,7 +86,7 @@ public class DataTablesController {
 	@ResponseBody
 	public Map<String, Object> getLanguage(Locale locale) {
 		if (messages == null) {
-			messages = new HashMap<String, Object>();
+			messages = new HashMap<>();
 
 			messages.put("search", messageSource.getMessage("generics.datatable.search", null, locale));
 			messages.put("lengthMenu", messageSource.getMessage("generics.datatable.lengthMenu", null, locale));
@@ -95,7 +95,7 @@ public class DataTablesController {
 			messages.put("infoFiltered", messageSource.getMessage("generics.datatable.infoFiltered", null, locale));
 			messages.put("zeroRecords", messageSource.getMessage("generics.datatable.zeroRecords", null, locale));
 
-			Map<String, Object> pagination = new HashMap<String, Object>();
+			Map<String, Object> pagination = new HashMap<>();
 			messages.put("paginate", pagination);
 
 			pagination.put("first", messageSource.getMessage("generics.datatable.paginate.first", null, locale));

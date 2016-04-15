@@ -1031,7 +1031,7 @@ public class AdvancedSearchController {
 		@Override
 		public Map<String, Object> buildItemData(IterationTestPlanItem item) {
 
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());
 			res.put("project-id", item.getProject().getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());

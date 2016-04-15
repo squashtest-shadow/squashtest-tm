@@ -36,7 +36,7 @@ public class DataTableDrawParameters {
 	private String sEcho;
 
 	// table columns definition
-	private Map<Integer, Object> mDataProp = new HashMap<Integer, Object>();
+	private Map<Integer, Object> mDataProp = new HashMap<>();
 
 	// paging information
 	private int iDisplayStart;
@@ -44,11 +44,11 @@ public class DataTableDrawParameters {
 
 	// filtering information
 	private String sSearch;
-	private Map<Integer, String> sSearches = new HashMap<Integer, String>();
+	private Map<Integer, String> sSearches = new HashMap<>();
 	
 	// sorting information
-	private Map<Integer, Integer> iSortCol = new HashMap<Integer, Integer>();
-	private Map<Integer, String> sSortDir = new HashMap<Integer, String>();
+	private Map<Integer, Integer> iSortCol = new HashMap<>();
+	private Map<Integer, String> sSortDir = new HashMap<>();
 	private int iSortingCols;
 
 	// filtering information

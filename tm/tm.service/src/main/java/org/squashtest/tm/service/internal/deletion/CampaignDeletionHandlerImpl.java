@@ -188,8 +188,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(campaign.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				} catch (AccessDeniedException exception) {
-
+				} 
+				catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
+					
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(campaign.getName());
@@ -217,13 +218,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				try {
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, "EXTENDED_DELETE"));
 
-					//The user is allowed to delete the campaign but must be warned
+					//The user is allowed to delete the iteration but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(iteration.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				} catch (AccessDeniedException exception) {
-					LOGGER.trace("The user is not allowed to delete the campaign");
+				} 
+				catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
+					LOGGER.trace("The user is not allowed to delete the iteration");
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(iteration.getName());
 					report.setHasRights(false);
@@ -270,14 +272,15 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					PermissionsUtils.checkPermission(permissionEvaluationService,
 						new SecurityCheckableObject(suite, "EXTENDED_DELETE"));
 
-					// The user is allowed to delete the campaign but must be warned
+					// The user is allowed to delete the test suite but must be warned
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(suite.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				} catch (AccessDeniedException exception) {
+				} 
+				catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
 
-					// The user is not allowed to delete the campaign
+					// The user is not allowed to delete the test suite
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(suite.getName());
 					report.setHasRights(false);

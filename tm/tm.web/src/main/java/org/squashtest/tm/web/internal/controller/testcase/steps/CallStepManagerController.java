@@ -86,7 +86,7 @@ public class CallStepManagerController {
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
 		DriveNodeBuilder<TestCaseLibraryNode> builder = driveNodeBuilder.get();
-		List<JsTreeNode> linkableLibrariesModel = new ArrayList<JsTreeNode>();
+		List<JsTreeNode> linkableLibrariesModel = new ArrayList<>();
 
 		for (TestCaseLibrary library : linkableLibraries) {
 			JsTreeNode libraryNode = builder.setModel(library).build();

@@ -30,6 +30,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Hibernate;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.sql.JoinType;
 import org.hibernate.type.LongType;
@@ -302,7 +303,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	public List<IssueDetector> findAllIssueDetectorsForExecution(Long execId) {
 		Execution execution = findById(execId);
 		List<ExecutionStep> steps = execution.getSteps();
-		List<IssueDetector> issueDetectors = new ArrayList<IssueDetector>(steps.size() + 1);
+		List<IssueDetector> issueDetectors = new ArrayList<>(steps.size() + 1);
 		issueDetectors.add(execution);
 		issueDetectors.addAll(steps);
 		return issueDetectors;
@@ -344,7 +345,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
 
-		crit.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
 		PagingUtils.addPaging(crit, pas);
 		SortingUtils.addOrder(crit, pas);

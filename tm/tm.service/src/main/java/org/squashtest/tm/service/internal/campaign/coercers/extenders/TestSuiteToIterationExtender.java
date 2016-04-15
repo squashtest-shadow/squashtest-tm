@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.hibernate.Query;
-import org.hibernate.SessionFactory;
 import org.hibernate.StatelessSession;
 import org.hibernate.Transaction;
 import org.springframework.beans.factory.annotation.Configurable;

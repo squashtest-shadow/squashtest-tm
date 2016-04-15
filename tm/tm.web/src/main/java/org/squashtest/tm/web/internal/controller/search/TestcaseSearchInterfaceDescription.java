@@ -275,7 +275,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		Collection<Project> readableProjects = projectFinder.findAllReadable();
 
-		Collection<InfoList> natures = new ArrayList<InfoList>(readableProjects.size());
+		Collection<InfoList> natures = new ArrayList<>(readableProjects.size());
 
 		for (Project p : readableProjects){
 			natures.add(p.getTestCaseNatures());
@@ -296,7 +296,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 
 		Collection<Project> readableProjects = projectFinder.findAllReadable();
 
-		Collection<InfoList> types = new ArrayList<InfoList>(readableProjects.size());
+		Collection<InfoList> types = new ArrayList<>(readableProjects.size());
 
 		for (Project p : readableProjects){
 			types.add(p.getTestCaseTypes());
@@ -313,7 +313,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){
 
 		InternationalizationHelper messages = getMessageSource();
-		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<String, SearchInputPossibleValueModel>();
+		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<>();
 
 		for (InfoList list : infoLists){
 			if (! listsByListCode.containsKey(list.getCode())){

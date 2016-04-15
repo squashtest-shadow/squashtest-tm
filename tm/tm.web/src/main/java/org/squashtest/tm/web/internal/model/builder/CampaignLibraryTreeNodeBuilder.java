@@ -30,7 +30,6 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor;
-import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
@@ -112,7 +111,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 				IterationNodeBuilder childrenBuilder = new IterationNodeBuilder(permissionEvaluationService);
 
-				List<JsTreeNode> children = new JsTreeNodeListBuilder<Iteration>(childrenBuilder)
+				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 						.expand(getExpansionCandidates())
 						.setModel(visited.getOrderedContent())
 						.build();
@@ -133,7 +132,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 
 
-				List<JsTreeNode> children = new JsTreeNodeListBuilder<CampaignLibraryNode>(childrenBuilder)
+				List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 						.expand(getExpansionCandidates())
 						.setModel(visited.getOrderedContent())
 						.build();

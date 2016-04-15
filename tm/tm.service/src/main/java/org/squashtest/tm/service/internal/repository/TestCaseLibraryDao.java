@@ -25,6 +25,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 
 public interface TestCaseLibraryDao extends LibraryDao<TestCaseLibrary, TestCaseLibraryNode>, EntityDao<TestCaseLibrary> {
 
+	@Override
 	void persist(TestCaseLibrary library);
 
 

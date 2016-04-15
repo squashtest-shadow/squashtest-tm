@@ -139,7 +139,7 @@ public class NextLayerFeeder implements NodeVisitor {
 	@SuppressWarnings("unchecked")
 	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> destination) {
 		if (source.hasContent()) {
-			Collection<TreeNode> sourceContent = new ArrayList<TreeNode>(source.getOrderedContent());
+			Collection<TreeNode> sourceContent = new ArrayList<>(source.getOrderedContent());
 			sourceContent.removeAll(outputList);
 			nextLayer.put((NodeContainer<TreeNode>) destination, sourceContent);
 		}

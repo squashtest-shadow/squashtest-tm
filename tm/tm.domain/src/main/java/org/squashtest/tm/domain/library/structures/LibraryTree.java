@@ -372,7 +372,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	 * @return all the nodes.
 	 */
 	public List<T> getAllNodes(){
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 		for (List<T> layer : layers.values()){
 			result.addAll(layer);
 		}

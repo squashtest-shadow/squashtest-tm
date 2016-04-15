@@ -33,7 +33,7 @@ public class JsTreeNodeData {
 		/**
 		 * Attributes of the <code>a</code> node
 		 */
-		private Map<String, String> attr = new HashMap<String, String>();
+		private Map<String, String> attr = new HashMap<>();
 
 		public String getTitle() {
 			return title;

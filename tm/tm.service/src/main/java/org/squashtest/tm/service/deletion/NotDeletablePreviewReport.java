@@ -35,8 +35,8 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 	private static final String WHY_MESSAGE_KEY = "squashtm.deletion.preview.notdeletable.why";
 	
 	
-	private final Set<String> nodeNames = new HashSet<String>();
-	private final Set<String> why = new HashSet<String>();
+	private final Set<String> nodeNames = new HashSet<>();
+	private final Set<String> why = new HashSet<>();
 	
 	@Override
 	public String toString(MessageSource source, Locale locale) {

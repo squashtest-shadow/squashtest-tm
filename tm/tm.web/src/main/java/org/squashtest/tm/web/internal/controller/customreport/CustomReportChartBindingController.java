@@ -83,7 +83,7 @@ public class CustomReportChartBindingController {
 
 	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.PUT)
 	public @ResponseBody void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
-		List<CustomReportChartBinding> bindings = new ArrayList<CustomReportChartBinding>();
+		List<CustomReportChartBinding> bindings = new ArrayList<>();
 		for (JsonCustomReportGridElement gridElement : gridElements) {
 			bindings.add(gridElement.convertToEntity());
 		}

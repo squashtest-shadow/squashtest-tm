@@ -36,6 +36,7 @@ public interface LibraryNode extends Copiable, Identified, AttachmentHolder, Tre
 	/**
 	 * @return Name of this node.
 	 */
+	@Override
 	String getName();
 
 	/**
@@ -43,6 +44,7 @@ public interface LibraryNode extends Copiable, Identified, AttachmentHolder, Tre
 	 * @param name
 	 *            The name of this node. Should not be blank or null.
 	 */
+	@Override
 	void setName(String name);
 
 	/***

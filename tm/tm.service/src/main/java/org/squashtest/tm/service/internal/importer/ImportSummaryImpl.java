@@ -32,11 +32,13 @@ public class ImportSummaryImpl implements ImportSummary {
 	private int milestoneFailures=0;
 	private int milestoneNotActivatedFailures=0;
 
+	@Override
 	public int getMilestoneNotActivatedFailures() {
 		return milestoneNotActivatedFailures;
 	}
 
 
+	@Override
 	public int getMilestoneFailures() {
 		return milestoneFailures;
 	}

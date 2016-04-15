@@ -29,7 +29,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.criterion.SimpleExpression;
 import org.hibernate.search.bridge.LuceneOptions;
 import org.hibernate.search.bridge.ParameterizedBridge;
-import org.hibernate.search.bridge.builtin.NumericEncodingCalendarBridge;
 import org.hibernate.search.bridge.builtin.NumericEncodingDateBridge;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +40,6 @@ import org.squashtest.tm.domain.testcase.TestCase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;

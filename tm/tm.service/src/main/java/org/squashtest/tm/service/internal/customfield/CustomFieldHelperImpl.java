@@ -46,7 +46,7 @@ public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustom
 	// ************* code ************************
 
 	public CustomFieldHelperImpl(X entity) {
-		this.entities = new ArrayList<X>();
+		this.entities = new ArrayList<>();
 		this.entities.add(entity);
 	}
 
@@ -94,7 +94,7 @@ public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustom
 			Collection<BindingTarget> targets = CollectionUtils.collect(entities, new BindingTargetCollector());
 			retainUniques(targets);
 
-			customFields = new ArrayList<CustomField>();
+			customFields = new ArrayList<>();
 
 			// collect the result
 			for (BindingTarget target : targets) {
@@ -111,7 +111,7 @@ public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustom
 	}
 
 	private <Y> void retainUniques(Collection<Y> argument) {
-		Set<Y> set = new LinkedHashSet<Y>(argument);
+		Set<Y> set = new LinkedHashSet<>(argument);
 		argument.clear();
 		argument.addAll(set);
 	}

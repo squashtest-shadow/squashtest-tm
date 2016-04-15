@@ -63,7 +63,7 @@ public class Dataset implements Identified {
 
 	@NotNull
 	@OneToMany(cascade = { CascadeType.ALL }, mappedBy="dataset")
-	private Set<DatasetParamValue> parameterValues = new HashSet<DatasetParamValue>(0);
+	private Set<DatasetParamValue> parameterValues = new HashSet<>(0);
 
 	public Dataset() {
 	}
@@ -91,6 +91,7 @@ public class Dataset implements Identified {
 		this.testCase = testCase;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

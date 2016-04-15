@@ -34,6 +34,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.Parameter;
@@ -119,7 +120,7 @@ class EntityValidator {
 		}
 
 		// 4 - name has length between 0 and 255
-		if (name != null && name.length() > TestCase.MAX_NAME_SIZE) {
+		if (name != null && name.length() > LibraryNode.MAX_NAME_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_NAME.header)
 					.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
@@ -312,8 +313,8 @@ class EntityValidator {
 		String[] names = PathUtils.splitPath(path);
 		for (int i = 1; i < names.length; i++) {//begin to 1 as first split is project name
 			String name = names[i];
-			if (name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
-				names[i] = StringUtils.abbreviate(name, RequirementLibraryNode.MAX_NAME_SIZE);
+			if (name.length() > LibraryNode.MAX_NAME_SIZE) {
+				names[i] = StringUtils.abbreviate(name, LibraryNode.MAX_NAME_SIZE);
 				hasTruncate = true;
 			}
 		}
@@ -343,8 +344,8 @@ class EntityValidator {
 
 	private void checkVersionName(RequirementVersionTarget target, RequirementVersion reqVersion, LogTrain logs) {
 		String name = reqVersion.getName();
-		if (name != null && name.length() > RequirementLibraryNode.MAX_NAME_SIZE) {
-			reqVersion.setName(StringUtils.abbreviate(name, RequirementLibraryNode.MAX_NAME_SIZE));
+		if (name != null && name.length() > LibraryNode.MAX_NAME_SIZE) {
+			reqVersion.setName(StringUtils.abbreviate(name, LibraryNode.MAX_NAME_SIZE));
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_NAME.header)
 					.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}

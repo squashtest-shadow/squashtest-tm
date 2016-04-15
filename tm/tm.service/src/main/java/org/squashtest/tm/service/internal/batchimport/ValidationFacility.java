@@ -328,7 +328,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 */
 	private List<LogEntry> fixMetadatas(Target target, AuditableMixin auditable, ImportMode importMode, EntityType type) {
 		// init vars
-		List<LogEntry> logEntries = new ArrayList<LogEntry>();
+		List<LogEntry> logEntries = new ArrayList<>();
 		String login = auditable.getCreatedBy();
 		boolean fixUser = false;
 		if (StringUtils.isBlank(login)) {

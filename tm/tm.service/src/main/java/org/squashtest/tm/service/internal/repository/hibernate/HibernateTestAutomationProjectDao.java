@@ -29,7 +29,6 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.stereotype.Repository;
@@ -138,7 +137,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		Session session = em.unwrap(Session.class);
 		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
 		query.setParameter(ParameterNames.SERVER_ID, serverId);
-		return (List<TestAutomationProject>) query.list();
+		return query.list();
 	}
 
 	/**

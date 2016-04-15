@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.testcase.TestStepVisitor;
 
 public class ParameterNamesFinder implements TestStepVisitor{
 	
-	private Set<String> result = new HashSet<String>();
+	private Set<String> result = new HashSet<>();
 	
 	public Set<String> findParametersNamesInActionAndExpectedResult(TestStep step){
 		step.accept(this);

@@ -30,7 +30,7 @@ import org.squashtest.tm.service.importer.Target;
 
 public class LogTrain {
 
-	private List<LogEntry> entries = new LinkedList<LogEntry>();
+	private List<LogEntry> entries = new LinkedList<>();
 	private boolean criticalErrors = false;
 
 	public void addEntry(LogEntry entry){

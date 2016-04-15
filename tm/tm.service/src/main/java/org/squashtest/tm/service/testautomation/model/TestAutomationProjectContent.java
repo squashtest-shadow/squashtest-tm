@@ -70,7 +70,7 @@ public class TestAutomationProjectContent {
 	public TestAutomationProjectContent(TestAutomationProject project) {
 		super();
 		this.project = project;
-		this.tests = new ArrayList<AutomatedTest>();
+		this.tests = new ArrayList<>();
 	}
 
 	public TestAutomationProjectContent(TestAutomationProject project, Exception knownProblem) {

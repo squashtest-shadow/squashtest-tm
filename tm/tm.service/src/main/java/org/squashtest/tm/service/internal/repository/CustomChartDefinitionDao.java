@@ -22,8 +22,6 @@ package org.squashtest.tm.service.internal.repository;
 
 import java.util.List;
 
-import org.squashtest.tm.domain.chart.ChartDefinition;
-
 public interface CustomChartDefinitionDao {
 	/**
 	 * Check if at least one user in the list own at least one chart.

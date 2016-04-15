@@ -83,7 +83,7 @@ public class ExecutionRestController {
 
 		Execution execution = findExecution(id);
 		List<ExecutionStep> steps = execution.getSteps();
-		List<RestExecutionStep> restExecutionSteps = new ArrayList<RestExecutionStep>(steps.size());
+		List<RestExecutionStep> restExecutionSteps = new ArrayList<>(steps.size());
 		for (ExecutionStep step : steps) {
 			restExecutionSteps.add(new RestExecutionStep(step));
 		}

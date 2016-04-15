@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
@@ -86,7 +85,7 @@ public class RequirementVerifierView {
 	}
 	
 	public List<RequirementVersionCoverageView> getCoverages(){
-		List<RequirementVersionCoverageView> coverages = new ArrayList<RequirementVersionCoverageView>(0);
+		List<RequirementVersionCoverageView> coverages = new ArrayList<>(0);
 		for(RequirementVersionCoverage rc : verifier.getRequirementVersionCoverages()){
 			RequirementVersionCoverageView coverage = new RequirementVersionCoverageView(rc, verifyingStep);
 			coverage.calculateMilestoneTimeInterval(internationalizationHelper, locale);

@@ -32,7 +32,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -75,7 +74,7 @@ public abstract class PartyControllerSupport {
 		Locale locale = LocaleContextHolder.getLocale();
 
 		List<PermissionGroup> permissionList = permissionService.findAllPossiblePermission();
-		List<PermissionGroupModel> permissionGroupModelList = new ArrayList<PermissionGroupModel>();
+		List<PermissionGroupModel> permissionGroupModelList = new ArrayList<>();
 		if (permissionList != null) {
 			for (PermissionGroup permission : permissionList) {
 				PermissionGroupModel model = new PermissionGroupModel(permission);
@@ -94,7 +93,7 @@ public abstract class PartyControllerSupport {
 
 		List<GenericProject> projectList = permissionService.findProjectWithoutPermissionByParty(partyId, new Sort(Direction.ASC, "name"));
 
-		List<ProjectModel> projectModelList = new ArrayList<ProjectModel>();
+		List<ProjectModel> projectModelList = new ArrayList<>();
 		if (projectList != null) {
 			for (GenericProject project : projectList) {
 				projectModelList.add(new ProjectModel(project));
@@ -110,7 +109,7 @@ public abstract class PartyControllerSupport {
 		List<ProjectModel> projectModelList = getProjectModels(partyId);
 		List<PermissionGroupModel> permissionGroupModelList = getPermissionGroupModels(partyId);
 
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 
 		res.put("myprojectList", projectModelList);
 		res.put("permissionList", permissionGroupModelList);
@@ -139,7 +138,7 @@ public abstract class PartyControllerSupport {
 
 		@Override
 		public Map<String, Object> buildItemData(ProjectPermission item) {
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put("project-id", item.getProject().getId());
 			res.put("project-index", getCurrentIndex());
 			res.put(DataTableModelConstants.PROJECT_NAME_KEY, item.getProject().getName());

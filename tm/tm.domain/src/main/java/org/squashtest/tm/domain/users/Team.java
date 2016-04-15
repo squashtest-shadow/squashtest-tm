@@ -58,7 +58,7 @@ public class Team extends Party{
 	
 	@ManyToMany
 	@JoinTable(name = "CORE_TEAM_MEMBER", joinColumns = @JoinColumn(name = "TEAM_ID"), inverseJoinColumns = @JoinColumn(name = "USER_ID"))
-	private final Set<User> members = new HashSet<User>();
+	private final Set<User> members = new HashSet<>();
 
 	@Override
 	public String getName() {
@@ -97,6 +97,7 @@ public class Team extends Party{
 		members.removeAll(users);
 	}
 	
+	@Override
 	public String getType(){
 		return TYPE;
 	}

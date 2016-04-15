@@ -45,8 +45,8 @@ public class WorksheetDef<COL extends TemplateColumn> {
 
 	private final TemplateWorksheet worksheetType;
 	private final Map<COL, StdColumnDef<COL>> stdColumnDefs = new HashMap<COL, StdColumnDef<COL>>();
-	private final List<CustomFieldColumnDef> customFieldDefs = new ArrayList<CustomFieldColumnDef>();
-	private final List<UnknownColumnDef> unknownColumnDefs = new ArrayList<UnknownColumnDef>();
+	private final List<CustomFieldColumnDef> customFieldDefs = new ArrayList<>();
+	private final List<UnknownColumnDef> unknownColumnDefs = new ArrayList<>();
 
 	public WorksheetDef(@NotNull TemplateWorksheet worksheetType) {
 		super();
@@ -75,7 +75,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 	 */
 	WorksheetFormatStatus validate() {
 
-		List<TemplateColumn> missingMandatoryColumnMismatch = new ArrayList<TemplateColumn>();
+		List<TemplateColumn> missingMandatoryColumnMismatch = new ArrayList<>();
 
 		for (TemplateColumn col : worksheetType.getColumnTypes()) {
 			if (isMandatory(col) && noColumnDef(col)) {
@@ -120,14 +120,14 @@ public class WorksheetDef<COL extends TemplateColumn> {
 		boolean duplicate = false;
 		if (colType != null) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as standard column {}", header, colType);
-			res = new StdColumnDef<COL>(colType, colIndex);
+			res = new StdColumnDef<>(colType, colIndex);
 			duplicate = addColumnDef((StdColumnDef<COL>) res);
 
 		} else if (isCustomFieldHeader(header)) {
 			LOGGER.trace("Column named '{}' will be added to metamodel as custom field", header);
 			res = new CustomFieldColumnDef(parseCustomFieldHeader(header), colIndex);
 			List<CustomFieldColumnDef> cufDefs = getCustomFieldDefs();
-			duplicate = cufDefs.contains((CustomFieldColumnDef) res);
+			duplicate = cufDefs.contains(res);
 			cufDefs.add((CustomFieldColumnDef) res);
 
 		} /*else if (TemplateColumnUtils){

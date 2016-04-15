@@ -100,7 +100,7 @@ public class RequirementLibraryNavigationController extends
 		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
-		List<Long> milestoneIds = new ArrayList<Long>();
+		List<Long> milestoneIds = new ArrayList<>();
 		if (activeMilestone != null) {
 			milestoneIds.add(activeMilestone.getId());
 		}
@@ -124,7 +124,7 @@ public class RequirementLibraryNavigationController extends
 			throw new BindException(validation);
 		}
 
-		List<Long> milestoneIds = new ArrayList<Long>();
+		List<Long> milestoneIds = new ArrayList<>();
 		if (activeMilestone != null) {
 			milestoneIds.add(activeMilestone.getId());
 		}
@@ -148,7 +148,7 @@ public class RequirementLibraryNavigationController extends
 		if (validation.hasErrors()) {
 			throw new BindException(validation);
 		}
-		List<Long> milestoneIds = new ArrayList<Long>();
+		List<Long> milestoneIds = new ArrayList<>();
 		if (activeMilestone != null) {
 			milestoneIds.add(activeMilestone.getId());
 		}
@@ -258,7 +258,7 @@ public class RequirementLibraryNavigationController extends
 			nodeBuilder.filterByMilestone(activeMilestone);
 		}
 
-		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<RequirementLibraryNode>(
+		JsTreeNodeListBuilder<RequirementLibraryNode> listBuilder = new JsTreeNodeListBuilder<>(
 				nodeBuilder);
 
 		return listBuilder.setModel((List<RequirementLibraryNode>) requirements).build();
@@ -272,7 +272,7 @@ public class RequirementLibraryNavigationController extends
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<RequirementLibrary> linkableLibraries) {
-		JsTreeNodeListBuilder<RequirementLibrary> listBuilder = new JsTreeNodeListBuilder<RequirementLibrary>(
+		JsTreeNodeListBuilder<RequirementLibrary> listBuilder = new JsTreeNodeListBuilder<>(
 				driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();

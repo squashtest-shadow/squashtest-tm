@@ -46,7 +46,7 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	private void initStatusesNb() {
-		statusesNb = new HashMap<ExecutionStatus, Integer>(ExecutionStatus.getCanonicalStatusSet().size());
+		statusesNb = new HashMap<>(ExecutionStatus.getCanonicalStatusSet().size());
 		for (ExecutionStatus status : ExecutionStatus.getCanonicalStatusSet()) {
 			statusesNb.put(status, 0);
 		}
@@ -120,7 +120,7 @@ public class TestSuiteTestInventoryStatistics {
 
 	public float getPcPrevProgress() {
 		if (nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f) {
-			return Math.round(((float) getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
+			return Math.round((getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
 					new Date(), getNbTotal())) * 10000) / (float) 100;
 		} else {
 			return getPcProgress();

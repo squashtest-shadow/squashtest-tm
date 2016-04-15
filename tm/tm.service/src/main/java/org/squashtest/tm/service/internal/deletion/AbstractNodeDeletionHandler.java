@@ -158,10 +158,10 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 
 			nodeHierarchy.addAll(nextPairedLayer);
 
-			currentLayer = new LinkedList<Long>(CollectionUtils.collect(nextPairedLayer, new Transformer() {
+			currentLayer = new LinkedList<>(CollectionUtils.collect(nextPairedLayer, new Transformer() {
 				@Override
 				public Object transform(Object input) {
-					return (Long)((Object[])input)[1];
+					return ((Object[])input)[1];
 				}
 			}));
 		}
@@ -184,7 +184,7 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 			return Collections.emptyList();
 		}
 
-		List<Long> nodeHierarchy = new ArrayList<Long>();
+		List<Long> nodeHierarchy = new ArrayList<>();
 
 		nodeHierarchy.addAll(rootNodeIds);
 

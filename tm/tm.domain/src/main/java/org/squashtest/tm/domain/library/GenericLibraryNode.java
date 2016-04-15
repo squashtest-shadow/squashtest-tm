@@ -88,6 +88,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		}
 	}
 
+	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}

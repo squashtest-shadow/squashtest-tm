@@ -31,10 +31,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.SequenceGenerator;
 
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DocumentId;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.domain.SelfClassAware;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.audit.Auditable;

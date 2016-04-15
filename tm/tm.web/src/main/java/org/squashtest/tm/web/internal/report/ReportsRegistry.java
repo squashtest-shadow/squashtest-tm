@@ -96,7 +96,7 @@ public class ReportsRegistry {
 
 
 	public List<StandardReportCategory> getSortedCategories() {
-		List<StandardReportCategory> sortedCategories = new ArrayList<StandardReportCategory>(getCategories());
+		List<StandardReportCategory> sortedCategories = new ArrayList<>(getCategories());
 		Collections.sort(sortedCategories, new CategorySorter(i18nHelper));
 		return sortedCategories;
 	}

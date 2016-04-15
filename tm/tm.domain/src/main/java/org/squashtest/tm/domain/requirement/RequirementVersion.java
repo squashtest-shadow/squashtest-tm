@@ -103,7 +103,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@OneToMany(cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH }, mappedBy = "verifiedRequirementVersion", fetch=FetchType.LAZY)
 	@Field(name = "testcases", analyze = Analyze.NO, store = Store.YES)
 	@FieldBridge(impl = CollectionSizeBridge.class)
-	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<RequirementVersionCoverage>();
+	private Set<RequirementVersionCoverage> requirementVersionCoverages = new HashSet<>();
 
 	/***
 	 * The requirement reference. It should usually be set by the Requirement.
@@ -147,7 +147,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_REQ_VERSION", joinColumns = @JoinColumn(name = "REQ_VERSION_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
-	private Set<Milestone> milestones = new HashSet<Milestone>();
+	private Set<Milestone> milestones = new HashSet<>();
 
 	@Transient
 	private PropertiesSetter propertiesSetter = new PropertiesSetter();
@@ -179,7 +179,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 * Returns an UNMODIFIABLE VIEW of the verifying test cases.
 	 */
 	public Set<TestCase> getVerifyingTestCases() {
-		Set<TestCase> testCases = new HashSet<TestCase>();
+		Set<TestCase> testCases = new HashSet<>();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			testCases.add(coverage.getVerifyingTestCase());
 		}
@@ -483,7 +483,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	 * @throws RequirementAlreadyVerifiedException
 	 */
 	public List<RequirementVersionCoverage> createRequirementVersionCoveragesForCopy(RequirementVersion copyVersion) {
-		List<RequirementVersionCoverage> copies = new ArrayList<RequirementVersionCoverage>();
+		List<RequirementVersionCoverage> copies = new ArrayList<>();
 		for (RequirementVersionCoverage coverage : this.requirementVersionCoverages) {
 			RequirementVersionCoverage verifyingCopy = coverage.copyForRequirementVersion(copyVersion);
 			copies.add(verifyingCopy);

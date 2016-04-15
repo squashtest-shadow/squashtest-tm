@@ -183,7 +183,7 @@ public class MilestoneBindingController {
 
 		@Override
 		public Object buildItemData(GenericProject project) {
-			Map<String, Object> data = new HashMap<String, Object>(4);
+			Map<String, Object> data = new HashMap<>(4);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, project.getId());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
 			data.put("type", "&nbsp;");

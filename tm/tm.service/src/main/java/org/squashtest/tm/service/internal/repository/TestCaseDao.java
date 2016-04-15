@@ -26,7 +26,6 @@ import java.util.List;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 

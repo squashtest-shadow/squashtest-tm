@@ -37,7 +37,7 @@ public class RequirementCoverageStat {
 	
 	private boolean ancestor = false;
 	
-	private Map<String,Rate> rates = new HashMap<String, Rate>();
+	private Map<String,Rate> rates = new HashMap<>();
 
 	public RequirementCoverageStat() {
 	}

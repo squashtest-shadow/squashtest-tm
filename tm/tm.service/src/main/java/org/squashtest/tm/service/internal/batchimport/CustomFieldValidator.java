@@ -154,7 +154,7 @@ class CustomFieldValidator {
 		case DROPDOWN_LIST:
 			// cache the options if needed
 			registerOptions(cuf);
-			Collection<String> options = (Collection<String>) optionsByListCode.getCollection(cuf.getCode());
+			Collection<String> options = optionsByListCode.getCollection(cuf.getCode());
 			if (!options.contains(inputValue)) {
 				error = CustomFieldError.UNPARSABLE_OPTION;
 			}

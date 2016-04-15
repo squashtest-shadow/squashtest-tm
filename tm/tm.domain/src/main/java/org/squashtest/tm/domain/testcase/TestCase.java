@@ -671,6 +671,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	 *
 	 * @deprecated does not seem to be used in 1.14 - to be removed
 	 */
+	@Deprecated
 	public void removeRequirementVersionCoverage(RequirementVersionCoverage requirementVersionCoverage) {
 		this.requirementVersionCoverages.remove(requirementVersionCoverage);
 
@@ -746,6 +747,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		this.datasets.remove(dataset);
 	}
 
+	@Override
 	public Set<Milestone> getMilestones() {
 		return milestones;
 	}
@@ -759,14 +761,17 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 		return allMilestones;
 	}
 
+	@Override
 	public void bindMilestone(Milestone milestone) {
 		milestones.add(milestone);
 	}
 
+	@Override
 	public void unbindMilestone(Milestone milestone) {
 		unbindMilestone(milestone.getId());
 	}
 
+	@Override
 	public void unbindMilestone(Long milestoneId) {
 		Iterator<Milestone> iter = milestones.iterator();
 

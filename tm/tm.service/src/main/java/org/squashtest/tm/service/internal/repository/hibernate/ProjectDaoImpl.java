@@ -23,7 +23,6 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 import java.util.Collections;
 import java.util.List;
 
-import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.internal.repository.CustomProjectDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;

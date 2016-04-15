@@ -27,9 +27,9 @@ import java.util.Map;
 
 public class SearchInputInterfaceModel {
 
-	private List<SearchInputPanelModel> panels = new ArrayList<SearchInputPanelModel>();
+	private List<SearchInputPanelModel> panels = new ArrayList<>();
 
-	private Map<String, Object> metadata = new HashMap<String, Object>();
+	private Map<String, Object> metadata = new HashMap<>();
 
 	SearchInputInterfaceModel(){
 

@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class AdvancedSearchModel {
 
-	private Map<String, AdvancedSearchFieldModel> fields = new HashMap<String, AdvancedSearchFieldModel>();
+	private Map<String, AdvancedSearchFieldModel> fields = new HashMap<>();
 
 	public AdvancedSearchModel(){
 		super();

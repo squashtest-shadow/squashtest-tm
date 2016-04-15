@@ -68,7 +68,7 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 	 */
 	@Override
 	public Set<IProcessor> getProcessors() {
-		Set<IProcessor> processors = new HashSet<IProcessor>(3);
+		Set<IProcessor> processors = new HashSet<>(3);
 		processors.add(new SquashUnsafeHtmlAttrProcessor());
 		processors.add(new SquashCssAttrProcessor());
 		processors.add(new SquashIso8601DateAttrProcessor());
@@ -83,7 +83,7 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 		final IWebContext webContext =
 				(context instanceof IWebContext? (IWebContext)context : null);
 
-		final Map<String, Object> extensions = new HashMap<String, Object>(1);
+		final Map<String, Object> extensions = new HashMap<>(1);
 
 		if (webContext != null){
 			final ServletContext servletContext = webContext.getServletContext();

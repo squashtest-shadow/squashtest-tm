@@ -89,7 +89,7 @@ public class SearchServiceImpl implements SearchService {
 	}
 
 	private <PR extends ProjectResource<?>> List<PR> applyFilter(List<PR> unfilteredResources, ProjectFilter filter) {
-		List<PR> filtered = new ArrayList<PR>(unfilteredResources.size());
+		List<PR> filtered = new ArrayList<>(unfilteredResources.size());
 
 		for (PR resource : unfilteredResources) {
 			if (filter.isProjectSelected(resource.getProject())) {
@@ -124,7 +124,7 @@ public class SearchServiceImpl implements SearchService {
 
 	private List<String> findBreadCrumbOfCampaignNode(CampaignLibraryNode node,
 			CampaignLibraryNavigationService libraryNavigationService, String rejex) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		result.add(node.getClass().getSimpleName() + rejex + node.getId());
 		CampaignFolder parent = libraryNavigationService.findParentIfExists(node);
 		fillBreadCrumbListUntillLibraryForCampaign(node, libraryNavigationService, rejex, result, parent);

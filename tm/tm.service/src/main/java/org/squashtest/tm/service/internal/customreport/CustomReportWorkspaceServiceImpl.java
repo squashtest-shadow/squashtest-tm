@@ -78,7 +78,7 @@ public class CustomReportWorkspaceServiceImpl implements
 	@PostFilter("hasPermission(filterObject, 'READ')" + OR_HAS_ROLE_ADMIN)
 	public List<CustomReportLibraryNode> findRootNodes() {
 		ProjectFilter projectFilter = projectFilterModificationService.findProjectFilterByUserLogin();
-		List<Long> projectIds = new ArrayList<Long>();
+		List<Long> projectIds = new ArrayList<>();
 		if (projectFilter.isEnabled()) {
 			if (projectFilter.getProjects().size()==0) {
 				return Collections.emptyList();

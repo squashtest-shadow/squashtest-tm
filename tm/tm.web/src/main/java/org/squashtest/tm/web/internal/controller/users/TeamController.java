@@ -296,7 +296,7 @@ public class TeamController extends PartyControllerSupport {
 		@Override
 		public Map<String, Object> buildItemData(Team item) {
 			final AuditableMixin auditable = (AuditableMixin) item;
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
@@ -318,7 +318,7 @@ public class TeamController extends PartyControllerSupport {
 
 		@Override
 		protected Map<?, ?> buildItemData(User item) {
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put("user-id", item.getId());
 			res.put("user-active", item.getActive());
 			res.put("user-index", getCurrentIndex());

@@ -108,7 +108,7 @@ public class AttachmentController {
 	public List<UploadSummary> uploadAttachmentAsJson(@RequestParam("attachment[]") List<UploadedData> attachments, @PathVariable long attachListId, Locale locale)
 			throws IOException {
 
-		List<UploadSummary> summary = new LinkedList<UploadSummary>();
+		List<UploadSummary> summary = new LinkedList<>();
 
 		for (UploadedData upload : attachments) {
 
@@ -145,7 +145,7 @@ public class AttachmentController {
 	}
 
 	private List<UploadedData> removeEmptyData(List<UploadedData> all){
-		List<UploadedData> nonEmpty = new ArrayList<UploadedData>();
+		List<UploadedData> nonEmpty = new ArrayList<>();
 		for (UploadedData dat : all){
 			if (dat.getSizeInBytes() > 0){
 				nonEmpty.add(dat);

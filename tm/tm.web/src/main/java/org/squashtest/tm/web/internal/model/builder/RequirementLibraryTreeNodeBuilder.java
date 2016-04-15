@@ -59,6 +59,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 		 * 
 		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.RequirementFolder)
 		 */
+		@Override
 		public void visit(RequirementFolder folder) {
 			addFolderAttributes("requirement-folders");
 			State state = (folder.hasContent() ? State.closed : State.leaf);
@@ -71,6 +72,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 		 * 
 		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.Requirement)
 		 */
+		@Override
 		public void visit(Requirement requirement) {
 
 			// supposed not to be null;
@@ -149,7 +151,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			RequirementLibraryTreeNodeBuilder childrenBuilder = new RequirementLibraryTreeNodeBuilder(permissionEvaluationService);
 			childrenBuilder.filterByMilestone(milestoneFilter);
 
-			Collection<RequirementLibraryNode<?>> content = (Collection<RequirementLibraryNode<?>>) container.getOrderedContent();
+			Collection<RequirementLibraryNode<?>> content = container.getOrderedContent();
 
 			List<JsTreeNode> children = new JsTreeNodeListBuilder<RequirementLibraryNode<?>>(childrenBuilder)
 					.expand(getExpansionCandidates())

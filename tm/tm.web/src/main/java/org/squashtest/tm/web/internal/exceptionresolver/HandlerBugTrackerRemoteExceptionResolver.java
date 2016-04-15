@@ -55,7 +55,7 @@ public class HandlerBugTrackerRemoteExceptionResolver extends AbstractHandlerExc
 	}
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(BugTrackerRemoteException remoteException) {
-		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
+		List<FieldValidationErrorModel> ves = new ArrayList<>();
 
 		ves.add(new FieldValidationErrorModel("", "bugtracker", remoteException.getMessage()));
 

@@ -148,7 +148,7 @@ import org.slf4j.LoggerFactory;
 	}
 	
 	public static Map<String, Integer>  mapColumns (Sheet sheet) {
-		Map<String, Integer> columnsMapping = new HashMap<String, Integer>();
+		Map<String, Integer> columnsMapping = new HashMap<>();
 		
 		Row firstRow = sheet.getRow(0);
 		for(int c = 0 ; c < firstRow.getLastCellNum(); c++){

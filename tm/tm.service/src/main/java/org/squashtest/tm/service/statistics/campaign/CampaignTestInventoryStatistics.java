@@ -35,7 +35,7 @@ public class CampaignTestInventoryStatistics {
 	}
 
 	private void initStatistics() {
-		statistics = new HashMap<ExecutionStatus, Integer>(ExecutionStatus.values().length);
+		statistics = new HashMap<>(ExecutionStatus.values().length);
 		for (ExecutionStatus status : ExecutionStatus.values()) {
 			statistics.put(status, 0);
 		}

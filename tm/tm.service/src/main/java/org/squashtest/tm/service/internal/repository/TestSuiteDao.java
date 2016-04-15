@@ -26,12 +26,12 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
-import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
 public interface TestSuiteDao extends Repository<TestSuite, Long>, CustomTestSuiteDao {
 
+	@Override
 	@UsesTheSpringJpaDsl
 	TestSuite findById(long id);
 

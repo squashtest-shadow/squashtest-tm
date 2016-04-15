@@ -63,6 +63,7 @@ public abstract class Party implements Identified{
 	public void setGroup(UsersGroup group) {
 		this.group = group;
 	}
+	@Override
 	public Long getId() {
 		return id;
 	}

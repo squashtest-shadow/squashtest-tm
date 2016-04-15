@@ -43,7 +43,7 @@ public class DataTableMultiSorting extends DataTablePaging implements PagingAndM
 	@Override
 	public List<Sorting> getSortings() {
 		
-		List<Sorting> sortings = new ArrayList<Sorting>(params.getiSortingCols());
+		List<Sorting> sortings = new ArrayList<>(params.getiSortingCols());
 		
 		int sortedcol;
 		String sorteddir;

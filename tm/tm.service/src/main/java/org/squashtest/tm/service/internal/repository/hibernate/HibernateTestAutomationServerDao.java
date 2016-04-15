@@ -31,7 +31,7 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -86,10 +86,10 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 				"TestAutomationServer");
 		SortingUtils.addOrder(criteria, pas);
 		PagingUtils.addPaging(criteria, pas);
-		criteria.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+		criteria.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		List<Map<String, ?>> raw = criteria.list();
-		List<TestAutomationServer> res = new ArrayList<TestAutomationServer>(raw.size());
+		List<TestAutomationServer> res = new ArrayList<>(raw.size());
 
 		for (Map<String, ?> r : raw) {
 			res.add((TestAutomationServer) r.get("TestAutomationServer"));

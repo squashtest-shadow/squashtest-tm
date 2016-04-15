@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.web.config;
 
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.orm.hibernate4.support.OpenSessionInViewInterceptor;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;

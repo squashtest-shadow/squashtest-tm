@@ -123,7 +123,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(
 			List<TestCase> testCases, RequirementVersion requirementVersion) {
 
-		List<VerifiedRequirementException> rejections = new ArrayList<VerifiedRequirementException>(testCases.size());
+		List<VerifiedRequirementException> rejections = new ArrayList<>(testCases.size());
 
 		Iterator<TestCase> iterator = testCases.iterator();
 		while (iterator.hasNext()) {

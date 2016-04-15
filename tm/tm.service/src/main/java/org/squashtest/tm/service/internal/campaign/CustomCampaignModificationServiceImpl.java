@@ -97,6 +97,7 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	}
 
 
+	@Override
 	@PreAuthorize(READ_CAMPAIGN_OR_ADMIN)
 	public Integer countIterations(Long campaignId) {
 		return campaignDao.countIterations(campaignId);

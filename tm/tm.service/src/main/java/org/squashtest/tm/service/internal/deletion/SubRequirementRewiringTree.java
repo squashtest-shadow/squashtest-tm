@@ -37,7 +37,7 @@ public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirement
 	// this method has to make sure no duplicate entries make it into the tree
 	public void build(List<Long[]> pairedIds){
 
-		Set<IdPair> allData = new HashSet<IdPair>();
+		Set<IdPair> allData = new HashSet<>();
 
 		// make sure all pairs are unique
 		for (Long[] pair : pairedIds){
@@ -59,7 +59,7 @@ public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirement
 
 
 	public void markDeletableNodes(List<Long> nodeKeys){
-		List<Node> toUpdate = new LinkedList<Node>();
+		List<Node> toUpdate = new LinkedList<>();
 
 		for (Long key : nodeKeys){
 			toUpdate.add(new Node(key, true));

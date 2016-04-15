@@ -450,7 +450,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone) {
-		List<Campaign> campaignList = new ArrayList<Campaign>();
+		List<Campaign> campaignList = new ArrayList<>();
 		if (milestone != null) {
 			for (Project project : projectList) {
 				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectIdWithMilestone");
@@ -478,7 +478,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	private List<CampaignTestPlanItem> buildItems(List<Object[]> tuples) {
 
-		List<CampaignTestPlanItem> items = new ArrayList<CampaignTestPlanItem>(tuples.size());
+		List<CampaignTestPlanItem> items = new ArrayList<>(tuples.size());
 
 		for (Object[] tuple : tuples) {
 			CampaignTestPlanItem ctpi = (CampaignTestPlanItem) tuple[1];
@@ -489,7 +489,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 	}
 
 	private List<IndexedCampaignTestPlanItem> buildIndexedItems(List<Object[]> tuples) {
-		List<IndexedCampaignTestPlanItem> indexedItems = new ArrayList<IndexedCampaignTestPlanItem>(tuples.size());
+		List<IndexedCampaignTestPlanItem> indexedItems = new ArrayList<>(tuples.size());
 
 		for (Object[] tuple : tuples) {
 			Integer index = (Integer) tuple[0];

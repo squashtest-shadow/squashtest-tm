@@ -72,7 +72,7 @@ final class TemplateColumnUtils {
 
 		if (headerCache == null) {
 			synchronized (headerCacheByClass) {
-				headerCache = new HashMap<String, TemplateColumn>();
+				headerCache = new HashMap<>();
 				populateCache(enumType, headerCache);
 				headerCacheByClass.put(enumType, headerCache);
 			}

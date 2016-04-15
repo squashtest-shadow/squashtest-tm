@@ -58,7 +58,7 @@ public class FormToCriteriaConverter {
 	public FormToCriteriaConverter() {
 		super();
 
-		this.simpleEntryConverterByType = new HashMap<InputType, SimpleEntryConverter>();
+		this.simpleEntryConverterByType = new HashMap<>();
 		simpleEntryConverterByType.put(DATE, new DateEntryConverter());
 		simpleEntryConverterByType.put(CHECKBOX, new CheckboxEntryConverter());
 		simpleEntryConverterByType.put(TEXT, simpleEntryDefaultConverter);
@@ -69,7 +69,7 @@ public class FormToCriteriaConverter {
 
 	@SuppressWarnings("unchecked")
 	public Map<String, Criteria> convert(Map<String, Object> formValues) {
-		HashMap<String, Criteria> res = new HashMap<String, Criteria>();
+		HashMap<String, Criteria> res = new HashMap<>();
 
 		for (Map.Entry<String, Object> entry : formValues.entrySet()) {
 			String name = entry.getKey();

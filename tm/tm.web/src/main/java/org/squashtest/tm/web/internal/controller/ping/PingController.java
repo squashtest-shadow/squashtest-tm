@@ -32,7 +32,7 @@ public class PingController {
     @RequestMapping(value = "/isSquashAlive", method=RequestMethod.GET, produces={"application/json"})
     @ResponseBody
     Object ping(){  
-        HashMap<String, String> result = new HashMap<String, String>();
+        HashMap<String, String> result = new HashMap<>();
         result.put("isAlive", "true");
         
         return result;

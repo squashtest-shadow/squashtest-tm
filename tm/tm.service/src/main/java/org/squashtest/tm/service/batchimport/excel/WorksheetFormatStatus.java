@@ -41,7 +41,7 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
  */
 public class WorksheetFormatStatus {
 	private Map<ColumnMismatch, Set<TemplateColumn>> columnMismatches = new HashMap<ColumnMismatch, Set<TemplateColumn>>();
-	private List<WorksheetMismatch> worksheetMismatches = new ArrayList<WorksheetMismatch>();
+	private List<WorksheetMismatch> worksheetMismatches = new ArrayList<>();
 	private TemplateWorksheet worksheet;
 
 	public WorksheetFormatStatus(TemplateWorksheet worksheet) {
@@ -98,7 +98,7 @@ public class WorksheetFormatStatus {
 			Set<String> columns = extractColumnFullNames(mismatch.getValue());
 			Set<String> alreadyStoredColumns = result.get(mismatch.getKey());
 			if (alreadyStoredColumns == null) {
-				alreadyStoredColumns = new HashSet<String>();
+				alreadyStoredColumns = new HashSet<>();
 			}
 			alreadyStoredColumns.addAll(columns);
 			result.put(mismatch.getKey(), alreadyStoredColumns);
@@ -107,7 +107,7 @@ public class WorksheetFormatStatus {
 	}
 
 	private Set<String> extractColumnFullNames(Set<TemplateColumn> columns) {
-		Set<String> columnNames = new HashSet<String>(columns.size());
+		Set<String> columnNames = new HashSet<>(columns.size());
 		for (TemplateColumn column : columns) {
 			columnNames.add(column.getFullName());
 		}
@@ -138,7 +138,7 @@ public class WorksheetFormatStatus {
 	private Set<TemplateColumn> findOrAddColumnListForMismatch(ColumnMismatch mismatchType) {
 		Set<TemplateColumn> columns = this.columnMismatches.get(mismatchType);
 		if (columns == null) {
-			columns = new HashSet<TemplateColumn>();
+			columns = new HashSet<>();
 		}
 		return columns;
 	}

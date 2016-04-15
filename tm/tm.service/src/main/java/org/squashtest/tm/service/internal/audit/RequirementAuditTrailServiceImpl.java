@@ -66,6 +66,7 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 		return new PageCollectionHolderWrapper<>(page);
 	}
 
+	@Override
 	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId) {
 		Paging paging = new Paging() {
 

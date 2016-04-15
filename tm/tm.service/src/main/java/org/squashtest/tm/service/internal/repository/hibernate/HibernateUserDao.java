@@ -29,6 +29,7 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Order;
@@ -160,6 +161,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 	 * @param login
 	 * @return
 	 */
+	@Override
 	public User findUserByCiLogin(String login) {
 		return executeEntityNamedQuery("User.findUserByCiLogin", new SetUserLoginParameterCallback(login));
 	}
@@ -192,7 +194,7 @@ public class HibernateUserDao extends HibernateEntityDao<User> implements UserDa
 		Criteria crit = currentSession().createCriteria(Team.class, "Team")
 				.add(Restrictions.eq("Team.id", teamId))
 				.createCriteria("Team.members", "User")
-				.setResultTransformer(Criteria.ALIAS_TO_ENTITY_MAP);
+				.setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		/* add ordering */
 		String sortedAttribute = paging.getSortedAttribute();

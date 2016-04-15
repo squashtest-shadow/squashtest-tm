@@ -73,6 +73,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#setModel(MODEL)
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public final BUILDER setModel(MODEL model) {
 		this.model = model;
@@ -82,6 +83,7 @@ implements JsTreeNodeBuilder<MODEL, BUILDER> {
 	/**
 	 * @see org.squashtest.tm.web.internal.model.builder.JsTreeNodeBuilder#build()
 	 */
+	@Override
 	public final JsTreeNode build() {
 		JsTreeNode node = new JsTreeNode();
 

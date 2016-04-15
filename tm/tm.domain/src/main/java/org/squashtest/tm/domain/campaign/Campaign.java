@@ -68,16 +68,16 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "ITERATION_ORDER")
 	@JoinTable(name = "CAMPAIGN_ITERATION", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "ITERATION_ID"))
-	private final List<Iteration> iterations = new ArrayList<Iteration>();
+	private final List<Iteration> iterations = new ArrayList<>();
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@OrderColumn(name = "TEST_PLAN_ORDER")
 	@JoinColumn(name = "CAMPAIGN_ID")
-	private final List<CampaignTestPlanItem> testPlan = new ArrayList<CampaignTestPlanItem>();
+	private final List<CampaignTestPlanItem> testPlan = new ArrayList<>();
 
 	@ManyToMany
 	@JoinTable(name = "MILESTONE_CAMPAIGN", joinColumns = @JoinColumn(name = "CAMPAIGN_ID"), inverseJoinColumns = @JoinColumn(name = "MILESTONE_ID"))
-	private Set<Milestone> milestones = new HashSet<Milestone>();
+	private Set<Milestone> milestones = new HashSet<>();
 
 
 	@NotNull
@@ -417,7 +417,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 			return;
 		}
 
-		List<CampaignTestPlanItem> moved = new ArrayList<CampaignTestPlanItem>(itemIds.size());
+		List<CampaignTestPlanItem> moved = new ArrayList<>(itemIds.size());
 
 		for (CampaignTestPlanItem item : testPlan) {
 			if (itemIds.contains(item.getId())) {
@@ -456,7 +456,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	@Override
 	public List<Iteration> getContent() {
-		List<Iteration> iterationList = new ArrayList<Iteration>();
+		List<Iteration> iterationList = new ArrayList<>();
 		iterationList.addAll(getIterations());
 		return iterationList;
 	}
@@ -491,7 +491,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	@Override
 	public List<String> getContentNames() {
-		List<String> iterationNames = new ArrayList<String>(iterations.size());
+		List<String> iterationNames = new ArrayList<>(iterations.size());
 		for(Iteration iteration : iterations){
 			iterationNames.add(iteration.getName());
 		}

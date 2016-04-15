@@ -60,7 +60,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "REQUIREMENT_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private List<RequirementLibraryNode> rootContent = new ArrayList<RequirementLibraryNode>();
+	private List<RequirementLibraryNode> rootContent = new ArrayList<>();
 
 	@OneToOne(mappedBy = "requirementLibrary")
 	private GenericProject project;
@@ -68,7 +68,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'R'")
-	private Set<RequirementLibraryPluginBinding> enabledPlugins = new HashSet<RequirementLibraryPluginBinding>(5);
+	private Set<RequirementLibraryPluginBinding> enabledPlugins = new HashSet<>(5);
 
 	public void setId(Long id) {
 		this.id = id;
@@ -103,7 +103,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@Override
 	public void removeContent(RequirementLibraryNode node) {
 		rootContent.remove(node);
-		rootContent = new ArrayList<RequirementLibraryNode>(rootContent);
+		rootContent = new ArrayList<>(rootContent);
 	}
 
 
@@ -111,7 +111,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 
 	@Override
 	public Set<String> getEnabledPlugins() {
-		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
+		Set<String> pluginIds = new HashSet<>(enabledPlugins.size());
 		for (RequirementLibraryPluginBinding binding : enabledPlugins){
 			pluginIds.add(binding.getPluginId());
 		}

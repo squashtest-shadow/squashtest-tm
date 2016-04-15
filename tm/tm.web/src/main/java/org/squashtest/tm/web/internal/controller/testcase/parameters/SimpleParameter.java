@@ -80,7 +80,7 @@ public class SimpleParameter {
 	 * @return a list of SimpleParameter representing the given list of Parameter
 	 */
 	public static List<SimpleParameter> convertToSimpleParameters(List<Parameter> parameters, Long ownerId2, MessageSource messageSource2, Locale locale2){
-		List<SimpleParameter> result = new ArrayList<SimpleParameter>(parameters.size());
+		List<SimpleParameter> result = new ArrayList<>(parameters.size());
 		for(Parameter param : parameters){
 			String newName = ParametersModelHelper.buildParameterName(param, ownerId2, messageSource2, locale2);
 			

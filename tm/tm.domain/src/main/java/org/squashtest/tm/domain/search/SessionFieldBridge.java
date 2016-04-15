@@ -22,8 +22,6 @@ package org.squashtest.tm.domain.search;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.lucene.document.Document;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;

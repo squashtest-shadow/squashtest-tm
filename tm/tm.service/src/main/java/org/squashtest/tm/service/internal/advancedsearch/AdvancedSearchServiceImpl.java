@@ -34,7 +34,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -43,7 +42,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
@@ -468,7 +466,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			Criteria crit = createMilestoneHibernateCriteria(fields);
 
 			List<String> milestoneIds = new ArrayList<>();
-			List<Long> foundIds = (List<Long>) crit.list();
+			List<Long> foundIds = crit.list();
 			for (Long milestoneId : foundIds) {
 				milestoneIds.add(String.valueOf(milestoneId));
 			}

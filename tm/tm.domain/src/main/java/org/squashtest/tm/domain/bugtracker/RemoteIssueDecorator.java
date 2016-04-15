@@ -42,33 +42,40 @@ public class RemoteIssueDecorator implements RemoteIssue {
 		return issueId;
 	}
 	
+	@Override
 	public String getId(){
 		return this.issue.getId();
 	}
 	
+	@Override
 	public boolean hasBlankId(){
 		return this.issue.hasBlankId();
 	}
 	
 
+	@Override
 	public RemoteCategory getCategory() {
 		return this.issue.getCategory();
 	}
 
 
+	@Override
 	public String getSummary() {
 		return this.issue.getSummary();
 	}
 
+	@Override
 	public RemoteProject getProject() {
 		return this.issue.getProject();
 	}
 
 
+	@Override
 	public RemotePriority getPriority() {
 		return this.issue.getPriority();
 	}
 
+	@Override
 	public RemoteVersion getVersion() {
 		return this.issue.getVersion();
 	}

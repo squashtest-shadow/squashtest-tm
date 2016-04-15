@@ -35,8 +35,8 @@ import org.squashtest.tm.api.report.form.InputType;
  * 
  */
 public final class MultiOptionsCriteria extends CriteriaBase implements Criteria {
-	private final Map<Object, Boolean> isSelectedByOption = new HashMap<Object, Boolean>();
-	private final List<Object> selectedOptions = new ArrayList<Object>();
+	private final Map<Object, Boolean> isSelectedByOption = new HashMap<>();
+	private final List<Object> selectedOptions = new ArrayList<>();
 
 	/**
 	 * @param name

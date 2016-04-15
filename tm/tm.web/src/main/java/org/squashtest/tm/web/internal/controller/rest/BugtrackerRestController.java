@@ -46,7 +46,7 @@ public class BugtrackerRestController {
 	@ResponseBody
 	public List<RestExecutionStub> getExecutionsByRemotedId(@PathVariable String name, @PathVariable String remoteid) {
 		List<Execution> executions = bugTrackersLocalService.findExecutionsByRemoteIssue(remoteid, name);
-		List<RestExecutionStub> restExecutions = new ArrayList<RestExecutionStub>(executions.size());
+		List<RestExecutionStub> restExecutions = new ArrayList<>(executions.size());
 		for(Execution execution : executions){
 			restExecutions.add(new RestExecutionStub(execution));
 		}

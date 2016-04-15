@@ -35,7 +35,7 @@ public class RequirementLibrarySelectionStrategyImpl implements LibrarySelection
 
 	@Override
 	public List<RequirementLibrary> getSpecificLibraries(List<Project> givenProjectList) {
-		List<RequirementLibrary> toReturn = new ArrayList<RequirementLibrary>();
+		List<RequirementLibrary> toReturn = new ArrayList<>();
 		for (Project project : givenProjectList) {
 			toReturn.add(project.getRequirementLibrary());
 		}

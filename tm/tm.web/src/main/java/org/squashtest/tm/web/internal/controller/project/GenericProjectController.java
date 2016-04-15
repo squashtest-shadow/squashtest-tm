@@ -294,7 +294,7 @@ public class GenericProjectController {
 
 		List<Map<String, Object>> partiesModel = new ArrayList<Map<String, Object>>(partyList.size());
 		for (Party p : partyList) {
-			Map<String, Object> newModel = new HashMap<String, Object>();
+			Map<String, Object> newModel = new HashMap<>();
 			newModel.put("label", p.getName());
 			newModel.put(JEditablePostParams.VALUE, p.getName());
 			newModel.put("id", p.getId());
@@ -426,7 +426,7 @@ public class GenericProjectController {
 		}
 		@Override
 		protected Map<String, ?> buildItemData(TestAutomationProject item) {
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
@@ -455,7 +455,7 @@ public class GenericProjectController {
 
 		@Override
 		public Object buildItemData(GenericProject project) {
-			Map<String, Object> data = new HashMap<String, Object>(14);
+			Map<String, Object> data = new HashMap<>(14);
 
 			final AuditableMixin auditable = (AuditableMixin) project;
 			data.put("project-id", project.getId());
@@ -530,7 +530,7 @@ public class GenericProjectController {
 		Set<ExecutionStatus> statuses = projectManager.enabledExecutionStatuses(projectId);
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		statuses.remove(status);
-		Map<String, Object> options = new HashMap<String, Object>();
+		Map<String, Object> options = new HashMap<>();
 		for (ExecutionStatus st : statuses) {
 			options.put(messageSource.internationalize(st.getI18nKey(), locale), st.name());
 		}

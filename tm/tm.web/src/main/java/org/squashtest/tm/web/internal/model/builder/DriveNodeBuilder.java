@@ -97,7 +97,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 				builder.filterByMilestone(milestoneFilter);
 			}
 
-			List<JsTreeNode> children = new JsTreeNodeListBuilder<LN>(builder)
+			List<JsTreeNode> children = new JsTreeNodeListBuilder<>(builder)
 				.expand(getExpansionCandidates())
 				.setModel(model.getOrderedContent())
 				.build();

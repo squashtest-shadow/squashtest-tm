@@ -22,15 +22,12 @@ package org.squashtest.tm.web.internal.report;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Map;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.ServletContext;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.ServletContextAware;
 import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.api.report.Report;

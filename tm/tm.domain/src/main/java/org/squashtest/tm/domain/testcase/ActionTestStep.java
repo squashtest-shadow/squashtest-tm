@@ -62,7 +62,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 	@ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.DETACH})
 	@JoinTable(name = "VERIFYING_STEPS", joinColumns = @JoinColumn(name = "TEST_STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "REQUIREMENT_VERSION_COVERAGE_ID", updatable = false, insertable = false))
-	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<RequirementVersionCoverage>();
+	private Set<RequirementVersionCoverage> requirementVersionCoverages= new HashSet<>();
 
 	public ActionTestStep() {
 		super();
@@ -119,7 +119,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 
 	@Override
 	public List<ExecutionStep> createExecutionSteps(Dataset dataset) {
-		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(1);
+		List<ExecutionStep> returnList = new ArrayList<>(1);
 		ExecutionStep exec = new ExecutionStep(this, dataset);
 		returnList.add(exec);
 		return returnList;
@@ -176,7 +176,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
-		Set<RequirementVersion> verified = new HashSet<RequirementVersion>();
+		Set<RequirementVersion> verified = new HashSet<>();
 		for(RequirementVersionCoverage coverage : requirementVersionCoverages){
 			verified.add(coverage.getVerifiedRequirementVersion());
 		}
@@ -184,7 +184,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	public Set<String> findUsedParametersNames() {
-		Set<String> result = new HashSet<String>();
+		Set<String> result = new HashSet<>();
 		if(this.action != null){
 			result.addAll(Parameter.findUsedParameterNamesInString(this.action));
 		}

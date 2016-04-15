@@ -55,7 +55,7 @@ public class JsTreeNodeListBuilder<ITEM extends Identified> {
 	}
 
 	public final List<JsTreeNode> build() {
-		List<JsTreeNode> nodes = new ArrayList<JsTreeNode>(model.size());
+		List<JsTreeNode> nodes = new ArrayList<>(model.size());
 
 		if (expansionCandidates == null) {
 			expansionCandidates = new MultiValueMap();

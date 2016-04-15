@@ -26,5 +26,6 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 public interface CampaignLibraryDao extends
 		LibraryDao<CampaignLibrary, CampaignLibraryNode>, EntityDao<CampaignLibrary> {
 
+	@Override
 	void persist(CampaignLibrary library);
 }

@@ -32,7 +32,7 @@ import java.util.List;
 public class TemplateMismatchException extends RuntimeException {
 	private static final long serialVersionUID = -3318286142079157710L;
 
-	private List<WorksheetFormatStatus> worksheetFormatStatuses = new ArrayList<WorksheetFormatStatus>();
+	private List<WorksheetFormatStatus> worksheetFormatStatuses = new ArrayList<>();
 
 	public TemplateMismatchException() {
 		super();

@@ -52,7 +52,7 @@ class TestCaseInstructionBuilder extends InstructionBuilder<TestCaseSheetColumn,
 	 */
 	@Override
 	protected void postProcessInstruction(Row row, TestCaseInstruction instruction) {
-		ignoreImportanceIfAuto((TestCaseInstruction) instruction);
+		ignoreImportanceIfAuto(instruction);
 	}
 
 	private void ignoreImportanceIfAuto(TestCaseInstruction instruction) {

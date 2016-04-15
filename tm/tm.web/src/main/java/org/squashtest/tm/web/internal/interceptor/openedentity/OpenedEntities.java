@@ -79,7 +79,7 @@ public class OpenedEntities {
 			TestSuite.class.getSimpleName(), Execution.class.getSimpleName());
 
 	public OpenedEntities() {
-		entitiesViewers = new HashMap<Long, OpenedEntity>();
+		entitiesViewers = new HashMap<>();
 	}
 
 	public synchronized boolean addViewerToEntity(Identified object, String userLogin) {

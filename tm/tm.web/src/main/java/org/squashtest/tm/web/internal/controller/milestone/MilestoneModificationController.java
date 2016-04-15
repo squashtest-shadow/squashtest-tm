@@ -99,7 +99,7 @@ public class MilestoneModificationController {
 
 	private Object buildMarshalledUserMap(List<User> activeUsersOrderedByLogin) {
 
-		HashMap<String, String> map = new HashMap<String, String>();
+		HashMap<String, String> map = new HashMap<>();
 		for (User user : activeUsersOrderedByLogin){
 			map.put(user.getLogin(), user.getName());
 		}

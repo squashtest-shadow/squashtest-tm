@@ -44,8 +44,6 @@ import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.squashtest.tm.domain.EntityType;
-
 /**
  * <p>This class represents a query. It is composed of  AxisColumn, Filter and MeasureColumns.</p>
  *

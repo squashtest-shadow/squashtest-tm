@@ -40,8 +40,9 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
 	@OrderColumn(name = "POSITION")
-	private List<CustomFieldValueOption> selectedOptions = new ArrayList<CustomFieldValueOption>();
+	private List<CustomFieldValueOption> selectedOptions = new ArrayList<>();
 
+	@Override
 	public List<CustomFieldValueOption> getSelectedOptions() {
 		return selectedOptions;
 	}
@@ -68,7 +69,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 
 	@Override
 	public List<String> getValues() {
-		List<String> result = new ArrayList<String>(selectedOptions.size());
+		List<String> result = new ArrayList<>(selectedOptions.size());
 		for (CustomFieldValueOption option : selectedOptions){
 			result.add(option.getLabel());
 		}
@@ -95,6 +96,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	 * Not the preferred way to set the values of this field,
 	 * use adCUFieldValueOption when possible.
 	 */
+	@Override
 	@Deprecated
 	public void setValue(String value){
 		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));

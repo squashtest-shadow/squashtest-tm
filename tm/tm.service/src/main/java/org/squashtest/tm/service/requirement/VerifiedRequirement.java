@@ -47,7 +47,7 @@ public class VerifiedRequirement {
 	 * call).
 	 */
 	private final boolean directVerification;
-	private final Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>(0);		//to set an actual content, see #withVerifyingStepsFrom(TestCase)
+	private final Set<ActionTestStep> verifyingSteps = new HashSet<>(0);		//to set an actual content, see #withVerifyingStepsFrom(TestCase)
 	private final RequirementVersion verifiedRequirementVersion;
 
 	public VerifiedRequirement(@NotNull RequirementVersionCoverage requirementVersionCoverage, boolean directVerification) {

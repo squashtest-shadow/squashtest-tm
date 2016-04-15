@@ -44,7 +44,7 @@ public class ExecutionStatusComboDataBuilder extends
 		EnumJeditableComboDataBuilder<ExecutionStatus, ExecutionStatusComboDataBuilder> {
 	public ExecutionStatusComboDataBuilder() {
 		super();
-		List<ExecutionStatus> executionList = new ArrayList<ExecutionStatus>();
+		List<ExecutionStatus> executionList = new ArrayList<>();
 		for (ExecutionStatus executionStatus : ExecutionStatus.values()) {
 			if(executionStatus.isCanonical()){
 				executionList.add(executionStatus);

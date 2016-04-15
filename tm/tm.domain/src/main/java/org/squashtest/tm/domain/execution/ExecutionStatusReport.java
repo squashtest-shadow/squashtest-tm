@@ -33,7 +33,7 @@ import javax.validation.constraints.NotNull;
  * 
  */
 public class ExecutionStatusReport {
-	private Map<ExecutionStatus, Integer> statusCount = new HashMap<ExecutionStatus, Integer>(
+	private Map<ExecutionStatus, Integer> statusCount = new HashMap<>(
 			ExecutionStatus.values().length);
 
 	public ExecutionStatusReport() {
@@ -78,7 +78,7 @@ public class ExecutionStatusReport {
 	 * @return
 	 */
 	public boolean allOf(@NotNull ExecutionStatus... statuses) {
-		Set<ExecutionStatus> uniqueStatuses = new HashSet<ExecutionStatus>(Arrays.asList(statuses));
+		Set<ExecutionStatus> uniqueStatuses = new HashSet<>(Arrays.asList(statuses));
 
 		int expectedCount = 0;
 		for (ExecutionStatus status : uniqueStatuses) {

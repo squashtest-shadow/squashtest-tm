@@ -188,8 +188,8 @@ class TestCaseCallGraph extends LibraryGraph<TestCaseTarget, TestCaseCallGraph.N
 			
 			// we keep track of processed nodes. It has the benefit of preventing multiple exploration of the same node.
 			// it also breaks infinite loop but this method exists precisely to prevent this to happen.
-			Set<Node> processed = new HashSet<Node>();	
-			LinkedList<Node> nodes = new LinkedList<Node>();
+			Set<Node> processed = new HashSet<>();	
+			LinkedList<Node> nodes = new LinkedList<>();
 			
 			Node orig = getNode(dest);
 			processed.add(orig);

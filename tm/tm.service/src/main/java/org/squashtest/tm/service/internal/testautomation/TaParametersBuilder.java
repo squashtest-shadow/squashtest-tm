@@ -142,7 +142,7 @@ public class TaParametersBuilder implements ParametersBuilder {
 		}
 	};
 
-	private Map<String, Object> params = new HashMap<String, Object>();
+	private Map<String, Object> params = new HashMap<>();
 
 	/**
 	 * @see org.squashtest.tm.service.internal.testautomation.ParametersBuilder#testCase()

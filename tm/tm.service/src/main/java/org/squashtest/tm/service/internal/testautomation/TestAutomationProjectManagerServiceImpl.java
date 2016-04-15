@@ -160,7 +160,7 @@ public class TestAutomationProjectManagerServiceImpl implements TestAutomationPr
 	 */
 	@Override
 	public Map<String, URL> findProjectUrls(Collection<TestAutomationProject> taProjects) {
-		Map<String, URL> result = new HashMap<String, URL>(taProjects.size());
+		Map<String, URL> result = new HashMap<>(taProjects.size());
 		for (TestAutomationProject testAutomationProject : taProjects) {
 			URL url = findProjectURL(testAutomationProject);
 			result.put(testAutomationProject.getJobName(), url);

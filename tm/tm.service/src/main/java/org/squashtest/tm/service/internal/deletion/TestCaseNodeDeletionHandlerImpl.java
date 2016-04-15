@@ -301,6 +301,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	}
 
 
+	@Override
 	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId){
 
 		List<Long> remainingIds = deletionDao.findRemainingTestCaseIds(ids);

@@ -30,7 +30,7 @@ import java.util.Map;
  * 
  */
 public abstract class StepInstruction extends Instruction<TestStepTarget> implements CustomFieldHolder {
-	private final Map<String, String> customFields = new HashMap<String, String>();
+	private final Map<String, String> customFields = new HashMap<>();
 
 	protected StepInstruction(TestStepTarget target) {
 		super(target);
@@ -43,6 +43,7 @@ public abstract class StepInstruction extends Instruction<TestStepTarget> implem
 		return customFields;
 	}
 
+	@Override
 	public void addCustomField(String code, String value) {
 		customFields.put(code, value);
 	}

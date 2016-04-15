@@ -106,6 +106,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	private final List<FieldPopulator> fieldPopulators = new ArrayList<>(6);
 
 	private final FieldPopulator defaultPopulator = new FieldPopulator("") {
+		@Override
 		public void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 			String tag = tagCell(row).getStringCellValue();
 			String value = valueCell(row).getStringCellValue();
@@ -118,6 +119,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	{
 		// description populator
 		fieldPopulators.add(new FieldPopulator(DESCRIPTION_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String tag = tagCell(row).getStringCellValue();
 				String value = valueCell(row).getStringCellValue();
@@ -129,6 +131,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		// importance populator
 		fieldPopulators.add(new FieldPopulator(IMPORTANCE_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.setImportance(value);
@@ -137,6 +140,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		// nature populator
 		fieldPopulators.add(new FieldPopulator(NATURE_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.setNature(value);
@@ -145,6 +149,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		// type populator
 		fieldPopulators.add(new FieldPopulator(TYPE_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.setType(value);
@@ -153,6 +158,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		// type populator
 		fieldPopulators.add(new FieldPopulator(STATUS_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.setStatus(value);
@@ -161,6 +167,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 		// created by populator
 		fieldPopulators.add(new FieldPopulator(CREATED_BY_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.setCreatedBy(value);
@@ -168,6 +175,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		});
 		// created on populator
 		fieldPopulators.add(new FieldPopulator(CREATED_ON_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				Cell cell = valueCell(row);
 				if (Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
@@ -182,6 +190,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		});
 		// prerequisite populator
 		fieldPopulators.add(new FieldPopulator(PREREQUISITE_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String value = valueCell(row).getStringCellValue();
 				pseudoTestCase.getPrerequisites().add(value);
@@ -189,6 +198,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		});
 		// action step populator
 		fieldPopulators.add(new FieldPopulator(ACTION_STEP_TAG) {
+			@Override
 			protected void doPopulate(PseudoTestCase pseudoTestCase, Row row) {
 				String action = valueCell(row).getStringCellValue();
 				String expectation = "";

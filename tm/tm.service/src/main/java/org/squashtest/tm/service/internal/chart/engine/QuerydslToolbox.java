@@ -532,7 +532,7 @@ class QuerydslToolbox {
 	@SuppressWarnings("unchecked")
 	private BooleanExpression createDatePredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
 
-		Expression<Date> exp = (Expression<Date>) operands[0];
+		Expression<Date> exp = operands[0];
 		DateOperation<Date> dateOp = Expressions.dateOperation(Date.class, DateTimeOps.DATE, baseExp);
 		BooleanExpression result;
 		switch (operation) {
@@ -540,7 +540,7 @@ class QuerydslToolbox {
 				result = dateOp.eq(exp);
 				break;
 			case BETWEEN:
-				result = dateOp.between(exp, (Expression<Date>) operands[1]);
+				result = dateOp.between(exp, operands[1]);
 				break;
 			case GREATER:
 				result = dateOp.gt(exp);

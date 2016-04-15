@@ -50,7 +50,7 @@ public class CustomReportListTreeNodeBuilder {
 	 * @return
 	 */
 	public List<JsTreeNode> build(List<TreeLibraryNode> nodes){
-		List<JsTreeNode> builtNodes =new ArrayList<JsTreeNode>();
+		List<JsTreeNode> builtNodes =new ArrayList<>();
 		
 		
 		for (TreeLibraryNode tln : nodes) {
@@ -69,7 +69,7 @@ public class CustomReportListTreeNodeBuilder {
 	 * @return
 	 */
 	public List<JsTreeNode> buildWithOpenedNodes(List<TreeLibraryNode> nodes, Set<Long> openedNodesIds){
-		List<JsTreeNode> builtNodes =new ArrayList<JsTreeNode>();
+		List<JsTreeNode> builtNodes =new ArrayList<>();
 		
 		for (TreeLibraryNode tln : nodes) {
 			CustomReportTreeNodeBuilder builder = builderProvider.get();

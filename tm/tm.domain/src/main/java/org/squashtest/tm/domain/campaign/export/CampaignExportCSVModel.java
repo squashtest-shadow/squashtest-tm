@@ -41,6 +41,7 @@ public interface CampaignExportCSVModel {
 		/**
 		 * return a separator-separated list of cell values
 		 */
+		@Override
 		String toString();
 
 		List<Cell> getCells();

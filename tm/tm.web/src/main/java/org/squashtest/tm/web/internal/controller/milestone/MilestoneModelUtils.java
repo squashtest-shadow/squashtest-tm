@@ -68,7 +68,7 @@ public final class MilestoneModelUtils {
 	public static String milestoneLabelsOrderByDate(Set<Milestone> milestones) {
 	
 		final StringBuilder sb = new StringBuilder();
-		ArrayList<Milestone> liste = new ArrayList<Milestone>(milestones);
+		ArrayList<Milestone> liste = new ArrayList<>(milestones);
 		Collections.sort(liste, new Comparator<Milestone>() {
 			@Override
 			public int compare(Milestone m1, Milestone m2) {

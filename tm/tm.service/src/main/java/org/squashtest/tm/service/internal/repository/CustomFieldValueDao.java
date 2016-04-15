@@ -21,7 +21,6 @@
 package org.squashtest.tm.service.internal.repository;
 
 import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;

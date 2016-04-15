@@ -81,7 +81,7 @@ final class TestPlanFilteringHelper {
 
 	private static final Map<String, String> SIMPLE_FILTER_CLAUSES;
 	static {
-		HashMap<String, String> clauses = new HashMap<String, String>();
+		HashMap<String, String> clauses = new HashMap<>();
 		clauses.put(PROJECT_DATA, HQL_INDEXED_TEST_PLAN_PROJECT_FILTER);
 		clauses.put(REFERENCE_DATA, HQL_INDEXED_TEST_PLAN_REFERENCE_FILTER);
 		clauses.put(TESTCASE_DATA, HQL_INDEXED_TEST_PLAN_TESTCASE_FILTER);

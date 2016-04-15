@@ -27,11 +27,9 @@ import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
@@ -239,7 +237,7 @@ class DerivedPermissionsManager {
 		Collection<Long> partyIds = query.list();
 
 		// then find the corresponding users
-		Collection<Long> userIds = new HashSet<Long>();
+		Collection<Long> userIds = new HashSet<>();
 		for (Long id : partyIds) {
 			userIds.addAll(findMembers(id));
 		}
@@ -265,7 +263,7 @@ class DerivedPermissionsManager {
 	private Collection<Long> retainUsersManagingAnything(Collection<Long> ids) {
 		if (!ids.isEmpty()) {
 
-			Set<Long> userIds = new HashSet<Long>();
+			Set<Long> userIds = new HashSet<>();
 			Collection<Long> buffer;
 
 			// first, get users directly managing anything

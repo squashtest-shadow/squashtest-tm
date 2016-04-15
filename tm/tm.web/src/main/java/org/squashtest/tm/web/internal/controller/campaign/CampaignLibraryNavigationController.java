@@ -115,7 +115,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	 */
 	private class ShortCutPermissionEvaluator implements PermissionEvaluationService {
 		private Boolean hasRole;
-		private Map<String, Boolean> perms = new HashMap<String, Boolean>();
+		private Map<String, Boolean> perms = new HashMap<>();
 		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<String[], Map<String, Boolean>>();
 
 		@Override
@@ -362,7 +362,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	private @ResponseBody
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
-		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
+		List<JsTreeNode> res = new ArrayList<>();
 
 		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
 
@@ -376,7 +376,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	private List<JsTreeNode> createIterationTestSuitesModel(List<TestSuite> suites) {
 		TestSuiteNodeBuilder nodeBuilder = suiteNodeBuilder.get();
-		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<TestSuite>(nodeBuilder);
+		JsTreeNodeListBuilder<TestSuite> listBuilder = new JsTreeNodeListBuilder<>(nodeBuilder);
 
 		return listBuilder.setModel(suites).build();
 
@@ -385,7 +385,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private @ResponseBody
 	List<JsTreeNode> createCopiedIterationsModel(List<Iteration> newIterations, int nextIterationNumber) {
 		int iterationIndex = nextIterationNumber;
-		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
+		List<JsTreeNode> res = new ArrayList<>();
 
 		PermissionEvaluationService pev = new ShortCutPermissionEvaluator();
 
@@ -400,7 +400,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private @ResponseBody
 	List<JsTreeNode> createCopiedTestSuitesModel(List<TestSuite> newTestSuites) {
 
-		List<JsTreeNode> res = new ArrayList<JsTreeNode>();
+		List<JsTreeNode> res = new ArrayList<>();
 
 		for (TestSuite testSuite : newTestSuites) {
 			res.add(createTestSuiteTreeNode(testSuite));
@@ -417,7 +417,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<CampaignLibrary> linkableLibraries) {
-		JsTreeNodeListBuilder<CampaignLibrary> listBuilder = new JsTreeNodeListBuilder<CampaignLibrary>(
+		JsTreeNodeListBuilder<CampaignLibrary> listBuilder = new JsTreeNodeListBuilder<>(
 				driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();

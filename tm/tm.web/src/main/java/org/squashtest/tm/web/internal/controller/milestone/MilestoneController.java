@@ -80,7 +80,7 @@ public class MilestoneController {
 		ProjectFilter projectFilter = projectFilterService.findProjectFilterByUserLogin();
 		if (projectFilter.isEnabled()) {
 			 Collection<Milestone> milestonesCollection = CollectionUtils.retainAll(milestones, getMilestoneFromProjectFilter(projectFilter));
-			 milestones = new ArrayList<Milestone>(0);
+			 milestones = new ArrayList<>(0);
 			 milestones.addAll(milestonesCollection);
 		}
 		
@@ -105,7 +105,7 @@ public class MilestoneController {
 	//--------------------------------- PRIVATE STUFF ---------------------------------//
 	
 	private Set<Milestone> getMilestoneFromProjectFilter(ProjectFilter projectFilter){
-		HashSet<Milestone> milestoneFiltered = new HashSet<Milestone>();
+		HashSet<Milestone> milestoneFiltered = new HashSet<>();
 		
 		List<Project> projects = projectFilter.getProjects();
 		for (Project project : projects) {

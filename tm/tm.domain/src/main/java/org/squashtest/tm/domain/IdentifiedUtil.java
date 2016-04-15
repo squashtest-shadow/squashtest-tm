@@ -30,7 +30,7 @@ public final class IdentifiedUtil {
  }
  
  public static <T extends Collection<? extends Identified>> List<Long> extractIds(T identifieds){
-	 List<Long> ids = new ArrayList<Long>(identifieds.size());
+	 List<Long> ids = new ArrayList<>(identifieds.size());
 	 for(Identified identified : identifieds) {
 		 ids.add(identified.getId());
 	 }

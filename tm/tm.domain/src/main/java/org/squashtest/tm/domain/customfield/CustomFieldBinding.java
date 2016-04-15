@@ -73,7 +73,7 @@ public class CustomFieldBinding {
 	@CollectionTable(name = "CUSTOM_FIELD_RENDERING_LOCATION", joinColumns = @JoinColumn(name = "CFB_ID"))
 	@Enumerated(EnumType.STRING)
 	@Column(name = "RENDERING_LOCATION")
-	private Set<RenderingLocation> renderingLocations = new HashSet<RenderingLocation>(5);
+	private Set<RenderingLocation> renderingLocations = new HashSet<>(5);
 
 	@ManyToOne
 	@JoinColumn(name = "BOUND_PROJECT_ID", updatable = false)
@@ -93,7 +93,7 @@ public class CustomFieldBinding {
 	}
 
 	public Set<RenderingLocation> copyRenderingLocations(){
-		Set<RenderingLocation> copy = new HashSet<RenderingLocation>(5);
+		Set<RenderingLocation> copy = new HashSet<>(5);
 		copy.addAll(renderingLocations);
 		return copy;
 	}
@@ -186,8 +186,8 @@ public class CustomFieldBinding {
 
 		private void moveCarelessly(List<Long> ids, int newIndex){
 
-			Set<Long> targetIds = new HashSet<Long>(ids);
-			LinkedList<CustomFieldBinding> removed = new LinkedList<CustomFieldBinding>();
+			Set<Long> targetIds = new HashSet<>(ids);
+			LinkedList<CustomFieldBinding> removed = new LinkedList<>();
 
 			ListIterator<CustomFieldBinding> iterator = this.listIterator();
 

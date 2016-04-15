@@ -131,7 +131,7 @@ public class EnumJeditableComboDataBuilder<T extends Enum<?>, B extends EnumJedi
 	}
 
 	private Map<String, String> createComboData() {
-		Map<String, String> comboData = new LinkedHashMap<String, String>(model.size());
+		Map<String, String> comboData = new LinkedHashMap<>(model.size());
 
 		labelFormatter.useLocale(locale);
 

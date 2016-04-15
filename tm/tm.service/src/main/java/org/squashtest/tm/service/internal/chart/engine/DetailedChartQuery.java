@@ -148,14 +148,17 @@ class DetailedChartQuery extends ChartQuery{
 	}
 
 
+	@Override
 	public void setMeasures(List<MeasureColumn> measures){
 		getMeasures().addAll(measures);
 	}
 
+	@Override
 	public void setAxis(List<AxisColumn> axes){
 		getAxis().addAll(axes);
 	}
 
+	@Override
 	public void setFilters(List<Filter> filters){
 		getFilters().addAll(filters);
 	}

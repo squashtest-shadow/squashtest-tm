@@ -26,11 +26,13 @@ package org.squashtest.tm.web.internal.exceptionresolver;
  */
 enum MimeType {
 	APPLICATION_JSON(){
+		@Override
 		public String requestHeaderValue(){
 			return "application/json";
 		}
 	},
 	TEXT_PLAIN(){
+		@Override
 		public String requestHeaderValue() {
 			return "text/plain";
 		}

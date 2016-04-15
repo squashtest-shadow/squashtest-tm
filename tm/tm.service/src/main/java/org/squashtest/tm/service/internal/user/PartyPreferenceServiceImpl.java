@@ -23,9 +23,6 @@ package org.squashtest.tm.service.internal.user;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.users.Party;

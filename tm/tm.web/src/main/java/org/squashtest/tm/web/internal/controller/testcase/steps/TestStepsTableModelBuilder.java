@@ -75,7 +75,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	@Override
 	public void visit(ActionTestStep visited) {
 
-		Map<Object, Object> item = new HashMap<Object, Object>(11);
+		Map<Object, Object> item = new HashMap<>(11);
 
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
@@ -99,7 +99,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	@Override
 	public void visit(CallTestStep visited) {
-		Map<Object, Object> item = new HashMap<Object, Object>(11);
+		Map<Object, Object> item = new HashMap<>(11);
 
 		item.put("step-id", visited.getId());
 		item.put("step-index", getCurrentIndex());
@@ -135,7 +135,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 			Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(entityId);
 
 			if (values == null) {
-				values = new HashMap<String, CustomFieldValueTableModel>(nbFieldsPerEntity);
+				values = new HashMap<>(nbFieldsPerEntity);
 				customFieldValuesById.put(entityId, values);
 			}
 
@@ -184,7 +184,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 		public Date getValueAsDate() {
 			try {
-				return DateUtils.parseIso8601Date((String)value);
+				return DateUtils.parseIso8601Date(value);
 			} catch (ParseException e) {
 				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
 			} catch (ClassCastException e) {
@@ -215,7 +215,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);
 
 		if (values == null) {
-			values = new HashMap<String, CustomFieldValueTableModel>();
+			values = new HashMap<>();
 		}
 		return values;
 

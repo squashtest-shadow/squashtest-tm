@@ -95,7 +95,7 @@ public class TestStepViewFromExec extends AbstractTestStepView<ExecutionStep> {
 
 	private List<ExecutionStep> getNonDeletedSteps(ExecutionStep execStep) {
 		Execution exec = execStep.getExecution();
-		List<ExecutionStep> execSteps = new ArrayList<ExecutionStep>(exec.getSteps());
+		List<ExecutionStep> execSteps = new ArrayList<>(exec.getSteps());
 		removeDeletedSteps(execSteps);
 		return execSteps;
 	}

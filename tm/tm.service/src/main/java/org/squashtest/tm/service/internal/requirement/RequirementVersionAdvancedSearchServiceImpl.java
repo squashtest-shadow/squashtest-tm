@@ -34,7 +34,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -75,7 +74,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Override
 	public List<String> findAllUsersWhoCreatedRequirementVersions() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
-		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		List<Long> projectIds = new ArrayList<>(readableProjects.size());
 		for (Project project : readableProjects) {
 			projectIds.add(project.getId());
 		}
@@ -85,7 +84,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Override
 	public List<String> findAllUsersWhoModifiedRequirementVersions() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
-		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		List<Long> projectIds = new ArrayList<>(readableProjects.size());
 		for (Project project : readableProjects) {
 			projectIds.add(project.getId());
 		}

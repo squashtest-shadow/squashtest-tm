@@ -32,7 +32,6 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.springframework.context.ApplicationListener;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;

@@ -140,7 +140,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 	}
 
 	public List<String> getContentNames() {
-		List<String> contentNames = new ArrayList<String>(folder.getContent().size());
+		List<String> contentNames = new ArrayList<>(folder.getContent().size());
 		for(NODE node : folder.getContent()){
 			contentNames.add(node.getName());
 		}

@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 	 */
 	public void build(List<Long[]> pairedIds){
 
-		List<TreeNodePair> allData = new LinkedList<TreeNodePair>();
+		List<TreeNodePair> allData = new LinkedList<>();
 
 		for (Long[] pair : pairedIds){
 			Long parentKey = pair[0];
@@ -83,7 +83,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 	 * @param isDeletable
 	 */
 	public void markLockedNodes(List<Long> nodeKeys){
-		List<Node> toUpdate = new LinkedList<Node>();
+		List<Node> toUpdate = new LinkedList<>();
 
 		for (Long key : nodeKeys){
 			toUpdate.add(new Node(key, false));
@@ -99,7 +99,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 	 * @param isDeletable
 	 */
 	public void markNodesAsDeletable(List<Long> nodeKeys){
-		List<Node> toUpdate = new LinkedList<Node>();
+		List<Node> toUpdate = new LinkedList<>();
 
 		for (Long key : nodeKeys){
 			toUpdate.add(new Node(key, true));
@@ -112,7 +112,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 
 	public List<Long> collectDeletableIds(){
 
-		List<Long> deletableIds = new LinkedList<Long>();
+		List<Long> deletableIds = new LinkedList<>();
 
 		for (Node node : getAllNodes()){
 			if (node.isDeletable()){
@@ -125,7 +125,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
 
 	public List<Long> collectLockedIds(){
 
-		List<Long> lockedIds = new LinkedList<Long>();
+		List<Long> lockedIds = new LinkedList<>();
 
 		for (Node node : getAllNodes()){
 			if (! node.isDeletable()){

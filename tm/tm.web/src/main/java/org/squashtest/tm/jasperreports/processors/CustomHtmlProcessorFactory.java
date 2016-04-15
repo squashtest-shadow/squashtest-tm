@@ -25,7 +25,6 @@ import java.text.AttributedCharacterIterator.Attribute;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -82,6 +81,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 	
 	
 	//slightly scrapped from JEditorPanelHtmlMarkupProcessor
+	@Override
 	protected Map<Attribute,Object> getAttributes(AttributeSet attrSet){
 		
 		Map<Attribute, Object> attributes = super.getAttributes(attrSet);
@@ -115,12 +115,13 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 	
 	// NOSONAR:START
 	// COPY PASTA FROM JEditorPaneHtmlMarkupProcessor to correct bug 2411
+	@Override
 	public String convert(String srcText)
 	{
 		JEditorPane editorPane = new JEditorPane("text/html", srcText);
 		editorPane.setEditable(false);
 
-		List<Element> elements = new ArrayList<Element>();
+		List<Element> elements = new ArrayList<>();
 
 		Document document = editorPane.getDocument();
 

@@ -27,7 +27,6 @@ import javax.inject.Inject;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Iteration;
-import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
@@ -79,7 +78,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 
 			TestSuiteNodeBuilder childrenBuilder = new TestSuiteNodeBuilder(permissionEvaluationService);
 
-			List<JsTreeNode> children = new JsTreeNodeListBuilder<TestSuite>(childrenBuilder)
+			List<JsTreeNode> children = new JsTreeNodeListBuilder<>(childrenBuilder)
 					.expand(getExpansionCandidates())
 					.setModel(model.getOrderedContent())
 					.build();

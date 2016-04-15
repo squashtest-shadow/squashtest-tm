@@ -32,9 +32,9 @@ import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CustomField;
 
 public class RequirementExportModel {
-	private List<RequirementModel> requirementsModels = new LinkedList<RequirementModel>();
+	private List<RequirementModel> requirementsModels = new LinkedList<>();
 
-	private List<CoverageModel> coverages = new LinkedList<CoverageModel>();
+	private List<CoverageModel> coverages = new LinkedList<>();
 
 	public List<CoverageModel> getCoverages() {
 		return coverages;
@@ -114,7 +114,7 @@ public class RequirementExportModel {
 		private Date lastModifiedOn;
 		private String lastModifiedBy;
 		private String milestonesLabels;
-		private List<CustomField> cufs = new LinkedList<CustomField>();
+		private List<CustomField> cufs = new LinkedList<>();
 
 		// That monster constructor will be used by Hibernate in a hql query.
 		// Note that attributes not present in the hql request mustn't be in this constructor
@@ -409,7 +409,7 @@ public class RequirementExportModel {
 		private String createdBy;
 		private Date lastModifiedOn;
 		private String lastModifiedBy;
-		private List<CustomField> cufs = new LinkedList<CustomField>();
+		private List<CustomField> cufs = new LinkedList<>();
 
 		// That monster constructor will be used by Hibernate in a hql query.
 		// Note that attributes not present in the hql request mustn't be in this constructor

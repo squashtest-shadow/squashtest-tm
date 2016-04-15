@@ -56,13 +56,11 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
 import org.squashtest.tm.service.campaign.IterationFinder;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.controller.generic.WorkspaceController;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
@@ -221,7 +219,7 @@ public class VerifyingTestCaseManagerController {
 		LOGGER.debug("JTH go controller go");
 		
 		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
-		List<Long> iterationIds = new ArrayList<Long>();
+		List<Long> iterationIds = new ArrayList<>();
 		RequirementCoverageStat stat = new RequirementCoverageStat();
 		
 		if (mapIdsByType.containsKey(campaign_name)) {
@@ -244,7 +242,7 @@ public class VerifyingTestCaseManagerController {
 
 	private List<Long> getIterationsIdsForCampagain(
 			Campaign campaign) {
-		List<Long> iterationIds = new ArrayList<Long>();
+		List<Long> iterationIds = new ArrayList<>();
 		for (Iteration it : campaign.getIterations()) {
 			iterationIds.add(it.getId());
 		}

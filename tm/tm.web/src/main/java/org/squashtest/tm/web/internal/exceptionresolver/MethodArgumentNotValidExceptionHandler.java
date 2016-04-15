@@ -75,7 +75,7 @@ public class MethodArgumentNotValidExceptionHandler extends
 	}
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(MethodArgumentNotValidException invalidAgrumentEx) {
-		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
+		List<FieldValidationErrorModel> ves = new ArrayList<>();
 		List<FieldError> oes = invalidAgrumentEx.getBindingResult().getFieldErrors();
 
 		for (FieldError oe : oes) {

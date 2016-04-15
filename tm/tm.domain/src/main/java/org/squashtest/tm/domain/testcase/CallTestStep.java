@@ -107,7 +107,7 @@ public class CallTestStep extends TestStep {
 	public List<ExecutionStep> createExecutionSteps(Dataset dataset){
 
 		List<TestStep> testSteps = this.getCalledTestCase().getSteps();
-		List<ExecutionStep> returnList = new ArrayList<ExecutionStep>(testSteps.size());
+		List<ExecutionStep> returnList = new ArrayList<>(testSteps.size());
 
 
 		Dataset effective;

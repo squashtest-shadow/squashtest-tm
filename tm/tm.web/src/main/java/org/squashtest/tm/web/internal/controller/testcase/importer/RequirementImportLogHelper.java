@@ -35,7 +35,7 @@ public class RequirementImportLogHelper extends ImportLogHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementImportLogHelper.class);
 
-	private static final Map<String, EntityType> ENTITY_BY_TAB = new HashMap<String, EntityType>();
+	private static final Map<String, EntityType> ENTITY_BY_TAB = new HashMap<>();
 
 	static {
 		ENTITY_BY_TAB.put("REQUIREMENT", EntityType.REQUIREMENT_VERSION);

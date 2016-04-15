@@ -48,6 +48,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -769,7 +770,7 @@ public class FacilityImpl implements Facility {
 	}
 	
 	private void renameIfNeeded(NewRequirementVersionDto version, Collection<String> siblingNames) {
-		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, TestCase.MAX_NAME_SIZE);
+		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
 		if (!newName.equals(version.getName())) {
 			version.setName(newName);
 		}
@@ -1033,7 +1034,7 @@ public class FacilityImpl implements Facility {
 	}
 
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
-		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, TestCase.MAX_NAME_SIZE);
+		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
 		if (!newName.equals(testCase.getName())) {
 			testCase.setName(newName);
 		}

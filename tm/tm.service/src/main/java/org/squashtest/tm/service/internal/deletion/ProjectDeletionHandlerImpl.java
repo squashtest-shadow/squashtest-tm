@@ -215,7 +215,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 	}
 
 	private List<Long> retrieveNodesids(List<? extends LibraryNode> folders) {
-		List<Long> result = new ArrayList<Long>();
+		List<Long> result = new ArrayList<>();
 		for (LibraryNode libraryNode : folders) {
 			result.add(libraryNode.getId());
 		}

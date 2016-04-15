@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -138,7 +139,7 @@ final class FacilityImplHelper {
 
 	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
-		testCase.setName(truncate(name, TestCase.MAX_NAME_SIZE));
+		testCase.setName(truncate(name, LibraryNode.MAX_NAME_SIZE));
 		String ref = testCase.getReference();
 		testCase.setReference(truncate(ref, TestCase.MAX_REF_SIZE));
 

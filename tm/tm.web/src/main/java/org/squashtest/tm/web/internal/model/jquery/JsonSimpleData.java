@@ -27,7 +27,7 @@ import java.util.ListIterator;
 // TODO this class does Jackson's work ie JSON marshalling. @Controllers can return Map or custom objects, they will be marshalled to JSON automatically.
 public class JsonSimpleData {
 
-	private List<String> attrList = new LinkedList<String>();
+	private List<String> attrList = new LinkedList<>();
 
 	public JsonSimpleData addAttr(String attrName, String attrValue) {
 		attrList.add("\"" + attrName + "\" : \"" + attrValue + "\"");

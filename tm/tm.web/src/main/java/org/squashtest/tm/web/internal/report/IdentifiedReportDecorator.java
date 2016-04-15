@@ -53,6 +53,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getCategory()
 	 */
+	@Override
 	public StandardReportCategory getCategory() {
 		return report.getCategory();
 	}
@@ -61,6 +62,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getType()
 	 */
+	@Override
 	public StandardReportType getType() {
 		return report.getType();
 	}
@@ -69,6 +71,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getDescriptionKey()
 	 */
+	@Override
 	public String getDescriptionKey() {
 		return report.getDescriptionKey();
 	}
@@ -77,6 +80,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getViews()
 	 */
+	@Override
 	public ReportView[] getViews() {
 		return report.getViews();
 	}
@@ -85,6 +89,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		return report.getDescription();
 	}
@@ -93,6 +98,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getForm()
 	 */
+	@Override
 	public Input[] getForm() {
 		return report.getForm();
 	}
@@ -101,6 +107,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getLabelKey()
 	 */
+	@Override
 	public String getLabelKey() {
 		return report.getLabelKey();
 	}
@@ -109,6 +116,7 @@ public class IdentifiedReportDecorator implements Report {
 	 * @return
 	 * @see org.squashtest.tm.api.report.Report#getLabel()
 	 */
+	@Override
 	public String getLabel() {
 		return report.getLabel();
 	}

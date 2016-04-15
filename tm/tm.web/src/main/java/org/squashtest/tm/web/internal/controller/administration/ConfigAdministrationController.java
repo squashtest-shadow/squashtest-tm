@@ -164,7 +164,7 @@ public class ConfigAdministrationController {
         BaseClientDetails clientDetails = new BaseClientDetails();
         clientDetails.setClientId(model.getClientId());
         clientDetails.setClientSecret(model.getClientSecret());
-        Set<String> uris = new HashSet<String>();
+        Set<String> uris = new HashSet<>();
         uris.add(model.getRegisteredRedirectUri());
         clientDetails.setRegisteredRedirectUri(uris);
         return clientDetails;

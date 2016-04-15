@@ -85,7 +85,7 @@ public class ProjectFilterController {
 	void updateProjectFilter(@RequestBody ProjectFilterModel projectFilterModel) {
 		List<Long> ids;
 		if (projectFilterModel == null) {
-			ids = new LinkedList<Long>(); // create an empty list instead
+			ids = new LinkedList<>(); // create an empty list instead
 		} else {
 			ids = projectFilterModel.getProjectIds();
 		}

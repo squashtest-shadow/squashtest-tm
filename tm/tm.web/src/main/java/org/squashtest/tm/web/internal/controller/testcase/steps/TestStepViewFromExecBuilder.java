@@ -72,7 +72,7 @@ class TestStepViewFromExecBuilder implements TestStepVisitor {
 	private ExecutionStep findExistingStep(ExecutionStep execStep) {
 
 		Execution exec = execStep.getExecution();
-		List<ExecutionStep> execSteps = new ArrayList<ExecutionStep>(exec.getSteps());
+		List<ExecutionStep> execSteps = new ArrayList<>(exec.getSteps());
 		int stepIndex = exec.getStepIndex(execStep.getId());
 		List<ExecutionStep> after = execSteps.subList(stepIndex, execSteps.size());
 

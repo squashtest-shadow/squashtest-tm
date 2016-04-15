@@ -164,7 +164,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	@Override
 	public void removeMemberFromAllTeams(long memberId) {
 		User user = userDao.findById(memberId);
-		List<Long> teamIds = new ArrayList<Long>();
+		List<Long> teamIds = new ArrayList<>();
 		Set<Team> teams = user.getTeams();
 		for (Team team : teams) {
 			teamIds.add(team.getId());

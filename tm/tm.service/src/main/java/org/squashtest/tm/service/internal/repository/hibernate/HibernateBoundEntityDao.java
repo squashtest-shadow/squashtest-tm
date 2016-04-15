@@ -39,7 +39,6 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -64,7 +63,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final Map<BindableEntity, String> BOUND_ENTITIES_IN_PROJECT_QUERY;
 
 	static {
-		Map<BindableEntity, String> queriesByBindable = new HashMap<BindableEntity, String>();
+		Map<BindableEntity, String> queriesByBindable = new HashMap<>();
 		queriesByBindable.put(TEST_CASE, TEST_CASE_QUERY_NAME);
 		queriesByBindable.put(REQUIREMENT_VERSION, REQUIREMENT_QUERY_NAME);
 		queriesByBindable.put(CAMPAIGN, CAMPAIGN_QUERY_NAME);

@@ -34,8 +34,8 @@ public class GraphNode<IDENT, T extends GraphNode<IDENT, T>>{
 	 * we need an arbitrary order, but rather because a node can appear multiple times
 	 * (edge cardinality)
 	 */
-	protected final Collection<T> inbounds = new LinkedList<T>();
-	protected final Collection<T> outbounds = new LinkedList<T>();
+	protected final Collection<T> inbounds = new LinkedList<>();
+	protected final Collection<T> outbounds = new LinkedList<>();
 
 
 	public GraphNode(){

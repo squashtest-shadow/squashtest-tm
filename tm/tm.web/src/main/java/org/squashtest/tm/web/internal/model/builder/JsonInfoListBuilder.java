@@ -52,7 +52,7 @@ public class JsonInfoListBuilder {
 		res.setLabel(list.getLabel());
 		res.setDescription(list.getDescription());
 
-		List<JsonInfoListItem> items = new ArrayList<JsonInfoListItem>(list.getItems().size());
+		List<JsonInfoListItem> items = new ArrayList<>(list.getItems().size());
 		for (InfoListItem item : list.getItems()){
 			JsonInfoListItem jsItem = toJson(item);
 			items.add(jsItem);

@@ -45,7 +45,7 @@ public class JsonCustomReportDashboard {
 	//Date formating is done server side
 	private String lastModifiedOn;
 	
-	private Set<JsonCustomReportChartBinding> chartBindings = new HashSet<JsonCustomReportChartBinding>();
+	private Set<JsonCustomReportChartBinding> chartBindings = new HashSet<>();
 
 	public Long getId() {
 		return id;

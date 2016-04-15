@@ -65,7 +65,7 @@ LibraryNodeDao<RequirementLibraryNode> {
 
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
-		List<Long> result = new ArrayList<Long>();
+		List<Long> result = new ArrayList<>();
 		for (String path : paths.subList(1, paths.size())) {
 			result.add(findNodeIdByPath(path));
 		}
@@ -78,7 +78,7 @@ LibraryNodeDao<RequirementLibraryNode> {
 	public Long findNodeIdByPath(String path){
 		String projectName = PathUtils.extractProjectName(path);
 		String projectUnescapedName = PathUtils.unescapePathPartSlashes(projectName);
-		List<String> splits = new ArrayList<String>(Arrays.asList (PathUtils.splitPath(path)));
+		List<String> splits = new ArrayList<>(Arrays.asList (PathUtils.splitPath(path)));
 		List<String> effectiveSplits = unescapeSlashes(splits);
 		GenericProject project = projectDao.findByName(projectUnescapedName);
 		
@@ -146,7 +146,7 @@ LibraryNodeDao<RequirementLibraryNode> {
 	}
 
 	private List<String> unescapeSlashes(List<String> paths) {
-		List<String> unescaped = new ArrayList<String>(paths.size());
+		List<String> unescaped = new ArrayList<>(paths.size());
 		for (String orig : paths) {
 			unescaped.add(orig.replaceAll("\\\\/", "/"));
 		}

@@ -45,7 +45,6 @@ import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PageCollectionHolderWrapper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -201,6 +200,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		return findAllByRequirement(requirementId, pas).getPagedItems();
 	}
 
+	@Override
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
 			+ OR_HAS_ROLE_ADMIN)
 	public void changeCategory(long requirementVersionId, String categoryCode) {
@@ -255,7 +255,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 				milestones.retainAll(mil);
 			} else {
 				// populate the collection for the first time
-				milestones = new ArrayList<Milestone>(mil);
+				milestones = new ArrayList<>(mil);
 			}
 		}
 		filterLockedAndPlannedStatus(milestones);
@@ -284,7 +284,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 				milestones.retainAll(mil);
 			} else {
 				// populate the collection for the first time
-				milestones = new ArrayList<Milestone>(mil);
+				milestones = new ArrayList<>(mil);
 			}
 		}
 		filterLockedAndPlannedStatus(milestones);

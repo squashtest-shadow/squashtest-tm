@@ -47,7 +47,7 @@ class HierarchyCreator{
 	private ExcelTestCaseParser parser;
 	private GenericProject project;
 
-	private StringPathMap<TestCaseLibraryNode> pathMap = new StringPathMap<TestCaseLibraryNode>();
+	private StringPathMap<TestCaseLibraryNode> pathMap = new StringPathMap<>();
 
 
 	private ImportSummaryImpl summary = new ImportSummaryImpl();

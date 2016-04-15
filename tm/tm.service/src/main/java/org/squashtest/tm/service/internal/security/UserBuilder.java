@@ -43,7 +43,7 @@ public final class UserBuilder {
 	private Boolean accountNonExpired;
 	private Boolean credentialsNonExpired;
 	private Boolean accountNonLocked;
-	private Collection<? extends GrantedAuthority> authorities = new ArrayList<GrantedAuthority>(0);
+	private Collection<? extends GrantedAuthority> authorities = new ArrayList<>(0);
 
 	/**
 	 * 

@@ -36,6 +36,7 @@ public enum RequirementCategory implements Level {
 		this.level = level;
 	}
 
+	@Override
 	public int getLevel() {
 		return level;
 	}

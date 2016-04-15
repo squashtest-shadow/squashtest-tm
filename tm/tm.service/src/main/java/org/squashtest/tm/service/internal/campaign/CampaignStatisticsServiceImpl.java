@@ -36,7 +36,6 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -332,7 +331,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		IterationTestInventoryStatistics newStatistics = new IterationTestInventoryStatistics();
 		Long currentId = null;
 
-		List<IterationTestInventoryStatistics> result = new LinkedList<IterationTestInventoryStatistics>();
+		List<IterationTestInventoryStatistics> result = new LinkedList<>();
 
 		for (Object[] tuple : res){
 			Long id = (Long)tuple[0];
@@ -368,7 +367,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		CampaignTestInventoryStatistics newStatistics = new CampaignTestInventoryStatistics();
 		Long currentId = null;
 
-		List<CampaignTestInventoryStatistics> result = new LinkedList<CampaignTestInventoryStatistics>();
+		List<CampaignTestInventoryStatistics> result = new LinkedList<>();
 
 		for (Object[] tuple : res){
 			Long id = (Long)tuple[0];

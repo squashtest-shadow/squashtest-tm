@@ -73,7 +73,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 	 */
 	@Override
 	public void updateTestStep(Long testStepId, String action, String expectedResult, Map<Long, RawValue> cufValues) {
-		List<DomainException> exceptions = new ArrayList<DomainException>();
+		List<DomainException> exceptions = new ArrayList<>();
 		TestStep step = testStepDao.findById(testStepId);
 		parameterModificationService.createParamsForStep(testStepId);
 		updateCufValues(step, cufValues, exceptions);

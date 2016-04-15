@@ -36,6 +36,7 @@ public enum RequirementCriticality implements Level, Serializable {
 		this.level = level;
 	}
 
+	@Override
 	public int getLevel() {
 		return level;
 	}

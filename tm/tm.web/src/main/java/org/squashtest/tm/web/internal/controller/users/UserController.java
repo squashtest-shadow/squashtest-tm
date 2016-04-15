@@ -110,7 +110,7 @@ public class UserController {
 	@ResponseBody
 	public Map<String, Object> getNonAssociatedTeams(@PathVariable(USER_ID) long userId) {
 		LOGGER.info("Find teams where user #{} is not a member.", userId);
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 		long teamTot = teamFinder.countAll();
 		if (teamTot <= 0) {
 			result.put("status", "no-team");
@@ -151,7 +151,7 @@ public class UserController {
 
 		@Override
 		protected Map<?, ?> buildItemData(Team item) {
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put("team-id", item.getId());
 			res.put("team-index", getCurrentIndex());
 			res.put("team-name", item.getName());

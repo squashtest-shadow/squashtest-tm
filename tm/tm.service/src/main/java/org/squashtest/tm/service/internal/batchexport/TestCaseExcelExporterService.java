@@ -81,7 +81,7 @@ public class TestCaseExcelExporterService {
 		int max = Math.min(idx+BATCH_SIZE, testCaseIds.size());
 		exporter.setMessageSource(messageSource);
 
-		Map<Long, String> pathById = new HashMap<Long, String>(testCaseIds.size());
+		Map<Long, String> pathById = new HashMap<>(testCaseIds.size());
 		populatePathsCache(pathById, testCaseIds);
 
 		while (idx < testCaseIds.size()){
@@ -142,8 +142,8 @@ public class TestCaseExcelExporterService {
 	private void addPathsForTestSteps(Map<Long, String> pathById, ExportModel models){
 
 
-		List<TestStepModel> callsteps = new LinkedList<TestStepModel>();
-		Set<Long> calledTC = new HashSet<Long>();
+		List<TestStepModel> callsteps = new LinkedList<>();
+		Set<Long> calledTC = new HashSet<>();
 
 		for (TestStepModel model : models.getTestSteps()){
 
@@ -189,8 +189,8 @@ public class TestCaseExcelExporterService {
 
 	private void addPathsForDatasets(Map<Long, String> pathById, ExportModel models){
 
-		List<DatasetModel>  unresolvedPOwnerPath = new LinkedList<DatasetModel>();
-		List<Long> pOwnerIds = new LinkedList<Long>();
+		List<DatasetModel>  unresolvedPOwnerPath = new LinkedList<>();
+		List<Long> pOwnerIds = new LinkedList<>();
 
 		for (DatasetModel model : models.getDatasets()){
 

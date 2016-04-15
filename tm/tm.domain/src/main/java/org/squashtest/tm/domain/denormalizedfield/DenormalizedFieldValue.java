@@ -111,7 +111,7 @@ public class DenormalizedFieldValue {
 	@CollectionTable(name = "DENORMALIZED_FIELD_RENDERING_LOCATION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@Enumerated(EnumType.STRING)
 	@Column(name = "RENDERING_LOCATION")
-	protected Set<RenderingLocation> renderingLocations = new HashSet<RenderingLocation>(5);
+	protected Set<RenderingLocation> renderingLocations = new HashSet<>(5);
 
 	/**
 	 * For ORM purposes.

@@ -27,10 +27,10 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class CampaignTestCaseSuccessRateStatistics {
 
-	private Map<ExecutionStatus, Integer> testsOfLowImportance = new HashMap<ExecutionStatus, Integer>();
-	private Map<ExecutionStatus, Integer> testsOfMediumImportance = new HashMap<ExecutionStatus, Integer>();
-	private Map<ExecutionStatus, Integer> testsOfHighImportance = new HashMap<ExecutionStatus, Integer>();
-	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new HashMap<ExecutionStatus, Integer>();
+	private Map<ExecutionStatus, Integer> testsOfLowImportance = new HashMap<>();
+	private Map<ExecutionStatus, Integer> testsOfMediumImportance = new HashMap<>();
+	private Map<ExecutionStatus, Integer> testsOfHighImportance = new HashMap<>();
+	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new HashMap<>();
 
 	public void addNbLow(ExecutionStatus status, int number){
 

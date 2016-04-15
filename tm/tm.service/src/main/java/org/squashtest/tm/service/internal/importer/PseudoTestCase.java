@@ -54,7 +54,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	// others are complementary elements
 	private final List<String[]> descriptionElements = new ArrayList<String[]>();
 
-	private final List<String> prerequisites = new ArrayList<String>();
+	private final List<String> prerequisites = new ArrayList<>();
 
 	private final List<String[]> stepElements = new LinkedList<String[]>();
 
@@ -182,7 +182,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 	public List<TestStep> formatSteps() {
 
-		List<TestStep> steps = new LinkedList<TestStep>();
+		List<TestStep> steps = new LinkedList<>();
 
 		for (String[] pseudoStep : stepElements) {
 			ActionTestStep step = new ActionTestStep();

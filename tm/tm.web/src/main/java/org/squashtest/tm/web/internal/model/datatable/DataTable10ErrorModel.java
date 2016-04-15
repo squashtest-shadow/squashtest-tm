@@ -66,6 +66,7 @@ public class DataTable10ErrorModel implements DataTable10Model {
 	 * @return
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTable10Model#getDraw()
 	 */
+	@Override
 	@JsonProperty
 	public long getDraw() {
 		return decorated.getDraw();
@@ -75,6 +76,7 @@ public class DataTable10ErrorModel implements DataTable10Model {
 	 * @return
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTable10Model#getRecordsTotal()
 	 */
+	@Override
 	@JsonProperty
 	public long getRecordsTotal() {
 		return decorated.getRecordsTotal();
@@ -84,6 +86,7 @@ public class DataTable10ErrorModel implements DataTable10Model {
 	 * @return
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTable10Model#getRecordsFiltered()
 	 */
+	@Override
 	@JsonProperty
 	public long getRecordsFiltered() {
 		return decorated.getRecordsFiltered();
@@ -93,6 +96,7 @@ public class DataTable10ErrorModel implements DataTable10Model {
 	 * @return
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTable10Model#getData()
 	 */
+	@Override
 	@JsonProperty
 	public List<Object> getData() {
 		return decorated.getData();

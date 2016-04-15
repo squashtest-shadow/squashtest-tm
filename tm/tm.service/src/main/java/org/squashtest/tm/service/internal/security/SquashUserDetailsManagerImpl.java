@@ -66,7 +66,7 @@ public class SquashUserDetailsManagerImpl extends JdbcUserDetailsManager impleme
 	 */
 	@Override
 	public List<GrantedAuthority> loadAuthoritiesByUsername(@NotNull String username) {
-		Set<GrantedAuthority> dbAuthsSet = new HashSet<GrantedAuthority>();
+		Set<GrantedAuthority> dbAuthsSet = new HashSet<>();
 
 		if (getEnableAuthorities()) {
 			dbAuthsSet.addAll(loadUserAuthorities(username));
@@ -76,7 +76,7 @@ public class SquashUserDetailsManagerImpl extends JdbcUserDetailsManager impleme
 			dbAuthsSet.addAll(loadGroupAuthorities(username));
 		}
 
-		List<GrantedAuthority> dbAuths = new ArrayList<GrantedAuthority>(dbAuthsSet);
+		List<GrantedAuthority> dbAuths = new ArrayList<>(dbAuthsSet);
 
 		addCustomAuthorities(username, dbAuths);
 

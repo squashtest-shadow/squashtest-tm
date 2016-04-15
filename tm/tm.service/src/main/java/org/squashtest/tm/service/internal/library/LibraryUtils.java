@@ -158,7 +158,7 @@ public final class LibraryUtils {
 	}
 
 	private static List<String> filterPotentialClashes(String source, Collection<String> siblings) {
-		List<String> potentialClashes = new ArrayList<String>(siblings.size());
+		List<String> potentialClashes = new ArrayList<>(siblings.size());
 
 		for (String sibling : siblings) {
 			if (sibling.startsWith(source)) {

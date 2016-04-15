@@ -49,7 +49,7 @@ public final class TestSuiteHelper {
 	}
 	
 	private static StringBuilder buildNameList(List<TestSuite> unsortedSuites){
-		List<TestSuite> sortedSuites = new ArrayList<TestSuite>(unsortedSuites);
+		List<TestSuite> sortedSuites = new ArrayList<>(unsortedSuites);
 		Collections.sort(sortedSuites, new Comparator<TestSuite>(){
 			@Override
 			public int compare(TestSuite o1, TestSuite o2) {

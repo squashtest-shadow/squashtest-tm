@@ -26,7 +26,6 @@ import static org.squashtest.tm.api.security.acls.Permission.EXECUTE;
 import static org.squashtest.tm.api.security.acls.Permission.EXPORT;
 import static org.squashtest.tm.api.security.acls.Permission.WRITE;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;

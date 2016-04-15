@@ -31,7 +31,6 @@ import org.apache.commons.collections.Transformer;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.DefaultSorting;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneRange;

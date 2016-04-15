@@ -310,8 +310,8 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long>[] separateFolderFromTestCaseIds(List<Long> originalIds) {
-		List<Long> folderIds = new ArrayList<Long>();
-		List<Long> testcaseIds = new ArrayList<Long>();
+		List<Long> folderIds = new ArrayList<>();
+		List<Long> testcaseIds = new ArrayList<>();
 
 		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
 				NativeQueries.TESTCASELIBRARYNODE_SQL_FILTERFOLDERIDS, "testcaseIds", originalIds);

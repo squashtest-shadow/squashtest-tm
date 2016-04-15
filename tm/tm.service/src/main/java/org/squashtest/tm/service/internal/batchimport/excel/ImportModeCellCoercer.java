@@ -34,7 +34,7 @@ import org.squashtest.tm.service.internal.batchimport.Messages;
 public final class ImportModeCellCoercer extends TypeBasedCellValueCoercer<ImportMode> {
 	public static final ImportModeCellCoercer INSTANCE = new ImportModeCellCoercer();
 
-	private final Map<String, ImportMode> modeByShortName = new HashMap<String, ImportMode>(
+	private final Map<String, ImportMode> modeByShortName = new HashMap<>(
 			ImportMode.values().length);
 
 

@@ -45,7 +45,7 @@ public class AttachmentList {
 
 	@OneToMany(cascade = { CascadeType.ALL })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID", nullable = false, updatable = false)
-	private final Set<Attachment> attachments = new HashSet<Attachment>();
+	private final Set<Attachment> attachments = new HashSet<>();
 
 	public Long getId() {
 		return id;

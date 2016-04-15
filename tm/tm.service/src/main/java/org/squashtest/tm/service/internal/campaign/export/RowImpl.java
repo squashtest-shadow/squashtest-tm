@@ -35,6 +35,7 @@ class RowImpl implements Row {
 	private final char separator;
 	private final List<? extends Cell> cells;
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<Cell> getCells() {
 		return (List<Cell>) cells;

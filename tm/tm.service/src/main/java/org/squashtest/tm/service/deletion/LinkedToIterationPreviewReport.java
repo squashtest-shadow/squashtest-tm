@@ -35,7 +35,7 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 	private static final String NODE_NAME_MESSAGE_KEY = "message.deletionWarning.testCase.nodeNames.single";
 	private static final String WHY_MESSAGE_KEY = "message.deletionWarning.testCase.why.linkedToIteration";
 	private static final String WHY_SINGLE_MESSAGE_KEY = "message.deletionWarning.testCase.why.linkedToIteration.single";
-	private final Set<String> nodeNames = new HashSet<String>();
+	private final Set<String> nodeNames = new HashSet<>();
 	@Override
 	public String toString(MessageSource source, Locale locale) {
 		StringBuilder builder = new StringBuilder();

@@ -173,7 +173,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 
 	private List<Long> parseLong(String[] stringArray) {
-		List<Long> longList = new ArrayList<Long>();
+		List<Long> longList = new ArrayList<>();
 		for (int i = 0; i < stringArray.length; i++) {
 			longList.add(Long.parseLong(stringArray[i]));
 		}

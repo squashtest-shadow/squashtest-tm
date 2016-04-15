@@ -74,7 +74,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 	
 	@Override
 	protected Object buildItemData(Milestone item) {
-		Map<String, Object> row = new HashMap<String, Object>(12);
+		Map<String, Object> row = new HashMap<>(12);
 		final AuditableMixin auditable = (AuditableMixin) item;
 		row.put("entity-id", item.getId());
 		row.put("index", getCurrentIndex() + 1);

@@ -93,7 +93,7 @@ public class JsonTestCaseBuilder {
 			return Collections.emptyList();
 		}
 
-		List<JsonTestCase> res = new ArrayList<JsonTestCase>(entities.size());
+		List<JsonTestCase> res = new ArrayList<>(entities.size());
 
 		for (TestCase tc : entities) {
 			res.add(build(tc));

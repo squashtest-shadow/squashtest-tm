@@ -61,7 +61,7 @@ public abstract class LibraryPluginBinding  {
 	@CollectionTable(name = "LIBRARY_PLUGIN_BINDING_PROPERTY", joinColumns = @JoinColumn(name = "PLUGIN_BINDING_ID"))
 	@MapKeyColumn(name = "PLUGIN_BINDING_KEY")
 	@Column(name = "PLUGIN_BINDING_VALUE")
-	private Map<String, String> properties = new HashMap<String, String>(2);
+	private Map<String, String> properties = new HashMap<>(2);
 
 
 	public LibraryPluginBinding(){

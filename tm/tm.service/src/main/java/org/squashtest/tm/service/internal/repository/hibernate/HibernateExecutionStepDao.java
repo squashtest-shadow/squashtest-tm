@@ -83,7 +83,7 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 		if (testStepIds.size()==0) {
 			return new MultiValueMap();
 		}
-		List<ExecutionStep> execSteps = new ArrayList<ExecutionStep>();
+		List<ExecutionStep> execSteps = new ArrayList<>();
 		for (Long tcId : testCaseIds) {
 			Query q = currentSession().getNamedQuery("execution.findAllByTestCaseIdAndItIdOrderByRunDate");
 			q.setParameter("testCaseId", tcId, LongType.INSTANCE);

@@ -39,12 +39,12 @@ implements CellValueCoercer<T> {
 	private static final Set<String> OLD_TYPES;
 
 	static {
-		OLD_NATURES = new HashSet<String>(8);
+		OLD_NATURES = new HashSet<>(8);
 		for (TestCaseNature nat : TestCaseNature.values()){
 			OLD_NATURES.add(nat.toString());
 		}
 
-		OLD_TYPES = new HashSet<String>(7);
+		OLD_TYPES = new HashSet<>(7);
 		for (TestCaseType typ : TestCaseType.values()){
 			OLD_TYPES.add(typ.toString());
 		}

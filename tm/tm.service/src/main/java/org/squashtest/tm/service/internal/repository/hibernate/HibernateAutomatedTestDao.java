@@ -30,7 +30,6 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.LongType;
@@ -87,6 +86,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	}
 
 
+	@Override
 	public void pruneOrphans(){
 		Session session = em.unwrap(Session.class);
 
@@ -163,7 +163,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findAllByExtenderIds");
 		query.setParameterList("extenderIds", extenderIds, LongType.INSTANCE);
-		return (List<AutomatedTest>) query.list();
+		return query.list();
 
 	}
 
@@ -176,7 +176,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findAllByExtenders");
 		query.setParameterList("extenders", extenders);
-		return (List<AutomatedTest>) query.list();
+		return query.list();
 
 	}
 

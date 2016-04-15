@@ -102,7 +102,7 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 		for (ExecutionStep estep : executionSteps){
 			Collection _values = cufsPerStepId.getCollection(estep.getReferencedTestStep().getId());
 			if (_values != null){ // might be null when there are no custom fields
-				List<CustomFieldValue> values = new ArrayList<CustomFieldValue>(_values);
+				List<CustomFieldValue> values = new ArrayList<>(_values);
 				createDenormalizedFieldValues(estep, values);
 			}
 		}

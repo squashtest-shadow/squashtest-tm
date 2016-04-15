@@ -87,6 +87,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 		doSetValue(value);
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}

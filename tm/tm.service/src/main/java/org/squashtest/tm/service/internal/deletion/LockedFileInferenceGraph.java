@@ -102,7 +102,7 @@ public class LockedFileInferenceGraph extends
 	 */
 	protected void resolveLockedFiles() {
 
-		LinkedList<Node> remainingNodes = new LinkedList<Node>();
+		LinkedList<Node> remainingNodes = new LinkedList<>();
 
 		reset();
 
@@ -140,7 +140,7 @@ public class LockedFileInferenceGraph extends
 	 * @return
 	 */
 	public List<Node> collectLockedNodes() {
-		List<Node> lockedNodes = new ArrayList<Node>();
+		List<Node> lockedNodes = new ArrayList<>();
 
 		for (Node node : getNodes()) {
 			if (!node.isDeletable()) {
@@ -159,7 +159,7 @@ public class LockedFileInferenceGraph extends
 	 */
 	public List<Node> collectLockedCandidates() {
 
-		List<Node> lockedCandidates = new ArrayList<Node>();
+		List<Node> lockedCandidates = new ArrayList<>();
 
 		for (Node node : getNodes()) {
 			if (! node.isDeletable() && isCandidate(node)) {
@@ -180,7 +180,7 @@ public class LockedFileInferenceGraph extends
 	 */
 	public List<Node> collectLockers() {
 
-		List<Node> lockers = new ArrayList<Node>();
+		List<Node> lockers = new ArrayList<>();
 
 		for (Node node : getNodes()) {
 			if ( ! node.isDeletable() && ! isCandidate(node)) {
@@ -202,7 +202,7 @@ public class LockedFileInferenceGraph extends
 	 * @return
 	 */
 	public List<Node> collectDeletableNodes() {
-		List<Node> deletableNodes = new ArrayList<Node>();
+		List<Node> deletableNodes = new ArrayList<>();
 
 		for (Node node : getNodes()) {
 			if (node.isDeletable()) {

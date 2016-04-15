@@ -92,7 +92,7 @@ public class CustomReportWorkspaceController {
 
 		List<CustomReportLibraryNode> libraries = workspaceService.findRootNodes();
 
-		Set<Long> nodeIdToOpen = new HashSet<Long>();
+		Set<Long> nodeIdToOpen = new HashSet<>();
 		nodeIdToOpen.addAll(convertCookieIds(openedNodes));
 		//Every node above selected node should be opened and it should be not necessary to get ancestors.
 		//But we have corner cases liken when we create a new chart in different screen...
@@ -101,7 +101,7 @@ public class CustomReportWorkspaceController {
 			nodeIdToOpen.addAll(findAncestorsOfselectedNode(elementId));
 		}
 
-		List<JsTreeNode> rootNodes = new ArrayList<JsTreeNode>();
+		List<JsTreeNode> rootNodes = new ArrayList<>();
 
 		for (CustomReportLibraryNode crl : libraries) {
 			JsTreeNode treeNode = builderProvider.get().buildWithOpenedNodes(crl, nodeIdToOpen);
@@ -169,7 +169,7 @@ public class CustomReportWorkspaceController {
 	}
 
 	private Set<Long> convertCookieIds(String[] cookieValues){
-		Set<Long> nodeIdToOpen = new HashSet<Long>();
+		Set<Long> nodeIdToOpen = new HashSet<>();
 		for (String value : cookieValues) {
 			try {
 				nodeIdToOpen.add(convertCookieId(value));

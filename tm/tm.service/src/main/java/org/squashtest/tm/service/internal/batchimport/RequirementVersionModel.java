@@ -38,7 +38,7 @@ public class RequirementVersionModel {
 	public RequirementVersionModel(TargetStatus status) {
 		super();
 		this.status = status;
-		this.linkedMilestones = new HashSet<String>();
+		this.linkedMilestones = new HashSet<>();
 	}
 
 	public TargetStatus getStatus() {

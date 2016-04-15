@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.project;
 
-import java.net.URL;
-
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 
 

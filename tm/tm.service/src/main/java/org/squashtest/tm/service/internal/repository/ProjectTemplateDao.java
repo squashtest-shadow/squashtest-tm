@@ -27,5 +27,6 @@ import org.squashtest.tm.domain.project.ProjectTemplate;
 
 public interface ProjectTemplateDao extends JpaRepository<ProjectTemplate, Long>{
 
+	@Override
 	List<ProjectTemplate> findAll();
 }

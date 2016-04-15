@@ -53,6 +53,7 @@ public class MultiSelectField extends CustomField {
 		return Collections.unmodifiableSet(options);
 	}
 
+	@Override
 	public void accept(CustomFieldVisitor visitor) {
 		visitor.visit(this);
 	}

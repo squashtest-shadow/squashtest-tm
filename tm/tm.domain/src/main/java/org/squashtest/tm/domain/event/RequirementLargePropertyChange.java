@@ -88,10 +88,12 @@ ChangedProperty {
 		return propertyName;
 	}
 
+	@Override
 	public String getOldValue() {
 		return oldValue;
 	}
 
+	@Override
 	public String getNewValue() {
 		return newValue;
 	}

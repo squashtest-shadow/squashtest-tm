@@ -50,6 +50,7 @@ public class MeasureColumn implements ColumnPrototypeInstance {
 	private Operation operation;
 
 
+	@Override
 	public ColumnPrototype getColumn() {
 		return column;
 	}

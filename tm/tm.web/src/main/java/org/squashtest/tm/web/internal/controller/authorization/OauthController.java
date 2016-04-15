@@ -45,7 +45,7 @@ public class OauthController {
 	public ModelAndView getAccessConfirmation(Map<String, Object> model, Principal principal) throws Exception {
 		AuthorizationRequest clientAuth = (AuthorizationRequest) model.remove("authorizationRequest");
 		ClientDetails client = oAuth2ClientService.findClientDetailsById(clientAuth.getClientId());
-		List<String> roles = new ArrayList<String>();
+		List<String> roles = new ArrayList<>();
 		for (GrantedAuthority item : client.getAuthorities()) {
 			roles.add(item.getAuthority());
 		}

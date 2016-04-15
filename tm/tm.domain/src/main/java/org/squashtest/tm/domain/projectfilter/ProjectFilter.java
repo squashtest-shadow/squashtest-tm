@@ -52,7 +52,7 @@ public class ProjectFilter {
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	@JoinTable(name = "PROJECT_FILTER_ENTRY", joinColumns = @JoinColumn(name = "FILTER_ID"), inverseJoinColumns = @JoinColumn(name = "PROJECT_ID"))
-	private final List<Project> projects = new ArrayList<Project>();
+	private final List<Project> projects = new ArrayList<>();
 
 	public void setProjects(List<Project> newProjectList) {
 		this.projects.clear();

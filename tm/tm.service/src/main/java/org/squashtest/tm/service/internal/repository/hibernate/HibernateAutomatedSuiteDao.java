@@ -29,11 +29,9 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
@@ -81,7 +79,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	@Override
 	public List<AutomatedSuite> findAll() {
 		Query query = currentSession().getNamedQuery("automatedSuite.findAll");
-		return (List<AutomatedSuite>) query.list();
+		return query.list();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -92,7 +90,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		} else {
 			Query query = currentSession().getNamedQuery("automatedSuite.findAllById");
 			query.setParameterList("suiteIds", ids, StringType.INSTANCE);
-			return (List<AutomatedSuite>) query.list();
+			return query.list();
 		}
 	}
 
@@ -101,7 +99,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	public Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId) {
 		Query query = currentSession().getNamedQuery("automatedSuite.findAllExtenders");
 		query.setString("suiteId", suiteId);
-		return (List<AutomatedExecutionExtender>) query.list();
+		return query.list();
 	}
 
 	@Override
@@ -130,7 +128,7 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 		query.setParameterList("statusList", statusList);
 
-		return (List<AutomatedExecutionExtender>) query.list();
+		return query.list();
 	}
 
 	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId,

@@ -23,12 +23,7 @@ package org.squashtest.tm.web.internal.interceptor.openedentity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.web.context.ServletContextAware;
-import org.springframework.web.context.request.RequestAttributes;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.context.request.WebRequestInterceptor;
-import org.springframework.web.context.support.WebApplicationContextUtils;
-import org.squashtest.tm.annotation.WebComponent;
 import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 

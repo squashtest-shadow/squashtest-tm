@@ -33,7 +33,6 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ListIterator;
 
 @Repository
 public class HibernateRequirementDeletionDao extends HibernateDeletionDao implements RequirementDeletionDao {
@@ -266,6 +265,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 	 * See javadoc on the interface
 	 *
 	 */
+	@Override
 	public List<Long> findDeletableVersions(List<Long> requirementIds, Long milestoneId) {
 
 		List<Long> deletableVersions = new ArrayList<>(0);

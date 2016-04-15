@@ -62,7 +62,7 @@ public class HandlerCompositeDomainExceptionResolver extends AbstractHandlerExce
 	}
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(CompositeDomainException cdex, Locale locale) {
-		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
+		List<FieldValidationErrorModel> ves = new ArrayList<>();
 		for (DomainException dex : cdex.getExceptions()) {
 			String message = dex.getMessage();
 			if (!dex.getI18nKey().equals("")) {

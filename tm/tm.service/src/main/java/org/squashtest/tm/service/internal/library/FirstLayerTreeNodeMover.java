@@ -124,7 +124,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private boolean projectChanged = false;
 
 	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
-	private Map<EntityType, NodeCollaborators> collaboratorsByType = new HashMap<EntityType, NodeCollaborators>();
+	private Map<EntityType, NodeCollaborators> collaboratorsByType = new HashMap<>();
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
@@ -147,6 +147,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		collaboratorsByType = Collections.unmodifiableMap(collaboratorsByType);
 	}
 
+	@Override
 	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination) {
 		//initialize attributes
 		this.destination = destination;
@@ -167,6 +168,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		return movedNode;
 	}
 
+	@Override
 	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination, int position) {
 		//initialize attributes
 		this.destination = destination;

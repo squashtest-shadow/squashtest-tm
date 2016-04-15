@@ -132,7 +132,7 @@ public class ProjectAdministrationController {
 
 		// execution status data
 		CampaignLibrary cl = adminProject.getCampaignLibrary();
-		Map<String, Boolean> allowedStatuses = new HashMap<String, Boolean>();
+		Map<String, Boolean> allowedStatuses = new HashMap<>();
 		allowedStatuses.put(ExecutionStatus.SETTLED.toString(), cl.allowsStatus(ExecutionStatus.SETTLED));
 		allowedStatuses.put(ExecutionStatus.UNTESTABLE.toString(), cl.allowsStatus(ExecutionStatus.UNTESTABLE));
 
@@ -154,7 +154,7 @@ public class ProjectAdministrationController {
 	}
 
 	private Map<Long, String> createComboDataForBugtracker(Locale locale) {
-		Map<Long, String> comboDataMap = new HashMap<Long, String>();
+		Map<Long, String> comboDataMap = new HashMap<>();
 		for (BugTracker b : bugtrackerFinderService.findAll()) {
 			comboDataMap.put(b.getId(), b.getName());
 		}
@@ -174,7 +174,7 @@ public class ProjectAdministrationController {
 
 		Collection<WorkspaceWizard> plugins = pluginManager.findAll();
 
-		Collection<String> enabledPlugins = new ArrayList<String>();
+		Collection<String> enabledPlugins = new ArrayList<>();
 		enabledPlugins.addAll(project.getTestCaseLibrary().getEnabledPlugins());
 		enabledPlugins.addAll(project.getRequirementLibrary().getEnabledPlugins());
 		enabledPlugins.addAll(project.getCampaignLibrary().getEnabledPlugins());
@@ -192,7 +192,7 @@ public class ProjectAdministrationController {
 
 	private Collection<ProjectPluginModel> toPluginModel(String servContext, long projectId, Collection<WorkspaceWizard> plugins, Collection<String> enabledPlugins) {
 
-		List<ProjectPluginModel> output = new ArrayList<ProjectPluginModel>(plugins.size());
+		List<ProjectPluginModel> output = new ArrayList<>(plugins.size());
 
 		EntityReference context = new EntityReference(EntityType.PROJECT, projectId);
 

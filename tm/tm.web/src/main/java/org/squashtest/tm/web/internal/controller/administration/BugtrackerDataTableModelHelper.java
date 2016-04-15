@@ -42,7 +42,7 @@ public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTra
 	public Map<String, Object> buildItemData(BugTracker item) {
 
 		String isIframeFriendlyStringValue = "";
-		Map<String, Object> row = new HashMap<String, Object>(7);
+		Map<String, Object> row = new HashMap<>(7);
 		
 		
 		if (item.isIframeFriendly()) {

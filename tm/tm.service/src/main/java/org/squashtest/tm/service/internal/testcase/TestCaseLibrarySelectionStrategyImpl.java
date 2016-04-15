@@ -34,7 +34,7 @@ public class TestCaseLibrarySelectionStrategyImpl implements LibrarySelectionStr
 
 	@Override
 	public List<TestCaseLibrary> getSpecificLibraries(List<Project> givenProjectList) {
-		List<TestCaseLibrary> toReturn = new ArrayList<TestCaseLibrary>();
+		List<TestCaseLibrary> toReturn = new ArrayList<>();
 		
 		for (Project project : givenProjectList) {
 			toReturn.add(project.getTestCaseLibrary());

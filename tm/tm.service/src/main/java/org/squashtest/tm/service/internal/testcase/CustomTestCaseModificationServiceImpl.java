@@ -202,7 +202,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			Map<Long, RawValue> customFieldValues) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep);
-		initCustomFieldValues((ActionTestStep) step, customFieldValues);
+		initCustomFieldValues(step, customFieldValues);
 		parameterModificationService.createParamsForStep(step.getId());
 		return step;
 	}
@@ -214,7 +214,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			Map<Long, RawValue> customFieldValues, int index) {
 
 		ActionTestStep step = addActionTestStep(parentTestCaseId, newTestStep,index);
-		initCustomFieldValues((ActionTestStep) step, customFieldValues);
+		initCustomFieldValues(step, customFieldValues);
 		parameterModificationService.createParamsForStep(step.getId());
 		return step;
 	}
@@ -561,10 +561,10 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	 */
 	@Override
 	public Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates) {
-		List<Long> callingCandidatesClone = new ArrayList<Long>(callingCandidates);
+		List<Long> callingCandidatesClone = new ArrayList<>(callingCandidates);
 		List<Long> callingLayer = testCaseDao
 				.findAllTestCasesIdsCallingTestCases(Arrays.asList(Long.valueOf(updatedId)));
-		Set<Long> callingTCToUpdate = new HashSet<Long>();
+		Set<Long> callingTCToUpdate = new HashSet<>();
 		while (!callingLayer.isEmpty() && !callingCandidatesClone.isEmpty()) {
 			// filter found calling test cases
 			callingLayer.retainAll(callingCandidatesClone);
@@ -585,7 +585,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	// TODO : secure this
 	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, Milestone activeMilestone){
 
-		List<Long> milestoneIds =  new ArrayList<Long>();
+		List<Long> milestoneIds =  new ArrayList<>();
 
 		if (activeMilestone  != null){
 			milestoneIds.add(activeMilestone.getId());
@@ -688,7 +688,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				milestones.retainAll(mil);
 			} else {
 				//populate the collection for the first time
-				milestones = new ArrayList<Milestone>(mil);
+				milestones = new ArrayList<>(mil);
 			}
 		}
 		filterLockedAndPlannedStatus(milestones);
@@ -720,7 +720,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 				milestones.retainAll(mil);
 			} else {
 				//populate the collection for the first time
-				milestones = new ArrayList<Milestone>(mil);
+				milestones = new ArrayList<>(mil);
 			}
 		}
 		filterLockedAndPlannedStatus(milestones);

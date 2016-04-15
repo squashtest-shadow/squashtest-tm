@@ -43,6 +43,7 @@ public class UploadedData implements RawAttachment {
 	/**
 	 * @return the stream
 	 */
+	@Override
 	public InputStream getStream() {
 		return stream;
 	}
@@ -50,6 +51,7 @@ public class UploadedData implements RawAttachment {
 	/**
 	 * @return the name
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}
@@ -57,6 +59,7 @@ public class UploadedData implements RawAttachment {
 	/**
 	 * @return the sizeInBytes
 	 */
+	@Override
 	public long getSizeInBytes() {
 		return sizeInBytes;
 	}

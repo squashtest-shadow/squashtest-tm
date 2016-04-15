@@ -135,7 +135,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
-		List<Long> milestoneIds = new ArrayList<Long>();
+		List<Long> milestoneIds = new ArrayList<>();
 
 		if (activeMilestone != null){
 			milestoneIds.add(activeMilestone.getId());
@@ -165,7 +165,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
-		ArrayList<Long> milestoneIds = new ArrayList<Long>();
+		ArrayList<Long> milestoneIds = new ArrayList<>();
 		if (activeMilestone != null){
 			milestoneIds.add(activeMilestone.getId());
 		}
@@ -181,7 +181,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries) {
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
+		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
 				driveNodeBuilder.get());
 
 		return listBuilder.setModel(linkableLibraries).build();
@@ -302,7 +302,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// Find node ids for specific milestone
-		List<Long> nodeIds = (List<Long>) testCaseLibraryNavigationService
+		List<Long> nodeIds = testCaseLibraryNavigationService
 				.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 
 		return testCaseLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
@@ -313,7 +313,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			@CurrentMilestone Milestone activeMilestone) {
 
 		// Find ids for specific milestone
-		List<Long> nodeIds = (List<Long>) testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
+		List<Long> nodeIds = testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 
 		TestCaseStatisticsBundle stats = testCaseLibraryNavigationService
 				.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);

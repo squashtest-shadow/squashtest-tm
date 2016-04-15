@@ -22,7 +22,6 @@ package org.squashtest.tm.web.internal.controller.users;
 
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;

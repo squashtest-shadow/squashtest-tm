@@ -341,8 +341,8 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 		private TargetStatus status;
 		private boolean isRequirement = true;
 		private boolean virtual = false;
-		private SortedMap<Integer,RequirementVersionModel> requirementVersions = new TreeMap<Integer, RequirementVersionModel>();
-		private Set<String> milestonesInVersion = new HashSet<String>();
+		private SortedMap<Integer,RequirementVersionModel> requirementVersions = new TreeMap<>();
+		private Set<String> milestonesInVersion = new HashSet<>();
 
 		public Node(RequirementTarget target, TargetStatus status) {
 			super(target);

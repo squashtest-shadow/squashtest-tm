@@ -50,6 +50,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	 *
 	 * @return a list of all entities found in the database with no restriction
 	 */
+	@Override
 	@SuppressWarnings("unchecked")
 	public List<ENTITY_TYPE> findAll() {
 		Criteria criteria = currentSession().createCriteria(entityType);
@@ -80,7 +81,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 			Session session = currentSession();
 
 			List<BigInteger> list;
-			List<Long> result = new ArrayList<Long>();
+			List<Long> result = new ArrayList<>();
 			result.addAll(params); // the inputs are also part of the output.
 			List<Long> local = params;
 
@@ -139,7 +140,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 	}
 
 	protected <X> List<X> collectFromMapList(List<X> hibernateResult, String alias){
-		List<X> collected = new ArrayList<X>(hibernateResult.size());
+		List<X> collected = new ArrayList<>(hibernateResult.size());
 		for (Map<String, X> result : (List<Map<String, X>>) hibernateResult){
 			collected.add(result.get(alias));
 		}
@@ -152,7 +153,7 @@ public class HibernateEntityDao<ENTITY_TYPE> extends HibernateDao<ENTITY_TYPE> i
 
 	protected Set<ENTITY_TYPE> collectFromMapListToSet(Criteria crit, String alias){
 		List<Map<String, ?>> res = crit.list();
-		Set<ENTITY_TYPE> set = new HashSet<ENTITY_TYPE>(res.size());
+		Set<ENTITY_TYPE> set = new HashSet<>(res.size());
 		for (Map<String, ?> e : res){
 			set.add((ENTITY_TYPE)e.get(alias));
 		}

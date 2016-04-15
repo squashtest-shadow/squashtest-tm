@@ -55,6 +55,7 @@ public class TestCaseRestController {
 	 *             {@link org.squashtest.tm.web.exception.ResourceNotFoundException}
 	 * 
 	 */
+	@Deprecated
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
 	private final class ResourceNotFoundException extends RuntimeException {
 
@@ -92,7 +93,7 @@ public class TestCaseRestController {
 
 	private List<TestStep> findTestSteps(Long id){
 
-		List<TestStep> testSteps = new ArrayList<TestStep>();
+		List<TestStep> testSteps = new ArrayList<>();
 
 		try {
 			testSteps = this.testCaseFinder.findStepsByTestCaseId(id);
@@ -118,7 +119,7 @@ public class TestCaseRestController {
 	public List<RestTestStep> getTestStepsByTestCaseId(@PathVariable Long id) {
 
 		List<TestStep> testSteps = findTestSteps(id);
-		List<RestTestStep> restTestSteps = new ArrayList<RestTestStep>(testSteps.size());
+		List<RestTestStep> restTestSteps = new ArrayList<>(testSteps.size());
 		for (TestStep testStep : testSteps) {
 			restTestSteps.add(new RestTestStep(testStep));
 		}

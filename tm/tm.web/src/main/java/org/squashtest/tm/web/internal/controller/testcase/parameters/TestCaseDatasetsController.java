@@ -98,7 +98,7 @@ public class TestCaseDatasetsController {
 
 		Collection<Dataset> datasets = datasetModificationService.findAllForTestCase(testCaseId);
 
-		Collection<JsonDataset> result = new ArrayList<JsonDataset>(datasets.size());
+		Collection<JsonDataset> result = new ArrayList<>(datasets.size());
 
 		for (Dataset ds : datasets) {
 			JsonDataset jds = new JsonDataset();
@@ -190,7 +190,7 @@ public class TestCaseDatasetsController {
 	public static List<String> findDatasetParamDescriptions(long testCaseId, final Locale locale,
 			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
 		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
-		List<String> result = new ArrayList<String>(directAndCalledParameters.size());
+		List<String> result = new ArrayList<>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
 			result.add(param.getDescription());
 		}
@@ -213,7 +213,7 @@ public class TestCaseDatasetsController {
 	public static Map<String, String> findDatasetParamHeadersByParamId(long testCaseId, final Locale locale,
 			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
 
-		Map<String, String> result = new HashMap<String, String>(directAndCalledParameters.size());
+		Map<String, String> result = new HashMap<>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
 			result.put(param.getId().toString(),
 					ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
@@ -225,7 +225,7 @@ public class TestCaseDatasetsController {
 		final TestCase testCase = testCaseFinder.findById(testCaseId);
 		Sorting sorting = new DataTableSorting(params, datasetsTableMapper);
 		Set<Dataset> datasets = testCase.getDatasets();
-		List<Dataset> datasetsList = new ArrayList<Dataset>(datasets);
+		List<Dataset> datasetsList = new ArrayList<>(datasets);
 		if (sorting.getSortedAttribute() != null && sorting.getSortedAttribute().equals("Parameter.name")) {
 			Collections.sort(datasetsList, new DatasetNameComparator(sorting.getSortOrder()));
 		} else {
@@ -274,7 +274,7 @@ public class TestCaseDatasetsController {
 
 		@Override
 		public Map<String, Object> buildItemData(Dataset item) {
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());

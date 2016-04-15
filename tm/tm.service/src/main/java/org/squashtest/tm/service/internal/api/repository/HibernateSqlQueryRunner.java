@@ -24,12 +24,8 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceContext;
-
 import org.hibernate.*;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.squashtest.tm.api.repository.SqlQueryRunner;
 
@@ -45,6 +41,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 
 
 	private static final QueryExecution<Query> EXECUTE_LIST = new QueryExecution<Query>() {
+		@Override
 		@SuppressWarnings("unchecked")
 		public <R> R executeQuery(Query query) {
 			return (R) query.list();
@@ -52,6 +49,7 @@ public class HibernateSqlQueryRunner implements SqlQueryRunner {
 	};
 
 	private static final QueryExecution<Query> EXECUTE_SINGLE = new QueryExecution<Query>() {
+		@Override
 		@SuppressWarnings("unchecked")
 		public <R> R executeQuery(Query query) {
 			return (R) query.uniqueResult();

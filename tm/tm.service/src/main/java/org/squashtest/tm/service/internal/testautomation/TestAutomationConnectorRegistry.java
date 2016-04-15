@@ -45,7 +45,7 @@ public class TestAutomationConnectorRegistry {
 	/**
 	 * Registered providers mapped by connector kind.
 	 */
-	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<String, TestAutomationConnector>(
+	private Map<String, TestAutomationConnector> availableConnectors = new ConcurrentHashMap<>(
 			5);
 
 	public Collection<String> listRegisteredConnectors() {

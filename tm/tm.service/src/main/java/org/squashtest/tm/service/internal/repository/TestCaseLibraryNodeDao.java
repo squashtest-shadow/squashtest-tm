@@ -45,6 +45,7 @@ public interface TestCaseLibraryNodeDao extends LibraryNodeDao<TestCaseLibraryNo
 	 * @param path
 	 * @return
 	 */
+	@Override
 	List<Long> findNodeIdsByPath(List<String> path);
 
 	/**
@@ -53,6 +54,7 @@ public interface TestCaseLibraryNodeDao extends LibraryNodeDao<TestCaseLibraryNo
 	 * @param path
 	 * @return the node id or <code>null</code> when not found
 	 */
+	@Override
 	Long findNodeIdByPath(String path);
 
 	/**

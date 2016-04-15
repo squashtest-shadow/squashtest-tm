@@ -43,7 +43,7 @@ class CallingTestCasesTableModelBuilder extends DataTableModelBuilder<CallTestSt
 	@Override
 	protected Map<String, Object> buildItemData(CallTestStep step) {
 
-		Map<String, Object> row = new HashMap<String, Object>(8);
+		Map<String, Object> row = new HashMap<>(8);
 
 		TestCase caller = step.getTestCase();
 		String dsName = findDatasetName(step);

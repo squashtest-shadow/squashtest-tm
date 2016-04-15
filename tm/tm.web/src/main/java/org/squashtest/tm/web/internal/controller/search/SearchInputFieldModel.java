@@ -33,7 +33,7 @@ public class SearchInputFieldModel {
 
 	private boolean ignoreBridge = false;
 
-	private List<SearchInputPossibleValueModel> possibleValues = new ArrayList<SearchInputPossibleValueModel>();
+	private List<SearchInputPossibleValueModel> possibleValues = new ArrayList<>();
 
 	public SearchInputFieldModel() {
 	}

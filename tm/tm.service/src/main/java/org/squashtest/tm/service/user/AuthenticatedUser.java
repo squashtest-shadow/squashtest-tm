@@ -50,6 +50,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		return decorated.hashCode();
 	}
@@ -58,6 +59,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.Party#getGroup()
 	 */
+	@Override
 	public UsersGroup getGroup() {
 		return decorated.getGroup();
 	}
@@ -66,6 +68,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param group
 	 * @see org.squashtest.tm.domain.users.Party#setGroup(org.squashtest.tm.domain.users.UsersGroup)
 	 */
+	@Override
 	public void setGroup(UsersGroup group) {
 		decorated.setGroup(group);
 	}
@@ -74,6 +77,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.Party#getId()
 	 */
+	@Override
 	public Long getId() {
 		return decorated.getId();
 	}
@@ -82,6 +86,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getFirstName()
 	 */
+	@Override
 	public String getFirstName() {
 		return decorated.getFirstName();
 	}
@@ -90,6 +95,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param firstName
 	 * @see org.squashtest.tm.domain.users.User#setFirstName(java.lang.String)
 	 */
+	@Override
 	public void setFirstName(String firstName) {
 		decorated.setFirstName(firstName);
 	}
@@ -98,6 +104,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getLastName()
 	 */
+	@Override
 	public String getLastName() {
 		return decorated.getLastName();
 	}
@@ -106,6 +113,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param lastName
 	 * @see org.squashtest.tm.domain.users.User#setLastName(java.lang.String)
 	 */
+	@Override
 	public void setLastName(String lastName) {
 		decorated.setLastName(lastName);
 	}
@@ -114,6 +122,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getLogin()
 	 */
+	@Override
 	public String getLogin() {
 		return decorated.getLogin();
 	}
@@ -122,6 +131,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param login
 	 * @see org.squashtest.tm.domain.users.User#setLogin(java.lang.String)
 	 */
+	@Override
 	public void setLogin(String login) {
 		decorated.setLogin(login);
 	}
@@ -130,6 +140,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getEmail()
 	 */
+	@Override
 	public String getEmail() {
 		return decorated.getEmail();
 	}
@@ -138,6 +149,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param email
 	 * @see org.squashtest.tm.domain.users.User#setEmail(java.lang.String)
 	 */
+	@Override
 	public void setEmail(String email) {
 		decorated.setEmail(email);
 	}
@@ -146,6 +158,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getActive()
 	 */
+	@Override
 	public Boolean getActive() {
 		return decorated.getActive();
 	}
@@ -154,6 +167,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param active
 	 * @see org.squashtest.tm.domain.users.User#setActive(java.lang.Boolean)
 	 */
+	@Override
 	public void setActive(Boolean active) {
 		decorated.setActive(active);
 	}
@@ -162,6 +176,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getTeams()
 	 */
+	@Override
 	public Set<Team> getTeams() {
 		return decorated.getTeams();
 	}
@@ -170,6 +185,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param team
 	 * @see org.squashtest.tm.domain.users.User#addTeam(org.squashtest.tm.domain.users.Team)
 	 */
+	@Override
 	public void addTeam(Team team) {
 		decorated.addTeam(team);
 	}
@@ -178,6 +194,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @param teamIds
 	 * @see org.squashtest.tm.domain.users.User#removeTeams(java.util.Collection)
 	 */
+	@Override
 	public void removeTeams(Collection<Long> teamIds) {
 		decorated.removeTeams(teamIds);
 	}
@@ -186,6 +203,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getName()
 	 */
+	@Override
 	public String getName() {
 		return decorated.getName();
 	}
@@ -195,6 +213,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		return decorated.equals(obj);
 	}
@@ -203,6 +222,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.users.User#getType()
 	 */
+	@Override
 	public String getType() {
 		return decorated.getType();
 	}
@@ -211,6 +231,7 @@ public class AuthenticatedUser extends User implements AuditableMixin {
 	 * @return
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return decorated.toString();
 	}

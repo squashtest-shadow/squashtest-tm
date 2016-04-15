@@ -40,7 +40,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 	private TestCaseStatus status;
 	private String firstAction = "";
 	private String firstExpectedResult = "";
-	private List<ExportTestStepData> steps = new ArrayList<ExportTestStepData>();
+	private List<ExportTestStepData> steps = new ArrayList<>();
 	private ExportTestStepData lastBuildStepData;
 	private String lastModifiedBy = "";
 	private Date lastModifiedOn ;

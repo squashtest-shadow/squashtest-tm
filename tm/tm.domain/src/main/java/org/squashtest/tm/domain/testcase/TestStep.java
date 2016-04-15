@@ -72,6 +72,7 @@ public abstract class TestStep implements Identified {
 	@JoinTable(name = "TEST_CASE_STEPS", joinColumns = @JoinColumn(name = "STEP_ID", updatable = false, insertable = false), inverseJoinColumns = @JoinColumn(name = "TEST_CASE_ID", updatable = false, insertable = false))
 	private TestCase testCase;
 
+	@Override
 	public Long getId() {
 		return id;
 	}

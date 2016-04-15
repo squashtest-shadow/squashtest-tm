@@ -59,7 +59,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TEST_CASE_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private List<TestCaseLibraryNode> rootContent = new ArrayList<TestCaseLibraryNode>();
+	private List<TestCaseLibraryNode> rootContent = new ArrayList<>();
 
 	@OneToOne(mappedBy = "testCaseLibrary")
 	private GenericProject project;
@@ -67,7 +67,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'T'")
-	private Set<TestCaseLibraryPluginBinding> enabledPlugins = new HashSet<TestCaseLibraryPluginBinding>(5);
+	private Set<TestCaseLibraryPluginBinding> enabledPlugins = new HashSet<>(5);
 
 	public List<TestCaseLibraryNode> getRootContent() {
 		return rootContent;
@@ -94,14 +94,14 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@Override
 	public void removeContent(TestCaseLibraryNode node) {
 		rootContent.remove(node);
-		rootContent = new ArrayList<TestCaseLibraryNode>(rootContent);
+		rootContent = new ArrayList<>(rootContent);
 	}
 
 	// ***************************** PluginReferencer section ****************************
 
 	@Override
 	public Set<String> getEnabledPlugins() {
-		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
+		Set<String> pluginIds = new HashSet<>(enabledPlugins.size());
 		for (TestCaseLibraryPluginBinding binding : enabledPlugins){
 			pluginIds.add(binding.getPluginId());
 		}

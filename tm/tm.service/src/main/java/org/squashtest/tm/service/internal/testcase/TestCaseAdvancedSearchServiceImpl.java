@@ -37,7 +37,6 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.hibernate.search.FullTextSession;
 import org.hibernate.search.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
@@ -104,7 +103,7 @@ TestCaseAdvancedSearchService {
 	@Override
 	public List<String> findAllUsersWhoCreatedTestCases() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
-		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		List<Long> projectIds = new ArrayList<>(readableProjects.size());
 		for (Project project : readableProjects) {
 			projectIds.add(project.getId());
 		}
@@ -114,7 +113,7 @@ TestCaseAdvancedSearchService {
 	@Override
 	public List<String> findAllUsersWhoModifiedTestCases() {
 		List<Project> readableProjects = projectFinder.findAllReadable();
-		List<Long> projectIds = new ArrayList<Long>(readableProjects.size());
+		List<Long> projectIds = new ArrayList<>(readableProjects.size());
 		for (Project project : readableProjects) {
 			projectIds.add(project.getId());
 		}
@@ -185,8 +184,8 @@ TestCaseAdvancedSearchService {
 	@Override
 	public List<TestCase> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model, Locale locale) {
 		List<RequirementVersion> requirements = requirementSearchService.searchForRequirementVersions(model, locale);
-		List<TestCase> result = new ArrayList<TestCase>();
-		Set<TestCase> testCases = new HashSet<TestCase>();
+		List<TestCase> result = new ArrayList<>();
+		Set<TestCase> testCases = new HashSet<>();
 		// Get testcases from found requirements
 		for (RequirementVersion requirement : requirements) {
 			List<TestCase> verifiedTestCases = verifyingTestCaseManagerService.findAllByRequirementVersion(requirement
@@ -195,7 +194,7 @@ TestCaseAdvancedSearchService {
 		}
 
 		// Get calling testcases
-		Set<Long> callingTestCaseIds = new HashSet<Long>();
+		Set<Long> callingTestCaseIds = new HashSet<>();
 		for (TestCase testcase : testCases) {
 			callingTestCaseIds.addAll(testCaseCallTreeFinder.getTestCaseCallers(testcase.getId()));
 		}

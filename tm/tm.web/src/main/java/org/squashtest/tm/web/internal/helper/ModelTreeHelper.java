@@ -21,13 +21,9 @@
 package org.squashtest.tm.web.internal.helper;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import javax.inject.Provider;
 
 import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
 import org.squashtest.tm.domain.library.Library;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.service.library.WorkspaceService;

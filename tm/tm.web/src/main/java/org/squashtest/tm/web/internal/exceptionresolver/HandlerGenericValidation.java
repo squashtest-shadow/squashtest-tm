@@ -35,7 +35,7 @@ import java.util.*;
 
 @Component
 public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
-	private final List<ConstraintViolationHandler> constraintViolationHandlers = new ArrayList<ConstraintViolationHandler>();
+	private final List<ConstraintViolationHandler> constraintViolationHandlers = new ArrayList<>();
 	
 
 	public HandlerGenericValidation() {
@@ -60,7 +60,7 @@ public class HandlerGenericValidation extends AbstractHandlerExceptionResolver {
 	}
 
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(ConstraintViolationException cve) {
-		List<FieldValidationErrorModel> ves = new ArrayList<FieldValidationErrorModel>();
+		List<FieldValidationErrorModel> ves = new ArrayList<>();
 
 		Set<ConstraintViolation<?>> constraintList = cve.getConstraintViolations();
 		Iterator<ConstraintViolation<?>> iter = constraintList.iterator();

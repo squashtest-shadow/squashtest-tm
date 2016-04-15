@@ -192,7 +192,7 @@ public enum RequirementStatus implements Level {
 	public abstract boolean isRequirementLinkable();
 
 	protected Set<RequirementStatus> defaultAvailableSet() {
-		Set<RequirementStatus> next = new TreeSet<RequirementStatus>();
+		Set<RequirementStatus> next = new TreeSet<>();
 		if (RequirementStatus.OBSOLETE != this){
 			next.add(RequirementStatus.OBSOLETE);}
 		next.add(this);
@@ -260,7 +260,7 @@ public enum RequirementStatus implements Level {
 	public abstract Set<RequirementStatus> getDisabledStatus();
 
 	protected Set<RequirementStatus> returnDisabledStatus() {
-		Set<RequirementStatus> disabledStatus = new TreeSet<RequirementStatus>();
+		Set<RequirementStatus> disabledStatus = new TreeSet<>();
 		for (RequirementStatus next : RequirementStatus.values()) {
 			if (!this.isTransitionLegal(next)) {
 				disabledStatus.add(next);

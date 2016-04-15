@@ -334,7 +334,7 @@ class CustomFieldModelFactory {
 
 	public static class SingleSelectFieldModel extends SingleValuedCustomFieldModel {
 
-		private List<CustomFieldOptionModel> options = new LinkedList<CustomFieldOptionModel>();
+		private List<CustomFieldOptionModel> options = new LinkedList<>();
 
 		public List<CustomFieldOptionModel> getOptions() {
 			return options;
@@ -352,8 +352,8 @@ class CustomFieldModelFactory {
 
 	public static class MultiSelectFieldModel extends CustomFieldModel<String[]> {
 
-		private List<String> defaultValue = new LinkedList<String>();
-		private Set<CustomFieldOptionModel> options = new HashSet<CustomFieldOptionModel>();
+		private List<String> defaultValue = new LinkedList<>();
+		private Set<CustomFieldOptionModel> options = new HashSet<>();
 
 		@Override
 		public String[] getDefaultValue() {
@@ -362,7 +362,7 @@ class CustomFieldModelFactory {
 
 		@Override
 		public void setDefaultValue(String[] defaultValue) {
-			this.defaultValue = new ArrayList<String>(Arrays.asList(defaultValue));
+			this.defaultValue = new ArrayList<>(Arrays.asList(defaultValue));
 		}
 
 		public void addDefaultValue(String newValue) {

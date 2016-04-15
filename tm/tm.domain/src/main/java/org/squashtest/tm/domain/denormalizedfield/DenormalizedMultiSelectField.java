@@ -47,12 +47,12 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 	@ElementCollection
 	@CollectionTable(name = "DENORMALIZED_FIELD_OPTION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@OrderColumn(name = "POSITION")
-	private Set<CustomFieldOption> options = new HashSet<CustomFieldOption>();
+	private Set<CustomFieldOption> options = new HashSet<>();
 
 	@ElementCollection
 	@CollectionTable(name = "DENORMALIZED_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "DFV_ID"))
 	@OrderColumn(name = "POSITION")
-	private List<CustomFieldValueOption> selectedOptions = new ArrayList<CustomFieldValueOption>();
+	private List<CustomFieldValueOption> selectedOptions = new ArrayList<>();
 
 
 	/**
@@ -79,7 +79,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 
 
 	public List<String> getValues(){
-		List<String> result = new ArrayList<String>(selectedOptions.size());
+		List<String> result = new ArrayList<>(selectedOptions.size());
 		for (CustomFieldValueOption option : selectedOptions){
 			result.add(option.getLabel());
 		}
@@ -97,6 +97,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 		return Collections.unmodifiableSet(options);
 	}
 
+	@Override
 	public void accept(DenormalizedFieldVisitor visitor){
 		visitor.visit(this);
 	}
@@ -119,6 +120,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 	 * Not the preferred way to set the values of this field,
 	 * use adCUFieldValueOption when possible.
 	 */
+	@Override
 	@Deprecated
 	public void setValue(String value){
 		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));

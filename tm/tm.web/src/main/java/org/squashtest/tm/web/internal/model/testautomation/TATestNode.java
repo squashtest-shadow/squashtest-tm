@@ -32,7 +32,7 @@ public class TATestNode {
 	private State state = State.leaf;	
 	private Attr attr;	
 	private Data data;	
-	private Collection<TATestNode> children = new ArrayList<TATestNode>();
+	private Collection<TATestNode> children = new ArrayList<>();
 	
 
 	public State getState() {

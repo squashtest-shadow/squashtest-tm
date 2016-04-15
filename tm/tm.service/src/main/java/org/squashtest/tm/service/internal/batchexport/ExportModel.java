@@ -34,15 +34,15 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.internal.batchexport.RequirementExportModel.RequirementPathSortable;
 
 public class ExportModel {
-	private List<TestCaseModel> testCases = new LinkedList<TestCaseModel>();
+	private List<TestCaseModel> testCases = new LinkedList<>();
 
-	private List<TestStepModel> testSteps = new LinkedList<TestStepModel>();
+	private List<TestStepModel> testSteps = new LinkedList<>();
 
-	private List<ParameterModel> parameters = new LinkedList<ParameterModel>();
+	private List<ParameterModel> parameters = new LinkedList<>();
 
-	private List<DatasetModel> datasets = new LinkedList<DatasetModel>();
+	private List<DatasetModel> datasets = new LinkedList<>();
 
-	private List<CoverageModel> coverages = new LinkedList<CoverageModel>();
+	private List<CoverageModel> coverages = new LinkedList<>();
 
 	public ExportModel() {
 		super();
@@ -228,7 +228,7 @@ public class ExportModel {
 		private String createdBy;
 		private Date lastModifiedOn;
 		private String lastModifiedBy;
-		private List<CustomField> cufs = new LinkedList<CustomField>();
+		private List<CustomField> cufs = new LinkedList<>();
 
 		// that monster constructor will be used by Hibernate in a hql query
 		public TestCaseModel(Long projectId, String projectName, Integer order, Long id, String reference, String name,
@@ -471,7 +471,7 @@ public class ExportModel {
 		private Long nbAttach;
 		private String calledDsName;
 		private boolean delegateParameters;
-		private List<CustomField> cufs = new LinkedList<CustomField>();
+		private List<CustomField> cufs = new LinkedList<>();
 
 
 		// about delegateParameters : when fetching an action step we want to select the literal 'false'. However Hibernate

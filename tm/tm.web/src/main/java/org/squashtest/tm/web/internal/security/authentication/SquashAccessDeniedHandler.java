@@ -65,7 +65,8 @@ public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
      *
      * @throws IllegalArgumentException if the argument doesn't comply with the above limitations
      */
-    public void setErrorPage(String errorPage) {
+    @Override
+	public void setErrorPage(String errorPage) {
         if ((errorPage != null) && !errorPage.startsWith("/")) {
             throw new IllegalArgumentException("errorPage must begin with '/'");
         }

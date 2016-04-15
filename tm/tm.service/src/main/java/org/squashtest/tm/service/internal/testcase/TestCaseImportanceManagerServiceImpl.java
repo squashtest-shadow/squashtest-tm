@@ -122,7 +122,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	}
 
 	private List<RequirementCriticality> extractCriticalities(List<RequirementVersion> requirementVersions) {
-		List<RequirementCriticality> requirementCriticalities = new ArrayList<RequirementCriticality>(
+		List<RequirementCriticality> requirementCriticalities = new ArrayList<>(
 				requirementVersions.size());
 		for (RequirementVersion requirementVersion : requirementVersions) {
 			requirementCriticalities.add(requirementVersion.getCriticality());
@@ -171,6 +171,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 * @see org.squashtest.tm.service.testcase.TestCaseImportanceManagerService#changeImportanceIfRelationRemoved(TestCaseImportance,
 	 *      TestCase)
 	 */
+	@Override
 	public void changeImportanceIfRelationRemoved(TestCaseImportance maxReqCritImportance, TestCase testCase) {
 		if (testCase.isImportanceAuto()) {
 			TestCaseImportance actualImportance = testCase.getImportance();
@@ -193,7 +194,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	}
 
 	private List<TestCase> extractTestCases(List<Long> testCasesIds) {
-		List<TestCase> testCases = new ArrayList<TestCase>(testCasesIds.size());
+		List<TestCase> testCases = new ArrayList<>(testCasesIds.size());
 		for (long testCaseId : testCasesIds) {
 			testCases.add(testCaseDao.findById(testCaseId));
 

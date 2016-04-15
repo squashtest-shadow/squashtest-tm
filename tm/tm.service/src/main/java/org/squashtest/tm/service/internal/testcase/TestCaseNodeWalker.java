@@ -49,7 +49,7 @@ public class TestCaseNodeWalker implements TestCaseLibraryNodeVisitor{
 	private List<TestCase> outputList ;
 			
 	public TestCaseNodeWalker(){
-		outputList = new LinkedList<TestCase>();
+		outputList = new LinkedList<>();
 	}
 	
 	public List<TestCase> walk(List<TestCaseLibraryNode> inputList){

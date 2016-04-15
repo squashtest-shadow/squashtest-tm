@@ -31,7 +31,7 @@ import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
 public class HttpSessionRequestCacheWithExceptions extends
 HttpSessionRequestCache {
 
-	private Collection<String> exceptions = new ArrayList<String>(2);
+	private Collection<String> exceptions = new ArrayList<>(2);
 
 	public Collection<String> getExceptions() {
 		return exceptions;

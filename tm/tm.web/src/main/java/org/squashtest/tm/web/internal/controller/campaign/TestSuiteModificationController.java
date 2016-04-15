@@ -188,7 +188,7 @@ public class TestSuiteModificationController {
 
 		String unassignedLabel = messageSource.internationalize("label.Unassigned", locale);
 
-		Map<String, String> jsonUsers = new LinkedHashMap<String, String>(usersList.size());
+		Map<String, String> jsonUsers = new LinkedHashMap<>(usersList.size());
 
 		jsonUsers.put(User.NO_USER_ID.toString(), unassignedLabel);
 		for (User user : usersList) {
@@ -260,7 +260,7 @@ public class TestSuiteModificationController {
 	public @ResponseBody
 	Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(RequestParams.NAME) String name) {
 		service.rename(suiteId, name);
-		Map<String, String> result = new HashMap<String, String>();
+		Map<String, String> result = new HashMap<>();
 		result.put("id", suiteId.toString());
 		result.put(NAME, name);
 		return result;

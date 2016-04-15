@@ -60,7 +60,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		Integer index = indexedItem.getIndex() + 1;
 		IterationTestPlanItem item = indexedItem.getItem();
 
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 
 		//automation mode
 		final String automationMode = item.isAutomated() ? "A" : "M";
@@ -193,7 +193,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			Collection<Dataset> available = item.getReferencedTestCase().getDatasets();
 
 			JsonDataset jsonSelected = convert(selected);
-			Collection<JsonDataset> jsonAvailable = new ArrayList<JsonDataset>(available.size()+1);
+			Collection<JsonDataset> jsonAvailable = new ArrayList<>(available.size()+1);
 			jsonAvailable.add(convert(null));	// that one corresponds to dataset 'None'
 			for (Dataset ds : available){
 				jsonAvailable.add(convert(ds));

@@ -92,7 +92,7 @@ public class ExpandedTestCase {
 		for (RequirementVersion requirement : this.testCase.getVerifiedRequirementVersions()) {
 			if (requirement.getCriticality().getLevel() < level
 					&& (selectedCriticalities.isEmpty() || selectedCriticalities.contains(requirement.getCriticality()))) {
-				level = (int) requirement.getCriticality().getLevel();
+				level = requirement.getCriticality().getLevel();
 			}
 		}
 		return RequirementCriticality.valueOf(level);

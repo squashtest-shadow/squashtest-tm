@@ -71,6 +71,7 @@ public class Filter implements ColumnPrototypeInstance {
 		this.operation = operation;
 	}
 
+	@Override
 	public ColumnPrototype getColumn() {
 		return column;
 	}

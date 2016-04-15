@@ -36,14 +36,12 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;

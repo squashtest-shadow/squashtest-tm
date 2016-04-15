@@ -84,7 +84,7 @@ public class RequirementVersionCoverage implements Identified {
 
 	@NotNull
 	@ManyToMany(mappedBy="requirementVersionCoverages", cascade=CascadeType.DETACH)
-	private Set<ActionTestStep> verifyingSteps = new HashSet<ActionTestStep>();
+	private Set<ActionTestStep> verifyingSteps = new HashSet<>();
 
 	/**
 	 * @throws RequirementVersionNotLinkableException
@@ -152,6 +152,7 @@ public class RequirementVersionCoverage implements Identified {
 	}
 	
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -250,7 +251,7 @@ public class RequirementVersionCoverage implements Identified {
 		rvcCopy.setVerifyingTestCase(tcCopy);
 		tcCopy.addRequirementCoverage(rvcCopy);
 		// set verifying steps
-		List<ActionTestStep> stepToVerify = new ArrayList<ActionTestStep>(this.verifyingSteps.size());
+		List<ActionTestStep> stepToVerify = new ArrayList<>(this.verifyingSteps.size());
 		for (ActionTestStep step : this.verifyingSteps) {
 			int indexInSource = this.verifyingTestCase.getPositionOfStep(step.getId());
 			stepToVerify.add((ActionTestStep) tcCopy.getSteps().get(indexInSource));

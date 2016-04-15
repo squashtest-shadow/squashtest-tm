@@ -30,12 +30,12 @@ public class DefaultDatatableMapper<KEY> implements DatatableMapper<KEY> {
 
 	public DefaultDatatableMapper() {
 		super();
-		mappings = new HashMap<KEY, Mapping>();
+		mappings = new HashMap<>();
 	}
 
 	public DefaultDatatableMapper(int initialCapacity) {
 		super();
-		mappings = new HashMap<KEY, Mapping>(initialCapacity);
+		mappings = new HashMap<>(initialCapacity);
 	}
 
 	

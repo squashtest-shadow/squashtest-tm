@@ -25,7 +25,7 @@ import java.util.Map.Entry;
 
 public class StringPathMap<T> {
 
-	private Map<String, T> map = new HashMap<String, T>();
+	private Map<String, T> map = new HashMap<>();
 
 
 	public void put(String path, T ref) {
@@ -60,7 +60,7 @@ public class StringPathMap<T> {
 			return Collections.emptyList();
 
 		} else {
-			List<String> children = new LinkedList<String>(); // TODO why a linked list ?
+			List<String> children = new LinkedList<>(); // TODO why a linked list ?
 			for (String p : map.keySet()) {
 				if (p.matches("^" + path + "/?[^/]+$")) {
 					children.add(p);
@@ -77,7 +77,7 @@ public class StringPathMap<T> {
 	 *
 	 */
 	public static List<String> tokenizePath(String path) {
-		List<String> tokens = new LinkedList<String>();
+		List<String> tokens = new LinkedList<>();
 
 		String[] toks = path.split("/");
 

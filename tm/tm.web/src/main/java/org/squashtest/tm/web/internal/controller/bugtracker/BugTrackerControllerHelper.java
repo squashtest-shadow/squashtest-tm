@@ -607,6 +607,7 @@ public final class BugTrackerControllerHelper {
 	 */
 	private static final class TestCaseModelOwnershipNamebuilder extends IssueOwnershipAbstractNameBuilder {
 
+		@Override
 		String buildExecName(Execution execution) {
 			String iterationName = findIterationName(execution);
 			String suiteNameList = findTestSuiteNameList(execution);

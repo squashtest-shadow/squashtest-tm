@@ -90,7 +90,7 @@ public class CustomFieldBindingController {
         List<CustomFieldBinding> bindings = service.findCustomFieldsForProjectAndEntity(projectId, bindableEntity);
         model.addAttribute("bindings", bindings);
 
-        List<CustomField> fields = new ArrayList<CustomField>(bindings.size());
+        List<CustomField> fields = new ArrayList<>(bindings.size());
 
         for (CustomFieldBinding binding : bindings) {
             fields.add(binding.getCustomField());
@@ -169,7 +169,7 @@ public class CustomFieldBindingController {
     // ********************** private stuffs *********************
 
     private List<CustomFieldBindingModel> bindingToJson(List<CustomFieldBinding> bindings) {
-        List<CustomFieldBindingModel> result = new LinkedList<CustomFieldBindingModel>();
+        List<CustomFieldBindingModel> result = new LinkedList<>();
 
         for (CustomFieldBinding binding : bindings) {
             CustomFieldBindingModel model = converter.toJson(binding);
@@ -180,7 +180,7 @@ public class CustomFieldBindingController {
     }
 
     private List<CustomFieldModel> fieldToJson(List<CustomField> fields) {
-        List<CustomFieldModel> result = new LinkedList<CustomFieldModel>();
+        List<CustomFieldModel> result = new LinkedList<>();
 
         for (CustomField field : fields) {
             CustomFieldModel model = converter.toJson(field);

@@ -27,7 +27,7 @@ public class AdvancedSearchListFieldModel implements AdvancedSearchFieldModel{
 
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.LIST;
 	
-	private List<String> values = new ArrayList<String>();
+	private List<String> values = new ArrayList<>();
 	
 	private boolean ignoreBridge = false;
 	

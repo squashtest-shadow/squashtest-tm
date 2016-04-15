@@ -172,7 +172,7 @@ public class TestSuiteTestPlanManagerController {
 			dNodeBuilder.filterByMilestone(activeMilestone);
 		}
 
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(
+		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
 				driveNodeBuilder.get());
 
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
@@ -204,7 +204,7 @@ public class TestSuiteTestPlanManagerController {
 				.getId());
 
 		String unassignedLabel = formatUnassigned(locale);
-		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
+		List<TestPlanAssignableUser> jsonUsers = new LinkedList<>();
 
 		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel));
 

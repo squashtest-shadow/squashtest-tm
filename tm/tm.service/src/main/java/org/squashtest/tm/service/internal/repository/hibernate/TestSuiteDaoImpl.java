@@ -66,13 +66,13 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
 
 	static {
-		Map<String, String> modeDataMap = new HashMap<String, String>(2);
+		Map<String, String> modeDataMap = new HashMap<>(2);
 		modeDataMap.put(TestCaseExecutionMode.MANUAL.name(),
 				TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEMANUAL_FILTER);
 		modeDataMap.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_MODEAUTO_FILTER);
 		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.MODE_DATA, modeDataMap);
 
-		Map<String, String> userData = new HashMap<String, String>(2);
+		Map<String, String> userData = new HashMap<>(2);
 		userData.put("0", TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_NULL_USER_FILTER);
 		userData.put(VDFC_DEFAULT_KEY, TestPlanFilteringHelper.HQL_INDEXED_TEST_PLAN_USER_FILTER);
 		VALUE_DEPENDENT_FILTER_CLAUSES.put(TestPlanFilteringHelper.USER_DATA, userData);
@@ -195,7 +195,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 
 	private List<IterationTestPlanItem> buildItems(List<Object[]> tuples) {
 
-		List<IterationTestPlanItem> items = new ArrayList<IterationTestPlanItem>(tuples.size());
+		List<IterationTestPlanItem> items = new ArrayList<>(tuples.size());
 
 		for (Object[] tuple : tuples) {
 			IterationTestPlanItem itpi = (IterationTestPlanItem) tuple[1];
@@ -206,7 +206,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 	}
 
 	private List<IndexedIterationTestPlanItem> buildIndexedItems(List<Object[]> tuples) {
-		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<IndexedIterationTestPlanItem>(tuples.size());
+		List<IndexedIterationTestPlanItem> indexedItems = new ArrayList<>(tuples.size());
 
 		for (Object[] tuple : tuples) {
 			Integer index = (Integer) tuple[0];

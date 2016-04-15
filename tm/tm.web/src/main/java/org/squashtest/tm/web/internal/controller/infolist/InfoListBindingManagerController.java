@@ -82,7 +82,7 @@ public class InfoListBindingManagerController {
 	}
 	
 	private String buildComboData(List<InfoList> infoLists, Locale locale, InfoList defaultList){
-		Map<String, String> result = new LinkedHashMap<String, String>();
+		Map<String, String> result = new LinkedHashMap<>();
 		//Add _ before the id so jeditable doesn't reorder our list
 		result.put("_" + defaultList.getId().toString(), i18n.internationalize(defaultList.getLabel(), locale));
 		for (InfoList list : infoLists){

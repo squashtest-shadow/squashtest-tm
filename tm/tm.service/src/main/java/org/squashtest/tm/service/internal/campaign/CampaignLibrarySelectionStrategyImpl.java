@@ -34,7 +34,7 @@ public class CampaignLibrarySelectionStrategyImpl implements LibrarySelectionStr
 
 	@Override
 	public List<CampaignLibrary> getSpecificLibraries(List<Project> givenProjectList) {
-		List<CampaignLibrary> toReturn = new ArrayList<CampaignLibrary>();
+		List<CampaignLibrary> toReturn = new ArrayList<>();
 		for (Project project : givenProjectList) {
 			toReturn.add(project.getCampaignLibrary());
 		}

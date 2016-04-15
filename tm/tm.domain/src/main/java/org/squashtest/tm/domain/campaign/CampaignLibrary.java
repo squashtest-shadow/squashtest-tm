@@ -64,7 +64,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CAMPAIGN_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
-	private List<CampaignLibraryNode> rootContent = new ArrayList<CampaignLibraryNode>();
+	private List<CampaignLibraryNode> rootContent = new ArrayList<>();
 
 	@OneToOne(mappedBy = "campaignLibrary")
 	private GenericProject project;
@@ -72,13 +72,13 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@OneToMany(cascade = { CascadeType.ALL}, orphanRemoval=true)
 	@JoinColumn(name="LIBRARY_ID")
 	@Where(clause="LIBRARY_TYPE = 'C'")
-	private Set<CampaignLibraryPluginBinding> enabledPlugins = new HashSet<CampaignLibraryPluginBinding>(5);
+	private Set<CampaignLibraryPluginBinding> enabledPlugins = new HashSet<>(5);
 
 	@ElementCollection
 	@Enumerated(EnumType.STRING)
 	@JoinTable(name = "DISABLED_EXECUTION_STATUS", joinColumns= @JoinColumn(name = "CL_ID"))
 	@Column(name = "EXECUTION_STATUS")
-	private Set<ExecutionStatus> disabledStatuses = new HashSet<ExecutionStatus>(ExecutionStatus.DEFAULT_DISABLED_STATUSES);
+	private Set<ExecutionStatus> disabledStatuses = new HashSet<>(ExecutionStatus.DEFAULT_DISABLED_STATUSES);
 
 
 	public void setId(Long id) {
@@ -105,7 +105,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 			throw new NullArgumentException("CampaignLibrary : cannot remove null node");
 		}
 		rootContent.remove(node);
-		rootContent = new ArrayList<CampaignLibraryNode>(rootContent);
+		rootContent = new ArrayList<>(rootContent);
 	}
 
 	@Override
@@ -147,7 +147,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	@Override
 	public Set<String> getEnabledPlugins() {
-		Set<String> pluginIds = new HashSet<String>(enabledPlugins.size());
+		Set<String> pluginIds = new HashSet<>(enabledPlugins.size());
 		for (CampaignLibraryPluginBinding binding : enabledPlugins){
 			pluginIds.add(binding.getPluginId());
 		}

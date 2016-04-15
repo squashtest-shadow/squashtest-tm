@@ -242,7 +242,7 @@ public class InfoListController {
 
 		@Override
 		public Object buildItemData(InfoListItem item) {
-			Map<String, Object> data = new HashMap<String, Object>(7);
+			Map<String, Object> data = new HashMap<>(7);
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			data.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex() + 1);
 			data.put("default", item.isDefault());

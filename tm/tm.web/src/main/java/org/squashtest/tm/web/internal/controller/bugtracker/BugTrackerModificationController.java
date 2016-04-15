@@ -117,7 +117,7 @@ public class BugTrackerModificationController {
 
 	private String findJsonBugTrackerKinds() {
 		Set<String> bugtrackerKinds = bugtrackerFinder.findBugTrackerKinds();
-		Map<String, String> mapKinds = new HashMap<String, String>(bugtrackerKinds.size());
+		Map<String, String> mapKinds = new HashMap<>(bugtrackerKinds.size());
 		for (String kind : bugtrackerKinds) {
 			mapKinds.put(kind, kind);
 		}

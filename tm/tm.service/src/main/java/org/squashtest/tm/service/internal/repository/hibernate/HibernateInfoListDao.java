@@ -27,7 +27,6 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;

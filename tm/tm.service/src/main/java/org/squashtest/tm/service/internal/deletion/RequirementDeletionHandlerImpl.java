@@ -34,6 +34,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.customfield.BindableEntity;
+import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.WhichNodeVisitor;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -92,7 +93,7 @@ RequirementNodeDeletionHandler {
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
 
-		List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
+		List<SuppressionPreviewReport> preview = new LinkedList<>();
 
 		// normal mode
 		if (milestoneId == null){
@@ -603,8 +604,8 @@ RequirementNodeDeletionHandler {
 		}
 
 		// init
-		Collection<Requirement> children = new ArrayList<Requirement>(rewired);
-		List<Node> movedNodesLog = new ArrayList<Node>(rewired.size());
+		Collection<Requirement> children = new ArrayList<>(rewired);
+		List<Node> movedNodesLog = new ArrayList<>(rewired.size());
 
 		boolean needsRenaming = false;
 
@@ -617,7 +618,7 @@ RequirementNodeDeletionHandler {
 			String name = child.getName();
 
 			while (!newParent.isContentNameAvailable(name)) {
-				name = LibraryUtils.generateNonClashingName(name, newParent.getContentNames(), Requirement.MAX_NAME_SIZE);
+				name = LibraryUtils.generateNonClashingName(name, newParent.getContentNames(), LibraryNode.MAX_NAME_SIZE);
 				needsRenaming = true;
 			}
 

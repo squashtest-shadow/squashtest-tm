@@ -94,7 +94,7 @@ public class CustomProjectModificationServiceImpl implements CustomProjectModifi
 	@Override
 	public List<GenericProject> findAllICanManage() {
 		List<GenericProject> projects = genericProjectDao.findAll();
-		List<GenericProject> manageableProjects = new ArrayList<GenericProject>();
+		List<GenericProject> manageableProjects = new ArrayList<>();
 
 		for (GenericProject project : projects) {
 			if (permissionEvaluationService.hasRoleOrPermissionOnObject("ADMIN", "MANAGEMENT", project)) {

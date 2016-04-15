@@ -60,7 +60,7 @@ public final class ReflectionFieldSetter<VAL, TARGET> implements PropertySetter<
 	 * @return
 	 */
 	public static <V, T> ReflectionFieldSetter<V, T> forOptionalField(@NotNull String name) {
-		ReflectionFieldSetter<V, T> res = new ReflectionFieldSetter<V, T>(name);
+		ReflectionFieldSetter<V, T> res = new ReflectionFieldSetter<>(name);
 		res.optionalValue = true;
 		return res;
 	}

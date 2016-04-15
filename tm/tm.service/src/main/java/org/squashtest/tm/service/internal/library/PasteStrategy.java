@@ -187,7 +187,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private void init(int nbCopiedNodes) {
 		firstOperation = createFirstLayerOperation();
 		nextsOperation = createNextLayerOperation();
-		outputList = new ArrayList<NODE>(nbCopiedNodes);
+		outputList = new ArrayList<>(nbCopiedNodes);
 		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
 		sourceLayer = null;
 		sourceLayerParents = null;
@@ -198,7 +198,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			// if we cont flush and then evict, some entities might not be persisted
 			genericDao.flush();
 
-			Collection<TreeNode> evicted = new HashSet<TreeNode>();
+			Collection<TreeNode> evicted = new HashSet<>();
 			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive
 			// content anymore.
 			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.

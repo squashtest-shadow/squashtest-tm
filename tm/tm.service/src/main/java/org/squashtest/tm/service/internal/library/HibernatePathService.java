@@ -29,7 +29,6 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.internal.repository.hibernate.TestCaseDaoImpl;
@@ -133,7 +132,7 @@ public class HibernatePathService implements PathService {
 
 		for (Object[] path : paths) {
 
-			int pos = ids.indexOf((Long) path[0]);
+			int pos = ids.indexOf(path[0]);
 			res[pos] = escapePath((String) path[1]);
 		}
 

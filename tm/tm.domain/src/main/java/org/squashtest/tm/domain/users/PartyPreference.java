@@ -21,8 +21,6 @@
 package org.squashtest.tm.domain.users;
 
 import org.squashtest.tm.domain.Identified;
-import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
-
 import javax.persistence.*;
 
 @Entity

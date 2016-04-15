@@ -65,6 +65,7 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	/**
 	 * @see org.squashtest.tm.web.internal.controller.generic.WorkspaceController#getWorkspaceType()
 	 */
+	@Override
 	protected WorkspaceType getWorkspaceType() {
 		return null;
 	}

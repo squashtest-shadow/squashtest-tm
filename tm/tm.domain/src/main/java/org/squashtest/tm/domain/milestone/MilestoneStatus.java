@@ -65,7 +65,7 @@ public enum MilestoneStatus implements Level {
 	
 	public static List<MilestoneStatus> getAllStatusAllowingObjectBind(){
 		
-		List<MilestoneStatus> result = new ArrayList<MilestoneStatus>();
+		List<MilestoneStatus> result = new ArrayList<>();
 		for (MilestoneStatus status : MilestoneStatus.values()){
 			if (status.isBindableToObject){
 				result.add(status);

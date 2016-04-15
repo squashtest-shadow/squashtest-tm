@@ -164,7 +164,7 @@ public class CampaignTestPlanManagerController {
 			dNodeBuilder.filterByMilestone(activeMilestone);
 		}
 
-		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<TestCaseLibrary>(dNodeBuilder);
+		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(dNodeBuilder);
 
 
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
@@ -185,7 +185,7 @@ public class CampaignTestPlanManagerController {
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
 
 		String unassignedLabel = formatUnassigned(locale);
-		List<TestPlanAssignableUser> jsonUsers = new LinkedList<TestPlanAssignableUser>();
+		List<TestPlanAssignableUser> jsonUsers = new LinkedList<>();
 
 		jsonUsers.add(new TestPlanAssignableUser(User.NO_USER_ID.toString(), unassignedLabel ));
 

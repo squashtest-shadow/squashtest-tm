@@ -28,7 +28,7 @@ public final class ActionStepCollector implements TestStepVisitor {
 	private List<ActionTestStep> actionSteps ;
 
 	public List<ActionTestStep> collect(List<TestStep> steps) {
-		this.actionSteps = new ArrayList<ActionTestStep>();
+		this.actionSteps = new ArrayList<>();
 		for (TestStep step : steps) {
 			step.accept(this);
 		}

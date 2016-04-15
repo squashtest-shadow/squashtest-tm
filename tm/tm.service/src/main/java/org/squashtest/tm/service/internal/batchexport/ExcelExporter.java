@@ -38,6 +38,8 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -66,6 +68,9 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseShe
 @Component
 @Scope("prototype")
 class ExcelExporter {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelExporter.class);
+	
 	private static final String DS_SHEET = TemplateWorksheet.DATASETS_SHEET.sheetName;
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
 	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
@@ -140,7 +145,7 @@ class ExcelExporter {
 		TestCaseSheetColumn.TC_LAST_MODIFIED_ON,
 		TestCaseSheetColumn.TC_LAST_MODIFIED_BY};
 
-	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList((TestCaseSheetColumn[]) ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
+	private static final List<TestCaseSheetColumn> TC_COLUMNS_MILESTONES = new ArrayList<>(Arrays.asList(ArrayUtils.add(BASIC_TC_COLUMNS, 7, TestCaseSheetColumn.TC_MILESTONE)));
 
 	private static final List<TestCaseSheetColumn> TC_COLUMNS = Arrays.asList(BASIC_TC_COLUMNS);
 
@@ -257,7 +262,12 @@ class ExcelExporter {
 				cIdx = doOptionnalAppendTestCases(r, cIdx, tcm);
 
 			} catch (IllegalArgumentException wtf) {
-
+				if (LOGGER.isWarnEnabled()){
+					LOGGER.warn("cannot export content for test case '"+tcm.getId()+"' : some data exceed the maximum size of an excel cell");
+				}
+				if (LOGGER.isTraceEnabled()){
+					LOGGER.trace("",wtf);
+				}
 				tcSheet.removeRow(r);
 				r = tcSheet.createRow(rIdx);
 
@@ -301,7 +311,12 @@ class ExcelExporter {
 
 				appendCustomFields(r, "TC_STEP_CUF_", tsm.getCufs());
 			} catch (IllegalArgumentException wtf) {
-
+				if (LOGGER.isWarnEnabled()){
+					LOGGER.warn("cannot export content for test step '"+tsm.getId()+"' : some data exceed the maximum size of an excel cell");
+				}
+				if (LOGGER.isTraceEnabled()){
+					LOGGER.trace("",wtf);
+				}
 				stSheet.removeRow(r);
 				r = stSheet.createRow(rIdx);
 
@@ -334,6 +349,12 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(pm.getDescription());
 			} catch (IllegalArgumentException wtf) {
 
+				if (LOGGER.isWarnEnabled()){
+					LOGGER.warn("cannot export content for parameter '"+pm.getId()+"' : some data exceed the maximum size of an excel cell");
+				}
+				if (LOGGER.isTraceEnabled()){
+					LOGGER.trace("",wtf);
+				}
 				pSheet.removeRow(r);
 				r = pSheet.createRow(rIdx);
 
@@ -368,7 +389,12 @@ class ExcelExporter {
 				r.createCell(cIdx++).setCellValue(dm.getParamName());
 				r.createCell(cIdx++).setCellValue(dm.getParamValue());
 			} catch (IllegalArgumentException wtf) {
-
+				if (LOGGER.isWarnEnabled()){
+					LOGGER.warn("cannot export content for dataset '"+dm.getId()+"' : some data exceed the maximum size of an excel cell");
+				}
+				if (LOGGER.isTraceEnabled()){
+					LOGGER.trace("",wtf);
+				}
 				dsSheet.removeRow(r);
 				r = dsSheet.createRow(rIdx);
 

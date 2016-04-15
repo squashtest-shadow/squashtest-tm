@@ -65,7 +65,7 @@ public class TestStepUpdateFormModel {
 
 	@JsonIgnore
 	public Map<Long, RawValue> getCufs(){
-		Map<Long, RawValue> cufs = new HashMap<Long, RawValue>(cufValues.size());
+		Map<Long, RawValue> cufs = new HashMap<>(cufValues.size());
 		for (Entry<Long, RawValueModel> entry : cufValues.entrySet()){
 			cufs.put(entry.getKey(), entry.getValue().toRawValue());
 		}

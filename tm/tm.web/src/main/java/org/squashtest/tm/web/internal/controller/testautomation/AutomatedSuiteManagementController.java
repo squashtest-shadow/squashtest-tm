@@ -112,7 +112,7 @@ public class AutomatedSuiteManagementController {
 		 * This is because Jackson wouldn't deserialized a collection to the right content type because of type erasure.
 		 * So we manually convert the content that was serialized as a Map, to SuiteExecutionConfiguration
 		 */
-		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<SuiteExecutionConfiguration>(
+		Collection<SuiteExecutionConfiguration> configuration = new ArrayList<>(
 				rawConf.size());
 		for (Map<String, ?> rawC : rawConf) {
 			long projectId = ((Integer) rawC.get(RequestParams.PROJECT_ID)).longValue();
@@ -148,7 +148,7 @@ public class AutomatedSuiteManagementController {
 		Collection<TestAutomationProjectContent> projectContents = service.sortByProject(suite);
 
 		Collection<TestAutomationProjectContentModel> models =
-				new ArrayList<TestAutomationProjectContentModel>(projectContents.size());
+				new ArrayList<>(projectContents.size());
 
 		for (TestAutomationProjectContent content : projectContents) {
 			models.add(new TestAutomationProjectContentModel(content));

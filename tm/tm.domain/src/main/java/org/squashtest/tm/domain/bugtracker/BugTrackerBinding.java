@@ -63,7 +63,7 @@ public class BugTrackerBinding {
 	@ElementCollection
 	@CollectionTable(name = "BUGTRACKER_PROJECT", joinColumns = @JoinColumn(name = "BUGTRACKER_BINDING_ID"))
 	@OrderColumn(name = "BUGTRACKER_PROJECT_ORDER")
-	private List<String> bugtrackerProjectName = new ArrayList<String>();
+	private List<String> bugtrackerProjectName = new ArrayList<>();
 
 	@OneToOne(optional = false)
 	@ForeignKey(name="FK_BugtrackerBinding_Bugtracker")

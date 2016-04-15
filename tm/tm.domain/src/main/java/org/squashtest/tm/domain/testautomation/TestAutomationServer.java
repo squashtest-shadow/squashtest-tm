@@ -34,7 +34,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.squashtest.tm.domain.audit.Auditable;
-import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -179,6 +178,7 @@ public class TestAutomationServer {
 		return kind;
 	}
 
+	@Override
 	public String toString(){
 		if (baseURL!=null){
 			return baseURL.toExternalForm();

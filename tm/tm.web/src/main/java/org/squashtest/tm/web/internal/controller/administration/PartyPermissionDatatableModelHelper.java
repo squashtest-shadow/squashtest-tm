@@ -45,7 +45,7 @@ public class PartyPermissionDatatableModelHelper extends DataTableModelBuilder<P
 	@Override
 	protected Map<?, ?> buildItemData(PartyProjectPermissionsBean item) {
 
-		Map<Object, Object> result = new HashMap<Object, Object>();
+		Map<Object, Object> result = new HashMap<>();
 		Party party = item.getParty();
 		PermissionGroup group = item.getPermissionGroup();
 		Boolean active = activePartyDetector.isActive(party);

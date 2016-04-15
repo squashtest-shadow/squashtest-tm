@@ -106,7 +106,7 @@ public class ExecutionStepModificationHelper {
 
 	public List<ExecutionStep> findStepsToUpdate(Execution execution) {
 		List<ExecutionStep> execSteps = execution.getSteps();
-		List<ExecutionStep> toBeUpdated = new ArrayList<ExecutionStep>();
+		List<ExecutionStep> toBeUpdated = new ArrayList<>();
 
 		for (ExecutionStep eStep : execSteps) {
 			ActionTestStep aStep = (ActionTestStep) eStep.getReferencedTestStep();

@@ -87,7 +87,7 @@ public class TestCaseImportanceManagerForRequirementDeletion {
 			storedCriticalities.add(nextCriticality);
 
 		} else {
-			List<RequirementCriticality> reqCriticalities = new ArrayList<RequirementCriticality>();
+			List<RequirementCriticality> reqCriticalities = new ArrayList<>();
 			reqCriticalities.add(nextCriticality);
 			this.requirementDeletionConcernedTestCases.put(testCase, reqCriticalities);
 

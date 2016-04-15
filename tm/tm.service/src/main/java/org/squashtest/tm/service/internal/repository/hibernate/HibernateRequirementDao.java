@@ -53,7 +53,7 @@ import com.querydsl.jpa.hibernate.HibernateQuery;
 
 @Repository
 public class HibernateRequirementDao extends HibernateEntityDao<Requirement> implements RequirementDao {
-	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION = new HashMap<VerificationCriterion, Criterion>(
+	private static final Map<VerificationCriterion, Criterion> HIBERNATE_RESTRICTION_BY_VERIFICATION_CRITERION = new HashMap<>(
 			VerificationCriterion.values().length);
 
 	static {
@@ -125,7 +125,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		List<Requirement> rootReqs = findRootContentRequirement(params);
 		List<Long> rootReqsIds = IdentifiedUtil.extractIds(rootReqs);
 		// find all leafs contained in param ids and contained by folders or requirements in param ids
-		Set<Long> nonRootReqNodesIds = new HashSet<Long>();
+		Set<Long> nonRootReqNodesIds = new HashSet<>();
 		List<Long> listReqNodeId = findDescendantRequirementIds(params);
 		nonRootReqNodesIds.addAll(listReqNodeId);
 		List<Long> listParentRequirementIds = findRequirementParents(params);
@@ -210,7 +210,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 
 	private List<ExportRequirementData> formatExportResult(Collection<Requirement> rootReq,
 			Collection<Object[]> nonRootReq) {
-		List<ExportRequirementData> exportList = new ArrayList<ExportRequirementData>();
+		List<ExportRequirementData> exportList = new ArrayList<>();
 
 		for (Requirement requirement : rootReq) {
 			ExportRequirementData erd = new ExportRequirementData(requirement, "", "");

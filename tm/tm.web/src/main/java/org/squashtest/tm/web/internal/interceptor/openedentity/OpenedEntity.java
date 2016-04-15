@@ -37,7 +37,7 @@ public class OpenedEntity {
 	private Map<String, Integer> viewers;
 
 	public OpenedEntity() {
-		viewers = new HashMap<String, Integer>();
+		viewers = new HashMap<>();
 	}
 
 	public boolean addViewForViewer(String viewerLogin) {

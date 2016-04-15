@@ -51,12 +51,12 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	private static final String SIMPLE_CLASS_NAME = "TestCaseFolder";
 
 	@Transient
-	private final FolderSupport<TestCaseLibraryNode, TestCaseFolder> folderSupport = new FolderSupport<TestCaseLibraryNode, TestCaseFolder>(this);
+	private final FolderSupport<TestCaseLibraryNode, TestCaseFolder> folderSupport = new FolderSupport<>(this);
 
 	@OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TCLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private List<TestCaseLibraryNode> content = new ArrayList<TestCaseLibraryNode>();
+	private List<TestCaseLibraryNode> content = new ArrayList<>();
 
 	@Override
 	public void addContent(TestCaseLibraryNode node) {
@@ -68,7 +68,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 		folderSupport.addContent(node, position);
 		// the following enforces that hibernate reinsert the data with their index,
 		// and makes sure it works along the triggers.
-		content = new ArrayList<TestCaseLibraryNode>(content);
+		content = new ArrayList<>(content);
 
 	}
 
@@ -96,7 +96,7 @@ public class TestCaseFolder extends TestCaseLibraryNode implements Folder<TestCa
 	@Override
 	public void removeContent(TestCaseLibraryNode node) throws NullArgumentException {
 		content.remove(node);
-		content = new ArrayList<TestCaseLibraryNode>(content);
+		content = new ArrayList<>(content);
 
 	}
 	@Override

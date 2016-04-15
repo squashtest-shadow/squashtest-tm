@@ -53,12 +53,12 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	 * Delegate implementation of folder responsibilities.
 	 */
 	@Transient
-	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<RequirementLibraryNode, RequirementFolder>(this);
+	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<>(this);
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
-	private List<RequirementLibraryNode> content = new ArrayList<RequirementLibraryNode>();
+	private List<RequirementLibraryNode> content = new ArrayList<>();
 
 	@OneToOne(cascade = { CascadeType.ALL })
 	@NotNull
@@ -95,7 +95,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Override
 	public void removeContent(RequirementLibraryNode contentToRemove) throws NullArgumentException {
 		content.remove(contentToRemove);
-		content = new ArrayList<RequirementLibraryNode>(content);
+		content = new ArrayList<>(content);
 	}
 
 	@Override
@@ -108,7 +108,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		folderSupport.addContent(node, position);
 		// the following enforces that hibernate reinsert the data with their index,
 		// and makes sure it works along the triggers.
-		content = new ArrayList<RequirementLibraryNode>(content);
+		content = new ArrayList<>(content);
 	}
 
 	@Override
@@ -118,7 +118,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 
 	@Override
 	public RequirementFolder createCopy() {
-		return (RequirementFolder) folderSupport.createCopy(new RequirementFolder());
+		return folderSupport.createCopy(new RequirementFolder());
 	}
 
 
@@ -140,6 +140,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		resource.setName(name);
 	}
 
+	@Override
 	public void setDescription(String description) {
 		resource.setDescription(description);
 	}

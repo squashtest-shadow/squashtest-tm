@@ -32,7 +32,7 @@ public class AdvancedSearchTagsFieldModel implements AdvancedSearchFieldModel {
 	private AdvancedSearchFieldModelType type = AdvancedSearchFieldModelType.TAGS;
 	private boolean ignoreBridge = false;
 
-	private List<String> tags = new ArrayList<String>();
+	private List<String> tags = new ArrayList<>();
 	private Operation operation;
 
 	@Override

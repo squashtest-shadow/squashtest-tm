@@ -111,6 +111,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 		}
 
 
+		@Override
 		public String toString(){
 			return getKey().toString();
 		}

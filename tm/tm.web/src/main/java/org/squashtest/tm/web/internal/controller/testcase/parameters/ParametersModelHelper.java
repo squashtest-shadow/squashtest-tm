@@ -58,7 +58,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 
 	@Override
 	public Map<String, Object> buildItemData(Parameter item) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 
 		Long tcId = item.getTestCase().getId();
 		boolean isDirectParam = Long.valueOf(ownerId).equals(tcId);
@@ -125,7 +125,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
 		List<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
-			HashMap<String, String> map = new HashMap<String, String>();
+			HashMap<String, String> map = new HashMap<>();
 			map.put("name",  ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));
 			map.put("description",  HTMLCleanupUtils.htmlToText(param.getDescription()));
 			map.put("id", param.getId().toString());

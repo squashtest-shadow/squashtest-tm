@@ -55,12 +55,13 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		return messageSource.noData(locale);
 	}
 
+	@Override
 	public Map<String, Object> buildItemData(IndexedCampaignTestPlanItem indexedItem) {
 
 		Integer index = indexedItem.getIndex() + 1;
 		CampaignTestPlanItem item = indexedItem.getItem();
 
-		Map<String, Object> result = new HashMap<String, Object>();
+		Map<String, Object> result = new HashMap<>();
 
 		TestCase testCase = item.getReferencedTestCase();
 		String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale);
@@ -111,7 +112,7 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 			Collection<Dataset> available = item.getReferencedTestCase().getDatasets();
 
 			JsonDataset jsonSelected = convert(selected);
-			Collection<JsonDataset> jsonAvailable = new ArrayList<JsonDataset>(available.size()+1);
+			Collection<JsonDataset> jsonAvailable = new ArrayList<>(available.size()+1);
 			jsonAvailable.add(convert(null));	// that one corresponds to dataset 'None'
 			for (Dataset ds : available){
 				jsonAvailable.add(convert(ds));

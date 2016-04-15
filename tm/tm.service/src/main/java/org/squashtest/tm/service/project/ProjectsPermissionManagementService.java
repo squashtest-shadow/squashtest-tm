@@ -30,6 +30,7 @@ public interface ProjectsPermissionManagementService extends ProjectsPermissionF
 
 	void addNewPermissionToProject(long userId, long projectId, String permissionName);
 
+	@Override
 	void removeProjectPermission(long userId, long projectId);
 	
 	/**

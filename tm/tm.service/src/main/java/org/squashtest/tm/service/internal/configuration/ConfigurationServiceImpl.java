@@ -26,7 +26,6 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.service.configuration.ConfigurationService;
@@ -105,6 +104,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	 *
 	 * @see org.squashtest.tm.service.configuration.ConfigurationService#set(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void set(String key, String value) {
 		if (findValue(key) == null) {
 			createNewConfiguration(key, value);

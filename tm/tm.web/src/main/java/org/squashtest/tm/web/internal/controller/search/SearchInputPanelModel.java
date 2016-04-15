@@ -25,12 +25,12 @@ import java.util.List;
 
 public class SearchInputPanelModel {
 
-	private List<SearchInputFieldModel> fields = new ArrayList<SearchInputFieldModel>();
+	private List<SearchInputFieldModel> fields = new ArrayList<>();
 	private String title;
 	private boolean open;
 	private String id;
 	private String location;
-	private List<String> cssClasses = new ArrayList<String>();
+	private List<String> cssClasses = new ArrayList<>();
 	
 	public SearchInputPanelModel(){
 		

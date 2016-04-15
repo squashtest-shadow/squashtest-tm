@@ -65,7 +65,7 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 	// ************* code ************************
 
 	public DenormalizedFieldHelper(X entity) {
-		this.entities = new ArrayList<X>();
+		this.entities = new ArrayList<>();
 		this.entities.add(entity);
 	}
 
@@ -138,7 +138,7 @@ public class DenormalizedFieldHelper<X extends DenormalizedFieldHolder>{
 	// so we include every custom fields that exist at least in one step.
 	private void extractCustomFields(){
 
-		Map<String, CustomField> cfMap = new HashMap<String, CustomField>();
+		Map<String, CustomField> cfMap = new HashMap<>();
 
 		CustomField customField;
 		for (DenormalizedFieldValue dfv : values){

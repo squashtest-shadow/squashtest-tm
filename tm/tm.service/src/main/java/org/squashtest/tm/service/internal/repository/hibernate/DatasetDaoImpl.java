@@ -47,7 +47,7 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 
 		Query query = em.unwrap(Session.class).getNamedQuery("Dataset.findOwnDatasetsByTestCase");
 		query.setParameter("testCaseId", testCaseId);
-		return (List<Dataset>) query.list();
+		return query.list();
 	}
 
 
@@ -58,7 +58,7 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 		if (!testCaseIds.isEmpty()) {
 			Query query = em.unwrap(Session.class).getNamedQuery("Dataset.findOwnDatasetsByTestCases");
 			query.setParameterList("testCaseIds", testCaseIds);
-			return (List<Dataset>) query.list();
+			return query.list();
 		} else {
 			return Collections.emptyList();
 		}
@@ -78,10 +78,10 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 
 	@Override
 	public List<Dataset> findAllDelegateDatasets(Long testCaseId) {
-		List<Dataset> allDatasets = new LinkedList<Dataset>();
+		List<Dataset> allDatasets = new LinkedList<>();
 
-		Set<Long> exploredTc = new HashSet<Long>();
-		List<Long> srcTc = new LinkedList<Long>();
+		Set<Long> exploredTc = new HashSet<>();
+		List<Long> srcTc = new LinkedList<>();
 		List<Long> destTc;
 
 		Query next = em.unwrap(Session.class).getNamedQuery("dataset.findTestCasesThatInheritParameters");

@@ -106,18 +106,22 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 	}
 
+	@Override
 	public void setCampaign(Campaign campaign) {
 		this.campaign = campaign;
 	}
 
+	@Override
 	public void setSeparator(char separator) {
 		this.separator = separator;
 	}
 
+	@Override
 	public char getSeparator() {
 		return separator;
 	}
 
+	@Override
 	public void init() {
 		initCustomFields();
 		milestonesEnabled = featureManager.isEnabled(Feature.MILESTONE);
@@ -288,6 +292,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 	}
 
+	@Override
 	public Iterator<Row> dataIterator() {
 		return new DataIterator();
 	}

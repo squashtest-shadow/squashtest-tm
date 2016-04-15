@@ -39,7 +39,7 @@ public class NotDeletableCampaignsPreviewReport implements SuppressionPreviewRep
 	private static final String ADMIN_MESSAGE_KEY_5 = "dialog.label.delete-node.label.specialcase.right.last";
 
 	private boolean hasRights; 
-	private final Set<String> nodeNames = new HashSet<String>();
+	private final Set<String> nodeNames = new HashSet<>();
 
 	@Override
 	public String toString(MessageSource source, Locale locale) {

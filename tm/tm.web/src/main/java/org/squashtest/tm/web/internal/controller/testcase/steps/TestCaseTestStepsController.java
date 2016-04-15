@@ -272,7 +272,7 @@ public class TestCaseTestStepsController {
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
+		List<CustomFieldModel> models = new ArrayList<>(customFields.size());
 		for (CustomField field : customFields) {
 			models.add(converter.toJson(field));
 		}

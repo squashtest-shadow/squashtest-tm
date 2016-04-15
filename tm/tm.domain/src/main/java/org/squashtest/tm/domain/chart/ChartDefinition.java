@@ -102,7 +102,7 @@ public class ChartDefinition implements TreeEntity{
 
 	@ElementCollection
 	@CollectionTable(name = "CHART_PROJECT_SCOPE", joinColumns = @JoinColumn(name = "CHART_ID") )
-	private List<String> projectScope = new ArrayList<String>();
+	private List<String> projectScope = new ArrayList<>();
 
 
 	@ElementCollection
@@ -120,7 +120,7 @@ public class ChartDefinition implements TreeEntity{
 
 	@NotNull
 	@OneToMany(fetch=FetchType.LAZY,mappedBy="chart", cascade = { CascadeType.REMOVE, CascadeType.REFRESH, CascadeType.MERGE, CascadeType.DETACH})
-	private Set<CustomReportChartBinding> chartBindings = new HashSet<CustomReportChartBinding>();
+	private Set<CustomReportChartBinding> chartBindings = new HashSet<>();
 
 	public User getOwner() {
 		return owner;

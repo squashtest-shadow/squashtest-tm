@@ -338,6 +338,7 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 	}
 
 
+	@Override
 	public List<NamedReferencePair> findTestCaseCallsDownstream(final Collection<Long> testCaseIds) {
 
 		// get the node pairs when a caller/called pair was found.

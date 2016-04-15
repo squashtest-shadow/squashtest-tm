@@ -26,12 +26,10 @@ import java.util.ListIterator;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.FlushMode;
 import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -114,7 +112,7 @@ public class ExportDao {
 	private List<TestCaseModel> findTestCaseModels(List<Long> tclnIds){
 
 		Session session = getStatelessSession();
-		List<TestCaseModel> models = new ArrayList<TestCaseModel>(tclnIds.size());
+		List<TestCaseModel> models = new ArrayList<>(tclnIds.size());
 		List<TestCaseModel> buffer;
 
 
@@ -151,7 +149,7 @@ public class ExportDao {
 	private List<TestStepModel> findStepsModel(List<Long> tcIds){
 
 		Session session = getStatelessSession();
-		List<TestStepModel> models = new ArrayList<TestStepModel>(tcIds.size());
+		List<TestStepModel> models = new ArrayList<>(tcIds.size());
 		List<TestStepModel> buffer;
 
 

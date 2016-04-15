@@ -97,8 +97,8 @@ implements CampaignDeletionDao {
 
 	@Override
 	public List<Long>[] separateFolderFromCampaignIds(List<Long> originalIds) {
-		List<Long> folderIds = new ArrayList<Long>();
-		List<Long> campaignIds = new ArrayList<Long>();
+		List<Long> folderIds = new ArrayList<>();
+		List<Long> campaignIds = new ArrayList<>();
 
 		List<BigInteger> filtredFolderIds = executeSelectSQLQuery(
 				NativeQueries.CAMPAIGNLIBRARYNODE_SQL_FILTERFOLDERIDS, "campaignIds", originalIds);

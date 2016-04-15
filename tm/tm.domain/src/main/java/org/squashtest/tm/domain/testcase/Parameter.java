@@ -82,7 +82,7 @@ public class Parameter implements Identified {
 	private TestCase testCase;
 
 	@OneToMany(mappedBy = "parameter", cascade = { CascadeType.REMOVE })
-	private List<DatasetParamValue> datasetParamValues = new ArrayList<DatasetParamValue>();
+	private List<DatasetParamValue> datasetParamValues = new ArrayList<>();
 
 	public Parameter() {
 		super();
@@ -161,6 +161,7 @@ public class Parameter implements Identified {
 		this.testCase.addParameter(this);
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -193,7 +194,7 @@ public class Parameter implements Identified {
 	}
 
 	protected static Set<String> findUsedParameterNamesInString(String content) {
-		Set<String> paramNames = new HashSet<String>();
+		Set<String> paramNames = new HashSet<>();
 		java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(Parameter.USAGE_PATTERN);
 		Matcher matcher = pattern.matcher(content);
 		while (matcher.find()) {

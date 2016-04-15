@@ -133,7 +133,7 @@ public final class CustomFieldAdministrationController {
 		@Override
 		public Map<String, Object> buildItemData(CustomField item) {
 
-			Map<String, Object> res = new HashMap<String, Object>();
+			Map<String, Object> res = new HashMap<>();
 
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 			res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());

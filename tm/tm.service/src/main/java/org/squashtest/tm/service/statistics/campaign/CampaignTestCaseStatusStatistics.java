@@ -35,7 +35,7 @@ public class CampaignTestCaseStatusStatistics {
 	}
 	
 	private void initStatistics() {
-		statistics = new HashMap<ExecutionStatus, Integer>(ExecutionStatus.getCanonicalStatusSet().size());
+		statistics = new HashMap<>(ExecutionStatus.getCanonicalStatusSet().size());
 		for(ExecutionStatus status: ExecutionStatus.getCanonicalStatusSet()){
 			statistics.put(status, 0);
 		}

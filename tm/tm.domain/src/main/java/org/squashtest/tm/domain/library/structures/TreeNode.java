@@ -45,7 +45,7 @@ import java.util.List;
 
 public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 
-	private final List<T> children = new ArrayList<T>();
+	private final List<T> children = new ArrayList<>();
 	private  T parent ;
 	private LibraryTree<IDENT, T> tree ;
 
@@ -111,7 +111,7 @@ public abstract class TreeNode<IDENT, T extends TreeNode<IDENT, T>> {
 	 * @return the list of the ancestors of this node, from its parent to the ancestor root node (they come in reverse order).
 	 */
 	List<T> getHierarchy(){
-		List<T> result = new ArrayList<T>();
+		List<T> result = new ArrayList<>();
 
 		T nodeIterator = (T)this;
 

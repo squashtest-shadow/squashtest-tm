@@ -100,7 +100,7 @@ public class JsonProjectBuilder {
 
 		for (BindableEntity entity : BindableEntity.values()){
 			List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(p.getId(), entity);
-			List<CustomFieldBindingModel> jsBindings = new ArrayList<CustomFieldBindingModel>(bindings.size());
+			List<CustomFieldBindingModel> jsBindings = new ArrayList<>(bindings.size());
 			for (CustomFieldBinding binding : bindings){
 				jsBindings.add(customFieldConverter.toJson(binding));
 			}

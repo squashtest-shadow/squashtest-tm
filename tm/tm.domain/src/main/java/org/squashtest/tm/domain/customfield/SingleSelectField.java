@@ -231,6 +231,7 @@ public class SingleSelectField extends CustomField {
 		}
 	}
 
+	@Override
 	public void accept(CustomFieldVisitor visitor) {
 		visitor.visit(this);
 	}

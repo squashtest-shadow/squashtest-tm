@@ -37,7 +37,7 @@ public class RequirementExtractor implements RequirementLibraryNodeVisitor {
 	 * @return the requirements
 	 */
 	public List<Requirement> extract(List<? extends RequirementLibraryNode> nodes) {
-		result = new ArrayList<Requirement>();
+		result = new ArrayList<>();
 		for (RequirementLibraryNode node : nodes) {
 			node.accept(this);
 		}

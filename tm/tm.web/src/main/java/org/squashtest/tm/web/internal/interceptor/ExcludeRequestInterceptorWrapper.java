@@ -144,7 +144,7 @@ public class ExcludeRequestInterceptorWrapper implements HandlerInterceptor {
 	public void setExcludedExtensions(String[] excludedExtensions) {
 		Assert.parameterNotNull(excludedExtensions, "excludedExtensions");
 
-		LOGGER.debug("Excluded extensions : {} ({} excluded extensions)", (Object) excludedExtensions,
+		LOGGER.debug("Excluded extensions : {} ({} excluded extensions)", excludedExtensions,
 				excludedExtensions.length); // had to cast to call the right method
 
 		Collection<String> nonNullExtensions = CollectionUtils.select(Arrays.asList(excludedExtensions),

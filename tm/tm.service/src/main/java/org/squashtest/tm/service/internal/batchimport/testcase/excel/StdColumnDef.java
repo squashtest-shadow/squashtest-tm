@@ -53,10 +53,12 @@ class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
 	/**
 	 * @return the index
 	 */
+	@Override
 	public int getIndex() {
 		return index;
 	}
 
+	@Override
 	public boolean is(@NotNull ColumnProcessingMode processingMode) {
 		return processingMode.equals(type.getProcessingMode());
 	}

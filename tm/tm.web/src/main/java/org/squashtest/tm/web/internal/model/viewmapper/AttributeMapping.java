@@ -36,6 +36,7 @@ class AttributeMapping implements Mapping{
 	}
 
 
+	@Override
 	public String getMapping() {
 		return ownerType.getSimpleName() + "." + attribute;
 	}

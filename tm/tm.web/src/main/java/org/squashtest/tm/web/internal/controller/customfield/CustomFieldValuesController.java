@@ -75,7 +75,7 @@ public class CustomFieldValuesController {
 
 
 	private List<CustomFieldValueModel> valuesToJson(List<CustomFieldValue> values) {
-		List<CustomFieldValueModel> models = new LinkedList<CustomFieldValueModel>();
+		List<CustomFieldValueModel> models = new LinkedList<>();
 
 		for (CustomFieldValue value : values) {
 			CustomFieldValueModel model = converter.toJson(value);

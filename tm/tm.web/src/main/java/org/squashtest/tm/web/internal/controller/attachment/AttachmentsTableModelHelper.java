@@ -45,7 +45,7 @@ public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachmen
 	@Override
 	protected Map<Object, Object> buildItemData(Attachment item) {
 		
-		Map<Object, Object> result = new HashMap<Object, Object>();
+		Map<Object, Object> result = new HashMap<>();
 		
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());

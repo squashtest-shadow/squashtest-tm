@@ -276,7 +276,7 @@ public class TestCaseModificationController {
 		boolean hasCUF = cufHelperService.hasCustomFields(testCase);
 
 		// Convert execution mode with local parameter
-		List<OptionTag> executionModes = new ArrayList<OptionTag>();
+		List<OptionTag> executionModes = new ArrayList<>();
 		for (TestCaseExecutionMode executionMode : TestCaseExecutionMode.values()) {
 			OptionTag ot = new OptionTag();
 			ot.setLabel(formatExecutionMode(executionMode, locale));
@@ -774,7 +774,7 @@ public class TestCaseModificationController {
 
 		for (Dataset dataset : datasets) {
 			Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();
-			Map<String, String> datasetParamValuesById = new HashMap<String, String>(datasetParamValues.size());
+			Map<String, String> datasetParamValuesById = new HashMap<>(datasetParamValues.size());
 
 			for (DatasetParamValue datasetParamValue : datasetParamValues) {
 				datasetParamValuesById.put(datasetParamValue.getParameter().getId().toString(),
@@ -835,7 +835,7 @@ public class TestCaseModificationController {
 	}
 
 	private List<CustomFieldModel> convertToJsonCustomField(Collection<CustomField> customFields) {
-		List<CustomFieldModel> models = new ArrayList<CustomFieldModel>(customFields.size());
+		List<CustomFieldModel> models = new ArrayList<>(customFields.size());
 		for (CustomField field : customFields) {
 			models.add(converter.toJson(field));
 		}

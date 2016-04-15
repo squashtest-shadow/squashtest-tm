@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.infolist.InfoListItem;
 
 public interface InfoListDao  extends EntityDao<InfoList>{
 
+	@Override
 	InfoList findById(long id);
 
 	InfoList findByCode(String code);

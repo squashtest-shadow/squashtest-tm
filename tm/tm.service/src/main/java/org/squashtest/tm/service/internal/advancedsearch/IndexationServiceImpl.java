@@ -30,7 +30,6 @@ import java.util.concurrent.ConcurrentMap;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.CacheMode;
@@ -38,7 +37,6 @@ import org.hibernate.Criteria;
 import org.hibernate.FlushMode;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
-import org.hibernate.Session;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.criterion.Restrictions;
@@ -271,7 +269,7 @@ public class IndexationServiceImpl implements IndexationService {
 					.get(worker);
 
 			Transaction transaction = ftSession.getTransaction();
-			PostTransactionWorkQueueSynchronization txSync = (PostTransactionWorkQueueSynchronization) synchronizationPerTransaction
+			PostTransactionWorkQueueSynchronization txSync = synchronizationPerTransaction
 					.get(transaction);
 
 			Field queueField = PostTransactionWorkQueueSynchronization.class.getDeclaredField("queue");

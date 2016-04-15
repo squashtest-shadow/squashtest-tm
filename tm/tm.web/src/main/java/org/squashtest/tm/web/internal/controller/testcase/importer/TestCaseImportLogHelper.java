@@ -35,7 +35,7 @@ public class TestCaseImportLogHelper extends ImportLogHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportLogHelper.class);
 
-	private static final Map<String, EntityType> ENTITY_BY_TAB = new HashMap<String, EntityType>();
+	private static final Map<String, EntityType> ENTITY_BY_TAB = new HashMap<>();
 
 	static {
 		ENTITY_BY_TAB.put("TEST CASE", EntityType.TEST_CASE);

@@ -90,7 +90,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	private static final Set<ExecutionStatus> LEGAL_EXEC_STATUS;
 
 	static {
-		Set<ExecutionStatus> set = new HashSet<ExecutionStatus>();
+		Set<ExecutionStatus> set = new HashSet<>();
 		set.add(ExecutionStatus.SUCCESS);
 		set.add(ExecutionStatus.BLOCKED);
 		set.add(ExecutionStatus.FAILURE);
@@ -145,7 +145,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)
 	@Field(analyze=Analyze.NO, store=Store.YES)
-	private final List<Execution> executions = new ArrayList<Execution>();
+	private final List<Execution> executions = new ArrayList<>();
 
 	@IndexedEmbedded(includeEmbeddedObjectId = true, depth=1)
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -154,7 +154,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	@ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, mappedBy = "testPlan")
 	@IndexedEmbedded(includePaths = "id")
-	private List<TestSuite> testSuites = new ArrayList<TestSuite>();
+	private List<TestSuite> testSuites = new ArrayList<>();
 
 	public IterationTestPlanItem() {
 		super();
@@ -468,7 +468,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 
 	public void removeTestSuite(TestSuite suite) {
 		long suiteId = suite.getId();
-		List<TestSuite> toRemove = new ArrayList<TestSuite>();
+		List<TestSuite> toRemove = new ArrayList<>();
 		for (TestSuite testSuite : this.testSuites) {
 			if (testSuite.getId() == suiteId) {
 				toRemove.add(testSuite);
@@ -541,7 +541,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	 * @return a collection containing at least 1 item.
 	 */
 	public static Collection<IterationTestPlanItem> createTestPlanItems(TestCase testCase, Collection<Dataset> datasets) {
-		List<IterationTestPlanItem> res = new ArrayList<IterationTestPlanItem>();
+		List<IterationTestPlanItem> res = new ArrayList<>();
 
 		if (CollectionUtils.isEmpty(datasets)) {
 			res.add(new IterationTestPlanItem(testCase));

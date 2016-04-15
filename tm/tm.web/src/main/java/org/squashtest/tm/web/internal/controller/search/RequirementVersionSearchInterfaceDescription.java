@@ -269,7 +269,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 
 		Collection<Project> readableProjects = projectFinder.findAllReadable();
 
-		Collection<InfoList> categories = new ArrayList<InfoList>(readableProjects.size());
+		Collection<InfoList> categories = new ArrayList<>(readableProjects.size());
 
 		for (Project p : readableProjects){
 			categories.add(p.getRequirementCategories());
@@ -279,6 +279,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 
 		if (categories.size() > 0) {
 			Collections.sort((List<InfoList>) categories, new Comparator<InfoList>() {
+				@Override
 				public int compare(final InfoList object1, final InfoList object2) {
 					return object1.getLabel().compareTo(object2.getLabel());
 				}
@@ -292,6 +293,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	}
 
 	private static Comparator<String> ALPHABETICAL_ORDER = new Comparator<String>() {
+		@Override
 		public int compare(String str1, String str2) {
 			int res = String.CASE_INSENSITIVE_ORDER.compare(str1, str2);
 			if (res == 0) {
@@ -305,7 +307,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 	private void populateInfoListFieldModel(SearchInputFieldModel model, Collection<InfoList> infoLists, Locale locale){
 
 		InternationalizationHelper messages = getMessageSource();
-		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<String, SearchInputPossibleValueModel>();
+		Map<String, SearchInputPossibleValueModel> listsByListCode = new HashMap<>();
 
 		for (InfoList list : infoLists){
 			if (! listsByListCode.containsKey(list.getCode())){

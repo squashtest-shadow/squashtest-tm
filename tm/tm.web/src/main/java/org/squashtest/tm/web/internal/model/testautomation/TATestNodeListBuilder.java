@@ -37,7 +37,7 @@ public class TATestNodeListBuilder {
 
 	public Collection<TATestNode> build(Collection<TestAutomationProjectContent> projectContents) {
 
-		Collection<TATestNode> nodeList = new LinkedList<TATestNode>();
+		Collection<TATestNode> nodeList = new LinkedList<>();
 
 		for (TestAutomationProjectContent content : projectContents) {
 

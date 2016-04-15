@@ -25,7 +25,6 @@ import java.io.Serializable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.springframework.security.acls.model.ObjectIdentity;

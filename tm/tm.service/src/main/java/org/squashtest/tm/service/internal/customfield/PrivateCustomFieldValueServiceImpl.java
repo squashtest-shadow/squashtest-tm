@@ -127,7 +127,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
 
 		// second, one can now call the db and consolidate the result.
-		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
+		List<CustomFieldValue> result = new ArrayList<>();
 
 		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()) {
 
@@ -148,7 +148,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		Map<BindableEntity, List<Long>> compositeIds = breakEntitiesIntoCompositeIds(boundEntities);
 
 		// second, one can now call the db and consolidate the result.
-		List<CustomFieldValue> result = new ArrayList<CustomFieldValue>();
+		List<CustomFieldValue> result = new ArrayList<>();
 
 		for (Entry<BindableEntity, List<Long>> entry : compositeIds.entrySet()) {
 
@@ -465,7 +465,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			List<Long> idList = segregatedEntities.get(entity.getBoundEntityType());
 
 			if (idList == null) {
-				idList = new ArrayList<Long>();
+				idList = new ArrayList<>();
 				segregatedEntities.put(entity.getBoundEntityType(), idList);
 			}
 			idList.add(entity.getBoundEntityId());
