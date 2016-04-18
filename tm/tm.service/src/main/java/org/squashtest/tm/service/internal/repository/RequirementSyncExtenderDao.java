@@ -31,14 +31,14 @@ public interface RequirementSyncExtenderDao {
 
 
 	void persist(RequirementSyncExtender extender);
-	
-	RequirementSyncExtender retrieveByRemoteKey(@QueryParam("id") String remoteId, @QueryParam("pId") String project Id);
+
+	RequirementSyncExtender retrieveByRemoteKey(@QueryParam("id") String remoteId, @QueryParam("pId") Long projectId);
 	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@QueryParam("ids") Collection<String> remoteId);
 	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@QueryParam("pId") String remoteProjectId, @QueryParam("filter") String filterName);
 	Collection<RequirementSyncExtender> retrieveAllByServer(@QueryParam("serverId") Long serverId);
-	
+
 
 	void delete(RequirementSyncExtender extender);
 	void deleteAllByServer(@QueryParam("serverId") Long serverId);
-	
+
 }

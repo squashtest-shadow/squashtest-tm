@@ -101,8 +101,8 @@
 	@NamedQuery(name = "requirement.findRequirementDescendantIds", query = "select reqDescendant.id from Requirement reqDescendant, RequirementPathEdge closure where closure.ancestorId in :nodeIds and closure.descendantId = reqDescendant.id and closure.depth != 0"),
 
 	// synchronized requirements
-	@NamedQuery(name = "requirement.findNodeIdByRemoteKey", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId = :key"),
-	@NamedQuery(name = "requirement.findNodeIdsByRemoteKeys", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId in (:keys)"),
+	@NamedQuery(name = "requirement.findNodeIdByRemoteKey", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId = :key and req.project.name = :projectName"),
+	@NamedQuery(name = "requirement.findNodeIdsByRemoteKeys", query = "select req.id from Requirement req inner join req.syncExtender sync where sync.remoteReqId in (:keys) and req.project.name = :projectName"),
 
 
 	// deprecated, see RequirementPathEdge.findPathsByIds

@@ -76,7 +76,7 @@ public interface RequirementLibraryFinderService {
 	 * @param remoyeKey
 	 * @return
 	 */
-	Long findNodeIdByRemoteKey(String remoteKey);
+	Long findNodeIdByRemoteKey(String remoteKey, String projectName);
 	
 
 	/**
@@ -86,7 +86,7 @@ public interface RequirementLibraryFinderService {
 	 * @param remoteKeys
 	 * @return
 	 */
-	List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys);
+	List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys, String projectName);
 	
 
 	/**

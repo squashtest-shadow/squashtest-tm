@@ -842,7 +842,7 @@ public class Model {
 		Long reqId;
 		if (target.isSynchronized()){
 			LOGGER.debug("ReqImport - looking for synchronized requirement key : '"+target.getRemoteKey()+"'");
-			reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey());
+			reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey(), target.getProject());
 		}
 		else{
 			LOGGER.debug("ReqImport - looking for native requirement by path : '"+target.getPath()+"'");
