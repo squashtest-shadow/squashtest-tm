@@ -175,12 +175,15 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		// rework the td css classes to inhibit some post processing on
 		// them when not relevant
+		/*jshint validthis: true */
 		specializeCellClasses(this);
 
 		// handles the content of the call step rows
+		/*jshint validthis: true */
 		setCallStepsContent(this);
 
 		// collapser
+		/*jshint validthis: true */
 		var collapser = this.data("collapser");
 		if (collapser) {
 			collapser.refreshTable();
@@ -188,6 +191,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		// the cookie used when navigating back from the attachment manager. This solution is crap
 		// and I hope we come up with something better.
+		/*jshint validthis: true */
 		this.on('click', 'td.has-attachment-cell > a', function (evt) {
 			$.cookie(COOKIE_NAME, 1, {expires: 1, path: '/'});
 			return true;
@@ -833,6 +837,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		conf.urls = {};
 		conf.urls.testCaseStepsUrl = urls.deleteStep;
 		conf.testCaseId = settings.basic.testCaseId;
+		/*jshint validthis: true */
 		conf.stepsTablePanel = this;
 		popups.init(conf);
 
