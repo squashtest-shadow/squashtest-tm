@@ -51,7 +51,7 @@ class RequirementCurrentIsCurrentBridgeIT extends BridgeSpecification {
 	@Unroll
 	def "requirement version #reqVerId is current active one : #current"() {
 		given:
-		Session session = sessionFactory.currentSession
+		Session session = getSession()
 		RequirementVersion req = session.load(RequirementVersion, reqVerId)
 		
 		when:

@@ -485,6 +485,20 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		then:"expected dataset is verified"
 		session.flush()
 	}
+	
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.should move a grap of folders.xml")
+	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move a grap of folders-result.xml")
+	def "should move a grap of folder in a new project"(){
+		given :
+		Long[] sourceIds = [-1L]
+		Long destinationId = -2L
+
+		when: navService.moveNodesToFolder(destinationId, sourceIds)
+
+		then:"expected dataset is verified"
+		session.flush()
+	}
 
 	@DataSet("CampaignLibraryNavigationServiceIT.should move to another project and keep issues.xml")
 	@ExpectedDataSet("CampaignLibraryNavigationServiceIT.should move to another project and keep issues-result.xml")

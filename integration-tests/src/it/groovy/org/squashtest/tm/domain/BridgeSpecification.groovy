@@ -24,7 +24,8 @@ import javax.inject.Inject
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Document
+import org.apache.lucene.document.Field;
 import org.apache.lucene.document.Field.Index;
 import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.Field.TermVector;
@@ -52,9 +53,9 @@ abstract class BridgeSpecification extends DbunitDaoSpecification {
 	}	
 	
 	def setup() {
-		lucene.getStore() >> Mock(Store)
-		lucene.getIndex() >> Mock(Index)
-		lucene.getTermVector() >> Mock(TermVector)
+		lucene.getStore() >> Field.Store.YES
+		lucene.getIndex() >> Field.Index.ANALYZED
+		lucene.getTermVector() >> Field.TermVector.NO
 
 	}
 	

@@ -188,7 +188,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		firstOperation = createFirstLayerOperation();
 		nextsOperation = createNextLayerOperation();
 		outputList = new ArrayList<>(nbCopiedNodes);
-		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
+		nextLayer = new HashMap<>();
 		sourceLayer = null;
 		sourceLayerParents = null;
 	}
