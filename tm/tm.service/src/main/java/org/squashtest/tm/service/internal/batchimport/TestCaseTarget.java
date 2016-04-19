@@ -20,12 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+
+import java.util.Arrays;
 
 /**
  * Bean that holds the property of a test case target.<br/>

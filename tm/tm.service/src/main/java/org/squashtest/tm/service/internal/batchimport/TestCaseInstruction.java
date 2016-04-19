@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.testcase.TestCase;
 
-public class TestCaseInstruction extends Instruction<TestCaseTarget> implements CustomFieldHolder {
+public class TestCaseInstruction extends Instruction<TestCaseTarget> implements CustomFieldHolder, Milestoned {
 	private final TestCase testCase;
 	private final Map<String, String> customFields = new HashMap<>();
 	private final String[] milestones = {};
@@ -71,6 +71,7 @@ public class TestCaseInstruction extends Instruction<TestCaseTarget> implements 
 		customFields.put(code, value);
 	}
 
+	@Override
 	public List<String> getMilestones() {
 		return Arrays.asList(milestones);
 	}

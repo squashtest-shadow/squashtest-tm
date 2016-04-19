@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 
-public class RequirementVersionInstruction extends Instruction<RequirementVersionTarget> implements CustomFieldHolder {
+public class RequirementVersionInstruction extends Instruction<RequirementVersionTarget> implements CustomFieldHolder, Milestoned {
 
 	private RequirementVersion requirementVersion;
 	private final Map<String, String> customFields = new HashMap<>();

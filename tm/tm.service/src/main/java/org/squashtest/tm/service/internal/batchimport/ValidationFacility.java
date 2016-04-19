@@ -20,18 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
-import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,12 +37,8 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.importer.EntityType;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.*;
 import org.squashtest.tm.service.importer.LogEntry.Builder;
-import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
@@ -69,28 +53,37 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.service.internal.batchimport.Existence.EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_CREATED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
+
 /**
- *
  * This implementation solely focuses on validating data. It doesn't perform any
  * operation against the database, nor modifies the model : it justs uses the
  * current data available.
- *
  */
 @Component
 @Scope("prototype")
 public class ValidationFacility implements Facility, ValidationFacilitySubservicesProvider {
 	/**
 	 * Strategy for validating milestones. Should be specialized in create and update
-	 * @author Gregory Fouquet
 	 *
+	 * @author Gregory Fouquet
 	 */
-	private abstract class MilestonesValidationStrategy {
-		public void validateMilestones(TestCaseInstruction instr, LogTrain logs) {
-			TestCaseTarget target = instr.getTarget();
+	private abstract class MilestonesValidationStrategy<I extends Instruction<T> & Milestoned, T extends Target> {
+		public void validateMilestones(I instr, LogTrain logs) {
+			T target = instr.getTarget();
 
 			if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
 				logs.addEntry(logEntry().forTarget(target)
-						.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
+					.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
 			}
 
 			if (milestonesEnabled) {
@@ -103,35 +96,27 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		protected abstract LogEntry.Builder logEntry();
 
-		/**
-		 * @param rejected
-		 * @return
-		 */
-		protected List<LogEntry> logUnbindableMilestones(TestCaseTarget target, List<String> rejected) {
+		protected List<LogEntry> logUnbindableMilestones(T target, List<String> rejected) {
 			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
 			for (String name : rejected) {
 				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
-						.build());
+					.build());
 			}
 			return logs;
 		}
 
-		/**
-		 * @param rejected
-		 * @return
-		 */
-		protected List<LogEntry> logUnknownMilestones(TestCaseTarget target, List<String> rejected) {
+		protected List<LogEntry> logUnknownMilestones(T target, List<String> rejected) {
 			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
 			for (String name : rejected) {
 				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name)
-						.build());
+					.build());
 			}
 			return logs;
 		}
 
 	}
 
-	private final class CreationStrategy extends MilestonesValidationStrategy {
+	private final class CreationStrategy<I extends Instruction<T> & Milestoned, T extends Target> extends MilestonesValidationStrategy<I,T> {
 		/**
 		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
 		 */
@@ -141,7 +126,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 	}
 
-	private final class UpdateStrategy extends MilestonesValidationStrategy {
+	private final class UpdateStrategy<I extends Instruction<T> & Milestoned, T extends Target> extends MilestonesValidationStrategy<I,T> {
 		/**
 		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
 		 */
@@ -149,82 +134,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		protected Builder logEntry() {
 			return LogEntry.warning();
 		}
-
-	}
-
-	/**
-	 * Strategy for validating milestones. Should be specialized in create and update
-	 * @author Gregory Fouquet
-	 *
-	 */
-	private abstract class RequirementMilestonesValidationStrategy {
-		public void validateMilestones(RequirementVersionInstruction instr, LogTrain logs) {
-			RequirementVersionTarget target = instr.getTarget();
-
-			if (!(milestonesEnabled || instr.getMilestones().isEmpty())) {
-				logs.addEntry(logEntry().forTarget(target)
-						.withMessage(Messages.ERROR_MILESTONE_FEATURE_DEACTIVATED).build());
-			}
-
-			if (milestonesEnabled) {
-				Partition existing = milestoneHelper.partitionExisting(instr.getMilestones());
-				Partition bindables = milestoneHelper.partitionBindable(existing.passing);
-				logs.addEntries(logUnknownMilestones(target, existing.rejected));
-				logs.addEntries(logUnbindableMilestones(target, bindables.rejected));
-			}
-		}
-
-		protected abstract LogEntry.Builder logEntry();
-
-		/**
-		 * @param rejected
-		 * @return
-		 */
-		protected List<LogEntry> logUnbindableMilestones(RequirementVersionTarget target, List<String> rejected) {
-			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
-			for (String name : rejected) {
-				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_WRONG_MILESTONE_STATUS, name)
-						.build());
-				target.rejectedMilestone();
-			}
-			return logs;
-		}
-
-		/**
-		 * @param rejected
-		 * @return
-		 */
-		protected List<LogEntry> logUnknownMilestones(RequirementVersionTarget target, List<String> rejected) {
-			ArrayList<LogEntry> logs = new ArrayList<>(rejected.size());
-			for (String name : rejected) {
-				logs.add(logEntry().forTarget(target).withMessage(Messages.ERROR_UNKNOWN_MILESTONE, name)
-						.build());
-				target.rejectedMilestone();
-			}
-			return logs;
-		}
-
-	}
-
-	private final class RequirementVersionCreationStrategy extends RequirementMilestonesValidationStrategy {
-		/**
-		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
-		 */
-		@Override
-		protected Builder logEntry() {
-			return LogEntry.failure();
-		}
-	}
-
-	private final class RequirementVersionUpdateStrategy extends RequirementMilestonesValidationStrategy {
-		/**
-		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
-		 */
-		@Override
-		protected Builder logEntry() {
-			return LogEntry.warning();
-		}
-
 	}
 
 	private static final String ROLE_ADMIN = "ROLE_ADMIN";
@@ -233,9 +142,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	private static final String TEST_CASE_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.testcase.TestCaseLibrary";
 	private static final String REQUIREMENT_VERSION_LIBRARY_CLASSNAME = "org.squashtest.tm.domain.requirement.RequirementLibrary";
 
-
 	private static final Logger LOGGER = LoggerFactory.getLogger(ValidationFacility.class);
-
 
 	@Inject
 	private PermissionEvaluationService permissionService;
@@ -252,7 +159,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	@Inject
 	private UserDao userDao;
 
-	@Inject
 	@Value("#{" + Authorizations.MILESTONE_FEAT_ENABLED + "}")
 	private boolean milestonesEnabled;
 
@@ -276,11 +182,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private EntityValidator entityValidator = new EntityValidator(this);
 	private CustomFieldValidator cufValidator = new CustomFieldValidator();
-	private CreationStrategy creationStrategy = new CreationStrategy();
-	private UpdateStrategy updateStrategy = new UpdateStrategy();
-	private RequirementVersionCreationStrategy requirementVersionCreationStrategy =  new RequirementVersionCreationStrategy();
-	private RequirementVersionUpdateStrategy requirementVersionUpdateStrategy =  new RequirementVersionUpdateStrategy();
-
+	private CreationStrategy<TestCaseInstruction, TestCaseTarget> testCaseCreationStrategy = new CreationStrategy<>();
+	private UpdateStrategy<TestCaseInstruction, TestCaseTarget> testCaseUpdateStrategy = new UpdateStrategy<>();
+	private CreationStrategy<RequirementVersionInstruction, RequirementVersionTarget> requirementVersionCreationStrategy = new CreationStrategy<>();
+	private UpdateStrategy<RequirementVersionInstruction, RequirementVersionTarget> requirementVersionUpdateStrategy = new UpdateStrategy<>();
 
 	@Override
 	public Model getModel() {
@@ -306,8 +211,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			TestCaseTarget newTarget = new TestCaseTarget(newPath);
 			TargetStatus newStatus = model.getStatus(newTarget);
 			if (newStatus.status != Existence.NOT_EXISTS) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_CANT_RENAME, new String[] {
-						path, newPath }));
+				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_CANT_RENAME, new String[]{
+					path, newPath}));
 			}
 		}
 	}
@@ -320,10 +225,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 * <li>{@code mixin.createdOn} will be replaced by the import date.</li>
 	 * </ul>
 	 *
-	 * @param target
-	 *
-	 * @param auditable
-	 * @param create
 	 * @return a list of logEntries
 	 */
 	private List<LogEntry> fixMetadatas(Target target, AuditableMixin auditable, ImportMode importMode, EntityType type) {
@@ -339,30 +240,30 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			if (user == null || !user.getActive()) {
 				// user not found or not active
 				String warningMessage = null;
-				String impactMessage = null;
+				String impactMessage;
 				switch (importMode) {
-				case CREATE:
-					impactMessage = Messages.IMPACT_USE_CURRENT_LOGIN;
-					break;
-				case UPDATE:
-					impactMessage = Messages.IMPACT_NO_CHANGE;
-					break;
-				default:
-					impactMessage = Messages.IMPACT_NO_CHANGE;
-					break;
+					case CREATE:
+						impactMessage = Messages.IMPACT_USE_CURRENT_LOGIN;
+						break;
+					case UPDATE:
+						impactMessage = Messages.IMPACT_NO_CHANGE;
+						break;
+					default:
+						impactMessage = Messages.IMPACT_NO_CHANGE;
+						break;
 				}
 				switch (type) {
-				case REQUIREMENT_VERSION:
-					warningMessage = Messages.ERROR_REQ_USER_NOT_FOUND;
-					break;
-				case TEST_CASE:
-					warningMessage = Messages.ERROR_TC_USER_NOT_FOUND;
-					break;
-				default:
-					break;
+					case REQUIREMENT_VERSION:
+						warningMessage = Messages.ERROR_REQ_USER_NOT_FOUND;
+						break;
+					case TEST_CASE:
+						warningMessage = Messages.ERROR_TC_USER_NOT_FOUND;
+						break;
+					default:
+						break;
 				}
-				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING,warningMessage,
-						impactMessage);
+				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, warningMessage,
+					impactMessage);
 				logEntries.add(logEntry);
 				fixUser = true;
 			}
@@ -401,7 +302,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 4 - milestone lock ?
-		if (model.isTestCaseLockedByMilestones(target)){
+		if (model.isTestCaseLockedByMilestones(target)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 		}
 
@@ -426,7 +327,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 4 - the test case must not be locked by a milestone
-		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 		}
 
@@ -435,7 +336,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_CREATED || tcStatus.status == EXISTS) {
 			LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
-					Messages.IMPACT_STEP_CREATED_LAST);
+				Messages.IMPACT_STEP_CREATED_LAST);
 			if (indexCheckLog != null) {
 				logs.addEntry(indexCheckLog);
 			}
@@ -447,7 +348,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-			CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -469,17 +370,17 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
 			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_CALL_NOT_READABLE,
-					Messages.IMPACT_CALL_AS_ACTION_STEP));
+				Messages.IMPACT_CALL_AS_ACTION_STEP));
 		}
 
 		// 4.3 - the test case must not be locked by a milestone
-		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 		}
 
 		// 5 - check the index
 		LogEntry indexCheckLog = checkStepIndex(ImportMode.CREATE, target, ImportStatus.WARNING,
-				Messages.IMPACT_STEP_CREATED_LAST);
+			Messages.IMPACT_STEP_CREATED_LAST);
 		if (indexCheckLog != null) {
 			logs.addEntry(indexCheckLog);
 		}
@@ -505,7 +406,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 4 - the test case must not be locked by a milestone
-		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 		}
 
@@ -532,7 +433,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-			CallStepParamsInfo paramInfos, ActionTestStep actionStepBackup) {
+		CallStepParamsInfo paramInfos, ActionTestStep actionStepBackup) {
 
 		LogTrain logs;
 
@@ -558,7 +459,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 4.3 - the test case must not be locked by a milestone
-		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 		}
 
@@ -576,7 +477,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			// 7 - no call step cycles allowed
 			if (model.wouldCreateCycle(target, calledTestCase)) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
-						new Object[] { target.getTestCase().getPath(), calledTestCase.getPath() }));
+					new Object[]{target.getTestCase().getPath(), calledTestCase.getPath()}));
 			}
 		}
 
@@ -598,7 +499,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		// 3 - the test case must not be locked by a milestone
-		if (model.isTestCaseLockedByMilestones(target.getTestCase())){
+		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 		}
 
@@ -622,7 +523,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 2 - does it already exists ?
 		if (model.doesParameterExists(target)) {
 			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_ALREADY_EXISTS,
-					Messages.IMPACT_PARAM_UPDATED));
+				Messages.IMPACT_PARAM_UPDATED));
 		}
 
 		// 3 - is the user approved ?
@@ -678,7 +579,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value,
-			boolean isUpdate) {
+		boolean isUpdate) {
 
 		/*
 		 * Feat 3695 in this method we must assume that all the checks on the
@@ -772,9 +673,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		Long libid = model.getProjectStatus(target.getProject()).getTestCaseLibraryId();
 		if ((libid != null)
-				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, TEST_CASE_LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
-					permission, target.getPath() });
+			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, TEST_CASE_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
+				permission, target.getPath()});
 		}
 
 		return entry;
@@ -786,9 +687,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		Long libid = model.getProjectStatus(target.getProject()).getRequirementLibraryId();
 		if ((libid != null)
-				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
-					permission, target.getPath() });
+			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
+				permission, target.getPath()});
 		}
 
 		return entry;
@@ -803,9 +704,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Long tcLibid = tcProject.getTestCaseLibrary().getId();
 
 		if ((tcLibid != null)
-				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
-					permission, target.getPath() });
+			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
+				permission, target.getPath()});
 		}
 
 		String reqPath = target.getReqPath();
@@ -813,9 +714,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Long reqLibid = reqProject.getRequirementLibrary().getId();
 
 		if ((reqLibid != null)
-				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
-					permission, target.getPath() });
+			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
+				permission, target.getPath()});
 		}
 
 		return entry;
@@ -828,7 +729,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private LogEntry checkStepIndex(ImportMode mode, TestStepTarget target, ImportStatus importStatus,
-			String optionalImpact) {
+		String optionalImpact) {
 		Integer index = target.getIndex();
 		LogEntry entry = null;
 
@@ -838,7 +739,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_NEGATIVE, optionalImpact);
 
 		} else if (!model.stepExists(target)
-				&& (!model.indexIsFirstAvailable(target) || !mode.equals(ImportMode.CREATE))) {
+			&& (!model.indexIsFirstAvailable(target) || !mode.equals(ImportMode.CREATE))) {
 			// when index doesn't match a step in the target model
 			// this error message is not needed for creation when the target
 			// index is the first one available
@@ -867,14 +768,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 2 - custom fields (create)
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues,
-				model.getTestCaseCufs(target)));
+			model.getTestCaseCufs(target)));
 
 		// 3 - other checks
 		// 3-1 : names clash
 		if (status.getStatus() != Existence.NOT_EXISTS) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_TC_ALREADY_EXISTS, target.getPath())
-					.withImpact(Messages.IMPACT_TC_WITH_SUFFIX).build());
+				.withMessage(Messages.ERROR_TC_ALREADY_EXISTS, target.getPath())
+				.withImpact(Messages.IMPACT_TC_WITH_SUFFIX).build());
 		}
 
 		// 3-2 : permissions.
@@ -886,14 +787,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 3-3 : name and path must be consistent, only if the name is not empty
 		if (!StringUtils.isBlank(name) && !PathUtils.arePathsAndNameConsistents(path, name)) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name == null ? "" : name).build());
+				.withMessage(Messages.ERROR_INCONSISTENT_PATH_AND_NAME, path, name).build());
 		}
 
 		// 3-4 : check the milestones
-		creationStrategy.validateMilestones(instr, logs);
+		testCaseCreationStrategy.validateMilestones(instr, logs);
 
 		// 3-5 : fix test case metadatas
-		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE,EntityType.TEST_CASE);
+		List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.CREATE, EntityType.TEST_CASE);
 		logs.addEntries(logEntries);
 		return logs;
 
@@ -923,7 +824,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 2 - custom fields (create)
 			logs.append(cufValidator.checkUpdateCustomFields(target, cufValues,
-					model.getTestCaseCufs(target)));
+				model.getTestCaseCufs(target)));
 
 			// 3 - other checks
 			// 3-1 : check if the test case is renamed and would induce a
@@ -941,7 +842,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			}
 
 			// 3-3 : milestone lock ?
-			if (model.isTestCaseLockedByMilestones(target)){
+			if (model.isTestCaseLockedByMilestones(target)) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
 			}
 
@@ -950,7 +851,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			List<LogEntry> logEntries = fixMetadatas(target, (AuditableMixin) testCase, ImportMode.UPDATE, EntityType.TEST_CASE);
 			logs.addEntries(logEntries);
 
-			updateStrategy.validateMilestones(instr, logs);
+			testCaseUpdateStrategy.validateMilestones(instr, logs);
 		}
 
 		return logs;
@@ -973,7 +874,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		//   - Check conflict between folder already created by previous import
 		// and the path the line we are presently importing
-		checkFolderConflict(instr,logs);
+		checkFolderConflict(instr, logs);
 
 		//   - Check status and put the requirement version status to WIP if needed
 		//   - The required status will be affected to requirement version in post process
@@ -981,7 +882,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 2 - custom fields (create)
 		logs.append(cufValidator.checkCreateCustomFields(target, cufValues,
-				model.getRequirementVersionCufs(target)));
+			model.getRequirementVersionCufs(target)));
 
 		// 3 - Check permissions
 		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
@@ -991,7 +892,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 4 - Check version number
 		//		-> change it to the last index +1 if problem and keep trace of the user version number
-		checkAndFixRequirementVersionNumber(target, reqVersion, logs);
+		checkAndFixRequirementVersionNumber(target, logs);
 
 		// 5 - Check and fix name consistency between path and req name version
 		checkAndFixNameConsistency(target, reqVersion);
@@ -1003,18 +904,17 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		checkMilestonesAlreadyUsedInRequirement(instr, logs);
 
 		// 8 - Fix createdOn and createdBy
-		logs.addEntries(fixMetadatas(target, (AuditableMixin) reqVersion, ImportMode.CREATE,EntityType.REQUIREMENT_VERSION));
+		logs.addEntries(fixMetadatas(target, (AuditableMixin) reqVersion, ImportMode.CREATE, EntityType.REQUIREMENT_VERSION));
 
 		// 9 - Now update model if the requirement version has passed all check
 		if (!logs.hasCriticalErrors()) {
 			model.addRequirementVersion(target, new TargetStatus(TO_BE_CREATED), instr.getMilestones());
 			//if requirement not exists then pass it to status TO_BE_CREATED
 			//with actual implementation of addNode in requirement tree, parent node should already have the good status
-			if (model.getStatus(reqTarget).getStatus()==Existence.NOT_EXISTS) {
+			if (model.getStatus(reqTarget).getStatus() == Existence.NOT_EXISTS) {
 				model.addRequirement(reqTarget, new TargetStatus(TO_BE_CREATED));
 			}
-		}
-		else {
+		} else {
 			//this instruction smell bad..
 			instr.fatalError();
 		}
@@ -1025,13 +925,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	 * Set the requirementVersionStatus to {@link RequirementStatus#WORK_IN_PROGRESS} to avoid
 	 * illegal modification exception on {@link RequirementVersion} with other status
 	 * and save the modified {@link RequirementStatus} in target to reassign it in postprocess
-	 * @param target
-	 * @param reqVersion
 	 */
 	private void checkImportedRequirementVersionStatus(RequirementVersionTarget target,
-			RequirementVersion reqVersion) {
+		RequirementVersion reqVersion) {
 		RequirementStatus requirementVersionStatus = reqVersion.getStatus();
-		if (requirementVersionStatus!=null && requirementVersionStatus!=RequirementStatus.WORK_IN_PROGRESS) {
+		if (requirementVersionStatus != null && requirementVersionStatus != RequirementStatus.WORK_IN_PROGRESS) {
 			target.setImportedRequirementStatus(requirementVersionStatus);
 			reqVersion.setStatus(RequirementStatus.WORK_IN_PROGRESS);
 		}
@@ -1041,11 +939,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	/**
 	 * Check if an existing requirement version has a status which forbid modifications.
 	 * Used for update
-	 * @param target
-	 * @param logs
 	 */
 	private void checkExistingRequirementVersionStatus(
-			RequirementVersionTarget target, LogTrain logs) {
+		RequirementVersionTarget target, LogTrain logs) {
 
 
 		if (!logs.hasCriticalErrors()) {
@@ -1056,7 +952,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			if (!persistedStatus.isRequirementModifiable()) {
 				logs.addEntry(LogEntry.failure().forTarget(target).
-						withMessage(Messages.ERROR_REQUIREMENT_VERSION_STATUS).build());
+					withMessage(Messages.ERROR_REQUIREMENT_VERSION_STATUS).build());
 			}
 		}
 	}
@@ -1078,7 +974,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		checkImportedRequirementVersionStatus(target, reqVersion);
 		logs.append(cufValidator.checkUpdateCustomFields(target, cufValues,
-				model.getRequirementVersionCufs(target)));
+			model.getRequirementVersionCufs(target)));
 
 		// 2 - Check if target requirement version exists in database (targetStatus == EXISTS) and id isn't null
 		checkRequirementVersionExists(target, logs);
@@ -1089,7 +985,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			return logs;
 		}
 
-		checkExistingRequirementVersionStatus(target,logs);
+		checkExistingRequirementVersionStatus(target, logs);
 
 		LogEntry hasntPermission = checkPermissionOnProject(PERM_IMPORT, target, target);
 		if (hasntPermission != null) {
@@ -1112,26 +1008,23 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 
-
 	private void checkRequirementVersionExists(RequirementVersionTarget target,
-			LogTrain logs) {
+		LogTrain logs) {
 
 		TargetStatus status = model.getStatus(target);
 		TargetStatus reqStatus = model.getStatus(target.getRequirement());
 
 		//checking requirement and loading his id
-		if (reqStatus.getStatus()!=Existence.EXISTS || reqStatus.getId()==null) {
+		if (reqStatus.getStatus() != Existence.EXISTS || reqStatus.getId() == null) {
 			logs.addEntry(LogEntry.failure().forTarget(target).
-					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
+				withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
 		}
 
 		//checking requirement version and loading his id
-		else if (status.getStatus()!=Existence.EXISTS || status.getId()==null) {
+		else if (status.getStatus() != Existence.EXISTS || status.getId() == null) {
 			logs.addEntry(LogEntry.failure().forTarget(target).
-					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
-		}
-
-		else {
+				withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
+		} else {
 			//setting the id also in the instruction target, more convenient for updating operations
 			target.getRequirement().setId(reqStatus.getId());
 		}
@@ -1141,7 +1034,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		RequirementVersionTarget target = instr.getTarget();
 		if (model.isRequirementFolder(target)) {
 			logs.addEntry(LogEntry.warning().forTarget(target).
-					withMessage(Messages.WARN_REQ_PATH_IS_FOLDER).withImpact(Messages.IMPACT_REQ_RENAMED).build());
+				withMessage(Messages.WARN_REQ_PATH_IS_FOLDER).withImpact(Messages.IMPACT_REQ_RENAMED).build());
 			//now changing the path of target
 			fixPathFolderConflict(instr);
 		}
@@ -1160,13 +1053,11 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private String appendReqNameSuffix(String name) {
-		StringBuffer pathBuffer = new StringBuffer(name);
-		pathBuffer.append(Messages.REQ_RENAME_SUFFIX);
-		return pathBuffer.toString();
+		return name + Messages.REQ_RENAME_SUFFIX;
 	}
 
 	private void checkAndFixNameConsistency(RequirementVersionTarget target,
-			RequirementVersion reqVersion) {
+		RequirementVersion reqVersion) {
 		String reqName = PathUtils.extractName(target.getPath());
 		String reqVersionName = reqVersion.getName();
 
@@ -1176,29 +1067,27 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 	}
 
-	private void checkMilestonesAlreadyUsedInRequirement(
-			RequirementVersionInstruction instr, LogTrain logs) {
+	private void checkMilestonesAlreadyUsedInRequirement(RequirementVersionInstruction instr, LogTrain logs) {
 
 		List<String> milestones = instr.getMilestones();
 		RequirementVersionTarget target = instr.getTarget();
 
 		for (String milestone : milestones) {
 			//checking in model wich keep trace of change since the begining of the batch
-			if (model.checkMilestonesAlreadyUsedInRequirement(milestone,target)) {
+			if (model.checkMilestonesAlreadyUsedInRequirement(milestone, target)) {
 				logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.WARN_MILESTONE_USED, REQ_VERSION_MILESTONE.header)
-						.withImpact(Messages.IMPACT_MILESTONE_NOT_BINDED).build());
+					.withImpact(Messages.IMPACT_MILESTONE_NOT_BINDED).build());
 			}
 		}
 	}
 
-	private void checkAndFixRequirementVersionNumber(
-			RequirementVersionTarget target, RequirementVersion reqVersion, LogTrain logs) {
+	private void checkAndFixRequirementVersionNumber(RequirementVersionTarget target, LogTrain logs) {
 		//fixing null/0 values from user -> setting versionNumber to 1 (default value for new requirement)
-		if (target.getVersion()==null||target.getVersion()<=0) {
+		if (target.getVersion() == null || target.getVersion() <= 0) {
 			target.setVersion(1);//setting to 0 as fixVersionNumber will increment this value
 			fixVersionNumber(target);
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_NULL, REQ_VERSION_NUM.header)
-					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
+				.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
 		}
 		//check if requirement exist
 		Existence requirementVersionStatus = model.getStatus(target).getStatus();
@@ -1208,10 +1097,10 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LOGGER.debug("ReqImport Status of version : " + target.getVersion() + " " + requirementVersionStatus);
 
 		if (requirementStatus != Existence.NOT_EXISTS
-				&& requirementVersionStatus != Existence.NOT_EXISTS) {
+			&& requirementVersionStatus != Existence.NOT_EXISTS) {
 			fixVersionNumber(target);
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_REQUIREMENT_VERSION_COLLISION, REQ_VERSION_NUM.header)
-					.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
+				.withImpact(Messages.IMPACT_VERSION_NUMBER_MODIFIED).build());
 		}
 
 	}
@@ -1226,15 +1115,14 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 
-
 	@Override
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
 		throw new RuntimeException("Implement me");
 	}
 
-	boolean areMilestoneValid(TestCaseInstruction instr){
+	boolean areMilestoneValid(TestCaseInstruction instr) {
 		LogTrain dummy = new LogTrain();
-		updateStrategy.validateMilestones(instr, dummy);
+		testCaseUpdateStrategy.validateMilestones(instr, dummy);
 		return dummy.hasNoErrorWhatsoever();
 	}
 
@@ -1252,7 +1140,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		//return to avoid nasty exception in nexts checks
 		if (logs.hasCriticalErrors()) {
 			return logs;
-}
+		}
 
 		logs.addEntry(checkPermissionOnProject(PERM_IMPORT, target, target));
 
@@ -1261,9 +1149,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private void checkCoverageAlreadyExist(CoverageTarget target, LogTrain logs, Long tcId, Long reqVersionId) {
 		if (tcId != null && reqVersionId != null
-				&& coverageDao.byRequirementVersionAndTestCase(reqVersionId, tcId) != null) {
+			&& coverageDao.byRequirementVersionAndTestCase(reqVersionId, tcId) != null) {
 			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_COVERAGE_ALREADY_EXIST)
-					.withImpact(Messages.IMPACT_COVERAGE_FAILURE).build());
+				.withImpact(Messages.IMPACT_COVERAGE_FAILURE).build());
 		}
 	}
 
@@ -1278,9 +1166,9 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private Long checkRequirementVersionExist(CoverageTarget target, LogTrain logs) {
-		
+
 		RequirementTarget reqTarget = new RequirementTarget(target.getReqPath());
-		RequirementVersionTarget reqVersionTarget = new RequirementVersionTarget(reqTarget,target.getReqVersion());
+		RequirementVersionTarget reqVersionTarget = new RequirementVersionTarget(reqTarget, target.getReqVersion());
 		Existence reqVersionStatus = getModel().getStatus(reqVersionTarget).getStatus();
 		Existence reqStatus = getModel().getStatus(reqTarget).getStatus();
 
@@ -1293,7 +1181,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
 				}
 				return reqVersion.getId();
-			} else if(reqVersionStatus.equals(Existence.NOT_EXISTS)){
+			} else if (reqVersionStatus.equals(Existence.NOT_EXISTS)) {
 				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
 			}
 		} else {
