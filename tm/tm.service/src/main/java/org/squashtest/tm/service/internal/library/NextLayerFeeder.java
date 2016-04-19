@@ -42,7 +42,7 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 @Scope("prototype")
 public class NextLayerFeeder implements NodeVisitor {
 
-	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
+	private Collection<NodePairing> nextLayer;
 	private TreeNode destination;
 	private Collection<? extends TreeNode> outputList;
 
@@ -82,7 +82,7 @@ public class NextLayerFeeder implements NodeVisitor {
 	 *            : the output list of the paste strategy.
 	 */
 	public void feedNextLayer(TreeNode destination, TreeNode source,
-			Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer, Collection<? extends TreeNode> outputList) {
+			Collection<NodePairing> nextLayer, Collection<? extends TreeNode> outputList) {
 		this.nextLayer = nextLayer;
 		this.destination = destination;
 		this.outputList = outputList;
@@ -141,7 +141,7 @@ public class NextLayerFeeder implements NodeVisitor {
 		if (source.hasContent()) {
 			Collection<TreeNode> sourceContent = new ArrayList<>(source.getOrderedContent());
 			sourceContent.removeAll(outputList);
-			nextLayer.put((NodeContainer<TreeNode>) destination, sourceContent);
+			nextLayer.add(new NodePairing((NodeContainer<TreeNode>)destination, sourceContent));
 		}
 	}
 

@@ -57,16 +57,9 @@ public class NextLayersTreeNodeMover  implements NodeVisitor, PasteOperation {
 	/**
 	 * Will make sure all nodes are aware of their project and call the {@link TreeNodeUpdater} on each of them.
 	 */
-	@Override
-	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination) {
-		this.destination = destination;
-		toMove.accept(this);
-		toMove.accept(treeNodeUpdater);
-		return toMove;
-	}
 
 	@Override
-	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination, int position) {
+	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination, Integer position) {
 		this.destination = destination;
 		toMove.accept(this);
 		toMove.accept(treeNodeUpdater);

@@ -20,39 +20,47 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
 
-public interface PasteOperation {
-
-	/**
-	 * <p>
-	 * Some operation involving a node and another node will happen, ie the source will be copied or moved to the destination. 
-	 * Also returns a TreeNode resulting from this operation,  that will be either the copy of the source or the source itself.
-	 * </p>
-	 * 
-	 * <p>
-	 * If a position is specified, the source node will be copied/moved to its destination at this position. If position
-	 * is left to null, it will be appended to the content of the destination.
-	 * 
-	 * </p>
-	 */
-	TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, Integer position);
-
-
+class NodePairing {
 	
-	/**
-	 * will say if the operation allows to go process node's childrens after operation.
-	 * see {@link TreeNodeCopier#visit(org.squashtest.tm.domain.campaign.Iteration)} for an example of when it is not ok.
-	 * 
-	 * @return
-	 */
-	boolean isOkToGoDeeper();
+	private NodeContainer<TreeNode> container;
+	private Set<TreeNode> newContent = new HashSet<>();
 	
-	List<Long> getRequirementVersionToIndex();
+	NodePairing(NodeContainer<TreeNode> container){
+		super();
+		this.container = container;
+	}
 	
-	List<Long> getTestCaseToIndex();
+	NodePairing(NodeContainer<TreeNode> container, Set<TreeNode> newContent){
+		this(container);
+		this.newContent = newContent;
+	}
+	
+	NodePairing(NodeContainer<TreeNode> container, Collection<TreeNode> newContent){
+		this(container);
+		this.newContent = new HashSet<>(newContent);
+	}
+	
+	void addContent(TreeNode node){
+		this.newContent.add(node);
+	}
+	
+	void cancelContent(TreeNode node){
+		this.newContent.remove(node);
+	}
+	
+	NodeContainer<TreeNode> getContainer(){
+		return container;
+	}
+	
+	Set<TreeNode> getNewContent(){
+		return newContent;
+	}
 	
 }

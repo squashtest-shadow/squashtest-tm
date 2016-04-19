@@ -79,6 +79,8 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  */
 public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends TreeNode> {
 
+	private static final Integer WHATEVER_POSITION = null;
+	
 	// **************** collaborators **************************
 
 	private Provider<? extends PasteOperation> nextLayersOperationFactory;
@@ -124,41 +126,25 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	// ***************** treatment-scoped variables ****************
 
 	private List<NODE> outputList;
-	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> nextLayer;
-	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayer;
-	private Map<NodeContainer<TreeNode>, Collection<TreeNode>> sourceLayerParents;
+	private Collection<NodePairing> nextLayer;
+	private Collection<NodePairing> sourceLayer;
+	private Collection<NodePairing> sourceLayerParents;
 	private Set<Long> tcIdsToIndex = new HashSet<>();
 	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
 
 	// ******************* code *****************************
+
 	@CacheScope
 	public List<NODE> pasteNodes(long containerId, List<Long> list) {
-
-		// fetch
-		CONTAINER container = containerDao.findById(containerId);
-
-		// proceed : will process the nodes layer by layer.
-		init(list.size());
-
-		// process the first layer and memorize processed entities
-		processFirstLayer(container, list);
-
-		// loop on all following generations
-		while (!nextLayer.isEmpty()) {
-
-			removeProcessedNodesFromCache();
-
-			shiftToNextLayer();
-
-			processLayer();
-
-		}
-		reindexAfterCopy();
-		return outputList;
+		return internalPasteNodes(containerId, list, WHATEVER_POSITION);
 	}
 
 	@CacheScope
-	public List<NODE> pasteNodes(long containerId, List<Long> list, int position) {
+	public List<NODE> pasteNodes(long containerId, List<Long> list, Integer position) {
+		return internalPasteNodes(containerId, list, position);
+	}
+	
+	private List<NODE> internalPasteNodes(long containerId, List<Long> list, Integer position) {
 
 		// fetch
 		CONTAINER container = containerDao.findById(containerId);
@@ -184,67 +170,34 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		return outputList;
 	}
 
+	
 	private void init(int nbCopiedNodes) {
 		firstOperation = createFirstLayerOperation();
 		nextsOperation = createNextLayerOperation();
 		outputList = new ArrayList<>(nbCopiedNodes);
-		nextLayer = new HashMap<>();
+		nextLayer = new ArrayList<>();
 		sourceLayer = null;
 		sourceLayerParents = null;
 	}
 
-	private void removeProcessedNodesFromCache() {
-		if (sourceLayerParents != null) {
-			// if we cont flush and then evict, some entities might not be persisted
-			genericDao.flush();
-
-			Collection<TreeNode> evicted = new HashSet<>();
-			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive
-			// content anymore.
-			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.
-			for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> processedLayerEntry : sourceLayerParents
-					.entrySet()) {
-				NodeContainer<TreeNode> container = processedLayerEntry.getKey();
-				Collection<TreeNode> content = processedLayerEntry.getValue();
-				genericDao.clearFromCache(container);
-				for (TreeNode node : content) {
-					if (!evicted.contains(node)) {
-						evicted.add(node);
-						genericDao.clearFromCache(node);
-					}
-				}
-			}
-		}
-	}
 
 	private void shiftToNextLayer() {
 		sourceLayerParents = sourceLayer;
 		sourceLayer = nextLayer;
-		nextLayer = new HashMap<NodeContainer<TreeNode>, Collection<TreeNode>>();
+		nextLayer = new ArrayList<>();
 	}
 
-	@SuppressWarnings("unchecked")
-	private void processFirstLayer(CONTAINER container, List<Long> list) {
-		for (Long id : list) {
-			NODE srcNode = nodeDao.findById(id);
-			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container);
-			outputList.add(outputNode);
-			if (firstOperation.isOkToGoDeeper()) {
-				appendNextLayerNodes(srcNode, outputNode);
-			}
-		}
-		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
-		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
-	}
 
 	@SuppressWarnings("unchecked")
-	private void processFirstLayer(CONTAINER container, List<Long> list, int position) {
+	private void processFirstLayer(CONTAINER container, List<Long> list, Integer position) {
 		for (Long id : list) {
 			NODE srcNode = nodeDao.findById(id);
 			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container,
 					position);
 			outputList.add(outputNode);
-			position++;
+			if (position != null){
+				position++;
+			}
 			if (firstOperation.isOkToGoDeeper()) {
 				appendNextLayerNodes(srcNode, outputNode);
 			}
@@ -253,24 +206,27 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
+	
+	
 	/**
 	 * Process non first layer.
 	 */
 	private void processLayer() {
-
-		for (Entry<NodeContainer<TreeNode>, Collection<TreeNode>> sourceEntry : sourceLayer.entrySet()) {
-
-			Collection<TreeNode> sources = sourceEntry.getValue();
-			NodeContainer<TreeNode> destination = sourceEntry.getKey();
-
+		
+		for (NodePairing pairing : sourceLayer){
+			NodeContainer<TreeNode> destination = pairing.getContainer();
+			Collection<TreeNode> sources = pairing.getNewContent();
+			
 			for (TreeNode source : sources) {
-				TreeNode outputNode = nextsOperation.performOperation(source, destination);
+				TreeNode outputNode = nextsOperation.performOperation(source, destination, WHATEVER_POSITION);
 				
 				if (nextsOperation.isOkToGoDeeper()) {
 					appendNextLayerNodes(source, outputNode);
 				}
 			}
 		}
+
+
 
 		reqVersionIdsToIndex.addAll(nextsOperation.getRequirementVersionToIndex());
 		tcIdsToIndex.addAll(nextsOperation.getTestCaseToIndex());
@@ -301,6 +257,31 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		em.unwrap(Session.class).flush();
 		indexationService.batchReindexTc(new ArrayList<>(tcIdsToIndex));
 		indexationService.batchReindexReqVersion(new ArrayList<>(reqVersionIdsToIndex));
+	}
+	
+
+	private void removeProcessedNodesFromCache() {
+		if (sourceLayerParents != null) {
+			// if we cont flush and then evict, some entities might not be persisted
+			genericDao.flush();
+
+			Collection<TreeNode> evicted = new HashSet<>();
+			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive
+			// content anymore.
+			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.			
+			for (NodePairing pairing : sourceLayerParents){
+				NodeContainer<TreeNode> container = pairing.getContainer();
+				Collection<TreeNode> content = pairing.getNewContent();
+				genericDao.clearFromCache(container);
+				for (TreeNode node : content) {
+					if (!evicted.contains(node)) {
+						evicted.add(node);
+						genericDao.clearFromCache(node);
+					}
+				}
+			}
+			
+		}
 	}
 
 }

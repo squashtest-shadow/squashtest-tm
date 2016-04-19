@@ -130,27 +130,9 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private boolean projectChanged = true;
 	private int batchRequirement = 0;
 
-	@Override
-	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination) {
-		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
-			new SecurityCheckableObject(source, "READ"));
-		this.okToGoDeeper = true;
-		this.destination = destination;
-		this.projectChanged = projectchanged(source);
-		copy = null;
-		source.accept(this);
-		if (projectChanged) {
-			// see comment on the method flush();
-			flush();
-			copy.accept(treeNodeUpdater);
-		}
-		return copy;
-
-
-	}
 
 	@Override
-	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, int position) {
+	public TreeNode performOperation(TreeNode source, NodeContainer<TreeNode> destination, Integer position) {
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(destination, "CREATE"),
 			new SecurityCheckableObject(source, "READ"));
 		this.okToGoDeeper = true;

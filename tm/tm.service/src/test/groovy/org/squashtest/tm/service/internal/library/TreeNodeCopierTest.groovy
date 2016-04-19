@@ -67,7 +67,7 @@ public class TreeNodeCopierTest extends Specification{
 
 
 		when :
-		def result = copier.performOperation(tcOrig, folder)
+		def result = copier.performOperation(tcOrig, folder, null)
 
 
 		then :
@@ -91,7 +91,7 @@ public class TreeNodeCopierTest extends Specification{
 
 
 		when :
-		def result = copier.performOperation(tcOrig, folder)
+		def result = copier.performOperation(tcOrig, folder, null)
 
 
 		then :
@@ -113,7 +113,7 @@ public class TreeNodeCopierTest extends Specification{
 
 
 		when :
-		def result = copier.performOperation(tcOrig, folder)
+		def result = copier.performOperation(tcOrig, folder, null)
 
 
 		then :
@@ -133,7 +133,7 @@ public class TreeNodeCopierTest extends Specification{
 
 
 		when :
-		def result = copier.performOperation(tcOrig, folder)
+		def result = copier.performOperation(tcOrig, folder, null)
 
 
 		then :
@@ -156,7 +156,7 @@ public class TreeNodeCopierTest extends Specification{
 		folder.addContent(new TestCase(name:"NX_OHNOZ-Copie1-Copie7"))
 
 		when :
-		def result = copier.performOperation(tcOrig, folder)
+		def result = copier.performOperation(tcOrig, folder, null)
 
 
 		then :

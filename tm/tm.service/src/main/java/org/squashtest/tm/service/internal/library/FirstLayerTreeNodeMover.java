@@ -147,29 +147,9 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		collaboratorsByType = Collections.unmodifiableMap(collaboratorsByType);
 	}
 
-	@Override
-	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination) {
-		//initialize attributes
-		this.destination = destination;
-		movedNode = null;
-		//check destination's hierarchy doesn't contain node to move
-		checkNotMovedInHimself(toMove);
-		//project changed ?
-		Project sourceProject = toMove.getProject();
-		GenericProject destinationProject = destination.getProject();
-		this.projectChanged = changedProject(sourceProject, destinationProject);
-
-		//process
-		processNodes(toMove);
-
-		if(projectChanged){
-			movedNode.accept(treeNodeUpdater);
-		}
-		return movedNode;
-	}
 
 	@Override
-	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination, int position) {
+	public TreeNode performOperation(TreeNode toMove, NodeContainer<TreeNode> destination, Integer position) {
 		//initialize attributes
 		this.destination = destination;
 		movedNode = null;
@@ -194,32 +174,8 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		return this.projectChanged;
 	}
 
-	protected void processNodes(TreeNode toMove) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
 
-		EntityType visitedType = whichVisitor.getTypeOf(toMove);
-
-		switch (visitedType) {
-		case CAMPAIGN_FOLDER:
-		case REQUIREMENT_FOLDER:
-		case TEST_CASE_FOLDER:
-		case CAMPAIGN:
-		case TEST_CASE:
-			NodeCollaborators nc = collaboratorsByType.get(visitedType);
-			visitLibraryNode((LibraryNode) toMove, nc.libraryDao, nc.folderDao);
-			break;
-		case REQUIREMENT: // special
-			visitWhenNodeIsRequirement((Requirement) toMove);
-			break;
-		case ITERATION:
-		case TEST_SUITE:
-			break;
-		default:
-			throw new IllegalArgumentException("Libraries cannot be copied nor moved !");
-		}
-
-	}
-
-	protected void processNodes(TreeNode toMove, int position) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
+	protected void processNodes(TreeNode toMove, Integer position) { //NOSONAR the cyclomatic complexity here is perfectly manageable by a standard instance of homo computernicus
 		EntityType visitedType = whichVisitor.getTypeOf(toMove);
 
 		switch (visitedType) {
@@ -244,22 +200,10 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 	}
 
-	@SuppressWarnings("unchecked")
-	private <LN extends LibraryNode> void visitLibraryNode(LN node, LibraryDao<?,?> libraryDao,
-			FolderDao<?,?> folderDao) {
-
-		NodeContainer<LN> parent = findFolderOrLibraryParent(node, libraryDao, folderDao);
-
-		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, CREATE), new SecurityCheckableObject(
-				parent, "DELETE"), new SecurityCheckableObject(node, READ));
-
-		node.notifyAssociatedWithProject((Project)destination.getProject());
-		moveNode(node, (NodeContainer<LN>) destination, parent);
-	}
 
 	@SuppressWarnings("unchecked")
 	private <LN extends LibraryNode> void visitLibraryNode(LN node, LibraryDao<?,?> libraryDao,
-			FolderDao<?,?> folderDao, int position) {
+			FolderDao<?,?> folderDao, Integer position) {
 
 		NodeContainer<LN> parent = findFolderOrLibraryParent(node, libraryDao, folderDao);
 
@@ -270,23 +214,10 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 		moveNode(node, (NodeContainer<LN>) destination, parent, position);
 	}
 
-	@SuppressWarnings("unchecked")
-	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node) {
 
-		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
-		if (parent == null){
-			parent = requirementDao.findByContent(node);
-		}
-
-		PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(destination, CREATE), new SecurityCheckableObject(
-				parent, "DELETE"), new SecurityCheckableObject(node, READ));
-
-		node.notifyAssociatedWithProject((Project)destination.getProject());
-		moveNode((LN)node, (NodeContainer<LN>) destination,(NodeContainer<LN>) parent);
-	}
 
 	@SuppressWarnings("unchecked")
-	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node, int position) {
+	private  <LN extends LibraryNode>  void visitWhenNodeIsRequirement(Requirement node, Integer position) {
 
 		NodeContainer<Requirement> parent = findFolderOrLibraryParent(node, requirementLibraryDao, requirementFolderDao);
 		if (parent == null){
@@ -309,19 +240,16 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 
 
-	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent) {
+	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent, Integer position) {
 		requirementDao.flush();
 		toMoveParent.removeContent(toMove);
 		requirementDao.flush();
-		destination.addContent(toMove);
-		movedNode = toMove;
-	}
-
-	private <TN extends TreeNode> void moveNode(TN toMove, NodeContainer<TN> destination, NodeContainer<TN> toMoveParent, int position) {
-		requirementDao.flush();
-		toMoveParent.removeContent(toMove);
-		requirementDao.flush();
-		destination.addContent(toMove, position);
+		if (position != null){
+			destination.addContent(toMove, position);
+		}
+		else{
+			destination.addContent(toMove);
+		}
 		movedNode = toMove;
 	}
 
