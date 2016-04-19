@@ -30,9 +30,9 @@ import java.util.regex.Pattern;
 /**
  * Used internally mostly for operations on paths. Much like an URL instance can check if the protocol, host, path etc
  * are corrects.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 // TODO : why this class in a package .lang ? (so is UrlUtils etc)
 public final class PathUtils {
@@ -74,6 +74,14 @@ public final class PathUtils {
 		return WELL_FORMED_PATH.matcher(path).matches();
 	}
 
+	/**
+	 * Extracts the <strong>escaped</strong> projet name from a path.
+	 * Note (GRF) : a path such as "/token" will return a null project name. Not too sure if that's what we want but it
+	 * seem to work this way
+	 * @see #extractUnescapedProjectName(String)
+	 * @param path the non null path to extract the project name from.
+	 * @return the <strong>escaped</strong> project name <strong>which might be null</strong>
+     */
 	public static String extractProjectName(String path) {
 		Matcher matcher = PROJECT_PATTERN.matcher(path);
 		if (matcher.matches()) {
@@ -81,6 +89,17 @@ public final class PathUtils {
 		} else {
 			return null;
 		}
+	}
+
+	/**
+	 * Same as {@link #extractProjectName(String)} but unescapes the result.
+	 * Project-less paths ("/foo") return null project name.
+	 * @param path the non null path to extract the project name from.
+	 * @return the project name <strong>which might be null</strong>
+     */
+	public static String extractUnescapedProjectName(String path) {
+		String esc =  extractProjectName(path);
+		return esc == null ? null : unescapePathPartSlashes(esc);
 	}
 
 	public static List<String> extractProjectNames(List<String> pathes) {
@@ -129,7 +148,7 @@ public final class PathUtils {
 
 	/**
 	 * Just an alias for {@link #extractName(String)}.
-	 * 
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -151,7 +170,7 @@ public final class PathUtils {
 
 	/**
 	 * Returns the path with a different test case name. You can't change directory that way (using "..")
-	 * 
+	 *
 	 * @param path
 	 * @param name
 	 * @return
@@ -172,12 +191,12 @@ public final class PathUtils {
 
 	/**
 	 * <p>Accepts a well formed path and returns the list of paths of all of its ancestors, and then itself.</p>
-	 * 
+	 *
 	 *  <p>example : scanPath("/project/folder1/folder2/element") => ["/project", "/project/folder1/", "/project/folder1/folder2" ,"/project/folder1/folder2/element"]</p>
-	 * 
+	 *
 	 * 	<p>Some Scala guy would think of it as path.split("/").scanLeft("")(_ + "/" + _)</p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param path
 	 * @return
 	 */
@@ -205,7 +224,7 @@ public final class PathUtils {
 	public static String unescapePathPartSlashes(String pathPart){
 		return pathPart.replaceAll("\\\\/", "/");
 	}
-	
+
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
 	 * @param pathPart

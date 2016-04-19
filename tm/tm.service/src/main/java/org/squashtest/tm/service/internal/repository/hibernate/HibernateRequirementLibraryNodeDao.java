@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -38,14 +32,19 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 @SuppressWarnings("rawtypes")
 @Repository("squashtest.tm.repository.RequirementLibraryNodeDao")
 public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<RequirementLibraryNode> implements
-LibraryNodeDao<RequirementLibraryNode> {
-	
+	LibraryNodeDao<RequirementLibraryNode> {
+
 	@Inject
 	private ProjectDao projectDao;
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<String> getParentsName(long entityId) {
@@ -71,59 +70,56 @@ LibraryNodeDao<RequirementLibraryNode> {
 		}
 		return result;
 	}
-	
+
 	// Naive and probably sub optimized implementation but request on closure table don't give expected results, so we have to do it by recursive algorithm.
 	// Hibernate or the RDBS seems to not be able to do the proper group concat on polymorphic associations.
 	@Override
-	public Long findNodeIdByPath(String path){
-		String projectName = PathUtils.extractProjectName(path);
-		String projectUnescapedName = PathUtils.unescapePathPartSlashes(projectName);
-		List<String> splits = new ArrayList<>(Arrays.asList (PathUtils.splitPath(path)));
+	public Long findNodeIdByPath(String path) {
+		String projectName = PathUtils.extractUnescapedProjectName(path);
+		List<String> splits = new ArrayList<>(Arrays.asList(PathUtils.splitPath(path)));
 		List<String> effectiveSplits = unescapeSlashes(splits);
-		GenericProject project = projectDao.findByName(projectUnescapedName);
-		
+		GenericProject project = projectDao.findByName(projectName);
+
 		//checks
 		if (effectiveSplits.size() < 2 || project == null) {
 			return null;
 		}
-		
+
 		//first round, we need to find the first node
 		RequirementLibraryNode parent = null;
 		List<RequirementLibraryNode> content = project.getRequirementLibrary().getContent();
-		
+
 		for (RequirementLibraryNode requirementLibraryNode : content) {
 			if (requirementLibraryNode.getName().equals(effectiveSplits.get(1))) {
 				parent = requirementLibraryNode;
 			}
 		}
-		
+
 		//if first node doesn't exists return null as the path cannot exists
 		if (parent == null) {
 			return null;
 		}
-		
+
 		//if length == 2, we are looking for a root node, so we didn't need to dig, we just return idFirstNode
 		if (effectiveSplits.size() == 2) {
 			return parent.getId();
 		}
-		
+
 		return findRecursive(parent, effectiveSplits.subList(2, effectiveSplits.size()));
 	}
-	
+
 	private Long findRecursive(RequirementLibraryNode parent,
-			List<String> splits) {
+		List<String> splits) {
 		if (parent.getClass().equals(Requirement.class)) {
 			Requirement reqParent = (Requirement) parent;
-			return findRecursiveRequirement(reqParent,splits);
-		}
-		else {
+			return findRecursiveRequirement(reqParent, splits);
+		} else {
 			RequirementFolder reqFolder = (RequirementFolder) parent;
 			List<RequirementLibraryNode> folderContent = reqFolder.getContent();
 			for (RequirementLibraryNode requirementLibraryNode : folderContent) {
-				if (requirementLibraryNode.getName().equals(splits.get(0)) && splits.size()==1) {
+				if (requirementLibraryNode.getName().equals(splits.get(0)) && splits.size() == 1) {
 					return requirementLibraryNode.getId();
-				}
-				else if(requirementLibraryNode.getName().equals(splits.get(0))) {
+				} else if (requirementLibraryNode.getName().equals(splits.get(0))) {
 					return findRecursive(requirementLibraryNode, splits.subList(1, splits.size()));
 				}
 			}
@@ -132,13 +128,12 @@ LibraryNodeDao<RequirementLibraryNode> {
 	}
 
 	private Long findRecursiveRequirement(Requirement reqParent,
-			List<String> splits) {
+		List<String> splits) {
 		List<Requirement> content = reqParent.getContent();
 		for (Requirement requirement : content) {
-			if (requirement.getName().equals(splits.get(0)) && splits.size()==1) {
+			if (requirement.getName().equals(splits.get(0)) && splits.size() == 1) {
 				return requirement.getId();
-			}
-			else if(requirement.getName().equals(splits.get(0))) {
+			} else if (requirement.getName().equals(splits.get(0))) {
 				return findRecursiveRequirement(requirement, splits.subList(1, splits.size()));
 			}
 		}
