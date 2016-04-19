@@ -135,7 +135,7 @@ public final class BugTrackerControllerHelper {
 	 */
 	public static String getDefaultDescription(Execution execution, Locale locale, MessageSource messageSource,
 											   String executionUrl) {
-		StringBuffer description = new StringBuffer();
+		StringBuilder description = new StringBuilder();
 		appendTestCaseDesc(execution.getReferencedTestCase(), description, locale, messageSource);
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
 		appendDescHeader(description, locale, messageSource);
@@ -157,7 +157,7 @@ public final class BugTrackerControllerHelper {
 	 */
 	public static String getDefaultDescription(ExecutionStep step, Locale locale, MessageSource messageSource,
 											   String executionUrl) {
-		StringBuffer description = new StringBuffer();
+		StringBuilder description = new StringBuilder();
 		appendTestCaseDesc(step.getExecution().getReferencedTestCase(), description, locale, messageSource);
 		appendExecutionDesc(description, locale, messageSource, executionUrl);
 		appendStepDesc(step, description, locale, messageSource);
@@ -184,13 +184,13 @@ public final class BugTrackerControllerHelper {
 		return requestUrl.toString();
 	}
 
-	private static void appendDescHeader(StringBuffer description, Locale locale, MessageSource messageSource) {
+	private static void appendDescHeader(StringBuilder description, Locale locale, MessageSource messageSource) {
 		description.append("\n# ");
 		description.append(messageSource.getMessage("issue.default.description.description", null, locale));
 		description.append(" :\n");
 	}
 
-	private static void appendStepDesc(ExecutionStep step, StringBuffer description, Locale locale,
+	private static void appendStepDesc(ExecutionStep step, StringBuilder description, Locale locale,
 									   MessageSource messageSource) {
 		description.append("# ");
 		description.append(messageSource.getMessage("issue.default.description.concernedStep", null, locale));
@@ -201,7 +201,7 @@ public final class BugTrackerControllerHelper {
 		description.append("\n");
 	}
 
-	private static void appendExecutionDesc(StringBuffer description, Locale locale, MessageSource messageSource,
+	private static void appendExecutionDesc(StringBuilder description, Locale locale, MessageSource messageSource,
 											String executionUrl) {
 		description.append("# ");
 		description.append(messageSource.getMessage("issue.default.description.execution", null, locale));
@@ -210,7 +210,7 @@ public final class BugTrackerControllerHelper {
 		description.append("\n");
 	}
 
-	private static void appendTestCaseDesc(TestCase testCase, StringBuffer description, Locale locale,
+	private static void appendTestCaseDesc(TestCase testCase, StringBuilder description, Locale locale,
 										   MessageSource messageSource) {
 		if (testCase != null) {
 			description.append("# ");
@@ -282,7 +282,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	final class IterationIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	private final class IterationIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new IterationModelOwnershipNamebuilder();
 
@@ -294,7 +294,7 @@ public final class BugTrackerControllerHelper {
 		@Override
 		public Map<String, String> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 
-			Map<String, String> result = new HashMap<>(7);
+			Map<String, String> result = new HashMap<>();
 
 			RemoteIssue issue = ownership.getIssue();
 			String strUrl = service.getIssueUrl(ownership.getIssue().getId(),
@@ -333,7 +333,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	final class TestCaseIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	private final class TestCaseIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new TestCaseModelOwnershipNamebuilder();
 
@@ -345,7 +345,7 @@ public final class BugTrackerControllerHelper {
 		@Override
 		public Map<String, Object> buildItemData(IssueOwnership<RemoteIssueDecorator> ownership) {
 			RemoteIssue issue = ownership.getIssue();
-			Map<String, Object> row = new HashMap<>(8);
+			Map<String, Object> row = new HashMap<>();
 
 			String url = service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
 				.toExternalForm();
@@ -378,7 +378,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	final class ExecutionIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	private final class ExecutionIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		private IssueOwnershipNameBuilder nameBuilder = new ExecutionModelOwnershipNamebuilder();
 
@@ -392,7 +392,7 @@ public final class BugTrackerControllerHelper {
 
 			RemoteIssueDecorator issue = ownership.getIssue();
 
-			Map<String, Object> result = new HashMap<>(9);
+			Map<String, Object> result = new HashMap<>();
 
 			result.put("issue-url",
 				service.getIssueUrl(issue.getId(), ownership.getOwner().getBugTracker())
@@ -422,7 +422,7 @@ public final class BugTrackerControllerHelper {
 	 * </ul>
 	 * </p>
 	 */
-	final class StepIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
+	private final class StepIssuesTableModel extends DataTableModelBuilder<IssueOwnership<RemoteIssueDecorator>> {
 
 		StepIssuesTableModel() {
 		}
@@ -495,7 +495,6 @@ public final class BugTrackerControllerHelper {
 		 * Returns the path of the issue detector. You'll have to find the protocol, address and application context by
 		 * yourself.
 		 *
-		 * @param bugged
 		 */
 		String buildURLPath(IssueDetector bugged);
 	}
