@@ -75,8 +75,9 @@ public class HibernateRequirementLibraryNodeDao extends HibernateEntityDao<Requi
 	// Hibernate or the RDBS seems to not be able to do the proper group concat on polymorphic associations.
 	@Override
 	public Long findNodeIdByPath(String path) {
+		// TODO this looks way too complex for a dao method, probably more like a service method
 		String projectName = PathUtils.extractUnescapedProjectName(path);
-		List<String> splits = new ArrayList<>(Arrays.asList(PathUtils.splitPath(path)));
+		List<String> splits = Arrays.asList(PathUtils.splitPath(path));
 		List<String> effectiveSplits = unescapeSlashes(splits);
 		GenericProject project = projectDao.findByName(projectName);
 

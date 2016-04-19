@@ -204,7 +204,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 		return pasteToRequirementLibraryStrategyProvider.get();
 	}
 
-	protected PasteStrategy<Requirement, Requirement> getPasteToRequirementStrategy() {
+	private PasteStrategy<Requirement, Requirement> getPasteToRequirementStrategy() {
 		return pasteToRequirementStrategyProvider.get();
 	}
 
@@ -337,9 +337,10 @@ public class RequirementLibraryNavigationServiceImpl extends
 		folder.addContent(newReq);
 		replaceAllInfoListReferences(newReq);
 		requirementDao.persist(newReq);
-		createCustomFieldValues(newReq.getCurrentVersion());
-		initCustomFieldValues(newReq.getCurrentVersion(), firstVersion.getCustomFields());
-		milestoneService.bindRequirementVersionToMilestones(newReq.getCurrentVersion().getId(), milestoneIds);
+		RequirementVersion currentVersion = newReq.getCurrentVersion();
+		createCustomFieldValues(currentVersion);
+		initCustomFieldValues(currentVersion, firstVersion.getCustomFields());
+		milestoneService.bindRequirementVersionToMilestones(currentVersion.getId(), milestoneIds);
 
 		return newReq;
 	}
@@ -554,13 +555,13 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	/*
-	 * 12/04/16 : about Category and ListItemReferences : 
-	 * 	
-	 * cannot use services 
+	 * 12/04/16 : about Category and ListItemReferences :
+	 *
+	 * cannot use services
 	 * 	- infoListItemService.isCategoryConsistent
 	 *  - infoListItemService.findReference
-	 * 
-	 * anymore because this would trigger here an autoflush / persist  
+	 *
+	 * anymore because this would trigger here an autoflush / persist
 	 * before we have a chance to replace the ListItemReference by actual entities
 	 */
 	private void replaceInfoListReferences(Requirement newReq) {

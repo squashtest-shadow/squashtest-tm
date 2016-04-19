@@ -103,7 +103,7 @@ public final class PathUtils {
 	}
 
 	public static List<String> extractProjectNames(List<String> pathes) {
-		Set<String> res = new HashSet<String>();
+		Set<String> res = new HashSet<>();
 		for (String p : pathes) {
 			Matcher matcher = PROJECT_PATTERN.matcher(p);
 			if (matcher.matches()) {
@@ -112,7 +112,7 @@ public final class PathUtils {
 				res.add(null);
 			}
 		}
-		return new ArrayList<String>(res);
+		return new ArrayList<>(res);
 	}
 
 
@@ -129,13 +129,10 @@ public final class PathUtils {
 	/**
 	 * Will build a valid path from splits. Throw {@link IllegalArgumentException} if
 	 * names concatenation lead to an ill formed path
-	 * @param names
-	 * @return
 	 */
 	public static String buildPathFromParts(String[] names) {
 		StringBuilder builder = new StringBuilder();
-		for (int i = 0; i < names.length; i++) {
-			String name = names[i];
+		for (String name : names) {
 			builder.append("/");
 			builder.append(name);
 		}
@@ -149,8 +146,6 @@ public final class PathUtils {
 	/**
 	 * Just an alias for {@link #extractName(String)}.
 	 *
-	 * @param path
-	 * @return
 	 */
 	public static String extractTestCaseName(String path) {
 		return extractName(path);
@@ -171,9 +166,6 @@ public final class PathUtils {
 	/**
 	 * Returns the path with a different test case name. You can't change directory that way (using "..")
 	 *
-	 * @param path
-	 * @param name
-	 * @return
 	 */
 	public static String rename(String path, String name) {
 		String oldname = extractTestCaseName(path);
@@ -181,7 +173,7 @@ public final class PathUtils {
 		return path.replaceAll(oldpatt, name);
 	}
 
-	/*
+	/**
 	 * a well formed path starts with a '/' and we remove it right away before splitting (or else a false positive empty
 	 * string would appear before it)
 	 */
@@ -196,20 +188,17 @@ public final class PathUtils {
 	 *
 	 * 	<p>Some Scala guy would think of it as path.split("/").scanLeft("")(_ + "/" + _)</p>
 	 *
-	 *
-	 * @param path
-	 * @return
 	 */
 	public static List<String> scanPath(String path){
 
 		String[] split = splitPath(path);
-		List<String> paths = new ArrayList<String>(split.length);
-		StringBuffer buffer = new StringBuffer();
+		List<String> paths = new ArrayList<>(split.length);
+		StringBuilder buffer = new StringBuilder();
 
 		// build all the paths on the way.
-		for (int i = 0; i < split.length; i++) {
+		for (String aSplit : split) {
 			buffer.append("/");
-			buffer.append(split[i]);
+			buffer.append(aSplit);
 			paths.add(buffer.toString());
 		}
 
@@ -218,8 +207,6 @@ public final class PathUtils {
 
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
-	 * @param pathPart
-	 * @return
 	 */
 	public static String unescapePathPartSlashes(String pathPart){
 		return pathPart.replaceAll("\\\\/", "/");
@@ -227,8 +214,6 @@ public final class PathUtils {
 
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
-	 * @param pathPart
-	 * @return
 	 */
 	public static List<String> unescapePathPartSlashes(List<String> pathParts){
 		List<String> unescapedParts = new ArrayList<>();

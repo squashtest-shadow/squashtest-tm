@@ -29,11 +29,11 @@ public class RequirementTarget extends Target{
 	private String path;
 
 	private Integer order;
-	
+
 	//convenient attribute to keep the id of the requirement in database
 	private Long id;
-	
-	// for synchronizerd requirements, the remote key is also part of the key.
+
+	// for synchronized requirements, the remote key is also part of the key.
 	private String remoteKey;
 
 
@@ -67,7 +67,7 @@ public class RequirementTarget extends Target{
 	public String getProject() {
 		return PathUtils.extractProjectName(path);
 	}
-	
+
 	public void setPath(String path) {
 		this.path = path;
 	}
@@ -100,7 +100,7 @@ public class RequirementTarget extends Target{
 	public void setRemoteKey(String remoteKey) {
 		this.remoteKey = remoteKey;
 	}
-	
+
 	public boolean isSynchronized(){
 		return this.remoteKey != null;
 	}

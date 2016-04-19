@@ -63,10 +63,6 @@ RequirementLibraryFinderService {
 	 * Will add a Requirement at the root of the given library and bind it to the given milestones. The custom fields
 	 * for this requirement will be created with their default value.
 	 *
-	 * @param libraryId
-	 * @param requirement
-	 * @param milestoneIds
-	 * @return
 	 */
 	@PreventConcurrent(entityType=RequirementLibrary.class)
 	Requirement addRequirementToRequirementLibrary(@Id long libraryId, @NotNull Requirement requirement, List<Long> milestoneIds);
@@ -76,10 +72,6 @@ RequirementLibraryFinderService {
 	 * library with and bind it to the given milestones. The DTO may hold additional information for initialization of the custom fields.
 	 * On the other hand this method is not suitable for creation of synchronized Requirements.
 	 *
-	 * @param libraryId
-	 * @param requirement
-	 * @param milestoneIds
-	 * @return
 	 */
 	@PreventConcurrent(entityType=RequirementLibrary.class)
 	Requirement addRequirementToRequirementLibrary(@Id long libraryId, @NotNull NewRequirementVersionDto newRequirement, List<Long> milestoneIds);
@@ -88,10 +80,6 @@ RequirementLibraryFinderService {
 	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
 	 * given folder.
 	 *
-	 * @param folderId
-	 * @param requirement
-	 * @param milestoneIds
-	 * @return
 	 */
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	Requirement addRequirementToRequirementFolder(@Id long folderId, @NotNull Requirement requirement, List<Long> milestoneIds);
@@ -112,10 +100,6 @@ RequirementLibraryFinderService {
 	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
 	 * given parent requirement.
 	 *
-	 * @param folderId
-	 * @param requirement
-	 * @param milestoneIds
-	 * @return
 	 */
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	Requirement addRequirementToRequirement(@Id long requirementId, @NotNull Requirement newRequirement, List<Long> milestoneIds);
@@ -183,20 +167,13 @@ RequirementLibraryFinderService {
 	 * Generate a xls file to export requirements
 	 * @param libraryIds List of libraryIds (ie project ids) selected for export
 	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
-	 * @param keepRteFormat
-	 * @param messageSource
-	 * @return
 	 */
 	File exportRequirementAsExcel(List<Long> libraryIds, List<Long> nodeIds,
 			boolean keepRteFormat, MessageSource messageSource);
 
 	/**
 	 * Generate a xls file to export requirements from research screen
-	 * @param libraryIds List of libraryIds (ie project ids) selected for export
 	 * @param nodeIds List of nodeIds (ie req id or folder id) selected for export
-	 * @param keepRteFormat
-	 * @param messageSource
-	 * @return
 	 */
 	File searchExportRequirementAsExcel(List<Long> nodeIds,
 			boolean keepRteFormat, MessageSource messageSource);
@@ -218,29 +195,28 @@ RequirementLibraryFinderService {
 	 * @param folderpath the complete path
 	 * @return the ID of the created node. Take care that it can be an ID corresponding to a {@link RequirementFolder} or a {@link Requirement}. See above...
 	 */
-	public Long mkdirs(String folderpath);
+	Long mkdirs(String folderpath);
 
 	/**
 	 * Change the current version number.
 	 * Used by import to change the last created version number.
 	 * This method also modify the {@link Requirement#getCurrentVersion()} if needed.
 	 */
-	public void changeCurrentVersionNumber(Requirement requirement, Integer noVersion);
+	void changeCurrentVersionNumber(Requirement requirement, Integer noVersion);
 
 	/**
 	 * Initialize the CUF values for a {@link RequirementVersion}
-	 * @param reqVersion
 	 * @param initialCustomFieldValues map the id of the CUF to the value.
 	 * Beware, it's not the id of the CUFValue entry in db but the id of the CUF itself
 	 */
 	void initCUFvalues(RequirementVersion reqVersion, Map<Long, RawValue> initialCustomFieldValues);
 
-	public RequirementLibraryNode findRequirementLibraryNodeById(Long id);
+	RequirementLibraryNode findRequirementLibraryNodeById(Long id);
 
-	public List<String> findNamesInNodeStartingWith(final long folderId, final String nameStart);
+	List<String> findNamesInNodeStartingWith(final long folderId, final String nameStart);
 
-	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
-	
+	List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart);
+
 
 	// ##################### PREVENT CONCURENCY OVERRIDES ##########################
 	@Override
