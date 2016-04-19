@@ -64,8 +64,6 @@ public final class PathUtils {
 	private static final Pattern GENERIC_NAME_PATTERN = Pattern.compile(".*[^\\\\]\\/(.*)$");
 
 
-
-
 	private PathUtils() {
 		super();
 	}
@@ -81,7 +79,7 @@ public final class PathUtils {
 	 * @see #extractUnescapedProjectName(String)
 	 * @param path the non null path to extract the project name from.
 	 * @return the <strong>escaped</strong> project name <strong>which might be null</strong>
-     */
+	 */
 	public static String extractProjectName(String path) {
 		Matcher matcher = PROJECT_PATTERN.matcher(path);
 		if (matcher.matches()) {
@@ -96,21 +94,16 @@ public final class PathUtils {
 	 * Project-less paths ("/foo") return null project name.
 	 * @param path the non null path to extract the project name from.
 	 * @return the project name <strong>which might be null</strong>
-     */
+	 */
 	public static String extractUnescapedProjectName(String path) {
-		String esc =  extractProjectName(path);
+		String esc = extractProjectName(path);
 		return esc == null ? null : unescapePathPartSlashes(esc);
 	}
 
 	public static List<String> extractProjectNames(List<String> pathes) {
 		Set<String> res = new HashSet<>();
-		for (String p : pathes) {
-			Matcher matcher = PROJECT_PATTERN.matcher(p);
-			if (matcher.matches()) {
-				res.add(matcher.group(1));
-			} else {
-				res.add(null);
-			}
+		for (String path : pathes) {
+			res.add(extractProjectName(path));
 		}
 		return new ArrayList<>(res);
 	}
@@ -122,7 +115,7 @@ public final class PathUtils {
 			return matcher.group(1);
 		} else {
 			throw new IllegalArgumentException("couldn't find a valid name in path '" + path
-					+ "'. It might be malformed.");
+				+ "'. It might be malformed.");
 		}
 	}
 
@@ -152,13 +145,12 @@ public final class PathUtils {
 	}
 
 
-
 	public static boolean arePathsAndNameConsistents(String path, String name) {
-		try{
+		try {
 			String pathName = extractName(path);
 			return pathName.equals(name);
 
-		} catch(IllegalArgumentException ex){
+		} catch (IllegalArgumentException ex) {
 			return false;
 		}
 	}
@@ -189,7 +181,7 @@ public final class PathUtils {
 	 * 	<p>Some Scala guy would think of it as path.split("/").scanLeft("")(_ + "/" + _)</p>
 	 *
 	 */
-	public static List<String> scanPath(String path){
+	public static List<String> scanPath(String path) {
 
 		String[] split = splitPath(path);
 		List<String> paths = new ArrayList<>(split.length);
@@ -208,14 +200,14 @@ public final class PathUtils {
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
 	 */
-	public static String unescapePathPartSlashes(String pathPart){
+	public static String unescapePathPartSlashes(String pathPart) {
 		return pathPart.replaceAll("\\\\/", "/");
 	}
 
 	/**
 	 * Unescape a path. Beware that it will change the path structure by adding "/" so it should be use only with parts...
 	 */
-	public static List<String> unescapePathPartSlashes(List<String> pathParts){
+	public static List<String> unescapePathPartSlashes(List<String> pathParts) {
 		List<String> unescapedParts = new ArrayList<>();
 		for (String part : pathParts) {
 			unescapedParts.add(PathUtils.unescapePathPartSlashes(part));

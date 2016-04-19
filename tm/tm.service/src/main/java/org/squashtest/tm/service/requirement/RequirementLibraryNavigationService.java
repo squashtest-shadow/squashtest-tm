@@ -62,8 +62,9 @@ RequirementLibraryFinderService {
 	/**
 	 * Will add a Requirement at the root of the given library and bind it to the given milestones. The custom fields
 	 * for this requirement will be created with their default value.
-	 *
+	 * @deprecated Looks like this method is useless
 	 */
+	@Deprecated
 	@PreventConcurrent(entityType=RequirementLibrary.class)
 	Requirement addRequirementToRequirementLibrary(@Id long libraryId, @NotNull Requirement requirement, List<Long> milestoneIds);
 
@@ -79,8 +80,9 @@ RequirementLibraryFinderService {
 	/**
 	 * Same than {@link #addRequirementToRequirementLibrary(long, Requirement, List)}, except that the requirement will be added to the
 	 * given folder.
-	 *
+	 * @deprecated Looks like this methid is useless
 	 */
+	@Deprecated
 	@PreventConcurrent(entityType=RequirementLibraryNode.class)
 	Requirement addRequirementToRequirementFolder(@Id long folderId, @NotNull Requirement requirement, List<Long> milestoneIds);
 
