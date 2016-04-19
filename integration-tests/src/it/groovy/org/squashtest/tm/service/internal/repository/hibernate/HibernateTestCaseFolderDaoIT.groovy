@@ -20,42 +20,36 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-
-
-import java.util.ArrayList
-import java.util.List
-
-import javax.inject.Inject
-
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.FolderDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
-import org.squashtest.tm.service.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport
 @Transactional
-class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
+class HibernateTestCaseFolderDaoIT extends DbunitServiceSpecification {
 
-	@Inject TestCaseFolderDao dao
-
+	@Inject
+	TestCaseFolderDao dao
 
 
 	def "should find content of folder"() {
 		setup:
 		TestCaseFolder container = new TestCaseFolder(name: "container")
-		TestCaseFolder	content = new TestCaseFolder(name: "content")
+		TestCaseFolder content = new TestCaseFolder(name: "content")
 		container.addContent(content)
 
 		dao.persist(container)
 
 		when:
-		def res  = dao.findAllContentById(container.id)
+		def res = dao.findAllContentById(container.id)
 
 
 		then:
@@ -65,29 +59,16 @@ class HibernateTestCaseFolderDaoIT  extends DbunitServiceSpecification{
 
 
 	@DataSet("HibernateTestCaseFolderDaoIT.db-setup.xml")
-	def "should find the children of a folder paired with their parents"(){
+	def "should find the children of a folder paired with their parents"() {
 
-		given :
+		given:
 		List<Long> startlist = [-1L]
 
-		and :
-		def expected = [
-			[-1L, -11L],
-			[-1L, -12L],
-			[-1L, -13L],
-			[-1L, -14L]
-		]
-
-		when :
+		when:
 		def result = ((FolderDao) dao).findPairedContentForList(((List<Long>) startlist))
 
-		then :
-		result.collectAll{it[1]}.containsAll(-11L, -12L, -13L, -14L)
-		result.every {it[0] == -1L}
+		then:
+		result.collect { it[1] } as Set == [-11L, -12L, -13L, -14L] as Set
+		result.every { it[0] == -1L }
 	}
-
-
-
-
-
 }
