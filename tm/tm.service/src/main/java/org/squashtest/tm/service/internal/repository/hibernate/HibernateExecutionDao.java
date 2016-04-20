@@ -71,9 +71,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	/*
 	 * as long as the ordering of a collection is managed by @OrderColumn, but you can't explicitely reference the
 	 * ordering column in the join table, initialize the collection itself is the only solution
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.csp.tm.internal.repository.ExecutionDao#findOrderedExecutionStepsByExecutionId(long)
 	 */
 	@Override
@@ -170,7 +170,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	/*
 	 * same than for HibernateTestCaseDao#findStepsByIdFiltered :
-	 * 
+	 *
 	 * because we need to get the ordered list and we can't access the join table to sort them (again), we can't use the
 	 * Criteria API. So we're playing it old good java here.
 	 */
@@ -311,7 +311,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.repository.ExecutionDao#countExecutionSteps(long)
 	 */
 	@Override
@@ -343,7 +343,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias("referencedTestCase", TEST_CASE, JoinType.LEFT_OUTER_JOIN);
 		crit.createAlias("testPlan.testSuites", TEST_SUITE, JoinType.LEFT_OUTER_JOIN);
 
-		crit.add(Restrictions.eq("TestCase.id", Long.valueOf(testCaseId)));
+		crit.add(Restrictions.eq("TestCase.id", testCaseId));
 
 		crit.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 

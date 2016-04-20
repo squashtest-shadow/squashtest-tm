@@ -20,30 +20,28 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
+import java.util.Collection;
+import java.util.List;
+
 
 public interface TestCaseDao extends Repository<TestCase, Long>, CustomTestCaseDao {
-	
+
 
 	/**
 	 * Counts the calling test steps of a test case
-	 * 
-	 * @param testCaseId
-	 * @return
+	 *
 	 */
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	long countCallingTestSteps(long testCaseId);
 
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Long> findAllDistinctTestCasesIdsCalledByTestCase(long testCaseId);
-	
+
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Long> findAllDistinctTestCasesIdsCallingTestCase(long testCaseId);
 
@@ -54,14 +52,14 @@ public interface TestCaseDao extends Repository<TestCase, Long>, CustomTestCaseD
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<Long> findNodeIdsHavingMultipleMilestones(@Param("nodeIds") Collection<Long> nodeIds);
-	
+
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<Long> findNonBoundTestCases(@Param("nodeIds") Collection<Long> nodeIds, @Param("milestoneId") Long milestoneId);
 
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<Long> findAllTestCasesLibraryForMilestone(@Param("milestoneId") Collection<Long> milestoneIds);
-	
+
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
 	List<Long> findAllTestCasesLibraryNodeForMilestone(@Param("milestoneIds") Collection<Long> milestoneIds);

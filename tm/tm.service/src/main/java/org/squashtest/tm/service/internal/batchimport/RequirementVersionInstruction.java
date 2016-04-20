@@ -78,6 +78,7 @@ public class RequirementVersionInstruction extends Instruction<RequirementVersio
 		return customFields;
 	}
 
+	@Override
 	public List<String> getMilestones() {
 		return Arrays.asList(milestones);
 	}

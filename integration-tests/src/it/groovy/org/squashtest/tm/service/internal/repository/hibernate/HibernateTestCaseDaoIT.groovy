@@ -20,41 +20,28 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import java.lang.reflect.InvocationHandler
-import java.lang.reflect.Method
-import java.lang.reflect.Proxy
-
-import javax.inject.Inject
-
-import org.hibernate.Query;
-import org.hibernate.SessionFactory
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
-import org.squashtest.tm.core.foundation.collection.Sorting;
-import org.squashtest.tm.domain.NamedReference
-import org.squashtest.tm.domain.requirement.RequirementCategory
-import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils
+import org.squashtest.tm.domain.NamedReferencePair
 import org.squashtest.tm.domain.testcase.TestCaseImportance
-import org.squashtest.tm.domain.testcase.TestCaseNature
-import org.squashtest.tm.domain.testcase.TestCaseStatus
-import org.squashtest.tm.domain.testcase.TestCaseType
-import org.squashtest.tm.domain.NamedReferencePair;
-import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
-import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils
-
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
+import java.lang.reflect.InvocationHandler
+import java.lang.reflect.Method
 
 @UnitilsSupport
 @Transactional
 class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
-	@Inject TestCaseDao testCaseDao
+	@Inject
+	TestCaseDao testCaseDao
 
 	def setupSpec() {
 		List.metaClass.containsSameIdentifiers << { ids ->
@@ -88,7 +75,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def callers = testCaseDao.countCallingTestSteps(-10L)
 
 		then:
-		callers == 1
+		callers == 1L
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should count calling test steps.xml")
@@ -97,7 +84,7 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def callers = testCaseDao.countCallingTestSteps(-20L)
 
 		then:
-		callers == 0
+		callers == 0L
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find called test cases.xml")
@@ -138,41 +125,41 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def " (*) should find the UNIQUES calling test cases sorted by test case name"(){
-		given :
+	def " (*) should find the UNIQUES calling test cases sorted by test case name"() {
+		given:
 		PagingAndSorting sorting = new PagingAndSorting() {
 
-					@Override
-					public int getFirstItemIndex() {
-						return 0;
-					}
+			@Override
+			public int getFirstItemIndex() {
+				return 0;
+			}
 
-					@Override
-					public int getPageSize() {
-						return 10;
-					}
+			@Override
+			public int getPageSize() {
+				return 10;
+			}
 
-					@Override
-					public SortOrder getSortOrder() {
-						return SortOrder.ASCENDING;
-					}
+			@Override
+			public SortOrder getSortOrder() {
+				return SortOrder.ASCENDING;
+			}
 
 
-					@Override
-					public String getSortedAttribute() {
-						return "TestCase.name";
-					}
+			@Override
+			public String getSortedAttribute() {
+				return "TestCase.name";
+			}
 
-					boolean shouldDisplayAll() {
-						return false;
-					};
-				
-					Pageable toPageable(){
-						return SpringPaginationUtils.toPageable(this);
-					}
-				};
+			boolean shouldDisplayAll() {
+				return false;
+			};
 
-		and :
+			Pageable toPageable() {
+				return SpringPaginationUtils.toPageable(this);
+			}
+		};
+
+		and:
 		def resultNames = [
 			"first test case",
 			"second test case",
@@ -181,25 +168,25 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 		def resultIds = [-101L, -102L, -103L]
 
 
-		when :
+		when:
 		def testCaseList = testCaseDao.findAllCallingTestCases(-100L, sorting);
 
-		then :
+		then:
 		testCaseList*.id == resultIds
 		testCaseList*.name == resultNames
 	}
 
 
-	private tcrefPair(callerid, callername, calledid, calledname){
+	private tcrefPair(callerid, callername, calledid, calledname) {
 		new NamedReferencePair(callerid, callername, calledid, calledname)
 	}
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should find the callers of a couple of test cases, returning results as pairs of caller/called details"(){
+	def "should find the callers of a couple of test cases, returning results as pairs of caller/called details"() {
 
-		when :
+		when:
 		def result = testCaseDao.findTestCaseCallsUpstream([-100L, -50L]);
-		then :
+		then:
 		result.size == 9
 
 		/*
@@ -209,41 +196,41 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 		def call1 = tcrefPair(
-				-101L,
-				"first test case",
-				-50L,
-				"other bottom test case"
-				);
+			-101L,
+			"first test case",
+			-50L,
+			"other bottom test case"
+		);
 		def call2 = tcrefPair(
-				-102L,
-				"second test case",
-				-50L,
-				"other bottom test case"
-				);
+			-102L,
+			"second test case",
+			-50L,
+			"other bottom test case"
+		);
 		def call3 = tcrefPair(
-				-103L,
-				"third test case",
-				-50L,
-				"other bottom test case"
-				);
+			-103L,
+			"third test case",
+			-50L,
+			"other bottom test case"
+		);
 		def call4 = tcrefPair(
-				-101L,
-				"first test case",
-				-100L,
-				"bottom test case"
-				);
+			-101L,
+			"first test case",
+			-100L,
+			"bottom test case"
+		);
 		def call5 = tcrefPair(
-				-102L,
-				"second test case",
-				-100L,
-				"bottom test case"
-				);
+			-102L,
+			"second test case",
+			-100L,
+			"bottom test case"
+		);
 		def call6 = tcrefPair(
-				-103L,
-				"third test case",
-				-100L,
-				"bottom test case"
-				);
+			-103L,
+			"third test case",
+			-100L,
+			"bottom test case"
+		);
 
 
 		result.count { it.equals call1 } == 1
@@ -256,50 +243,48 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 
 
-
-
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should find no callers of a couple of test cases, returning results as pairs of caller/called details with null values"(){
+	def "should find no callers of a couple of test cases, returning results as pairs of caller/called details with null values"() {
 
-		when :
+		when:
 		def result = testCaseDao.findTestCaseCallsUpstream([-101L, -102L, -103L]);
-		then :
+		then:
 		result.size == 3
 
 
 
 		def call1 = tcrefPair(
-				null,
-				null,
-				-101L,
-				"first test case"
-				);
+			null,
+			null,
+			-101L,
+			"first test case"
+		);
 		def call2 = tcrefPair(
-				null,
-				null,
-				-102L,
-				"second test case"
-				);
+			null,
+			null,
+			-102L,
+			"second test case"
+		);
 		def call3 = tcrefPair(
-				null,
-				null,
-				-103L,
-				"third test case"
-				);
+			null,
+			null,
+			-103L,
+			"third test case"
+		);
 
 
-		result.contains (call1)
-		result.contains (call2)
-		result.contains (call3)
+		result.contains(call1)
+		result.contains(call2)
+		result.contains(call3)
 	}
 
 
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should find the called test cases of a couple of test cases, returning results as pairs of caller/called details"(){
+	def "should find the called test cases of a couple of test cases, returning results as pairs of caller/called details"() {
 
-		when :
+		when:
 		def result = testCaseDao.findTestCaseCallsDownstream([-101L, -103L]);
-		then :
+		then:
 		result.size == 7
 
 		/*
@@ -310,36 +295,36 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 
 
 		def call1 = tcrefPair(
-				-101L,
-				"first test case",
-				-50L,
-				"other bottom test case"
-				);
+			-101L,
+			"first test case",
+			-50L,
+			"other bottom test case"
+		);
 
 		def call2 = tcrefPair(
-				-103L,
-				"third test case",
-				-50L,
-				"other bottom test case"
-				);
+			-103L,
+			"third test case",
+			-50L,
+			"other bottom test case"
+		);
 		def call3 = tcrefPair(
-				-101L,
-				"first test case",
-				-100L,
-				"bottom test case"
-				);
+			-101L,
+			"first test case",
+			-100L,
+			"bottom test case"
+		);
 		def call4 = tcrefPair(
-				-103L,
-				"third test case",
-				-100L,
-				"bottom test case"
-				);
+			-103L,
+			"third test case",
+			-100L,
+			"bottom test case"
+		);
 		def call5 = tcrefPair(
-				-103L,
-				"third test case",
-				-5L,
-				"ultra bottom test case"
-				);
+			-103L,
+			"third test case",
+			-5L,
+			"ultra bottom test case"
+		);
 
 
 		result.count { it.equals call1 } == 1
@@ -352,49 +337,46 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 
 
-
-
 	@DataSet("HibernateTestCaseDaoIT.should find the calling test cases.xml")
-	def "should find no called test cases of a couple of test cases, returning results as pairs of details with null values"(){
+	def "should find no called test cases of a couple of test cases, returning results as pairs of details with null values"() {
 
 
-		when :
+		when:
 		def result = testCaseDao.findTestCaseCallsDownstream([-100L, -5L]);
-		then :
+		then:
 		result.size == 2
 
 
 
 		def call1 = tcrefPair(
-				-100L,
-				"bottom test case",
-				null,
-				null
-				);
+			-100L,
+			"bottom test case",
+			null,
+			null
+		);
 		def call2 = tcrefPair(
-				-5L,
-				"ultra bottom test case",
-				null,
-				null
-				);
+			-5L,
+			"ultra bottom test case",
+			null,
+			null
+		);
 
 
-		result.contains (call1)
-		result.contains (call2)
+		result.contains(call1)
+		result.contains(call2)
 	}
 
 
-
 	@DataSet("HibernateTestCaseDaoIT.deletiontest.xml")
-	def "should delete a test case and cascade-remove some relationships"(){
+	def "should delete a test case and cascade-remove some relationships"() {
 
-		when :
+		when:
 		def tc = testCaseDao.findById(-1L)
 		testCaseDao.remove(tc)
 
 		def retc = testCaseDao.findById(-1L)
 
-		then :
+		then:
 
 		tc != null
 
@@ -402,51 +384,25 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	}
 
 
-
 	@DataSet("HibernateTestCaseDaoIT.should return list of executions.xml")
-	def "should return list of executions"(){
+	def "should return list of executions"() {
 		when:
 		def id = -10L;
 		def result = testCaseDao.findAllExecutionByTestCase(id)
 
 		then:
 		result.size() == 3
-		result.each {it.name == "testCase1-execution"}
+		result.each { it.name == "testCase1-execution" }
 	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
-	def "should find all by name containing "(){
-		when:
-		def token = "token"
-		def groupedByProject = false
-		def result = testCaseDao.findAllByNameContaining(token, groupedByProject);
-
-		then:
-		result.size() == 4
-		def name = result.collectNested {  it.name }
-		name.containsAll(["un-nameStart-token", "neuf-token","token douze", "dix token foo"])
-	}
-
-	@DataSet("HibernateTestCaseDaoIT.should find on name.xml")
-	def "should find all by name containing grouped by project"(){
-		when:
-		def token = "token"
-		def groupedByProject = true
-		def result = testCaseDao.findAllByNameContaining(token, groupedByProject);
-
-		then:
-		result.size() == 4
-		result.get(0).name == "un-nameStart-token"
-		def name = result.collectNested {  it.name }
-		name.containsAll(["un-nameStart-token", "neuf-token","token douze", "dix token foo"])
-	}
-
 
 	@DataSet("HibernateTestCaseDaoIT.should find tc imp w impAuto.xml")
-	def "should find tc imp w impAuto"(){
-		given : def testIds = [-1L, -2L, -3L, -4L]
-		when : Map<Long, TestCaseImportance> result = testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testIds)
-		then : result.size() == 2
+	def "should find tc imp w impAuto"() {
+		given:
+		def testIds = [-1L, -2L, -3L, -4L]
+		when:
+		Map<Long, TestCaseImportance> result = testCaseDao.findAllTestCaseImportanceWithImportanceAuto(testIds)
+		then:
+		result.size() == 2
 		result.containsKey(-1L)
 		result.containsKey(-3L)
 		result.get(-1L) == TestCaseImportance.LOW
@@ -486,72 +442,70 @@ class HibernateTestCaseDaoIT extends DbunitDaoSpecification {
 	 * We want them as verifying test cases for the requirement version 255
 	 *
 	 */
-	@DataSet("HibernateTestCaseDaoIT.verifying TC sorted by milestone.xml")
-	def "should find verifying test cases sorted by milestone dates"(){
 
-		given :
+	@DataSet("HibernateTestCaseDaoIT.verifying TC sorted by milestone.xml")
+	def "should find verifying test cases sorted by milestone dates"() {
+
+		given:
 
 		PagingAndSorting pas = Mock(PagingAndSorting)
 		pas.getSortedAttribute() >> "endDate"
 		pas.getSortOrder() >> SortOrder.ASCENDING
 		pas.shouldDisplayAll() >> true
 
-		when :
+		when:
 
 		def res = testCaseDao.findAllByVerifiedRequirementVersion(255l, pas)
 
-		then :
-		res.collect {it.id} == [239, 241, 244, 240, 242, 243]
+		then:
+		res*.id == [239L, 241L, 244L, 240L, 242L, 243L]
 
 	}
 
 	// ************* scaffolding ************
 
-
-
-
 	//cannot make it more groovy because java native code wouldn't mix well with other kinds of proxies
-	class SearchCriteriaHandler implements InvocationHandler{
+	class SearchCriteriaHandler implements InvocationHandler {
 
 		Map attributes
 
-		SearchCriteriaHandler(attributes){
+		SearchCriteriaHandler(attributes) {
 			this.attributes = attributes;
 		}
 
 
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)
-		throws Throwable {
+			throws Throwable {
 
 			def mName = method.name
 
 			def matchUses = mName =~ /uses(.*)/
 
-			if ( matchUses.find() ){
-				return ! (attributes[matchUses[0][1]].isEmpty())
+			if (matchUses.find()) {
+				return !(attributes[matchUses[0][1]].isEmpty())
 			}
 
 			def matchGet = mName =~ /get(.*)Set/
 
-			if (matchGet.find()){
+			if (matchGet.find()) {
 				return attributes[matchGet[0][1]]
 			}
 
 			//others
 
-			if (mName == "getNameFilter"){
+			if (mName == "getNameFilter") {
 				return attributes["NameFilter"]
 			}
 
-			if (mName == "includeFoldersInResult"){
-				return  attributes["ImportanceFilter"].isEmpty() &&
-				attributes["NatureFilter"].isEmpty() &&
-				attributes["TypeFilter"].isEmpty() &&
-				attributes["StatusFilter"].isEmpty()
+			if (mName == "includeFoldersInResult") {
+				return attributes["ImportanceFilter"].isEmpty() &&
+					attributes["NatureFilter"].isEmpty() &&
+					attributes["TypeFilter"].isEmpty() &&
+					attributes["StatusFilter"].isEmpty()
 			}
 
-			if (mName == "isGroupByProject"){
+			if (mName == "isGroupByProject") {
 				return attributes["groupByProject"]
 			}
 		}
