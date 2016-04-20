@@ -20,46 +20,30 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.Repository;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
-/**
- *
- * @author Gregory Fouquet
- *
- */
-public interface RequirementVersionDao extends Repository<RequirementVersion, Long>, CustomRequirementVersionDao {
+import java.util.List;
 
-	// note : native method from JPA repositorie
+/**
+ * @author Gregory Fouquet
+ */
+public interface RequirementVersionDao extends CrudRepository<RequirementVersion, Long>, CustomRequirementVersionDao {
+
 	@EmptyCollectionGuard
 	List<RequirementVersion> findAll(Iterable<Long> ids);
-	
-	// note : native method from JPA repositorie
-	RequirementVersion findById(long requirementId);
 
-	// note : uses a named query in package-info or elsewhere
 	long countVerifiedByTestCase(long testCaseId);
 
-	// note : uses the Spring JPA dsl
 	List<RequirementVersion> findAllByRequirement(Requirement node);
 
-	// note : uses the Spring JPA dsl
 	Page<RequirementVersion> findAllByRequirementId(long requirementId, Pageable pageable);
-	
-	/**
-	 * @param requirementId
-	 * @return the versions count for the given requirement.
-	 */
-	// note : uses the Spring JPA dsl
-	long countByRequirementId(long requirementId);
 
-	// note : uses the Spring JPA dsl
 	RequirementVersion findByRequirementIdAndVersionNumber(Long requirementId, Integer versionNumber);
-	
+
 }

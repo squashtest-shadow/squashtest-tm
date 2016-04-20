@@ -66,7 +66,7 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Service("CustomRequirementVersionManagerService")
 @Transactional
@@ -74,7 +74,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@Inject
 	private MilestoneDao milestoneDao;
-	
+
 	@Inject
 	private RequirementVersionDao requirementVersionDao;
 
@@ -95,7 +95,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
@@ -148,7 +148,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
 			+ OR_HAS_ROLE_ADMIN)
 	public void changeCriticality(long requirementVersionId, RequirementCriticality criticality) {
-		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		RequirementCriticality oldCriticality = requirementVersion.getCriticality();
 		requirementVersion.setCriticality(criticality);
 		testCaseImportanceManagerService.changeImportanceIfRequirementCriticalityChanged(requirementVersionId,
@@ -159,14 +159,14 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
 			+ OR_HAS_ROLE_ADMIN)
 	public void rename(long requirementVersionId, String newName) {
-		RequirementVersion v = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion v = requirementVersionDao.findOne(requirementVersionId);
 
 		/*
 		 * FIXME : there is a loophole here. What exactly means DuplicateNameException for requirements, that can have
 		 * multiple names (one for each version) ? What happens when the library is displayed in milestone mode and that
 		 * two versions of different requirements happens to have the same name and same milestone (hint : they would be
 		 * displayed both anyway).
-		 * 
+		 *
 		 * Because of this we are waiting for better specs on that matter, and the implementation here remains trivial
 		 * in the mean time.
 		 */
@@ -185,7 +185,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId, PagingAndSorting pas) {
 
 		Pageable pageable = pas.toPageable();
-		
+
 		Page<RequirementVersion> page = requirementVersionDao.findAllByRequirementId(requirementId, pageable);
 
 		return new PageCollectionHolderWrapper<RequirementVersion>(page);
@@ -204,7 +204,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@PreAuthorize("hasPermission(#requirementVersionId, 'org.squashtest.tm.domain.requirement.RequirementVersion', 'WRITE')"
 			+ OR_HAS_ROLE_ADMIN)
 	public void changeCategory(long requirementVersionId, String categoryCode) {
-		RequirementVersion version = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion version = requirementVersionDao.findOne(requirementVersionId);
 		InfoListItem category = infoListItemService.findByCode(categoryCode);
 
 		if (infoListItemService.isCategoryConsistent(version.getProject().getId(), categoryCode)) {
@@ -249,7 +249,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		Collection<Milestone> milestones = null;
 
 		for (Long reqVersionId : reqVersionIds) {
-			List<Milestone> mil = requirementVersionDao.findById(reqVersionId).getProject().getMilestones();
+			List<Milestone> mil = requirementVersionDao.findOne(reqVersionId).getProject().getMilestones();
 			if (milestones != null) {
 				// keep only milestone that in ALL selected requirementVersion
 				milestones.retainAll(mil);
@@ -278,7 +278,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		Collection<Milestone> milestones = null;
 
 		for (Long reqVersionId : reqVersionIds) {
-			Set<Milestone> mil = requirementVersionDao.findById(reqVersionId).getMilestones();
+			Set<Milestone> mil = requirementVersionDao.findOne(reqVersionId).getMilestones();
 			if (milestones != null) {
 				// keep only milestone that in ALL selected requirementVersion
 				milestones.retainAll(mil);
@@ -304,10 +304,10 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		if (reqVersionIds.size() != 1) {
 
 			Long first = reqVersionIds.remove(0);
-			List<Milestone> toCompare = requirementVersionDao.findById(first).getProject().getMilestones();
+			List<Milestone> toCompare = requirementVersionDao.findOne(first).getProject().getMilestones();
 
 			for (Long reqVersionId : reqVersionIds) {
-				List<Milestone> mil = requirementVersionDao.findById(reqVersionId).getProject().getMilestones();
+				List<Milestone> mil = requirementVersionDao.findOne(reqVersionId).getProject().getMilestones();
 
 				if (mil.size() != toCompare.size() || !mil.containsAll(toCompare)) {
 					return false;
@@ -321,7 +321,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 	@Override
 	public boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds) {
 		return milestoneDao.isOneMilestoneAlreadyBindToAnotherRequirementVersion(reqVIds, milestoneIds);
-		
+
 	}
 
 	@Override

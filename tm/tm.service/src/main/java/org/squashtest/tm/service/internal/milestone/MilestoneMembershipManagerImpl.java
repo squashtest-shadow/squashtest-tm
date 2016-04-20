@@ -90,7 +90,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Override
 	@PreAuthorize(WRITE_REQVERSION + OR_HAS_ROLE_ADMIN)
 	public void bindRequirementVersionToMilestones(long versionId, Collection<Long> milestoneIds) {
-		RequirementVersion version = requirementVersionDao.findById(versionId);
+		RequirementVersion version = requirementVersionDao.findOne(versionId);
 		Collection<Milestone> milestones = milestoneDao.findAllByIds(milestoneIds);
 
 		for (Milestone m : milestones) {
@@ -104,7 +104,7 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Override
 	@PreAuthorize(WRITE_REQVERSION + OR_HAS_ROLE_ADMIN)
 	public void unbindRequirementVersionFromMilestones(long versionId, Collection<Long> milestoneIds) {
-		RequirementVersion version = requirementVersionDao.findById(versionId);
+		RequirementVersion version = requirementVersionDao.findOne(versionId);
 		for (Long milestoneId : milestoneIds) {
 			version.unbindMilestone(milestoneId);
 		}

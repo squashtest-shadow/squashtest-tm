@@ -22,33 +22,13 @@ package org.squashtest.tm.service.requirement
 
 import javax.inject.Inject
 
-import org.hibernate.Query
-import org.hibernate.validator.constraints.NotEmpty;
-import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.customfield.BindableEntity
-import org.squashtest.tm.domain.customfield.CustomFieldValue
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.tm.domain.requirement.RequirementVersion
-import org.squashtest.tm.exception.library.CannotMoveInHimselfException
-import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException
-import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
+import org.squashtest.tm.domain.requirement.RequirementCoverageStat
 import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler
-import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-import org.unitils.dbunit.annotation.ExpectedDataSet
-import org.squashtest.tm.service.internal.repository.RequirementDao;
-import org.squashtest.tm.service.internal.repository.RequirementFolderDao
+import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.domain.milestone.Milestone
-
-import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -72,7 +52,7 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 	}
 
 	def setBidirectionalReqReqVersion(Long reqVersionId, Long reqId) {
-		def reqVer = requirementVersionDao.findById(reqVersionId)
+		def reqVer = requirementVersionDao.findOne(reqVersionId)
 		def req = requirementDao.findById(reqId)
 		reqVer.setRequirement(req)
 	}

@@ -116,7 +116,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 
 	private Collection<VerifiedRequirementException> doAddVerifyingTestCasesToRequirementVersion(
 			List<TestCase> testCases, long requirementVersionId) {
-		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		return doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersion);
 	}
 

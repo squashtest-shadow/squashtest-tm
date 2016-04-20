@@ -50,11 +50,11 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 
 	@Inject
 	private TestCaseDao testCaseDao;
-	
+
 	@Inject private TestCaseCallTreeFinder callTreeFinder;
 
 	/**
-	 * 
+	 *
 	 * @param testCaseId
 	 * @return distinct criticalities found for all verified requirementVersions (including through call steps)
 	 */
@@ -73,7 +73,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 * <i>NB: this can't be done in the setter of "importanceAuto" because of the call-step associated
 	 * requirementVersions that is an info handled by the "service" package . </i>
 	 * </p>
-	 * 
+	 *
 	 * @param testCaseId
 	 * @return the test case autoCalculated importance
 	 */
@@ -157,7 +157,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	 */
 	@Override
 	public void changeImportanceIfRelationsRemovedFromReq(List<Long> testCasesIds, long requirementVersionId) {
-		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		RequirementCriticality requirementCriticality = requirementVersion.getCriticality();
 		TestCaseImportance reqCritImportance = TestCaseImportance.deduceTestCaseImportance(Arrays
 				.asList(requirementCriticality));
@@ -224,7 +224,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 	@Override
 	public void changeImportanceIfRequirementCriticalityChanged(long requirementVersionId,
 			RequirementCriticality oldRequirementCriticality) {
-		RequirementVersion requirementVersion = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion requirementVersion = requirementVersionDao.findOne(requirementVersionId);
 		List<TestCase> testCases = testCaseDao.findUnsortedAllByVerifiedRequirementVersion(requirementVersionId);
 		for (TestCase testCase : testCases) {
 			changeImportanceIfRequirementCriticalityChanged(oldRequirementCriticality, requirementVersion, testCase);

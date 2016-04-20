@@ -20,9 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.Collection;
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -36,6 +33,9 @@ import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 
+import java.util.Collection;
+import java.util.List;
+
 public interface CampaignDao extends EntityDao<Campaign> {
 
 
@@ -47,7 +47,7 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	 * For a given collection of campaign ids, will return only those that belong
 	 * to a milestone (given its id). If milestoneId is null, the initial list
 	 * will be returned.
-	 * 
+	 *
 	 * @param campaignIds
 	 * @param milestoneId
 	 * @return
@@ -68,7 +68,7 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	/**
 	 * Returns the paged list of [index, CampaignTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
-	 * 
+	 *
 	 * @param campaignId
 	 * @param sorting
 	 * @return
@@ -77,10 +77,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	/**
 	 * Returns the paged list of [index, CampaignTestPlanItem] wrapped in an {@link IndexedIterationTestPlanItem}
-	 * 
-	 * @param campaignId
-	 * @param sorting
-	 * @return
 	 */
 	List<IndexedCampaignTestPlanItem> findIndexedTestPlan(long campaignId, PagingAndSorting sorting);
 
@@ -90,9 +86,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	/**
 	 * Returns how many iterations this campaign have
-	 * 
-	 * @param campaignIds
-	 * @return
 	 */
 	int countIterations(long campaignId);
 
@@ -103,24 +96,21 @@ public interface CampaignDao extends EntityDao<Campaign> {
 	List<String> findNamesInCampaignStartingWith(long campaignId, String nameStart);
 
 	List<String> findAllNamesInCampaign(long campaignId);
+
 	/**
 	 * Finds all {@link CampaignLibraryNode} which name contains the given token.
-	 * 
-	 * @param tokenInName
-	 * @param groupByProject
-	 * @return
 	 */
 	List<CampaignLibraryNode> findAllByNameContaining(String tokenInName, boolean groupByProject);
 
 	/**
 	 * find all the campaign's iterations, and return all iteration's executions regardless of the campaign test-plan
-	 * 
-	 * @param campaignId
+	 *
 	 * @return list of executions of all iterations
 	 */
 	List<Execution> findAllExecutionsByCampaignId(Long campaignId);
+
 	/**
-	 * 
+	 *
 	 * @param campaignId the id of the concerned campaign
 	 * @return the computed {@link TestPlanStatistics} out of each test-plan-item of each campaign's iteration
 	 */

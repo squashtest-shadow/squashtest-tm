@@ -27,22 +27,14 @@ public interface CustomRequirementVersionDao {
 
 	/**
 	 * Returns a requirement by its ID. Note that we mean Requirement, and not RequirementVersion
-	 * 
-	 * @param requirementId
-	 * @return
 	 */
 	Requirement findRequirementById(long requirementId);
 
 	/**
 	 * Find which version of a requirement that is bound to a given milestone. if MilestoneId is null
 	 * the latest version will be returned
-	 * 
-	 * @param requirementId
-	 * @param milestoneId
-	 * @return
 	 */
 	RequirementVersion findByRequirementIdAndMilestone(long requirementId, Long milestoneId);
 
 
-	
 }

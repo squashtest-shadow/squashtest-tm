@@ -225,7 +225,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		long oldVerifiedRequirementVersionId,
 		long newVerifiedRequirementVersionId, long testCaseId) {
 		RequirementVersion newReq = requirementVersionDao
-			.findById(newVerifiedRequirementVersionId);
+			.findOne(newVerifiedRequirementVersionId);
 		RequirementVersionCoverage coverage = requirementVersionCoverageDao
 			.byRequirementVersionAndTestCase(
 				oldVerifiedRequirementVersionId, testCaseId);
@@ -427,7 +427,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		ActionTestStep step = testStepDao.findActionTestStepById(testStepId);
 		TestCase testCase = step.getTestCase();
 		RequirementVersion version = requirementVersionDao
-			.findById(requirementVersionId);
+			.findOne(requirementVersionId);
 		Collection<VerifiedRequirementException> rejections = new ArrayList<>(
 			1);
 		if (version == null) {
@@ -625,7 +625,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	public void findCoverageStat(Long requirementVersionId,
 								 Milestone currentMilestone, List<Long> iterationsIds, RequirementCoverageStat stats) {
 
-		RequirementVersion mainVersion = requirementVersionDao.findById(requirementVersionId);
+		RequirementVersion mainVersion = requirementVersionDao.findOne(requirementVersionId);
 		Requirement mainRequirement = mainVersion.getRequirement();
 		List<RequirementVersion> descendants = findValidDescendants(mainRequirement, currentMilestone);
 		findCoverageRate(mainRequirement, mainVersion, descendants, stats);

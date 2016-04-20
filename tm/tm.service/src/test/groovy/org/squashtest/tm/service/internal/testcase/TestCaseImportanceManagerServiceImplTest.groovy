@@ -31,10 +31,6 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.TestCaseDao
-import org.squashtest.tm.service.internal.testcase.CallStepManagerServiceImpl;
-import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
-import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl;
-
 import spock.lang.Specification
 class TestCaseImportanceManagerServiceImplTest extends Specification {
 	TestCaseImportanceManagerServiceImpl service = new TestCaseImportanceManagerServiceImpl()
@@ -168,7 +164,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 		//the requirement
 		RequirementVersion rv = new RequirementVersion()
 		rv.setCriticality CRITICAL
-		requirementVersionDao.findById( 3L )>> rv
+		requirementVersionDao.findOne( 3L )>> rv
 
 		//no called test case
 		Set<Long> calleesIds2 = [1L]
@@ -220,7 +216,7 @@ class TestCaseImportanceManagerServiceImplTest extends Specification {
 		RequirementCriticality oldRequirementCriticality = MINOR
 		RequirementVersion rv = new RequirementVersion()
 		rv.setCriticality CRITICAL
-		requirementVersionDao.findById (3L )>> rv
+		requirementVersionDao.findOne (3L )>> rv
 
 		TestCase testCase = new TestCase()
 		testCase.setImportance LOW
