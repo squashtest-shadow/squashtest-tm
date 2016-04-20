@@ -54,7 +54,11 @@ that page won't be editable if
  <c:set var="linkable"          value="${false}"/>
  <c:set var="status_editable"   value="${false}"/>
  <c:set var="milestone_mode"    value="${not empty cookie['milestones'] }"/>
-
+<%-- creation of new version now don't give a shit about milestones  --%>
+<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirementVersion }">
+	<c:set var="creatable" value="${true }"/>
+		<c:set var="moreThanReadOnly" value="${ true }" />
+</authz:authorized>
 
  <%-- permission 'linkable' is not subject to the milestone statuses, ACL only --%>
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="LINK" domainObject="${ requirementVersion }">
@@ -77,10 +81,7 @@ that page won't be editable if
 	<c:set var="deletable" value="${true}"/>
 		<c:set var="moreThanReadOnly" value="${ true }" />
 </authz:authorized>
-<authz:authorized hasRole="ROLE_ADMIN" hasPermission="CREATE" domainObject="${ requirementVersion }">
-	<c:set var="creatable" value="${true }"/>
-		<c:set var="moreThanReadOnly" value="${ true }" />
-</authz:authorized>
+
 <authz:authorized hasRole="ROLE_ADMIN" hasPermission="WRITE" domainObject="${ requirementVersion }">
 	<c:set var="linkable" value="${ requirementVersion.linkable }" />
 		<c:set var="moreThanReadOnly" value="${ true }" />
@@ -176,7 +177,7 @@ that page won't be editable if
         <c:if test="${ writable }">
 			<input type="button" value="${renameLabel}" title="${renameLabel}" id="rename-requirement-button" class="sq-btn"  ${disableIfSynced}/>
 		</c:if>
-		<c:if test="${ creatable }">
+		<c:if test="${ creatable and milestoneConf.activeMilestone.canCreateDelete}">
 			<input type="button" value="${newversionLabel}" title="${newversionLabel}" id="new-version-button" class="sq-btn"  ${disableIfSynced}/>
 		</c:if>
 		<input type="button" value="<f:message key='label.print'/>" title='<f:message key='label.print'/>' id="print-requirement-version-button" class="sq-btn"/>
@@ -391,7 +392,7 @@ publish('reload.requirement.attachments');
 
 </c:if>
 <%--------------------------- New version popup -------------------------------------%>
-<c:if test="${ creatable }">
+<c:if test="${ creatable and milestoneConf.activeMilestone.canCreateDelete}">
 	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />
 	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog"
           title="${ confirmNewVersionDialogTitle }" style="font-weight:bold">

@@ -55,8 +55,8 @@
 		<input type="button" value="${renameLabel}"  title="${renameLabel}"
 				id="rename-test-case-button" class="sq-btn" />
 	</c:if>
-    
-    <c:if test="${milestoneConf.userEnabled and milestoneConf.editable and milestoneConf.globallyEnabled}">
+
+    <c:if test="${milestoneConf.userEnabled and milestoneConf.activeMilestone.canCreateDelete and milestoneConf.globallyEnabled}">
         <input type="button" value="${createNewVersionLabel}" id="create-test-case-version-button" class="sq-btn"
         title="${createNewVersionHint}"/>
     </c:if>

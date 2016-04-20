@@ -96,10 +96,9 @@
 	</div>
 </div>
 
-
+</c:if>
     <%-- create new version dialog --%>
-
-    
+ <c:if test="${milestoneConf.activeMilestone.canEdit}">
     <div id="create-test-case-version-dialog" class="popup-dialog not-displayed" title="${createNewVersionLabel}">
       
       <div data-def="state=wait">
@@ -156,8 +155,8 @@
       </div>
       
     </div>
-
 </c:if>
+
 
 </div>
 

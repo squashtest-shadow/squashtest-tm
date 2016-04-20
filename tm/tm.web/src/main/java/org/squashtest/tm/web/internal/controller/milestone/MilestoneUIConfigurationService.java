@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.web.internal.controller.milestone;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.inject.Inject;
+
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -34,11 +40,6 @@ import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
-
-import javax.inject.Inject;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 
 /**
@@ -144,6 +145,7 @@ public class MilestoneUIConfigurationService {
 
 			activeMilestone.setId(currentMilestone.getId());
 			activeMilestone.setLabel(currentMilestone.getLabel());
+			activeMilestone.setStatus(currentMilestone.getStatus());
 			conf.setActiveMilestone(activeMilestone);
 
 		}
