@@ -23,8 +23,8 @@ require([ "common" ], function() {
 		$(function() {
 			WS.init();
 			userAdmin.initUserListPage(window.squashtm.app.teamsManager.settings);
+			new TeamsManager();
 		});
 
-		new TeamsManager();
 	});
 });
