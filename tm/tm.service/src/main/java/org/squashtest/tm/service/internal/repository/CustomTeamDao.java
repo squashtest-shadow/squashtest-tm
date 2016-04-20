@@ -20,24 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
 import org.squashtest.tm.core.foundation.collection.Filtering;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.users.Team;
 import org.squashtest.tm.domain.users.User;
 
-public interface CustomTeamDao extends EntityDao<Team>{
-	/**
-	 * 
-	 * @param filter
-	 * @return
-	 */
+import java.util.List;
+
+public interface CustomTeamDao extends EntityDao<Team> {
 	List<Team> findSortedTeams(PagingAndSorting paging, Filtering filtering);
 
 	/**
 	 * Will find {@link Team}s associated to concerned user organized with the given pagin and filtering params.
-	 * 
+	 *
 	 * @param userId
 	 *            : id of the concerned {@link User}
 	 * @param paging

@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
 import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -36,6 +34,8 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTeamDao;
 
+import java.util.List;
+
 public class TeamDaoImpl extends HibernateEntityDao<Team> implements CustomTeamDao {
 
 	private static final String HQL_FIND_TEAMS_BASE = "from Team Team ";
@@ -46,21 +46,21 @@ public class TeamDaoImpl extends HibernateEntityDao<Team> implements CustomTeamD
 	public List<Team> findSortedTeams(PagingAndSorting paging, Filtering filter) {
 
 		StringBuilder sQuery = new StringBuilder(HQL_FIND_TEAMS_BASE);
-		
+
 		if (filter.isDefined()) {
 			sQuery.append(HQL_FIND_TEAMS_FILTER);
 		}
 
 		SortingUtils.addOrder(sQuery, paging);
-		
+
 		Query hQuery = currentSession().createQuery(sQuery.toString());
-		
+
 		if (filter.isDefined()) {
 			hQuery.setParameter("filter", "%" + filter.getFilter() + "%");
 		}
 
 		PagingUtils.addPaging(hQuery, paging);
-		
+
 		return hQuery.list();
 
 	}
@@ -71,10 +71,10 @@ public class TeamDaoImpl extends HibernateEntityDao<Team> implements CustomTeamD
 	@Override
 	@SuppressWarnings("unchecked")
 	public List<Team> findSortedAssociatedTeams(long userId, PagingAndSorting paging, Filtering filtering) {
-		
+
 
 		Criteria crit = currentSession().createCriteria(User.class, "User").add(Restrictions.eq("User.id", userId))
-				.createCriteria("User.teams", "Team").setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
+			.createCriteria("User.teams", "Team").setResultTransformer(CriteriaSpecification.ALIAS_TO_ENTITY_MAP);
 
 		/* add ordering */
 		String sortedAttribute = paging.getSortedAttribute();
