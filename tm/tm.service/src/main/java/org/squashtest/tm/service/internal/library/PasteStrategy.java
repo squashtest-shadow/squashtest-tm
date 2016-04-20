@@ -128,7 +128,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private List<NODE> outputList;
 	private Collection<NodePairing> nextLayer;
 	private Collection<NodePairing> sourceLayer;
-	private Collection<NodePairing> sourceLayerParents;
 	private Set<Long> tcIdsToIndex = new HashSet<>();
 	private Set<Long> reqVersionIdsToIndex = new HashSet<>();
 
@@ -146,14 +145,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	
 	private List<NODE> internalPasteNodes(long containerId, List<Long> list, Integer position) {
 
-		// fetch
-		CONTAINER container = containerDao.findById(containerId);
 
 		// proceed : will process the nodes layer by layer.
-		init(list.size());
+		init(containerId, list);
 
 		// process the first layer and memorize processed entities
-		processFirstLayer(container, list, position);
+		processFirstLayer(position);
 
 		// loop on all following generations
 		while (!nextLayer.isEmpty()) {
@@ -171,27 +168,42 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 
 	
-	private void init(int nbCopiedNodes) {
+	private void init(long containerId, List<Long> list) {
 		firstOperation = createFirstLayerOperation();
 		nextsOperation = createNextLayerOperation();
-		outputList = new ArrayList<>(nbCopiedNodes);
+		outputList = new ArrayList<>(list.size());
 		nextLayer = new ArrayList<>();
-		sourceLayer = null;
-		sourceLayerParents = null;
+		
+		// init the source layer		
+		sourceLayer = new HashSet<>();
+		CONTAINER container = containerDao.findById(containerId);
+		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>)container);
+		
+		for (Long contentId : list){
+			NODE srcNode = nodeDao.findById(contentId);
+			pairing.addContent(srcNode);
+		}
+		sourceLayer.add(pairing);
 	}
 
 
 	private void shiftToNextLayer() {
-		sourceLayerParents = sourceLayer;
 		sourceLayer = nextLayer;
 		nextLayer = new ArrayList<>();
 	}
 
 
 	@SuppressWarnings("unchecked")
-	private void processFirstLayer(CONTAINER container, List<Long> list, Integer position) {
-		for (Long id : list) {
-			NODE srcNode = nodeDao.findById(id);
+	private void processFirstLayer(Integer position) {
+
+		// yeah that's an obnoxious way to get the unique element of a collection
+		// (sourceLayer contains only one pairing at that time)
+		NodePairing pairing = sourceLayer.iterator().next();
+		
+		CONTAINER container = (CONTAINER)pairing.getContainer();
+		Collection<TreeNode> newContent = pairing.getNewContent();
+		
+		for (NODE srcNode : (Collection<NODE>)newContent) {
 			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container,
 					position);
 			outputList.add(outputNode);
@@ -202,6 +214,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				appendNextLayerNodes(srcNode, outputNode);
 			}
 		}
+		
 		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
 		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
@@ -260,28 +273,39 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	}
 	
 
+	/*
+	 * Here we want to evict the nodes already processed from the Hibernate cache. We do so only 
+	 * if that same node won't be processed again in the next iteration
+	 * 
+	 */
 	private void removeProcessedNodesFromCache() {
-		if (sourceLayerParents != null) {
-			// if we cont flush and then evict, some entities might not be persisted
-			genericDao.flush();
+		
+		// if we cont flush and then evict, some entities might not be persisted
+		genericDao.flush();
+		
+		Collection<TreeNode> nextNodes = new HashSet<>();
+		for (NodePairing nextPairing : nextLayer){
+			nextNodes.add((TreeNode)nextPairing.getContainer());
+			nextNodes.addAll(nextPairing.getNewContent());
+		}
 
-			Collection<TreeNode> evicted = new HashSet<>();
-			// when moving to a next layer, evict the nodes that won't be used anymore - those who will not receive
-			// content anymore.
-			// note: will note evict the nodes to return because they never been in the "sourceLayer" map.			
-			for (NodePairing pairing : sourceLayerParents){
-				NodeContainer<TreeNode> container = pairing.getContainer();
-				Collection<TreeNode> content = pairing.getNewContent();
-				genericDao.clearFromCache(container);
-				for (TreeNode node : content) {
-					if (!evicted.contains(node)) {
-						evicted.add(node);
-						genericDao.clearFromCache(node);
-					}
+		Collection<TreeNode> evicted = new HashSet<>();
+		
+		
+		// now we evict what we can
+		for (NodePairing processed : sourceLayer){
+			Collection<TreeNode> toEvict = new HashSet<>();
+			toEvict.add((TreeNode) processed.getContainer());
+			toEvict.addAll(processed.getNewContent());
+			
+			for (TreeNode evi : toEvict){
+				if (! nextNodes.contains(evi)){
+					evicted.add(evi);
+					genericDao.clearFromCache(evi);					
 				}
 			}
-			
 		}
+		
 	}
 
 }
