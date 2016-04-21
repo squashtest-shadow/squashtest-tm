@@ -30,6 +30,7 @@ import org.springframework.security.authentication.encoding.PasswordEncoder
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
+import org.squashtest.it.stub.milestone.StubActiveMilestoneHolder
 import org.squashtest.it.stub.security.StubObjectAclService
 import org.squashtest.it.stub.security.StubObjectIdentityService
 import org.squashtest.it.stub.security.StubPermissionEvaluationService
