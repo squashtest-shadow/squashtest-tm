@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.web.config;
 
+import java.util.List;
+
+import javax.inject.Inject;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.PersistenceUnit;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
@@ -34,14 +40,14 @@ import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
 import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver;
+import org.squashtest.tm.web.internal.interceptor.ActiveMilestoneInterceptor;
 import org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor;
-import org.squashtest.tm.web.internal.interceptor.openedentity.*;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.PersistenceUnit;
-
-import java.util.List;
+import org.squashtest.tm.web.internal.interceptor.openedentity.CampaignViewInterceptor;
+import org.squashtest.tm.web.internal.interceptor.openedentity.ExecutionViewInterceptor;
+import org.squashtest.tm.web.internal.interceptor.openedentity.IterationViewInterceptor;
+import org.squashtest.tm.web.internal.interceptor.openedentity.RequirementViewInterceptor;
+import org.squashtest.tm.web.internal.interceptor.openedentity.TestCaseViewInterceptor;
+import org.squashtest.tm.web.internal.interceptor.openedentity.TestSuiteViewInterceptor;
 
 /**
  * This class configures Spring MVC.
@@ -82,6 +88,9 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 	@Inject
 	private TestSuiteViewInterceptor testSuiteViewInterceptor;
 
+	@Inject
+	private ActiveMilestoneInterceptor milestoneInterceptor;
+
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		// Log4j output enhancement
@@ -94,6 +103,7 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		osiv.setEntityManagerFactory(emf);
 		registry.addWebRequestInterceptor(osiv);
 		
+		registry.addInterceptor(milestoneInterceptor);
 
 		// #sec in thymeleaf
 		registry.addInterceptor(securityExpressionResolverExposerInterceptor)

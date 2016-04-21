@@ -40,6 +40,7 @@ import org.squashtest.it.stub.security.StubUserDetailsManager
 import org.squashtest.it.stub.user.StubChefAccountService
 import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
 import org.squashtest.tm.service.security.ObjectIdentityService
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -135,5 +136,10 @@ class ServiceSpecConfig {
 	@Primary
 	@Bean ObjectAclService objectAclService(){
 		new StubObjectAclService();
+	}
+
+	@Primary
+	@Bean ActiveMilestoneHolder activeMilestoneHolder(){
+		new StubActiveMilestoneHolder()
 	}
 }
