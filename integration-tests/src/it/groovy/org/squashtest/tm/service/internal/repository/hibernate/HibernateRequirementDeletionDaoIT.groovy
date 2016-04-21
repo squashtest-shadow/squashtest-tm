@@ -20,19 +20,21 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
+import javax.inject.Inject
+import javax.persistence.Query
+
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
-import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitDaoSpecification
+import org.squashtest.tm.service.internal.repository.AttachmentListDao
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.unitils.dbunit.annotation.DataSet
-import spock.unitils.UnitilsSupport
 
-import javax.inject.Inject
-import javax.persistence.Query
+import spock.unitils.UnitilsSupport
 
 @NotThreadSafe
 @UnitilsSupport
@@ -58,7 +60,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		given:
 		//we associate the current version to the requirements
 		String sql = "update REQUIREMENT set current_version_id = :ver_id where rln_id = :id";
-		Query query = entityManager.createNativeQuery(sql);
+		Query query = em.createNativeQuery(sql);
 		query.setParameter("id", 10);
 		query.setParameter("ver_id", 15);
 		query.executeUpdate();
@@ -88,33 +90,33 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		def resReq = requirementDao.findAllByIds([-10L, -20L, -30L, -40L])
 
 		String sql_select_resource = "select res_id from RESOURCE where res_id in (-10, 11, -12, -13, -14, -15, -20, -21, -22, -23, -24, -25, -30, -40)";
-		Query query_select_resource = entityManager.createNativeQuery(sql_select_resource);
+		Query query_select_resource = em.createNativeQuery(sql_select_resource);
 		def resources = query_select_resource.list()
 
 		def resAttachList = attachmentListDao.findAllByIds([-10L, -11L, -12L, -13L, -14L, -15L, -20L, -21L, -22L, -23L, -24L, -25L, -30L, -40L])
 
 		String sql_select_librairy_node = "select rln_id from REQUIREMENT_LIBRARY_NODE where rln_id in (-10, -20, -30, -40)";
-		Query query_select_librairy_node = entityManager.createNativeQuery(sql_select_librairy_node);
+		Query query_select_librairy_node = em.createNativeQuery(sql_select_librairy_node);
 		def resLibrairy_node = query_select_librairy_node.list()
 
 		String sql_select_test_case_verified_req_vers = "select verified_req_version_id from REQUIREMENT_VERSION_COVERAGE where verified_req_version_id in (-15, -25, -30, -40)";
-		Query query_select_test_case_verified_req_vers = entityManager.createNativeQuery(sql_select_test_case_verified_req_vers);
+		Query query_select_test_case_verified_req_vers = em.createNativeQuery(sql_select_test_case_verified_req_vers);
 		def resTestCaseVerifiedReqVers = query_select_test_case_verified_req_vers.list()
 
 		String sql_select_requirement_audit_event = "select event_id from REQUIREMENT_AUDIT_EVENT where event_id in (-10, -11, -12, -13, -14, -15, -20, -21, -22, -23, -24, -25, -30, -40)";
-		Query query_select_requirement_audit_event = entityManager.createNativeQuery(sql_select_requirement_audit_event);
+		Query query_select_requirement_audit_event = em.createNativeQuery(sql_select_requirement_audit_event);
 		def resRequirementAuditEvent = query_select_requirement_audit_event.list()
 
 		String sql_select_requirement_creation = "select event_id from REQUIREMENT_CREATION where event_id in (-10, -20, -30, -40)";
-		Query query_select_requirement_creation = entityManager.createNativeQuery(sql_select_requirement_creation);
+		Query query_select_requirement_creation = em.createNativeQuery(sql_select_requirement_creation);
 		def resRequirementCreation = query_select_requirement_creation.list()
 
 		String sql_select_requirement_property_change = "select event_id from REQUIREMENT_PROPERTY_CHANGE where event_id in (-12, -13, -21, -22, -23)";
-		Query query_select_requirement_property_change = entityManager.createNativeQuery(sql_select_requirement_property_change);
+		Query query_select_requirement_property_change = em.createNativeQuery(sql_select_requirement_property_change);
 		def resRequirementPropertyChange = query_select_requirement_property_change.list()
 
 		String sql_select_requirement_large_property_change = "select event_id from REQUIREMENT_LARGE_PROPERTY_CHANGE where event_id in (-11, -14, -15, -24, -25)";
-		Query query_select_requirement_large_property_change = entityManager.createNativeQuery(sql_select_requirement_large_property_change);
+		Query query_select_requirement_large_property_change = em.createNativeQuery(sql_select_requirement_large_property_change);
 		def resRequirementLargePropertyChange = query_select_requirement_large_property_change.list()
 
 		//should remain only the elements not linked to the removed requirements
