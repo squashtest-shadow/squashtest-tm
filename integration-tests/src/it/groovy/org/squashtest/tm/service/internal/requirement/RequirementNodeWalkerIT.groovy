@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.requirement
 
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.requirement.RequirementLibraryNode
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

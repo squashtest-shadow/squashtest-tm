@@ -27,7 +27,7 @@ import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.importer.ImportLog
 import org.unitils.dbunit.annotation.DataSet
 

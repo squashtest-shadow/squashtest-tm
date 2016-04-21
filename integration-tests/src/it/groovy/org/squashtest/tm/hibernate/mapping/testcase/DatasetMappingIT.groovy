@@ -23,12 +23,12 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 
-class DatasetMappingIT extends HibernateMappingSpecification {
+class DatasetMappingIT extends DbunitMappingSpecification {
 
 	def "should not persist a nameless dataset"(){
 

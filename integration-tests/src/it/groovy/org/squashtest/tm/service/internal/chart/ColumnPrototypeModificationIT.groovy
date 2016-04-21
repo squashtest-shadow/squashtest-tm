@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding
 import org.squashtest.tm.event.ChangeCustomFieldCodeEvent
 import org.squashtest.tm.event.CreateCustomFieldBindingEvent
 import org.squashtest.tm.event.DeleteCustomFieldBindingEvent
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.lang.Ignore

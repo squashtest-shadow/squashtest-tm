@@ -32,7 +32,7 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.HibernateServiceSpecification
+import org.squashtest.it.basespecs.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 
 @Transactional

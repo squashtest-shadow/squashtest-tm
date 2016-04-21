@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport

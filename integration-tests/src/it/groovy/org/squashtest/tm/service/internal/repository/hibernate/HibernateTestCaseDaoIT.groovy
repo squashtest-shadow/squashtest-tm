@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.core.foundation.collection.Paging
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder

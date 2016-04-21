@@ -21,13 +21,13 @@
 package org.squashtest.tm.hibernate.mapping.users
 
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.users.Team
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
 /**
  * @author mpagnon
  */
-class TeamMappingIT extends HibernateMappingSpecification {
+class TeamMappingIT extends DbunitMappingSpecification {
 	def "should persist and retrieve a team"() {
 		given:
 		def team = new Team()

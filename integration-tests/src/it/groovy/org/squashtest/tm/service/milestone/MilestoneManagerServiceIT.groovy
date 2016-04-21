@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneStatus
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.lang.Unroll

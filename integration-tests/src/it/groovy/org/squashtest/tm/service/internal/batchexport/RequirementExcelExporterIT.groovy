@@ -29,7 +29,7 @@ import javax.inject.Named;
 import org.junit.runner.RunWith;
 import org.spockframework.runtime.Sputnik;
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.RequirementDao
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.unitils.dbunit.annotation.DataSet

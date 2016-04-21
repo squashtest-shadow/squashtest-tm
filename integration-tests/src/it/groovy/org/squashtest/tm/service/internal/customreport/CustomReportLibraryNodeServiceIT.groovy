@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.customreport.CustomReportTreeDefinition;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao;
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao;
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.unitils.UnitilsSupport

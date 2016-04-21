@@ -18,37 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.repository.hibernate
+package org.squashtest.it.basespecs
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 import org.hibernate.Session
 import org.hibernate.Transaction
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
-import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.config.DynamicDaoConfig
-import org.squashtest.it.config.RepositorySpecConfig
-import org.squashtest.it.utils.SkipAll
-import org.squashtest.tm.service.RepositoryConfig
+
 import spock.lang.Specification
 
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
-
 /**
- * Superclass for hibernate DAO integration tests.
- *
- * @deprecated Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
+ * Superclass for hibernate mapping integration tests.
  */
-@ContextConfiguration(classes = [RepositorySpecConfig, DynamicDaoConfig, RepositoryConfig])
-@TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
 @Rollback
-@Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
-@Deprecated
-@SkipAll
-abstract class HibernateDaoSpecification extends Specification {
-	@PersistenceContext
-	EntityManager em
+abstract class DbunitMappingSpecification extends DatasourceDependantSpecification {
+	
+
 	/**
 	 * Runs action closure in a new transaction created from a new session.
 	 * @param action
@@ -70,7 +58,7 @@ abstract class HibernateDaoSpecification extends Specification {
 	}
 
 	def final Session getCurrentSession() {
-		em.unwrap(Session.class)
+		sessionFactory.currentSession
 	}
 	/**
 	 * Persists a fixture in a separate session / transaction

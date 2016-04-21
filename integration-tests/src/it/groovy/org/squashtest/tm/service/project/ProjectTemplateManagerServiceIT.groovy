@@ -26,7 +26,7 @@ import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.NamedReference;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectTemplateManagerService;
 import org.unitils.dbunit.annotation.DataSet;

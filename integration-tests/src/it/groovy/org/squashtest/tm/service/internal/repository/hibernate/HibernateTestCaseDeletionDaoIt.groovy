@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem

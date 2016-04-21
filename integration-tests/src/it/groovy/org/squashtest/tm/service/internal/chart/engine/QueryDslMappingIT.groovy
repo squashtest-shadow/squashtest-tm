@@ -25,7 +25,8 @@ import javax.inject.Inject;
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.bugtracker.QIssue;
 import org.squashtest.tm.domain.campaign.QCampaign;
 import org.squashtest.tm.domain.campaign.QIteration;
@@ -42,8 +43,7 @@ import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.QTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.DbunitServiceSpecification
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet;
 import org.squashtest.tm.domain.testautomation.QAutomatedTest;
 

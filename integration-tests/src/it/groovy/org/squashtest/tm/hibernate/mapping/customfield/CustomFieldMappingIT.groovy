@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.hibernate.mapping.customfield
 
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.customfield.CustomField
 import org.squashtest.tm.domain.customfield.CustomFieldOption
 import org.squashtest.tm.domain.customfield.InputType
@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField
 /**
  * @author Gregory Fouquet
  */
-class CustomFieldMappingIT extends HibernateMappingSpecification {
+class CustomFieldMappingIT extends DbunitMappingSpecification {
 	def "should persist and retrieve a custom field"() {
 		given:
 		def cf = new CustomField()

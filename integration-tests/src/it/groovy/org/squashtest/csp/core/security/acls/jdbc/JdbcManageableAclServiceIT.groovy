@@ -20,15 +20,17 @@
  */
 package org.squashtest.csp.core.security.acls.jdbc
 
+import javax.inject.Inject
+import javax.sql.DataSource
+
 import org.springframework.security.acls.domain.ObjectIdentityImpl
 import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DatasourceDependantSpecification;
 import org.squashtest.it.config.SecuritySpecConfig
-import org.squashtest.it.config.UnitilsConfig
 import org.squashtest.it.stub.security.StubAuthentication
 import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.SecurityConfig
@@ -37,27 +39,18 @@ import org.squashtest.tm.service.security.acls.jdbc.UnknownAclClassException
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 import org.unitils.dbunit.annotation.DataSet
 import org.unitils.dbunit.annotation.ExpectedDataSet
+
 import spock.lang.IgnoreRest
 import spock.lang.Specification
 import spock.unitils.UnitilsSupport
 
-import javax.inject.Inject
-import javax.sql.DataSource
 
-//@ContextConfiguration(classes = [ServiceSpecConfig,
-//	UnitilsConfig,
-//	TmServiceConfig,
-//	RepositoryConfig,
-//	DynamicServiceConfig])
-//@TestPropertySource(["classpath:no-validation-hibernate.properties"])
-//@TransactionConfiguration(transactionManager = "squashtest.tm.hibernate.TransactionManager")
 @UnitilsSupport
-@ContextConfiguration(classes = [UnitilsConfig, SecurityConfig, SecuritySpecConfig])
-@TestPropertySource(["classpath:no-validation-hibernate.properties"])
+@ContextConfiguration(classes = [SecurityConfig, SecuritySpecConfig])
 @Rollback
-@Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
+@Transactional
 @SkipAll
-class JdbcManageableAclServiceIT extends Specification {
+class JdbcManageableAclServiceIT extends DatasourceDependantSpecification {
 	@Inject
 	DataSource dataSource
 	@Inject

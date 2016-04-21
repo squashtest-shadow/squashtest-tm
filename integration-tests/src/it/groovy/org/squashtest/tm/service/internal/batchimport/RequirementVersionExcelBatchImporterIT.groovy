@@ -32,8 +32,8 @@ import spock.lang.Ignore;
 import spock.unitils.UnitilsSupport
 
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.tm.service.RequirementImportCustomDbunitServiceSpecification;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.RequirementImportCustomDbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;

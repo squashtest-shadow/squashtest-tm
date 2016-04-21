@@ -31,8 +31,8 @@ import org.apache.lucene.document.Field.Store;
 import org.apache.lucene.document.Field.TermVector;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.search.bridge.LuceneOptions;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
+import org.hibernate.search.bridge.LuceneOptions
+import org.squashtest.it.basespecs.DbunitDaoSpecification;;
 
 /**
  * Superclass for a hibernate search bridge specification.

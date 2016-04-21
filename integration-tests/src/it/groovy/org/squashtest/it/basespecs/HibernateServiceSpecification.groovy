@@ -18,33 +18,30 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service
+package org.squashtest.it.basespecs
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 import org.hibernate.Session
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
-import org.squashtest.it.config.UnitilsConfig
-import org.squashtest.it.utils.SkipAll
-import spock.lang.Specification
-
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import org.squashtest.tm.service.BugTrackerConfig
+import org.squashtest.tm.service.SchedulerConfig
+import org.squashtest.tm.service.TmServiceConfig
 
 /**
  * Superclass for a Hibernate based service integration test. Should not be used anymore, use DbunitServiceSpecification instead.
  * @deprecated Should not be used anymore, use Dbunit based spec DbunitDaoSpecification
  */
-@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig, UnitilsConfig])
-@TestPropertySource(["classpath:no-validation-hibernate.properties", "classpath:datasource.properties"])
+@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, BugTrackerConfig, SchedulerConfig])
 @Rollback
 @Deprecated
 //Skip all child test for the moment
-abstract class HibernateServiceSpecification extends Specification {
-	@PersistenceContext
-	EntityManager em
+abstract class HibernateServiceSpecification extends DatasourceDependantSpecification{
+
 
 	Session getCurrentSession() {
 		em.unwrap(Session.class)

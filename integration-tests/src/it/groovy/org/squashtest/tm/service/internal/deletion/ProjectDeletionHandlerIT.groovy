@@ -27,7 +27,7 @@ import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.ProjectDao
 import org.squashtest.tm.service.security.ObjectIdentityService
 import org.unitils.dbunit.annotation.DataSet

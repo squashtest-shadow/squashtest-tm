@@ -50,7 +50,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
 
 import spock.lang.Specification;
 
-public class ChartEngineTestUtils extends Specification{
+public class ChartEngineTestUtils{
 
 	public static QTestCase tc = QTestCase.testCase
 	public static QRequirementVersionCoverage cov = QRequirementVersionCoverage.requirementVersionCoverage

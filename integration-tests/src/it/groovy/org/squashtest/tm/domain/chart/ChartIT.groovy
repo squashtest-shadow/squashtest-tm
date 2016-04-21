@@ -20,13 +20,14 @@
  */
 package org.squashtest.tm.domain.chart
 
-import org.junit.runner.RunWith;
-import org.squashtest.tm.domain.EntityType;
-import org.spockframework.runtime.Sputnik;
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.tm.service.DbunitServiceSpecification;
-import org.unitils.dbunit.annotation.DataSet
-import spock.unitils.UnitilsSupport;
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.tm.domain.EntityType;
+import org.unitils.dbunit.annotation.DataSet;
+
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional

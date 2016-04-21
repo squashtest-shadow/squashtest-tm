@@ -26,7 +26,7 @@ import org.spockframework.util.NotThreadSafe;
 import org.springframework.security.acls.domain.ObjectIdentityImpl;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.unitils.dbunit.annotation.DataSet;
 import org.squashtest.tm.domain.project.Project;
 

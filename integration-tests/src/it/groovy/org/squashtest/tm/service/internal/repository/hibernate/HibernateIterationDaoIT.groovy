@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.hibernate.HibernateException
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering
 import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering
 import org.squashtest.tm.core.foundation.collection.Filtering

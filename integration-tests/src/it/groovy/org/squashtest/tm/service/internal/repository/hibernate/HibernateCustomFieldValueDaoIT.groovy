@@ -46,7 +46,8 @@ import javax.inject.Inject;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.type.LongType;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextConfiguration
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.testcase.TestCase;

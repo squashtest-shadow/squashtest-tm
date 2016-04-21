@@ -29,7 +29,8 @@ import java.util.Set;
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.EntityType;
 import org.squashtest.tm.domain.bugtracker.QIssue;
 import org.squashtest.tm.domain.campaign.QCampaign;
@@ -50,8 +51,7 @@ import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.testcase.QRequirementVersionCoverage;
 import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef
 import org.unitils.dbunit.annotation.DataSet;
 import static org.squashtest.tm.domain.EntityType.*
 import static org.squashtest.tm.domain.chart.ColumnType.*

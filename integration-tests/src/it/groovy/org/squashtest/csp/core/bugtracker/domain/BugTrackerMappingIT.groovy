@@ -20,15 +20,15 @@
  */
 package org.squashtest.csp.core.bugtracker.domain
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 
 /**
  * @author Gregory Fouquet
  *
  */
 @Transactional
-class BugTrackerMappingIT extends HibernateMappingSpecification {
+class BugTrackerMappingIT extends DbunitMappingSpecification {
 	def "[Issue 3928] should persist a bugtracker"() {
 		given:
 		BugTracker bt = new BugTracker(url: "http://foo/bar", name: "foo", kind: "bar")

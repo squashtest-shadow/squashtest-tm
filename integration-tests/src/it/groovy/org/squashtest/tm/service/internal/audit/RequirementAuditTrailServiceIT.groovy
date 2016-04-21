@@ -28,7 +28,7 @@ import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.unitils.dbunit.annotation.DataSet;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;

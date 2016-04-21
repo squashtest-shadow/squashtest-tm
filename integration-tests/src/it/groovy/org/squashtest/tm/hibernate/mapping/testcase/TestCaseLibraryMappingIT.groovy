@@ -22,7 +22,7 @@ package org.squashtest.tm.hibernate.mapping.testcase
 ;
 
 
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementLibrary
@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 
-class TestCaseLibraryMappingIT extends HibernateMappingSpecification {
+class TestCaseLibraryMappingIT extends DbunitMappingSpecification {
 	TestCaseLibrary library = new TestCaseLibrary()
 	Project p = new Project(name: "foo")
 	

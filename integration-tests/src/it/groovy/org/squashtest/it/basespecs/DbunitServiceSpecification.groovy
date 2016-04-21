@@ -18,39 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service
+package org.squashtest.it.basespecs
 
-import org.hibernate.ObjectNotFoundException
+import javax.persistence.EntityManager
+import javax.persistence.EntityNotFoundException
+import javax.persistence.PersistenceContext
+
 import org.hibernate.Query
 import org.hibernate.Session
 import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
 import org.squashtest.it.config.DynamicServiceConfig
-import org.squashtest.it.config.UnitilsConfig
-import org.squashtest.it.utils.SkipAll
-import spock.lang.Specification
-
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import org.squashtest.it.config.ServiceSpecConfig
+import org.squashtest.tm.service.BugTrackerConfig
+import org.squashtest.tm.service.SchedulerConfig
+import org.squashtest.tm.service.TmServiceConfig
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(classes = [RequirementImportServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
-@TestPropertySource(["classpath:no-validation-hibernate.properties"])
+@ContextConfiguration(classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
 @Rollback
-@SkipAll
-abstract class RequirementImportCustomDbunitServiceSpecification extends Specification {
+abstract class DbunitServiceSpecification extends DatasourceDependantSpecification{
 
-	@PersistenceContext
-	EntityManager em
-
+	/**
+	 * @deprecated use entityManager instead
+     */
+	@Deprecated
 	protected Session getSession() {
-		return em.unwrap(Session.class)
+		return entityManager.unwrap(Session.class)
 	}
 
 	/*-------------------------------------------Private stuff-----------------------------------*/
@@ -65,15 +64,16 @@ abstract class RequirementImportCustomDbunitServiceSpecification extends Specifi
 	}
 
 	protected Integer countAll(String className) {
-		return (Integer) getSession().createQuery("select count(entity) from " + className + " entity").uniqueResult()
+		entityManager.createQuery("select count(entity) from " + className + " entity")
+			.singleResult
 	}
 
 	protected boolean found(Class<?> entityClass, Object id) {
 		boolean found = false
 
 		try {
-			found = (getSession().get(entityClass, id) != null)
-		} catch (ObjectNotFoundException ex) {
+			found = (entityManager.find(entityClass, id) != null)
+		} catch (EntityNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
 		}
@@ -81,11 +81,13 @@ abstract class RequirementImportCustomDbunitServiceSpecification extends Specifi
 	}
 
 	protected boolean allDeleted(String className, List<Long> ids) {
-		Query query = getSession().createQuery("from " + className + " where id in (:ids)")
-		query.setParameterList("ids", ids, new LongType())
-		List<?> result = query.list()
+		def result = entityManager.createQuery("from " + className + " where id in (:ids)")
+			.setParameter("ids", ids)
+			.resultList*.id
 
-		return result.isEmpty()
+		ids.each { assert !result.contains(it) }
+
+		return true
 	}
 
 	protected Object findEntity(Class<?> entityClass, Long id) {

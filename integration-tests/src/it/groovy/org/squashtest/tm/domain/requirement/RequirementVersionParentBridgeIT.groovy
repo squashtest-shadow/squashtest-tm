@@ -20,9 +20,9 @@
  */
 package org.squashtest.tm.domain.requirement
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.domain.BridgeSpecification;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.tm.domain.BridgeSpecification
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.lang.Specification

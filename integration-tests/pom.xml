@@ -274,7 +274,11 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <!-- <threadCount>1</threadCount> -->
+          <!--  
+          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine>
+          --> 
           <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+          
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
         </configuration>

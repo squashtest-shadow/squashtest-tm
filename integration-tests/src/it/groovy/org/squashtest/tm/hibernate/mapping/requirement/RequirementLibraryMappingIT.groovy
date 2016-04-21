@@ -22,7 +22,7 @@ package org.squashtest.tm.hibernate.mapping.requirement
 
 
 import org.hibernate.Session
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.CampaignLibrary
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.project.Project
@@ -30,7 +30,7 @@ import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 
-class RequirementLibraryMappingIT extends HibernateMappingSpecification {
+class RequirementLibraryMappingIT extends DbunitMappingSpecification {
 
 	def "should create a not-null Requirement Library"() {
 		given:

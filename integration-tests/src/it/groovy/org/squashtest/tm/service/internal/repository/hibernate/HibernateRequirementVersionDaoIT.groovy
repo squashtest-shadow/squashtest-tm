@@ -30,6 +30,7 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 

@@ -22,12 +22,11 @@ package org.squashtest.tm.service.campaign
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.infrastructure.AopSquashProxyUtil
 import org.squashtest.it.utils.CollectionComparisonUtils
 import org.squashtest.tm.core.foundation.collection.*
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.users.User
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
@@ -44,19 +43,6 @@ class IterationTestPlanManagerServiceIT extends DbunitServiceSpecification {
 
 
 
-	def setup(){
-
-		// mock declaration
-		User mockUser = Mock()
-
-		// behaviour
-		mockUser.getLogin() >> "bob"
-
-		// wiring
-		def proxyutil = new AopSquashProxyUtil()
-		def serviceImpl = proxyutil.getTarget(service)
-
-	}
 
 	@DataSet("IterationTestPlanManagerServiceIT.xml")
 	@Unroll("should fetch a test plan sorted by #attributes")

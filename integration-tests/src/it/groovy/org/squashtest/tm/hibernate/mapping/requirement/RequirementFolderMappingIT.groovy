@@ -25,14 +25,14 @@ import org.hibernate.Hibernate
 import org.hibernate.Session
 import org.hibernate.exception.GenericJDBCException
 import org.hibernate.exception.ConstraintViolationException
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.requirement.RequirementVersion
 
-class RequirementFolderMappingIT extends HibernateMappingSpecification {
+class RequirementFolderMappingIT extends DbunitMappingSpecification {
 	def "should persist and retrieve a requirement folder"() {
 		given:
 		def f = new RequirementFolder(name:"folder mapping test")

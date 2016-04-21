@@ -23,11 +23,11 @@ package org.squashtest.tm.service.internal.chart.engine
 import org.hibernate.Query;
 import org.hibernate.type.LongType;
 import org.spockframework.util.NotThreadSafe;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery;
 import org.squashtest.tm.domain.requirement.QRequirementVersion;
-import org.squashtest.tm.domain.testcase.QTestCase;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.squashtest.tm.domain.testcase.QTestCase
 import org.unitils.dbunit.annotation.DataSet;
 
 import com.querydsl.core.BooleanBuilder;

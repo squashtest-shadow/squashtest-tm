@@ -22,12 +22,12 @@ package org.squashtest.tm.hibernate.mapping.campaign
 
 import org.hibernate.Hibernate
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
-class CampaignMappingIT extends HibernateMappingSpecification {
+class CampaignMappingIT extends DbunitMappingSpecification {
 	def "should persist ordered iterations"() {
 		given:
 		Campaign campaign = new Campaign(name: "camp")

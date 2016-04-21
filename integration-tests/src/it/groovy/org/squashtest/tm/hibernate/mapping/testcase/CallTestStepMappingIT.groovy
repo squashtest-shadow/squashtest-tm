@@ -22,12 +22,12 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 import javax.inject.Inject
 
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.testcase.CallTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 
-class CallTestStepMappingIT extends HibernateMappingSpecification {
+class CallTestStepMappingIT extends DbunitMappingSpecification {
 
 /*	def "shoud persist and retrieve a test step"() {
 		given:

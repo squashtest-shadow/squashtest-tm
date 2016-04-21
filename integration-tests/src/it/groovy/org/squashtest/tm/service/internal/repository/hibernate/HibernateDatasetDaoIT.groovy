@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject
 
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.unitils.dbunit.annotation.DataSet

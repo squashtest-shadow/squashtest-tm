@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.service.milestone
 
-import org.squashtest.tm.service.AsManagerDbunitServiceSpecification
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import spock.lang.IgnoreRest
 
 import javax.inject.Inject
 
 import org.hibernate.exception.SQLGrammarException
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.AsManagerDbunitServiceSpecification;
 import org.squashtest.tm.domain.milestone.Milestone
 
 import org.unitils.dbunit.annotation.DataSet

@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.requirement.RequirementCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
 import org.squashtest.tm.domain.requirement.VerificationCriterion

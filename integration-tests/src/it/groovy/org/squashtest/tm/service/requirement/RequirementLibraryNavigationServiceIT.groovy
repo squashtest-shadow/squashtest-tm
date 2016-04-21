@@ -29,7 +29,7 @@ import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.exception.library.CannotMoveInHimselfException
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler
 import org.unitils.dbunit.annotation.DataSet

@@ -18,7 +18,10 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service
+package org.squashtest.it.basespecs
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext
 
 import org.hibernate.ObjectNotFoundException
 import org.hibernate.Query
@@ -27,28 +30,21 @@ import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
-import org.springframework.test.context.TestPropertySource
-import org.squashtest.it.config.AsManagerServiceSpecConfig
 import org.squashtest.it.config.DynamicServiceConfig
-import org.squashtest.it.config.UnitilsConfig
+import org.squashtest.it.config.RequirementImportServiceSpecConfig
 import org.squashtest.it.utils.SkipAll
-import spock.lang.Specification
-
-import javax.persistence.EntityManager
-import javax.persistence.PersistenceContext
+import org.squashtest.tm.service.BugTrackerConfig
+import org.squashtest.tm.service.SchedulerConfig
+import org.squashtest.tm.service.TmServiceConfig
 
 /**
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(classes = [AsManagerServiceSpecConfig, UnitilsConfig, DynamicServiceConfig, TmServiceConfig, RepositoryConfig, BugTrackerConfig, SchedulerConfig])
-@TestPropertySource(["classpath:no-validation-hibernate.properties"])
+@ContextConfiguration(classes = [RequirementImportServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, BugTrackerConfig, SchedulerConfig])
 @Rollback
 @SkipAll
-abstract class AsManagerDbunitServiceSpecification extends Specification {
-
-	@PersistenceContext
-	EntityManager em
+abstract class RequirementImportCustomDbunitServiceSpecification extends DatasourceDependantSpecification {
 
 	protected Session getSession() {
 		return em.unwrap(Session.class)

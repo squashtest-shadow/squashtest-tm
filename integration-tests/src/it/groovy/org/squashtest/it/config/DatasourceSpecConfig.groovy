@@ -20,18 +20,36 @@
  */
 package org.squashtest.it.config
 
-import org.springframework.context.annotation.Configuration
-import org.springframework.context.annotation.ImportResource
+import javax.sql.DataSource
+import javax.validation.ValidatorFactory
 
-/**
- * <code>@ContextConfiguration</code> is not able to load both java config and xml config, hence this indirection
- *
- * Source : http://stackoverflow.com/questions/27979735/cannot-process-locations-and-classes-for-context-configuration
- *
- * @author Gregory Fouquet
- * @since 1.13.0
- */
+import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.Configuration
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.TestPropertySource
+import org.squashtest.it.stub.validation.StubValidatorFactory
+import org.squashtest.tm.service.RepositoryConfig
+import org.unitils.database.UnitilsDataSourceFactoryBean
+
 @Configuration
-@ImportResource("classpath*:META-INF/spring/dynamicdao-context.xml")
-class DynamicDaoConfig {
+@ContextConfiguration(classes = [RepositoryConfig])
+@TestPropertySource(["classpath:hibernate.properties"])
+class DatasourceSpecConfig {
+
+	@Bean
+	ValidatorFactory validatorFactory() {
+		return new StubValidatorFactory()
+	}
+
+	@Bean
+	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+	
+	@Bean(name = "squashtest.core.persistence.jdbc.DataSource")
+	DataSource dataSource() {
+		return new UnitilsDataSourceFactoryBean().getObject()
+	}
+	
 }

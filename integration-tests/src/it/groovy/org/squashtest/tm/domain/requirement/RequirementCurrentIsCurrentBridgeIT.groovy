@@ -29,10 +29,10 @@ import org.apache.lucene.document.Field.TermVector;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.search.bridge.LuceneOptions;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.BridgeSpecification;
-import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.squashtest.tm.domain.testcase.TestCaseAttachmentBridge
 import org.unitils.dbunit.annotation.DataSet;
 
 import spock.lang.Unroll;

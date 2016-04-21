@@ -26,7 +26,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.chart.*
 import org.squashtest.tm.domain.customreport.*
 import org.squashtest.tm.domain.tree.TreeLibraryNode
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryDao
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao

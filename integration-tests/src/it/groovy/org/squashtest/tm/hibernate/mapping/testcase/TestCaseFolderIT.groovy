@@ -22,12 +22,12 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 import org.springframework.test.annotation.Rollback
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
 @Rollback
 @Transactional(transactionManager = "squashtest.tm.hibernate.TransactionManager")
-class TestCaseFolderIT extends HibernateMappingSpecification {
+class TestCaseFolderIT extends DbunitMappingSpecification {
 	def "should persist and retrieve a folder"() {
 		given: "a persistent folder"
 		TestCaseFolder f = new TestCaseFolder(name: "to retrieve")

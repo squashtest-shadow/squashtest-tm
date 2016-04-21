@@ -23,7 +23,7 @@ package org.squashtest.tm.service.milestone;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
 
 import spock.unitils.UnitilsSupport;
 import org.unitils.dbunit.annotation.DataSet

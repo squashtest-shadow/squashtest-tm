@@ -22,7 +22,9 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import javax.inject.Inject;
 
-import static org.squashtest.tm.domain.execution.ExecutionStatus.*;
+import static org.squashtest.tm.domain.execution.ExecutionStatus.*
+
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.service.internal.repository.AutomatedSuiteDao;
 import org.unitils.dbunit.annotation.DataSet;
 

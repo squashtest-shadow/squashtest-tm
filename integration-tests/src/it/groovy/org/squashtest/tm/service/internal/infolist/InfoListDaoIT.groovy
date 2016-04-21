@@ -20,10 +20,10 @@
  */
 package org.squashtest.tm.service.internal.infolist
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.squashtest.tm.service.internal.repository.InfoListDao;
-import org.squashtest.tm.service.internal.repository.hibernate.DbunitDaoSpecification
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
+import org.squashtest.tm.service.internal.repository.InfoListDao
 import org.unitils.dbunit.annotation.DataSet;
 import org.unitils.dbunit.datasetloadstrategy.DataSetLoadStrategy;
 import org.unitils.dbunit.datasetloadstrategy.impl.InsertLoadStrategy;

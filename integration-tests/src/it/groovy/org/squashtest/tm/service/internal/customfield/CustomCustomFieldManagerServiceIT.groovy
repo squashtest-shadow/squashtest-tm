@@ -28,7 +28,7 @@ import org.hibernate.SessionFactory
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.customfield.CustomFieldValue
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldManagerService
 import org.unitils.dbunit.annotation.DataSet
 

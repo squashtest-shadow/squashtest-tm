@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 import org.hibernate.SessionFactory;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.service.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.DatasetParamValue
 import org.squashtest.tm.domain.testcase.Parameter

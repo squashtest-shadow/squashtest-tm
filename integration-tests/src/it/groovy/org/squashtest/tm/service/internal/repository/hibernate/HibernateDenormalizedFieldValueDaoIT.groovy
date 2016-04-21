@@ -22,7 +22,8 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import javax.inject.Inject;
 
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
 import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDao;

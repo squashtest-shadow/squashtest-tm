@@ -21,10 +21,10 @@
 package org.squashtest.tm.hibernate.mapping.campaign
 
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.Iteration
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 
-class IterationMappingIT extends HibernateMappingSpecification {
+class IterationMappingIT extends DbunitMappingSpecification {
 
 	def "hibernate should populate creation info when iteration persisted"() {
 		given:

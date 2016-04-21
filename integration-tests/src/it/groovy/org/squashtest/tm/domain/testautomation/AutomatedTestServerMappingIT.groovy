@@ -20,11 +20,9 @@
  */
 package org.squashtest.tm.domain.testautomation
 
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 
-class AutomatedTestServerMappingIT extends HibernateMappingSpecification {
-
-
+class AutomatedTestServerMappingIT extends DbunitMappingSpecification {
 
 	def "should persist a new AutomatedTestServer"(){
 

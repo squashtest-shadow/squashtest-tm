@@ -28,55 +28,33 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
-import spock.lang.Ignore
+import org.unitils.dbunit.annotation.DataSet;
 
-@Transactional
-class HibernateTestCaseLibraryDaoIT extends HibernateDaoSpecification {
+import spock.lang.Ignore
+import spock.unitils.UnitilsSupport;
+
+@UnitilsSupport
+@DataSet
+class HibernateTestCaseLibraryDaoIT extends DbunitDaoSpecification {
+	
 	@Inject TestCaseLibraryDao dao
 
 	
-/*	def "should find root content of test case library"() {
-		setup:
-		TestCaseLibrary lib  = new TestCaseLibrary();
-		Project p = new Project(name: "p")
-		p.testCaseLibrary = lib
 
-		TestCase tc = new TestCase(name:"tc")
-		lib.addContent tc
-
-		TestCaseFolder f = new TestCaseFolder(name:"f")
-		lib.addContent f
-
-		persistFixture p, lib
-
-
-		when:
-		def content = dao.findAllRootContentById(lib.id)
-
-		then:
-		content.size() == 2
-		(content.collect { it.name }).containsAll(["tc", "f"])
-	}*/
-  @Ignore
 	def "should find library by id"() {
-		setup:
-		TestCaseLibrary lib  = new TestCaseLibrary();
-		persistFixture lib
-
-		when:
-		def found = dao.findById(lib.id)
-
-		then:
-		found != null
-
-		cleanup:
-		deleteFixture lib
+		
+		when : 
+			TestCaseLibrary tcln = dao.findById(-1l)
+			
+		then :
+			tcln != null
 	}
 	
 	

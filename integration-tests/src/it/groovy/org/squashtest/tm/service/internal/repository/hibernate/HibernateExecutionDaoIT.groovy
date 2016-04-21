@@ -28,6 +28,7 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Unroll
 import spock.unitils.UnitilsSupport
 import org.squashtest.tm.core.foundation.collection.SortOrder
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.execution.ExecutionStatus
 

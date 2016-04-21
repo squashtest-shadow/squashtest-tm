@@ -20,7 +20,8 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate
 
-import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Pageable
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;

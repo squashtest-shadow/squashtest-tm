@@ -23,8 +23,8 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.requirement.Requirement
@@ -38,7 +38,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
 
 import spock.lang.Unroll
 
-class RequirementVersionCoverageMappingIT extends HibernateMappingSpecification {
+class RequirementVersionCoverageMappingIT extends DbunitMappingSpecification {
 
 
 

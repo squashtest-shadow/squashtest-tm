@@ -22,7 +22,8 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject;
 
-import org.hibernate.Query;
+import org.hibernate.Query
+import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.hibernate.CustomFieldBindingDaoImpl.NewBindingPosition;

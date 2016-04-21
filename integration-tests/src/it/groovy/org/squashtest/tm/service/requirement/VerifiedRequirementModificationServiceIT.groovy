@@ -24,7 +24,7 @@ import org.spockframework.util.NotThreadSafe
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.requirement.RequirementFolder
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.tm.service.HibernateServiceSpecification
+import org.squashtest.it.basespecs.HibernateServiceSpecification
 import org.squashtest.tm.service.project.ProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService

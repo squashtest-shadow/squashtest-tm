@@ -22,8 +22,8 @@ package org.squashtest.tm.hibernate.mapping.requirement
 
 
 import org.hibernate.JDBCException
-import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.hibernate.mapping.HibernateMappingSpecification
+import org.squashtest.csp.core.bugtracker.domain.BugTracker
+import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus
@@ -33,7 +33,7 @@ import org.squashtest.tm.domain.testcase.RequirementVersionCoverage
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.exception.requirement.IllegalRequirementModificationException
 
-class RequirementMappingIT extends HibernateMappingSpecification {
+class RequirementMappingIT extends DbunitMappingSpecification {
 
 
 	def "should persist a new Requirement"(){

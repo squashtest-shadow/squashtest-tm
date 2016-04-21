@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.campaign.*
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
-import org.squashtest.tm.service.DbunitServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler
 import org.unitils.dbunit.annotation.DataSet

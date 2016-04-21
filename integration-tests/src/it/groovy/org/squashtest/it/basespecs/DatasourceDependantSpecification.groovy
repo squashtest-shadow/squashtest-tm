@@ -18,18 +18,19 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.it.infrastructure;
+package org.squashtest.it.basespecs
 
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
+import org.springframework.test.context.ContextConfiguration
+import org.squashtest.it.config.DatasourceSpecConfig
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.Target;
+import spock.lang.Specification
 
+@ContextConfiguration(classes = [DatasourceSpecConfig])
+class DatasourceDependantSpecification extends Specification {
 
-@Deprecated /* now just set your stub as a primary candidate for autowiring */
-@Target(ElementType.TYPE )
-@Retention(RUNTIME)
-public @interface Stub {
-
+	@PersistenceContext
+	EntityManager em;
+	
 }
