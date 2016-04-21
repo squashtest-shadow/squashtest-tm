@@ -25,9 +25,6 @@ package org.squashtest.tm.service.internal.campaign
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem
-import org.squashtest.tm.domain.infolist.InfoList
-import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.infolist.ListItemReference
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.testcase.Dataset
@@ -35,7 +32,6 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.testutils.MockFactory;
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy
 import org.squashtest.tm.service.internal.project.ProjectFilterModificationServiceImpl
@@ -44,8 +40,12 @@ import org.squashtest.tm.service.internal.repository.CampaignTestPlanItemDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao
 import org.squashtest.tm.service.internal.repository.UserDao
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+import org.squashtest.tm.service.testutils.MockFactory
 
 import spock.lang.Specification
+
+import com.google.common.base.Optional
 
 
 class CampaignTestPlanManagerServiceImplTest extends Specification {
@@ -58,6 +58,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 	ProjectFilterModificationServiceImpl projectFilterModificationService = Mock()
 	LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy = Mock()
 	UserDao userDao = Mock()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	MockFactory mockFactory = new MockFactory()
 
@@ -69,6 +70,8 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		service.campaignTestPlanItemDao = itemDao
 		service.testCaseLibraryNodeDao = nodeDao
 		service.userDao = userDao
+		service.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 	}
 
 	def "should find campaign by id"(){
@@ -121,7 +124,6 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		camp.testPlan.size() == 1
 		tc1 == camp.testPlan[0].referencedTestCase
 		null == camp.testPlan[0].referencedDataset
-
 	}
 
 	def "should add a test case three times to a campaign because of it has datasets"() {
@@ -149,8 +151,6 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		camp.testPlan.size() == 3
 		camp.testPlan.collect { it.referencedTestCase }.unique() == [tc1]
 		camp.testPlan.collect { it.referencedDataset.name } as Set == ["like this", "like that", "alternative"] as Set
-
-
 	}
 
 	def "should add a list of test cases to a campaign"() {
@@ -206,9 +206,7 @@ class CampaignTestPlanManagerServiceImplTest extends Specification {
 		folder1.addContent(folder2)
 		folder2.addContent(tc2)
 
-		nodeDao.findAllByIds([1L, 5L]) >> [
-			tc3,
-			folder1] //note that we reversed the order here to test the sorting
+		nodeDao.findAllByIds([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToCampaignTestPlan([1L, 5L], 10)
 

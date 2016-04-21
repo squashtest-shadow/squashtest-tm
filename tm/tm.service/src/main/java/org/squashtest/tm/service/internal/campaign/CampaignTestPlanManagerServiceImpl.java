@@ -30,6 +30,8 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PostAuthorize;
 import org.springframework.security.access.prepost.PostFilter;
@@ -69,8 +71,11 @@ import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
+
+import com.google.common.base.Optional;
 
 @Service("squashtest.tm.service.CampaignTestPlanManagerService")
 @Transactional
@@ -126,6 +131,9 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	@Qualifier("squashtest.tm.service.TestCaseLibrarySelectionStrategy")
 	private LibrarySelectionStrategy<TestCaseLibrary, TestCaseLibraryNode> libraryStrategy;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 
 	public void setObjectIdentityRetrievalStrategy(ObjectIdentityRetrievalStrategy objectIdentityRetrievalStrategy) {
 		this.objIdRetrievalStrategy = objectIdentityRetrievalStrategy;
@@ -179,6 +187,18 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		Collections.sort(nodes, comparator);
 
 		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
+
+		final Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+		CollectionUtils.filter(testCases, new Predicate() {
+
+			@Override
+			public boolean evaluate(Object tc) {
+				return ((TestCase) tc).getAllMilestones().contains(activeMilestone.get());
+			}
+		});
+		}
 
 		Campaign campaign = campaignDao.findById(campaignId);
 

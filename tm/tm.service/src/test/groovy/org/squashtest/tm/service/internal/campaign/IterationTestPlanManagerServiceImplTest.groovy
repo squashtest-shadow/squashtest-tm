@@ -28,16 +28,19 @@ import org.squashtest.tm.domain.testcase.Dataset
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode
-import org.squashtest.tm.service.testutils.MockFactory;
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.internal.repository.DatasetDao
 import org.squashtest.tm.service.internal.repository.IterationDao
 import org.squashtest.tm.service.internal.repository.IterationTestPlanDao
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+import org.squashtest.tm.service.testutils.MockFactory
 
 import spock.lang.Specification
 import spock.lang.Unroll
+
+import com.google.common.base.Optional
 
 public class IterationTestPlanManagerServiceImplTest extends Specification {
 
@@ -52,6 +55,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 	DatasetDao datasetDao = Mock()
 	IndexationService indexationService = Mock()
 	CampaignNodeDeletionHandler deletionHandler = Mock()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup(){
 		service.testCaseLibraryNodeDao = nodeDao
@@ -60,7 +64,8 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		service.datasetDao = datasetDao
 		service.indexationService = indexationService
 		service.deletionHandler = deletionHandler
-
+		service.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 	}
 
 	def "should reccursively add a list of test cases to an iteration" () {
@@ -83,7 +88,6 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		folder2.addContent(tc2)
 
 		nodeDao.findAllByIds([1L, 5L]) >> [tc3, folder1] //note that we reversed the order here to test the sorting
-
 		when: "the test cases are added to the campaign"
 		service.addTestCasesToIteration([1L, 5L], 10)
 
@@ -93,7 +97,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		 the content of collected states that tc3 is positioned last,
 		 collected contains tc1 and tc2 in an undefined order in first position (since the content of a folder is a Set)
 		 */
-		collected[0..1] == [tc1, tc2] || [tc2, tc1]
+		collected[0..1] == [tc1, tc2]|| [tc2, tc1]
 		collected[ 2] == tc3
 	}
 
@@ -149,13 +153,7 @@ public class IterationTestPlanManagerServiceImplTest extends Specification {
 		frag*.referencedDataset.containsAll(datasets)
 
 		where:
-		datasets << [
-			[],
-			[Mock(Dataset)],
-			[
-				Mock(Dataset),
-				Mock(Dataset)]
-		]
+		datasets << [[], [Mock(Dataset)], [Mock(Dataset), Mock(Dataset)]]
 	}
 
 	def MockTC(def id, def name) {
