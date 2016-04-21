@@ -42,13 +42,12 @@ class CampaignMappingIT extends DbunitMappingSpecification {
 
 		when:
 		persistFixture it1, it2, campaign
-		def loadedIters = use (HibernateOperationCategory) {
-			sessionFactory.doInSession {
-				def loadedCamp = it.get(Campaign, campaign.id)
-				Hibernate.initialize(loadedCamp.iterations)
-				return loadedCamp.iterations
-			}
+		def loadedIters = doInTransaction {
+			def loadedCamp = it.get(Campaign, campaign.id)
+			Hibernate.initialize(loadedCamp.iterations)
+			return loadedCamp.iterations
 		}
+		
 
 		then:
 		loadedIters[0].name == "it1"
@@ -59,6 +58,7 @@ class CampaignMappingIT extends DbunitMappingSpecification {
 		deleteFixture it2
 		deleteFixture campaign
 	}
+	
 	def "should not add null iteration top campaign"() {
 		given:
 		Campaign campaign = new Campaign()
@@ -68,33 +68,6 @@ class CampaignMappingIT extends DbunitMappingSpecification {
 		then:
 		thrown NullArgumentException
 	}
-
-	/*def "Should add a test case to a campaign"(){
-	 given :
-	 def tc1 = new TestCase(name: "tc1")
-	 persistFixture tc1
-	 and:
-	 def cpgn1 = new Campaign(name: "cpgn1")
-	 persistFixture cpgn1
-	 when :
-	 doInTransaction{
-	 def tc2 = it.get(TestCase, tc1.id)
-	 Campaign cpgn2 = it.get(Campaign, cpgn1.id)
-	 CampaignTestPlanItem item = new CampaignTestPlanItem(referencedTestCase: tc2)
-	 it.persist item
-	 cpgn2.addToTestPlan(item)
-	 }
-	 Campaign cmpgn = doInTransaction {
-	 Campaign cmpgns = it.get(Campaign, cpgn1.id)
-	 Hibernate.initialize(cmpgns.testPlan)
-	 return cmpgns
-	 }
-	 then :
-	 cmpgn.testPlan.size() == 1
-	 }
-	 */
-
-
 
 
 

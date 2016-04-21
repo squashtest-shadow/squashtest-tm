@@ -20,7 +20,12 @@
  */
 package org.squashtest.tm.domain.testautomation
 
-import org.squashtest.it.basespecs.DbunitMappingSpecification;
+import org.junit.runner.RunWith;
+import org.spockframework.runtime.Sputnik;
+import org.springframework.transaction.annotation.Transactional;
+import org.squashtest.it.basespecs.DbunitMappingSpecification
+
+import spock.unitils.UnitilsSupport;;
 
 class AutomatedTestServerMappingIT extends DbunitMappingSpecification {
 

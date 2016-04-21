@@ -36,12 +36,14 @@ class TeamMappingIT extends DbunitMappingSpecification {
 
 		when:
 		persistFixture team
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession { it.get(Team, team.id) }
-		}
+		def res = doInTransaction { it.get(Team, team.id) }
+		
 
 		then:
 		res != null
+		
+		cleanup :
+		deleteFixture(team)
 
 	}
 

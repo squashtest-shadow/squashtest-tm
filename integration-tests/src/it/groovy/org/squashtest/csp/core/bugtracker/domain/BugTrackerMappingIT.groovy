@@ -27,19 +27,22 @@ import org.squashtest.it.basespecs.DbunitMappingSpecification;
  * @author Gregory Fouquet
  *
  */
-@Transactional
 class BugTrackerMappingIT extends DbunitMappingSpecification {
 	def "[Issue 3928] should persist a bugtracker"() {
 		given:
 		BugTracker bt = new BugTracker(url: "http://foo/bar", name: "foo", kind: "bar")
 
 		when:
-		currentSession.persist(bt)
-		currentSession.flush()
-		currentSession.evict(bt)
+		persistFixture bt
+		
+		BugTracker bt2 = doInTransaction{session -> session.get(BugTracker, bt.id)}
 
 		then:
-		currentSession.get(BugTracker, bt.id) != null
+		bt2 != null
+		bt2.name == "foo"
+		
+		cleanup :
+		deleteFixture bt
 	}
 
 }

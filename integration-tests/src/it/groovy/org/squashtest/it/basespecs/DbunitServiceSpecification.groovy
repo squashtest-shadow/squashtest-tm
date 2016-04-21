@@ -30,6 +30,7 @@ import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.tm.service.BugTrackerConfig
@@ -41,6 +42,7 @@ import org.squashtest.tm.service.TmServiceConfig
  * Subclasses should be annotated @UnitilsSupport
  */
 @ContextConfiguration(classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
+@Transactional
 @Rollback
 abstract class DbunitServiceSpecification extends DatasourceDependantSpecification{
 
@@ -49,7 +51,7 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
      */
 	@Deprecated
 	protected Session getSession() {
-		return entityManager.unwrap(Session.class)
+		return em.unwrap(Session.class)
 	}
 
 	/*-------------------------------------------Private stuff-----------------------------------*/
@@ -64,7 +66,7 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 	}
 
 	protected Integer countAll(String className) {
-		entityManager.createQuery("select count(entity) from " + className + " entity")
+		getSession().createQuery("select count(entity) from " + className + " entity")
 			.singleResult
 	}
 
@@ -81,7 +83,7 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 	}
 
 	protected boolean allDeleted(String className, List<Long> ids) {
-		def result = entityManager.createQuery("from " + className + " where id in (:ids)")
+		def result = getSession().createQuery("from " + className + " where id in (:ids)")
 			.setParameter("ids", ids)
 			.resultList*.id
 

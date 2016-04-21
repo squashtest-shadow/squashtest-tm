@@ -54,9 +54,8 @@ class IterationMappingIT extends DbunitMappingSpecification {
 		persistFixture iteration
 
 		when:
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession { it.get(Iteration, iteration.id) }
-		}
+		def res = doInTransaction{ it.get(Iteration, iteration.id) }
+
 
 		then:
 		res.actualStartDate != null
@@ -74,11 +73,10 @@ class IterationMappingIT extends DbunitMappingSpecification {
 		persistFixture iteration
 
 		when:
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession {
+		def res = doInTransaction {
 				it.get(Iteration, iteration.id)
 			}
-		}
+		
 
 		then:
 		res.scheduledPeriod != null

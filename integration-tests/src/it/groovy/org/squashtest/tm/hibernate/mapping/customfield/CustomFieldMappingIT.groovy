@@ -79,13 +79,12 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		persistFixture cf
 
 		when:
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession {
-				def r = it.get(CustomField, cf.id)
-				r.options.each { it.label }
-				return r
-			}
+		def res = doInTransaction {
+			def r = it.get(CustomField, cf.id)
+			r.options.each { it.label }
+			return r
 		}
+		
 
 		then:
 		res.options*.label == ["leatherpants", "batarang"]
@@ -115,10 +114,9 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 			return res
 		}
 
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession removeOption
-			sessionFactory.doInSession(loadFixture)
-		}
+		doInTransaction removeOption
+		def res = doInTransaction(loadFixture)
+		
 
 		then:
 		res.options*.label == ["leatherpants"]
@@ -148,10 +146,8 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 			return res
 		}
 
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession changeOptionLabel
-			sessionFactory.doInSession loadFixture
-		}
+		doInTransaction changeOptionLabel
+		def res = doInTransaction(loadFixture)
 
 		then:
 		res.options*.label == ["leatherpants", "bataring"]

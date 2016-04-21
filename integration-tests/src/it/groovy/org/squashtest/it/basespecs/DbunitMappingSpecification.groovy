@@ -20,13 +20,21 @@
  */
 package org.squashtest.it.basespecs
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceContext
+import javax.persistence.PersistenceUnit
+import javax.persistence.SynchronizationType;
+import javax.transaction.TransactionManager;
 
 import org.hibernate.Session
+import org.hibernate.SessionFactory;
 import org.hibernate.Transaction
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.config.ServiceSpecConfig;
 
 import spock.lang.Specification
 
@@ -36,14 +44,20 @@ import spock.lang.Specification
 @Rollback
 abstract class DbunitMappingSpecification extends DatasourceDependantSpecification {
 	
+	@PersistenceUnit
+	EntityManagerFactory emf;
+	
 
 	/**
 	 * Runs action closure in a new transaction created from a new session.
 	 * @param action
 	 * @return propagates closure result.
 	 */
+	
 	def final doInTransaction(def action) {
-		Session s = em.unwrap(Session.class)
+
+		EntityManager localEm = emf.createEntityManager();
+		Session s = localEm.unwrap(Session.class);
 		Transaction tx = s.beginTransaction()
 
 		try {
@@ -52,22 +66,23 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 			s.flush()
 			tx.commit()
 			return res
-		} finally {
+		} 
+		finally {
 			s?.close()
 		}
 	}
 
-	def final Session getCurrentSession() {
-		sessionFactory.currentSession
-	}
 	/**
 	 * Persists a fixture in a separate session / transaction
 	 * @param fixture
 	 * @return
 	 */
+	
 	def final persistFixture(Object... fixtures) {
 		doInTransaction { session ->
-			fixtures.each { fixture -> session.persist fixture }
+			fixtures.each { fixture -> 
+				session.persist fixture 
+			}
 		}
 	}
 	/**
@@ -75,9 +90,13 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 	 * @param fixture
 	 * @return
 	 */
+	
 	def final deleteFixture(Object... fixtures) {
 		doInTransaction { session ->
-			fixtures.each { fixture -> session.delete fixture }
+			fixtures.each { fixture -> 				
+				def persistent = session.load(fixture.class, fixture.id)
+				session.delete persistent 
+			}
 		}
 	}
 }

@@ -20,24 +20,29 @@
  */
 package org.squashtest.tm.service.attachment
 
+import javax.inject.Inject
+
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.springframework.core.io.ClassPathResource
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
-import org.squashtest.it.basespecs.HibernateServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService
 import org.squashtest.tm.service.testcase.TestCaseModificationService
+import org.unitils.dbunit.annotation.DataSet;
 
-import javax.inject.Inject
+import spock.unitils.UnitilsSupport
 
+@UnitilsSupport
 @Transactional
-class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
+@DataSet
+class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 
 	@Inject	TestCaseModificationService service
 
@@ -46,30 +51,13 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 	@Inject AttachmentManagerService attachService;
 
 	@Inject GenericProjectManagerService genericProjectManager
-
-	int testCaseId=-1;
+	
+	// IDs : see dataset
 	int folderId = -1;
-	int attachListId = -1;
+	int testCaseId=-2;
+	int attachListId = -3;
 
 
-	def setup(){
-		genericProjectManager.persist(createProject())
-
-		def libList= currentSession.createQuery("from TestCaseLibrary").list()
-
-
-		def lib = libList.get(libList.size()-1);
-
-		def folder =  new TestCaseFolder(name:"folder")
-		def testCase = new TestCase(name: "test case 1", description: "the first test case")
-
-		navService.addFolderToLibrary(lib.id,folder)
-		navService.addTestCaseToFolder (folder.id, testCase, null )
-
-		folderId = folder.id;
-		testCaseId= testCase.id;
-		attachListId = testCase.attachmentList.id;
-	}
 
 	def "should create an AttachmentList along with a TestCase"(){
 		given :
@@ -106,16 +94,16 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 		when :
 		Long id = attachService.addAttachment(attachListId, raw)
-		currentSession.flush()
+		session.flush()
 
-		Attachment attach =  currentSession.load(Attachment, id)
+		Attachment attach =  session.load(Attachment, id)
 
 		then : "attachment correctly created"
 		attach.name == "attachment.jpg"
 		attach.type == "jpg"
 
 		and:
-		currentSession.clear()
+		session.clear()
 		File stored = File.createTempFile("yuno", "storeblobs")
 		OutputStream os = new FileOutputStream(stored)
 
@@ -159,8 +147,8 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 			ids << attachService.addAttachment(attachListId, it)
 		}
 
-		currentSession.flush()
-		currentSession.clear()
+		session.flush()
+		session.clear()
 
 		Set<Attachment> attached = attachService.findAttachments(attachListId)
 
@@ -195,11 +183,11 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 		File source = sourceFile()
 		RawAttachment raw = rawAttachment(source, "image.jpg")
 		Long id = attachService.addAttachment(attachListId, raw)
-		currentSession.flush()
+		session.flush()
 
 		when :
 		attachService.removeAttachmentFromList(attachListId, id)
-		currentSession.flush()
+		session.flush()
 		Set<Attachment> attached = attachService.findAttachments(attachListId)
 
 		then :
@@ -219,7 +207,7 @@ class AttachmentManagerServiceImplIT extends HibernateServiceSpecification {
 
 		when:
 		attachService.addAttachment(attachListId, raw);
-		currentSession.flush()
+		session.flush()
 		TestCase testCase2 = service.findById(testCaseId);
 
 		then:
