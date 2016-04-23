@@ -1,3 +1,4 @@
+
 /**
  *     This file is part of the Squashtest platform.
  *     Copyright (C) 2010 - 2016 Henix, henix.fr
@@ -19,7 +20,9 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.campaign
+import org.unitils.dbunit.annotation.DataSet;
 
+import spock.unitils.UnitilsSupport;
 import javax.inject.Inject
 import javax.validation.ConstraintViolation
 import javax.validation.ConstraintViolationException
@@ -32,11 +35,13 @@ import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.project.Project
 import org.squashtest.tm.exception.DuplicateNameException
-import org.squashtest.it.basespecs.HibernateServiceSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.service.project.GenericProjectManagerService
 
 @Transactional
-class CampaignModificationServiceIT extends HibernateServiceSpecification {
+@UnitilsSupport
+@DataSet
+class CampaignModificationServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private CampaignModificationService service
 
@@ -48,27 +53,11 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 
 	@Inject GenericProjectManagerService projectService;
 
-	private int campId=-1;
-	private int testCaseId=-1;
-	private int folderId = -1;
+	private long campId=-10l;
+	private long folderId = -1l;
+	private long libId = -1l
 
-	def setup(){
-		projectService.persist(createProject())
-
-		def libList= currentSession.createQuery("from CampaignLibrary").list()
-
-
-		def lib = libList.get(libList.size()-1);
-
-		def folder =  new CampaignFolder(name:"folder")
-		def campaign = new Campaign(name: "campaign 1", description: "the first campaign")
-
-		navService.addFolderToLibrary(lib.id,folder)
-		navService.addCampaignToCampaignFolder (folder.id, campaign)
-
-		folderId = folder.id;
-		campId= campaign.id;
-	}
+	
 
 	def "should not accept a rename to empty string"(){
 		given :
@@ -188,10 +177,4 @@ class CampaignModificationServiceIT extends HibernateServiceSpecification {
 	}
 
 
-	def GenericProject createProject(){
-		Project p = new Project();
-		p.name = Double.valueOf(Math.random()).toString();
-		p.description = "eaerazer"
-		return p
-	}
 }

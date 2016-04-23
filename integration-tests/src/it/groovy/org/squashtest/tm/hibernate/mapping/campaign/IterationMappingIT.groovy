@@ -32,8 +32,8 @@ class IterationMappingIT extends DbunitMappingSpecification {
 		persistFixture iteration
 
 		when:
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession { it.get(Iteration, iteration.id) }
+		def res = doInTransaction {
+			it.get(Iteration, iteration.id) 
 		}
 
 		then:

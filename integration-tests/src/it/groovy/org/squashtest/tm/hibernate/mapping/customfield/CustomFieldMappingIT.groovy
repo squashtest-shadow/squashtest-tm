@@ -36,13 +36,13 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		def cf = new CustomField()
 		cf.name = "batman"
 		cf.code="code1"
+		cf.label = cf.name
 		cf.inputType = InputType.PLAIN_TEXT
 
 		when:
 		persistFixture cf
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession { it.get(CustomField, cf.id) }
-		}
+		def res = doInTransaction {it.get(CustomField, cf.id) }
+	
 
 		then:
 		res != null
@@ -55,12 +55,13 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		given:
 		def cf = new SingleSelectField()
 		cf.name = "batman"
+		cf.label = cf.name
+		cf.code="code1"
 
 		when:
 		persistFixture cf
-		def res = use (HibernateOperationCategory) {
-			sessionFactory.doInSession { it.get(CustomField, cf.id) }
-		}
+		def res = doInTransaction  { it.get(CustomField, cf.id) }
+		
 
 		then:
 		res != null
@@ -74,6 +75,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		def cf = new SingleSelectField()
 		cf.name = "batman"
 		cf.code="code1"
+		cf.label = cf.name
 		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
 		cf.addOption(new CustomFieldOption("batarang", "code3"))
 		persistFixture cf
@@ -98,6 +100,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		def cf = new SingleSelectField()
 		cf.name = "batman"
 		cf.code="code1"
+		cf.label = cf.name
 		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
 		cf.addOption(new CustomFieldOption("batarang", "code3"))
 		persistFixture cf
@@ -130,6 +133,7 @@ class CustomFieldMappingIT extends DbunitMappingSpecification {
 		def cf = new SingleSelectField()
 		cf.name="batman"
 		cf.code = "code1"
+		cf.label = cf.name
 		cf.addOption(new CustomFieldOption("leatherpants", "code2"))
 		cf.addOption(new CustomFieldOption("batarang", "code3"))
 		persistFixture cf

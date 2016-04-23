@@ -42,7 +42,7 @@ class HibernateDatasetDaoIT extends DbunitDaoSpecification {
 		given : "a dataset "
 		Dataset dataset = session.get(Dataset.class, -1L)
 		when : 		
-		datasetDao.remove(dataset)
+		datasetDao.delete(dataset)
 		session.flush()
 		then : "expected dataset is verified"
 		notThrown(Exception.class)

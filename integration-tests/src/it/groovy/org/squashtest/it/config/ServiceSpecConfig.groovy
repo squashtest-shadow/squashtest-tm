@@ -38,6 +38,7 @@ import org.squashtest.it.stub.security.StubPermissionEvaluator
 import org.squashtest.it.stub.security.StubPermissionFactory
 import org.squashtest.it.stub.security.StubUserContextService
 import org.squashtest.it.stub.security.StubUserDetailsManager
+import org.squashtest.it.stub.user.StubAverageJoeAccountService;
 import org.squashtest.it.stub.user.StubChefAccountService
 import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
@@ -114,7 +115,7 @@ class ServiceSpecConfig {
 	@Bean(name = "squashtest.tm.service.UserAccountService")
 	@Primary
 	UserAccountService userAccountService() {
-		new StubChefAccountService()
+		new StubAverageJoeAccountService()
 	}
 
 	@Bean

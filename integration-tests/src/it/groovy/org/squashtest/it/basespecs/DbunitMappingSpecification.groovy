@@ -67,6 +67,9 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 			tx.commit()
 			return res
 		} 
+		catch(Throwable wtf){
+			println wtf
+		}
 		finally {
 			s?.close()
 		}
