@@ -82,6 +82,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def result = deletionHandler.deleteNodes([-11L], null)
+		flush()
 
 		then :
 		result.removed*.resid.containsAll([-11L])
@@ -102,6 +103,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def result = deletionHandler.deleteNodes([-1L], null)
+		flush()
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L])
@@ -122,6 +124,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def result = deletionHandler.deleteNodes([-1L], null)
+		flush()
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L])
@@ -139,6 +142,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def result = deletionHandler.deleteNodes([-1L], null)
+		flush()
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L])
@@ -155,6 +159,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def result = deletionHandler.deleteNodes([-11L], null)
+		flush()
 
 		then :
 		result.removed*.resid.containsAll([-11L])
@@ -176,6 +181,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		when :
 		def lib = findEntity(RequirementLibrary.class, -1L)
 		def result = deletionHandler.deleteNodes([-3L], null)
+		flush()
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-3L])
@@ -202,6 +208,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		deletionHandler.deleteNodes([-1L], null)
+		flush()
 
 		then :
 		! found(RequirementFolder.class, -1L)
@@ -241,6 +248,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	def "should delete a requirement in a hierarchy"(){
 		when :
 		deletionHandler.deleteNodes([-15L], null)
+		flush()
 		then :
 		! found(Requirement.class, -15L)
 	}

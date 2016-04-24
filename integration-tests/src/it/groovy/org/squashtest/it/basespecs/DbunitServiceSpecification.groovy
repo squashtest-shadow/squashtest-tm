@@ -53,6 +53,15 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 	protected Session getSession() {
 		return em.unwrap(Session.class)
 	}
+	
+	void flush(){
+		em.flush()
+	}
+	
+	void flushAndClear(){
+		em.flush()
+		em.clear()
+	}
 
 	/*-------------------------------------------Private stuff-----------------------------------*/
 
@@ -67,14 +76,14 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 
 	protected Integer countAll(String className) {
 		getSession().createQuery("select count(entity) from " + className + " entity")
-			.singleResult
+			.uniqueResult
 	}
 
 	protected boolean found(Class<?> entityClass, Object id) {
 		boolean found = false
 
 		try {
-			found = (entityManager.find(entityClass, id) != null)
+			found = (em.find(entityClass, id) != null)
 		} catch (EntityNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false
@@ -84,8 +93,10 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 
 	protected boolean allDeleted(String className, List<Long> ids) {
 		def result = getSession().createQuery("from " + className + " where id in (:ids)")
-			.setParameter("ids", ids)
-			.resultList*.id
+			.setParameterList("ids", ids, LongType.INSTANCE)
+			.list()
+			
+		result = result*.id
 
 		ids.each { assert !result.contains(it) }
 

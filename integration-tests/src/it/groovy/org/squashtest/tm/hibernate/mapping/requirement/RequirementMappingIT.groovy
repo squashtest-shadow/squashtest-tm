@@ -21,6 +21,8 @@
 package org.squashtest.tm.hibernate.mapping.requirement
 
 
+import javax.validation.ConstraintViolationException;
+
 import org.hibernate.JDBCException
 import org.squashtest.csp.core.bugtracker.domain.BugTracker
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
@@ -91,40 +93,8 @@ class RequirementMappingIT extends DbunitMappingSpecification {
 		persistFixture requirement
 
 		then :
-		thrown (JDBCException)
+		thrown (ConstraintViolationException)
 	}
 
-	def "should cascade persist a requirement and a sync extender"(){
-
-		given :
-		BugTracker bt = new BugTracker(name :"by", kind :"something", url : "http://")
-
-		and :
-		def version = new RequirementVersion(name: "req 1", description: "this is a new requirement")
-		Requirement requirement = new Requirement(version)
-		def categ = doInTransaction({it.get(InfoListItem.class, 1l)})
-		requirement.category = categ
-
-		RequirementSyncExtender ext = new RequirementSyncExtender()
-
-		ext.bugtracker = bt
-		requirement.syncExtender = ext
-		ext.requirement = requirement
-
-		when :
-		persistFixture bt
-		persistFixture requirement
-
-
-		then :
-		requirement.id != null
-		ext.id != null
-
-		cleanup :
-		deleteFixture ext
-		deleteFixture bt
-
-
-	}
 
 }

@@ -100,7 +100,7 @@ class RequirementLibraryMappingIT extends DbunitMappingSpecification {
 
 		cleanup:
 		deleteRootContent library
-		deleteFixture folder, p, library
+		deleteFixture folder, p
 
 	}
 

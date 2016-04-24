@@ -24,7 +24,10 @@ package org.squashtest.tm.hibernate.mapping.requirement
 import org.hibernate.Hibernate
 import org.hibernate.Session
 import org.hibernate.exception.GenericJDBCException
-import org.hibernate.exception.ConstraintViolationException
+
+import javax.validation.ConstraintViolationException
+
+import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.project.Project;
@@ -92,72 +95,4 @@ class RequirementFolderMappingIT extends DbunitMappingSpecification {
 
 	}
 
-
-	def "should not retrieve deleted requirements"(){
-		given :
-		RequirementFolder refolder = new RequirementFolder(name: "ref")
-
-		and :
-		def req1 = new Requirement(new RequirementVersion(name: "req1"))
-		def req2 = new Requirement(new RequirementVersion(name: "req2"))
-		def req3 = new Requirement(new RequirementVersion(name: "req3"))
-
-		def defCategory = doInTransaction({
-			it.get(InfoListItem.class, 1l)
-
-		})
-
-		[req1, req2, req3].each{it.category = defCategory}
-
-
-		refolder.addContent req1
-		refolder.addContent req2
-		refolder.addContent req3
-
-		persistFixture refolder
-
-		when :
-
-		def obj
-		def content
-
-
-		//delete 1 requirement
-		doInTransaction {
-			obj = it.get(RequirementFolder, refolder.id)
-			Hibernate.initialize(obj.getContent())
-			content = obj.getContent()
-
-			def truc = it.get(Requirement, req1.id)
-
-
-			obj.removeContent(truc)
-			it.delete truc
-		}
-
-		//refetch the collection
-		def contentNames = doInTransaction {
-
-			obj = it.get(RequirementFolder, refolder.id)
-			obj.content.collect { it.name }
-		}
-
-		then :
-		contentNames.size() == 2
-		contentNames.containsAll(["req2", "req3"])
-
-		cleanup :
-		doInTransaction {
-			Session s ->
-			def folder = s.get(RequirementFolder, refolder.id)
-			folder.content.clear()
-			s.delete(folder)
-			def reqt = s.get(Requirement, req3.id)
-			s.delete(reqt)
-			def reqd = s.get(Requirement, req2.id)
-			s.delete(reqd)
-		}
-
-
-	}
 }

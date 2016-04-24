@@ -52,15 +52,15 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 			
 		and:
 		Paging paging = Mock()
-		paging.getFirstItemIndex() >> 1
-		paging.getPageSize() >> 2
+		paging.getFirstItemIndex() >> 0
+		paging.getPageSize() >> 3
 		
 		when :
 		PagedCollectionHolder paged = service.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
 		
 		then :
-		paged.items.collect { it.id } == [ -12L , -14L]
-		paged.firstItemIndex == 1
+		paged.pagedItems.collect { it.id } == [-13l, -12L , -14L]
+		paged.firstItemIndex == 0
 		paged.totalNumberOfItems == 4
 	}
 

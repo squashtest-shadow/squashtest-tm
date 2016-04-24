@@ -62,8 +62,8 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 		JpaTransactionManager jpaTransactionManager = applicationContext.getBean(JpaTransactionManager.class);
 		jpaTransactionManager.getEntityManagerFactory().unwrap();
 		def result = service.copyNodes([-10L], -2L);
-		entityManager.flush()
-		entityManager.clear()
+		em.flush()
+		em.clear()
 
 		then:
 		CustomReportLibraryNode targetFolderNode = findEntity(CustomReportLibraryNode.class,-2L)

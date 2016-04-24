@@ -64,28 +64,11 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	CustomFieldValueFinderService customFieldValueService
 
 	private Long libId=-1
-	private Long campId=-1
+	private Long campId=-10
 	private Long folderId = -1
 
-	def setup(){
-
-		genericProjectManager.persist(createProject())
-
-		def libList= session.createQuery("from CampaignLibrary").list()
-
-		def lib = libList.get(libList.size()-1)
-
-		def folder =  new CampaignFolder(name:"folder")
-		def campaign = new Campaign(name: "campaign 1", description: "the first campaign")
-
-		navService.addFolderToLibrary(lib.id,folder)
-		navService.addCampaignToCampaignFolder (folder.id, campaign)
-
-		libId=lib.id
-		folderId = folder.id
-		campId= campaign.id
-	}
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should not persist a nameless campaign"(){
 		given :
 		Campaign camp = new Campaign()
@@ -96,7 +79,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 
 		thrown RuntimeException
 	}
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should not persist a nameless iteration"(){
 		given :
 		Campaign camp = new Campaign(name:"cp")
@@ -108,7 +92,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		thrown (RuntimeException)
 	}
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should add folder to library and fetch it back"(){
 		given :
 		def folder = new CampaignFolder( name:"folder 2")
@@ -121,10 +106,11 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		obj.id!=null
 		obj.name == folder.name
 	}
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should not add a folder to library"(){
 		given :
-		def folder = new CampaignFolder(name:"folder")	//same as the one in the setup() clause
+		def folder = new CampaignFolder(name:"a folder")	//same as the one in the dataset
 
 		when :
 		navService.addFolderToLibrary(libId, folder)
@@ -135,7 +121,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	}
 
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should add folder to folder and fetch it back"() {
 		given :
 		def folder = new CampaignFolder( name:"folder 2")
@@ -151,7 +138,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		obj.name == folder.name
 	}
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should find root content of library"() {
 		given :
 		def folder2 = new CampaignFolder(name: "folder 2")
@@ -176,7 +164,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		])
 	}
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should find content of folder"() {
 		given :
 		def folder2 = new CampaignFolder( name:"folder 2")
@@ -200,7 +189,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 			campaign.id
 		])
 	}
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should add campaign to campaign folder and fetch it back"(){
 		given :
 		def campaign = new Campaign(name:"new campaign", description:"test campaign")
@@ -214,10 +204,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		obj.description == "test campaign"
 	}
 
-	def findCampaign(id) {
-		session.load(Campaign, id)
-	}
 
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should not add campaign to campaign folder"(){
 		given :
 		def campaign = new Campaign(name:"campaign 1", description:"test campaign") //same as in the setup() clause
@@ -229,7 +218,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		thrown(DuplicateNameException)
 	}
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "sould add campaign to campaign library and fetch it back"(){
 		given :
 		def campaign = new Campaign(name:"test campaign", description:"test campaign")
@@ -242,7 +232,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		obj.description=="test campaign"
 	}
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should not add campaign to campaign library"(){
 		given :
 		def campaign1 = new Campaign(name:"test campaign 1", description:"test campaign")
@@ -254,7 +245,8 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		thrown(DuplicateNameException)
 	}
 
-
+	
+	@DataSet("CampaignLibraryNavigationServiceIT.xml")
 	def "should find test campaign"() {
 		given :
 		true
@@ -526,12 +518,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		session.flush()
 	}
 
-	def GenericProject createProject(){
-		Project p = new Project()
-		p.name = Double.valueOf(Math.random()).toString()
-		p.description = "eaerazer"
-		return p
-	}
+
 
 	@DataSet("CampaignLibraryNavigationServiceIT.should move to same project at right position.xml")
 	def "should move folder with campaigns to the right position - first"(){
@@ -574,5 +561,9 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		CampaignFolder parentFolder = (CampaignFolder) folderDao.findById(-2L)
 		parentFolder.content*.id.containsAll([-20L, -21L, -1L])
 	}
-
+	
+	
+	def findCampaign(id) {
+		session.load(Campaign, id)
+	}
 }

@@ -27,6 +27,7 @@ import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
+import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.ActionTestStep
@@ -43,20 +44,22 @@ class RequirementVersionCoverageMappingIT extends DbunitMappingSpecification {
 
 
 	def "should add a Requirement Version verified by a TestCase"() {
-		given:
-		TestCase tc = new TestCase(name: "link")
-		persistFixture tc
-
+		
+		given :
+		def someItem = doInTransaction{
+			it.get(InfoListItem, 1l)
+		}
+		
 		and:
-		Requirement r = new Requirement(new RequirementVersion(name: "link"))
-		persistFixture r
-
-		when:
-		doInTransaction({
-			RequirementVersionCoverage rvc = new RequirementVersionCoverage(r.currentVersion,tc)
-			it.persist(rvc)
-			
-		})
+		
+		TestCase tc = new TestCase(name: "link", nature:someItem, type : someItem)
+		Requirement r = new Requirement(new RequirementVersion(name: "link", category:someItem))
+		RequirementVersionCoverage rvc = new RequirementVersionCoverage(r.currentVersion,tc)
+		
+		and :
+		persistFixture r, tc, rvc
+		
+		when :
 		TestCase res = doInTransaction ({
 			it.createQuery("from TestCase tc left join fetch tc.requirementVersionCoverages where tc.id = " + tc.id).uniqueResult()
 		})
@@ -65,6 +68,7 @@ class RequirementVersionCoverageMappingIT extends DbunitMappingSpecification {
 		res.verifiedRequirementVersions.size() == 1
 
 		cleanup:
+		deleteFixture rvc
 		deleteFixture r, tc
 	}
 

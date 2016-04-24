@@ -31,9 +31,12 @@ import javax.transaction.TransactionManager;
 import org.hibernate.Session
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction
+import org.springframework.orm.jpa.EntityManagerFactoryUtils;
+import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Transactional
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.squashtest.it.config.ServiceSpecConfig;
 
 import spock.lang.Specification
@@ -56,8 +59,8 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 	
 	def final doInTransaction(def action) {
 
-		EntityManager localEm = emf.createEntityManager();
-		Session s = localEm.unwrap(Session.class);
+		
+		Session s = createManager()
 		Transaction tx = s.beginTransaction()
 
 		try {
@@ -67,11 +70,13 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 			tx.commit()
 			return res
 		} 
-		catch(Throwable wtf){
-			println wtf
+		catch(Exception wtf){
+			// that catch block is useful so that we can probe a breakpoint in there
+			throw wtf;
 		}
 		finally {
 			s?.close()
+			destroyManager()
 		}
 	}
 
@@ -98,8 +103,27 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 		doInTransaction { session ->
 			fixtures.each { fixture -> 				
 				def persistent = session.load(fixture.class, fixture.id)
-				session.delete persistent 
+				if (persistent != null){
+					session.delete persistent
+				} 
 			}
 		}
+	}
+	
+	
+	// the two methods below create an entity manager and bind them to 
+	// the future transaction, so that other parties (like hibernate search bridges) 
+	// know where to find the correct instance of the entity manager
+	def createManager(){
+		
+		EntityManager localEm = emf.createEntityManager();
+		EntityManagerHolder emHolder = new EntityManagerHolder(localEm);
+		TransactionSynchronizationManager.bindResource(emf, emHolder);
+		return localEm.unwrap(Session.class);
+	}
+	
+	def destroyManager(){
+		EntityManagerHolder emHolder = (EntityManagerHolder) TransactionSynchronizationManager.unbindResource(emf);
+		EntityManagerFactoryUtils.closeEntityManager(emHolder.getEntityManager());
 	}
 }

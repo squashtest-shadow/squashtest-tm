@@ -47,9 +47,9 @@ import javax.inject.Inject
 	private IterationDao iterationDao
 
 	def findTestPlan(testSuite) {
-		entityManager.createQuery("from IterationTestPlanItem it  join it.testSuites ts where ts = :suite")
+		getSession().createQuery("from IterationTestPlanItem it  join it.testSuites ts where ts = :suite")
 			.setParameter("suite", testSuite)
-			.resultList
+			.list()
 	}
 
 	@DataSet("TestSuiteTestPlanManager.should link test plan to test Suite.xml")
