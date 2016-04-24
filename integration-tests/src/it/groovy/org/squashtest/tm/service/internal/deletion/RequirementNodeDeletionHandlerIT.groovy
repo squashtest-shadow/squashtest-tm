@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.deletion
 
 import javax.inject.Inject
 
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -82,18 +83,20 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def result = deletionHandler.deleteNodes([-11L], null)
-		flush()
+		flushAndClear()
 
 		then :
 		result.removed*.resid.containsAll([-11L])
-
+		
+		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
+		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
+		
+		found (Requirement.class, -12L)
+		
 		allDeleted("Requirement", [-11L])
 		allDeleted("RequirementVersion", [-111L, -112L])
 
-		found (Requirement.class, -12L)
 
-		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
-		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
 	}
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
@@ -218,31 +221,6 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 	}
 
-
-	/*
-	 * The following test is disabled because H2 complains of some random imaginary
-	 * FK constraint violation. But works fine on mysql.
-	 *
-	 @DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
-	 def "should do the above on requirement 31, and prevent possible name clashes"(){
-	 setCurrentVersions()
-	 when :
-	 def lib = findEntity(RequirementLibrary.class, -1L)
-	 def result = deletionHandler.deleteNodes([-31L])
-	 then :
-	 // test the report
-	 result.removed.collect{it.resid}.containsAll([-31L])
-	 result.moved.collect{ [it.dest.resid, it.dest.rel] } == [[-3L, "requirement"]]
-	 result.moved.collect{ it.moved.collect {it.resid }} == [[-311L]]
-	 result.renamed.collect{[it.node.resid, it.node.rel]} == [[-311L, "requirement"]]
-	 // test the behavior
-	 allNotDeleted("Requirement", [-311L]);
-	 def req32 = findEntity(Requirement.class, -32L)
-	 def req311 = findEntity(Requirement.class, -311L)
-	 req32.name == "possible nameclash"
-	 req311.name ==~ /possible nameclash-\d.*/
-
-	/*}*/
 
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a requirement in a hierarchy"(){

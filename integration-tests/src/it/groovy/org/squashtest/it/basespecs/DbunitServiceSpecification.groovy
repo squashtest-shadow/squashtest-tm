@@ -55,7 +55,11 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 	}
 	
 	void flush(){
-		em.flush()
+		session.flush()
+	}
+	
+	void commit(){
+		session.transaction.commit()
 	}
 	
 	void flushAndClear(){

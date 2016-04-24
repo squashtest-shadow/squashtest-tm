@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import javax.inject.Inject
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.transaction.annotation.Transactional
 import org.hibernate.Query
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
@@ -32,6 +34,7 @@ import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.assertions.ListAssertions
 import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet
+
 import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
@@ -54,32 +57,25 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 		count == 2
 	}
 
-	@DataSet("HibernateTestCaseDaoIT.should count versions of requirement.xml")
-	def "should count versions of requirement"() {
-		expect:
-		versionDao.countByRequirement(-1) == 2
-	}
+
 
 	@DataSet("HibernateTestCaseDaoIT.should count versions of requirement.xml")
 	def "should find versions of requirement"() {
 		given:
-		PagingAndSorting paging = Mock()
-		paging.firstItemIndex >> 1
-		paging.pageSize >> 1
-		paging.sortedAttribute >> "RequirementVersion.versionNumber"
-		paging.sortOrder >> SortOrder.ASCENDING
+		
+		PageRequest pr = new PageRequest(1, 1, Direction.ASC, "versionNumber")
 
 		when:
-		def res = versionDao.findAllByRequirement(-1, paging)
+		def res = versionDao.findAllByRequirementId(-1l, pr)
 
 		then:
-		res*.id == [-20L]
+		res.content*.id == [-20L]
 	}
 
 	@DataSet("HibernateRequirementVersionDaoIT.should find all requirements versions by id.xml")
 	def "should find all requirements versions by id"() {
 		when:
-		def res = versionDao.findAllByIds([-10L, -20L])
+		def res = versionDao.findAll([-10L, -20L])
 
 		then:
 		res.containsExactlyIds([-10L, -20L])

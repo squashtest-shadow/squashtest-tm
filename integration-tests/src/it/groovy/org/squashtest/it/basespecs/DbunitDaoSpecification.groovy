@@ -26,7 +26,9 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.config.RepositorySpecConfig;
 import org.squashtest.tm.service.RepositoryConfig
+
 import spock.lang.Specification
 
 /**
@@ -35,6 +37,7 @@ import spock.lang.Specification
  */
 @Transactional
 @Rollback
+@ContextConfiguration(classes =[RepositorySpecConfig])
 abstract class DbunitDaoSpecification extends DatasourceDependantSpecification {
 
 

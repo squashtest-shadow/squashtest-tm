@@ -148,7 +148,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 	def "should find 5 paged executions for test case 500"() {
 		given:
 		PagingAndSorting pas = Mock()
-		pas.firstItemIndex >> 1
+		pas.firstItemIndex >> 0
 		pas.pageSize >> 5
 		pas.sortedAttribute >> "Execution.lastExecutedOn"
 		pas.sortOrder >> SortOrder.ASCENDING

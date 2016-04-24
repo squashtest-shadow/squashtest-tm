@@ -125,9 +125,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	}
 
 
-	def commit(){
-		getSession().getTransaction().commit()
-	}
 
 
 

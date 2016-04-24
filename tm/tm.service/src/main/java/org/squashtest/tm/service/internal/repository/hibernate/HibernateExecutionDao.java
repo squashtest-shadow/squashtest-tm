@@ -336,12 +336,13 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Execution> findAllByTestCaseId(long testCaseId, PagingAndSorting pas) {
-		Criteria crit = currentSession().createCriteria(Execution.class, EXECUTION);
-		crit.createAlias("testPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("referencedTestCase", TEST_CASE, JoinType.LEFT_OUTER_JOIN);
-		crit.createAlias("testPlan.testSuites", TEST_SUITE, JoinType.LEFT_OUTER_JOIN);
+		Criteria crit = currentSession().createCriteria(Execution.class, EXECUTION)
+		.createAlias("Execution.testPlan", TEST_PLAN, JoinType.LEFT_OUTER_JOIN)
+		.createAlias("TestPlan.iteration", ITERATION, JoinType.LEFT_OUTER_JOIN)
+		.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.LEFT_OUTER_JOIN)
+		.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.LEFT_OUTER_JOIN)
+		.createAlias("Execution.referencedTestCase", TEST_CASE, JoinType.LEFT_OUTER_JOIN)
+		.createAlias("TestPlan.testSuites", TEST_SUITE, JoinType.LEFT_OUTER_JOIN);
 
 		crit.add(Restrictions.eq("TestCase.id", testCaseId));
 
