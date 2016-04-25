@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
+import java.util.List;
+
 import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
 import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
@@ -28,13 +31,8 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
-
-import java.util.Collection;
-import java.util.List;
 
 public interface CampaignDao extends EntityDao<Campaign> {
 
@@ -56,7 +54,6 @@ public interface CampaignDao extends EntityDao<Campaign> {
 
 	List<Long> findAllIdsByMilestone(Long milestoneId);
 
-	List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone);
 
 	Campaign findByIdWithInitializedIterations(long campaignId);
 

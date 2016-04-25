@@ -20,6 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -39,9 +48,9 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.audit.RequirementAuditTrailService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.audittrail.RequirementAuditEventTableModelBuilder;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -50,14 +59,15 @@ import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurat
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.JsonInfoListBuilder;
-import org.squashtest.tm.web.internal.model.datatable.*;
+import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
+import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
+import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.*;
-
+import com.google.common.base.Optional;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}/versions")
@@ -92,6 +102,9 @@ public class RequirementVersionManagerController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 
 	private final DatatableMapper<String> versionMapper = new NameBasedMapper()
 	.map("version-number", "versionNumber")
@@ -106,13 +119,14 @@ public class RequirementVersionManagerController {
 
 	@RequestMapping(value = "/new", method = RequestMethod.POST)
 	@ResponseBody
-	public void createNewVersion(@PathVariable long requirementId, @CurrentMilestone Milestone activeMilestone) {
+	public void createNewVersion(@PathVariable long requirementId) {
 
-		if (activeMilestone == null){
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
 			versionService.createNewVersion(requirementId);
 		}else{
 			ArrayList<Long> milestoneIds = new ArrayList<>();
-			milestoneIds.add(activeMilestone.getId());
+			milestoneIds.add(activeMilestone.get().getId());
 			versionService.createNewVersion(requirementId, milestoneIds);
 		}
 	}
@@ -121,8 +135,7 @@ public class RequirementVersionManagerController {
 
 
 	@RequestMapping(value = "/manager")
-	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale,
-			@CurrentMilestone Milestone activeMilestone) {
+	public String showRequirementVersionsManager(@PathVariable long requirementId, Model model, Locale locale) {
 
 		Requirement req = versionService.findRequirementById(requirementId);
 
@@ -131,7 +144,7 @@ public class RequirementVersionManagerController {
 		DataTableModel tableModel = new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
 				"0");
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, req.getCurrentVersion());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(req.getCurrentVersion());
 
 		model.addAttribute("requirement", req);
 		model.addAttribute("versions", req.getUnmodifiableVersions());

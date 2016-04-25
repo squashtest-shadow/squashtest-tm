@@ -65,7 +65,6 @@ import org.squashtest.tm.service.annotation.PreventConcurrents;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportSummary;
-import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchexport.TestCaseExcelExporterService;
 import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
 import org.squashtest.tm.service.internal.importer.TestCaseImporter;
@@ -85,11 +84,14 @@ import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoer
 import org.squashtest.tm.service.internal.testcase.coercers.TCLNAndParentIdsCoercerForList;
 import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForArray;
 import org.squashtest.tm.service.internal.testcase.coercers.TestCaseLibraryIdsCoercerForList;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseStatisticsService;
+
+import com.google.common.base.Optional;
 
 @Service("squashtest.tm.service.TestCaseLibraryNavigationService")
 @Transactional
@@ -150,11 +152,12 @@ public class TestCaseLibraryNavigationServiceImpl
 	@Inject
 	private PathService pathService;
 
-	@Inject
-	private InfoListItemFinderService infoListItemService;
 
 	@Inject
 	private MilestoneMembershipManager milestoneService;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Override
 	protected NodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> getDeletionHandler() {
@@ -512,22 +515,16 @@ public class TestCaseLibraryNavigationServiceImpl
 
 	}
 
+
+
 	@Override
 	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds) {
 
 		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
 
-		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
-	}
-
-	@Override
-	public TestCaseStatisticsBundle getStatisticsForSelection(Collection<Long> libraryIds, Collection<Long> nodeIds,
-															  Milestone activeMilestone) {
-
-		Collection<Long> tcIds = findTestCaseIdsFromSelection(libraryIds, nodeIds);
-
-		if (activeMilestone != null) {
-			tcIds = filterTcIdsListsByMilestone(tcIds, activeMilestone);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			tcIds = filterTcIdsListsByMilestone(tcIds, activeMilestone.get());
 		}
 
 		return statisticsService.gatherTestCaseStatisticsBundle(tcIds);
@@ -808,8 +805,8 @@ public class TestCaseLibraryNavigationServiceImpl
 	@PreventConcurrents(batchsLocks = {
 		@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName = TARGET_IDS, coercer = TCLNAndParentIdsCoercerForList.class),
 		@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName = TARGET_IDS, coercer = TestCaseLibraryIdsCoercerForList.class)})
-	public OperationReport deleteNodes(@Ids(TARGET_IDS) List<Long> targetIds, Long milestoneId) {
-		return super.deleteNodes(targetIds, milestoneId);
+	public OperationReport deleteNodes(@Ids(TARGET_IDS) List<Long> targetIds) {
+		return super.deleteNodes(targetIds);
 	}
 
 }

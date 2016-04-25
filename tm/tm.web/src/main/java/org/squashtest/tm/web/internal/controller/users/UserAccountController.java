@@ -29,7 +29,6 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.validation.Valid;
 
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -42,12 +41,14 @@ import org.squashtest.tm.api.security.authentication.AuthenticationProviderFeatu
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.ProjectPermission;
 import org.squashtest.tm.domain.users.User;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionFinder;
 import org.squashtest.tm.service.user.UserAccountService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.security.authentication.AuthenticationProviderContext;
+
+import com.google.common.base.Optional;
 
 
 @Controller
@@ -58,6 +59,9 @@ public class UserAccountController {
 
 	@Inject
 	private MilestoneManagerService milestoneManager;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	private ProjectsPermissionFinder permissionFinder;
 
@@ -74,7 +78,7 @@ public class UserAccountController {
 	}
 
 	@RequestMapping(method=RequestMethod.GET)
-	public ModelAndView getUserAccountDetails(@CurrentMilestone Milestone activeMilestone){
+	public ModelAndView getUserAccountDetails() {
 		User user = userService.findCurrentUser();
 
 		List<Milestone> milestoneList = milestoneManager.findAllVisibleToCurrentUser();
@@ -89,16 +93,14 @@ public class UserAccountController {
 		mav.addObject("projectPermissions", projectPermissions);
 
 		// also, active milestone
-
-		if (activeMilestone != null){
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
 			JsonMilestone jsMilestone =
 					new JsonMilestone(
-							activeMilestone.getId(),
-							activeMilestone.getLabel(),
-							activeMilestone.getStatus(),
-							activeMilestone.getRange(),
-							activeMilestone.getEndDate(),
-							activeMilestone.getOwner().getLogin()
+activeMilestone.get().getId(),
+					activeMilestone.get().getLabel(), activeMilestone.get().getStatus(),
+					activeMilestone.get().getRange(), activeMilestone.get().getEndDate(),
+					activeMilestone.get().getOwner().getLogin()
 							);
 			mav.addObject("activeMilestone", jsMilestone);
 		}

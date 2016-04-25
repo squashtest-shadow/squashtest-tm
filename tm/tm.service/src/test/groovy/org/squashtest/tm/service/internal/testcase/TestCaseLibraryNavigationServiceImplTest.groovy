@@ -48,8 +48,6 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 	ProjectDao projectDao = Mock()
 	TestCaseLibraryNodeDao nodeDao = Mock()
 	PermissionEvaluationService permissionService = Mock()
-	InfoListItemFinderService infoListItemService = Mock()
-
 
 	def setup() {
 		service.testCaseLibraryDao = testCaseLibraryDao
@@ -57,7 +55,7 @@ class TestCaseLibraryNavigationServiceImplTest extends Specification {
 		service.testCaseDao = testCaseDao
 		service.projectDao = projectDao
 		service.testCaseLibraryNodeDao = nodeDao
-		service.infoListItemService = infoListItemService
+
 
 		use (ReflectionCategory) {
 			AbstractLibraryNavigationService.set(field: "permissionService", of: service, to: permissionService)

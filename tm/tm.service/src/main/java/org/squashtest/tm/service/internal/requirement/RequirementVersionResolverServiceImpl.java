@@ -38,11 +38,13 @@ public class RequirementVersionResolverServiceImpl implements RequirementVersion
 	@Inject
 	private RequirementVersionDao versionDao;
 
+
+
 	@Override
 	@Transactional(readOnly = true)
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')" + OR_HAS_ROLE_ADMIN)
-	public RequirementVersion resolveByRequirementId(long requirementId, Long milestoneId) {
-		return versionDao.findByRequirementIdAndMilestone(requirementId, milestoneId);
+	public RequirementVersion resolveByRequirementId(long requirementId) {
+		return versionDao.findByRequirementIdAndMilestone(requirementId);
 	}
 
 }

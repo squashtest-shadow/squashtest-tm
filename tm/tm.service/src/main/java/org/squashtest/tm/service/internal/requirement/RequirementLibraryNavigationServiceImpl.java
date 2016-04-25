@@ -948,8 +948,8 @@ public class RequirementLibraryNavigationServiceImpl extends
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName="targetIds", coercer=RLNAndParentIdsCoercerForList.class),
 					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName="targetIds", coercer=RequirementLibraryIdsCoercerForList.class)}
 			)
-	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId) {
-		return super.deleteNodes(targetIds, milestoneId);
+	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds) {
+		return super.deleteNodes(targetIds);
 	}
 
 

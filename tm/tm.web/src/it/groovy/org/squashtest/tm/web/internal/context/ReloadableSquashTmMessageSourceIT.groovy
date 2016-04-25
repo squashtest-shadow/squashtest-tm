@@ -36,12 +36,12 @@ import spock.lang.Unroll
 class ReloadableSquashTmMessageSourceIT extends Specification {
 	@Inject
 	MessageSource messageSource
-	
+
 	@Unroll
 	def "message with key #key should resolve to #message"() {
 		expect:
 		message == messageSource.getMessage(key, null, Locale.default)
-		
+
 		where:
 		key 			| message
 		"whizz.label"	| "whizz"

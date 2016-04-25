@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.customreport;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -31,18 +35,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.customreport.CustomReportDashboard;
 import org.squashtest.tm.domain.customreport.CustomReportFolder;
 import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.domain.tree.TreeLibraryNode;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
 import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.builder.CustomReportListTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
@@ -107,21 +115,18 @@ public class CustomReportNavigationController {
 	//-------------- SHOW-NODE-CHILDREN METHODS ---------------
 
 	@RequestMapping(value = "/drives/{nodeId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId,
-			@CurrentMilestone Milestone activeMilestone) {
-		return getNodeContent(nodeId, activeMilestone);
+	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId) {
+		return getNodeContent(nodeId);
 	}
 
 	@RequestMapping(value = "/folders/{nodeId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId,
-			@CurrentMilestone Milestone activeMilestone) {
-		return getNodeContent(nodeId, activeMilestone);
+	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId) {
+		return getNodeContent(nodeId);
 	}
 
 	@RequestMapping(value = "/dashboard/{nodeId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId,
-			@CurrentMilestone Milestone activeMilestone) {
-		return getNodeContent(nodeId, activeMilestone);
+	public @ResponseBody List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId) {
+		return getNodeContent(nodeId);
 	}
 
 	//-------------- COPY-NODES ------------------------------
@@ -174,7 +179,7 @@ public class CustomReportNavigationController {
 	 */
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CurrentMilestone Milestone activeMilestone, Locale locale) {
+			Locale locale) {
 		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything
 	}
 
@@ -182,8 +187,7 @@ public class CustomReportNavigationController {
 
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
 	public @ResponseBody OperationReport confirmNodeDeletion(
-			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CurrentMilestone Milestone activeMilestone) {
+@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
 		return customReportLibraryNodeService.delete(nodeIds);
 	}
@@ -195,8 +199,7 @@ public class CustomReportNavigationController {
 		return builderProvider.get().build(newNode);
 	}
 
-	private List<JsTreeNode> getNodeContent( long folderId,
-			@CurrentMilestone Milestone activeMilestone) {
+	private List<JsTreeNode> getNodeContent(long folderId) {
 		List<TreeLibraryNode> children = workspaceService.findContent(folderId);
 		return listBuilder.build(children);
 	}

@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Controller;
@@ -32,17 +34,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.campaign.CampaignModificationService;
 import org.squashtest.tm.service.library.FolderModificationService;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.FolderModificationController;
 import org.squashtest.tm.web.internal.http.ContentTypes;
-
-import javax.inject.Inject;
-import javax.inject.Named;
 
 @Controller
 @RequestMapping("/campaign-folders/{"+RequestParams.FOLDER_ID+"}")
@@ -102,22 +99,20 @@ public class CampaignFolderModificationController extends FolderModificationCont
 	// URL should have been /statistics, but that was already used by another method in this controller
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
-	ManyCampaignStatisticsBundle getStatisticsAsJson(@PathVariable(RequestParams.FOLDER_ID) long folderId, @CurrentMilestone Milestone activeMilestone) {
-		Long milestoneId = (activeMilestone != null) ? activeMilestone.getId() : null;
-		return campaignModificationService.gatherFolderStatisticsBundle(folderId, milestoneId);
+ ManyCampaignStatisticsBundle getStatisticsAsJson(
+			@PathVariable(RequestParams.FOLDER_ID) long folderId) {
+		return campaignModificationService.gatherFolderStatisticsBundle(folderId);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
 	public ModelAndView getDashboard(
 			Model model,
 			@PathVariable(RequestParams.FOLDER_ID) long folderId,
-			@CurrentMilestone Milestone activeMilestone,
 			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
 
 		CampaignFolder folder= folderModificationService.findFolder(folderId);
 
-		Long milestoneId = (activeMilestone != null) ? activeMilestone.getId() : null;
-		ManyCampaignStatisticsBundle bundle = campaignModificationService.gatherFolderStatisticsBundle(folderId, milestoneId);
+		ManyCampaignStatisticsBundle bundle = campaignModificationService.gatherFolderStatisticsBundle(folderId);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-folder-dashboard");
 		mav.addObject("folder", folder);

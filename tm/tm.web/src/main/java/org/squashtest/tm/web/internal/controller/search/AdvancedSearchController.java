@@ -75,7 +75,6 @@ import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.campaign.CampaignAdvancedSearchService;
-import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
@@ -83,6 +82,8 @@ import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+import org.squashtest.tm.service.milestone.MilestoneMembershipFinder;
 import org.squashtest.tm.service.project.CustomProjectFinder;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchService;
@@ -93,7 +94,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.administration.MilestoneDataTableModelHelper;
@@ -114,6 +114,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
 
 @Controller
 @RequestMapping("/advanced-search")
@@ -158,8 +159,6 @@ public class AdvancedSearchController {
 	@Inject
 	private CustomProjectFinder customProjectFinder;
 
-	@Inject
-	private CampaignLibraryNavigationService campaignLibraryNavigationService;
 
 
 	@Inject
@@ -171,6 +170,9 @@ public class AdvancedSearchController {
 
 	@Inject
 	private FeatureManager featureManager;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	private Map<String, FormModelBuilder> formModelBuilder = new HashMap<>();
 
@@ -262,6 +264,9 @@ public class AdvancedSearchController {
 	@Inject
 	private WorkspaceService<CampaignLibrary> workspaceService;
 
+	@Inject
+	private MilestoneMembershipFinder milestoneMembershipFinder;
+
 	// These are used by Lucene - Thus the columns are mapped to index
 	// properties rather than class properties
 	private DatatableMapper<String> testCaseSearchResultMapper = new NameBasedMapper(15)
@@ -321,9 +326,7 @@ public class AdvancedSearchController {
 			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam(required = false, defaultValue = "") String associateResultWithType,
-			@RequestParam(required = false, defaultValue = "") Long id,
-			Locale locale,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(required = false, defaultValue = "") Long id, Locale locale) {
 
 		// Wow, so much params.
 		// workspace-prefs could be useless
@@ -331,9 +334,10 @@ public class AdvancedSearchController {
 		// workspace to be put in the search tree
 		// Abracajava ! You get the value, you put it in the mixer, nodesToOpen or selectedNode, some go to
 		// expansionCandidates then to the rootNodes
-
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_DOMAIN, searchDomain);
+
 		if (TESTCASE_VIA_REQUIREMENT.equals(searchDomain)) {
 			searchDomain = REQUIREMENT;
 		}
@@ -347,28 +351,36 @@ public class AdvancedSearchController {
 			MultiMap expansionCandidates = mapIdsByType(cookieValueOpen);
 
 			DriveNodeBuilder<CampaignLibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
-			if (activeMilestone != null) {
-				nodeBuilder.filterByMilestone(activeMilestone);
+
+			boolean isCampaignAvailable = true;
+
+			if (activeMilestone.isPresent()) {
+				Milestone milestone = activeMilestone.get();
+				nodeBuilder.filterByMilestone(milestone);
+
+				List<Project> projectList = customProjectFinder.findAllReadable();
+				
+				List<Long> projectIds = new ArrayList<>();
+
+				for (Project project : projectList) {
+					projectIds.add(project.getId());
+				}
+
+				isCampaignAvailable = milestoneMembershipFinder.isMilestoneBoundToACampainInProjects(milestone.getId(),
+						projectIds);
+
 			}
 
 			List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<CampaignLibrary>(nodeBuilder).expand(expansionCandidates)
 					.setModel(libraries).build();
 			model.addAttribute("rootModel", rootNodes);
-			Collection<Project> numberOfCampaignsAvailable = customProjectFinder.findAllReadable();
-
-			List<Project> projectList = new ArrayList<>();
-			for (Project project : numberOfCampaignsAvailable) {
-				projectList.add(project);
-			}
-
-			boolean isCampaignAvailable = campaignTestPlanManagerService.findCampaignByProjectId(projectList,
-					activeMilestone);
+			
 			model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 		}
 
 		FormModelBuilder builder = formModelBuilder.get(searchDomain);
 		if (builder != null) {
-			model.addAttribute("formModel", builder.build(locale, (activeMilestone != null)));
+			model.addAttribute("formModel", builder.build(locale, activeMilestone.isPresent()));
 		} else {
 			LOGGER.error(
 					"Could not find a FormModelBuilder for search domain : {}. This is either caused by a bug or a hand-written request",
@@ -391,8 +403,8 @@ public class AdvancedSearchController {
 		return JsTreeHelper.mapIdsByType(openedNodes);
 	}
 
-	private void initModelForPage(Model model, String associateResultWithType, Long id, Milestone activeMilestone) {
-		model.addAttribute("isMilestoneMode", (activeMilestone != null));
+	private void initModelForPage(Model model, String associateResultWithType, Long id) {
+		model.addAttribute("isMilestoneMode", activeMilestoneHolder.getActiveMilestone().isPresent());
 		if (StringUtils.isNotBlank(associateResultWithType)) {
 			model.addAttribute("associateResult", true);
 			model.addAttribute("associateResultWithType", associateResultWithType);
@@ -408,20 +420,17 @@ public class AdvancedSearchController {
 			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
 			@CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
-			@RequestParam(required = false) Long id, Locale locale,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(required = false) Long id, Locale locale) {
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		return showSearchPage(model, searchDomain, cookieValueSelect, cookieValueOpen, elementId,
-				associateResultWithType, id, locale,
-				activeMilestone);
+				associateResultWithType, id, locale);
 	}
 
 	@RequestMapping(value = RESULTS, params = TESTCASE)
 	public String getTestCaseSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE);
 
@@ -432,10 +441,9 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = RESULTS, params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, REQUIREMENT);
 
@@ -446,10 +454,9 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, CAMPAIGN);
 
@@ -461,10 +468,9 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = RESULTS, params = TESTCASE_VIA_REQUIREMENT)
 	public String getTestCaseThroughRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
-		initModelForPage(model, associateResultWithType, id, activeMilestone);
+		initModelForPage(model, associateResultWithType, id);
 		model.addAttribute(SEARCH_MODEL, searchModel);
 		model.addAttribute(SEARCH_DOMAIN, TESTCASE_VIA_REQUIREMENT);
 
@@ -488,15 +494,13 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseThroughRequirementTableModel(final DataTableDrawParameters params,
 			final Locale locale, @RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone)
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 					throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
-		if (activeMilestone != null && featureManager.isEnabled(Feature.MILESTONE) ) {
-			addMilestoneToSearchModel(searchModel, activeMilestone);
-		}
+
+		addMilestoneToSearchModel(searchModel);
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
@@ -520,14 +524,13 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getTestCaseTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone)
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 					throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-		if (activeMilestone != null) {
-			addMilestoneToSearchModel(searchModel, activeMilestone);
-		}
+
+		addMilestoneToSearchModel(searchModel);
+
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, testCaseSearchResultMapper);
 
 		PagedCollectionHolder<List<TestCase>> holder = testCaseAdvancedSearchService.searchForTestCases(searchModel,
@@ -550,15 +553,13 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getRequirementTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone)
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
 					throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
 
-		if (activeMilestone != null) {
-			addMilestoneToSearchModel(searchModel, activeMilestone);
-		}
+
+		addMilestoneToSearchModel(searchModel);
 
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, requirementSearchResultMapper);
 
@@ -584,13 +585,13 @@ public class AdvancedSearchController {
 	@ResponseBody
 	public DataTableModel getCampaignTableModel(final DataTableDrawParameters params, final Locale locale,
 			@RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id,
-			@CurrentMilestone Milestone activeMilestone) throws IOException {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
+					throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
-		if (activeMilestone != null) {
-			addMilestoneToSearchModel(searchModel, activeMilestone);
-		}
+
+		addMilestoneToSearchModel(searchModel);
+
 		PagingAndMultiSorting paging = new DataTableMultiSorting(params, campaignSearchResultMapper);
 
 		PagedCollectionHolder<List<IterationTestPlanItem>> holder = campaignAdvancedSearchService
@@ -605,14 +606,19 @@ public class AdvancedSearchController {
 	 *
 	 */
 
-	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel, Milestone activeMilestone) {
+	private void addMilestoneToSearchModel(AdvancedSearchModel searchModel) {
 		// yes this is a list field for only one value ! But this allow us to handle milestone mode same as reference
 		// mode
-		AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
-		List<String> milestones = new ArrayList<>();
-		milestones.add(activeMilestone.getId().toString());
-		model.setValues(milestones);
-		searchModel.addField("milestones.id", model);
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+			AdvancedSearchListFieldModel model = new AdvancedSearchListFieldModel();
+			List<String> milestones = new ArrayList<>();
+			milestones.add(activeMilestone.get().getId().toString());
+			model.setValues(milestones);
+			searchModel.addField("milestones.id", model);
+		}
 	}
 
 	private Set<Long> getIdsOfRequirementsAssociatedWithObjects(String associateResultWithType, Long id) {

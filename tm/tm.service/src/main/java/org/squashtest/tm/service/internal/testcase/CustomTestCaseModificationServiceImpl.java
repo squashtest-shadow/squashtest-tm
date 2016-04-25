@@ -85,12 +85,15 @@ import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testautomation.UnsecuredAutomatedTestManagerService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.testautomation.model.TestAutomationProjectContent;
 import org.squashtest.tm.service.testcase.CustomTestCaseModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
+import com.google.common.base.Optional;
 
 /**
  * @author Gregory Fouquet
@@ -144,6 +147,9 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Inject
 	private TestCaseLibraryNavigationService libraryService;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 
 	/* *************** TestCase section ***************************** */
@@ -583,12 +589,13 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 	@Override
 	// TODO : secure this
-	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, Milestone activeMilestone){
+	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData) {
 
 		List<Long> milestoneIds =  new ArrayList<>();
 
-		if (activeMilestone  != null){
-			milestoneIds.add(activeMilestone.getId());
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			milestoneIds.add(activeMilestone.get().getId());
 		}
 
 

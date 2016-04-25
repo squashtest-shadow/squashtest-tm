@@ -173,16 +173,15 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 
 
 	/**
-	 * Will create a new version of a test case and insert it next to it.
-	 * It's basically a cheap copy where the test steps, attachments, parameters and custom fields are the only elements
-	 * duplicated, and some other properties are overriden by the content of newTestCase. The verified requirements are left out.
+	 * Will create a new version of a test case and insert it next to it. It's basically a cheap copy where the test
+	 * steps, attachments, parameters and custom fields are the only elements duplicated, and some other properties are
+	 * overriden by the content of newTestCase. The verified requirements are left out.
 	 * 
 	 * @return the newly created test case version
 	 * @param originalTcId
 	 * @param newVersionData
-	 * @param activeMilestone
 	 */
-	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData, Milestone activeMilestone);
+	public TestCase addNewTestCaseVersion(long originalTcId, TestCase newVersionData);
 
 
 

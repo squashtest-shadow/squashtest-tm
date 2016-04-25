@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.milestone;
 import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 import java.util.Collection;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -197,6 +198,11 @@ public class MilestoneMembershipManagerImpl implements MilestoneMembershipManage
 	@Override
 	public Collection<Campaign> findCampaignsByMilestoneId(long milestoneId) {
 		return milestoneDao.findCampaignsForMilestone(milestoneId);
+	}
+
+	@Override
+	public boolean isMilestoneBoundToACampainInProjects(Long milestoneId, List<Long> projectIds) {
+		return milestoneDao.isMilestoneBoundToACampainInProjects(milestoneId, projectIds);
 	}
 
 }

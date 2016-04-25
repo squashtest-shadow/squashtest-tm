@@ -24,7 +24,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,13 +56,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.tm.domain.campaign.Campaign;
-import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
-import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibrary;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
+import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel.Row;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -67,10 +74,9 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.campaign.CampaignFormModel.CampaignFormModelValidator;
 import org.squashtest.tm.web.internal.controller.campaign.IterationFormModel.IterationFormModelValidator;
@@ -83,6 +89,8 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestSuiteNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import com.google.common.base.Optional;
 
 /**
  * Controller which processes requests related to navigation in a {@link CampaignLibrary}.
@@ -204,13 +212,12 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private PermissionEvaluationService permissionEvaluator;
 
 	@Inject
-	private MilestoneFinderService milestoneFinder;
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
 	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
-			@RequestBody CampaignFormModel campaignForm,
-			@CurrentMilestone Milestone activeMilestone)
+			@RequestBody CampaignFormModel campaignForm)
 					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
@@ -224,18 +231,16 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
-		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues,
-				milestoneId);
+		campaignLibraryNavigationService.addCampaignToCampaignLibrary(libraryId, newCampaign, customFieldValues);
 
-		return createTreeNodeFromLibraryNode(newCampaign, activeMilestone);
+		return createTreeNodeFromLibraryNode(newCampaign);
 
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
 	public @ResponseBody
-	JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId, @RequestBody CampaignFormModel campaignForm,
-			@CurrentMilestone Milestone activeMilestone)
+ JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
+			@RequestBody CampaignFormModel campaignForm)
 					throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(campaignForm, "add-campaign");
@@ -249,11 +254,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		Campaign newCampaign = campaignForm.getCampaign();
 		Map<Long, RawValue> customFieldValues = campaignForm.getCufs();
 
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
-		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues,
-				milestoneId);
 
-		return createTreeNodeFromLibraryNode(newCampaign, activeMilestone);
+		campaignLibraryNavigationService.addCampaignToCampaignFolder(folderId, newCampaign, customFieldValues);
+
+		return createTreeNodeFromLibraryNode(newCampaign);
 
 	}
 
@@ -263,11 +267,13 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model, Milestone activeMilestone) {
+	protected JsTreeNode createTreeNodeFromLibraryNode(CampaignLibraryNode model) {
 		CampaignLibraryTreeNodeBuilder builder = campaignLibraryTreeNodeBuilder.get();
 
-		if (activeMilestone != null) {
-			builder.filterByMilestone(activeMilestone);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+			builder.filterByMilestone(activeMilestone.get());
 		}
 
 		return builder.setNode(model).build();
@@ -535,20 +541,22 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	@RequestMapping(value = "/dashboard-milestones-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
-	CampaignStatisticsBundle getStatisticsAsJson(@CurrentMilestone Milestone activeMilestone) {
+ CampaignStatisticsBundle getStatisticsAsJson() {
 
-		return campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone(activeMilestone.getId());
+		return campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone();
 	}
 
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public ModelAndView getDashboard(Model model, @CurrentMilestone Milestone activeMilestone) {
+	public ModelAndView getDashboard(Model model) {
 
 		ModelAndView mav = new ModelAndView("fragment/campaigns/campaign-milestone-dashboard");
 
-		long milestoneId = activeMilestone.getId();
-		CampaignStatisticsBundle csbundle = campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone(milestoneId);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
-		mav.addObject("milestone", milestoneFinder.findById(milestoneId));
+		CampaignStatisticsBundle csbundle = campaignLibraryNavigationService
+				.gatherCampaignStatisticsBundleByMilestone();
+
+		mav.addObject("milestone", activeMilestone.get());
 		mav.addObject("dashboardModel", csbundle);
 
 		boolean allowsSettled = (csbundle.getCampaignTestCaseStatusStatistics().getNbSettled() > 0);
@@ -561,10 +569,10 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	@RequestMapping(value = "/dashboard-milestones", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params="printmode")
-	public ModelAndView getDashboard(Model model, @CurrentMilestone Milestone activeMilestone,
-			@RequestParam(value="printmode", defaultValue="false") Boolean printmode) {
+	public ModelAndView getDashboard(Model model,
+			@RequestParam(value = "printmode", defaultValue = "false") Boolean printmode) {
 
-		ModelAndView mav = getDashboard(model, activeMilestone);
+		ModelAndView mav = getDashboard(model);
 		mav.setViewName("page/campaign-workspace/show-campaign-milestone-dashboard");
 		mav.addObject("printmode", printmode);
 

@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.structures.LibraryGraph;
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -55,9 +56,12 @@ import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeDeletionHandler;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.ParameterModificationService;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+
+import com.google.common.base.Optional;
 
 @Component("squashtest.tm.service.deletion.TestCaseNodeDeletionHandler")
 @Transactional
@@ -93,6 +97,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	@Inject
 	private AutomatedTestDao autoTestDao;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	@Override
 	protected FolderDao<TestCaseFolder, TestCaseLibraryNode> getFolderDao() {
 		return folderDao;
@@ -105,12 +112,14 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * ******************************************************************************/
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		List<SuppressionPreviewReport> preview = new LinkedList<>();
 
 		// check test cases that are called by other test cases
-		reportLocksByCallSteps(nodeIds, milestoneId, preview);
+		reportLocksByCallSteps(nodeIds, preview);
 
 		// check test cases that have been planned or executed
 		reportExecutedTestCases(nodeIds, preview);
@@ -119,7 +128,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		reportLocksByMilestones(nodeIds, preview);
 
 		// milestone mode only :
-		if (milestoneId != null){
+		if (activeMilestone.isPresent()) {
 
 			// separate the folders from the test cases
 			List<Long>[] separatedIds = deletionDao.separateFolderFromTestCaseIds(nodeIds);
@@ -165,8 +174,8 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		}
 	}
 
-	protected void reportLocksByCallSteps(List<Long> nodeIds, Long milestoneId, List<SuppressionPreviewReport> preview) {
-		NotDeletablePreviewReport report = previewLockedNodes(nodeIds, milestoneId);
+	protected void reportLocksByCallSteps(List<Long> nodeIds, List<SuppressionPreviewReport> preview) {
+		NotDeletablePreviewReport report = previewLockedNodes(nodeIds);
 		if (report != null){
 			preview.add(report);
 		}
@@ -190,11 +199,11 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 
 	@Override
-	protected List<Long> detectLockedNodes(final List<Long> nodeIds, Long milestoneId) {
+	protected List<Long> detectLockedNodes(final List<Long> nodeIds) {
 
 		List<Long> lockedCandidateIds = new ArrayList<>();
 
-		List<Long> lockedByMilestoneRule;
+
 
 		List<Long> candidateIds = new ArrayList<>(nodeIds);
 
@@ -205,12 +214,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		 * user actually uses the milestone mode or not. Also the test cases are de facto
 		 * removed from the test case call graph before computation.
 		 */
-		if (milestoneId  == null){
-			lockedByMilestoneRule = lockedByMilestoneNormalMode(nodeIds);
-		}
-		else {
-			lockedByMilestoneRule = lockedByMilestoneMilestoneMode(nodeIds, milestoneId);
-		}
+		List<Long> lockedByMilestoneRule = getLockedByMilestoneRule(nodeIds);
 
 		lockedCandidateIds.addAll(lockedByMilestoneRule);
 
@@ -244,7 +248,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * Note : We only need to take care of the attachments and steps, the rest will cascade thanks to the ON CASCADE
 	 * clauses in the other tables.
 	 */
-	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
+	protected OperationReport batchDeleteNodes(List<Long> ids) {
 
 		OperationReport report = new OperationReport();
 
@@ -302,9 +306,11 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 
 	@Override
-	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId){
+	protected OperationReport batchUnbindFromMilestone(List<Long> ids) {
 
 		List<Long> remainingIds = deletionDao.findRemainingTestCaseIds(ids);
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		// some node should not be unbound.
 		List<Long> lockedIds = deletionDao.findTestCasesWhichMilestonesForbidsDeletion(remainingIds);
@@ -312,7 +318,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		OperationReport report = new OperationReport();
 
-		deletionDao.unbindFromMilestone(remainingIds, milestoneId);
+		deletionDao.unbindFromMilestone(remainingIds, activeMilestone.get().getId());
 
 		report.addRemoved(remainingIds, "test-case");
 
@@ -364,7 +370,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * a node will be deletable if : - it has no deletion-related constraints, - the node has constraints but they are
 	 * being deleted too.
 	 */
-	protected NotDeletablePreviewReport previewLockedNodes(List<Long> nodeIds, Long milestoneId) {
+	protected NotDeletablePreviewReport previewLockedNodes(List<Long> nodeIds) {
 
 		NotDeletablePreviewReport report = null;
 
@@ -373,13 +379,7 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 
 		// find the nodes locked by milestone. The rules differ depending on
 		// whether the milestone mode is on or not
-		List<Long> lockedByMilestoneRule;
-		if (milestoneId == null){
-			lockedByMilestoneRule = lockedByMilestoneNormalMode(nodeIds);
-		}
-		else{
-			lockedByMilestoneRule = lockedByMilestoneMilestoneMode(nodeIds, milestoneId);
-		}
+		List<Long> lockedByMilestoneRule = getLockedByMilestoneRule(nodeIds);
 
 		candidateIds.removeAll(lockedByMilestoneRule);
 
@@ -408,6 +408,19 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		}
 
 		return report;
+	}
+
+	private List<Long> getLockedByMilestoneRule(List<Long> nodeIds) {
+		List<Long> lockedByMilestoneRule;
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+			lockedByMilestoneRule = lockedByMilestoneMilestoneMode(nodeIds, activeMilestone.get().getId());
+		} else {
+			lockedByMilestoneRule = lockedByMilestoneNormalMode(nodeIds);
+		}
+		return lockedByMilestoneRule;
 	}
 
 
@@ -476,7 +489,9 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 	 * - 3) no test case bound to more than one milestone shall be deleted (need for graph resolution) (they will be unbound though, but later).
 	 * - 4) no test case bound to a milestone which status forbids deletion shall be deleted.
 	 */
-	private List<Long> lockedByMilestoneMilestoneMode(List<Long> nodeIds, Long milestoneId){
+	private List<Long> lockedByMilestoneMilestoneMode(List<Long> nodeIds, Long milestoneId) {
+
+
 
 		List<Long> folderIds = deletionDao.separateFolderFromTestCaseIds(nodeIds)[0];
 		List<Long> outOfMilestone = leafDao.findNonBoundTestCases(nodeIds, milestoneId);
@@ -493,6 +508,11 @@ AbstractNodeDeletionHandler<TestCaseLibraryNode, TestCaseFolder> implements Test
 		return milestoneLocked;
 	}
 
+
+	@Override
+	protected boolean isMilestoneMode() {
+		return activeMilestoneHolder.getActiveMilestone().isPresent();
+	}
 
 	private static final class DeletableIds {
 		private final List<Long> folderIds;

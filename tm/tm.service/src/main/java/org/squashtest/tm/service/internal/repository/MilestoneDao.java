@@ -121,4 +121,6 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);
 
 	long countMilestonesForUsers(List<Long> userIds);
+
+	boolean isMilestoneBoundToACampainInProjects(Long milestoneId, List<Long> projectIds);
 }

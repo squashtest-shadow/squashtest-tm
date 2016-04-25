@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.milestone;
 
 import java.util.Collection;
+import java.util.List;
 
 import org.squashtest.tm.domain.milestone.Milestone;
 
@@ -67,5 +68,7 @@ public interface MilestoneMembershipFinder {
 	Collection<Milestone> findMilestonesForIteration(long iterationId);
 
 	Collection<Milestone> findMilestonesForTestSuite(long testSuiteId);
+
+	boolean isMilestoneBoundToACampainInProjects(Long milestoneId, List<Long> projectIds);
 
 }

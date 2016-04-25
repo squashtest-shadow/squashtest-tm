@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
+import com.google.common.base.Optional
+import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+
 import static org.junit.Assert.*
 
 import javax.inject.Provider
@@ -48,6 +52,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 	VerifyingTestCaseManagerService verifyingTestCaseManager = Mock()
 	RequirementVersionManagerService requirementVersionManager = Mock()
 	MilestoneUIConfigurationService milestoneConfService = Mock()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
 		controller.i18nHelper = i18nHelper
@@ -55,6 +60,9 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		controller.verifyingTestCaseManager = verifyingTestCaseManager
 		controller.requirementVersionFinder = requirementVersionManager
 		controller.milestoneConfService = milestoneConfService
+		controller.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+
 
 		milestoneConfService.configure(_,_) >> new MilestoneFeatureConfiguration()
 	}
@@ -79,7 +87,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		verifyingTestCaseManager.findLinkableTestCaseLibraries() >> []
 
 		when:
-		controller.showManager(10L, model, [] as String[], null)
+		controller.showManager(10L, model, [] as String[])
 
 		then:
 		model.asMap()['requirementVersion'] == requirementVersion
@@ -93,7 +101,7 @@ class VerifyingTestCaseManagerControllerTest extends Specification {
 		mockVerifyingTestCaseService()
 
 		when:
-		def view = controller.showManager(10L, Mock(Model), [] as String[], null)
+		def view = controller.showManager(10L, Mock(Model), [] as String[])
 
 		then:
 		view == "page/requirement-workspace/show-verifying-testcase-manager"

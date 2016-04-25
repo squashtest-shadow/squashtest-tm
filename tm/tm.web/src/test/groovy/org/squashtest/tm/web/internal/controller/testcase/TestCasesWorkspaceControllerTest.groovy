@@ -20,6 +20,9 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
+import com.google.common.base.Optional
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+
 import javax.inject.Provider
 
 import org.springframework.ui.Model
@@ -41,14 +44,15 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
     DriveNodeBuilder driveNodeBuilder = new DriveNodeBuilder(permissionEvaluator(), Mock(Provider))
 	ProjectFinder projFinder = Mock()
 	JsonProjectBuilder projBuilder = Mock()
-
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 	Provider provider = Mock()
 
 	def setup() {
 		controller.workspaceService = service
 		controller.projectFinder = projFinder
 		controller.jsonProjectBuilder = projBuilder
-
+		controller.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		provider.get() >> driveNodeBuilder
 		use(ReflectionCategory) {
 			TestCaseWorkspaceController.set field: 'driveNodeBuilderProvider', of: controller, to: provider
@@ -66,7 +70,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		def model = Mock(Model)
 
 		when:
-		String view = controller.showWorkspace(model, Locale.getDefault(), null , [] as String[], "" as String)
+		String view = controller.showWorkspace(model, Locale.getDefault() , [] as String[], "" as String)
 
 		then:
 		view == "test-case-workspace.html"

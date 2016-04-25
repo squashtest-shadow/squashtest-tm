@@ -209,7 +209,7 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		List<? extends LibraryNode> folders = library.getContent();
 		if (!folders.isEmpty()) {
 			List<Long> nodesIds = retrieveNodesids(folders);
-			deletionHandler.deleteNodes(nodesIds, null);
+			deletionHandler.deleteNodes(nodesIds);
 		}
 
 	}

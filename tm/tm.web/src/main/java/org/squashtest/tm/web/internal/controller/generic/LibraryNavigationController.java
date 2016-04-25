@@ -20,39 +20,49 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JRParameter;
-import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-import org.springframework.context.MessageSource;
-import org.springframework.context.support.MessageSourceResourceBundle;
-import org.springframework.http.HttpStatus;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.bind.annotation.*;
-import org.squashtest.tm.domain.library.ExportData;
-import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.library.Library;
-import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.testcase.ExportTestCaseData;
-import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
-import org.squashtest.tm.service.deletion.OperationReport;
-import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
-import org.squashtest.tm.service.library.LibraryNavigationService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
-import org.squashtest.tm.web.internal.controller.RequestParams;
-import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
-import org.squashtest.tm.web.internal.report.service.JasperReportsService;
-import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
+
+import org.springframework.context.MessageSource;
+import org.springframework.context.support.MessageSourceResourceBundle;
+import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.squashtest.tm.domain.library.ExportData;
+import org.squashtest.tm.domain.library.Folder;
+import org.squashtest.tm.domain.library.Library;
+import org.squashtest.tm.domain.library.LibraryNode;
+import org.squashtest.tm.domain.testcase.ExportTestCaseData;
+import org.squashtest.tm.exception.library.RightsUnsuficientsForOperationException;
+import org.squashtest.tm.service.deletion.OperationReport;
+import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.web.internal.controller.RequestParams;
+import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+import org.squashtest.tm.web.internal.report.service.JasperReportsService;
+import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JRParameter;
+import net.sf.jasperreports.engine.export.JRCsvExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsAbstractExporterParameter;
 
 /**
  * Superclass for library navigation controllers. This controller handles : library root retrieval, folder content
@@ -85,22 +95,21 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return messageSource;
 	}
 
-	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource, Milestone activeMilestone);
+	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
 
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
-	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId,
-			@CurrentMilestone Milestone activeMilestone) {
+	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
-		List<JsTreeNode> model = createJsTreeModel(nodes, activeMilestone);
+		List<JsTreeNode> model = createJsTreeModel(nodes);
 
 		return model;
 	}
 
-	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes, Milestone activeMilestone) {
+	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes) {
 		List<JsTreeNode> jstreeNodes = new ArrayList<>();
 
 		for (NODE node : nodes) {
-			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node, activeMilestone);
+			JsTreeNode jsnode = createTreeNodeFromLibraryNode(node);
 			if (jsnode != null){
 				jstreeNodes.add(jsnode);
 			}
@@ -113,43 +122,40 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
+			@Valid @RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
-		return createTreeNodeFromLibraryNode((NODE) newFolder, activeMilestone);
+		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
 
 	@SuppressWarnings("unchecked")
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-			@Valid @RequestBody FOLDER newFolder, @CurrentMilestone Milestone activeMilestone) {
+			@Valid @RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
-		return createTreeNodeFromLibraryNode((NODE) newFolder, activeMilestone);
+		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
 
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
 	public final @ResponseBody
-	List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId,
-			@CurrentMilestone Milestone activeMilestone) {
+ List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
 
 		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
-		List<JsTreeNode> model = createJsTreeModel(nodes, activeMilestone);
+		List<JsTreeNode> model = createJsTreeModel(nodes);
 
 		return model;
 	}
 
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
 	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CurrentMilestone Milestone activeMilestone,
 			Locale locale) {
 
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 
-		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds, milestoneId);
+		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
 
 		Messages messages = new Messages();
 		for (SuppressionPreviewReport report : reportList) {
@@ -162,18 +168,15 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
 	public @ResponseBody OperationReport confirmNodeDeletion(
-			@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			@CurrentMilestone Milestone activeMilestone) {
+@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
-
-		return getLibraryNavigationService().deleteNodes(nodeIds, milestoneId);
+		return getLibraryNavigationService().deleteNodes(nodeIds);
 	}
 
 
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
 	public @ResponseBody List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType, @CurrentMilestone Milestone activeMilestone) {
+			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		List<NODE> nodeList;
 		try {
@@ -189,7 +192,7 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			throw new RightsUnsuficientsForOperationException(ade);
 		}
 
-		return createJsTreeModel(nodeList, activeMilestone);
+		return createJsTreeModel(nodeList);
 	}
 
 

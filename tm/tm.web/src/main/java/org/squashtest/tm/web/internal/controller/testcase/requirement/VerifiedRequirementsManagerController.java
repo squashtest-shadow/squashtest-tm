@@ -55,7 +55,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
-import org.squashtest.tm.service.milestone.MilestoneFinderService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
@@ -64,7 +64,6 @@ import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneModelUtils;
@@ -82,6 +81,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import com.google.common.base.Optional;
 
 /**
  * Controller for verified requirements management page.
@@ -113,10 +114,10 @@ public class VerifiedRequirementsManagerController {
 	private PermissionEvaluationService permissionService;
 
 	@Inject
-	private MilestoneFinderService milestoneFinder;
+	private MilestoneUIConfigurationService milestoneConfService;
 
 	@Inject
-	private MilestoneUIConfigurationService milestoneConfService;
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 
 
@@ -133,14 +134,13 @@ public class VerifiedRequirementsManagerController {
 
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/manager", method = RequestMethod.GET)
 	public String showTestCaseManager(@PathVariable long testCaseId, Model model,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CurrentMilestone Milestone activeMilestone) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testCase, "LINK"));
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testCase);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes, activeMilestone);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 		model.addAttribute("testCase", testCase);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
 		model.addAttribute("milestoneConf", milestoneConf);
@@ -152,15 +152,14 @@ public class VerifiedRequirementsManagerController {
 	public String showTestStepManager(
 			@PathVariable long testStepId,
 			Model model,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CurrentMilestone Milestone activeMilestone){
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		TestStep testStep = testStepService.findById(testStepId);
 		PermissionsUtils.checkPermission(permissionService, new SecurityCheckableObject(testStep, "LINK"));
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testStep.getTestCase());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testStep.getTestCase());
 
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes, activeMilestone);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(openedNodes);
 
 		model.addAttribute("testStep", testStep);
 		model.addAttribute("linkableLibrariesModel", linkableLibrariesModel);
@@ -171,13 +170,14 @@ public class VerifiedRequirementsManagerController {
 	}
 
 	@SuppressWarnings("rawtypes")
-	private List<JsTreeNode> createLinkableLibrariesModel(String[] openedNodes, Milestone activeMilestone) {
+	private List<JsTreeNode> createLinkableLibrariesModel(String[] openedNodes) {
 		List<RequirementLibrary> linkableLibraries = requirementLibraryFinder.findLinkableRequirementLibraries();
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 		DriveNodeBuilder<RequirementLibraryNode> nodeBuilder = driveNodeBuilder.get();
-		if (activeMilestone != null){
-			nodeBuilder.filterByMilestone(activeMilestone);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			nodeBuilder.filterByMilestone(activeMilestone.get());
 		}
 
 		return new JsTreeNodeListBuilder<RequirementLibrary>(nodeBuilder)
@@ -190,12 +190,12 @@ public class VerifiedRequirementsManagerController {
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
 	public @ResponseBody
 	Map<String, Object> addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
-			@PathVariable long testCaseId,
-			@CurrentMilestone Milestone activeMilestone) {
+ @PathVariable long testCaseId) {
 
 
 		Collection<VerifiedRequirementException> rejections =
-				verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId, activeMilestone);
+ verifiedRequirementsManagerService
+				.addVerifiedRequirementsToTestCase(requirementsIds, testCaseId);
 
 		return buildSummary(rejections);
 
@@ -204,12 +204,11 @@ public class VerifiedRequirementsManagerController {
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
 	public @ResponseBody
 	Map<String, Object> addVerifiedRequirementsToTestStep(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
-			@PathVariable long testStepId,
-			@CurrentMilestone Milestone activeMilestone) {
+ @PathVariable long testStepId) {
 
 
 		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
-				.addVerifiedRequirementsToTestStep(requirementsIds, testStepId, activeMilestone);
+				.addVerifiedRequirementsToTestStep(requirementsIds, testStepId);
 
 		return buildSummary(rejections);
 

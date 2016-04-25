@@ -55,11 +55,10 @@ import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.requirement.VerifiedRequirementException;
 import org.squashtest.tm.service.campaign.CampaignFinder;
-import org.squashtest.tm.service.campaign.IterationFinder;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -75,6 +74,8 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import com.google.common.base.Optional;
 
 /**
  * Controller for verified requirements management page.
@@ -108,7 +109,7 @@ public class VerifyingTestCaseManagerController {
 	private CampaignFinder campaignFinder;
 	
 	@Inject
-	private IterationFinder iterationFinder;
+	private ActiveMilestoneHolder activeMilestoneHolder;
 	
 	private static final String campaign_name = "Campaign";
 	private static final String iteration_name = "Iteration";
@@ -131,14 +132,13 @@ public class VerifyingTestCaseManagerController {
 
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/manager", method = RequestMethod.GET)
 	public String showManager(@PathVariable long requirementVersionId, Model model,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CurrentMilestone Milestone activeMilestone) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		RequirementVersion requirementVersion = requirementVersionFinder.findById(requirementVersionId);
 		List<TestCaseLibrary> linkableLibraries = verifyingTestCaseManager.findLinkableTestCaseLibraries();
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, requirementVersion);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(requirementVersion);
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("Project.name");
 		DataTableModel verifyingTCModel = buildVerifyingTestCaseModel(requirementVersionId, pas, "");
 
@@ -152,13 +152,16 @@ public class VerifyingTestCaseManagerController {
 		return "page/requirement-workspace/show-verifying-testcase-manager";
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Milestone activeMilestone) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
+			String[] openedNodes) {
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> nodeBuilder = driveNodeBuilder.get();
 
-		if (activeMilestone != null){
-			nodeBuilder.filterByMilestone(activeMilestone);
+		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (milestone.isPresent()) {
+			nodeBuilder.filterByMilestone(milestone.get());
 		}
 
 		return new JsTreeNodeListBuilder<TestCaseLibrary>(nodeBuilder)
@@ -215,7 +218,8 @@ public class VerifyingTestCaseManagerController {
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/coverage-stats", method = RequestMethod.GET,params = { "perimeter" })
 	@SuppressWarnings("unchecked")
 	public @ResponseBody
-	RequirementCoverageStat getCoverageStat(@CurrentMilestone Milestone currentMilestone, @PathVariable long requirementVersionId, @RequestParam String perimeter) {
+ RequirementCoverageStat getCoverageStat(@PathVariable long requirementVersionId,
+			@RequestParam String perimeter) {
 		LOGGER.debug("JTH go controller go");
 		
 		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
@@ -236,7 +240,7 @@ public class VerifyingTestCaseManagerController {
 			List<Long> ids = (List<Long>) mapIdsByType.get(iteration_name);
 			iterationIds.addAll(ids);
 		}
-		verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, currentMilestone, iterationIds,stat);
+		verifiedRequirementsManagerService.findCoverageStat(requirementVersionId, iterationIds, stat);
 		return stat;
 	}
 

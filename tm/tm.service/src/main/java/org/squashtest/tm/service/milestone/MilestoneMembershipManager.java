@@ -54,4 +54,6 @@ public interface MilestoneMembershipManager extends MilestoneMembershipFinder {
 
 	void unbindCampaignFromMilestones(long campaignId, Collection<Long> milestoneIds);
 
+
+
 }

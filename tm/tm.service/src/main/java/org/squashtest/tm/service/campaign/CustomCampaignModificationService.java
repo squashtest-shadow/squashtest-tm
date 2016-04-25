@@ -58,7 +58,7 @@ public interface CustomCampaignModificationService {
 	// TODO : move this method to CampaignFolderModificationService. If it exists one day.
 	// TODO : move this to CampaignLibraryNavigationSercice. If the inconsistencies in the
 	// returned data are solved one day (see comment on CampaignStatisticsService).
-	ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId);
+	ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId);
 
 
 	/* ********************** milestones section ******************* */
@@ -77,5 +77,6 @@ public interface CustomCampaignModificationService {
 	Collection<Milestone> findAssociableMilestones(long campaignId);
 
 	Collection<Milestone> findAllMilestones(long campaignId);
+
 
 }

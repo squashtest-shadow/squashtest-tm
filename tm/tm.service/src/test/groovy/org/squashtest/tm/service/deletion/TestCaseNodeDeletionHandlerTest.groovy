@@ -20,16 +20,17 @@
  */
 package org.squashtest.tm.service.deletion
 
-
+import com.google.common.base.Optional
 import org.squashtest.tm.domain.NamedReference;
 import org.squashtest.tm.domain.library.structures.LibraryGraph
 import org.squashtest.tm.domain.library.structures.LibraryGraph.SimpleNode
+import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.service.internal.deletion.TestCaseNodeDeletionHandlerImpl
 import org.squashtest.tm.service.internal.repository.TestCaseDao
 import org.squashtest.tm.service.internal.repository.TestCaseFolderDao
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao
-
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import spock.lang.Specification
 
 class TestCaseNodeDeletionHandlerTest extends Specification {
@@ -38,6 +39,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 	TestCaseFolderDao fDao = Mock();
 	TestCaseCallTreeFinder calltreeFinder = Mock();
 	TestCaseDeletionDao deletionDao = Mock()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	TestCaseNodeDeletionHandlerImpl handler = new TestCaseNodeDeletionHandlerImpl();
 
@@ -48,6 +50,8 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		handler.folderDao = fDao;
 		handler.calltreeFinder = calltreeFinder;
 		handler.deletionDao = deletionDao
+		handler.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 
 		deletionDao.findTestCasesWhichMilestonesForbidsDeletion(_) >> []
 	}
@@ -78,7 +82,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		calltreeFinder.getCallerGraph(_) >> testGraph1()
 
 		when :
-		def report = handler.previewLockedNodes([21l, 22l, 23l, 24l, 25l], null);
+		def report = handler.previewLockedNodes([21l, 22l, 23l, 24l, 25l]);
 
 		then :
 		report.nodeNames == ["21", "22", "23", "24"] as Set
@@ -93,7 +97,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		calltreeFinder.getCallerGraph(_) >> testGraph2()
 
 		when :
-		def report = handler.previewLockedNodes([11l, 12l], null);
+		def report = handler.previewLockedNodes([11l, 12l]);
 
 		then :
 		report.nodeNames == ["11", "12"] as Set
@@ -108,7 +112,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		calltreeFinder.getCallerGraph(_) >> testGraph2()
 
 		when :
-		def report = handler.previewLockedNodes([11l, 12l, 1l], null);
+		def report = handler.previewLockedNodes([11l, 12l, 1l]);
 
 		then :
 		report == null
@@ -121,7 +125,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 
 
 		when :
-		def reallyNonDeletables = handler.detectLockedNodes([21l, 22l, 23l, 24l, 25l], null)
+		def reallyNonDeletables = handler.detectLockedNodes([21l, 22l, 23l, 24l, 25l])
 
 		then :
 		reallyNonDeletables as Set == [21l, 22l, 23l, 24l] as Set
@@ -135,7 +139,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		calltreeFinder.getCallerGraph(_) >> testGraph2()
 
 		when :
-		def reallyNonDeletables = handler.detectLockedNodes([11l, 12l], null)
+		def reallyNonDeletables = handler.detectLockedNodes([11l, 12l])
 
 		then :
 		reallyNonDeletables as Set == [11l, 12l] as Set
@@ -148,7 +152,7 @@ class TestCaseNodeDeletionHandlerTest extends Specification {
 		calltreeFinder.getCallerGraph(_) >> testGraph2()
 
 		when :
-		def reallyNonDeletables = handler.detectLockedNodes([11l, 12l, 1l], null)
+		def reallyNonDeletables = handler.detectLockedNodes([11l, 12l, 1l])
 
 		then :
 		reallyNonDeletables == []

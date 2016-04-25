@@ -27,14 +27,13 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 public interface RequirementVersionResolverService {
 
 	/**
-	 * Returns the version of a requirement which is bound to a given milestone.
-	 * If milestoneId is null, the latest version will be returned
+	 * Returns the version of a requirement which is bound to a given milestone. If not in milestone mode, the latest
+	 * version will be returned
 	 * 
 	 * @param reqId
-	 * @param milestoneId
 	 * @return
 	 */
-	RequirementVersion resolveByRequirementId(long requirementId, Long milestoneId);
+	RequirementVersion resolveByRequirementId(long requirementId);
 
 
 }

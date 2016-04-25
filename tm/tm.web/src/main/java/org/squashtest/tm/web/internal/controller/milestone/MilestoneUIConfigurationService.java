@@ -37,9 +37,12 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.testcase.TestCaseFinder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
+
+import com.google.common.base.Optional;
 
 
 /**
@@ -63,9 +66,12 @@ public class MilestoneUIConfigurationService {
 	@Inject
 	TestCaseFinder testCaseFinder;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
-	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, TestCase testcase) {
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, testcase);
+
+	public MilestoneFeatureConfiguration configure(TestCase testcase) {
+		MilestoneFeatureConfiguration conf = createCommonConf(testcase);
 		Map<String, String> identity = createIdentity(testcase);
 		conf.setIdentity(identity);
 
@@ -75,29 +81,29 @@ public class MilestoneUIConfigurationService {
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, RequirementVersion version) {
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, version);
+	public MilestoneFeatureConfiguration configure(RequirementVersion version) {
+		MilestoneFeatureConfiguration conf = createCommonConf(version);
 		Map<String, String> identity = createIdentity(version);
 		conf.setIdentity(identity);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, Campaign campaign) {
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, campaign);
+	public MilestoneFeatureConfiguration configure(Campaign campaign) {
+		MilestoneFeatureConfiguration conf = createCommonConf(campaign);
 		Map<String, String> identity = createIdentity(campaign);
 		conf.setIdentity(identity);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, Iteration iteration) {
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, iteration);
+	public MilestoneFeatureConfiguration configure(Iteration iteration) {
+		MilestoneFeatureConfiguration conf = createCommonConf(iteration);
 		Map<String, String> identity = createIdentity(iteration);
 		conf.setIdentity(identity);
 		return conf;
 	}
 
-	public MilestoneFeatureConfiguration configure(Milestone activeMilestone, TestSuite testSuite) {
-		MilestoneFeatureConfiguration conf = createCommonConf(activeMilestone, testSuite);
+	public MilestoneFeatureConfiguration configure(TestSuite testSuite) {
+		MilestoneFeatureConfiguration conf = createCommonConf(testSuite);
 		Map<String, String> identity = createIdentity(testSuite);
 		conf.setIdentity(identity);
 		return conf;
@@ -107,9 +113,11 @@ public class MilestoneUIConfigurationService {
 	// ************************** private stuffs *******************************************
 
 
-	private MilestoneFeatureConfiguration createCommonConf(Milestone currentMilestone, MilestoneMember member) {
+	private MilestoneFeatureConfiguration createCommonConf(MilestoneMember member) {
 
 		MilestoneFeatureConfiguration conf = new MilestoneFeatureConfiguration();
+
+		Optional<Milestone> currentMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		JsonMilestone activeMilestone = new JsonMilestone();
 		boolean globallyEnabled;
@@ -131,7 +139,7 @@ public class MilestoneUIConfigurationService {
 		conf.setMilestoneLocked(locked);
 
 		// does the user actually use the feature
-		userEnabled = (currentMilestone != null);
+		userEnabled = (currentMilestone.isPresent());
 		if (!userEnabled) {
 			conf.setUserEnabled(false);
 		}
@@ -141,11 +149,12 @@ public class MilestoneUIConfigurationService {
 		conf.setTotalMilestones(totalMilestones);
 
 		// if both globally and user enabled, fetch the active milestones etc
-		if (userEnabled && (currentMilestone != null)) { // NOSONAR redundant check, yet it expresses the business rule
+		if (userEnabled && (currentMilestone.isPresent())) { // NOSONAR redundant check, yet it expresses the business
+																// rule
 
-			activeMilestone.setId(currentMilestone.getId());
-			activeMilestone.setLabel(currentMilestone.getLabel());
-			activeMilestone.setStatus(currentMilestone.getStatus());
+			activeMilestone.setId(currentMilestone.get().getId());
+			activeMilestone.setLabel(currentMilestone.get().getLabel());
+			activeMilestone.setStatus(currentMilestone.get().getStatus());
 			conf.setActiveMilestone(activeMilestone);
 
 		}

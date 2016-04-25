@@ -49,7 +49,6 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
@@ -59,7 +58,6 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -105,8 +103,7 @@ public class TestCaseTestStepsController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseModificationController.class);
 
 	@RequestMapping(value = "/panel")
-	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale,
-			@CurrentMilestone Milestone activeMilestone) {
+	public String getTestStepsPanel(@PathVariable("testCaseId") long testCaseId, Model model, Locale locale) {
 
 		// the main entities
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
@@ -127,7 +124,7 @@ public class TestCaseTestStepsController {
 
 
 		// the milestone feature
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testCase);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testCase);
 
 		// populate the model
 		model.addAttribute(TEST_CASE, testCase);

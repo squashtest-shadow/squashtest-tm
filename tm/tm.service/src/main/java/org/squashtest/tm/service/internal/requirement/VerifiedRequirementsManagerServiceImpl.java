@@ -82,13 +82,15 @@ import org.squashtest.tm.service.internal.repository.RequirementVersionDao;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder;
-import org.squashtest.tm.service.milestone.MilestoneManagerService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.requirement.VerifiedRequirement;
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
+
+import com.google.common.base.Optional;
 
 @Service("squashtest.tm.service.VerifiedRequirementsManagerService")
 @Transactional
@@ -121,8 +123,6 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@Inject
 	private IndexationService indexationService;
 
-	@Inject
-	private MilestoneManagerService milestoneManager;
 
 	@Inject
 	private RequirementDao requirementDao;
@@ -133,6 +133,9 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@Inject
 	private ExecutionStepDao executionStepDao;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	@SuppressWarnings("rawtypes")
 	@Inject
 	@Qualifier("squashtest.tm.repository.RequirementLibraryNodeDao")
@@ -142,12 +145,10 @@ public class VerifiedRequirementsManagerServiceImpl implements
 
 	@Override
 	@PreAuthorize(LINK_TC_OR_ROLE_ADMIN)
-	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(
-		List<Long> requirementsIds, long testCaseId,
-		Milestone activeMilestone) {
+	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
+			long testCaseId) {
 
-		List<RequirementVersion> requirementVersions = findRequirementVersions(
-			requirementsIds, activeMilestone);
+		List<RequirementVersion> requirementVersions = findRequirementVersions(requirementsIds);
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 		if (!requirementVersions.isEmpty()) {
@@ -157,20 +158,21 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return Collections.emptyList();
 	}
 
-	private List<RequirementVersion> extractVersions(
-		List<Requirement> requirements, Milestone activeMilestone) {
+	private List<RequirementVersion> extractVersions(List<Requirement> requirements) {
 
-		List<RequirementVersion> rvs = new ArrayList<>(
-			requirements.size());
+		List<RequirementVersion> rvs = new ArrayList<>(requirements.size());
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
 		for (Requirement requirement : requirements) {
 
 			// normal mode
-			if (activeMilestone == null) {
+			if (!activeMilestone.isPresent()) {
 				rvs.add(requirement.getResource());
 			}
 			// milestone mode
 			else {
-				rvs.add(requirement.findByMilestone(activeMilestone));
+				rvs.add(requirement.findByMilestone(activeMilestone.get()));
 			}
 
 		}
@@ -339,10 +341,10 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	@PreAuthorize("hasPermission(#testStepId, 'org.squashtest.tm.domain.testcase.TestStep' , 'LINK')"
 		+ OR_HAS_ROLE_ADMIN)
 	public Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(
-		List<Long> requirementsIds, long testStepId,
-		Milestone activeMilestone) {
+List<Long> requirementsIds,
+			long testStepId) {
 		List<RequirementVersion> requirementVersions = findRequirementVersions(
-			requirementsIds, activeMilestone);
+requirementsIds);
 		// init rejections
 		Collection<VerifiedRequirementException> rejections = new ArrayList<>();
 		// check if list not empty
@@ -453,7 +455,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	private List<RequirementVersion> findRequirementVersions(
-		List<Long> requirementsIds, Milestone activeMilestone) {
+List<Long> requirementsIds) {
 
 		List<RequirementLibraryNode> nodes = requirementLibraryNodeDao
 			.findAllByIds(requirementsIds);
@@ -462,7 +464,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 			List<Requirement> requirements = new RequirementNodeWalker()
 				.walk(nodes);
 			if (!requirements.isEmpty()) {
-				return extractVersions(requirements, activeMilestone);
+				return extractVersions(requirements);
 			}
 		}
 		return Collections.emptyList();
@@ -622,12 +624,11 @@ public class VerifiedRequirementsManagerServiceImpl implements
 	}
 
 	@Override
-	public void findCoverageStat(Long requirementVersionId,
-								 Milestone currentMilestone, List<Long> iterationsIds, RequirementCoverageStat stats) {
+	public void findCoverageStat(Long requirementVersionId, List<Long> iterationsIds, RequirementCoverageStat stats) {
 
 		RequirementVersion mainVersion = requirementVersionDao.findOne(requirementVersionId);
 		Requirement mainRequirement = mainVersion.getRequirement();
-		List<RequirementVersion> descendants = findValidDescendants(mainRequirement, currentMilestone);
+		List<RequirementVersion> descendants = findValidDescendants(mainRequirement);
 		findCoverageRate(mainRequirement, mainVersion, descendants, stats);
 		//if we have a valid perimeter (ie iteration(s)), we'll have to calculate verification and validation rates
 		if (iterationsIds.size() > 0) {
@@ -1078,26 +1079,27 @@ public class VerifiedRequirementsManagerServiceImpl implements
 		return 0L;
 	}
 
-	private List<RequirementVersion> findValidDescendants(Requirement requirement, Milestone activeMilestone) {
+	private List<RequirementVersion> findValidDescendants(Requirement requirement) {
 		List<Long> candidatesIds = requirementDao.findDescendantRequirementIds(Arrays.asList(new Long[]{requirement.getId()}));
 		List<Requirement> candidates = requirementDao.findAllByIds(candidatesIds);
-		return extractCurrentVersions(candidates, activeMilestone);
+		return extractCurrentVersions(candidates);
 	}
 
-	private List<RequirementVersion> extractCurrentVersions(
-		List<Requirement> requirements, Milestone activeMilestone) {
-		List<RequirementVersion> rvs = new ArrayList<>(
-			requirements.size());
+	private List<RequirementVersion> extractCurrentVersions(List<Requirement> requirements) {
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		List<RequirementVersion> rvs = new ArrayList<>(requirements.size());
 		for (Requirement requirement : requirements) {
 			RequirementVersion rv = requirement.getResource();
 			// normal mode
-			if (activeMilestone == null
+			if (!activeMilestone.isPresent()
 				&& rv.isNotObsolete()) {
 				rvs.add(rv);
 			}
 			// milestone mode
 			else {
-				if (rv.getMilestones().contains(activeMilestone)
+				if (rv.getMilestones().contains(activeMilestone.get())
 					&& rv.isNotObsolete()) {
 					rvs.add(rv);
 				}

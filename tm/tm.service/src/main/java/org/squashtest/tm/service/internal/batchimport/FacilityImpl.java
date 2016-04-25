@@ -1076,7 +1076,7 @@ public class FacilityImpl implements Facility {
 
 	private void doDeleteTestCase(TestCaseTarget target) {
 		TestCase tc = validator.getModel().get(target);
-		navigationService.deleteNodes(Collections.singletonList(tc.getId()), null);
+		navigationService.deleteNodes(Collections.singletonList(tc.getId()));
 	}
 
 	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {

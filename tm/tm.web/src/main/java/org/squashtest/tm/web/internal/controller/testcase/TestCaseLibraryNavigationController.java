@@ -56,9 +56,9 @@ import org.squashtest.tm.domain.testcase.TestCaseFolder;
 import org.squashtest.tm.domain.testcase.TestCaseLibrary;
 import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.library.LibraryNavigationService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.statistics.testcase.TestCaseStatisticsBundle;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController;
 import org.squashtest.tm.web.internal.controller.testcase.TestCaseFormModel.TestCaseFormModelValidator;
@@ -68,6 +68,8 @@ import org.squashtest.tm.web.internal.model.builder.JsTreeNodeListBuilder;
 import org.squashtest.tm.web.internal.model.builder.TestCaseLibraryTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
+
+import com.google.common.base.Optional;
 
 @Controller
 @RequestMapping("/test-case-browser")
@@ -85,6 +87,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	@Inject
 	private TestCaseLibraryNavigationService testCaseLibraryNavigationService;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 
 	private static final String JASPER_EXPORT_FILE = "WEB-INF/reports/test-case-export.jasper";
 	private static final String ADD_TEST_CASE = "add-test-case";
@@ -101,12 +106,12 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node, Milestone activeMilestone) {
+	protected JsTreeNode createTreeNodeFromLibraryNode(TestCaseLibraryNode node) {
 
 		TestCaseLibraryTreeNodeBuilder builder = testCaseLibraryTreeNodeBuilder.get();
-
-		if (activeMilestone != null){
-			builder.filterByMilestone(activeMilestone);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			builder.filterByMilestone(activeMilestone.get());
 		}
 
 		return builder.setNode(node).build();
@@ -120,8 +125,7 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToLibraryRootContent(
 			@PathVariable long libraryId,
-			@RequestBody TestCaseFormModel testCaseModel,
-			@CurrentMilestone Milestone activeMilestone) throws BindException{
+			@RequestBody TestCaseFormModel testCaseModel) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(testCaseModel, ADD_TEST_CASE);
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator(getMessageSource());
@@ -137,21 +141,21 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		List<Long> milestoneIds = new ArrayList<>();
 
-		if (activeMilestone != null){
-			milestoneIds.add(activeMilestone.getId());
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			milestoneIds.add(activeMilestone.get().getId());
 		}
 
 		testCaseLibraryNavigationService.addTestCaseToLibrary(libraryId, testCase, customFieldValues, null, milestoneIds);
 
-		return createTreeNodeFromLibraryNode(testCase, activeMilestone);
+		return createTreeNodeFromLibraryNode(testCase);
 	}
 
 
 	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
 	public @ResponseBody JsTreeNode addNewTestCaseToFolder(
 			@PathVariable long folderId,
-			@RequestBody TestCaseFormModel testCaseModel,
-			@CurrentMilestone Milestone activeMilestone) throws BindException {
+			@RequestBody TestCaseFormModel testCaseModel) throws BindException {
 
 		BindingResult validation = new BeanPropertyBindingResult(testCaseModel, ADD_TEST_CASE);
 		TestCaseFormModelValidator validator = new TestCaseFormModelValidator(getMessageSource());
@@ -165,13 +169,14 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 		Map<Long, RawValue> customFieldValues = testCaseModel.getCufs();
 
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		ArrayList<Long> milestoneIds = new ArrayList<>();
-		if (activeMilestone != null){
-			milestoneIds.add(activeMilestone.getId());
+		if (activeMilestone.isPresent()) {
+			milestoneIds.add(activeMilestone.get().getId());
 		}
 		testCaseLibraryNavigationService.addTestCaseToFolder(folderId, testCase, customFieldValues, null, milestoneIds);
 
-		return createTreeNodeFromLibraryNode(testCase, activeMilestone);
+		return createTreeNodeFromLibraryNode(testCase);
 	}
 
 	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
@@ -277,10 +282,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 			LIBRARIES, NODES })
 	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(
 			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
-			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds,
-			@CurrentMilestone Milestone activeMilestone) {
+			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
 
-		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds, activeMilestone);
+		return testCaseLibraryNavigationService.getStatisticsForSelection(libraryIds, nodeIds);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML, params = {
@@ -298,20 +302,19 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	public @ResponseBody
-	TestCaseStatisticsBundle getStatisticsAsJson(
-			@CurrentMilestone Milestone activeMilestone) {
+ TestCaseStatisticsBundle getStatisticsAsJson() {
 
 		// Find node ids for specific milestone
 		List<Long> nodeIds = testCaseLibraryNavigationService
-				.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
+				.findAllTestCasesLibraryNodeForMilestone(activeMilestoneHolder.getActiveMilestone().orNull());
 
 		return testCaseLibraryNavigationService.getStatisticsForSelection(new ArrayList<Long>(), nodeIds);
 	}
 
 	@RequestMapping(value = "/dashboard", method = RequestMethod.GET, produces = ContentTypes.TEXT_HTML)
-	public String getDashboardByMilestone(Model model,
-			@CurrentMilestone Milestone activeMilestone) {
+	public String getDashboardByMilestone(Model model) {
 
+		Milestone activeMilestone = activeMilestoneHolder.getActiveMilestone().orNull();
 		// Find ids for specific milestone
 		List<Long> nodeIds = testCaseLibraryNavigationService.findAllTestCasesLibraryNodeForMilestone(activeMilestone);
 

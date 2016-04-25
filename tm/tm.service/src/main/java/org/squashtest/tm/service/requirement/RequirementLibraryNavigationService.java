@@ -274,7 +274,7 @@ RequirementLibraryFinderService {
 			batchsLocks ={@BatchPreventConcurrent(entityType=RequirementLibraryNode.class, paramName= TARGET_IDS, coercer=RLNAndParentIdsCoercerForArray.class),
 					@BatchPreventConcurrent(entityType=RequirementLibrary.class, paramName= TARGET_IDS, coercer=RequirementLibraryIdsCoercerForArray.class)}
 			)
-	OperationReport deleteNodes(@Ids(TARGET_IDS) List<Long> targetIds, Long milestoneId);
+	OperationReport deleteNodes(@Ids(TARGET_IDS) List<Long> targetIds);
 
 	// #################### /PREVENT CONCURENCY OVERRIDES ##########################
 }

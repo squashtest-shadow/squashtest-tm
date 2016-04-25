@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
+import com.google.common.base.Optional
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.web.internal.controller.generic.NodeBuildingSpecification
 
 import javax.inject.Provider
@@ -50,7 +52,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 	Provider testCaseLibraryTreeNodeBuilder = Mock();
 	PermissionEvaluationService permissionEvaluationService = permissionEvaluator()
 	InternationalizationHelper internationalizationHelper = Mock()
-
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 
 	def setup() {
@@ -58,6 +60,10 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 
 		controller.driveNodeBuilder = driveNodeBuilder
 		controller.testCaseLibraryTreeNodeBuilder = testCaseLibraryTreeNodeBuilder
+		controller.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
+
+
 		use (ReflectionCategory) {
 			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
 		}
@@ -86,7 +92,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		testCaseLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10, null)
+		def res = controller.getRootContentTreeModel(10)
 
 		then:
 		res.size() == 1
@@ -102,7 +108,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		}
 
 		when:
-		def res = controller.createTreeNodeFromLibraryNode(node, null)
+		def res = controller.createTreeNodeFromLibraryNode(node)
 
 		then:
 		res.state == State.leaf.name()
@@ -113,7 +119,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 
 
 		when:
-		def res = controller.createTreeNodeFromLibraryNode(node, null)
+		def res = controller.createTreeNodeFromLibraryNode(node)
 
 		then:
 		res.state == State.closed.name()
@@ -130,7 +136,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		testCaseLibraryNavigationService.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(folderId, null)
+		def res = controller.getFolderContentTreeModel(folderId)
 
 		then:
 		res.size() == 1
@@ -143,7 +149,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		folder.id >> 50
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder, null)
+		def res = controller.addNewFolderToLibraryRootContent(10, folder)
 
 		then:
 		1 * testCaseLibraryNavigationService.addFolderToLibrary(10, folder)
@@ -173,7 +179,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
 		when:
-		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm, null)
+		def res = controller.addNewTestCaseToLibraryRootContent(10, tcfm)
 
 		then:
 		1 * testCaseLibraryNavigationService.addTestCaseToLibrary(10, {it.getName() == "test case"}, [:], null, [])
@@ -202,7 +208,7 @@ class TestCaseLibraryNavigationControllerTest extends NodeBuildingSpecification 
 		tcfm.getCustomFields() >> [:]
 		tcfm.getName() >> "test case"
 		when:
-		def res = controller.addNewTestCaseToFolder(10, tcfm, null)
+		def res = controller.addNewTestCaseToFolder(10, tcfm)
 
 		then:
 		1 * testCaseLibraryNavigationService.addTestCaseToFolder(10, {it.getName() == "test case"}, [:], null, [])

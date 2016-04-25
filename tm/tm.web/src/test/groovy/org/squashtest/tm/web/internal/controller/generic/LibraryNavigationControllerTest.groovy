@@ -56,7 +56,7 @@ class LibraryNavigationControllerTest extends Specification {
 		DummyFolder folder = new DummyFolder()
 
 		when:
-		def res = controller.addNewFolderToLibraryRootContent(10, folder, null)
+		def res = controller.addNewFolderToLibraryRootContent(10, folder)
 
 		then:
 		1 * service.addFolderToLibrary(10, folder)
@@ -71,7 +71,7 @@ class LibraryNavigationControllerTest extends Specification {
 		service.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10, null)
+		def res = controller.getRootContentTreeModel(10)
 
 		then:
 		res.size() == 1
@@ -85,7 +85,7 @@ class LibraryNavigationControllerTest extends Specification {
 		service.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(10, null)
+		def res = controller.getFolderContentTreeModel(10)
 
 		then:
 		res.size() == 1
@@ -97,7 +97,7 @@ class LibraryNavigationControllerTest extends Specification {
 		DummyFolder folder = new DummyFolder();
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder, null)
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
 
 		then:
 		1 * service.addFolderToFolder(100, folder)
@@ -125,12 +125,8 @@ class DummyController extends LibraryNavigationController<DummyLibrary, DummyFol
 
 
 
-	JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
-		null
-	}
-
 	@Override
-	protected JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource, Milestone activeMilestone) {
+	protected JsTreeNode createTreeNodeFromLibraryNode(DummyNode resource) {
 			new JsTreeNode()
 	}
 

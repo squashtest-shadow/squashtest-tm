@@ -60,7 +60,7 @@ import org.squashtest.tm.service.campaign.IterationFinder;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.campaign.TestSuiteModificationService;
 import org.squashtest.tm.service.campaign.TestSuiteTestPlanManagerService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -79,6 +79,8 @@ import org.squashtest.tm.web.internal.model.json.JsonIterationTestPlanItem;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import com.google.common.base.Optional;
 
 /**
  * 
@@ -119,6 +121,9 @@ public class TestSuiteTestPlanManagerController {
 	@Inject
 	private MilestoneUIConfigurationService milestoneConfService;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestSuiteModificationController.class);
@@ -144,15 +149,14 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan-manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CurrentMilestone Milestone activeMilestone) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 		LOGGER.debug("show test suite test plan manager for test suite #{}", suiteId);
 		TestSuite testSuite = testSuiteTestPlanManagerService.findTestSuite(suiteId);
 
 		List<TestCaseLibrary> linkableLibraries = iterationTestPlanManagerService.findLinkableTestCaseLibraries();
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testSuite);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testSuite);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-test-suite-test-plan-manager");
 		mav.addObject("testSuite", testSuite);
@@ -163,13 +167,17 @@ public class TestSuiteTestPlanManagerController {
 		return mav;
 	}
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Milestone activeMilestone) {
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
+			String[] openedNodes) {
 
 		MultiMap expansionCandidates = JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
-		if (activeMilestone != null){
-			dNodeBuilder.filterByMilestone(activeMilestone);
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+			dNodeBuilder.filterByMilestone(activeMilestone.get());
 		}
 
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(
@@ -326,8 +334,7 @@ public class TestSuiteTestPlanManagerController {
 
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable(TEST_SUITE_ID) long suiteId,
-			@PathVariable(ITEM_ID) long itemId,
-			@CurrentMilestone Milestone activeMilestone) {
+			@PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("find model and view for executions of test plan item  #{}", itemId);
 
 		TestSuite testSuite = service.findById(suiteId);
@@ -340,7 +347,7 @@ public class TestSuiteTestPlanManagerController {
 
 		ModelAndView mav = new ModelAndView("fragment/test-suites/test-suite-test-plan-row");
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testSuite);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testSuite);
 
 		mav.addObject("testPlanItem", iterationTestPlanItem);
 		mav.addObject("iterationId", iterationId);

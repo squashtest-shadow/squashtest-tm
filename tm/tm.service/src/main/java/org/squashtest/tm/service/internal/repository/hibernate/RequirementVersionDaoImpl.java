@@ -20,14 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
+
+import com.google.common.base.Optional;
 
 /**
  * 
@@ -38,6 +43,9 @@ import org.squashtest.tm.service.internal.repository.CustomRequirementVersionDao
 public class RequirementVersionDaoImpl implements CustomRequirementVersionDao {
 	@PersistenceContext
 	private EntityManager em;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	private Session currentSession() {
 		return em.unwrap(Session.class);
@@ -50,8 +58,11 @@ public class RequirementVersionDaoImpl implements CustomRequirementVersionDao {
 	}
 
 	@Override
-	public RequirementVersion findByRequirementIdAndMilestone(long requirementId, Long milestoneId) {
-		if (milestoneId== null){
+	public RequirementVersion findByRequirementIdAndMilestone(long requirementId) {
+
+		Optional<Milestone> active = activeMilestoneHolder.getActiveMilestone();
+
+		if (active.isPresent()) {
 			Query q = currentSession().getNamedQuery("requirementVersion.findLatestRequirementVersion");
 			q.setParameter("requirementId", requirementId);
 			return (RequirementVersion)q.uniqueResult();
@@ -59,7 +70,7 @@ public class RequirementVersionDaoImpl implements CustomRequirementVersionDao {
 		else{
 			Query q = currentSession().getNamedQuery("requirementVersion.findVersionByRequirementAndMilestone");
 			q.setParameter("requirementId", requirementId);
-			q.setParameter("milestoneId", milestoneId);
+			q.setParameter("milestoneId", active.get().getId());
 			return (RequirementVersion)q.uniqueResult();
 		}
 	}

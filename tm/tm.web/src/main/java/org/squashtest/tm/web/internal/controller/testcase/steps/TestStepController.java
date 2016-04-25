@@ -44,13 +44,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.execution.ExecutionStep;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.execution.ExecutionFinder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestStepModificationService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -99,26 +97,25 @@ public class TestStepController {
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET)
-	public String showStepInfos(@PathVariable long testStepId, Model model,
-			@CurrentMilestone Milestone activeMilestone) {
+	public String showStepInfos(@PathVariable long testStepId, Model model) {
 
 		LOGGER.info("Show Test Step initiated");
 		LOGGER.debug("Find and show TestStep #{}", testStepId);
 		TestStep testStep = testStepService.findById(testStepId);
 		TestStepView testStepView = new TestStepViewBuilder().buildTestStepView(testStep);
-		generateTestStepInfo(model, testStepView, activeMilestone, testStep);
+		generateTestStepInfo(model, testStepView, testStep);
 
 		return "edit-test-step.html";
 	}
 
-	private void generateTestStepInfo(Model model, AbstractTestStepView<?> testStepView, Milestone activeMilestone,
+	private void generateTestStepInfo(Model model, AbstractTestStepView<?> testStepView,
 			TestStep testStep) {
 		Locale locale = LocaleContextHolder.getLocale();
 		model.addAttribute("testStepView", testStepView);
 		model.addAttribute("workspace", "test-case");
 
 		// ------------------------------------ MILLESTONE FEATURE
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, testStep.getTestCase());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(testStep.getTestCase());
 		model.addAttribute("milestoneConf", milestoneConf);
 
 		// ------------------------------------RIGHTS PART
@@ -172,8 +169,8 @@ public class TestStepController {
 
 	@RequestMapping(value = "/from-exec", method = RequestMethod.GET, params = OPTIMIZED)
 	public String showStepInfosFromExec(@PathVariable("testStepId") int execStepId,
-			Model model, @RequestParam(OPTIMIZED) boolean optimized,
-			@CurrentMilestone Milestone activeMilestone) {
+ Model model,
+			@RequestParam(OPTIMIZED) boolean optimized) {
 
 
 		ExecutionStep execStep = executionService.findExecutionStepById(execStepId);
@@ -181,7 +178,7 @@ public class TestStepController {
 		TestStepViewFromExec testStepView = new TestStepViewFromExecBuilder().buildTestStepViewFromExec(execStep);
 
 		if (testStep != null) {
-		generateTestStepInfo(model, testStepView, activeMilestone, testStep);
+			generateTestStepInfo(model, testStepView, testStep);
 		} else {
 			model.addAttribute("testStepView", testStepView);
 			model.addAttribute("workspace", "test-case");

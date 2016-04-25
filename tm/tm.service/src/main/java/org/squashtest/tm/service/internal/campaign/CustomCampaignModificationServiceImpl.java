@@ -115,8 +115,8 @@ public class CustomCampaignModificationServiceImpl implements CustomCampaignModi
 	@Override
 	@PreAuthorize(READ_FOLDER_OR_ADMIN)
 	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(
-			Long folderId, Long milestoneId) {
-		return statisticsService.gatherFolderStatisticsBundle(folderId, milestoneId);
+Long folderId) {
+		return statisticsService.gatherFolderStatisticsBundle(folderId);
 	}
 
 

@@ -43,8 +43,6 @@ import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestPlanStatistics;
 import org.squashtest.tm.domain.execution.Execution;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
@@ -448,31 +446,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 		return q.list();
 	}
 
-	@Override
-	public List<Campaign> findCampaignByProject(List<Project> projectList, Milestone milestone) {
-		List<Campaign> campaignList = new ArrayList<>();
-		if (milestone != null) {
-			for (Project project : projectList) {
-				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectIdWithMilestone");
-				q.setParameter("projectId", project.getId());
-				q.setParameter("milestoneId", milestone.getId());
-				for (Object campaign : q.list()) {
-					campaignList.add((Campaign) campaign);
-				}
-			}
-		} else {
-			for (Project project : projectList) {
-				Query q = currentSession().getNamedQuery("campaign.findCampaignByProjectId");
-				q.setParameter("projectId", project.getId());
-				for (Object campaign : q.list()) {
-					campaignList.add((Campaign) campaign);
-				}
-			}
-		}
 
-		return campaignList;
-
-	}
 
 	// ******************** utils ***************************
 

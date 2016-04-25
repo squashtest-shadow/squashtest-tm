@@ -324,12 +324,12 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 	/* ***************************** deletion operations *************************** */
 
 	@Override
-	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds, Long milestoneId) {
-		return getDeletionHandler().simulateDeletion(targetIds, milestoneId);
+	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
+		return getDeletionHandler().simulateDeletion(targetIds);
 	}
 
 	@Override
-	public OperationReport deleteNodes(List<Long> targetIds, Long milestoneId) {
+	public OperationReport deleteNodes(List<Long> targetIds) {
 
 		// check. Note : we wont recursively check for the whole hierarchy as it's supposed to have the same
 		// identity holder
@@ -338,7 +338,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			checkPermission(new SecurityCheckableObject(node, "DELETE"));
 		}
 
-		return getDeletionHandler().deleteNodes(targetIds, milestoneId);
+		return getDeletionHandler().deleteNodes(targetIds);
 	}
 
 	/* ************************* private stuffs ************************* */

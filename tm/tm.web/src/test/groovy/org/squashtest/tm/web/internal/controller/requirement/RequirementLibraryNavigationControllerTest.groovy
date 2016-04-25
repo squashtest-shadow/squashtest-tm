@@ -20,6 +20,10 @@
  */
 package org.squashtest.tm.web.internal.controller.requirement
 
+import com.google.common.base.Optional
+import org.squashtest.tm.domain.milestone.Milestone
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+
 import javax.inject.Provider
 
 import org.springframework.context.MessageSource;
@@ -47,6 +51,7 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 	RequirementLibraryNavigationService requirementLibraryNavigationService = Mock()
 	Provider driveNodeBuilder = Mock();
 	Provider requirementLibraryTreeNodeBuilder = Mock();
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
 		controller.requirementLibraryNavigationService = requirementLibraryNavigationService
@@ -56,19 +61,21 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 			LibraryNavigationController.set field: "messageSource", of: controller, to: Mock(MessageSource)
 		}
 
+		controller.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		driveNodeBuilder.get() >> new DriveNodeBuilder(Mock(PermissionEvaluationService), null)
         requirementLibraryTreeNodeBuilder.get() >> new RequirementLibraryTreeNodeBuilder(permissionEvaluator())
 	}
 
 	def "should add folder to root of library and return folder node model"() {
-		given:
-		RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
-		use (ReflectionCategory) {
-			RequirementLibraryNode.set field: "id", of: folder, to: 100L
-		}
+			given:
+			RequirementFolder folder = new RequirementFolder(name: "new folder") // we need the real thing because of visitor pattern
+			use (ReflectionCategory) {
+				RequirementLibraryNode.set field: "id", of: folder, to: 100L
+			}
 
-		when:
-		JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder, null)
+			when:
+			JsTreeNode res = controller.addNewFolderToLibraryRootContent(10, folder)
 
 		then:
 		1 * requirementLibraryNavigationService.addFolderToLibrary(10, folder)
@@ -86,7 +93,7 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 		requirementLibraryNavigationService.findLibraryRootContent(10) >> [rootFolder]
 
 		when:
-		def res = controller.getRootContentTreeModel(10, null)
+		def res = controller.getRootContentTreeModel(10)
 
 		then:
 		res.size() == 1
@@ -107,7 +114,7 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 		}
 
 		when:
-		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion, null)
+		JsTreeNode res = controller.addNewRequirementToLibraryRootContent(100, firstVersion)
 
 		then:
 		1 * requirementLibraryNavigationService.addRequirementToRequirementLibrary(100, _, []) >> req
@@ -125,7 +132,7 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 		requirementLibraryNavigationService.findFolderContent(10) >> [content]
 
 		when:
-		def res = controller.getFolderContentTreeModel(10, null)
+		def res = controller.getFolderContentTreeModel(10)
 
 		then:
 		res.size() == 1
@@ -141,7 +148,7 @@ class RequirementLibraryNavigationControllerTest  extends NodeBuildingSpecificat
 		}
 
 		when:
-		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder, null)
+		JsTreeNode res = controller.addNewFolderToFolderContent(100, folder)
 
 		then:
 		1 * requirementLibraryNavigationService.addFolderToFolder(100, folder)

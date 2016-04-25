@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.deletion.BoundToLockedMilestonesReport;
@@ -66,9 +67,12 @@ import org.squashtest.tm.service.internal.repository.CampaignFolderDao;
 import org.squashtest.tm.service.internal.repository.FolderDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.security.PermissionsUtils;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
+
+import com.google.common.base.Optional;
 
 @Component("squashtest.tm.service.deletion.CampaignNodeDeletionHandler")
 public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<CampaignLibraryNode, CampaignFolder>
@@ -107,6 +111,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	@Inject
 	private IterationTestPlanManagerService iterationTestPlanManagerService;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	@Override
 	protected FolderDao<CampaignFolder, CampaignLibraryNode> getFolderDao() {
 		return folderDao;
@@ -115,7 +122,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	/* ************************** diagnostic section ******************************* */
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
 		List<SuppressionPreviewReport> reportList = new ArrayList<>();
 
@@ -128,7 +137,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		reportLocksByMilestone(nodeIds, reportList);
 
 		// milestone mode : additional checks
-		if (milestoneId != null) {
+		if (activeMilestone.isPresent()) {
 
 			// separate the campaigns from the folders
 			List<Long>[] separateIds = deletionDao.separateFolderFromCampaignIds(nodeIds);
@@ -188,9 +197,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(campaign.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				} 
+				}
 				catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
-					
+
 					//The user is not allowed to delete the campaign
 					report = new NotDeletableCampaignsPreviewReport();
 					report.addName(campaign.getName());
@@ -223,7 +232,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(iteration.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				} 
+				}
 				catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
 					LOGGER.trace("The user is not allowed to delete the iteration");
 					report = new NotDeletableCampaignsPreviewReport();
@@ -277,7 +286,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 					report.addName(suite.getName());
 					report.setHasRights(true);
 					reportList.add(report);
-				} 
+				}
 				catch (AccessDeniedException exception) {// NOSONAR : this exception is part of the nominal use case
 
 					// The user is not allowed to delete the test suite
@@ -326,7 +335,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	/* *************************locked entities detection section ******************* */
 
 	@Override
-	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
+	protected List<Long> detectLockedNodes(List<Long> nodeIds) {
 
 		List<Campaign> campaigns = campaignDao.findAllByIds(nodeIds);
 		List<Long> lockedNodes = new ArrayList<>(nodeIds.size());
@@ -347,19 +356,20 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		List<Long> lockedByMilestones = deletionDao.findCampaignsWhichMilestonesForbidsDeletion(nodeIds);
 		lockedNodes.addAll(lockedByMilestones);
 
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		/*
 		 * milestone mode provides additional checks :
 		 * - 1) no folder shall be deleted (enqueued outright)
 		 * - 2) no campaign that doesn't belong to the milestone shall be deleted
 		 * - 3) no campaign bound to more than one milestone shall be deleted (they will be unbound though, but later).
 		 */
-		if (milestoneId != null) {
+		if (activeMilestone.isPresent()) {
 
 			// 1 - no folder shall be deleted
 			List<Long> folderIds = deletionDao.separateFolderFromCampaignIds(nodeIds)[0];
 
 			// 2 - no campaign that aren't bound to the current milestone shall be deleted
-			List<Long> notBoundToMilestone = campaignDao.findNonBoundCampaign(nodeIds, milestoneId);
+			List<Long> notBoundToMilestone = campaignDao.findNonBoundCampaign(nodeIds, activeMilestone.get().getId());
 
 			// 3 - no campaign bound to more than one milestone shall be deleted
 			List<Long> boundToMoreMilestones = campaignDao.findCampaignIdsHavingMultipleMilestones(nodeIds);
@@ -389,7 +399,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	/*
 	 * by Nodes we mean the CampaignLibraryNodes.
 	 */
-	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
+	protected OperationReport batchDeleteNodes(List<Long> ids) {
 
 		//prepare the operation report:
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
@@ -435,7 +445,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 
 	@Override
-	protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+	protected OperationReport batchUnbindFromMilestone(List<Long> ids) {
 
 		List<Long> remainingIds = deletionDao.findRemainingCampaignIds(ids);
 
@@ -444,8 +454,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		remainingIds.removeAll(lockedIds);
 
 		OperationReport report = new OperationReport();
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 
-		deletionDao.unbindFromMilestone(remainingIds, milestoneId);
+		deletionDao.unbindFromMilestone(remainingIds, activeMilestone.get().getId());
 
 		report.addRemoved(remainingIds, "campaign");
 
@@ -644,6 +655,11 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		report.addRemoved(suiteIds, "test-suite");
 		return report;
 
+	}
+
+	@Override
+	protected boolean isMilestoneMode() {
+		return activeMilestoneHolder.getActiveMilestone().isPresent();
 	}
 
 	private void removeItpiFromIteration(List<TestSuite> suites, final List<Long> targetIds) {

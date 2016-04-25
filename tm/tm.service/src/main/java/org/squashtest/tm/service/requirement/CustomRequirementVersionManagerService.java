@@ -122,4 +122,6 @@ public interface CustomRequirementVersionManagerService {
 	
 	boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds);
 
+
+
 }

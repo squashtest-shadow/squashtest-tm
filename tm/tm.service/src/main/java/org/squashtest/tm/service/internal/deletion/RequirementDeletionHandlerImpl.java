@@ -57,6 +57,7 @@ import org.squashtest.tm.service.internal.repository.RequirementDao;
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao;
 import org.squashtest.tm.service.internal.repository.RequirementFolderDao;
 import org.squashtest.tm.service.internal.requirement.RequirementNodeDeletionHandler;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
 @Component("squashtest.tm.service.deletion.RequirementNodeDeletionHandler")
 public class RequirementDeletionHandlerImpl extends
@@ -84,6 +85,9 @@ RequirementNodeDeletionHandler {
 	@Inject
 	private PrivateCustomFieldValueService customValueService;
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	@Override
 	protected FolderDao<RequirementFolder, RequirementLibraryNode> getFolderDao() {
 		return folderDao;
@@ -91,21 +95,17 @@ RequirementNodeDeletionHandler {
 
 
 	@Override
-	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId) {
+	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
 
 		List<SuppressionPreviewReport> preview = new LinkedList<>();
 
 		// normal mode
-		if (milestoneId == null){
-			reportLocksByMilestone(nodeIds, preview);
-		}
-
 		// milestone mode
-		else {
-
+		if (isMilestoneMode()) {
 			// separate the folders from the requirements
 			List<Long>[] separatedIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
-			List<Long> targetVersionIds = deletionDao.findVersionIdsForMilestone(separatedIds[1], milestoneId);
+			List<Long> targetVersionIds = deletionDao.findVersionIdsForMilestone(separatedIds[1],
+					getActiveMilestoneId());
 
 			// check if there are some folders in the selection
 			reportNoFoldersAllowed(separatedIds[0], preview);
@@ -117,6 +117,13 @@ RequirementNodeDeletionHandler {
 			// RG 3613-R2.05
 			// check if some versions are bound to multiple milestones
 			reportMultipleMilestoneBinding(targetVersionIds, preview);
+
+		}
+
+		// normal mode
+		else {
+			reportLocksByMilestone(nodeIds, preview);
+
 		}
 
 		return preview;
@@ -175,19 +182,12 @@ RequirementNodeDeletionHandler {
 	 *
 	 */
 	@Override
-	protected List<Long> detectLockedNodes(List<Long> nodeIds, Long milestoneId) {
+	protected List<Long> detectLockedNodes(List<Long> nodeIds) {
 
 		List<Long> lockedIds = new ArrayList<>();
 
-		// referential mode. Nodes locked by milestone are always locked
-		if (milestoneId == null){
-			List<Long> lockedRequirementIds = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(nodeIds);
-			lockedIds.addAll(lockedRequirementIds);
-		}
-
 		// milestone mode
-		else {
-
+		if (isMilestoneMode()) {
 			List<Long>[] separateIds = deletionDao.separateFolderFromRequirementIds(nodeIds);
 
 			// a) no folder shall be deleted
@@ -206,7 +206,8 @@ RequirementNodeDeletionHandler {
 			List<Long> requirementIds = separateIds[1];
 
 			// 1 - have deletable version
-			List<Long> deletableRequirements = deletionDao.filterRequirementsHavingDeletableVersions(requirementIds, milestoneId);
+			List<Long> deletableRequirements = deletionDao.filterRequirementsHavingDeletableVersions(requirementIds,
+					getActiveMilestoneId());
 
 			// 2 - have only one version
 			List<Long> reqHavingManyVersions = requirementDao.filterRequirementHavingManyVersions(deletableRequirements);
@@ -216,6 +217,13 @@ RequirementNodeDeletionHandler {
 			requirementIds.removeAll(deletableRequirements);
 
 			lockedIds.addAll(requirementIds);
+		}
+
+		// referential mode. Nodes locked by milestone are always locked
+		else {
+
+			List<Long> lockedRequirementIds = deletionDao.filterRequirementsIdsWhichMilestonesForbidsDeletion(nodeIds);
+			lockedIds.addAll(lockedRequirementIds);
 
 		}
 
@@ -257,7 +265,7 @@ RequirementNodeDeletionHandler {
 	 *
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
 	 */
-	protected TargetsSortedByAppropriatePunishment sortThatMess(List<Long> nodeIds, Long milestoneId){
+	protected TargetsSortedByAppropriatePunishment sortThatMess(List<Long> nodeIds) {
 
 		List<Long> deletableFolderIds = null;
 		List<Long> deletableRequirementIds = null;
@@ -271,7 +279,7 @@ RequirementNodeDeletionHandler {
 
 		// --------- find nodes deletable per rule D1 -------------
 
-		LockedFolderInferenceTree folderTree = createLockedFileInferenceTree(candidateFolders, milestoneId);
+		LockedFolderInferenceTree folderTree = createLockedFileInferenceTree(candidateFolders);
 		List<Long> treeNodeIds = folderTree.collectKeys();			// these are the whole node hierarchy
 
 		// detect deletable folders. The tree can tell us that.
@@ -290,7 +298,7 @@ RequirementNodeDeletionHandler {
 		 */
 
 		List<Long> rule1DeletableRequirementIds = deletionDao.separateFolderFromRequirementIds(treeNodeIds)[1];
-		List<Long> lockedTreeRequirementIds = detectLockedNodes(rule1DeletableRequirementIds, milestoneId);
+		List<Long> lockedTreeRequirementIds = detectLockedNodes(rule1DeletableRequirementIds);
 		rule1DeletableRequirementIds.removeAll(lockedTreeRequirementIds);
 
 		deletableRequirementIds = new ArrayList<>(rule1DeletableRequirementIds);
@@ -298,7 +306,7 @@ RequirementNodeDeletionHandler {
 
 		// ------- find deletable nodes per rule D2 ---------
 
-		List<Long> lockedCandidateIds = detectLockedNodes(candidateRequirementIds, milestoneId);
+		List<Long> lockedCandidateIds = detectLockedNodes(candidateRequirementIds);
 
 		List<Long> rule2DeletableRequirementIds = new ArrayList<>(candidateRequirementIds);
 		rule2DeletableRequirementIds.removeAll(lockedCandidateIds);
@@ -316,13 +324,15 @@ RequirementNodeDeletionHandler {
 		 * encompassed by the selection minus those that
 		 * must be deleted
 		 */
-		if (milestoneId != null){
+		if (isMilestoneMode()) {
 			List<Long> allRequirementsEncompassed = deletionDao.separateFolderFromRequirementIds(folderTree.collectKeys())[1];
 			allRequirementsEncompassed.removeAll(deletableRequirementIds);
 			allRequirementsEncompassed.addAll(lockedCandidateIds);
 
-			requirementsWithOneDeletableVersion = deletionDao.filterRequirementsHavingDeletableVersions(allRequirementsEncompassed, milestoneId);
-			requirementsWithOneUnbindableVersion = deletionDao.filterRequirementsHavingUnbindableVersions(allRequirementsEncompassed, milestoneId);
+			requirementsWithOneDeletableVersion = deletionDao
+					.filterRequirementsHavingDeletableVersions(allRequirementsEncompassed, getActiveMilestoneId());
+			requirementsWithOneUnbindableVersion = deletionDao
+					.filterRequirementsHavingUnbindableVersions(allRequirementsEncompassed, getActiveMilestoneId());
 		}
 
 		// -------- now fill our object ---------
@@ -365,11 +375,11 @@ RequirementNodeDeletionHandler {
 	 * @see org.squashtest.tm.service.internal.deletion.AbstractNodeDeletionHandler#deleteNodes(java.util.List)
 	 */
 	@Override
-	public OperationReport deleteNodes(List<Long> targetIds, Long milestoneId) {
+	public OperationReport deleteNodes(List<Long> targetIds) {
 
 		OperationReport globalReport = new OperationReport();
 
-		TargetsSortedByAppropriatePunishment sortedTargets = sortThatMess(targetIds, milestoneId);
+		TargetsSortedByAppropriatePunishment sortedTargets = sortThatMess(targetIds);
 
 
 		// rewire future orphan requirements
@@ -391,16 +401,17 @@ RequirementNodeDeletionHandler {
 
 
 		// milestone mode :
-		if (milestoneId != null){
+		if (isMilestoneMode()) {
 
 			// delete just a version
 			List<Long> requirementWithDeletableVersion = sortedTargets.getRequirementsWithOneDeletableVersion();
-			OperationReport removedVersionsReport = batchRemoveMilestoneVersion(requirementWithDeletableVersion, milestoneId);
+			OperationReport removedVersionsReport = batchRemoveMilestoneVersion(requirementWithDeletableVersion,
+					getActiveMilestoneId());
 			globalReport.mergeWith(removedVersionsReport);
 
 			// unbind just a version
 			List<Long> requirementWithUnbindableVersion = sortedTargets.getRequirementsWithOneUnbindableVersion();
-			OperationReport unboundVerionsReport = batchUnbindFromMilestone(requirementWithUnbindableVersion, milestoneId);
+			OperationReport unboundVerionsReport = batchUnbindFromMilestone(requirementWithUnbindableVersion);
 			globalReport.mergeWith(unboundVerionsReport);
 
 
@@ -501,15 +512,15 @@ RequirementNodeDeletionHandler {
 	}
 
 	@Override
-	protected OperationReport batchUnbindFromMilestone(List<Long> requirementIds, Long milestoneId){
+	protected OperationReport batchUnbindFromMilestone(List<Long> requirementIds) {
 		OperationReport report = new OperationReport();
 
 		if (! requirementIds.isEmpty()){
 
-			List<Long> versionIds = deletionDao.findUnbindableVersions(requirementIds, milestoneId);
+			List<Long> versionIds = deletionDao.findUnbindableVersions(requirementIds, getActiveMilestoneId());
 			List<Long> unbindableRequirements = requirementDao.findByRequirementVersion(versionIds);
 
-			deletionDao.unbindFromMilestone(unbindableRequirements, milestoneId);
+			deletionDao.unbindFromMilestone(unbindableRequirements, getActiveMilestoneId());
 
 			report.addRemoved(requirementIds, "requirement");
 
@@ -772,11 +783,18 @@ RequirementNodeDeletionHandler {
 	 *
 	 */
 	@Override
-	protected OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId) {
+	protected OperationReport batchDeleteNodes(List<Long> ids) {
 		// NOOP see javadoc
 		return null;
 	}
+	@Override
+	protected boolean isMilestoneMode() {
+		return activeMilestoneHolder.getActiveMilestone().isPresent();
+	}
 
+	private Long getActiveMilestoneId() {
+		return activeMilestoneHolder.getActiveMilestone().get().getId();
+	}
 
 
 }

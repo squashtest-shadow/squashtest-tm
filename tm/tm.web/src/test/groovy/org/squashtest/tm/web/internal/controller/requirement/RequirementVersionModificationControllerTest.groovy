@@ -74,7 +74,7 @@ class RequirementVersionModificationControllerTest extends Specification {
 
 	def setup() {
 		new JsonHelper(new ObjectMapper())
-		
+
 		controller.requirementVersionManager = requirementVersionModificationService
 		controller.criticalityComboBuilderProvider = criticalityBuilderProvider
 		controller.statusComboDataBuilderProvider = statusBuilderProvider
@@ -142,7 +142,7 @@ class RequirementVersionModificationControllerTest extends Specification {
 		attachmentsHelper.findPagedAttachments(_) >> Mock(DataTableModel)
 
 		when:
-		String res = controller.showRequirementVersion(reqId, model, null, null)
+		String res = controller.showRequirementVersion(reqId, model, null)
 
 		then:
 		res == "fragment/requirements/requirement-version"

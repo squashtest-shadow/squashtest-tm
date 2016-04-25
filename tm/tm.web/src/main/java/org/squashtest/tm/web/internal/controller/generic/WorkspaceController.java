@@ -20,6 +20,14 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.Predicate;
@@ -27,7 +35,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 import org.squashtest.tm.domain.library.Library;
@@ -35,9 +48,9 @@ import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.service.library.WorkspaceService;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneFinderService;
 import org.squashtest.tm.service.project.ProjectFinder;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.campaign.MenuItem;
 import org.squashtest.tm.web.internal.helper.JsTreeHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
@@ -49,12 +62,7 @@ import org.squashtest.tm.web.internal.model.json.JsonProject;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
+import com.google.common.base.Optional;
 
 public abstract class WorkspaceController<LN extends LibraryNode> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorkspaceController.class);
@@ -74,6 +82,8 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	@Inject
 	protected MilestoneFinderService milestoneFinder;
 
+	@Inject
+	protected ActiveMilestoneHolder activeMilestoneHolder;
 
 	/**
 	 * Shows a workspace.
@@ -84,14 +94,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-	                            @CurrentMilestone Milestone activeMilestone,
 	                            @CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 	                            @CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
 
-		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen 
+		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen
 		// thus the test here
 		if (StringUtils.isBlank(elementId) || elementId.equals("null")) {
 			nodesToOpen = openedNodes;
@@ -105,8 +114,10 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-		if (activeMilestone != null) {
-			nodeBuilder.filterByMilestone(activeMilestone);
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			nodeBuilder.filterByMilestone(activeMilestone.get());
 		}
 
 		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
@@ -127,15 +138,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 		model.addAttribute("projects", jsProjects);
 
 		// also, milestones
-		if (activeMilestone != null) {
+		if (activeMilestone.isPresent()) {
 			JsonMilestone jsMilestone =
 				new JsonMilestone(
-					activeMilestone.getId(),
-					activeMilestone.getLabel(),
-					activeMilestone.getStatus(),
-					activeMilestone.getRange(),
-					activeMilestone.getEndDate(),
-					activeMilestone.getOwner().getLogin()
+activeMilestone.get().getId(),
+					activeMilestone.get().getLabel(), activeMilestone.get().getStatus(),
+					activeMilestone.get().getRange(), activeMilestone.get().getEndDate(),
+					activeMilestone.get().getOwner().getLogin()
 				);
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
@@ -224,13 +233,13 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	 */
 	@SuppressWarnings("all")
 	private MenuItem[] menuItems(Collection<WorkspaceWizard> wizards) {
-		Collection<WorkspaceWizard> effective = CollectionUtils.select(wizards, new Predicate() {			
+		Collection<WorkspaceWizard> effective = CollectionUtils.select(wizards, new Predicate() {
 			@Override
 			public boolean evaluate(Object object) {
 				return (((WorkspaceWizard)object).getWizardMenu() != null);
 			}
 		});
-		
+
 		MenuItem[] res = new MenuItem[effective.size()];
 		int i = 0;
 

@@ -20,6 +20,13 @@
  */
 package org.squashtest.tm.web.internal.controller.execution;
 
+import java.text.MessageFormat;
+import java.util.Collections;
+import java.util.Locale;
+import java.util.Set;
+
+import javax.inject.Inject;
+
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.Model;
@@ -36,12 +43,6 @@ import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
-
-import javax.inject.Inject;
-import java.text.MessageFormat;
-import java.util.Collections;
-import java.util.Locale;
-import java.util.Set;
 
 /**
  * Helper class for Controllers which need to show classic and optimized execution runners.
@@ -127,7 +128,7 @@ public class ExecutionRunnerControllerHelper {
             attachments = attachmentHelper.findAttachments(executionStep);
         }
 
-        MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(null, execution.getIteration());
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(execution.getIteration());
 
         model.addAttribute("execution", execution);
         model.addAttribute("executionStep", executionStep);

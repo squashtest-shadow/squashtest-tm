@@ -60,11 +60,11 @@ public interface CampaignLibraryFinderService {
 
 
 	/**
-	 * Returns all dashboard data for a milestone dashboard (ie about all campaigns that belong to that milestone)
+	 * Returns all dashboard data for a milestone dashboard (ie about all campaigns that belong to the active milestone)
 	 * 
-	 * @param milestoneId
+	 *
 	 * @return
 	 */
-	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId);
+	CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone();
 
 }

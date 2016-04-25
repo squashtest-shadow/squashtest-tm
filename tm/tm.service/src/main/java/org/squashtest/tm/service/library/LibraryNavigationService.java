@@ -108,10 +108,9 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 * happen.
 	 *
 	 * @param targetIds
-	 * @Param milestoneId. If non null, the simulation will carry on using the milestone mode.
 	 * @return
 	 */
-	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds, Long milestoneId);
+	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
 
 	/**
 	 * that method should delete the nodes. It still takes care of non deletable nodes so the implementation should
@@ -121,7 +120,7 @@ public interface LibraryNavigationService<LIBRARY extends Library<? extends NODE
 	 * @param targetIds
 	 * @return
 	 */
-	OperationReport deleteNodes(List<Long> targetIds, Long milestoneId);
+	OperationReport deleteNodes(List<Long> targetIds);
 
 	/**
 	 * That method should find the parentFolder of the library Node if it has one

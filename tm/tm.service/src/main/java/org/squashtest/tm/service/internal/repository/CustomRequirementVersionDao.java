@@ -31,10 +31,10 @@ public interface CustomRequirementVersionDao {
 	Requirement findRequirementById(long requirementId);
 
 	/**
-	 * Find which version of a requirement that is bound to a given milestone. if MilestoneId is null
-	 * the latest version will be returned
+	 * Find which version of a requirement that is bound to a given milestone. if not milestoneMode the latest version
+	 * will be returned
 	 */
-	RequirementVersion findByRequirementIdAndMilestone(long requirementId, Long milestoneId);
+	RequirementVersion findByRequirementIdAndMilestone(long requirementId);
 
 
 }

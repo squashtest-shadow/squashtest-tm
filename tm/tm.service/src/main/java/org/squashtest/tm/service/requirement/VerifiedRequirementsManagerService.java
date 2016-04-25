@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementCoverageStat;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
@@ -45,12 +44,10 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 * 
 	 * @param requirementsIds
 	 * @param testCaseId
-	 * @param milestoneId if non null, for each requirement, the version belonging to the current milestone will be bound, instead
-	 * of the last one.
 	 * @return
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestCase(List<Long> requirementsIds,
-			long testCaseId, Milestone activeMilestone);
+			long testCaseId);
 
 	/**
 	 * Adds a list of requirement's current requirement-versions to the ones verified by the step's test case and bind them to the step. If the version  already verified by the test case, it is only bound to the step.
@@ -62,7 +59,7 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	 * @return
 	 */
 	Collection<VerifiedRequirementException> addVerifiedRequirementsToTestStep(List<Long> requirementsIds,
-			long testStepId, Milestone activeMilestone);
+			long testStepId);
 	/**
 	 * Adds the requirement-version to the ones verified by the step's test case and bind it to the step. If the version is already verified by the test case, it is only bound to the step.
 	 * If a sister version is already bound to the test case the version is not added.
@@ -125,9 +122,8 @@ public interface VerifiedRequirementsManagerService extends VerifiedRequirements
 	/**
 	 * Return a list of coverage rate for a designed requirement version
 	 * @param requirementVersionId
-	 * @param currentMilestone
 	 * @param iterations 
 	 * @return
 	 */
-	void findCoverageStat(Long requirementVersionId, Milestone currentMilestone, List<Long> iterationsIds, RequirementCoverageStat stats);
+	void findCoverageStat(Long requirementVersionId, List<Long> iterationsIds, RequirementCoverageStat stats);
 }

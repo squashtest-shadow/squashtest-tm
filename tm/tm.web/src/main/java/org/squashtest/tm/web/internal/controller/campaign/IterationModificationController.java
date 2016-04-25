@@ -20,12 +20,36 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
@@ -35,7 +59,6 @@ import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IterationModificationService;
@@ -44,7 +67,6 @@ import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.statistics.iteration.IterationStatisticsBundle;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -58,15 +80,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.jquery.TestSuiteModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.Serializable;
-import java.util.*;
-
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/iterations/{iterationId}")
@@ -112,23 +125,21 @@ public class IterationModificationController {
 
 
 	@RequestMapping(method = RequestMethod.GET)
-	public String showIteration(Model model, @PathVariable long iterationId,
-								@CurrentMilestone Milestone activeMilestone) {
+	public String showIteration(Model model, @PathVariable long iterationId) {
 
-		populateIterationModel(model, iterationId, activeMilestone);
+		populateIterationModel(model, iterationId);
 		return "fragment/iterations/iteration";
 	}
 
 	// will return the iteration in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String showIterationInfo(Model model, @PathVariable long iterationId,
-									@CurrentMilestone Milestone activeMilestone) {
+	public String showIterationInfo(Model model, @PathVariable long iterationId) {
 
-		populateIterationModel(model, iterationId, activeMilestone);
+		populateIterationModel(model, iterationId);
 		return "page/campaign-workspace/show-iteration";
 	}
 
-	private void populateIterationModel(Model model, long iterationId, Milestone activeMilestone) {
+	private void populateIterationModel(Model model, long iterationId) {
 
 		Iteration iteration = iterationModService.findById(iterationId);
 		boolean hasCUF = cufValueService.hasCustomFields(iteration);
@@ -136,7 +147,7 @@ public class IterationModificationController {
 		Map<String, String> assignableUsers = getAssignableUsers(iterationId);
 		Map<String, String> weights = getWeights();
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, iteration);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(iteration);
 
 		model.addAttribute(ITERATION_KEY, iteration);
 		model.addAttribute("hasCUF", hasCUF);
@@ -403,8 +414,7 @@ public class IterationModificationController {
 	 */
 	@RequestMapping(value = "/test-plan/{itemId}/executions", method = RequestMethod.GET)
 	public ModelAndView getExecutionsForTestPlan(@PathVariable("iterationId") long iterationId,
-												 @PathVariable("itemId") long itemId,
-												 @CurrentMilestone Milestone activeMilestone) {
+			@PathVariable("itemId") long itemId) {
 
 		List<Execution> executionList = iterationModService.findExecutionsByTestPlan(iterationId,
 			itemId);
@@ -413,7 +423,7 @@ public class IterationModificationController {
 		IterationTestPlanItem testPlanItem = testPlanFinder.findTestPlanItem(itemId);
 		ModelAndView mav = new ModelAndView("fragment/iterations/iteration-test-plan-row");
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, iter);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(iter);
 
 		mav.addObject("testPlanItem", testPlanItem);
 		mav.addObject(ITERATION_ID_KEY, iterationId);

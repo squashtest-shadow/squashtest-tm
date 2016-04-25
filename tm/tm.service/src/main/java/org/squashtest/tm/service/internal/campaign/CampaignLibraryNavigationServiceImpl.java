@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.campaign.export.CampaignExportCSVModel;
 import org.squashtest.tm.domain.customfield.RawValue;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.service.annotation.BatchPreventConcurrent;
@@ -78,10 +79,13 @@ import org.squashtest.tm.service.internal.repository.CampaignLibraryDao;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestSuiteDao;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
+
+import com.google.common.base.Optional;
 
 @Service("squashtest.tm.service.CampaignLibraryNavigationService")
 @Transactional
@@ -147,6 +151,9 @@ public class CampaignLibraryNavigationServiceImpl
 
 	@Inject
 	private MilestoneMembershipManager milestoneManager;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@Override
 	protected NodeDeletionHandler<CampaignLibraryNode, CampaignFolder> getDeletionHandler() {
@@ -272,10 +279,13 @@ public class CampaignLibraryNavigationServiceImpl
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = CampaignLibrary.class)
 	public void addCampaignToCampaignLibrary(@Id long libraryId, Campaign campaign,
-											 Map<Long, RawValue> customFieldValues, Long milestoneId) {
+			Map<Long, RawValue> customFieldValues) {
 		addCampaignToCampaignLibrary(libraryId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-		milestoneManager.bindCampaignToMilestone(campaign.getId(), milestoneId);
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			milestoneManager.bindCampaignToMilestone(campaign.getId(), activeMilestone.get().getId());
+		}
 	}
 
 	@Override
@@ -298,13 +308,16 @@ public class CampaignLibraryNavigationServiceImpl
 	@PreAuthorize("hasPermission(#folderId, 'org.squashtest.tm.domain.campaign.CampaignFolder', 'CREATE')"
 		+ OR_HAS_ROLE_ADMIN)
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
-	public void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues,
-											Long milestoneId) {
+	public void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign,
+			Map<Long, RawValue> customFieldValues) {
 
 		addCampaignToCampaignFolder(folderId, campaign);
 		initCustomFieldValues(campaign, customFieldValues);
-		milestoneManager.bindCampaignToMilestone(campaign.getId(), milestoneId);
 
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		if (activeMilestone.isPresent()) {
+			milestoneManager.bindCampaignToMilestone(campaign.getId(), activeMilestone.get().getId());
+		}
 	}
 
 	@Override
@@ -437,8 +450,8 @@ public class CampaignLibraryNavigationServiceImpl
 	}
 
 	@Override
-	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone(long milestoneId) {
-		return statisticsService.gatherMilestoneStatisticsBundle(milestoneId);
+	public CampaignStatisticsBundle gatherCampaignStatisticsBundleByMilestone() {
+		return statisticsService.gatherMilestoneStatisticsBundle();
 	}
 
 	@Override
@@ -525,8 +538,8 @@ public class CampaignLibraryNavigationServiceImpl
 	@PreventConcurrents(batchsLocks = {
 		@BatchPreventConcurrent(entityType = CampaignLibrary.class, paramName = "targetIds", coercer = CampaignLibraryIdsCoercerForList.class),
 		@BatchPreventConcurrent(entityType = CampaignLibraryNode.class, paramName = "targetIds", coercer = CLNAndParentIdsCoercerForList.class)})
-	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId) {
-		return super.deleteNodes(targetIds, milestoneId);
+	public OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds) {
+		return super.deleteNodes(targetIds);
 	}
 
 	// ###################### /PREVENT CONCURRENCY OVERIDES

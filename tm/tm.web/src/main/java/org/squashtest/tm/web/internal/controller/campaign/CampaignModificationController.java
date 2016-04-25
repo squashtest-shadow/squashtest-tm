@@ -20,6 +20,25 @@
  */
 package org.squashtest.tm.web.internal.controller.campaign;
 
+import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
+
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.slf4j.Logger;
@@ -27,7 +46,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
@@ -46,7 +70,6 @@ import org.squashtest.tm.service.campaign.IterationModificationService;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
@@ -62,15 +85,6 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.json.JsonGeneralInfo;
 import org.squashtest.tm.web.internal.model.json.JsonIteration;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.*;
-
-import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 @Controller
 @RequestMapping("/campaigns/{campaignId}")
@@ -135,19 +149,19 @@ public class CampaignModificationController {
 	// will return the Campaign in a full page
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
 	public String showCampaignInfo(@PathVariable long campaignId,
-			@CurrentMilestone Milestone activeMilestone, Model model) {
-		populateCampaignModel(campaignId, activeMilestone, model);
+ Model model) {
+		populateCampaignModel(campaignId, model);
 		return "page/campaign-workspace/show-campaign";
 	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String showCampaign(@PathVariable long campaignId, @CurrentMilestone Milestone activeMilestone, Model model) {
-		populateCampaignModel(campaignId,activeMilestone, model);
+	public String showCampaign(@PathVariable long campaignId, Model model) {
+		populateCampaignModel(campaignId, model);
 		return "fragment/campaigns/campaign";
 	}
 
-	private Model populateCampaignModel(long campaignId, Milestone activeMilestone, Model model) {
+	private Model populateCampaignModel(long campaignId, Model model) {
 
 		Campaign campaign = campaignModService.findById(campaignId);
 		TestPlanStatistics statistics = campaignModService.findCampaignStatistics(campaignId);
@@ -162,7 +176,7 @@ public class CampaignModificationController {
 		model.addAttribute("weights", getWeights());
 		model.addAttribute("modes", getModes());
 
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, campaign);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 		model.addAttribute("milestoneConf", milestoneConf);
 
 		populateOptionalExecutionStatuses(campaign, model);

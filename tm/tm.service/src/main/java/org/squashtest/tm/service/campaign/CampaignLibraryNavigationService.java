@@ -69,7 +69,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param customFieldValues
 	 */
 	@PreventConcurrent(entityType = CampaignLibrary.class)
-	void addCampaignToCampaignLibrary(@Id long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId);
+	void addCampaignToCampaignLibrary(@Id long libraryId, Campaign campaign, Map<Long, RawValue> customFieldValues);
 
 
 	/**
@@ -91,7 +91,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 	 * @param customFieldValues
 	 */
 	@PreventConcurrent(entityType = CampaignLibraryNode.class)
-	void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues, Long milestoneId);
+	void addCampaignToCampaignFolder(@Id long folderId, Campaign campaign, Map<Long, RawValue> customFieldValues);
 
 	@PreventConcurrent(entityType=CampaignLibraryNode.class,paramName="destinationId")
 	void moveIterationsWithinCampaign(@Id("destinationId")long destinationId, Long[] nodeIds, int position);
@@ -241,7 +241,7 @@ LibraryNavigationService<CampaignLibrary, CampaignFolder, CampaignLibraryNode>, 
 			batchsLocks={@BatchPreventConcurrent(entityType=CampaignLibrary.class, paramName="targetIds",coercer=CampaignLibraryIdsCoercerForList.class),
 					@BatchPreventConcurrent(entityType=CampaignLibraryNode.class, paramName="targetIds",coercer=CLNAndParentIdsCoercerForList.class)}
 			)
-	OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds, Long milestoneId);
+	OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds);
 
 	// ###################### /PREVENT CONCURRENCY OVERIDES ############################
 

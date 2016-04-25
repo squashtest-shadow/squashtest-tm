@@ -274,7 +274,7 @@ LibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>, 
 			batchsLocks={@BatchPreventConcurrent(entityType = TestCaseLibraryNode.class, paramName="targetIds", coercer=TCLNAndParentIdsCoercerForList.class),
 					@BatchPreventConcurrent(entityType = TestCaseLibrary.class, paramName="targetIds", coercer=TestCaseLibraryIdsCoercerForList.class)}
 			)
-	OperationReport deleteNodes(@Ids("targetIds")List<Long> targetIds, Long milestoneId);
+	OperationReport deleteNodes(@Ids("targetIds") List<Long> targetIds);
 	
 	//####################### /PREVENT CONCURENCY OVERRIDES #########################//
 }

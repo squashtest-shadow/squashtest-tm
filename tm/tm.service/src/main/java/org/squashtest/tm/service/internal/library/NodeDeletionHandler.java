@@ -62,10 +62,9 @@ public interface NodeDeletionHandler<NODE extends LibraryNode, FOLDER extends Fo
 	 * should first calculate then include all the candidate nodes.</p>
 	 * 
 	 * @param targetIds the ids of the input node.
-	 * @param milestoneId if non null, will carry on the simulation on milestone mode.
 	 * @return a list of SuppressionPreviewReport.
 	 */
-	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds, Long milestoneId);
+	List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds);
 
 
 	/**
@@ -75,9 +74,8 @@ public interface NodeDeletionHandler<NODE extends LibraryNode, FOLDER extends Fo
 	 * 
 	 * 
 	 * @param targetIds the list of node ids selected by the user.
-	 * @param milestoneId if non null, deletion will be performed in milestone mode
 	 * @return an OperationReport saying what happened.
 	 */
-	OperationReport deleteNodes(List<Long> targetIds, Long milestoneId);
+	OperationReport deleteNodes(List<Long> targetIds);
 
 }

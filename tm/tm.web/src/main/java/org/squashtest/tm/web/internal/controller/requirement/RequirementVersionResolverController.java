@@ -29,11 +29,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
 import org.squashtest.tm.service.requirement.RequirementVersionResolverService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
@@ -55,18 +53,17 @@ public class RequirementVersionResolverController {
 
 
 	@RequestMapping(value = "/info", method = RequestMethod.GET)
-	public String resolveRequirementInfo(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @CurrentMilestone Milestone activeMilestone) {
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
-		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId, milestoneId);
+	public String resolveRequirementInfo(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
+
+		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 		return "redirect:/requirement-versions/"+version.getId()+"/info";
 
 	}
 
 	// will return the fragment only
 	@RequestMapping(method = RequestMethod.GET)
-	public String resolveRequirement(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @CurrentMilestone Milestone activeMilestone) {
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
-		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId, milestoneId);
+	public String resolveRequirement(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId) {
+		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 		return "redirect:/requirement-versions/"+version.getId();
 	}
 
@@ -86,12 +83,11 @@ public class RequirementVersionResolverController {
 	 */
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	public @ResponseBody
-	Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId, @RequestParam("newName") String newName,
-			@CurrentMilestone Milestone activeMilestone) {
+ Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
+			@RequestParam("newName") String newName) {
 		
-		Long milestoneId = activeMilestone != null ? activeMilestone.getId() : null;
 
-		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId, milestoneId);
+		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 		requirementVersionManager.rename(version.getId(), newName);
 
 		return new  RenameModel(newName);

@@ -43,9 +43,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.CampaignStatisticsService;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.statistics.campaign.CampaignNonExecutedTestCaseImportanceStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignProgressionStatistics;
 import org.squashtest.tm.service.statistics.campaign.CampaignStatisticsBundle;
@@ -55,6 +57,8 @@ import org.squashtest.tm.service.statistics.campaign.CampaignTestInventoryStatis
 import org.squashtest.tm.service.statistics.campaign.IterationTestInventoryStatistics;
 import org.squashtest.tm.service.statistics.campaign.ManyCampaignStatisticsBundle;
 import org.squashtest.tm.service.statistics.campaign.ScheduledIteration;
+
+import com.google.common.base.Optional;
 
 @Transactional(readOnly=true)
 @Service("CampaignStatisticsService")
@@ -71,6 +75,9 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Inject
 	private CampaignDao campaignDao;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 
 	// ************************************ all-in-one methods ******************************
@@ -110,9 +117,12 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	// TODO : security ? If never exposed through OSGI it might not be necessary
-	public CampaignStatisticsBundle gatherMilestoneStatisticsBundle(long milestoneId) {
+	public CampaignStatisticsBundle gatherMilestoneStatisticsBundle() {
 
 		CampaignStatisticsBundle bundle = new CampaignStatisticsBundle();
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Long milestoneId = activeMilestone.get().getId();
 
 		// perimeter
 		List<Long> campaignIds = campaignDao.findAllIdsByMilestone(milestoneId);
@@ -123,7 +133,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		CampaignTestCaseSuccessRateStatistics testcaseSuccessRate = gatherTestCaseSuccessRateStatistics(campaignIds);
 
 		// specific methods
-		List<IterationTestInventoryStatistics> inventory = gatherMilestoneTestInventoryStatistics(milestoneId);
+		List<IterationTestInventoryStatistics> inventory = gatherMilestoneTestInventoryStatistics();
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics(); // not used in the by-milestone dashboard
 
 		// stuff it all
@@ -141,13 +151,19 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	// TODO : security ? If never exposed through OSGI it might not be necessary
-	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId) {
+	public ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId) {
+
 
 		ManyCampaignStatisticsBundle bundle = new ManyCampaignStatisticsBundle();
 
 		// perimeter
 		List<Long> campaignIds = campaignDao.findAllCampaignIdsByNodeIds(Arrays.asList(folderId));
-		campaignIds = campaignDao.filterByMilestone(campaignIds, milestoneId);
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+			campaignIds = campaignDao.filterByMilestone(campaignIds, activeMilestone.get().getId());
+		}
 
 		// common methods
 		CampaignTestCaseStatusStatistics testcaseStatuses = gatherTestCaseStatusStatistics(campaignIds);
@@ -275,8 +291,10 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
-	public List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics(long milestoneId) {
+	public List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics() {
 		Query query = em.unwrap(Session.class).getNamedQuery("CampaignStatistics.testinventorybymilestone");
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+		Long milestoneId = activeMilestone.get().getId();
 		query.setParameter("id", milestoneId);
 		List<Object[]> tuples = query.list();
 

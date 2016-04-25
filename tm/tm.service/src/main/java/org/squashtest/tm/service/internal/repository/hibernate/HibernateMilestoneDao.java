@@ -47,7 +47,7 @@ import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsExceptio
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
 
 @Repository
-public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> implements MilestoneDao {
+public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implements MilestoneDao {
 	private static final String CAMPAIGN_ID = "campaignId";
 	private static final String VERSION_ID = "versionId";
 	private static final String VALID_STATUS = "validStatus";
@@ -108,11 +108,10 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	}
 
-
 	/*
-	 * Note : for now the implementation for isTestCaseMilestoneDeletable and
-	 * isTestCaseMilestoneModifiable is the same. That might change in the future.
-	 * (non-Javadoc)
+	 * Note : for now the implementation for isTestCaseMilestoneDeletable and isTestCaseMilestoneModifiable is the same.
+	 * That might change in the future. (non-Javadoc)
+	 * 
 	 * @see org.squashtest.tm.service.internal.repository.MilestoneDao#isTestCaseMilestoneDeletable(long)
 	 */
 	@Override
@@ -125,7 +124,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		return doesTestCaseBelongToMilestonesWithStatus(testCaseId, MilestoneStatus.PLANNED, MilestoneStatus.LOCKED);
 	}
 
-	private boolean doesTestCaseBelongToMilestonesWithStatus(long testCaseId, MilestoneStatus... statuses){
+	private boolean doesTestCaseBelongToMilestonesWithStatus(long testCaseId, MilestoneStatus... statuses) {
 		Query query = currentSession().getNamedQuery("testCase.findTestCasesWithMilestonesHavingStatuses");
 		query.setParameterList("testCaseIds", Arrays.asList(testCaseId), LongType.INSTANCE);
 		query.setParameterList("statuses", statuses);
@@ -336,10 +335,9 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	public boolean isBoundToAtleastOneObject(long milestoneId) {
 		Query query = currentSession().getNamedQuery("milestone.countBoundObject");
 		query.setParameter(MILESTONE_ID, milestoneId);
-		int count =  (int) query.uniqueResult();
+		int count = (int) query.uniqueResult();
 		return count != 0 ? true : false;
 	}
-
 
 	@Override
 	public void unbindAllObjectsForProject(Long milestoneId, Long projectId) {
@@ -348,9 +346,8 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		unbindAllObjectsForProjects(milestoneId, projectIds);
 	}
 
-
 	@Override
-	public void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds){
+	public void unbindAllObjectsForProjects(Long milestoneId, List<Long> projectIds) {
 		final String[] entities = { "TestCases", "RequirementVersions", "Campaigns" };
 
 		Session session = currentSession();
@@ -379,7 +376,6 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 			}
 		}
 	}
-
 
 	@Override
 	public void unbindAllObjects(long milestoneId) {
@@ -411,7 +407,6 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		}
 	}
 
-
 	@Override
 	public Milestone findByName(String name) {
 		return findMilestoneByLabel(name);
@@ -426,6 +421,14 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 	}
 
 	@Override
+	public boolean isMilestoneBoundToACampainInProjects(Long milestoneId, List<Long> projectIds) {
+		Query query = currentSession().getNamedQuery("milestone.countCampaignsForProjectAndMilestone");
+		query.setParameterList(PROJECT_IDS, projectIds);
+		query.setParameter(MILESTONE_ID, milestoneId);
+		return (long) query.uniqueResult() > 0;
+	}
+
+	@Override
 	public boolean isMilestoneBoundToOneObjectOfProject(Long milestoneId, Long projectId) {
 
 		List<Long> projectIds = new ArrayList<>();
@@ -435,20 +438,20 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 		queryTc.setParameterList(PROJECT_IDS, projectIds);
 		queryTc.setParameter(MILESTONE_ID, milestoneId);
 
-		if (queryTc.list().size() != 0){
-			return true; //return now so we don't do useless request
+		if (queryTc.list().size() != 0) {
+			return true; // return now so we don't do useless request
 		}
 
 		Query queryCamp = currentSession().getNamedQuery("milestone.findAllCampaignsForProjectAndMilestone");
 		queryCamp.setParameterList(PROJECT_IDS, projectIds);
 		queryCamp.setParameter(MILESTONE_ID, milestoneId);
-		if (queryCamp.list().size() != 0){
-			return true;//return now so we don't do useless request
+		if (queryCamp.list().size() != 0) {
+			return true;// return now so we don't do useless request
 		}
 		Query queryReq = currentSession().getNamedQuery("milestone.findAllRequirementVersionsForProjectAndMilestone");
 		queryReq.setParameterList(PROJECT_IDS, projectIds);
 		queryReq.setParameter(MILESTONE_ID, milestoneId);
-		if (queryReq.list().size() != 0){
+		if (queryReq.list().size() != 0) {
 			return true;
 		}
 
@@ -457,11 +460,10 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	@Override
 	public boolean isOneMilestoneAlreadyBindToAnotherRequirementVersion(List<Long> reqVIds, List<Long> milestoneIds) {
-		if (reqVIds.isEmpty() || milestoneIds.isEmpty()){
+		if (reqVIds.isEmpty() || milestoneIds.isEmpty()) {
 			return false;
-		}
-		else{
-			Query query= currentSession().getNamedQuery("milestone.otherRequirementVersionBindToOneMilestone");
+		} else {
+			Query query = currentSession().getNamedQuery("milestone.otherRequirementVersionBindToOneMilestone");
 			query.setParameterList("reqVIds", reqVIds);
 			query.setParameterList(MILESTONE_IDS, milestoneIds);
 			return query.list().size() != 0;
@@ -470,11 +472,9 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone> impleme
 
 	@Override
 	public long countMilestonesForUsers(List<Long> userIds) {
-		Query query= currentSession().getNamedQuery("milestone.countMilestonesForUsers");
+		Query query = currentSession().getNamedQuery("milestone.countMilestonesForUsers");
 		query.setParameterList("userIds", userIds);
 		return (long) query.uniqueResult();
 	}
-
-
 
 }

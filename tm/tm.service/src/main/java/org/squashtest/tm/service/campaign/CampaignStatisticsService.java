@@ -70,15 +70,17 @@ public interface CampaignStatisticsService {
 
 
 	/**
-	 * <p>Given a milestone id, gathers all of the following in one package for a milestone.</p>
+	 * <p>
+	 * For activeMilestone, gathers all of the following in one package for a milestone.
+	 * </p>
 	 * 
-	 * @param milestoneId
+	 * 
 	 * @return
 	 */
 	// functional FIXME : ask a spec writer why statistics vary so subtly depending on
 	// whether we ask a dashboard for a bunch of campaigns belonging to the same milestone,
 	// or a bunch of campaigns belonging to the same folder.
-	CampaignStatisticsBundle gatherMilestoneStatisticsBundle(long milestoneId);
+	CampaignStatisticsBundle gatherMilestoneStatisticsBundle();
 
 
 	/**
@@ -92,8 +94,7 @@ public interface CampaignStatisticsService {
 	// functional FIXME : ask a spec writer why statistics vary so subtly depending on
 	// whether we ask a dashboard for a bunch of campaigns belonging to the same milestone,
 	// or a bunch of campaigns belonging to the same folder
-	ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId, Long milestoneId);
-
+	ManyCampaignStatisticsBundle gatherFolderStatisticsBundle(Long folderId);
 
 	/* *********************************** common statistics methods ************************************ */
 
@@ -169,7 +170,7 @@ public interface CampaignStatisticsService {
 	 * @param milestoneId
 	 * @return
 	 */
-	List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics(long milestoneId);
+	List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics();
 
 
 
@@ -183,6 +184,7 @@ public interface CampaignStatisticsService {
 	 * @return
 	 */
 	List<CampaignTestInventoryStatistics> gatherFolderTestInventoryStatistics(Collection<Long> campaignIds);
+
 
 
 

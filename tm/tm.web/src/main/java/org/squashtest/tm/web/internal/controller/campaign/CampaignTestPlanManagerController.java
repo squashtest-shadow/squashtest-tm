@@ -50,7 +50,7 @@ import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.CampaignTestPlanManagerService;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneFeatureConfiguration;
 import org.squashtest.tm.web.internal.controller.milestone.MilestoneUIConfigurationService;
@@ -69,6 +69,8 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
+import com.google.common.base.Optional;
+
 /**
  * @author Agnes Durand
  */
@@ -86,6 +88,9 @@ public class CampaignTestPlanManagerController {
 
 	@Inject
 	private InternationalizationHelper messageSource;
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 
 	@Inject
@@ -106,15 +111,14 @@ public class CampaignTestPlanManagerController {
 
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/manager", method = RequestMethod.GET)
 	public ModelAndView showManager(@PathVariable long campaignId,
-			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
-			@CurrentMilestone Milestone activeMilestone) {
+			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes) {
 
 
 		Campaign campaign = testPlanManager.findCampaign(campaignId);
 		List<TestCaseLibrary> linkableLibraries = testPlanManager.findLinkableTestCaseLibraries();
-		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(activeMilestone, campaign);
+		MilestoneFeatureConfiguration milestoneConf = milestoneConfService.configure(campaign);
 
-		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes, activeMilestone);
+		List<JsTreeNode> linkableLibrariesModel = createLinkableLibrariesModel(linkableLibraries, openedNodes);
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-campaign-test-plan-manager");
 		mav.addObject("campaign", campaign);
@@ -156,12 +160,16 @@ public class CampaignTestPlanManagerController {
 	}
 
 
-	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries, String[] openedNodes, Milestone activeMilestone){
+	private List<JsTreeNode> createLinkableLibrariesModel(List<TestCaseLibrary> linkableLibraries,
+			String[] openedNodes) {
 		MultiMap expansionCandidates =  JsTreeHelper.mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<TestCaseLibraryNode> dNodeBuilder = driveNodeBuilder.get();
-		if (activeMilestone != null){
-			dNodeBuilder.filterByMilestone(activeMilestone);
+
+		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+
+		if (activeMilestone.isPresent()) {
+			dNodeBuilder.filterByMilestone(activeMilestone.get());
 		}
 
 		JsTreeNodeListBuilder<TestCaseLibrary> listBuilder = new JsTreeNodeListBuilder<>(dNodeBuilder);

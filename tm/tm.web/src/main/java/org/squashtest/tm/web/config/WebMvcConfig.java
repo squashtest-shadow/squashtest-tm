@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.web.config;
 
-import java.util.List;
-
 import javax.inject.Inject;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.PersistenceUnit;
@@ -31,7 +29,6 @@ import org.springframework.boot.autoconfigure.web.ResourceProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.orm.jpa.support.OpenEntityManagerInViewInterceptor;
 import org.springframework.web.context.request.Log4jNestedDiagnosticContextInterceptor;
-import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -39,7 +36,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.resource.CssLinkResourceTransformer;
 import org.springframework.web.servlet.resource.GzipResourceResolver;
 import org.springframework.web.servlet.resource.VersionResourceResolver;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver;
 import org.squashtest.tm.web.internal.interceptor.ActiveMilestoneInterceptor;
 import org.squashtest.tm.web.internal.interceptor.SecurityExpressionResolverExposerInterceptor;
 import org.squashtest.tm.web.internal.interceptor.openedentity.CampaignViewInterceptor;
@@ -68,9 +64,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 
 	@Inject
 	private ResourceResolverProperties resourceResolverProperties;
-
-	@Inject
-	private MilestoneConfigResolver milestoneConfigResolver;
 
 	@Inject
 	private SecurityExpressionResolverExposerInterceptor securityExpressionResolverExposerInterceptor;
@@ -194,11 +187,6 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 			.resourceChain(resourceResolverProperties.isCache())
 			.addResolver(gzipResolver)
 			.addResolver(versionResolver);
-	}
-
-	@Override
-	public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers) {
-		argumentResolvers.add(milestoneConfigResolver);
 	}
 
 }

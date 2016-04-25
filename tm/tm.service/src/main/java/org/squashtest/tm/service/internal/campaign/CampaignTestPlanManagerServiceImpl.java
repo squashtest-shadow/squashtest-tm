@@ -53,7 +53,6 @@ import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignTestPlanItem;
 import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.projectfilter.ProjectFilter;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.TestCase;
@@ -373,14 +372,5 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		}
 	}
 
-	@Override
-	public boolean findCampaignByProjectId(List<Project> projectList, Milestone milestone) {
-		boolean isCampaign = false;
-		// If we have at least one campaign, boolean is going true
-		if (campaignDao.findCampaignByProject(projectList, milestone).size() > 0) {
-			isCampaign = true;
-		}
-		return isCampaign;
-	}
 
 }

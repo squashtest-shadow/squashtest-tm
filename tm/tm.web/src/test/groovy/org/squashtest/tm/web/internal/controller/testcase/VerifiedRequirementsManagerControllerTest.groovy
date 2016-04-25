@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase
 
+import com.google.common.base.Optional
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -30,6 +31,7 @@ import org.squashtest.tm.domain.testcase.ActionTestStep
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.requirement.VerifiedRequirementsManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
@@ -53,6 +55,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 	TestStepModificationService testStepService = Mock()
 	MilestoneUIConfigurationService milestoneConfService = Mock()
 	PermissionEvaluationService permissionService = permissionEvaluator()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
 		controller.verifiedRequirementsManagerService = verifiedRequirementsManagerService
@@ -62,6 +65,9 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		controller.testStepService = testStepService;
 		controller.milestoneConfService = milestoneConfService
 		milestoneConfService.configure(_,_) >> new MilestoneFeatureConfiguration()
+
+		controller.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 
         driveNodeBuilder.get() >> new DriveNodeBuilder(permissionEvaluator(), null)
 		controller.permissionService = permissionService;
@@ -73,7 +79,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		requirementLibraryFinder.findLinkableRequirementLibraries() >> []
 
 		when:
-		def res = controller.showTestCaseManager(20L, Mock(Model), [] as String[], null)
+		def res = controller.showTestCaseManager(20L, Mock(Model), [] as String[])
 
 		then:
 		res == "page/test-case-workspace/show-verified-requirements-manager"
@@ -88,7 +94,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 
 
 		when:
-		def res = controller.showTestStepManager(20L, Mock(Model), [] as String[], null)
+		def res = controller.showTestStepManager(20L, Mock(Model), [] as String[])
 
 		then:
 		res == "page/test-case-workspace/show-step-verified-requirements-manager"
@@ -111,7 +117,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showTestCaseManager(20L, model, [] as String[], null)
+		def res = controller.showTestCaseManager(20L, model, [] as String[])
 
 		then:
 		model['testCase'] == testCase
@@ -135,7 +141,7 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		def model = new ExtendedModelMap()
 
 		when:
-		def res = controller.showTestStepManager(20L, model, [] as String[], null)
+		def res = controller.showTestStepManager(20L, model, [] as String[])
 
 		then:
 		model['testStep'] == testStep
@@ -144,26 +150,26 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 
 	def "should add requirements to verified requirements to test case"() {
 		when:
-		controller.addVerifiedRequirementsToTestCase([5, 15], 10, null)
+		controller.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10, null) >> []
+		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> []
 	}
 
 	def "should add requirements to verified requirements of test step"() {
 		when:
-		controller.addVerifiedRequirementsToTestStep([5, 15], 10, null)
+		controller.addVerifiedRequirementsToTestStep([5, 15], 10)
 
 		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10, null) >> []
+		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5, 15], 10) >> []
 	}
 
 	def "should add requirements to verified requirement of test step"() {
 		when:
-		controller.addVerifiedRequirementsToTestStep([5L], 10L, null)
+		controller.addVerifiedRequirementsToTestStep([5L], 10L)
 
 		then:
-		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5L], 10L, null) >> []
+		1 * verifiedRequirementsManagerService.addVerifiedRequirementsToTestStep([5L], 10L) >> []
 	}
 
 	def "should remove requirements from verified requirements of test case"() {
@@ -186,10 +192,10 @@ class VerifiedRequirementsManagerControllerTest extends NodeBuildingSpecificatio
 		given:
 		Requirement req = Mock()
 		NoVerifiableRequirementVersionException ex = new NoVerifiableRequirementVersionException(req)
-		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10, null) >> [ex]
+		verifiedRequirementsManagerService.addVerifiedRequirementsToTestCase([5, 15], 10) >> [ex]
 
 		when:
-		def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10, null)
+		def res = controller.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
 		res.noVerifiableVersionRejections

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.requirement
 
+import com.google.common.base.Optional
 import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -47,6 +48,7 @@ import org.squashtest.tm.service.internal.repository.TestStepDao
 import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManagerServiceImpl
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
 import org.squashtest.tm.service.milestone.MilestoneManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 
@@ -66,7 +68,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 	LibrarySelectionStrategy<RequirementLibrary, RequirementLibraryNode> libraryStrategy = Mock()
 	PermissionEvaluationService permissionService = Mock()
 	IndexationService indexationService = Mock()
-	MilestoneManagerService milestoneManager = Mock()
+	ActiveMilestoneHolder activeMilestoneHolder = Mock()
 
 	def setup() {
 		CollectionAssertions.declareContainsExactly()
@@ -80,7 +82,8 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		service.callTreeFinder = callTreeFinder
 		service.permissionService = permissionService
 		service.indexationService = indexationService
-		service.milestoneManager = milestoneManager
+		service.activeMilestoneHolder = activeMilestoneHolder
+		activeMilestoneHolder.getActiveMilestone() >> Optional.absent()
 		permissionService.hasRoleOrPermissionOnObject(_, _, _) >> true
 	}
 
@@ -108,7 +111,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		nodeDao.findAllByIds([5, 15]) >> [req5, req15]
 
 		when:
-		service.addVerifiedRequirementsToTestCase([5, 15], 10, null)
+		service.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
 		testCase.verifiedRequirementVersions.containsExactly([rv5, rv15])
@@ -148,7 +151,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		requirementVersionCoverageDao.byRequirementVersionAndTestCase(15, 16L)>>null
 
 		when:
-		service.addVerifiedRequirementsToTestStep([5, 15], 10, null)
+		service.addVerifiedRequirementsToTestStep([5, 15], 10)
 
 		then:
 		testStep.verifiedRequirementVersions.containsExactly([rv5, rv15])
@@ -179,7 +182,7 @@ class VerifiedRequirementsManagerServiceImplTest extends Specification {
 		nodeDao.findAllByIds([5, 15]) >> [req5, req15]
 
 		when:
-		service.addVerifiedRequirementsToTestCase([5, 15], 10, null)
+		service.addVerifiedRequirementsToTestCase([5, 15], 10)
 
 		then:
 		testCase.verifiedRequirementVersions.containsExactly([rv15])

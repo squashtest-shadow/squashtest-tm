@@ -49,12 +49,14 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.customreport.CustomReportLibraryNodeService;
 import org.squashtest.tm.service.customreport.CustomReportWorkspaceService;
-import org.squashtest.tm.web.internal.argumentresolver.MilestoneConfigResolver.CurrentMilestone;
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.web.internal.helper.I18nLevelEnumInfolistHelper;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.builder.CustomReportTreeNodeBuilder;
 import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
+
+import com.google.common.base.Optional;
 
 /**
  * This controller is dedicated to the initial page of Custom Reports
@@ -83,10 +85,12 @@ public class CustomReportWorkspaceController {
 
 	@Inject
 	protected InternationalizationHelper i18nHelper;
+	
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
-			@CurrentMilestone Milestone activeMilestone,
 			@CookieValue(value = "jstree_open", required = false, defaultValue = "") String[] openedNodes,
 			@CookieValue(value = "jstree_select", required = false, defaultValue = "") String elementId) {
 
@@ -109,17 +113,19 @@ public class CustomReportWorkspaceController {
 		}
 
 		model.addAttribute("rootModel", rootNodes);
+		
+		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
 
 		//Active Milestone
-		if (activeMilestone != null){
+		if (milestone.isPresent()){
 			JsonMilestone jsMilestone =
 					new JsonMilestone(
-							activeMilestone.getId(),
-							activeMilestone.getLabel(),
-							activeMilestone.getStatus(),
-							activeMilestone.getRange(),
-							activeMilestone.getEndDate(),
-							activeMilestone.getOwner().getLogin()
+							milestone.get().getId(),
+							milestone.get().getLabel(),
+							milestone.get().getStatus(),
+							milestone.get().getRange(),
+							milestone.get().getEndDate(),
+							milestone.get().getOwner().getLogin()
 							);
 			model.addAttribute("activeMilestone", jsMilestone);
 		}

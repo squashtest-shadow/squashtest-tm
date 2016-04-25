@@ -49,7 +49,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			return tcFolderDao;
 		}
 
-		protected  List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds, Long milestoneId){
+		protected  List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds){
 			List<SuppressionPreviewReport> preview = new LinkedList<SuppressionPreviewReport>();
 
 
@@ -66,19 +66,23 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 			return preview;
 		}
 
-		protected  List<Long> detectLockedNodes(List<Long> nodeIds,  Long milestoneId){
+		protected  List<Long> detectLockedNodes(List<Long> nodeIds){
 			return tcDao.findAllTestCasesIdsCalledByTestCases (nodeIds);
 		}
 
-		protected  OperationReport batchDeleteNodes(List<Long> ids, Long milestoneId){
+		protected  OperationReport batchDeleteNodes(List<Long> ids){
 			OperationReport report = new  OperationReport()
 			report.addRemoved(ids, "who-cares");
 			return report
 		}
 
 		@Override
-		protected OperationReport batchUnbindFromMilestone(List<Long> ids, Long milestoneId) {
+		protected OperationReport batchUnbindFromMilestone(List<Long> ids) {
 			return new OperationReport();
+		}
+
+		protected boolean isMilestoneMode(){
+			return false;
 		}
 
 	}
@@ -201,7 +205,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 
 		when :
 
-		def preview = handler.simulateDeletion([1l, 2l], null)
+		def preview = handler.simulateDeletion([1l, 2l])
 
 		then :
 
@@ -240,7 +244,7 @@ class AbstractNodeDeletionHandlerImplTest extends Specification {
 
 
 		when :
-		def deleted = handler.deleteNodes([1l, 2l], null)
+		def deleted = handler.deleteNodes([1l, 2l])
 
 		then :
 		deleted.removed.collect{it.resid} as Set == expected as Set
