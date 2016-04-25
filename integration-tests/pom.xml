@@ -28,7 +28,6 @@
     <hibernate.sql.formatted>false</hibernate.sql.formatted>
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
-    <non-dbunit-database.url>jdbc:h2:${project.build.directory}/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
   </properties>
 
@@ -208,9 +207,6 @@
                 <requireProperty>
                   <property>dbunit-database.url</property>
                 </requireProperty>
-                <requireProperty>
-                  <property>non-dbunit-database.url</property>
-                </requireProperty>
               </rules>
             </configuration>
           </execution>
@@ -280,10 +276,10 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <!-- <threadCount>1</threadCount> -->
-          <!--  
-          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine>
-          --> 
-          <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+         <!--
+          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine>--> 
+          
+         <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
           
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
@@ -346,7 +342,6 @@
         <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
         <dbunit-database.url>jdbc:h2:./target/database/squash-it-dbunit/squash-it</dbunit-database.url>
-        <non-dbunit-database.url>jdbc:h2:./target/database/squash-it-non-dbunit/squash-it</non-dbunit-database.url>
       </properties>
     </profile>
 
@@ -362,7 +357,6 @@
         <!-- On Jenkins server these relative paths are not interpreted in the same way by liquibase and the datasource. These
       props should be overridden with absolute paths (which don't work under windows...) -->
         <dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-dbunit</dbunit-database.url>
-        <non-dbunit-database.url>jdbc:h2:${project.basedir}/target/database/squash-it-non-dbunit</non-dbunit-database.url>
       </properties>
     </profile>
 
@@ -378,7 +372,6 @@
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
 
         <hibernate.dialect>org.hibernate.dialect.MySQLDialect</hibernate.dialect>
-        <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
       </properties>
 
       <build>
@@ -428,7 +421,6 @@
         <database.username>${it.database.username}</database.username>
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQL9Dialect</hibernate.dialect>
-        <non-dbunit-database.url>${it.legacy.database.url}</non-dbunit-database.url>
       </properties>
 
       <dependencies>
@@ -520,22 +512,6 @@
                 </configuration>
               </execution>
 
-              <execution>
-                <id>create-non-dbunit-database</id>
-                <goals>
-                  <goal>update</goal>
-                </goals>
-                <phase>generate-test-resources</phase>
-                <configuration>
-                  <dropFirst>true</dropFirst>
-                  <clearCheckSums>true</clearCheckSums>
-                  <changeLogFile>${database.changelog}</changeLogFile>
-                  <driver>${database.drivername}</driver>
-                  <url>${non-dbunit-database.url}</url>
-                  <username>${database.username}</username>
-                  <password>${database.password}</password>
-                </configuration>
-              </execution>
             </executions>
           </plugin>
         </plugins>

@@ -101,10 +101,12 @@ abstract class DbunitMappingSpecification extends DatasourceDependantSpecificati
 	
 	def final deleteFixture(Object... fixtures) {
 		doInTransaction { session ->
-			fixtures.each { fixture -> 				
-				def persistent = session.load(fixture.class, fixture.id)
-				if (persistent != null){
-					session.delete persistent
+			fixtures.each { fixture ->
+				if (fixture.id != null){							
+					def persistent = session.load(fixture.class, fixture.id)
+					if (persistent != null){
+						session.delete persistent
+					}
 				} 
 			}
 		}

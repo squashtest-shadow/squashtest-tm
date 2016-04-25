@@ -21,6 +21,8 @@
 package org.squashtest.tm.hibernate.mapping.testcase
 
 
+import javax.validation.ConstraintViolationException;
+
 import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
@@ -42,7 +44,10 @@ class DatasetMappingIT extends DbunitMappingSpecification {
 		})
 
 		then:
-		thrown(JDBCException)
+		thrown(ConstraintViolationException)
+		
+		cleanup : 
+		deleteFixture ds, tc
 	}
 
 }

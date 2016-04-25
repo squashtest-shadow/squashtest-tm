@@ -214,10 +214,5 @@ class AttachmentManagerServiceImplIT extends DbunitServiceSpecification {
 		testCase2.attachmentList.hasAttachments()
 	}
 
-	def GenericProject createProject(){
-		Project p = new Project();
-		p.name = Double.valueOf(Math.random()).toString();
-		p.description = "eaerazer"
-		return p
-	}
+
 }
