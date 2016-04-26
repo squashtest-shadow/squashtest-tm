@@ -26,11 +26,17 @@ import spock.lang.MockingApi;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
-import com.google.common.base.Optional;
+import com.google.common.base.Optional
+
+import javax.persistence.EntityManager
+import javax.persistence.PersistenceContext;
 
 
 
 public class StubActiveMilestoneHolder implements ActiveMilestoneHolder {
+
+	@PersistenceContext
+	EntityManager entityManager
 
 	private Optional<Milestone> activeMilestone = Optional.absent();
 
@@ -43,11 +49,11 @@ public class StubActiveMilestoneHolder implements ActiveMilestoneHolder {
 	@Override
 	public void setActiveMilestone(Long milestoneId) {
 
-
-		Milestone m = new Milestone(id:milestoneId)
-
-		activeMilestone = Optional.fromNullable(m);
-
+		Milestone milestone
+		if (milestoneId != null){
+			milestone = entityManager.find(Milestone.class, milestoneId)
+		}
+		activeMilestone = Optional.fromNullable(milestone);
 	}
 
 	@Override
