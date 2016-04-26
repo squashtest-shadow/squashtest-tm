@@ -63,14 +63,14 @@ public class RequirementVersionDaoImpl implements CustomRequirementVersionDao {
 		Optional<Milestone> active = activeMilestoneHolder.getActiveMilestone();
 
 		if (active.isPresent()) {
-			Query q = currentSession().getNamedQuery("requirementVersion.findLatestRequirementVersion");
-			q.setParameter("requirementId", requirementId);
-			return (RequirementVersion)q.uniqueResult();
-		}
-		else{
 			Query q = currentSession().getNamedQuery("requirementVersion.findVersionByRequirementAndMilestone");
 			q.setParameter("requirementId", requirementId);
 			q.setParameter("milestoneId", active.get().getId());
+			return (RequirementVersion) q.uniqueResult();
+		}
+		else{
+			Query q = currentSession().getNamedQuery("requirementVersion.findLatestRequirementVersion");
+			q.setParameter("requirementId", requirementId);
 			return (RequirementVersion)q.uniqueResult();
 		}
 	}
