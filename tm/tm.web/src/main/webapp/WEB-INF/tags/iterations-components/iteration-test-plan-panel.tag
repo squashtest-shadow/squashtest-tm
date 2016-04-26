@@ -190,7 +190,7 @@
             data-def="map=exec-mode, sortable, center, visible=${iteration.project.testAutomationEnabled}, sClass=exec-mode, sWidth=5%">   <f:message key="label.Mode" /></th>
 
           <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
-              data-def="map=reference, sortable, link=${testCaseUrl}, link-cookie=workspace-prefs={tc-id}">
+              data-def="map=reference, sortable, link=${testCaseUrl}">
             <f:message key="label.Reference.short" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, sClass=toggle-row">
