@@ -58,7 +58,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should not delete the test case because of a step call"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([-12L], null)
+		def result = deletionHandler.deleteNodes([-12L])
 
 		then :
 		result.removed  == []
@@ -70,7 +70,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should delete the test case and cascade to its steps"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([-11L], null);
+		def result = deletionHandler.deleteNodes([-11L]);
 
 		then :
 		result.removed*.resid.containsAll([-11L])
@@ -93,7 +93,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should not delete a folder because one child is called by a non-deleted test case, the other test case is removed normally"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L], null);
+		def result = deletionHandler.deleteNodes([-1L]);
 
 		then :
 		result.removed*.resid.containsAll([-11L])
@@ -107,7 +107,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should delete a folder and all its dependencies, Called tc are removed successfully because the caller is removed along it, so are the custom field values"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L], null);
+		def result = deletionHandler.deleteNodes([-1L]);
 
 		then :
 		result.removed.collect{it.resid}.containsAll([-1L, -11L, -12L])
@@ -175,7 +175,7 @@ public class TestCaseNodeDeletionHandlerIT extends DbunitServiceSpecification {
 	def "should delete a test case and reorder the (non executed) test plans that includes it"(){
 
 		when :
-		deletionHandler.deleteNodes([-100L], null)
+		deletionHandler.deleteNodes([-100L])
 		session.flush();
 
 		def tsMaxOrder = session.createSQLQuery("select max(test_plan_order) from TEST_SUITE_TEST_PLAN_ITEM where suite_id = -1").uniqueResult()

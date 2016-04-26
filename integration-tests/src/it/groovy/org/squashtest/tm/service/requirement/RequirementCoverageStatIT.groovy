@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.requirement
 
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+
 import javax.inject.Inject
 
 import org.springframework.transaction.annotation.Transactional
@@ -44,6 +46,9 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 	@Inject
 	private RequirementDao requirementDao
 
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	def setup (){
 		def ids = [-11L,-21L,-210L,-211L,-22L,-23L,-31L,-41L,-42L,-43L,-44L,-441L,-442L,-51L,-511L]
 		ids.each {
@@ -66,7 +71,7 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		def result = new RequirementCoverageStat();
 
 		when:
-		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,null,perimeter,result)
+		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,perimeter,result)
 
 		then:
 		result.getRates().get("coverage").requirementVersionRate == selfRate
@@ -88,16 +93,17 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		def testedReqVersionId = reqVersionId
 		def perimeter = [-1L]
 		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
-		def currentMilestone = findEntity(Milestone.class, milestoneId);
+		activeMilestoneHolder.setActiveMilestone(milestoneId)
 		def result = new RequirementCoverageStat();
 
 		when:
-		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,currentMilestone,perimeter,result)
+		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,perimeter,result)
 
 		then:
 		result.getRates().get("coverage").requirementVersionRate == selfRate
 		result.getRates().get("coverage").requirementVersionGlobalRate == globalRate
 		result.getRates().get("coverage").requirementVersionChildrenRate == childrenRate
+		activeMilestoneHolder.clearContext()
 
 		where:
 		reqVersionId 		|	milestoneId	|| selfRate | globalRate 	| childrenRate
@@ -112,14 +118,16 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		def perimeter = [-1L]
 		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
 		def result = new RequirementCoverageStat();
+		activeMilestoneHolder.setActiveMilestone(currentMilestoneId)
 
 		when:
-		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,currentMilestoneId,perimeter,result)
+		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,perimeter,result)
 
 		then:
 		result.getRates().get("verification").requirementVersionRate == selfRate
 		result.getRates().get("verification").requirementVersionGlobalRate == globalRate
 		result.getRates().get("verification").requirementVersionChildrenRate == childrenRate
+		activeMilestoneHolder.clearContext()
 
 		where:
 		reqVersionId 	| currentMilestoneId 	|| selfRate | globalRate 	| childrenRate
@@ -139,14 +147,15 @@ class RequirementCoverageStatIT extends DbunitServiceSpecification {
 		def perimeter = [-1L]
 		setBidirectionalReqReqVersion(testedReqVersionId,testedReqVersionId)
 		def result = new RequirementCoverageStat();
-
+		activeMilestoneHolder.setActiveMilestone(currentMilestoneId)
 		when:
-		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,currentMilestoneId,perimeter,result)
+		verifiedRequirementsManagerService.findCoverageStat(testedReqVersionId,perimeter,result)
 
 		then:
 		result.getRates().get("validation").requirementVersionRate == selfRate
 		result.getRates().get("validation").requirementVersionGlobalRate == globalRate
 		result.getRates().get("validation").requirementVersionChildrenRate == childrenRate
+		activeMilestoneHolder.clearContext()
 
 		where:
 		reqVersionId 	| currentMilestoneId 	|| selfRate | globalRate 	| childrenRate

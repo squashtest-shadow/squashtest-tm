@@ -82,17 +82,17 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-11L], null)
+		def result = deletionHandler.deleteNodes([-11L])
 		flushAndClear()
 
 		then :
 		result.removed*.resid.containsAll([-11L])
-		
+
 		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
 		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
-		
+
 		found (Requirement.class, -12L)
-		
+
 		allDeleted("Requirement", [-11L])
 		allDeleted("RequirementVersion", [-111L, -112L])
 
@@ -105,7 +105,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L], null)
+		def result = deletionHandler.deleteNodes([-1L])
 		flush()
 
 		then :
@@ -126,7 +126,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L], null)
+		def result = deletionHandler.deleteNodes([-1L])
 		flush()
 
 		then :
@@ -144,7 +144,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		def result = deletionHandler.deleteNodes([-1L], null)
+		def result = deletionHandler.deleteNodes([-1L])
 		flush()
 
 		then :
@@ -161,7 +161,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	def "should update test case importance when requirement is deleted"(){
 
 		when :
-		def result = deletionHandler.deleteNodes([-11L], null)
+		def result = deletionHandler.deleteNodes([-11L])
 		flush()
 
 		then :
@@ -183,7 +183,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 
 		when :
 		def lib = findEntity(RequirementLibrary.class, -1L)
-		def result = deletionHandler.deleteNodes([-3L], null)
+		def result = deletionHandler.deleteNodes([-3L])
 		flush()
 
 		then :
@@ -210,7 +210,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		setCurrentVersions()
 
 		when :
-		deletionHandler.deleteNodes([-1L], null)
+		deletionHandler.deleteNodes([-1L])
 		flush()
 
 		then :
@@ -225,7 +225,7 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 	@DataSet("RequirementNodeDeletionHandlerIT.should cascade delete.xml")
 	def "should delete a requirement in a hierarchy"(){
 		when :
-		deletionHandler.deleteNodes([-15L], null)
+		deletionHandler.deleteNodes([-15L])
 		flush()
 		then :
 		! found(Requirement.class, -15L)

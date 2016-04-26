@@ -1092,17 +1092,13 @@ List<Long> requirementsIds) {
 		List<RequirementVersion> rvs = new ArrayList<>(requirements.size());
 		for (Requirement requirement : requirements) {
 			RequirementVersion rv = requirement.getResource();
-			// normal mode
-			if (!activeMilestone.isPresent()
-				&& rv.isNotObsolete()) {
-				rvs.add(rv);
-			}
-			// milestone mode
-			else {
-				if (rv.getMilestones().contains(activeMilestone.get())
-					&& rv.isNotObsolete()) {
+
+			if (rv.isNotObsolete()) {
+
+				if (!activeMilestone.isPresent() || rv.getMilestones().contains(activeMilestone.get())) {
 					rvs.add(rv);
 				}
+
 			}
 		}
 		return rvs;

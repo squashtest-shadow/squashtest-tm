@@ -344,7 +344,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		def cpg = findEntity(Campaign.class, 1);
 
 		when:
-		deletionHandler.deleteNodes([-1L], null)
+		deletionHandler.deleteNodes([-1L])
 
 		then :
 
@@ -361,7 +361,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.cpgFolderHierarchy.xml")
 	def "should remove a hierarchy of campaign folders and campaigns (1)"(){
 		when :
-		deletionHandler.deleteNodes([-11L], null)
+		deletionHandler.deleteNodes([-11L])
 		then :
 		allDeleted("CampaignFolder", [-11L, -21L])
 		allDeleted("Campaign", [-22L, -31L, -32L])
@@ -384,7 +384,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.cpgFolderHierarchy.xml")
 	def "should remove a hierarchy of campaign folders and campaigns (2)"(){
 		when :
-		deletionHandler.deleteNodes([-21L], null)
+		deletionHandler.deleteNodes([-21L])
 		then :
 		allDeleted("CampaignFolder", 	[-21L])
 		allDeleted("Campaign", 			[-31L, -32L])
@@ -409,7 +409,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 	@DataSet("NodeDeletionHandlerTest.cpgFolderHierarchy.xml")
 	def "should remove a hierarchy of campaign folders and campaigns (3)"(){
 		when :
-		deletionHandler.deleteNodes([-11L, -12L], null)
+		deletionHandler.deleteNodes([-11L, -12L])
 		then :
 		allDeleted("CampaignFolder", [-11L, -21L])
 		allDeleted("Campaign", [-12L, -22L, -31L, -32L])
@@ -443,7 +443,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 
 	}
-	
+
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites and remove itpi from iteration.xml")
 	def"should remove test suites and remove itpi from iteration"(){
 		when :
@@ -455,13 +455,13 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 
 		where :
-		suiteId    || attachListId | itpiId 
+		suiteId    || attachListId | itpiId
 		[-1L, -2L] || [-12L, -13L] | [-121L, -122L]
 		[-1L]      || [-12L]       | [-122L]
-		
+
 	}
-	
-	
-	
+
+
+
 
 }

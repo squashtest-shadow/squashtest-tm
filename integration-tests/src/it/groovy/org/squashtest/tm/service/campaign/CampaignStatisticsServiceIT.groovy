@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.campaign
 
+import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+
 import javax.inject.Inject
 
 import org.spockframework.util.NotThreadSafe
@@ -38,6 +40,10 @@ import spock.unitils.UnitilsSupport
 class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	@Inject
 	private CampaignStatisticsService service
+
+	@Inject
+	private ActiveMilestoneHolder activeMilestoneHolder;
+
 	//TODO improve check and dataset
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign progression statistics"(){
@@ -50,8 +56,8 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 
 	}
 
-	
-	
+
+
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather campaign statistics bundle"(){
 		given :
@@ -77,7 +83,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 	def"should gather campaign test case succes rate stat"(){
 		given :
 		def campId = [-10L]
-		when : 
+		when :
 		def result = service.gatherTestCaseSuccessRateStatistics(campId)
 		then :
 		notThrown(Exception)
@@ -101,7 +107,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		then :
 		notThrown(Exception)
 	}
-	
+
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should not explode when no campaign are present"(){
 		//test for Issue 5267
@@ -114,10 +120,10 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		then :
 		notThrown(Exception)
 	}
-	
-	
-	
-	
+
+
+
+
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather folder data"(){
 		//test for Issue 5270
@@ -129,7 +135,7 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		then :
 		notThrown(Exception)
 	}
-	
+
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather folder data 2"(){
 		given :
@@ -140,19 +146,20 @@ class CampaignStatisticsServiceIT extends DbunitServiceSpecification {
 		then :
 		result.campaignName == ['bar', 'ref B - bar', 'ref Z - foo']
 	}
-	
-	
+
+
 	@DataSet("CampaignStatisticsServiceIT.xml")
 	def"should gather milestone data "(){
 		given :
-		def milId = -1L
+		activeMilestoneHolder.setActiveMilestone(-1L)
 		when :
-		def result = service.gatherMilestoneStatisticsBundle(milId)
+		def result = service.gatherMilestoneStatisticsBundle()
 
 		then :
 		result.iterationTestInventoryStatisticsList.iterationName == ['bar / iter', 'ref B - bar / iter', 'ref Z - foo / iter - 3', 'ref Z - foo / ref A - iter - tc1', 'ref Z - foo / ref B - iter - tc1 -2']
+		activeMilestoneHolder.clearContext()
 	}
-	
-	
+
+
 
 }
