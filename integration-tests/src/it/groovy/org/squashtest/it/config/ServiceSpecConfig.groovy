@@ -141,8 +141,4 @@ class ServiceSpecConfig {
 		new StubObjectAclService();
 	}
 
-	@Primary
-	@Bean ActiveMilestoneHolder activeMilestoneHolder(){
-		new StubActiveMilestoneHolder()
-	}
 }
