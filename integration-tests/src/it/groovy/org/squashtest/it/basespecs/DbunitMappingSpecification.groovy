@@ -37,7 +37,8 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.squashtest.it.config.ServiceSpecConfig;
+import org.squashtest.it.config.ServiceSpecConfig
+import org.squashtest.it.utils.SkipAll;
 
 import spock.lang.Specification
 

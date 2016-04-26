@@ -38,7 +38,7 @@ import spock.lang.Specification
  */
 @Transactional
 @Rollback
-// inherit the context from DatasourceDependantSpecification
+// inherit the same datasource and TX manager from DatasourceDependantSpecification
 @ContextHierarchy(
 	@ContextConfiguration(classes =[RepositorySpecConfig])
 )

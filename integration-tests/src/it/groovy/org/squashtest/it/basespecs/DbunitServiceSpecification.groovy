@@ -45,7 +45,7 @@ import org.squashtest.tm.service.TmServiceConfig
 
 @Transactional
 @Rollback
-// inherit the context from DatasourceDependantSpecification
+// inherit the same datasource and TX manager from DatasourceDependantSpecification
 @ContextHierarchy(
 	@ContextConfiguration(classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
 )
