@@ -35,6 +35,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.core.Ordered;
 
 /**
  * <p>This aspect will handle the following meta annotations : 
@@ -73,7 +74,13 @@ import org.aspectj.lang.reflect.MethodSignature;
  *
  */
 @Aspect
-public class SpringDaoMetaAnnotationAspect{
+public class SpringDaoMetaAnnotationAspect implements Ordered{
+	
+	@Override
+	public int getOrder() {
+		return Ordered.LOWEST_PRECEDENCE-1;
+	}
+	
 
 	@Pointcut(value="call(@org.squashtest.tm.service.annotation.EmptyCollectionGuard * org.springframework.data.repository.Repository+.*(..))")
 	public void callEmptyCollectionGuard(){
@@ -207,6 +214,6 @@ public class SpringDaoMetaAnnotationAspect{
 					+ "but cannot find a suitable value for the expected return type '"+returnType+"'");
 		}
 	}
-	
+
 
 }
