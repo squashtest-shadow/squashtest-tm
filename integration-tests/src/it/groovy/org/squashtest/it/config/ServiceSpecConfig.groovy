@@ -59,7 +59,7 @@ import org.squashtest.tm.service.user.UserAccountService
  */
 @Configuration
 @ComponentScan(
-basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
+basePackages = ["org.squashtest.tm.service.internal.hibernate", "org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
 	"org.squashtest.it.stub.security", "org.squashtest.it.stub.validation"],
 excludeFilters = [
 	@ComponentScan.Filter(Configuration),

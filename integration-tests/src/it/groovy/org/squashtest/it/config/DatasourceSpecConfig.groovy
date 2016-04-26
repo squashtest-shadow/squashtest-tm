@@ -36,7 +36,6 @@ import org.squashtest.tm.service.RepositoryConfig
 import org.unitils.database.UnitilsDataSourceFactoryBean
 
 @Configuration
-@Import(RepositoryConfig.class)
 @EnableSpringConfigured
 class DatasourceSpecConfig {
 

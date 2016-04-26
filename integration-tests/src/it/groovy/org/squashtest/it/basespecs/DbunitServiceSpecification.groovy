@@ -30,6 +30,7 @@ import org.hibernate.transform.ResultTransformer
 import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
@@ -41,9 +42,13 @@ import org.squashtest.tm.service.TmServiceConfig
  * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
  * Subclasses should be annotated @UnitilsSupport
  */
-@ContextConfiguration(classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
+
 @Transactional
 @Rollback
+// inherit the context from DatasourceDependantSpecification
+@ContextHierarchy(
+	@ContextConfiguration(classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
+)
 abstract class DbunitServiceSpecification extends DatasourceDependantSpecification{
 
 	/**

@@ -24,6 +24,7 @@ import org.hibernate.Query
 import org.hibernate.Session
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.TestPropertySource
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.RepositorySpecConfig;
@@ -37,7 +38,10 @@ import spock.lang.Specification
  */
 @Transactional
 @Rollback
-@ContextConfiguration(classes =[RepositorySpecConfig])
+// inherit the context from DatasourceDependantSpecification
+@ContextHierarchy(
+	@ContextConfiguration(classes =[RepositorySpecConfig])
+)
 abstract class DbunitDaoSpecification extends DatasourceDependantSpecification {
 
 

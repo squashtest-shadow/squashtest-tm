@@ -18,21 +18,17 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain
+package org.squashtest.it.basespecs
 
-import javax.inject.Inject
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
+import javax.persistence.EntityManager
 
 import org.apache.lucene.document.Document
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.Field.Index;
-import org.apache.lucene.document.Field.Store;
-import org.apache.lucene.document.Field.TermVector;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import org.apache.lucene.document.Field
+import org.apache.lucene.document.Field.Index
+import org.apache.lucene.document.Field.Store
+import org.apache.lucene.document.Field.TermVector
+import org.hibernate.Session
 import org.hibernate.search.bridge.LuceneOptions
-import org.squashtest.it.basespecs.DbunitDaoSpecification;;
 
 /**
  * Superclass for a hibernate search bridge specification.
@@ -42,9 +38,7 @@ import org.squashtest.it.basespecs.DbunitDaoSpecification;;
  *
  */
 abstract class BridgeSpecification extends DbunitDaoSpecification {
-	@PersistenceContext
-	EntityManager em;
-	
+
 	LuceneOptions lucene = Mock()
 	Document doc = new Document()
 

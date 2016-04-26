@@ -37,6 +37,10 @@ public class HibernateStatelessSessionHelper {
 
 	@Inject
 	EntityManagerFactory entityManagerFactory;
+	
+	public HibernateStatelessSessionHelper() {
+		super();
+	}
 
 	/**
 	 * Create a new Hibernate stateless session, by unwrapping the HibernateSessionFactory from EntityManagerFactory and return the session.
