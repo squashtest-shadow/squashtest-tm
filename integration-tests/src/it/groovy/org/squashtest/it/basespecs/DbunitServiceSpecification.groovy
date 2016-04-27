@@ -111,6 +111,15 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 
 		return true
 	}
+	
+	
+	protected boolean allNotDeleted(String className, List<Long> ids) {
+		Query query = getSession().createQuery("from " + className + " where id in (:ids)")
+		query.setParameterList("ids", ids, LongType.INSTANCE)
+		List<?> result = query.list()
+
+		return result.size() == ids.size()
+	}
 
 	protected Object findEntity(Class<?> entityClass, Long id) {
 		return getSession().get(entityClass, id)
@@ -120,13 +129,6 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 		return getSession().createQuery("from " + className).list()
 	}
 
-	protected boolean allNotDeleted(String className, List<Long> ids) {
-		Query query = getSession().createQuery("from " + className + " where id in (:ids)")
-		query.setParameterList("ids", ids, new LongType())
-		List<?> result = query.list()
-
-		return result.size() == ids.size()
-	}
 
 	protected NewSQLQuery newSQLQuery(String query) {
 		return new NewSQLQuery(query, session)

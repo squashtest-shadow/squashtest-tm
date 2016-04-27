@@ -22,6 +22,8 @@ package org.squashtest.tm.service.internal.deletion
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.tm.domain.attachment.AttachmentList
+import org.squashtest.tm.domain.bugtracker.IssueList;
 import org.squashtest.tm.domain.campaign.*
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStatus
@@ -64,9 +66,10 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 		when :
 		deletionHandler.deleteExecution(exec)
+		em.flush()
 
-		then :
-		allDeleted("AttachmentList", [-500L, -6001L, -6002L, -6003L]);
+		then :		
+		
 		allDeleted("Attachment", [
 			-5001L,
 			-5002L,
@@ -77,6 +80,9 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 			-60031L,
 			-60032L
 		])
+		
+		allDeleted("AttachmentList", [-500L, -6001L, -6002L, -6003L]);
+
 		allDeleted("AttachmentContent", [
 			-5001L,
 			-5002L,
@@ -139,13 +145,16 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		deletionHandler.deleteExecution(exec)
 
 		then :
-		allDeleted("AttachmentList", [-1111L])
-		allDeleted("IssueList", [-1111L])
-		allDeleted("Execution", [-1111L])
+		
+		// Exec -1111L is gone
+		! found(AttachmentList, -1111L)
+		! found(IssueList, -1111L)
+		! found(Execution, -1111L)
 
-		!allDeleted("AttachmentList", [-1112L])
-		!allDeleted("IssueList", [-1112L])
-		!allDeleted("Execution", [-1112L])
+		// Exec -1112L still there
+		found(AttachmentList, -1112L)
+		found(IssueList, -1112L)
+		found(Execution, -1112L)
 
 		def tp = findEntity(IterationTestPlanItem.class, -111L )
 		tp.executions.size()==1
@@ -285,17 +294,17 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("IterationTestPlanItem", [-111L, -112L])
 		allDeleted("Iteration", [-11L])
 
-		!allDeleted("AttachmentList", [
+		allNotDeleted("AttachmentList", [
 			-12L,
 			-1211L,
 			-1212L,
 			-1221L,
 			-1222L
 		])
-		!allDeleted("IssueList", [-1211L, -1212L, -1221L, -1222L])
-		!allDeleted("Execution", [-1211L, -1212L, -1221L, -1222L])
-		!allDeleted("IterationTestPlanItem", [-121L, -122L])
-		!allDeleted("Iteration", [-12L])
+		allNotDeleted("IssueList", [-1211L, -1212L, -1221L, -1222L])
+		allNotDeleted("Execution", [-1211L, -1212L, -1221L, -1222L])
+		allNotDeleted("IterationTestPlanItem", [-121L, -122L])
+		allNotDeleted("Iteration", [-12L])
 
 		def cpg= findEntity(Campaign.class, -1L)
 		cpg.iterations.size()==1
@@ -319,7 +328,7 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 		allDeleted("IterationTestPlanItem", [-111L])
 
 		and :
-		!allDeleted("AttachmentList", [
+		allNotDeleted("AttachmentList", [
 			-11L,-12L,
 			-1211L,
 			-1212L,
@@ -328,10 +337,10 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 			-1121L,
 			-1122L
 		])
-		!allDeleted("IssueList", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
-		!allDeleted("Execution", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
-		!allDeleted("IterationTestPlanItem", [-121L, -122L, -112L])
-		!allDeleted("Iteration", [-12L, -11L])
+		allNotDeleted("IssueList", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
+		allNotDeleted("Execution", [-1211L, -1212L, -1221L, -1222L, -1121L, -1122L])
+		allNotDeleted("IterationTestPlanItem", [-121L, -122L, -112L])
+		allNotDeleted("Iteration", [-12L, -11L])
 
 
 	}

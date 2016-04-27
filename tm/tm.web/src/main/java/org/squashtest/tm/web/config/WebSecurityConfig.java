@@ -20,6 +20,11 @@
  */
 package org.squashtest.tm.web.config;
 
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
+
+import javax.inject.Inject;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
@@ -34,11 +39,6 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 import org.springframework.web.filter.HttpPutFormContentFilter;
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager;
 import org.squashtest.tm.web.internal.filter.HtmlSanitizationFilter;
-
-import javax.inject.Inject;
-
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 /**
  * This configures Spring Security
@@ -140,8 +140,6 @@ public class WebSecurityConfig {
 
 					.antMatchers("/accessDenied").permitAll()
 
-					// Squash TA callback api
-					.antMatchers("/resultUpdate/**").access("hasRole('ROLE_TA_API_CLIENT')")
 
 					// Namespace reserved for other use
 					.antMatchers("/management/**").denyAll()

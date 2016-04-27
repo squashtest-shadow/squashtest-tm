@@ -521,8 +521,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			deleteCampaignTestPlan(campaign.getTestPlan());
 			campaign.getTestPlan().clear();
 
-			doDeleteIterations(campaign.getIterations());
+			List<Iteration> allIterations = new ArrayList<>(campaign.getIterations());
 			campaign.getIterations().clear();
+			doDeleteIterations(allIterations);
 
 			customValueService.deleteAllCustomFieldValues(campaign);
 		}
@@ -537,20 +538,20 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	/*
 	 * removing an iteration means : 
+	 * - remove the test suites
 	 * - removing its test plan, 
 	 * - remove itself from repository.
 	 */
 	private void doDeleteIterations(List<Iteration> iterations) {
 		for (Iteration iteration : iterations) {
 
-			Collection<TestSuite> suites = new ArrayList<>();
-			suites.addAll(iteration.getTestSuites());
-
-			doDeleteSuites(suites);
+			Collection<TestSuite> suites = new ArrayList<>(iteration.getTestSuites());
 			iteration.getTestSuites().clear();
+			doDeleteSuites(suites);
 
-			deleteIterationTestPlan(iteration.getTestPlans());
-			iteration.getTestPlans().clear();  
+			List<IterationTestPlanItem> items = new ArrayList<>(iteration.getTestPlans());
+			iteration.getTestPlans().clear(); 
+			deleteIterationTestPlan(items); 
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
@@ -573,7 +574,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	@Override
 	public void deleteIterationTestPlanItem(IterationTestPlanItem item) {
-		deleteExecutions(item.getExecutions());
+		List<Execution> execs = new ArrayList<>(item.getExecutions());
+		deleteExecutions(execs);
+		
 		deletionDao.removeEntity(item);
 	}
 
@@ -582,8 +585,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 */
 	@Override
 	public void deleteExecutions(List<Execution> executions) {
-		Collection<Execution> executionsCopy = new ArrayList<>();
-		executionsCopy.addAll(executions);
+		Collection<Execution> executionsCopy = new ArrayList<>(executions);
 		for (Execution execution : executionsCopy) {
 			deleteExecution(execution);
 		}
@@ -591,19 +593,34 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 	/*
 	 * removing the steps mean : 
-	 * - remove their issues, 
+	 * - remove the denormalized custom fields, 
+	 * - remote the custom fields,
 	 * - remove themselves.
 	 */
 	public void deleteExecSteps(Execution execution) {
 
-		for (ExecutionStep step : execution.getSteps()) {
+		/*
+		 * Even when asking the EntityManager to remove a step - thus assigning it a status DELETED -, 
+		 * it can still abort its deletion when some random flush occurs : 
+		 * 
+		 * flushing the Execution (still in status MANAGED) 
+		 * -> triggers cascade PERSIST on its steps 
+		 * -> thus assign status MANAGED to the step that should have been deleted
+		 * 
+		 * To prevent that to occur, first thing to do is to clear the step list.
+		 */
+		
+		Collection<ExecutionStep> steps = new ArrayList<>(execution.getSteps());
+		execution.getSteps().clear();
+		
+		// now we can delete them
+		for (ExecutionStep step : steps) {
 
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
 			deletionDao.removeEntity(step);
 		}
 
-		execution.getSteps().clear();
 	}
 
 	private void deleteAutomatedExecutionExtender(Execution execution) {
