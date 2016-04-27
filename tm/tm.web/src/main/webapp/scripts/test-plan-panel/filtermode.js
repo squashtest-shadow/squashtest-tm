@@ -239,7 +239,9 @@ define(["jquery",  "jquery.squash.rangedatepicker", "squash.translator", "worksp
 			var visiIndex =  headers.index($(this).parents("th:first")),
 				realIndex = api._fnVisibleToColumnIndex( settings, visiIndex );
 
-			sTable.fnFilter(this.value, realIndex);
+
+			var realInput = $(this).parent().find(".filter_input").get(0);
+			sTable.fnFilter(realInput.value, realIndex);
 			self._save();
 		});
 
