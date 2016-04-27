@@ -24,6 +24,8 @@ import org.apache.commons.collections.ListUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Table;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;
@@ -80,6 +82,11 @@ import static org.squashtest.tm.domain.testcase.TestCaseImportance.LOW;
 		@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "ALL") }),
 		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
 			@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
+
+/*
+ *  the following annotation is a trick, see same thing in class documentation in RequirementLibraryNode
+ */
+//@Table(appliesTo="EXECUTION_ISSUES_CLOSURE", sqlDelete=@SQLDelete(sql="delete from EXECUTION_ISSUES_CLOSURE where EXECUTION_ID=null and EXECUTION_ID=?"))
 public class Execution implements AttachmentHolder, IssueDetector, Identified, HasExecutionStatus,
 DenormalizedFieldHolder, BoundEntity {
 
@@ -195,7 +202,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,CascadeType.DETACH, CascadeType.REMOVE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
@@ -203,7 +210,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/* *********************** issues attributes ************************ */
 
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private IssueList issueList = new IssueList();

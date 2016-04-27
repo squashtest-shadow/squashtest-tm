@@ -25,6 +25,7 @@ import org.apache.commons.collections.Transformer;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
+import org.springframework.util.ReflectionUtils;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -32,6 +33,9 @@ import org.squashtest.tm.service.internal.repository.DeletionDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -101,8 +105,8 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 
 	@Override
 	public void removeEntity(Object entity) {
-		getSession().delete(entity);
-
+		//getSession().delete(entity);
+		em.remove(entity);	
 	}
 
 	@Override

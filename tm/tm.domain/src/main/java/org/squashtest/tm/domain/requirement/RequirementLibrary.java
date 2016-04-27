@@ -57,7 +57,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 	@SequenceGenerator(name = "requirement_library_rl_id_seq", sequenceName = "requirement_library_rl_id_seq")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+	@OneToMany // no cascade is desired because we need to handle it manually
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "REQUIREMENT_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
 	private List<RequirementLibraryNode> rootContent = new ArrayList<>();

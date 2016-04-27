@@ -56,7 +56,7 @@ public class TestCaseLibrary extends GenericLibrary<TestCaseLibraryNode> {
 	@SequenceGenerator(name = "test_case_library_tcl_id_seq", sequenceName = "test_case_library_tcl_id_seq")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany // no cascade is desired because we need to handle it manually
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "TEST_CASE_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
 	private List<TestCaseLibraryNode> rootContent = new ArrayList<>();

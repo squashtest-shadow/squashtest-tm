@@ -61,7 +61,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 	@SequenceGenerator(name = "campaign_library_cl_id_seq", sequenceName = "campaign_library_cl_id_seq")
 	private Long id;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
+	@OneToMany // no cascade is desired because we need to handle it manually
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "CAMPAIGN_LIBRARY_CONTENT", joinColumns = @JoinColumn(name = "LIBRARY_ID"), inverseJoinColumns = @JoinColumn(name = "CONTENT_ID"))
 	private List<CampaignLibraryNode> rootContent = new ArrayList<>();

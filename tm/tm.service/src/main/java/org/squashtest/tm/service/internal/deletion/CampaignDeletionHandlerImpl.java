@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +35,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
@@ -405,35 +403,12 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		List<Long>[] separatedIds = deletionDao.separateFolderFromCampaignIds(ids);
 
 		List<Campaign> campaigns = campaignDao.findAllByIds(ids);
-		List<CampaignFolder> folders = folderDao.findAllByIds(ids);
-
-		// saving the attachment list for later.
-		List<AttachmentList> attachLists = new LinkedList<>();
-		for (Campaign campaign : campaigns) {
-			attachLists.add(campaign.getAttachmentList());
-		}
-		for (CampaignFolder folder : folders) {
-			attachLists.add(folder.getAttachmentList());
-		}
 
 		//empty of those campaigns
 		deleteCampaignContent(campaigns);
 
-		/*
-		 * a flush is needed at this point because all operations above where performed by Hibernate, while the rest
-		 * will be executed using SQL queries. The inconsistencies between cached entities but not yet flushed entities
-		 * and the actual database content would make the operation crash, so we need to synchronize.
-		 */
-		deletionDao.flush();
-
 		// now we can delete the folders as well
 		deletionDao.removeEntities(ids);
-
-		// only now we can delete the attachments according to the fk constraints
-		for (AttachmentList list : attachLists) {
-			deletionDao.removeAttachmentList(list);
-		}
-
 
 		//and finally prepare the operation report.
 		OperationReport report = new OperationReport();
@@ -502,10 +477,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	private void doDeleteSuites(Collection<TestSuite> testSuites) {
-		List<Long> attachmentListIds = new ArrayList<>();
-
+		
 		for (TestSuite testSuite : testSuites) {
-			attachmentListIds.add(testSuite.getAttachmentList().getId());
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
 				testPlanItem.getTestSuites().clear();
 			}
@@ -517,7 +490,6 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 		}
 
 		deletionDao.flush();
-		deletionDao.removeAttachmentsLists(attachmentListIds);
 	}
 
 	@Override
@@ -530,7 +502,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
 		customValueService.deleteAllCustomFieldValues(execution);
-		deletionDao.removeAttachmentList(execution.getAttachmentList());
+		
 		deletionDao.removeEntity(execution);
 	}
 
@@ -538,7 +510,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * we just remove the content of a campaign here. The actual removal of the campaign will be processed in the
 	 * calling methods.
 	 *
-	 * The operations carried over a campaign are : - removal of all its iterations, - removal its attachment list,
+	 * The operations carried over a campaign are : - removal of all its iterations, 
 	 *
 	 * the rest is supposed to cascade normally (node hierarchy, campaign test plans).
 	 */
@@ -564,8 +536,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	/*
-	 * removing an iteration means : - removing its test plan, - removing its attachment list - remove itself from
-	 * repository.
+	 * removing an iteration means : 
+	 * - removing its test plan, 
+	 * - remove itself from repository.
 	 */
 	private void doDeleteIterations(List<Iteration> iterations) {
 		for (Iteration iteration : iterations) {
@@ -577,11 +550,10 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			iteration.getTestSuites().clear();
 
 			deleteIterationTestPlan(iteration.getTestPlans());
-			iteration.getTestSuites().clear();    //XXX isn't that supposed to be iteration.getTestPlans().clear();
+			iteration.getTestPlans().clear();  
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
-			deletionDao.removeAttachmentList(iteration.getAttachmentList());
 			deletionDao.removeEntity(iteration);
 		}
 	}
@@ -589,7 +561,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	/*
 	 * removing a test plan :
 	 *
-	 * - remove the executions - remove itself.
+	 * - remove the executions 
+	 * - remove itself.
 	 */
 	private void deleteIterationTestPlan(List<IterationTestPlanItem> testPlan) {
 		for (IterationTestPlanItem item : testPlan) {
@@ -617,13 +590,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	/*
-	 * removing the steps mean : - remove their issues, - remove their attachments, - remove themselves.
+	 * removing the steps mean : 
+	 * - remove their issues, 
+	 * - remove themselves.
 	 */
 	public void deleteExecSteps(Execution execution) {
 
 		for (ExecutionStep step : execution.getSteps()) {
 
-			deletionDao.removeAttachmentList(step.getAttachmentList());
 			denormalizedFieldValueService.deleteAllDenormalizedFieldValues(step);
 			customValueService.deleteAllCustomFieldValues(step);
 			deletionDao.removeEntity(step);

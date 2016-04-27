@@ -111,7 +111,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 
 	/* *********************** attachment attributes ************************ */
 
-	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
+	@OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, fetch = FetchType.LAZY)
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 

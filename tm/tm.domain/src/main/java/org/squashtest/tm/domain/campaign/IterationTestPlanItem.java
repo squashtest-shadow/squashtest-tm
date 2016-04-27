@@ -140,7 +140,7 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@JoinColumn(name = "DATASET_ID", referencedColumnName = "DATASET_ID")
 	private Dataset referencedDataset;
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	@OrderColumn(name = "EXECUTION_ORDER")
 	@JoinTable(name = "ITEM_TEST_PLAN_EXECUTION", joinColumns = @JoinColumn(name = "ITEM_TEST_PLAN_ID"), inverseJoinColumns = @JoinColumn(name = "EXECUTION_ID"))
 	@FieldBridge(impl = CollectionSizeBridge.class)

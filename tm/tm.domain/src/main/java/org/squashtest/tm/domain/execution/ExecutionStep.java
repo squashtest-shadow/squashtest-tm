@@ -108,12 +108,12 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	private Integer executionStepOrder;
 
 	/* attachment attributes */
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE })
 	@JoinColumn(name = "ATTACHMENT_LIST_ID")
 	private final AttachmentList attachmentList = new AttachmentList();
 
 	/* issues attributes */
-	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE })
+	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
 	private IssueList issueList = new IssueList();
 

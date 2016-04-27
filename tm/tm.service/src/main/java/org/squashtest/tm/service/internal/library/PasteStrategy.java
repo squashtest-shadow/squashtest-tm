@@ -37,6 +37,7 @@ import javax.persistence.PersistenceContext;
 import org.hibernate.Session;
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
+import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
@@ -288,19 +289,25 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			nextNodes.add((TreeNode)nextPairing.getContainer());
 			nextNodes.addAll(nextPairing.getNewContent());
 		}
-
-		Collection<TreeNode> evicted = new HashSet<>();
 		
 		
-		// now we evict what we can
+		/*
+		 *  Now we evict what we can. Note that the collection toEvict is of generic type Object because not all nodes are TreeNode : 
+		 *  indeed a TestCaseLibrary is not a TreeNode.
+		 */
 		for (NodePairing processed : sourceLayer){
-			Collection<TreeNode> toEvict = new HashSet<>();
-			toEvict.add((TreeNode) processed.getContainer());
+			Collection<Object> toEvict = new HashSet<>();
+			toEvict.add(processed.getContainer());
 			toEvict.addAll(processed.getNewContent());
 			
-			for (TreeNode evi : toEvict){
-				if (! nextNodes.contains(evi)){
-					evicted.add(evi);
+			for (Object evi : toEvict){
+				/*
+				 * evict a node only if :
+				 * - not evicted already, 
+				 * - not a library (or at flush time the project will rant) 
+				 */
+				if (! nextNodes.contains(evi) && 
+						! (GenericLibrary.class.isAssignableFrom(evi.getClass()))){
 					genericDao.clearFromCache(evi);					
 				}
 			}
