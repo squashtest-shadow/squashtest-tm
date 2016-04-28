@@ -23,10 +23,13 @@ package org.squashtest.tm.service.internal.testcase
 
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseFolder
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.testutils.MockFactory;
 
 import spock.lang.Specification
+
+import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 
 class TestCaseNodeWalkerTest extends Specification {
 
@@ -60,6 +63,9 @@ class TestCaseNodeWalkerTest extends Specification {
 		def p = mockFactory.mockProject()
 
 		[fold2, fold4, fold42].each { it.notifyAssociatedWithProject(p) }
+		
+		assignId tc1, tc3, tc5, tc21, tc22, tc41, tc43, tc421, fold2, fold4, fold42
+		
 
 		and : "bind them together"
 		fold2.addContent(tc21)
@@ -102,6 +108,13 @@ class TestCaseNodeWalkerTest extends Specification {
 		//test (4)
 		floatingTcPos.collect { result[it.index].containsAll(it.tcs)  } == [true, true]
 
+	}
+	
+	def assignId(...args){
+		long cnt=0l;
+		use (ReflectionCategory){
+			args.each{ TestCaseLibraryNode.set field: "id", of: it, to: cnt++ }
+		}
 	}
 
 }

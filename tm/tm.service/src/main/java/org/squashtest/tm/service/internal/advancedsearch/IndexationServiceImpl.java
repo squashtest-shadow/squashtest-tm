@@ -24,6 +24,7 @@ import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentMap;
@@ -198,18 +199,18 @@ public class IndexationServiceImpl implements IndexationService {
 	}
 
 	@Override
-	public void batchReindexTc(List<Long> tcIdsToIndex) {
+	public void batchReindexTc(Collection<Long> tcIdsToIndex) {
 		batchReindex(TestCase.class, tcIdsToIndex);
 	}
 
 	@Override
-	public void batchReindexReqVersion(List<Long> reqVersionIdsToIndex) {
+	public void batchReindexReqVersion(Collection<Long> reqVersionIdsToIndex) {
 		batchReindex(RequirementVersion.class, reqVersionIdsToIndex);
 
 	}
 
 	// Batched versions
-	private <T> void batchReindex(Class<T> entity, List<Long> ids) {
+	private <T> void batchReindex(Class<T> entity, Collection<Long> ids) {
 		if (!ids.isEmpty()) {
 			FullTextSession ftSession = getFullTextSession();
 			ScrollableResults scroll = getScrollableResults(ftSession, entity, ids);
@@ -233,7 +234,7 @@ public class IndexationServiceImpl implements IndexationService {
 		ftSession.clear();
 	}
 
-	private ScrollableResults getScrollableResults(FullTextSession ftSession, Class<?> entity, List<Long> ids) {
+	private ScrollableResults getScrollableResults(FullTextSession ftSession, Class<?> entity, Collection<Long> ids) {
 		Criteria query = ftSession.createCriteria(entity);
 		query.add(Restrictions.in("id", ids));
 		return query.scroll(ScrollMode.FORWARD_ONLY);

@@ -32,6 +32,7 @@ import org.squashtest.tm.service.campaign.CampaignLibraryNavigationService
 import org.squashtest.tm.service.internal.campaign.CampaignNodeDeletionHandler
 import org.unitils.dbunit.annotation.DataSet
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
@@ -453,24 +454,25 @@ class CampaignNodeDeletionHandlerIT  extends DbunitServiceSpecification{
 
 	}
 
+	@Unroll
 	@DataSet("NodeDeletionHandlerTest.should delete testSuites and remove itpi from iteration.xml")
-	def"should remove test suites and remove itpi from iteration"(){
+	def "should remove a test plan item along with a test suite when it becomes orphan, leave the other not deleted"(){
 		when :
 		deletionHandler.deleteSuites(suiteId, true)
 		then :
 		allDeleted("TestSuite", suiteId)
 		allDeleted("AttachmentList", attachListId)
 		allDeleted("IterationTestPlanItem", itpiId )
-
+		allNotDeleted("IterationTestPlanItem", notdeletedItpi)
 
 		where :
-		suiteId    || attachListId | itpiId
-		[-1L, -2L] || [-12L, -13L] | [-121L, -122L]
-		[-1L]      || [-12L]       | [-122L]
+		suiteId    | attachListId | itpiId			| notdeletedItpi
+		// dataset 1 : itpi 123 is shared with test suite 3
+		[-1L, -2L] | [-12L, -13L] | [-121L, -122L]	| [-123L]	
+		// dataset 2 : itpi 123 out of scope and 121 is shared with test suite 2 (which is not deleted)
+		[-1L]      | [-12L]       | [-122L]			| [-121L, -123L] 
 
 	}
-
-
 
 
 }

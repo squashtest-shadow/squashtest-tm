@@ -656,12 +656,14 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	private void removeItpiFromIteration(List<TestSuite> suites, final List<Long> targetIds) {
 
 		Set<Long> idsToRemove = new HashSet<>();
+		
+		// TODO : maybe use a couple of HQL queries that would compute this with more efficiency
 
 		for (TestSuite suite : suites) {
 
 			for (IterationTestPlanItem itpi : suite.getTestPlan()) {
 
-				// Try to find one test suite in the IterationTestPlanItem that is not in the list of selected Iteration
+				// Try to find one test suite in the IterationTestPlanItem that is none of the test suites to remove
 				Object result = CollectionUtils.find(itpi.getTestSuites(), new Predicate() {
 					@Override
 					public boolean evaluate(Object ts) {

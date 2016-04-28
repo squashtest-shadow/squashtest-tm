@@ -21,6 +21,7 @@
 package org.squashtest.tm.service.internal.milestone;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -166,6 +167,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	private void unbindMilestonesFromProject(GenericProject project, List<Milestone> milestones) {
+		
 		project.unbindMilestones(milestones);
 
 		// Remove the project in different for loop because milestoneDao.unbindAllObjectsForProject may clear the
@@ -173,18 +175,19 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		for (Milestone milestone : milestones) {
 			milestone.removeProjectFromPerimeter(project);
 		}
-
-		List<Long> tcIds = new ArrayList<>();
-		List<Long> reqIds = new ArrayList<>();
+		
+		// save the test case and requirement ids for reindexation later
+		Collection<Long> milestoneIds = CollectionUtils.collect(milestones, ID_COLLECTOR);
+		
+		Collection<Long> tcIds = milestoneDao.findTestCaseIdsBoundToMilestones(milestoneIds);
+		Collection<Long> reqIds = milestoneDao.findRequirementVersionIdsBoundToMilestones(milestoneIds);
 
 		for (Milestone milestone : milestones) {
-
-			tcIds.addAll(CollectionUtils.collect(milestone.getTestCases(), ID_COLLECTOR));
-			reqIds.addAll(CollectionUtils.collect(milestone.getRequirementVersions(), ID_COLLECTOR));
-
-			// BE CAREFULL if you refactor here : This method may clear the session.
+			// that thing will probably clear the session, be careful
 			milestoneDao.unbindAllObjectsForProject(milestone.getId(), project.getId());
 		}
+		
+		// reindex
 		indexService.batchReindexTc(tcIds);
 		indexService.batchReindexReqVersion(reqIds);
 	}

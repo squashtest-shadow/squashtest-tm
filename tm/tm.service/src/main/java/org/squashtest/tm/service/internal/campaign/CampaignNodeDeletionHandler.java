@@ -128,7 +128,8 @@ public interface CampaignNodeDeletionHandler extends NodeDeletionHandler<Campaig
 	List<SuppressionPreviewReport> simulateSuiteDeletion(List<Long> targetIds);
 
 	/**
-	 * That method should delete test suites, and remove its references in iteration and iteration test plan item
+	 * Will delete the test suites. If removeFromIter is false it will leave the planned test cases, executions etc untouched. If true, 
+	 * they will also be removed unless shared with another test suite.
 	 * 
 	 * @param removeFromIter
 	 *

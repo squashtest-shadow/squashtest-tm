@@ -27,6 +27,7 @@ import org.hibernate.search.annotations.FieldBridge;
 import org.hibernate.search.annotations.Indexed;
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.project.GenericProject;
@@ -48,7 +49,7 @@ import java.util.*;
 @Entity
 @Table(name = "MILESTONE")
 @Indexed
-public class Milestone  {
+public class Milestone implements Identified {
 
 	@Id
 	@Column(name = "MILESTONE_ID")
@@ -165,6 +166,7 @@ public class Milestone  {
 		this.endDate = endDate;
 	}
 
+	@Override
 	public Long getId() {
 		return id;
 	}
@@ -251,26 +253,31 @@ public class Milestone  {
 	}
 
 	@Deprecated
+	// XXX omg potentially VERY EXPENSIVE
 	public Set<TestCase> getTestCases() {
 		return testCases;
 	}
 
 	@Deprecated
+	// XXX omg potentially VERY EXPENSIVE
 	public Set<RequirementVersion> getRequirementVersions() {
 		return requirementVersions;
 	}
 
 	@Deprecated
+	// XXX omg potentially VERY EXPENSIVE
 	public Set<Campaign> getCampaigns() {
 		return campaigns;
 	}
 
 	@Deprecated
+	// XXX omg potentially VERY EXPENSIVE
 	public void bindTestCase(TestCase testCase) {
 		testCases.add(testCase);
 	}
 
 	@Deprecated
+	// XXX omg potentially VERY EXPENSIVE
 	public void bindRequirementVersion(RequirementVersion version) {
 
 		// we need to exit early because this case is legit

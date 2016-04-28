@@ -123,4 +123,8 @@ public interface MilestoneDao extends EntityDao<Milestone> {
 	long countMilestonesForUsers(List<Long> userIds);
 
 	boolean isMilestoneBoundToACampainInProjects(Long milestoneId, List<Long> projectIds);
+	
+	Collection<Long> findTestCaseIdsBoundToMilestones(Collection<Long> milestoneIds);
+	
+	Collection<Long> findRequirementVersionIdsBoundToMilestones(Collection<Long> milestoneIds);
 }

@@ -56,16 +56,16 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementCreation event"() {
 		given:
-		RequirementVersion requirement = entityManager.getReference(RequirementVersion.class, -1L);
+		RequirementVersion requirement = em.getReference(RequirementVersion.class, -1L);
 
 		when:
 		def createEvent = new RequirementCreation(requirement, requirement.createdBy);
 		eventDao.save(createEvent);
 
-		entityManager.flush()
-		entityManager.clear()
+		em.flush()
+		em.clear()
 
-		def revent = entityManager.createQuery("from RequirementCreation rc where rc.requirementVersion.id=:req")
+		def revent = em.createQuery("from RequirementCreation rc where rc.requirementVersion.id=:req")
 			.setParameter("req", requirement.id)
 			.singleResult
 
@@ -77,7 +77,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementPropertyChange event"() {
 		given:
-		RequirementVersion requirement = entityManager.getReference(RequirementVersion.class, -1L);
+		RequirementVersion requirement = em.getReference(RequirementVersion.class, -1L);
 
 		when:
 		RequirementPropertyChange pptChangeEvent = RequirementPropertyChange.builder()
@@ -89,10 +89,10 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 			.build()
 		eventDao.save(pptChangeEvent);
 
-		entityManager.flush()
-		entityManager.clear()
+		em.flush()
+		em.clear()
 
-		def revent = entityManager.createQuery("from RequirementPropertyChange rpc where rpc.requirementVersion=:req")
+		def revent = em.createQuery("from RequirementPropertyChange rpc where rpc.requirementVersion=:req")
 			.setParameter("req", requirement)
 			.singleResult
 
@@ -107,7 +107,7 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateRequirementAuditEventDaoIT.should persist various events.xml")
 	def "should persist a RequirementLargeProperty event"() {
 		given:
-		RequirementVersion requirement = entityManager.getReference(RequirementVersion.class, -1L);
+		RequirementVersion requirement = em.getReference(RequirementVersion.class, -1L);
 
 		when:
 		def pptChangeEvent = RequirementLargePropertyChange.builder()
@@ -119,10 +119,10 @@ class HibernateRequirementAuditEventDaoIT extends DbunitDaoSpecification {
 			.build()
 		eventDao.save(pptChangeEvent);
 
-		entityManager.flush()
-		entityManager.clear()
+		em.flush()
+		em.clear()
 
-		def revent = entityManager.createQuery("from RequirementLargePropertyChange rpc where rpc.requirementVersion=:req")
+		def revent = em.createQuery("from RequirementLargePropertyChange rpc where rpc.requirementVersion=:req")
 			.setParameter("req", requirement)
 			.singleResult
 

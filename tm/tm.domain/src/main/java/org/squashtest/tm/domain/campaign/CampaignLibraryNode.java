@@ -53,4 +53,10 @@ public abstract class CampaignLibraryNode extends GenericLibraryNode {
 	public Library<?> getLibrary() {
 		return getProject().getCampaignLibrary();
 	}
+	
+	@Override
+	protected Class<? extends GenericLibraryNode> getGenericNodeClass() {
+		return CampaignLibraryNode.class;
+	}
+	
 }

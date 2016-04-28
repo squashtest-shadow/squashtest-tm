@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.advancedsearch;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.squashtest.tm.domain.library.IndexModel;
@@ -54,8 +55,8 @@ public interface IndexationService {
 	void indexIterationTestPlanItem();
 
 
-	void batchReindexTc(List<Long> tcIdsToIndex);
+	void batchReindexTc(Collection<Long> tcIdsToIndex);
 
-	void batchReindexReqVersion(List<Long> reqVersionIdsToIndex);
+	void batchReindexReqVersion(Collection<Long> reqVersionIdsToIndex);
 
 }

@@ -309,7 +309,7 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	}
 
 	private List<CustomFieldValue> findCufValueForEntity(BindableEntity entity, long entityId) {
-		entityManager.createQuery("from CustomFieldValue cufV where cufV.boundEntityType = :type and cufV.boundEntityId = :id")
+		em.createQuery("from CustomFieldValue cufV where cufV.boundEntityType = :type and cufV.boundEntityId = :id")
 			.setParameter("type", entity)
 			.setParameter("id", entityId)
 			.resultList

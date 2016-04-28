@@ -89,7 +89,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		when:
 		service.changeName(parameterId, newParamName)
 		then:
-		ActionTestStep editedStep = entityManager.getReference(ActionTestStep.class, -1L)
+		ActionTestStep editedStep = em.getReference(ActionTestStep.class, -1L)
 		String newStep = "do this \${newName}"
 		editedStep.action.equals(newStep)
 	}
@@ -111,7 +111,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		Parameter param = parameterDao.findById(-10100L)
 		parameterDao.delete(param)
 		then:
-		entityManager.flush()
+		em.flush()
 		testCase.getParameters().size() == 0
 	}
 
@@ -120,7 +120,7 @@ class ParameterModificationServiceIT extends DbunitServiceSpecification {
 		when:
 		service.createParamsForStep(-101L)
 		then:
-		TestCase testCase = entityManager.getReference(TestCase.class, -100L)
+		TestCase testCase = em.getReference(TestCase.class, -100L)
 		testCase.parameters.collect { it.name }.contains("parameter")
 
 	}

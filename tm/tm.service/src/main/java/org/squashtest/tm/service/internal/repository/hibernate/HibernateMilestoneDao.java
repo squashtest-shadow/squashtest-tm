@@ -41,10 +41,15 @@ import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneHolder;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
+import org.squashtest.tm.domain.milestone.QMilestone;
+import org.squashtest.tm.domain.requirement.QRequirementVersion;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
+import org.squashtest.tm.domain.testcase.QTestCase;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.exception.milestone.MilestoneLabelAlreadyExistsException;
 import org.squashtest.tm.service.internal.repository.MilestoneDao;
+
+import com.querydsl.jpa.hibernate.HibernateQuery;
 
 @Repository
 public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implements MilestoneDao {
@@ -477,4 +482,22 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 		return (long) query.uniqueResult();
 	}
 
+	@Override
+	public Collection<Long> findTestCaseIdsBoundToMilestones(Collection<Long> milestoneIds) {
+		QTestCase tc = QTestCase.testCase;
+		QMilestone ms = QMilestone.milestone;
+		
+		return new HibernateQuery<Long>(currentSession())
+				.select(tc.id).from(tc).innerJoin(tc.milestones, ms).where(ms.id.in(milestoneIds)).fetch();
+	}
+	
+	@Override
+	public Collection<Long> findRequirementVersionIdsBoundToMilestones(Collection<Long> milestoneIds) {
+		QRequirementVersion v = QRequirementVersion.requirementVersion;
+		QMilestone ms = QMilestone.milestone;
+		
+		return new HibernateQuery<Long>(currentSession())
+				.select(v.id).from(v).innerJoin(v.milestones, ms).where(ms.id.in(milestoneIds)).fetch();
+	}
+	
 }

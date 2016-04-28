@@ -23,8 +23,9 @@ package org.squashtest.tm.service.milestone;
 import javax.inject.Inject;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 
+import spock.lang.Unroll;
 import spock.unitils.UnitilsSupport;
 import org.unitils.dbunit.annotation.DataSet
 
@@ -114,6 +115,7 @@ public class MilestoneBindingServiceIT extends DbunitServiceSpecification{
 		   -4L     || [-1]
 	}
 	
+	@Unroll
 	@DataSet("/org/squashtest/tm/service/milestone/MilestoneBindingManagerServiceIT.xml")
 	def "Free milestones from the evil project"(){
 	

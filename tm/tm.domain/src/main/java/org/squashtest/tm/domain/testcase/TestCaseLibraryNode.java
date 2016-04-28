@@ -65,39 +65,7 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 
 	public abstract void accept(TestCaseLibraryNodeVisitor visitor);
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		return result;
-	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (! TestCaseLibraryNode.class.isAssignableFrom(obj.getClass())) {
-			return false;
-		}
-		TestCaseLibraryNode other = (TestCaseLibraryNode) obj;
-		Long thisId = getId();
-		Long otherId = other.getId();
-		if (thisId == null) {
-			if (otherId != null) {
-				return false;
-			}
-			// no ids for both -> delegate to superclass
-			return super.equals(other);
-		} else if (!thisId.equals(otherId)) {
-			return false;
-		}
-		return true;
-	}
 
 	@Override
 	@AclConstrainedObject
@@ -109,4 +77,9 @@ public abstract class TestCaseLibraryNode extends GenericLibraryNode implements 
 		return getAttachmentList().getAllAttachments();
 	}
 
+	@Override
+	protected Class<? extends GenericLibraryNode> getGenericNodeClass() {
+		return TestCaseLibraryNode.class;
+	}
+	
 }

@@ -144,6 +144,10 @@ class CustomMilestoneBindingServiceImplTest extends Specification{
 		Milestone m2 = new Milestone(id:20L)
 		project.bindMilestones([m1, m2])
 		m1.addProjectToPerimeter(project)
+		
+		and :
+		milestoneDao.findTestCaseIdsBoundToMilestones(_) >> []
+		milestoneDao.findRequirementVersionIdsBoundToMilestones(_) >> []
 
 		when:
 		manager.unbindAllMilestonesFromProject(project)

@@ -118,7 +118,18 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		return attachmentList;
 	}
 
+
 	// ******************* other utilities ****************************
+
+	/**
+	 * Used internally, this class must be implemented by first-descendant of this (GenericLibraryNode) class. We need it 
+	 * in order to implement a better, accurate hashcode and equals. Now that Squash has only one classloader, that shouldn't 
+	 * be a problem right ?
+	 * 
+	 * @return
+	 */
+	protected abstract Class<? extends GenericLibraryNode> getGenericNodeClass();
+
 
 	/*
 	 * Issue 1713
@@ -130,17 +141,45 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	@Override
 	public int hashCode() {
-		final int prime = 67;
-		int result = 3;
-		result = prime * result + ((getAttachmentList() == null) ? 0 : getAttachmentList().hashCode());
-		result = prime * result + ((getDescription() == null) ? 0 : getDescription().hashCode());
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+		final int prime = 31;
+		int result = 1;
+		Long id = getId();
+		Class<?> mygenericClass = getGenericNodeClass();
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		result = prime * result + ((mygenericClass == null) ? 0 : mygenericClass.hashCode());
 		return result;
 	}
-
+	
 	// GENERATED:START
 	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (! GenericLibraryNode.class.isAssignableFrom(obj.getClass()))
+			return false;
+		
+		GenericLibraryNode other = (GenericLibraryNode) obj;
+		Long id = getId();
+		Class<?> mygenericClass = getGenericNodeClass();
+		
+		if (id == null) {
+			if (other.getId() != null)
+				return false;
+		} else if (!id.equals(other.getId()))
+			return false;
+
+		if (!mygenericClass.equals(other.getGenericNodeClass()))
+			return false;
+		
+		return true;
+	}
+	// GENERATED:END
+	
+
+	// GENERATED:START
+	/*@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
@@ -152,20 +191,6 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 			return false;
 		}
 		GenericLibraryNode other = (GenericLibraryNode) obj;
-		if (getAttachmentList() == null) {
-			if (other.getAttachmentList() != null) {
-				return false;
-			}
-		} else if (!getAttachmentList().equals(other.getAttachmentList())) {
-			return false;
-		}
-		if (getDescription() == null) {
-			if (other.getDescription() != null) {
-				return false;
-			}
-		} else if (!getDescription().equals(other.getDescription())) {
-			return false;
-		}
 		if (getId() == null) {
 			if (other.getId() != null) {
 				return false;
@@ -173,14 +198,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		} else if (!getId().equals(other.getId())) {
 			return false;
 		}
-		if (getName() == null) {
-			if (other.getName() != null) {
-				return false;
-			}
-		} else if (!getName().equals(other.getName())) {
-			return false;
-		}
 		return true;
-	}
+	}*/
 	// GENERATED:END
 }
