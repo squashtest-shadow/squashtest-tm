@@ -134,7 +134,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	private RequirementStatus status = RequirementStatus.WORK_IN_PROGRESS;
 
 	@NotNull
-	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
+	@ManyToOne
 	@JoinColumn(name = "REQUIREMENT_ID")
 	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private Requirement requirement;

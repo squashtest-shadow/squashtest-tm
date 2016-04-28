@@ -88,13 +88,15 @@ public class RequirementNodeDeletionHandlerIT extends DbunitServiceSpecification
 		then :
 		result.removed*.resid.containsAll([-11L])
 
-		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])
-		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
-
-		found (Requirement.class, -12L)
-
-		allDeleted("Requirement", [-11L])
+		allDeleted("CustomFieldValue", [-1111L, -1112L, -1121L, -1122L])		
 		allDeleted("RequirementVersion", [-111L, -112L])
+		allDeleted("AttachmentList", [-111L, -112L])
+		allDeleted("Requirement", [-11L])
+		
+		
+		// requirement -12l is untouched
+		allNotDeleted("CustomFieldValue", [-1211L, -1212L]);
+		found (Requirement.class, -12L)
 
 
 	}

@@ -177,7 +177,7 @@ that page won't be editable if
         <c:if test="${ writable }">
 			<input type="button" value="${renameLabel}" title="${renameLabel}" id="rename-requirement-button" class="sq-btn"  ${disableIfSynced}/>
 		</c:if>
-		<c:if test="${ creatable and milestoneConf.activeMilestone.canCreateDelete}">
+		<c:if test="${ (not milestoneConf.globallyEnabled) or (creatable and milestoneConf.activeMilestone.canCreateDelete)}">
 			<input type="button" value="${newversionLabel}" title="${newversionLabel}" id="new-version-button" class="sq-btn"  ${disableIfSynced}/>
 		</c:if>
 		<input type="button" value="<f:message key='label.print'/>" title='<f:message key='label.print'/>' id="print-requirement-version-button" class="sq-btn"/>

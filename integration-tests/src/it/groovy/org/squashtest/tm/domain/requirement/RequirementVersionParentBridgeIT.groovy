@@ -38,6 +38,14 @@ import spock.unitils.UnitilsSupport;
 class RequirementVersionParentBridgeIT extends BridgeSpecification {
 	RequirementVersionHasParentBridge bridge = new RequirementVersionHasParentBridge()
 	
+	
+	def setup(){
+		def rv402 = em.find(RequirementVersion, -402l)
+		def r400 = em.find(Requirement, -400l)
+		rv402.setRequirement(r400)
+		em.flush()
+	}
+	
 	@DataSet("RequirementVersionBridgeIT.dataset.xml")
 	@Unroll
 	def "requirement version #reqId should have parent : #parent"() {

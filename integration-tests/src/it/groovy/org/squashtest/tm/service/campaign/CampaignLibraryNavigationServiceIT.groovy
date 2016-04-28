@@ -273,6 +273,7 @@ class CampaignLibraryNavigationServiceIT extends DbunitServiceSpecification {
 		then:
 		iterations.size() == 2
 		iterations.get(0).name == "iter - tc1"
+		iterations.get(1).name == "iter - tc1 -2"
 
 	}
 

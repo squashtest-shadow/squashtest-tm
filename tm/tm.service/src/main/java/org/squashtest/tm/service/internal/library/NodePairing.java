@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.service.internal.library;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.squashtest.tm.domain.library.NodeContainer;
 import org.squashtest.tm.domain.library.TreeNode;
@@ -30,22 +29,18 @@ import org.squashtest.tm.domain.library.TreeNode;
 class NodePairing {
 	
 	private NodeContainer<TreeNode> container;
-	private Set<TreeNode> newContent = new HashSet<>();
+	private List<TreeNode> newContent = new ArrayList<>();
 	
 	NodePairing(NodeContainer<TreeNode> container){
 		super();
 		this.container = container;
 	}
 	
-	NodePairing(NodeContainer<TreeNode> container, Set<TreeNode> newContent){
+	NodePairing(NodeContainer<TreeNode> container, List<TreeNode> newContent){
 		this(container);
 		this.newContent = newContent;
 	}
 	
-	NodePairing(NodeContainer<TreeNode> container, Collection<TreeNode> newContent){
-		this(container);
-		this.newContent = new HashSet<>(newContent);
-	}
 	
 	void addContent(TreeNode node){
 		this.newContent.add(node);
@@ -59,7 +54,7 @@ class NodePairing {
 		return container;
 	}
 	
-	Set<TreeNode> getNewContent(){
+	List<TreeNode> getNewContent(){
 		return newContent;
 	}
 	

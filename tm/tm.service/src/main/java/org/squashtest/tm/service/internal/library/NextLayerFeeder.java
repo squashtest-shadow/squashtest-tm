@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.library;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
@@ -140,7 +141,7 @@ public class NextLayerFeeder implements NodeVisitor {
 	@SuppressWarnings("unchecked")
 	private void saveNextToCopy(NodeContainer<? extends TreeNode> source, NodeContainer<? extends TreeNode> destination) {
 		if (source.hasContent()) {
-			Collection<TreeNode> sourceContent = new HashSet<>(source.getOrderedContent());
+			List<TreeNode> sourceContent = new ArrayList<>(source.getOrderedContent());
 			sourceContent.removeAll(outputList);
 			nextLayer.add(new NodePairing((NodeContainer<TreeNode>)destination, sourceContent));
 		}

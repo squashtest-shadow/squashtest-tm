@@ -28,7 +28,11 @@ import java.util.List;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
+import org.hibernate.FlushMode;
+import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
@@ -93,6 +97,8 @@ RequirementNodeDeletionHandler {
 		return folderDao;
 	}
 
+	@PersistenceContext
+	private EntityManager em;
 
 	@Override
 	protected List<SuppressionPreviewReport> diagnoseSuppression(List<Long> nodeIds) {
@@ -289,9 +295,9 @@ RequirementNodeDeletionHandler {
 		/*
 		 * detect the locked requirements. Now, in this case the tree is not applicable
 		 * because of subrequirements. Consider a requirement r1 and its subrequirement r2.
-		 * The tree considers that if r2 is locked (non deletable) then r1 is locked too.
-		 * However according to our spec this is not the case : if r2 is deletable, r1 can
-		 * still be deleted, and it entails that r2 will be attached to the parent of r1.
+		 * The tree would wrongly considers that since r2 is locked (non deletable) then r1 should be locked too.
+		 * However according to our spec this is not the case : r1 can still be deleted eventough r2 is deletable.
+		 * In this case r2 will be attached to the parent of r1, then r1 will be deleted.
 		 *
 		 * So we need just recompute the whole thing : find which requirements are actually
 		 * deletable on an individual basis.
@@ -376,7 +382,10 @@ RequirementNodeDeletionHandler {
 	 */
 	@Override
 	public OperationReport deleteNodes(List<Long> targetIds) {
-
+	
+		//Session s = em.unwrap(Session.class);
+		
+		
 		OperationReport globalReport = new OperationReport();
 
 		TargetsSortedByAppropriatePunishment sortedTargets = sortThatMess(targetIds);
@@ -417,7 +426,6 @@ RequirementNodeDeletionHandler {
 
 		}
 
-
 		return globalReport;
 	}
 
@@ -430,10 +438,8 @@ RequirementNodeDeletionHandler {
 
 		OperationReport report = new OperationReport();
 
-		if (!folderIds.isEmpty()) {
-			List<Long> requirementFolderAttachmentIds = deletionDao.findRequirementFolderAttachmentListIds(folderIds);
+		if (!folderIds.isEmpty()) {	
 			deletionDao.removeEntities(folderIds);
-			deletionDao.removeAttachmentsLists(requirementFolderAttachmentIds);
 			report.addRemoved(folderIds, "folder");
 
 			deletionDao.flush();
@@ -537,8 +543,9 @@ RequirementNodeDeletionHandler {
 		if (! versionIds.isEmpty()) {
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_VERSION, versionIds);
-
-			// save the attachment list ids for later reference
+			
+			// save the attachment list ids for later reference. We cannot rely on the cascade here 
+			// because the requirement deletion is made by HQL, which doesn't honor the cascades
 			List<Long> versionsAttachmentIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
 
 			// remove the changelog
