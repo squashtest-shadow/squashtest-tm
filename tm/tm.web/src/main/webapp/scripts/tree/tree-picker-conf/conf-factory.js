@@ -36,27 +36,37 @@
  * }
  *
  */
-define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf","./tp-campaign-it-conf","./tp-customreport-conf"],
-	function($, genCommon, genTC, genReq, genCamp, genCampIt, genCustomReport){
+define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf", "./tp-campaign-it-conf", "./tp-customreport-conf"],
+	function ($, genCommon, genTC, genReq, genCamp, genCampIt, genCustomReport) {
+		"use strict";
 
+		return {
+			generate: function (settings) {
+				var commonConf = genCommon.generate(settings);
+				var specificConf;
 
-	return {
-		generate : function(settings){
-			var commonConf = genCommon.generate(settings);
-			var specificConf;
+				switch (settings.workspace) {
+					case 'test-case'  :
+						specificConf = genTC.generate(settings);
+						break;
+					case 'requirement'  :
+						specificConf = genReq.generate(settings);
+						break;
+					case 'campaign'    :
+						specificConf = genCamp.generate(settings);
+						break;
+					case 'campaign-it'    :
+						specificConf = genCampIt.generate(settings);
+						break;
+					case 'custom-report'    :
+						specificConf = genCustomReport.generate(settings);
+						break;
+				}
 
-			switch(settings.workspace){
-			case 'test-case'	: specificConf = genTC.generate(settings); break;
-			case 'requirement'	: specificConf = genReq.generate(settings); break;
-			case 'campaign'		: specificConf = genCamp.generate(settings); break;
-			case 'campaign-it'		: specificConf = genCampIt.generate(settings); break;
-			case 'custom-report'		: specificConf = genCustomReport.generate(settings); break;
+				return $.extend({}, commonConf, specificConf);
+
 			}
-
-			return $.extend({}, commonConf, specificConf);
-
-		}
-	};
+		};
 
 
-});
+	});

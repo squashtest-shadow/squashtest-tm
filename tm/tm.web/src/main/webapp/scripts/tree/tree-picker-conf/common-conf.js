@@ -27,20 +27,20 @@
  * }
  *
  */
-define(function() {
+define(function () {
 	"use strict";
 
 	return {
-		generate : function(settings) {
+		generate: function (settings) {
 
 			return {
 
-				plugins : [ "json_data", "sort", "themes", "types", "dnd", "cookies", "ui", "squash", "treepicker",
-						'conditionalselect' ],
+				plugins: ["json_data", "sort", "themes", "types", "dnd", "cookies", "ui", "squash", "treepicker",
+					'conditionalselect'],
 
-				json_data : {
-					ajax : {
-						url : function(n) {
+				json_data: {
+					ajax: {
+						url: function (n) {
 							var nodes = n.treeNode();
 							if (nodes.canContainNodes()) {
 								return nodes.getContentUrl();
@@ -49,15 +49,15 @@ define(function() {
 							}
 						}
 					},
-					data : settings.model
+					data: settings.model
 				},
 
-				core : {
-					animation : 0
+				core: {
+					animation: 0
 				},
-				
-				dnd : {
-					drop_finish : function(data){
+
+				dnd: {
+					drop_finish: function (data) {
 						// attention : extra lazy implementation
 						// don't do the same at home kids !
 						data.o.treeNode().select();
@@ -65,25 +65,25 @@ define(function() {
 					}
 				},
 
-				ui : {
-					select_multiple_modifier : "ctrl",
-					select_range_modifier : "shift"
+				ui: {
+					select_multiple_modifier: "ctrl",
+					select_range_modifier: "shift"
 				},
 
-				themes : {
-					theme : "squashtest",
-					dots : true,
-					icons : true,
-					url : window.squashtm.app.contextRoot + "/styles/squash.tree.css"
+				themes: {
+					theme: "squashtest",
+					dots: true,
+					icons: true,
+					url: window.squashtm.app.contextRoot + "/styles/squash.tree.css"
 				},
 
-				squash : {
-					rootUrl : window.squashtm.app.contextRoot,
-					opened : (!!settings.selectedNode) ? [ settings.selectedNode ] : []
+				squash: {
+					rootUrl: window.squashtm.app.contextRoot,
+					opened: (!!settings.selectedNode) ? [settings.selectedNode] : []
 				},
-				conditionalselect : function(node) {
+				conditionalselect: function (node) {
 
-					if (settings.canSelectProject && $(node).is("[rel='drive']")){
+					if (settings.canSelectProject && $(node).is("[rel='drive']")) {
 						return true;
 					}
 

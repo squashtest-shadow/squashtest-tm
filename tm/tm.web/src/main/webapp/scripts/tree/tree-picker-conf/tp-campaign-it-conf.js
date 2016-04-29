@@ -18,36 +18,35 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function(){
-
-	var baseURL = squashtm.app.contextRoot;
+define(function () {
+	"use strict";
 
 	return {
-		generate : function(){
+		generate: function () {
 
-				return {
-				"types" : {
-					"max_depth" : -2, // unlimited without check
-					"max_children" : -2, // unlimited w/o check
-					"valid_children" : [ "drive" ],
-					"types" : {
-            "iteration" : {
-							"valid_children" : ["test-suite"]
+			return {
+				"types": {
+					"max_depth": -2, // unlimited without check
+					"max_children": -2, // unlimited w/o check
+					"valid_children": ["drive"],
+					"types": {
+						"iteration": {
+							"valid_children": ["test-suite"]
 						},
-						"campaign" : {
-							"valid_children" : ['iteration']
+						"campaign": {
+							"valid_children": ['iteration']
 						},
-						"folder" : {
-							"valid_children" : [ "campaign", "folder" ]
+						"folder": {
+							"valid_children": ["campaign", "folder"]
 						},
-						"drive" : {
-							"valid_children" : [ "campaign", "folder" ]
+						"drive": {
+							"valid_children": ["campaign", "folder"]
 						}
 					}
 				},
-        conditionalselect : function(node) {
+				conditionalselect: function (node) {
 
-					if ($(node).is("[rel='campaign']")||$(node).is("[rel='iteration']")){
+					if ($(node).is("[rel='campaign']") || $(node).is("[rel='iteration']")) {
 						return true;
 					}
 					return false;

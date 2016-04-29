@@ -30,11 +30,11 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Bean to hold the occurrence of execution steps status from a list of execution steps.
- * 
+ *
  */
 public class ExecutionStatusReport {
 	private Map<ExecutionStatus, Integer> statusCount = new HashMap<>(
-			ExecutionStatus.values().length);
+		ExecutionStatus.values().length);
 
 	public ExecutionStatusReport() {
 		super();
@@ -63,7 +63,7 @@ public class ExecutionStatusReport {
 
 	/**
 	 * Tells if there is at least 1 given status.
-	 * 
+	 *
 	 * @param status
 	 * @return
 	 */
@@ -73,7 +73,7 @@ public class ExecutionStatusReport {
 
 	/**
 	 * Tells if all the counted statuses are of the given ones.
-	 * 
+	 *
 	 * @param statuses
 	 * @return
 	 */
@@ -87,22 +87,16 @@ public class ExecutionStatusReport {
 		return expectedCount == getTotal();
 	}
 
-	/**
-	 * @param success
-	 * @param warning
-	 * @param settled
-	 * @return
-	 */
 	public boolean anyOf(@NotNull ExecutionStatus... statuses) {
 		boolean found = false;
-		
+
 		for (ExecutionStatus status : statuses) {
 			if (has(status)) {
 				found = true;
 				break;
 			}
 		}
-		
+
 		return found;
 	}
 }

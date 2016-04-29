@@ -18,39 +18,38 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function(){
+define(function () {
+	"use strict";
 
-	var baseURL = squashtm.app.contextRoot;
-	
 	return {
-		generate : function(){
-		
-				return {
-				"types" : {
-					"max_depth" : -2, // unlimited without check
-					"max_children" : -2, // unlimited w/o check
-					"valid_children" : [ "drive" ],
-					"types" : {					
-						"test-suite" : {
-							"valid_children" : "none"
+		generate: function () {
+
+			return {
+				"types": {
+					"max_depth": -2, // unlimited without check
+					"max_children": -2, // unlimited w/o check
+					"valid_children": ["drive"],
+					"types": {
+						"test-suite": {
+							"valid_children": "none"
 						},
-						
-						"iteration" : {
-							"valid_children" : ["test-suite"]
-						},					
-						"campaign" : {
-							"valid_children" : ['iteration']
+
+						"iteration": {
+							"valid_children": ["test-suite"]
 						},
-						"folder" : {
-							"valid_children" : [ "campaign", "folder" ]
+						"campaign": {
+							"valid_children": ['iteration']
 						},
-						"drive" : {
-							"valid_children" : [ "campaign", "folder" ]
+						"folder": {
+							"valid_children": ["campaign", "folder"]
+						},
+						"drive": {
+							"valid_children": ["campaign", "folder"]
 						}
 					}
 				}
 			};
 		}
-	
+
 	};
 });

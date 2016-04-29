@@ -36,25 +36,34 @@
  * }
  *
  */
-define(["jquery", "./common-conf", "./w-testcase-conf", "./w-requirement-conf", "./w-campaign-conf", "./w-customreport-conf"], function($, genCommon, genTC, genReq, genCamp,genCustomReport){
+define(["jquery", "./common-conf", "./w-testcase-conf", "./w-requirement-conf", "./w-campaign-conf", "./w-customreport-conf"],
+	function ($, genCommon, genTC, genReq, genCamp, genCustomReport) {
+		"use strict";
 
+		return {
+			generate: function (settings) {
+				var commonConf = genCommon.generate(settings);
+				var specificConf;
 
-	return {
-		generate : function(settings){
-			var commonConf = genCommon.generate(settings);
-			var specificConf;
+				switch (settings.workspace) {
+					case 'test-case'  :
+						specificConf = genTC.generate(settings);
+						break;
+					case 'requirement'  :
+						specificConf = genReq.generate(settings);
+						break;
+					case 'campaign'    :
+						specificConf = genCamp.generate(settings);
+						break;
+					case 'custom-report'    :
+						specificConf = genCustomReport.generate(settings);
+						break;
+				}
 
-			switch(settings.workspace){
-			case 'test-case'	: specificConf = genTC.generate(settings); break;
-			case 'requirement'	: specificConf = genReq.generate(settings); break;
-			case 'campaign'		: specificConf = genCamp.generate(settings); break;
-			case 'custom-report'		: specificConf = genCustomReport.generate(settings); break;
+				return $.extend({}, commonConf, specificConf);
+
 			}
-
-			return $.extend({}, commonConf, specificConf);
-
-		}
-	};
+		};
 
 
-});
+	});

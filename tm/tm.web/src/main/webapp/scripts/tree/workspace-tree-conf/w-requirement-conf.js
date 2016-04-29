@@ -19,8 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(function(){
-	var baseURL = squashtm.app.contextRoot;
-
+	"use strict";
 	return {
 		generate : function(){
 
@@ -43,6 +42,6 @@ define(function(){
 				}
 			};
 		}
-	
+
 	};
 });

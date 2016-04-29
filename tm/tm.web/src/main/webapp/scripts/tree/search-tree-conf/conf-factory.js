@@ -18,19 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "./common-conf", "./w-campaign-conf"], function($, genCommon, genCamp){
-
+define(["jquery", "./common-conf", "../workspace-tree-conf/w-campaign-conf"], function ($, genCommon, genCamp) {
+	"use strict";
 
 	return {
-		generate : function(settings){
+		generate: function (settings) {
 			var commonConf = genCommon.generate(settings);
 			var specificConf;
 
-			switch(settings.workspace){
-			case 'test-case'	:  break;
-			case 'requirement'	:  break;
-			case 'campaign'		: specificConf = genCamp.generate(settings); break;
-			case 'custom-report'		: break;
+			switch (settings.workspace) {
+				case 'test-case':
+					break;
+				case 'requirement':
+					break;
+				case 'campaign':
+					specificConf = genCamp.generate(settings);
+					break;
+				case 'custom-report':
+					break;
 			}
 
 			return $.extend({}, commonConf, specificConf);
