@@ -18,31 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statusfactory', 'squash.translator',
-		'squash.dateutils', 'app/ws/squashtm.notification', 'test-plan-management/DeleteExecutionDialog', 'jqueryui', 'jquery.squash.confirmdialog',
-		'jquery.squash.formdialog' ], function($,
-		eventBus, ComponentUtil, statusfactory, translator, dateutils, notification, DeleteExecutionDialog) {
+define(['jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statusfactory', 'squash.translator',
+	'squash.dateutils', 'app/ws/squashtm.notification', 'test-plan-management/DeleteExecutionDialog', 'test-plan-management/BatchEditStatusDialog',
+	'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog'], function ($,
+	eventBus, ComponentUtil, statusfactory, translator, dateutils, notification, DeleteExecutionDialog, BatchEditStatusDialog) {
 
 	function _initDeleteExecutionPopup(conf) {
-		new DeleteExecutionDialog({el: "#iter-test-plan-delete-execution-dialog", urlRoot: conf.urls.executionsUrl})
-
-		// var deleteExecutionDialog = $("#iter-test-plan-delete-execution-dialog");
-        //
-		// deleteExecutionDialog.confirmDialog();
-        //
-		// deleteExecutionDialog.on('confirmdialogconfirm', function() {
-		// 	var execId = $(this).data('origin').id.substr('delete-execution-table-button-'.length);
-        //
-		// 	$.ajax({
-		// 		url : conf.urls.executionsUrl + execId,
-		// 		type : 'DELETE',
-		// 		dataType : 'json'
-		// 	}).done(function(data) {
-		// 		eventBus.trigger('context.content-modified', {
-		// 			newDates : data
-		// 		});
-		// 	});
-		// });
+		new DeleteExecutionDialog({el: "#iter-test-plan-delete-execution-dialog", urlRoot: conf.urls.executionsUrl});
 	}
 
 	function _initDeleteItemTestplan(conf) {
@@ -51,7 +33,7 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 		deleteItemTestplanDialog.formDialog();
 
-		deleteItemTestplanDialog.on('formdialogopen', function() {
+		deleteItemTestplanDialog.on('formdialogopen', function () {
 
 			var $this = $(this),
 				$table = $("#iteration-test-plans-table").squashTable();
@@ -70,38 +52,38 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 			}
 
 			switch (selIds.length) {
-			case 0:
-				$this.formDialog('close');
-				notification.showError(translator.get('message.EmptyExecPlanSelection'));
-				break;
-			case 1:
-				var row = $table.getRowsByIds(selIds)[0];
-				var wasexecuted = (!! $table.fnGetData(row)['last-exec-on']);
-				if (wasexecuted){
-					$this.formDialog('setState', 'delete-single-tp');
-				}
-				else{
-					$this.formDialog('setState', 'unbind-single-tp');
-				}
-				break;
-			default:
-				$this.formDialog('setState', 'multiple-tp');
-				break;
+				case 0:
+					$this.formDialog('close');
+					notification.showError(translator.get('message.EmptyExecPlanSelection'));
+					break;
+				case 1:
+					var row = $table.getRowsByIds(selIds)[0];
+					var wasexecuted = (!!$table.fnGetData(row)['last-exec-on']);
+					if (wasexecuted) {
+						$this.formDialog('setState', 'delete-single-tp');
+					}
+					else {
+						$this.formDialog('setState', 'unbind-single-tp');
+					}
+					break;
+				default:
+					$this.formDialog('setState', 'multiple-tp');
+					break;
 			}
 
 			this.selIds = selIds;
 		});
 
-		deleteItemTestplanDialog.on('formdialogconfirm', function() {
+		deleteItemTestplanDialog.on('formdialogconfirm', function () {
 			var table = $("#iteration-test-plans-table").squashTable();
 			var ids = this.selIds;
 			var url = conf.urls.testplanUrl + ids.join(',');
 
 			$.ajax({
-				url : url,
-				type : 'delete',
-				dataType : 'json'
-			}).done(function(partiallyUnauthorized) {
+				url: url,
+				type: 'delete',
+				dataType: 'json'
+			}).done(function (partiallyUnauthorized) {
 				/*
 				 * When a user can delete a planned test case unless executed,
 				 * and that a multiple selection encompassed both cases,
@@ -118,7 +100,7 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 			$(this).formDialog('close');
 		});
 
-		deleteItemTestplanDialog.on('formdialogcancel', function() {
+		deleteItemTestplanDialog.on('formdialogcancel', function () {
 			$(this).formDialog('close');
 		});
 
@@ -130,7 +112,7 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 		batchAssignUsersDialog.formDialog();
 
-		batchAssignUsersDialog.on('formdialogopen', function() {
+		batchAssignUsersDialog.on('formdialogopen', function () {
 			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
 
 			if (selIds.length === 0) {
@@ -142,118 +124,57 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 
 		});
 
-		batchAssignUsersDialog.on('formdialogconfirm', function() {
+		batchAssignUsersDialog.on('formdialogconfirm', function () {
 
 			var table = $("#iteration-test-plans-table").squashTable(), select = $('.batch-select', this);
 
 			var rowIds = table.getSelectedIds(), assigneeId = select.val(), assigneeLogin = select.find(
-					'option:selected').text();
+				'option:selected').text();
 
 			var url = conf.urls.testplanUrl + rowIds.join(',');
 
 			$.post(url, {
-				assignee : assigneeId
-			}, function() {
+				assignee: assigneeId
+			}, function () {
 				table.getSelectedRows().find('td.assignee-combo span').text(assigneeLogin);
 			});
 
 			$(this).formDialog('close');
 		});
 
-		batchAssignUsersDialog.on('formdialogcancel', function() {
+		batchAssignUsersDialog.on('formdialogcancel', function () {
 			$(this).formDialog('close');
 		});
 
 	}
+
 	function _initBatchEditStatus(conf) {
-
-		var batchEditStatusDialog = $("#iter-test-plan-batch-edit-status");
-
-		batchEditStatusDialog.formDialog();
-
-		var cbox = batchEditStatusDialog.find(".execution-status-combo-class");
-		ComponentUtil.updateStatusCboxIconOnChange(cbox);
-
-		batchEditStatusDialog.on('formdialogopen', function() {
-			var selIds = $("#iteration-test-plans-table").squashTable().getSelectedIds();
-			var cbox = $(this).find(".execution-status-combo-class");
-			ComponentUtil.updateStatusCboxIcon(cbox);
-			if (selIds.length === 0) {
-				$(this).formDialog('close');
-				notification.showError(translator.get('message.EmptyExecPlanSelection'));
-			} else {
-				$(this).formDialog('setState', 'edit');
-			}
-
-		});
-
-		batchEditStatusDialog.on('formdialogconfirm', function() {
-
-			var table = $("#iteration-test-plans-table").squashTable(), select = $('.execution-status-combo-class',
-					this);
-
-			var rowIds = table.getSelectedIds(), statusCode = select.val(), statusName = select.find('option:selected')
-					.text();
-
-			var url = conf.urls.testplanUrl + rowIds.join(',');
-
-			$.post(url, {
-				status : statusCode
-			}, function(itp) {
-
-				// must update the execution status, the execution date and the assignee
-
-				// 1/ the status
-				var $statusspans = table.getSelectedRows().find('td.status-combo span');
-				for ( var i = 0; i < $statusspans.length; i++) {
-					var $statusspan = $($statusspans[i]);
-					$statusspan.attr('class', 'cursor-arrow exec-status-label exec-status-' +
-							itp.executionStatus.toLowerCase());
-					$statusspan.html(statusfactory.translate(itp.executionStatus));
-
-					// 2/ the date format
-					var format = translator.get('squashtm.dateformat'), $execon = $statusspan.parents('tr:first').find(
-							"td.exec-on");
-
-					var newdate = dateutils.format(itp.lastExecutedOn, format);
-					$execon.text(newdate);
-
-					// 3/ user assigned
-					$statusspan.parents('tr:first').find('td.assignee-combo').children().first().text(itp.assignee);
-				}
-			});
-
-			$(this).formDialog('close');
-		});
-
-		batchEditStatusDialog.on('formdialogcancel', function() {
-			$(this).formDialog('close');
-		});
-
+		new BatchEditStatusDialog({el: "#iter-test-plan-batch-edit-status", urlRoot: conf.urls.testplanUrl});
 	}
+
 	function _initReorderTestPlan(conf) {
 		var dialog = $("#iter-test-plan-reorder-dialog");
 
 		dialog.confirmDialog();
 
-		dialog.on('confirmdialogconfirm', function() {
+		dialog.on('confirmdialogconfirm', function () {
 			var table = $("#iteration-test-plans-table").squashTable();
 			var drawParameters = table.getAjaxParameters();
 
 			var url = conf.urls.testplanUrl + '/order';
-			$.post(url, drawParameters, 'json').success(function() {
+			$.post(url, drawParameters, 'json').success(function () {
 				table.data('sortmode').resetTableOrder(table);
 				eventBus.trigger('context.content-modified');
 			});
 		});
 
-		dialog.on('confirmdialogcancel', function() {
+		dialog.on('confirmdialogcancel', function () {
 			$(this).confirmDialog('close');
 		});
 	}
 
 	return {
-		init : function(conf) {
+		init: function (conf) {
 			if (conf.permissions.linkable) {
 				_initDeleteItemTestplan(conf);
 			}
