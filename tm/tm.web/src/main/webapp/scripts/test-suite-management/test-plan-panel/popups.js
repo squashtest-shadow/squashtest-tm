@@ -19,28 +19,29 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statusfactory', 'squash.translator',
-		'squash.dateutils', 'app/ws/squashtm.notification', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
-		function($, eventBus, ComponentUtil, statusfactory, translator, dateutils, notification) {
+		'squash.dateutils', 'app/ws/squashtm.notification', 'test-plan-management/DeleteExecutionDialog', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ],
+		function($, eventBus, ComponentUtil, statusfactory, translator, dateutils, notification, DeleteExecutionDialog) {
 
 	function _initDeleteExecutionPopup(conf) {
+		new DeleteExecutionDialog({el: "#ts-test-plan-delete-execution-dialog", urlRoot: conf.urls.executionsUrl});
 
-		var deleteExecutionDialog = $("#ts-test-plan-delete-execution-dialog");
-
-		deleteExecutionDialog.confirmDialog();
-
-		deleteExecutionDialog.on('confirmdialogconfirm', function() {
-			var execId = $(this).data('origin').id.substr('delete-execution-table-button-'.length);
-
-			$.ajax({
-				url : conf.urls.executionsUrl + execId,
-				type : 'DELETE',
-				dataType : 'json'
-			}).done(function(data) {
-				eventBus.trigger('context.content-modified', {
-					newDates : data
-				});
-			});
-		});
+		// var deleteExecutionDialog = $("#ts-test-plan-delete-execution-dialog");
+        //
+		// deleteExecutionDialog.confirmDialog();
+        //
+		// deleteExecutionDialog.on('confirmdialogconfirm', function() {
+		// 	var execId = $(this).data('origin').id.substr('delete-execution-table-button-'.length);
+        //
+		// 	$.ajax({
+		// 		url : conf.urls.executionsUrl + execId,
+		// 		type : 'DELETE',
+		// 		dataType : 'json'
+		// 	}).done(function(data) {
+		// 		eventBus.trigger('context.content-modified', {
+		// 			newDates : data
+		// 		});
+		// 	});
+		// });
 	}
 
 	function _initDeleteItemTestplan(conf) {
@@ -64,10 +65,10 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 				dataType : 'json'
 			}).done(function(partiallyUnauthorized) {
 				/*
-				 * When a user can delete a planned test case unless executed, 
-				 * and that a multiple selection encompassed both cases, 
-				 * the server performs the operation only on the item it is allowed to. 
-				 * 
+				 * When a user can delete a planned test case unless executed,
+				 * and that a multiple selection encompassed both cases,
+				 * the server performs the operation only on the item it is allowed to.
+				 *
 				 *  When this happens, the used must be notified.
 				 */
 				if (partiallyUnauthorized) {
@@ -82,8 +83,8 @@ define([ 'jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.stat
 		deleteItemTestplanDialog.on('formdialogopen', function() {
 
 			var $this = $(this),
-				$table = $("#test-suite-test-plans-table").squashTable();			
-			
+				$table = $("#test-suite-test-plans-table").squashTable();
+
 			var entityId = $this.data("entity-id");
 			$this.data("entity-id", null);
 

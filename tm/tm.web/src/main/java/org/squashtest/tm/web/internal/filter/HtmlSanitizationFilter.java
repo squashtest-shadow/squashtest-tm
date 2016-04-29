@@ -41,12 +41,12 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /*
  * that class needs to embbed a real HtmlValidator.
- * 
+ *
  * TODO : check the OWASP library and the following class :
- * 
+ *
  * http://owasp-esapi-java.googlecode.com/svn/trunk_doc/latest/org/owasp/esapi/filters/SecurityWrapperRequest.html
- * 
- * 
+ *
+ *
  */
 public class HtmlSanitizationFilter implements Filter {
 	private static final Logger LOGGER = LoggerFactory.getLogger(HtmlSanitizationFilter.class);
@@ -190,7 +190,7 @@ public class HtmlSanitizationFilter implements Filter {
 		@Override
 		public Collection<String[]> values() {
 			Collection<String[]> values = wrappedMap.values();
-			Collection<String[]> clean = new ArrayList<String[]>();
+			Collection<String[]> clean = new ArrayList<>();
 			for (String[] origString : values) {
 				clean.add(escapeValue(origString));
 			}

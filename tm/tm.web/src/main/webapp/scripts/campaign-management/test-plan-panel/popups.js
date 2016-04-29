@@ -81,7 +81,7 @@ define(['jquery',  'underscore', 'handlebars', 'squash.translator', 'app/ws/squa
 		dialog.on('confirmdialogcancel', closeDialog);
 	}
 	/**
-	 * Creates an unbind functino with the given configuration
+	 * Creates an unbind function with the given configuration
 	 * @param conf the configuration for the created function
 	 *
 	 * @return function which posts an unbind request for the given id(s)
