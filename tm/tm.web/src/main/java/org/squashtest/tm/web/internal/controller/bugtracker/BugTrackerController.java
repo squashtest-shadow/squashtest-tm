@@ -169,7 +169,7 @@ public class BugTrackerController {
 	public ModelAndView showWorkspace(@PathVariable Long bugtrackerId) {
 		BugTracker bugTracker = bugTrackerManagerService.findById(bugtrackerId);
 		ModelAndView mav = new ModelAndView("page/bugtrackers/bugtracker-workspace");
-		mav.addObject("bugtrackerUrl", bugTracker.getUrl().toString());
+		mav.addObject("bugtrackerUrl", bugTracker.getUrl());
 		return mav;
 	}
 

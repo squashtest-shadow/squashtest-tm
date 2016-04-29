@@ -233,7 +233,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		List<String> tokens = getTokens(fieldModel);
 		return tokens.isEmpty() ? null : buildLuceneSingleValueQuery(qb, fieldKey, tokens);
-		
+
 	}
 
 	private Query buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {

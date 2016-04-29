@@ -44,13 +44,13 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 			this.tableRowCallback = $.proxy(this._tableRowCallback, this);
 			this.addAssociationCheckboxes  = $.proxy(this._addAssociationCheckboxes, this);
 
-			var self,
-				tableConf,
-				squashConf;
+			var self = this;		
+			var tableConf;
+			var	squashConf;
 
 			if(isAssociation){
 
-				self = this;
+				
 				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"
@@ -179,7 +179,7 @@ define([ "jquery", "backbone", "squash.translator", "jeditable.simpleJEditable",
 
 				this.$el.squashTable(tableConf, squashConf);
 			} else {
-				self = this;
+		
 				tableConf = {
 						"oLanguage" : {
 							"sUrl" : squashtm.app.contextRoot + "/datatables/messages"

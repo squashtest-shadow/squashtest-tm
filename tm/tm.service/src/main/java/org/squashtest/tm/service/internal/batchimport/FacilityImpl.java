@@ -556,9 +556,9 @@ public class FacilityImpl implements Facility {
 			//CREATE REQUIREMENT VERSION IN DB
 			createReqVersionRoutine(train, instr);
 			//Assign the create requirement strategy to postProcessHandler
-			
-			
-			// XXX and what if the same import file define both a creation and an update ? 
+
+
+			// XXX and what if the same import file define both a creation and an update ?
 			postProcessHandler = new CreateRequirementVersionPostProcessStrategy();
 		}
 		return train;
@@ -569,8 +569,8 @@ public class FacilityImpl implements Facility {
 		LogTrain train = validator.updateRequirementVersion(instr);
 		if (!train.hasCriticalErrors()) {
 			updateRequirementVersionRoutine(train, instr);
-			
-			// XXX and what if the same import file define both a creation and an update ? 
+
+			// XXX and what if the same import file define both a creation and an update ?
 			postProcessHandler = new UpdateRequirementVersionPostProcessStrategy();
 		}
 		return train;
@@ -735,47 +735,47 @@ public class FacilityImpl implements Facility {
 		if (target.getRequirement().isRootRequirement()) {
 			Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
 
-			
+
 			Collection<String> siblingNames = reqLibNavigationService.findNamesInLibraryStartingWith(requirementLibrairyId,
 					dto.getName());
 			renameIfNeeded(dto, siblingNames);
-			
+
 			finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementLibrary(
-				requirementLibrairyId, dto, Collections.EMPTY_LIST);
+				requirementLibrairyId, dto, Collections.<Long>emptyList());
 			moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
 			milestoneService.bindRequirementVersionToMilestones(finalRequirement[0].getCurrentVersion().getId(), boundMilestonesIds(instruction));
 		} else {
 			List<String> paths = PathUtils.scanPath(target.getPath());
 			String parentPath = paths.get(paths.size() - 2); //we know that path is composite of at least 3 elements
-				
-				// note : the following instruction might lead to horribe result if the parent path 
+
+				// note : the following instruction might lead to horribe result if the parent path
 				// is ambiguous due to duplicate names (which is possible for now for requirements)
 				// due to lazy business analysts
 			finalParentId[0] = reqFinderService.findNodeIdByPath(parentPath);
-		
+
 			//if parent doesn't exist, we must create it and all needed hierarchy above
 			if (finalParentId[0] == null) {
 				finalParentId[0] = reqLibNavigationService.mkdirs(parentPath);
 			}
-				
+
 				Collection<String> siblingNames = reqLibNavigationService.findNamesInNodeStartingWith(finalParentId[0],
 						dto.getName());
-				renameIfNeeded(dto, siblingNames);	
-				
+				renameIfNeeded(dto, siblingNames);
+
 			RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(finalParentId[0]);
 			parent.accept(visitor);
 		}
 
 		return doAfterCreationProcess(finalRequirement[0], instruction, requirementVersion);
 	}
-	
+
 	private void renameIfNeeded(NewRequirementVersionDto version, Collection<String> siblingNames) {
 		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
 		if (!newName.equals(version.getName())) {
 			version.setName(newName);
 		}
 	}
-	
+
 
 	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
 									Integer order) {
@@ -1516,9 +1516,9 @@ public class FacilityImpl implements Facility {
 		void doPostProcess(List<Instruction<?>> instructions);
 	}
 
-	
+
 	// TODO : this will not work as intended (see the XXX  "and what if")
-	// unless I've missed a catch, better have a unique strategy that can handle both create and update, 
+	// unless I've missed a catch, better have a unique strategy that can handle both create and update,
 	// using instruction.getImportMode() to know which case it is
 	private class CreateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
 
@@ -1604,7 +1604,7 @@ public class FacilityImpl implements Facility {
 
 		return train;
 	}
-	
+
 
 
 }

@@ -594,7 +594,7 @@ jQuery.tableDnD = {
 				result += "&";
 			}
 			var rowId = rows[i].id;
-			if (rowId && rowId && table.tableDnDConfig
+			if (rowId && table.tableDnDConfig
 					&& table.tableDnDConfig.serializeRegexp) {
 				rowId = rowId.match(table.tableDnDConfig.serializeRegexp)[0];
 			}

@@ -407,8 +407,8 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public List<TestCaseExecutionStatus> findExecStatusForIterationsAndTestCases(
 		List<Long> testCasesIds, List<Long> iterationsIds) {
-		if (testCasesIds.size() == 0) {
-			return Collections.EMPTY_LIST;
+		if (testCasesIds.isEmpty()) {
+			return Collections.emptyList();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findITPIByTestCaseGroupByStatus");
 		q.setParameterList("testCasesIds", testCasesIds, LongType.INSTANCE);

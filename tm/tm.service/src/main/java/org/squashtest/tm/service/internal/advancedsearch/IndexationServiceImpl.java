@@ -282,11 +282,11 @@ public class IndexationServiceImpl implements IndexationService {
 			}
 
 		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
-			e.printStackTrace();
+			LOGGER.debug("Error during indexing", e);
 		}
 
 	}
-	
+
 	private Session getCurrentSession(){
 		return em.unwrap(Session.class);
 	}
