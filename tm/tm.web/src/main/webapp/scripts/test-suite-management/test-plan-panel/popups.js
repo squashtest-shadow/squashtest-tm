@@ -20,8 +20,8 @@
  */
 define(['jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statusfactory', 'squash.translator',
 		'squash.dateutils', 'app/ws/squashtm.notification', 'test-plan-management/DeleteExecutionDialog',
-		'test-plan-management/BatchEditStatusDialog', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog'],
-	function ($, eventBus, ComponentUtil, statusfactory, translator, dateutils, notification, DeleteExecutionDialog, BatchEditStatusDialog) {
+		'test-plan-management/BatchEditStatusDialog', 'test-plan-management/BatchAssignUsersDialog', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog'],
+	function ($, eventBus, ComponentUtil, statusfactory, translator, dateutils, notification, DeleteExecutionDialog, BatchEditStatusDialog, BatchAssignUsersDialog) {
 
 		function _initDeleteExecutionPopup(conf) {
 			new DeleteExecutionDialog({el: "#ts-test-plan-delete-execution-dialog", urlRoot: conf.urls.executionsUrl});
@@ -112,45 +112,7 @@ define(['jquery', 'workspace.event-bus', 'app/util/ComponentUtil', 'squash.statu
 		}
 
 		function _initBatchAssignUsers(conf) {
-
-			var batchAssignUsersDialog = $("#ts-test-plan-batch-assign");
-
-			batchAssignUsersDialog.formDialog();
-
-			batchAssignUsersDialog.on('formdialogopen', function () {
-				var selIds = $("#test-suite-test-plans-table").squashTable().getSelectedIds();
-
-				if (selIds.length === 0) {
-					$(this).formDialog('close');
-					notification.showError(translator.get('message.EmptyExecPlanSelection'));
-				} else {
-					$(this).formDialog('setState', 'assign');
-				}
-
-			});
-
-			batchAssignUsersDialog.on('formdialogconfirm', function () {
-
-				var table = $("#test-suite-test-plans-table").squashTable(), select = $('.batch-select', this);
-
-				var rowIds = table.getSelectedIds(), assigneeId = select.val(), assigneeLogin = select.find(
-					'option:selected').text();
-
-				var url = conf.urls.testplanUrl + rowIds.join(',');
-
-				$.post(url, {
-					assignee: assigneeId
-				}, function () {
-					table.getSelectedRows().find('td.assignee-combo span').text(assigneeLogin);
-				});
-
-				$(this).formDialog('close');
-			});
-
-			batchAssignUsersDialog.on('formdialogcancel', function () {
-				$(this).formDialog('close');
-			});
-
+			new BatchAssignUsersDialog({el: "#ts-test-plan-batch-assign", urlRoot: conf.urls.testplanUrl});
 		}
 
 		function _initBatchEditStatus(conf) {
