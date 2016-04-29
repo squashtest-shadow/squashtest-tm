@@ -233,21 +233,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	private Query buildLuceneTimeIntervalQuery(QueryBuilder qb, String fieldName, Date startdate, Date enddate) {
 
-		return qb.bool().must(qb.range().onField(fieldName).from(startdate).to(enddate).createQuery())
-			.createQuery();
-	}
-
-	private Query buildLuceneTimeIntervalWithoutStartQuery(QueryBuilder qb, String fieldName, Date enddate) {
-
-		return qb.bool().must(qb.range().onField(fieldName).below(enddate).createQuery()).createQuery();
-	}
-
-	private Query buildLuceneTimeIntervalWithoutEndQuery(QueryBuilder qb, String fieldName, Date startdate) {
-
-		return qb.bool().must(qb.range().onField(fieldName).above(startdate).createQuery()).createQuery();
-	}
 
 	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb,
 											   Locale locale) {
@@ -354,28 +340,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private Query buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel,
-													 QueryBuilder qb) {
-		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
-		Date startDate = intervalModel.getStartDate();
 
-		Date endDate = intervalModel.getEndDate();
-
-		Query query = null;
-		if (startDate != null) {
-			if (endDate != null) {
-				query = buildLuceneTimeIntervalQuery(qb, fieldKey, startDate, endDate);
-			} else {
-				query = buildLuceneTimeIntervalWithoutEndQuery(qb, fieldKey, startDate);
-			}
-		} else {
-			if (endDate != null) {
-				query = buildLuceneTimeIntervalWithoutStartQuery(qb, fieldKey, endDate);
-			}
-		}
-
-		return query;
-	}
 
 	private Query buildQueryForTagsCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
@@ -630,7 +595,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 				query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 				break;
 			case CF_TIME_INTERVAL:
-				query = dateIntervalCustomFieldQuery(fieldKey, fieldModel, qb);
+			query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 				break;
 			case TAGS:
 				query = buildQueryForTagsCriterium(fieldKey, fieldModel, qb);
@@ -641,7 +606,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return query;
 	}
 
-	private Query dateIntervalCustomFieldQuery(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+	private Query buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel,
+			QueryBuilder qb) {
 		AdvancedSearchTimeIntervalFieldModel intervalModel = (AdvancedSearchTimeIntervalFieldModel) fieldModel;
 		Date startDate = intervalModel.getStartDate();
 		Date endDate = intervalModel.getEndDate();

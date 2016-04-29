@@ -30,10 +30,11 @@ import javax.persistence.Entity;
 import javax.persistence.Transient;
 
 import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.DateBridge;
 import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.Resolution;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.NumericField;
 import org.hibernate.search.annotations.Store;
+import org.squashtest.tm.domain.search.NotGMTDateBridge;
 
 /**
  * This aspect adds the {@link AuditableMixin} mixin to entities annotated with @Audidable
@@ -50,8 +51,8 @@ public aspect AuditableMixinAspect {
 	@Transient private
 	AuditableSupport AuditableMixin.audit = new AuditableSupport();
 
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@DateBridge(resolution = Resolution.DAY)
+	@NumericField
+	@Field(analyze=Analyze.NO, store=Store.YES, bridge=@FieldBridge(impl=NotGMTDateBridge.class))
 	public Date AuditableMixin.getCreatedOn() {
 		return this.getAudit().getCreatedOn();
 	}
@@ -60,8 +61,8 @@ public aspect AuditableMixinAspect {
 		return this.getAudit().getCreatedBy();
 	}
 
-	@Field(analyze=Analyze.NO, store=Store.YES)
-	@DateBridge(resolution = Resolution.DAY)
+	@NumericField
+	@Field(analyze=Analyze.NO, store=Store.YES, bridge=@FieldBridge(impl=NotGMTDateBridge.class))
 	public Date AuditableMixin.getLastModifiedOn() {
 		return this.getAudit().getLastModifiedOn();
 	}
