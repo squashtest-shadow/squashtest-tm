@@ -20,17 +20,19 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.squashtest.tm.domain.users.Party;
 import org.squashtest.tm.domain.users.PartyPreference;
 import org.squashtest.tm.service.internal.repository.CustomPartyPreferenceDao;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class PartyPreferenceDaoImpl implements CustomPartyPreferenceDao {
 
@@ -67,7 +69,7 @@ public class PartyPreferenceDaoImpl implements CustomPartyPreferenceDao {
 		PartyPreference preference;
 		try {
 			preference = (PartyPreference) q.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {
+		} catch (EmptyResultDataAccessException | NoResultException e) {
 			return null;
 		}
 		return preference;
