@@ -39,6 +39,8 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrMatcher;
+import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.lucene.document.DateTools;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
@@ -258,69 +260,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return null;
 	}
 
-	private void addToTokens(List<String> tokens, String token) {
-		if (StringUtils.isNotBlank(token)) {
-			tokens.add(token);
-		}
 
-	}
-
+	
 	private List<String> parseInput(String textInput) {
-
-		List<String> tokens = new ArrayList<>();
-		char[] input = textInput.toCharArray();
-
-		char startChar = input[0];
-
-		// init the starting position
-		int start = (startChar == '"' || startChar == '\'') ? 1 : 0;
-
-		// init the double quote context
-		boolean inDoubleQuoteContext = (startChar == '"');
-
-		// iterate over each characters
-		for (int i = 1; i < input.length; i++) {
-
-			char charAtPosition = input[i];
-			char charBeforePosition = input[i - 1];
-
-			// add a new token if the current character reached a delimiter
-			// and prepare the counter for the next token
-			if (isSimpleQuote(charAtPosition, charBeforePosition) || isDoubleQuote(charAtPosition, charBeforePosition)
-				|| isNewBlankInDoubleQuoteContext(inDoubleQuoteContext, charAtPosition, charBeforePosition)) {
-				addToTokens(tokens, textInput.substring(start, i).trim());
-				start = i + 1;
-			}
-
-			// keep track of the double quote context
-			if (isDoubleQuote(charAtPosition, charBeforePosition)) {
-				inDoubleQuoteContext = !inDoubleQuoteContext;
-			}
-
-		}
-
-		// add the last bit if this is a token too
-		char lastChar = input[input.length - 1];
-		if (lastChar != '"' && lastChar != ' ') {
-			addToTokens(tokens, textInput.substring(start, input.length).trim());
-		}
-
-		return tokens;
+		return new StrTokenizer(textInput, StrMatcher.trimMatcher(), StrMatcher.doubleQuoteMatcher()).getTokenList();
 	}
-
-	private boolean isSimpleQuote(char charAtPosition, char charBeforePosition) {
-		return charAtPosition == '\'' && charBeforePosition != '\\';
-	}
-
-	private boolean isDoubleQuote(char charAtPosition, char charBeforePosition) {
-		return charAtPosition == '"' && charBeforePosition != '\\';
-	}
-
-	private boolean isNewBlankInDoubleQuoteContext(boolean inDoubleQuoteContext, char charAtPosition,
-												   char charBeforePosition) {
-		return charAtPosition == ' ' && charBeforePosition != ' ' && !inDoubleQuoteContext;
-	}
-
+	
 	private Query buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
 		if (textModel.getValue() != null && !"".equals(textModel.getValue().trim())) {
