@@ -124,17 +124,17 @@ TestCaseAdvancedSearchService {
 	/*
 	 * That implementation is special because we cannot process the milestones as usual. Indeed, we need the test cases that belongs both directly and indirectly to the
 	 * milestone. That's why we use the method noMilestoneLuceneQuery.
-	 * 
+	 *
 	 * (non-Javadoc)
 	 * @see org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService#searchForTestCases(org.squashtest.tm.domain.search.AdvancedSearchModel, java.util.Locale)
 	 */
 	/*
 	 * TODO :
-	 * 
+	 *
 	 * This method is basically an override of "buildLuceneQuery" defined in the superclass -> thus we could rename it accordingly.
 	 * However in method "searchForTestCasesThroughRequirementModel" we must use the super implementation of "buildLuceneQuery" -> thus renaming
 	 * "searchTestCaseQuery" to "buildLuceneQuery" could lead to ambiguity.
-	 * 
+	 *
 	 * I don't know what to do about it.
 	 */
 	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextSession ftSession, Locale locale){
@@ -145,7 +145,7 @@ TestCaseAdvancedSearchService {
 		/*
 		 * we must not include the milestone criteria yet because
 		 * it'll be the subject of a separate query.
-		 * 
+		 *
 		 * Let's save the search model and create a milestone-stripped
 		 * version of it
 		 */
@@ -154,7 +154,7 @@ TestCaseAdvancedSearchService {
 		removeMilestoneSearchFields(model);
 
 		// create the main query (search test cases, no milestones)
-		Query luceneQuery = buildCoreLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 
 		// now add the test-cases specific milestones criteria
 		if (shouldSearchByMilestones(modelCopy)){
@@ -262,7 +262,7 @@ TestCaseAdvancedSearchService {
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
-		Query luceneQuery = super.buildLuceneQuery(qb, testcases, locale);
+		Query luceneQuery = super.buildLuceneQuery(qb, testcases);
 
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;

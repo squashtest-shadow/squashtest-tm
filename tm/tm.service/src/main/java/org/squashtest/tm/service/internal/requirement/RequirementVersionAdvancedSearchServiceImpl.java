@@ -101,7 +101,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
-		Query luceneQuery = buildLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildLuceneQuery(qb, model);
 
 		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, RequirementVersion.class);
 
@@ -164,7 +164,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(RequirementVersion.class).get();
 
-		Query luceneQuery = buildLuceneQuery(qb, model, locale);
+		Query luceneQuery = buildLuceneQuery(qb, model);
 
 		List<RequirementVersion> result = Collections.emptyList();
 		int countAll = 0;

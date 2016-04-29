@@ -20,17 +20,8 @@
  */
 package org.squashtest.tm.service.internal.advancedsearch;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -163,7 +154,8 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		if (!values.isEmpty()) {
 			for (String value : values) {
 
-				if ("".equals(value.trim())) {
+
+				if (StringUtils.isBlank(value)) {
 					value = "$NO_VALUE";
 				}
 				Query query;
@@ -188,7 +180,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return qb.bool().must(mainQuery).createQuery();
 	}
 
-	protected Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, List<String> values, Locale locale) {
+	protected Query buildLuceneSingleValueQuery(QueryBuilder qb, String fieldName, List<String> values) {
 
 		Query mainQuery = null;
 
@@ -237,18 +229,33 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 
 
-	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb,
-											   Locale locale) {
+	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
-		AdvancedSearchSingleFieldModel singleModel = (AdvancedSearchSingleFieldModel) fieldModel;
-		if (singleModel.getValue() != null && !"".equals(singleModel.getValue().trim())) {
-			List<String> inputs = parseInput(singleModel.getValue());
+		List<String> tokens = getTokens(fieldModel);
+		return tokens.isEmpty() ? null : buildLuceneSingleValueQuery(qb, fieldKey, tokens);
+		
+	}
 
-			return buildLuceneSingleValueQuery(qb, fieldKey, inputs, locale);
+	private Query buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+
+		List<String> tokens = getTokens(fieldModel);
+		return tokens.isEmpty() ? null : buildLuceneTextQuery(qb, fieldKey, tokens);
+	}
+
+	private List<String> getTokens(AdvancedSearchFieldModel fieldModel){
+
+		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
+		if (textModel.getValue() != null && StringUtils.isNotBlank(textModel.getValue())) {
+			List<String> inputs = parseInput(textModel.getValue());
+			return inputs;
 		}
 
-		return null;
+		return Collections.emptyList();
 	}
+
+
+
+
 
 	private Query buildQueryForListCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
@@ -261,20 +268,11 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	}
 
 
-	
+
 	private List<String> parseInput(String textInput) {
 		return new StrTokenizer(textInput, StrMatcher.trimMatcher(), StrMatcher.doubleQuoteMatcher()).getTokenList();
 	}
-	
-	private Query buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
-		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
-		if (textModel.getValue() != null && !"".equals(textModel.getValue().trim())) {
-			List<String> inputs = parseInput(textModel.getValue());
-			return buildLuceneTextQuery(qb, fieldKey, inputs);
-		}
 
-		return null;
-	}
 
 	private Query buildQueryForRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 		AdvancedSearchRangeFieldModel rangeModel = (AdvancedSearchRangeFieldModel) fieldModel;
@@ -303,7 +301,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	}
 
-	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList, Locale locale) {
+	protected Query buildLuceneQuery(QueryBuilder qb, List<TestCase> testcaseList) {
 
 		Query mainQuery = null;
 		Query query;
@@ -311,7 +309,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		for (TestCase testcase : testcaseList) {
 			List<String> id = new ArrayList<>();
 			id.add(testcase.getId().toString());
-			query = buildLuceneSingleValueQuery(qb, "id", id, locale);
+			query = buildLuceneSingleValueQuery(qb, "id", id);
 
 			if (query != null && mainQuery == null) {
 				mainQuery = query;
@@ -322,7 +320,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		return mainQuery;
 	}
 
-	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
+	protected Query buildLuceneQuery(QueryBuilder qb, AdvancedSearchModel model) {
 
 		// find the milestone ids and add them to the model
 		if (featureManager.isEnabled(Feature.MILESTONE)) {
@@ -332,10 +330,10 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		// now remove the criteria from the form before the main search begins
 		removeMilestoneSearchFields(model);
 
-		return buildCoreLuceneQuery(qb, model, locale);
+		return buildCoreLuceneQuery(qb, model);
 	}
 
-	protected Query buildCoreLuceneQuery(QueryBuilder qb, AdvancedSearchModel model, Locale locale) {
+	protected Query buildCoreLuceneQuery(QueryBuilder qb, AdvancedSearchModel model) {
 
 		Query mainQuery = null;
 
@@ -349,7 +347,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			AdvancedSearchFieldModel fieldModel = model.getFields().get(fieldKey);
 			AdvancedSearchFieldModelType type = fieldModel.getType();
 
-			Query query = buildQueryDependingOnType(qb, locale, fieldKey, fieldModel, type);
+			Query query = buildQueryDependingOnType(qb, fieldKey, fieldModel, type);
 
 			if (query != null) {
 				if (mainQuery == null) {
@@ -520,12 +518,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 	}
 
-	private Query buildQueryDependingOnType(QueryBuilder qb, Locale locale, String fieldKey,
+	private Query buildQueryDependingOnType(QueryBuilder qb, String fieldKey,
 											AdvancedSearchFieldModel fieldModel, AdvancedSearchFieldModelType type) {
 		Query query = null;
 		switch (type) {
 			case SINGLE:
-				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb, locale);
+				query = buildQueryForSingleCriterium(fieldKey, fieldModel, qb);
 				break;
 			case LIST:
 				query = buildQueryForListCriterium(fieldKey, fieldModel, qb);

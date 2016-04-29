@@ -123,7 +123,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		FullTextSession ftSession = Search.getFullTextSession(session);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
-		Query luceneQuery = buildLuceneQuery(qb, searchModel, locale);
+		Query luceneQuery = buildLuceneQuery(qb, searchModel);
 
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;
