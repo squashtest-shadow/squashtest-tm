@@ -116,7 +116,7 @@ public class TATestNodeListBuilder {
 
 		TATestNode node = new TATestNode();
 
-		State state = (hasChildren) ? State.closed : State.leaf;
+		State state = hasChildren ? State.closed : State.leaf;
 		node.setState(state);
 
 		Attr attr = new Attr();

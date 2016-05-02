@@ -33,9 +33,9 @@ import org.hibernate.annotations.Immutable;
  * Maps an edge of a requirement node path. This entity shoud be used to query TCLN_RELATIONSHIP_CLOSURE using hql instead
  * of native SQL so that hibernate handles postgresql / mysql funky differences.
  * TODO : tried to map this as inheriting a common class "PathEdge" to avoid code duplication but could not succeed
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Entity
 @Immutable
@@ -54,8 +54,8 @@ public class RequirementPathEdge {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 17;
-			result = prime * result + (int) (ancestorId ^ (ancestorId >>> 32));
-			result = prime * result + (int) (descendantId ^ (descendantId >>> 32));
+			result = prime * result + (int) (ancestorId ^ ancestorId >>> 32);
+			result = prime * result + (int) (descendantId ^ descendantId >>> 32);
 			return result;
 		}
 

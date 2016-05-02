@@ -38,8 +38,8 @@ import org.squashtest.tm.security.UserContextHolder;
  */
 @SuppressWarnings("serial")
 public class AuditLogInterceptor extends EmptyInterceptor {
-	
-	
+
+
 	@Override
 	public boolean onFlushDirty(Object entity, Serializable id, Object[] currentState, Object[] previousState,
 			String[] propertyNames, Type[] types) {
@@ -85,15 +85,15 @@ public class AuditLogInterceptor extends EmptyInterceptor {
 	private void logCreationData(Object entity, Object[] state) {
 		try {
 			AuditableSupport audit = findAudit(state);
-			
+
 			//one sets defaults only if they aren't provided at creation time
-			if ( (audit.getCreatedBy() ==null) && (audit.getCreatedOn()==null)){
-				
+			if ( audit.getCreatedBy() ==null && audit.getCreatedOn()==null){
+
 				audit.setCreatedBy(getCurrentUser());
 				audit.setCreatedOn(new Date());
-				
+
 			}
-			
+
 		} catch (IllegalArgumentException e) {
 			throw new IllegalArgumentException("Non Auditable entity is : " + entity, e);
 		}

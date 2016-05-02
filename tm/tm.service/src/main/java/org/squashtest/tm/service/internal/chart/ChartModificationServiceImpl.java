@@ -59,10 +59,10 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Inject
 	private ChartDataFinder dataFinder;
-	
+
 	@Inject
 	private CustomChartDefinitionDao chartDefinitionDao;
-	
+
 	@Inject
 	private CustomReportLibraryNodeService customReportLibraryNodeService;
 
@@ -73,7 +73,7 @@ public class ChartModificationServiceImpl implements ChartModificationService {
 
 	@Override
 	public ChartDefinition findById(long id) {
-		return (ChartDefinition)(session().get(ChartDefinition.class, id));
+		return (ChartDefinition) session().get(ChartDefinition.class, id);
 	}
 
 

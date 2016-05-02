@@ -197,7 +197,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 			css = MAIN_MENUITEM_ADDITIONAL_CLASSES;
 
 			// UNUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
-			css += (counter == activeContentIndex) ? MAIN_MENUITEM_ACTIVE_ADD_CLASSES : "";
+			css += counter == activeContentIndex ? MAIN_MENUITEM_ACTIVE_ADD_CLASSES : "";
 			process(elt, css);
 			counter++;
 		}
@@ -238,7 +238,7 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 			css = CONTENT_ADDITIONAL_CLASSES;
 
 			// MISUSED for now, it'd require to process the cookies. The cookies themselves are malfunctionning.
-			hide = (counter == activeContentIndex) ? false : true;
+			hide = counter == activeContentIndex ? false : true;
 
 			process(content, css, hide);
 

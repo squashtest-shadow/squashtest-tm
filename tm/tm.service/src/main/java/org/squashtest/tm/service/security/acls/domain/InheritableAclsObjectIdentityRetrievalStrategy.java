@@ -51,7 +51,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(InheritableAclsObjectIdentityRetrievalStrategy.class);
 
-	private final static class Key {
+	private static final class Key {
 		public final Class<?> constrained; // NOSONAR final immutable field
 		public final Class<?> heir; // NOSONAR final immutable field
 
@@ -66,8 +66,8 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 		public int hashCode() {
 			final int prime = 31;
 			int result = 17;
-			result = prime * result + ((heir == null) ? 0 : heir.hashCode());
-			result = prime * result + ((constrained == null) ? 0 : constrained.hashCode());
+			result = prime * result + (heir == null ? 0 : heir.hashCode());
+			result = prime * result + (constrained == null ? 0 : constrained.hashCode());
 			return result;
 		}
 		// GENERATED:END

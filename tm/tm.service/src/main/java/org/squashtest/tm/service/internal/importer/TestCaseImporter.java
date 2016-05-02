@@ -37,7 +37,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 @Component
 public class TestCaseImporter {
 
-	private final static String DEFAULT_ENCODING= "Cp858";
+	private static final String DEFAULT_ENCODING= "Cp858";
 	public static final String  DEFAULT_ENCODING_KEY = "default";
 
 	@Inject
@@ -52,7 +52,7 @@ public class TestCaseImporter {
 
 	public ImportSummary importExcelTestCases(InputStream archiveStream, Long libraryId, String encoding){
 
-		String finalEncoding = (encoding.equals(DEFAULT_ENCODING_KEY)) ? DEFAULT_ENCODING : encoding;
+		String finalEncoding = encoding.equals(DEFAULT_ENCODING_KEY) ? DEFAULT_ENCODING : encoding;
 
 		ArchiveReader reader = factory.createReader(archiveStream, finalEncoding);
 

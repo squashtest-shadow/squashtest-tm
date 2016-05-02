@@ -90,12 +90,12 @@ TestCaseAdvancedSearchService {
 	@Inject
 	private MessageSource source;
 
-	private final static SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
+	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
 		new SortField("project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
 		new SortField("label", SortField.Type.STRING, false) };
 
-	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
+	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
 			"attachments");
 
 	private static final String FAKE_TC_ID = "-9000";
@@ -211,7 +211,7 @@ TestCaseAdvancedSearchService {
 
 		List<Sorting> sortings = multisorting.getSortings();
 
-		if (sortings == null || sortings.size() == 0) {
+		if (sortings == null || sortings.isEmpty()) {
 			return new Sort(DEFAULT_SORT_TESTCASES);
 		}
 
@@ -219,7 +219,7 @@ TestCaseAdvancedSearchService {
 		SortField[] sortFieldArray = new SortField[sortings.size()];
 
 		for (int i = 0; i < sortings.size(); i++) {
-			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
+			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
 				isReverse = false;
 			}
 
@@ -336,7 +336,7 @@ TestCaseAdvancedSearchService {
 		boolean enabled = getFeatureManager().isEnabled(Feature.MILESTONE);
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model.getFields().get("searchByMilestone");
-		boolean hasCriteria = (searchByMilestone != null && "true".equals(searchByMilestone.getValue()));
+		boolean hasCriteria = searchByMilestone != null && "true".equals(searchByMilestone.getValue());
 
 		return enabled && hasCriteria;
 	}

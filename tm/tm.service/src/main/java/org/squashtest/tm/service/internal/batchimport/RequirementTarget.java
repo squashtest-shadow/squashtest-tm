@@ -109,8 +109,8 @@ public class RequirementTarget extends Target{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
-		result = prime * result + ((remoteKey == null) ? 0 : remoteKey.hashCode());
+		result = prime * result + (path == null ? 0 : path.hashCode());
+		result = prime * result + (remoteKey == null ? 0 : remoteKey.hashCode());
 		return result;
 	}
 

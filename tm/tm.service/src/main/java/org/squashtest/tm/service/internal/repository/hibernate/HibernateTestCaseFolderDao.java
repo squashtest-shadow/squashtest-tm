@@ -80,7 +80,7 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
-		if (ids.size() == 0) {
+		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		}
 
@@ -97,7 +97,7 @@ public class HibernateTestCaseFolderDao extends HibernateEntityDao<TestCaseFolde
 
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
-		if (ids.size() == 0) {
+		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		}
 

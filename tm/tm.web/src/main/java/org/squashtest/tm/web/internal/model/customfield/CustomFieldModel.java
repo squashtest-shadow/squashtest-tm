@@ -49,7 +49,7 @@ public abstract class CustomFieldModel<VALUETYPE> {
 
 
 	/* ************** abstract thing : here is all you have to do ******/
-	abstract public VALUETYPE getDefaultValue();
+	public abstract VALUETYPE getDefaultValue();
 
 	abstract void setDefaultValue(VALUETYPE defaultValue);
 

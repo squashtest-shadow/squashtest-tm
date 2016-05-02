@@ -223,7 +223,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 	}
 
 	public boolean isFirst(){
-		return (executionStepOrder==0);
+		return executionStepOrder==0;
 	}
 
 	/* ********************* interface Attachable impl ****************** */
@@ -296,7 +296,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 				String paramName = matcher.group(1);
 
 				String paramValue = dataset.get(paramName);
-				if( paramValue == null|| paramValue.length() == 0) {
+				if( paramValue == null|| paramValue.isEmpty()) {
 					paramValue = NO_PARAM;
 				}
 

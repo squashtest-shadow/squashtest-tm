@@ -69,7 +69,7 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
  * This class is called when moving nodes to another one, it is called only for the first nodes of moved hierarchies.
  * If the move changes project, next layer nodes will be updated (not need to move them)
  * with the {@link NextLayersTreeNodeMover}.
- * 
+ *
  * @author mpagnon
  *
  */
@@ -235,7 +235,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private <LN extends LibraryNode> NodeContainer<LN> findFolderOrLibraryParent(LN node, LibraryDao libraryDao,
 			FolderDao folderDao) {
 		Library<? extends LibraryNode> parentLib = libraryDao.findByRootContent(node);
-		return ((parentLib != null) ? parentLib : folderDao.findByContent(node));
+		return parentLib != null ? parentLib : folderDao.findByContent(node);
 	}
 
 
@@ -255,14 +255,14 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 
 	/**
 	 * Checks if node1's project is the same as node2's.
-	 * 
+	 *
 	 * @param sourceProject , the project of the source node
 	 * @param destinationProject , the project of the destination
 	 * @return true if the source and destination projects are the same.
-	 * 
+	 *
 	 */
 	private boolean changedProject(Project sourceProject , GenericProject destinationProject) {
-		return (sourceProject != null && destinationProject != null && !sourceProject.getId().equals(destinationProject.getId()));
+		return sourceProject != null && destinationProject != null && !sourceProject.getId().equals(destinationProject.getId());
 	}
 
 	/**

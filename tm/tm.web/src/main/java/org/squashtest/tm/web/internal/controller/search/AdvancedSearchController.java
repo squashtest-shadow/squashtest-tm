@@ -359,7 +359,7 @@ public class AdvancedSearchController {
 				nodeBuilder.filterByMilestone(milestone);
 
 				List<Project> projectList = customProjectFinder.findAllReadable();
-				
+
 				List<Long> projectIds = new ArrayList<>();
 
 				for (Project project : projectList) {
@@ -374,7 +374,7 @@ public class AdvancedSearchController {
 			List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<CampaignLibrary>(nodeBuilder).expand(expansionCandidates)
 					.setModel(libraries).build();
 			model.addAttribute("rootModel", rootNodes);
-			
+
 			model.addAttribute("isCampaignAvailable", isCampaignAvailable);
 		}
 
@@ -802,7 +802,7 @@ public class AdvancedSearchController {
 
 		MilestoneMassModifData data = new MilestoneMassModifData();
 		data.setCheckedIds(testCaseModificationService.findBindedMilestonesIdForMassModif(testCaseIds));
-		boolean hasData = testCaseModificationService.findAssociableMilestonesForMassModif(testCaseIds).size() != 0;
+		boolean hasData = !testCaseModificationService.findAssociableMilestonesForMassModif(testCaseIds).isEmpty();
 		data.setHasData(hasData);
 		data.setSamePerimeter(testCaseModificationService.haveSamePerimeter(testCaseIds));
 		return data;
@@ -817,7 +817,7 @@ public class AdvancedSearchController {
 
 		MilestoneMassModifData data = new MilestoneMassModifData();
 		data.setCheckedIds(versionService.findBindedMilestonesIdForMassModif(reqVersionIds));
-		boolean hasData = versionService.findAssociableMilestonesForMassModif(reqVersionIds).size() != 0;
+		boolean hasData = !versionService.findAssociableMilestonesForMassModif(reqVersionIds).isEmpty();
 		data.setHasData(hasData);
 		data.setSamePerimeter(versionService.haveSamePerimeter(reqVersionIds));
 		return data;

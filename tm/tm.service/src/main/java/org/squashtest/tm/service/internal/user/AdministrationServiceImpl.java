@@ -120,11 +120,11 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@PersistenceContext
 	private EntityManager em;
 
-	private final static String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
-	private final static String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
-	private final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
-	private final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
-	private final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
+	private static final String WELCOME_MESSAGE_KEY = "WELCOME_MESSAGE";
+	private static final String LOGIN_MESSAGE_KEY = "LOGIN_MESSAGE";
+	private static final String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
+	private static final String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
+	private static final String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd hh:mm");
 
 	public void setAdministratorAuthenticationService(AdministratorAuthenticationService adminService) {
@@ -505,7 +505,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public void checkLoginAvailability(String login) {
 		boolean caseInsensitive = features.isEnabled(Feature.CASE_INSENSITIVE_LOGIN);
 
-		if ((caseInsensitive && userDao.findUserByCiLogin(login) != null) || (!caseInsensitive && userDao.findUserByLogin(login) != null)) {
+		if (caseInsensitive && userDao.findUserByCiLogin(login) != null || !caseInsensitive && userDao.findUserByLogin(login) != null) {
 			throw new LoginAlreadyExistsException("User " + login + " cannot be created because it already exists");
 		}
 	}

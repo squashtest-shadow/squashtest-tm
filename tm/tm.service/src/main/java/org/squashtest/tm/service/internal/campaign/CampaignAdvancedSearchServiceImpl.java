@@ -68,7 +68,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
 
 
-	private final static SortField[] DEFAULT_SORT_EXECUTION = new SortField[] {
+	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[] {
 			new SortField("project.name", SortField.Type.STRING, false),
 			new SortField("campaign-name", SortField.Type.STRING, false),
 			new SortField("iteration-name", SortField.Type.STRING, false),
@@ -80,7 +80,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			new SortField("itpi-executed-on", SortField.Type.STRING, false),
 			new SortField("itpi-datasets", SortField.Type.STRING, false)};
 
-	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("");
+	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("");
 
 
 	@Override
@@ -146,7 +146,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		List<Sorting> sortings = multisorting.getSortings();
 
-		if (sortings == null || sortings.size() == 0) {
+		if (sortings == null || sortings.isEmpty()) {
 			return new Sort(DEFAULT_SORT_EXECUTION);
 		}
 
@@ -154,7 +154,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		SortField[] sortFieldArray = new SortField[sortings.size()];
 
 		for (int i = 0; i < sortings.size(); i++) {
-			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
+			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
 				isReverse = false;
 			}
 

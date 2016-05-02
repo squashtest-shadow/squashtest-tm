@@ -220,8 +220,9 @@ public class CampaignModificationController {
 		return modeComboBuilderProvider.get().useLocale(locale).buildMap();
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-description", VALUE })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-description", VALUE})
+	public
 	String updateDescription(@RequestParam(VALUE) String newDescription, @PathVariable long campaignId) {
 
 		campaignModService.changeDescription(campaignId, newDescription);
@@ -230,8 +231,9 @@ public class CampaignModificationController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=campaign-reference", VALUE })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"id=campaign-reference", VALUE})
+	public
 	String updateReference(@RequestParam(VALUE) String newReference, @PathVariable long campaignId) {
 
 		campaignModService.changeReference(campaignId, newReference);
@@ -240,8 +242,9 @@ public class CampaignModificationController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
+	public
 	Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long campaignId) {
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
 
@@ -271,8 +274,9 @@ public class CampaignModificationController {
 		return DateUtils.dateToMillisecondsAsString(date);
 	}
 
-	@RequestMapping(value = PLANNING_URL, params = { "scheduledStart" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = PLANNING_URL, params = {"scheduledStart"})
+	public
 	String setScheduledStart(HttpServletResponse response, @PathVariable long campaignId,
 			@RequestParam(value = "scheduledStart") String strDate) {
 
@@ -386,10 +390,10 @@ public class CampaignModificationController {
 	public void setIterationsPlanning(@RequestBody JsonIteration[] iterations) throws ParseException {
 		Date date;
 		for (JsonIteration iter : iterations) {
-			date = (iter.getScheduledStartDate() != null) ? DateUtils.parseIso8601DateTime(iter
+			date = iter.getScheduledStartDate() != null ? DateUtils.parseIso8601DateTime(iter
 					.getScheduledStartDate()) : null;
 			iterationModService.changeScheduledStartDate(iter.getId(), date);
-			date = (iter.getScheduledEndDate() != null) ? DateUtils.parseIso8601DateTime(iter.getScheduledEndDate())
+			date = iter.getScheduledEndDate() != null ? DateUtils.parseIso8601DateTime(iter.getScheduledEndDate())
 					: null;
 			iterationModService.changeScheduledEndDate(iter.getId(), date);
 		}
@@ -398,8 +402,9 @@ public class CampaignModificationController {
 	// *************************** statistics ********************************
 
 	// URL should have been /statistics, but that was already used by another method in this controller
+	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody
+	public
 	CampaignStatisticsBundle getStatisticsAsJson(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId) {
 		return campaignModService.gatherCampaignStatisticsBundle(campaignId);
 	}
@@ -487,7 +492,7 @@ public class CampaignModificationController {
 				return ((Milestone)milestone).getStatus().isBindableToObject();
 			}
 		});
-		Boolean isMilestoneInProject = mil.size() != 0;
+		Boolean isMilestoneInProject = !mil.isEmpty();
 
 
 		// add them to the model

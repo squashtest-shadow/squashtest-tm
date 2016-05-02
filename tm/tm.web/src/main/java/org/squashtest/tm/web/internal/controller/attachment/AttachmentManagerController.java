@@ -70,13 +70,13 @@ public class AttachmentManagerController {
 	.mapAttribute("size", "size", Attachment.class)
 	.mapAttribute("added-on", "addedOn", Attachment.class);
 
-	
+
 
 
 	/* ********************** data display *********************************** */
 
 
-	
+
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId,
 			@RequestParam("workspace") String workspace) {
@@ -90,8 +90,9 @@ public class AttachmentManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId,
 			final DataTableDrawParameters params, final Locale locale) {
 		PagingAndSorting pas = createPaging(params, attachmentMapper);

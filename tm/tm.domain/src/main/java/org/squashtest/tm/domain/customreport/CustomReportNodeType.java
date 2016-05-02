@@ -22,9 +22,9 @@ package org.squashtest.tm.domain.customreport;
 
 /**
  * This interface just define the name of custom report entity. Please make names consistent with
- * {@link CustomReportTreeDefinition} because hibernate have mapped values on these Strings in 
+ * {@link CustomReportTreeDefinition} because hibernate have mapped values on these Strings in
  * {@link CustomReportLibraryNode#getEntity()} AND in {@link CustomReportLibraryNode#getEntityType()}.
- * 
+ *
  * As these values are represented by columns data in database, PLEASE DON'T MODIFY these values.
  * You can however freely add new types here but you have to put a corresponding type in {@link CustomReportTreeDefinition}
  * with a consistent name
@@ -32,9 +32,9 @@ package org.squashtest.tm.domain.customreport;
  *
  */
 public interface CustomReportNodeType {
-	final String CHART_NAME = "CHART";
-	final String DASHBOARD_NAME = "DASHBOARD";
-	final String REPORT_NAME = "REPORT";
-	final String FOLDER_NAME = "FOLDER";
-	final String LIBRARY_NAME = "LIBRARY";
+	String CHART_NAME = "CHART";
+	String DASHBOARD_NAME = "DASHBOARD";
+	String REPORT_NAME = "REPORT";
+	String FOLDER_NAME = "FOLDER";
+	String LIBRARY_NAME = "LIBRARY";
 }

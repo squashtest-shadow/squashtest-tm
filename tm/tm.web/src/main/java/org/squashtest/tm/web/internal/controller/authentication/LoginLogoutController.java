@@ -37,7 +37,7 @@ public class LoginLogoutController {
 	@Value("${info.app.version}")
     private String version;
 
-	private final static String LOGIN_MESSAGE = "LOGIN_MESSAGE";
+	private static final String LOGIN_MESSAGE = "LOGIN_MESSAGE";
 
 	@RequestMapping("/login")
 	public String login(Model model) {

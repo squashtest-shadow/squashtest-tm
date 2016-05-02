@@ -391,8 +391,8 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		while (iterator.hasNext()) {
 			IterationTestPlanItem itemTestPlan = iterator.next();
 
-			if ((!itemTestPlan.isTestCaseDeleted())
-				&& (itemTestPlan.getReferencedTestCase().getId().equals(testCaseId))) {
+			if (!itemTestPlan.isTestCaseDeleted()
+				&& itemTestPlan.getReferencedTestCase().getId().equals(testCaseId)) {
 				return iterator.previousIndex();
 			}
 		}
@@ -567,7 +567,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 			// if we're lucky we can save a heavier computation
 			if (getActualEndDate() == null) {
 				setActualEndDate(newItemTestPlanDate);
-			} else if ((newItemTestPlanDate != null) && (getActualEndDate().compareTo(newItemTestPlanDate) < 0)) {
+			} else if (newItemTestPlanDate != null && getActualEndDate().compareTo(newItemTestPlanDate) < 0) {
 				setActualEndDate(newItemTestPlanDate);
 			}
 
@@ -584,7 +584,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 		// if we're lucky we can save a heavier computation
 		if (getActualStartDate() == null) {
 			setActualStartDate(newItemTestPlanDate);
-		} else if ((newItemTestPlanDate != null) && (getActualStartDate().compareTo(newItemTestPlanDate) > 0)) {
+		} else if (newItemTestPlanDate != null && getActualStartDate().compareTo(newItemTestPlanDate) > 0) {
 			setActualStartDate(newItemTestPlanDate);
 		}
 

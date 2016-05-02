@@ -36,17 +36,17 @@ public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachmen
 	private InternationalizationHelper i18nHelper;
 	private Locale locale;
 	private static final int INT_MAX_FILENAME_LENGTH = 50;
-	
+
 	public AttachmentsTableModelHelper(InternationalizationHelper i18nHelper){
 		this.i18nHelper = i18nHelper;
 		this.locale = LocaleContextHolder.getLocale();
 	}
-	
+
 	@Override
 	protected Map<Object, Object> buildItemData(Attachment item) {
-		
+
 		Map<Object, Object> result = new HashMap<>();
-		
+
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, getCurrentIndex());
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, item.getName());
@@ -54,22 +54,22 @@ public class AttachmentsTableModelHelper extends DataTableModelBuilder<Attachmen
 		result.put("size",item.getFormattedSize(locale));
 		result.put("added-on",localizedDate(item.getAddedOn(),locale));
 		result.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, null);
-		
+
 		return result;
 	}
-	
+
 	private String localizedDate(Date date, Locale locale){
 		return i18nHelper.localizeDate(date, locale);
 
 	}
-	
+
 	private String hyphenateFilename(String longName){
 		String newName = longName;
 		if (longName.length() > INT_MAX_FILENAME_LENGTH){
-			newName = longName.substring(0, (INT_MAX_FILENAME_LENGTH-3))+"...";
+			newName = longName.substring(0, INT_MAX_FILENAME_LENGTH-3)+"...";
 		}
 		return newName;
 	}
 
-	
+
 }

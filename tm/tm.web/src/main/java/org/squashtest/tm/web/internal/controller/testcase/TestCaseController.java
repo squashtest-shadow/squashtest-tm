@@ -77,9 +77,9 @@ public class TestCaseController {
 	 * @return
 	 *
 	 */
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = IDS, headers = AcceptHeaders.CONTENT_JSON)
 	public
-	@ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds, Locale locale) {
 		List<TestCase> testCases = finder.findAllByIds(testCaseIds);
 		return builder.get().locale(locale).entities(testCases).toJson();
@@ -93,9 +93,9 @@ public class TestCaseController {
 	 * @return
 	 *
 	 */
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = FOLDER_IDS, headers = AcceptHeaders.CONTENT_JSON)
 	public
-	@ResponseBody
 	List<JsonTestCase> getJsonTestCasesFromFolders(@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		return buildJsonTestCasesFromAncestorIds(folderIds, locale);
 	}
@@ -113,9 +113,9 @@ public class TestCaseController {
 	 * @param locale
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, params = {IDS, FOLDER_IDS}, headers = AcceptHeaders.CONTENT_JSON)
 	public
-	@ResponseBody
 	List<JsonTestCase> getJsonTestCases(@RequestParam(IDS) List<Long> testCaseIds,
 										@RequestParam(FOLDER_IDS) List<Long> folderIds, Locale locale) {
 		List<Long> consolidatedIds = new ArrayList<>(testCaseIds.size() + folderIds.size());
@@ -130,10 +130,10 @@ public class TestCaseController {
 	 *      updated, the importance and requirement property of the calling test cases must be updated to.
 	 *
 	 */
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/tree-infos", method = RequestMethod.POST)
-	public
 	@ResponseBody
+	@RequestMapping(value = "/tree-infos", method = RequestMethod.POST)
+	@SuppressWarnings("unchecked")
+	public
 	List<TestCaseTreeIconsUpdate> getTestCaseTreeInfosToUpdate(@RequestBody Map<String, Object> form) {
 		// get form content
 		Map<String, String> updatedIdsAndOldReqString = (Map<String, String>) form.get("updatedIdsAndOldReq");

@@ -152,7 +152,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
-		return (getPluginBinding(pluginId) != null);
+		return getPluginBinding(pluginId) != null;
 	}
 
 	/* ***************************** SelfClassAware section ******************************* */
@@ -169,7 +169,7 @@ public class RequirementLibrary extends GenericLibrary<RequirementLibraryNode>  
 
 	@Override
 	public boolean hasContent() {
-		return (rootContent.size() > 0);
+		return !rootContent.isEmpty();
 	}
 
 	@Override

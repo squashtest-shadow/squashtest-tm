@@ -33,7 +33,6 @@ import org.squashtest.tm.service.internal.repository.ParameterNames;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 @Repository
 public class HibernateCampaignDeletionDao extends HibernateDeletionDao

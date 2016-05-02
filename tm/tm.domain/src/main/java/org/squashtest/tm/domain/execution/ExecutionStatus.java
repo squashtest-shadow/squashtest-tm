@@ -32,14 +32,14 @@ import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 /**
- * 
+ *
  * <p>
  * This class declare the 7 execution statuses, 5 of them being canonical.
- * 
+ *
  * Also, it declares and additional methods to update the new execution status of an execution, based on the former
  * states of the execution, of the step, and the new status of the step. See their documentation for details.
  * </p>
- * 
+ *
  * <b>Definitions</b> :
  * <ul>
  * <li><u>former execution status</u> : former ExecutionStatus of the considered Execution</li>
@@ -50,60 +50,60 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
  * <li><u>new execution status</u> : the new ExecutionStatus of the considered Execution. It is what is being computed
  * there.</li>
  * </ul>
- * 
+ *
  * Rem : {@link Level} seems to be used for sorting purposes (which might not be so good a thing)
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 /*
  * Tech documentation :
- * 
+ *
  * When asking for the new status of an Execution given its former state, and those of the modified step, the procedure
  * goes through multiple stages. It's a rather awkward procedure because the implementation first concern was
  * optimization rather than code clarity. Indeed we need to reduce calls to the database to the minimum because this
  * code may be called numerous times in a short period of time, especially since a recomputation requires to load the
  * complete collection of steps for the considered execution.
- * 
+ *
  * To achieve the lowest number of db calls, we apply successive tests, from the less information-consuming to the most
  * information-consuming.
- * 
+ *
  * Computation here is based on the table of truth of : former execution status, former step status, new step status.
  * From all the possible combinations obtained in that table we can deduce the tests mentioned above, and which
  * informations are required to deduce them. When no test can be deduced it usually means that a db call is needed.
- * 
+ *
  * The tests are grouped in the following stages (in that order) :
- * 
+ *
  * 1/ trivial deductions : we filter the table of truth with trivial computations wrt the former states of the execution
  * only. If the new status could be deducted it is returned immediately, otherwise we proceed to the next stage.
- * 
+ *
  * 2/ check if computation is mandatory : another row of quick tests that will tell if a db call is unavoidable. If
  * that's the case the method returns null immediately, otherwise we proceed to the next stage. The calling method is
  * now in charge to call the db.
- * 
+ *
  * 3/ Status-specific computations : we perform specific tests, like in the first one (trivial computation), this time
  * adding all the informations we have at disposal. If a result was found the method returns it immediately, otherwise
  * we proceed.
- * 
+ *
  * 4/ Failure : none of the step above succeeded. The result is null, and the calling method must call the DB.
- * 
+ *
  * See below for more comments about the various tests .
- * 
+ *
  * Note 1 : impossible states like formerStepStatus = BLOCKED and formerExecStatus = SUCCESS are filtered out (they
  * aren't supposed to happen).
- * 
+ *
  * Note 2 : see the method computeNewStatus for the simplest statement about what does this thing compute.
  */
 
 /*
  * Feat 1181, 03/08/12 : the list of execution statuses is extended by two statuses designed for automated executions :
  * TA_WARNING and TA_ERROR. There are now 8 status, yet manual or automated statuses only uses a subset of them.
- * 
+ *
  * The set of valid statuses for manual executions is : BLOCKED, FAILURE, SUCCESS, RUNNING, READY The set of valid
  * statuses for automated executions : ERROR, FAILURE, WARNING, SUCCESS, RUNNING, READY, NOT_RUN, NOT_FOUND
- * 
- * 
+ *
+ *
  * The status sets for manual and automated can still be compared to each other, but one have to normalize them first :
  * BLOCKED, FAILURE, SUCCESS, RUNNING, READY is considered as the Canonical status set. To this end, TA_ERROR and
  * TA_NOT_RUN is considered equal to BLOCKED, TA_NOT_FOUND is considered as UNTESTABLE, and TA_WARNING is considered equal to SUCCESS.
@@ -111,9 +111,9 @@ import org.squashtest.tm.domain.requirement.RequirementStatus;
 
 /*
  * Feat 3481, 3482, 3483, 30/06/14 :
- * 
+ *
  *  Two more TA statuses : NOT_RUN(BLOCKED) and NOT_FOUND(UNTESTABLE)
- * 
+ *
  */
 public enum ExecutionStatus implements Internationalizable, Level {
 
@@ -523,7 +523,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 	/***
 	 * This methods checks if the status is RUNNING or READY
-	 * 
+	 *
 	 * @return true if the status is neither RUNNING nor READY
 	 */
 	public boolean isTerminatedStatus() {
@@ -538,9 +538,9 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	/**
 	 * will deduce the new status of an execution based on the former execution status and former step status. "this" is
 	 * here the new step status. In some case the deduction is impossible and a further computation will be necessary.
-	 * 
+	 *
 	 * The method will first convert the argument to their canonical form before performing the comparison.
-	 * 
+	 *
 	 * @param formerExecutionStatus
 	 *            : the former execution status
 	 * @param formerStepStatus
@@ -557,7 +557,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 	protected boolean isNoneOf(ExecutionStatus... status) {
 		for (ExecutionStatus state : status) {
-			if (this.equals(state)) {
+			if (this == state) {
 				return false;
 			}
 		}
@@ -565,7 +565,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	}
 
 	protected boolean isOneOf(ExecutionStatus... status) {
-		return (!isNoneOf(status));
+		return !isNoneOf(status);
 	}
 
 	protected ExecutionStatus doDeduceNewStatus(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
@@ -598,7 +598,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 
 	/**
 	 * will compute from scratch a status using a complete report.
-	 * 
+	 *
 	 * @param report
 	 *            : ExecutionStatusReport.
 	 * @return : ExecutionStatus.
@@ -684,7 +684,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	/* *************************** Micro tests ************************************** */
 
 	protected boolean hasChanged(ExecutionStatus formerStepStatus) {
-		return (this != formerStepStatus);
+		return this != formerStepStatus;
 	}
 
 	// new step status = former step status : no change. new Step Status Running is an exception : the Execution might
@@ -693,15 +693,15 @@ public enum ExecutionStatus implements Internationalizable, Level {
 		if (this == ExecutionStatus.RUNNING) {
 			return false;
 		}
-		return (this == formerExecutionStatus);
+		return this == formerExecutionStatus;
 	}
 
 	protected boolean wontUnlockBloquedExecution(ExecutionStatus formerExecutionStatus, ExecutionStatus formerStepStatus) {
-		return (formerExecutionStatus == ExecutionStatus.BLOCKED && formerStepStatus != ExecutionStatus.BLOCKED);
+		return formerExecutionStatus == ExecutionStatus.BLOCKED && formerStepStatus != ExecutionStatus.BLOCKED;
 	}
 
 	protected boolean mayUnlockBloquedExecution(ExecutionStatus formerStepStatus) {
-		return (this != ExecutionStatus.BLOCKED && formerStepStatus == ExecutionStatus.BLOCKED);
+		return this != ExecutionStatus.BLOCKED && formerStepStatus == ExecutionStatus.BLOCKED;
 	}
 
 	// here we test if the former step status is the former execution status : this step was maybe the only one
@@ -710,7 +710,7 @@ public enum ExecutionStatus implements Internationalizable, Level {
 	// we then now the new exec status must then be recomputed.
 	protected boolean couldHaveSetExecStatusAlone(ExecutionStatus formerExecutionStatus,
 			ExecutionStatus formerStepStatus) {
-		return (formerExecutionStatus.equals(formerStepStatus));
+		return formerExecutionStatus == formerStepStatus;
 	}
 
 	// ---------------------------------- Comparator -------------------------------------

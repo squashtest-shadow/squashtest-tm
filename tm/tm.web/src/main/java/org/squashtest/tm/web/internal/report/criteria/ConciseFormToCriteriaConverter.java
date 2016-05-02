@@ -288,7 +288,7 @@ public class ConciseFormToCriteriaConverter {
 		Collection<Input> res = new ArrayList<>();
 
 		for (Input input : inputs) {
-			if (INPUTS_GROUP.equals(input.getType())) {
+			if (INPUTS_GROUP == input.getType()) {
 				res.addAll(flattenInputs(((InputsGroup) input).getInputs()));
 			} else {
 				res.add(input);

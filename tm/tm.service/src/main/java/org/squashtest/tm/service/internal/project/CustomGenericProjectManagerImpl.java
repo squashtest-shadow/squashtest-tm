@@ -642,7 +642,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 			customProject.setBugtracker(project.isBugtrackerConnected() ? project.getBugtrackerBinding()
 					.getBugtracker().getKind() : null);
 
-			if (permissionsManager.findPartyPermissionsBeanByProject(project.getId()).size() == 0) {
+			if (permissionsManager.findPartyPermissionsBeanByProject(project.getId()).isEmpty()) {
 				customProject.setHabilitation(false);
 			} else {
 				customProject.setHabilitation(true);
@@ -749,7 +749,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 						+ " is unknown and is not covered");
 			}
 
-			if (sorting.getSortOrder().equals(SortOrder.DESCENDING)) {
+			if (sorting.getSortOrder() == SortOrder.DESCENDING) {
 				comp.append(first, second);
 			} else {
 				comp.append(second, first);

@@ -30,48 +30,48 @@ import net.htmlparser.jericho.Tag;
 import org.springframework.web.util.HtmlUtils;
 
 public final class HTMLCleanupUtils {
-	
+
 	private HTMLCleanupUtils(){
-		
+
 	}
 
 	public static String htmlToText(String html){
-		
-		String fixedHtml = (html!=null) ? html : "";
-		
+
+		String fixedHtml = html!=null ? html : "";
+
 		String replacedHtml = fixedHtml.replaceFirst("\n", "");
-		
+
 		Source htmlSource = new Source(replacedHtml);
 		Segment htmlSegment = new Segment(htmlSource, 0, replacedHtml.length());
 		Renderer htmlRend = new Renderer(htmlSegment);
 		String encoded = htmlRend.toString();
 		return encoded.trim();
-	
+
 	}
-	
-	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/ 
+
+	/* note : Unescape is idempotent when applied on unescaped data. We use that trick to prevent double html encoding*/
 	public static String forceHtmlEscape(String html){
-		
-		String fixedHtml = (html!=null) ? html : "";
-		
-		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);			
+
+		String fixedHtml = html!=null ? html : "";
+
+		String unescaped = HtmlUtils.htmlUnescape(fixedHtml);
 		return HtmlUtils.htmlEscape(unescaped);
 	}
-	
+
 	/* naive implementation, needs numerous improvements */
 	public static String stripJavascript(String html){
-		
-		String fixedHtml = (html!=null) ? html : "";
-		
+
+		String fixedHtml = html!=null ? html : "";
+
 		Source source = new Source(fixedHtml);
 		OutputDocument output = new OutputDocument(source);
-		
+
 		for (Tag tag : source.getAllStartTags()){
 			if (tag.getName().equals(HTMLElementName.SCRIPT)){
 				output.remove(tag.getElement());
 			}
 		}
-		
+
 		return output.toString();
 	}
 

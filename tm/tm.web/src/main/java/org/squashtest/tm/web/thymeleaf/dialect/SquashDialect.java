@@ -81,7 +81,7 @@ public class SquashDialect extends AbstractDialect implements IExpressionEnhanci
 	public Map<String, Object> getAdditionalExpressionObjects(IProcessingContext processingContext) {
 		final IContext context = processingContext.getContext();
 		final IWebContext webContext =
-				(context instanceof IWebContext? (IWebContext)context : null);
+			context instanceof IWebContext? (IWebContext)context : null;
 
 		final Map<String, Object> extensions = new HashMap<>(1);
 

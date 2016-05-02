@@ -34,7 +34,7 @@ import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milestone> {
-	
+
 	private MilestoneManagerService milestoneManagerService;
 
 	private InternationalizationHelper messageSource;
@@ -59,19 +59,19 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 	public void setMessageSource(InternationalizationHelper messageSource) {
 		this.messageSource = messageSource;
 	}
-	
+
 	public MilestoneDataTableModelHelper(InternationalizationHelper messageSource) {
 		this.messageSource = messageSource;
 	}
-	
+
 	public MilestoneDataTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
-	
+
 		this.locale = locale;
 		this.messageSource = messageSource;
 	}
 
-	
-	
+
+
 	@Override
 	protected Object buildItemData(Milestone item) {
 		Map<String, Object> row = new HashMap<>(12);
@@ -105,7 +105,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 
 	private Object ownerToPrint(Milestone item) {
 		String owner = null;
-		if (item.getRange().equals(MilestoneRange.GLOBAL)){
+		if (item.getRange() == MilestoneRange.GLOBAL){
 			owner = messageSource.internationalize("label.milestone.global.owner", locale);
 		} else {
 			owner = item.getOwner().getName();
@@ -117,7 +117,7 @@ public class MilestoneDataTableModelHelper  extends DataTableModelBuilder<Milest
 		final String i18nKey = milestoneRange.getI18nKey();
 		return  messageSource.internationalize(i18nKey, locale);
 	}
-	
+
 private String i18nStatus(final MilestoneStatus milestoneStatus){
 	final String i18nKey = milestoneStatus.getI18nKey();
 	return  messageSource.internationalize(i18nKey, locale);
@@ -127,7 +127,7 @@ private String i18nStatus(final MilestoneStatus milestoneStatus){
 
 public void setProject(GenericProject project) {
 	this.project = project;
-	
+
 }
 
 }

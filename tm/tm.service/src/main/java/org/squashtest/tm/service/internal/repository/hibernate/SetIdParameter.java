@@ -35,7 +35,7 @@ class SetIdParameter implements SetQueryParametersCallback {
 		this.longParameterValue = parameterValue;
 		strParameterValue=null;
 	}
-	
+
 	public SetIdParameter(@NotNull String parameterName, String parameterValue) {
 		super();
 		this.parameterName = parameterName;
@@ -45,9 +45,9 @@ class SetIdParameter implements SetQueryParametersCallback {
 
 
 	private boolean isLongParam(){
-		return (strParameterValue==null);
+		return strParameterValue==null;
 	}
-	
+
 	@Override
 	public void setQueryParameters(Query query) {
 		if (isLongParam()){

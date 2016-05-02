@@ -75,13 +75,13 @@ public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 
 	@Override
 	public boolean isProjectTemplate(long projectId) {
-		
+
 		Query query = em.createNamedQuery("GenericProject.findProjectTypeOf");
 		query.setParameter(ParameterNames.PROJECT_ID, projectId);
 
 		String type = (String) query.getSingleResult();
 
-		return type.equals("T");
+		return "T".equals(type);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class GenericProjectDaoImpl implements CustomGenericProjectDao {
 	@Override
 	@SuppressWarnings("unchecked")
 	public <T extends GenericProject> List<T> findAllWithTextProperty(Class<T> entity, Filtering filtering) {
-		
+
 		Criteria allEntities = getCurrentSession().createCriteria(entity);
 
 		if (filtering.isDefined() && StringUtils.isNotEmpty(filtering.getFilter())) {

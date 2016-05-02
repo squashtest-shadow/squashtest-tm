@@ -41,7 +41,7 @@ import org.squashtest.tm.domain.Identified;
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Party implements Identified{
 
-	private final static String TYPE = "PARTY";
+	private static final String TYPE = "PARTY";
 
 	@Id
 	@Column(name = "PARTY_ID")

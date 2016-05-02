@@ -267,8 +267,8 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 			@Override
 			public boolean evaluate(Object milestone) {
 
-				return !((Milestone) milestone).getStatus().equals(MilestoneStatus.LOCKED)
-						&&!((Milestone) milestone).getStatus().equals(MilestoneStatus.PLANNED);
+				return ((Milestone) milestone).getStatus() != MilestoneStatus.LOCKED
+						&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
 			}
 		});
 	}

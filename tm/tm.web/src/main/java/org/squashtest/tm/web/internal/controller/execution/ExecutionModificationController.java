@@ -269,7 +269,7 @@ public class ExecutionModificationController {
 
 		StringBuilder toReturn = new StringBuilder();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
-		if (issueList.size() > 0) {
+		if (!issueList.isEmpty()) {
 			toReturn.append(issueList.get(0).getId());
 		}
 		for (int i = 1; i < issueList.size(); i++) {
@@ -341,9 +341,9 @@ public class ExecutionModificationController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.DELETE)
 	public
-	@ResponseBody
 	Object removeExecution(@PathVariable("executionId") long executionId) {
 		Execution execution = executionModService.findById(executionId);
 		IterationTestPlanItem testPlan = execution.getTestPlan();

@@ -29,7 +29,7 @@ public enum TestPlanStatus implements Internationalizable {
 
 	private static final String I18N_KEY_ROOT = "label.testPlanStatus.";
 	/**
-	 * 
+	 *
 	 * @param statistics a {@link TestPlanStatistics}
 	 * @return DONE if all test-plan-item are "settled", "untestable", "failed", "success" or "blocked"<br>
 	 * 		   READY if all test-plan item are "ready"
@@ -46,24 +46,24 @@ public enum TestPlanStatus implements Internationalizable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param statistics
 	 *            an instance of {@linkplain TestPlanStatistics}
 	 * @return <b><code>true</code></b> : if all testPlanItem are ready.
 	 */
 	private static boolean allReady(TestPlanStatistics statistics) {
-		return (statistics.getNbReady()) == (statistics.getNbTestCases());
+		return statistics.getNbReady() == statistics.getNbTestCases();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param statistics
 	 *            an instance of {@linkplain TestPlanStatistics}
 	 * @return <b><code>true</code></b> : if <b>all</b> TestPlanItem have are done (untestable, blocked, failed or
 	 *         success)
 	 */
 	private static boolean allDone(TestPlanStatistics statistics) {
-		return statistics.getNbDone() == (statistics.getNbTestCases());
+		return statistics.getNbDone() == statistics.getNbTestCases();
 	}
 
 	@Override

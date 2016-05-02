@@ -341,8 +341,9 @@ public class TestCaseModificationController {
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/new-version", method = RequestMethod.GET)
-	public @ResponseBody JsonTestCase getNewVersionTemplate(@PathVariable("testCaseId") Long testCaseId){
+	public JsonTestCase getNewVersionTemplate(@PathVariable("testCaseId") Long testCaseId){
 
 		TestCase testCase = testCaseModificationService.findById(testCaseId);
 
@@ -355,8 +356,9 @@ public class TestCaseModificationController {
 	}
 
 
-	@RequestMapping(value = "/new-version", method = RequestMethod.POST, consumes="application/json", produces="application/json")
-	public @ResponseBody JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData){
+	@ResponseBody
+	@RequestMapping(value = "/new-version", method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public JsonTestCase createNewVersion(@PathVariable("testCaseId") Long originalId, @RequestBody TestCase newVersionData){
 
 		TestCase newTestCase = testCaseModificationService.addNewTestCaseVersion(originalId, newVersionData);
 
@@ -676,7 +678,7 @@ public class TestCaseModificationController {
 			mav.addObject("bugTrackerStatus", status);
 
 			List<DecoratedIssueOwnership> decoratedIssues = Collections.emptyList();
-			if (status.equals(AuthenticationStatus.AUTHENTICATED)) {
+			if (status == AuthenticationStatus.AUTHENTICATED) {
 				try {
 					List<IssueOwnership<RemoteIssueDecorator>> issuesOwnerShipList = Collections.emptyList();
 					issuesOwnerShipList = bugTrackersLocalService.findIssueOwnershipForTestCase(testCaseId);

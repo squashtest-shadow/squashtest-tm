@@ -83,7 +83,7 @@ public enum TemplateWorksheet {
 	 */
 	@SuppressWarnings("unchecked")
 	public static Collection<TemplateWorksheet> coerceFromSheetName(String name) {
-		if (ENUM_BY_SHEET_NAME.size() == 0) {
+		if (ENUM_BY_SHEET_NAME.isEmpty()) {
 			synchronized (ENUM_BY_SHEET_NAME) {
 				for (TemplateWorksheet e : TemplateWorksheet.values()) {
 					ENUM_BY_SHEET_NAME.put(e.sheetName, e);

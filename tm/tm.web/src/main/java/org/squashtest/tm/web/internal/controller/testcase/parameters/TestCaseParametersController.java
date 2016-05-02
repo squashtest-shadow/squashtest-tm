@@ -202,10 +202,10 @@ public class TestCaseParametersController {
 		String sortedAttribute = sorting.getSortedAttribute();
 		SortOrder sortOrder = sorting.getSortOrder();
 
-		if (sortedAttribute != null && sortedAttribute.equals("Parameter.name")) {
+		if (sortedAttribute != null && "Parameter.name".equals(sortedAttribute)) {
 
 			Collections.sort(parameters, new ParameterNameComparator(sortOrder));
-		} else if (sortedAttribute != null && sortedAttribute.equals("TestCase.name")) {
+		} else if (sortedAttribute != null && "TestCase.name".equals(sortedAttribute)) {
 			Collections.sort(parameters, new ParameterTestCaseNameComparator(sortOrder, testCaseId));
 		} else {
 			Collections.sort(parameters, new ParameterNameComparator(SortOrder.ASCENDING));
@@ -239,7 +239,7 @@ public class TestCaseParametersController {
 			boolean o2DirectParam = testCaseId.equals(o2.getTestCase().getId());
 			int ascResult = ParametersModelHelper.buildTestCaseName(o1, o1DirectParam).compareTo(
 					ParametersModelHelper.buildTestCaseName(o2, o2DirectParam));
-			if (sortOrder.equals(SortOrder.ASCENDING)) {
+			if (sortOrder == SortOrder.ASCENDING) {
 				return ascResult;
 			} else {
 				return -ascResult;

@@ -47,16 +47,16 @@ import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilde
 
 /**
  * Common code factored out of subclasses
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class SearchInterfaceDescription {
 	/**
 	 * Compares formatted label using the thread-bound locale when instanciated -> not thread safe.
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 * @param <T>
 	 */
 	private class InternationalizableComparator implements Comparator<Internationalizable> {
@@ -74,9 +74,9 @@ public abstract class SearchInterfaceDescription {
 
 	/**
 	 * Builder for options aka {@link SearchInputPossibleValueModel}
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 */
 	protected final class OptionBuilder {
 		private final Locale locale;
@@ -165,7 +165,7 @@ public abstract class SearchInterfaceDescription {
 
 		/**
 		 * the css class of the panel
-		 * 
+		 *
 		 * @param cssClass
 		 * @return
 		 */
@@ -176,7 +176,7 @@ public abstract class SearchInterfaceDescription {
 
 		/**
 		 * the html id of the search field
-		 * 
+		 *
 		 * @param id
 		 * @return
 		 */
@@ -245,7 +245,7 @@ public abstract class SearchInterfaceDescription {
 	private MilestoneFinderService milestoneFinder;
 
 	/**
-	 * 
+	 *
 	 */
 	public SearchInterfaceDescription() {
 		super();
@@ -256,7 +256,7 @@ public abstract class SearchInterfaceDescription {
 
 		/*
 		 * Additional specs from issue 4667
-		 * 
+		 *
 		 * 1/ the whole feature is now activated by a checkbox,
 		 * 2/ sort the milestones alphabetically,
 		 * 3/ don't show milestones having status=PLANNED
@@ -303,7 +303,7 @@ public abstract class SearchInterfaceDescription {
 		});
 
 		for (Milestone milestone : milestones){
-			if (! milestone.getStatus().equals(MilestoneStatus.PLANNED)){
+			if (milestone.getStatus() != MilestoneStatus.PLANNED){
 				labelField.addPossibleValue(optionBuilder.label(milestone.getLabel()).optionKey(milestone.getId().toString()).build());
 			}
 		}

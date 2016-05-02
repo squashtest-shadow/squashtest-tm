@@ -40,7 +40,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class TestCaseFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
-	 * 
+	 *
 	 */
 
 	/*@NotBlank
@@ -122,14 +122,14 @@ public class TestCaseFormModel {
 		public TestCaseFormModelValidator(MessageSource messageSource){
 			this.messageSource = messageSource;
 		}
-		
+
 		public void setMessageSource(MessageSource messageSource){
 			this.messageSource = messageSource;
 		}
 
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return (clazz.equals(TestCaseFormModel.class));
+			return clazz.equals(TestCaseFormModel.class);
 		}
 
 		@Override

@@ -28,9 +28,9 @@ import org.squashtest.tm.domain.testcase.Parameter;
 
 /**
  * Will compare {@link Parameter} on their name in the given {@link SortOrder}
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @SuppressWarnings("serial")
 public final class ParameterNameComparator implements Comparator<Parameter>,
@@ -45,7 +45,7 @@ public final class ParameterNameComparator implements Comparator<Parameter>,
 	@Override
 	public int compare(Parameter o1, Parameter o2) {
 		int ascResult = o1.getName().compareTo(o2.getName());
-		if (sortOrder.equals(SortOrder.ASCENDING)) {
+		if (sortOrder == SortOrder.ASCENDING) {
 			return ascResult;
 		} else {
 			return -ascResult;

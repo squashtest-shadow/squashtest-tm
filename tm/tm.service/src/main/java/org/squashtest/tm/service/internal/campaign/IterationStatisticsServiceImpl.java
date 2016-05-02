@@ -144,20 +144,20 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 	/*
 	 * A few comments about test suites having an empty test plan or referencing test case(s) that were deleted.
-	 * 
+	 *
 	 *  We want to report the test suites with the following rules :
 	 *  a) test suites with an empty test plan must be reported anyway,
 	 *  b) deleted test cases must be excluded of the statistics.
-	 * 
+	 *
 	 *  This implies that we must detect those exceptions. We can achieve that thanks to the following behavior :
-	 * 
+	 *
 	 * 1/ By the virtue of "left outer join" there always will be at least one row in the resultset for each test suite
 	 * even when its test plan is empty. In that later case the ExecutionStatus will be null.
-	 * 
+	 *
 	 * 2/ When the test plan is not empty but contains one or several deleted test cases there will be a row for them anyway.
 	 * In that later case the TestCaseImportance will be null.
-	 * 
-	 * 
+	 *
+	 *
 	 * (non-Javadoc)
 	 * @see org.squashtest.tm.service.campaign.IterationStatisticsService#gatherTestSuiteTestInventoryStatistics(long)
 	 */
@@ -212,10 +212,10 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 			/*
 			 * corner cases as discussed in the comments above. We skip the rest of that test suite if :
-			 * 
+			 *
 			 * 1/ (status == null) because it means that the test plan is empty,
 			 * 2/ (importance == null) because means that those test cases were deleted
-			 * 
+			 *
 			 */
 			ExecutionStatus status = (ExecutionStatus)tuple[1];
 			TestCaseImportance importance = (TestCaseImportance)tuple[2];
@@ -230,7 +230,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 			 */
 			newStatistics.addNumber(howmany.intValue(), status.getCanonicalStatus());
 
-			if(status.equals(ExecutionStatus.RUNNING) || status.equals(ExecutionStatus.READY)){
+			if(status == ExecutionStatus.RUNNING || status == ExecutionStatus.READY){
 				addImportance(newStatistics, importance, howmany);
 
 			}
@@ -241,8 +241,8 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 	}
 
 	private boolean sameSuite(String name1, String name2){
-		return  (name1 == null && name2 == null) ||
-				(name1 != null && name1.equals(name2));
+		return  name1 == null && name2 == null ||
+			name1 != null && name1.equals(name2);
 	}
 
 	private void addImportance(TestSuiteTestInventoryStatistics newStatistics, TestCaseImportance importance, Long howmany){
@@ -306,7 +306,7 @@ public class IterationStatisticsServiceImpl implements IterationStatisticsServic
 
 		return progression;
 	}
-	
+
 	private Session getCurrentSession(){
 		return em.unwrap(Session.class);
 	}

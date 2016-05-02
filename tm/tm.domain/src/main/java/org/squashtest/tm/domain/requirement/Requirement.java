@@ -308,7 +308,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	private RequirementVersion findLatestApprovedVersion() {
 		for (RequirementVersion version : versions) {
-			if (APPROVED.equals(version.getStatus())) {
+			if (APPROVED == version.getStatus()) {
 				return version;
 			}
 		}
@@ -340,7 +340,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	 */
 	public boolean hasNonObsoleteVersion() {
 		for (RequirementVersion version : this.versions) {
-			if (!version.getStatus().equals(OBSOLETE)) {
+			if (version.getStatus() != OBSOLETE) {
 				return true;
 			}
 		}
@@ -354,7 +354,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	public RequirementVersion findLastNonObsoleteVersion() {
 
 		for (RequirementVersion version : this.versions) {
-			if (!version.getStatus().equals(OBSOLETE)) {
+			if (version.getStatus() != OBSOLETE) {
 				return version;
 			}
 		}
@@ -427,7 +427,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 
 	@Override
 	public boolean hasContent() {
-		return (children.size() > 0);
+		return !children.isEmpty();
 	}
 
 	@Override
@@ -505,12 +505,12 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		SortedMap<Integer, RequirementVersion> sortedVersions = new TreeMap<>();
 
 		for (RequirementVersion version : this.versions) {
-			if (!version.getStatus().equals(OBSOLETE)) {
+			if (version.getStatus() != OBSOLETE) {
 				sortedVersions.put(version.getVersionNumber(), version);
 			}
 		}
 
-		return (sortedVersions.size() == 0) ? null : sortedVersions.get(sortedVersions.lastKey());
+		return sortedVersions.isEmpty() ? null : sortedVersions.get(sortedVersions.lastKey());
 	}
 
 
@@ -526,7 +526,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 	}
 
 	public boolean isSynchronized() {
-		return (this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null);
+		return this.mode == ManagementMode.SYNCHRONIZED && syncExtender != null;
 	}
 
 

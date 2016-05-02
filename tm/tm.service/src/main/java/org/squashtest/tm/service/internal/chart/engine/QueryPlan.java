@@ -36,7 +36,7 @@ import org.squashtest.tm.domain.library.structures.TreeNode;
  * 	This class represent which entities (tables) should be traversed, and in which direction (this last detail matters when a left join occurs)
  * 	This class is meant to be created via {@link DomainGraph#getQueryPlan(DetailedChartQuery)};
  *</p>
- * 
+ *
  * @author bsiri
  *
  */
@@ -93,7 +93,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 
 	/**
 	 * A node in the QueryPlan : it represents an entity type that WILL be traversed.
-	 * 
+	 *
 	 * @author bsiri
 	 *
 	 */
@@ -175,7 +175,7 @@ class QueryPlan extends LibraryTree<InternalEntityType, QueryPlan.TraversedEntit
 
 		private void armNext(){
 			// find the next node who has children until found or no more parent
-			while (remainingChildren.isEmpty() && (! toProcess.isEmpty())){
+			while (remainingChildren.isEmpty() && ! toProcess.isEmpty()){
 				currentParent = toProcess.remove();
 				remainingChildren.addAll(currentParent.getChildren());
 			}

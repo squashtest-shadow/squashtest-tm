@@ -82,7 +82,7 @@ public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirement
 	/*
 	 * This closure must execute bottom-up. This mean it will
 	 * always execute on leaves first.
-	 * 
+	 *
 	 * The goal is for each node :
 	 * 	- if deletable -> screw it
 	 *  - if non deletable : find a parent where to attach
@@ -263,8 +263,8 @@ public class SubRequirementRewiringTree extends LibraryTree<Long, SubRequirement
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((id1 == null) ? 0 : id1.hashCode());
-			result = prime * result + ((id2 == null) ? 0 : id2.hashCode());
+			result = prime * result + (id1 == null ? 0 : id1.hashCode());
+			result = prime * result + (id2 == null ? 0 : id2.hashCode());
 			return result;
 		}
 

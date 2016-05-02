@@ -115,7 +115,7 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 					break;
 				case DROPDOWN_LIST:
 					val = cufValue.getValue();
-					if ("".equals(val)) {
+					if (val != null && val.isEmpty()) {
 						val = "$NO_VALUE";
 					}
 					break;

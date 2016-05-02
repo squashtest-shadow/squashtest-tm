@@ -67,25 +67,29 @@ public class CustomReportController {
 
 	//---- SHOW DETAIL METHODS -----
 
-	@RequestMapping(value="custom-report-library/{id}", method=RequestMethod.GET)
-	public @ResponseBody CustomReportLibrary getLibraryDetails(@PathVariable Long id){
+	@ResponseBody
+	@RequestMapping(value = "custom-report-library/{id}", method = RequestMethod.GET)
+	public CustomReportLibrary getLibraryDetails(@PathVariable Long id){
 		return customReportLibraryNodeService.findLibraryByTreeNodeId(id);
 	}
 
-	@RequestMapping(value="custom-report-folder/{id}", method=RequestMethod.GET)
-	public @ResponseBody CustomReportFolder getFolderDetails(@PathVariable Long id){
+	@ResponseBody
+	@RequestMapping(value = "custom-report-folder/{id}", method = RequestMethod.GET)
+	public CustomReportFolder getFolderDetails(@PathVariable Long id){
 		return customReportLibraryNodeService.findFolderByTreeNodeId(id);
 	}
 
-	@RequestMapping(value="custom-report-chart/{id}", method=RequestMethod.GET)
-	public @ResponseBody JsonChartInstance getChartDetails(@PathVariable Long id){
+	@ResponseBody
+	@RequestMapping(value = "custom-report-chart/{id}", method = RequestMethod.GET)
+	public JsonChartInstance getChartDetails(@PathVariable Long id){
 		ChartDefinition chartDef = customReportLibraryNodeService.findChartDefinitionByNodeId(id);
 		ChartInstance instance = chartService.generateChart(chartDef.getId());
 		return new JsonChartInstance(instance);
 	}
 
-	@RequestMapping(value="custom-report-dashboard/{id}", method=RequestMethod.GET)
-	public @ResponseBody JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id,Locale locale){
+	@ResponseBody
+	@RequestMapping(value = "custom-report-dashboard/{id}", method = RequestMethod.GET)
+	public JsonCustomReportDashboard getDashboardDetails(@PathVariable Long id, Locale locale){
 		CustomReportDashboard dashboard = customReportLibraryNodeService.findCustomReportDashboardById(id);
 		return builderProvider.get().build(dashboard, locale);
 	}

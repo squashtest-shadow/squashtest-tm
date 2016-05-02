@@ -86,7 +86,7 @@ public class StatusBasedRequirementAuditor implements RequirementAuditor,
 		if ("status".equals(event.getPropertyName())) {
 			return true;
 		}
-		return RequirementStatus.UNDER_REVIEW.equals(event.getRequirementVersion().getStatus());
+		return RequirementStatus.UNDER_REVIEW == event.getRequirementVersion().getStatus();
 	}
 
 	@Override

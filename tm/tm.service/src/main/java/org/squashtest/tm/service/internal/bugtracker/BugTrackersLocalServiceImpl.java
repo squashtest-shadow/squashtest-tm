@@ -150,7 +150,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 			status = AuthenticationStatus.UNDEFINED;
 		} else {
 			boolean needs = remoteBugTrackersService.isCredentialsNeeded(bugtracker);
-			status = (needs) ? AuthenticationStatus.NON_AUTHENTICATED : AuthenticationStatus.AUTHENTICATED;
+			status = needs ? AuthenticationStatus.NON_AUTHENTICATED : AuthenticationStatus.AUTHENTICATED;
 		}
 		return status;
 	}

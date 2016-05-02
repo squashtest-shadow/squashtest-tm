@@ -156,8 +156,8 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		int result = 1;
 		Long id = getId();
 		Class<?> mygenericClass = getGenericNodeClass();
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((mygenericClass == null) ? 0 : mygenericClass.hashCode());
+		result = prime * result + (id == null ? 0 : id.hashCode());
+		result = prime * result + (mygenericClass == null ? 0 : mygenericClass.hashCode());
 		return result;
 	}
 

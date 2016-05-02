@@ -397,7 +397,7 @@ public class ChartDataFinder {
      */
 	private void postProcessColumn(List<Object[]> abscissa, List<AxisColumn> columns, int i) {
 		AxisColumn axisColumn =  columns.get(i);
-		if (axisColumn.getDataType().equals(DataType.INFO_LIST_ITEM)){
+		if (axisColumn.getDataType() == DataType.INFO_LIST_ITEM){
 			postProcessInfoListItem(abscissa, i);
 		}
 	}

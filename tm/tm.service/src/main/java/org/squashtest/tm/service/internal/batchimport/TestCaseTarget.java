@@ -85,7 +85,7 @@ public class TestCaseTarget extends Target {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 47;
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		result = prime * result + (path == null ? 0 : path.hashCode());
 		return result;
 	}
 

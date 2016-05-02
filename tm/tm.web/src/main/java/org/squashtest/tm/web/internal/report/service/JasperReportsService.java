@@ -57,7 +57,7 @@ public class JasperReportsService {
 
 
 	public boolean isSupported(String format){
-		return (exporterMaps.keySet().contains(format));
+		return exporterMaps.keySet().contains(format);
 	}
 
 

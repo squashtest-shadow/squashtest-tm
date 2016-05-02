@@ -24,9 +24,9 @@ import org.apache.poi.ss.usermodel.Cell;
 
 /**
  * Coerces a plain string cell to a string
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class StringCellCoercer extends TypeBasedCellValueCoercer<String> implements CellValueCoercer<String> {
 	public static final StringCellCoercer INSTANCE = new StringCellCoercer();
@@ -56,7 +56,7 @@ public final class StringCellCoercer extends TypeBasedCellValueCoercer<String> i
 	 */
 	@Override
 	protected String coerceNumericCell(Cell cell) {
-		return "" + cell.getNumericCellValue();
+		return String.valueOf(cell.getNumericCellValue());
 	}
 
 

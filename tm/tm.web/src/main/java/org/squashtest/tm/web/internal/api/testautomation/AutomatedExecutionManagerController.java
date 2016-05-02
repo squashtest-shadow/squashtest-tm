@@ -34,9 +34,9 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionManagerService
 
 /**
  * This controller receives callbacks from Squash TA which modify automated executions statuses.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/automated-executions")
@@ -46,13 +46,14 @@ public class AutomatedExecutionManagerController {
 
 	/**
 	 * Changes the status of the automated execution
-	 * 
+	 *
 	 * @param id
 	 *            the automated exec extender id.
 	 * @param stateChange
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/{id}/test-status", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void changeExecutionState(@PathVariable long id, @RequestBody @Valid TestExecutionStatus stateChange) {
 		automatedExecutionManager.changeExecutionState(id, stateChange);
 	}

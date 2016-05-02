@@ -148,11 +148,11 @@ public class RequirementFormModel {
 	public static class RequirementFormModelValidator implements Validator{
 
 		/**
-		 * 
+		 *
 		 */
 		private static final String MESSAGE_LENGTH_MAX = "message.lengthMax";
 		/**
-		 * 
+		 *
 		 */
 		private static final String MESSAGE_NOT_BLANK = "message.notBlank";
 
@@ -175,7 +175,7 @@ public class RequirementFormModel {
 
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return (clazz.equals(NewRequirementVersionDto.class));
+			return clazz.equals(NewRequirementVersionDto.class);
 		}
 
 		@Override

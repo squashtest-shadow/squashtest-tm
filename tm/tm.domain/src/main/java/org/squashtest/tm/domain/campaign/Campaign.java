@@ -174,7 +174,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	/**
 	 * @return {reference} - {name} if reference is not empty, or {name} if it is
-	 * 
+	 *
 	 */
 	public String getFullName() {
 		if (StringUtils.isBlank(reference)) {
@@ -185,7 +185,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	/**
-	 * 
+	 *
 	 * @param testCase
 	 * @return the test plan item which references the given test case, if any.
 	 */
@@ -199,7 +199,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	/**
-	 * 
+	 *
 	 * @param itemTestPlan
 	 */
 	public void addToTestPlan(@NotNull CampaignTestPlanItem itemTestPlan) {
@@ -317,7 +317,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 
 	/**
 	 * If the iteration have autodates set, they will be updated accordingly.
-	 * 
+	 *
 	 * @param newIterationStartDate
 	 */
 	public void updateActualStart(Date newIterationStartDate) {
@@ -326,7 +326,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 			// if we're lucky we can save a heavier computation
 			if (getActualStartDate() == null) {
 				setActualStartDate(newIterationStartDate);
-			} else if ((newIterationStartDate != null) && (getActualStartDate().compareTo(newIterationStartDate) > 0)) {
+			} else if (newIterationStartDate != null && getActualStartDate().compareTo(newIterationStartDate) > 0) {
 				setActualStartDate(newIterationStartDate);
 			}
 
@@ -342,7 +342,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 			// if we're lucky we can save a heavier computation
 			if (getActualEndDate() == null) {
 				setActualEndDate(newIterationEndDate);
-			} else if ((newIterationEndDate != null) && (getActualEndDate().compareTo(newIterationEndDate) < 0)) {
+			} else if (newIterationEndDate != null && getActualEndDate().compareTo(newIterationEndDate) < 0) {
 				setActualEndDate(newIterationEndDate);
 			}
 

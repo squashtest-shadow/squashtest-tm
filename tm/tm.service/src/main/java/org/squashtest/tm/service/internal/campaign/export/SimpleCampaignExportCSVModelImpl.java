@@ -392,13 +392,13 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 		private String formatDate(Date date) {
 
-			return (date == null) ? "" : dateFormat.format(date);
+			return date == null ? "" : dateFormat.format(date);
 
 		}
 
 
 		private String formatUser(User user) {
-			return (user == null) ? "" : user.getLogin();
+			return user == null ? "" : user.getLogin();
 
 		}
 
@@ -468,7 +468,7 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 			itp = nextITP;
 
-			return (itp != null);
+			return itp != null;
 		}
 
 	}

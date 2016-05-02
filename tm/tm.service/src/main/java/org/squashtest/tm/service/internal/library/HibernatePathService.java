@@ -35,10 +35,10 @@ import org.squashtest.tm.service.internal.repository.hibernate.TestCaseDaoImpl;
 
 /**
  * DAO for computing nodes paths. Factored out of {@link TestCaseDaoImpl}
- * 
+ *
  * @author Gregory Fouquet
- * 
- * 
+ *
+ *
  */
 @Service
 @Transactional(readOnly = true)
@@ -48,12 +48,12 @@ public class HibernatePathService implements PathService {
 	 * a name. Of course to disambiguate we could have used MySQL / H2 function replace(targetstr, orig, replace)
 	 * and escape the '/' but the functions don't work the same way on both database and what works in one
 	 * doesn't work on the other.
-	 * 
+	 *
 	 * So the separator is not / but some other improbable character, that I hope
 	 * improbable enough in the context of a normal use of Squash.
 	 * Currently it's the ASCII character "US", or "Unit separator", aka "Information separator one",
 	 * that was precisely intended for similar purpose back in the prehistoric era.
-	 * 
+	 *
 	 * It's up to the caller to then post process the chain and replace that character
 	 * by anything it sees fit.
 	 **/
@@ -81,8 +81,8 @@ public class HibernatePathService implements PathService {
 	public List<String> buildTestCasesPaths(List<Long> ids) {
 		return buildAllPaths("TestCasePathEdge.findPathsByIds", ids);
 	}
-	
-	
+
+
 	@Override
 	public String buildRequirementPath(long id) {
 		return buildPath("RequirementPathEdge.findPathById", id);
@@ -105,14 +105,14 @@ public class HibernatePathService implements PathService {
 		return fetchedPath != null ? fetchedPath.replace("/", "\\/").replace(PATH_SEPARATOR, "/") : null;
 	}
 
-	
-	
+
+
 	// ************************* private methods *************************************
-	
+
 	private String buildPath(String queryname, long id) {
 		List<String> paths = findPathById(queryname, id);
 
-		if (paths.size() == 0) {
+		if (paths.isEmpty()) {
 			return null;
 		}
 
@@ -121,7 +121,7 @@ public class HibernatePathService implements PathService {
 
 
 	private List<String> buildAllPaths(String queryname, List<Long> ids) {
-		
+
 		// the DB dies if you query with an empty list argument
 		if (ids.isEmpty()){
 			return new ArrayList<>();
@@ -138,7 +138,7 @@ public class HibernatePathService implements PathService {
 
 		return Arrays.asList(res);
 	}
-	
+
 
 	@SuppressWarnings("unchecked")
 	private List<String> findPathById(String queryname, long id) {
@@ -146,7 +146,7 @@ public class HibernatePathService implements PathService {
 		query.setParameter("nodeId", id);
 		return query.list();
 	}
-	
+
 	/**
 	 * @param ids
 	 * @return

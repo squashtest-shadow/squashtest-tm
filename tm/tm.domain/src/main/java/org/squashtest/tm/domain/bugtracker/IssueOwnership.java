@@ -25,9 +25,9 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 
 /**
  * Mainly used to pair a Bugged entity with an issue together.
- * 
+ *
  * @author bsiri
- * 
+ *
  * @param <ISSUE>
  *            can be pretty much anything you need to pair with a bugged thing actually.
  */
@@ -52,10 +52,10 @@ public class IssueOwnership<ISSUE> {
 	public Execution getExecution() {
 		Execution execution = null;
 		if (ExecutionStep.class.isAssignableFrom(owner.getClass())){
-			ExecutionStep step = ((ExecutionStep) owner);
+			ExecutionStep step = (ExecutionStep) owner;
 			execution = step.getExecution();
 		} else if (Execution.class.isAssignableFrom(owner.getClass())){
-			execution = ((Execution) owner);
+			execution = (Execution) owner;
 		}
 		return execution;
 	}

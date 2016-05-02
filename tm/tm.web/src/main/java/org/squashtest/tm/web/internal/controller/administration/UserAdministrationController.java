@@ -128,8 +128,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return mav;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/table", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	DataTableModel getTable(final DataTableDrawParameters params, final Locale locale) {
 		LOGGER.trace("getTable called ");
 
@@ -146,8 +147,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return new UserDataTableModelBuilder(locale).buildDataModel(holder, sEcho);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "password")
-	public @ResponseBody
+	public
 	void addUser(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		if (!currentProviderFeatures().isManagedPassword()) {
 			adminService.addUser(userForm.getUser(), userForm.getGroupId(), userForm.getPassword());
@@ -162,8 +164,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 		}
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/new", method = RequestMethod.POST, params = "noPassword")
-	public @ResponseBody
+	public
 	void addUserWithoutCredentials(@ModelAttribute("add-user") @Valid UserForm userForm) {
 		if (currentProviderFeatures().isManagedPassword()) {
 			adminService.createUserWithoutCredentials(userForm.getUser(), userForm.getGroupId());
@@ -183,27 +186,30 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return new DataTableSorting(params, mapper);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URLS + "/deactivate", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void deactivateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deactivateUsers(userIds);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URLS + "/activate", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void activateUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.activateUsers(userIds);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URLS, method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void deleteUsers(@PathVariable("userIds") List<Long> userIds) {
 		adminService.deleteUsers(userIds);
 	}
 
 	/**
 	 * Will return a view for the user of the given id
-	 * 
+	 *
 	 * @param userId
 	 */
 	@RequestMapping(value = USER_URL + "/info", method = RequestMethod.GET)
@@ -226,8 +232,9 @@ public class UserAdministrationController extends PartyControllerSupport {
 		return "user-modification.html";
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URL + "/change-group", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void changeUserGroup(@PathVariable long userId, @RequestParam long groupId) {
 		adminService.setUserGroupAuthority(userId, groupId);
 	}
@@ -280,29 +287,33 @@ public class UserAdministrationController extends PartyControllerSupport {
 	}
 
 	// *********************************************************************************
+	@ResponseBody
 	@RequestMapping(value = USER_URL + "/add-permission", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void addNewPermission(@RequestParam("project") long projectId, @PathVariable long userId,
 			@RequestParam String permission) {
 		permissionService.addNewPermissionToProject(userId, projectId, permission);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URL + "/remove-permission", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void removePermission(@RequestParam("project") List<Long> projectIds, @PathVariable(USER_ID) long userId) {
 		for (Long projectId : projectIds) {
 			permissionService.removeProjectPermission(userId, projectId);
 		}
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URL + "/permission-popup", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	Map<String, Object> getPermissionPopup(@PathVariable(USER_ID) long userId) {
 		return createPermissionPopupModel(userId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = USER_URL + "/permissions", method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
+	public
 	DataTableModel getPermissionTableModel(DataTableDrawParameters params, @PathVariable(USER_ID) long userId) {
 		PagingAndSorting paging = new DataTableSorting(params, permissionMapper);
 		Filtering filtering = new DataTableFiltering(params);
@@ -331,7 +342,7 @@ public class UserAdministrationController extends PartyControllerSupport {
 	 */
 	private final class UserDataTableModelBuilder extends DataTableModelBuilder<User> {
 		/**
-		 * 
+		 *
 		 */
 		private final Locale locale;
 

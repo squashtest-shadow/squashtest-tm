@@ -47,7 +47,7 @@ public abstract class AbstractRequirementEventPublisher {
 	 */
 	protected final String currentUser() {
 		String name = UserContextHolder.getUsername();
-		if (name == null || "".equals(name)) {
+		if (name == null || name.isEmpty()) {
 			name = "unknown";
 		}
 

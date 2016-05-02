@@ -59,9 +59,10 @@ public class CustomReportChartBindingController {
 	@Named("customReport.chartBindingBuilder")
 	private Provider<JsonCustomReportChartBindingBuilder> builderProvider;
 
+	@ResponseBody
+	@RequestMapping(value = "/custom-report-chart-binding", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.POST)
-	public @ResponseBody JsonCustomReportChartBinding createCustomReportChartBinding(@RequestBody FormCustomReportChartBinding formChartBinding){
+	public JsonCustomReportChartBinding createCustomReportChartBinding(@RequestBody FormCustomReportChartBinding formChartBinding){
 		CustomReportChartBinding crcb = formChartBinding.convertToEntity();
 
 		//setting the nested entities.
@@ -75,14 +76,16 @@ public class CustomReportChartBindingController {
 		return  builderProvider.get().build(crcb);
 	}
 
-	@RequestMapping(value="/custom-report-chart-binding-replace-chart/{bindingId}/{chartNodeId}", method=RequestMethod.POST)
-	public @ResponseBody JsonCustomReportChartBinding changeBindedChart(@PathVariable long bindingId,@PathVariable long chartNodeId){
+	@ResponseBody
+	@RequestMapping(value = "/custom-report-chart-binding-replace-chart/{bindingId}/{chartNodeId}", method = RequestMethod.POST)
+	public JsonCustomReportChartBinding changeBindedChart(@PathVariable long bindingId, @PathVariable long chartNodeId){
 		CustomReportChartBinding crcb = dashboardService.changeBindedChart(bindingId,chartNodeId);
 		return  builderProvider.get().build(crcb);
 	}
 
-	@RequestMapping(value="/custom-report-chart-binding", method=RequestMethod.PUT)
-	public @ResponseBody void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
+	@ResponseBody
+	@RequestMapping(value = "/custom-report-chart-binding", method = RequestMethod.PUT)
+	public void updateGrid(@RequestBody JsonCustomReportGridElement[] gridElements){
 		List<CustomReportChartBinding> bindings = new ArrayList<>();
 		for (JsonCustomReportGridElement gridElement : gridElements) {
 			bindings.add(gridElement.convertToEntity());
@@ -90,8 +93,9 @@ public class CustomReportChartBindingController {
 		dashboardService.updateGridPosition(bindings);
 	}
 
-	@RequestMapping(value="/custom-report-chart-binding/{id}", method=RequestMethod.DELETE)
-	public @ResponseBody void unbindChart(@PathVariable long id){
+	@ResponseBody
+	@RequestMapping(value = "/custom-report-chart-binding/{id}", method = RequestMethod.DELETE)
+	public void unbindChart(@PathVariable long id){
 		dashboardService.unbindChart(id);
 	}
 }

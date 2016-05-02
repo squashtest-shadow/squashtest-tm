@@ -116,7 +116,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 		T srcNode = getNode(src);
 		T destNode = getNode(dest);
 
-		return (srcNode != null && destNode != null && srcNode.getOutbounds().contains(destNode));
+		return srcNode != null && destNode != null && srcNode.getOutbounds().contains(destNode);
 	}
 
 	public int cardEdge(IDENT src, IDENT dest) {

@@ -597,10 +597,10 @@ public class JdbcManageableAclService extends JdbcAclService implements Manageab
 			arguments = new Object[]{entityId, entityClass.getCanonicalName()};
 		}
 
-		if (sorting.getSortedAttribute().equals("name")){
+		if ("name".equals(sorting.getSortedAttribute())){
 			orderByClause=" order by sorting_key ";
 		}
-		else if(sorting.getSortedAttribute().equals("qualifiedName")){
+		else if("qualifiedName".equals(sorting.getSortedAttribute())){
 			orderByClause=" order by ag.QUALIFIED_NAME ";
 		} else {
 			orderByClause=" order by party_type ";

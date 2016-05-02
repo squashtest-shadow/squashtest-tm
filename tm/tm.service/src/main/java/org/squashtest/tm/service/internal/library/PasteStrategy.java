@@ -304,7 +304,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				 * - not a library (or at flush time the project will rant)
 				 */
 				if (! nextNodes.contains(evi) &&
-						! (GenericLibrary.class.isAssignableFrom(evi.getClass()))){
+						!GenericLibrary.class.isAssignableFrom(evi.getClass())){
 					genericDao.clearFromCache(evi);
 				}
 			}

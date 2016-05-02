@@ -64,9 +64,9 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 		Map<String, Object> result = new HashMap<>();
 
 		TestCase testCase = item.getReferencedTestCase();
-		String user = (item.getUser() != null) ? item.getUser().getLogin() : formatNoData(locale);
-		Long assigneeId = (item.getUser() != null) ? item.getUser().getId() : User.NO_USER_ID;
-		String reference = (testCase.getReference().isEmpty()) ? formatNoData(locale) : testCase.getReference();
+		String user = item.getUser() != null ? item.getUser().getLogin() : formatNoData(locale);
+		Long assigneeId = item.getUser() != null ? item.getUser().getId() : User.NO_USER_ID;
+		String reference = testCase.getReference().isEmpty() ? formatNoData(locale) : testCase.getReference();
 		DatasetInfos dsInfos = makeDatasetInfo(item);
 
 		result.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
@@ -90,16 +90,16 @@ final class CampaignTestPlanTableModelHelper extends DataTableModelBuilder<Index
 
 	/*
 	 * TODO : This code is a copy pasta of the same thing in TestPlanTableModelHelper.
-	 * 
+	 *
 	 * If you want to move that in an helper class you should consider that :
 	 * - you should pass it the message source,
 	 * - you should move the relevant methods from CampaignTestPlanItem and IterationTestPlanItem
 	 * 	in a common interface
 	 * - and while you're at it, make a common ancestor for XTestPlanTableModelHelper and subclass it
 	 * where necessary.
-	 * 
+	 *
 	 * OR
-	 * 
+	 *
 	 * you can just tell SONAR to stfu.
 	 */
 	private DatasetInfos makeDatasetInfo(CampaignTestPlanItem item){	// NOSONAR copy pasta blahblahblah.

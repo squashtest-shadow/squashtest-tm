@@ -112,7 +112,7 @@ FolderModificationService<FOLDER> {
 		}
 
 		private void setKind(String kind) {
-			if (!(kind.equals(SecurityCheckableItem.FOLDER)) || kind.equals(SecurityCheckableItem.LIBRARY)) {
+			if (!kind.equals(SecurityCheckableItem.FOLDER) || kind.equals(SecurityCheckableItem.LIBRARY)) {
 				throw new RuntimeException(
 						"(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");
 			}

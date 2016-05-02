@@ -78,7 +78,7 @@ public class IssueList {
 	}
 
 	public boolean hasIssues() {
-		return (issues.size() > 0);
+		return !issues.isEmpty();
 	}
 
 	public List<Issue> getAllIssues() {

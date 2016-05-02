@@ -918,7 +918,7 @@ public class FacilityImpl implements Facility {
 
 	private void doUpdateRequirementCriticality(RequirementVersion reqVersion, RequirementVersion orig) {
 		RequirementCriticality newCriticality = reqVersion.getCriticality();
-		if (newCriticality != null && !newCriticality.equals(orig.getCriticality())) {
+		if (newCriticality != null && newCriticality != orig.getCriticality()) {
 			requirementVersionManagerService.changeCriticality(orig.getId(), newCriticality);
 		}
 	}
@@ -990,7 +990,7 @@ public class FacilityImpl implements Facility {
 			}
 		}
 
-		if (checkedMilestones.size() > 0) {
+		if (!checkedMilestones.isEmpty()) {
 			requirementVersionPersisted.getMilestones().clear();
 			requirementVersionManagerService.bindMilestones(requirementVersionPersisted.getId(), checkedMilestones);
 		}
@@ -1229,7 +1229,7 @@ public class FacilityImpl implements Facility {
 		}
 
 		TestCaseImportance newImp = testCase.getImportance();
-		if (newImp != null && !orig.getImportance().equals(newImp)) {
+		if (newImp != null && orig.getImportance() != newImp) {
 			testcaseModificationService.changeImportance(origId, newImp);
 		}
 
@@ -1244,7 +1244,7 @@ public class FacilityImpl implements Facility {
 		}
 
 		TestCaseStatus newStatus = testCase.getStatus();
-		if (newStatus != null && !orig.getStatus().equals(newStatus)) {
+		if (newStatus != null && orig.getStatus() != newStatus) {
 			testcaseModificationService.changeStatus(origId, newStatus);
 		}
 
@@ -1567,7 +1567,7 @@ public class FacilityImpl implements Facility {
 		RequirementStatus newstatus = rvi.getTarget().getImportedRequirementStatus();
 		RequirementStatus oldStatus = rvi.getRequirementVersion().getStatus();
 
-		if (newstatus == null || newstatus.equals(oldStatus)) {
+		if (newstatus == null || newstatus == oldStatus) {
 			return;
 		}
 

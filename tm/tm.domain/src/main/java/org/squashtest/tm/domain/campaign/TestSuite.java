@@ -137,7 +137,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * When one needs to create a suite in the scope of an iteration, it should use
 	 * {@link Iteration#addTestSuite(TestSuite)}. This method is for internal use only.
-	 * 
+	 *
 	 */
 	/* package */void setIteration(@NotNull Iteration iteration) {
 		this.iteration = iteration;
@@ -155,12 +155,12 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	private boolean boundToThisSuite(IterationTestPlanItem item) {
 		List<TestSuite> suites = item.getTestSuites();
 
-		return suites.size() > 0 && hasSame(suites);
+		return !suites.isEmpty() && hasSame(suites);
 	}
 
 	/**
 	 * Compares 2 suites, for internal use.
-	 * 
+	 *
 	 */
 	private boolean hasSame(List<TestSuite> suites) {
 
@@ -203,7 +203,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Binds the test plan items to this test suite
-	 * 
+	 *
 	 */
 	public void bindTestPlanItems(List<IterationTestPlanItem> items) {
 		for (IterationTestPlanItem item : items) {
@@ -233,7 +233,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Binds the test plan items to this test suite using their id to retrieve them from the iteration.
-	 * 
+	 *
 	 */
 	public void bindTestPlanItemsById(List<Long> itemIds) {
 		for (Long itemId : itemIds) {
@@ -265,7 +265,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * -test plans items that are not linked to a test case are not copied<br>
 	 * -the copy of a test plan item is done using {@linkplain IterationTestPlanItem#createCopy()}
 	 * </p>
-	 * 
+	 *
 	 * @return an ordered copy of the test-suite test plan
 	 */
 	public List<IterationTestPlanItem> createPastableCopyOfTestPlan() {
@@ -288,7 +288,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	 * returns a copy of a test Suite without it's test plan. <br>
 	 * a copy of the test plan can be found at {@linkplain TestSuite#createPastableCopyOfTestPlan()}
 	 * </p>
-	 * 
+	 *
 	 * @return returns a copy of a test Suite
 	 */
 	@Override
@@ -332,7 +332,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	}
 
 	private boolean testCaseHasSteps(TestCase testCase) {
-		return testCase != null && testCase.getSteps() != null && testCase.getSteps().size() > 0;
+		return testCase != null && testCase.getSteps() != null && !testCase.getSteps().isEmpty();
 	}
 
 	/**
@@ -351,7 +351,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 	/**
 	 * Determines if the item is the first of the test plan of the test suite
-	 * 
+	 *
 	 * @param itemId
 	 *            : the id of the item to determine if it is the first executable test plan item
 	 * @param testerLogin
@@ -361,7 +361,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 
 		for (IterationTestPlanItem iterationTestPlanItem : this.testPlan) {
 			if ((testerLogin == null || iterationTestPlanItem.isAssignedToUser(testerLogin))
-					&& (boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted())) {
+					&& boundToThisSuite(iterationTestPlanItem) && !iterationTestPlanItem.isTestCaseDeleted()) {
 				return itemId == iterationTestPlanItem.getId();
 			}
 		}
@@ -372,7 +372,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted)
 	 * <em>can return item linked to test-case with no step</em>
-	 * 
+	 *
 	 * @throws TestPlanItemNotExecutableException
 	 *             if no item is found
 	 * @throws IllegalArgumentException
@@ -386,7 +386,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	/**
 	 * finds next item (that last execution has unexecuted step) or (has no execution and is not test case deleted) and that is assigned to the current user if he is a tester.<br>
 	 * <em>NB: can return item linked to test-case with no step</em>
-	 * 
+	 *
 	 * @throws TestPlanItemNotExecutableException
 	 *             if no item is found
 	 * @throws IllegalArgumentException
@@ -396,7 +396,7 @@ public class TestSuite implements Identified, Copiable, TreeNode, BoundEntity, A
 	public IterationTestPlanItem findNextExecutableTestPlanItem(long testPlanItemId, String testerLogin) {
 		List<IterationTestPlanItem> remaining = getRemainingPlanById(testPlanItemId);
 		for (IterationTestPlanItem item : remaining) {
-			if ((testerLogin == null || item.isAssignedToUser(testerLogin)) && (item.isExecutableThroughTestSuite())) {
+			if ((testerLogin == null || item.isAssignedToUser(testerLogin)) && item.isExecutableThroughTestSuite()) {
 				return item;
 			}
 		}

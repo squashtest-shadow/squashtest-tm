@@ -157,8 +157,9 @@ public class RequirementVersionModificationController {
 		return "page/requirement-workspace/show-requirement-version";
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id=requirement-description", VALUE }, produces = "text/plain;charset=UTF-8")
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"id=requirement-description", VALUE}, produces = "text/plain;charset=UTF-8")
+	public
 	String changeDescription(@PathVariable long requirementVersionId, @RequestParam(VALUE) String newDescription) {
 		requirementVersionManager.changeDescription(requirementVersionId, newDescription);
 		return newDescription;
@@ -263,8 +264,9 @@ public class RequirementVersionModificationController {
 	}
 
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
+	public
 	Object rename(@PathVariable long requirementVersionId, @RequestParam("newName") String newName) {
 		requirementVersionManager.rename(requirementVersionId, newName);
 		return new  RenameModel(newName);
@@ -331,10 +333,10 @@ public class RequirementVersionModificationController {
 		for (RequirementVersion version : cloneRequirementVersions) {
 			if (version.getStatus() != RequirementStatus.OBSOLETE) {
 				status = i18nHelper.internationalize("requirement.status." + version.getStatus().name(), locale);
-				versionsNumbersById.put("" + version.getId(), "" + version.getVersionNumber() + " (" + status + ")");
+				versionsNumbersById.put(String.valueOf(version.getId()), version.getVersionNumber() + " (" + status + ")");
 			}
 		}
-		versionsNumbersById.put("selected", "" + requirementVersionId);
+		versionsNumbersById.put("selected", String.valueOf(requirementVersionId));
 
 		return versionsNumbersById;
 	}
@@ -349,8 +351,8 @@ public class RequirementVersionModificationController {
 
 		@Override
 		public int compare(RequirementVersion rV1, RequirementVersion rV2) {
-			return (rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : (rV1.getVersionNumber() == rV2
-					.getVersionNumber() ? 0 : 1));
+			return rV1.getVersionNumber() > rV2.getVersionNumber() ? -1 : rV1.getVersionNumber() == rV2
+					.getVersionNumber() ? 0 : 1;
 		}
 	}
 
@@ -461,7 +463,7 @@ public class RequirementVersionModificationController {
 				return ((Milestone)milestone).getStatus().isBindableToObject();
 			}
 		});
-		Boolean isMilestoneInProject = mil.size() != 0;
+		Boolean isMilestoneInProject = !mil.isEmpty();
 
 
 		// add them to the model

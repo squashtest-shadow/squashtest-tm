@@ -107,7 +107,7 @@ public class InfoListController {
 	/**
 	 * Tells if an item identified by its code exists or not. Existence is
 	 * checked across all items of all info lists.
-	 * 
+	 *
 	 * @param code
 	 * @return JSON <code>{ exists: <true|false> }</code>
 	 */
@@ -134,7 +134,7 @@ public class InfoListController {
 	/**
 	 * Tells if an item identified by its code exists or not. Existence is
 	 * checked across all items of all info lists.
-	 * 
+	 *
 	 * @param code
 	 * @return JSON <code>{ exists: <true|false> }</code>
 	 */
@@ -151,7 +151,7 @@ public class InfoListController {
 
 	/**
 	 * Alias of {@link InfoListItemController#getItemByCode(String)}
-	 * 
+	 *
 	 * @param code
 	 * @return
 	 */
@@ -163,7 +163,7 @@ public class InfoListController {
 
 	/**
 	 * Tells if a list identified by a unique property exists or not.
-	 * 
+	 *
 	 * @param prop
 	 *            name of the property. `label` and `code` are supported
 	 * @value
@@ -193,9 +193,10 @@ public class InfoListController {
 		infoListManager.changeItemsPositions(infoListId, newIndex, itemsIds);
 	}
 
-	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
+	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody
+	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
+	public
 	void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("new-info-list-item") UserListItem item) {
 		infoListItemManager.addInfoListItem(infoListId, item);
 	}

@@ -34,14 +34,15 @@ import org.squashtest.tm.service.customreport.CustomReportFolderService;
 
 @Controller
 public class CustomReportFolderController {
-	
+
 	@Inject
 	CustomReportFolderService crfService;
 
 	//--- CHANGE DESCRIPTION ---
-	
-		@RequestMapping(method = RequestMethod.POST,value="custom-report-workspace/description/{folderId}", params = { "id=folder-description", VALUE })
-		public @ResponseBody
+
+		@ResponseBody
+		@RequestMapping(method = RequestMethod.POST, value = "custom-report-workspace/description/{folderId}", params = {"id=folder-description", VALUE})
+		public
 		String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
 			crfService.updateDescription(folderId, newDescription);
 			return newDescription;

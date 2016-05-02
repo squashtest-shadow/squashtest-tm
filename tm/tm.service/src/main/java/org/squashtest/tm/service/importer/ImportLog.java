@@ -168,7 +168,7 @@ public class ImportLog{
 
 			// now we set our flag according to the status of the
 			// current entry and update precLine
-			okFoundOnPrecEntry = (curStatus == OK);
+			okFoundOnPrecEntry = curStatus == OK;
 			precLine = curLine;
 		}
 
@@ -222,8 +222,8 @@ public class ImportLog{
 			LogEntry entry = iter.next();
 			Integer precLine = entry.getLine();	// we move the iterator forward purposedly
 
-			errors = (entry.getStatus() == FAILURE);
-			warnings = (entry.getStatus() == WARNING);
+			errors = entry.getStatus() == FAILURE;
+			warnings = entry.getStatus() == WARNING;
 
 			while(iter.hasNext()){
 				entry = iter.next();
@@ -234,12 +234,12 @@ public class ImportLog{
 					countForEntity(type, errors, warnings);
 
 					// reset
-					errors = (entry.getStatus() == FAILURE);
-					warnings = (entry.getStatus() == WARNING);
+					errors = entry.getStatus() == FAILURE;
+					warnings = entry.getStatus() == WARNING;
 				}
 				else{
-					errors = (entry.getStatus() == FAILURE || errors);
-					warnings = (entry.getStatus() == WARNING || warnings);
+					errors = entry.getStatus() == FAILURE || errors;
+					warnings = entry.getStatus() == WARNING || warnings;
 				}
 
 				precLine = curLine;

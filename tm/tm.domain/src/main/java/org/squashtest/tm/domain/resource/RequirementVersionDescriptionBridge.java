@@ -49,17 +49,17 @@ public class RequirementVersionDescriptionBridge implements FieldBridge{
 
 	@Override
 	public void set(String name, Object value, Document document, LuceneOptions luceneOptions) {
-		
+
 		String description = (String) value;
 		Integer val = 1;
-		if(description == null || "".equals(description.trim())){
+		if(description == null || description.trim() != null && description.trim().isEmpty()){
 			val = 0;
 		}
-		
+
 		Field field = new Field(name, String.valueOf(val), luceneOptions.getStore(),
 				   luceneOptions.getIndex(), luceneOptions.getTermVector() );
 				   field.setBoost( luceneOptions.getBoost());
-				
+
 		document.add(field);
 	}
 }

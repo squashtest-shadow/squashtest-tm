@@ -22,7 +22,7 @@ package org.squashtest.tm.web.internal.report;
 
 /**
  * @author Gregory
- * 
+ *
  */
 public class ReportIdentifier {
 	private final String namespace;
@@ -46,7 +46,7 @@ public class ReportIdentifier {
 		final int prime = 31;
 		int result = 7;
 		result = prime * result + index;
-		result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+		result = prime * result + (namespace == null ? 0 : namespace.hashCode());
 		return result;
 	}
 
@@ -55,7 +55,7 @@ public class ReportIdentifier {
 	 */
 	@Override
 	public boolean equals(Object obj) {
-		
+
 		if (this == obj){return true;}
 		if (obj == null){return false;}
 		if (getClass() != obj.getClass()){return false;}

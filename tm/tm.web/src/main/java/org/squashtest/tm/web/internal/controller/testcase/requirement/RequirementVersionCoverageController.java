@@ -43,8 +43,9 @@ public class RequirementVersionCoverageController {
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
 
+	@ResponseBody
 	@RequestMapping(value = "{requirementVersionCoverageId}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void removeVerifiedRequirementVersionFromTestCase(@PathVariable long requirementVersionId,
 			@PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionFromTestCase(requirementVersionId, testCaseId);

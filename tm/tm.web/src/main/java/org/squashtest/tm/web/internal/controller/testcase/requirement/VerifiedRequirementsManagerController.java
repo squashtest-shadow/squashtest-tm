@@ -86,9 +86,9 @@ import com.google.common.base.Optional;
 
 /**
  * Controller for verified requirements management page.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 public class VerifiedRequirementsManagerController {
@@ -187,8 +187,9 @@ public class VerifiedRequirementsManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
-	public @ResponseBody
+	public
 	Map<String, Object> addVerifiedRequirementsToTestCase(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
  @PathVariable long testCaseId) {
 
@@ -201,8 +202,9 @@ public class VerifiedRequirementsManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirements", method = RequestMethod.POST, params = REQUIREMENTS_IDS)
-	public @ResponseBody
+	public
 	Map<String, Object> addVerifiedRequirementsToTestStep(@RequestParam(REQUIREMENTS_IDS) List<Long> requirementsIds,
  @PathVariable long testStepId) {
 
@@ -214,8 +216,9 @@ public class VerifiedRequirementsManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionId}", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	Map<String, Object> addVerifiedRequirementToTestStep(@PathVariable long requirementVersionId,
 			@PathVariable long testStepId) {
 		Collection<VerifiedRequirementException> rejections = verifiedRequirementsManagerService
@@ -245,8 +248,9 @@ public class VerifiedRequirementsManagerController {
 		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-cases/{testCaseId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void removeVerifiedRequirementVersionsFromTestCase(@PathVariable List<Long> requirementVersionsIds,
 			@PathVariable long testCaseId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestCase(requirementVersionsIds,
@@ -254,8 +258,9 @@ public class VerifiedRequirementsManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-steps/{testStepId}/verified-requirement-versions/{requirementVersionsIds}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void removeVerifiedRequirementVersionsFromTestStep(@PathVariable List<Long> requirementVersionsIds,
 			@PathVariable long testStepId) {
 		verifiedRequirementsManagerService.removeVerifiedRequirementVersionsFromTestStep(requirementVersionsIds,
@@ -312,7 +317,7 @@ public class VerifiedRequirementsManagerController {
 
 	/**
 	 * gets the table model for step's verified requirement versions.
-	 * 
+	 *
 	 * @param params
 	 *            : the {@link DataTableDrawParameters}
 	 * @param testStepId

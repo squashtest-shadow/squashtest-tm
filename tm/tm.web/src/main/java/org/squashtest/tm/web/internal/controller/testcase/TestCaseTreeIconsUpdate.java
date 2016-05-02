@@ -38,7 +38,7 @@ public class TestCaseTreeIconsUpdate {
 		this.id = id;
 		doSetImportance(importance);
 	}
-	
+
 	public TestCaseTreeIconsUpdate(long id ,boolean isreqcovered) {
 		super();
 		this.id = id;
@@ -51,7 +51,7 @@ public class TestCaseTreeIconsUpdate {
 		return isreqcovered;
 	}
 	private void doSetReq(boolean isreqcovered) {
-		this.isreqcovered  = ""+isreqcovered;
+		this.isreqcovered  = String.valueOf(isreqcovered);
 	}
 	public String getImportance() {
 		return importance;
@@ -59,7 +59,7 @@ public class TestCaseTreeIconsUpdate {
 	private void doSetImportance(TestCaseImportance importance) {
 		this.importance = importance.toString().toLowerCase();
 	}
-	
-	
+
+
 }
 

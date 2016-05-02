@@ -240,9 +240,9 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	@Override
 	public boolean projectUsesExecutionStatus(long projectId, ExecutionStatus executionStatus) {
-		return (hasExecStepWithStatus(projectId, executionStatus)
+		return hasExecStepWithStatus(projectId, executionStatus)
 				|| hasItemTestPlanWithStatus(projectId, executionStatus)
-				|| hasExecWithStatus(projectId, executionStatus) );
+				|| hasExecWithStatus(projectId, executionStatus);
 	}
 
 	private boolean hasItemTestPlanWithStatus(long projectId, ExecutionStatus executionStatus) {
@@ -361,7 +361,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 	@Override
 	public boolean wasNeverRan(Long executionId) {
-		return ((countExecutionSteps(executionId) - countReady(executionId)) == 0);
+		return countExecutionSteps(executionId) - countReady(executionId) == 0;
 	}
 
 	private static class CountStepStatusByExecutionParamSetter implements SetQueryParametersCallback {

@@ -489,7 +489,7 @@ public class ExportModel {
 			this.nbReq = nbReq;
 			this.nbAttach = nbAttach;
 			this.calledDsName = calledDsName;	// special call steps
-			this.delegateParameters = (delegateParameters == 1); // special call steps
+			this.delegateParameters = delegateParameters == 1; // special call steps
 		}
 
 		public String getTcOwnerPath() {
@@ -663,7 +663,7 @@ public class ExportModel {
 				int comp1 = o1.getTcOwnerPath().compareTo(o2.getTcOwnerPath());
 				int comp2 = o1.getName().compareTo(o2.getName());
 				int comp3 = o1.getParamName().compareTo(o2.getParamName());
-				return (comp1 != 0) ? comp1 : (comp2 != 0) ? comp2 : comp3;
+				return comp1 != 0 ? comp1 : comp2 != 0 ? comp2 : comp3;
 			}
 		};
 
@@ -764,7 +764,7 @@ public class ExportModel {
 			this.ownerId = ownerId;
 			this.ownerType = ownerType;
 			this.code = code;
-			this.value = (! StringUtils.isBlank(largeValue)) ? largeValue : value;
+			this.value = ! StringUtils.isBlank(largeValue) ? largeValue : value;
 			this.type = type;
 			this.selectedOptions = selectedOptions;
 		}
@@ -782,7 +782,7 @@ public class ExportModel {
 		}
 
 		public String getValue() {
-			return (! StringUtils.isBlank(selectedOptions)) ? selectedOptions : value ;
+			return ! StringUtils.isBlank(selectedOptions) ? selectedOptions : value ;
 		}
 
 		public InputType getType() {

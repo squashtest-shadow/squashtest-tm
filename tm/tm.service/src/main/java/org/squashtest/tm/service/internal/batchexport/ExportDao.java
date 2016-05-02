@@ -299,7 +299,7 @@ public class ExportDao {
 
 	private String getPathFromFolder(Long requirementId) {
 		String result = requirementVersionQuery("requirement.findReqFolderPath", requirementId, "");
-		return result.equals("") ? result : result + HibernatePathService.PATH_SEPARATOR;
+		return result != null && result.isEmpty() ? result : result + HibernatePathService.PATH_SEPARATOR;
 	}
 
 	@SuppressWarnings("unchecked")

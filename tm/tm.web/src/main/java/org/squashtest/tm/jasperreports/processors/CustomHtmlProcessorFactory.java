@@ -56,20 +56,20 @@ import org.slf4j.LoggerFactory;
 
 
 /**
- * As a solution to issue https://ci.squashtest.org/mantis/view.php?id=2293 this implementation 
- * will handle &lt;strong&gt; and &lt;em&gt; instead of their obsolete versions. This implementation must 
- * be supplied in Jasper Report configuration, like 
+ * As a solution to issue https://ci.squashtest.org/mantis/view.php?id=2293 this implementation
+ * will handle &lt;strong&gt; and &lt;em&gt; instead of their obsolete versions. This implementation must
+ * be supplied in Jasper Report configuration, like
  * net.sf.jasperreports.markup.processor.factory.html=org.squashtest.tm.web.internal.controller.report.CustomHtmlProcessorFactory
- * 
+ *
  * @author bsiri
  *
  */
 public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor implements MarkupProcessorFactory {
 
 	private static CustomHtmlProcessorFactory custom_instance;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomHtmlProcessorFactory.class);
-	
+
 
 	@Override
 	public MarkupProcessor createMarkupProcessor(){
@@ -78,32 +78,32 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 		}
 		return custom_instance;
 	}
-	
-	
+
+
 	//slightly scrapped from JEditorPanelHtmlMarkupProcessor
 	@Override
 	protected Map<Attribute,Object> getAttributes(AttributeSet attrSet){
-		
+
 		Map<Attribute, Object> attributes = super.getAttributes(attrSet);
-		
-		//checks for attributes WEIGHT and POSTURE. If they were not set, checks whether some HTML.Tag named "strong" of "em" exists in the 
+
+		//checks for attributes WEIGHT and POSTURE. If they were not set, checks whether some HTML.Tag named "strong" of "em" exists in the
 		//attribute set.
-		
+
 		if (! attributes.containsKey(TextAttribute.WEIGHT) &&
 		   hasHtmlTag(attrSet, HTML.Tag.STRONG)){
 			attributes.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
 		}
-	
+
 		if (! attributes.containsKey(TextAttribute.POSTURE) &&
 				hasHtmlTag(attrSet, HTML.Tag.EM)){
 			attributes.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
 		}
-		
+
 		return attributes;
 	}
-	
+
 	public boolean hasHtmlTag(AttributeSet attrSet, HTML.Tag tag){
-		Enumeration<?> attrNames = attrSet.getAttributeNames();  
+		Enumeration<?> attrNames = attrSet.getAttributeNames();
 		while (attrNames.hasMoreElements()){
 			Object obj = attrNames.nextElement();
 			if (tag.equals(obj)){
@@ -112,7 +112,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 		}
 		return false;
 	}
-	
+
 	// NOSONAR:START
 	// COPY PASTA FROM JEditorPaneHtmlMarkupProcessor to correct bug 2411
 	@Override
@@ -147,7 +147,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 			whitespaces[i] = "";
 		}
 		JRStyledText styledText = new JRStyledText();
-		
+
 		for(int i = 0; i < elements.size(); i++)
 		{
 			if (bodyOccurred && chunk != null)
@@ -161,7 +161,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 				}
 				if (!styleAttributes.isEmpty())
 				{
-					styledText.addRun(new JRStyledText.Run(styleAttributes, 
+					styledText.addRun(new JRStyledText.Run(styleAttributes,
 							startOffset + crtOffset, endOffset + crtOffset));
 				}
 			}
@@ -174,10 +174,10 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 			AttributeSet attrs = element.getAttributes();
 
 			Object elementName = attrs.getAttribute(AbstractDocument.ElementNameAttribute);
-			Object object = (elementName != null) ? null : attrs.getAttribute(StyleConstants.NameAttribute);
-			if (object instanceof HTML.Tag) 
+			Object object = elementName != null ? null : attrs.getAttribute(StyleConstants.NameAttribute);
+			if (object instanceof HTML.Tag)
 			{
-				
+
 				HTML.Tag htmlTag = (HTML.Tag) object;
 				if(htmlTag == Tag.BODY)
 				{
@@ -193,7 +193,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 					orderedListIndex[i] = 0;
 					String parentName = parent.getName().toLowerCase();
 					whitespaces[i] = whitespaces[elements.indexOf(parent)] + whitespace;
-					if(parentName.equals("li"))
+					if("li".equals(parentName))
 					{
 						chunk = "";
 					}
@@ -208,7 +208,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 					whitespaces[i] = whitespaces[elements.indexOf(parent)] + whitespace;
 
 					String parentName = parent.getName().toLowerCase();
-					if(parentName.equals("li"))
+					if("li".equals(parentName))
 					{
 						chunk = "";
 					}
@@ -217,23 +217,23 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 						chunk = "\n";
 						++crtOffset;
 					}
-					
+
 				}
 				else if(htmlTag == Tag.LI)
 				{
-					
+
 					whitespaces[i] = whitespaces[elements.indexOf(parent)];
-					if(element.getElement(0) != null && 
-							(element.getElement(0).getName().toLowerCase().equals("ol") || element.getElement(0).getName().toLowerCase().equals("ul"))
+					if(element.getElement(0) != null &&
+							("ol".equals(element.getElement(0).getName().toLowerCase()) || "ul".equals(element.getElement(0).getName().toLowerCase()))
 							)
 					{
 						chunk = "";
 					}
-					else if(parent.getName().equals("ol"))
+					else if("ol".equals(parent.getName()))
 					{
 						int index = elements.indexOf(parent);
 						chunk = whitespaces[index] + String.valueOf(++orderedListIndex[index]) + ".  ";
-					} 
+					}
 					else
 					{
 						chunk = whitespaces[elements.indexOf(parent)] + "\u2022  ";
@@ -280,11 +280,11 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 			}
 			if (!styleAttributes.isEmpty())
 			{
-				styledText.addRun(new JRStyledText.Run(styleAttributes, 
+				styledText.addRun(new JRStyledText.Run(styleAttributes,
 						startOffset + crtOffset, endOffset + crtOffset));
 			}
 		}
-		
+
 		styledText.setGlobalAttributes(new HashMap<Attribute,Object>());
 		// FIX FOR [Issue 2411]
 		List<Run> runs = styledText.getRuns();
@@ -292,7 +292,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 			if (run.endIndex > styledText.length()){
 				run.endIndex = styledText.length();
 			}
-			
+
 		}
 		// END FIX FOR  [Issue 2411]
 		return JRStyledTextParser.getInstance().write(styledText);

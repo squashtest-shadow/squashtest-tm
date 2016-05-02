@@ -31,7 +31,7 @@ import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
 
 public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
-	
+
 	private String errorPage;
 
 	@Override
@@ -46,8 +46,8 @@ public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
                 // Set the 403 status code.
                 response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                
-                
+
+
                 response.sendRedirect(errorPage);
                 // forward to error page.
                 //RequestDispatcher dispatcher = request.getRequestDispatcher(errorPage);
@@ -57,7 +57,7 @@ public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
             }
         }
 	}
-	
+
 	/**
      * The error page to use. Must begin with a "/" and is interpreted relative to the current context root.
      *
@@ -67,7 +67,7 @@ public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
      */
     @Override
 	public void setErrorPage(String errorPage) {
-        if ((errorPage != null) && !errorPage.startsWith("/")) {
+        if (errorPage != null && !errorPage.startsWith("/")) {
             throw new IllegalArgumentException("errorPage must begin with '/'");
         }
 

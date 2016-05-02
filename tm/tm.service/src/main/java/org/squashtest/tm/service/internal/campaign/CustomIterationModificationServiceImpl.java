@@ -419,7 +419,7 @@ IterationTestPlanManager {
 			throw new ExecutionWasDeleted();
 		}
 
-		if (exec.getReferencedTestCase() != null && exec.getReferencedTestCase().getSteps().size() == 0) {
+		if (exec.getReferencedTestCase() != null && exec.getReferencedTestCase().getSteps().isEmpty()) {
 			throw new ExecutionHasNoStepsException();
 		}
 

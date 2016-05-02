@@ -50,12 +50,12 @@ public class CampaignFolderModificationController extends FolderModificationCont
 
 	/*
 	 * We need this service to expose the statistics-provider methods for campaign folder.
-	 * 
+	 *
 	 * TODO : move this method to the folder modification service, once the small problem
 	 * of having a specific method exposed in a generic class resolved.
-	 * 
+	 *
 	 * OR
-	 * 
+	 *
 	 * TODO : just inject the CampaignStatisticsService directly. But it is not secured yet (hence
 	 * the need to channel this via another secured service).
 	 */
@@ -97,8 +97,9 @@ public class CampaignFolderModificationController extends FolderModificationCont
 	// *************************** statistics ********************************
 
 	// URL should have been /statistics, but that was already used by another method in this controller
+	@ResponseBody
 	@RequestMapping(value = "/dashboard-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody
+	public
  ManyCampaignStatisticsBundle getStatisticsAsJson(
 			@PathVariable(RequestParams.FOLDER_ID) long folderId) {
 		return campaignModificationService.gatherFolderStatisticsBundle(folderId);

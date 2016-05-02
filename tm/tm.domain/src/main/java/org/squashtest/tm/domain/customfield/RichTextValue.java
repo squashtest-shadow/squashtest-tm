@@ -39,7 +39,7 @@ public class RichTextValue extends CustomFieldValue {
 	@Override
 	public void setValue(String value){
 		CustomField field = getCustomField();
-		if (field != null && (!field.isOptional() && StringUtils.isBlank(value))){
+		if (field != null && !field.isOptional() && StringUtils.isBlank(value)){
 			throw new MandatoryCufException(this);
 		}
 
@@ -48,7 +48,7 @@ public class RichTextValue extends CustomFieldValue {
 
 	@Override
 	public String getValue(){
-		return (largeValue  != null) ? largeValue  : "";
+		return largeValue  != null ? largeValue  : "";
 	}
 
 	@Override

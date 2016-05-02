@@ -64,7 +64,7 @@ import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 //@Service
 public class ColumnPrototypeModification implements ApplicationListener<ColumnPrototypeEvent> {
 
-	private final static Transformer TYPE_COLLECTOR = new Transformer() {
+	private static final Transformer TYPE_COLLECTOR = new Transformer() {
 
 		@Override
 		public Object transform(Object cufBinding) {
@@ -73,8 +73,8 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		}
 	};
 
-	private final static QColumnPrototype PROTOTYPE = QColumnPrototype.columnPrototype;
-	private final static QFilter FILTER = QFilter.filter;
+	private static final QColumnPrototype PROTOTYPE = QColumnPrototype.columnPrototype;
+	private static final QFilter FILTER = QFilter.filter;
 
 	@PersistenceContext
 	private EntityManager em;
@@ -298,7 +298,7 @@ public class ColumnPrototypeModification implements ApplicationListener<ColumnPr
 		// we need to fix the name for test step...because it's not called the same in bindable entity and
 		// entityType
 		// Maybe we could do something better later to avoid having different name for the same thing
-		String name = bind.equals(BindableEntity.TEST_STEP) ? EntityType.TEST_CASE_STEP.name() : bind.name();
+		String name = bind == BindableEntity.TEST_STEP ? EntityType.TEST_CASE_STEP.name() : bind.name();
 		return EntityType.valueOf(name);
 
 	}

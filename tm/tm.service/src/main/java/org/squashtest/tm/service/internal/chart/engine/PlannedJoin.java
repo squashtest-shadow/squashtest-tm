@@ -79,7 +79,7 @@ class PlannedJoin extends Couple<InternalEntityType, InternalEntityType>{
 	public int hashCode() {
 		final int prime = 31;
 		int result = super.hashCode();
-		result = prime * result + ((attribute == null) ? 0 : attribute.hashCode());
+		result = prime * result + (attribute == null ? 0 : attribute.hashCode());
 		return result;
 	}
 

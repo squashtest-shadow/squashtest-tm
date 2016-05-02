@@ -43,7 +43,7 @@ import org.squashtest.tm.web.internal.interceptor.openedentity.OpenedEntities;
 
 @Controller
 public class ObjectAccessController {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ObjectAccessController.class);
 
 	@RequestMapping(value = "/test-cases/{id}/opened-entity", method = RequestMethod.DELETE)
@@ -52,14 +52,14 @@ public class ObjectAccessController {
 		String contextKey = TestCase.class.getSimpleName();
 		removeViewForObject(id, request, contextKey);
 	}
-	
+
 	@RequestMapping(value = "/requirements/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveRequirement(@PathVariable("id") Long id, HttpServletRequest request) {
 		String contextKey = Requirement.class.getSimpleName();
 		removeViewForObject(id, request, contextKey);
 	}
-	
+
 	@RequestMapping(value = "/campaigns/{id}/opened-entity", method = RequestMethod.DELETE)
 	@ResponseBody
 	public void leaveCampaign(@PathVariable("id") Long id, HttpServletRequest request) {
@@ -84,7 +84,7 @@ public class ObjectAccessController {
 		String contextKey = Execution.class.getSimpleName();
 		removeViewForObject(id, request, contextKey);
 	}
-	
+
 	private void removeViewForObject(Long id, HttpServletRequest request, String contextKey) {
 		Principal user = request.getUserPrincipal();
 		HttpSession session = request.getSession();
@@ -93,7 +93,7 @@ public class ObjectAccessController {
 			if (context != null && user != null) {
 				LOGGER.debug("context = "+context);
 				LOGGER.debug("leave "+contextKey+" #" + id);
-								LOGGER.debug(""+user.getName());
+								LOGGER.debug(user.getName());
 				OpenedEntities openedEnities = (OpenedEntities) context.getAttribute(contextKey);
 				if(openedEnities != null){
 					openedEnities.removeView(user.getName(), id);
@@ -101,6 +101,6 @@ public class ObjectAccessController {
 			}
 		}
 	}
-	
+
 
 }

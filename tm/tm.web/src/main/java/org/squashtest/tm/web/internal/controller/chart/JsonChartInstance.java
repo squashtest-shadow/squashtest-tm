@@ -372,7 +372,7 @@ public class JsonChartInstance {
 		}
 
 		private void findName(ChartDefinition def) {
-			if (entityType.equals(EntityType.PROJECT)&&def.getProject()!=null) {
+			if (entityType == EntityType.PROJECT &&def.getProject()!=null) {
 				name = def.getProject().getName();
 			}
 		}

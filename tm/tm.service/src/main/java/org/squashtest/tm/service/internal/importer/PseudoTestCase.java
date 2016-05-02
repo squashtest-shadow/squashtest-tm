@@ -66,7 +66,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 		List<String[]> elements = descriptionElements;
 
-		if (elements.size() > 0) {
+		if (!elements.isEmpty()) {
 			// appending the description
 			builder.append("<p>").append(elements.get(0)[1]).append("</p>");
 		}
@@ -166,7 +166,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	public String formatPreRequisites() {
 		StringBuilder builder = new StringBuilder();
 
-		if (prerequisites.size() > 0) {
+		if (!prerequisites.isEmpty()) {
 
 			builder.append("<ol>");
 

@@ -72,15 +72,15 @@ public class IndexationServiceImpl implements IndexationService {
 	@Inject
 	private ConfigurationService configurationService;
 
-	public final static String SQUASH_VERSION_KEY = "squashtest.tm.database.version";
+	public static final String SQUASH_VERSION_KEY = "squashtest.tm.database.version";
 
-	public final static String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
-	public final static String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
-	public final static String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
+	public static final String REQUIREMENT_INDEXING_DATE_KEY = "lastindexing.requirement.date";
+	public static final String TESTCASE_INDEXING_DATE_KEY = "lastindexing.testcase.date";
+	public static final String CAMPAIGN_INDEXING_DATE_KEY = "lastindexing.campaign.date";
 
-	public final static String REQUIREMENT_INDEXING_VERSION_KEY = "lastindexing.requirement.version";
-	public final static String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
-	public final static String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
+	public static final String REQUIREMENT_INDEXING_VERSION_KEY = "lastindexing.requirement.version";
+	public static final String TESTCASE_INDEXING_VERSION_KEY = "lastindexing.testcase.version";
+	public static final String CAMPAIGN_INDEXING_VERSION_KEY = "lastindexing.campaign.version";
 
 	private static final int BATCH_SIZE = 20;
 

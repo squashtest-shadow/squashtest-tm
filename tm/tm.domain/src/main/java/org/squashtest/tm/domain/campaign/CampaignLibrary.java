@@ -188,7 +188,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	@Override
 	public boolean isPluginEnabled(String pluginId) {
-		return (getPluginBinding(pluginId) != null);
+		return getPluginBinding(pluginId) != null;
 	}
 
 	/* ***************************** SelfClassAware section ******************************* */
@@ -205,7 +205,7 @@ public class CampaignLibrary extends GenericLibrary<CampaignLibraryNode> {
 
 	@Override
 	public boolean hasContent() {
-		return (rootContent.size() > 0);
+		return !rootContent.isEmpty();
 	}
 
 	@Override

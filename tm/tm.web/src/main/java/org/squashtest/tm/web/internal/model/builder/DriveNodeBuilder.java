@@ -106,7 +106,7 @@ public class DriveNodeBuilder<LN extends LibraryNode> extends
 
 			// because of the milestoneFilter it may happen that the children collection ends up empty.
 			// in that case we must set the state of the node accordingly
-			State state = (children.isEmpty()) ? State.leaf : State.open;
+			State state = children.isEmpty() ? State.leaf : State.open;
 			node.setState(state);
 		}
 

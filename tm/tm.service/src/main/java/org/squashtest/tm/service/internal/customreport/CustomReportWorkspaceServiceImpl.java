@@ -43,13 +43,13 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 @Service("org.squashtest.tm.service.customreport.CustomReportWorkspaceService")
 public class CustomReportWorkspaceServiceImpl implements
 		CustomReportWorkspaceService {
-	
+
 	@Inject
 	private CustomReportLibraryDao libraryDao;
-	
+
 	@Inject
 	private CustomReportLibraryNodeDao crlnDao;
-	
+
 	@Inject
 	private ProjectFilterModificationService projectFilterModificationService;
 
@@ -80,7 +80,7 @@ public class CustomReportWorkspaceServiceImpl implements
 		ProjectFilter projectFilter = projectFilterModificationService.findProjectFilterByUserLogin();
 		List<Long> projectIds = new ArrayList<>();
 		if (projectFilter.isEnabled()) {
-			if (projectFilter.getProjects().size()==0) {
+			if (projectFilter.getProjects().isEmpty()) {
 				return Collections.emptyList();
 			}
 			for (Project project : projectFilter.getProjects()) {

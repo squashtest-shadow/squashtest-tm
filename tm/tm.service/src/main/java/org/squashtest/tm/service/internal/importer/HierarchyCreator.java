@@ -35,9 +35,9 @@ import org.squashtest.tm.service.internal.archive.Entry;
 
 /**
  * Must read an archive and make test cases from the files it includes.
- * 
+ *
  * regarding the summary : may increment total test cases, warnings and failures, but not success.
- * 
+ *
  * @author bsiri
  *
  */
@@ -101,7 +101,7 @@ class HierarchyCreator{
 	/**
 	 * will chain-create folders if path elements do not exist. Will also store the path in a map
 	 * for faster reference later.
-	 * 
+	 *
 	 * @param path
 	 */
 	private TestCaseFolder findOrCreateFolder(Entry entry){
@@ -174,14 +174,14 @@ class HierarchyCreator{
 
 	private void fixNatureTypes(TestCase testCase){
 		InfoListItem importNature = testCase.getNature();
-		if (importNature == null || (! project.getTestCaseNatures().contains(importNature))){
+		if (importNature == null || ! project.getTestCaseNatures().contains(importNature)){
 			InfoListItem newNature = project.getTestCaseNatures().getDefaultItem();
 			testCase.setNature(newNature);
 			summary.incrModified();
 		}
 
 		InfoListItem importType = testCase.getType();
-		if (importType == null || (! project.getTestCaseTypes().contains(importType))){
+		if (importType == null || ! project.getTestCaseTypes().contains(importType)){
 			InfoListItem newType = project.getTestCaseTypes().getDefaultItem();
 			testCase.setType(newType);
 			summary.incrModified();

@@ -526,10 +526,10 @@ public final class BugTrackerControllerHelper {
 			String name = "this is clearly a bug";
 
 			if (bugged instanceof ExecutionStep) {
-				ExecutionStep step = ((ExecutionStep) bugged);
+				ExecutionStep step = (ExecutionStep) bugged;
 				name = buildStepName(step);
 			} else if (bugged instanceof Execution) {
-				Execution exec = ((Execution) bugged);
+				Execution exec = (Execution) bugged;
 				name = buildExecName(exec);
 			}
 
@@ -539,7 +539,7 @@ public final class BugTrackerControllerHelper {
 		@Override
 		public String buildURLPath(IssueDetector bugged) {
 
-			Execution exec = (bugged instanceof ExecutionStep) ? ((ExecutionStep) bugged).getExecution()
+			Execution exec = bugged instanceof ExecutionStep ? ((ExecutionStep) bugged).getExecution()
 				: (Execution) bugged;
 
 			return "/executions/" + exec.getId();
@@ -560,7 +560,7 @@ public final class BugTrackerControllerHelper {
 		@Override
 		String buildExecName(Execution bugged) {
 			String suiteNameList = findTestSuiteNameList(bugged);
-			if (suiteNameList.equals("")) {
+			if (suiteNameList.isEmpty()) {
 				return messageSource.getMessage("squashtm.generic.hierarchy.execution.name.noSuite", new Object[]{
 					bugged.getName(), bugged.getExecutionOrder() + 1}, locale);
 			} else {
@@ -610,7 +610,7 @@ public final class BugTrackerControllerHelper {
 		String buildExecName(Execution execution) {
 			String iterationName = findIterationName(execution);
 			String suiteNameList = findTestSuiteNameList(execution);
-			if (suiteNameList.equals("")) {
+			if (suiteNameList.isEmpty()) {
 				return messageSource.getMessage("squashtm.test-case.hierarchy.execution.name.noSuite", new Object[]{
 					iterationName, execution.getExecutionOrder() + 1}, locale);
 			} else {

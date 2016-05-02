@@ -36,86 +36,86 @@ import org.hibernate.persister.entity.JoinedSubclassEntityPersister;
 
 /*
  * Since version 1.5.0 :
- * 
- * 
+ *
+ *
  * What
  * ======================
- * 
+ *
  * This class works around a bug on the reverse mapping between the test steps and the test case that own them.
- * 
- * 
+ *
+ *
  * Why
  * ======================
- * 
+ *
  * Hibernate 3.6.10 (and probably other releases) cannot process properly the following case :
- * 
+ *
  * - bi-directional ManyToOne (owned by the 1 side),
  * - using a join table,
  * - using an index column,
  * - mapped in a superclass using the joined-sublasses strategy
- * 
+ *
  * Specifically the problem lies in org.hibernate.persister.entity.JoinedSubclassEntityPersister constructor, line 277 -> 281.
  * In that section of the code, the foreign key between the master table (TEST_STEP) and the join table (TEST_CASE_STEPS) is
  * wrongly identified : it is assumed to be the the primary key of the join table regardless of what the annotations says
  * (and the primary key isn't right anyway).
- * 
+ *
  * The consequence is that Hibernate believe it must join on TEST_CASE_ID, while the correct column is STEP_ID.
- * 
- * 
+ *
+ *
  * How
  * =======================
- * 
+ *
  * To work around this we override the function #getSubclassTableKeyColumns(), that returns accepts an index as input and returns
  * the foreign key for this index. This method is invoked anytime the persister generates a join sql fragment.
  * When the overriden function is requested for the foreign key of the table TEST_CASE_STEPS, it will return the correct foreign key
  * (STEP_ID), instead of the wrong one (TEST_CASE_ID).
- * 
+ *
  * This class reuses some bits of the initialization code in order to generate the final name of the table and column, according to
  * target database dialect.
- * 
- * 
- * 
+ *
+ *
+ *
  */
 
 /*
  * Update 08/03/13 : Issue 1980 (https://ci.squashtest.org/mantis/view.php?id=1980)
- * 
+ *
  * First, I'd like you to know that I swear I've tried everything ( mapping using @SecondaryTable + inverse=true, custom @SQLInsert, orthodox and unorthodox mapping,
  * voodoo and else) before relying on this.
- * 
- * 
+ *
+ *
  * Why
  * ======================
- * 
+ *
  * This issue is related to the cascade-persist of a test case and its steps. What should normally happen is the following :
- * 
+ *
  *  1/ persist the data in table TEST_STEP
  *  2/ persist the data in the table subclasses
  *  3/ persist the other join tables
- * 
+ *
  *  For each of those operations it's supposed to check that the join pointing to the current table is not an inverse relation. That information is normally
  *  supplied by the  . However, here is
  *  the default implementation straight from org.hibernate.persister.entity.AbstractEntityPersister :
- * 
+ *
  *  [quote]
  *  protected boolean isInverseTable(int j) {
  *		return false;
  *	}
  *	[/quote]
- *	
+ *
  *	And here is how Gavin King solved the problem : by delegating to me.
  *
  *  The consequence, regarding cascade persistence, is that the join table TEST_CASE_STEPS is handled by the CollectionPersister managing TestCase#steps but also by the
  *  TestStep persister, which has no clue of what index it should insert the TestStep. This leads to double-insertion in the database, with null data for the order column.
  *  But the TestStepPersister should never worry about TEST_CASE_STEPS in the first place !
  *
- *	
+ *
  * How
  * =======================
- * 
+ *
  * Override isInverseTable and return the information that should have been read from the metadata : the bloody TEST_CASE_STEPS table is an INVERTED TABLE.
- * 
- * 
+ *
+ *
  */
 public class TestStepPersister extends JoinedSubclassEntityPersister {
 
@@ -128,7 +128,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 	/*
 	 * At first, when Hibernate invokes getSubclassTableKeyColumns(int) we must test if
 	 * the override applies by comparing the string names of the requested table.
-	 * 
+	 *
 	 * In order to prevent systematic and expensive string comparison we later on
 	 * cache the index of that data, once it is known to us.
 	 */
@@ -185,7 +185,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 			return isTheOne;
 		}
 		else{
-			return (_cachedIndex == index);
+			return _cachedIndex == index;
 		}
 	}
 

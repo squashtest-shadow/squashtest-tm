@@ -63,8 +63,8 @@ public class ParameterTarget extends Target{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((owner == null) ? 0 : owner.hashCode());
+		result = prime * result + (name == null ? 0 : name.hashCode());
+		result = prime * result + (owner == null ? 0 : owner.hashCode());
 		return result;
 	}
 	// GENERATED:END
@@ -102,7 +102,7 @@ public class ParameterTarget extends Target{
 
 	@Override
 	public boolean isWellFormed() {
-		return owner.isWellFormed() && (! StringUtils.isBlank(name));
+		return owner.isWellFormed() && ! StringUtils.isBlank(name);
 	}
 
 	@Override

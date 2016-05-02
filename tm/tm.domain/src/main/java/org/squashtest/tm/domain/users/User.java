@@ -43,7 +43,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 @PrimaryKeyJoinColumn(name = "PARTY_ID")
 public class User extends Party {
 
-	private final static String TYPE = "USER";
+	private static final String TYPE = "USER";
 
 	@Transient
 	public static final Long NO_USER_ID = 0L;
@@ -144,7 +144,7 @@ public class User extends Party {
 
 	/**
 	 * appends the user's full name ("John Doe") to the given builder and returns it for method chaining purposes
-	 * 
+	 *
 	 * @param builder
 	 * @return the builder
 	 */
@@ -170,7 +170,7 @@ public class User extends Party {
 
 	/**
 	 * Factory method which creates a user from a login. last name is populated with login.
-	 * 
+	 *
 	 * @param login
 	 */
 	public static User createFromLogin(@NotNull String login) {
@@ -183,7 +183,7 @@ public class User extends Party {
 
 	/**
 	 * Tells if this user matches the given login.
-	 * 
+	 *
 	 * @param candidate
 	 * @return
 	 */

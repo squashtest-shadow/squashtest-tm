@@ -74,16 +74,16 @@ public class ChartController {
 
 	@Inject
 	private InfoListFinderService infoListFinder;
-	
+
 	@Inject
 	private I18nLevelEnumInfolistHelper i18nLevelEnumInfolistHelper;
-	
+
 	@Inject
 	private CustomFieldBindingModificationService cufBindingService;
-	
+
 	@Inject
 	protected JsonProjectBuilder jsonProjectBuilder;
-	
+
 
 	@RequestMapping(method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
 	@ResponseBody
@@ -109,7 +109,7 @@ public class ChartController {
 				.getProject();
 		mav.addObject("parentId", parentId);
 		mav.addObject("defaultProject", project.getId());
-		
+
 		//defaults lists and enums levels
 		mav.addObject("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));
 		mav.addObject("testCaseImportance", i18nLevelEnumInfolistHelper.getI18nLevelEnum(TestCaseImportance.class,locale));
@@ -118,38 +118,42 @@ public class ChartController {
 		mav.addObject("requirementCriticality", i18nLevelEnumInfolistHelper.getI18nLevelEnum(RequirementCriticality.class,locale));
 		mav.addObject("executionStatus",
 				i18nLevelEnumInfolistHelper.getI18nLevelEnum(ExecutionStatus.class, locale));
-		
+
 		// project metadata
 		mav.addObject("projectsMeta", jsonProjectBuilder.getExtendedReadableProjects());
-		
+
 		return mav;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{definitionId}/instance", method = RequestMethod.GET)
-	public @ResponseBody JsonChartInstance generate(@PathVariable("definitionId") Long definitionId){
+	public JsonChartInstance generate(@PathVariable("definitionId") Long definitionId){
 		ChartInstance instance = chartService.generateChart(definitionId);
 		return new JsonChartInstance(instance);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/instance", method = RequestMethod.POST)
-	public @ResponseBody JsonChartInstance generate(@RequestBody @Valid ChartDefinition definition) {
+	public JsonChartInstance generate(@RequestBody @Valid ChartDefinition definition) {
 		ChartInstance instance = chartService.generateChart(definition);
 		return new JsonChartInstance(instance);
 	}
 
 
 
+	@ResponseBody
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
-			@PathVariable("id") long id) {
+	public String updateChartDefinition(@RequestBody @Valid ChartDefinition definition,
+										@PathVariable("id") long id) {
 		ChartDefinition oldDef = reportNodeService.findChartDefinitionByNodeId(id);
 		chartService.updateDefinition(definition, oldDef);
 		return String.valueOf(id);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/new/{id}", method = RequestMethod.POST, consumes = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody String createNewChartDefinition(@RequestBody @Valid ChartDefinition definition,
-			@PathVariable("id") long id) {
+	public String createNewChartDefinition(@RequestBody @Valid ChartDefinition definition,
+										   @PathVariable("id") long id) {
 
 		definition.setOwner(userService.findCurrentUser());
 		CustomReportLibraryNode node = reportNodeService.createNewNode(id, definition);

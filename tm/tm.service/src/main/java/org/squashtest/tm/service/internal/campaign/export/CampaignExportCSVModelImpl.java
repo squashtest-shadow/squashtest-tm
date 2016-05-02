@@ -379,17 +379,17 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 		private String formatDate(Date date) {
 
-			return (date == null) ? "--" : dateFormat.format(date);
+			return date == null ? "--" : dateFormat.format(date);
 
 		}
 
 		private String formatLongText(String text) {
 			// TODO something mor euseful ?
-			return (text == null) ? "--" : text;
+			return text == null ? "--" : text;
 		}
 
 		private String formatUser(User user) {
-			return (user == null) ? "--" : user.getLogin();
+			return user == null ? "--" : user.getLogin();
 
 		}
 
@@ -458,7 +458,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 			itp = nextITP;
 
-			return (itp != null);
+			return itp != null;
 		}
 
 	}

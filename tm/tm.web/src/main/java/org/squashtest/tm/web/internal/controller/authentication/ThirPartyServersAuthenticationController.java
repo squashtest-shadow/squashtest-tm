@@ -55,8 +55,9 @@ public class ThirPartyServersAuthenticationController {
 	 * tries to authenticate the current user against the given server using login/password. Status 200 means success (user is authenticated),
 	 * an exception means failure.
 	 */
-	@RequestMapping(value = "/{serverId}/authentication", method = RequestMethod.POST, params = { "login", "password" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/{serverId}/authentication", method = RequestMethod.POST, params = {"login", "password"})
+	public
 	void authenticate(@RequestParam("login") String login, @RequestParam("password") String password,
 			@PathVariable("serverId") long serverId) {
 

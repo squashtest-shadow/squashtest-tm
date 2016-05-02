@@ -96,7 +96,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		for(CustomFieldBinding binding : bindings) {
 			bindingIds.add(binding.getId());
 		}
-		if(bindingIds.size() > 0){
+		if(!bindingIds.isEmpty()){
 			customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
 		}
 		customFieldDao.delete(customField);
@@ -168,7 +168,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 
 	private void checkDefaultValueExists(CustomField customField) {
-		if (customField.getDefaultValue() == null || customField.getDefaultValue().equals("")) {
+		if (customField.getDefaultValue() == null || customField.getDefaultValue().isEmpty()) {
 			throw new DefaultValueRequiredException();
 		}
 	}
@@ -178,7 +178,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		for(CustomFieldBinding binding : bindings) {
 			List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
 			for(CustomFieldValue value : values) {
-				if(value.getValue() == null || value.getValue().equals("")) {
+				if(value.getValue() == null || value.getValue().isEmpty()) {
 					value.setValue(defaulfValue);
 				}
 			}

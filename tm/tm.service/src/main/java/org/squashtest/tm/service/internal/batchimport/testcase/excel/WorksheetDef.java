@@ -93,7 +93,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 	}
 
 	private boolean isMandatory(TemplateColumn col) {
-		return ColumnProcessingMode.MANDATORY.equals(col.getProcessingMode());
+		return ColumnProcessingMode.MANDATORY == col.getProcessingMode();
 	}
 
 	private boolean noColumnDef(TemplateColumn col) {
@@ -157,7 +157,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 
 		for (Entry<COL, StdColumnDef<COL>> entry : stdColumnDefs.entrySet()) {
 			if (!isIgnored(entry.getKey())) {
-				if (entry.getKey().getHeader().equals("ACTION")) {
+				if ("ACTION".equals(entry.getKey().getHeader())) {
 					res.add(0, entry.getValue());
 				} else {
 					res.add(entry.getValue());
@@ -173,7 +173,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 	 * @return
 	 */
 	private boolean isIgnored(COL col) {
-		return ColumnProcessingMode.IGNORED.equals(col.getProcessingMode());
+		return ColumnProcessingMode.IGNORED == col.getProcessingMode();
 	}
 
 	/**

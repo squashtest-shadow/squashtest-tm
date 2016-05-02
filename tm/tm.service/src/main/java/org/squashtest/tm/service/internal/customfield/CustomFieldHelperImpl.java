@@ -137,8 +137,8 @@ public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustom
 		public int hashCode() { // GENERATED:START
 			final int prime = 73;
 			int result = 17;
-			result = prime * result + ((bindableEntity == null) ? 0 : bindableEntity.hashCode());
-			result = prime * result + ((projectId == null) ? 0 : projectId.hashCode());
+			result = prime * result + (bindableEntity == null ? 0 : bindableEntity.hashCode());
+			result = prime * result + (projectId == null ? 0 : projectId.hashCode());
 			return result;
 		} // GENERATED:END
 

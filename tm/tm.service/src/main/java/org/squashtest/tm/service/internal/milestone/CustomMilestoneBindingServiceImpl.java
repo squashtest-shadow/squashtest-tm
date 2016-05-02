@@ -134,9 +134,9 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 		List<GenericProject> projectBoundToMilestone = getAllProjectForMilestone(milestoneId);
 		List<GenericProject> allProjects = projectDao.findAll(new Sort(Direction.ASC, "name"));
-		
+
 		Milestone milestone = milestoneDao.findById(milestoneId);
-		if (milestone.getRange().equals(MilestoneRange.RESTRICTED)) {
+		if (milestone.getRange() == MilestoneRange.RESTRICTED) {
 			allProjects.removeAll(projectTemplateDao.findAll());
 		}
 		allProjects.removeAll(projectBoundToMilestone);
@@ -148,7 +148,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	public List<GenericProject> getAllProjectForMilestone(Long milestoneId) {
 		Milestone milestone = milestoneDao.findById(milestoneId);
 		List<GenericProject> bindedProject;
-		if (milestone.getRange().equals(MilestoneRange.GLOBAL)) {
+		if (milestone.getRange() == MilestoneRange.GLOBAL) {
 			bindedProject = milestone.getProjects();
 		} else {
 			bindedProject = milestone.getPerimeter();
@@ -167,7 +167,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	}
 
 	private void unbindMilestonesFromProject(GenericProject project, List<Milestone> milestones) {
-		
+
 		project.unbindMilestones(milestones);
 
 		// Remove the project in different for loop because milestoneDao.unbindAllObjectsForProject may clear the
@@ -175,10 +175,10 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 		for (Milestone milestone : milestones) {
 			milestone.removeProjectFromPerimeter(project);
 		}
-		
+
 		// save the test case and requirement ids for reindexation later
 		Collection<Long> milestoneIds = CollectionUtils.collect(milestones, ID_COLLECTOR);
-		
+
 		Collection<Long> tcIds = milestoneDao.findTestCaseIdsBoundToMilestones(milestoneIds);
 		Collection<Long> reqIds = milestoneDao.findRequirementVersionIdsBoundToMilestones(milestoneIds);
 
@@ -186,7 +186,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 			// that thing will probably clear the session, be careful
 			milestoneDao.unbindAllObjectsForProject(milestone.getId(), project.getId());
 		}
-		
+
 		// reindex
 		indexService.batchReindexTc(tcIds);
 		indexService.batchReindexReqVersion(reqIds);
@@ -267,7 +267,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 
 	private boolean isRestricted(Milestone milestone) {
 		boolean isRestricted = false;
-		if (milestone.getRange().equals(MilestoneRange.RESTRICTED)) {
+		if (milestone.getRange() == MilestoneRange.RESTRICTED) {
 			isRestricted = true;
 		}
 		return isRestricted;
@@ -285,7 +285,7 @@ public class CustomMilestoneBindingServiceImpl implements MilestoneBindingManage
 	private List<Milestone> getGlobalMilestones(List<Milestone> milestones) {
 		List<Milestone> filtered = new ArrayList<>();
 		for (Milestone milestone : milestones) {
-			if (milestone.getRange().equals(MilestoneRange.GLOBAL)) {
+			if (milestone.getRange() == MilestoneRange.GLOBAL) {
 				filtered.add(milestone);
 			}
 		}

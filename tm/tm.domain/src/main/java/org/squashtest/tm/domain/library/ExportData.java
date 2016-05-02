@@ -126,7 +126,7 @@ public abstract class ExportData {
 		this.name = node.getName();
 		doSetDescription(node.getDescription());
 		this.project = node.getProject().getName();
-		AuditableMixin audit = ((AuditableMixin) node);
+		AuditableMixin audit = (AuditableMixin) node;
 		this.createdOn = audit.getCreatedOn();
 		this.createdBy = audit.getCreatedBy();
 		// folder is null if the requirement is located directly under the project root.
@@ -143,7 +143,7 @@ public abstract class ExportData {
 		this.name = node.getName();
 		doSetDescription(node.getDescription());
 		this.project = node.getProject().getName();
-		AuditableMixin audit = ((AuditableMixin) node);
+		AuditableMixin audit = (AuditableMixin) node;
 		this.createdOn = audit.getCreatedOn();
 		this.createdBy = audit.getCreatedBy();
 		// folder is null if the requirement is located directly under the project root.

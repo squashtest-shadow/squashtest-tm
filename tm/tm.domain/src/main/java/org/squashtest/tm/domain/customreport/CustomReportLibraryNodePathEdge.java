@@ -32,9 +32,9 @@ import org.hibernate.annotations.Immutable;
 /**
  * Maps an edge of a test case node path. This entity shoud be used to query TCLN_RELATIONSHIP_CLOSURE using hql instead
  * of native SQL so that hibernate handles postgresql / mysql funky differences.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Entity
 @Immutable
@@ -53,8 +53,8 @@ public class CustomReportLibraryNodePathEdge {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 17;
-			result = prime * result + (int) (ancestorId ^ (ancestorId >>> 32));
-			result = prime * result + (int) (descendantId ^ (descendantId >>> 32));
+			result = prime * result + (int) (ancestorId ^ ancestorId >>> 32);
+			result = prime * result + (int) (descendantId ^ descendantId >>> 32);
 			return result;
 		}
 

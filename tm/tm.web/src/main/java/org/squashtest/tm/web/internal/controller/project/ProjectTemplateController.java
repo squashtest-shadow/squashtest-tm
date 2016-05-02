@@ -50,20 +50,22 @@ public class ProjectTemplateController {
 
 	@Inject
 	private ProjectTemplateFinder projectFinder;
-	
+
 	@Inject
 	private ProjectTemplateManagerService projectTemplateManagerService;
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(GenericProjectController.class);
-	
-	@RequestMapping(method = RequestMethod.GET, params="dropdownList")
-	public @ResponseBody List<NamedReference> getTemplateDropdownModel() {
+
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.GET, params = "dropdownList")
+	public List<NamedReference> getTemplateDropdownModel() {
 		return projectFinder.findAllReferences();
 	}
-	
-	@RequestMapping(value = "/new", method = RequestMethod.POST)
+
+	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public @ResponseBody
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public
 	JsonUrl createTemplateFromProject(@Valid @RequestBody JsonTemplateFromProject jsonTemplateFromProject) {
 		try {
 			projectTemplateManagerService.addTemplateFromProject(jsonTemplateFromProject.getProjectTemplate(),
@@ -74,7 +76,7 @@ public class ProjectTemplateController {
 		}
 		return getUrlToProjectInfoPage(jsonTemplateFromProject.getProjectTemplate());
 	}
-	
+
 	private JsonUrl getUrlToProjectInfoPage(GenericProject project){
 		UriComponents uri = ServletUriComponentsBuilder.fromCurrentContextPath().path("/administration/projects/{id}/info")
 				.buildAndExpand(project.getId());

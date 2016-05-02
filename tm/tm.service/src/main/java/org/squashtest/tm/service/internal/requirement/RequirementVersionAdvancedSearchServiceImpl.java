@@ -62,13 +62,13 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 	@Inject
 	private ProjectDao projectDao;
 
-	private final static SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
+	private static final SortField[] DEFAULT_SORT_REQUIREMENTS = new SortField[] {
 			new SortField("requirement.project.name", SortField.Type.STRING, false),
 			new SortField("reference", SortField.Type.STRING, false), new SortField("criticality", SortField.Type.STRING, false),
 			new SortField("category", SortField.Type.STRING, false), new SortField("status", SortField.Type.STRING, false),
 			new SortField("labelUpperCased", SortField.Type.STRING, false) };
 
-	private final static List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "versionNumber", "id",
+	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirement.id", "versionNumber", "id",
 			"requirement.versions", "testcases", "attachments");
 
 	@Override
@@ -110,7 +110,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 	private Sort getRequirementVersionSort(List<Sorting> sortings, MessageSource source, Locale locale) {
 
-		if (sortings == null || sortings.size() == 0) {
+		if (sortings == null || sortings.isEmpty()) {
 			return new Sort(DEFAULT_SORT_REQUIREMENTS);
 		}
 
@@ -119,7 +119,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 		for (int i = 0; i < sortings.size(); i++) {
 
-			if (SortOrder.ASCENDING.equals(sortings.get(i).getSortOrder())) {
+			if (SortOrder.ASCENDING == sortings.get(i).getSortOrder()) {
 				isReverse = false;
 			}
 

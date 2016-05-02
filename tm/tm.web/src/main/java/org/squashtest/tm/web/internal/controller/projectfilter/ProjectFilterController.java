@@ -39,15 +39,15 @@ import org.squashtest.tm.service.project.ProjectFilterModificationService;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 
 /*
- * 
+ *
  *  To the future developpers that will work on that controller, check comment on updateProjectFilter first.
- * 
- * 
- * 
- * 
- * 
- * 
- * 
+ *
+ *
+ *
+ *
+ *
+ *
+ *
  */
 
 @Controller
@@ -59,8 +59,9 @@ public class ProjectFilterController {
 	@Inject
 	private ProjectFilterModificationService projectFilterService;
 
+	@ResponseBody
 	@RequestMapping(value = "/filter", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	FilterModel getProjects() {
 
 		ProjectFilter filter = projectFilterService.findProjectFilterByUserLogin();
@@ -72,16 +73,17 @@ public class ProjectFilterController {
 	/*
 	 * That method requires a workaround. The client cannot send a empty list so the param projectIds[] might never
 	 * exist. Hence the request will never hit that method.
-	 * 
+	 *
 	 * Solution : make the parameter optional, and when projectIds[] do not exist consider it as an empty list.
-	 * 
+	 *
 	 * Note 1 : if in the future you need to map another method to the same RequestMapping, you'll probably have to
 	 * rework the strategy to handle incoming empty (non existant) lists.
-	 * 
+	 *
 	 * Note 2 : why would an user set a filter 100% restrictive anyway.
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/filter", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void updateProjectFilter(@RequestBody ProjectFilterModel projectFilterModel) {
 		List<Long> ids;
 		if (projectFilterModel == null) {
@@ -107,15 +109,17 @@ public class ProjectFilterController {
 		}
 	}
 
-	@RequestMapping(value = "/filter-status", params = ("isEnabled"), method = RequestMethod.POST)
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/filter-status", params = "isEnabled", method = RequestMethod.POST)
+	public
 	void setProjectFilterStatus(@RequestParam("isEnabled") boolean isEnabled) {
 		LOGGER.trace("UserPreferenceController : filter enabled to " + isEnabled);
 		projectFilterService.updateProjectFilterStatus(isEnabled);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/filter-status", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	FilterModel getProjectFilterStatus() {
 		ProjectFilter filter = projectFilterService.findProjectFilterByUserLogin();
 		FilterModel model = new FilterModel();

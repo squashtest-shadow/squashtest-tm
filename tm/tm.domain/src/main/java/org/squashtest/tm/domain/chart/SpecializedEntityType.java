@@ -31,7 +31,7 @@ public class SpecializedEntityType {
 	/**
 	 * Used in {@link ColumnPrototype} : when the EntityType referenced by this ColumnPrototype may support different roles depending
 	 * on the context, an EntityRole will help to know which one.
-	 * 
+	 *
 	 * @author bsiri
 	 *
 	 */
@@ -63,8 +63,8 @@ public class SpecializedEntityType {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((entityRole == null) ? 0 : entityRole.hashCode());
-		result = prime * result + ((entityType == null) ? 0 : entityType.hashCode());
+		result = prime * result + (entityRole == null ? 0 : entityRole.hashCode());
+		result = prime * result + (entityType == null ? 0 : entityType.hashCode());
 		return result;
 	}
 

@@ -88,83 +88,96 @@ public class CustomReportNavigationController {
 
 	//----- CREATE NODE METHODS -----
 
+	@ResponseBody
+	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	@RequestMapping(value="/drives/{libraryId}/content/new-folder", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId,@Valid @RequestBody CustomReportFolder customReportFolder){
+	public JsTreeNode createNewFolderInLibrary(@PathVariable Long libraryId, @Valid @RequestBody CustomReportFolder customReportFolder){
 		return createNewCustomReportLibraryNode(libraryId, customReportFolder);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	@RequestMapping(value="/folders/{folderId}/content/new-folder", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewFolderInFolder(@PathVariable Long folderId,@Valid @RequestBody CustomReportFolder customReportFolder){
+	public JsTreeNode createNewFolderInFolder(@PathVariable Long folderId, @Valid @RequestBody CustomReportFolder customReportFolder){
 		return createNewCustomReportLibraryNode(folderId, customReportFolder);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/drives/{libraryId}/content/new-dashboard", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	@RequestMapping(value="/drives/{libraryId}/content/new-dashboard", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewDashboardInLibrary(@PathVariable Long libraryId,@Valid @RequestBody CustomReportDashboard customReportDashboard){
+	public JsTreeNode createNewDashboardInLibrary(@PathVariable Long libraryId, @Valid @RequestBody CustomReportDashboard customReportDashboard){
 		return createNewCustomReportLibraryNode(libraryId, customReportDashboard);
 	}
 
+	@ResponseBody
+	@RequestMapping(value = "/folders/{folderId}/content/new-dashboard", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.CREATED)
-	@RequestMapping(value="/folders/{folderId}/content/new-dashboard", method=RequestMethod.POST)
-	public @ResponseBody JsTreeNode createNewDashboardInFolder(@PathVariable Long folderId,@Valid @RequestBody CustomReportDashboard customReportDashboard){
+	public JsTreeNode createNewDashboardInFolder(@PathVariable Long folderId, @Valid @RequestBody CustomReportDashboard customReportDashboard){
 		return createNewCustomReportLibraryNode(folderId, customReportDashboard);
 	}
 
 	//-------------- SHOW-NODE-CHILDREN METHODS ---------------
 
+	@ResponseBody
 	@RequestMapping(value = "/drives/{nodeId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId) {
+	public List<JsTreeNode> getRootContentTreeModel(@PathVariable long nodeId) {
 		return getNodeContent(nodeId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/folders/{nodeId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId) {
+	public List<JsTreeNode> getFolderContentTreeModel(@PathVariable long nodeId) {
 		return getNodeContent(nodeId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/dashboard/{nodeId}/content", method = RequestMethod.GET)
-	public @ResponseBody List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId) {
+	public List<JsTreeNode> getDashboardContentTreeModel(@PathVariable long nodeId) {
 		return getNodeContent(nodeId);
 	}
 
 	//-------------- COPY-NODES ------------------------------
 	//Two Request mappings for the same function, as we have to follow the jstree logic... or re do the tree :-(
 
-	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
-	public @ResponseBody List<JsTreeNode> copyNodesTofolder(@RequestParam("nodeIds[]") Long[] nodeIds,
-													@PathVariable("destinationId") long destinationId) {
+	@ResponseBody
+	@RequestMapping(value = "/folders/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public List<JsTreeNode> copyNodesTofolder(@RequestParam("nodeIds[]") Long[] nodeIds,
+											  @PathVariable("destinationId") long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
-	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
-	public @ResponseBody List<JsTreeNode> copyNodesToDrives(@RequestParam("nodeIds[]") Long[] nodeIds,
-													@PathVariable("destinationId") long destinationId) {
+	@ResponseBody
+	@RequestMapping(value = "/drives/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public List<JsTreeNode> copyNodesToDrives(@RequestParam("nodeIds[]") Long[] nodeIds,
+											  @PathVariable("destinationId") long destinationId) {
 		return copyNodes(nodeIds, destinationId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodesToFolderWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-										@PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
+	public void moveNodesToFolderWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+											  @PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
 		moveNodes(nodeIds, destinationId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodesToDriveWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-										@PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
+	public void moveNodesToDriveWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+											 @PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
 		moveNodes(nodeIds, destinationId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodesToFolder(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-												@PathVariable("destinationId") long destinationId) {
+	public void moveNodesToFolder(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+								  @PathVariable("destinationId") long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodesToDrive(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											   @PathVariable("destinationId") long destinationId) {
+	public void moveNodesToDrive(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+								 @PathVariable("destinationId") long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
@@ -177,16 +190,18 @@ public class CustomReportNavigationController {
 	 * @param locale
 	 * @return
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
+	public Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
 			Locale locale) {
 		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything
 	}
 
 	//-------------- DELETE METHOD ---------------------------
 
+	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
-	public @ResponseBody OperationReport confirmNodeDeletion(
+	public OperationReport confirmNodeDeletion(
 @PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
 		return customReportLibraryNodeService.delete(nodeIds);

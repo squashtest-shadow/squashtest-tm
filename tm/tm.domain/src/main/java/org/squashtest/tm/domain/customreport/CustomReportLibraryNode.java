@@ -274,7 +274,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 		if (!getEntityType().isContainer()) {
 			return false;
 		}
-		return children.size() > 0;
+		return !children.isEmpty();
 	}
 
 	@Override

@@ -339,7 +339,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 		referencedTestCase = testCase;
 
-		if (testCase.getReference() != null && !testCase.getReference().equals("")) {
+		if (testCase.getReference() != null && !"".equals(testCase.getReference())) {
 			setName(testCase.getReference() + " - " + testCase.getName());
 		} else {
 			setName(testCase.getName());
@@ -613,12 +613,12 @@ DenormalizedFieldHolder, BoundEntity {
 	}
 
 	public boolean isAutomated() {
-		return (executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender != null);
+		return executionMode == TestCaseExecutionMode.AUTOMATED && automatedExecutionExtender != null;
 	}
 
 	private boolean checkValidNewStatus(ExecutionStatus status) {
 		if (isAutomated()) {
-			return (automatedExecutionExtender.getLegalStatusSet().contains(status));
+			return automatedExecutionExtender.getLegalStatusSet().contains(status);
 		} else {
 			return getLegalStatusSet().contains(status);
 		}

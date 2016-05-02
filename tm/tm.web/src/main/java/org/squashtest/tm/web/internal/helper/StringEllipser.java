@@ -21,15 +21,15 @@
 package org.squashtest.tm.web.internal.helper;
 
 public final class StringEllipser {
-	
+
 	private StringEllipser() {
 		super();
 	}
-	
+
 	public static String truncateAndEllipse(String truncateMe, Integer maxLength){
 		String toReturn = truncateMe;
 		if (truncateMe.length()>maxLength){
-			toReturn = truncateMe.substring(0,(maxLength-3))+"...";
+			toReturn = truncateMe.substring(0, maxLength-3)+"...";
 		}
 		return toReturn;
 	}

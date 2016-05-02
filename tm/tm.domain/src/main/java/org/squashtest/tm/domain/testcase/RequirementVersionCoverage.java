@@ -52,9 +52,9 @@ import org.squashtest.tm.exception.testcase.StepDoesNotBelongToTestCaseException
 /**
  * Entity representing a The coverage of a {@link RequirementVersion} by a {@link TestCase}. The {@link ActionTestStep}
  * responsible for the requirement coverage can be specified in the verifyingSteps property.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @NamedQueries({
 	@NamedQuery(name = "RequirementVersionCoverage.byRequirementVersionAndTestCase", query = "select rvc from RequirementVersionCoverage rvc join rvc.verifiedRequirementVersion rv join rvc.verifyingTestCase tc where rv.id = :rvId and tc.id = :tcId"),
@@ -150,7 +150,7 @@ public class RequirementVersionCoverage implements Identified {
 		verifiedRequirementVersion.addRequirementCoverage(this);
 
 	}
-	
+
 
 	@Override
 	public Long getId() {
@@ -164,10 +164,10 @@ public class RequirementVersionCoverage implements Identified {
 	/**
 	 * Checks that all steps belong to this {@linkplain RequirementVersionCoverage#verifyingTestCase} and add them to
 	 * this {@linkplain RequirementVersionCoverage#verifyingSteps}.
-	 * 
+	 *
 	 * @param steps
 	 * @throws StepDoesNotBelongToTestCaseException
-	 * 
+	 *
 	 */
 	public void addAllVerifyingSteps(Collection<ActionTestStep> steps) {
 		checkStepsBelongToTestCase(steps);
@@ -181,7 +181,7 @@ public class RequirementVersionCoverage implements Identified {
 	/**
 	 * Will check that all steps are found in this.verifyingTestCase.steps. The check is with
 	 * {@link TestCase#hasStep(TestStep)}
-	 * 
+	 *
 	 * @param steps
 	 * @throws StepDoesNotBelongToTestCaseException
 	 *             if one step doesn't belong to this.verifyingTestCase.
@@ -212,24 +212,24 @@ public class RequirementVersionCoverage implements Identified {
 	 * <p>
 	 * Returns a copy of a RequirementVersionCoverage adapted to a given TestCase (
 	 * this TestCase is usually different from the owner of the RequirementVersionCoverage)
-	 * 
+	 *
 	 * In short it means that the given TestCase will verify the target Requirement and if the
 	 * original TestCase had steps verifying it, the corresponding steps in the given TestCase
 	 * will too.
 	 * This method is primarily used in the use-case 'copy a test case with all its stuffs'.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * 	In some case such copy is impossible because the requirement cannot be linked
 	 * 	because the target Requirement has a status 'OBSOLETE' (or other reasons if
 	 * 	more rules appears in the future).
-	 * 
-	 * 
+	 *
+	 *
 	 * 	In such case NULL will be returned. Be sure to check for NULL.
 	 * </p>
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * @param tcCopy
 	 * @return a copy of this RequirementVersionCoverage, or NULL if that was impossible.
 	 */
@@ -238,7 +238,7 @@ public class RequirementVersionCoverage implements Identified {
 			return null;
 		}
 		// copy verified requirement
-		
+
 		RequirementVersionCoverage rvcCopy = new RequirementVersionCoverage();
 		/*For performance issue it's better to construct an empty ReqVersionCoverage then set the verifiedRequirementVersion without using the setter
 		If you use the setter or the constructor with verifiedRequirementVersion, you will call addRequirementCoverage on the requirementVersion
@@ -269,7 +269,7 @@ public class RequirementVersionCoverage implements Identified {
 
 	/**
 	 * Returns true if the given step id matches on of the verifying steps id.
-	 * 
+	 *
 	 * @param stepId
 	 * @return
 	 */
@@ -285,7 +285,7 @@ public class RequirementVersionCoverage implements Identified {
 	/**
 	 * Will remove the step matching the given id from this.verifyingSteps. If the step is not found nothing special
 	 * happens.
-	 * 
+	 *
 	 * @param testStepId
 	 *            : the id of the step to remove.
 	 */
@@ -299,13 +299,13 @@ public class RequirementVersionCoverage implements Identified {
 		}
 
 	}
-	
+
 	/**
 	 * Check if this {@link RequirementVersionCoverage} is linked to one or more {@link TestStep}
 	 * @return
 	 */
 	public boolean hasSteps(){
-		return verifyingSteps.size()>0;
+		return !verifyingSteps.isEmpty();
 	}
 
 }

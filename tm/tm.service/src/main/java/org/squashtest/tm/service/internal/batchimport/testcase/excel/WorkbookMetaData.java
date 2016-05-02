@@ -66,7 +66,7 @@ public class WorkbookMetaData {
 			}
 		}
 
-		if (worksheetKOStatuses.size() > 0) {
+		if (!worksheetKOStatuses.isEmpty()) {
 			throw new TemplateMismatchException(worksheetKOStatuses);
 		}
 	}

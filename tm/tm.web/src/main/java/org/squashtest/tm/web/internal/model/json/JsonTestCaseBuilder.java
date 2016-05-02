@@ -37,7 +37,7 @@ import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component
 @Scope("prototype")
@@ -85,11 +85,11 @@ public class JsonTestCaseBuilder {
 
 	/**
 	 * Simplistic implementation - we could cache projets and other referencial data.
-	 * 
+	 *
 	 * @return
 	 */
 	private List<JsonTestCase> buildList() {
-		if (entities.size() == 0) {
+		if (entities.isEmpty()) {
 			return Collections.emptyList();
 		}
 

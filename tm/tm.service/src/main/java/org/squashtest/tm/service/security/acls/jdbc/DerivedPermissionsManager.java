@@ -191,17 +191,17 @@ class DerivedPermissionsManager {
 	 */
 	private boolean isSortOfProject(ObjectIdentity identity) {
 		String type = identity.getType();
-		return (type.equals(PROJECT_CLASS_NAME));
+		return type.equals(PROJECT_CLASS_NAME);
 	}
 
 	private boolean doesExist(ObjectIdentity identity) {
-		
+
 		Query query = em.unwrap(Session.class).createSQLQuery(CHECK_OBJECT_IDENTITY_EXISTENCE);
 		query.setParameter("id", identity.getIdentifier(), LongType.INSTANCE);
 		query.setParameter("class", identity.getType());
 
 		List<?> result = query.list();
-		return (!result.isEmpty());
+		return !result.isEmpty();
 	}
 
 
@@ -211,7 +211,7 @@ class DerivedPermissionsManager {
 		query.setParameter("id", partyId, LongType.INSTANCE);
 
 		List<?> result = query.list();
-		return (!result.isEmpty());
+		return !result.isEmpty();
 	}
 
 

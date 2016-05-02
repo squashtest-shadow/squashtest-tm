@@ -104,7 +104,7 @@ public class InfoListItemManagerServiceImpl implements InfoListItemManagerServic
 		InfoList infoList = infoListService.findById(infoListId);
 		SystemInfoListCode.verifyModificationPermission(infoList);
 
-		if (infoList.getItems().size() == 0) {
+		if (infoList.getItems().isEmpty()) {
 			item.setDefault(true);
 		}
 		item.setInfoList(infoList);

@@ -29,9 +29,9 @@ public class RequirementVersionTarget extends Target {
 	private RequirementTarget requirement;
 
 	private Integer version;
-	
+
 	private String unconsistentName;
-	
+
 	/**
 	 * Used for update. Convenient boolean which store the fact that one of the
 	 * milestone label present in import file isn't valid. Spec 5085 specify
@@ -39,9 +39,9 @@ public class RequirementVersionTarget extends Target {
 	 * binding isn't modified.
 	 */
 	private boolean rejectedMilestone = false;
-	
+
 	private RequirementStatus importedRequirementStatus = RequirementStatus.WORK_IN_PROGRESS;
-	
+
 	public RequirementVersionTarget(RequirementTarget requirement, Integer version) {
 		super();
 		this.requirement = requirement;
@@ -105,7 +105,7 @@ public class RequirementVersionTarget extends Target {
 			RequirementStatus importedRequirementStatus) {
 		this.importedRequirementStatus = importedRequirementStatus;
 	}
-	
+
 
 
 	public boolean isRejectedMilestone() {
@@ -122,8 +122,8 @@ public class RequirementVersionTarget extends Target {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((requirement == null) ? 0 : requirement.hashCode());
-		result = prime * result + ((version == null) ? 0 : version.hashCode());
+		result = prime * result + (requirement == null ? 0 : requirement.hashCode());
+		result = prime * result + (version == null ? 0 : version.hashCode());
 		return result;
 	}
 

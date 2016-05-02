@@ -34,7 +34,7 @@ public final class LibraryUtils {
 	}
 	/**
 	 * Will generate a unique name assuming that there is a clash with the given copiesNames.
-	 * 
+	 *
 	 * @param copiesNames
 	 * @param sourceName
 	 * @param token
@@ -115,7 +115,7 @@ public final class LibraryUtils {
 	/**
 	 * Generates a non-clashing name for a "source" to be added amongst "siblings". The non-clashing name is either the
 	 * source (when no clash) or the source appended with "(n)"
-	 * 
+	 *
 	 * @param source
 	 *            the non <code>null</code> source name.
 	 * @param siblings
@@ -169,7 +169,7 @@ public final class LibraryUtils {
 	}
 
 	private static boolean noNameClash(String name, Collection<String> siblings) {
-		return siblings.size() == 0 || !siblings.contains(name);
+		return siblings.isEmpty() || !siblings.contains(name);
 	}
 
 

@@ -88,7 +88,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		Query q = currentSession().getNamedQuery("infoListItem.foundCategoryInProject");
 		q.setParameter(PROJECT_ID, projectId);
 		q.setParameter(ITEM_CODE, itemCode);
-		return ((Long) q.uniqueResult() == 1);
+		return (Long) q.uniqueResult() == 1;
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		Query q = currentSession().getNamedQuery("infoListItem.foundNatureInProject");
 		q.setParameter(PROJECT_ID, projectId);
 		q.setParameter(ITEM_CODE, itemCode);
-		return ((Long) q.uniqueResult() == 1);
+		return (Long) q.uniqueResult() == 1;
 	}
 
 	@Override
@@ -104,7 +104,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		Query q = currentSession().getNamedQuery("infoListItem.foundTypeInProject");
 		q.setParameter(PROJECT_ID, projectId);
 		q.setParameter(ITEM_CODE, itemCode);
-		return ((Long) q.uniqueResult() == 1);
+		return (Long) q.uniqueResult() == 1;
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	public boolean isUsed(long infoListItemId) {
 		Query q = currentSession().getNamedQuery("infoListItem.isUsed");
 		q.setParameter("id", infoListItemId);
-		return ((Long) q.uniqueResult() > 0);
+		return (Long) q.uniqueResult() > 0;
 	}
 
 	@Override

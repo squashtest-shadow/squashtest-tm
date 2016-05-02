@@ -125,7 +125,7 @@ class ExecutionIssueFinder implements IssueOwnershipFinder {
 	}
 
 	private Comparator<Pair<? extends IssueDetector, Issue>> comparator(PagingAndSorting sorter) {
-		return sorter.getSortOrder().equals(SortOrder.ASCENDING) ?  ASC_PAIR_COMPARATOR : DESC_PAIR_COMPARATOR;
+		return sorter.getSortOrder() == SortOrder.ASCENDING ?  ASC_PAIR_COMPARATOR : DESC_PAIR_COMPARATOR;
 	}
 
 	private List<Pair<ExecutionStep, Issue>> findExecutionStepIssuePairs(Execution execution, PagingAndSorting sorter) {

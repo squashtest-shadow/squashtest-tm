@@ -33,7 +33,7 @@ import org.squashtest.tm.api.report.form.Input;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class IdentifiedReportDecorator implements Report {
 	private final Report report;
@@ -151,7 +151,7 @@ public class IdentifiedReportDecorator implements Report {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((identifier == null) ? 0 : identifier.hashCode());
+		result = prime * result + (identifier == null ? 0 : identifier.hashCode());
 		return result;
 	}
 
@@ -184,12 +184,12 @@ public class IdentifiedReportDecorator implements Report {
 	}
 
 	/**
-	 * @return 
+	 * @return
 	 * @see org.squashtest.tm.api.report.Report#buildModelAndView(int, java.lang.String, java.util.Map)
 	 */
 	@Override
 	public ModelAndView buildModelAndView(int viewIndex, String format, Map<String, Criteria> criteria) {
 		return report.buildModelAndView(viewIndex, format, criteria);
-		
+
 	}
 }

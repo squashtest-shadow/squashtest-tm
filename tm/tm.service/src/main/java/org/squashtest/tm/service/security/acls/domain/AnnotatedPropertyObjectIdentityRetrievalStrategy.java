@@ -133,11 +133,11 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 
 		explorationQueue.add(candidateClass);
 
-		while ( (targetProperty == null) && (! explorationQueue.isEmpty())){
+		while ( targetProperty == null && ! explorationQueue.isEmpty()){
 
 			currentClass = explorationQueue.removeFirst();
 
-			if ( (currentClass==null) || (exploredClasses.contains(currentClass))){ continue;}
+			if ( currentClass==null || exploredClasses.contains(currentClass)){ continue;}
 
 			if (LOGGER.isDebugEnabled()){
 				LOGGER.trace("Looking for @AclConstrainedObject in class '"+candidateClass.getName()+"'");

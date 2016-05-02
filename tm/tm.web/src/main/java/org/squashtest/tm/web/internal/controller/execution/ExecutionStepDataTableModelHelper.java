@@ -76,7 +76,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 		res.put("run-step-button", "");
 
 		// XXX : why this ?
-		String status = (isAutomated) ? "--" : ExecutionModificationController.localizedStatus(item.getExecutionStatus(), locale, messageSource);
+		String status = isAutomated ? "--" : ExecutionModificationController.localizedStatus(item.getExecutionStatus(), locale, messageSource);
 		res.put("status", status);
 
 		appendCustomFields(res);
@@ -189,7 +189,7 @@ class ExecutionStepDataTableModelHelper extends DataTableModelBuilder<ExecutionS
 
 		@SuppressWarnings("unused")
 		public Object getValue() {
-			return (value != null) ? value : values;
+			return value != null ? value : values;
 		}
 
 		@SuppressWarnings("unused")

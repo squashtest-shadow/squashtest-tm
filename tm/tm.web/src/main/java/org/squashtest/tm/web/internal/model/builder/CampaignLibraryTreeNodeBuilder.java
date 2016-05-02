@@ -40,7 +40,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<CampaignLibraryNode> {
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
-	 * 
+	 *
 	 */
 	private class CustomAttributesPopulator implements CampaignLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
@@ -51,18 +51,18 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 		}
 
 		/**
-		 * 
+		 *
 		 * @see org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor#visit(org.squashtest.tm.domain.campaign.CampaignFolder)
 		 */
 		@Override
 		public void visit(CampaignFolder folder) {
 			addFolderAttributes("campaign-folders");
-			State state = (folder.hasContent() ? State.closed : State.leaf);
+			State state = folder.hasContent() ? State.closed : State.leaf;
 			builtNode.setState(state);
 		}
 
 		/**
-		 * 
+		 *
 		 * @see org.squashtest.tm.domain.campaign.CampaignLibraryNodeVisitor#visit(org.squashtest.tm.domain.campaign.Campaign)
 		 */
 		@Override
@@ -77,7 +77,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 			builtNode.addAttr("rel", "campaign");
 			builtNode.addAttr("resType", "campaigns");
 			builtNode.addAttr("reference", campaign.getReference());
-			State state = (campaign.hasIterations() ? State.closed : State.leaf);
+			State state = campaign.hasIterations() ? State.closed : State.leaf;
 			builtNode.setState(state);
 
 			// milestones
@@ -89,9 +89,9 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 	/**
 	 * This visitor is used to populate the children of the currently built {@link JsTreeNode}
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 */
 	private class ChildrenPopulator implements CampaignLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
@@ -142,7 +142,7 @@ public class CampaignLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Campa
 
 				// because of the milestoneFilter it may happen that the children collection ends up empty.
 				// in that case we must set the state of the node accordingly
-				State state =  (children.isEmpty()) ? State.leaf : State.open;
+				State state =  children.isEmpty() ? State.leaf : State.open;
 				builtNode.setState(state);
 			}
 		}

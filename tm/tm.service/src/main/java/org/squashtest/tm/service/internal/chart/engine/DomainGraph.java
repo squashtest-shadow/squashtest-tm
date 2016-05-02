@@ -278,7 +278,7 @@ class DomainGraph {
 
 	private TraversableEntity getNode(InternalEntityType type){
 		for (TraversableEntity node : nodes){
-			if (node.type().equals(type)){
+			if (node.type() == type){
 				return node;
 			}
 		}
@@ -436,7 +436,7 @@ class DomainGraph {
 			Iterator<PlannedJoin> iter = joinInfos.iterator();
 			while (iter.hasNext()){
 				PlannedJoin nextJoin = iter.next();
-				if (nextJoin.getDest().equals(dest)){
+				if (nextJoin.getDest() == dest){
 					iter.remove();
 				}
 			}
@@ -450,7 +450,7 @@ class DomainGraph {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			result = prime * result + (type == null ? 0 : type.hashCode());
 			return result;
 		}
 

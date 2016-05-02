@@ -33,11 +33,11 @@ import org.springframework.core.PrioritizedParameterNameDiscoverer;
  * This {@link ParameterNameDiscoverer} holds an ordererd collection of {@link ParameterNameDiscoverer}. It delegates to
  * each component of this collection until a component is able to resolve the parameters names i.e. it don't return
  * <code>null</code>)
- * 
+ *
  * Note : {@link PrioritizedParameterNameDiscoverer} cannot be configured through XML AFAIK
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class CompositeDelegatingParameterNameDiscoverer implements ParameterNameDiscoverer {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CompositeDelegatingParameterNameDiscoverer.class);
@@ -49,8 +49,8 @@ public class CompositeDelegatingParameterNameDiscoverer implements ParameterName
 	 */
 	public CompositeDelegatingParameterNameDiscoverer(List<ParameterNameDiscoverer> discoverers) {
 		super();
-		
-		if (discoverers == null || discoverers.size() == 0) {
+
+		if (discoverers == null || discoverers.isEmpty()) {
 			LOGGER.warn("CompositeDelegatingParameterNameDiscoverer initialized with an empty list of delegate");
 
 		} else {
@@ -58,13 +58,13 @@ public class CompositeDelegatingParameterNameDiscoverer implements ParameterName
 				LOGGER.info("Adding to CompositeDelegatingParameterNameDiscoverer a discoverer of type {}", discoverer.getClass());
 				delegate.addDiscoverer(discoverer);
 			}
-			
+
 		}
 	}
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.springframework.core.ParameterNameDiscoverer#getParameterNames(java.lang.reflect.Method)
 	 */
 	@Override
@@ -74,10 +74,10 @@ public class CompositeDelegatingParameterNameDiscoverer implements ParameterName
 
 	/**
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.springframework.core.ParameterNameDiscoverer#getParameterNames(java.lang.reflect.Constructor)
 	 */
-	@SuppressWarnings("rawtypes") 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public String[] getParameterNames(Constructor ctor) {
 		return delegate.getParameterNames(ctor);

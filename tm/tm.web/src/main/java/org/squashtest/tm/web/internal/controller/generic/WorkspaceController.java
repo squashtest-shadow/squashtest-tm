@@ -102,7 +102,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 
 		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen
 		// thus the test here
-		if (StringUtils.isBlank(elementId) || elementId.equals("null")) {
+		if (StringUtils.isBlank(elementId) || "null".equals(elementId)) {
 			nodesToOpen = openedNodes;
 			model.addAttribute("selectedNode", "");
 		} else {
@@ -152,8 +152,9 @@ activeMilestone.get().getId(),
 		return getWorkspaceViewName();
 	}
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.GET, value = "/tree/{openedNodes}")
-	public @ResponseBody
+	public
 	List<JsTreeNode> getRootModel(@PathVariable String[] openedNodes) {
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
 

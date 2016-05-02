@@ -413,8 +413,7 @@ public class Model {
 	public Integer addCallStep(TestStepTarget target,
 							   TestCaseTarget calledTestCase, CallStepParamsInfo paramInfo) {
 
-		Boolean delegates = (paramInfo.getParamMode()
-			.equals(ParameterAssignationMode.DELEGATE));
+		Boolean delegates = paramInfo.getParamMode() == ParameterAssignationMode.DELEGATE;
 
 		// set the call graph
 		addCallGraphEdge(target.getTestCase(), calledTestCase);
@@ -477,8 +476,7 @@ public class Model {
 		}
 
 		InternalStepModel model = findInternalStepModel(step);
-		Boolean delegates = (paramInfo.getParamMode()
-			.equals(ParameterAssignationMode.DELEGATE));
+		Boolean delegates = paramInfo.getParamMode() == ParameterAssignationMode.DELEGATE;
 		model.setDelegates(delegates);
 		TestCaseTarget src = step.getTestCase();
 		TestCaseTarget oldDest = model.getCalledTC();
@@ -520,7 +518,7 @@ public class Model {
 
 		InternalStepModel model = findInternalStepModel(target);
 
-		return (model != null);
+		return model != null;
 
 	}
 
@@ -566,7 +564,7 @@ public class Model {
 			return null;
 		}
 
-		
+
 		Query q = getCurrentSession().getNamedQuery(
 			"testStep.findIdByTestCaseAndPosition");
 		q.setParameter(":tcId", tcId);
@@ -614,7 +612,7 @@ public class Model {
 		Integer index = step.getIndex();
 		List<InternalStepModel> steps = findInternalStepModels(step);
 
-		if ((index != null) && (steps.size() > index) && (index >= 0)) {
+		if (index != null && steps.size() > index && index >= 0) {
 			return steps.get(index);
 		} else {
 			return null;
@@ -724,7 +722,7 @@ public class Model {
 	public boolean isParamInDataset(ParameterTarget param, DatasetTarget ds) {
 		Collection<ParameterTarget> allparams = getAllParameters(ds
 			.getTestCase());
-		return (allparams.contains(param));
+		return allparams.contains(param);
 	}
 
 	// **************************** datasets
@@ -920,7 +918,7 @@ public class Model {
 			TestCaseTarget t = targets.get(i);
 			Long id = ids.get(i);
 
-			Existence existence = (id == null) ? Existence.NOT_EXISTS
+			Existence existence = id == null ? Existence.NOT_EXISTS
 				: Existence.EXISTS;
 			TargetStatus status = new TargetStatus(existence, id);
 
@@ -1188,7 +1186,7 @@ public class Model {
 							   TargetStatus status) {
 		requirementTree.addOrUpdateNode(target, status);
 	}
-	
+
 	public Long getRequirementId(RequirementVersionTarget target){
 		return requirementTree.getNodeId(target.getRequirement());
 	}
@@ -1318,7 +1316,7 @@ public class Model {
 	private Session getCurrentSession(){
 		return em.unwrap(Session.class);
 	}
-	
+
 	// ************************ internal types for TestCase Management
 	// **********************************
 

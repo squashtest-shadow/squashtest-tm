@@ -90,7 +90,7 @@ public class HandlerMaxUploadSizeExceptionResolver extends AbstractHandlerExcept
 
 	private ModelAndView handleAsHtml(MaxUploadSizeExceededException mex) {
 
-		Long size = (mex.getMaxUploadSize() / NB_BYTES_PER_MBYTES);
+		Long size = mex.getMaxUploadSize() / NB_BYTES_PER_MBYTES;
 
 		String msg = messageSource.getMessage("message.AttachmentUploadSizeExceeded", null, "message.AttachmentUploadSizeExceeded", LocaleContextHolder.getLocale()).replaceAll("#size#", size.toString());
 

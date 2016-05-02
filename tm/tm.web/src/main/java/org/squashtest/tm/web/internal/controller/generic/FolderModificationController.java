@@ -66,8 +66,9 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 		return attachmentsHelper.findAttachments(folder);
 	}
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	String removeFolder(@PathVariable long folderId) {
 
 		getFolderModificationService().removeFolder(folderId);
@@ -75,8 +76,9 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
+	public
 	Object renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
 			@PathVariable long folderId) {
 
@@ -85,8 +87,9 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 
 	}
 
-	@RequestMapping(method = RequestMethod.POST, params = { "id", VALUE })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"id", VALUE})
+	public
 	String updateDescription(@PathVariable long folderId, @RequestParam(VALUE) String newDescription) {
 		getFolderModificationService().updateFolderDescription(folderId, newDescription);
 		return newDescription;

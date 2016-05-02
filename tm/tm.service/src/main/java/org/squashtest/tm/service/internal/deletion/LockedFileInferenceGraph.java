@@ -34,23 +34,23 @@ public class LockedFileInferenceGraph extends
 
 	private List<Long> candidatesToDeletion;
 
-	
+
 	public void init(LibraryGraph<NamedReference, SimpleNode<NamedReference>> initialGraph){
-		
+
 		mergeGraph(initialGraph, new NodeTransformer<SimpleNode<NamedReference>, Node>() {
 			@Override
 			public Node createFrom(SimpleNode<NamedReference> node) {
-				return new Node(node.getKey());				
+				return new Node(node.getKey());
 			}
 			@Override
 			public Object createKey(SimpleNode<NamedReference> node) {
 				return node.getKey();
 			}
 		});
-		
+
 	}
-	
-	
+
+
 	public void setCandidatesToDeletion(List<Long> candidates) {
 		this.candidatesToDeletion = candidates;
 	}
@@ -67,21 +67,21 @@ public class LockedFileInferenceGraph extends
 	 * <p>That method will check that if a test case is candidate to deletion, all
 	 * test cases calling it directly or indirectly will be deleted along. If so
 	 * the test case is deletable, else it is locked.</p>
-	 * 
-	 *  
+	 *
+	 *
 	 * <p>Requires the graph to be built. The graph must be acyclic, of fear my wrath.</p>
-	 * 
+	 *
 
-	 * 
+	 *
 	 * algorithm :
 	 * <ol>
-	 * 		<li>init : all nodes are non deletable</li>	
-	 * 		<li>remaining_nodes := orphan nodes that are to be deleted</li> 
-	 * 		<li>for all nodes in remaining_nodes, node.deletable := true</li>	
+	 * 		<li>init : all nodes are non deletable</li>
+	 * 		<li>remaining_nodes := orphan nodes that are to be deleted</li>
+	 * 		<li>for all nodes in remaining_nodes, node.deletable := true</li>
 	 * 		<li>while remaining_nodes is not empty</li>
 	 * 		<ol>
-	 * 			<li>node := first of remaining_nodes</li>	
-	 * 			<li>for child in node.children</li>	
+	 * 			<li>node := first of remaining_nodes</li>
+	 * 			<li>for child in node.children</li>
 	 * 			<ol>
 	 * 				<li>child.parentProcessed +=1</li>
 	 * 				<li>if child.parentDeletableCount = child.parent.size and child should be deleted</li>
@@ -89,16 +89,16 @@ public class LockedFileInferenceGraph extends
 	 * 					<li>child.deletable := true</li>
 	 * 					<li>remaining_nodes += child</li>
 	 * 				</ol>
-	 * 			</ol> 
+	 * 			</ol>
 	 *			 <li>remove node from remaining_nodes</li>
 	 * 		</ol>
 	 * 		<li>done</li>
-	 * 
+	 *
 	 * </ol>
-	 * 
+	 *
 	 * <p>note : the algorithm starts from the parent nodes of the graph and explore the nodes breadth-first. So we are sure
 	 * that all parent nodes will be processed before their children are (and so the algorithm works).</p>
-	 * 
+	 *
 	 */
 	protected void resolveLockedFiles() {
 
@@ -123,7 +123,7 @@ public class LockedFileInferenceGraph extends
 
 				boolean childShouldBeDeleted = isCandidate(child);
 
-				if ((child.areAllParentsDeletable()) && (childShouldBeDeleted)) {
+				if (child.areAllParentsDeletable() && childShouldBeDeleted) {
 					child.setDeletable(true);
 					remainingNodes.add(child);
 				}
@@ -136,7 +136,7 @@ public class LockedFileInferenceGraph extends
 
 	/**
 	 * Once the locks are resolved, returns all the nodes that are locked.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Node> collectLockedNodes() {
@@ -154,7 +154,7 @@ public class LockedFileInferenceGraph extends
 	/**
 	 * Once the locks are resolved, will return the list of nodes that are both
 	 * locked and candidates.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Node> collectLockedCandidates() {
@@ -173,9 +173,9 @@ public class LockedFileInferenceGraph extends
 	/**
 	 * Once the locks are resolved, return the list of nodes that are locked and
 	 * were not candidates.
-	 * 
+	 *
 	 * They are most likely locking other nodes.
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Node> collectLockers() {
@@ -194,11 +194,11 @@ public class LockedFileInferenceGraph extends
 	/**
 	 * Once the locks are resolved, will return the nodes that are eventually
 	 * deletable.
-	 * 
+	 *
 	 * Note that by design, a node is deletable only if it was a candidate to
 	 * deletion (see {@link #resolveLockedFiles()} for the reasons of that
 	 * statement).
-	 * 
+	 *
 	 * @return
 	 */
 	public List<Node> collectDeletableNodes() {
@@ -221,7 +221,7 @@ public class LockedFileInferenceGraph extends
 		}
 		return false;
 	}
-	
+
 	private boolean isCandidate (Node node){
 		return candidatesToDeletion.contains(node.getKey().getId());
 	}
@@ -230,12 +230,12 @@ public class LockedFileInferenceGraph extends
 
 		private Boolean deletable = true;
 		private Integer parentDeletableCount = 0;
-		
+
 		public Node(NamedReference key){
 			super(key);
 		}
 
-		
+
 		public Boolean isDeletable() {
 			return deletable;
 		}
@@ -257,7 +257,7 @@ public class LockedFileInferenceGraph extends
 		}
 
 		public boolean areAllParentsDeletable() {
-			return (parentDeletableCount == getInbounds().size());
+			return parentDeletableCount == getInbounds().size();
 		}
 
 		public String getName() {

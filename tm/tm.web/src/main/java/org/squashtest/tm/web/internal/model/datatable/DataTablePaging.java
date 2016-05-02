@@ -47,10 +47,10 @@ public class DataTablePaging implements Paging {
 	public int getPageSize() {
 		return params.getiDisplayLength();
 	}
-	
+
 	@Override
 	public boolean shouldDisplayAll() {
-		return (params.getiDisplayLength()<0);
+		return params.getiDisplayLength()<0;
 	}
-	
+
 }

@@ -76,8 +76,8 @@ public class EntityReference {
 	public int hashCode() { // GENERATED:START
 		final int prime = 43;
 		int result = 29;
-		result = prime * result + ((id == null) ? 0 : id.hashCode());
-		result = prime * result + ((type == null) ? 0 : type.hashCode());
+		result = prime * result + (id == null ? 0 : id.hashCode());
+		result = prime * result + (type == null ? 0 : type.hashCode());
 		return result;
 	} // GENERATED:END
 

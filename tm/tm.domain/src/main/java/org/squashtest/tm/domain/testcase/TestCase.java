@@ -202,7 +202,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	// *************************** CODE *************************************
 
 	public TestCase(Date createdOn, String createdBy) {
-		AuditableMixin audit = ((AuditableMixin) this);
+		AuditableMixin audit = (AuditableMixin) this;
 
 		audit.setCreatedOn(createdOn);
 		audit.setCreatedBy(createdBy);
@@ -523,7 +523,7 @@ public class TestCase extends TestCaseLibraryNode implements AttachmentHolder, B
 	}
 
 	public boolean isAutomated() {
-		return (automatedTest != null && getProject().isTestAutomationEnabled());
+		return automatedTest != null && getProject().isTestAutomationEnabled();
 	}
 
 	// ***************** (detached) custom field section *************

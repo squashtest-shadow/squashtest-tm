@@ -73,7 +73,7 @@ import com.lowagie.text.pdf.codec.Base64;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/reports/{namespace}/{index}")
@@ -95,7 +95,7 @@ public class ReportController {
 
 	/**
 	 * Populates model and returns the fragment panel showing a report.
-	 * 
+	 *
 	 * @param namespace
 	 *            namespace of the report
 	 * @param index
@@ -129,7 +129,7 @@ public class ReportController {
 
 	/**
 	 * Populates model and returns the full page showing a report.
-	 * 
+	 *
 	 * @param namespace
 	 *            namespace of the report
 	 * @param index
@@ -146,7 +146,7 @@ public class ReportController {
 
 	/**
 	 * Generates report view from a standard post with a data attribute containing a serialized JSON form.
-	 * 
+	 *
 	 * @param namespace
 	 * @param index
 	 * @param viewIndex
@@ -164,7 +164,7 @@ public class ReportController {
 			@PathVariable int viewIndex, @PathVariable String format, @RequestParam("parameters") String parameters)
 					throws JsonParseException, JsonMappingException, IOException {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
-		Map<String, Criteria> crit = (new FormToCriteriaConverter()).convert(form);
+		Map<String, Criteria> crit = new FormToCriteriaConverter().convert(form);
 
 		Report report = reportsRegistry.findReport(namespace, index);
 
@@ -180,11 +180,11 @@ public class ReportController {
 		Map<String, Object> form = JsonHelper.deserialize(parameters);
 		Report report = reportsRegistry.findReport(namespace, index);
 		List<Project> projects = projectFinder.findAllOrderedByName();
-		Map<String, Criteria> crit = (new ConciseFormToCriteriaConverter(report, projects)).convert(form);
+		Map<String, Criteria> crit = new ConciseFormToCriteriaConverter(report, projects).convert(form);
 
 
 		ModelAndView mav;
-		if (format.equals("docx")){
+		if ("docx".equals(format)){
 			Map<String,Object> model = report.buildModelAndView(viewIndex, format, crit).getModel();
 			mav = new ModelAndView("docx.html");
 			mav.addObject("model", model.get("data"));

@@ -54,7 +54,7 @@ import org.squashtest.tm.service.user.UserAccountService;
 public class CustomMilestoneManagerServiceImpl implements CustomMilestoneManager {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomMilestoneManagerServiceImpl.class);
 
-// TODO replace by the app wide const	
+// TODO replace by the app wide const
 private static final String ADMIN_ROLE = "ROLE_ADMIN";
 
 	@Inject
@@ -128,7 +128,7 @@ private static final String ADMIN_ROLE = "ROLE_ADMIN";
 	}
 
 	private boolean isGlobal(Milestone milestone) {
-		return MilestoneRange.GLOBAL.equals(milestone.getRange());
+		return MilestoneRange.GLOBAL == milestone.getRange();
 	}
 
 	private boolean isCreatedBySelf(Milestone milestone) {

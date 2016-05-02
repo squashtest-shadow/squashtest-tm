@@ -82,20 +82,20 @@ TestCaseLibraryNodeDao {
 			 * There is one case where the database could return a path we haven't requested :
 			 * the DB is MySQL and the charset is case insensitive for select
 			 * (see http://dev.mysql.com/doc/refman/5.0/en/case-sensitivity.html)
-			 * 
+			 *
 			 * This leads to problem because our system is always case sensitive : MySQL could
 			 * return paths it considers valid (give or take a couple of uppercased letters)
 			 * that weren't queried for.
-			 * 
+			 *
 			 * That's why we test again that the result from the DB actually has a positive index
 			 * before assigning it to the result.
-			 * 
+			 *
 			 */
 			for (Object[] res : result) {
 				String path = (String) res[0];
 				int idx = effectiveParameters.indexOf(path);
 				if (idx>-1) {
-					toReturn[idx] = ((Long) res[1]);
+					toReturn[idx] = (Long) res[1];
 				}
 			}
 
@@ -107,7 +107,7 @@ TestCaseLibraryNodeDao {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.repository.LibraryNodeDao#findNodeIdByPath(java.lang.String)
 	 */
 	@SuppressWarnings("unchecked")
@@ -128,7 +128,7 @@ TestCaseLibraryNodeDao {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.repository.LibraryNodeDao#findNodeByPath(java.lang.String)
 	 */
 	@Override

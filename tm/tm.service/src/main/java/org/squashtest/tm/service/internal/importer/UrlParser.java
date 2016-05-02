@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * 
+ *
  * @author mpagnon
  *
  */
@@ -87,7 +87,7 @@ import org.slf4j.LoggerFactory;
 		StringBuffer nameBuffer = new StringBuffer();
 		int slashesNumber = 1;
 		pathCharInt = pathReader.read();
-		while (pathCharInt != -1 && ((char) pathCharInt == '/')) {
+		while (pathCharInt != -1 && (char) pathCharInt == '/') {
 			slashesNumber++;
 			pathCharInt = pathReader.read();
 		}
@@ -145,7 +145,7 @@ import org.slf4j.LoggerFactory;
 	}
 
 	private static boolean isEven(int n) {
-		return (n % 2 == 0);
+		return n % 2 == 0;
 	}
 
 }

@@ -184,13 +184,13 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 
 		BindingLocationFilter(Collection<RenderingLocation> locations) {
 			this.locations = locations;
-			automaticallyPassed = (locations == null || locations.isEmpty());
+			automaticallyPassed = locations == null || locations.isEmpty();
 		}
 
 		@Override
 		public boolean evaluate(Object binding) {
 			return automaticallyPassed
-					|| (CollectionUtils.containsAny(locations, ((CustomFieldBinding) binding).getRenderingLocations()));
+					|| CollectionUtils.containsAny(locations, ((CustomFieldBinding) binding).getRenderingLocations());
 		}
 
 	}

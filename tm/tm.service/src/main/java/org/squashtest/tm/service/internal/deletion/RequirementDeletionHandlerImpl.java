@@ -591,7 +591,7 @@ RequirementNodeDeletionHandler {
 		for (Movement mouv : movements){
 
 			Long newParentId = mouv.getId();
-			boolean isknown = (! mouv.isTheParentOf());
+			boolean isknown = ! mouv.isTheParentOf();
 
 			NodeContainer<Requirement> newParent;
 
@@ -729,23 +729,23 @@ RequirementNodeDeletionHandler {
 
 
 		List<Long> getDeletableRequirementIds() {
-			return (deletableRequirementIds != null) ? deletableRequirementIds : new ArrayList<Long>();
+			return deletableRequirementIds != null ? deletableRequirementIds : new ArrayList<Long>();
 		}
 
 		List<Long> getRequirementsWithOneDeletableVersion() {
-			return (requirementsWithOneDeletableVersion != null) ? requirementsWithOneDeletableVersion : new ArrayList<Long>();
+			return requirementsWithOneDeletableVersion != null ? requirementsWithOneDeletableVersion : new ArrayList<Long>();
 		}
 
 		List<Long> getDeletableFolderIds() {
-			return (deletableFolderIds != null) ? deletableFolderIds : new ArrayList<Long>();
+			return deletableFolderIds != null ? deletableFolderIds : new ArrayList<Long>();
 		}
 
 		List<Long> getRequirementsWithOneUnbindableVersion() {
-			return (requirementsWithOneUnbindableVersion != null) ? requirementsWithOneUnbindableVersion : new ArrayList<Long>();
+			return requirementsWithOneUnbindableVersion != null ? requirementsWithOneUnbindableVersion : new ArrayList<Long>();
 		}
 
 		List<Long> getRequirementsWithRewirableChildren() {
-			return (requirementsWithRewirableChildren != null) ? requirementsWithRewirableChildren : new ArrayList<Long>();
+			return requirementsWithRewirableChildren != null ? requirementsWithRewirableChildren : new ArrayList<Long>();
 		}
 
 		void setDeletableRequirementIds(List<Long> deletableRequirementIds) {

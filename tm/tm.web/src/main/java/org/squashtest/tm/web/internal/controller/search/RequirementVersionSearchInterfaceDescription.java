@@ -277,7 +277,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		// Collections.sort((List<InfoList>) categories);
 		// Collections.sort((List<InfoList>) categories, ALPHABETICAL_ORDER);
 
-		if (categories.size() > 0) {
+		if (!categories.isEmpty()) {
 			Collections.sort((List<InfoList>) categories, new Comparator<InfoList>() {
 				@Override
 				public int compare(final InfoList object1, final InfoList object2) {

@@ -139,7 +139,7 @@ class ExcelWorkbookParserBuilder {
 		for (int iSheet = 0; iSheet < wb.getNumberOfSheets(); iSheet++) {
 			processSheet(wb, wmd, worksheetKOStatuses, iSheet);
 		}
-		if (worksheetKOStatuses.size() > 0) {
+		if (!worksheetKOStatuses.isEmpty()) {
 			throw new TemplateMismatchException(worksheetKOStatuses);
 		}
 	}

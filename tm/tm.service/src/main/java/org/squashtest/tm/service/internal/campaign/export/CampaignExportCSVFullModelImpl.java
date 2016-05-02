@@ -436,7 +436,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 			if (execStep == null && actionTestStep != null) {
 				dataCells.add(new CellImpl(N_A));
-				dataCells.add(new CellImpl("" + (actionTestStepIndex + 1)));
+				dataCells.add(new CellImpl(String.valueOf(actionTestStepIndex + 1)));
 				dataCells.add(new CellImpl(formatStepRequirements()));
 				dataCells.add(new CellImpl(N_A));
 				dataCells.add(new CellImpl(N_A));
@@ -447,7 +447,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 			if (execStep != null) {
 				dataCells.add(new CellImpl(Long.toString(execStep.getId())));
-				dataCells.add(new CellImpl("" + (stepIndex + 1)));
+				dataCells.add(new CellImpl(String.valueOf(stepIndex + 1)));
 				dataCells.add(new CellImpl(formatStepRequirements()));
 				dataCells.add(new CellImpl(execStep.getExecutionStatus().toString()));
 				dataCells.add(new CellImpl(formatDate(execStep.getLastExecutedOn())));
@@ -459,7 +459,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		}
 
 		private String formatLongText(String text) {
-			return (text == null) ? "" : text.trim();
+			return text == null ? "" : text.trim();
 		}
 
 		private int getNbIssues(ExecutionStep execStep) {
@@ -509,7 +509,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 		private void populateIterationFixedRowData(List<CellImpl> dataCells) {
 
 			dataCells.add(new CellImpl(iteration.getId().toString()));
-			dataCells.add(new CellImpl("" + (iterIndex + 1)));
+			dataCells.add(new CellImpl(String.valueOf(iterIndex + 1)));
 			dataCells.add(new CellImpl(iteration.getName()));
 			if (milestonesEnabled) {
 				dataCells.add(new CellImpl(formatMilestone(iteration.getMilestones())));
@@ -584,17 +584,17 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 
 		private String formatDate(Date date) {
 
-			return (date == null) ? "" : dateFormat.format(date);
+			return date == null ? "" : dateFormat.format(date);
 
 		}
 
 		private String formatUser(User user) {
-			return (user == null) ? "" : user.getLogin();
+			return user == null ? "" : user.getLogin();
 
 		}
 
 		private String formatUser(String username) {
-			return (username == null) ? "" : username;
+			return username == null ? "" : username;
 		}
 
 		private String formatStepRequirements() {

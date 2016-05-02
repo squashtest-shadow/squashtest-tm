@@ -148,7 +148,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 
 	public boolean targetExists(RequirementTarget target){
 		Node req = getNode(target);
-		return (req != null && req.getStatus().getStatus() != Existence.NOT_EXISTS);
+		return req != null && req.getStatus().getStatus() != Existence.NOT_EXISTS;
 	}
 
 	public boolean targetAlreadyLoaded(RequirementTarget target){

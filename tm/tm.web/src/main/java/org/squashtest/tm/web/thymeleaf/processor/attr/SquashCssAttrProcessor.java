@@ -111,7 +111,7 @@ public class SquashCssAttrProcessor extends AbstractSingleAttributeModifierAttrP
 			+ getVersionPathToken(context) + '/' + attributeValue + "}");
 		LOGGER.trace("Stylesheet resolved to url '{}'", result);
 
-		return (result == null ? "" : result.toString());
+		return result == null ? "" : result.toString();
 	}
 
 	/**

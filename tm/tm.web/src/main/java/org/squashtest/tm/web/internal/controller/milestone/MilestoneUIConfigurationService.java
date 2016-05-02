@@ -139,7 +139,7 @@ public class MilestoneUIConfigurationService {
 		conf.setMilestoneLocked(locked);
 
 		// does the user actually use the feature
-		userEnabled = (currentMilestone.isPresent());
+		userEnabled = currentMilestone.isPresent();
 		if (!userEnabled) {
 			conf.setUserEnabled(false);
 		}
@@ -149,7 +149,7 @@ public class MilestoneUIConfigurationService {
 		conf.setTotalMilestones(totalMilestones);
 
 		// if both globally and user enabled, fetch the active milestones etc
-		if (userEnabled && (currentMilestone.isPresent())) { // NOSONAR redundant check, yet it expresses the business
+		if (userEnabled && currentMilestone.isPresent()) { // NOSONAR redundant check, yet it expresses the business
 																// rule
 
 			activeMilestone.setId(currentMilestone.get().getId());
@@ -179,7 +179,7 @@ public class MilestoneUIConfigurationService {
 	}
 
 	private boolean isMilestoneLocked(MilestoneMember member) {
-		return (!member.doMilestonesAllowEdition());
+		return !member.doMilestonesAllowEdition();
 	}
 
 

@@ -54,9 +54,9 @@ import org.squashtest.tm.web.internal.controller.AcceptHeaders;
 import org.squashtest.tm.web.internal.model.json.JsonStepInfo;
 
 /**
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/test-suites/{testSuiteId}/test-plan")
@@ -119,11 +119,12 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * TODO remplacer le test de l'url par un param "dry-run"
-	 * 
+	 *
 	 * @param testSuiteId
 	 */
-	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = { "mode=start-resume", "dry-run" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, method = RequestMethod.POST, params = {"mode=start-resume", "dry-run"})
+	public
 	void testStartResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		try {
 			testSuiteExecutionRunner.startResume(testSuiteId);
@@ -169,7 +170,7 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * Returns absolute url for the steps collection of an execution, ie including this webapp's context path.
-	 * 
+	 *
 	 * @param testSuiteId
 	 * @param execution
 	 * @return
@@ -183,11 +184,11 @@ public class TestSuiteExecutionRunnerController {
 	/**
 	 * That method will create if necessary the next execution then redirect a view to its runner. It matches the
 	 * "next test case" button in classic mode
-	 * 
+	 *
 	 * \o/ There should be a params = "optimized" in this method's {@link RequestMapping}. We omitted it because
 	 * "params" has more precedence than "headers", which leads to requests meant to be processed by
 	 * {@link #getNextTestCaseRunnerState(long, long, HttpServletRequest, Locale)} being routed to this method instead.
-	 * 
+	 *
 	 * @param testPlanItemId
 	 * @param testSuiteId
 	 * @param optimized
@@ -209,12 +210,12 @@ public class TestSuiteExecutionRunnerController {
 	 * That method will create if necessary the next execution then return the RunnerState that corresponds to it note
 	 * that most of the time it corresponds to an ieo working in test suite mode so we skip 'optimized' and 'suitemode'
 	 * parameters here
-	 * 
+	 *
 	 * It is called by the optimized runner only
-	 * 
+	 *
 	 * headers parameter is required otherwise there is an ambiguity with
 	 * {@link #moveToNextTestCase(long, long, boolean, boolean)}
-	 * 
+	 *
 	 * @param testPlanItemId
 	 * @param testSuiteId
 	 * @param context
@@ -243,15 +244,16 @@ public class TestSuiteExecutionRunnerController {
 		return servletContext.getContextPath();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = RequestMappingPattern.DELETE_ALL_EXECUTIONS, method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void deleteAllExecutions(@PathVariable long testSuiteId) {
 		testSuiteExecutionRunner.deleteAllExecutions(testSuiteId);
 	}
 
 	/**
 	 * requests a view for the first executable step of the given execution.
-	 * 
+	 *
 	 * @param testSuiteId
 	 * @param testPlanItemId
 	 * @param executionId
@@ -280,7 +282,7 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * returns the execution prologue
-	 * 
+	 *
 	 * @param testSuiteId
 	 * @param testPlanItemId
 	 * @param executionId
@@ -313,7 +315,7 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * Returns classic runner fragment for the given step.
-	 * 
+	 *
 	 * @param testSuiteId
 	 * @param testPlanItemId
 	 * @param executionId
@@ -353,7 +355,7 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * Returns Optimized runner fragment for given step.
-	 * 
+	 *
 	 * @param testSuiteId
 	 * @param testPlanItemId
 	 * @param executionId
@@ -375,7 +377,7 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * changes execution comment
-	 * 
+	 *
 	 * @param newComment
 	 * @param stepId
 	 * @return
@@ -389,7 +391,7 @@ public class TestSuiteExecutionRunnerController {
 
 	/**
 	 * changes execution step status
-	 * 
+	 *
 	 * @param executionStatus
 	 * @param stepId
 	 */

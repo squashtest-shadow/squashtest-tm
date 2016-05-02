@@ -111,7 +111,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private PermissionEvaluationService permissionService;
 	@Inject
 	private RequirementVersionCoverageDao requirementVersionCoverageDao;
-	
+
 
 	@Inject
 	private HibernateObjectDao genericDao;
@@ -153,7 +153,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	private boolean projectchanged(TreeNode source) {
 		Project projectSource = source.getProject();
 		GenericProject projectDestination = destination.getProject();
-		return (projectSource != null && projectDestination != null && !projectSource.getId().equals(projectDestination.getId()));
+		return projectSource != null && projectDestination != null && !projectSource.getId().equals(projectDestination.getId());
 	}
 
 	@SuppressWarnings({"unchecked", "rawtypes"})

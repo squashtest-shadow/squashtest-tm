@@ -24,9 +24,9 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Definition of a custom field column.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class CustomFieldColumnDef implements ColumnDef {
 	private final int index;
@@ -40,7 +40,7 @@ public class CustomFieldColumnDef implements ColumnDef {
 
 	@Override
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.batchimport.testcase.excel.ColumnDef#getIndex()
 	 */
 	public int getIndex() {
@@ -67,7 +67,7 @@ public class CustomFieldColumnDef implements ColumnDef {
 	 */
 	@Override
 	public boolean is(@NotNull ColumnProcessingMode processingMode) {
-		return processingMode.equals(ColumnProcessingMode.OPTIONAL);
+		return processingMode == ColumnProcessingMode.OPTIONAL;
 	}
 
 	// GENERATED:START
@@ -75,7 +75,7 @@ public class CustomFieldColumnDef implements ColumnDef {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((code == null) ? 0 : code.hashCode());
+		result = prime * result + (code == null ? 0 : code.hashCode());
 		result = prime * result + index;
 		return result;
 	}

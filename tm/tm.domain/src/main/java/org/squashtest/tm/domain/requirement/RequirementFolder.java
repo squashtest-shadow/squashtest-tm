@@ -69,7 +69,7 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 		resource = new SimpleResource();
 	}
 	public RequirementFolder(Date createdOn, String createdBy) {
-		AuditableMixin audit = ((AuditableMixin) this);
+		AuditableMixin audit = (AuditableMixin) this;
 
 		audit.setCreatedOn(createdOn);
 		audit.setCreatedBy(createdBy);

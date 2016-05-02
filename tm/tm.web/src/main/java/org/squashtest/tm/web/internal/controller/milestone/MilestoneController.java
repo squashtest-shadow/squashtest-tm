@@ -88,7 +88,7 @@ public class MilestoneController {
 		Collections.sort(milestones, new Comparator<Milestone>() {
 			@Override
 			public int compare(Milestone o1, Milestone o2) {
-				return (o2.getEndDate().before(o1.getEndDate())) ? -1 : 1;
+				return o2.getEndDate().before(o1.getEndDate()) ? -1 : 1;
 			}
 		});
 

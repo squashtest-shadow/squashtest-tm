@@ -24,16 +24,16 @@ import javax.validation.constraints.NotNull;
 
 /**
  * Definition of a "standard" column in an import file. Standard columns have predifined headers and behaviour.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
 	private final COL type;
 	private final int index;
 
 	/**
-	 * 
+	 *
 	 * @param type
 	 * @param index
 	 */
@@ -60,7 +60,7 @@ class StdColumnDef<COL extends TemplateColumn> implements ColumnDef {
 
 	@Override
 	public boolean is(@NotNull ColumnProcessingMode processingMode) {
-		return processingMode.equals(type.getProcessingMode());
+		return processingMode == type.getProcessingMode();
 	}
 
 	/**

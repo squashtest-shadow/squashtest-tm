@@ -59,8 +59,8 @@ public final class CallStepParamsInfo{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((calledDatasetName == null) ? 0 : calledDatasetName.hashCode());
-		result = prime * result + ((paramMode == null) ? 0 : paramMode.hashCode());
+		result = prime * result + (calledDatasetName == null ? 0 : calledDatasetName.hashCode());
+		result = prime * result + (paramMode == null ? 0 : paramMode.hashCode());
 		return result;
 	}
 

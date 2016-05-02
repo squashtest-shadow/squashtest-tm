@@ -43,7 +43,7 @@ public class ActionStepFormModel {
 	private String expectedResult="";
 
 	private RawValueModelMap customFields = new RawValueModelMap();
-	
+
 	private int index;
 
 	public String getAction() {
@@ -104,7 +104,7 @@ public class ActionStepFormModel {
 
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return (clazz.equals(ActionStepFormModel.class));
+			return clazz.equals(ActionStepFormModel.class);
 		}
 
 

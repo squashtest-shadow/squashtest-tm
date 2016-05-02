@@ -47,7 +47,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	@Override
 	public AutomatedTest persistOrAttach(AutomatedTest newTest) {
 
-		if ((newTest.getId() != null) && (findById(newTest.getId()) != null)) {
+		if (newTest.getId() != null && findById(newTest.getId()) != null) {
 			return newTest;
 		}
 

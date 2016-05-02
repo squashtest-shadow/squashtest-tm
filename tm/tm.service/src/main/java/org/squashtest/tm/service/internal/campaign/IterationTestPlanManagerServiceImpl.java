@@ -203,7 +203,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 		TestCase testCase = testCaseDao.findById(testcaseId);
 
-		Dataset ds = (datasetId!=null) ? datasetDao.findById(datasetId) : null;
+		Dataset ds = datasetId!=null ? datasetDao.findById(datasetId) : null;
 
 		IterationTestPlanItem itp = new IterationTestPlanItem(testCase, ds);
 		iteration.addTestPlan(itp);
@@ -435,7 +435,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
 			+ OR_HAS_ROLE_ADMIN)
 	public void assignUserToTestPlanItem(long testPlanItemId, long userId) {
-		User user = (userId == 0) ? null : userDao.findById(userId);
+		User user = userId == 0 ? null : userDao.findById(userId);
 
 		IterationTestPlanItem itp = iterationTestPlanDao.findById(testPlanItemId);
 		if (!itp.isTestCaseDeleted()) {
@@ -453,7 +453,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		PermissionsUtils.checkPermission(permissionEvaluationService, testPlanIds, "WRITE", IterationTestPlanItem.class.getName());
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(testPlanIds);
 
-		User user = (userId == 0) ? null : userDao.findById(userId);
+		User user = userId == 0 ? null : userDao.findById(userId);
 
 		for (IterationTestPlanItem item : items) {
 			if (!item.isTestCaseDeleted()) {

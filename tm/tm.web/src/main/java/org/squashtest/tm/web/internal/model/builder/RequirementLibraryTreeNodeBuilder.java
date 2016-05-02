@@ -45,7 +45,7 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<RequirementLibraryNode> {
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
-	 * 
+	 *
 	 */
 	private class CustomAttributesPopulator implements RequirementLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
@@ -56,27 +56,27 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 		}
 
 		/**
-		 * 
+		 *
 		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.RequirementFolder)
 		 */
 		@Override
 		public void visit(RequirementFolder folder) {
 			addFolderAttributes("requirement-folders");
-			State state = (folder.hasContent() ? State.closed : State.leaf);
+			State state = folder.hasContent() ? State.closed : State.leaf;
 			builtNode.setState(state);
 
 		}
 
 
 		/**
-		 * 
+		 *
 		 * @see org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor#visit(org.squashtest.tm.domain.requirement.Requirement)
 		 */
 		@Override
 		public void visit(Requirement requirement) {
 
 			// supposed not to be null;
-			RequirementVersion version = (milestoneFilter == null) ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
+			RequirementVersion version = milestoneFilter == null ? requirement.getCurrentVersion() : requirement.findByMilestone(milestoneFilter);
 
 			//version can be null if it not in the current milestone but on of his child is.
 			if (version == null){
@@ -93,7 +93,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 			// for-display instructions
 			addLeafAttributes("requirement", "requirements");
 
-			State state = (requirement.hasContent() ? State.closed : State.leaf);
+			State state = requirement.hasContent() ? State.closed : State.leaf;
 			builtNode.setState(state);
 
 			// spec 4553
@@ -162,7 +162,7 @@ public class RequirementLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<Re
 
 			// because of the milestoneFilter it may happen that the children collection ends up empty.
 			// in that case we must set the state of the node accordingly
-			State state =  (children.isEmpty()) ? State.leaf : State.open;
+			State state =  children.isEmpty() ? State.leaf : State.open;
 			builtNode.setState(state);
 		}
 	}

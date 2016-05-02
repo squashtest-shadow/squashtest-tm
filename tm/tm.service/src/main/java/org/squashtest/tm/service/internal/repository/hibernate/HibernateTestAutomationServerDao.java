@@ -108,7 +108,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 		Query q = session.getNamedQuery("testAutomationServer.hasBoundProjects");
 		q.setParameter(ParameterNames.SERVER_ID, serverId);
 		Long count = (Long) q.uniqueResult();
-		return (count > 0);
+		return count > 0;
 	}
 
 	/**

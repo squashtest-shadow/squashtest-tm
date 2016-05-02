@@ -72,20 +72,21 @@ public class RequirementVersionResolverController {
 	/*
 	 * Normally the method RequirementVersionModificationController#rename should
 	 * have been used.
-	 * 
+	 *
 	 * Requests this method is mapped to come from the library tree, that doesn't know which
 	 * requirement version it is actually talking to and the purpose of this controller is
 	 * to redirect requests to the correct URL.
-	 * 
+	 *
 	 * Unfortunately one can't redirect POST methods. So in this particular case we must handle
 	 * such requests (like 'POST newName') here.
-	 * 
+	 *
 	 */
-	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
+	public
  Object rename(@PathVariable(RequestParams.REQUIREMENT_ID) long requirementId,
 			@RequestParam("newName") String newName) {
-		
+
 
 		RequirementVersion version = versionResolver.resolveByRequirementId(requirementId);
 		requirementVersionManager.rename(version.getId(), newName);

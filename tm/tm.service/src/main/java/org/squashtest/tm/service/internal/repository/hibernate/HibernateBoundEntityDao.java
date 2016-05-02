@@ -116,7 +116,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 		query.setParameter("boundEntityId", boundEntityId, LongType.INSTANCE);
 		query.setParameter("boundEntityType", entityType);
 
-		return ((Long)query.uniqueResult() != 0);
+		return (Long)query.uniqueResult() != 0;
 
 	}
 

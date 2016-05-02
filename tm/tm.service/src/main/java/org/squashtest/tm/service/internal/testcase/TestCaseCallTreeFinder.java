@@ -22,7 +22,6 @@ package org.squashtest.tm.service.internal.testcase;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -270,10 +269,10 @@ public class TestCaseCallTreeFinder {
 		// phase 2 : halve the number of edges as explained in the comment above the method
 		// every edges will appear two times, except for "boundaries" (ie caller is null or called is null),
 		// for which the cardinality is 1.
-		for (NamedReferencePair pair : ((Set<NamedReferencePair>) allpairs.uniqueSet())) {
+		for (NamedReferencePair pair : (Set<NamedReferencePair>) allpairs.uniqueSet()) {
 			int cardinality = allpairs.getCount(pair);
 			if (cardinality > 1) {
-				allpairs.remove(pair, (cardinality) / 2);
+				allpairs.remove(pair, cardinality / 2);
 			}
 		}
 
@@ -289,7 +288,7 @@ public class TestCaseCallTreeFinder {
 	}
 
 	private SimpleNode<NamedReference> node(NamedReference ref) {
-		return (ref != null) ? new SimpleNode<>(ref) : null;
+		return ref != null ? new SimpleNode<>(ref) : null;
 	}
 
 }

@@ -39,7 +39,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 public class IterationFormModel {
 	/**
 	 * Note : the following validation annotations are never called, a custom validator will be invoked for this.
-	 * 
+	 *
 	 */
 
 	/*@NotBlank
@@ -146,7 +146,7 @@ public class IterationFormModel {
 
 		@Override
 		public boolean supports(Class<?> clazz) {
-			return (clazz.equals(IterationFormModel.class));
+			return clazz.equals(IterationFormModel.class);
 		}
 
 		@Override

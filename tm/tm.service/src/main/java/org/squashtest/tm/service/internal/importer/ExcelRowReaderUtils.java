@@ -122,7 +122,7 @@ import org.slf4j.LoggerFactory;
 				if (type == Cell.CELL_TYPE_NUMERIC) {
 					Double doubleVal = cell.getNumericCellValue();
 					if(doubleVal - doubleVal.intValue() == 0){
-						toReturn =""+doubleVal.intValue();
+						toReturn = String.valueOf(doubleVal.intValue());
 					}else{
 					toReturn = doubleVal.toString();
 					}
@@ -133,7 +133,7 @@ import org.slf4j.LoggerFactory;
 	}
 
 	private static boolean notEmpty(String string) {
-		return (string != null && (!string.isEmpty()));
+		return string != null && !string.isEmpty();
 	}
 
 	private static Cell accessToCell(Row row, Map<String, Integer> columnsMapping, String tag) {

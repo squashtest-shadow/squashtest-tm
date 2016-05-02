@@ -42,7 +42,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.web.internal.model.builder.GenericJsTreeNodeBuilder#doBuild(org.squashtest.tm.web.internal.model.jstree.JsTreeNode,
 	 *      org.squashtest.tm.domain.Identified)
 	 */
@@ -87,7 +87,7 @@ public class IterationNodeBuilder extends GenericJsTreeNodeBuilder<Iteration, It
 
 			// because of the milestoneFilter it may happen that the children collection ends up empty.
 			// in that case we must set the state of the node accordingly
-			State state =  (children.isEmpty()) ? State.leaf : State.open;
+			State state =  children.isEmpty() ? State.leaf : State.open;
 			node.setState(state);
 		}
 

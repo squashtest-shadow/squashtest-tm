@@ -121,7 +121,7 @@ public class FolderSupport<NODE extends LibraryNode, FOLDER extends Folder<NODE>
 	}
 
 	public boolean hasContent(){
-		return (folder.getContent().size()>0);
+		return !folder.getContent().isEmpty();
 	}
 
 	public FOLDER createCopy(FOLDER newFolder) {

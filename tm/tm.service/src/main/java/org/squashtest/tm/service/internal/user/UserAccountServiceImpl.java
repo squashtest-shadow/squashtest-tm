@@ -189,7 +189,7 @@ public class UserAccountServiceImpl implements UserAccountService {
 	private void checkPermissions(User user) {
 		String currentLogin = userContextService.getUsername();
 
-		if ((!user.getLogin().equals(currentLogin)) && (!userContextService.hasRole("ROLE_ADMIN"))) {
+		if (!user.getLogin().equals(currentLogin) && !userContextService.hasRole("ROLE_ADMIN")) {
 			throw new AccessDeniedException("Access is denied");
 		}
 	}

@@ -32,18 +32,18 @@ import org.hibernate.annotations.Immutable;
 /**
  * Maps an edge of a test case node path. This entity shoud be used to query CLN_RELATIONSHIP_CLOSURE using hql instead
  * of native SQL so that hibernate handles postgresql / mysql funky differences.
- * 
+ *
  * Ripped from TestCasePathEdge.
- * 
+ *
  * @author Gregory Fouquet, bsiri
- * 
+ *
  */
 /*
  * TODO :
- * 
+ *
  * Maybe TestCasePathEdge, RequirementPathEdge and CampaignPathEdge would benefit from
  * a bit of refactoring using a MappedSuperclass ?
- * 
+ *
  */
 @Entity
 @Immutable
@@ -53,7 +53,7 @@ public class CampaignPathEdge {
 
 	public static class PathId implements Serializable {
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 		private long ancestorId;
@@ -66,8 +66,8 @@ public class CampaignPathEdge {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 17;
-			result = prime * result + (int) (ancestorId ^ (ancestorId >>> 32));
-			result = prime * result + (int) (descendantId ^ (descendantId >>> 32));
+			result = prime * result + (int) (ancestorId ^ ancestorId >>> 32);
+			result = prime * result + (int) (descendantId ^ descendantId >>> 32);
 			return result;
 		}
 

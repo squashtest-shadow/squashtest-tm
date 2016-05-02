@@ -214,8 +214,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-campaign", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	JsTreeNode addNewCampaignToLibraryRootContent(@PathVariable Long libraryId,
 			@RequestBody CampaignFormModel campaignForm)
 					throws BindException {
@@ -237,8 +238,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content/new-campaign", method = RequestMethod.POST)
-	public @ResponseBody
+	public
  JsTreeNode addNewCampaignToFolderContent(@PathVariable long folderId,
 			@RequestBody CampaignFormModel campaignForm)
 					throws BindException {
@@ -279,8 +281,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return builder.setNode(model).build();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/content/new-iteration", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	JsTreeNode addNewIterationToCampaign(@PathVariable long campaignId, @RequestBody IterationFormModel iterationForm)
 			throws BindException {
 
@@ -314,15 +317,17 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return suiteNodeBuilder.get().setModel(testSuite).build();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/content", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	List<JsTreeNode> getCampaignIterationsTreeModel(@PathVariable long campaignId) {
 		List<Iteration> iterations = campaignLibraryNavigationService.findIterationsByCampaignId(campaignId);
 		return createCampaignIterationsModel(iterations);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{resourceId}/content", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	List<JsTreeNode> getIterationTestSuitesTreeModel(@PathVariable("resourceId") long iterationId) {
 
 		List<TestSuite> testSuites = campaignLibraryNavigationService.findIterationContent(iterationId);
@@ -336,8 +341,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	 * (non-Javadoc)
 	 * @see org.squashtest.tm.web.internal.controller.generic.LibraryNavigationController#moveNodes(java.lang.Long[], long, java.lang.String)
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
 			@PathVariable("destinationId") long destinationId) {
 
 		/*
@@ -352,10 +358,11 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId,
-			@PathVariable("position") int position) {
+	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+						  @PathVariable("destinationId") long destinationId,
+						  @PathVariable("position") int position) {
 
 		try {
 			campaignLibraryNavigationService.moveIterationsWithinCampaign(destinationId, nodeIds, position);
@@ -366,7 +373,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 
-	private @ResponseBody
+	@ResponseBody
+	private
 	List<JsTreeNode> createCampaignIterationsModel(List<Iteration> iterations) {
 		List<JsTreeNode> res = new ArrayList<>();
 
@@ -388,7 +396,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
-	private @ResponseBody
+	@ResponseBody
+	private
 	List<JsTreeNode> createCopiedIterationsModel(List<Iteration> newIterations, int nextIterationNumber) {
 		int iterationIndex = nextIterationNumber;
 		List<JsTreeNode> res = new ArrayList<>();
@@ -403,7 +412,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return res;
 	}
 
-	private @ResponseBody
+	@ResponseBody
+	private
 	List<JsTreeNode> createCopiedTestSuitesModel(List<TestSuite> newTestSuites) {
 
 		List<JsTreeNode> res = new ArrayList<>();
@@ -415,8 +425,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return res;
 	}
 
-	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
+	public
 	List<JsTreeNode> getLinkablesRootModel() {
 		List<CampaignLibrary> linkableLibraries = campaignLibraryNavigationService.findLinkableCampaignLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
@@ -429,8 +440,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return listBuilder.setModel(linkableLibraries).build();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	Messages simulateIterationDeletion(@PathVariable("iterationIds") List<Long> iterationIds, Locale locale) {
 
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService
@@ -444,15 +456,17 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return messages;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationIds}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	OperationReport confirmIterationsDeletion(@PathVariable("iterationIds") List<Long> iterationIds) {
 
 		return campaignLibraryNavigationService.deleteIterations(iterationIds);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	Messages simulateSuiteDeletion(@PathVariable("suiteIds") List<Long> suiteIds, Locale locale) {
 		List<SuppressionPreviewReport> reportList = campaignLibraryNavigationService.simulateSuiteDeletion(suiteIds);
 
@@ -465,17 +479,19 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteIds}", params = { REMOVE_FROM_ITER }, method = RequestMethod.DELETE)
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/test-suites/{suiteIds}", params = {REMOVE_FROM_ITER}, method = RequestMethod.DELETE)
+	public
  OperationReport confirmSuitesDeletion(@PathVariable("suiteIds") List<Long> suiteIds,
 			@RequestParam(REMOVE_FROM_ITER) boolean removeFromIter) {
 
 		return campaignLibraryNavigationService.deleteSuites(suiteIds, removeFromIter);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/iterations/new", method = RequestMethod.POST, params = {
-			"nodeIds[]", "next-iteration-index" })
-	public @ResponseBody
+		"nodeIds[]", "next-iteration-index"})
+	public
 	List<JsTreeNode> copyIterations(@RequestParam("nodeIds[]") Long[] nodeIds,
 			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			@RequestParam("next-iteration-index") int nextIterationIndex) {
@@ -485,8 +501,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		return createCopiedIterationsModel(iterationsList, nextIterationIndex);
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = { "nodeIds[]" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/iterations/{iterationId}/test-suites/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public
 	List<JsTreeNode> copyTestSuites(@RequestParam("nodeIds[]") Long[] nodeIds,
 			@PathVariable("iterationId") long iterationId) {
 
@@ -496,8 +513,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/export-campaign/{campaignId}", method = RequestMethod.GET, params = "export=csv")
-	public @ResponseBody
+	public
 	FileSystemResource exportCampaign(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
 
@@ -516,8 +534,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	}
 
 	// Export Campaign from Execution
+	@ResponseBody
 	@RequestMapping(value = "/export-campaign-by-execution/{executionId}", method = RequestMethod.GET, params = "export=csv")
-	public @ResponseBody
+	public
 	FileSystemResource exportCampaignByExecution(@PathVariable(RequestParams.EXECUTION_ID) long executionId,
 			@RequestParam(value = "exportType", defaultValue = "S") String exportType, HttpServletResponse response) {
 
@@ -539,8 +558,9 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 
 	// Milestone dashboard
 
+	@ResponseBody
 	@RequestMapping(value = "/dashboard-milestones-statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody
+	public
  CampaignStatisticsBundle getStatisticsAsJson() {
 
 		return campaignLibraryNavigationService.gatherCampaignStatisticsBundleByMilestone();
@@ -559,8 +579,8 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 		mav.addObject("milestone", activeMilestone.get());
 		mav.addObject("dashboardModel", csbundle);
 
-		boolean allowsSettled = (csbundle.getCampaignTestCaseStatusStatistics().getNbSettled() > 0);
-		boolean allowsUntestable = (csbundle.getCampaignTestCaseStatusStatistics().getNbUntestable() > 0);
+		boolean allowsSettled = csbundle.getCampaignTestCaseStatusStatistics().getNbSettled() > 0;
+		boolean allowsUntestable = csbundle.getCampaignTestCaseStatusStatistics().getNbUntestable() > 0;
 
 		mav.addObject("allowsSettled", allowsSettled);
 		mav.addObject("allowsUntestable", allowsUntestable);

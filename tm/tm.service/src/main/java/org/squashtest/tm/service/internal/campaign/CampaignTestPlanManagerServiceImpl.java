@@ -231,7 +231,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 
 		TestCase testCase = testCaseDao.findById(testCaseId);
 
-		Dataset ds = (datasetId!=null) ? datasetDao.findById(datasetId) : null;
+		Dataset ds = datasetId!=null ? datasetDao.findById(datasetId) : null;
 
 		CampaignTestPlanItem itp = new CampaignTestPlanItem(testCase, ds);
 		campaignTestPlanItemDao.persist(itp);

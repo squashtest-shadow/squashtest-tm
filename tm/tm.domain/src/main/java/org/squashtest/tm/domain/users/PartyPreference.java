@@ -27,7 +27,7 @@ import javax.persistence.*;
 @Table(name = "PARTY_PREFERENCE")
 public class PartyPreference implements Identified{
 
-	private final static String TYPE = "PARTY_PREFERENCE";
+	private static final String TYPE = "PARTY_PREFERENCE";
 
 	@Id
 	@Column(name = "PREFERENCE_ID")

@@ -226,7 +226,7 @@ public class TestCaseDatasetsController {
 		Sorting sorting = new DataTableSorting(params, datasetsTableMapper);
 		Set<Dataset> datasets = testCase.getDatasets();
 		List<Dataset> datasetsList = new ArrayList<>(datasets);
-		if (sorting.getSortedAttribute() != null && sorting.getSortedAttribute().equals("Parameter.name")) {
+		if (sorting.getSortedAttribute() != null && "Parameter.name".equals(sorting.getSortedAttribute())) {
 			Collections.sort(datasetsList, new DatasetNameComparator(sorting.getSortOrder()));
 		} else {
 			Collections.sort(datasetsList, new DatasetNameComparator(SortOrder.ASCENDING));
@@ -252,7 +252,7 @@ public class TestCaseDatasetsController {
 		@Override
 		public int compare(Dataset o1, Dataset o2) {
 			int ascResult = o1.getName().compareTo(o2.getName());
-			if (this.sortOrder.equals(SortOrder.ASCENDING)) {
+			if (this.sortOrder == SortOrder.ASCENDING) {
 				return ascResult;
 			} else {
 				return -ascResult;
@@ -266,7 +266,7 @@ public class TestCaseDatasetsController {
 	 * @author mpagnon
 	 *
 	 */
-	public final static class DatasetsDataTableModelHelper extends DataTableModelBuilder<Dataset> {
+	public static final class DatasetsDataTableModelHelper extends DataTableModelBuilder<Dataset> {
 
 		public DatasetsDataTableModelHelper() {
 			super();

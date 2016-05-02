@@ -557,7 +557,7 @@ class ScopePlanner {
 
 
 	private boolean notEmpty(Collection<?> collection) {
-		return (collection != null) && (!collection.isEmpty());
+		return collection != null && !collection.isEmpty();
 	}
 
 	private void addImpossibleCondition() {

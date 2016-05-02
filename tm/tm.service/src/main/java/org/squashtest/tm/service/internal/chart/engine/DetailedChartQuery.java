@@ -64,7 +64,7 @@ class DetailedChartQuery extends ChartQuery{
 
 	/**
 	 * Constructor for a given chartquery
-	 * 
+	 *
 	 * @param parent
 	 */
 	DetailedChartQuery(ChartQuery parent){
@@ -94,7 +94,7 @@ class DetailedChartQuery extends ChartQuery{
 
 	/**
 	 * Constructor that will build a DetailedChartQuery for the subquery of the given column
-	 * 
+	 *
 	 * @param column
 	 */
 	DetailedChartQuery(ColumnPrototypeInstance column){
@@ -192,10 +192,8 @@ class DetailedChartQuery extends ChartQuery{
 		@Override
 		public boolean evaluate(Object col) {
 			ColumnPrototype proto = ((ColumnPrototypeInstance)col).getColumn();
-			return (
-					proto.getColumnType() == ColumnType.CALCULATED &&
-					proto.getSubQuery().getStrategy() == strategy
-					);
+			return proto.getColumnType() == ColumnType.CALCULATED &&
+            proto.getSubQuery().getStrategy() == strategy;
 		}
 
 	}

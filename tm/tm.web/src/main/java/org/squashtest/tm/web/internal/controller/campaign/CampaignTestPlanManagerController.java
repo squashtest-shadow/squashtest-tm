@@ -129,8 +129,9 @@ public class CampaignTestPlanManagerController {
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "campaigns/{campaignId}/test-plan", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
+	public
 	DataTableModel getTestCasesTableModel(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			final DataTableDrawParameters params, final Locale locale) {
 
@@ -144,16 +145,18 @@ public class CampaignTestPlanManagerController {
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan", method = RequestMethod.POST,
-			params = TESTCASES_IDS_REQUEST_PARAM)
-	public @ResponseBody
+		params = TESTCASES_IDS_REQUEST_PARAM)
+	public
 	void addTestCasesToCampaign(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long campaignId) {
 		testPlanManager.addTestCasesToCampaignTestPlan(testCasesIds, campaignId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void removeItemsFromTestPlan(@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			@PathVariable("testPlanIds") List<Long> itemsIds) {
 		testPlanManager.removeTestPlanItems(campaignId, itemsIds);
@@ -178,16 +181,18 @@ public class CampaignTestPlanManagerController {
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{itemId}/assign-user", method = RequestMethod.POST, params = "userId")
-	public @ResponseBody
+	public
 	void assignUserToCampaignTestPlanItem(@PathVariable long itemId, @PathVariable long campaignId,
 			@RequestParam long userId) {
 		testPlanManager.assignUserToTestPlanItem(itemId, campaignId, userId);
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/assignable-users", method = RequestMethod.GET)
-	public @ResponseBody List<TestPlanAssignableUser> getAssignUserForCampaignTestPlanItem(
+	public List<TestPlanAssignableUser> getAssignUserForCampaignTestPlanItem(
 			@PathVariable(RequestParams.CAMPAIGN_ID) long campaignId, final Locale locale) {
 
 		List<User> usersList = testPlanManager.findAssignableUserForTestPlan(campaignId);
@@ -206,8 +211,9 @@ public class CampaignTestPlanManagerController {
 
 
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
-	public @ResponseBody
+	public
 	Long assignUserToCampaignTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds, @PathVariable(RequestParams.CAMPAIGN_ID) long campaignId,
 			@RequestParam("assignee") long assignee) {
 		testPlanManager.assignUserToTestPlanItems(testPlanIds, campaignId, assignee);
@@ -221,8 +227,9 @@ public class CampaignTestPlanManagerController {
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/campaigns/{campaignId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
-	public @ResponseBody
+	public
 	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
 		testPlanManager.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
@@ -231,7 +238,7 @@ public class CampaignTestPlanManagerController {
 
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return
 	 */

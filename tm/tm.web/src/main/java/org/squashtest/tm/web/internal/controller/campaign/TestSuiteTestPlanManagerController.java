@@ -186,8 +186,9 @@ public class TestSuiteTestPlanManagerController {
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
+	public
 	DataTableModel getTestPlanModel(@PathVariable(TEST_SUITE_ID) long suiteId, final DataTableDrawParameters params,
 			final Locale locale) {
 
@@ -223,8 +224,9 @@ public class TestSuiteTestPlanManagerController {
 		return jsonUsers;
 	}
 
-	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = { "assignee" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = {"assignee"})
+	public
 	long assignUserToCampaignTestPlanItem(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId, @RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
@@ -232,8 +234,9 @@ public class TestSuiteTestPlanManagerController {
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
-	public @ResponseBody
+	public
 	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId){
 		iterationTestPlanManagerService.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
@@ -260,15 +263,17 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.reorderTestPlan(suiteId, sorting);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/test-suites/{suiteId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
-	public @ResponseBody
+	public
 	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.addTestCasesToIterationAndTestSuite(testCasesIds, suiteId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	Boolean removeTestCaseFromTestSuiteAndIteration(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		// check if a test plan was already executed and therefore not removed from the iteration
@@ -277,16 +282,18 @@ public class TestSuiteTestPlanManagerController {
 		return response;
 	}
 
-	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = { "detach=true" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.DELETE, params = {"detach=true"})
+	public
 	Boolean detachTestCaseFromTestSuite(@PathVariable(TESTPLAN_IDS) List<Long> testPlanIds,
 			@PathVariable(TEST_SUITE_ID) long suiteId) {
 		testSuiteTestPlanManagerService.detachTestPlanFromTestSuite(testPlanIds, suiteId);
 		return Boolean.FALSE;
 	}
 
-	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = { ITEM_IDS })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/test-suites/{suiteIds}/test-plan", method = RequestMethod.POST, params = {ITEM_IDS})
+	public
 	Map<String, List<Long>> bindTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@PathVariable("suiteIds") List<Long> suitesIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
@@ -296,9 +303,10 @@ public class TestSuiteTestPlanManagerController {
 		return result;
 	}
 
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
-			BOUND_SUITE_IDS, UNBOUND_SUITE_IDS })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = {ITEM_IDS,
+		BOUND_SUITE_IDS, UNBOUND_SUITE_IDS})
+	public
 	void changeboundTestPlan(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds,
 			@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
@@ -307,25 +315,28 @@ public class TestSuiteTestPlanManagerController {
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
 
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS, UNBOUND_SUITE_IDS })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = {ITEM_IDS, UNBOUND_SUITE_IDS})
+	public
 	void unbindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam(UNBOUND_SUITE_IDS) List<Long> unboundTestSuiteIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.unbindTestPlanToMultipleSuites(unboundTestSuiteIds, itpIds);
 	}
 
-	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = { ITEM_IDS,
-			BOUND_SUITE_IDS })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/test-suites/test-plan", method = RequestMethod.POST, params = {ITEM_IDS,
+		BOUND_SUITE_IDS})
+	public
 	void bindTestPlans(@RequestParam(ITEM_IDS) List<Long> itpIds,
 			@RequestParam(BOUND_SUITE_IDS) List<Long> boundTestSuitesIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(boundTestSuitesIds, itpIds);
 	}
 
-	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = { STATUS })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = TEST_PLAN_IDS_URL_MAPPING, method = RequestMethod.POST, params = {STATUS})
+	public
 	JsonIterationTestPlanItem setTestPlanItemStatus(@PathVariable("testPlanIds") List<Long> testPlanIds, @RequestParam(STATUS) String status) {
 		LOGGER.debug("change status test plan items to {}", status);
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
@@ -362,8 +373,9 @@ public class TestSuiteTestPlanManagerController {
 	// ************* execution *****************************************
 
 	// returns the ID of the newly created execution
-	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = { "mode=manual" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/test-suites/{suiteId}/test-plan/{itemId}/executions/new", method = RequestMethod.POST, params = {"mode=manual"})
+	public
 	String addManualExecution(@PathVariable(TEST_SUITE_ID) long suiteId, @PathVariable(ITEM_ID) long itemId) {
 		LOGGER.debug("add manual execution to item #{}", itemId);
 		Execution newExecution = service.addExecution(itemId);
@@ -384,7 +396,7 @@ public class TestSuiteTestPlanManagerController {
 
 
 	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item){
-		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
+		String name = item.isTestCaseDeleted() ? null : item.getReferencedTestCase().getName();
 		return new JsonIterationTestPlanItem(
 				item.getId(),
 				item.getExecutionStatus(),

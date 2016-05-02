@@ -129,8 +129,8 @@ public abstract class ExcelBatchImporter {
 		return instructions;
 	}
 
-	abstract public List<EntityType> getEntityType();
+	public abstract List<EntityType> getEntityType();
 
-	abstract public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType);
+	public abstract List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType);
 
 }

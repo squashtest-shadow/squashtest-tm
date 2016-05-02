@@ -144,7 +144,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	public void visit(TestCase testCase) {
 		updateCustomFields(testCase);
 		updateMilestones(testCase);
-		
+
 		TestStepVisitor visitor = new TestStepVisitor() {
 
 			@Override
@@ -180,8 +180,8 @@ public class TreeNodeUpdater implements NodeVisitor {
 	public void updateIssues(List<Issue> issues, Project project) {
 		for (Issue issue : issues) {
 			if (project != null
-					&& (project.getBugtrackerBinding() == null || (!issue.getBugtracker().getId()
-							.equals(project.getBugtrackerBinding().getBugtracker().getId())))) {
+					&& (project.getBugtrackerBinding() == null || !issue.getBugtracker().getId()
+							.equals(project.getBugtrackerBinding().getBugtracker().getId()))) {
 				issueDao.remove(issue);
 			}
 		}
@@ -254,7 +254,7 @@ public class TreeNodeUpdater implements NodeVisitor {
 	private void updateMilestones(MilestoneHolder element){
 		milestoneService.migrateMilestones(element);
 	}
-	
+
 	private void stripSyncExtender(Requirement req){
 		if (req.isSynchronized()){
 			RequirementSyncExtender extender = req.getSyncExtender();

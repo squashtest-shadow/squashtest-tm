@@ -71,7 +71,7 @@ AbstractHandlerExceptionResolver {
 	private List<FieldValidationErrorModel> buildFieldValidationErrors(DomainException dex, Locale locale ) {
 		List<FieldValidationErrorModel> ves = new ArrayList<>();
 		String message = dex.getMessage();
-		if(!dex.getI18nKey().equals("")){
+		if(!dex.getI18nKey().isEmpty()){
 			message = messageSource.getMessage(dex.getI18nKey(), dex.getI18nParams(), locale);
 		}
 

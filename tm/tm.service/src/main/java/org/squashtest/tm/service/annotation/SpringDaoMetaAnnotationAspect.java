@@ -182,10 +182,9 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 	}
 
 	private boolean isEmptyIterable(Object arg){
-		return (arg != null &&
+		return arg != null &&
 				Iterable.class.isAssignableFrom(arg.getClass()) &&
-			!((Iterable) arg).iterator().hasNext()
-				);
+			!((Iterable) arg).iterator().hasNext();
 	}
 
 	private boolean isCollectionType(Class<?> paramType) {

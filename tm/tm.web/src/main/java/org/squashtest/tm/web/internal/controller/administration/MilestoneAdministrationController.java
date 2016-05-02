@@ -76,9 +76,10 @@ public class MilestoneAdministrationController {
 	@Inject
 	private UserAccountService userService;
 
-	@RequestMapping(method = RequestMethod.POST)
+	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody long addMilestone(@Valid @ModelAttribute("add-milestone") Milestone milestone) {
+	@RequestMapping(method = RequestMethod.POST)
+	public long addMilestone(@Valid @ModelAttribute("add-milestone") Milestone milestone) {
 
 		setRange(milestone);
 		setPerimeter(milestone);
@@ -106,8 +107,9 @@ public class MilestoneAdministrationController {
 		}
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{milestoneIds}", method = RequestMethod.DELETE)
-	public @ResponseBody void removeMilestones(@PathVariable("milestoneIds") List<Long> milestoneIds) {
+	public void removeMilestones(@PathVariable("milestoneIds") List<Long> milestoneIds) {
 		milestoneManager.removeMilestones(milestoneIds);
 	}
 
@@ -123,9 +125,10 @@ public class MilestoneAdministrationController {
 		return mav;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/list")
-	public @ResponseBody DataTableModel getMilestonesTableModel(final DataTableDrawParameters params,
-			final Locale locale) {
+	public DataTableModel getMilestonesTableModel(final DataTableDrawParameters params,
+												  final Locale locale) {
 
 		MilestoneDataTableModelHelper helper = new MilestoneDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
@@ -135,8 +138,9 @@ public class MilestoneAdministrationController {
 		return model;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{motherId}/clone", method = RequestMethod.POST)
-	public @ResponseBody long cloneMilestone(@Valid @ModelAttribute("new-milestone") Milestone milestone, @RequestParam boolean bindToRequirements, @RequestParam boolean bindToTestCases,  @PathVariable("motherId") long motherId) {
+	public long cloneMilestone(@Valid @ModelAttribute("new-milestone") Milestone milestone, @RequestParam boolean bindToRequirements, @RequestParam boolean bindToTestCases, @PathVariable("motherId") long motherId) {
 
 		if (permissionEvaluationService.hasRole("ROLE_ADMIN")) {
 			//keep range for admin user
@@ -150,8 +154,9 @@ public class MilestoneAdministrationController {
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/{sourceId}/synchronize/{targetId}", method = RequestMethod.POST)
-	public @ResponseBody void synchronizeMilestone(@PathVariable("sourceId") long sourceId,  @PathVariable("targetId") long targetId, @RequestParam boolean extendPerimeter, @RequestParam boolean isUnion){
+	public void synchronizeMilestone(@PathVariable("sourceId") long sourceId, @PathVariable("targetId") long targetId, @RequestParam boolean extendPerimeter, @RequestParam boolean isUnion){
 
 		milestoneManager.synchronize(sourceId, targetId, extendPerimeter, isUnion);
 

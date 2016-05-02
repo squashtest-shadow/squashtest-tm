@@ -116,7 +116,7 @@ public class CustomFieldController {
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId, Model model) {
 		CustomField customField = customFieldManager.findById(customFieldId);
 
-		if (customField.getInputType().equals(InputType.DROPDOWN_LIST)) {
+		if (customField.getInputType() == InputType.DROPDOWN_LIST) {
 			SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
 			model.addAttribute(CUSTOM_FIELD, cuf);
 		} else {
@@ -223,7 +223,7 @@ public class CustomFieldController {
 		customFieldManager.changeDefaultValue(customFieldId, defaultValue);
 		CustomField customField = customFieldManager.findById(customFieldId);
 		String toReturn = defaultValue;
-		if (customField.getInputType().equals(InputType.CHECKBOX)) {
+		if (customField.getInputType() == InputType.CHECKBOX) {
 			toReturn = messageSource.getMessage("label." + defaultValue, null, locale);
 		}
 		return toReturn;
@@ -396,9 +396,10 @@ public class CustomFieldController {
 		customFieldManager.changeOptionsPositions(customFieldId, newIndex, optionsLabels);
 	}
 
-	@RequestMapping(value = "/{customFieldIds}", method = RequestMethod.DELETE)
+	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
-	public @ResponseBody
+	@RequestMapping(value = "/{customFieldIds}", method = RequestMethod.DELETE)
+	public
 	void deleteCustomField(@PathVariable("customFieldIds") List<Long> customFieldIds) {
 		customFieldManager.deleteCustomField(customFieldIds);
 	}

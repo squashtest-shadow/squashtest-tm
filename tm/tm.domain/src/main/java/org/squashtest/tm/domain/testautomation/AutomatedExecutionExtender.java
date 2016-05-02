@@ -47,10 +47,10 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 /**
  * this was meant to be a subclass of Execution; that's what the business says. But Hibernate says that doing so would
  * trigger a bug. So we came with an extender instead.
- * 
- * 
+ *
+ *
  * @author bsiri
- * 
+ *
  */
 @Entity
 public class AutomatedExecutionExtender {
@@ -132,7 +132,7 @@ public class AutomatedExecutionExtender {
 
 	/**
 	 * Sets the automated test and the node, based on the test's host server.
-	 * 
+	 *
 	 * @param automatedTest
 	 */
 	public void setAutomatedTest(AutomatedTest automatedTest) {
@@ -191,10 +191,10 @@ public class AutomatedExecutionExtender {
 	}
 
 	public boolean isNotOverYet() {
-		return (automatedTest != null && resultURL == null);
+		return automatedTest != null && resultURL == null;
 	}
 
 	public boolean isProjectDisassociated() {
-		return (automatedTest == null);
+		return automatedTest == null;
 	}
 }

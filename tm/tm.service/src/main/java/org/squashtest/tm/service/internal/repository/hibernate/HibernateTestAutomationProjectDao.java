@@ -101,7 +101,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationProject.haveExecutedTestsByIds");
 		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
 		int count = ((Long) q.iterate().next()).intValue();
-		return (count > 0);
+		return count > 0;
 	}
 
 	/**

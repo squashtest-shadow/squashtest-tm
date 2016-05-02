@@ -79,7 +79,7 @@ public class AutomatedTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return project.name + name
 	 */
 	public String getFullName(){
@@ -87,7 +87,7 @@ public class AutomatedTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return project.label + name
 	 */
 	public String getFullLabel(){
@@ -95,7 +95,7 @@ public class AutomatedTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return name - shortName
 	 */
 	public String getPath(){
@@ -103,7 +103,7 @@ public class AutomatedTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return returns name - path
 	 */
 	public String getShortName(){
@@ -111,7 +111,7 @@ public class AutomatedTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return name - rootfolder
 	 */
 	public String getNameWithoutRoot(){
@@ -123,11 +123,11 @@ public class AutomatedTest {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return if the test is a direct child of the root folder
 	 */
 	public boolean isAtTheRoot(){
-		return (getPath().equals(getRootFolderName()));
+		return getPath().equals(getRootFolderName());
 	}
 
 	public AutomatedTest newWithProject(TestAutomationProject newP){

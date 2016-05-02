@@ -23,9 +23,9 @@ package org.squashtest.tm.domain;
 /**
  * A class that justs conveniently ship together two named references. This is really a pair and the semantic depends on
  * what you do with it.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 public final class NamedReferencePair {
 
@@ -58,8 +58,8 @@ public final class NamedReferencePair {
 	public int hashCode() { // NOSONAR generated
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((called == null) ? 0 : called.hashCode());
-		result = prime * result + ((caller == null) ? 0 : caller.hashCode());
+		result = prime * result + (called == null ? 0 : called.hashCode());
+		result = prime * result + (caller == null ? 0 : caller.hashCode());
 		return result;
 	}
 

@@ -133,14 +133,14 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 			// TODO below is a hacky enum of all rights, should be externalized.
 			for (Field field : fields) {
 				try {
-					if ((!field.getName().equals("READ"))
+					if (!"READ".equals(field.getName())
 						&& permissionEvaluator.hasPermission(authentication, object, field.getName())) {
 						return true;
 					}
 				} catch (IllegalArgumentException iaexecption) {
 					List<String> knownMessages = Arrays.asList("Unknown permission 'RESERVED_ON'",
 						"Unknown permission 'RESERVED_OFF'", "Unknown permission 'THIRTY_TWO_RESERVED_OFF'");
-					if (!(knownMessages.contains(iaexecption.getMessage()))) {
+					if (!knownMessages.contains(iaexecption.getMessage())) {
 						throw iaexecption;
 					}
 				}

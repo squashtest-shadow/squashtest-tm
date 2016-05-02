@@ -45,9 +45,9 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State;
 
 /**
  * Builds a {@link JsTreeNode} from a TestCaseLibraryNode. Can be reused in the same thread.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component
 @Scope("prototype")
@@ -66,7 +66,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	/**
 	 * This visitor is used to populate custom attributes of the {@link JsTreeNode} currently built
-	 * 
+	 *
 	 */
 	private class CustomAttributesPopulator implements TestCaseLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
@@ -84,8 +84,8 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 			//gather test cases infos
 			TestCaseStatus status = visited.getStatus();
 			TestCaseImportance importance = visited.getImportance();
-			Boolean isreqcovered = (!visited.getRequirementVersionCoverages().isEmpty() ||
-					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId())) ;
+			Boolean isreqcovered = !visited.getRequirementVersionCoverages().isEmpty() ||
+					verifiedRequirementsManagerService.testCaseHasUndirectRequirementCoverage(visited.getId());
 
 			Boolean hasSteps = !visited.getSteps().isEmpty();
 
@@ -127,7 +127,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 		@Override
 		public void visit(TestCaseFolder visited) {
 			addFolderAttributes("test-case-folders");
-			State state = (visited.hasContent() ? State.closed : State.leaf);
+			State state = visited.hasContent() ? State.closed : State.leaf;
 			builtNode.setState(state);
 		}
 
@@ -135,9 +135,9 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 	/**
 	 * This visitor is used to populate the children of the currently built {@link JsTreeNode}
-	 * 
+	 *
 	 * @author Gregory Fouquet
-	 * 
+	 *
 	 */
 	private class ChildrenPopulator implements TestCaseLibraryNodeVisitor {
 		private final JsTreeNode builtNode;
@@ -175,7 +175,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 
 				// because of the milestoneFilter it may happen that the children collection ends up empty.
 				// in that case we must set the state of the node accordingly
-				State state =  (children.isEmpty()) ? State.leaf : State.open;
+				State state =  children.isEmpty() ? State.leaf : State.open;
 				builtNode.setState(state);
 			}
 		}
@@ -191,7 +191,7 @@ public class TestCaseLibraryTreeNodeBuilder extends LibraryTreeNodeBuilder<TestC
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.web.internal.model.builder.LibraryTreeNodeBuilder#addCustomAttributes(org.squashtest.tm.domain.library.LibraryNode,
 	 *      org.squashtest.tm.web.internal.model.jstree.JsTreeNode)
 	 */

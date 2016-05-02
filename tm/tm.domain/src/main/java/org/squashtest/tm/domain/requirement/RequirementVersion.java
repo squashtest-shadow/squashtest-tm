@@ -282,7 +282,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 	private void checkStatusAccess(RequirementStatus newStatus) {
-		if ((!status.getAllowsStatusUpdate()) || (!status.isTransitionLegal(newStatus))) {
+		if (!status.getAllowsStatusUpdate() || !status.isTransitionLegal(newStatus)) {
 			throw new IllegalRequirementModificationException();
 		}
 	}
@@ -373,7 +373,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 	}
 
 	public boolean isNotObsolete() {
-		return !RequirementStatus.OBSOLETE.equals(status);
+		return RequirementStatus.OBSOLETE != status;
 	}
 
 	/**
@@ -410,7 +410,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 		res.reference = memento.getReference();
 		res.status = memento.getStatus();
 
-		AuditableMixin audit = ((AuditableMixin) res);
+		AuditableMixin audit = (AuditableMixin) res;
 
 		audit.setCreatedOn(memento.getCreatedOn());
 		audit.setCreatedBy(memento.getCreatedBy());
@@ -488,7 +488,7 @@ public class RequirementVersion extends Resource implements BoundEntity, Milesto
 			RequirementVersionCoverage verifyingCopy = coverage.copyForRequirementVersion(copyVersion);
 			copies.add(verifyingCopy);
 		}
-		return (copies);
+		return copies;
 	}
 
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {

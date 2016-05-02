@@ -29,7 +29,7 @@ import org.springframework.util.DigestUtils;
 
 /**
  * Defines an option which can be selected among a list and set as a custom field's value.
- * 
+ *
  * @author Gregory Fouquet
  */
 @Embeddable
@@ -92,7 +92,7 @@ public class CustomFieldOption {
 	public int hashCode() {
 		final int prime = 57; // NOSONAR : look somewhere else
 		int result = 53; // NOSONAR : look somewhere else
-		result = prime * result + ((label == null) ? 0 : label.hashCode());
+		result = prime * result + (label == null ? 0 : label.hashCode());
 		return result;
 	}
 

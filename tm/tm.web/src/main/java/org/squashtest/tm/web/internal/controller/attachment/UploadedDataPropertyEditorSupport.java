@@ -29,7 +29,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class UploadedDataPropertyEditorSupport extends PropertyEditorSupport {
 	/**
-	 * 
+	 *
 	 * @see java.beans.PropertyEditorSupport#setValue(java.lang.Object)
 	 */
 	@Override
@@ -64,18 +64,18 @@ public class UploadedDataPropertyEditorSupport extends PropertyEditorSupport {
 	}
 
 	/**
-	 * 
+	 *
 	 * @see java.beans.PropertyEditorSupport#getAsText()
 	 */
 	@Override
 	public String getAsText() {
 		// XXX this looks wrong
 		InputStream value = (InputStream) getValue();
-		return (value != null ? value.toString() : "");
+		return value != null ? value.toString() : "";
 	}
 
 	/**
-	 * 
+	 *
 	 * @see java.beans.PropertyEditorSupport#setAsText(java.lang.String)
 	 */
 	@Override

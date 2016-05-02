@@ -76,7 +76,7 @@ public class HibernateTestStepDao extends HibernateEntityDao<TestStep> implement
 		List<TestCase> tcList = session.createCriteria(TestCase.class).createCriteria("steps")
 		.add(Restrictions.eq("id", testStepId)).list();
 
-		if (tcList.size() > 0) {
+		if (!tcList.isEmpty()) {
 			TestCase tc = tcList.get(0);
 			Hibernate.initialize(tc.getSteps());
 			return tc;

@@ -30,17 +30,17 @@ import org.squashtest.tm.domain.requirement.RequirementVersion;
 
 /**
  * Determines edition status for CF values bound to requirements.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component
 class RequirementBoundEditionStatusStrategy extends ValueEditionStatusHelper implements ValueEditionStatusStrategy {
 	@PersistenceContext
 	private EntityManager em;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public RequirementBoundEditionStatusStrategy() {
 		super();
@@ -52,9 +52,9 @@ class RequirementBoundEditionStatusStrategy extends ValueEditionStatusHelper imp
 	 */
 	@Override
 	public boolean isEditable(long boundEntityId, BindableEntity bindableEntity) {
-		if (!BindableEntity.REQUIREMENT_VERSION.equals(bindableEntity)) {
+		if (BindableEntity.REQUIREMENT_VERSION != bindableEntity) {
 			throw new IllegalArgumentException(this.getClass().getSimpleName() + " does not handle bindables of type " + bindableEntity.name());
-		}		
+		}
 		return entityIsEditable(boundEntityId) && userHasPermission(boundEntityId, bindableEntity);
 	}
 

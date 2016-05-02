@@ -146,8 +146,9 @@ public class IterationTestPlanManagerController {
 		return mav;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
+	public
 	DataTableModel getTestPlanModel(@PathVariable long iterationId, final DataTableDrawParameters params,
 			final Locale locale) {
 
@@ -162,8 +163,9 @@ public class IterationTestPlanManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan", method = RequestMethod.POST, params = ITPI_IDS_REQUEST_PARAM)
-	public @ResponseBody void addIterationTestPlanItemToIteration(
+	public void addIterationTestPlanItemToIteration(
 			@RequestParam(ITPI_IDS_REQUEST_PARAM) List<Long> iterationTestPlanIds, @PathVariable long iterationId) {
 
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.findTestPlanItems(iterationTestPlanIds);
@@ -179,8 +181,9 @@ public class IterationTestPlanManagerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan", method = RequestMethod.POST, params = TESTCASES_IDS_REQUEST_PARAM)
-	public @ResponseBody
+	public
 	void addTestCasesToIteration(@RequestParam(TESTCASES_IDS_REQUEST_PARAM) List<Long> testCasesIds,
 			@PathVariable long iterationId) {
 		iterationTestPlanManagerService.addTestCasesToIteration(testCasesIds, iterationId);
@@ -194,8 +197,9 @@ public class IterationTestPlanManagerController {
 	 * @return the list of {@link JsonTestCase} representing the iteration's planned test-cases
 	 *
 	 */
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/test-cases", method = RequestMethod.GET, headers = AcceptHeaders.CONTENT_JSON)
-	public @ResponseBody
+	public
 	List<JsonTestCase> getJsonTestCases(@PathVariable long iterationId, Locale locale) {
 		List<TestCase> testCases = iterationFinder.findPlannedTestCases(iterationId);
 		return jsonTestCaseBuilder.get().locale(locale).entities(testCases).toJson();
@@ -235,8 +239,9 @@ public class IterationTestPlanManagerController {
 		iterationTestPlanManagerService.reorderTestPlan(iterationId, sorting);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanItemsIds}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	Boolean removeTestPlanItemsFromIteration(@PathVariable("testPlanItemsIds") List<Long> testPlanItemsIds,
 			@PathVariable long iterationId) {
 		// check if a test plan item was already executed and therefore not removed
@@ -262,8 +267,9 @@ public class IterationTestPlanManagerController {
 		return listBuilder.expand(expansionCandidates).setModel(linkableLibraries).build();
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/iterations/{iterationId}/assignable-users", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	List<TestPlanAssignableUser> getAssignUserForIterationTestPlanItem(@PathVariable long iterationId,
 			final Locale locale) {
 
@@ -281,16 +287,18 @@ public class IterationTestPlanManagerController {
 		return jsonUsers;
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "assignee" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"assignee"})
+	public
 	Long assignUserToIterationTestPlanItem(@PathVariable("testPlanIds") List<Long> testPlanIds,
 			@RequestParam("assignee") long assignee) {
 		iterationTestPlanManagerService.assignUserToTestPlanItems(testPlanIds, assignee);
 		return assignee;
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "status" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"status"})
+	public
 	JsonIterationTestPlanItem editStatusOfIterationTestPlanItems(@PathVariable("testPlanIds") List<Long> testPlanIds,
 			@RequestParam("status") String status) {
 		List<IterationTestPlanItem> itpis = iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
@@ -298,14 +306,16 @@ public class IterationTestPlanManagerController {
 
 	}
 
-	@RequestMapping(value = "/iterations/test-plan/{testPlanIds}", method = RequestMethod.POST, params = { "status" })
-	public @ResponseBody void editIterationTestPlanItemsStatus(@PathVariable("testPlanIds") List<Long> testPlanIds,
-			@RequestParam("status") String status) {
+	@ResponseBody
+	@RequestMapping(value = "/iterations/test-plan/{testPlanIds}", method = RequestMethod.POST, params = {"status"})
+	public void editIterationTestPlanItemsStatus(@PathVariable("testPlanIds") List<Long> testPlanIds,
+												 @RequestParam("status") String status) {
 		iterationTestPlanManagerService.forceExecutionStatus(testPlanIds, status);
 	}
 
-	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = { "dataset" })
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/iterations/{iterationId}/test-plan/{testPlanId}", method = RequestMethod.POST, params = {"dataset"})
+	public
 	Long setDataset(@PathVariable("testPlanId") long testPlanId, @RequestParam("dataset") Long datasetId) {
 		iterationTestPlanManagerService.changeDataset(testPlanId, JeditableComboHelper.coerceIntoEntityId(datasetId));
 		return datasetId;
@@ -323,7 +333,7 @@ public class IterationTestPlanManagerController {
 	}
 
 	private JsonIterationTestPlanItem createJsonITPI(IterationTestPlanItem item) {
-		String name = (item.isTestCaseDeleted()) ? null : item.getReferencedTestCase().getName();
+		String name = item.isTestCaseDeleted() ? null : item.getReferencedTestCase().getName();
 		return new JsonIterationTestPlanItem(item.getId(), item.getExecutionStatus(), name, item.getLastExecutedOn(),
 				item.getLastExecutedBy(), item.getUser(), item.isTestCaseDeleted(), item.isAutomated());
 	}

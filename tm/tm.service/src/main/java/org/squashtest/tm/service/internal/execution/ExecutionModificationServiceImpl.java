@@ -166,7 +166,7 @@ public class ExecutionModificationServiceImpl implements ExecutionModificationSe
 
 		long result = executionStepModifHelper.doUpdateStep(toBeUpdated, execution);
 
-		if (execution.getSteps().size() == 0) {
+		if (execution.getSteps().isEmpty()) {
 			throw new ExecutionHasNoStepsException();
 		}
 		return result;

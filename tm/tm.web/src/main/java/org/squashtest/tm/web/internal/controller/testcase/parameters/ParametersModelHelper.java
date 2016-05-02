@@ -99,7 +99,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 		TestCase testCase = item.getTestCase();
 		Project project = testCase.getProject();
 		String testCaseName = testCase.getName() + " (" + project.getName() + ')';
-		if (testCase.getReference().length() > 0) {
+		if (!testCase.getReference().isEmpty()) {
 			testCaseName = testCase.getReference() + '-' + testCaseName;
 		}
 		return testCaseName;

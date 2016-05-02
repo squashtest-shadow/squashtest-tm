@@ -108,7 +108,7 @@ public class ZipReader implements ArchiveReader {
 		// the parent of the root is itself
 		private String getParentString() {
 			String res = getName().replaceAll("/[^/]*$", "");
-			if (res.equals("")) {
+			if (res != null && res.isEmpty()) {
 				res = "/";
 			}
 			return res;
@@ -121,7 +121,7 @@ public class ZipReader implements ArchiveReader {
 
 		@Override
 		public boolean isFile() {
-			return (!isDirectory);
+			return !isDirectory;
 		}
 
 		@Override
@@ -134,10 +134,10 @@ public class ZipReader implements ArchiveReader {
 		}
 
 		private String stripSuffix(String original) {
-			String res = (original.charAt(original.length() - 1) == '/') ? original.substring(0, original.length() - 1)
+			String res = original.charAt(original.length() - 1) == '/' ? original.substring(0, original.length() - 1)
 					: original;
 
-			if (res.equals("")) {
+			if (res != null && res.isEmpty()) {
 				res = "/";
 			}
 			return res;
@@ -172,7 +172,7 @@ public class ZipReader implements ArchiveReader {
 	@Override
 	public boolean hasNext() {
 		readNext();
-		return (nextEntry != null);
+		return nextEntry != null;
 	}
 
 	@Override

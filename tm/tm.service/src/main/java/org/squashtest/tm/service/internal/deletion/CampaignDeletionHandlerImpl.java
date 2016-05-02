@@ -304,7 +304,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		for (IterationTestPlanItem itpi : suite.getTestPlan()) {
 
-			if (itpi.getExecutions().size() > 0) {
+			if (!itpi.getExecutions().isEmpty()) {
 				return true;
 			}
 
@@ -477,7 +477,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	private void doDeleteSuites(Collection<TestSuite> testSuites) {
-		
+
 		for (TestSuite testSuite : testSuites) {
 			for (IterationTestPlanItem testPlanItem : testSuite.getTestPlan()) {
 				testPlanItem.getTestSuites().clear();
@@ -502,7 +502,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 
 		denormalizedFieldValueService.deleteAllDenormalizedFieldValues(execution);
 		customValueService.deleteAllCustomFieldValues(execution);
-		
+
 		deletionDao.removeEntity(execution);
 	}
 
@@ -510,7 +510,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	 * we just remove the content of a campaign here. The actual removal of the campaign will be processed in the
 	 * calling methods.
 	 *
-	 * The operations carried over a campaign are : - removal of all its iterations, 
+	 * The operations carried over a campaign are : - removal of all its iterations,
 	 *
 	 * the rest is supposed to cascade normally (node hierarchy, campaign test plans).
 	 */
@@ -537,9 +537,9 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	/*
-	 * removing an iteration means : 
+	 * removing an iteration means :
 	 * - remove the test suites
-	 * - removing its test plan, 
+	 * - removing its test plan,
 	 * - remove itself from repository.
 	 */
 	private void doDeleteIterations(List<Iteration> iterations) {
@@ -550,8 +550,8 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			doDeleteSuites(suites);
 
 			List<IterationTestPlanItem> items = new ArrayList<>(iteration.getTestPlans());
-			iteration.getTestPlans().clear(); 
-			deleteIterationTestPlan(items); 
+			iteration.getTestPlans().clear();
+			deleteIterationTestPlan(items);
 
 			customValueService.deleteAllCustomFieldValues(iteration);
 
@@ -562,7 +562,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	/*
 	 * removing a test plan :
 	 *
-	 * - remove the executions 
+	 * - remove the executions
 	 * - remove itself.
 	 */
 	private void deleteIterationTestPlan(List<IterationTestPlanItem> testPlan) {
@@ -576,7 +576,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	public void deleteIterationTestPlanItem(IterationTestPlanItem item) {
 		List<Execution> execs = new ArrayList<>(item.getExecutions());
 		deleteExecutions(execs);
-		
+
 		deletionDao.removeEntity(item);
 	}
 
@@ -592,27 +592,27 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	}
 
 	/*
-	 * removing the steps mean : 
-	 * - remove the denormalized custom fields, 
+	 * removing the steps mean :
+	 * - remove the denormalized custom fields,
 	 * - remote the custom fields,
 	 * - remove themselves.
 	 */
 	public void deleteExecSteps(Execution execution) {
 
 		/*
-		 * Even when asking the EntityManager to remove a step - thus assigning it a status DELETED -, 
-		 * it can still abort its deletion when some random flush occurs : 
-		 * 
-		 * flushing the Execution (still in status MANAGED) 
-		 * -> triggers cascade PERSIST on its steps 
+		 * Even when asking the EntityManager to remove a step - thus assigning it a status DELETED -,
+		 * it can still abort its deletion when some random flush occurs :
+		 *
+		 * flushing the Execution (still in status MANAGED)
+		 * -> triggers cascade PERSIST on its steps
 		 * -> thus assign status MANAGED to the step that should have been deleted
-		 * 
+		 *
 		 * To prevent that to occur, first thing to do is to clear the step list.
 		 */
-		
+
 		Collection<ExecutionStep> steps = new ArrayList<>(execution.getSteps());
 		execution.getSteps().clear();
-		
+
 		// now we can delete them
 		for (ExecutionStep step : steps) {
 
@@ -656,7 +656,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 	private void removeItpiFromIteration(List<TestSuite> suites, final List<Long> targetIds) {
 
 		Set<Long> idsToRemove = new HashSet<>();
-		
+
 		// TODO : maybe use a couple of HQL queries that would compute this with more efficiency
 
 		for (TestSuite suite : suites) {

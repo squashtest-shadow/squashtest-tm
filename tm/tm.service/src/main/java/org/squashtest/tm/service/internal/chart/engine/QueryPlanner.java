@@ -41,7 +41,7 @@ import com.querydsl.core.types.dsl.PathBuilder;
  * 	Whenever possible the natural joins will be used; however we are dependent on the way the entities were mapped : when no natural join
  * 	is available a where clause will be used.
  * </p>
- * 
+ *
  * <p>
  * 	For the main query, the entities are all aliased with the camel case version of the class name. Explicitly : testCase, requirementVersion etc.
  *  If there are any inlined subqueries, the relevant entities will also be joined and attached to the main query via their respective root entity.
@@ -49,14 +49,14 @@ import com.querydsl.core.types.dsl.PathBuilder;
  *  The extra entities joined that way will be aliased with a deterministic suffix that depend on the ColumnPrototype id that stands for the
  *  inlined subquery.
  * </p>
- * 
+ *
  * <p>
  * 	Remember that the query created is detached from the session, don't forget to attach it via query.clone(session)
  * </p>
- * 
+ *
  * <p>See javadoc on {@link ChartDataFinder}</p>
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -105,7 +105,7 @@ class QueryPlanner {
 	 * Use if you intend to use the queryplanner to append on a mainquery,
 	 * before invoking {@link #modifyQuery()}. This method supplies the
 	 * said main query.
-	 * 
+	 *
 	 * @param existingQuery
 	 * @return
 	 */
@@ -119,7 +119,7 @@ class QueryPlanner {
 	 * before invoking {@link #modifyQuery()}. This method supplies
 	 * the root entity, where the join should be made between the main query and
 	 * this query
-	 * 
+	 *
 	 * @param existingQuery
 	 * @return
 	 */
@@ -133,7 +133,7 @@ class QueryPlanner {
 
 	/**
 	 * Will create a new query from scratch, based on the ChartQuery. No conf asked.
-	 * 
+	 *
 	 * @return
 	 */
 	ExtendedHibernateQuery<?> createQuery(){
@@ -147,8 +147,8 @@ class QueryPlanner {
 	 * Used when an existing HibernateQuery must now join on more columns. Will append to the query (configured with {@link #appendToQuery(ExtendedHibernateQuery)})
 	 * the joins defined in the ChartQuery. This new set of joins will be attached to the
 	 * main query on the root entity of this ChartQuery.
-	 * 
-	 * 
+	 *
+	 *
 	 */
 
 	void modifyQuery(){
@@ -303,7 +303,7 @@ class QueryPlanner {
 		boolean hasWhereJoin = false;
 
 		// condition 1
-		hasLeftJoin = (definition.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN);
+		hasLeftJoin = definition.getJoinStyle() == NaturalJoinStyle.LEFT_JOIN;
 
 		for (Iterator<PlannedJoin> iter = plan.joinIterator(); iter.hasNext();) {
 			PlannedJoin join = iter.next();

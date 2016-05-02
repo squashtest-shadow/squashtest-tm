@@ -135,7 +135,7 @@ public class ExecutionRunnerControllerHelper {
         model.addAttribute("hasDenormFields", hasDenormFields);
         model.addAttribute("hasCustomFields", hasCustomFields);
         model.addAttribute("totalSteps", total);
-        model.addAttribute("hasNextStep", stepOrder != (total - 1));
+        model.addAttribute("hasNextStep", stepOrder != total - 1);
         model.addAttribute("attachments", attachments);
         model.addAttribute("allowsUntestable", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.UNTESTABLE));
         model.addAttribute("allowsSettled", execution.getProject().getCampaignLibrary().allowsStatus(ExecutionStatus.SETTLED));
@@ -219,7 +219,7 @@ public class ExecutionRunnerControllerHelper {
         int totalSteps = executionProcessingService.findTotalNumberSteps(executionId);
 
         boolean wasNeverExecuted = executionProcessingService.wasNeverRun(executionId);
-        int stepOrder = (wasNeverExecuted) ? 0 : step.getExecutionStepOrder() + 1;
+        int stepOrder = wasNeverExecuted ? 0 : step.getExecutionStepOrder() + 1;
 
         String currentStepUrl = contextPath + "/" + MessageFormat.format(CURRENT_STEP_URL_PATTERN, executionId);
 

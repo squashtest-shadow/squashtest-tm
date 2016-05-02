@@ -33,7 +33,7 @@ public class JsonExecutionInfo {
 	private String executionStatus;
 	private String automatedStatus;
 	private String resultURL;
-	
+
 	public JsonExecutionInfo(){
 		super();
 	}
@@ -47,15 +47,15 @@ public class JsonExecutionInfo {
 		this.automatedStatus = automatedStatus;
 		this.resultURL = resultURL;
 	}
-	
+
 	public JsonExecutionInfo(Date executedOn, String executedBy,
 			ExecutionStatus executionStatus, ExecutionStatus automatedStatus, URL resultURL) {
 		super();
 		this.executedOn = DateUtils.formatIso8601DateTime(executedOn);
 		this.executedBy = executedBy;
-		this.executionStatus = (executionStatus != null) ? executionStatus.toString() : null;
-		this.automatedStatus = (automatedStatus != null) ? automatedStatus.toString() : null;
-		this.resultURL = (resultURL != null) ? resultURL.toExternalForm() : null;
+		this.executionStatus = executionStatus != null ? executionStatus.toString() : null;
+		this.automatedStatus = automatedStatus != null ? automatedStatus.toString() : null;
+		this.resultURL = resultURL != null ? resultURL.toExternalForm() : null;
 	}
 
 	public String getExecutedOn() {
@@ -77,6 +77,6 @@ public class JsonExecutionInfo {
 	public String getResultURL() {
 		return resultURL;
 	}
-	
-	
+
+
 }

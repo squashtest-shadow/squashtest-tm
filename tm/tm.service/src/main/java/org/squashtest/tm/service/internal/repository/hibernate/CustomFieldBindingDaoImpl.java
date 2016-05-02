@@ -40,12 +40,12 @@ public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBin
 		Query q = currentSession().getNamedQuery("CustomFieldBinding.findAllForProjectAndEntity");
 		q.setParameter("projectId", projectId);
 		q.setParameter("entityType", boundEntity);
-		
+
 		PagingUtils.addPaging(q, paging);
 		return q.list();
 	}
-	
-	
+
+
 	@Override
 	public void removeCustomFieldBindings(List<Long> bindingIds) {
 
@@ -141,7 +141,7 @@ public class CustomFieldBindingDaoImpl extends HibernateEntityDao<CustomFieldBin
 		}
 
 		public boolean needsUpdate(){
-			return (formerPosition!=newPosition);
+			return formerPosition!=newPosition;
 		}
 
 	}

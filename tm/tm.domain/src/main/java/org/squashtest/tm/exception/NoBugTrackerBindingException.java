@@ -25,13 +25,13 @@ import org.squashtest.tm.core.foundation.exception.ActionException;
 public class NoBugTrackerBindingException extends ActionException {
 
 	/**
-	 * 
+	 *
 	 */
 	//FIXME add generated serial version UID , my eclipse couldn't do it (mpagnon)
 	private static final long serialVersionUID = 1L;
-	
-	private final static String DEFAULT_MESSAGE = "No Bug-Tracker is bound to this Project";
-	private final static String BUGTRACKER_NAME_EXISTS_MESSAGE_KEY = "squashtm.action.exception.bugtrackerBinding.notExist";
+
+	private static final String DEFAULT_MESSAGE = "No Bug-Tracker is bound to this Project";
+	private static final String BUGTRACKER_NAME_EXISTS_MESSAGE_KEY = "squashtm.action.exception.bugtrackerBinding.notExist";
 
 	public NoBugTrackerBindingException(Exception ex) {
 		super(ex);

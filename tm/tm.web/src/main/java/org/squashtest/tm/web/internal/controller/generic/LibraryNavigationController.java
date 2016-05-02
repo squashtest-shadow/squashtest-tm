@@ -97,8 +97,9 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	protected abstract JsTreeNode createTreeNodeFromLibraryNode(NODE resource);
 
+	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
-	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
+	public final List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
 
 		return createJsTreeModel(nodes);
@@ -117,30 +118,33 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return jstreeNodes;
 	}
 
-	@SuppressWarnings("unchecked")
-	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
 	@RequestMapping(value = "/drives/{libraryId}/content/new-folder", method = RequestMethod.POST)
-	public final @ResponseBody JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
-			@Valid @RequestBody FOLDER newFolder) {
+	@ResponseStatus(HttpStatus.CREATED)
+	@SuppressWarnings("unchecked")
+	public final JsTreeNode addNewFolderToLibraryRootContent(@PathVariable long libraryId,
+															 @Valid @RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToLibrary(libraryId, newFolder);
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
 
-	@SuppressWarnings("unchecked")
-	@ResponseStatus(HttpStatus.CREATED)
+	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content/new-folder", method = RequestMethod.POST)
-	public final @ResponseBody JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
-			@Valid @RequestBody FOLDER newFolder) {
+	@ResponseStatus(HttpStatus.CREATED)
+	@SuppressWarnings("unchecked")
+	public final JsTreeNode addNewFolderToFolderContent(@PathVariable long folderId,
+														@Valid @RequestBody FOLDER newFolder) {
 
 		getLibraryNavigationService().addFolderToFolder(folderId, newFolder);
 
 		return createTreeNodeFromLibraryNode((NODE) newFolder);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/folders/{folderId}/content", method = RequestMethod.GET)
-	public final @ResponseBody
+	public final
  List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
 
 		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
@@ -148,9 +152,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 		return createJsTreeModel(nodes);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public @ResponseBody Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			Locale locale) {
+	public Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
+										 Locale locale) {
 
 
 		List<SuppressionPreviewReport> reportList = getLibraryNavigationService().simulateDeletion(nodeIds);
@@ -164,17 +169,19 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}", method = RequestMethod.DELETE)
-	public @ResponseBody OperationReport confirmNodeDeletion(
+	public OperationReport confirmNodeDeletion(
 @PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds) {
 
 		return getLibraryNavigationService().deleteNodes(nodeIds);
 	}
 
 
-	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = { "nodeIds[]" })
-	public @ResponseBody List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+	@ResponseBody
+	@RequestMapping(value = "/{destinationType}/{destinationId}/content/new", method = RequestMethod.POST, params = {"nodeIds[]"})
+	public List<JsTreeNode> copyNodes(@RequestParam("nodeIds[]") Long[] nodeIds,
+									  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		List<NODE> nodeList;
 		try {
@@ -197,9 +204,10 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
+	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+						  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		try {
 			switch (destType) {
@@ -219,10 +227,11 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{destinationType}/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
-	public @ResponseBody void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType,
-			@PathVariable("position") int position) {
+	public void moveNodes(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
+						  @PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType,
+						  @PathVariable("position") int position) {
 
 		try {
 			switch (destType) {

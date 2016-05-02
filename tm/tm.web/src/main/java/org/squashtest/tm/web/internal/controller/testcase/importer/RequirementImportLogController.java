@@ -47,8 +47,9 @@ public class RequirementImportLogController {
 	private RequirementImportLogHelper logHelper;
 
 	// There are dots in `{filename}`. We need to parse using a regexp (`{:.+}`) because standard parser ditches file extensions.
+	@ResponseBody
 	@RequestMapping(value = "/{filename:.+}", method = RequestMethod.GET)
-	public @ResponseBody FileSystemResource getExcelImportLog(@PathVariable String filename,
+	public FileSystemResource getExcelImportLog(@PathVariable String filename,
 			HttpServletResponse response) {
 		File logFile = logHelper.fetchLogFile(filename);
 		response.setContentType("application/octet-stream");

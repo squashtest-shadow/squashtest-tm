@@ -170,10 +170,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
-			if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
+			if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
 				indexationService.reindexTestCase(entity.getBoundEntityId());
 			}
-			if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
+			if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
 				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
 			}
 		}
@@ -237,10 +237,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
 
-			if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
+			if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
 				indexationService.reindexTestCase(entity.getBoundEntityId());
 			}
-			if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
+			if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
 				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
 			}
 		}
@@ -295,10 +295,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				value.setBoundEntity(entity);
 				customFieldValueDao.save(value);
 
-				if (BindableEntity.TEST_CASE.equals(entity.getBoundEntityType())) {
+				if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
 					indexationService.reindexTestCase(entity.getBoundEntityId());
 				}
-				if (BindableEntity.REQUIREMENT_VERSION.equals(entity.getBoundEntityType())) {
+				if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
 					indexationService.reindexRequirementVersion(entity.getBoundEntityId());
 				}
 			}
@@ -394,10 +394,10 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 		newValue.setValueFor(changedValue);
 
-		if (BindableEntity.TEST_CASE.equals(boundEntity.getBoundEntityType())) {
+		if (BindableEntity.TEST_CASE == boundEntity.getBoundEntityType()) {
 			indexationService.reindexTestCase(boundEntityId);
 		}
-		if (BindableEntity.REQUIREMENT_VERSION.equals(boundEntity.getBoundEntityType())) {
+		if (BindableEntity.REQUIREMENT_VERSION == boundEntity.getBoundEntityType()) {
 			indexationService.reindexRequirementVersion(boundEntityId);
 		}
 	}

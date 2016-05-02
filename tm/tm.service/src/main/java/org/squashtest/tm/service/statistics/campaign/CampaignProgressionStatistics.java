@@ -73,7 +73,7 @@ public final class CampaignProgressionStatistics {
 		for (ScheduledIteration iteration : scheduledIterations){
 
 			iteration.computeCumulativeTestByDate(cumulative);
-			cumulative += (iteration.getTestplanCount());
+			cumulative += iteration.getTestplanCount();
 
 		}
 	}

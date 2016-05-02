@@ -129,11 +129,11 @@ public abstract class Resource implements AttachmentHolder, Identified {
 		final int prime = 61;
 		int result = 97;
 		result = prime * result
-			+ ((getAttachmentList() == null) ? 0 : getAttachmentList().hashCode());
+			+ (getAttachmentList() == null ? 0 : getAttachmentList().hashCode());
 		result = prime * result
-			+ ((getDescription() == null) ? 0 : getDescription().hashCode());
-		result = prime * result + ((getId() == null) ? 0 : getId().hashCode());
-		result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
+			+ (getDescription() == null ? 0 : getDescription().hashCode());
+		result = prime * result + (getId() == null ? 0 : getId().hashCode());
+		result = prime * result + (getName() == null ? 0 : getName().hashCode());
 		return result;
 	}
 

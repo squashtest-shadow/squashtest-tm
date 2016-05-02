@@ -595,7 +595,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		junk = entityValidator.basicDatasetCheck(dataset);
 
 		// 1 - is the parameter correctly identified ?
-		logs = (entityValidator.basicParameterValueChecks(param));
+		logs = entityValidator.basicParameterValueChecks(param);
 
 		// in this context specifically we set the target explicitly as being
 		// the dataset, not the parameter
@@ -672,8 +672,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogEntry entry = null;
 
 		Long libid = model.getProjectStatus(target.getProject()).getTestCaseLibraryId();
-		if ((libid != null)
-			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, TEST_CASE_LIBRARY_CLASSNAME))) {
+		if (libid != null
+			&& !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, TEST_CASE_LIBRARY_CLASSNAME)) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
 				permission, target.getPath()});
 		}
@@ -686,8 +686,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogEntry entry = null;
 
 		Long libid = model.getProjectStatus(target.getProject()).getRequirementLibraryId();
-		if ((libid != null)
-			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+		if (libid != null
+			&& !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, libid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME)) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
 				permission, target.getPath()});
 		}
@@ -703,8 +703,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Project tcProject = getProjectFromPath(tcPath);
 		Long tcLibid = tcProject.getTestCaseLibrary().getId();
 
-		if ((tcLibid != null)
-			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
+		if (tcLibid != null
+			&& !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME)) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
 				permission, target.getPath()});
 		}
@@ -713,8 +713,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Project reqProject = getProjectFromPath(reqPath);
 		Long reqLibid = reqProject.getRequirementLibrary().getId();
 
-		if ((reqLibid != null)
-			&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
+		if (reqLibid != null
+			&& !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME)) {
 			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
 				permission, target.getPath()});
 		}
@@ -739,7 +739,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_NEGATIVE, optionalImpact);
 
 		} else if (!model.stepExists(target)
-			&& (!model.indexIsFirstAvailable(target) || !mode.equals(ImportMode.CREATE))) {
+			&& (!model.indexIsFirstAvailable(target) || mode != ImportMode.CREATE)) {
 			// when index doesn't match a step in the target model
 			// this error message is not needed for creation when the target
 			// index is the first one available
@@ -1173,7 +1173,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		Existence reqStatus = getModel().getStatus(reqTarget).getStatus();
 
 		if (reqStatus != Existence.NOT_EXISTS) {
-			if (reqVersionStatus.equals(Existence.EXISTS)) {
+			if (reqVersionStatus == Existence.EXISTS) {
 				Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
 				Requirement req = reqLibNavigationService.findRequirement(reqId);
 				RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
@@ -1181,7 +1181,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
 				}
 				return reqVersion.getId();
-			} else if (reqVersionStatus.equals(Existence.NOT_EXISTS)) {
+			} else if (reqVersionStatus == Existence.NOT_EXISTS) {
 				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
 			}
 		} else {

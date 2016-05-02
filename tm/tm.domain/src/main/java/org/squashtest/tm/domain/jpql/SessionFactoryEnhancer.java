@@ -187,12 +187,12 @@ public class SessionFactoryEnhancer {
 			} else {
 				try {
 					// validation
-					String direction = (arguments.size() >= 4) ? ((String) arguments.get(3)).replaceAll("'", "") : "asc";
-					String separator = (arguments.size() >= 5) ? ((String) arguments.get(4)).replaceAll("'", "") : ",";
-					if (!(direction.equalsIgnoreCase("asc") || direction.equalsIgnoreCase("desc"))) {
+					String direction = arguments.size() >= 4 ? ((String) arguments.get(3)).replaceAll("'", "") : "asc";
+					String separator = arguments.size() >= 5 ? ((String) arguments.get(4)).replaceAll("'", "") : ",";
+					if (!("asc".equalsIgnoreCase(direction) || "desc".equalsIgnoreCase(direction))) {
 						throw new IllegalArgumentException();
 					}
-					if (!((String) arguments.get(1)).equalsIgnoreCase("'order by'")) {
+					if (!"'order by'".equalsIgnoreCase((String) arguments.get(1))) {
 						throw new IllegalArgumentException();
 					}
 

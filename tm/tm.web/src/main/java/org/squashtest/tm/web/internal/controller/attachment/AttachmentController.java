@@ -156,8 +156,9 @@ public class AttachmentController {
 
 	/* ***************************** download ************************************* */
 
+	@ResponseBody
 	@RequestMapping(value = "/download/{attachemendId}", method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	void downloadAttachment(@PathVariable("attachemendId") long attachmentId, HttpServletResponse response) {
 
 		try {

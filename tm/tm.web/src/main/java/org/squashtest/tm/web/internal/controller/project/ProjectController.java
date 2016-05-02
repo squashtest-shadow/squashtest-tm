@@ -52,9 +52,10 @@ public class ProjectController {
 	@Inject
 	private GenericProjectManagerService genericProjectManager;
 
-	@RequestMapping(value= "/{projectId}", method=RequestMethod.PUT)
+	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
-	public @ResponseBody
+	@RequestMapping(value = "/{projectId}", method = RequestMethod.PUT)
+	public
 	void coerceTemplateIntoProject(@RequestBody Map<String, Object> payload, @PathVariable long projectId) {
 		LOGGER.trace("PUTting project/{} with payload {}", projectId, payload);
 		if (payload.get("templateId").equals(projectId)) {
@@ -66,13 +67,14 @@ public class ProjectController {
 		genericProjectManager.coerceTemplateIntoProject(projectId);
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public @ResponseBody
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public
 	void createProjectFromTemplate(@Valid @RequestBody JsonProjectFromTemplate jsonProjectFromTemplate) {
 		try {
 			if (jsonProjectFromTemplate.isFromTemplate()) {
-				projectManager.addProjectFromtemplate(jsonProjectFromTemplate.getProject(), 
+				projectManager.addProjectFromtemplate(jsonProjectFromTemplate.getProject(),
 						jsonProjectFromTemplate.getTemplateId(), jsonProjectFromTemplate.getParams());
 			}
 			else {

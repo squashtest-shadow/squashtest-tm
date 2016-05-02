@@ -96,10 +96,10 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import oslcdomain.OslcIssue;
 
 /**
- * 
+ *
  * Note : as of 1.13 the questions regarding authentications has been moved to
  * {@link ThirPartyServersAuthenticationController}
- * 
+ *
  * @author bsiri
  *
  */
@@ -216,8 +216,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
+	public DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
 			final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -226,7 +227,7 @@ public class BugTrackerController {
 
 	}
 
-	
+
 	/**
 	 * will prepare a bug report for an execution step. The returned json infos will populate the form.
 	 */
@@ -331,8 +332,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = EXECUTION_TYPE + "/{execId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getExecKnownIssuesData(@PathVariable("execId") Long execId,
+	public DataTableModel getExecKnownIssuesData(@PathVariable("execId") Long execId,
 			final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -441,8 +443,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = TEST_CASE_TYPE + "/{tcId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId,
+	public DataTableModel getTestCaseKnownIssuesData(@PathVariable("tcId") Long tcId,
 			final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -486,8 +489,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = ITERATION_TYPE + "/{iterId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
+	public DataTableModel getIterationKnownIssuesData(@PathVariable("iterId") Long iterId,
 			final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -530,8 +534,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = CAMPAIGN_TYPE + "/{campId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
+	public DataTableModel getCampaignKnownIssuesData(@PathVariable("campId") Long campId,
 			final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -574,8 +579,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
+	public DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
 			final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
@@ -623,8 +629,9 @@ public class BugTrackerController {
 	/**
 	 * json Data for the known issues table.
 	 */
+	@ResponseBody
 	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}/known-issues", method = RequestMethod.GET)
-	public @ResponseBody DataTableModel getCampaignFolderKnownIssuesData(
+	public DataTableModel getCampaignFolderKnownIssuesData(
 			@PathVariable("campaignFolderId") Long campaignFolderId, final DataTableDrawParameters params,
 			final Locale locale) {
 
@@ -682,15 +689,17 @@ public class BugTrackerController {
 		return result;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/issues/{issueId}", method = RequestMethod.DELETE)
-	public @ResponseBody void detachIssue(@PathVariable("issueId") Long issueId) {
+	public void detachIssue(@PathVariable("issueId") Long issueId) {
 		bugTrackersLocalService.detachIssue(issueId);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/{btName}/remote-issues/{remoteIssueId}/attachments", method = RequestMethod.POST)
-	public @ResponseBody void forwardAttachmentsToIssue(@PathVariable("btName") String btName,
-			@PathVariable("remoteIssueId") String remoteIssueId,
-			@RequestParam("attachment[]") List<UploadedData> uploads) {
+	public void forwardAttachmentsToIssue(@PathVariable("btName") String btName,
+										  @PathVariable("remoteIssueId") String remoteIssueId,
+										  @RequestParam("attachment[]") List<UploadedData> uploads) {
 
 		List<Attachment> issueAttachments = new ArrayList<>(uploads.size());
 		for (UploadedData upload : uploads) {
@@ -712,9 +721,10 @@ public class BugTrackerController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "{btName}/command", method = RequestMethod.POST)
-	public @ResponseBody Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName,
-			@RequestBody DelegateCommand command) {
+	public Object forwardDelegateCommand(@PathVariable("btName") String bugtrackerName,
+										 @RequestBody DelegateCommand command) {
 		return bugTrackersLocalService.forwardDelegateCommand(command, bugtrackerName);
 	}
 
@@ -793,8 +803,9 @@ public class BugTrackerController {
 	 * ***********************************************************************************************************
 	 */
 
+	@ResponseBody
 	@RequestMapping(value = "/{bugtrackerIds}", method = RequestMethod.DELETE)
-	public @ResponseBody void deleteBugtrackers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds) {
+	public void deleteBugtrackers(@PathVariable("bugtrackerIds") List<Long> bugtrackerIds) {
 		LOGGER.debug("ids of bugtracker to delete " + bugtrackerIds.toString());
 		bugTrackerManagerService.deleteBugTrackers(bugtrackerIds);
 	}
@@ -875,7 +886,7 @@ public class BugTrackerController {
 
 		@Override
 		public boolean shouldDisplayAll() {
-			return (getPageSize() < 0);
+			return getPageSize() < 0;
 		}
 
 		/**
@@ -885,7 +896,7 @@ public class BugTrackerController {
 		public SortOrder getSortOrder() {
 			return SortOrder.coerceFromCode(params.getsSortDir_0());
 		}
-		
+
 		@Override
 		public Pageable toPageable() {
 			return SpringPaginationUtils.toPageable(this);

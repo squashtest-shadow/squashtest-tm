@@ -31,12 +31,12 @@ public class JsonIterationTestPlanItem{
 	private long id;
 	private ExecutionStatus executionStatus;
 	private String name;
-	private String lastExecutedOn;	//format ISO 8601 aka ATOM 
+	private String lastExecutedOn;	//format ISO 8601 aka ATOM
 	private String lastExecutedBy;
 	private String assignee;
 	private boolean isTestCaseDeleted;
 	private boolean isAutomated;
-	
+
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
 			String name, String lastExecutedOn, String lastExecutedBy, String assignee, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
@@ -49,7 +49,7 @@ public class JsonIterationTestPlanItem{
 		this.isTestCaseDeleted = isTestCaseDeleted;
 		this.isAutomated = isAutomated;
 	}
-	
+
 	public JsonIterationTestPlanItem(long id, ExecutionStatus executionStatus,
 			String name, Date lastExecutedOn, String lastExecutedBy, User assignee, boolean isTestCaseDeleted, boolean isAutomated) {
 		super();
@@ -58,12 +58,12 @@ public class JsonIterationTestPlanItem{
 		this.name = name;
 		this.lastExecutedOn = toISO8601(lastExecutedOn);
 		this.lastExecutedBy = lastExecutedBy;
-		this.assignee = (assignee != null) ? assignee.getLogin() : "";
+		this.assignee = assignee != null ? assignee.getLogin() : "";
 		this.isTestCaseDeleted = isTestCaseDeleted;
 		this.isAutomated = isAutomated;
 	}
-	
-		
+
+
 	private String toISO8601(Date date){
 		return DateUtils.formatIso8601DateTime(date);
 	}
@@ -123,11 +123,11 @@ public class JsonIterationTestPlanItem{
 	public void setAutomated(boolean isAutomated) {
 		this.isAutomated = isAutomated;
 	}
-	
+
 	public void setAssignee(String login){
 		this.assignee = login;
 	}
-	
+
 	public String getAssignee(){
 		return this.assignee;
 	}

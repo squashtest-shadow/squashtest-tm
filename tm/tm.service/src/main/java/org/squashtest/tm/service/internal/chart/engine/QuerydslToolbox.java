@@ -230,7 +230,7 @@ class QuerydslToolbox {
 	}
 
 	boolean isSubquery(ColumnPrototypeInstance proto) {
-		return (proto.getColumn().getColumnType() == ColumnType.CALCULATED);
+		return proto.getColumn().getColumnType() == ColumnType.CALCULATED;
 	}
 
 	// ***************************** high level API ***********************
@@ -520,11 +520,11 @@ class QuerydslToolbox {
 	 */
 	private BooleanExpression createExistencePredicate(Operation operation, Expression<?> baseExp, Expression... operands) {
 		String arg = operands[0].toString();
-		boolean argIsTrue = (arg.equals("true") || arg.equals("1"));
-		boolean operIsIS_NULL = (operation == Operation.IS_NULL);
+		boolean argIsTrue = "true".equals(arg) || "1".equals(arg);
+		boolean operIsIS_NULL = operation == Operation.IS_NULL;
 
 		// when both boolean have the same value then the actual operation is IS_NULL, else it's the other one
-		Ops actualOperator = (argIsTrue == operIsIS_NULL) ? Ops.IS_NULL : Ops.IS_NOT_NULL;
+		Ops actualOperator = argIsTrue == operIsIS_NULL ? Ops.IS_NULL : Ops.IS_NOT_NULL;
 		return Expressions.predicate(actualOperator, baseExp);
 	}
 
@@ -622,7 +622,7 @@ class QuerydslToolbox {
 			 * the column they apply to, except for NOT_NULL which accepts a
 			 * boolean instead. Hence the line below.
 			 */
-			DataType actualType = (operation == Operation.NOT_NULL) ? BOOLEAN : type;
+			DataType actualType = operation == Operation.NOT_NULL ? BOOLEAN : type;
 
 			for (String val : values) {// NOSONAR that's a fucking switch it's not complex !
 
@@ -634,7 +634,7 @@ class QuerydslToolbox {
 						operand = val;
 						break;
 					case NUMERIC:
-						operand = (val.contains(".")) ? Double.valueOf(val) : Long.valueOf(val);
+						operand = val.contains(".") ? Double.valueOf(val) : Long.valueOf(val);
 						break;
 					case DATE:
 						operand = DateUtils.parseIso8601Date(val);
@@ -653,7 +653,7 @@ class QuerydslToolbox {
 						throw new IllegalArgumentException("type '" + type + "' not yet supported");
 				}
 
-				if (Operation.LIKE.equals(operation)) {
+				if (Operation.LIKE == operation) {
 					operand = '%' + operand.toString() + '%';
 				}
 

@@ -78,11 +78,11 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	 * if has executions: will return last execution if not terminated,<br>
 	 * if has no execution and is not test-case deleted : will return new execution<br>
 	 * else will return null
-	 * 
+	 *
 	 * @param executions
 	 * @param testPlanItem
 	 * @return
-	 * 
+	 *
 	 */
 	private Execution findUnexecutedOrCreateExecution(IterationTestPlanItem testPlanItem) {
 		Execution executionToReturn = null;
@@ -115,8 +115,8 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 		String testerLogin = findUserLoginIfTester(testSuite);
 		for (IterationTestPlanItem iterationTestPlanItem : suiteTestPlan) {
 			if (testerLogin == null
-					|| (iterationTestPlanItem.getUser() != null && iterationTestPlanItem.getUser().getLogin()
-					.equals(testerLogin))) {
+					|| iterationTestPlanItem.getUser() != null && iterationTestPlanItem.getUser().getLogin()
+					.equals(testerLogin)) {
 				List<Execution> executions = iterationTestPlanItem.getExecutions();
 				if (!executions.isEmpty()) {
 					campaignDeletionHandler.deleteExecutions(executions);

@@ -48,7 +48,7 @@ public class RedirectEntryPoint extends LoginUrlAuthenticationEntryPoint {
 	@Override
 	public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
 			throws IOException, ServletException {
-		if (("XMLHttpRequest").equals(request.getHeader("X-Requested-With"))) {
+		if ("XMLHttpRequest".equals(request.getHeader("X-Requested-With"))) {
 			// Send an 401 response for ajax request
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 		} else {

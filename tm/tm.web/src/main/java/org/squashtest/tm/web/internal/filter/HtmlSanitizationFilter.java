@@ -75,7 +75,7 @@ public class HtmlSanitizationFilter implements Filter {
 
 	}
 
-	static protected String[] escapeValue(String[] orig) {
+	protected static String[] escapeValue(String[] orig) {
 		if (orig == null) {
 			return null;
 		}
@@ -107,7 +107,7 @@ public class HtmlSanitizationFilter implements Filter {
 				return null;
 			}
 			String[] cleaned = escapeValue(new String[] { value });
-			return (cleaned != null) ? cleaned[0] : null;
+			return cleaned != null ? cleaned[0] : null;
 		}
 
 		@Override

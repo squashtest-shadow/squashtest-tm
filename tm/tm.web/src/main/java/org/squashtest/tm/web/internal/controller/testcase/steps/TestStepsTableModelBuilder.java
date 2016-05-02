@@ -155,7 +155,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 
 		public Object getValue() {
-			return (value != null) ? value : values;
+			return value != null ? value : values;
 		}
 
 		public void setValue(Object value) {

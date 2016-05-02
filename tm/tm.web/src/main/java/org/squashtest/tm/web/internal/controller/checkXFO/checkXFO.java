@@ -34,8 +34,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 public class checkXFO {
 
-    @RequestMapping(value = "/checkXFO", method = RequestMethod.POST, params = ("URL"))
-    public @ResponseBody boolean XFOAllowForAll(@RequestParam("URL") String url) {
+    @ResponseBody
+	@RequestMapping(value = "/checkXFO", method = RequestMethod.POST, params = "URL")
+	public boolean XFOAllowForAll(@RequestParam("URL") String url) {
 
         boolean result = false;
         URL obj;
@@ -46,7 +47,7 @@ public class checkXFO {
            // get header by 'key'
             String XFrameOptions = conn.getHeaderField("X-Frame-Options");
 
-            if (!("DENY").equals(XFrameOptions) && !("SAMEORIGIN").equals(XFrameOptions)) {
+            if (!"DENY".equals(XFrameOptions) && !"SAMEORIGIN".equals(XFrameOptions)) {
                 result = true;
             }
 

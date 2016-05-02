@@ -73,7 +73,7 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 		if (! evaluators.isEmpty()){
 			Iterator<ExtraPermissionEvaluator> evalIter = evaluators.iterator();
 
-			while(evalIter.hasNext() && (! granted)){
+			while(evalIter.hasNext() && ! granted){
 				ExtraPermissionEvaluator evaluator = evalIter.next();
 				granted = evaluator.hasPermission(authentication, targetDomainObject, permission);
 			}
@@ -93,7 +93,7 @@ public class AffirmativeBasedCompositePermissionEvaluator extends AclPermissionE
 		if (! evaluators.isEmpty()){
 			Iterator<ExtraPermissionEvaluator> evalIter = evaluators.iterator();
 
-			while(evalIter.hasNext() && (! granted)){
+			while(evalIter.hasNext() && ! granted){
 				ExtraPermissionEvaluator evaluator = evalIter.next();
 				granted = evaluator.hasPermission(authentication, targetId, targetType, permission);
 			}

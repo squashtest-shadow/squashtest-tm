@@ -122,8 +122,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	 * The former validation system doesn't work anymore because it kicks in before our json form is filled.
 	 * So we're doing it manually now.
 	 */
-	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
-	public @ResponseBody JsTreeNode addNewTestCaseToLibraryRootContent(
+	@ResponseBody
+	@RequestMapping(value = "/drives/{libraryId}/content/new-test-case", method = RequestMethod.POST, consumes = "application/json")
+	public JsTreeNode addNewTestCaseToLibraryRootContent(
 			@PathVariable long libraryId,
 			@RequestBody TestCaseFormModel testCaseModel) throws BindException {
 
@@ -152,8 +153,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 	}
 
 
-	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes="application/json")
-	public @ResponseBody JsTreeNode addNewTestCaseToFolder(
+	@ResponseBody
+	@RequestMapping(value = "/folders/{folderId}/content/new-test-case", method = RequestMethod.POST, consumes = "application/json")
+	public JsTreeNode addNewTestCaseToFolder(
 			@PathVariable long folderId,
 			@RequestBody TestCaseFormModel testCaseModel) throws BindException {
 
@@ -179,8 +181,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return createTreeNodeFromLibraryNode(testCase);
 	}
 
-	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = { "linkables" })
-	public @ResponseBody List<JsTreeNode> getLinkablesRootModel() {
+	@ResponseBody
+	@RequestMapping(value = "/drives", method = RequestMethod.GET, params = {"linkables"})
+	public List<JsTreeNode> getLinkablesRootModel() {
 		List<TestCaseLibrary> linkableLibraries = testCaseLibraryNavigationService.findLinkableTestCaseLibraries();
 		return createLinkableLibrariesModel(linkableLibraries);
 	}
@@ -278,9 +281,10 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 
 	// ****************************** statistics section *******************************
 
+	@ResponseBody
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = {
-			LIBRARIES, NODES })
-	public @ResponseBody TestCaseStatisticsBundle getStatisticsAsJson(
+		LIBRARIES, NODES})
+	public TestCaseStatisticsBundle getStatisticsAsJson(
 			@RequestParam(value = LIBRARIES, defaultValue = "") Collection<Long> libraryIds,
 			@RequestParam(value = NODES, defaultValue = "") Collection<Long> nodeIds) {
 
@@ -300,8 +304,9 @@ LibraryNavigationController<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode
 		return "fragment/test-cases/test-cases-dashboard";
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/statistics", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON)
-	public @ResponseBody
+	public
  TestCaseStatisticsBundle getStatisticsAsJson() {
 
 		// Find node ids for specific milestone

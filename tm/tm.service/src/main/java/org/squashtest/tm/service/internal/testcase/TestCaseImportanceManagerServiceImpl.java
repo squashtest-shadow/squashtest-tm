@@ -135,7 +135,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 		if (testCase.isImportanceAuto()) {
 			TestCaseImportance importance = testCase.getImportance();
 			TestCaseImportance newImportance = importance.deduceNewImporanceWhenAddCriticality(requirementCriticality);
-			if (!newImportance.equals(importance)) {
+			if (newImportance != importance) {
 				testCase.setImportance(newImportance);
 				List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
 				for (TestCase callingTestCase : callingTestCases) {
@@ -177,7 +177,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 			TestCaseImportance actualImportance = testCase.getImportance();
 			if (maxReqCritImportance.getLevel() <= actualImportance.getLevel()) {
 				TestCaseImportance newImportance = deduceImportanceAuto(testCase.getId());
-				if (!newImportance.equals(actualImportance)) {
+				if (newImportance != actualImportance) {
 					testCase.setImportance(newImportance);
 					List<TestCase> callingTestCases = testCaseDao.findAllCallingTestCases(testCase.getId(), null);
 					for (TestCase callingTestCase : callingTestCases) {
@@ -243,7 +243,7 @@ public class TestCaseImportanceManagerServiceImpl implements TestCaseImportanceM
 				// -if it changes
 				TestCaseImportance newImportanceAuto = deduceImportanceAuto(testCase.getId());
 
-				if (!importanceAuto.equals(newImportanceAuto)) {
+				if (importanceAuto != newImportanceAuto) {
 					// -- => change importance
 					testCase.setImportance(newImportanceAuto);
 					// -- look for any calling test case and call the method on

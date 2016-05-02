@@ -59,7 +59,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	 * @author Gregory Fouquet
 	 *
 	 */
-	private static abstract class FieldPopulator {
+	private abstract static class FieldPopulator {
 		protected final String managedFieldTag;
 
 		public FieldPopulator(String managedFieldTag) {
@@ -302,10 +302,10 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 
 	private TestCase setTestCaseCreatedOnByInfos(PseudoTestCase pseudoTestCase, ImportSummaryImpl summary,
 												 TestCase testCase) {
-		if ((pseudoTestCase.getCreatedOnDate() != null) && (pseudoTestCase.getCreatedBy() != null)) {
+		if (pseudoTestCase.getCreatedOnDate() != null && pseudoTestCase.getCreatedBy() != null) {
 			testCase = new TestCase(pseudoTestCase.getCreatedOnDate(), pseudoTestCase.getCreatedBy());
 
-		} else if ((pseudoTestCase.getCreatedOn() != null) && (pseudoTestCase.getCreatedBy() != null)) {
+		} else if (pseudoTestCase.getCreatedOn() != null && pseudoTestCase.getCreatedBy() != null) {
 			try {
 				Date createdDate = new SimpleDateFormat("dd/MM/yyyy").parse(pseudoTestCase.getCreatedOn());
 				testCase = new TestCase(createdDate, pseudoTestCase.getCreatedBy());
@@ -405,7 +405,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		// spec 1 : the row must not be null
 		if (row == null) {
 			validated = false;
-		} else if (!((validateRegularRow(row)) || (validateStepRow(row)))) {
+		} else if (!(validateRegularRow(row) || validateStepRow(row))) {
 			// spec 3 : at least two cells where they are expected, 3 in the case of an action step
 			// and they must all contain something
 			validated = false;
@@ -449,8 +449,8 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		//compute cell content to validate row
 		boolean keyIsPresent = !text1.isEmpty();
 		boolean keyIsCreatedOn = text1.equalsIgnoreCase(CREATED_ON_TAG);
-		boolean valueIsTextOrDateDependingOnKey = ((keyIsCreatedOn && (!text2.isEmpty() || date2 != null)) || !text2
-			.isEmpty());
+		boolean valueIsTextOrDateDependingOnKey = keyIsCreatedOn && (!text2.isEmpty() || date2 != null) || !text2
+			.isEmpty();
 
 		return keyIsPresent && valueIsTextOrDateDependingOnKey;
 	}
@@ -464,7 +464,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 	}
 
 	private boolean lessThan2Cells(int lastCell, int nbCell) {
-		return (lastCell < 2) || (nbCell < 2);
+		return lastCell < 2 || nbCell < 2;
 	}
 
 	/*
@@ -477,7 +477,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 		int lastCell = row.getLastCellNum();
 		int nbCell = row.getPhysicalNumberOfCells();
 
-		String text1 = (row.getCell(0) != null) ? row.getCell(0).getStringCellValue() : "";
+		String text1 = row.getCell(0) != null ? row.getCell(0).getStringCellValue() : "";
 		String text2 = "";
 		Cell cell2 = row.getCell(1);
 
@@ -487,7 +487,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			LOGGER.debug("validateStepRow : Cell 1 of row {} was not of string type, empty string will be used", row);
 		}
 
-		validated = (text1.equals(ACTION_STEP_TAG)) && (!text2.isEmpty()) && ((lastCell >= 3) && (nbCell >= 3));
+		validated = text1.equals(ACTION_STEP_TAG) && !text2.isEmpty() && lastCell >= 3 && nbCell >= 3;
 
 		return validated;
 

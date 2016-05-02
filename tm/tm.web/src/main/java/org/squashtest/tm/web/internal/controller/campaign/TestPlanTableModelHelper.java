@@ -49,7 +49,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 
 	private InternationalizationHelper messageSource;
 	private Locale locale;
-	
+
 	private static final String NONE = "";
 
 	TestPlanTableModelHelper(InternationalizationHelper messageSource, Locale locale) {
@@ -133,7 +133,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			int succes = 0;
 			List<ExecutionStep> steps = item.getLatestExecution().getSteps();
 			for (ExecutionStep step : steps) {
-				if (step.getExecutionStatus().equals(ExecutionStatus.SUCCESS)) {
+				if (step.getExecutionStatus() == ExecutionStatus.SUCCESS) {
 					succes++;
 				}
 			}

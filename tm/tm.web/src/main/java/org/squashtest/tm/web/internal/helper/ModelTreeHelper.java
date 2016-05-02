@@ -57,7 +57,7 @@ public abstract class ModelTreeHelper {
 		List<Library<LibraryNode>> libraries = getWorkspaceService().findAllLibraries();
 		String[] nodesToOpen = null;
 
-		if (elementId == null || "".equals(elementId)) {
+		if (elementId == null || elementId.isEmpty()) {
 			nodesToOpen = openedNodes;
 		} else {
 			Long id = Long.valueOf(elementId);

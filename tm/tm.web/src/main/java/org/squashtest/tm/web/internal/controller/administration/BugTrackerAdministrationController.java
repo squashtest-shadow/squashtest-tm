@@ -69,8 +69,9 @@ public class BugTrackerAdministrationController {
 
 
 
+	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void createBugTracker(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
 
 		LOGGER.info("name " + bugtracker.getName());
@@ -91,8 +92,9 @@ public class BugTrackerAdministrationController {
 		return mav;
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/list", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
+	public
 	DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		PagingAndSorting filter = createPaging(params, bugtrackerMapper);

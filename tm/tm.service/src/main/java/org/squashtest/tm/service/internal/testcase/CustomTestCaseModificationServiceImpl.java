@@ -407,7 +407,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			copyStep.accept(new TestStepCustomFieldCopier(original));
 
 			// last, update that weird variable
-			hasCallstep = hasCallstep || (copyStep instanceof CallTestStep);
+			hasCallstep = hasCallstep || copyStep instanceof CallTestStep;
 		}
 
 		return hasCallstep;
@@ -708,8 +708,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			@Override
 			public boolean evaluate(Object milestone) {
 
-				return !((Milestone) milestone).getStatus().equals(MilestoneStatus.LOCKED)
-						&&!((Milestone) milestone).getStatus().equals(MilestoneStatus.PLANNED);
+				return ((Milestone) milestone).getStatus() != MilestoneStatus.LOCKED
+						&& ((Milestone) milestone).getStatus() != MilestoneStatus.PLANNED;
 			}
 		});
 	}
@@ -809,7 +809,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 		@Override
 		public boolean evaluate(Object object) {
 			TestAutomationProject tap = (TestAutomationProject) object;
-			return (tap.getLabel().equals(label));
+			return tap.getLabel().equals(label);
 		}
 	}
 

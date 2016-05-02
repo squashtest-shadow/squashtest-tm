@@ -107,21 +107,21 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	public float getPcProgress() {
-		return Math.round(((float) getNbExecuted() / (float) getNbTotal()) * 10000) / (float) 100;
+		return Math.round((float) getNbExecuted() / (float) getNbTotal() * 10000) / (float) 100;
 	}
 
 	public float getPcSuccess() {
-		return Math.round(((float) (getNbSuccess() + getNbSettled()) / (float) getNbExecuted()) * 10000) / (float) 100;
+		return Math.round((float) (getNbSuccess() + getNbSettled()) / (float) getNbExecuted() * 10000) / (float) 100;
 	}
 
 	public float getPcFailure() {
-		return Math.round(((float) getNbFailure() / (float) getNbExecuted()) * 10000) / (float) 100;
+		return Math.round((float) getNbFailure() / (float) getNbExecuted() * 10000) / (float) 100;
 	}
 
 	public float getPcPrevProgress() {
 		if (nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f) {
-			return Math.round((getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
-					new Date(), getNbTotal())) * 10000) / (float) 100;
+			return Math.round(getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
+					new Date(), getNbTotal()) * 10000) / (float) 100;
 		} else {
 			return getPcProgress();
 		}
@@ -129,7 +129,7 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	public int getNbPrevToExecute() {
-		return ((int) nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) - getNbExecuted());
+		return (int) nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) - getNbExecuted();
 	}
 
 	public int getNbVeryHigh() {

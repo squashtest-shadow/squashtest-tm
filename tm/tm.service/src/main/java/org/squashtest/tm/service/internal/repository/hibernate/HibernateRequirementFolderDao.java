@@ -77,7 +77,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 	@Override
 	public List<Long[]> findPairedContentForList(final List<Long> ids) {
 
-		if (ids.size() == 0) {
+		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		}
 
@@ -95,7 +95,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findContentForList(List<Long> ids) {
-		if (ids.size() == 0) {
+		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		}
 

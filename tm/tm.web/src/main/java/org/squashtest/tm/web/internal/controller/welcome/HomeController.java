@@ -113,26 +113,30 @@ public class HomeController {
 		return model;
 	}
 
-	@RequestMapping(value = "/home-workspace/choose-message", method=RequestMethod.POST)
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/home-workspace/choose-message", method = RequestMethod.POST)
+	public
 	void chooseWelcomeMessageAsHomeContent(){
 		partyPreferenceService.chooseWelcomeMessageAsHomeContentForCurrentUser();
 	}
 
-	@RequestMapping(value = "/home-workspace/choose-dashboard", method=RequestMethod.POST)
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/home-workspace/choose-dashboard", method = RequestMethod.POST)
+	public
 	void chooseFavoriteDashboardAsHomeContent(){
 		partyPreferenceService.chooseFavoriteDashboardAsHomeContentForCurrentUser();
 	}
 
-	@RequestMapping(value = "/administration/modify-welcome-message", method=RequestMethod.POST)
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/administration/modify-welcome-message", method = RequestMethod.POST)
+	public
 	String modifyWelcomeMessage(@RequestParam(VALUE) String welcomeMessage){
 		administrationService.modifyWelcomeMessage(welcomeMessage);
 		return welcomeMessage;
 	}
-	@RequestMapping(value = "/administration/modify-login-message", method=RequestMethod.POST)
-	public @ResponseBody
+	@ResponseBody
+	@RequestMapping(value = "/administration/modify-login-message", method = RequestMethod.POST)
+	public
 	String modifyLoginMessage(@RequestParam(VALUE) String loginMessage){
 		administrationService.modifyLoginMessage(loginMessage);
 		return loginMessage;

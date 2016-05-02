@@ -58,9 +58,9 @@ import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CustomTestCaseDao;
 /**
  * DAO for org.squashtest.tm.domain.testcase.TestCase
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements CustomTestCaseDao {
@@ -125,16 +125,16 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 		return tc;
 	}
-	
+
 	/*
 	 * Implementation note : the query :
-	 * 
+	 *
 	 *  select steps from TestStep steps left join fetch steps.attachmentList al left join fetch al.attachments where steps.testCase.id = :tcId order by index(steps)
-	 *  
-	 *  or any other variant would not work : we need the left join, the fetch joins and order by index etc. The only way to make it work is to fetch the test case with all the required 
+	 *
+	 *  or any other variant would not work : we need the left join, the fetch joins and order by index etc. The only way to make it work is to fetch the test case with all the required
 	 *  features then return the hibernate collection of steps...
-	 * 
-	 * 
+	 *
+	 *
 	 * (non-Javadoc)
 	 * @see org.squashtest.tm.service.internal.repository.CustomTestCaseDao#findTestSteps(long)
 	 */
@@ -392,19 +392,19 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.csp.tm.internal.repository.TestCaseDao#findAllVerifyingRequirementVersion(long,
 	 * org.squashtest.tm.core.foundation.collection.PagingAndSorting)
 	 */
 
 	/*
 	 * Issue #1629
-	 * 
+	 *
 	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name. Actual
 	 * problem : We always want them to be sorted by reference and name, even when we want primarily sort them by
 	 * project or execution type or else. Solution : The resultset will be sorted on all the attributes (ascending), and
 	 * the Sorting specified by the user will have an higher priority.
-	 * 
+	 *
 	 * See #createEffectiveSorting(Sorting sorting), just below
 	 */
 	@SuppressWarnings("unchecked")
@@ -435,28 +435,28 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			res.add((TestCase)tuple[0]);
 		}
 
-		if ("endDate".equals(sorting.getSortedAttribute())){	
+		if ("endDate".equals(sorting.getSortedAttribute())){
 			 Collections.sort(res, new Comparator<TestCase>() {
 				@Override
 				public int compare(TestCase tc1, TestCase tc2) {
 					return compareTcMilestoneDate(tc1, tc2);
 				}
 			});
-			 
-			if (sorting.getSortOrder().equals(SortOrder.ASCENDING)){
+
+			if (sorting.getSortOrder() == SortOrder.ASCENDING){
 				Collections.reverse(res);
-			}	
+			}
 		}
 
 		return res;
 
 	}
-	
+
 	private int compareTcMilestoneDate(TestCase tc1, TestCase tc2){
-		
-		boolean isEmpty1 = tc1.getMilestones().isEmpty(); 
+
+		boolean isEmpty1 = tc1.getMilestones().isEmpty();
 		boolean isEmpty2 = tc2.getMilestones().isEmpty();
-	
+
 		if (isEmpty1 && isEmpty2){
 			return 0;
 		} else if (isEmpty1){
@@ -465,9 +465,9 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			return -1;
 		} else {
 			return getMinDate(tc1).before(getMinDate(tc2)) ? getMinDate(tc1).after(getMinDate(tc2)) ? 0 : 1 : -1;
-			
 
-		}	
+
+		}
 	}
 
 	private Date getMinDate(TestCase tc){
@@ -475,23 +475,23 @@ public class TestCaseDaoImpl extends HibernateEntityDao<TestCase> implements Cus
 			@Override
 			public int compare(Milestone m1, Milestone m2) {
 				return m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
-			}	
+			}
 		}).getEndDate();
 	}
-	
-	
+
+
 	/**
 	 * @param userSorting
 	 * @return
 	 */
 	/*
 	 * Issue #1629
-	 * 
+	 *
 	 * Observed problem : test cases sorted by references are indeed sorted by reference, but no more by name. Actual
 	 * problem : We always want them to be sorted by reference and name, even when we want primarily sort them by
 	 * project or execution type or else. Solution : The resultset will be sorted on all the attributes (ascending), and
 	 * the Sorting specified by the user will have an higher priority.
-	 * 
+	 *
 	 * See #createEffectiveSorting(Sorting sorting), just below
 	 */
 

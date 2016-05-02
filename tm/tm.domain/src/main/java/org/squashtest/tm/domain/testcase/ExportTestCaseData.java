@@ -149,7 +149,7 @@ public class ExportTestCaseData extends ExportData implements TestStepVisitor{
 		this.nature = testCase.getNature().getCode();
 		this.type = testCase.getType().getCode();
 		this.status = testCase.getStatus();
-		AuditableMixin audit = ((AuditableMixin) testCase);
+		AuditableMixin audit = (AuditableMixin) testCase;
 		this.lastModifiedBy = audit.getLastModifiedBy();
 		this.lastModifiedOn = audit.getLastModifiedOn();
 		formatSteps(testCase);

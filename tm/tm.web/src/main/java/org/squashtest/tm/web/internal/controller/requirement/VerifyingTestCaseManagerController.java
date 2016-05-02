@@ -79,9 +79,9 @@ import com.google.common.base.Optional;
 
 /**
  * Controller for verified requirements management page.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 public class VerifyingTestCaseManagerController {
@@ -98,7 +98,7 @@ public class VerifyingTestCaseManagerController {
 
 	@Inject
 	private RequirementVersionManagerService requirementVersionFinder;
-	
+
 	@Inject
 	private VerifiedRequirementsManagerService verifiedRequirementsManagerService;
 
@@ -107,19 +107,19 @@ public class VerifyingTestCaseManagerController {
 
 	@Inject
 	private CampaignFinder campaignFinder;
-	
+
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
-	
+
 	private static final String campaign_name = "Campaign";
 	private static final String iteration_name = "Iteration";
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(VerifyingTestCaseManagerController.class);
 
 	/*
 	 * Kind of a hack : we rely on mDataProp sent by squash table. IndexBasedMapper looks up into mataProps unmarchalled
 	 * as a Map<String, String>. The found value is used as a key in a Map<Long, Object>, so it breaks.
-	 * 
+	 *
 	 * So we use a named-base with column indexes as names.
 	 */
 	private final DatatableMapper<String> verifyingTcMapper = new NameBasedMapper(6)
@@ -171,9 +171,10 @@ public class VerifyingTestCaseManagerController {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@ResponseBody
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.POST)
-	public @ResponseBody
+	@SuppressWarnings("unchecked")
+	public
 	Map<String, Object> addVerifyingTestCasesToRequirement(@PathVariable("testCaseIds") List<Long> testCasesIds, @PathVariable long requirementVersionId) {
 		Map<String, Collection<?>> rejectionsAndIds =
 				verifyingTestCaseManager.addVerifyingTestCasesToRequirementVersion(testCasesIds, requirementVersionId);
@@ -188,16 +189,18 @@ public class VerifyingTestCaseManagerController {
 		return VerifiedRequirementActionSummaryBuilder.buildAddActionSummary(rejections);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/{testCaseIds}", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void removeVerifyingTestCaseFromRequirement(@PathVariable("requirementVersionId") long requirementVersionId,
 			@PathVariable("testCaseIds") List<Long> testCaseIds ) {
 		verifyingTestCaseManager.removeVerifyingTestCasesFromRequirementVersion(testCaseIds, requirementVersionId);
 	}
 
 
+	@ResponseBody
 	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/verifying-test-cases/table", params = RequestParams.S_ECHO_PARAM)
-	public @ResponseBody
+	public
 	DataTableModel getVerifiedTestCasesTableModel(@PathVariable long requirementVersionId,
 			DataTableDrawParameters params) {
 
@@ -215,17 +218,18 @@ public class VerifyingTestCaseManagerController {
 		return new VerifyingTestCasesTableModelHelper(i18nHelper).buildDataModel(holder, sEcho);
 	}
 
-	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/coverage-stats", method = RequestMethod.GET,params = { "perimeter" })
+	@ResponseBody
 	@SuppressWarnings("unchecked")
-	public @ResponseBody
+	@RequestMapping(value = "/requirement-versions/{requirementVersionId}/coverage-stats", method = RequestMethod.GET, params = {"perimeter"})
+	public
  RequirementCoverageStat getCoverageStat(@PathVariable long requirementVersionId,
 			@RequestParam String perimeter) {
 		LOGGER.debug("JTH go controller go");
-		
+
 		MultiMap mapIdsByType = JsTreeHelper.mapIdsByType(new String[]{perimeter});
 		List<Long> iterationIds = new ArrayList<>();
 		RequirementCoverageStat stat = new RequirementCoverageStat();
-		
+
 		if (mapIdsByType.containsKey(campaign_name)) {
 			List<Long> ids = (List<Long>) mapIdsByType.get(campaign_name);
 			try {

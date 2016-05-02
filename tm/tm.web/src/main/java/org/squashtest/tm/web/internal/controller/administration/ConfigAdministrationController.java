@@ -139,17 +139,17 @@ public class ConfigAdministrationController {
 		eventPublisher.publishEvent(event);
     }
 
-    @RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)
-    public
     @ResponseBody
+	@RequestMapping(value = "clients/{idList}", method = RequestMethod.DELETE)
+	public
     void removeMilestones(@PathVariable("idList") List<String> idList) {
         clientService.removeClientDetails(idList);
     }
 
-    @RequestMapping(value = "clients", method = RequestMethod.POST)
-    @ResponseStatus(HttpStatus.CREATED)
-    public
     @ResponseBody
+	@ResponseStatus(HttpStatus.CREATED)
+	@RequestMapping(value = "clients", method = RequestMethod.POST)
+	public
     ClientDetails addClient(@Valid @ModelAttribute("add-client") ClientModel model) {
         BaseClientDetails clientDetails = convertClientModelToBaseClientDetails(model);
         try {

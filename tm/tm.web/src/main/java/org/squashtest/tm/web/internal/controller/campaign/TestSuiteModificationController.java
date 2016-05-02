@@ -150,7 +150,7 @@ public class TestSuiteModificationController {
 
 	/**
 	 * Will fetch the active {@link ExecutionStatus} for the project matching the given id
-	 * 
+	 *
 	 * @param projectId
 	 *            : the id of the concerned {@link Project}
 	 * @return a map representing the active statuses for the given project with :
@@ -252,8 +252,9 @@ public class TestSuiteModificationController {
 	}
 
 	// that method is redundant but don't remove it yet.
+	@ResponseBody
 	@RequestMapping(value = "/rename", method = RequestMethod.POST, params = RequestParams.NAME)
-	public @ResponseBody
+	public
 	Map<String, String> renameTestSuite(@PathVariable("suiteId") Long suiteId, @RequestParam(RequestParams.NAME) String name) {
 		service.rename(suiteId, name);
 		Map<String, String> result = new HashMap<>();

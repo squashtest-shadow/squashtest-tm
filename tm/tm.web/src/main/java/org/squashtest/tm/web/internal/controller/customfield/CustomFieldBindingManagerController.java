@@ -60,7 +60,7 @@ public class CustomFieldBindingManagerController {
 		List<CustomField> customFields = service.findAvailableCustomFields();
 		ModelAndView mav;
 
-		if (customFields.size() > 0){
+		if (!customFields.isEmpty()){
 
 			List<CustomFieldBinding> testCaseBindings = service.findCustomFieldsForProjectAndEntity
 					(projectId, BindableEntity.TEST_CASE, new DefaultPagingAndSorting(DEFAULT_PAGE_SIZE)).getPagedItems();

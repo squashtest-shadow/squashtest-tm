@@ -139,8 +139,9 @@ public class GenericProjectController {
 			.map("party-id", "id").map("party-name", "name").map("party-type", "type")
 			.map("permission-group.qualifiedName", "qualifiedName");
 
+	@ResponseBody
 	@RequestMapping(value = "", params = RequestParams.S_ECHO_PARAM, method = RequestMethod.GET)
-	public @ResponseBody
+	public
 	DataTableModel getProjectsTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		final PagingAndMultiSorting sorter = new DataTableMultiSorting(params, allProjectsMapper);
@@ -151,9 +152,10 @@ public class GenericProjectController {
 
 	}
 
-	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public @ResponseBody
+	@RequestMapping(value = "/new", method = RequestMethod.POST)
+	public
 	void createNewProject(@Valid @RequestBody Project project) {
 		try {
 			projectManager.persist(project);
@@ -163,9 +165,10 @@ public class GenericProjectController {
 		}
 	}
 
-	@RequestMapping(value = "/new-template", method = RequestMethod.POST)
+	@ResponseBody
 	@ResponseStatus(value = HttpStatus.CREATED)
-	public @ResponseBody JsonUrl createNewTemplate(@RequestBody @Valid ProjectTemplate template) {
+	@RequestMapping(value = "/new-template", method = RequestMethod.POST)
+	public JsonUrl createNewTemplate(@RequestBody @Valid ProjectTemplate template) {
 		try {
 			projectManager.persist(template);
 		} catch (NameAlreadyInUseException ex) {
@@ -305,8 +308,9 @@ public class GenericProjectController {
 
 	}
 
+	@ResponseBody
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions/{permission}", method = RequestMethod.PUT)
-	public @ResponseBody
+	public
 	void addNewPermissionWithPartyId(@PathVariable long partyId, @PathVariable long projectId,
 			@PathVariable String permission) {
 
@@ -337,14 +341,16 @@ public class GenericProjectController {
 				params.getsEcho());
 	}
 
+	@ResponseBody
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions/{permission}", method = RequestMethod.POST)
-	public @ResponseBody
+	public
 	void addNewPartyPermission(@PathVariable long partyId, @PathVariable long projectId, @PathVariable String permission) {
 		projectManager.addNewPermissionToProject(partyId, projectId, permission);
 	}
 
+	@ResponseBody
 	@RequestMapping(value = PROJECT_ID_URL + "/parties/{partyId}/permissions", method = RequestMethod.DELETE)
-	public @ResponseBody
+	public
 	void removePartyPermission(@PathVariable long partyId, @PathVariable long projectId) {
 		projectManager.removeProjectPermission(partyId, projectId);
 	}
@@ -355,7 +361,7 @@ public class GenericProjectController {
 	@ResponseBody
 	public Long bindTestAutomationServer(@PathVariable(RequestParams.PROJECT_ID) long projectId,
 			@RequestParam("serverId") long serverId) {
-		Long finalServerId = (serverId == 0) ? null : serverId;
+		Long finalServerId = serverId == 0 ? null : serverId;
 		projectManager.bindTestAutomationServer(projectId, finalServerId);
 		return serverId;
 	}
@@ -418,7 +424,7 @@ public class GenericProjectController {
 
 	// ********************** private classes ***************************
 
-	private final static class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
+	private static final class TestAutomationTableModel extends DataTableModelBuilder<TestAutomationProject> {
 		Map<String, URL> jobUrls;
 
 		public TestAutomationTableModel(Map<String, URL> jobUrls) {
@@ -476,7 +482,7 @@ public class GenericProjectController {
 		}
 		private boolean hasPermissions(final GenericProject project){
 			boolean hasPermissions = true;
-			if (projectManager.findPartyPermissionsBeansByProject(project.getId()).size() == 0){
+			if (projectManager.findPartyPermissionsBeansByProject(project.getId()).isEmpty()){
 				hasPermissions = false;
 			}
 			return hasPermissions;

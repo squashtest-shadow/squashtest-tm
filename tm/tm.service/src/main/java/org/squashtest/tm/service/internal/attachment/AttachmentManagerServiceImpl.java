@@ -171,7 +171,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 					break;
 				}
 			}
-			if (attachmentIds.size() == 0) {
+			if (attachmentIds.isEmpty()) {
 				break;
 			}
 		}

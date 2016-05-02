@@ -72,7 +72,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AdvancedSearchServiceImpl.class);
 
-	private final static List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
+	private static final List<String> MILESTONE_SEARCH_FIELD = Arrays.asList("milestone.label", "milestone.status",
 		"milestone.endDate", "searchByMilestone");
 
 	@Inject
@@ -90,7 +90,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 	@Inject
 	protected ProjectManagerService projectFinder;
 
-	private final static Integer EXPECTED_LENGTH = 7;
+	private static final Integer EXPECTED_LENGTH = 7;
 
 	private static final String FAKE_MILESTONE_ID = "-9000";
 

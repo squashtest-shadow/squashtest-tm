@@ -112,7 +112,7 @@ CustomRequirementVersionCoverageDao {
 				}
 			});
 
-			if (pagingAndSorting.getSortOrder().equals(SortOrder.ASCENDING)){
+			if (pagingAndSorting.getSortOrder() == SortOrder.ASCENDING){
 				Collections.reverse(res);
 			}
 		}
