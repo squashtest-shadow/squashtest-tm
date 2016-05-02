@@ -28,11 +28,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspContext;
 import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.PageContext;
 import javax.servlet.jsp.tagext.JspFragment;
 import javax.servlet.jsp.tagext.SimpleTagSupport;
 
@@ -119,32 +116,13 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 		this.activeContentIndex = activeContentIndex;
 	}
 
-	/*
-	 * Should set (one day, once functional) which content index is active
-	 */
-	private void readCookies(JspContext context){
 
-		PageContext ctx = (PageContext) context;
-		HttpServletRequest request = (HttpServletRequest) ctx.getRequest();
-
-		Cookie[] cookies = request.getCookies();
-		for (Cookie cooky : cookies) {
-			for (String TAB_COOKY : TAB_COOKIES) {
-				if (TAB_COOKY.equals(cooky.getName())) {
-					activeContentIndex = Integer.parseInt(cooky.getValue());
-				}
-			}
-		}
-
-	}
 
 	@Override
 	public void doTag() throws JspException, IOException {
 
 		JspFragment body = getJspBody();
 		JspContext context = getJspContext();
-
-		// readCookies(context);
 
 		StringWriter writer = new StringWriter();
 

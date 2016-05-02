@@ -32,8 +32,8 @@ public class ExProgressIterationDto extends ExProgressScheduledAbstractDto {
 
 	private ExProgressCampaignDto campaign;
 
-	private List<ExProgressTestPlanDto> testPlans = new LinkedList<ExProgressTestPlanDto>();
-	private List<ExProgressTestSuiteDto> testSuites = new LinkedList<ExProgressTestSuiteDto>();
+	private List<ExProgressTestPlanDto> testPlans = new LinkedList<>();
+	private List<ExProgressTestSuiteDto> testSuites = new LinkedList<>();
 
 	public ExProgressCampaignDto getCampaign() {
 		return campaign;

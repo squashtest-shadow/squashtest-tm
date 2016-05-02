@@ -28,7 +28,7 @@ import org.squashtest.tm.bugtracker.definition.RemoteUser;
 
 /**
  * @author bsiri
- * 
+ *
  */
 
 public class User implements Identifiable<User>, RemoteUser {
@@ -38,7 +38,7 @@ public class User implements Identifiable<User>, RemoteUser {
 	private String id;
 	private String name;
 
-	private List<Permission> permissions = new ArrayList<Permission>();
+	private List<Permission> permissions = new ArrayList<>();
 
 	public User() {
 		super();

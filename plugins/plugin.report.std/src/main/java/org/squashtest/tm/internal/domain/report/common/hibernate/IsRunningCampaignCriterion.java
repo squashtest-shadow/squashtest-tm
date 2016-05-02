@@ -33,29 +33,29 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 
 /*
  * This ReportCriterion cannot be reused due to its very specific content. It'll basically check that a campaign have
- * at least one iteration having a state of ExecutionStatus.READY or ExecutionStatus.RUNNING, or not, depending on the 
+ * at least one iteration having a state of ExecutionStatus.READY or ExecutionStatus.RUNNING, or not, depending on the
  * parameter (an ExProgressCampaignStatus).
- * 
- * Actually it uses a subquery that returns the list of ids of campaigns like described above, then embbed the subquery in 
- * a Criterion testing if a given campaign (from the main query and identified by its alias) is 
- * 	- among them (if the parameter is CAMPAIGN_RUNNING), 
+ *
+ * Actually it uses a subquery that returns the list of ids of campaigns like described above, then embbed the subquery in
+ * a Criterion testing if a given campaign (from the main query and identified by its alias) is
+ * 	- among them (if the parameter is CAMPAIGN_RUNNING),
  *  - or not among them (parameter is CAMPAIGN_OVER),
- *  - or if we don't care at all (parameter is CAMPAIGN_ALL).  
- * 
- * 
+ *  - or if we don't care at all (parameter is CAMPAIGN_ALL).
+ *
+ *
  */
 public class IsRunningCampaignCriterion extends ReportCriterion {
-	
+
 	public IsRunningCampaignCriterion(){
 		super();
 		setOperator(QueryOperator.COMPARATOR_SPECIAL);
-		setParamClass(ExProgressCampaignStatus.class);				
+		setParamClass(ExProgressCampaignStatus.class);
 	}
-	
+
 	public IsRunningCampaignCriterion(String criterionName, String attributePath){
 		setCriterionName(criterionName);
 		setAttributePath(attributePath);
-		
+
 	}
 
 	@Override
@@ -63,11 +63,11 @@ public class IsRunningCampaignCriterion extends ReportCriterion {
 		try{
 			Criterion result = null;
 			Object[] values = getParameters();
-			if ((values!=null)&&(values.length>0)){
-				
+			if (values!=null && values.length>0){
+
 				//here we go
 				ExProgressCampaignStatus status = ExProgressCampaignStatus.valueOf(values[0].toString());
-				
+
 				//creation of the subquery.
 				DetachedCriteria subQuery = DetachedCriteria.forClass(Campaign.class,"campaigns2")
 				.createCriteria("iterations")
@@ -76,13 +76,13 @@ public class IsRunningCampaignCriterion extends ReportCriterion {
 				Restrictions.disjunction()
 							.add(Restrictions.eq("tps.executionStatus", ExecutionStatus.READY))
 							.add(Restrictions.eq("tps.executionStatus", ExecutionStatus.RUNNING))
-							
+
 				).setProjection(
 						Projections.projectionList().add(Property.forName("campaigns2.id"))
 				);
-				
-				
-	
+
+
+
 				//embbed the subquery in a Criterion that depends on the parameter.
 				if (status==ExProgressCampaignStatus.CAMPAIGN_RUNNING){
 					result=Property.forName("campaigns.id").in(subQuery);
@@ -94,8 +94,8 @@ public class IsRunningCampaignCriterion extends ReportCriterion {
 					//we do not filter this time
 					result=null;
 				}
-				
-				
+
+
 			}
 			return result;
 		}catch(Exception e){
@@ -103,7 +103,7 @@ public class IsRunningCampaignCriterion extends ReportCriterion {
 		}
 	}
 
-	
-	
-	
+
+
+
 }

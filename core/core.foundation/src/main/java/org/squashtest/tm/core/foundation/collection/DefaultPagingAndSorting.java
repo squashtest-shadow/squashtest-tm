@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.core.foundation.collection;
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 public class DefaultPagingAndSorting implements PagingAndSorting {
@@ -97,10 +96,10 @@ public class DefaultPagingAndSorting implements PagingAndSorting {
 	public SortOrder getSortOrder() {
 		return order;
 	}
-	
+
 	@Override
 	public Pageable toPageable() {
-		return SpringPaginationUtils.toPageable(this);		
+		return SpringPaginationUtils.toPageable(this);
 	}
 
 }

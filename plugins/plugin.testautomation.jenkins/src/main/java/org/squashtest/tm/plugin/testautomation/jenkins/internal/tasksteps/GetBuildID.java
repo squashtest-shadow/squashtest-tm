@@ -44,7 +44,7 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 	private BuildAbsoluteId absoluteId;
 
 
-	// ****** the output here is stored when available in the absolueId#setBuildId ***** 
+	// ****** the output here is stored when available in the absolueId#setBuildId *****
 
 	// ****** accessors ********** */
 
@@ -82,12 +82,12 @@ public class GetBuildID extends BuildStep<GetBuildID> implements HttpBasedStep {
 		super(processor);
 	}
 
-	// ************ code ***************** 
+	// ************ code *****************
 
 
 	@Override
 	public boolean needsRescheduling() {
-		return (absoluteId.getBuildId() == null);
+		return absoluteId.getBuildId() == null;
 	}
 
 

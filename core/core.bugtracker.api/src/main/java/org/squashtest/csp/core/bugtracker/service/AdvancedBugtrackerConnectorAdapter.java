@@ -82,7 +82,7 @@ public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerCon
 
 	@Override
 	public RemoteIssue createIssue(RemoteIssue issue) throws BugTrackerRemoteException {
-		return connector.createIssue((AdvancedIssue) issue);
+		return connector.createIssue(issue);
 	}
 
 	@Override
@@ -96,7 +96,7 @@ public class AdvancedBugtrackerConnectorAdapter implements InternalBugtrackerCon
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.csp.core.bugtracker.service.InternalBugtrackerConnector#findIssues(java.util.Collection)
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })

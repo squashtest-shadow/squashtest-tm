@@ -198,7 +198,6 @@ class CustomFieldModelFactory {
 		model.setLabel(field.getLabel());
 		model.setOptional(field.isOptional());
 		model.setInputType(typeModel);
-		//model.setIType(typeModel.getEnumName());
 		model.setFriendlyOptional(field.isOptional() ? getMessage("label.Yes") : getMessage("label.No"));
 		model.setCode(field.getCode());
 
@@ -271,7 +270,6 @@ class CustomFieldModelFactory {
 		customFieldModel.setCode(value.getCode());
 		customFieldModel.setId(value.getId());
 		customFieldModel.setInputType(inputTypeModel);
-		//customFieldModel.setIType(inputTypeModel.getEnumName());
 		customFieldModel.setLabel(value.getLabel());
 		customFieldModel.setOptional(true);
 		customFieldModel.setDenormalized(true);

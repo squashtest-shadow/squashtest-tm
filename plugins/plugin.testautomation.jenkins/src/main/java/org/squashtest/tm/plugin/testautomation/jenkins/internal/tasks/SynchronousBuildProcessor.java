@@ -41,10 +41,10 @@ public abstract class SynchronousBuildProcessor<RESULT> extends AbstractBuildPro
 	}
 
 
-	abstract public RESULT getResult();
+	public abstract RESULT getResult();
 
 
-	abstract protected void buildResult();
+	protected abstract void buildResult();
 
 
 	@Override

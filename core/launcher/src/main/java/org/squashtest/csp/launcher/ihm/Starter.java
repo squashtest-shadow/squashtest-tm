@@ -74,6 +74,6 @@ public class Starter {
 			e.printStackTrace();
 		}
 
-		return response.equalsIgnoreCase("ok");
+		return "ok".equalsIgnoreCase(response);
 	}
 }

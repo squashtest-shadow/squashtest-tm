@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
@@ -28,12 +34,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.DefaultResourceLoader;
-
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
 
 /**
  * This SpringApplicationRunListener lists all the jars found in the plugins folder (as defined by
@@ -44,8 +44,7 @@ import java.net.URLClassLoader;
  */
 public class PluginsPathClasspathExtender implements SpringApplicationRunListener {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PluginsPathClasspathExtender.class);
-//	private ConfigurableEnvironment environment;
-//	private String pluginsPath;
+
 
 	public PluginsPathClasspathExtender(SpringApplication app, String[] args) {
 		super();
@@ -58,8 +57,7 @@ public class PluginsPathClasspathExtender implements SpringApplicationRunListene
 
 	@Override
 	public void environmentPrepared(ConfigurableEnvironment environment) {
-//		LOGGER.debug("Environment prepared");
-//		this.environment = environment;
+
 		// NOOP
 	}
 

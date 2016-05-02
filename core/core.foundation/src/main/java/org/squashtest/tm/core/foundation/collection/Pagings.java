@@ -26,43 +26,43 @@ import java.lang.reflect.Proxy;
 
 /**
  * {@link Paging} of Squash TM default size.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class Pagings {
-	
+
 	private Pagings(){};
-	
+
 	public static final Paging DEFAULT_PAGING = new PagingImpl();
-	
+
 	public static final Paging NO_PAGING = new PagingImpl(0,0,true);
-	
+
 	public static Paging createNew (int firstItemIndex){
 		return new PagingImpl(firstItemIndex);
 	}
-	
+
 	public static Paging createNew (int firstItemIndex, int pageSize){
 		return new PagingImpl(firstItemIndex, pageSize);
 	}
-	
+
 	public static Paging createNew (int firstItemIndex, int pageSize, boolean shouldDisplayAll){
 		return new PagingImpl(firstItemIndex, pageSize, shouldDisplayAll);
 	}
-	
+
 	public static <P extends Paging> P disablePaging(P paging){
 		return (P)Proxy.newProxyInstance(Thread.currentThread().getContextClassLoader(), paging.getClass().getInterfaces(), new DisabledPagingProxy<Paging>(paging));
 	}
-	
+
 	private static final class PagingImpl implements Paging{
 
 		private int firstIndex = 0;
 		private int pageSize = 50;
 		private boolean displayAll = false;
-		
-		
-		
-		
+
+
+
+
 		public PagingImpl() {
 			super();
 		}
@@ -99,28 +99,28 @@ public final class Pagings {
 		public boolean shouldDisplayAll() {
 			return displayAll;
 		}
-		
+
 	}
-	
+
 	private static class DisabledPagingProxy<P extends Paging> implements InvocationHandler{
-		
+
 		private P original;
 
 		DisabledPagingProxy(P original) {
 			this.original = original;
 		}
-		
+
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args)
 				throws Throwable {
-			if (method.getName().equals("shouldDisplayAll")){
+			if ("shouldDisplayAll".equals(method.getName())){
 				return true;
 			}
 			else{
 				return method.invoke(original, args);
 			}
 		}
-		
+
 	}
 
 }

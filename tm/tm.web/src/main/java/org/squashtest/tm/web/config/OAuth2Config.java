@@ -20,6 +20,12 @@
  */
 package org.squashtest.tm.web.config;
 
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
+
+import javax.inject.Inject;
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,12 +41,6 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import org.springframework.security.oauth2.provider.code.JdbcAuthorizationCodeServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JdbcTokenStore;
-
-import javax.inject.Inject;
-import javax.sql.DataSource;
-
-import static org.springframework.http.HttpMethod.GET;
-import static org.springframework.security.config.http.SessionCreationPolicy.NEVER;
 
 /**
  * @author Gregory Fouquet
@@ -72,20 +72,6 @@ public class OAuth2Config {
 			// @formatter:on
 		}
 
-//		@Bean
-//		private DefaultTokenServices tokenServices() {
-//			DefaultTokenServices tokenServices = new DefaultTokenServices();
-//
-//			tokenServices.setTokenStore(tokenStore());
-//			tokenServices.setSupportRefreshToken(true);
-//			tokenServices.setClientDetailsService(clientDetailsService());
-//			/**
-//			 * TODO (GRF - Migration from xml) Don't know why it's this high but it does not seem very secure...
-//			 */
-//			tokenServices.setAccessTokenValiditySeconds(900000000);
-//
-//			return tokenServices;
-//		}
 
 		@Override
 		public void configure(ClientDetailsServiceConfigurer clients) throws Exception {

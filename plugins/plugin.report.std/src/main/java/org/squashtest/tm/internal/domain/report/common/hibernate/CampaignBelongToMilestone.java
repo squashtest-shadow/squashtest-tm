@@ -46,7 +46,7 @@ public class CampaignBelongToMilestone extends IsInSet<Long> {
 
 		List<Long> milestoneIds = (List<Long>)getTypedParameters();
 
-		if ((milestoneIds!=null) && (! milestoneIds.isEmpty())){
+		if (milestoneIds!=null && ! milestoneIds.isEmpty()){
 
 			DetachedCriteria subQuery = DetachedCriteria.forClass(Campaign.class, "milestonecpgs")
 					.createAlias("milestonecpgs.milestones", "milestones")

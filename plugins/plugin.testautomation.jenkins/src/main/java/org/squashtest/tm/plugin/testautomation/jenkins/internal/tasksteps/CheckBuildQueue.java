@@ -98,11 +98,7 @@ public class CheckBuildQueue extends BuildStep<CheckBuildQueue> implements HttpB
 
 		Item buildOfInterest = queuedBuilds.findQueuedBuildByExtId(absoluteId.getProjectName(), absoluteId.getExternalId());
 
-		if (buildOfInterest != null) {
-			buildIsQueued = true;
-		} else {
-			buildIsQueued = false;
-		}
+		buildIsQueued = buildOfInterest != null;
 
 	}
 

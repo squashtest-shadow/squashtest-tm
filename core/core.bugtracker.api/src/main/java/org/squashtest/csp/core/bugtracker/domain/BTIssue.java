@@ -176,7 +176,7 @@ public class BTIssue implements RemoteIssue {
 
 	/**
 	 * sets the name of the instance of the bugtracker (not its kind, url or else)
-	 * 
+	 *
 	 * @param btName
 	 */
 	public void setBugtracker(String btName){
@@ -196,10 +196,8 @@ public class BTIssue implements RemoteIssue {
 
 	@Override
 	public boolean hasBlankId(){
-		return (
-				(id==null) ||
-				(id.length()==0) ||
-				(id.matches("^\\s*$"))
-				);
+		return id==null ||
+			id.isEmpty() ||
+			id.matches("^\\s*$");
 	}
 }

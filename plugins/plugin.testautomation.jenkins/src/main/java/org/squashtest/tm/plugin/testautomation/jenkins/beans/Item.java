@@ -25,9 +25,9 @@ import java.util.Arrays;
 public class Item {
 
 	private Action[] actions;
-	
+
 	private Task task;
-	
+
 	int id;
 
 
@@ -54,42 +54,38 @@ public class Item {
 	public void setId(int id) {
 		this.id = id;
 	}
-	
-	
+
+
 	public boolean representsProjectWithExtId(String projectName, String externalId){
-		return (	
-				projectName.equals(getProjectName())
-			&&	hasExternalId(externalId)
-		);
+		return projectName.equals(getProjectName())
+    &&	hasExternalId(externalId);
 	}
-	
+
 	public boolean representsProjectWithId(String projectName, int id){
-		return (	
-				projectName.equals(getProjectName())
-			&&	(getId() == id)
-		);		
+		return projectName.equals(getProjectName())
+    && getId() == id;
 	}
-	
+
 	private boolean hasExternalId(String externalId){
-		
+
 		if (actions == null) return false;
-		
+
 		Parameter extIdParam = Parameter.newExtIdParameter(externalId);
-		
+
 		for (Action action : actions){
-			
+
 			if (action == null) continue;
-			
+
 			if (action.hasParameter(extIdParam)){
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public String getProjectName(){
 		return task.getName();
 	}
-	
+
 }

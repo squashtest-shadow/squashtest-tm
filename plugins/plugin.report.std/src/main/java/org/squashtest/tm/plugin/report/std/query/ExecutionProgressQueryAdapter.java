@@ -33,22 +33,22 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQ
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateExecutionProgressQuery> {
 
 	@Inject
 	private Provider<HibernateExecutionProgressQuery> legacyQueryProvider;
 	/**
-	 * 
+	 *
 	 */
 	static final String CAMPAIGN_IDS = "campaignIds";
 	/**
-	 * 
+	 *
 	 */
 	static final String LEGACY_CAMPAIGN_IDS = "campaignIds[]";
 	/**
-	 * 
+	 *
 	 */
 	static final String CAMPAIGN_SELECTION_MODE = "campaignSelectionMode";
 
@@ -67,7 +67,7 @@ public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateE
 		}
 		else {
 			Criteria idsCrit = criteria.get(CAMPAIGN_IDS);
-			Collection nodesIds = new HashSet<Object>();
+			Collection nodesIds = new HashSet<>();
 			addCampaignIds(idsCrit, nodesIds, "campaigns");
 			addCampaignIds(idsCrit, nodesIds, "campaign-folders");
 			legacyQuery.setCriterion(LEGACY_CAMPAIGN_IDS, nodesIds.toArray());

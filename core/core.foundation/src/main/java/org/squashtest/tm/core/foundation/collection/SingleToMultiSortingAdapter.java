@@ -50,11 +50,11 @@ public class SingleToMultiSortingAdapter implements PagingAndMultiSorting{
 
 	@Override
 	public List<Sorting> getSortings() {
-		List<Sorting> sortings = new ArrayList<Sorting>(1);
+		List<Sorting> sortings = new ArrayList<>(1);
 		sortings.add(new DefaultSorting(_original.getSortedAttribute(), _original.getSortOrder()));
 		return sortings;
 	}
 
-	
-	
+
+
 }

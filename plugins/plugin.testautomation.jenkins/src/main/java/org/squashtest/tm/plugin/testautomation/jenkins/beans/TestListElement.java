@@ -39,7 +39,7 @@ public class TestListElement {
 	// this is a trick required because Jenkins would return a (pseudo) root of the test tree
 	// this root stands for the project, we need to detect if this is the case for the current node.
 	private boolean amIPseudoRoot(){
-		return (timestamp != null);
+		return timestamp != null;
 	}
 
 	public String getName() {
@@ -74,13 +74,13 @@ public class TestListElement {
 
 	public Collection<String> collectAllTestNames(){
 
-		Collection<String> allNames = new LinkedList<String>();
+		Collection<String> allNames = new LinkedList<>();
 
 		//case : directory
 		if (contents != null){
 
 			// we don't want the pseudo root and discard its name if encountered.
-			String thisName = (! amIPseudoRoot()) ? name + "/" : "";
+			String thisName = ! amIPseudoRoot() ? name + "/" : "";
 
 			for (TestListElement content : contents){
 

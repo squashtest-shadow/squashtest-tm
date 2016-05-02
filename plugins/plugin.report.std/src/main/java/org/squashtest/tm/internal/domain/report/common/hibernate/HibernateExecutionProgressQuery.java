@@ -102,13 +102,13 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 	/*
 	 * Here is a typical implementation of createHibernateQuery :
-	 * 
+	 *
 	 * - a basic request,
 	 * - application of the criteria,
 	 * - return that to the Dao.
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQuery#createHibernateQuery()
 	 */
 	@Override
@@ -139,7 +139,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 	/*
 	 * This method uses some of the private methods below.
-	 * 
+	 *
 	 * Note : It's rather strange but we fetch the projects from the campaigns, not the campaigns from the project.
 	 * So we'll now create the list of project dtos in the loop creating the campaign dtos.
 	 */
@@ -164,7 +164,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		// we'll create the corresponding ExProgressProjectDto and store them in a map, of which the Id of the project
 		// is the key.
 
-		Map<Long, ExProgressProjectDto> projectMap = new HashMap<Long, ExProgressProjectDto>();
+		Map<Long, ExProgressProjectDto> projectMap = new HashMap<>();
 
 		for (Campaign campaign : campaignList) {
 
@@ -199,7 +199,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 
 		// phase 3 : return the list and we're done !
 
-		List<ExProgressProjectDto> projectList = new LinkedList<ExProgressProjectDto>();
+		List<ExProgressProjectDto> projectList = new LinkedList<>();
 		fillProjectStatusInfos(projectMap);
 		projectList.addAll(projectMap.values());
 		return projectList;
@@ -215,7 +215,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 	}
 
 	protected List<Campaign> filterUnwantedDataOut(List<Campaign> list) {
-		List<Campaign> toReturn = new LinkedList<Campaign>();
+		List<Campaign> toReturn = new LinkedList<>();
 		for (Campaign campaign : list) {
 			if (getDataFilteringService().isFullyAllowed(campaign)) {
 				toReturn.add(campaign);
@@ -260,7 +260,7 @@ public class HibernateExecutionProgressQuery extends HibernateReportQuery {
 		if (milestoneCrit != null) {
 			Object[] ids = milestoneCrit.getParameters();
 
-			if (ids != null && ids.length > 0 && (!campaignList.isEmpty())) {
+			if (ids != null && ids.length > 0 && !campaignList.isEmpty()) {
 				// for now we support only one milestone
 				Long milestoneId = Long.valueOf(ids[0].toString());
 

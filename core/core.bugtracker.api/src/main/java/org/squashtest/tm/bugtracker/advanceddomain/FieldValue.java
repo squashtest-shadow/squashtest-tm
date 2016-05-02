@@ -30,22 +30,22 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 
 /**
  * A FieldValue represents, well, a value. This class is kind of stuff-what-you-can-in-there because the following may happen :
- * 
+ *
  * <ul>
  * 	<li>the value may be a simple scalar (eg, a string),</li>
  * 	<li>the value may be an collection of scalar (eg, a collection of string)</li>
  * 	<li>the value may be identified (eg, a version)</li>
- * 	<li>and well, the value may be collection of identified or unidentified scalar of values</li> 
+ * 	<li>and well, the value may be collection of identified or unidentified scalar of values</li>
  * 	<li>...</li>
  * </ul>
- * 
+ *
  * <p>
  * 	you get the idea. This class flattens the fact that the content can have or not have an idea, and can be a simple type of aggregated type.
- * It is so because json serializers will handle it more easily, since the mechanics doesn't rely on the class of the data (there is only one class) but solely on its content.  
+ * It is so because json serializers will handle it more easily, since the mechanics doesn't rely on the class of the data (there is only one class) but solely on its content.
  * </p>
- * 
+ *
  * <p>
- * 	fields are : 
+ * 	fields are :
  * <ul>
  * 	<li>id : if the fieldvalue is identified by something, let it be the id</li>
  * 	<li>typename : a metadata which states what type of data it is. Content is free, can be used by widget extensions deployed in Squash, or otherwise may help to convert a FieldValue to a desired specific domain entity</li>
@@ -53,9 +53,9 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
  * 	<li>composite : if there are multiple value for a value, let composite be this value</li>
  *  </li>random : for anything that doesn't fit in the above. Can be used by widget extensions deployed in Squash.</li>
  * </ul>
- * 
+ *
  * </p>
- * 
+ *
  * @author bsiri
  *
  */
@@ -66,29 +66,29 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	private String scalar;
 	private FieldValue[] composite = new FieldValue[0];
 	private Object random;
-	
-	
+
+
 	public FieldValue(){
 		super();
 	}
-	
+
 	public FieldValue(String id, String scalar){
 		super();
 		this.id=id;
 		this.scalar = scalar;
 	}
-	
+
 	public FieldValue(String id, String typeName, String scalar){
 		super();
 		this.id = id;
 		this.scalar = scalar;
 		this.typename = typeName;
 	}
-	
+
 	public String getId() {
 		return id;
 	}
-	
+
 	public void setId(String id) {
 		this.id = id;
 	}
@@ -108,7 +108,7 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	public void setComposite(FieldValue[] composite) {
 		this.composite = composite;
 	}
-	
+
 
 	public String getTypename() {
 		return typename;
@@ -118,25 +118,25 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 		this.typename = typename;
 	}
 
-	
+
 	private String doGetName(){
 		if (scalar!=null){
 			return scalar+", ";
 		}
 		else{
 			StringBuilder builder = new StringBuilder();
-			for (int i=0;i<composite.length;i++){
-				builder.append(composite[i].doGetName()+", ");
+			for (FieldValue aComposite : composite) {
+				builder.append(aComposite.doGetName()).append(", ");
 			}
 			return builder.toString();
-		}		
+		}
 	}
-		
+
 	@Override
 	public String getName() {
 		return doGetName().replaceFirst(",\\s*$", "");
 	}
-	
+
 	public void setName(String name){
 		//nothing. This exists just because Jackson would complain otherwise
 	}
@@ -148,13 +148,13 @@ public class FieldValue implements RemotePriority, RemoteVersion, RemoteCategory
 	public void setRandom(Object random) {
 		this.random = random;
 	}
-	
+
 	public boolean hasScalarValue(){
 		return ! StringUtils.isBlank(scalar);
 	}
-	
+
 	public boolean hasCompositeValue(){
-		return (composite.length != 0);
+		return composite.length != 0;
 	}
-	
+
 }

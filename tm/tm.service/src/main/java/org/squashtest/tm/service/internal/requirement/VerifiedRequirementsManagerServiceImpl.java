@@ -593,12 +593,7 @@ List<Long> requirementsIds) {
 	@Override
 	public void removeVerifiedRequirementVersionsFromTestStep(
 		List<Long> requirementVersionsIds, long testStepId) {
-		/*
-		 * List<RequirementVersionCoverage> coverages =
-		 * requirementVersionCoverageDao.byRequirementVersionsAndTestStep(
-		 * requirementVersionsIds, testStepId); for (RequirementVersionCoverage
-		 * coverage : coverages) { coverage.removeVerifyingStep(testStepId); }
-		 */
+
 		List<RequirementVersionCoverage> coverages = requirementVersionCoverageDao
 			.byRequirementVersionsAndTestStep(requirementVersionsIds,
 				testStepId);

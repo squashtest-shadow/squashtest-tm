@@ -25,7 +25,7 @@ import java.util.Collection;
 
 public class JobList {
 
-	private Collection<Job> jobs = new ArrayList<Job>();
+	private Collection<Job> jobs = new ArrayList<>();
 
 	public Collection<Job> getJobs() {
 		return jobs;
@@ -34,6 +34,6 @@ public class JobList {
 	public void setJobs(Collection<Job> jobs) {
 		this.jobs = jobs;
 	}
-	
-	
+
+
 }

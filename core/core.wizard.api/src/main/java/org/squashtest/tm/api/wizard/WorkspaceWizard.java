@@ -20,21 +20,18 @@
  */
 package org.squashtest.tm.api.wizard;
 
-import java.util.Map;
-
-import org.squashtest.tm.api.plugin.EntityReference;
 import org.squashtest.tm.api.widget.MenuItem;
 import org.squashtest.tm.api.workspace.WorkspaceType;
 
 /**
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface WorkspaceWizard extends WizardPlugin {
 	/**
 	 * This wizard is available for display in the workspace returned by this method.
-	 * 
+	 *
 	 * @return the {@link WorkspaceType} where this wizard can be started / displayed. SHould not return
 	 *         <code>null</code>
 	 */
@@ -42,7 +39,7 @@ public interface WorkspaceWizard extends WizardPlugin {
 
 	/**
 	 * {@link MenuItem} which should be used to generate a menu in the workspace's wizard menu.
-	 * 
+	 *
 	 * @return
 	 */
 	MenuItem getWizardMenu();

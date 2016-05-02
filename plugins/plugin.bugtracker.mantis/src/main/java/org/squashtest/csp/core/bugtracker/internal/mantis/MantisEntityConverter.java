@@ -73,7 +73,7 @@ public final class MantisEntityConverter {
 
 	public static List<BTProject> mantis2SquashProject(ProjectData[] mantisProjects){
 
-		if ((mantisProjects==null) || (mantisProjects.length==0)){
+		if (mantisProjects==null || mantisProjects.length==0){
 			return Collections.emptyList();
 		}
 		else{
@@ -140,7 +140,7 @@ public final class MantisEntityConverter {
 	public static List<Version> mantis2SquashVersion(ProjectVersionData[] mantisVersions){
 		List<Version> versions = new LinkedList<>();
 
-		if ((mantisVersions == null) || (mantisVersions.length==0)){
+		if (mantisVersions == null || mantisVersions.length==0){
 			versions.add(Version.NO_VERSION);
 		}
 
@@ -172,7 +172,7 @@ public final class MantisEntityConverter {
 		List<Category> categories  = new LinkedList<>();
 		long dummyId=0;
 
-		if ((mantisCategories==null) || (mantisCategories.length==0) ){
+		if (mantisCategories==null || mantisCategories.length==0){
 			categories.add(Category.NO_CATEGORY);
 		}
 		else{

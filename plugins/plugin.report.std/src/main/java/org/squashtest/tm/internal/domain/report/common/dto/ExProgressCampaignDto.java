@@ -32,7 +32,7 @@ public class ExProgressCampaignDto extends ExProgressScheduledAbstractDto {
 
 	private ExProgressProjectDto project;
 
-	private List<ExProgressIterationDto> iterations = new LinkedList<ExProgressIterationDto>();
+	private List<ExProgressIterationDto> iterations = new LinkedList<>();
 
 	public ExProgressCampaignDto() {
 		super();

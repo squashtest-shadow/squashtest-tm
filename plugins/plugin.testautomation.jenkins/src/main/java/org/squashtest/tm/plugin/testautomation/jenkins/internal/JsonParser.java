@@ -55,18 +55,12 @@ public class JsonParser {
 
 			JobList filteredList = filterDisabledJobs(list);
 
-			Collection<TestAutomationProject> projectsList = toProjectList(filteredList);
-
-			return projectsList;
+			return toProjectList(filteredList);
 
 		}
-		catch (JsonParseException e) {
+		catch (JsonParseException | JsonMappingException e) {
 			throw new UnreadableResponseException(e);
-		}
-		catch (JsonMappingException e) {
-			throw new UnreadableResponseException(e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new UnreadableResponseException(e);
 		}
 
@@ -93,13 +87,9 @@ public class JsonParser {
 		try {
 			return objMapper.writeValueAsString(object);
 		}
-		catch (JsonGenerationException e) {
+		catch (JsonGenerationException | JsonMappingException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		}
-		catch (JsonMappingException e) {
-			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new TestAutomationException("TestAutomationConnector : internal error, could not generate json", e);
 		}
 	}
@@ -109,13 +99,9 @@ public class JsonParser {
 		try {
 			return objMapper.readValue(json, clazz);
 		}
-		catch (JsonParseException e) {
+		catch (JsonParseException | JsonMappingException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
-		}
-		catch (JsonMappingException e) {
-			throw new UnreadableResponseException("TestAutomationConnector : the response from the server couldn't be treated", e);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new UnreadableResponseException("TestAutomationConnector : internal error :", e);
 		}
 
@@ -135,7 +121,7 @@ public class JsonParser {
 
 	protected Collection<TestAutomationProject> toProjectList(JobList jobList){
 
-		Collection<TestAutomationProject> projects = new ArrayList<TestAutomationProject>();
+		Collection<TestAutomationProject> projects = new ArrayList<>();
 
 		for (Job job : jobList.getJobs()){
 			projects.add(new TestAutomationProject(job.getName()));

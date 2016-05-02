@@ -37,9 +37,9 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 /**
  * {@link DynamicComponentInvocationHandler} which handles <code>List<ENTITY> findAllByIds(Collection<Long> id)</code>
  * method. Fetches all entities matching the ids of a collection.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHandler { // NOSONAR : I dont choose what
 	// JDK interfaces throw
@@ -99,9 +99,9 @@ public class FindAllByIdsHandler<ENTITY> implements DynamicComponentInvocationHa
 
 	private boolean mehtodParamsMatchMethodParams(Method method) {
 		Class<?>[] params = method.getParameterTypes();
-		return (params.length == 1 && Collection.class.isAssignableFrom(params[0]))
-				|| (params.length == 2 && Collection.class.isAssignableFrom(params[0]) && Sorting.class
-				.isAssignableFrom(params[1]));
+		return params.length == 1 && Collection.class.isAssignableFrom(params[0])
+				|| params.length == 2 && Collection.class.isAssignableFrom(params[0]) && Sorting.class
+				.isAssignableFrom(params[1]);
 	}
 
 	public boolean methodNameMatchesMethodPattern(Method method) {

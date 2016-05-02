@@ -27,21 +27,21 @@ import org.squashtest.tm.internal.domain.report.query.QueryOperator;
 
 /**
  * This class explicitly designs a criterion for a HibernateReportQuery.
- * 
+ *
  * The primary goal of this class is to hold all the informations and metainformations describing a particular Criterion
  * for the parent Query.
- * 
+ *
  * Implementing classes must also implement a method that return a Hibernate Criterion based on those informations.
- * 
- * 
+ *
+ *
  * Implementing the ReportCriterion : ==================================
- * 
+ *
  * - makeCriterion() will generate the corresponding Hibernate Criterion, based on the informations you fed the instance
  * with. You might not need all of its properties (see the setters below) and those properties exist for convenience in
  * case you need them.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 public abstract class ReportCriterion {
@@ -62,7 +62,7 @@ public abstract class ReportCriterion {
 
 	/**
 	 * Rich constructor for a ReportCriterion.
-	 * 
+	 *
 	 * @param criterionName
 	 *            the name for that Criterion.
 	 * @param attributePath
@@ -94,7 +94,7 @@ public abstract class ReportCriterion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the raw parameters, non typed.
 	 */
 	public Object[] getParameters() {
@@ -102,7 +102,7 @@ public abstract class ReportCriterion {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the class of the target entity.
 	 */
 	protected Class<?> getEntityClass() {
@@ -119,7 +119,7 @@ public abstract class ReportCriterion {
 
 	/**
 	 * Sets an alternate alias for the target entity.
-	 * 
+	 *
 	 * @param entityAlias
 	 */
 	protected void setEntityAlias(String entityAlias) {
@@ -132,7 +132,7 @@ public abstract class ReportCriterion {
 
 	/**
 	 * Specify the class of the parameters.
-	 * 
+	 *
 	 * @param paramClass
 	 *            the java class of the parameters.
 	 */
@@ -146,7 +146,7 @@ public abstract class ReportCriterion {
 
 	/**
 	 * Sets a semantic hint about what will the criterion do. Implementations might use that hint or not.
-	 * 
+	 *
 	 * @param operator
 	 */
 	protected void setOperator(QueryOperator operator) {
@@ -160,9 +160,9 @@ public abstract class ReportCriterion {
 	/**
 	 * This method will convert, using some of its properties, a Hibernate Criterion corresponding to that
 	 * ReportCriterion.
-	 * 
+	 *
 	 * @return the converted Criterion.
 	 */
-	abstract public Criterion makeCriterion();
+	public abstract Criterion makeCriterion();
 
 }

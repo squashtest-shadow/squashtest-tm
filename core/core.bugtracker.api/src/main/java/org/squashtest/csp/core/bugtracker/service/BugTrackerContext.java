@@ -38,18 +38,18 @@ import org.squashtest.csp.core.bugtracker.net.AuthenticationCredentials;
  */
 @SuppressWarnings("serial")
 public class BugTrackerContext implements Serializable {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerContext.class);
-	
-	
-	Map<Long, AuthenticationCredentials> bugTrackersCredentials = new HashMap<Long, AuthenticationCredentials>();
+
+
+	Map<Long, AuthenticationCredentials> bugTrackersCredentials = new HashMap<>();
 
 	public AuthenticationCredentials getCredentials(BugTracker bugTracker) {
 		return bugTrackersCredentials.get(bugTracker.getId());
 	}
 
 	public void setCredentials(BugTracker bugTracker, AuthenticationCredentials credentials) {
-		String login = (credentials != null) ? credentials.getUsername() : null;
+		String login = credentials != null ? credentials.getUsername() : null;
 		LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (set credentials)", this.toString(), login);
 		bugTrackersCredentials.put(bugTracker.getId(), credentials);
 	}
@@ -58,25 +58,25 @@ public class BugTrackerContext implements Serializable {
 		AuthenticationCredentials credentials = bugTrackersCredentials.get(bugTracker.getId()) ;
 		return credentials != null;
 	}
-	
+
 	/**
 	 * Will merge the mapping from the other context into this one. The credentials defined in this instance take precedence in case
-	 * of conflicts. 
-	 * 
+	 * of conflicts.
+	 *
 	 * @param anotherContext
 	 */
 	public void absorb(BugTrackerContext anotherContext){
-		
+
 		for (Entry<Long, AuthenticationCredentials> anotherEntry : anotherContext.bugTrackersCredentials.entrySet()){
-			
+
 			Long id = anotherEntry.getKey();
 			AuthenticationCredentials creds = anotherEntry.getValue();
-			
+
 			if (! bugTrackersCredentials.containsKey(id)){
 				LOGGER.trace("BugTrackerContext #{} : settings credentials for user '{}' (via merge)",this.toString(), creds.getUsername());
 				bugTrackersCredentials.put(id, creds);
 			}
 		}
-		
+
 	}
 }

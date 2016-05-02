@@ -31,7 +31,7 @@ public abstract class BuildStep<S extends BuildStep<S>> implements Runnable {
 
 	public void addListener(StepEventListener<S> newListener) {
 		if (eventListeners == null) {
-			eventListeners = new LinkedList<StepEventListener<S>>();
+			eventListeners = new LinkedList<>();
 		}
 		eventListeners.add(newListener);
 	}
@@ -78,21 +78,21 @@ public abstract class BuildStep<S extends BuildStep<S>> implements Runnable {
 
 	/**
 	 * Tells whether the current step is complete, or the same step needs to be executed again at a later time.
-	 * 
+	 *
 	 * @return true if needs rescheduling, false if we can move to the next step
 	 */
 	public abstract boolean needsRescheduling();
 
 	/**
 	 * do the job
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public abstract void perform() throws Exception;
 
 	/**
 	 * sets the same object ready for reuse
-	 * 
+	 *
 	 */
 	public abstract void reset();
 
@@ -100,7 +100,7 @@ public abstract class BuildStep<S extends BuildStep<S>> implements Runnable {
 	 * Returns a positive or null integer if it can suggest an adequate delay before next execution, if the task is
 	 * unconclusive and must be rescheduled. Null should be returned if it has no opinion and let the processor decide
 	 * instead.
-	 * 
+	 *
 	 * @return
 	 */
 	public abstract Integer suggestedReschedulingInterval();

@@ -32,7 +32,7 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQ
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<HibernateRequirementCoverageByTestsQuery> {
 
@@ -40,7 +40,7 @@ public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<H
 	private Provider<HibernateRequirementCoverageByTestsQuery> legacyQueryProvider;
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String LEGACY_PROJECT_IDS = "projectIds[]";
 
@@ -55,7 +55,7 @@ public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<H
 
 		String mode = (String)criteria.get("selectionMode").getValue();
 
-		if (mode.equals("PROJECT_PICKER")){
+		if ("PROJECT_PICKER".equals(mode)){
 			Criteria idsCrit = criteria.get("projectIds");
 			legacyQuery.setCriterion(LEGACY_PROJECT_IDS, ((Collection<?>) idsCrit.getValue()).toArray());
 

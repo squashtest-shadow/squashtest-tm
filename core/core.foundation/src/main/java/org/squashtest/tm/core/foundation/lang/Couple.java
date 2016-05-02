@@ -22,9 +22,9 @@ package org.squashtest.tm.core.foundation.lang;
 
 /**
  * An immutable 2-tuple
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class Couple<T1, T2> {
 	private final T1 a1;
@@ -63,8 +63,8 @@ public class Couple<T1, T2> {
 
 		final int prime = 31;
 		int result = 7;
-		result = prime * result + ((a1 == null) ? 0 : a1.hashCode());
-		result = prime * result + ((a2 == null) ? 0 : a2.hashCode());
+		result = prime * result + (a1 == null ? 0 : a1.hashCode());
+		result = prime * result + (a2 == null ? 0 : a2.hashCode());
 		return result;
 
 	}

@@ -47,7 +47,7 @@ public class HibernateReportQueryDao implements ReportQueryDao {
 
 	@Override
 	public boolean doesSupportFlavor(ReportQueryFlavor flavor) {
-		return (this.flavor.getClass() == flavor.getClass());
+		return this.flavor.getClass() == flavor.getClass();
 	}
 
 	@Override

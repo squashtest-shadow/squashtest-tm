@@ -29,9 +29,9 @@ import org.squashtest.tm.core.foundation.lang.Assert;
 
 /**
  * Access rule meaning : some kind of node has to be selected, and user need a permission on this node.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class SelectedNodePermission implements AccessRule {
 	private final TreeNodeType nodeType;
@@ -66,8 +66,8 @@ public class SelectedNodePermission implements AccessRule {
 	public int hashCode() { // GENERATED:START
 		final int prime = 31;
 		int result = 7;
-		result = prime * result + ((getNodeType() == null) ? 0 : getNodeType().hashCode());
-		result = prime * result + ((getPermission() == null) ? 0 : getPermission().hashCode());
+		result = prime * result + (getNodeType() == null ? 0 : getNodeType().hashCode());
+		result = prime * result + (getPermission() == null ? 0 : getPermission().hashCode());
 		return result;
 	} // GENERATED:END
 

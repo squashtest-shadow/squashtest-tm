@@ -23,12 +23,12 @@ package org.squashtest.tm.plugin.testautomation.jenkins.beans;
 import java.util.Arrays;
 
 public class Build {
-	
+
 	private Action[] actions;
 	private int number;
 	private boolean building;
-	
-	
+
+
 	public Action[] getActions() {
 		return actions;
 	}
@@ -52,29 +52,29 @@ public class Build {
 	public void setBuilding(boolean building) {
 		this.building = building;
 	}
-	
+
 	public Build(){
 		super();
 	}
-	
+
 	public boolean hasExternalId(String externalId){
 		Parameter extIdParam = Parameter.newExtIdParameter(externalId);
-		
+
 		for (Action action : actions){
 			if (action.hasParameter(extIdParam)){
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public boolean hasId(int id){
-		return (this.getNumber() == id);
+		return this.getNumber() == id;
 	}
-	
+
 	public int getId(){
 		return this.getNumber();
 	}
-	
+
 }

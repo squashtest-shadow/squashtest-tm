@@ -130,10 +130,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 			duplicate = cufDefs.contains(res);
 			cufDefs.add((CustomFieldColumnDef) res);
 
-		} /*else if (TemplateColumnUtils){
-			LOGGER.trace("Column named '{}' will be ignored", header);
-
-		}*/ else {
+		} else {
 			LOGGER.trace("Column named '{}' is unknown", header);
 			unknownColumnDefs.add(new UnknownColumnDef(colIndex, header));
 		}

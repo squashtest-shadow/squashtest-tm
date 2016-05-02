@@ -22,7 +22,6 @@ package org.squashtest.tm.internal.domain.report.common.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,9 +47,9 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.HibernateReportQ
 import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 
 /**
- * 
+ *
  * Manage hibernate query to get the requirements covered by a given test-case
- * 
+ *
  * @author bsiri
  * @reviewed-on 2011-11-30
  */
@@ -69,7 +68,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	/**
 	 * when picking by milestone, will only treat versions bound to
 	 * the given milestone.
-	 * 
+	 *
 	 */
 	private static final int REPORT_VERSION_BOUND_TO_MILESTONE =  0;
 
@@ -208,7 +207,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	private List<Long> idsByProject(Session session){
 
-		List<Long> projectIds = new ArrayList<Long>();
+		List<Long> projectIds = new ArrayList<>();
 		boolean runOnAllProjects = true;
 
 		if (this.getCriterions().get(PROJECT_IDS).getParameters() != null) {
@@ -257,7 +256,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	private List<Object[]> pairRequirementAndParents(List<Requirement> requirements, List<Object[]>parentsNameOfRequirements){
 
-		List<Object[]> requirementsAndParents = new LinkedList<Object[]>();
+		List<Object[]> requirementsAndParents = new LinkedList<>();
 
 		for (Requirement req : requirements){
 
@@ -267,7 +266,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 				Object[] tuple = iterNames.next();
 				Long id = ((BigInteger)tuple[0]).longValue();
 				if (id.equals(req.getId())){
-					requirementsAndParents.add(new Object[]{req, (String)tuple[1]});
+					requirementsAndParents.add(new Object[]{req, tuple[1]});
 					iterNames.remove();
 					break;
 				}
@@ -296,7 +295,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		// update projectTotals rates
 		calculateProjectCoverageRates(projectTotals);
 		// add it to the list. We only need the sorted Map values...
-		List<ReqCoverageByTestProjectDto> toReturn = new ArrayList<ReqCoverageByTestProjectDto>(projectList.values());
+		List<ReqCoverageByTestProjectDto> toReturn = new ArrayList<>(projectList.values());
 
 		toReturn.add(projectTotals);
 
@@ -327,7 +326,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 		String milestone = extractMilestoneLabel((Requirement)filteredData.get(0)[0]);
 
 		// First initiate the projectDTO map, project id is the key
-		Map<Long, ReqCoverageByTestProjectDto> projectList = new HashMap<Long, ReqCoverageByTestProjectDto>();
+		Map<Long, ReqCoverageByTestProjectDto> projectList = new HashMap<>();
 		for (Object[] objects : filteredData) {
 			// Current project
 			ReqCoverageByTestProjectDto currentProject;
@@ -383,7 +382,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/**
 	 * check if the project is not here and create if necessary
-	 * 
+	 *
 	 * @param projectList
 	 * @param requirement
 	 * @param projectId
@@ -417,7 +416,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	}
 
 	protected List<Object[]> filterUnwantedDataOut(List<Object[]> list) {
-		List<Object[]> toReturn = new LinkedList<Object[]>();
+		List<Object[]> toReturn = new LinkedList<>();
 
 		for (Object[] array : list) {
 			Requirement requirement = (Requirement) array[0];
@@ -432,7 +431,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	/***
 	 * This method create a new ReqCoverageByTestRequirementSingleDto with informations from requirement and the name of
 	 * the requirement folder if it exists
-	 * 
+	 *
 	 * @param requirement
 	 *            the requirement
 	 * @param folder
@@ -443,7 +442,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 			String parentName) {
 		Object mode = this.criterions.get("mode").getParameters()[0];
 		int reqMode = Integer.parseInt((String) mode);
-		List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos = new ArrayList<ReqCoverageByTestRequirementSingleDto>();
+		List<ReqCoverageByTestRequirementSingleDto> reqCovByTestReqSingleDtos = new ArrayList<>();
 		switch (reqMode) {
 		case REPORT_VERSION_BOUND_TO_MILESTONE :
 			LOGGER.debug("creation of reqCovByTestReqSingleDtos for Report mode 0 : only versions bound to the specified milestones are taken into account");
@@ -528,7 +527,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/***
 	 * This method update the projectDto statistics
-	 * 
+	 *
 	 * @param project
 	 * @param requirementSingleDto
 	 */
@@ -558,7 +557,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/***
 	 * Method which sets all project's rates
-	 * 
+	 *
 	 * @param givenProject
 	 *            the project to modify
 	 */
@@ -688,7 +687,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 
 	/***
 	 * This method returns the rate calculated from the given values
-	 * 
+	 *
 	 * @param verifiedNumber
 	 *            the number of verified requirements
 	 * @param totalNumber
@@ -698,7 +697,7 @@ public class HibernateRequirementCoverageByTestsQuery extends HibernateReportQue
 	private byte calculateAndRoundRate(Long verifiedNumber, Long totalNumber) {
 		Double result = DEFAULT_RATE_VALUE;
 		if (totalNumber > 0) {
-			result = ((double) verifiedNumber * 100 / (double) totalNumber);
+			result = (double) verifiedNumber * 100 / (double) totalNumber;
 		}
 		// round
 		result = Math.floor(result + 0.5);

@@ -60,7 +60,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 
 	@Override
 	public Map<String, String> getProperties(){
-		return new HashMap<String, String>();
+		return new HashMap<>();
 	}
 
 	/**

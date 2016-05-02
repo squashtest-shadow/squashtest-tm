@@ -40,9 +40,9 @@ import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 /**
  * Basic impementation of {@link BugTrackersService}
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class BugTrackersServiceImpl implements BugTrackersService {
 
@@ -140,7 +140,7 @@ public class BugTrackersServiceImpl implements BugTrackersService {
 			issue.setBugtracker(bugtrackerName);
 		}
 
-		return new AsyncResult<List<RemoteIssue>>(issues);
+		return new AsyncResult<>(issues);
 	}
 
 	@Override

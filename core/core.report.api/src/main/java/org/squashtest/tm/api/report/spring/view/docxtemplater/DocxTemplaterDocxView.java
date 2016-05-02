@@ -40,9 +40,9 @@ public class DocxTemplaterDocxView extends AbstractView{
 
 
 	private String[] templatePath = new String[0];
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(DocxTemplaterDocxView.class);
-	
+
 
 	public void setTemplatePath(String... templatePath) {
 		if (templatePath != null) {
@@ -67,21 +67,21 @@ public class DocxTemplaterDocxView extends AbstractView{
 	protected void renderMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
 			HttpServletResponse response) throws Exception {
 
-	
-		for (int i = 0; i < templatePath.length; i++){
-			Resource resource = getApplicationContext().getResource(templatePath[i]);
-			try{
-				InputStream inputStream = 	resource.getInputStream();
-		        response.setContentType("application/octet-stream");
-		        response.setHeader("Content-Disposition", "attachment; filename="+resource.getFilename()); 
-		        IOUtils.copy(inputStream, response.getOutputStream());
-		        response.flushBuffer();
-		        inputStream.close();
-		        break;
-			}catch(Exception e){
+
+		for (String aTemplatePath : templatePath) {
+			Resource resource = getApplicationContext().getResource(aTemplatePath);
+			try {
+				InputStream inputStream = resource.getInputStream();
+				response.setContentType("application/octet-stream");
+				response.setHeader("Content-Disposition", "attachment; filename=" + resource.getFilename());
+				IOUtils.copy(inputStream, response.getOutputStream());
+				response.flushBuffer();
+				inputStream.close();
+				break;
+			} catch (Exception e) {
 				LOGGER.debug("file don't exist" + resource.getFilename());
 			}
-				
-		}	
+
+		}
 	}
 }

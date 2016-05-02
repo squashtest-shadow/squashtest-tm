@@ -36,7 +36,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	private String[] formats;
 	private View springView;
 	private ReportQuery query;
-	
+
 	/**
 	 * @see org.squashtest.tm.api.report.ReportView#getFormats()
 	 */
@@ -58,7 +58,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 	 */
 	@Override
 	public Map<String, Object> buildViewModel(String format, Map<String, Criteria> criteria) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 
 		query.executeQuery(criteria, res);
 		res.put("format", format);
@@ -68,7 +68,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 
 	/**
 	 * Sets the Spring MVC View bean. It should be a JasperReportMultiFormatView.
-	 * 
+	 *
 	 * @param springView
 	 *            the springView to set
 	 */
@@ -94,7 +94,7 @@ public class DocxTemplaterView extends Labelled implements ReportView, Initializ
 
 	/**
 	 * Checks the state of this bean.
-	 * 
+	 *
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override

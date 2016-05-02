@@ -20,6 +20,14 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.hibernate.Query;
@@ -29,14 +37,6 @@ import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.service.internal.repository.DeletionDao;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 public abstract class HibernateDeletionDao implements DeletionDao {
 
@@ -102,7 +102,6 @@ public abstract class HibernateDeletionDao implements DeletionDao {
 
 	@Override
 	public void removeEntity(Object entity) {
-		//getSession().delete(entity);
 		em.remove(entity);
 	}
 

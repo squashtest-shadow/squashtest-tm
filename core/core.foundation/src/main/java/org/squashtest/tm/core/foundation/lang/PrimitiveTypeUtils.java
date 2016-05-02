@@ -24,14 +24,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 
- * 
+ *
+ *
  * @author Gregory Fouquet
  *
  */
 public final class PrimitiveTypeUtils {
-	private static final Map<Class<?>, Class<?>> primitiveByWrapper = new HashMap<Class<?>, Class<?>>();
-	
+	private static final Map<Class<?>, Class<?>> primitiveByWrapper = new HashMap<>();
+
 	static {
 		primitiveByWrapper.put(Long.class, long.class);
 		primitiveByWrapper.put(Integer.class, int.class);
@@ -39,15 +39,15 @@ public final class PrimitiveTypeUtils {
 		primitiveByWrapper.put(Double.class, double.class);
 		primitiveByWrapper.put(Boolean.class, boolean.class);
 	}
-	
+
 	private PrimitiveTypeUtils() {
 		super();
 	}
-	
+
 	public static boolean isPrimitiveWrapper(Class<?> type) {
 		return primitiveByWrapper.containsKey(type);
 	}
-	
+
 	public static Class<?> wrapperToPrimitive(Class<?> wrapperType) {
 		return primitiveByWrapper.get(wrapperType);
 	}

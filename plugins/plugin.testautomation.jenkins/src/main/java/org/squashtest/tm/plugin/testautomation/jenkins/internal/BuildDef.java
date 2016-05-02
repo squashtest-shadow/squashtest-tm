@@ -36,9 +36,9 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject;
 /**
  * Build definition i.e. all the informtion required to run a bunch of automated tests from the same squash ta project
  * (i.e. the same jenkins job)
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class BuildDef {
 	private final TestAutomationProject project;
@@ -69,7 +69,7 @@ public class BuildDef {
 	}
 
 	public Collection<AutomatedTest> getTests() {
-		ArrayList<AutomatedTest> res = new ArrayList<AutomatedTest>(parameterizedExecutions.size());
+		ArrayList<AutomatedTest> res = new ArrayList<>(parameterizedExecutions.size());
 
 		for (Couple<AutomatedExecutionExtender, Map<String, Object>> paramdExec : parameterizedExecutions) {
 			res.add(paramdExec.getA1().getAutomatedTest());

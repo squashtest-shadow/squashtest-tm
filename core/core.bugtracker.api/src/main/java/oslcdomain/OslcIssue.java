@@ -37,14 +37,14 @@ import org.squashtest.tm.bugtracker.definition.RemoteVersion;
 public class OslcIssue implements RemoteIssue {
 
 	//maps a fieldId to a FieldValue
-		private Map<String, FieldValue> fieldValues = new HashMap<String, FieldValue>();
-		
+		private Map<String, FieldValue> fieldValues = new HashMap<>();
+
 		private AdvancedProject project ;
-		
+
 		private String id;
-		
+
 		private String btName;
-		
+
 	public URL getUrl() {
 		return url;
 	}
@@ -56,7 +56,7 @@ public class OslcIssue implements RemoteIssue {
 	private URL url;
 		//the name of the fields scheme currently used, see AdvancedProject#schemes
 		private String currentScheme;
-		
+
 	private String selectDialog;
 
 	private String createDialog;
@@ -82,27 +82,25 @@ public class OslcIssue implements RemoteIssue {
 		public void setId(String key){
 			this.id = key;
 		}
-		
+
 		@Override
 		public String getId() {
 			return id;
 		}
-		
+
 		@Override
 		public boolean hasBlankId(){
-			return (
-				(id==null) ||
-				(id.length()==0) ||
-				(id.matches("^\\s*$"))
-			);
+			return id==null ||
+				id.isEmpty() ||
+				id.matches("^\\s*$");
 		}
-		
+
 
 		@Override
 		public String getSummary() {
 			return findFieldValueName("summary");
 		}
-		
+
 		public void setSummary(String summary){
 			if (isFieldNotSet("summary")){
 				addGenericFieldValue("summary", summary);
@@ -137,24 +135,24 @@ public class OslcIssue implements RemoteIssue {
 		public String getComment() {
 			return findFieldValueName("comment");
 		}
-		
+
 		@Override
 		public void setComment(String comment) {
 			if (isFieldNotSet("comment")){
 				addGenericFieldValue("comment", comment);
 			}
 		}
-		
+
 		@Override
 		public AdvancedProject getProject() {
 			return project;
 		}
-		
+
 
 		public void setProject(AdvancedProject project) {
 			this.project = project;
 		}
-		
+
 		@Override
 		public RemoteStatus getStatus() {
 			return fieldValues.get("status");
@@ -165,7 +163,7 @@ public class OslcIssue implements RemoteIssue {
 		public RemoteUser getAssignee() {
 			RemoteUser user = fieldValues.get("assignee");
 			if(user == null){
-				user = new RemoteFieldStub();	
+				user = new RemoteFieldStub();
 			}
 			return user;
 		}
@@ -206,23 +204,23 @@ public class OslcIssue implements RemoteIssue {
 		public String getBugtracker() {
 			return btName;
 		}
-		
+
 		public void setFieldValue(String fieldName, FieldValue fieldValue){
 			fieldValues.put(fieldName, fieldValue);
 		}
-		
+
 		public FieldValue getFieldValue(String fieldName){
 			return fieldValues.get(fieldName);
 		}
-		
+
 		public void setFieldValues(Map<String, FieldValue> fieldValues){
 			this.fieldValues = fieldValues;
 		}
-		
+
 		public Map<String, FieldValue> getFieldValues(){
 			return fieldValues;
 		}
-		
+
 		public String getCurrentScheme() {
 			return currentScheme;
 		}
@@ -234,12 +232,12 @@ public class OslcIssue implements RemoteIssue {
 		// ********************* private stuffs ***************************
 
 		private boolean isFieldNotSet(String name){
-			return (fieldValues.get(name) == null);
+			return fieldValues.get(name) == null;
 		}
-		
+
 		private String findFieldValueName(String fieldId){
 			FieldValue value = fieldValues.get(fieldId);
-			return (value!=null) ? value.getName() : "";			
+			return value!=null ? value.getName() : "";
 		}
 
 		private void addGenericFieldValue(String fieldName, String value){

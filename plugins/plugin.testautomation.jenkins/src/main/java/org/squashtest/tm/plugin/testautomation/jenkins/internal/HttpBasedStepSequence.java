@@ -64,7 +64,7 @@ public abstract class HttpBasedStepSequence {
 
 	// *********** getters *******************
 
-	abstract protected BuildProcessor getProcessor();
+	protected abstract BuildProcessor getProcessor();
 
 
 	// *********** useful methods ************

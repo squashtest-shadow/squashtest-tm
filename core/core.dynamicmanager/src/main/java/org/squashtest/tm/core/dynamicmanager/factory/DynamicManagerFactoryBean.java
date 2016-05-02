@@ -38,16 +38,16 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
 /**
  * This class is a Spring bean factory for DynamicManager instances. It creates "Manager" services which are able to
  * dynamically handle simple modifications of an entity's properties.
- * 
+ *
  * The dynamic manager is created using an interface. This interface can contain methods which signature are :
- * 
+ *
  * <dl>
  * <dt>
  * <code>void changeSomething(long entityId, SOMETHING newSomething)</code></dt>
  * <dd>Will fetch the entity of id <code>entityId</code> and set its <code>something</code> property to
  * <code>newSomething</code> using the entity's public <code>setSomething</code> method</dd>
  * </dl>
- * 
+ *
  * One can override or add custom methods to a dynamic manager. The dynamic manager needs to be defined this way :
  * <code>
  * <p>
@@ -69,16 +69,16 @@ import org.squashtest.tm.core.dynamicmanager.internal.handler.PersistEntityHandl
  * }
  * </p>
  * </code>
- * 
+ *
  * <strong>Transaction demarcation and security constraints</strong>
- * 
+ *
  * When needed, transaction demarcation has to be declared in the dynamic manager interface using @Transactional annotations.
  * Security constraints such as @PostAuthorize also have to be declared in the interface.
  * When using method parameters in security constraints, they must follow the "positional" naming convention : #arg0, #arg1, #arg2...
  * If one uses the actual parameter name (e.g. #id), Spring will not be able to resolve it.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  * @param <MANAGER>
  *            type of the dynamic manager service to be created.
  * @param <ENTITY>
@@ -100,15 +100,15 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	}
 
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
-		List<DynamicComponentInvocationHandler> handlers =  new ArrayList<DynamicComponentInvocationHandler>(HANDLERS_COUNT);
+		List<DynamicComponentInvocationHandler> handlers = new ArrayList<>(HANDLERS_COUNT);
 
-		handlers.add(new PersistEntityHandler<ENTITY>(entityType, em));
-		handlers.add(new EntityModifierHandler<ENTITY>(em, entityType));
-		handlers.add(new FindAllByIdsHandler<ENTITY>(entityType, em));
+		handlers.add(new PersistEntityHandler<>(entityType, em));
+		handlers.add(new EntityModifierHandler<>(em, entityType));
+		handlers.add(new FindAllByIdsHandler<>(entityType, em));
 		handlers.add(new FindByIdHandler(em));
-		handlers.add(new EntityFinderNamedQueryHandler<ENTITY>(entityType, em));
-		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<ENTITY>(entityType, em));
-		handlers.add(new ArbitraryQueryHandler<ENTITY>(entityType, em));
+		handlers.add(new EntityFinderNamedQueryHandler<>(entityType, em));
+		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<>(entityType, em));
+		handlers.add(new ArbitraryQueryHandler<>(entityType, em));
 
 		return handlers;
 	}

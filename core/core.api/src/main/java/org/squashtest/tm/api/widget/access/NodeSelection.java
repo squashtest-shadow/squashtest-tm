@@ -30,15 +30,15 @@ import org.squashtest.tm.core.foundation.lang.Assert;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class NodeSelection implements AccessRule {
 	private final SelectionMode selectionMode;
 
-	private final Set<AccessRule> rules = new HashSet<AccessRule>();
+	private final Set<AccessRule> rules = new HashSet<>();
 
 	/**
-	 * 
+	 *
 	 */
 	public NodeSelection(@NotNull SelectionMode selectionMode) {
 		super();

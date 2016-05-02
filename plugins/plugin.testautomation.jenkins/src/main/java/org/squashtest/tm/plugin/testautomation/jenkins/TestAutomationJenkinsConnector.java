@@ -173,7 +173,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		for (Entry<TestAutomationProject, List<Couple<AutomatedExecutionExtender, Map<String, Object>>>> entry : execsByProject
 			.entrySet()) {
-			if (entry.getValue().size() > 0) {
+			if (!entry.getValue().isEmpty()) {
 				// fetch the name of the slave node if any
 				Couple<AutomatedExecutionExtender, Map<String, Object>> firstEntry = entry.getValue().get(0);
 

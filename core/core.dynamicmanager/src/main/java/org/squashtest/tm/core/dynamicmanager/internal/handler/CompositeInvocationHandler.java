@@ -34,9 +34,9 @@ import org.squashtest.tm.core.dynamicmanager.exception.UnsupportedMethodExceptio
  * This {@link InvocationHandler} holds a list of {@link DynamicComponentInvocationHandler}. When this object is asked
  * to handle a method invocation, it iterates over its {@link #invocationHandlers} list, and delegates the invocation to
  * the first handler able to handle it.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class CompositeInvocationHandler implements InvocationHandler {
 	/**
@@ -44,14 +44,14 @@ public class CompositeInvocationHandler implements InvocationHandler {
 	 */
 	public CompositeInvocationHandler(@NotNull List<DynamicComponentInvocationHandler> invocationHandlers) {
 		super();
-		this.invocationHandlers = new ArrayList<DynamicComponentInvocationHandler>(invocationHandlers);
+		this.invocationHandlers = new ArrayList<>(invocationHandlers);
 	}
 
 	private final List<DynamicComponentInvocationHandler> invocationHandlers;
 
 	/**
 	 * Delegates to the first item of {@link #invocationHandlers} able to handle the invocation.
-	 * 
+	 *
 	 * {@link #equals(Object)} invocation is never delegated and performs a proxy reference check.
 	 */
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw

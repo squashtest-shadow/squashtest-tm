@@ -74,7 +74,7 @@ class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSeq
 
 	@Override
 	public boolean hasMoreElements() {
-		return (currentStage != GATHER_RESULT);
+		return currentStage != GATHER_RESULT;
 	}
 
 	@Override

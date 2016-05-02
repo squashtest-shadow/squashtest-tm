@@ -28,7 +28,7 @@ public class ExProgressProjectDto extends ExProgressAbstractDto implements HasMi
 	/*
 	 * The milestone label is essentially a Report level parameter, not an attribute of the project. But still we have to store that
 	 * information somewhere, and by default this DTO is the best place so far.
-	 * 
+	 *
 	 */
 	private String milestone;
 
@@ -38,7 +38,7 @@ public class ExProgressProjectDto extends ExProgressAbstractDto implements HasMi
 
 	private boolean allowsSettled;
 
-	private List<ExProgressCampaignDto> campaigns = new LinkedList<ExProgressCampaignDto>();
+	private List<ExProgressCampaignDto> campaigns = new LinkedList<>();
 
 	public Long getId() {
 		return id;

@@ -40,14 +40,14 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 	/***
 	 * List of all requirement
 	 */
-	private List<ReqCoverageByTestRequirementSingleDto> singleRequirementList = new ArrayList<ReqCoverageByTestRequirementSingleDto>();
+	private List<ReqCoverageByTestRequirementSingleDto> singleRequirementList = new ArrayList<>();
 
 	/****************************/
 	/** STATISTICS **/
 	/****************************/
 
-	private Map<ReqCoverageByTestStatType, Long> requirementNumbers = new HashMap<ReqCoverageByTestStatType, Long>();
-	private Map<String, Long> requirementStatusNumbers = new HashMap<String, Long>();
+	private Map<ReqCoverageByTestStatType, Long> requirementNumbers = new HashMap<>();
+	private Map<String, Long> requirementStatusNumbers = new HashMap<>();
 
 	public ReqCoverageByTestProjectDto() {
 		for (ReqCoverageByTestStatType reqStatType : ReqCoverageByTestStatType.values()) {
@@ -124,7 +124,7 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 
 	/**
 	 * Increments the number identified by the ReqCoverageByTestStatType
-	 * 
+	 *
 	 * @param type
 	 *            identify the reqNumber type to increment
 	 */
@@ -136,7 +136,7 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 
 	/**
 	 * Increments the number identified by the String status+reqCoverageByTestStartType
-	 * 
+	 *
 	 * @param key
 	 *            the String status+reqCoverageByTestStartType
 	 */
@@ -147,9 +147,9 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 	}
 
 	/**
-	 * 
+	 *
 	 * Method which add the given values to the totals
-	 * 
+	 *
 	 * @param requirementNumbers
 	 *            of the project that will increase the projectTotals numbers
 	 */

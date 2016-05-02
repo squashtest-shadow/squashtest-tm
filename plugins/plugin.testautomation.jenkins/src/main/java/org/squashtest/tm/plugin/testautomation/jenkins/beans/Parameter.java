@@ -53,28 +53,28 @@ public class Parameter {
 		this.value = value;
 	}
 
-	static public Parameter operationTestListParameter() {
+	public static Parameter operationTestListParameter() {
 		return new Parameter("operation", "list");
 	}
 
-	static public Parameter operationRunSuiteParameter() {
+	public static Parameter operationRunSuiteParameter() {
 		return new Parameter("operation", "run");
 	}
 
-	static public Parameter newExtIdParameter(String externalId) {
+	public static Parameter newExtIdParameter(String externalId) {
 		return new Parameter("externalJobId", externalId);
 	}
 
-	static public Parameter newCallbackURlParameter(String callback) {
+	public static Parameter newCallbackURlParameter(String callback) {
 		return new Parameter("notificationURL", callback);
 	}
 
-	static public Parameter testListParameter() {
+	public static Parameter testListParameter() {
 		// not invented here : json marshaller
 		return new Parameter("testList", "{file:" + SYMBOLIC_FILENAME + "}");
 	}
 
-	static public Parameter executorParameter(String executor) {
+	public static Parameter executorParameter(String executor) {
 		return new Parameter("executor", executor);
 	}
 
@@ -83,8 +83,8 @@ public class Parameter {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((name == null) ? 0 : name.hashCode());
-		result = prime * result + ((value == null) ? 0 : value.hashCode());
+		result = prime * result + (name == null ? 0 : name.hashCode());
+		result = prime * result + (value == null ? 0 : value.hashCode());
 		return result;
 	}
 

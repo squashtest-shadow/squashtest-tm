@@ -34,45 +34,45 @@ import org.squashtest.tm.plugin.report.std.service.DataFilteringService;
 
 /**
  * This class is an implementation of ReportQuery meant for a Hibernate repository.
- * 
+ *
  * The goal of that Hibernate-oriented ReportQuery is to provide the Dao executing it with a DetachedCriteria query.
  * Note that an HibernateReportQuery will return a HibernateQueryFlavor by design.
- * 
+ *
  * That abstract class is a superclass for other queries. Note that this abstract class extends the ReportQuery
  * interface by far, including a post processing method {@see HibernateReportQuery#convertToDto(java.util.List)}. The
  * corresponding ReportQueryDao, namely {@see HibernateReportQueryDao} is aware of that method and will invoke it.
- * 
+ *
  * That method is useful for any post processing like the use of a DataFilteringService {@see DataFilteringService},
  * {@see ReportQuery} or complex computations that would have been difficult to get directly from the repository.
- * 
- * 
+ *
+ *
  * For convenience this implementation uses a class to explicitly design the criteria for that query, the
  * ReportCriterion. A ReportCriterion is meant to hold informations and possibly generate a Hibernate Criterion that
  * will be used in the main DetachedCriteria query, but it's up to the implementor to use it or rebuild the Criterion
  * from scratch.
- * 
+ *
  * Subclassing a HibernateReportQuery : ========================================
- * 
+ *
  * - The constructor must create the needed ReportCriterion and add then to the list of ReportCriterions.
- * 
+ *
  * - createHibernateQuery() may generate a DetachedCriteria, or return null.
- * 
+ *
  * - doInSession(Session session) will be executed if createHibernateQuery() returned null.
- * 
+ *
  * - convertToDto() accepting a list of Hibernate entities and returning a list of different objects that fits the
  * definition of the view (probably a .jasper). Trick : if you couldn't translate your criterion into Hibernate
  * Criterion when implementing the createHibernateQuery() interface, you can postprocess the results with the remaining
  * criteria in this step.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 
 public abstract class HibernateReportQuery implements ReportQuery {
 
 	private final ReportQueryFlavor flavor = new HibernateQueryFlavor();
 
-	protected Map<String, ReportCriterion> criterions = new HashMap<String, ReportCriterion>();
+	protected Map<String, ReportCriterion> criterions = new HashMap<>();
 
 	private DataFilteringService filterService;
 
@@ -103,7 +103,7 @@ public abstract class HibernateReportQuery implements ReportQuery {
 
 	/**
 	 * For internal use of the subclasses, this will return the concrete implementation of the criterions holder.
-	 * 
+	 *
 	 * @return the map of ReportCriterion, identified by their names (the name does exists both in the Map and in the
 	 *         ReportCriterion).
 	 */
@@ -118,7 +118,7 @@ public abstract class HibernateReportQuery implements ReportQuery {
 
 	@Override
 	public boolean isCriterionExists(String name) {
-		return (criterions.get(name) != null);
+		return criterions.get(name) != null;
 	}
 
 	@Override
@@ -133,7 +133,7 @@ public abstract class HibernateReportQuery implements ReportQuery {
 
 	/**
 	 * Short hand for including a Hibernate Criterion in a DetachedCriteria.
-	 * 
+	 *
 	 * @param criteria
 	 *            the DetachedCriteria query to which we add a Criterion.
 	 * @param criterionName
@@ -158,7 +158,7 @@ public abstract class HibernateReportQuery implements ReportQuery {
 
 	/**
 	 * if you really need it. Will be executed if createHibernateQuery() returned null;
-	 * 
+	 *
 	 * @param session
 	 * @return
 	 */
@@ -167,7 +167,7 @@ public abstract class HibernateReportQuery implements ReportQuery {
 	/**
 	 * This method will convert the raw results from Hibernate into a suitable list of Dto object that the view will
 	 * process in turn. Should also use the DataFilteringService if need be.
-	 * 
+	 *
 	 * @param rawData
 	 *            a List of Hibernate entities.
 	 * @return a List of Dtos.

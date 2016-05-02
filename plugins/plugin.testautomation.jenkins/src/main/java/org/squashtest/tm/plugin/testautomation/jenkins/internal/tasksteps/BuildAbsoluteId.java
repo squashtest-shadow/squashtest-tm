@@ -24,28 +24,28 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal.tasksteps;
 /**
  * <p>
  * 	That class identifies a build using the job name and the externalId it was given as parameter (as for any TA job).
- * 	Additionally one will specify the buildId (the one Jenkins knows) at some point during the build survey, once it 
+ * 	Additionally one will specify the buildId (the one Jenkins knows) at some point during the build survey, once it
  * 	has been retrived from Jenkins. The buildId cannot be known before the build starts.
  * </p>
- * 
+ *
  * <p>
- * 	Basically that class will be shared among many classes, some consuming data (project name, external id), some other 
+ * 	Basically that class will be shared among many classes, some consuming data (project name, external id), some other
  * 	will feed data (the buildId).
  * </p>
- * 
- * 
- * 
+ *
+ *
+ *
  * @author bsiri
  *
  */
 public class BuildAbsoluteId {
 
 	private String projectName;
-	
+
 	private String externalId;
-	
+
 	private Integer buildId = null;
-	
+
 	public BuildAbsoluteId(String projectName, String externalId){
 		this.projectName = projectName;
 		this.externalId = externalId;
@@ -66,14 +66,14 @@ public class BuildAbsoluteId {
 	public String getExternalId() {
 		return externalId;
 	}
-	
+
 	@Override
 	public String toString(){
 		return "project '"+projectName+"', build : external id '"+externalId+"', jenkins id '"+buildId+"'";
 	}
-	
+
 	public boolean hasBuildIdSet(){
-		return (buildId != null);
+		return buildId != null;
 	}
-	
+
 }

@@ -42,12 +42,12 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * in most generic terms, it looks for a <u>{@link Query}</u>, applies the <u>parameters</u> and return the
  * <u>result</u>.
  * </p>
- * 
+ *
  * <h3>Query</h3>
  * <p>
  * query name must be &lt;entityname&gt;.&lt;methodname&gt;
  * </p>
- * 
+ *
  * <h3>Parameters</h3>
  * <p>
  * Accepts any number of parameters that may be :
@@ -56,7 +56,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * <li>an annotated Collection (or subclass),</li>
  * <li>an annotated Object,</li>
  * </ul>
- * 
+ *
  * In the third case an object will be treated as a scalar. A note about Collection arguments : if that collection is
  * empty the query will not be executed and a default return value will be returned.
  * </p>
@@ -66,7 +66,7 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * to the named parameter that will be looked for in the query. You may supply more annotations if you want to as long
  * as at least QueryParam is supplied.
  * </p>
- * 
+ *
  * <h3>Result</h3>
  * <p>
  * It depends on the result type of the method. When the query is executed the returned values are :
@@ -75,18 +75,18 @@ import org.squashtest.tm.core.foundation.collection.Paging;
  * <li>Collection (or subclass) : returns a List</li>
  * <li>other : returns a scalar</li>
  * </ul>
- * 
+ *
  * If the query was aborted because a collection argument is empty, the returned values will be instead :
- * 
+ *
  * <ul>
  * <li>void : returns null</li>
  * <li>Collection (or sublcass) : returns an empty List</li>
  * <li>other : returns null or 0 if the result expects a type primitive</li>
  * </ul>
  * </p>
- * 
+ *
  * @author bsiri
- * 
+ *
  * @param <ENTITY>
  */
 public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocationHandler {
@@ -126,9 +126,9 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	}
 
 	private QueryParam findQueryParam(Annotation[] paramAnnotations) {
-		for (int i = 0; i < paramAnnotations.length; i++) {
-			if (isQueryParam(paramAnnotations[i])) {
-				return (QueryParam) paramAnnotations[i];
+		for (Annotation paramAnnotation : paramAnnotations) {
+			if (isQueryParam(paramAnnotation)) {
+				return (QueryParam) paramAnnotation;
 			}
 		}
 		return null;
@@ -139,7 +139,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	private boolean queryExistsCheck(Method method) {
 		try {
 			Query q = findQuery(method);
-			return (q != null);
+			return q != null;
 		} catch (HibernateException ex) {
 			LOGGER.debug("Could not find a named query matching method name " + method.getName(), ex);
 			return false;
@@ -152,7 +152,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		Class<?>[] allParamTypes = method.getParameterTypes();
 
 		for (int i = 0; i < allParamTypes.length; i++) {
-			if ((!isPagingType(allParamTypes[i])) && (findQueryParam(allAnnotations[i]) == null)) {
+			if (!isPagingType(allParamTypes[i]) && findQueryParam(allAnnotations[i]) == null) {
 				return false;
 			}
 		}
@@ -181,7 +181,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 	}
 
 	private boolean isQueryParam(Annotation ann) {
-		return (ann.annotationType().equals(QueryParam.class));
+		return ann.annotationType().equals(QueryParam.class);
 	}
 
 	// ************************** Query processing check ***************

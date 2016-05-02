@@ -39,7 +39,7 @@ import org.squashtest.tm.core.foundation.i18n.Labelled;
 /**
  * @author bsiri
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class JasperReportsView extends Labelled implements ReportView, InitializingBean {
 	private String[] formats;
@@ -72,7 +72,7 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 	 */
 	@Override
 	public Map<String, Object> buildViewModel(String format, Map<String, Criteria> criteria) {
-		Map<String, Object> res = new HashMap<String, Object>();
+		Map<String, Object> res = new HashMap<>();
 
 		query.executeQuery(criteria, res);
 
@@ -85,7 +85,7 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 
 	/**
 	 * Sets the Spring MVC View bean. It should be a JasperReportMultiFormatView.
-	 * 
+	 *
 	 * @param springView
 	 *            the springView to set
 	 */
@@ -111,7 +111,7 @@ public final class JasperReportsView extends Labelled implements ReportView, Ini
 
 	/**
 	 * Checks the state of this bean.
-	 * 
+	 *
 	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
 	 */
 	@Override

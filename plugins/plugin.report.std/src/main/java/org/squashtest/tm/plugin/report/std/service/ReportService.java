@@ -22,7 +22,6 @@ package org.squashtest.tm.plugin.report.std.service;
 
 import java.util.List;
 
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.internal.domain.report.query.ReportQuery;
 
 

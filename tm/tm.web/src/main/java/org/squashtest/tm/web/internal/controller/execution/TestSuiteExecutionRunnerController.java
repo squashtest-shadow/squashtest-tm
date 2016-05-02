@@ -329,7 +329,7 @@ public class TestSuiteExecutionRunnerController {
 			@PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 
 		populateExecutionStepFragment(testSuiteId, testPlanItemId, executionId, stepIndex, model);
-		// model.addAttribute("optimized", false);
+
 
 		return ExecutionRunnerViewName.CLASSIC_STEP;
 
@@ -369,7 +369,7 @@ public class TestSuiteExecutionRunnerController {
 			@PathVariable long testPlanItemId, @PathVariable long executionId, @PathVariable int stepIndex, Model model) {
 
 		populateExecutionStepFragment(testSuiteId, testPlanItemId, executionId, stepIndex, model);
-		// model.addAttribute("optimized", false);
+
 
 		return ExecutionRunnerViewName.OPTIMIZED_RUNNER_STEP;
 

@@ -90,7 +90,7 @@ public final class DateUtils {
 			if (matcher.matches()) {
 				int month = Integer.parseInt(matcher.group(2));
 				int day = Integer.parseInt(matcher.group(3));
-				success = (month > 0) && (month < 13) && (day > 0) && (day < 32);
+				success = month > 0 && month < 13 && day > 0 && day < 32;
 			} else {
 				success = false;
 			}
@@ -157,7 +157,7 @@ public final class DateUtils {
 	public static Date millisecondsToDate(String milliseconds) {
 		Date newDate = null;
 
-		if (milliseconds.length() > 0) {
+		if (!milliseconds.isEmpty()) {
 			Long millisecs = Long.valueOf(milliseconds);
 			newDate = new Date(millisecs);
 		}

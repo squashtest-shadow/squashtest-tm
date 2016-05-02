@@ -34,18 +34,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping("/executions")
 public class ExecutionController {
 
-	@Inject
-	private Provider<ExecutionAssignmentComboDataBuilder> assignmentComboBuilderProvider;
+
 
 	@Inject
 	private Provider<ExecutionStatusComboDataBuilder> statusComboDataBuilderProvider;
 
 
-	@RequestMapping(value = "/assignment-combo-data", method = RequestMethod.GET)
-	@ResponseBody
-	public Object buildImportanceComboData(Locale locale) {
-		return assignmentComboBuilderProvider.get().useLocale(locale).buildMap();
-	}
 
 	@RequestMapping(value = "/status-combo-data", method = RequestMethod.GET)
 	@ResponseBody

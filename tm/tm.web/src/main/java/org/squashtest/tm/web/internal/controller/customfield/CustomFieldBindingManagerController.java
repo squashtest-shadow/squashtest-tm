@@ -44,15 +44,9 @@ public class CustomFieldBindingManagerController {
 	@Inject
 	private CustomFieldBindingFinderService service;
 
-	//private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldBindingManagerController.class);
+
 	private static final int DEFAULT_PAGE_SIZE = 10;
 
-	/*
-	@Inject
-	public void setCustomFieldBindingFinderService(CustomFieldBindingFinderService service){
-		this.service=service;
-	}
-	 */
 
 	@RequestMapping(method = RequestMethod.GET)
 	public ModelAndView getManager(@PathVariable(RequestParams.PROJECT_ID) Long projectId){

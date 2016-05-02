@@ -92,39 +92,4 @@ public class TestCaseAutomationController {
 	}
 
 
-	/*
-	@Deprecated
-	private Collection<TestAutomationProjectContent> mockTests() throws RuntimeException{
-
-		Field pid = ReflectionUtils.findField(TestAutomationProject.class, "id");
-		pid.setAccessible(true);
-
-		TestAutomationProject p1 = new TestAutomationProject("jobbook", "localjob1", null);
-
-		// TODO : change access from private to public
-		ReflectionUtils.setField(pid, p1, 1l);
-
-		AutomatedTest t11 = new AutomatedTest("database/stresstest", p1);
-		AutomatedTest t12 = new AutomatedTest("database/index", p1);
-		AutomatedTest t13 = new AutomatedTest("UI/login", p1);
-		AutomatedTest t14 = new AutomatedTest("UI/admin/adduser", p1);
-		AutomatedTest t15 = new AutomatedTest("basic", p1);
-
-		TestAutomationProjectContent content1 = new TestAutomationProjectContent(p1, Arrays.asList(t11, t12, t13, t14, t15));
-
-		TestAutomationProject p2 = new TestAutomationProject("grandproject", "Grand Project", null);
-		ReflectionUtils.setField(pid, p2, 2l);
-
-		AutomatedTest t21 = new AutomatedTest("step1/be grand", p2);
-		AutomatedTest t22 = new AutomatedTest("step1/be smart", p2);
-		AutomatedTest t23 = new AutomatedTest("step2/be bold", p2);
-		AutomatedTest t24 = new AutomatedTest("step2/optional/have a side kick", p2);
-		AutomatedTest t25 = new AutomatedTest("just be", p2);
-
-		TestAutomationProjectContent content2 = new TestAutomationProjectContent(p2, Arrays.asList(t21, t22, t23, t24, t25));
-
-		return Arrays.asList(content1, content2);
-
-	}
-	 */
 }

@@ -274,8 +274,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 		for (Project p : readableProjects){
 			categories.add(p.getRequirementCategories());
 		}
-		// Collections.sort((List<InfoList>) categories);
-		// Collections.sort((List<InfoList>) categories, ALPHABETICAL_ORDER);
+
 
 		if (!categories.isEmpty()) {
 			Collections.sort((List<InfoList>) categories, new Comparator<InfoList>() {

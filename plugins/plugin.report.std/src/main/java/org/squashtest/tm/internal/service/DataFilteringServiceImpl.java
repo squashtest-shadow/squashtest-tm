@@ -61,9 +61,7 @@ public class DataFilteringServiceImpl implements DataFilteringService {
 	public boolean isAllowedByUser(ProjectResource object) {
 		ProjectFilter filter = userFilterService.findProjectFilterByUserLogin();
 
-		return filter.getActivated() ?
-			filter.isProjectSelected(object.getProject())
-			: true;
+		return !filter.getActivated() || filter.isProjectSelected(object.getProject());
 
 	}
 

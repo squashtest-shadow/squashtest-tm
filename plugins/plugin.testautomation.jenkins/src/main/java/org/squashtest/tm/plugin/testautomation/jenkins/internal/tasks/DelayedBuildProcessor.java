@@ -26,32 +26,32 @@ import org.springframework.scheduling.TaskScheduler;
 
 public abstract class DelayedBuildProcessor extends AbstractBuildProcessor {
 
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractBuildProcessor.class);
-	
+
 	public DelayedBuildProcessor(TaskScheduler scheduler){
 		super();
 		this.scheduler = new ThreadPoolStepScheduler(scheduler);
 	}
-	
-	
+
+
 	@Override
 	public void run() {
 		notifyStepDone();
 		//then return immediately
 	}
-	
+
 	@Override
 	//should be overriden by subclasses if a more appropriate treatment is needed
 	public void notifyException(Exception ex) {
 		if (LOGGER.isErrorEnabled()){
 			LOGGER.error(ex.getMessage(),ex);
-		}	
+		}
 	}
-	
+
 	@Override
 	public void notifyStepDone() {
-		if(getStepSequence().hasMoreElements() && (! isCanceled())){
+		if(getStepSequence().hasMoreElements() && ! isCanceled()){
 			scheduleNextStep();
 		}
 	}

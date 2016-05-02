@@ -20,17 +20,18 @@
  */
 package org.squashtest.tm.web.internal.exceptionresolver;
 
+import java.io.IOException;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.AbstractView;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 import org.squashtest.tm.core.foundation.exception.SimpleException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Map;
 
 /**
  * This handler will format ActionExceptions and subclasses in order to raise a popup clientside and display an
@@ -86,7 +87,7 @@ public class HandlerSimpleExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {
-		// return ex instanceof ActionException;
+
 		return SimpleException.class.isAssignableFrom(ex.getClass());
 	}
 

@@ -24,7 +24,7 @@ import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class OptionInput extends Labelled {
 	private String name;
@@ -37,7 +37,7 @@ public class OptionInput extends Labelled {
 	private String disabledBy;
 
 	/**
-	 * 
+	 *
 	 * @param value
 	 *            the value to set
 	 */
@@ -53,7 +53,7 @@ public class OptionInput extends Labelled {
 	}
 
 	public void setGivesAccessTo(String givesAccessTo) {
-		if (givesAccessTo != null && !givesAccessTo.equals("")) {
+		if (givesAccessTo != null && !givesAccessTo.isEmpty()) {
 			this.givesAccessTo = givesAccessTo;
 		}
 	}
@@ -67,7 +67,7 @@ public class OptionInput extends Labelled {
 
 	/**
 	 * Callback - should be called by a {@link OptionsGroup} then this object is added to the group.
-	 * 
+	 *
 	 * @param group
 	 */
 	/* package */void addedTo(OptionsGroup group) {

@@ -32,49 +32,49 @@ import org.squashtest.tm.internal.domain.report.query.hibernate.ReportCriterion;
 
 /*
  * this ReportCriterion is exactly wysiwyg
- * 
+ *
  */
 public class BelowDateCriterion extends ReportCriterion{
 
 	public BelowDateCriterion(){
 
 		setOperator(QueryOperator.COMPARATOR_LT);
-		setParamClass(Date.class);		
+		setParamClass(Date.class);
 	}
-	
+
 	public BelowDateCriterion(String criterionName, String attributePath){
 		this();
 		setCriterionName(criterionName);
 		setAttributePath(attributePath);
 
 	}
-	
+
 
 	private Date makeDate() throws ParseException{
 		Object[] values = getParameters();
 		if (values.length!=1){ throw new IllegalArgumentException("Criterion of type "+this.getClass().getSimpleName()+" cannot have more than one argument");}
-		Date date = (Date)(values[0]);	
-		
+		Date date = (Date) values[0];
+
 		Calendar calendar = GregorianCalendar.getInstance();
-		
+
 		calendar.setTime(date);
-		
+
 		calendar.add(Calendar.DAY_OF_MONTH, 1);
-		
+
 		return calendar.getTime();
-		
-		
+
+
 	}
 
 	@Override
 	public Criterion makeCriterion() {
 		try{
 			Criterion result = null;
-			
+
 			Date arg = makeDate();
-				
+
 			result= Restrictions.lt(getAttributePath(), arg );
-			
+
 			return result;
 		}catch(Exception e){
 			return null;

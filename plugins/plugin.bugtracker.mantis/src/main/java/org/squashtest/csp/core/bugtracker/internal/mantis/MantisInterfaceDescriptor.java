@@ -36,27 +36,27 @@ import org.squashtest.csp.core.bugtracker.spi.BugTrackerInterfaceDescriptor;
 @Component
 public class MantisInterfaceDescriptor implements BugTrackerInterfaceDescriptor {
 
-	private final static String REPORT_PRIORITY_LABEL  	 = "interface.report.priority.label";
-	private final static String REPORT_VERSION_LABEL  	 = "interface.report.version.label";
-	private final static String REPORT_ASSIGNEE_LABEL 	 = "interface.report.assignee.label";
-	private final static String REPORT_CATEGORY_LABEL 	 = "interface.report.category.label";
-	private final static String REPORT_SUMMARY_LABEL 	 = "interface.report.summary.label";
-	private final static String REPORT_DESCRIPTION_LABEL = "interface.report.description.label";
-	private final static String REPORT_COMMENT_LABEL 	 = "interface.report.comment.label";
+	private static final String REPORT_PRIORITY_LABEL  	 = "interface.report.priority.label";
+	private static final String REPORT_VERSION_LABEL  	 = "interface.report.version.label";
+	private static final String REPORT_ASSIGNEE_LABEL 	 = "interface.report.assignee.label";
+	private static final String REPORT_CATEGORY_LABEL 	 = "interface.report.category.label";
+	private static final String REPORT_SUMMARY_LABEL 	 = "interface.report.summary.label";
+	private static final String REPORT_DESCRIPTION_LABEL = "interface.report.description.label";
+	private static final String REPORT_COMMENT_LABEL 	 = "interface.report.comment.label";
 
-	private final static String REPORT_EMPTY_VERSION	 = "interface.report.lists.emptyversion.label";
-	private final static String REPORT_EMPTY_CATEGORY	 = "interface.report.lists.emptycategory.label";
-	private final static String REPORT_EMPTY_ASSIGNEE	 = "interface.report.lists.emptyassignee.label";
+	private static final String REPORT_EMPTY_VERSION	 = "interface.report.lists.emptyversion.label";
+	private static final String REPORT_EMPTY_CATEGORY	 = "interface.report.lists.emptycategory.label";
+	private static final String REPORT_EMPTY_ASSIGNEE	 = "interface.report.lists.emptyassignee.label";
 
-	private final static String TABLE_ID_HEADER			 = "interface.table.issueid.header";
-	private final static String TABLE_SUMMARY_HEADER	 = "interface.table.summary.header";
-	private final static String TABLE_PRIORITY_HEADER	 = "interface.table.priority.header";
-	private final static String TABLE_STATUS_HEADER		 = "interface.table.status.header";
-	private final static String TABLE_ASSIGNEE_HEADER	 = "interface.table.assignee.header";
-	private final static String TABLE_REPORTEDIN_HEADER	 = "interface.table.reportedin.header";
-	private final static String TABLE_DESCRIPTION_HEADER = "interface.table.description.header";
+	private static final String TABLE_ID_HEADER			 = "interface.table.issueid.header";
+	private static final String TABLE_SUMMARY_HEADER	 = "interface.table.summary.header";
+	private static final String TABLE_PRIORITY_HEADER	 = "interface.table.priority.header";
+	private static final String TABLE_STATUS_HEADER		 = "interface.table.status.header";
+	private static final String TABLE_ASSIGNEE_HEADER	 = "interface.table.assignee.header";
+	private static final String TABLE_REPORTEDIN_HEADER	 = "interface.table.reportedin.header";
+	private static final String TABLE_DESCRIPTION_HEADER = "interface.table.description.header";
 
-	private final static String TABLE_EMPTY_ASSIGNEE	 = "interface.table.null.assignee.label";
+	private static final String TABLE_EMPTY_ASSIGNEE	 = "interface.table.null.assignee.label";
 
 
 

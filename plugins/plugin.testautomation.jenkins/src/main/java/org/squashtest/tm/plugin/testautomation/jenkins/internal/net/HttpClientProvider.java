@@ -154,10 +154,10 @@ public class HttpClientProvider {
 		public int hashCode() {
 			final int prime = 31;
 			int result = 1;
-			result = prime * result + ((serverKind == null) ? 0 : serverKind.hashCode());
-			result = prime * result + ((serverLogin == null) ? 0 : serverLogin.hashCode());
-			result = prime * result + ((serverPass == null) ? 0 : serverPass.hashCode());
-			result = prime * result + ((serverURL == null) ? 0 : serverURL.hashCode());
+			result = prime * result + (serverKind == null ? 0 : serverKind.hashCode());
+			result = prime * result + (serverLogin == null ? 0 : serverLogin.hashCode());
+			result = prime * result + (serverPass == null ? 0 : serverPass.hashCode());
+			result = prime * result + (serverURL == null ? 0 : serverURL.hashCode());
 			return result;
 		}
 

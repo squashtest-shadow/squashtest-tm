@@ -58,7 +58,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AbstractDynamicComponentFactoryBean.class);
 
 	private BeanFactory beanFactory;
-	
+
 	@PersistenceContext
 	protected EntityManager em;
 
@@ -129,7 +129,7 @@ public abstract class AbstractDynamicComponentFactoryBean<COMPONENT> implements 
 		LOGGER.debug("Initializing invocation handlers");
 
 		if (componentInvocationHandler == null) {
-			List<DynamicComponentInvocationHandler> invocationHandlers = new ArrayList<DynamicComponentInvocationHandler>();
+			List<DynamicComponentInvocationHandler> invocationHandlers = new ArrayList<>();
 			addCustomImplementationHandler(invocationHandlers); // IT MUST BE THE FIRST !
 			invocationHandlers.addAll(createInvocationHandlers());
 

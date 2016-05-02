@@ -28,7 +28,7 @@ import javax.validation.constraints.NotNull;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class CollectionUtils {
 	private CollectionUtils() {
@@ -37,7 +37,7 @@ public final class CollectionUtils {
 
 	/**
 	 * Coerces the given non-null collection to a list. Collection order is not garanteed to be preserved.
-	 * 
+	 *
 	 * @param collection
 	 * @return
 	 */
@@ -46,7 +46,7 @@ public final class CollectionUtils {
 			return (List<T>) collection;
 		}
 
-		List<T> res = new ArrayList<T>(collection.size());
+		List<T> res = new ArrayList<>(collection.size());
 		res.addAll(collection);
 
 		return res;

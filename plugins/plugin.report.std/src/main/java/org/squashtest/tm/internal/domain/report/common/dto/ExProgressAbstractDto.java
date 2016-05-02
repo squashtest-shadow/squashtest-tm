@@ -128,7 +128,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusReady() / (float) total);
+			return (float) getiCountStatusReady() / (float) total;
 		}
 	}
 
@@ -137,7 +137,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusRunning() / (float) total);
+			return (float) getiCountStatusRunning() / (float) total;
 		}
 	}
 
@@ -146,7 +146,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusBloqued() / (float) total);
+			return (float) getiCountStatusBloqued() / (float) total;
 		}
 	}
 
@@ -155,7 +155,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusFailure() / (float) total);
+			return (float) getiCountStatusFailure() / (float) total;
 		}
 	}
 
@@ -164,7 +164,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusSuccess() / (float) total);
+			return (float) getiCountStatusSuccess() / (float) total;
 		}
 	}
 
@@ -173,7 +173,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusUntestable() / (float) total);
+			return (float) getiCountStatusUntestable() / (float) total;
 		}
 	}
 
@@ -182,7 +182,7 @@ public abstract class ExProgressAbstractDto {
 		if (total == 0) {
 			return 0;
 		} else {
-			return ((float) getiCountStatusSettled() / (float) total);
+			return (float) getiCountStatusSettled() / (float) total;
 		}
 	}
 
@@ -226,7 +226,7 @@ public abstract class ExProgressAbstractDto {
 	}
 
 	public ExProgressCampaignStatus getStatus() {
-		if ((iCountStatusBloqued + iCountStatusFailure + iCountStatusSuccess + iCountStatusUntestable) == getNumberTestCase()) {
+		if (iCountStatusBloqued + iCountStatusFailure + iCountStatusSuccess + iCountStatusUntestable == getNumberTestCase()) {
 			return ExProgressCampaignStatus.CAMPAIGN_OVER;
 		}
 		return ExProgressCampaignStatus.CAMPAIGN_RUNNING;

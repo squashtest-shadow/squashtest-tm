@@ -27,23 +27,23 @@ import java.util.List;
 import org.squashtest.tm.bugtracker.definition.RemoteProject;
 
 /**
- * 
+ *
  * a BTProject has lists of Priority, Version, assignable User and Category. Those lists must never be empty : if such
  * list would be empty because their counterpart on the remote server do not exist, please use the dummy specified for
  * each of those classes, eg {@link Version#NO_VERSION} for empty version list.
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 public class BTProject implements Identifiable<BTProject>, RemoteProject {
 
 	private String id;
 	private String name;
 
-	private List<Priority> priorities = new LinkedList<Priority>();
-	private List<Version> versions = new LinkedList<Version>();
-	private List<User> users = new LinkedList<User>();
-	private List<Category> categories = new LinkedList<Category>();
+	private List<Priority> priorities = new LinkedList<>();
+	private List<Version> versions = new LinkedList<>();
+	private List<User> users = new LinkedList<>();
+	private List<Category> categories = new LinkedList<>();
 	/* Set to the dummy priority by default */
 	private Priority defaultIssuePriority = Priority.NO_PRIORITY;
 
@@ -101,7 +101,7 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 
 	/**
 	 * Get the default issue priority
-	 * 
+	 *
 	 * @return The default issue priority
 	 */
 	public Priority getDefaultIssuePriority() {
@@ -110,7 +110,7 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 
 	/**
 	 * Set the default issue priority
-	 * 
+	 *
 	 * @param defaultIssuePriority
 	 *            The new default issue priority
 	 */
@@ -224,7 +224,7 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 
 	/**
 	 * is hopefully never a dummy
-	 * 
+	 *
 	 */
 	@Override
 	public boolean isDummy() {
@@ -238,10 +238,10 @@ public class BTProject implements Identifiable<BTProject>, RemoteProject {
 
 	/**
 	 * returns true if the user list is empty or if it contains only {@link User}.NO_USER
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean canAssignUsers() {
-		return !((users.isEmpty()) || (users.size() == 1 && users.get(0).isDummy()));
+		return !(users.isEmpty() || users.size() == 1 && users.get(0).isDummy());
 	}
 }
