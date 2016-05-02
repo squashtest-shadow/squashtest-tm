@@ -31,16 +31,16 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
  * Metadata of a test case import workbook. It collects data about the worksheets and the columns we have to process.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class WorkbookMetaData {
-	private Map<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>> worksheetDefByType = new HashMap<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>>();
+	private Map<TemplateWorksheet, WorksheetDef<? extends TemplateColumn>> worksheetDefByType = new HashMap<>();
 
 	/**
 	 * should not be called after build time / validation
-	 * 
+	 *
 	 * @param worksheetDef
 	 */
 	void addWorksheetDef(WorksheetDef<? extends TemplateColumn> worksheetDef) {
@@ -50,7 +50,7 @@ public class WorkbookMetaData {
 
 	/**
 	 * Validates this {@link WorksheetDef}. Unrecoverable mismatches from template will throw an exception.
-	 * 
+	 *
 	 * @throws TemplateMismatchException
 	 *             when the metadata does not match the expected template in an unrecoverable way. The exception holds
 	 *             all encountered mismatches.
@@ -72,7 +72,7 @@ public class WorkbookMetaData {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param ws
 	 *            the ws template for which we want the ws def.
 	 * @return the {@link WorksheetDef} matching the given ws template or <code>null</code>

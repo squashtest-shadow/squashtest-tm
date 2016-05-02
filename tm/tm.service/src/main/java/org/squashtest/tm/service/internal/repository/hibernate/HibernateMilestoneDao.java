@@ -116,7 +116,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 	/*
 	 * Note : for now the implementation for isTestCaseMilestoneDeletable and isTestCaseMilestoneModifiable is the same.
 	 * That might change in the future. (non-Javadoc)
-	 * 
+	 *
 	 * @see org.squashtest.tm.service.internal.repository.MilestoneDao#isTestCaseMilestoneDeletable(long)
 	 */
 	@Override
@@ -341,7 +341,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 		Query query = currentSession().getNamedQuery("milestone.countBoundObject");
 		query.setParameter(MILESTONE_ID, milestoneId);
 		int count = (int) query.uniqueResult();
-		return count != 0 ? true : false;
+		return count != 0;
 	}
 
 	@Override
@@ -456,11 +456,8 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 		Query queryReq = currentSession().getNamedQuery("milestone.findAllRequirementVersionsForProjectAndMilestone");
 		queryReq.setParameterList(PROJECT_IDS, projectIds);
 		queryReq.setParameter(MILESTONE_ID, milestoneId);
-		if (!queryReq.list().isEmpty()) {
-			return true;
-		}
+		return !queryReq.list().isEmpty();
 
-		return false;
 	}
 
 	@Override
@@ -486,18 +483,18 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 	public Collection<Long> findTestCaseIdsBoundToMilestones(Collection<Long> milestoneIds) {
 		QTestCase tc = QTestCase.testCase;
 		QMilestone ms = QMilestone.milestone;
-		
+
 		return new HibernateQuery<Long>(currentSession())
 				.select(tc.id).from(tc).innerJoin(tc.milestones, ms).where(ms.id.in(milestoneIds)).fetch();
 	}
-	
+
 	@Override
 	public Collection<Long> findRequirementVersionIdsBoundToMilestones(Collection<Long> milestoneIds) {
 		QRequirementVersion v = QRequirementVersion.requirementVersion;
 		QMilestone ms = QMilestone.milestone;
-		
+
 		return new HibernateQuery<Long>(currentSession())
 				.select(v.id).from(v).innerJoin(v.milestones, ms).where(ms.id.in(milestoneIds)).fetch();
 	}
-	
+
 }

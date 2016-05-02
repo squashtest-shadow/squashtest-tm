@@ -367,7 +367,7 @@ public abstract class AbstractLibraryNavigationService<LIBRARY extends Library<N
 			// if the requirement is not directly located under
 			if (!id.equals(ExportData.NO_FOLDER)) {
 				for (String name : getLibraryNodeDao().getParentsName(id)) {
-					path.append('/' + name);
+					path.append('/').append(name);
 				}
 				if (path.length() != 0) {
 					path.deleteCharAt(0);

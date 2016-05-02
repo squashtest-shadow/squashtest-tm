@@ -150,8 +150,8 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 				userFiltering, columnFiltering);
 		long testPlanSize = testSuiteDao.countTestPlans(testSuiteId, userFiltering, columnFiltering);
 
-		return new PagingBackedPagedCollectionHolder<List<IndexedIterationTestPlanItem>>(sorting, testPlanSize,
-				indexedItems);
+		return new PagingBackedPagedCollectionHolder<>(sorting, testPlanSize,
+			indexedItems);
 	}
 
 	@Override

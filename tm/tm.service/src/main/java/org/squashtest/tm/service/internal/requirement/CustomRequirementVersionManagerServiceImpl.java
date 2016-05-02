@@ -188,7 +188,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 		Page<RequirementVersion> page = requirementVersionDao.findAllByRequirementId(requirementId, pageable);
 
-		return new PageCollectionHolderWrapper<RequirementVersion>(page);
+		return new PageCollectionHolderWrapper<>(page);
 	}
 
 	@Override

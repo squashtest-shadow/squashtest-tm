@@ -28,12 +28,12 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class CampaignTestCaseStatusStatistics {
 
-	
+
 	private Map<ExecutionStatus, Integer> statistics ;
 	public CampaignTestCaseStatusStatistics() {
 		initStatistics();
 	}
-	
+
 	private void initStatistics() {
 		statistics = new HashMap<>(ExecutionStatus.getCanonicalStatusSet().size());
 		for(ExecutionStatus status: ExecutionStatus.getCanonicalStatusSet()){
@@ -41,7 +41,7 @@ public class CampaignTestCaseStatusStatistics {
 		}
 		statistics.put(ExecutionStatus.UNTESTABLE, 0);
 		statistics.put(ExecutionStatus.SETTLED, 0);
-		
+
 	}
 
 	public void addNumber(int nb, ExecutionStatus status){
@@ -50,37 +50,37 @@ public class CampaignTestCaseStatusStatistics {
 			thisNb += nb;
 			statistics.put(status, thisNb);
 		}else{
-			statistics.put(status, Integer.valueOf(nb));
+			statistics.put(status, nb);
 		}
 	}
 
 	public int getNbReady() {
 		return statistics.get(ExecutionStatus.READY);
 	}
-	
+
 	public int getNbRunning() {
 		return statistics.get(ExecutionStatus.RUNNING);
 	}
-	
+
 	public int getNbSuccess() {
 		return statistics.get(ExecutionStatus.SUCCESS);
 	}
-	
+
 	public int getNbFailure() {
 		return statistics.get(ExecutionStatus.FAILURE);
 	}
-	
+
 	public int getNbBlocked() {
 		return statistics.get(ExecutionStatus.BLOCKED);
 	}
-	
+
 	public int getNbUntestable() {
 		return statistics.get(ExecutionStatus.UNTESTABLE);
 	}
-	
+
 	public int getNbSettled() {
 		return statistics.get(ExecutionStatus.SETTLED);
 	}
-	
+
 
 }

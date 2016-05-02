@@ -68,9 +68,7 @@ implements CampaignDeletionDao {
 		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		CampaignLibrary library = (CampaignLibrary) query.uniqueResult();
 		if(library != null){
-			ListIterator<CampaignLibraryNode> iterator = library.getContent().listIterator();
-			while (iterator.hasNext()) {
-				CampaignLibraryNode tcln = iterator.next();
+			for (CampaignLibraryNode tcln : library.getContent()) {
 				if (tcln.getId().equals(node.getId())) {
 					library.removeContent(tcln);
 					break;
@@ -84,9 +82,7 @@ implements CampaignDeletionDao {
 		query.setParameter(ParameterNames.LIBRARY_NODE_ID, entityId);
 		CampaignFolder folder = (CampaignFolder) query.uniqueResult();
 		if(folder != null){
-			ListIterator<CampaignLibraryNode> iterator = folder.getContent().listIterator();
-			while (iterator.hasNext()) {
-				CampaignLibraryNode tcln = iterator.next();
+			for (CampaignLibraryNode tcln : folder.getContent()) {
 				if (tcln.getId().equals(node.getId())) {
 					folder.removeContent(tcln);
 					break;

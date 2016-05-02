@@ -53,7 +53,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 
 	private ObjectIdentityRetrievalStrategy delegate = new ObjectIdentityRetrievalStrategyImpl();
 
-	private Map<Class<?>, Method> identityMethodMap = new ConcurrentHashMap<Class<?>, Method>();
+	private Map<Class<?>, Method> identityMethodMap = new ConcurrentHashMap<>();
 
 	@Override
 	public ObjectIdentity getObjectIdentity(Object domainObject) {
@@ -125,9 +125,9 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 
 	private Method findAnnotatedProperty(Class<?> candidateClass) {
 
-		Set<Class<?>> exploredClasses = new HashSet<Class<?>>();
+		Set<Class<?>> exploredClasses = new HashSet<>();
 
-		LinkedList<Class<?>> explorationQueue= new LinkedList<Class<?>>();
+		LinkedList<Class<?>> explorationQueue= new LinkedList<>();
 		Method targetProperty = null;
 		Class<?> currentClass = null;
 

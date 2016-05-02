@@ -52,11 +52,11 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 	// the first element of the list is the description itself
 	// others are complementary elements
-	private final List<String[]> descriptionElements = new ArrayList<String[]>();
+	private final List<String[]> descriptionElements = new ArrayList<>();
 
 	private final List<String> prerequisites = new ArrayList<>();
 
-	private final List<String[]> stepElements = new LinkedList<String[]>();
+	private final List<String[]> stepElements = new LinkedList<>();
 
 	/* ***************************** formatters *********************************** */
 
@@ -80,7 +80,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 
 			for (int i = 1; i < elements.size(); i++) {
 				String[] elt = elements.get(i);
-				builder.append("<li>").append("<strong>" + elt[0] + " :</strong> ").append(elt[1]).append("</li>");
+				builder.append("<li>").append("<strong>").append(elt[0]).append(" :</strong> ").append(elt[1]).append("</li>");
 			}
 
 			builder.append("</ul>");
@@ -101,7 +101,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	 * we must ensure that the former natures
 	 * (the enum TestCaseNature) are still supported,
 	 * eg NON_FUNCTIONAL must be translated to NAT_NON_FUNCTIONAL.
-	 * 
+	 *
 	 * Note that because of this we must treat the nominal case as an exception handling clause,
 	 * and that sucks.
 	 */
@@ -133,7 +133,7 @@ import org.squashtest.tm.domain.testcase.TestStep;
 	 * we must ensure that the former types
 	 * (the enum testCaseType) are still supported,
 	 * eg UNDEFINED must be translated to TYP_UNDEFINED.
-	 * 
+	 *
 	 * Note that because of this we must treat the nominal case as an exception handling clause,
 	 * and that sucks.
 	 */

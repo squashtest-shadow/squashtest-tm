@@ -35,12 +35,12 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
 /**
  * Indicates if the {@link #worksheet} is conform to the expected format ({@link #isFormatOk()}. <br/>
  * If not, will hold the {@link #columnMismatches} infos.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class WorksheetFormatStatus {
-	private Map<ColumnMismatch, Set<TemplateColumn>> columnMismatches = new HashMap<ColumnMismatch, Set<TemplateColumn>>();
+	private Map<ColumnMismatch, Set<TemplateColumn>> columnMismatches = new HashMap<>();
 	private List<WorksheetMismatch> worksheetMismatches = new ArrayList<>();
 	private TemplateWorksheet worksheet;
 
@@ -54,7 +54,7 @@ public class WorksheetFormatStatus {
 
 	/**
 	 * Add mismatches to the worksheed format status.
-	 * 
+	 *
 	 * @param mismatchType
 	 *            : the concerned{@link ColumnMismatch}
 	 * @param columnsMismatched
@@ -70,7 +70,7 @@ public class WorksheetFormatStatus {
 
 	/**
 	 * Will add all given columnMismatches to this.{@link #columnMismatches}
-	 * 
+	 *
 	 * @param columnMismatches
 	 *            : the mismatches to store here
 	 */
@@ -81,7 +81,7 @@ public class WorksheetFormatStatus {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return true if there is no column mismatches.
 	 */
 	public boolean isFormatOk() {
@@ -89,11 +89,11 @@ public class WorksheetFormatStatus {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the column full names ( see {@link TemplateColumn#getFullName()}) by the {@link ColumnMismatch}
 	 */
 	public Map<ColumnMismatch, Set<String>> getColumnNamesByMismatches() {
-		Map<ColumnMismatch, Set<String>> result = new HashMap<ColumnMismatch, Set<String>>();
+		Map<ColumnMismatch, Set<String>> result = new HashMap<>();
 		for (Entry<ColumnMismatch, Set<TemplateColumn>> mismatch : columnMismatches.entrySet()) {
 			Set<String> columns = extractColumnFullNames(mismatch.getValue());
 			Set<String> alreadyStoredColumns = result.get(mismatch.getKey());
@@ -124,7 +124,7 @@ public class WorksheetFormatStatus {
 	}
 	/**
 	 * Will store the column mismatch.
-	 * 
+	 *
 	 * @param type
 	 * @param colType
 	 */

@@ -79,7 +79,7 @@ public class PreventConcurrentAspect implements Ordered {
 
 		}
 	}
-	
+
 	@Around(value = "execution(@org.squashtest.tm.service.annotation.PreventConcurrents * *(..)) && @annotation(pc)", argNames = "pc")
 	public Object lockEntities(ProceedingJoinPoint pjp, PreventConcurrents pc) throws Throwable { // NOSONAR propagated exception
 		Set<EntityRef> refs = findEntityRefs(pjp,pc);
@@ -93,7 +93,7 @@ public class PreventConcurrentAspect implements Ordered {
 
 		}
 	}
-	
+
 	@Around(value = "execution(@org.squashtest.tm.service.annotation.BatchPreventConcurrent * *(..)) && @annotation(pc)", argNames = "pc")
 	public Object lockEntities(ProceedingJoinPoint pjp, BatchPreventConcurrent pc) throws Throwable { // NOSONAR propagated exception
 		Collection<? extends Serializable> sourceIds = findEntityIds(pjp);
@@ -114,12 +114,12 @@ public class PreventConcurrentAspect implements Ordered {
 		}
 	}
 
-		
+
 	private Serializable findEntityId(ProceedingJoinPoint pjp) {
 		return findAnnotatedParam(pjp, Id.class);
 	}
 
-	
+
 
 	private Collection<? extends Serializable> findEntityIds(ProceedingJoinPoint pjp) {
 		return findAnnotatedParam(pjp, Ids.class);
@@ -154,9 +154,9 @@ public class PreventConcurrentAspect implements Ordered {
 		}
 		return annotatedParam;
 	}
-	
+
 	//PRIVATE CODE FOR @PreventConcurents
-	
+
 	private Set<EntityRef> findEntityRefs( ProceedingJoinPoint pjp,PreventConcurrents pc) throws Throwable {
 		Set<EntityRef> refs = new HashSet<>();
 		refs.addAll(findEntityIdsForSimpleLocks(pjp,pc.simplesLocks()));
@@ -166,18 +166,16 @@ public class PreventConcurrentAspect implements Ordered {
 
 	private Collection<EntityRef> findEntityIdsForBashLocks(ProceedingJoinPoint pjp, BatchPreventConcurrent[] batchsLocks) throws Throwable {
 		Set<EntityRef> refs = new HashSet<>();
-		for (int i = 0; i < batchsLocks.length; i++) {
-			BatchPreventConcurrent batchPreventConcurrent = batchsLocks[i];
-			refs.addAll(findEntityRefForNamedParam(pjp,batchPreventConcurrent));
+		for (BatchPreventConcurrent batchPreventConcurrent : batchsLocks) {
+			refs.addAll(findEntityRefForNamedParam(pjp, batchPreventConcurrent));
 		}
 		return refs;
 	}
 
 	private Collection<EntityRef> findEntityIdsForSimpleLocks(ProceedingJoinPoint pjp, PreventConcurrent[] simplesLocks) throws Throwable {
 		Set<EntityRef> refs = new HashSet<>();
-		for (int i = 0; i < simplesLocks.length; i++) {
-			PreventConcurrent preventConcurrent = simplesLocks[i];
-			refs.add(findEntityRefForNamedParam(pjp,preventConcurrent));
+		for (PreventConcurrent preventConcurrent : simplesLocks) {
+			refs.add(findEntityRefForNamedParam(pjp, preventConcurrent));
 		}
 		return refs;
 	}
@@ -190,7 +188,7 @@ public class PreventConcurrentAspect implements Ordered {
 		LOGGER.debug("Prevent Concurency - Finded an entity to lock {}.", entityRef.toString());
 		return entityRef;
 	}
-	
+
 	private Set<EntityRef> findEntityRefForNamedParam(ProceedingJoinPoint pjp, BatchPreventConcurrent batchPreventConcurrent) throws Throwable {
 		Class<?> entityType = batchPreventConcurrent.entityType();
 		Object sourceIds = findIdForNamedParam(pjp, batchPreventConcurrent.paramName(), Ids.class);
@@ -209,7 +207,7 @@ public class PreventConcurrentAspect implements Ordered {
 		Method meth = sig.getMethod();
 		Annotation[][] annotations = meth.getParameterAnnotations();
 		LOGGER.debug("Prevent Concurency - Advising method {}{}.", pjp.getSignature().getDeclaringTypeName(), meth.getName());
-		
+
 		T annotatedParam = null;
 
 		argsLoop:

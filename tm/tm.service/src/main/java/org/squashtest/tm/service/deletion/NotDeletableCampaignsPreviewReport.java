@@ -31,20 +31,20 @@ public class NotDeletableCampaignsPreviewReport implements SuppressionPreviewRep
 
 	private static final String NORIGHT_MESSAGE_KEY_1 = "dialog.label.delete-node.label.specialcase.noright.first";
 	private static final String NORIGHT_MESSAGE_KEY_2 = "dialog.label.delete-node.label.specialcase.noright.second";
-	
-	private static final String ADMIN_MESSAGE_KEY_1 = "dialog.label.delete-node.label.specialcase.right.first";     
-	private static final String ADMIN_MESSAGE_KEY_2 = "dialog.label.delete-node.label.specialcase.right.second";   
+
+	private static final String ADMIN_MESSAGE_KEY_1 = "dialog.label.delete-node.label.specialcase.right.first";
+	private static final String ADMIN_MESSAGE_KEY_2 = "dialog.label.delete-node.label.specialcase.right.second";
 	private static final String ADMIN_MESSAGE_KEY_3 = "dialog.label.delete-node.label.specialcase.right.third";
-	private static final String ADMIN_MESSAGE_KEY_4 = "dialog.label.delete-node.label.specialcase.right.fourth";            
+	private static final String ADMIN_MESSAGE_KEY_4 = "dialog.label.delete-node.label.specialcase.right.fourth";
 	private static final String ADMIN_MESSAGE_KEY_5 = "dialog.label.delete-node.label.specialcase.right.last";
 
-	private boolean hasRights; 
+	private boolean hasRights;
 	private final Set<String> nodeNames = new HashSet<>();
 
 	@Override
 	public String toString(MessageSource source, Locale locale) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		if(hasRights){
 			builder.append(source.getMessage(ADMIN_MESSAGE_KEY_1, null, locale));
 			builder.append("<span class='red-warning-message'>");
@@ -62,30 +62,30 @@ public class NotDeletableCampaignsPreviewReport implements SuppressionPreviewRep
 			builder.append(setToString(nodeNames));
 			builder.append(source.getMessage(NORIGHT_MESSAGE_KEY_2, null, locale));
 		}
-		
+
 		return builder.toString();
-		
+
 	}
-	
-	
+
+
 	public void addName(String name){
 		nodeNames.add(name);
 	}
-	
+
 	private String setToString(Set<String> set){
 		StringBuilder builder = new StringBuilder();
 		Iterator<String> iterator = set.iterator();
-		
+
 		if(iterator.hasNext()){
 			builder.append(iterator.next());
 		}
-		
+
 		while(iterator.hasNext()){
-			builder.append(", "+iterator.next());
+			builder.append(", ").append(iterator.next());
 		}
 
 		return builder.toString();
-		
+
 	}
 
 	public boolean isHasRights() {

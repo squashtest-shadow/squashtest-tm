@@ -91,7 +91,7 @@ public class ExecutionStepModificationHelper {
 			// We need to remove attachment first, then clear the list.
 			// All attachment are removed then added, this may be suboptimal.
 			// Maybe some optimization may be required later.
-			attachmentDao.removeAll(new ArrayList<Attachment>(execStep.getAttachmentList().getAllAttachments()));
+			attachmentDao.removeAll(new ArrayList<>(execStep.getAttachmentList().getAllAttachments()));
 			execStep.getAttachmentList().getAllAttachments().clear();
 
 			for (Attachment actionStepAttach : step.getAllAttachments()) {

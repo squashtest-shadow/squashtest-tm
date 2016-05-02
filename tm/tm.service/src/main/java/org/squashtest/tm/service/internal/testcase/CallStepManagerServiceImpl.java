@@ -86,13 +86,13 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
-	
+
 	@Override
 	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId,
 			int index) {
-		
+
 		checkAddCallTestStep(parentTestCaseId, calledTestCaseId);
-		
+
 		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
 		TestCase calledTestCase = testCaseDao.findById(calledTestCaseId);
 
@@ -104,9 +104,9 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		parentTestCase.addStep(index,newStep);
 
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
-		
+
 	}
-	
+
 	private void checkAddCallTestStep(long parentTestCaseId, long calledTestCaseId){
 		if (parentTestCaseId == calledTestCaseId) {
 			throw new CyclicStepCallException();
@@ -174,8 +174,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	private List<Long> parseLong(String[] stringArray) {
 		List<Long> longList = new ArrayList<>();
-		for (int i = 0; i < stringArray.length; i++) {
-			longList.add(Long.parseLong(stringArray[i]));
+		for (String aStringArray : stringArray) {
+			longList.add(Long.parseLong(aStringArray));
 		}
 		return longList;
 	}

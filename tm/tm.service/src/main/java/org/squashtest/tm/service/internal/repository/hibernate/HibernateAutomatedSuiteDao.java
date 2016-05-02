@@ -104,12 +104,12 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 
 	@Override
 	public Collection<AutomatedExecutionExtender> findAllWaitingExtenders(String suiteId) {
-		return findAllExtendersByStatus(suiteId, new ExecutionStatus[] { READY });
+		return findAllExtendersByStatus(suiteId, READY);
 	}
 
 	@Override
 	public Collection<AutomatedExecutionExtender> findAllRunningExtenders(String suiteId) {
-		return findAllExtendersByStatus(suiteId, new ExecutionStatus[] { RUNNING });
+		return findAllExtendersByStatus(suiteId, RUNNING);
 	}
 
 	@Override

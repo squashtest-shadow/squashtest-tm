@@ -22,9 +22,7 @@ package org.squashtest.tm.service.internal.library;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -68,12 +66,12 @@ public class NextLayerFeeder implements NodeVisitor {
 	 * A', A'' into A'' ...<br>
 	 * Thus we need to fill the next generation without A'.<br>
 	 * <br>
-	 * 
+	 *
 	 * <u>Why can't we fill the next layer before copying ? </u> We need to fill the next layer node by node because we
 	 * have to remember the node destination and to know it it is allowed to go deeper on the node (both depend on the
 	 * operation). <br>
 	 * <br>
-	 * 
+	 *
 	 * @param destination
 	 *            : the result of a {@linkplain PasteOperation} on the source node
 	 * @param source

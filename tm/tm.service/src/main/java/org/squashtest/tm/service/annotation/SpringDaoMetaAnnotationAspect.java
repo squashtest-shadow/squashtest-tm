@@ -38,36 +38,36 @@ import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.Ordered;
 
 /**
- * <p>This aspect will handle the following meta annotations : 
+ * <p>This aspect will handle the following meta annotations :
  * 	<ul>
  * 		<li>EmptyCollectionGuard</li>
  * 		<li>Maybe more to come ?</li>
- * 	</ul> 
+ * 	</ul>
  *  which are all intended to refine the default behaviour dynamically-generated Spring JPA DAO.
  * </p>
  * <p>
  * See below for details.
  * </p>
- * 
+ *
  * <h3>EmptyCollectionGuard</h3
- * 
+ *
  * <p>
- * A method of a Spring JPA repository will not fail when passed 
+ * A method of a Spring JPA repository will not fail when passed
  * empty {@link Iterable}, if that method has the annotation {@link EmptyCollectionGuard}.</p>
- * 
+ *
  * <p>When this aspect is triggered, any argument of type/subtype of {@link Iterable} will be checked against emptyness.</p>
- * 
+ *
  * <p>
  *  If the test passes the call will be forwared to the target method. Otherwise it will be aborted and a value semantically meaning
- *  "no results" will be returned. The actual result depend on the expected returned type : </p> 
+ *  "no results" will be returned. The actual result depend on the expected returned type : </p>
  * <ul>
  * 		<li>void : returns null</li>
  * 		<li>Collection (or subclass) : returns an empty List/Set, or throw {@link UnsupportedReturnTypeException} for other subtypes of Collection</li>
  * 		<li>Object : returns null </li>
  * 		<li> primitive : 0/false etc</li>
  * </ul>
- * </p> 
- * 
+ * </p>
+ *
  * <p>
  *  History note : part of the code is scrapped from @link ArbitraryQueryHandler (core.dynamicmanagers)
  * </p>
@@ -75,43 +75,43 @@ import org.springframework.core.Ordered;
  */
 @Aspect
 public class SpringDaoMetaAnnotationAspect implements Ordered{
-	
+
 	@Override
 	public int getOrder() {
 		return Ordered.LOWEST_PRECEDENCE-1;
 	}
-	
+
 
 	@Pointcut(value="call(@org.squashtest.tm.service.annotation.EmptyCollectionGuard * org.springframework.data.repository.Repository+.*(..))")
 	public void callEmptyCollectionGuard(){
-		
+
 	}
-	
+
 	// NOSONAR yes I know I throw a Throwable but that's usual stuff with reflection
 	@Around(value="callEmptyCollectionGuard()")
 	public Object guardAgainstEmptyness(ProceedingJoinPoint pjp) throws Throwable{
 		Object[] args = pjp.getArgs();
-				
+
 		// abort if one argument is an empty collection
 		for (Object arg : args){
 			if (isEmptyIterable(arg)){
 				return abortQuery(pjp);
 			}
 		}
-		
+
 		// else proceed
 		return pjp.proceed();
-		
+
 	}
-	
-	
+
+
 	private Object abortQuery(ProceedingJoinPoint pjp) {
 
 		Object result;
-		
+
 		Class<?> returnType = findReturnType(pjp);
-		
-		
+
+
 		if (returnType == null){
 			// damn, could not find what it is ! trying dumb luck now
 			result = null;
@@ -129,7 +129,7 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 
 		return result;
 	}
-	
+
 	private Class<?> findReturnType(ProceedingJoinPoint pjp){
 		Signature sig = pjp.getSignature();
 		if (MethodSignature.class.isAssignableFrom(sig.getClass())){
@@ -139,10 +139,10 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 			return null;
 		}
 	}
-	
+
 	private Object newEmptyCollection(Class<?> returnType){
 		Object res = null;
-		
+
 		if (isList(returnType)){
 			res = new ArrayList<>();
 		}
@@ -155,10 +155,10 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 		else{
 			throw new UnsupportedReturnTypeException(returnType);
 		}
-		
+
 		return res;
 	}
-	
+
 	private Object newPrimitiveZero(Class<?> returnType) {
 		Object res = null;
 
@@ -180,27 +180,27 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 
 		return res;
 	}
-	
+
 	private boolean isEmptyIterable(Object arg){
 		return (arg != null &&
 				Iterable.class.isAssignableFrom(arg.getClass()) &&
-				((Iterable)arg).iterator().hasNext() == false
+			!((Iterable) arg).iterator().hasNext()
 				);
 	}
-	
+
 	private boolean isCollectionType(Class<?> paramType) {
 		return Collection.class.isAssignableFrom(paramType);
 	}
-	
+
 	private boolean isList(Class<?> paramType){
 		return List.class.isAssignableFrom(paramType);
 	}
-	
+
 	private boolean isSet(Class<?> paramType){
 		return Set.class.isAssignableFrom(paramType);
 	}
-	
-	
+
+
 	private boolean isQueue(Class<?> paramType){
 		return Queue.class.isAssignableFrom(paramType);
 	}

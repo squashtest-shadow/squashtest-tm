@@ -39,7 +39,7 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 	@Override
 	public String toString(MessageSource source, Locale locale) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		if (! nodeNames.isEmpty()){
 			String firstMessageKey;
 			String secondMessageKey;
@@ -53,35 +53,35 @@ public class LinkedToIterationPreviewReport implements SuppressionPreviewReport 
 			builder.append(source.getMessage(firstMessageKey, null, locale));
 			builder.append(setToString(nodeNames));
 			builder.append("<br/>");
-			
-			builder.append(source.getMessage(secondMessageKey, null, locale));		
+
+			builder.append(source.getMessage(secondMessageKey, null, locale));
 			builder.append("<br/>");
-			
+
 		}
 		return builder.toString();
-		
+
 	}
-	
-	
+
+
 	public void addName(String name){
 		nodeNames.add(name);
 	}
-	
-	
-	
+
+
+
 	private String setToString(Set<String> set){
 		StringBuilder builder = new StringBuilder();
 		Iterator<String> iterator = set.iterator();
-		
+
 		if(iterator.hasNext()){
 			builder.append(iterator.next());
 		}
-		
+
 		while(iterator.hasNext()){
-			builder.append(", "+iterator.next());
+			builder.append(", ").append(iterator.next());
 		}
 
 		return builder.toString();
-		
+
 	}
 }

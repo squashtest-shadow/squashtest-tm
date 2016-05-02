@@ -186,7 +186,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 
 		// prevent IndexOutOfBoundException :
 		if (startIndex >= listSize) {
-			return new LinkedList<ExecutionStep>(); // ie resultset is empty
+			return new LinkedList<>(); // ie resultset is empty
 		}
 		if (lastIndex >= listSize) {
 			lastIndex = listSize;
@@ -207,7 +207,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias("Execution.testPlan.iteration", ITERATION, JoinType.INNER_JOIN);
 		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.INNER_JOIN);
 		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.INNER_JOIN);
-		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
+		crit.add(Restrictions.eq(PROJECT_ID, projectId));
 		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
 
 		return crit.list();
@@ -232,7 +232,7 @@ public class HibernateExecutionDao extends HibernateEntityDao<Execution> impleme
 		crit.createAlias("iteration", ITERATION, JoinType.INNER_JOIN);
 		crit.createAlias(ITERATION_CAMPAIGN, CAMPAIGN, JoinType.INNER_JOIN);
 		crit.createAlias(CAMPAIGN_PROJECT, PROJECT, JoinType.INNER_JOIN);
-		crit.add(Restrictions.eq(PROJECT_ID, Long.valueOf(projectId)));
+		crit.add(Restrictions.eq(PROJECT_ID, projectId));
 		crit.add(Restrictions.eq(EXECUTION_STATUS, executionStatus));
 
 		return crit.list();

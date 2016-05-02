@@ -131,17 +131,21 @@ public enum CustomFieldError {
 
 	public static void updateValue(Map<String, String> cufs, CustomField cuf, String value, String impact) {
 
-		if (impact.equals(Messages.IMPACT_MAX_SIZE)) {
-			cufs.put(cuf.getCode(), value.substring(0, Math.min(value.length(), CustomFieldValue.MAX_SIZE)));
+		switch (impact) {
+			case Messages.IMPACT_MAX_SIZE:
+				cufs.put(cuf.getCode(), value.substring(0, Math.min(value.length(), CustomFieldValue.MAX_SIZE)));
 
-		} else if (impact.equals(Messages.IMPACT_DEFAULT_VALUE)) {
-			cufs.put(cuf.getCode(), cuf.getDefaultValue());
+				break;
+			case Messages.IMPACT_DEFAULT_VALUE:
+				cufs.put(cuf.getCode(), cuf.getDefaultValue());
 
-		} else if (impact.equals(Messages.IMPACT_NO_CHANGE)) {
-			cufs.remove(cuf.getCode());
+				break;
+			case Messages.IMPACT_NO_CHANGE:
+				cufs.remove(cuf.getCode());
 
-		} else {
-			throw new RuntimeException("Unknown CUF validation impact : " + impact);
+				break;
+			default:
+				throw new RuntimeException("Unknown CUF validation impact : " + impact);
 		}
 
 	}

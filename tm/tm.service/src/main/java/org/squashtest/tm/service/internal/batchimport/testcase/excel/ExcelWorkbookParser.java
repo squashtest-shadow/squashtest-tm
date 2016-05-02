@@ -125,10 +125,10 @@ public class ExcelWorkbookParser {
 	private Workbook workbook;
 	private final WorkbookMetaData wmd;
 
-	private final Map<TemplateWorksheet, List<Instruction<?>>> instructionsByWorksheet = new HashMap<TemplateWorksheet, List<Instruction<?>>>(
-			5);
-	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<TemplateWorksheet, Factory<?>>(
-			5);
+	private final Map<TemplateWorksheet, List<Instruction<?>>> instructionsByWorksheet = new HashMap<>(
+		5);
+	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<>(
+		5);
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.
@@ -214,7 +214,7 @@ public class ExcelWorkbookParser {
 				LogEntry.Builder builder = LogEntry.failure()
 						.atLine(0)
 						.forTarget(createDummyTarget(wd))
-						.withMessage(Messages.ERROR_UNKNOWN_COLUMN_HEADER, new Object[]{unknown.getHeader()})
+						.withMessage(Messages.ERROR_UNKNOWN_COLUMN_HEADER, unknown.getHeader())
 						.withImpact(Messages.IMPACT_COLUMN_IGNORED, (Object[])null);
 				logs.addEntry(builder.build());
 			}

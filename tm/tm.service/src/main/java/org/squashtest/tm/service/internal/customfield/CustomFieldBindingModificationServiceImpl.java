@@ -124,7 +124,7 @@ public class CustomFieldBindingModificationServiceImpl implements CustomFieldBin
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(projectId, entity, paging);
 		Long count = customFieldBindingDao.countAllForProjectAndEntity(projectId, entity);
 
-		return new PagingBackedPagedCollectionHolder<List<CustomFieldBinding>>(paging, count, bindings);
+		return new PagingBackedPagedCollectionHolder<>(paging, count, bindings);
 	}
 
 	@Override

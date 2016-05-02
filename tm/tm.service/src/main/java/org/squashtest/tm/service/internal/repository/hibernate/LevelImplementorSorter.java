@@ -33,19 +33,19 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.Level;
 
 /**
- * 
+ *
  * @author Frederic,bsiri
- * 
+ *
  * Enables sorting of objects according to Enums that implements {@link Level}. Note : the correct type should something like &lt;? extends Level & Enum &gt;
  * but I cannot make java comply with such type declaration, so the type checking will happen at runtime.
- * 
+ *
  */
 public final class LevelImplementorSorter implements PagingAndMultiSorting{
 
 	private PagingAndMultiSorting multiSorting;
 
 	@SuppressWarnings("rawtypes")
-	private Map<String, Class<? extends Enum>> levelClassByAttributes = new HashMap<String, Class<? extends Enum>>();
+	private Map<String, Class<? extends Enum>> levelClassByAttributes = new HashMap<>();
 
 	public LevelImplementorSorter(PagingAndMultiSorting sorting){
 		this.multiSorting = sorting;
@@ -111,9 +111,9 @@ public final class LevelImplementorSorter implements PagingAndMultiSorting{
 		EnumSet<? extends Enum> enums = EnumSet.allOf(enumClass);
 
 		StringBuilder builder = new StringBuilder();
-		builder.append("CASE "+attribute+" ");
+		builder.append("CASE ").append(attribute).append(" ");
 		for (Enum e : enums){
-			builder.append("when '"+e.name()+"' then "+((Level)e).getLevel()+" ");
+			builder.append("when '").append(e.name()).append("' then ").append(((Level) e).getLevel()).append(" ");
 		}
 		builder.append("END ");
 

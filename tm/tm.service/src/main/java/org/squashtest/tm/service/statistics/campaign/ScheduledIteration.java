@@ -43,7 +43,7 @@ public final class ScheduledIteration{
 	private Date scheduledEnd;
 
 	// an entry = { Date, int }
-	private Collection<Object[]> cumulativeTestsByDate = new LinkedList<Object[]>();
+	private Collection<Object[]> cumulativeTestsByDate = new LinkedList<>();
 
 	public ScheduledIteration(){
 		super();

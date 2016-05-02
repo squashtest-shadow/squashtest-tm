@@ -51,9 +51,9 @@ import org.squashtest.tm.service.testcase.ParameterModificationService;
 
 /**
  * Implementations for (non dynamically generated) testStep modification services.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Service("CustomTestStepModificationService")
 @Transactional
@@ -90,9 +90,7 @@ public class CustomTestStepModificationServiceImpl implements CustomTestStepModi
 		try {
 			testStepDao.flush();
 		} catch (ConstraintViolationException e) {
-			Iterator<ConstraintViolation<?>> iter = e.getConstraintViolations().iterator();
-			while (iter.hasNext()) {
-				ConstraintViolation<?> cv = iter.next();
+			for (ConstraintViolation<?> cv : e.getConstraintViolations()) {
 				String property = cv.getPropertyPath().toString();
 				String message = cv.getMessage();
 				exceptions.add(new DomainException(message, property) {

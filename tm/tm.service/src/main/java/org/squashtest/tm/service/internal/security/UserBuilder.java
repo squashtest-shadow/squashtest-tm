@@ -32,9 +32,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * Builds {@link User} objects without having to use the ugly, 10-parameters constructor
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class UserBuilder {
 	private String login;
@@ -46,7 +46,7 @@ public final class UserBuilder {
 	private Collection<? extends GrantedAuthority> authorities = new ArrayList<>(0);
 
 	/**
-	 * 
+	 *
 	 */
 	private UserBuilder() {
 		super();
@@ -67,7 +67,7 @@ public final class UserBuilder {
 		builder.accountNonExpired = user.isAccountNonExpired();
 		builder.accountNonLocked = user.isAccountNonLocked();
 		builder.credentialsNonExpired = user.isCredentialsNonExpired();
-		
+
 		return builder;
 	}
 
@@ -86,7 +86,7 @@ public final class UserBuilder {
 	 * @return
 	 */
 	private boolean valueOrDefault(Boolean potentialValue) {
-		return potentialValue == null ? enabled : potentialValue.booleanValue();
+		return potentialValue == null ? enabled : potentialValue;
 	}
 
 	/**

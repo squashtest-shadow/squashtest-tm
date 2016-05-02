@@ -58,11 +58,11 @@ public class TestCaseImportanceManagerForRequirementDeletion {
 	 * will find TestCases concerned by deleted requirements versions and store them in property along with the
 	 * concerned criticalities
 	 * </p>
-	 * 
+	 *
 	 * @param requirementIds
 	 */
 	public void prepareRequirementDeletion(List<Long> requirementLibrarieNodesIds) {
-		this.requirementDeletionConcernedTestCases = new HashMap<TestCase, List<RequirementCriticality>>();
+		this.requirementDeletionConcernedTestCases = new HashMap<>();
 		List<RequirementVersion> requirementVersions = requirementDao.findVersionsForAll(requirementLibrarieNodesIds);
 		storeReqVersionConcernedTestCases(requirementVersions);
 	}
@@ -104,7 +104,7 @@ public class TestCaseImportanceManagerForRequirementDeletion {
 	 * will adapt the importance of the TestCases concerned by deleted requirements versions if their importanceAuto
 	 * property is 'true'.
 	 * </p>
-	 * 
+	 *
 	 */
 	public void changeImportanceAfterRequirementDeletion() {
 		if (this.requirementDeletionConcernedTestCases != null && !this.requirementDeletionConcernedTestCases.isEmpty()) {

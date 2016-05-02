@@ -121,7 +121,7 @@ public abstract class ExcelBatchImporter {
 	}
 
 	public List<Instruction<?>> buildOrderedInstruction(ExcelWorkbookParser parser) {
-		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
+		List<Instruction<?>> instructions = new ArrayList<>();
 		for (EntityType entity : getEntityType()) {
 			List<Instruction<?>> entityInstructions = findInstructionsByEntity(parser, entity);
 			instructions.addAll(entityInstructions);

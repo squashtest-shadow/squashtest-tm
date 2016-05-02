@@ -29,9 +29,9 @@ import org.springframework.util.ReflectionUtils;
 
 /**
  * Sets a property using a mutator (ie a "setter").
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class ReflectionMutatorSetter<VAL, TARGET> implements PropertySetter<VAL, TARGET> {
 	private final String mutatorName;
@@ -49,7 +49,7 @@ public final class ReflectionMutatorSetter<VAL, TARGET> implements PropertySette
 	 * Creates a {@link ReflectionMutatorSetter} with mandatory values, ie the {@link ReflectionMutatorSetter} shall try
 	 * to set any given value. As the value to be set can be <code>null</code>, we cannot infer its type, hence the
 	 * paramType param.
-	 * 
+	 *
 	 * @param propName
 	 *            name of the field.
 	 * @param paramType
@@ -57,19 +57,19 @@ public final class ReflectionMutatorSetter<VAL, TARGET> implements PropertySette
 	 * @return
 	 */
 	public static <V, T> ReflectionMutatorSetter<V, T> forProperty(@NotNull String propName, Class<V> paramType) {
-		return new ReflectionMutatorSetter<V, T>(propName, paramType, false);
+		return new ReflectionMutatorSetter<>(propName, paramType, false);
 
 	}
 
 	/**
 	 * Creates a {@link ReflectionMutatorSetter} with optional values, ie the {@link ReflectionMutatorSetter} shall
 	 * discard any <code>null</code> value.
-	 * 
+	 *
 	 * @param propName
 	 * @return
 	 */
 	public static <V, T> ReflectionMutatorSetter<V, T> forOptionalProperty(@NotNull String propName) {
-		return new ReflectionMutatorSetter<V, T>(propName, null, true);
+		return new ReflectionMutatorSetter<>(propName, null, true);
 	}
 
 	private ReflectionMutatorSetter(@NotNull String fieldName, Class<VAL> paramType, boolean optionalValue) {

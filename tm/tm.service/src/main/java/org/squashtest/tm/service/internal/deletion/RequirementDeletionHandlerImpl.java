@@ -31,8 +31,6 @@ import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.hibernate.FlushMode;
-import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
@@ -382,10 +380,10 @@ RequirementNodeDeletionHandler {
 	 */
 	@Override
 	public OperationReport deleteNodes(List<Long> targetIds) {
-	
+
 		//Session s = em.unwrap(Session.class);
-		
-		
+
+
 		OperationReport globalReport = new OperationReport();
 
 		TargetsSortedByAppropriatePunishment sortedTargets = sortThatMess(targetIds);
@@ -438,7 +436,7 @@ RequirementNodeDeletionHandler {
 
 		OperationReport report = new OperationReport();
 
-		if (!folderIds.isEmpty()) {	
+		if (!folderIds.isEmpty()) {
 			deletionDao.removeEntities(folderIds);
 			report.addRemoved(folderIds, "folder");
 
@@ -543,8 +541,8 @@ RequirementNodeDeletionHandler {
 		if (! versionIds.isEmpty()) {
 
 			customValueService.deleteAllCustomFieldValues(BindableEntity.REQUIREMENT_VERSION, versionIds);
-			
-			// save the attachment list ids for later reference. We cannot rely on the cascade here 
+
+			// save the attachment list ids for later reference. We cannot rely on the cascade here
 			// because the requirement deletion is made by HQL, which doesn't honor the cascades
 			List<Long> versionsAttachmentIds = deletionDao.findRequirementVersionAttachmentListIds(versionIds);
 
@@ -601,7 +599,7 @@ RequirementNodeDeletionHandler {
 				newParent = (NodeContainer<Requirement>)libraryNodeDao.findById(newParentId);	// the cast is quite brutal indeed
 			}
 			else{
-				List<Object[]> allParents = requirementDao.findAllParentsOf(Arrays.asList(new Long[]{newParentId}));
+				List<Object[]> allParents = requirementDao.findAllParentsOf(Arrays.asList(newParentId));
 				newParent = (NodeContainer<Requirement>)allParents.get(0)[0]; 					// quite brutal too
 			}
 

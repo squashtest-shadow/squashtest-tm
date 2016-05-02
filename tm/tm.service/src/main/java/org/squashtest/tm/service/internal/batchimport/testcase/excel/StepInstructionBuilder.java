@@ -33,7 +33,7 @@ import org.squashtest.tm.service.internal.batchimport.TestStepTarget;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 class StepInstructionBuilder extends InstructionBuilder<StepSheetColumn, StepInstruction> {
 	private final StdColumnDef<StepSheetColumn> stepTypeColDef;
@@ -66,7 +66,7 @@ class StepInstructionBuilder extends InstructionBuilder<StepSheetColumn, StepIns
 			return true;
 		}
 		Boolean callStep = getValue(row, stepTypeColDef);
-		return callStep == null ? true : !callStep;
+		return callStep == null || !callStep;
 	}
 
 }

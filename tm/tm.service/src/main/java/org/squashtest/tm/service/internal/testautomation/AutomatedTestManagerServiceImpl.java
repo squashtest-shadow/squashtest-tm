@@ -66,8 +66,7 @@ public class AutomatedTestManagerServiceImpl implements UnsecuredAutomatedTestMa
 	@Inject
     @Transactional(propagation = SUPPORTS) // Injection method should not trigger a tx but should not care either
 	public void setAsyncTaskExecutor(AsyncTaskExecutor executor) {
-		TestAutomationTaskExecutor taExecutor = new TestAutomationTaskExecutor(executor);
-		this.executor = taExecutor;
+		this.executor = new TestAutomationTaskExecutor(executor);
 	}
 
 	// ******************** Entity Management ************************

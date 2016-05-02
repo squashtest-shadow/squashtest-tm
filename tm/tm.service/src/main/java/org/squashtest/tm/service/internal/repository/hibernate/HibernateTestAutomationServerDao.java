@@ -72,7 +72,7 @@ public class HibernateTestAutomationServerDao implements TestAutomationServerDao
 	@Override
 	public long countAll() {
 		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationServer.countAll");
-		return ((Long) q.iterate().next()).longValue();
+		return (Long) q.iterate().next();
 	}
 
 	/**

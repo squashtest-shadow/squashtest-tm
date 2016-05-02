@@ -274,7 +274,7 @@ TestCaseAdvancedSearchService {
 
 			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
 		}
-		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, result);
+		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
 	@Override
@@ -295,7 +295,7 @@ TestCaseAdvancedSearchService {
 
 			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
 		}
-		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countAll, result);
+		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
 	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale){

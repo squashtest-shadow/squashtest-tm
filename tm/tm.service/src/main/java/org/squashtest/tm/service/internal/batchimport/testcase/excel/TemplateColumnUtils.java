@@ -30,14 +30,14 @@ import org.springframework.util.ReflectionUtils;
 
 /**
  * Utilities methods for {@link TemplateColumn} enums
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 final class TemplateColumnUtils {
 	private static final TemplateColumnUtils INSTANCE = new TemplateColumnUtils();
 
-	private Map<Class<?>, Map<String, TemplateColumn>> headerCacheByClass = new HashMap<Class<?>, Map<String, TemplateColumn>>();
+	private Map<Class<?>, Map<String, TemplateColumn>> headerCacheByClass = new HashMap<>();
 
 	private TemplateColumnUtils() {
 		super();
@@ -46,8 +46,8 @@ final class TemplateColumnUtils {
 	/**
 	 * Coerce the given "header" (content of cell @ row[0]) into a enum value. Coerces unknown headers to
 	 * <code>null</code>.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param enumType
 	 *            the enum type that shall be looked up. should not be <code>null</code>.
 	 * @param header
@@ -91,7 +91,7 @@ final class TemplateColumnUtils {
 
 	/**
 	 * Retrieves an enum's values from the enum's class.
-	 * 
+	 *
 	 * @param enumType
 	 *            type of the enum which values we want
 	 * @return the values of the enum

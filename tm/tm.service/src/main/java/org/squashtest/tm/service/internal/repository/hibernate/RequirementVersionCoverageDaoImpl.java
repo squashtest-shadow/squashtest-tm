@@ -104,27 +104,27 @@ CustomRequirementVersionCoverageDao {
 		for (Object[] tuple : raw){
 			res.add((RequirementVersion)tuple[0]);
 		}
-		if ("endDate".equals(pagingAndSorting.getSortedAttribute())){	
+		if ("endDate".equals(pagingAndSorting.getSortedAttribute())){
 			 Collections.sort(res, new Comparator<RequirementVersion>() {
 				@Override
 				public int compare(RequirementVersion req1, RequirementVersion req2) {
 					return compareReqMilestoneDate(req1, req2);
 				}
 			});
-			 
+
 			if (pagingAndSorting.getSortOrder().equals(SortOrder.ASCENDING)){
 				Collections.reverse(res);
-			}	
+			}
 		}
 		return res;
 
 	}
 
 private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion req2){
-		
-		boolean isEmpty1 = req1.getMilestones().isEmpty(); 
+
+		boolean isEmpty1 = req1.getMilestones().isEmpty();
 		boolean isEmpty2 = req2.getMilestones().isEmpty();
-	
+
 		if (isEmpty1 && isEmpty2){
 			return 0;
 		} else if (isEmpty1){
@@ -133,20 +133,19 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 			return -1;
 		} else {
 			return getMinDate(req1).before(getMinDate(req2)) ?  getMinDate(req1).after(getMinDate(req2))? 0 : 1 : -1;
-		}	
+		}
 	}
 
 	private Date getMinDate(RequirementVersion req){
 		return Collections.min(req.getMilestones(), new Comparator<Milestone>(){
 			@Override
 			public int compare(Milestone m1, Milestone m2) {
-				int result = m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
-				return result;
-			}	
+				return m1.getEndDate().before(m2.getEndDate()) ? -1 : 1;
+			}
 		}).getEndDate();
 	}
-	
-	
+
+
 	@Override
 	public List<RequirementVersion> findDistinctRequirementVersionsByTestCases(Collection<Long> testCaseIds) {
 		PagingAndSorting pas = new DefaultPagingAndSorting("RequirementVersion.name", true);
@@ -155,7 +154,7 @@ private int compareReqMilestoneDate(RequirementVersion req1, RequirementVersion 
 
 	/*
 	 * Hibernate won't f***ing do it the normal way so I'll shove SQL up it until it begs me to stop
-	 * 
+	 *
 	 * (non-Javadoc)
 	 * @see org.squashtest.tm.service.internal.repository.CustomRequirementVersionCoverageDao#delete(org.squashtest.tm.domain.testcase.RequirementVersionCoverage)
 	 */

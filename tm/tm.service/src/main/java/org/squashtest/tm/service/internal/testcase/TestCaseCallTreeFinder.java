@@ -280,8 +280,7 @@ public class TestCaseCallTreeFinder {
 		// phase 3 : make that graph
 		LibraryGraph<NamedReference, SimpleNode<NamedReference>> graph = new LibraryGraph<>();
 
-		for (Iterator<NamedReferencePair> iter = allpairs.iterator(); iter.hasNext(); ) {
-			NamedReferencePair pair = iter.next();
+		for (NamedReferencePair pair : (Iterable<NamedReferencePair>) allpairs) {
 			graph.addEdge(node(pair.getCaller()), node(pair.getCalled()));
 		}
 

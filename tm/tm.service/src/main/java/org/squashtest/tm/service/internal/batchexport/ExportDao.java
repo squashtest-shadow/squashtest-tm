@@ -280,7 +280,7 @@ public class ExportDao {
 
 
 	private String getRequirementPath(Long requirementId, String requirementProjectName){
-		StringBuffer sb = new StringBuffer(HibernatePathService.PATH_SEPARATOR);
+		StringBuilder sb = new StringBuilder(HibernatePathService.PATH_SEPARATOR);
 		sb.append(requirementProjectName);
 		sb.append(HibernatePathService.PATH_SEPARATOR);
 		String pathFromFolder = getPathFromFolder(requirementId);

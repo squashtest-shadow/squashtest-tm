@@ -66,7 +66,7 @@ public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustom
 	/**
 	 * returns the flattened collection of custom fields associated to all the entities in arguments, restricted to only
 	 * the supplied customfields.
-	 * 
+	 *
 	 * @param entities
 	 * @param optionalLocations
 	 * @return
@@ -78,9 +78,7 @@ public class CustomFieldHelperImpl<X extends BoundEntity> extends AbstractCustom
 			return Collections.emptyList();
 		}
 
-		List<CustomFieldValue> cufValues = getCufValuesService().findAllCustomFieldValues(entities, customFields);
-
-		return cufValues;
+		return getCufValuesService().findAllCustomFieldValues(entities, customFields);
 	}
 
 	// ******************* utilities **************************

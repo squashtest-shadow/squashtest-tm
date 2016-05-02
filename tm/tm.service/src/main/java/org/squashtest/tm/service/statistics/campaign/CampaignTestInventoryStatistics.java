@@ -92,7 +92,7 @@ public class CampaignTestInventoryStatistics {
 
 	public void setNumber(int intValue, ExecutionStatus status) {
 
-		this.statistics.put(status, Integer.valueOf(intValue));
+		this.statistics.put(status, intValue);
 
 	}
 

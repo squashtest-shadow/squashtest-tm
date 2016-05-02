@@ -108,7 +108,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 		if (!testCases.isEmpty()) {
 			rejections = doAddVerifyingTestCasesToRequirementVersion(testCases, requirementVersionId);
 		}
-		Map<String, Collection<?>> result = new HashMap<String, Collection<?>>(2);
+		Map<String, Collection<?>> result = new HashMap<>(2);
 		result.put(IDS_KEY, ids);
 		result.put(REJECTION_KEY, rejections);
 		return result;
@@ -185,7 +185,7 @@ public class VerifyingTestCaseManagerServiceImpl implements VerifyingTestCaseMan
 
 		long verifiersCount = testCaseDao.countByVerifiedRequirementVersion(requirementVersionId);
 
-		return new PagingBackedPagedCollectionHolder<List<TestCase>>(pagingAndSorting, verifiersCount, verifiers);
+		return new PagingBackedPagedCollectionHolder<>(pagingAndSorting, verifiersCount, verifiers);
 	}
 
 	@Override

@@ -66,7 +66,7 @@ import org.squashtest.tm.service.internal.chart.engine.QueryPlan.TraversedEntity
  * </p>
  * <p>Please note that, for that purpose different enum is used here : {@link InternalEntityType}.</p>
  * <p>See javadoc on ChartDataFinder for details on this. Excerpt pasted below for convenience.</p>
- * 
+ *
  * <p>
  *  <table>
  * 	<tr>
@@ -141,7 +141,7 @@ class DomainGraph {
 	 * through a "where join". The solution is thus to change the RootEntity, so that the plan now originate from the
 	 * Measure entity instead of the Axis entity.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * 	<ul>
 	 * 	<li>if reverse == false -&gt; the root entity stays the same</li>
@@ -160,13 +160,13 @@ class DomainGraph {
 
 	/*
 	 * The creation of a query plan is a two step process :
-	 * 
+	 *
 	 * 1/ transform the undirected domain graph in a directed graph (a tree), radiating from the node representing the root entity,
 	 * 2/ on the result, prune the leaves until a target entity node is encountered
-	 * 
+	 *
 	 * The result is a tree with the root entity as root node, and by walking it top-down one will find
 	 * which entities are traversed from which (indicating which join should be made).
-	 * 
+	 *
 	 */
 
 	QueryPlan getQueryPlan(){
@@ -288,23 +288,20 @@ class DomainGraph {
 	/**
 	 * This method should decide whether navigating from parent to child should
 	 * be allowed.
-	 * 
+	 *
 	 * @return
 	 */
 	protected boolean shouldNavigate(PlannedJoin join){
 		// first : check that the end node wasn't visited already
 		InternalEntityType dest = join.getDest();
-		if (visited.contains(dest)){
-			return false;
-		}
-		return true;
+		return !visited.contains(dest);
 	}
 
 
 	/**
 	 *	<p>returns an exhaustive QueryPlan (it still needs to be trimmed afterward, using {@link QueryPlan#trim(DetailedChartQuery)})</p>
 	 *	<p>warning : this instance of DomainGraph will be altered in the process</p>
-	 * 
+	 *
 	 */
 
 	/*
@@ -313,18 +310,18 @@ class DomainGraph {
 
 	/*
 	 * Developper from the Future, read this !
-	 * 
+	 *
 	 * Step 1 details :
 	 * 	by default any outbound node from the root entity (and thereafter) is legit for joining. However
 	 * 	in some cases it might not be acceptable in the future : the domain graph could contain loops,
 	 *  which means that many directed paths are possible between two nodes.
-	 * 
+	 *
 	 *  For instance in the future one could join TestCase with Execution and/or TestCase with Item and/or Item with
 	 *  Execution : we don't want all three happen at the same time. Thus, we need an additional validation step
 	 *  to prevent this.
-	 * 
+	 *
 	 *  This step is included in the process, and returns always true for now.
-	 * 
+	 *
 	 */
 	private QueryPlan morphToQueryPlan(){
 
@@ -332,7 +329,7 @@ class DomainGraph {
 
 		InternalEntityType rootType = definition.getRootEntity();
 
-		if (reverse == false){
+		if (!reverse){
 			rootType = definition.getRootEntity();
 		}
 		else{
@@ -395,7 +392,7 @@ class DomainGraph {
 
 	/**
 	 * A node in the Domain graph : it represents an entity type (table) that can potentially be traversed
-	 * 
+	 *
 	 * @author bsiri
 	 *
 	 */

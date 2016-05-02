@@ -161,7 +161,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 	public PagedCollectionHolder<List<CampaignTestPlanItem>> findTestPlanByCampaignId(long campaignId,	PagingAndSorting filter) {
 		List<CampaignTestPlanItem> tcs = campaignDao.findAllTestPlanByIdFiltered(campaignId, filter);
 		long count = campaignDao.countTestPlanById(campaignId);
-		return new PagingBackedPagedCollectionHolder<List<CampaignTestPlanItem>>(filter, count, tcs);
+		return new PagingBackedPagedCollectionHolder<>(filter, count, tcs);
 	}
 
 	@Override
@@ -171,7 +171,7 @@ public class CampaignTestPlanManagerServiceImpl implements CampaignTestPlanManag
 		List<IndexedCampaignTestPlanItem> indexedItems = campaignDao.findFilteredIndexedTestPlan(campaignId, sorting, filtering);
 		long testPlanSize = campaignDao.countFilteredTestPlanById(campaignId, filtering);
 
-		return new PagingBackedPagedCollectionHolder<List<IndexedCampaignTestPlanItem>>(sorting, testPlanSize, indexedItems);
+		return new PagingBackedPagedCollectionHolder<>(sorting, testPlanSize, indexedItems);
 	}
 
 

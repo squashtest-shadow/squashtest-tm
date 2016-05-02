@@ -97,7 +97,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 	public PagedCollectionHolder<List<Team>> findAllFiltered(PagingAndSorting paging, Filtering filtering) {
 		List<Team> teams = teamDao.findSortedTeams(paging, filtering);
 		long count = teamDao.count();
-		return new PagingBackedPagedCollectionHolder<List<Team>>(paging, count, teams);
+		return new PagingBackedPagedCollectionHolder<>(paging, count, teams);
 	}
 
 	@Override
@@ -158,7 +158,7 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 			Filtering filtering) {
 		List<User> teamMates = userDao.findAllTeamMembers(teamId, sorting, filtering);
 		long allMates = userDao.countAllTeamMembers(teamId);
-		return new PagingBackedPagedCollectionHolder<List<User>>(sorting, allMates, teamMates);
+		return new PagingBackedPagedCollectionHolder<>(sorting, allMates, teamMates);
 	}
 
 	@Override

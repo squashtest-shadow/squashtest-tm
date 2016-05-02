@@ -54,10 +54,7 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	public boolean isUsedByOneOrMoreProject(long infoListId) {
 		Query query = currentSession().getNamedQuery("infoList.findProjectUsingInfoList");
 		query.setParameter("id", infoListId);
-		if (query.list().size() > 0) {
-			return true;
-		}
-		return false;
+		return !query.list().isEmpty();
 	}
 
 	@Override

@@ -34,15 +34,15 @@ import org.slf4j.LoggerFactory;
 
 /*package private*/final class ExcelRowReaderUtils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelRowReaderUtils.class);
-	
+
 	private ExcelRowReaderUtils(){
-		
+
 	}
-	
+
 	/**
 	 * If the cell is of numeric type : will find the cell of the given header tag and will, get it's numerical value.<br>
 	 * If the cell is of String type, will try to parse the string value of the cell and return <code>null</code> if parsing failed.
-	 * 
+	 *
 	* @param row : the concerned row
 	 * @param columnsMapping : a map linking the header name to the column index
 	 * @param tag : the column header
@@ -59,8 +59,7 @@ import org.slf4j.LoggerFactory;
 				if (type == Cell.CELL_TYPE_STRING) {
 					String value2s = cell.getStringCellValue();
 					try {
-						Double value2d = Double.parseDouble(value2s);
-						toReturn = value2d;
+						toReturn = Double.parseDouble(value2s);
 					} catch (NumberFormatException nfe) {
 						LOGGER.warn(nfe.getMessage());
 					}
@@ -84,16 +83,14 @@ import org.slf4j.LoggerFactory;
 		if (cell != null) {
 			int type = cell.getCellType();
 			if (type == Cell.CELL_TYPE_NUMERIC) {
-				Date date = cell.getDateCellValue();
-				toReturn = date;
+				toReturn = cell.getDateCellValue();
 
 			} else {
 				if (type == Cell.CELL_TYPE_STRING) {
 					String dateS = cell.getStringCellValue();
 
 					try {
-						Date date = new SimpleDateFormat("dd/MM/yyyy").parse(dateS);
-						toReturn = date;
+						toReturn = new SimpleDateFormat("dd/MM/yyyy").parse(dateS);
 					} catch (ParseException e) {
 						LOGGER.warn(e.getMessage());
 					}
@@ -102,10 +99,10 @@ import org.slf4j.LoggerFactory;
 		}
 		return toReturn;
 	}
-	
+
 	/**
 	 * If the cell is of String type : will return it's value if not empty<br>
-	 * If the cell is of numeric type : will return the number as String (Integer (if round) or Double value) 
+	 * If the cell is of numeric type : will return the number as String (Integer (if round) or Double value)
 	 * @param row : the concerned row
 	 * @param columnsMapping : a map linking the header name to the column index
 	 * @param tag : the column header
@@ -134,7 +131,7 @@ import org.slf4j.LoggerFactory;
 		}
 		return toReturn;
 	}
-	
+
 	private static boolean notEmpty(String string) {
 		return (string != null && (!string.isEmpty()));
 	}
@@ -146,19 +143,19 @@ import org.slf4j.LoggerFactory;
 		}
 		return null;
 	}
-	
+
 	public static Map<String, Integer>  mapColumns (Sheet sheet) {
 		Map<String, Integer> columnsMapping = new HashMap<>();
-		
+
 		Row firstRow = sheet.getRow(0);
 		for(int c = 0 ; c < firstRow.getLastCellNum(); c++){
 			Cell headerCell =  firstRow.getCell(c);
-			if(headerCell != null){		
+			if(headerCell != null){
 			String headerTag = headerCell.getStringCellValue();
 			columnsMapping.put(headerTag.toUpperCase(), c);
 			}
 		}
 		return columnsMapping;
-				
+
 	}
 }

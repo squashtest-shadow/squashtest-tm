@@ -61,7 +61,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 			+ "left outer join IterationTestPlanItem.user as User " + "where TestSuite.id = :suiteId ";
 
 
-	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<String, Map<String, String>>();
+	private static final Map<String, Map<String, String>> VALUE_DEPENDENT_FILTER_CLAUSES = new HashMap<>();
 
 	private static final String VDFC_DEFAULT_KEY = "VDFC_DEFAULT_KEY";
 

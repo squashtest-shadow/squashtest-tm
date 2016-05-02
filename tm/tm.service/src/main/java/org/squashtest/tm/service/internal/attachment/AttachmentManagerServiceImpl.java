@@ -68,7 +68,7 @@ import org.squashtest.tm.service.internal.repository.AttachmentListDao;
 @Service("squashtest.tm.service.AttachmentManagerService")
 public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	/**
-	 * 
+	 *
 	 */
 	private static final int EOF = -1;
 
@@ -196,7 +196,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId, PagingAndSorting pas) {
 		List<Attachment> atts = attachmentDao.findAllAttachmentsFiltered(attachmentListId, pas);
 		long count = attachmentDao.findAllAttachments(attachmentListId).size();
-		return new PagingBackedPagedCollectionHolder<List<Attachment>>(pas, count, atts);
+		return new PagingBackedPagedCollectionHolder<>(pas, count, atts);
 	}
 
 	@Override

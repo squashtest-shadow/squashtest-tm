@@ -56,22 +56,22 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(folderId, nameStart);
 		return executeListNamedQuery("requirementFolder.findNamesInFolderStartingWith", newCallBack1);
 	}
-	
+
 	@Override
 	public List<String> findNamesInLibraryStartingWith(final long libraryId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(libraryId, nameStart);
 		return executeListNamedQuery("requirementFolder.findNamesInLibraryStartingWith", newCallBack1);
 	}
-	
-	
+
+
 	@Override
 	public List<String> findNamesInNodeStartingWith(final long nodeId, final String nameStart) {
 		SetQueryParametersCallback newCallBack1 = new ContainerIdNameStartParameterCallback(nodeId, nameStart);
 		return executeListNamedQuery("requirementLibraryNode.findNamesInNodeStartingWith", newCallBack1);
-		
+
 	}
 
-	
+
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -106,9 +106,9 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 		return query.list();
 	}
 
-	
+
 	private List<Long[]> toArrayOfLong(List<Object[]> input) {
-		List<Long[]> result = new ArrayList<Long[]>();
+		List<Long[]> result = new ArrayList<>();
 
 		for (Object[] pair : input) {
 			Long[] newPair = new Long[] { (Long) pair[0], (Long) pair[1] };
@@ -123,7 +123,7 @@ public class HibernateRequirementFolderDao extends HibernateEntityDao<Requiremen
 		SetQueryParametersCallback newCallBack = new ContentIdParametterCallback(id);
 		return executeEntityNamedQuery("requirementFolder.findParentOf", newCallBack);
 	}
-	
+
 	private static final class ContentIdParametterCallback implements SetQueryParametersCallback {
 		private long contentId;
 		private ContentIdParametterCallback(long contentId){

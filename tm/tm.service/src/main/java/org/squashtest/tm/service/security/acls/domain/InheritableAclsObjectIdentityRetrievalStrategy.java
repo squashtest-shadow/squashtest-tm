@@ -42,9 +42,9 @@ import org.squashtest.tm.security.annotation.InheritsAcls;
 /**
  * This {@link ObjectIdentityRetrievalStrategy} checks if an entity should inherit ACLs from another entity. If so, the
  * object identity will be retrieved from the "constrained" object.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Component("squashtest.core.security.ObjectIdentityRetrievalStrategy")
 public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIdentityRetrievalStrategy {
@@ -62,8 +62,8 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 		}
 
 		// GENERATED:START
-		@Override 
-		public int hashCode() { 
+		@Override
+		public int hashCode() {
 			final int prime = 31;
 			int result = 17;
 			result = prime * result + ((heir == null) ? 0 : heir.hashCode());
@@ -74,7 +74,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 
 		// GENERATED:START
 		@Override
-		public boolean equals(Object obj) { 
+		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
@@ -119,7 +119,7 @@ public class InheritableAclsObjectIdentityRetrievalStrategy implements ObjectIde
 	/**
 	 * Cache of hql queries used to retrieved constrained objects.
 	 */
-	private final Map<InheritableAclsObjectIdentityRetrievalStrategy.Key, String> hqlCache = new ConcurrentHashMap<InheritableAclsObjectIdentityRetrievalStrategy.Key, String>();
+	private final Map<InheritableAclsObjectIdentityRetrievalStrategy.Key, String> hqlCache = new ConcurrentHashMap<>();
 
 	/**
 	 * If the domain object is annotated with {@link InheritsAcls}, will return an {@link ObjectIdentity} according to

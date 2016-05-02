@@ -131,10 +131,10 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 			Authentication authentication = userContextService.getPrincipal();
 			Field[] fields = CustomPermission.class.getFields();
 			// TODO below is a hacky enum of all rights, should be externalized.
-			for (int i = 0; i < fields.length; i++) {
+			for (Field field : fields) {
 				try {
-					if ((!fields[i].getName().equals("READ"))
-						&& permissionEvaluator.hasPermission(authentication, object, fields[i].getName())) {
+					if ((!field.getName().equals("READ"))
+						&& permissionEvaluator.hasPermission(authentication, object, field.getName())) {
 						return true;
 					}
 				} catch (IllegalArgumentException iaexecption) {

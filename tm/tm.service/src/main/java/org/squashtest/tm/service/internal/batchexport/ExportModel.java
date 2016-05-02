@@ -489,7 +489,7 @@ public class ExportModel {
 			this.nbReq = nbReq;
 			this.nbAttach = nbAttach;
 			this.calledDsName = calledDsName;	// special call steps
-			this.delegateParameters = (delegateParameters==1) ? true : false; // special call steps
+			this.delegateParameters = (delegateParameters == 1); // special call steps
 		}
 
 		public String getTcOwnerPath() {

@@ -93,7 +93,7 @@ public class TestSuiteTestInventoryStatistics {
 	public int getNbSettled() {
 		return statusesNb.get(ExecutionStatus.SETTLED);
 	}
-	
+
 	public int getNbFailure() {
 		return statusesNb.get(ExecutionStatus.FAILURE);
 	}
@@ -213,7 +213,7 @@ public class TestSuiteTestInventoryStatistics {
 			thisNb += nb;
 			statusesNb.put(status, thisNb);
 		} else {
-			statusesNb.put(status, Integer.valueOf(nb));
+			statusesNb.put(status, nb);
 		}
 	}
 }

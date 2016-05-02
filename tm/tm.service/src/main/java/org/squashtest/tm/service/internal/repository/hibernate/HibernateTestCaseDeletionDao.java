@@ -43,9 +43,9 @@ import org.squashtest.tm.service.internal.repository.TestCaseDeletionDao;
 
 /*
  * we'll perform a lot of operation using SQL because Hibernate whine at bulk-delete on polymorphic entities.
- * 
+ *
  * See bugs : HHH-4183, HHH-1361, HHH-1657
- * 
+ *
  */
 
 @Repository
@@ -140,12 +140,12 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	@Override
 	/*
 	 * we're bound to use sql since hql offers no solution here.
-	 * 
+	 *
 	 * that method will perform the following :
-	 * 
+	 *
 	 * - update the order of all campaign item test plan ranked after the ones we're about to delete - delete the
 	 * campaign item test plans.
-	 * 
+	 *
 	 * Also, because MySQL do not support sub queries selecting from the table being updated we have to proceed with the
 	 * awkward treatment that follows :
 	 */
@@ -167,9 +167,9 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 
 	/*
 	 * same comment than for HibernateTestCaseDeletionDao#removeCallingCampaignItemTestPlan
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.squashtest.csp.tm.internal.repository.TestCaseDeletionDao#removeOrSetNullCallingIterationItemTestPlan(java
 	 * .util.List)
@@ -249,7 +249,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 	}
 
 	private Map<Integer, List<Long>> buildMapOfOffsetAndIds(List<Object[]> list) {
-		Map<Integer, List<Long>> result = new HashMap<Integer, List<Long>>();
+		Map<Integer, List<Long>> result = new HashMap<>();
 
 		for (Object[] pair : list) {
 			Integer offset = ((BigInteger) pair[1]).intValue();

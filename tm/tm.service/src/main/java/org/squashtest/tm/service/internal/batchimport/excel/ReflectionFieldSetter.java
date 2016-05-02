@@ -28,9 +28,9 @@ import org.springframework.util.ReflectionUtils;
 
 /**
  * Sets an object's field through reflection. When value is declared optional, <code>null</code> values are not set.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class ReflectionFieldSetter<VAL, TARGET> implements PropertySetter<VAL, TARGET> {
 	private final String fieldName;
@@ -43,19 +43,19 @@ public final class ReflectionFieldSetter<VAL, TARGET> implements PropertySetter<
 	/**
 	 * Creates a {@link ReflectionFieldSetter} with mandatory values, ie the {@link ReflectionFieldSetter} shall try to
 	 * set any given value.
-	 * 
+	 *
 	 * @param name
 	 *            name of the field.
 	 * @return
 	 */
 	public static <V, T> ReflectionFieldSetter<V, T> forField(@NotNull String name) {
-		return new ReflectionFieldSetter<V, T>(name);
+		return new ReflectionFieldSetter<>(name);
 	}
 
 	/**
 	 * Creates a {@link ReflectionFieldSetter} with optional values, ie the {@link ReflectionFieldSetter} shall discard
 	 * any <code>null</code> value.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */

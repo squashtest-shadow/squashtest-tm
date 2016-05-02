@@ -246,8 +246,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
 		if (textModel.getValue() != null && StringUtils.isNotBlank(textModel.getValue())) {
-			List<String> inputs = parseInput(textModel.getValue());
-			return inputs;
+			return  parseInput(textModel.getValue());
 		}
 
 		return Collections.emptyList();

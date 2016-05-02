@@ -179,7 +179,7 @@ public class RequirementVersionAdvancedSearchServiceImpl extends AdvancedSearchS
 
 
 		}
-		return new PagingBackedPagedCollectionHolder<List<RequirementVersion>>(sorting, countAll, result);
+		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
 

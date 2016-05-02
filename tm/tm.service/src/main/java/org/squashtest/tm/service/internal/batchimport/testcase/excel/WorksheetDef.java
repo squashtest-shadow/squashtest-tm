@@ -36,15 +36,15 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 
 /**
  * Definition of a worksheet that is to be processd by the importer.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class WorksheetDef<COL extends TemplateColumn> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(WorksheetDef.class);
 
 	private final TemplateWorksheet worksheetType;
-	private final Map<COL, StdColumnDef<COL>> stdColumnDefs = new HashMap<COL, StdColumnDef<COL>>();
+	private final Map<COL, StdColumnDef<COL>> stdColumnDefs = new HashMap<>();
 	private final List<CustomFieldColumnDef> customFieldDefs = new ArrayList<>();
 	private final List<UnknownColumnDef> unknownColumnDefs = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 
 	/**
 	 * Validates this {@link WorksheetDef}. Unrecoverable mismatches from template will throw an exception.
-	 * 
+	 *
 	 * @returns {@link WorksheetFormatStatus} that holds the possible Column mismatches
 	 */
 	WorksheetFormatStatus validate() {
@@ -106,7 +106,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 
 	/**
 	 * Adds a column. This should not be used after build time / validation.
-	 * 
+	 *
 	 * @param header
 	 * @param colIndex
 	 * @return
@@ -153,7 +153,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 	}
 
 	public List<StdColumnDef<COL>> getImportableColumnDefs() {
-		List<StdColumnDef<COL>> res = new ArrayList<StdColumnDef<COL>>(stdColumnDefs.size());
+		List<StdColumnDef<COL>> res = new ArrayList<>(stdColumnDefs.size());
 
 		for (Entry<COL, StdColumnDef<COL>> entry : stdColumnDefs.entrySet()) {
 			if (!isIgnored(entry.getKey())) {
@@ -178,7 +178,7 @@ public class WorksheetDef<COL extends TemplateColumn> {
 
 	/**
 	 * Name of the worksheet in the workbook
-	 * 
+	 *
 	 * @return
 	 */
 	public String getSheetName() {

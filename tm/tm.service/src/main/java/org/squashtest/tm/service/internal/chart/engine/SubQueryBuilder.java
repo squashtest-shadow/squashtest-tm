@@ -37,7 +37,7 @@ import com.querydsl.core.types.dsl.Expressions;
 
 /**
  * This class creates a subquery, it is used for ChartQueries having a QueryStrategy = SUBQUERY.
- * 
+ *
  * @author bsiri
  *
  */
@@ -121,10 +121,10 @@ class SubQueryBuilder extends QueryBuilder {
 
 		List<AxisColumn> axes = queryDefinition.getAxis();
 
-		for (int i=0; i< axes.size(); i++){
+		for (AxisColumn axe : axes) {
 
 			Expression<?> outerAxis = subselectProfileJoinExpression.get(0);
-			Expression<?> subAxis = utils.getQBean(axes.get(i));
+			Expression<?> subAxis = utils.getQBean(axe);
 
 			joinWhere.and(Expressions.predicate(Ops.EQ, outerAxis, subAxis));
 		}

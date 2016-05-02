@@ -89,7 +89,7 @@ public final class EntityLockManager {
 		}
 	}
 
-	private static final Map<EntityRef, WeakReference<ReentrantLock>> locks = new ConcurrentHashMap<EntityRef, WeakReference<ReentrantLock>>();
+	private static final Map<EntityRef, WeakReference<ReentrantLock>> locks = new ConcurrentHashMap<>();
 
 	/**
 	 * Gets a lock for the given entity.
@@ -122,7 +122,7 @@ public final class EntityLockManager {
 		ReentrantLock lock;
 		LOGGER.trace("Creating new weak reference and lock for entity {}", ref);
 		lock = new ReentrantLock();
-		locks.put(ref, new WeakReference<ReentrantLock>(lock));
+		locks.put(ref, new WeakReference<>(lock));
 		return lock;
 	}
 

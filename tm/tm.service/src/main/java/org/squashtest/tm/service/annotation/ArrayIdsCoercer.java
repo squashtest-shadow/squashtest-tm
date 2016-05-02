@@ -38,9 +38,8 @@ public class ArrayIdsCoercer implements IdsCoercer {
 	public Collection<? extends Serializable> coerce (Object object) {
 		Collection<Serializable> collection = new ArrayList<>();
 		Object[] objects = (Object[]) object;
-		for (int i = 0; i < objects.length; i++) {
-			Object obj = objects[i];
-			collection.add((Serializable)obj);
+		for (Object obj : objects) {
+			collection.add((Serializable) obj);
 		}
 		return collection;
 	}

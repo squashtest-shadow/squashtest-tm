@@ -43,7 +43,7 @@ import org.squashtest.tm.service.customfield.CustomFieldValueManagerService;
 
 /**
  * @author bsiri, Gregory Fouquet
- * 
+ *
  * @param <X>
  */
 public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implements CustomFieldHelper<X> {
@@ -72,7 +72,7 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 				if (orig.isEmpty()) {
 					return addition;
 				} else {
-					return new ArrayList<CustomField>(CollectionUtils.intersection(orig, addition));
+					return new ArrayList<>(CollectionUtils.intersection(orig, addition));
 				}
 			}
 		},
@@ -88,7 +88,7 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public AbstractCustomFieldHelper() {
 		super();
@@ -146,7 +146,7 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 	 * Return the CustomFields referenced by the CustomFieldBindings for the given project and BindableEntity type,
 	 * ordered by their position. The location argument is optional, if set then only the custom fields that are
 	 * rendered in at least one of these locations will be returned.
-	 * 
+	 *
 	 * @param projectId
 	 * @param entityType
 	 * @return
@@ -170,7 +170,7 @@ public abstract class AbstractCustomFieldHelper<X extends BoundEntity> implement
 
 	@SuppressWarnings("serial")
 	protected static final class BindingSorter implements Comparator<CustomFieldBinding>, Serializable {
-		
+
 		@Override
 		public int compare(CustomFieldBinding o1, CustomFieldBinding o2) {
 			return o1.getPosition() - o2.getPosition();

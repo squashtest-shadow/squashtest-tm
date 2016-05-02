@@ -48,7 +48,7 @@ public class CRLNDeletionHandler implements
 	 */
 	@Override
 	public List<SuppressionPreviewReport> simulateDeletion(List<Long> targetIds) {
-		return new ArrayList<SuppressionPreviewReport>();
+		return new ArrayList<>();
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class CRLNDeletionHandler implements
 		int descendantNumber = targetIds.size();
 		List<Long> currentLayerIds = targetIds;
 		LockedFolderInferenceTree tree = new LockedFolderInferenceTree();
-		List<Long[]> pairedIds = new ArrayList<Long[]>();
+		List<Long[]> pairedIds = new ArrayList<>();
 
 		//adding the root nodes to tree
 		addMultipleChildToParent(null,targetIds,pairedIds);

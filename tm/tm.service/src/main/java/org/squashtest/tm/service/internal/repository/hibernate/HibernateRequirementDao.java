@@ -170,7 +170,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	private Collection<Object[]> addPathInfos(final List<Requirement> requirements) {
 		if (!requirements.isEmpty()) {
 
-			Map<Long, Object[]> exportInfosById = new HashMap<Long, Object[]>(requirements.size());
+			Map<Long, Object[]> exportInfosById = new HashMap<>(requirements.size());
 			for (Requirement requirement : requirements) {
 				Object[] exportInfo = new Object[3];
 				exportInfo[0] = requirement;
@@ -319,7 +319,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	public List<Long> findAllRequirementsIdsByLibrary(long libraryId) {
 		Session session = currentSession();
 		SQLQuery query = session.createSQLQuery(FIND_ALL_FOR_LIBRARY_QUERY);
-		query.setParameter("libraryId", Long.valueOf(libraryId));
+		query.setParameter("libraryId", libraryId);
 		query.setResultTransformer(new SqLIdResultTransformer());
 		return query.list();
 	}
@@ -334,7 +334,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	@Override
 	public List<Object[]> findAllParentsOf(List<Long> requirementIds) {
 		if (!requirementIds.isEmpty()) {
-			List<Object[]> allpairs = new ArrayList<Object[]>(requirementIds.size());
+			List<Object[]> allpairs = new ArrayList<>(requirementIds.size());
 
 			List<Object[]> libraryReqs = executeListNamedQuery("requirement.findAllLibraryParents",
 					new SetRequirementsIdsParameterCallback(requirementIds));
@@ -422,38 +422,38 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 				.getNamedQuery("requirement.findNodeIdByRemoteKey")
 				.setParameter("key", remoteKey);
 		return (Long)q.uniqueResult();
-				
+
 	}
 
 	@Override
 	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys) {
-		
+
 		if (remoteKeys.isEmpty()){
 			return new ArrayList<>();
 		}
-		
+
 		QRequirement req = QRequirement.requirement;
 		QRequirementSyncExtender sync = QRequirementSyncExtender.requirementSyncExtender;
-		
-		
-		HibernateQuery<Map<String, Long>> query = new HibernateQuery<>(currentSession()); 
-		
+
+
+		HibernateQuery<Map<String, Long>> query = new HibernateQuery<>(currentSession());
+
 		Map<String, Long> idsByKeys = query.select(req.id)
 											.from(req).innerJoin(req.syncExtender, sync)
 											.where(sync.remoteReqId.in(remoteKeys))
 											.transform(GroupBy.groupBy(sync.remoteReqId).as(req.id));
-		
+
 		// now build a result with an order consistent with the input order
 		List<Long> res = new ArrayList<>(remoteKeys.size());
-		
+
 		for (String key : remoteKeys){
 			Long id = idsByKeys.get(key);
 			res.add(id);
 		}
-		
+
 		return res;
-			
+
 	}
 
-	
+
 }

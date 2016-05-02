@@ -320,11 +320,7 @@ public class VerifiedRequirementsManagerServiceImpl implements
 				indexationService.reindexTestCase(testCase.getId());
 				indexationService.reindexRequirementVersion(requirementVersion
 					.getId());
-			} catch (RequirementAlreadyVerifiedException ex) {
-				LOGGER.warn(ex.getMessage());
-				rejections.add(ex);
-				iterator.remove();
-			} catch (RequirementVersionNotLinkableException ex) {
+			} catch (RequirementAlreadyVerifiedException | RequirementVersionNotLinkableException ex) {
 				LOGGER.warn(ex.getMessage());
 				rejections.add(ex);
 				iterator.remove();
@@ -367,11 +363,7 @@ requirementsIds);
 					if (!newReqCoverage) {
 						iterator.remove();
 					}
-				} catch (RequirementAlreadyVerifiedException ex) {
-					LOGGER.warn(ex.getMessage());
-					iterator.remove();
-					rejections.add(ex);
-				} catch (RequirementVersionNotLinkableException ex) {
+				} catch (RequirementAlreadyVerifiedException | RequirementVersionNotLinkableException ex) {
 					LOGGER.warn(ex.getMessage());
 					iterator.remove();
 					rejections.add(ex);
@@ -444,10 +436,7 @@ requirementsIds);
 					.changeImportanceIfRelationsAddedToTestCase(
 						Arrays.asList(version), testCase);
 			}
-		} catch (RequirementAlreadyVerifiedException ex) {
-			LOGGER.warn(ex.getMessage());
-			rejections.add(ex);
-		} catch (RequirementVersionNotLinkableException ex) {
+		} catch (RequirementAlreadyVerifiedException | RequirementVersionNotLinkableException ex) {
 			LOGGER.warn(ex.getMessage());
 			rejections.add(ex);
 		}
@@ -1080,7 +1069,7 @@ List<Long> requirementsIds) {
 	}
 
 	private List<RequirementVersion> findValidDescendants(Requirement requirement) {
-		List<Long> candidatesIds = requirementDao.findDescendantRequirementIds(Arrays.asList(new Long[]{requirement.getId()}));
+		List<Long> candidatesIds = requirementDao.findDescendantRequirementIds(Arrays.asList(requirement.getId()));
 		List<Requirement> candidates = requirementDao.findAllByIds(candidatesIds);
 		return extractCurrentVersions(candidates);
 	}

@@ -39,7 +39,7 @@ public class RequirementExcelBatchImporter extends ExcelBatchImporter {
 
 	@Override
 	public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
-		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
+		List<Instruction<?>> instructions = new ArrayList<>();
 
 		switch (entityType) {
 

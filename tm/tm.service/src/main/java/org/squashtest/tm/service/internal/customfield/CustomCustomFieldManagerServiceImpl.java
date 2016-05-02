@@ -53,9 +53,9 @@ import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Service("CustomCustomFieldManagerService")
 public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldManagerService {
@@ -82,7 +82,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter) {
 		List<CustomField> customFields = customFieldDao.findSortedCustomFields(filter);
 		long count = customFieldDao.count();
-		return new PagingBackedPagedCollectionHolder<List<CustomField>>(filter, count, customFields);
+		return new PagingBackedPagedCollectionHolder<>(filter, count, customFields);
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 	@Override
 	public List<String> getAvailableTagsForEntity(String boundEntityType, List<Long> projectIds) {
-		
+
 		return customFieldValueDao.findAllAvailableTagForEntityInProjects(BindableEntity.valueOf(boundEntityType), projectIds);
 	}
 

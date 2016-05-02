@@ -33,9 +33,9 @@ import org.squashtest.tm.core.foundation.collection.Sorting;
 
 /**
  * Utility class to apply sorting to a Hibernate query.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public final class SortingUtils {
 
@@ -49,7 +49,7 @@ public final class SortingUtils {
 
 	/**
 	 * Adds sorting to a Criteria query.
-	 * 
+	 *
 	 * @param criteria
 	 * @param sorting
 	 */
@@ -73,9 +73,7 @@ public final class SortingUtils {
 	}
 
 	public static void addOrders(Criteria criteria, Collection<Sorting> sortings) {
-		Iterator<Sorting> iterator = sortings.iterator();
-		while (iterator.hasNext()) {
-			Sorting next = iterator.next();
+		for (Sorting next : sortings) {
 			addOrder(criteria, next);
 		}
 	}

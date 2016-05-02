@@ -38,8 +38,8 @@ import org.squashtest.tm.service.internal.advancedsearch.IndexationServiceImpl;
 public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor {
 
 
-	private static final Map<Class<?>, String> dateKeys = new HashMap<Class<?>, String>();
-	private static final Map<Class<?>, String> versionKeys = new HashMap<Class<?>, String>();
+	private static final Map<Class<?>, String> dateKeys = new HashMap<>();
+	private static final Map<Class<?>, String> versionKeys = new HashMap<>();
 
 	static {
 		dateKeys.put(RequirementVersion.class, IndexationServiceImpl.REQUIREMENT_INDEXING_DATE_KEY);
@@ -55,13 +55,13 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 	private ConfigurationService configurationService;
 	private List<Class<?>> indexedDomains;
 	private Class<?> indexedClass;
-	
+
 	private SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm");
 
 	public AdvancedSearchIndexingMonitor(List<Class<?>> classes, ConfigurationService configurationService) {
 		this.configurationService = configurationService;
 		this.indexedDomains = classes;
-		
+
 		if (multipleIndex()) {
 			IndexMonitor.resetTotal();
 		} else {
@@ -70,13 +70,10 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 		}
 
 	}
-	
+
 
 	private boolean multipleIndex() {
-		if (indexedDomains.size() > 1) {
-			return true;
-		}
-		return false;
+		return indexedDomains.size() > 1;
 	}
 
 	private IndexMonitor getCurrentMonitor() {
@@ -103,7 +100,7 @@ public class AdvancedSearchIndexingMonitor implements MassIndexerProgressMonitor
 
 	@Override
 	public void indexingCompleted() {
-		
+
 		Date indexingDate = new Date();
 		String currentVersion = this.configurationService.findConfiguration(IndexationServiceImpl.SQUASH_VERSION_KEY);
 

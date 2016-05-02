@@ -33,58 +33,58 @@ public class NotDeletablePreviewReport implements SuppressionPreviewReport {
 
 	private static final String NODES_NAMES_MESSAGE_KEY = "squashtm.deletion.preview.notdeletable.whichnodes";
 	private static final String WHY_MESSAGE_KEY = "squashtm.deletion.preview.notdeletable.why";
-	
-	
+
+
 	private final Set<String> nodeNames = new HashSet<>();
 	private final Set<String> why = new HashSet<>();
-	
+
 	@Override
 	public String toString(MessageSource source, Locale locale) {
 		StringBuilder builder = new StringBuilder();
-		
+
 		if (! nodeNames.isEmpty()){
-		
+
 			builder.append(source.getMessage(NODES_NAMES_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
 			builder.append(setToString(nodeNames));
 			builder.append("<br/>");
-			
+
 			builder.append(source.getMessage(WHY_MESSAGE_KEY, null, locale));
 			builder.append(" : ");
 			builder.append(setToString(why));
 			builder.append("<br/>");
-			
+
 		}
 		return builder.toString();
-		
+
 	}
-	
-	
+
+
 	public void addName(String name){
 		nodeNames.add(name);
-	
+
 	}
-	
+
 	public void addWhy(String why){
 		this.why.add(why);
 	}
-	
+
 	private String setToString(Set<String> set){
 		StringBuilder builder = new StringBuilder();
 		Iterator<String> iterator = set.iterator();
-		
+
 		if(iterator.hasNext()){
 			builder.append(iterator.next());
 		}
-		
+
 		while(iterator.hasNext()){
-			builder.append(", "+iterator.next());
+			builder.append(", ").append(iterator.next());
 		}
 
 		return builder.toString();
-		
+
 	}
-	
-	
-	
+
+
+
 }

@@ -109,7 +109,7 @@ public class HibernateCampaignFolderDao extends HibernateEntityDao<CampaignFolde
 	}
 
 	private List<Long[]> toArrayOfLong(List<Object[]> input) {
-		List<Long[]> result = new ArrayList<Long[]>();
+		List<Long[]> result = new ArrayList<>();
 
 		for (Object[] pair : input) {
 			Long[] newPair = new Long[] { (Long) pair[0], (Long) pair[1] };

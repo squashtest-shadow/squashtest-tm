@@ -79,7 +79,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			persisted = findByExample(test);
 		}
 
-		if (countReferences(persisted.getId()) == 0l){
+		if (countReferences(persisted.getId()) == 0L){
 			em.unwrap(Session.class).delete(persisted);
 		}
 

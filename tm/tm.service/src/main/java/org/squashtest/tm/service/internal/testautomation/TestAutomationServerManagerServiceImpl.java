@@ -128,7 +128,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		List<TestAutomationServer> sortedServers = serverDao.findPagedServers(pagingNsorting);
 		long count = serverDao.countAll();
 
-		return new PagingBackedPagedCollectionHolder<List<TestAutomationServer>>(pagingNsorting, count, sortedServers);
+		return new PagingBackedPagedCollectionHolder<>(pagingNsorting, count, sortedServers);
 	}
 
 	@Override

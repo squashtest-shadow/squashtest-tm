@@ -111,7 +111,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 
 	@Inject
 	private MilestoneManagerService milestoneManagerService;
-	
+
 	@Inject
 	private ChartModificationService chartModificationService;
 
@@ -186,7 +186,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 	public PagedCollectionHolder<List<User>> findAllUsersFiltered(PagingAndSorting sorter, Filtering filter) {
 		List<User> list = userDao.findAllUsers(sorter, filter);
 		long count = userDao.findAll().size();
-		return new PagingBackedPagedCollectionHolder<List<User>>(sorter, count, list);
+		return new PagingBackedPagedCollectionHolder<>(sorter, count, list);
 	}
 
 	@Override
@@ -250,10 +250,10 @@ public class AdministrationServiceImpl implements AdministrationService {
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN)
 	public void deleteUsers(Collection<Long> userIds) {
-		
+
 		checkUsersOwnMilestones(userIds);
 		checkUsersOwnCharts(userIds);
-		
+
 		for (Long id : userIds) {
 			User user = userDao.findById(id);
 			checkActiveUser(user);
@@ -265,14 +265,14 @@ public class AdministrationServiceImpl implements AdministrationService {
 	}
 
 	private void checkUsersOwnCharts(Collection<Long> userIds) {
-		if (chartModificationService.hasChart(new ArrayList<Long>(userIds))){
+		if (chartModificationService.hasChart(new ArrayList<>(userIds))){
 			throw new ChartOwnerDeleteException();
 		}
-		
+
 	}
 
 	private void checkUsersOwnMilestones(Collection<Long> userIds) {
-		if (milestoneManagerService.hasMilestone(new ArrayList<Long>(userIds))) {
+		if (milestoneManagerService.hasMilestone(new ArrayList<>(userIds))) {
 			throw new MilestoneOwnerDeleteException();
 		}
 	}
@@ -410,7 +410,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 			Filtering filtering) {
 		List<Team> associatedTeams = teamDao.findSortedAssociatedTeams(userId, paging, filtering);
 		long associatedTeamsTotal = teamDao.countAssociatedTeams(userId);
-		return new PagingBackedPagedCollectionHolder<List<Team>>(paging, associatedTeamsTotal, associatedTeams);
+		return new PagingBackedPagedCollectionHolder<>(paging, associatedTeamsTotal, associatedTeams);
 
 	}
 
@@ -528,7 +528,7 @@ public class AdministrationServiceImpl implements AdministrationService {
 		query.setParameter("login", login);
 		return (String) query.uniqueResult();
 	}
-	
-	
+
+
 
 }

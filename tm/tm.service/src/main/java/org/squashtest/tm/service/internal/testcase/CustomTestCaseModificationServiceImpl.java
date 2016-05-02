@@ -321,7 +321,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public PagedCollectionHolder<List<TestStep>> findStepsByTestCaseIdFiltered(long testCaseId, Paging paging) {
 		List<TestStep> list = testCaseDao.findAllStepsByIdFiltered(testCaseId, paging);
 		long count = findStepsByTestCaseId(testCaseId).size();
-		return new PagingBackedPagedCollectionHolder<List<TestStep>>(paging, count, list);
+		return new PagingBackedPagedCollectionHolder<>(paging, count, list);
 	}
 
 	@Override
@@ -329,7 +329,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreventConcurrent(entityType=TestCase.class)
 	public boolean pasteCopiedTestStep(@Id long testCaseId, long idInsertion, long copiedTestStepId) {
 		Integer position = testStepDao.findPositionOfStep(idInsertion) + 1;
-		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), position);
+		return pasteTestStepAtPosition(testCaseId, Arrays.asList(copiedTestStepId), position);
 	}
 
 	@Override
@@ -344,7 +344,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize(WRITE_TC_OR_ROLE_ADMIN)
 	@PreventConcurrent(entityType=TestCase.class)
 	public boolean pasteCopiedTestStepToLastIndex(@Id long testCaseId, long copiedTestStepId) {
-		return pasteTestStepAtPosition(testCaseId, Arrays.asList(new Long[]{copiedTestStepId}), null);
+		return pasteTestStepAtPosition(testCaseId, Arrays.asList(copiedTestStepId), null);
 	}
 
 	@Override
@@ -427,7 +427,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 
 		List<TestCase> callers = testCaseDao.findAllCallingTestCases(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
-		return new PagingBackedPagedCollectionHolder<List<TestCase>>(sorting, countCallers, callers);
+		return new PagingBackedPagedCollectionHolder<>(sorting, countCallers, callers);
 
 	}
 
@@ -435,7 +435,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public PagedCollectionHolder<List<CallTestStep>> findCallingTestSteps(long testCaseId, PagingAndSorting sorting) {
 		List<CallTestStep> callers = testCaseDao.findAllCallingTestSteps(testCaseId, sorting);
 		Long countCallers = testCaseDao.countCallingTestSteps(testCaseId);
-		return new PagingBackedPagedCollectionHolder<List<CallTestStep>>(sorting, countCallers, callers);
+		return new PagingBackedPagedCollectionHolder<>(sorting, countCallers, callers);
 	}
 
 	@Override
@@ -569,7 +569,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	public Set<Long> findCallingTCids(long updatedId, Collection<Long> callingCandidates) {
 		List<Long> callingCandidatesClone = new ArrayList<>(callingCandidates);
 		List<Long> callingLayer = testCaseDao
-				.findAllTestCasesIdsCallingTestCases(Arrays.asList(Long.valueOf(updatedId)));
+				.findAllTestCasesIdsCallingTestCases(Arrays.asList(updatedId));
 		Set<Long> callingTCToUpdate = new HashSet<>();
 		while (!callingLayer.isEmpty() && !callingCandidatesClone.isEmpty()) {
 			// filter found calling test cases
@@ -795,7 +795,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			throw new UnallowedTestAssociationException();
 		}
 
-		return new Couple<Long, String>(tap.getId(), testName);
+		return new Couple<>(tap.getId(), testName);
 	}
 
 

@@ -25,8 +25,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.squashtest.tm.domain.library.Folder;
@@ -35,7 +33,6 @@ import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
 import org.squashtest.tm.service.internal.library.NodeDeletionHandler;
 import org.squashtest.tm.service.internal.repository.FolderDao;
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 
 /**
  *
@@ -149,7 +146,7 @@ implements NodeDeletionHandler<NODE, FOLDER>{
 			return new ArrayList<>();
 		}
 
-		List<Long[]> nodeHierarchy = new ArrayList<Long[]>();
+		List<Long[]> nodeHierarchy = new ArrayList<>();
 
 		for (Long id : rootNodeIds){
 			nodeHierarchy.add(new Long[]{null, id});

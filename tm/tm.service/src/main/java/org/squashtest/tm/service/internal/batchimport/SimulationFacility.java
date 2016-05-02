@@ -96,11 +96,9 @@ public class SimulationFacility implements Facility {
 	@Override
 	public LogTrain updateActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
-		LogTrain logs = validator.updateActionStep(target, testStep, cufValues);
-
 		// no need to update the model
 
-		return logs;
+		return validator.updateActionStep(target, testStep, cufValues);
 
 	}
 
@@ -247,14 +245,13 @@ public class SimulationFacility implements Facility {
 	 */
 	@Override
 	public LogTrain updateTestCase(TestCaseInstruction instr) {
-		LogTrain logs = validator.updateTestCase(instr);
 
 		/*
 		 * In case of an update, we don't need to change the model regardless of the success or failure of the
 		 * operation.
 		 */
 
-		return logs;
+		return validator.updateTestCase(instr);
 
 	}
 

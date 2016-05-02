@@ -22,11 +22,8 @@ package org.squashtest.tm.service.internal.library;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -58,7 +55,7 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  * {@linkplain AbstractLibraryNavigationService#makeCopierStrategy(PasteStrategy)} and
  * {@linkplain AbstractLibraryNavigationService#makeMoverStrategy(PasteStrategy)} as examples).
  * <br><br>
- * 
+ *
  * <u>What is a layer ?</u><br>
  * A layer is a map holing
  * <ul>
@@ -66,22 +63,22 @@ import org.squashtest.tm.service.internal.repository.GenericDao;
  * <li>a value : the list of source {@link TreeNode} that will be processed by a {@link PasteOperation} and which result will be
  * added to the destination</li>
  * </ul>
- * 
+ *
  * @author gfouquet, mpagnon, bsiri
- * 
+ *
  * @param <CONTAINER>
  * @param <NODE>
  */
 
 /*
  * for documentation purposes :
- * 
+ *
  * @Scope("prototype")
  */
 public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends TreeNode> {
 
 	private static final Integer WHATEVER_POSITION = null;
-	
+
 	// **************** collaborators **************************
 
 	private Provider<? extends PasteOperation> nextLayersOperationFactory;
@@ -93,10 +90,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
 	private EntityDao<NODE> nodeDao;
-	
+
 	@Inject
 	private IndexationService indexationService;
-	
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -143,7 +140,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	public List<NODE> pasteNodes(long containerId, List<Long> list, Integer position) {
 		return internalPasteNodes(containerId, list, position);
 	}
-	
+
 	private List<NODE> internalPasteNodes(long containerId, List<Long> list, Integer position) {
 
 
@@ -163,23 +160,23 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 			processLayer();
 
 		}
-		
+
 		reindexAfterCopy();
 		return outputList;
 	}
 
-	
+
 	private void init(long containerId, List<Long> list) {
 		firstOperation = createFirstLayerOperation();
 		nextsOperation = createNextLayerOperation();
 		outputList = new ArrayList<>(list.size());
 		nextLayer = new ArrayList<>();
-		
-		// init the source layer		
+
+		// init the source layer
 		sourceLayer = new HashSet<>();
 		CONTAINER container = containerDao.findById(containerId);
 		NodePairing pairing = new NodePairing((NodeContainer<TreeNode>)container);
-		
+
 		for (Long contentId : list){
 			NODE srcNode = nodeDao.findById(contentId);
 			pairing.addContent(srcNode);
@@ -200,10 +197,10 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		// yeah that's an obnoxious way to get the unique element of a collection
 		// (sourceLayer contains only one pairing at that time)
 		NodePairing pairing = sourceLayer.iterator().next();
-		
+
 		CONTAINER container = (CONTAINER)pairing.getContainer();
 		Collection<TreeNode> newContent = pairing.getNewContent();
-		
+
 		for (NODE srcNode : (Collection<NODE>)newContent) {
 			NODE outputNode = (NODE) firstOperation.performOperation(srcNode, (NodeContainer<TreeNode>) container,
 					position);
@@ -215,25 +212,25 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				appendNextLayerNodes(srcNode, outputNode);
 			}
 		}
-		
+
 		reqVersionIdsToIndex.addAll(firstOperation.getRequirementVersionToIndex());
 		tcIdsToIndex.addAll(firstOperation.getTestCaseToIndex());
 	}
 
-	
-	
+
+
 	/**
 	 * Process non first layer.
 	 */
 	private void processLayer() {
-		
+
 		for (NodePairing pairing : sourceLayer){
 			NodeContainer<TreeNode> destination = pairing.getContainer();
 			Collection<TreeNode> sources = pairing.getNewContent();
-			
+
 			for (TreeNode source : sources) {
 				TreeNode outputNode = nextsOperation.performOperation(source, destination, WHATEVER_POSITION);
-				
+
 				if (nextsOperation.isOkToGoDeeper()) {
 					appendNextLayerNodes(source, outputNode);
 				}
@@ -257,7 +254,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	/**
 	 * feeds next layer avoiding nodes from the outputList.
-	 * 
+	 *
 	 * @param destNode
 	 * @param sourceNode
 	 */
@@ -265,54 +262,54 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		NextLayerFeeder feeder = nextLayerFeederOperationFactory.get();
 		feeder.feedNextLayer(destNode, sourceNode, this.nextLayer, this.outputList);
 	}
-	
+
 	private void reindexAfterCopy() {
 		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
 		em.unwrap(Session.class).flush();
 		indexationService.batchReindexTc(new ArrayList<>(tcIdsToIndex));
 		indexationService.batchReindexReqVersion(new ArrayList<>(reqVersionIdsToIndex));
 	}
-	
+
 
 	/*
-	 * Here we want to evict the nodes already processed from the Hibernate cache. We do so only 
+	 * Here we want to evict the nodes already processed from the Hibernate cache. We do so only
 	 * if that same node won't be processed again in the next iteration
-	 * 
+	 *
 	 */
 	private void removeProcessedNodesFromCache() {
-		
+
 		// if we cont flush and then evict, some entities might not be persisted
 		genericDao.flush();
-		
+
 		Collection<TreeNode> nextNodes = new HashSet<>();
 		for (NodePairing nextPairing : nextLayer){
 			nextNodes.add((TreeNode)nextPairing.getContainer());
 			nextNodes.addAll(nextPairing.getNewContent());
 		}
-		
-		
+
+
 		/*
-		 *  Now we evict what we can. Note that the collection toEvict is of generic type Object because not all nodes are TreeNode : 
+		 *  Now we evict what we can. Note that the collection toEvict is of generic type Object because not all nodes are TreeNode :
 		 *  indeed a TestCaseLibrary is not a TreeNode.
 		 */
 		for (NodePairing processed : sourceLayer){
 			Collection<Object> toEvict = new HashSet<>();
 			toEvict.add(processed.getContainer());
 			toEvict.addAll(processed.getNewContent());
-			
+
 			for (Object evi : toEvict){
 				/*
 				 * evict a node only if :
-				 * - not evicted already, 
-				 * - not a library (or at flush time the project will rant) 
+				 * - not evicted already,
+				 * - not a library (or at flush time the project will rant)
 				 */
-				if (! nextNodes.contains(evi) && 
+				if (! nextNodes.contains(evi) &&
 						! (GenericLibrary.class.isAssignableFrom(evi.getClass()))){
-					genericDao.clearFromCache(evi);					
+					genericDao.clearFromCache(evi);
 				}
 			}
 		}
-		
+
 	}
 
 }

@@ -28,7 +28,7 @@ import org.squashtest.tm.service.internal.batchimport.Messages;
 /**
  * Coerces a cell into an enum. Non coercible values throw a {@link CannotCoerceException}. Empty cells return
  * <code>null</code>.
- * 
+ *
  * @author Gregory Fouquet
  * @param the
  *            target enum.
@@ -38,7 +38,7 @@ CellValueCoercer<ENUM> {
 	private final Class<ENUM> enumType;
 
 	public static <E extends Enum<E>> OptionalEnumCellCoercer<E> forEnum(@NotNull Class<E> enumType) {
-		return new OptionalEnumCellCoercer<E>(enumType);
+		return new OptionalEnumCellCoercer<>(enumType);
 	}
 
 	private OptionalEnumCellCoercer(Class<ENUM> enumType) {

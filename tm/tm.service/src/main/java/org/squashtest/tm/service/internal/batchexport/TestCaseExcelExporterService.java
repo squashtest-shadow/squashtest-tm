@@ -58,21 +58,21 @@ public class TestCaseExcelExporterService {
 	@Qualifier("squashtest.tm.repository.TestCaseLibraryNodeDao")
 	private TestCaseLibraryNodeDao nodeDao;
 
-	@Inject 
+	@Inject
 	@Named("excelExporter")
 	private Provider<ExcelExporter> exporterProvider;
-	
-	@Inject 
+
+	@Inject
 	private Provider<SearchTestCaseExcelExporter> searchExporterProvider;
 
 	public File exportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
 		return doExportAsExcel(testCaseIds, keepRteFormat, messageSource, exporterProvider.get());
 	}
-	
+
 	public File searchExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource){
 		return doExportAsExcel(testCaseIds, keepRteFormat, messageSource, searchExporterProvider.get());
 	}
-	
+
 	private File doExportAsExcel(List<Long> testCaseIds, boolean keepRteFormat, MessageSource messageSource, ExcelExporter exporter){
 
 		// let's chunk the job by batches of 50 test cases
@@ -99,19 +99,19 @@ public class TestCaseExcelExporterService {
 		}
 
 		return exporter.print();
-	
+
 	}
 
 
 	private void populatePathsCache(Map<Long, String> pathById, Set<Long> ids){
 
-		populatePathsCache(pathById, new ArrayList<Long>(ids));
+		populatePathsCache(pathById, new ArrayList<>(ids));
 
 	}
 
 	private void populatePathsCache(Map<Long, String> pathById, List<Long> ids){
 
-	
+
 		List<String> paths = !ids.isEmpty() ? pathService.buildTestCasesPaths(ids) : Collections.<String>emptyList();
 
 		for (int i=0; i< ids.size(); i++){

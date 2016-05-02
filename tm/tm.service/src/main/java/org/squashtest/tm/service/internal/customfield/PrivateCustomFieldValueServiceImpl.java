@@ -324,7 +324,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		List<CustomFieldValue> sourceValues = customFieldValueDao.findAllCustomValues(source.getBoundEntityId(),
 				source.getBoundEntityType());
 
-		
+
 		for (CustomFieldValue value : sourceValues) {
 			CustomFieldValue copy = value.copy();
 			copy.setBoundEntity(recipient);
@@ -408,7 +408,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 		return customFieldBindingDao.findAllForProjectAndEntity(entity
 				.getProject().getId(), entity.getBoundEntityType());
 	}
-	
+
 	@Override
 	// basically it's a copypasta of createAllCustomFieldValues, with some extra code in it.
 	public void migrateCustomFieldValues(BoundEntity entity) {
@@ -417,7 +417,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				entity.getBoundEntityType());
 		if (entity.getProject() != null) {
 			List<CustomFieldBinding> projectBindings = optimizedFindCustomField(entity);
-		
+
 
 			for (CustomFieldBinding binding : projectBindings) {
 
@@ -437,9 +437,9 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 
 			}
 		}
-		
+
 		deleteCustomFieldValues(valuesToUpdate);
-		
+
 
 	}
 
@@ -459,7 +459,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private Map<BindableEntity, List<Long>> breakEntitiesIntoCompositeIds(
 			Collection<? extends BoundEntity> boundEntities) {
 
-		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<BindableEntity, List<Long>>();
+		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<>();
 
 		for (BoundEntity entity : boundEntities) {
 			List<Long> idList = segregatedEntities.get(entity.getBoundEntityType());

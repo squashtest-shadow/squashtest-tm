@@ -38,7 +38,7 @@ public class TestCaseExcelBatchImporter extends ExcelBatchImporter {
 
 	@Override
 	public List<Instruction<?>> findInstructionsByEntity(ExcelWorkbookParser parser, EntityType entityType) {
-		List<Instruction<?>> instructions = new ArrayList<Instruction<?>>();
+		List<Instruction<?>> instructions = new ArrayList<>();
 
 		switch (entityType) {
 		case TEST_CASE:
