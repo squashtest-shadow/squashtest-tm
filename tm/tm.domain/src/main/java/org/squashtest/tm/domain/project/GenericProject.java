@@ -155,7 +155,7 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	private boolean allowTcModifDuringExec = false;
 
 	public List<Milestone> getMilestones() {
-		return new ArrayList<Milestone>(milestones);
+		return new ArrayList<>(milestones);
 	}
 
 

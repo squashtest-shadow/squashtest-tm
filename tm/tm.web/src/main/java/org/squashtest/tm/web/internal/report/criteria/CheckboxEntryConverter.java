@@ -43,7 +43,7 @@ class CheckboxEntryConverter implements SimpleEntryConverter {
 
 		Boolean value = (Boolean) entry.get(INPUT_SELECTED);
 
-		return new SimpleCriteria<Boolean>(name, value, type);
+		return new SimpleCriteria<>(name, value, type);
 	}
 
 }

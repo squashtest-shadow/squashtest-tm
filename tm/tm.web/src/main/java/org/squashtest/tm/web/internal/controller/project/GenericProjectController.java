@@ -292,7 +292,7 @@ public class GenericProjectController {
 
 		List<Party> partyList = projectManager.findPartyWithoutPermissionByProject(projectId);
 
-		List<Map<String, Object>> partiesModel = new ArrayList<Map<String, Object>>(partyList.size());
+		List<Map<String, Object>> partiesModel = new ArrayList<>(partyList.size());
 		for (Party p : partyList) {
 			Map<String, Object> newModel = new HashMap<>();
 			newModel.put("label", p.getName());
@@ -366,8 +366,8 @@ public class GenericProjectController {
 	public DataTableModel getAutomatedProjectsTableModel(@PathVariable long projectId, final DataTableDrawParameters params) {
 		List<TestAutomationProject> taProjects = projectManager.findBoundTestAutomationProjects(projectId);
 
-		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<List<TestAutomationProject>>(
-				taProjects);
+		PagedCollectionHolder<List<TestAutomationProject>> holder = new SinglePageCollectionHolder<>(
+			taProjects);
 		Map<String, URL> jobUrls = testAutomationProjectFinder.findProjectUrls(taProjects);
 		return new TestAutomationTableModel(jobUrls).buildDataModel(holder, params.getsEcho());
 

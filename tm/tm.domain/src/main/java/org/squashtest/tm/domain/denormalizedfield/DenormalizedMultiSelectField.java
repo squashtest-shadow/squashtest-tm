@@ -108,7 +108,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 		if (! selectedOptions.isEmpty()){
 			StringBuilder builder = new StringBuilder();
 			for (CustomFieldValueOption option : selectedOptions){
-				builder.append(option.getLabel()+ MultiSelectField.SEPARATOR);
+				builder.append(option.getLabel()).append(MultiSelectField.SEPARATOR);
 			}
 			int lastidx = builder.lastIndexOf(MultiSelectField.SEPARATOR);
 			result = builder.substring(0,lastidx);

@@ -115,11 +115,9 @@ public class ReportsRegistry {
 	@SuppressWarnings("unchecked")
 	public Map<StandardReportCategory, Collection<BasicReport>> getSortedReportsByCategory() {
 
-		Map<StandardReportCategory, Collection<BasicReport>> sortedMap = new HashMap<StandardReportCategory, Collection<BasicReport>>(reportsByCategory.size());
-		Iterator<StandardReportCategory> categIterator = reportsByCategory.keySet().iterator();
+		Map<StandardReportCategory, Collection<BasicReport>> sortedMap = new HashMap<>(reportsByCategory.size());
 
-		while (categIterator.hasNext()) {
-			StandardReportCategory categ = categIterator.next();
+		for (StandardReportCategory categ : (Iterable<StandardReportCategory>) reportsByCategory.keySet()) {
 			List<BasicReport> sortedReports = new ArrayList<>(reportsByCategory.getCollection(categ));
 			Collections.sort(sortedReports, new ReportSorter());
 			sortedMap.put(categ, sortedReports);

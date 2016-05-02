@@ -81,8 +81,7 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 			@PathVariable long folderId) {
 
 		getFolderModificationService().renameFolder(folderId, newName);
-		final String reNewName = newName;
-		return new RenameModel(reNewName);
+		return new RenameModel(newName);
 
 	}
 

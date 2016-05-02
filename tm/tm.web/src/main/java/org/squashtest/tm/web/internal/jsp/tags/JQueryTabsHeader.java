@@ -42,29 +42,29 @@ import net.htmlparser.jericho.Source;
 import net.htmlparser.jericho.StartTag;
 
 /**
- * 
+ *
  * <p>That tag will handle the body and add additional css classes to any element that is part of a jquery tab. Example of the expected body is
  * the following (note which classes or id are used in which situations):</p>
  *
  *
  * <p>&lt; div class="fragment-tabs" &gt;</p>
- * 
+ *
  * <p>&lt; ul class="tab-menu"&gt;</p>
  * <p>&lt; li &gt;</p>
  * <p>&lt; a href="#tab1"&gt;tab1 &lt; /a&gt;</p>
  * <p>&lt; /li &gt;</p>
- * 
+ *
  * <p>&lt; li &gt;</p>
  * <p>&lt; a href=&gt;tab2 &lt; /a &gt;</p>
  * <p>&lt; /li &gt;</p>
- * 
+ *
  * <p>&lt; a href="#tab2"/ul &gt;</p>
  *
- * 
+ *
  * <p>&lt; div id="tab1" &gt; content 1 &lt; /div &gt;</p>
- * 
+ *
  * <p>&lt; div id="tab2" &gt; content 2 &lt; /div &gt;</p>
- * 
+ *
  *<p>&lt; /div &gt;</p>
  *
  *
@@ -128,10 +128,10 @@ public class JQueryTabsHeader extends SimpleTagSupport {
 		HttpServletRequest request = (HttpServletRequest) ctx.getRequest();
 
 		Cookie[] cookies = request.getCookies();
-		for(int i=0; i<cookies.length; i++){
-			for(int j=0; j<TAB_COOKIES.length; j++){
-				if(TAB_COOKIES[j].equals(cookies[i].getName())){
-					activeContentIndex = Integer.parseInt(cookies[i].getValue());
+		for (Cookie cooky : cookies) {
+			for (String TAB_COOKY : TAB_COOKIES) {
+				if (TAB_COOKY.equals(cooky.getName())) {
+					activeContentIndex = Integer.parseInt(cooky.getValue());
 				}
 			}
 		}

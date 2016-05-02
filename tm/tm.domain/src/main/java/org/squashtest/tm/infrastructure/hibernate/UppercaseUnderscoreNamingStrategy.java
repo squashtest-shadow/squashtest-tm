@@ -46,7 +46,7 @@ public class UppercaseUnderscoreNamingStrategy implements NamingStrategy {
 
 	private String addUnderscoresBetweenCamelCaseWords(String camelCaseName) {
 		String[] tokens = StringUtils.splitByCharacterTypeCamelCase(camelCaseName);
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		for (int i = 0; i < tokens.length; i++) {
 			if (i > 0) {

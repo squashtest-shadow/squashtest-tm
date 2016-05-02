@@ -46,7 +46,7 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/test-cases/importer")
@@ -63,7 +63,7 @@ public class TestCaseImportController {
 
 	@Inject
 	private TestCaseImportLogHelper logHelper;
-	
+
 	@Inject
 	private ImportHelper importHelper;
 
@@ -71,7 +71,7 @@ public class TestCaseImportController {
 	 * Will import test cases given in the form of zipped archive. The zip must contain a folder hierarchy, with
 	 * test-cases represented by xls files. One test-case is represented by one xls file where only the first tab of the
 	 * file is read.
-	 * 
+	 *
 	 * @see TestCaseLibraryNavigationService#importZipTestCase(InputStream, long, String)
 	 * @param archive
 	 *            : the uploaded file
@@ -99,7 +99,7 @@ public class TestCaseImportController {
 
 	/**
 	 * Will simulate import of test cases in a one xls file format.
-	 * 
+	 *
 	 * @see TestCaseLibraryNavigationService#simulateImportExcelTestCase(File)
 	 * @param uploadedFile
 	 *            : the xls file to import in a {@link MultipartFile} form
@@ -140,13 +140,9 @@ public class TestCaseImportController {
 			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
 			mav.addObject("summary", importFormatFailure);
 		}
-		catch(MaxFileSizeExceededException mfsee){
+		catch(MaxFileSizeExceededException | MaxNumberOfLinesExceededException mfsee){
 			mav.addObject("summary", mfsee.getMessage());
-		}
-		catch(MaxNumberOfLinesExceededException mnofee){
-			mav.addObject("summary", mnofee.getMessage());
-		}
-		finally {
+		} finally {
 			if (xls != null) {
 				xls.deleteOnExit();
 			}
@@ -158,7 +154,7 @@ public class TestCaseImportController {
 
 	/**
 	 * Generates a downloadable xls import log file and stores it where it should.
-	 * 
+	 *
 	 * @param request
 	 *            : the {@link WebRequest} that lead here
 	 * @param summary
@@ -190,7 +186,7 @@ public class TestCaseImportController {
 
 	/**
 	 * Will import test cases in a one xls file format.
-	 * 
+	 *
 	 * @see TestCaseLibraryNavigationService#performImportExcelTestCase(File)
 	 * @param uploadedFile
 	 *            : the xls file to import in a {@link MultipartFile} form

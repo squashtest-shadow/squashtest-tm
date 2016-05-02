@@ -31,10 +31,10 @@ import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 
 /**
  * That class represents a "value" that aren't attached to any specific custom field value. They can hold either a single value or a multi value,
- * 
+ *
  * and therefore targets either a {@link SingleValuedCustomFieldValue} or a {@link MultiValuedCustomFieldValue}. See it as a sort of Visitor.
- * 
- * 
+ *
+ *
  * @author bsiri
  *
  */
@@ -130,7 +130,7 @@ public class RawValue implements DenormalizedFieldVisitor {
 		else if (values != null){
 			StringBuilder builder = new StringBuilder();
 			for (String v : values){
-				builder.append(v+", ");
+				builder.append(v).append(", ");
 			}
 			debugvalue = builder.toString();
 		}

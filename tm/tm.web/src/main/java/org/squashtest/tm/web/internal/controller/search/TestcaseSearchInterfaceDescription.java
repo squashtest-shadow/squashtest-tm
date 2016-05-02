@@ -337,7 +337,7 @@ public class TestcaseSearchInterfaceDescription extends SearchInterfaceDescripti
 			}
 		}
 
-		model.setPossibleValues(new ArrayList<SearchInputPossibleValueModel>(listsByListCode.values()));
+		model.setPossibleValues(new ArrayList<>(listsByListCode.values()));
 
 	}
 }

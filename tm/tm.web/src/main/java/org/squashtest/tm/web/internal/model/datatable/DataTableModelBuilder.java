@@ -51,9 +51,8 @@ public abstract class DataTableModelBuilder<X> {
 
 		currentIndex = holder.getFirstItemIndex() + 1;
 		Collection<X> pagedItems = holder.getPagedItems();
-		Collection<Object> model = buildRawModel(pagedItems);
 
-		return model;
+		return buildRawModel(pagedItems);
 
 	}
 

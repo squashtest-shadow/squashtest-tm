@@ -86,7 +86,7 @@ public class Attachment {
 
 	/**
 	 * @return the full name of the file (including extension)
-	 * 
+	 *
 	 */
 
 	public String getName() {
@@ -95,7 +95,7 @@ public class Attachment {
 
 	/**
 	 * sets the full name (including extensions). The file type will be set on the fly.
-	 * 
+	 *
 	 * @param String
 	 *            name
 	 */
@@ -112,7 +112,7 @@ public class Attachment {
 	}
 	/**
 	 * When dealing with name this is the one you want most of the time
-	 * 
+	 *
 	 * @return the filename without extension
 	 */
 	@NotBlank
@@ -123,7 +123,7 @@ public class Attachment {
 
 	/**
 	 * When dealing with names this is the one you want most of the time
-	 * 
+	 *
 	 * @param shortName
 	 *            represents the filename without extension
 	 */
@@ -169,15 +169,15 @@ public class Attachment {
 
 	// TODO text formatting should not be the responsibility of domain object. computing size in megs is, though
 	public String getFormattedSize(Locale locale) {
-		Float megaSize = Float.valueOf(size / MEGA_BYTE);
+		Float megaSize = size / MEGA_BYTE;
 		return String.format(locale, "%.2f", megaSize);
 	}
 
 	/**
 	 * will perform a deep copy of this Attachment. All attributes will be duplicated including the content.
-	 * 
+	 *
 	 * Note : the properties 'id' and 'addedOn' won't be duplicated and will be automatically set by the system.
-	 * 
+	 *
 	 */
 	public Attachment hardCopy() {
 		Attachment clone = new Attachment();

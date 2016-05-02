@@ -65,9 +65,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * Controller to handle requests for parameters of a given test case.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @RequestMapping("/test-cases/{testCaseId}/parameters")
 @Controller
@@ -93,14 +93,14 @@ public class TestCaseParametersController {
 	.mapAttribute("test-case-name", "name", TestCase.class);
 
 	/**
-	 * 
+	 *
 	 */
 	private static final String TEST_CASE = "testCase";
 
 	/**
 	 * Will find all parameters concerned by the test case (directly and through call step) and return them as a list of
 	 * {@link SimpleParameter} ordered by name.
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the id of the concerned test case
 	 * @return the list of all parameters ordered by name as {@link SimpleParameter}s
@@ -114,7 +114,7 @@ public class TestCaseParametersController {
 
 	/**
 	 * Will return the test case's parameter tab on the test case view.
-	 * 
+	 *
 	 * @param testCaseId : the id of the viewed test case
 	 * @param model : the {@link Model}
 	 * @param locale : the browser's locale
@@ -130,15 +130,15 @@ public class TestCaseParametersController {
 
 		/*
 		 * Issue 3871
-		 * 
+		 *
 		 * The problem comes from the configuration of the datatable, which is splitted in two parts :
 		 * the aoColumnDefs (that binds the model to the columns ) and the paramHeaders (that binds
 		 * some label to the columns). Those informations are extracted from the same original collection
 		 * 'directAndCalledParameters'.
-		 * 
+		 *
 		 * It happens that 'paramHeaders' is sorted when generated, while 'aoColumnDefs' is not, hence
 		 * the discrepency.
-		 * 
+		 *
 		 * A simple solution is then to sort 'directAndCalledParameters' before deriving the informations
 		 * so that they remain consistent.
 		 */
@@ -165,7 +165,7 @@ public class TestCaseParametersController {
 
 	/**
 	 * Will return the data model for the DataTable of parameters in the parameter tab of the test case view.
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the id of the viewed test case
 	 * @param params
@@ -182,7 +182,7 @@ public class TestCaseParametersController {
 		List<Parameter> parameters = parameterModificationService.findAllParameters(testCaseId);
 		Sorting sorting = new DataTableSorting(params, parametersTableMapper);
 		sortParams(sorting, parameters, testCaseId);
-		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<List<Parameter>>(parameters);
+		PagedCollectionHolder<List<Parameter>> holder = new SinglePageCollectionHolder<>(parameters);
 
 		return new ParametersModelHelper(testCaseId, messageSource, locale).buildDataModel(holder,
 				params.getsEcho());
@@ -191,7 +191,7 @@ public class TestCaseParametersController {
 	/**
 	 * will sort the given list of parameters according to the given params. If params are not defined , will order by
 	 * parameter name ascending.
-	 * 
+	 *
 	 * @param params
 	 *            : the {@link DataTableDrawParameters}
 	 * @param parameters
@@ -216,11 +216,11 @@ public class TestCaseParametersController {
 	/**
 	 * Will compare {@link Parameter} on their test case name in the given {@link SortOrder}. The compared test case
 	 * name is the one displayed in the parameter table on the test case view.
-	 * 
+	 *
 	 * @see {@link ParametersModelHelper#buildTestCaseName(Parameter)}
-	 * 
+	 *
 	 * @author mpagnon
-	 * 
+	 *
 	 */
 	@SuppressWarnings("serial")
 	private static final class ParameterTestCaseNameComparator implements Comparator<Parameter>, Serializable {
@@ -250,7 +250,7 @@ public class TestCaseParametersController {
 
 	/**
 	 * Will add a new parameter to the test case
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the id of the test case that will hold the new parameter
 	 * @param parameter

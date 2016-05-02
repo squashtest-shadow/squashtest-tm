@@ -100,9 +100,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 	@RequestMapping(value = "/drives/{libraryId}/content", method = RequestMethod.GET)
 	public final @ResponseBody List<JsTreeNode> getRootContentTreeModel(@PathVariable long libraryId) {
 		List<NODE> nodes = getLibraryNavigationService().findLibraryRootContent(libraryId);
-		List<JsTreeNode> model = createJsTreeModel(nodes);
 
-		return model;
+		return createJsTreeModel(nodes);
 	}
 
 	protected List<JsTreeNode> createJsTreeModel(Collection<NODE> nodes) {
@@ -145,9 +144,8 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
  List<JsTreeNode> getFolderContentTreeModel(@PathVariable long folderId) {
 
 		List<NODE> nodes = getLibraryNavigationService().findFolderContent(folderId);
-		List<JsTreeNode> model = createJsTreeModel(nodes);
 
-		return model;
+		return createJsTreeModel(nodes);
 	}
 
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
@@ -180,12 +178,15 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 
 		List<NODE> nodeList;
 		try {
-			if (destType.equals("folders")) {
-				nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
-			} else if (destType.equals("drives")) {
-				nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
-			} else {
-				throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "
+			switch (destType) {
+				case "folders":
+					nodeList = getLibraryNavigationService().copyNodesToFolder(destinationId, nodeIds);
+					break;
+				case "drives":
+					nodeList = getLibraryNavigationService().copyNodesToLibrary(destinationId, nodeIds);
+					break;
+				default:
+					throw new IllegalArgumentException("copy nodes : specified destination type doesn't exists : "
 						+ destType);
 			}
 		} catch (AccessDeniedException ade) {
@@ -201,12 +202,15 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			@PathVariable("destinationId") long destinationId, @PathVariable("destinationType") String destType) {
 
 		try {
-			if (destType.equals("folders")) {
-				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
-			} else if (destType.equals("drives")) {
-				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
-			} else {
-				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "
+			switch (destType) {
+				case "folders":
+					getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds);
+					break;
+				case "drives":
+					getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds);
+					break;
+				default:
+					throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "
 						+ destType);
 			}
 		} catch (AccessDeniedException ade) {
@@ -221,12 +225,15 @@ public abstract class LibraryNavigationController<LIBRARY extends Library<? exte
 			@PathVariable("position") int position) {
 
 		try {
-			if (destType.equals("folders")) {
-				getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);
-			} else if (destType.equals("drives")) {
-				getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds, position);
-			} else {
-				throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "
+			switch (destType) {
+				case "folders":
+					getLibraryNavigationService().moveNodesToFolder(destinationId, nodeIds, position);
+					break;
+				case "drives":
+					getLibraryNavigationService().moveNodesToLibrary(destinationId, nodeIds, position);
+					break;
+				default:
+					throw new IllegalArgumentException("move nodes : specified destination type doesn't exists : "
 						+ destType);
 			}
 		} catch (AccessDeniedException ade) {

@@ -60,7 +60,7 @@ public class MilestoneController {
 
 	@Inject
 	private InternationalizationHelper i18nHelper;
-	
+
 	@Inject
 	private ProjectFilterModificationService projectFilterService;
 
@@ -75,7 +75,7 @@ public class MilestoneController {
 	public DataTableModel<Milestone> findUserSelectableMilestones(){
 
 		List<Milestone> milestones = milestoneFinder.findAllVisibleToCurrentUser();
-		
+
 		//checking global project filter and filter milestone who aren't binded to at least one project in filter
 		ProjectFilter projectFilter = projectFilterService.findProjectFilterByUserLogin();
 		if (projectFilter.isEnabled()) {
@@ -83,7 +83,7 @@ public class MilestoneController {
 			 milestones = new ArrayList<>(0);
 			 milestones.addAll(milestonesCollection);
 		}
-		
+
 		// they must be initially sorted by date descending
 		Collections.sort(milestones, new Comparator<Milestone>() {
 			@Override
@@ -94,19 +94,19 @@ public class MilestoneController {
 
 		// now make the model
 		PagedCollectionHolder<List<Milestone>> holderCollection =
-				new SinglePageCollectionHolder<List<Milestone>>(milestones);
+			new SinglePageCollectionHolder<>(milestones);
 
 
 		Locale locale = LocaleContextHolder.getLocale();
 		return new MilestoneTableModelHelper(i18nHelper, locale).buildDataModel(holderCollection, "0");
 
 	}
-	
+
 	//--------------------------------- PRIVATE STUFF ---------------------------------//
-	
+
 	private Set<Milestone> getMilestoneFromProjectFilter(ProjectFilter projectFilter){
 		HashSet<Milestone> milestoneFiltered = new HashSet<>();
-		
+
 		List<Project> projects = projectFilter.getProjects();
 		for (Project project : projects) {
 			milestoneFiltered.addAll(project.getMilestones());

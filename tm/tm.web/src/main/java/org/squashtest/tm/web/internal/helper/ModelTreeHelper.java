@@ -33,14 +33,14 @@ import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 /**
  * Helper class to manipulate jsTree related data.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public abstract class ModelTreeHelper {
 
 	/**
-	 * 
+	 *
 	 */
 	private ModelTreeHelper() {
 		super();
@@ -49,7 +49,7 @@ public abstract class ModelTreeHelper {
 	/**
 	 * Coerces an array of dom nodes ids (["#TestCase-10", "#TestCaseLibrary-20"]) into a map. The result maps entities
 	 * ids by their short class name ([TestCase: [10], TestCaseLibrary: [20]]).
-	 * 
+	 *
 	 * @param domNodesIds
 	 * @return
 	 */
@@ -67,7 +67,7 @@ public abstract class ModelTreeHelper {
 		MultiMap expansionCandidates = mapIdsByType(nodesToOpen);
 
 		DriveNodeBuilder<LibraryNode> nodeBuilder = driveNodeBuilderProvider().get();
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LibraryNode>>(nodeBuilder)
+		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder)
 				.expand(expansionCandidates)
 				.setModel(libraries).build();
 		return rootNodes;
@@ -75,14 +75,14 @@ public abstract class ModelTreeHelper {
 
 	/**
 	 * Should return a workspace service.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract WorkspaceService<Library<LibraryNode>> getWorkspaceService();
 
 	/**
 	 * Returns the list of parents of a node given the id of an element
-	 * 
+	 *
 	 * @param elementId
 	 * @return
 	 */
@@ -98,7 +98,7 @@ public abstract class ModelTreeHelper {
 
 	/**
 	 * Returns the appropriate drive node builder. Should never return null.
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Provider<DriveNodeBuilder<LibraryNode>> driveNodeBuilderProvider();

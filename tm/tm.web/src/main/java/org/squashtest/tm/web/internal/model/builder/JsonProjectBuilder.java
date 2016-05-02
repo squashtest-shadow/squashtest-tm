@@ -54,7 +54,7 @@ public class JsonProjectBuilder {
 
 	@Inject
 	private JsonInfoListBuilder infoListBuilder;
-	
+
 	@Inject
 	protected ProjectFinder projectFinder;
 
@@ -66,10 +66,10 @@ public class JsonProjectBuilder {
 	public JsonProject toSimpleJson(Project p){
 		return JsonProject.toJson(p);
 	}
-	
+
 	/**
 	 * Return all readable projects as json, extended version (see below)
-	 * 
+	 *
 	 * @return
 	 */
 	public Collection<JsonProject> getExtendedReadableProjects(){
@@ -96,7 +96,7 @@ public class JsonProjectBuilder {
 		res.setTestCaseTypes(types);
 
 		// the custom field bindings
-		Map<String, List<CustomFieldBindingModel>> cufBindings = new HashMap<String, List<CustomFieldBindingModel>>();
+		Map<String, List<CustomFieldBindingModel>> cufBindings = new HashMap<>();
 
 		for (BindableEntity entity : BindableEntity.values()){
 			List<CustomFieldBinding> bindings = cufBindingService.findCustomFieldsForProjectAndEntity(p.getId(), entity);

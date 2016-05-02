@@ -26,9 +26,9 @@ import org.squashtest.tm.domain.audit.AuditableMixin;
 
 /**
  * Common DataSource for jasper Node Export
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 public abstract class ExportData {
 
@@ -40,7 +40,7 @@ public abstract class ExportData {
 	private Date createdOn;
 	private String createdBy;
 	private Long folderId;
-	public static final Long NO_FOLDER = -1l;
+	public static final Long NO_FOLDER = -1L;
 
 	public ExportData() {
 	}

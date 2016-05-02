@@ -56,7 +56,7 @@ public class ClientDataTableModelHelper  extends DataTableModelBuilder<ClientDet
 	public String formatRegisteredRedirectUri(Set<String> registeredRedirectUri){
 		StringBuilder builder = new StringBuilder();
 		for(String uri : registeredRedirectUri){
-			builder.append(uri+" ");
+			builder.append(uri).append(" ");
 		}
 		return builder.toString();
 	}

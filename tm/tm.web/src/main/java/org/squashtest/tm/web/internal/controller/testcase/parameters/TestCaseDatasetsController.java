@@ -70,9 +70,9 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
 /**
  * Controller to handle requests for datasets of a given test case.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @RequestMapping("/test-cases/{testCaseId}/datasets")
 @Controller
@@ -112,7 +112,7 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Return the datas to fill the datasets table in the test case view
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the id of the viewed test case
 	 * @param params
@@ -126,7 +126,7 @@ public class TestCaseDatasetsController {
 	public DataTableModel getDatasetsTableDatas(@PathVariable long testCaseId, final DataTableDrawParameters params,
 			final Locale locale) {
 		List<Dataset> datasetsList = getSortedDatasets(testCaseId, params);
-		PagedCollectionHolder<List<Dataset>> holder = new SinglePageCollectionHolder<List<Dataset>>(datasetsList);
+		PagedCollectionHolder<List<Dataset>> holder = new SinglePageCollectionHolder<>(datasetsList);
 		return new DatasetsDataTableModelHelper().buildDataModel(holder, params.getsEcho());
 	}
 
@@ -151,7 +151,7 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Return the list of parameters headers for the dataset table in the test case view.
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the viewed test case
 	 * @param locale
@@ -175,8 +175,8 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Returns the list of parameter description for parameters in the Datasets table ordered by parameter name.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param testCaseId
 	 *            : the concerned test case id
 	 * @param locale
@@ -199,7 +199,7 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Returns the list of column headers names for parameters in the Datasets table mapped with the parameter id.
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the concerned test case id
 	 * @param locale
@@ -236,9 +236,9 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Will compare {@link Dataset} on their name in the given {@link SortOrder}
-	 * 
+	 *
 	 * @author mpagnon
-	 * 
+	 *
 	 */
 	@SuppressWarnings("serial")
 	private static final class DatasetNameComparator implements Comparator<Dataset>, Serializable {
@@ -262,9 +262,9 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Helps create the datas (for the jQuery DataTable) for the datasets table in the test case view.
-	 * 
+	 *
 	 * @author mpagnon
-	 * 
+	 *
 	 */
 	public final static class DatasetsDataTableModelHelper extends DataTableModelBuilder<Dataset> {
 
@@ -289,7 +289,7 @@ public class TestCaseDatasetsController {
 
 	/**
 	 * Will add a new dataset to the test case
-	 * 
+	 *
 	 * @param testCaseId
 	 *            : the id of the test case that will hold the new dataset
 	 * @param dataset

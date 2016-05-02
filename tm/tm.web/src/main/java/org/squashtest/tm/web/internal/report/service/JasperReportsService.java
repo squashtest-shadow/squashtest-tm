@@ -35,14 +35,14 @@ import java.util.Set;
 
 /**
  * For now, internal use only. TODO : relocate that class the day we make a real reporting OSGI service ?
- * 
+ *
  * @author bsiri
  *
  */
 @Service("squashtest.tm.service.JasperReportsService")
 public class JasperReportsService {
 
-	private final Map<String,Class<? extends JRExporter>> exporterMaps = new HashMap<String, Class<? extends JRExporter>>();
+	private final Map<String,Class<? extends JRExporter>> exporterMaps = new HashMap<>();
 
 	//todo : make it Spring configurable instead.
 	public JasperReportsService(){
@@ -84,8 +84,8 @@ public class JasperReportsService {
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param jasperStream
 	 * @param format
 	 * @param dataSource
@@ -115,11 +115,8 @@ public class JasperReportsService {
 
 			return new FileInputStream(reportFile);
 
-		}catch(IOException ioe){
+		}catch(IOException | JRException ioe){
 			throw new RuntimeException(ioe);
-		}
-		catch(JRException jre){
-			throw new RuntimeException(jre);
 		}
 
 

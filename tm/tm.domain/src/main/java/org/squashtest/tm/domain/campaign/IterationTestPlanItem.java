@@ -202,7 +202,6 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	public void updateExecutionStatus() {
 		if (executions.isEmpty()) {
 			executionStatus = ExecutionStatus.READY;
-			return;
 		} else {
 			Execution execution = getLatestExecution();
 			executionStatus = execution.getExecutionStatus();
@@ -487,12 +486,11 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 		StringBuilder builder = new StringBuilder();
 
 		for (TestSuite suite : testSuites) {
-			builder.append(suite.getName() + ", ");
+			builder.append(suite.getName()).append(", ");
 		}
 
-		String nameList = builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
 
-		return nameList;
+		return builder.toString().replaceFirst(", $", "");	//this eliminates the last comma
 	}
 
 	public void setTestSuites(List<TestSuite> testSuites) {

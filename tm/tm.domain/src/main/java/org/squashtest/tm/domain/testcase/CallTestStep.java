@@ -95,7 +95,7 @@ public class CallTestStep extends TestStep {
 		if (calledDataset != null){
 			return ParameterAssignationMode.CALLED_DATASET;
 		}
-		else if (delegateParameterValues == true){
+		else if (delegateParameterValues){
 			return ParameterAssignationMode.DELEGATE;
 		} else {
 			return ParameterAssignationMode.NOTHING;

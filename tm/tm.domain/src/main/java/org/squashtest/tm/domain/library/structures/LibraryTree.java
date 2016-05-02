@@ -41,13 +41,13 @@ import org.apache.commons.collections.Transformer;
 /*
  * TODO : the current implementation is reaching its limits. Only few cases are implemented for now, but on the long run we may have to
  * implement one specific solution for each of them, unless we make a more generic solution.
- * 
+ *
  * Basically detecting a network of locked nodes means :
- * 
+ *
  * 1) build the network of entities that are relevant for the current problem,
  * 2) mark the first locked node (seeds),
  * 3) propagate to other nodes (the meaning of propagation may vary from one problem to another).
- * 
+ *
  * So instead of using things like trees and graphs and tons of variations of these let's think of a generic and configurable class. That will be useful
  * the day we'll need to chain the results of multiple instances to resolve complex dependencies.
  */
@@ -62,29 +62,29 @@ import org.apache.commons.collections.Transformer;
  *  <li> The parent of a node of layer <i>n</i> belongs to layer <i>n-1</i>, except for layer 0, </li>
  *  <li> The order of two nodes within the same layer is undefined (weak ordering). </li>
  * </ul>
- * 
+ *
  * The implementation is simple because its only purpose is to provide a structure to store data in. The structure is the very goal here so its not supposed to be structurally modified or
  * rebalanced : its built once and for all.
- * 
+ *
  * @see TreeNode
  * </p>
- * 
+ *
  * @param T : the type of the nodes this tree is made of
  * @param IDENT : the type of the key used by a node. As an identifier, it should be immutable and implement
  * equality/hashcode properly. If it's good for a HashSet, it's good for the job here too.
- * 
+ *
  *  @author bsiri
  */
 
 public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
-	protected final Map<Integer, List<T>> layers = new HashMap<Integer, List<T>>();
+	protected final Map<Integer, List<T>> layers = new HashMap<>();
 
 
 	/**
 	 * Given an integer, returns the layer at the corresponding depth in the tree. That integer must be comprised within the acceptable bounds of that tree, ie 0 and {@link #getDepth()}.
 	 * The layer is returned as a list of nodes.
-	 * 
+	 *
 	 * @param depth the depth of the layer we want an access to.
 	 * @return the layer as a list of nodes.
 	 * @throws IndexOutOfBoundsException
@@ -102,7 +102,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	 * Given a TreeNodePair (see documentation of the inner class for details), will add the child node to the tree.
 	 * If the child node have no parents it will be added to layer 0 (ie, new root).
 	 * Else, the child node will belong to the layer following its parent's layer.
-	 * 
+	 *
 	 * @param newPair a TreeNodePair with informations regarding parent and child node included.
 	 * @throws NoSuchElementException if a parent node cannot be found.
 	 */
@@ -133,7 +133,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 	/**
 	 * Same than {@link #addNode(TreeNodePair)}, but the TreeNodePair parameter will be built using the parameter provided here.
-	 * 
+	 *
 	 * @param parentKey the key designating the parent node.
 	 * @param childNode the child we want eventually to insert.
 	 */
@@ -147,9 +147,9 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	 * Accepts a list of TreeNodePair and will add all the nodes in that list (see TreeNodePair and TreeNode). Such list can be called a flat tree and passing one to this method
 	 * is a convenient way for tree initialization.
 	 * You do not need to pass the TreeNodePairs in any order : the method will take care of inserting them in the correct order (ie parents before children).
-	 * 
+	 *
 	 * @see {@link #sortData(List)}, TreeNode, TreeNodePair
-	 * 
+	 *
 	 * @param unsortedData the flat representation of the tree.
 	 */
 	public void addNodes(List<TreeNodePair> unsortedFlatTree){
@@ -217,10 +217,10 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 
 	/**
-	 * 
+	 *
 	 * <p>This method will clean up some wrong data, for instance the data might say that a given node have multiple parent. In this case the last non null parent will
 	 * be selected and the other entries are discarded.</p>
-	 * 
+	 *
 	 * @param corruptData
 	 * @return
 	 */
@@ -250,13 +250,13 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 
 	/**
-	 * 
+	 *
 	 * Accepts a identifier - aka key - and returns the corresponding node if found.
-	 * 
+	 *
 	 * @param key the key identifying a node
 	 * @return the node if found
 	 * @throws NoSuchElementException if the node was not found.
-	 * 
+	 *
 	 */
 	public T getNode(IDENT key){
 
@@ -272,7 +272,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 
 	/**
-	 * 
+	 *
 	 * <p>Accepts a {@link Closure} that will be applied on the nodes using bottom-up exploration. The method will walk up the tree :
 	 * <ul>
 	 *  <li>layer <i>n+1</i> will be treated before layer <i>n</i> (reverse order)</li>
@@ -323,7 +323,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	 * actual nodes in the tree and the rest of their data will be used to update the found nodes.
 	 * </p>
 	 * <p>The particulars of how data will be merged depends on how the TreeNodes implement {@link TreeNode#updateWith(TreeNode)}.</p>
-	 * 
+	 *
 	 * @throws NoSuchElementException if one of the node was not found.
 	 */
 	public void merge(List<T> mergeData){
@@ -340,7 +340,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	 * That method will gather arbitrary informations on every single nodes and return the list of the gathered informations. What will be gathered and how it is done is defined in the
 	 * {@link Transformer} parameter. The tree will be processed top-down, ie, walked down (see {@link #doTopDown(Closure)}).
 	 * </p>
-	 * 
+	 *
 	 * @param <X> the type of the data returned by the transformer.
 	 * @param transformer the code to be applied over all the nodes.
 	 * @return the list of the gathered data.
@@ -348,13 +348,13 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	@SuppressWarnings("unchecked")
 	public <X> List<X> collect(Transformer transformer){
 
-		return new ArrayList<X>(CollectionUtils.collect(getAllNodes(), transformer));
+		return new ArrayList<>(CollectionUtils.collect(getAllNodes(), transformer));
 
 	}
 
 	/**
 	 * <p>short hand for {@link #collect(Transformer)} with a Transformer returning the data.key for each nodes.</p>
-	 * 
+	 *
 	 * @return the list of the node keys.
 	 */
 	public List<IDENT> collectKeys(){
@@ -402,7 +402,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	/**
 	 * Says whether the given node may be
 	 * removed (ie it has no children)
-	 * 
+	 *
 	 * @param key
 	 */
 	public boolean mayRemove(IDENT key){
@@ -413,7 +413,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	/**
 	 * Will remove the node having this key if it is childress.
 	 * If it has children, throws a RuntimeException
-	 * 
+	 *
 	 * @param key
 	 */
 	public void remove(IDENT key){
@@ -435,7 +435,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 	/**
 	 * removes a node and its subtree
-	 * 
+	 *
 	 * @param key
 	 */
 	public void cut(IDENT key){
@@ -486,7 +486,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	/**
 	 * A TreeNodePair is a scaffolding class which is mainly used when initializing a tree. It simply pairs a child treeNode with the key of its parent. A child node having a null parent
 	 * will be considered as a root node.
-	 * 
+	 *
 	 * @author bsiri
 	 *
 	 */
@@ -529,7 +529,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	/**
 	 * Returns a new instance of a TreeNodePair. Basically the same thing than calling TreeNodePair constructors, that method exists mainly for semantic reasons (it guarantees that the
 	 * returned TreeNodePair instance is compatible with the tree (regarding generic types).
-	 * 
+	 *
 	 * @return a new instance of a TreeNodePair.
 	 */
 	public TreeNodePair newPair(){
@@ -539,7 +539,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 
 	/**
 	 * An initializing version of {@link #newPair()}.
-	 * 
+	 *
 	 * @param parentKey the identifier of the parent node.
 	 * @param child the child node.
 	 * @return an initialized instance of TreeNodePair.

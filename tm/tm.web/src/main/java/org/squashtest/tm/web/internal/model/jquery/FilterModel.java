@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.jquery;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.squashtest.tm.domain.project.Project;
@@ -30,14 +31,14 @@ import org.squashtest.tm.domain.projectfilter.ProjectFilter;
  * Note : we set the NOSONAR flag on the setters for Array-type properties otherwise it rings because we don't clone them.
  * We can reasonably ignore those warnings because that class is meant to be serialized from/to json. Of course, that assumption holds
  * as long as no one uses that class for another purpose.
- * 
- * 
+ *
+ *
  * @author bsiri
  */
 
 // made "final" because SONAR didn't like the overridable methods in the constructor
 public final class FilterModel {
-	private List<Object[]> projectData = new ArrayList<Object[]>();
+	private List<Object[]> projectData = new ArrayList<>();
 	private boolean enabled;
 
 	public FilterModel(){
@@ -78,10 +79,8 @@ public final class FilterModel {
 	}
 
 	private void setProjectData(Object[][] projectData) {
-		this.projectData = new ArrayList<Object[]>(projectData.length);
-		for(Object[] project : projectData) {
-			this.projectData.add(project);
-		}
+		this.projectData = new ArrayList<>(projectData.length);
+		Collections.addAll(this.projectData, projectData);
 	}
 	public boolean isEnabled() {
 		return enabled;

@@ -47,14 +47,12 @@ public final class MilestoneModelUtils {
 		Date minDate = null;
 		Date maxDate = null;
 
-		Iterator<Milestone> iter = milestones.iterator();
-		while(iter.hasNext()){
-			Milestone m  = iter.next();
+		for (Milestone m : milestones) {
 			Date date = m.getEndDate();
-			if (minDate == null || date.before(minDate)){
+			if (minDate == null || date.before(minDate)) {
 				minDate = date;
 			}
-			if (maxDate == null || date.after(maxDate)){
+			if (maxDate == null || date.after(maxDate)) {
 				maxDate = date;
 			}
 		}
@@ -66,7 +64,7 @@ public final class MilestoneModelUtils {
 	}
 
 	public static String milestoneLabelsOrderByDate(Set<Milestone> milestones) {
-	
+
 		final StringBuilder sb = new StringBuilder();
 		ArrayList<Milestone> liste = new ArrayList<>(milestones);
 		Collections.sort(liste, new Comparator<Milestone>() {
@@ -75,7 +73,7 @@ public final class MilestoneModelUtils {
 				return m1.getEndDate().after(m2.getEndDate()) ? 1 : -1;
 			}
 		});
-		
+
 		CollectionUtils.forAllDo(liste, new Closure(){
 			@Override
 			public void execute(Object input) {
@@ -83,7 +81,7 @@ public final class MilestoneModelUtils {
 				sb.append(m.getLabel());
 				sb.append(SEPARATOR);
 			}});
-		
+
 		sb.delete(Math.max(sb.length() - SEPARATOR.length(), 0), sb.length());
 		return sb.toString();
 	}

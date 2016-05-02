@@ -39,33 +39,31 @@ public class AdvancedSearchIndexingController {
 	@ResponseBody
 	public void indexAll(){
 		indexationService.indexAll();
-	} 
-	
+	}
+
 	@RequestMapping(value = "/index-requirements", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexRequirements(){
 		indexationService.indexRequirementVersions();
-	} 	
-	
-	
+	}
+
+
 	@RequestMapping(value = "/index-testcases", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexTestCases(){
 		indexationService.indexTestCases();
-	} 
+	}
 
 	@RequestMapping(value = "/index-campaigns", method = RequestMethod.POST)
 	@ResponseBody
 	public void indexCampaigns(){
 		indexationService.indexIterationTestPlanItem();
-	} 	
+	}
 
 	@RequestMapping(value = "/refresh", method = RequestMethod.POST)
 	@ResponseBody
 	public IndexingProgressModel refreshIndexPage(){
-		
-		IndexingProgressModel model = new IndexingProgressModel();
-		
-		return model;
-	} 	
+
+		return new IndexingProgressModel();
+	}
 }

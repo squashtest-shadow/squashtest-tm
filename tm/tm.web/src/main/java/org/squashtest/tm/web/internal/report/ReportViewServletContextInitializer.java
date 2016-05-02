@@ -38,9 +38,9 @@ import org.squashtest.tm.api.report.ReportView;
  * This class registers / unregisters Jasper Reports view definitinos from report plugin under a view name.
  *
  * TODO As it is now called only once, could be replaced by a ServletContextListener
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @WebComponent
 public class ReportViewServletContextInitializer implements ServletContextAware {
@@ -58,7 +58,7 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 			@Override
 			public void apply(ServletContext servletContext, ReportView view) {
 				if (view.getSpringView() instanceof ServletContextAware) {
-					ServletContextAware springView = (ServletContextAware) view.getSpringView(); 
+					ServletContextAware springView = (ServletContextAware) view.getSpringView();
 					springView.setServletContext(servletContext);
 					LOGGER.info("Bound ServletContext to view [{}]", view);
 				}
@@ -85,9 +85,7 @@ public class ReportViewServletContextInitializer implements ServletContextAware 
 	private void apply(RegistrationAction action, ReportPlugin plugin) {
 		Report[] reports = plugin.getReports();
 
-		for (int reportIndex = 0; reportIndex < reports.length; reportIndex++) {
-			Report report = reports[reportIndex];
-
+		for (Report report : reports) {
 			apply(action, report);
 		}
 	}

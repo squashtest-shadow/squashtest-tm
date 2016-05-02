@@ -34,11 +34,11 @@ import org.squashtest.tm.core.foundation.lang.DateUtils;
 
 /**
  * @author Gregory
- * 
+ *
  */
 class DateEntryConverter implements SimpleEntryConverter {
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.web.internal.report.criteria.SimpleEntryConverter#convertEntry(java.lang.String,
 	 *      java.util.Map, org.squashtest.tm.api.report.form.InputType)
 	 */
@@ -50,10 +50,10 @@ class DateEntryConverter implements SimpleEntryConverter {
 
 		if (EMPTY_DATE_ENTRY.equals(raw)) {
 			return EmptyCriteria.createEmptyCriteria(name, type);
-		} 
+		}
 
 		Date value = parseDate(raw);
-		return new SimpleCriteria<Date>(name, value, type);
+		return new SimpleCriteria<>(name, value, type);
 	}
 
 	private Date parseDate(String raw) {

@@ -40,7 +40,7 @@ class GenericSimpleEntryConverter implements SimpleEntryConverter {
 	public Criteria convertEntry(String name, Map<String, Object> entry, InputType type) {
 		Object value = entry.get(INPUT_VALUE);
 
-		return new SimpleCriteria<Object>(name, value, type);
+		return new SimpleCriteria<>(name, value, type);
 	}
 
 }

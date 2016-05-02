@@ -33,12 +33,12 @@ import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 /**
  * Holds references to {@link ColumnMismatch} and build String list of concerned columns for each mismatch type. <br/>
  * see {@link #getMissingMandatoryColumns()} and {@link #getDuplicateColumns()}.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 public class ImportFormatFailure {
-	private Map<ColumnMismatch, Set<String>> mismatches = new HashMap<ColumnMismatch, Set<String>>();
+	private Map<ColumnMismatch, Set<String>> mismatches = new HashMap<>();
 
 	public ImportFormatFailure(TemplateMismatchException tme) {
 		fillMismatches(tme);
@@ -84,7 +84,7 @@ public class ImportFormatFailure {
 
 	/**
 	 * see workspace.import-popup.js "doSubmit"
-	 * 
+	 *
 	 * @return "Format KO"
 	 */
 	public String getStatus() {

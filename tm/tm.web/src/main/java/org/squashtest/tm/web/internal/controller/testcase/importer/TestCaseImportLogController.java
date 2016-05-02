@@ -36,7 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/test-cases/import-logs")
@@ -54,8 +54,6 @@ public class TestCaseImportLogController {
 		response.setContentType("application/octet-stream");
 		response.setHeader("Content-Disposition", "attachment; filename=" + logHelper.logFilename(filename));
 
-		FileSystemResource res = new FileSystemResource(logFile);
-
-		return res;
+		return new FileSystemResource(logFile);
 	}
 }

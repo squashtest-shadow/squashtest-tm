@@ -173,7 +173,7 @@ public class ChartQuery {
 	 */
 	public Map<ColumnRole, Set<SpecializedEntityType>> getInvolvedEntities(){
 
-		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<ColumnRole, Set<SpecializedEntityType>>(3);
+		Map<ColumnRole, Set<SpecializedEntityType>> result = new HashMap<>(3);
 
 		Collection<? extends ColumnPrototypeInstance> columns;
 

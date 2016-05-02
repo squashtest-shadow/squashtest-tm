@@ -38,9 +38,9 @@ import org.squashtest.tm.api.report.form.InputType;
 
 /**
  * This class builds a map of {@link Criteria} from the map of objects which was submitted by a report form.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class FormToCriteriaConverter {
 	private static final String INPUT_SELECTED = "selected";
@@ -127,9 +127,9 @@ public class FormToCriteriaConverter {
 		case MILESTONE_PICKER :
 			res = createMilestoneMultiCriteria(name, multiValued, inputType);
 			break;
-			
+
 		case TAG_PICKER :
-			res = createTagCriteria(name, multiValued, inputType); 
+			res = createTagCriteria(name, multiValued, inputType);
 			break;
 		default:
 			res = EmptyCriteria.createEmptyCriteria(name, inputType);
@@ -138,7 +138,7 @@ public class FormToCriteriaConverter {
 	}
 
 	private Criteria createTagCriteria(String name, Collection<Map<String, Object>> multiValued, InputType inputType) {
-		
+
 		MultiOptionsCriteria crit = new MultiOptionsCriteria(name, inputType);
 
 		for (Map<String, Object> valueItem : multiValued){
@@ -174,7 +174,7 @@ public class FormToCriteriaConverter {
 		for (Map<String, Object> valueItem : multiValued) {
 			Boolean selected = (Boolean) valueItem.get(INPUT_SELECTED);
 			if (selected) {
-				return new SimpleCriteria<String>(name, (String) valueItem.get(INPUT_VALUE), inputType);
+				return new SimpleCriteria<>(name, (String) valueItem.get(INPUT_VALUE), inputType);
 			}
 		}
 		return new EmptyCriteria(name, inputType);

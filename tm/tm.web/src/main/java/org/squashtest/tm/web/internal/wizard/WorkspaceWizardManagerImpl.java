@@ -114,10 +114,8 @@ public class WorkspaceWizardManagerImpl implements WorkspaceWizardManager {
 		Collection<String> enabledWizardIds = findEnabledWizardIds(projectId, workspace);
 
 		Predicate predicate = new BelongsToList(enabledWizardIds);
-		
-		Collection<WorkspaceWizard> res = filterWizards(wizards, predicate);
 
-		return res;
+		return filterWizards(wizards, predicate);
 	}
 
 	private Collection<WorkspaceWizard> filterWizards(Collection<WorkspaceWizard> wizards, Predicate predicate) {

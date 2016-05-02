@@ -52,9 +52,9 @@ import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 
 /**
  * Generic superclass for library nodes.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @MappedSuperclass
 @AnalyzerDef(name = "htmlStrip", charFilters = {
@@ -116,7 +116,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	/**
 	 * Notifies this object it is now a resource of the given project.
-	 * 
+	 *
 	 * @param project
 	 */
 	@Override
@@ -133,10 +133,10 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	// ******************* other utilities ****************************
 
 	/**
-	 * Used internally, this class must be implemented by first-descendant of this (GenericLibraryNode) class. We need it 
-	 * in order to implement a better, accurate hashcode and equals. Now that Squash has only one classloader, that shouldn't 
+	 * Used internally, this class must be implemented by first-descendant of this (GenericLibraryNode) class. We need it
+	 * in order to implement a better, accurate hashcode and equals. Now that Squash has only one classloader, that shouldn't
 	 * be a problem right ?
-	 * 
+	 *
 	 * @return
 	 */
 	protected abstract Class<? extends GenericLibraryNode> getGenericNodeClass();
@@ -144,7 +144,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 	/*
 	 * Issue 1713
-	 * 
+	 *
 	 * Due to the mixed use of actual instances and javassist proxies, comparisons may fail. Thus the redefinition of
 	 * hashCode() and equals() below, that take account of the lazy loading and the fact that the compared objects may
 	 * be of different classes.
@@ -160,7 +160,7 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		result = prime * result + ((mygenericClass == null) ? 0 : mygenericClass.hashCode());
 		return result;
 	}
-	
+
 	// GENERATED:START
 	@Override
 	public boolean equals(Object obj) {
@@ -170,11 +170,11 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 			return false;
 		if (! GenericLibraryNode.class.isAssignableFrom(obj.getClass()))
 			return false;
-		
+
 		GenericLibraryNode other = (GenericLibraryNode) obj;
 		Long id = getId();
 		Class<?> mygenericClass = getGenericNodeClass();
-		
+
 		if (id == null) {
 			if (other.getId() != null)
 				return false;
@@ -183,33 +183,10 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 
 		if (!mygenericClass.equals(other.getGenericNodeClass()))
 			return false;
-		
+
 		return true;
 	}
 	// GENERATED:END
-	
 
-	// GENERATED:START
-	/*@Override
-	public boolean equals(Object obj) {
-		if (this == obj) {
-			return true;
-		}
-		if (obj == null) {
-			return false;
-		}
-		if (!(this.getClass().isAssignableFrom(obj.getClass()) || obj.getClass().isAssignableFrom(getClass()))) {
-			return false;
-		}
-		GenericLibraryNode other = (GenericLibraryNode) obj;
-		if (getId() == null) {
-			if (other.getId() != null) {
-				return false;
-			}
-		} else if (!getId().equals(other.getId())) {
-			return false;
-		}
-		return true;
-	}*/
-	// GENERATED:END
+
 }

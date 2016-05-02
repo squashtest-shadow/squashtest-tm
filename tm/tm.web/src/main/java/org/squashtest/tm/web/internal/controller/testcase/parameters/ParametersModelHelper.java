@@ -38,9 +38,9 @@ import org.squashtest.tm.web.internal.util.HTMLCleanupUtils;
 
 /**
  * Helps create the datas (for the jQuery DataTable) for the parameters table in the test case view.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 public final class ParametersModelHelper extends DataTableModelBuilder<Parameter> {
 
@@ -87,7 +87,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 
 	/**
 	 * Will build the test case name for display in the table. The name will be : tReference-tcName (tcProjectName)
-	 * 
+	 *
 	 * @param item
 	 * @param isDirectParam : if the parameter is shown in it's direct test case owner
 	 * @return
@@ -108,8 +108,8 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 
 	/**
 	 * Returns the list of column headers names, descriptions and ids for parameters in the Datasets table ordered by parameter name.
-	 * 
-	 * 
+	 *
+	 *
 	 * @param testCaseId
 	 *            : the concerned test case id
 	 * @param locale
@@ -123,7 +123,7 @@ public final class ParametersModelHelper extends DataTableModelBuilder<Parameter
 	public static List<HashMap<String, String>> findDatasetParamHeaders(long testCaseId, final Locale locale,
 			List<Parameter> directAndCalledParameters, MessageSource messageSource) {
 		Collections.sort(directAndCalledParameters, new ParameterNameComparator(SortOrder.ASCENDING));
-		List<HashMap<String, String>> result = new ArrayList<HashMap<String, String>>(directAndCalledParameters.size());
+		List<HashMap<String, String>> result = new ArrayList<>(directAndCalledParameters.size());
 		for (Parameter param : directAndCalledParameters) {
 			HashMap<String, String> map = new HashMap<>();
 			map.put("name",  ParametersModelHelper.buildParameterName(param, testCaseId, messageSource, locale));

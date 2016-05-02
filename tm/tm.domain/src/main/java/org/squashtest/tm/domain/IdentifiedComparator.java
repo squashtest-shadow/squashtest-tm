@@ -24,17 +24,17 @@ import java.util.Comparator;
 
 /**
  * compares {@link Identified} objects using their id.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
-public class IdentifiedComparator extends Object implements Comparator<Identified> {
+public class IdentifiedComparator implements Comparator<Identified> {
 	private static final IdentifiedComparator INSTANCE = new IdentifiedComparator();
-	
+
 	public static IdentifiedComparator getInstance() {
 		return INSTANCE;
 	}
-	
+
 	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */

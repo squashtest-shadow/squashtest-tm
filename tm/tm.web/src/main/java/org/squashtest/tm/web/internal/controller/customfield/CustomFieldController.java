@@ -67,9 +67,9 @@ import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 
 /**
  * Controller for the Custom Fields resources.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @Controller
 @RequestMapping("/custom-fields")
@@ -83,9 +83,9 @@ public class CustomFieldController {
 	@Inject
 	private CustomFieldManagerService customFieldManager;
 
-	@Inject 
+	@Inject
 	private ProjectFinder projectFinder;
-	
+
 	@Inject
 	private MessageSource messageSource;
 
@@ -106,7 +106,7 @@ public class CustomFieldController {
 
 	/**
 	 * Shows the custom field modification page.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the custom field to show
 	 * @param model
@@ -142,7 +142,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the label of the concerned custom field
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the concerned custom field
 	 * @param label
@@ -158,7 +158,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the code of the concerned custom field
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the concerned custom field
 	 * @param label
@@ -174,7 +174,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the name of the concerned custom field
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the concerned custom field
 	 * @param name
@@ -190,7 +190,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the whether the custom-field is optional or not.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            the id of the concerned custom field
 	 * @param optional
@@ -206,14 +206,14 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the default value of the concerned custom-field
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of concerned custom-field
 	 * @param defaultValue
 	 *            : the new default-value for the custom-field
 	 * @param locale
 	 *            : the browser's locale
-	 * 
+	 *
 	 * @return defaultValue
 	 */
 	@RequestMapping(value = "/{customFieldId}", method = RequestMethod.POST, params = { "id=cuf-default-value", JEditablePostParams.VALUE })
@@ -231,7 +231,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the default value of the concerned custom-field
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of concerned custom-field
 	 * @param defaultValue
@@ -246,7 +246,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the label of the concerned custom-field's option
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
 	 * @param optionLabel
@@ -270,7 +270,7 @@ public class CustomFieldController {
 
 	/**
 	 * Changes the code of the concerned custom-field's option
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
 	 * @param optionCode
@@ -294,7 +294,7 @@ public class CustomFieldController {
 
 	/**
 	 * Adds an option to the concerned custom-field
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
 	 * @param option
@@ -315,7 +315,7 @@ public class CustomFieldController {
 
 	/**
 	 * Remove a customField's option
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
 	 * @param optionLabel
@@ -330,7 +330,7 @@ public class CustomFieldController {
 
 	/**
 	 * Return the DataTableModel to display the table of all custom field's option.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned custom field
 	 * @param params
@@ -343,13 +343,13 @@ public class CustomFieldController {
 			final DataTableDrawParameters params) {
 		SingleSelectField customField = customFieldManager.findSingleSelectFieldById(customFieldId);
 		List<CustomFieldOption> customFieldOptions = customField.getOptions();
-		PagedCollectionHolder<List<CustomFieldOption>> holder = new SinglePageCollectionHolder<List<CustomFieldOption>>(customFieldOptions);
+		PagedCollectionHolder<List<CustomFieldOption>> holder = new SinglePageCollectionHolder<>(customFieldOptions);
 		return new CustomFieldOptionsDataTableModelHelper(customField).buildDataModel(holder,params.getsEcho());
 	}
 
 	/**
 	 * Will help to create the {@link DataTableModel} to fill the data-table of custom field's options
-	 * 
+	 *
 	 */
 	private static final class CustomFieldOptionsDataTableModelHelper extends DataTableModelBuilder<CustomFieldOption> {
 
@@ -379,7 +379,7 @@ public class CustomFieldController {
 
 	/**
 	 * Will change custom field's options positions.
-	 * 
+	 *
 	 * @param customFieldId
 	 *            : the id of the concerned CustomField.
 	 * @param newIndex
@@ -402,19 +402,19 @@ public class CustomFieldController {
 	void deleteCustomField(@PathVariable("customFieldIds") List<Long> customFieldIds) {
 		customFieldManager.deleteCustomField(customFieldIds);
 	}
-	
+
 	@RequestMapping(value = "/tags/{boundEntity}", method = RequestMethod.GET)
 	@ResponseBody
 	public List<String> getPossibleTagValues(@PathVariable("boundEntity") String boundEntity){
-		
+
 	List<Long> projectIds = (List<Long>) CollectionUtils.collect(projectFinder.findAllOrderedByName(), new Transformer() {
-			
+
 			@Override
 			public Object transform(Object input) {
 				return 	((GenericProject) input).getId();
 			}
 		});
-		
+
 		return customFieldManager.getAvailableTagsForEntity(boundEntity, projectIds);
 	}
 }

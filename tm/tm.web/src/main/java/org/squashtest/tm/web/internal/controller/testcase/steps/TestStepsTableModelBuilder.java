@@ -41,13 +41,13 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder;
 
 /**
  * Builds a DataTable model for TestSteps table.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> implements TestStepVisitor {
 	/**
-	 * 
+	 *
 	 */
 	private static final int DEFAULT_MAP_CAPACITY = 16;
 
@@ -60,7 +60,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	}
 
 	/**
-	 * 
+	 *
 	 * @see org.squashtest.tm.web.internal.model.datatable.DataTableModelBuilder#buildItemData(java.lang.Object)
 	 */
 	@Override
@@ -128,7 +128,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 	}
 
 	public void usingCustomFields(Collection<CustomFieldValue> cufValues, int nbFieldsPerEntity) {
-		customFieldValuesById = new HashMap<Long, Map<String, CustomFieldValueTableModel>>();
+		customFieldValuesById = new HashMap<>();
 
 		for (CustomFieldValue value : cufValues) {
 			Long entityId = value.getBoundEntityId();
@@ -185,9 +185,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 		public Date getValueAsDate() {
 			try {
 				return DateUtils.parseIso8601Date(value);
-			} catch (ParseException e) {
-				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
-			} catch (ClassCastException e) {
+			} catch (ParseException | ClassCastException e) {
 				LOGGER.debug("Unable to parse date {} of custom field #{}", value, id);
 			}
 
@@ -209,7 +207,7 @@ public class TestStepsTableModelBuilder extends DataTableModelBuilder<TestStep> 
 
 	private Map<String, CustomFieldValueTableModel> getCustomFieldsFor(Long id) {
 		if (customFieldValuesById == null) {
-			return new HashMap<String, CustomFieldValueTableModel>();
+			return new HashMap<>();
 		}
 
 		Map<String, CustomFieldValueTableModel> values = customFieldValuesById.get(id);

@@ -33,7 +33,7 @@ public class IndexMonitor {
 
 	private static final BigInteger CENT = BigInteger.valueOf(100);
 
-	public static Map<Class<?>, IndexMonitor> monitors = new HashMap<Class<?>, IndexMonitor>();
+	public static Map<Class<?>, IndexMonitor> monitors = new HashMap<>();
 	public static IndexMonitor total = new IndexMonitor();
 
 	static {

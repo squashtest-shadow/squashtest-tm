@@ -46,22 +46,22 @@ import org.squashtest.tm.web.internal.controller.testcase.importer.RequirementIm
 @Controller
 @RequestMapping("/requirements/importer")
 public class RequirementImportController {
-	
+
 	private interface Command<T, U> {
 		U execute(T arg);
 	}
-	
+
 	@Inject
 	private RequirementLibraryNavigationService requirementLibraryNavigationService;
-	
+
 	@Inject
 	private ImportHelper importHelper;
-	
+
 	@Inject
-	private RequirementImportLogHelper logHelper; 
-	
+	private RequirementImportLogHelper logHelper;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementImportController.class);
-	
+
 	@RequestMapping(value = "/xls", method = RequestMethod.POST, params = "dry-run")
 	public ModelAndView dryRunExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 		LOGGER.debug("Req-Import" + "In controller, DRY RUN");
@@ -73,7 +73,7 @@ public class RequirementImportController {
 			}
 		);
 	}
-	
+
 	@RequestMapping(value = "/xls", params = "!dry-run", method = RequestMethod.POST)
 	public ModelAndView importExcelWorkbook(@RequestParam("archive") MultipartFile uploadedFile, WebRequest request) {
 		LOGGER.debug("Req-Import" + "In controller, RUN");
@@ -85,7 +85,7 @@ public class RequirementImportController {
 			}
 		);
 	}
-	
+
 	//A factoriser avec l'import de TC ?
 	private ModelAndView importWorkbook(MultipartFile uploadedFile, WebRequest request,
 			Command<File, ImportLog> callback) {
@@ -107,13 +107,9 @@ public class RequirementImportController {
 			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
 			mav.addObject("summary", importFormatFailure);
 		}
-		catch(MaxFileSizeExceededException mfsee){
+		catch(MaxFileSizeExceededException | MaxNumberOfLinesExceededException mfsee){
 			mav.addObject("summary", mfsee.getMessage());
-		}
-		catch(MaxNumberOfLinesExceededException mnofee){
-			mav.addObject("summary", mnofee.getMessage());
-		}
-		finally {
+		} finally {
 			if (xls != null) {
 				xls.deleteOnExit();
 			}
@@ -123,10 +119,10 @@ public class RequirementImportController {
 		LOGGER.debug("Req-Import" + "OUT controller, RUN");
 		return mav;
 	}
-	
+
 	/**
 	 * Generates a downloadable xls import log file and stores it where it should.
-	 * 
+	 *
 	 * @param request
 	 *            : the {@link WebRequest} that lead here
 	 * @param summary
@@ -150,7 +146,7 @@ public class RequirementImportController {
 			}
 		}
 	}
-	
+
 	private File importLogToLogFile(ImportLog summary) throws IOException {
 		return logHelper.storeLogFile(summary);
 	}

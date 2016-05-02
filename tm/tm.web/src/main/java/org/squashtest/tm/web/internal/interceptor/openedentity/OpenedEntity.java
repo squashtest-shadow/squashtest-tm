@@ -26,7 +26,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 /**
- * Represents a list of users viewing the same object at the same time and how many views have each user opened. 
+ * Represents a list of users viewing the same object at the same time and how many views have each user opened.
  * see it's use at {@linkplain OpenedEntities}
  * @author mpagnon
  *
@@ -49,7 +49,7 @@ public class OpenedEntity {
 			numberOfViews++;
 			viewers.put(viewerLogin, numberOfViews);
 		} else {// else create input for this user
-			viewers.put(viewerLogin, Integer.valueOf(1));
+			viewers.put(viewerLogin, 1);
 		}
 		// if list of users is higher than 1 return true
 		if (viewers.size() > 1) {

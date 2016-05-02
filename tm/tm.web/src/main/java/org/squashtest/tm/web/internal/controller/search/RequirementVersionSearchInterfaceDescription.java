@@ -331,7 +331,7 @@ public class RequirementVersionSearchInterfaceDescription extends SearchInterfac
 			}
 		}
 
-		model.setPossibleValues(new ArrayList<SearchInputPossibleValueModel>(listsByListCode.values()));
+		model.setPossibleValues(new ArrayList<>(listsByListCode.values()));
 
 	}
 }

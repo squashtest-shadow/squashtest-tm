@@ -348,7 +348,7 @@ public class TestCaseModificationController {
 
 		return builder.get()
 				.extended()
-				.entities(Arrays.asList(new TestCase[]{testCase}))
+				.entities(Arrays.asList(testCase))
 				.toJson()
 				.get(0);
 
@@ -607,7 +607,7 @@ public class TestCaseModificationController {
 
 
 		// add them to the model
-		Boolean isMilestoneInProject = mil.size() == 0 ? false : true;
+		Boolean isMilestoneInProject = !mil.isEmpty();
 		conf.setNodeType("testcase");
 		conf.setRootPath(rootPath);
 		conf.setIdentity(identity);
@@ -638,7 +638,7 @@ public class TestCaseModificationController {
 		}
 
 		PagedCollectionHolder<List<MetaMilestone>> collectionHolder =
-				new SinglePageCollectionHolder<List<MetaMilestone>>(metaMilestones);
+			new SinglePageCollectionHolder<>(metaMilestones);
 
 		Locale locale = LocaleContextHolder.getLocale();
 		return new TestCaseBoundMilestoneTableModelHelper(internationalizationHelper, locale).buildDataModel(collectionHolder, sEcho);
@@ -680,8 +680,8 @@ public class TestCaseModificationController {
 				try {
 					List<IssueOwnership<RemoteIssueDecorator>> issuesOwnerShipList = Collections.emptyList();
 					issuesOwnerShipList = bugTrackersLocalService.findIssueOwnershipForTestCase(testCaseId);
-					decoratedIssues = new ArrayList<TestCaseModificationController.DecoratedIssueOwnership>(
-							issuesOwnerShipList.size());
+					decoratedIssues = new ArrayList<>(
+						issuesOwnerShipList.size());
 					for (IssueOwnership<RemoteIssueDecorator> ownerShip : issuesOwnerShipList) {
 						decoratedIssues.add(new DecoratedIssueOwnership(ownerShip, locale));
 					}
@@ -748,12 +748,12 @@ public class TestCaseModificationController {
 		List<VerifiedRequirement> verifReq = verifiedRequirementsManagerService
 				.findAllVerifiedRequirementsByTestCaseId(testCaseId);
 		mav.addObject("verifiedRequirements", verifReq);
-		
+
 		// ========================THE LOVELY MILESTONES
 		Collection<Milestone> allMilestones = testCaseModificationService.findAllMilestones(testCaseId);
 		List<?> milestoneModels = buildMilestoneTableModel(testCaseId,allMilestones,  "0").getAaData();
 		mav.addObject("milestones", milestoneModels);
-		
+
 		return mav;
 	}
 
@@ -766,7 +766,7 @@ public class TestCaseModificationController {
 	 * @return a list of Object[] with each object representing a dataset's information
 	 */
 	private List<Object[]> getParamValuesById(Set<Dataset> datasets) {
-		List<Object[]> result = new ArrayList<Object[]>(datasets.size());
+		List<Object[]> result = new ArrayList<>(datasets.size());
 
 		for (Dataset dataset : datasets) {
 			Set<DatasetParamValue> datasetParamValues = dataset.getParameterValues();

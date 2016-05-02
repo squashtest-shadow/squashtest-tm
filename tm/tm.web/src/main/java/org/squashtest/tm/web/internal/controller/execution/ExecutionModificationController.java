@@ -152,7 +152,7 @@ public class ExecutionModificationController {
 
 		ModelAndView mav = new ModelAndView("page/campaign-workspace/show-execution");
 		mav.addObject("execution", execution);
-		mav.addObject("executionRank", Integer.valueOf(rank + 1));
+		mav.addObject("executionRank", rank + 1);
 		mav.addObject("attachmentSet", attachmentHelper.findAttachments(execution));
 
 		mav.addObject("executionCufValues", customValueModels);
@@ -267,7 +267,7 @@ public class ExecutionModificationController {
 
 	static String createBugList(ExecutionStep item) {
 
-		StringBuffer toReturn = new StringBuffer();
+		StringBuilder toReturn = new StringBuilder();
 		List<Issue> issueList = item.getIssueList().getAllIssues();
 		if (issueList.size() > 0) {
 			toReturn.append(issueList.get(0).getId());

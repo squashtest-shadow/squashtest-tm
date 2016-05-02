@@ -124,7 +124,7 @@ LibraryNavigationController<CampaignLibrary, CampaignFolder, CampaignLibraryNode
 	private class ShortCutPermissionEvaluator implements PermissionEvaluationService {
 		private Boolean hasRole;
 		private Map<String, Boolean> perms = new HashMap<>();
-		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<String[], Map<String, Boolean>>();
+		private Map<String[], Map<String,Boolean>> hasRolePerms = new HashMap<>();
 
 		@Override
 		public boolean hasRoleOrPermissionOnObject(String role, String permission, Object object) {

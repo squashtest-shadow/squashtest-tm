@@ -83,7 +83,7 @@ import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 import com.google.common.base.Optional;
 
 /**
- * 
+ *
  * @author R.A
  * @authored bsiri
  */
@@ -248,7 +248,7 @@ public class TestSuiteTestPlanManagerController {
 
 	/**
 	 * Will reorder the test plan according to the current sorting instructions.
-	 * 
+	 *
 	 * @param iterationId
 	 * @return
 	 */
@@ -291,7 +291,7 @@ public class TestSuiteTestPlanManagerController {
 			@PathVariable("suiteIds") List<Long> suitesIds) {
 		LOGGER.debug(BIND_TEST_PLAN_ITEMS_TO_TEST_SUITES);
 		testSuiteTestPlanManagerService.bindTestPlanToMultipleSuites(suitesIds, itpIds);
-		Map<String, List<Long>> result = new HashMap<String, List<Long>>();
+		Map<String, List<Long>> result = new HashMap<>();
 		result.put("ids", suitesIds);
 		return result;
 	}

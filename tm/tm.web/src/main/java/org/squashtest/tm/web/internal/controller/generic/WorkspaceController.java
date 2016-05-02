@@ -120,7 +120,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 			nodeBuilder.filterByMilestone(activeMilestone.get());
 		}
 
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
+		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
 			.setModel(libraries).build();
 
 		model.addAttribute("rootModel", rootNodes);
@@ -161,7 +161,7 @@ activeMilestone.get().getId(),
 		MultiMap expansionCandidates = mapIdsByType(openedNodes);
 
 		DriveNodeBuilder<LN> nodeBuilder = driveNodeBuilderProvider().get();
-		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<Library<LN>>(nodeBuilder).expand(expansionCandidates)
+		List<JsTreeNode> rootNodes = new JsTreeNodeListBuilder<>(nodeBuilder).expand(expansionCandidates)
 				.setModel(libraries).build();
 
 

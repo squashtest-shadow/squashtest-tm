@@ -36,7 +36,7 @@ public class JsonSimpleData {
 
 	@Override
 	public String toString() {
-		StringBuffer toReturn = new StringBuffer();
+		StringBuilder toReturn = new StringBuilder();
 
 		toReturn.append("{ ");
 

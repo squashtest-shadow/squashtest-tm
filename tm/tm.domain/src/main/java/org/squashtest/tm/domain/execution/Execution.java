@@ -24,8 +24,6 @@ import org.apache.commons.collections.ListUtils;
 import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
-import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Table;
 import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
 import org.hibernate.search.annotations.Parameter;

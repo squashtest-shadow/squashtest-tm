@@ -293,10 +293,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 
 	private boolean nameAlreadyUsedBySibling(String newName) {
 		List<String> siblingsNames = getSiblingsNames();
-		if (siblingsNames.contains(newName)) {
-			return true;
-		}
-		return false;
+		return siblingsNames.contains(newName);
 	}
 
 	private List<String> getSiblingsNames() {

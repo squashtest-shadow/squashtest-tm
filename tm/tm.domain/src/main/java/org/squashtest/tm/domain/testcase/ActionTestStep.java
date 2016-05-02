@@ -155,7 +155,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	/**
-	 * 
+	 *
 	 * @return an UNMODIFIABLE set of this {@linkplain ActionTestStep}'s {@linkplain RequirementVersionCoverage}s.
 	 */
 	public Set<RequirementVersionCoverage> getRequirementVersionCoverages() {
@@ -172,7 +172,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	/**
-	 * 
+	 *
 	 * @return UNMODIFIABLE VIEW of verified requirements.
 	 */
 	public Set<RequirementVersion> getVerifiedRequirementVersions() {
@@ -195,8 +195,7 @@ public class ActionTestStep extends TestStep implements BoundEntity, AttachmentH
 	}
 
 	public static ActionTestStep createBlankActionStep() {
-		ActionTestStep res = new ActionTestStep(null, null);
 
-		return res;
+		return new ActionTestStep(null, null);
 	}
 }

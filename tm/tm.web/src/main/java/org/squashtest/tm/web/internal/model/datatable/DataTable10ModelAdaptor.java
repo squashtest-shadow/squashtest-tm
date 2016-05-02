@@ -28,19 +28,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class DataTable10ModelAdaptor<T> implements DataTable10Model<T> {
 	private final DataTableModel<T> adapted;
 
 	/**
 	 * Adapts a {@link DataTableModel} into a {@link DataTable10Model}
-	 * 
+	 *
 	 * @param model
 	 * @return
 	 */
 	public static final <U> DataTable10Model<U> adapt(@NotNull DataTableModel<U> model) {
-		return new DataTable10ModelAdaptor<U>(model);
+		return new DataTable10ModelAdaptor<>(model);
 	}
 
 	private DataTable10ModelAdaptor(DataTableModel<T> adapted) {
