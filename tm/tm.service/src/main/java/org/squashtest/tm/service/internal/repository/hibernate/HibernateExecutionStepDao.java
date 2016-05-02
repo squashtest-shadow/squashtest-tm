@@ -80,7 +80,7 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 
 	@Override
 	public MultiMap findStepExecutionsStatus(List<Long> testCaseIds,List<Long> testStepIds) {
-		if (testStepIds.size()==0) {
+		if (testStepIds.isEmpty()) {
 			return new MultiValueMap();
 		}
 		List<ExecutionStep> execSteps = new ArrayList<>();
@@ -88,7 +88,7 @@ public class HibernateExecutionStepDao extends HibernateEntityDao<ExecutionStep>
 			Query q = currentSession().getNamedQuery("execution.findAllByTestCaseIdAndItIdOrderByRunDate");
 			q.setParameter("testCaseId", tcId, LongType.INSTANCE);
 			List<Execution> execs = q.list();
-			if (execs.size() > 0) {
+			if (!execs.isEmpty()) {
 				execSteps.addAll(execs.get(0).getSteps());
 			}
 		}

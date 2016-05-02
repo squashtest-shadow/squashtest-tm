@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -109,7 +110,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testCaseIds.isEmpty()) {
 			return executeSelectNamedQuery("testCase.findAllSteps", TEST_CASES_IDS, testCaseIds);
 		}
-		return new ArrayList<Long>();
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -117,7 +118,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testCaseIds.isEmpty()) {
 			return executeSelectNamedQuery("testCase.findAllAttachmentLists", TEST_CASES_IDS, testCaseIds);
 		}
-		return new ArrayList<Long>();
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -125,7 +126,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!folderIds.isEmpty()) {
 			return executeSelectNamedQuery("testCaseFolder.findAllAttachmentLists", FOLDER_IDS, folderIds);
 		}
-		return new ArrayList<Long>();
+		return Collections.emptyList();
 	}
 
 	@Override
@@ -133,7 +134,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testStepIds.isEmpty()) {
 			return executeSelectNamedQuery("testStep.findAllAttachmentLists", TEST_STEP_IDS, testStepIds);
 		}
-		return new ArrayList<Long>();
+		return Collections.emptyList();
 	}
 
 	@Override

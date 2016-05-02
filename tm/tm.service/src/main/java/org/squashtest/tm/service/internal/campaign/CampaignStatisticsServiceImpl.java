@@ -309,7 +309,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	public List<CampaignTestInventoryStatistics> gatherFolderTestInventoryStatistics(Collection<Long> campaignIds) {
 
 		List<Object[]> tuples = Collections.emptyList();
-		if (campaignIds.size() > 0) {
+		if (!campaignIds.isEmpty()) {
 		Query query = em.unwrap(Session.class).getNamedQuery("CampaignFolderStatistics.testinventory");
 		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 			tuples = query.list();
@@ -332,7 +332,7 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		List<Object[]> res = Collections.emptyList();
 
-		if (campaignIds.size() > 0) {
+		if (!campaignIds.isEmpty()) {
 		Query query = em.unwrap(Session.class).getNamedQuery(queryName);
 		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
 			res = query.list();

@@ -20,6 +20,16 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.apache.commons.collections.MultiMap;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.hibernate.Hibernate;
@@ -30,8 +40,18 @@ import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
-import org.squashtest.tm.core.foundation.collection.*;
-import org.squashtest.tm.domain.campaign.*;
+import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
+import org.squashtest.tm.core.foundation.collection.Filtering;
+import org.squashtest.tm.core.foundation.collection.MultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
+import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.squashtest.tm.core.foundation.collection.SingleToMultiSortingAdapter;
+import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.domain.campaign.Campaign;
+import org.squashtest.tm.domain.campaign.Iteration;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.campaign.TestPlanStatistics;
+import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
@@ -42,9 +62,6 @@ import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.IterationDao;
 import org.squashtest.tm.service.internal.repository.ParameterNames;
-
-import java.util.*;
-import java.util.Map.Entry;
 
 @Repository
 public class HibernateIterationDao extends HibernateEntityDao<Iteration> implements IterationDao {
@@ -169,7 +186,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 		List<Campaign> tcList = session.createCriteria(Campaign.class).createCriteria("iterations")
 			.add(Restrictions.eq("id", iterationId)).list();
 
-		if (tcList.size() > 0) {
+		if (!tcList.isEmpty()) {
 			Campaign ca = tcList.get(0);
 			Hibernate.initialize(ca.getIterations());
 			return ca;
@@ -425,7 +442,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public List<Long> findVerifiedTcIdsInIterations(List<Long> testCasesIds,
 													List<Long> iterationsIds) {
-		if (testCasesIds.size() == 0) {
+		if (testCasesIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findVerifiedTcIdsInIterations");
@@ -438,7 +455,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@Override
 	public List<Long> findVerifiedTcIdsInIterationsWithExecution(
 		List<Long> tcIds, List<Long> iterationsIds) {
-		if (tcIds.size() == 0) {
+		if (tcIds.isEmpty()) {
 			return Collections.emptyList();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findVerifiedAndExecutedTcIdsInIterations");
@@ -450,7 +467,7 @@ public class HibernateIterationDao extends HibernateEntityDao<Iteration> impleme
 	@SuppressWarnings("unchecked")
 	@Override
 	public MultiMap findVerifiedITPI(List<Long> tcIds, List<Long> iterationsIds) {
-		if (tcIds.size() == 0) {
+		if (tcIds.isEmpty()) {
 			return new MultiValueMap();
 		}
 		Query q = currentSession().getNamedQuery("iteration.findITPIByTestCaseGroupByStatus");

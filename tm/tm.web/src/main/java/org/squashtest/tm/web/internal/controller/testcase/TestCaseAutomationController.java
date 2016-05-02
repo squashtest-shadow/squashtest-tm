@@ -22,9 +22,10 @@ package org.squashtest.tm.web.internal.controller.testcase;
 
 import java.util.Collection;
 
+import javax.inject.Inject;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,8 +37,6 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNode;
 import org.squashtest.tm.web.internal.model.testautomation.TATestNodeListBuilder;
-
-import javax.inject.Inject;
 
 
 @Controller
@@ -63,19 +62,6 @@ public class TestCaseAutomationController {
 		Collection<TestAutomationProjectContent> projectContents = testCaseModificationService.findAssignableAutomationTests(testCaseId);
 		return new TATestNodeListBuilder().build(projectContents);
 
-
-		/*
-		 * STUB (obsolete
-
-		if (testCaseId == 238){
-			Collection<TestAutomationProjectContent> projectContents = mockTests();
-
-			return new TATestNodeListBuilder().build(projectContents);
-		}
-		else{
-			throw new UnknownConnectorKind("pof");
-		}
-		 */
 	}
 
 

@@ -631,7 +631,7 @@ List<Long> requirementsIds) {
 		List<RequirementVersion> descendants = findValidDescendants(mainRequirement);
 		findCoverageRate(mainRequirement, mainVersion, descendants, stats);
 		//if we have a valid perimeter (ie iteration(s)), we'll have to calculate verification and validation rates
-		if (iterationsIds.size() > 0) {
+		if (!iterationsIds.isEmpty()) {
 			checkPerimeter(iterationsIds, stats);
 			if (!stats.isCorruptedPerimeter()) {
 				findExecutionRate(mainRequirement, mainVersion, descendants, stats, iterationsIds);
@@ -673,7 +673,7 @@ List<Long> requirementsIds) {
 								   RequirementVersion mainVersion,
 								   List<RequirementVersion> descendants,
 								   RequirementCoverageStat stats, List<Long> iterationsIds) {
-		boolean hasDescendant = descendants.size() > 0;
+		boolean hasDescendant = !descendants.isEmpty();
 		Rate verificationRate = new Rate();
 		Rate validationRate = new Rate();
 
@@ -753,7 +753,7 @@ List<Long> requirementsIds) {
 		Set<RequirementVersionCoverage> covs = new HashSet<>();
 		for (RequirementVersion requirementVersion : descendants) {
 			Set<RequirementVersionCoverage> coverages = requirementVersion.getRequirementVersionCoverages();
-			if (coverages.size() > 0) {
+			if (!coverages.isEmpty()) {
 				covs.addAll(coverages);
 			}
 		}
@@ -1037,7 +1037,7 @@ List<Long> requirementsIds) {
 								  List<RequirementVersion> descendants, RequirementCoverageStat stats) {
 
 		Rate coverageRate = new Rate();
-		boolean hasValidDescendant = descendants.size() > 0;
+		boolean hasValidDescendant = !descendants.isEmpty();
 		coverageRate.setRequirementVersionRate(calculateCoverageRate(mainVersion));
 
 		if (hasValidDescendant) {
@@ -1073,7 +1073,7 @@ List<Long> requirementsIds) {
 	 * @return
 	 */
 	private Long calculateCoverageRate(RequirementVersion mainVersion) {
-		if (mainVersion.getRequirementVersionCoverages().size() > 0) {
+		if (!mainVersion.getRequirementVersionCoverages().isEmpty()) {
 			return 1L;
 		}
 		return 0L;

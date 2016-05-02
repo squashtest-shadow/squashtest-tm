@@ -443,20 +443,20 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 		queryTc.setParameterList(PROJECT_IDS, projectIds);
 		queryTc.setParameter(MILESTONE_ID, milestoneId);
 
-		if (queryTc.list().size() != 0) {
+		if (!queryTc.list().isEmpty()) {
 			return true; // return now so we don't do useless request
 		}
 
 		Query queryCamp = currentSession().getNamedQuery("milestone.findAllCampaignsForProjectAndMilestone");
 		queryCamp.setParameterList(PROJECT_IDS, projectIds);
 		queryCamp.setParameter(MILESTONE_ID, milestoneId);
-		if (queryCamp.list().size() != 0) {
+		if (!queryCamp.list().isEmpty()) {
 			return true;// return now so we don't do useless request
 		}
 		Query queryReq = currentSession().getNamedQuery("milestone.findAllRequirementVersionsForProjectAndMilestone");
 		queryReq.setParameterList(PROJECT_IDS, projectIds);
 		queryReq.setParameter(MILESTONE_ID, milestoneId);
-		if (queryReq.list().size() != 0) {
+		if (!queryReq.list().isEmpty()) {
 			return true;
 		}
 
@@ -471,7 +471,7 @@ public class HibernateMilestoneDao extends HibernateEntityDao<Milestone>implemen
 			Query query = currentSession().getNamedQuery("milestone.otherRequirementVersionBindToOneMilestone");
 			query.setParameterList("reqVIds", reqVIds);
 			query.setParameterList(MILESTONE_IDS, milestoneIds);
-			return query.list().size() != 0;
+			return !query.list().isEmpty();
 		}
 	}
 

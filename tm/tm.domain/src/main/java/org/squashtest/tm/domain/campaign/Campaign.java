@@ -40,8 +40,8 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.apache.commons.lang3.StringUtils;
+import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -378,7 +378,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	private Iteration getFirstIteration() {
-		if (getIterations().size() == 0) {
+		if (getIterations().isEmpty()) {
 			return null;
 		} else {
 			return Collections
@@ -397,7 +397,7 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	private Iteration getLastIteration() {
-		if (getIterations().size() == 0) {
+		if (getIterations().isEmpty()) {
 			return null;
 		} else {
 			return Collections.max(getIterations(), CascadingAutoDateComparatorBuilder.buildIterationActualEndOrder());
@@ -405,11 +405,11 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	}
 
 	public boolean testPlanContains(@NotNull TestCase tc) {
-		return (findTestPlanItem(tc) != null);
+		return findTestPlanItem(tc) != null;
 	}
 
 	public boolean hasIterations() {
-		return (iterations.size() > 0);
+		return !iterations.isEmpty();
 	}
 
 	public void moveTestPlanItems(int targetIndex, List<Long> itemIds) {
