@@ -208,6 +208,11 @@
           <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
+          
+               <th class="no-user-select tp-th-filter tp-th-succesPercent" data-def="map=succesPercent, sortable, sWidth=10%">
+            <f:message key="iteration.executions.table.column-header.succesPercent.label" />
+          </th>
+          
           <th class="no-user-select tp-th-filter tp-th-assignee"
             data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo">
             <f:message key="iteration.executions.table.column-header.user.label" />

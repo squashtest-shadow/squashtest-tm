@@ -32,6 +32,9 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.execution.Execution;
+import org.squashtest.tm.domain.execution.ExecutionStatus;
+import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.users.User;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
@@ -123,6 +126,24 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 			testSuiteIdsList = IdentifiedUtil.extractIds(item.getTestSuites());
 		}
 
+		int succesPercent = 0;
+
+		Execution lastExec = item.getLatestExecution();
+		if (lastExec != null) {
+			int succes = 0;
+			List<ExecutionStep> steps = item.getLatestExecution().getSteps();
+			for (ExecutionStep step : steps) {
+				if (step.getExecutionStatus().equals(ExecutionStatus.SUCCESS)) {
+					succes++;
+				}
+			}
+			int totalSteps = steps.size();
+
+			// I think it's not possible to have total step = 0, because we need at least 1 step to execute
+			// but maybe there's a case i don't see so better give 0 than divide by 0 exception.
+			succesPercent = totalSteps > 0 ? succes * 100 / totalSteps : 0;
+		}
+
 		// now stuff the map
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_ID_KEY, item.getId());
 		res.put(DataTableModelConstants.DEFAULT_ENTITY_INDEX_KEY, index);
@@ -139,6 +160,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("assignee-login", assigneeLogin);
 		res.put("last-exec-on", DateUtils.formatIso8601DateTime(item.getLastExecutedOn()));
 		res.put("is-tc-deleted", item.isTestCaseDeleted());
+		res.put("succesPercent", succesPercent);
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_DELETE_HOLDER_KEY, " ");
 		res.put("exec-mode", automationMode);
