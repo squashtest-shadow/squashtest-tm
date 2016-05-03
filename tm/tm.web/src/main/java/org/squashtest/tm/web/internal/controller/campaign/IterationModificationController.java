@@ -36,7 +36,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -257,7 +256,7 @@ public class IterationModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	@ResponseBody
-	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
+	public Object rename(@RequestParam("newName") String newName,
 						 @PathVariable long iterationId) {
 
 		LOGGER.info("IterationModificationController : renaming {} as {}", iterationId, newName);
@@ -300,7 +299,7 @@ public class IterationModificationController {
 	@ResponseBody
 	@RequestMapping(value = PLANNING_URL, params = {"scheduledStart"})
 	public
-	String setScheduledStart(HttpServletResponse response, @PathVariable long iterationId,
+	String setScheduledStart(@PathVariable long iterationId,
 							 @RequestParam(value = "scheduledStart") String strDate) {
 
 		Date newScheduledStart = strToDate(strDate);
@@ -316,7 +315,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = {"scheduledEnd"})
 	@ResponseBody
-	public String setScheduledEnd(HttpServletResponse response, @PathVariable long iterationId,
+	public String setScheduledEnd(@PathVariable long iterationId,
 								  @RequestParam(value = "scheduledEnd") String strDate) {
 
 		Date newScheduledEnd = strToDate(strDate);
@@ -334,7 +333,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = {"actualStart"})
 	@ResponseBody
-	public String setActualStart(HttpServletResponse response, @PathVariable long iterationId,
+	public String setActualStart(@PathVariable long iterationId,
 								 @RequestParam(value = "actualStart") String strDate) {
 
 		Date newActualStart = strToDate(strDate);
@@ -350,7 +349,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = {"actualEnd"})
 	@ResponseBody
-	public String setActualEnd(HttpServletResponse response, @PathVariable long iterationId,
+	public String setActualEnd(@PathVariable long iterationId,
 							   @RequestParam(value = "actualEnd") String strDate) {
 
 		Date newActualEnd = strToDate(strDate);
@@ -366,7 +365,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = {"setActualStartAuto"})
 	@ResponseBody
-	public String setActualStartAuto(HttpServletResponse response, @PathVariable long iterationId,
+	public String setActualStartAuto(@PathVariable long iterationId,
 									 @RequestParam(value = "setActualStartAuto") boolean auto) {
 
 		LOGGER.info("IterationModificationController : autosetting actual start date for iteration {}, new value {}", iterationId, auto);
@@ -379,7 +378,7 @@ public class IterationModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = {"setActualEndAuto"})
 	@ResponseBody
-	public String setActualEndAuto(HttpServletResponse response, @PathVariable long iterationId,
+	public String setActualEndAuto(@PathVariable long iterationId,
 								   @RequestParam(value = "setActualEndAuto") boolean auto) {
 		LOGGER.info("IterationModificationController : autosetting actual end date for campaign {}, new value {}", iterationId, auto);
 

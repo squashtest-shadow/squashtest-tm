@@ -29,7 +29,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.slf4j.Logger;
@@ -69,7 +68,7 @@ public class MilestoneModificationController {
 
 	@Inject
 	private PermissionEvaluationService permissionEvaluationService;
-	
+
 	@Inject
 	private Provider<MilestoneStatusComboDataBuilder> statusComboDataBuilderProvider;
 
@@ -147,7 +146,7 @@ public class MilestoneModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newEndDate" })
 	@ResponseBody
-	public Date changeEndDate(@PathVariable long milestoneId, @RequestParam @DateTimeFormat(pattern= "yy-MM-dd") Date newEndDate, Locale locale) {
+	public Date changeEndDate(@PathVariable long milestoneId, @RequestParam @DateTimeFormat(pattern = "yy-MM-dd") Date newEndDate) {
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeEndDate(milestoneId, newEndDate);
 		LOGGER.debug("Milestone modification : change milestone {} end date = {}", milestoneId, newEndDate);
@@ -156,7 +155,7 @@ public class MilestoneModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=milestone-owner", VALUE })
 	@ResponseBody
-	public String changeOwner(@PathVariable long milestoneId, @RequestParam(VALUE) String login, Locale locale) {
+	public String changeOwner(@PathVariable long milestoneId, @RequestParam(VALUE) String login) {
 		User newOwner = adminManager.findByLogin(login);
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeOwner(milestoneId, newOwner);
@@ -166,7 +165,7 @@ public class MilestoneModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object changeName(HttpServletResponse response, @PathVariable long milestoneId, @RequestParam String newName) {
+	public Object changeName(@PathVariable long milestoneId, @RequestParam String newName) {
 		milestoneManager.verifyCanEditMilestone(milestoneId);
 		milestoneManager.changeLabel(milestoneId, newName);
 		LOGGER.debug("Milestone modification : change milestone {} label = {}", milestoneId, newName);

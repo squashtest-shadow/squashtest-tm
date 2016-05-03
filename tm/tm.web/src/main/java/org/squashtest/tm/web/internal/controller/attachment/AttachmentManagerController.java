@@ -21,10 +21,8 @@
 package org.squashtest.tm.web.internal.controller.attachment;
 
 import java.util.List;
-import java.util.Locale;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -94,7 +92,7 @@ public class AttachmentManagerController {
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
 	public
 	DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId,
-			final DataTableDrawParameters params, final Locale locale) {
+											final DataTableDrawParameters params) {
 		PagingAndSorting pas = createPaging(params, attachmentMapper);
 
 		return attachmentModelHelper.findPagedAttachments(attachListId, pas, params.getsEcho());
@@ -115,7 +113,7 @@ public class AttachmentManagerController {
 
 	@RequestMapping(value="/{attachmentId}/name",method = RequestMethod.POST, params = { RequestParams.NAME })
 	@ResponseBody
-	public Object renameAttachment(HttpServletResponse response, @PathVariable long attachmentId, @RequestParam( RequestParams.NAME) String newName) {
+	public Object renameAttachment(@PathVariable long attachmentId, @RequestParam(RequestParams.NAME) String newName) {
 
 		attachmentManagerService.renameAttachment(attachmentId, newName);
 		LOGGER.info("AttachmentController : renaming attachment " + attachmentId + " as " + newName);

@@ -32,7 +32,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -242,8 +241,8 @@ public class TestSuiteModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object rename(HttpServletResponse response, @RequestParam("newName") String newName,
-			@PathVariable("suiteId") long suiteId) {
+	public Object rename(@RequestParam("newName") String newName,
+						 @PathVariable("suiteId") long suiteId) {
 
 		LOGGER.info("TestSuiteModificationController : renaming " + suiteId + " as " + newName);
 		service.rename(suiteId, newName);

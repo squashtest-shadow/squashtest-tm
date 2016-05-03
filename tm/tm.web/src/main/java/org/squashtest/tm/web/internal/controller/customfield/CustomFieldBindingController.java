@@ -103,7 +103,7 @@ public class CustomFieldBindingController {
     @RequestMapping(method = RequestMethod.GET, params = {RequestParams.PROJECT_ID, "bindableEntity", RequestParams.S_ECHO_PARAM})
     @ResponseBody
     public DataTableModel findAllCustomFieldsTableForProject(@RequestParam(RequestParams.PROJECT_ID) Long projectId,
-                                                             @RequestParam("bindableEntity") BindableEntity bindableEntity, DataTableDrawParameters params, Locale locale) {
+                                                             @RequestParam("bindableEntity") BindableEntity bindableEntity, DataTableDrawParameters params) {
 
         DataTablePaging paging = new DataTablePaging(params);
 

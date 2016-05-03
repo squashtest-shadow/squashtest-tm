@@ -117,14 +117,11 @@ public class TestCaseDatasetsController {
 	 *            : the id of the viewed test case
 	 * @param params
 	 *            : DataTable draw parameters
-	 * @param locale
-	 *            : the browser's locale
 	 * @return
 	 */
 	@RequestMapping(method = RequestMethod.GET, params = RequestParams.S_ECHO_PARAM)
 	@ResponseBody
-	public DataTableModel getDatasetsTableDatas(@PathVariable long testCaseId, final DataTableDrawParameters params,
-			final Locale locale) {
+	public DataTableModel getDatasetsTableDatas(@PathVariable long testCaseId, final DataTableDrawParameters params) {
 		List<Dataset> datasetsList = getSortedDatasets(testCaseId, params);
 		PagedCollectionHolder<List<Dataset>> holder = new SinglePageCollectionHolder<>(datasetsList);
 		return new DatasetsDataTableModelHelper().buildDataModel(holder, params.getsEcho());
@@ -134,13 +131,11 @@ public class TestCaseDatasetsController {
 	 * @see DatasetsTableColumnDefHelper#getAoColumnDefs(List, boolean);
 	 * @param testCaseId
 	 *            : the id of the viewed test case
-	 * @param locale
-	 *            : the browser's locale
 	 * @return
 	 */
 	@RequestMapping(value = "/table/aoColumnDef", method = RequestMethod.GET)
 	@ResponseBody
-	public List<AoColumnDef> getDatasetsTableColumnDefs(@PathVariable long testCaseId, final Locale locale) {
+	public List<AoColumnDef> getDatasetsTableColumnDefs(@PathVariable long testCaseId) {
 		TestCase testCase = testCaseFinder.findById(testCaseId);
 		List<Parameter> directAndCalledParameters = getSortedDirectAndCalledParameters(testCaseId);
 		List<Long> paramIds = IdentifiedUtil.extractIds(directAndCalledParameters);

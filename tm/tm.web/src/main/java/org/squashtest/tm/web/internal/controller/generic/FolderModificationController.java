@@ -26,7 +26,6 @@ import java.util.Set;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -79,8 +78,8 @@ public abstract class FolderModificationController<FOLDER extends Folder<?>> {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	public
-	Object renameFolder(HttpServletResponse response, @RequestParam("newName") String newName,
-			@PathVariable long folderId) {
+	Object renameFolder(@RequestParam("newName") String newName,
+						@PathVariable long folderId) {
 
 		getFolderModificationService().renameFolder(folderId, newName);
 		return new RenameModel(newName);

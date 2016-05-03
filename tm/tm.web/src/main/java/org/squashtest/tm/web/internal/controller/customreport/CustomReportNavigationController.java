@@ -156,14 +156,14 @@ public class CustomReportNavigationController {
 	@ResponseBody
 	@RequestMapping(value = "/folders/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodesToFolderWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											  @PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
+											  @PathVariable("destinationId") long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
 	@ResponseBody
 	@RequestMapping(value = "/drives/{destinationId}/content/{nodeIds}/{position}", method = RequestMethod.PUT)
 	public void moveNodesToDriveWithPosition(@PathVariable(RequestParams.NODE_IDS) Long[] nodeIds,
-											 @PathVariable("destinationId") long destinationId, @PathVariable("destinationId") int position) {
+											 @PathVariable("destinationId") long destinationId) {
 		moveNodes(nodeIds, destinationId);
 	}
 
@@ -192,8 +192,7 @@ public class CustomReportNavigationController {
 	 */
 	@ResponseBody
 	@RequestMapping(value = "/content/{nodeIds}/deletion-simulation", method = RequestMethod.GET)
-	public Messages simulateNodeDeletion(@PathVariable(RequestParams.NODE_IDS) List<Long> nodeIds,
-			Locale locale) {
+	public Messages simulateNodeDeletion() {
 		return new Messages();	// from TM 1.13 until further notice the simulation doesn't do anything
 	}
 

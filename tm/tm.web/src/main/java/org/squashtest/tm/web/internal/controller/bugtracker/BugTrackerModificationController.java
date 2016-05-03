@@ -23,12 +23,10 @@ package org.squashtest.tm.web.internal.controller.bugtracker;
 import static org.squashtest.tm.web.internal.helper.JEditablePostParams.VALUE;
 
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +56,7 @@ public class BugTrackerModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object changeName(HttpServletResponse response, @PathVariable long bugtrackerId, @RequestParam String newName) {
+	public Object changeName(@PathVariable long bugtrackerId, @RequestParam String newName) {
 		bugtrackerModificationService.changeName(bugtrackerId, newName);
 		LOGGER.debug("BugTracker modification : change bugtracker {} name = {}", bugtrackerId, newName);
 		return new RenameModel(newName);
@@ -74,8 +72,8 @@ public class BugTrackerModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "isIframeFriendly" })
 	@ResponseBody
-	public Object changeIframeFriendly(HttpServletResponse response, @PathVariable long bugtrackerId,
-			@RequestParam boolean isIframeFriendly) {
+	public Object changeIframeFriendly(@PathVariable long bugtrackerId,
+									   @RequestParam boolean isIframeFriendly) {
 		bugtrackerModificationService.changeIframeFriendly(bugtrackerId, isIframeFriendly);
 		LOGGER.debug("BugTracker modification : change bugtracker {} is iframe-friendly = {}", bugtrackerId,
 				isIframeFriendly);
@@ -97,7 +95,7 @@ public class BugTrackerModificationController {
 
 	@RequestMapping(method = RequestMethod.POST, params = { "id=bugtracker-kind", VALUE })
 	@ResponseBody
-	public String changeKind(@RequestParam(VALUE) String kind, @PathVariable long bugtrackerId, Locale locale) {
+	public String changeKind(@RequestParam(VALUE) String kind, @PathVariable long bugtrackerId) {
 		LOGGER.debug("BugTracker modification : change bugtracker {} kind = {}", bugtrackerId, kind);
 		bugtrackerModificationService.changeKind(bugtrackerId, kind);
 

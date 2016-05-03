@@ -172,7 +172,7 @@ public class ConfigAdministrationController {
 
     @RequestMapping(value = "clients/list")
     @ResponseBody
-    public DataTableModel getClientsTableModel(final DataTableDrawParameters params, final Locale locale) {
+    public DataTableModel getClientsTableModel(final Locale locale) {
 
         ClientDataTableModelHelper helper = new ClientDataTableModelHelper(messageSource);
         helper.setLocale(locale);

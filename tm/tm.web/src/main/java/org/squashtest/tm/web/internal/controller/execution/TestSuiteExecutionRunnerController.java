@@ -134,7 +134,7 @@ public class TestSuiteExecutionRunnerController {
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INIT_EXECUTION_RUNNER, params = { "optimized=false", "!dry-run" })
-	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId, Model model) {
+	public String startResumeExecutionInClassicRunner(@PathVariable long testSuiteId) {
 		LOGGER.trace("startResumeExecutionInClassicRunner({})", testSuiteId);
 
 		Execution execution = testSuiteExecutionRunner.startResume(testSuiteId);

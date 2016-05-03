@@ -231,7 +231,7 @@ public class ReportController {
 
 
 	@RequestMapping(value = "/ie9", method = RequestMethod.POST)
-	public void ie9Sucks(HttpServletRequest request, HttpServletResponse response,  @RequestParam("b64") String b64, @RequestParam("fileName") String fileName) throws IOException{
+	public void ie9Sucks(HttpServletResponse response, @RequestParam("b64") String b64, @RequestParam("fileName") String fileName) throws IOException{
 
 		final File tempFile = File.createTempFile(fileName, ".tmp");
 		tempFile.deleteOnExit();

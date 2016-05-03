@@ -79,7 +79,7 @@ public class ExecutionProcessingController {
 
 	@RequestMapping(method = RequestMethod.GET, params = OPTIMIZED)
 	public String executeFirstRunnableStep(@PathVariable long executionId,
-			@RequestParam(OPTIMIZED) boolean optimized, Model model) {
+										   @RequestParam(OPTIMIZED) boolean optimized) {
 
 		if (executionProcService.wasNeverRun(executionId)) {
 			return "redirect:" + getRedirectToPrologue(executionId, optimized);
@@ -134,8 +134,7 @@ public class ExecutionProcessingController {
 	}
 
 	@RequestMapping(value = "/step/{stepId}", params = "optimized=false")
-	public String startResumeExecutionStepInClassicRunner(@PathVariable long executionId, @PathVariable long stepId,
-			Model model) {
+	public String startResumeExecutionStepInClassicRunner(@PathVariable long executionId, @PathVariable long stepId) {
 		Execution execution = executionProcService.findExecution(executionId);
 		int stepIndex = execution.getStepIndex(stepId);
 		// simple case here : the context is simply the popup. We redirect to the execution processing view controller.

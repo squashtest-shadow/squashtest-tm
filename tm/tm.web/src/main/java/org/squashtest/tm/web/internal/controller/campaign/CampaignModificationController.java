@@ -37,7 +37,6 @@ import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -245,7 +244,7 @@ public class CampaignModificationController {
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST, params = {"newName"})
 	public
-	Object rename(HttpServletResponse response, @RequestParam("newName") String newName, @PathVariable long campaignId) {
+	Object rename(@RequestParam("newName") String newName, @PathVariable long campaignId) {
 		LOGGER.info("Renaming Campaign " + campaignId + " as " + newName);
 
 		campaignModService.rename(campaignId, newName);
@@ -277,8 +276,8 @@ public class CampaignModificationController {
 	@ResponseBody
 	@RequestMapping(value = PLANNING_URL, params = {"scheduledStart"})
 	public
-	String setScheduledStart(HttpServletResponse response, @PathVariable long campaignId,
-			@RequestParam(value = "scheduledStart") String strDate) {
+	String setScheduledStart(@PathVariable long campaignId,
+							 @RequestParam(value = "scheduledStart") String strDate) {
 
 		Date newScheduledStart = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledStart);
@@ -293,8 +292,8 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = { "scheduledEnd" })
 	@ResponseBody
-	String setScheduledEnd(HttpServletResponse response, @PathVariable long campaignId,
-			@RequestParam(value = "scheduledEnd") String strDate) {
+	String setScheduledEnd(@PathVariable long campaignId,
+						   @RequestParam(value = "scheduledEnd") String strDate) {
 
 		Date newScheduledEnd = strToDate(strDate);
 		String toReturn = dateToStr(newScheduledEnd);
@@ -311,8 +310,8 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = { "actualStart" })
 	@ResponseBody
-	String setActualStart(HttpServletResponse response, @PathVariable long campaignId,
-			@RequestParam(value = "actualStart") String strDate) {
+	String setActualStart(@PathVariable long campaignId,
+						  @RequestParam(value = "actualStart") String strDate) {
 
 		Date newActualStart = strToDate(strDate);
 		String toReturn = dateToStr(newActualStart);
@@ -327,8 +326,8 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = { "actualEnd" })
 	@ResponseBody
-	String setActualEnd(HttpServletResponse response, @PathVariable long campaignId,
-			@RequestParam(value = "actualEnd") String strDate) {
+	String setActualEnd(@PathVariable long campaignId,
+						@RequestParam(value = "actualEnd") String strDate) {
 
 		Date newActualEnd = strToDate(strDate);
 		String toReturn = dateToStr(newActualEnd);
@@ -343,8 +342,8 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = { "setActualStartAuto" })
 	@ResponseBody
-	String setActualStartAuto(HttpServletResponse response, @PathVariable long campaignId,
-			@RequestParam(value = "setActualStartAuto") Boolean auto) {
+	String setActualStartAuto(@PathVariable long campaignId,
+							  @RequestParam(value = "setActualStartAuto") Boolean auto) {
 
 		LOGGER.info("Autosetting actual start date for campaign " + campaignId + ", new value " + auto.toString());
 
@@ -356,8 +355,8 @@ public class CampaignModificationController {
 
 	@RequestMapping(value = PLANNING_URL, params = { "setActualEndAuto" })
 	@ResponseBody
-	String setActualEndAuto(HttpServletResponse response, @PathVariable long campaignId,
-			@RequestParam(value = "setActualEndAuto") Boolean auto) {
+	String setActualEndAuto(@PathVariable long campaignId,
+							@RequestParam(value = "setActualEndAuto") Boolean auto) {
 		LOGGER.info("CampaignModificationController : autosetting actual end date for campaign " + campaignId
 				+ ", new value " + auto.toString());
 

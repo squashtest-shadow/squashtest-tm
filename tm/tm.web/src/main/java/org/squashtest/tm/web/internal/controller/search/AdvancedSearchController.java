@@ -480,13 +480,7 @@ public class AdvancedSearchController {
 	}
 
 	private boolean isInAssociationContext(String associateResultWithType) {
-		boolean isInAssociationContext = false;
-
-		if (associateResultWithType != null) {
-			isInAssociationContext = true;
-		}
-
-		return isInAssociationContext;
+		return associateResultWithType != null;
 	}
 
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL,
@@ -578,14 +572,13 @@ public class AdvancedSearchController {
 				isInAssociationContext, ids).buildDataModel(holder, params.getsEcho());
 	}
 
-	// TODO
+
 
 	@RequestMapping(value = TABLE, method = RequestMethod.POST, params = { RequestParams.MODEL, CAMPAIGN,
 			RequestParams.S_ECHO_PARAM })
 	@ResponseBody
 	public DataTableModel getCampaignTableModel(final DataTableDrawParameters params, final Locale locale,
-			@RequestParam(value = RequestParams.MODEL) String model,
-			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id)
+												@RequestParam(value = RequestParams.MODEL) String model)
 					throws IOException {
 
 		AdvancedSearchModel searchModel = new ObjectMapper().readValue(model, AdvancedSearchModel.class);
@@ -781,7 +774,7 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/milestones/tc-mass-modif-associables/{testCaseIds}", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getMilestonesForMassTcModif(@PathVariable List<Long> testCaseIds,
-			DataTableDrawParameters params, Locale locale) {
+													  Locale locale) {
 		Collection<Milestone> milestones = testCaseModificationService
 				.findAssociableMilestonesForMassModif(testCaseIds);
 		return buildMilestoneTableModelForMassModif(milestones, locale);
@@ -790,7 +783,7 @@ public class AdvancedSearchController {
 	@RequestMapping(value = "/milestones/reqV-mass-modif-associables/{reqVersionIds}", method = RequestMethod.GET)
 	@ResponseBody
 	public DataTableModel getMilestonesForMassReqVersionModif(@PathVariable List<Long> reqVersionIds,
-			DataTableDrawParameters params, Locale locale) {
+															  Locale locale) {
 		Collection<Milestone> milestones = versionService.findAssociableMilestonesForMassModif(reqVersionIds);
 		return buildMilestoneTableModelForMassModif(milestones, locale);
 	}
@@ -812,8 +805,7 @@ public class AdvancedSearchController {
 
 	@RequestMapping(value = "/milestones/reqV-mass-modif-data/{reqVersionIds}", method = RequestMethod.GET)
 	@ResponseBody
-	public MilestoneMassModifData getMilestoneMassModifDataForReqVersion(@PathVariable List<Long> reqVersionIds,
-			Locale locale) {
+	public MilestoneMassModifData getMilestoneMassModifDataForReqVersion(@PathVariable List<Long> reqVersionIds) {
 
 		MilestoneMassModifData data = new MilestoneMassModifData();
 		data.setCheckedIds(versionService.findBindedMilestonesIdForMassModif(reqVersionIds));

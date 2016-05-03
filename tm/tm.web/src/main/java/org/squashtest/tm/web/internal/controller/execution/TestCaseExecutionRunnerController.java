@@ -116,7 +116,7 @@ public class TestCaseExecutionRunnerController {
 	}
 
 	@RequestMapping(params = { "optimized=false" })
-	public String startResumeExecutionInClassicRunner(@PathVariable long executionId, Model model) {
+	public String startResumeExecutionInClassicRunner(@PathVariable long executionId) {
 
 		// simple case here : the context is simply the popup. We redirect to the execution processing view controller.
 		return "redirect:" + getRedirectExecURL(executionId, false);

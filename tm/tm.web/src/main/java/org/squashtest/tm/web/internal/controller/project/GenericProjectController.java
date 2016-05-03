@@ -33,7 +33,6 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.inject.Inject;
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -191,7 +190,7 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "newName" })
 	@ResponseBody
-	public Object changeName(HttpServletResponse response, @PathVariable long projectId, @RequestParam String newName) {
+	public Object changeName(@PathVariable long projectId, @RequestParam String newName) {
 
 		projectManager.changeName(projectId, newName);
 		LOGGER.info("Project modification : renaming {} as {}", projectId, newName);
@@ -200,8 +199,8 @@ public class GenericProjectController {
 
 	@RequestMapping(value = PROJECT_ID_URL, method = RequestMethod.POST, params = { "isActive" })
 	@ResponseBody
-	public Active changeActive(HttpServletResponse response, @PathVariable long projectId,
-			@RequestParam boolean isActive) {
+	public Active changeActive(@PathVariable long projectId,
+							   @RequestParam boolean isActive) {
 
 		projectManager.changeActive(projectId, isActive);
 		LOGGER.info("Project modification : change project {} is active = {}", projectId, isActive);
@@ -240,7 +239,7 @@ public class GenericProjectController {
 			"id=project-bugtracker-project-name", VALUES })
 	@ResponseBody
 	public List<String> changeBugtrackerProjectName(@RequestParam(VALUES) List<String> projectBugTrackerNames,
-			@PathVariable long projectId, Locale locale) {
+													@PathVariable long projectId) {
 		projectManager.changeBugTrackerProjectName(projectId, projectBugTrackerNames);
 		return projectBugTrackerNames;
 	}
@@ -382,7 +381,7 @@ public class GenericProjectController {
 	@RequestMapping(value = PROJECT_ID_URL + "/test-automation-projects/new", method = RequestMethod.POST)
 	@ResponseBody
 	public void addTestAutomationProject(@PathVariable long projectId,
-			@RequestBody TestAutomationProject[] projects, Locale locale) throws BindException {
+										 @RequestBody TestAutomationProject[] projects) throws BindException {
 		projectManager.bindTestAutomationProjects(projectId, Arrays.asList(projects));
 
 	}

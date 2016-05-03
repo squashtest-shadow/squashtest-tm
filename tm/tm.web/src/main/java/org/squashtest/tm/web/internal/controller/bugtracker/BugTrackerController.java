@@ -155,7 +155,7 @@ public class BugTrackerController {
 	private static final String MODEL_BUG_TRACKER_STATUS = "bugTrackerStatus";
 
 	@InitBinder
-	public void initBinder(HttpServletRequest request, ServletRequestDataBinder binder) throws ServletException {
+	public void initBinder(ServletRequestDataBinder binder) throws ServletException {
 		binder.registerCustomEditor(UploadedData.class, new UploadedDataPropertyEditorSupport());
 	}
 
@@ -219,7 +219,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = EXECUTION_STEP_TYPE + "/{stepId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getExecStepKnownIssuesData(@PathVariable("stepId") Long stepId,
-			final DataTableDrawParameters params, final Locale locale) {
+													 final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -582,7 +582,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = TEST_SUITE_TYPE + "/{testSuiteId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getTestSuiteKnownIssuesData(@PathVariable("testSuiteId") Long testSuiteId,
-			final DataTableDrawParameters params, final Locale locale) {
+													  final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -632,8 +632,7 @@ public class BugTrackerController {
 	@ResponseBody
 	@RequestMapping(value = CAMPAIGN_FOLDER_TYPE + "/{campaignFolderId}/known-issues", method = RequestMethod.GET)
 	public DataTableModel getCampaignFolderKnownIssuesData(
-			@PathVariable("campaignFolderId") Long campaignFolderId, final DataTableDrawParameters params,
-			final Locale locale) {
+		@PathVariable("campaignFolderId") Long campaignFolderId, final DataTableDrawParameters params) {
 
 		PagingAndSorting sorter = new IssueCollectionSorting(params);
 
@@ -742,11 +741,11 @@ public class BugTrackerController {
 				executionUrl);
 		String defaultAdditionalInformations = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale,
 				messageSource);
-		return makeReportIssueModel(step, defaultDescription, defaultAdditionalInformations, locale, projectName);
+		return makeReportIssueModel(step, defaultDescription, locale, projectName);
 	}
 
 	private RemoteIssue makeReportIssueModel(ExecutionStep step, String defaultDescription,
-			String defaultAdditionalInformations, Locale locale, String projectName) {
+											 Locale locale, String projectName) {
 		RemoteIssue emptyIssue = makeReportIssueModel(step, defaultDescription, projectName);
 		String comment = BugTrackerControllerHelper.getDefaultAdditionalInformations(step, locale, messageSource);
 		emptyIssue.setComment(comment);
