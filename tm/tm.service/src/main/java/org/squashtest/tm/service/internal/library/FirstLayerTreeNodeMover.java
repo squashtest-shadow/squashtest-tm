@@ -27,10 +27,7 @@ import static org.squashtest.tm.domain.EntityType.REQUIREMENT_FOLDER;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 
@@ -124,7 +121,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 	private boolean projectChanged = false;
 
 	private WhichNodeVisitor whichVisitor = new WhichNodeVisitor();
-	private Map<EntityType, NodeCollaborators> collaboratorsByType = new HashMap<>();
+	private Map<EntityType, NodeCollaborators> collaboratorsByType = new EnumMap<>(EntityType.class);
 
 	@Override
 	public void afterPropertiesSet() throws Exception {

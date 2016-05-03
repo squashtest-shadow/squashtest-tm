@@ -29,10 +29,7 @@ import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_CASE;
 import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_STEP;
 import static org.squashtest.tm.domain.customfield.BindableEntity.TEST_SUITE;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -63,7 +60,7 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	private static final Map<BindableEntity, String> BOUND_ENTITIES_IN_PROJECT_QUERY;
 
 	static {
-		Map<BindableEntity, String> queriesByBindable = new HashMap<>();
+		Map<BindableEntity, String> queriesByBindable = new EnumMap<>(BindableEntity.class);
 		queriesByBindable.put(TEST_CASE, TEST_CASE_QUERY_NAME);
 		queriesByBindable.put(REQUIREMENT_VERSION, REQUIREMENT_QUERY_NAME);
 		queriesByBindable.put(CAMPAIGN, CAMPAIGN_QUERY_NAME);

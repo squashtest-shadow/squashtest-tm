@@ -20,14 +20,8 @@
  */
 package org.squashtest.tm.service.batchimport.excel;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
@@ -40,7 +34,7 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWor
  *
  */
 public class WorksheetFormatStatus {
-	private Map<ColumnMismatch, Set<TemplateColumn>> columnMismatches = new HashMap<>();
+	private Map<ColumnMismatch, Set<TemplateColumn>> columnMismatches = new EnumMap<>(ColumnMismatch.class);
 	private List<WorksheetMismatch> worksheetMismatches = new ArrayList<>();
 	private TemplateWorksheet worksheet;
 
@@ -93,7 +87,7 @@ public class WorksheetFormatStatus {
 	 * @return the column full names ( see {@link TemplateColumn#getFullName()}) by the {@link ColumnMismatch}
 	 */
 	public Map<ColumnMismatch, Set<String>> getColumnNamesByMismatches() {
-		Map<ColumnMismatch, Set<String>> result = new HashMap<>();
+		Map<ColumnMismatch, Set<String>> result = new EnumMap<>(ColumnMismatch.class);
 		for (Entry<ColumnMismatch, Set<TemplateColumn>> mismatch : columnMismatches.entrySet()) {
 			Set<String> columns = extractColumnFullNames(mismatch.getValue());
 			Set<String> alreadyStoredColumns = result.get(mismatch.getKey());

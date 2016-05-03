@@ -29,12 +29,7 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Temp
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -125,10 +120,10 @@ public class ExcelWorkbookParser {
 	private Workbook workbook;
 	private final WorkbookMetaData wmd;
 
-	private final Map<TemplateWorksheet, List<Instruction<?>>> instructionsByWorksheet = new HashMap<>(
-		5);
-	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new HashMap<>(
-		5);
+	private final Map<TemplateWorksheet, List<Instruction<?>>> instructionsByWorksheet = new EnumMap<>(
+		TemplateWorksheet.class);
+	private final Map<TemplateWorksheet, Factory<?>> instructionBuilderFactoryByWorksheet = new EnumMap<>(
+		TemplateWorksheet.class);
 
 	/**
 	 * Should be used by ExcelWorkbookParserBuilder only.

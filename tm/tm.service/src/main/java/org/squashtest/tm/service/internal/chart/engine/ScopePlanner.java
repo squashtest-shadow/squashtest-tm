@@ -32,15 +32,7 @@ import static org.squashtest.tm.domain.EntityType.TEST_CASE;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_FOLDER;
 import static org.squashtest.tm.domain.EntityType.TEST_CASE_LIBRARY;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -508,7 +500,7 @@ class ScopePlanner {
 	 */
 	private Map<EntityType, Collection<Long>> mapScopeByType() {
 
-		Map<EntityType, Collection<Long>> map = new HashMap<>();
+		Map<EntityType, Collection<Long>> map = new EnumMap<>(EntityType.class);
 
 		for (EntityReference ref : scope) {
 			EntityType type = ref.getType();
@@ -674,7 +666,7 @@ class ScopePlanner {
 
 
 	private static class ScopeUtils {
-		private static final Map<EntityType, String> CLASS_NAME_BY_ENTITY = new LinkedHashMap<>();
+		private static final Map<EntityType, String> CLASS_NAME_BY_ENTITY = new EnumMap<>(EntityType.class);
 
 		static {
 			CLASS_NAME_BY_ENTITY.put(PROJECT, "org.squashtest.tm.domain.project.Project");

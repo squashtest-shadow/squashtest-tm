@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,10 +28,10 @@ import org.squashtest.tm.domain.execution.ExecutionStatus;
 
 public class CampaignTestCaseSuccessRateStatistics {
 
-	private Map<ExecutionStatus, Integer> testsOfLowImportance = new HashMap<>();
-	private Map<ExecutionStatus, Integer> testsOfMediumImportance = new HashMap<>();
-	private Map<ExecutionStatus, Integer> testsOfHighImportance = new HashMap<>();
-	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new HashMap<>();
+	private Map<ExecutionStatus, Integer> testsOfLowImportance = new EnumMap<>(ExecutionStatus.class);
+	private Map<ExecutionStatus, Integer> testsOfMediumImportance = new EnumMap<>(ExecutionStatus.class);
+	private Map<ExecutionStatus, Integer> testsOfHighImportance = new EnumMap<>(ExecutionStatus.class);
+	private Map<ExecutionStatus, Integer> testsOfVeryHighImportance = new EnumMap<>(ExecutionStatus.class);
 
 	public void addNbLow(ExecutionStatus status, int number){
 

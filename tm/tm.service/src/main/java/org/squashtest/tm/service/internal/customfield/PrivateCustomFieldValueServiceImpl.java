@@ -20,13 +20,8 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -459,7 +454,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private Map<BindableEntity, List<Long>> breakEntitiesIntoCompositeIds(
 			Collection<? extends BoundEntity> boundEntities) {
 
-		Map<BindableEntity, List<Long>> segregatedEntities = new HashMap<>();
+		Map<BindableEntity, List<Long>> segregatedEntities = new EnumMap<>(BindableEntity.class);
 
 		for (BoundEntity entity : boundEntities) {
 			List<Long> idList = segregatedEntities.get(entity.getBoundEntityType());

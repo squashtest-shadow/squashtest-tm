@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.statistics.campaign;
 
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,7 +36,7 @@ public class CampaignTestCaseStatusStatistics {
 	}
 
 	private void initStatistics() {
-		statistics = new HashMap<>(ExecutionStatus.getCanonicalStatusSet().size());
+		statistics = new EnumMap<>(ExecutionStatus.class);
 		for(ExecutionStatus status: ExecutionStatus.getCanonicalStatusSet()){
 			statistics.put(status, 0);
 		}
