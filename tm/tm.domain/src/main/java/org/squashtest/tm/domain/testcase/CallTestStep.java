@@ -78,7 +78,7 @@ public class CallTestStep extends TestStep {
 	public void setCalledDataset(Dataset calledDataset) {
 
 		if (calledDataset != null && ! calledTestCase.getDatasets().contains(calledDataset)){
-			throw new RuntimeException("attempted to bind to a call step a dataset that doesn't belong to the called test case");
+			throw new IllegalArgumentException("attempted to bind to a call step a dataset that doesn't belong to the called test case");
 		}
 		this.calledDataset = calledDataset;
 	}

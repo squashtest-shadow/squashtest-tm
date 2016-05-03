@@ -339,7 +339,7 @@ DenormalizedFieldHolder, BoundEntity {
 
 		referencedTestCase = testCase;
 
-		if (testCase.getReference() != null && !"".equals(testCase.getReference())) {
+		if (testCase.getReference() != null && !testCase.getReference().isEmpty()) {
 			setName(testCase.getReference() + " - " + testCase.getName());
 		} else {
 			setName(testCase.getName());

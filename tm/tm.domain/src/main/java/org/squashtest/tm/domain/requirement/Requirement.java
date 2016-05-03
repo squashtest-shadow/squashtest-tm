@@ -492,8 +492,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 				resource = requirementVersion;
 			}
 		} else {
-			// FIXME never throw RuntimeEx. IllegalArgEx should be ok
-			throw new RuntimeException("RequirementVersion with version number " + newVersionNumber + " already exist in this Requirement, id : " + getId());
+			throw new IllegalArgumentException("RequirementVersion with version number " + newVersionNumber + " already exist in this Requirement, id : " + getId());
 		}
 	}
 

@@ -112,8 +112,8 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		DatasetInfos dsIndos = makeDatasetInfo (item);
 
 		// test suite name
-		String testSuiteNameList = "";
-		String testSuiteNameListTot = "";
+		String testSuiteNameList;
+		String testSuiteNameListTot;
 		List<Long> testSuiteIdsList;
 
 		if (item.getTestSuites().isEmpty()) {

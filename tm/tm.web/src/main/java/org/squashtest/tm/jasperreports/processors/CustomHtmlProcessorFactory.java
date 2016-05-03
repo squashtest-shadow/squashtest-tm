@@ -137,7 +137,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 		String chunk = null;
 		JRPrintHyperlink hyperlink = null;
 		Element element = null;
-		Element parent = null;
+		Element parent;
 		boolean bodyOccurred = false;
 		int[] orderedListIndex = new int[elements.size()];
 		String whitespace = "    ";

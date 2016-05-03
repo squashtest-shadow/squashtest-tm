@@ -429,7 +429,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 			}
 
 		}else{
-			throw new RuntimeException("Cannot remove node '"+key+"' : it has no children");
+			throw new IllegalArgumentException("Cannot remove node '"+key+"' : it has no children");
 		}
 	}
 

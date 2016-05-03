@@ -58,11 +58,11 @@ public class SearchServiceImpl implements SearchService {
 	 * TODO : the user project filter is applied in a straight forward manner in the following methods. The relevant
 	 * code should be moved in an aspect, because the need for filtering might appear in other parts of the app in the
 	 * future.
-	 * 
+	 *
 	 * See task (TODO : write the task)
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * org.squashtest.csp.tm.service.SearchService#findAllBySearchCriteria(org.squashtest.tm.domain.requirement.
 	 * RequirementSearchCriteria)
@@ -109,7 +109,7 @@ public class SearchServiceImpl implements SearchService {
 	public List<String> findBreadCrumbForCampaign(String className, Long id, String rejex) {
 		List<String> result = null;
 		if (!"Iteration".equals(className) && !"TestSuite".equals(className)) {
-			CampaignLibraryNode node = null;
+			CampaignLibraryNode node;
 			if (className.endsWith("Folder")) {
 				node = campaignLibraryNavigationService.findFolder(id);
 			} else {

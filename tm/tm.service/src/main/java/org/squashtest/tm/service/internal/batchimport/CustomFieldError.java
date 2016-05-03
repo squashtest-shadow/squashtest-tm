@@ -145,7 +145,7 @@ public enum CustomFieldError {
 
 				break;
 			default:
-				throw new RuntimeException("Unknown CUF validation impact : " + impact);
+				throw new IllegalArgumentException("Unknown CUF validation impact : " + impact);
 		}
 
 	}

@@ -81,14 +81,10 @@ public class InfoListItemComparator extends FieldComparator<String> {
 
 		final String val2 = currentReaderValues.get(doc).utf8ToString();
 
-        int result = 0;
+        int result;
         if (val1 == null) {
-            if (val2 != null) {
                 result = -1;
-            }
-        } else if (val2 == null) {
-            result = 1;
-        } else {
+        }  else {
             String internationalizedVal2 = source.getMessage(i18nRoot + val2, null, val2, locale);
             result = val1.compareTo(internationalizedVal2);
         }

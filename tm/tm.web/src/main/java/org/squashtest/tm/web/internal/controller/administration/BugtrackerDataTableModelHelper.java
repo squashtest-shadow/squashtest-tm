@@ -41,16 +41,16 @@ public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTra
 	@Override
 	public Map<String, Object> buildItemData(BugTracker item) {
 
-		String isIframeFriendlyStringValue = "";
+		String isIframeFriendlyStringValue;
 		Map<String, Object> row = new HashMap<>(7);
-		
-		
+
+
 		if (item.isIframeFriendly()) {
 			isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.true", locale);
 		} else {
 			isIframeFriendlyStringValue = messageSource.internationalize("squashtm.truefalse.false", locale);
 		}
-		
+
 		row.put("entity-id", item.getId());
 		row.put("index", getCurrentIndex());
 		row.put("name", item.getName());
@@ -58,7 +58,7 @@ public class BugtrackerDataTableModelHelper extends DataTableModelBuilder<BugTra
 		row.put("url", item.getUrl());
 		row.put("iframe-friendly", isIframeFriendlyStringValue);
 		row.put("delete", "");
-		
+
 		return row;
 	}
 

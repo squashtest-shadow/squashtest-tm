@@ -137,7 +137,7 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public List<Long> filterByMilestone(Collection<Long> campaignIds, Long milestoneId) {
-		List<Long> res = null;
+		List<Long> res;
 
 		if (milestoneId == null){
 			res  = new ArrayList(campaignIds);
@@ -417,11 +417,11 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public TestPlanStatistics findCampaignStatistics(long campaignId) {
-		
+
 		Query q = currentSession().getNamedQuery("campaign.countStatuses");
 		q.setParameter("campaignId", campaignId);
 		List<Object[]> result = q.list();
-		
+
 		return new TestPlanStatistics(result);
 	}
 

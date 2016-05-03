@@ -21,16 +21,7 @@
 package org.squashtest.tm.domain.campaign;
 
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -482,7 +473,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 			}
 		}
 
-		throw new RuntimeException("Iteration " + id + " : cannot find test suite named '" + tsName + "'");
+		throw new NoSuchElementException("Iteration " + id + " : cannot find test suite named '" + tsName + "'");
 	}
 
 	public void addTestSuite(TestSuite suite) {

@@ -69,7 +69,7 @@ public class CustomFieldModelIdTypeResolver extends TypeIdResolverBase implement
 	@Override
 	public JavaType typeFromId(String type){
 
-		JavaType toReturn = null;
+		JavaType toReturn;
 
 		InputType enumType = InputType.valueOf(type);
 

@@ -52,8 +52,8 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 
 	/*
 	 * This query cannot be expressed in hql because the CASE construct doesn't
-	 * support multiple WHEN. 
-	 * 
+	 * support multiple WHEN.
+	 *
 	 * See definition of sct.sizeclass in the CASE WHEN construct.
 	 */
 	private static final String SQL_SIZE_STATISTICS = "select sct.sizeclass, count(sct.sizeclass) as count "
@@ -68,7 +68,7 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 			+ "left outer join TEST_CASE_STEPS tcs on tc.tcln_id = tcs.test_case_id "
 			+ "where tc.tcln_id in (:testCaseIds) "
 			+ "group by tc.tcln_id ) as sct " + "group by sct.sizeclass";
-	
+
 	/*
 	 * Same problem here. See definition of coverage.sizeclass in the CASE WHEN.
 	 */
@@ -105,20 +105,20 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		Integer sizeClass;
 		Integer count;
 		for(Object[] tuple : tuples){
-			
+
 			sizeClass= (Integer)tuple[0];
 			count = ((BigInteger)tuple[1]).intValue();
-			
+
 			switch(sizeClass){
 				case 0 : stats.setZeroRequirements(count); break;
 				case 1 : stats.setOneRequirement(count); break;
 				case 2 : stats.setManyRequirements(count); break;
-				default : throw new RuntimeException("TestCaseStatisticsServiceImpl#gatherBoundRequirementStatistics : "+
+				default : throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherBoundRequirementStatistics : "+
 													 "there should not be a sizeclass <0 or >2. It's a bug.");
-				
+
 			}
 		}
-		
+
 		return stats;
 
 	}
@@ -230,21 +230,21 @@ public class TestCaseStatisticsServiceImpl implements TestCaseStatisticsService 
 		Integer sizeClass;
 		Integer count;
 		for(Object[] tuple : tuples){
-			
+
 			sizeClass= (Integer)tuple[0];
 			count = ((BigInteger)tuple[1]).intValue();
-			
+
 			switch(sizeClass){
 				case 0 : stats.setZeroSteps(count); break;
 				case 1 : stats.setBetween0And10Steps(count); break;
 				case 2 : stats.setBetween11And20Steps(count); break;
 				case 3 : stats.setAbove20Steps(count); break;
-				default : throw new RuntimeException("TestCaseStatisticsServiceImpl#gatherTestCaseSizeStatistics : "+
+				default : throw new IllegalArgumentException("TestCaseStatisticsServiceImpl#gatherTestCaseSizeStatistics : "+
 													 "there should not be a sizeclass <0 or >3. It's a bug.");
-				
+
 			}
 		}
-		
+
 
 		return stats;
 	}

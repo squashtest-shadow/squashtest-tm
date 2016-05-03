@@ -55,7 +55,7 @@ public abstract class ModelTreeHelper {
 	 */
 	public List<JsTreeNode> getRootModel(String[] openedNodes, String elementId) {
 		List<Library<LibraryNode>> libraries = getWorkspaceService().findAllLibraries();
-		String[] nodesToOpen = null;
+		String[] nodesToOpen;
 
 		if (elementId == null || elementId.isEmpty()) {
 			nodesToOpen = openedNodes;

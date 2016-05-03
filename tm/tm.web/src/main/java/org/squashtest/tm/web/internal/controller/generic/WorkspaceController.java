@@ -98,7 +98,7 @@ public abstract class WorkspaceController<LN extends LibraryNode> {
 	                            @CookieValue(value = "workspace-prefs", required = false, defaultValue = "") String elementId) {
 
 		List<Library<LN>> libraries = getWorkspaceService().findAllLibraries();
-		String[] nodesToOpen = null;
+		String[] nodesToOpen;
 
 		// #5585 : the case where elementId explicitly equals string litteral "null" can and will happen
 		// thus the test here

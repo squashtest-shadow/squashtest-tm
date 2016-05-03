@@ -566,7 +566,7 @@ class EntityValidator {
 
 	private boolean categoryDefinedAndConsistent(TargetStatus projectStatus,
 			RequirementVersion reqVersion) {
-		boolean isConsistent = true;
+		boolean isConsistent;
 		InfoListItem category = reqVersion.getCategory();
 		if (category!=null) {
 			isConsistent = getInfoListItemService().isCategoryConsistent(projectStatus.getId(), category.getCode());
@@ -578,7 +578,7 @@ class EntityValidator {
 	}
 
 	private boolean natureDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
-		boolean isConsistent = true;
+		boolean isConsistent;
 		InfoListItem nature = testCase.getNature();
 
 		if (nature == null){
@@ -593,7 +593,7 @@ class EntityValidator {
 
 
 	private boolean typeDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
-		boolean isConsistent = true;
+		boolean isConsistent;
 		InfoListItem type = testCase.getType();
 
 		if (type == null){

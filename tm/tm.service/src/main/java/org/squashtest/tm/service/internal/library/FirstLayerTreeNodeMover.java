@@ -279,7 +279,7 @@ public class FirstLayerTreeNodeMover implements PasteOperation, InitializingBean
 			throw new CannotMoveInHimselfException();
 		}
 
-		LibraryNodeDao<?> lnDao = null;
+		LibraryNodeDao<?> lnDao;
 		EntityType destType = whichVisitor.getTypeOf(destination);
 
 		switch (destType) {

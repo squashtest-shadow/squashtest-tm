@@ -271,9 +271,9 @@ RequirementNodeDeletionHandler {
 	 */
 	protected TargetsSortedByAppropriatePunishment sortThatMess(List<Long> nodeIds) {
 
-		List<Long> deletableFolderIds = null;
-		List<Long> deletableRequirementIds = null;
-		List<Long> requirementWithRewirableChildren = null;
+		List<Long> deletableFolderIds;
+		List<Long> deletableRequirementIds;
+		List<Long> requirementWithRewirableChildren;
 		List<Long> requirementsWithOneDeletableVersion = null;
 		List<Long> requirementsWithOneUnbindableVersion = null;
 
@@ -623,7 +623,7 @@ RequirementNodeDeletionHandler {
 		Collection<Requirement> children = new ArrayList<>(rewired);
 		List<Node> movedNodesLog = new ArrayList<>(rewired.size());
 
-		boolean needsRenaming = false;
+		boolean needsRenaming;
 
 		// renaming loop. Loop over each children, and for each of them ensure that they wont namecrash within their new
 		// parent.

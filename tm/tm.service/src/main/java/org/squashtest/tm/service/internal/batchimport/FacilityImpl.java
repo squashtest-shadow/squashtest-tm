@@ -35,6 +35,7 @@ import java.util.Set;
 import javax.inject.Inject;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -579,7 +580,7 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
-		throw new RuntimeException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
+		throw new NotImplementedException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
 	}
 
 	/**

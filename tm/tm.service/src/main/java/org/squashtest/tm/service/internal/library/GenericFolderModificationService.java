@@ -113,7 +113,7 @@ FolderModificationService<FOLDER> {
 
 		private void setKind(String kind) {
 			if (!kind.equals(SecurityCheckableItem.FOLDER) || kind.equals(SecurityCheckableItem.LIBRARY)) {
-				throw new RuntimeException(
+				throw new IllegalArgumentException(
 						"(dev note : AbstracLibraryNavigationService : manual security checks aren't correctly configured");
 			}
 			domainObjectKind = kind;

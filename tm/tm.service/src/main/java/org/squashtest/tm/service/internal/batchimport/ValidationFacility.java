@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1117,7 +1118,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	@Override
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
-		throw new RuntimeException("Implement me");
+		throw new NotImplementedException("Implement me");
 	}
 
 	boolean areMilestoneValid(TestCaseInstruction instr) {

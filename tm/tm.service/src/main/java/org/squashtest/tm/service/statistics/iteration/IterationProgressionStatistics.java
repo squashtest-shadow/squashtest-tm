@@ -85,8 +85,8 @@ private Collection<String> i18nErrors;
 
 			Iterator<Date> dateIter = trickedDates.iterator();
 			Date precDate= dateIter.next();
-			Date curDate = null;
-			Date truncated = null;
+			Date curDate;
+			Date truncated;
 			int accumulator = 1;
 
 			// iterate over the rest. Remember that the last element is a dummy null value

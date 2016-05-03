@@ -141,7 +141,7 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 	}
 
 	private Object newEmptyCollection(Class<?> returnType){
-		Object res = null;
+		Object res;
 
 		if (isList(returnType)){
 			res = new ArrayList<>();
@@ -160,7 +160,7 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 	}
 
 	private Object newPrimitiveZero(Class<?> returnType) {
-		Object res = null;
+		Object res;
 
 		if (returnType.equals(Short.TYPE)) {
 			res = 0;

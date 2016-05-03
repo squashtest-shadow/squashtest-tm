@@ -22,6 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate;
 
 import java.util.List;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.hibernate.SQLQuery;
 import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
@@ -52,12 +53,12 @@ public class HibernateCampaignLibraryNodeDao extends HibernateEntityDao<Campaign
 
 	@Override
 	public List<Long> findNodeIdsByPath(List<String> paths) {
-		throw new RuntimeException("Pleeeaaaase implements me !!");
+		throw new NotImplementedException("Pleeeaaaase implements me !!");
 	}
 
 	@Override
 	public Long findNodeIdByPath(String path) {
-		throw new RuntimeException("Pleeeaaaase implements me !!");
+		throw new NotImplementedException("Pleeeaaaase implements me !!");
 	}
 
 }

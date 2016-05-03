@@ -91,7 +91,7 @@ public abstract class DataTableModelBuilder<X> {
 	}
 
 	protected static String formatUsername(String username) {
-		if (username == null || username.trim() != null && username.trim().isEmpty()) {
+		if (username == null  && username.trim().isEmpty()) {
 			return "-";
 		}
 		return username;

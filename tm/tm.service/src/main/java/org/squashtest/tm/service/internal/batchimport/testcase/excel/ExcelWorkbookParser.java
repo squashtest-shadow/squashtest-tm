@@ -227,7 +227,7 @@ public class ExcelWorkbookParser {
 	// quick and dirty. LogEntries need a target because ImportLog sorts the entries by the EntityType
 	// of the target of the log entry.
 	private Target createDummyTarget(WorksheetDef<?> def){
-		Target target = null;
+		Target target;
 		switch (def.getWorksheetType()){
 		case TEST_CASES_SHEET :
 			target = new TestCaseTarget();

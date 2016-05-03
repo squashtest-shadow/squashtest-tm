@@ -49,7 +49,7 @@ public final class LibraryUtils {
 
 	private static String generateUniqueName(Collection<String> copiesNames, String sourceName, int maxNameSize,
 			TokenHelper helper) {
-		String result = "";
+		String result;
 		String baseName = sourceName;
 		String tokenRegexp = helper.getTokenRegexp();
 

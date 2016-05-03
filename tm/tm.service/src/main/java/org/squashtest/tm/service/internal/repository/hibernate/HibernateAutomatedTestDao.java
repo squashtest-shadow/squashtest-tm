@@ -67,7 +67,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 	@Override
 	public void removeIfUnused(AutomatedTest test) {
 
-		AutomatedTest persisted = null;
+		AutomatedTest persisted;
 
 		if (test == null){
 			return;

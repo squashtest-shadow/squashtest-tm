@@ -265,7 +265,7 @@ public class TestSuiteExecutionRunnerController {
 	public String runFirstRunnableStep(@PathVariable long testSuiteId, @PathVariable long testPlanItemId,
 			@PathVariable long executionId, @RequestParam(defaultValue = "false") boolean optimized) {
 
-		String viewName = null;
+		String viewName;
 
 		if (executionRunner.wasNeverRun(executionId)) {
 			viewName = MessageFormat.format(ResourceUrlPattern.PROLOGUE_STEP, testSuiteId, testPlanItemId, executionId);

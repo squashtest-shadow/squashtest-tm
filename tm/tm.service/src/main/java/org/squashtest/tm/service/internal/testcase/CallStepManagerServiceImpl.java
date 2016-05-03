@@ -222,7 +222,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 		case CALLED_DATASET :
 			if (datasetId == null){
-				throw new RuntimeException("attempted to bind no dataset (datasetid is null) to a call step, yet the parameter assignation mode is 'CALLED_DATASET'");
+				throw new IllegalArgumentException("attempted to bind no dataset (datasetid is null) to a call step, yet the parameter assignation mode is 'CALLED_DATASET'");
 			}
 
 			Dataset ds = datasetModificationService.findById(datasetId);
@@ -231,7 +231,7 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 			break;
 
 		default :
-			throw new RuntimeException("ParameterAssignationMode '"+mode+"' is not handled here, please find a dev and make him do the job");
+			throw new IllegalArgumentException("ParameterAssignationMode '"+mode+"' is not handled here, please find a dev and make him do the job");
 
 		}
 

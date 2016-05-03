@@ -164,8 +164,8 @@ public final class ScheduledIteration{
 	public static void checkIterationsDatesIntegrity(Collection<ScheduledIteration> iterations){
 
 		Date prevEnd = null;
-		Date start = null;
-		Date end = null;
+		Date start;
+		Date end;
 
 		if (iterations.isEmpty()){
 			throw new IllegalArgumentException(SCHED_ITER_NO_ITERATIONS_I18N);

@@ -64,7 +64,7 @@ public class TATestNodeListBuilder {
 		}
 
 		TATestNode parent = projectNode;
-		TATestNode current = null;
+		TATestNode current;
 
 		ListIterator<String> iterator = path.listIterator();
 

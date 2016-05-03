@@ -166,7 +166,7 @@ public class TestSuiteTestInventoryStatistics {
 
 	private float nbOfTestsToExecuteToDate(Date scheduledStart, Date scheduledEnd, Date currentDate, int nbTests) {
 
-		float result = 0.0f;
+		float result;
 
 		// if current date is before the start of the previsional schedule
 		if (scheduledStart == null || scheduledEnd == null || currentDate.before(scheduledStart)) {

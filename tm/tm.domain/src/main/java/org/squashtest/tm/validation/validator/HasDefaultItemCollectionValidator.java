@@ -32,7 +32,7 @@ import org.squashtest.tm.validation.constraint.HasDefaultItem;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class HasDefaultItemCollectionValidator implements ConstraintValidator<HasDefaultItem, Collection<?>> {
 	private String prop;
@@ -70,13 +70,13 @@ public class HasDefaultItemCollectionValidator implements ConstraintValidator<Ha
 		return hasDefault;
 	}
 
-	private Boolean readField(Field f, Object item) throws IllegalArgumentException, RuntimeException {
+	private Boolean readField(Field f, Object item) throws IllegalArgumentException {
 		Boolean val;
 		try {
 			val = (Boolean) f.get(item);
 
 		} catch (IllegalAccessException e) {
-			throw new RuntimeException(e);
+			throw new IllegalArgumentException(e);
 		}
 		return val;
 	}

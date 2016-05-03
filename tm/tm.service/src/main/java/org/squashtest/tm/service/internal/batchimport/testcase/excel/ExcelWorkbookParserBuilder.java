@@ -84,13 +84,13 @@ class ExcelWorkbookParserBuilder {
 	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException,
 			TemplateMismatchException {
 
-		InputStream is = null;
+		InputStream is;
 		try {
 			is = new BufferedInputStream(new FileInputStream(xls));
 		} catch (FileNotFoundException e) {
-			IOUtils.closeQuietly(is);
 			throw new SheetCorruptedException(e);
 		}
+
 		Workbook wb = openWorkbook(is);
 		List<TemplateMismatchException> mismatches = new ArrayList<>();
 		WorkbookMetaData wmd = null;

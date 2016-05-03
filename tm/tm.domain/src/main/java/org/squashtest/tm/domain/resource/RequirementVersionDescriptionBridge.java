@@ -52,7 +52,7 @@ public class RequirementVersionDescriptionBridge implements FieldBridge{
 
 		String description = (String) value;
 		Integer val = 1;
-		if(description == null || description.trim() != null && description.trim().isEmpty()){
+		if(description == null  && description.trim().isEmpty()){
 			val = 0;
 		}
 

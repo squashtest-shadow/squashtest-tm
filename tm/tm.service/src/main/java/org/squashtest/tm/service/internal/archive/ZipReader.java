@@ -137,7 +137,7 @@ public class ZipReader implements ArchiveReader {
 			String res = original.charAt(original.length() - 1) == '/' ? original.substring(0, original.length() - 1)
 					: original;
 
-			if (res != null && res.isEmpty()) {
+			if (res.isEmpty()) {
 				res = "/";
 			}
 			return res;

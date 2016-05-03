@@ -63,7 +63,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@Override
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public Execution startResume(long testSuiteId) {
-		Execution execution = null;
+		Execution execution;
 		TestSuite suite = suiteDao.findById(testSuiteId);
 		String testerLogin = findUserLoginIfTester(suite);
 		IterationTestPlanItem item = suite.findFirstExecutableTestPlanItem(testerLogin);
@@ -153,7 +153,7 @@ public class TestSuiteExecutionProcessingServiceImpl implements TestSuiteExecuti
 	@Override
 	@PreAuthorize(CAN_EXECUTE_BY_TESTSUITE_ID)
 	public Execution startResumeNextExecution(long testSuiteId, long testPlanItemId) {
-		Execution execution = null;
+		Execution execution;
 		TestSuite testSuite = suiteDao.findById(testSuiteId);
 		String testerLogin = findUserLoginIfTester(testSuite);
 		IterationTestPlanItem item = testSuite.findNextExecutableTestPlanItem(testPlanItemId, testerLogin);

@@ -362,7 +362,7 @@ class TestCaseLibraryMerger {
 				return node;
 			}
 		}
-		throw new RuntimeException("that method should never have been called if not preceeded by a preventive call to " +
+		throw new IllegalArgumentException("that method should never have been called if not preceeded by a preventive call to " +
 			"collectName().contains() or if this preventive call returned false - something is wrong with your code dude ");
 
 	}

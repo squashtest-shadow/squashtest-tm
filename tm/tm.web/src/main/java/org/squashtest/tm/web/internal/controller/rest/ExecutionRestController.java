@@ -67,7 +67,7 @@ public class ExecutionRestController {
 	@ResponseBody
 	public RestExecution getExecutionById(@PathVariable Long id) {
 
-		Execution execution = null;
+		Execution execution;
 		String path = "";
 		execution = findExecution(id);
 		if (execution.getReferencedTestCase() != null) {

@@ -54,7 +54,7 @@ public class InfoListItemComparatorSource extends FieldComparatorSource {
 	public FieldComparator<?> newComparator(String fieldName, int numHits, int sortPos, boolean reversed)
 			throws IOException {
 		// quick and dirty
-		String i18nRoot = null;
+		String i18nRoot;
 		switch (fieldName) {
 		case INFO_NATURE:
 			i18nRoot = "test-case.nature.";

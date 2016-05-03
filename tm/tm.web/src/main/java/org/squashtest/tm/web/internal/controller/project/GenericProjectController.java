@@ -489,7 +489,7 @@ public class GenericProjectController {
 		}
 		private String getBugtrackerKind(final GenericProject project){
 
-			String bugtrackerKind = null;
+			String bugtrackerKind;
 			if (project.isBugtrackerConnected()){
 				bugtrackerKind = project.getBugtrackerBinding().getBugtracker().getKind();
 			} else {

@@ -24,7 +24,7 @@ import org.squashtest.tm.service.importer.ImportMode;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class CannotCoerceException extends RuntimeException {
 	private static final long serialVersionUID = 839887673080933124L;
@@ -73,7 +73,7 @@ public class CannotCoerceException extends RuntimeException {
 	}
 
 	public String getImpactI18nKey(ImportMode mode) {
-		String toReturn = null;
+		String toReturn;
 		switch (mode) {
 		case CREATE:
 			toReturn = createImpactI18nKey;
