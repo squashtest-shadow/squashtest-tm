@@ -84,12 +84,9 @@ class ExcelWorkbookParserBuilder {
 	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException,
 			TemplateMismatchException {
 
-		InputStream is;
+		InputStream is = null;
 		try {
 			is = new BufferedInputStream(new FileInputStream(xls));
-		} catch (FileNotFoundException e) {
-			throw new SheetCorruptedException(e);
-		}
 
 		Workbook wb = openWorkbook(is);
 		List<TemplateMismatchException> mismatches = new ArrayList<>();
@@ -111,6 +108,11 @@ class ExcelWorkbookParserBuilder {
 		LOGGER.trace("Metamodel is built, will create a parser based on the metamodel");
 
 		return new ExcelWorkbookParser(wb, wmd);
+		} catch (FileNotFoundException e) {
+			throw new SheetCorruptedException(e);
+		} finally {
+			IOUtils.closeQuietly(is);
+		}
 	}
 
 	/**
