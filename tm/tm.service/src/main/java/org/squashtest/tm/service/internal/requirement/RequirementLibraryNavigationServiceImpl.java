@@ -706,13 +706,13 @@ public class RequirementLibraryNavigationServiceImpl extends
 	}
 
 	@Override
-	public Long findNodeIdByRemoteKey(String remoteKey) {
-		return requirementDao.findNodeIdByRemoteKey(remoteKey);
+	public Long findNodeIdByRemoteKey(String remoteKey, String projectName) {
+		return requirementDao.findNodeIdByRemoteKey(remoteKey, projectName);
 	}
 
 	@Override
-	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys){
-		return requirementDao.findNodeIdsByRemoteKeys(remoteKeys);
+	public List<Long> findNodeIdsByRemoteKeys(List<String> remoteKeys, String projectName){
+		return requirementDao.findNodeIdsByRemoteKeys(remoteKeys, projectName);
 	}
 
 	@Override

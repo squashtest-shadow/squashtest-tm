@@ -35,14 +35,14 @@ public interface RequirementSyncExtenderDao extends Repository<RequirementSyncEx
 	void save(RequirementSyncExtender extender);
 
 	@UsesANamedQueryInPackageInfoOrElsewhere
-	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId);
+	RequirementSyncExtender retrieveByRemoteKey(@Param("id") String remoteId, @Param("pId") Long projectId);
 
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	@EmptyCollectionGuard
-	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId);
+	Collection<RequirementSyncExtender> retrieveAllByRemoteKey(@Param("ids") Collection<String> remoteId, @Param("pId") Long projectId);
 
 	@UsesANamedQueryInPackageInfoOrElsewhere
-	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@Param("pId") String remoteProjectId, @Param("filter") String filterName);
+	Collection<RequirementSyncExtender> retrieveAllByRemoteProjectsAndFilter(@Param("remotePId") String remoteProjectId, @Param("filter") String filterName, @Param("pId") Long projectId);
 
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	Collection<RequirementSyncExtender> retrieveAllByServer(@Param("serverId") Long serverId);

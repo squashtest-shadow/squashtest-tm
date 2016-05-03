@@ -187,13 +187,13 @@ public class StubRequirementDao extends StubEntityDao<Requirement> implements Re
 	}
 
 	@Override
-	public Long findNodeIdByRemoteKey(String remoteKey) {
+	public Long findNodeIdByRemoteKey(String remoteKey, String projectName) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys) {
+	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys, String projectName) {
 		// TODO Auto-generated method stub
 		return null;
 	}

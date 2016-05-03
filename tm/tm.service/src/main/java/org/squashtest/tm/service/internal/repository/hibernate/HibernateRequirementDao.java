@@ -417,16 +417,17 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 	}
 
 	@Override
-	public Long findNodeIdByRemoteKey(String remoteKey) {
+	public Long findNodeIdByRemoteKey(String remoteKey, String projectName) {
 		Query q = currentSession()
 				.getNamedQuery("requirement.findNodeIdByRemoteKey")
-				.setParameter("key", remoteKey);
+				.setParameter("key", remoteKey)
+			.setParameter("projectName", projectName);
 		return (Long)q.uniqueResult();
 
 	}
 
 	@Override
-	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys) {
+	public List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys, String projectName) {
 
 		if (remoteKeys.isEmpty()){
 			return new ArrayList<>();
@@ -441,6 +442,7 @@ public class HibernateRequirementDao extends HibernateEntityDao<Requirement> imp
 		Map<String, Long> idsByKeys = query.select(req.id)
 											.from(req).innerJoin(req.syncExtender, sync)
 											.where(sync.remoteReqId.in(remoteKeys))
+			                                 .where(req.project.name.eq(projectName))
 											.transform(GroupBy.groupBy(sync.remoteReqId).as(req.id));
 
 		// now build a result with an order consistent with the input order

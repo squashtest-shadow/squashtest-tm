@@ -42,7 +42,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	/**
 	 * Returns collection of distinct requirements criticalities verified by any of the given verifiers.
-	 * 
+	 *
 	 * @param verifiersIds
 	 * @return unsorted collection of distinct requirements criticalities verified by any of the given verifiers.
 	 */
@@ -50,7 +50,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	/**
 	 * returns the list of distinct requirementCriticalities found for all requirementsIds
-	 * 
+	 *
 	 * @param requirementVersionsIds
 	 * @return
 	 */
@@ -58,7 +58,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	/**
 	 * returns the list of all requirement versions
-	 * 
+	 *
 	 * @param requirementId
 	 * @return
 	 */
@@ -66,7 +66,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	/**
 	 * returns the list of all requirement versions for all the specified requirements
-	 * 
+	 *
 	 * @param requirementIds the lists of requirement ids
 	 * @return
 	 */
@@ -103,9 +103,9 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	/**
 	 * Given a list of requirementIds, returns the corresponding list of [parent, requirement].
 	 * the 'parent' is of type NodeContainer&lt;Requirement&gt;.
-	 * 
+	 *
 	 * @return what I just said.
-	 * 
+	 *
 	 */
 	List<Object[]> findAllParentsOf(List<Long> requirementIds);
 
@@ -114,7 +114,7 @@ public interface RequirementDao extends EntityDao<Requirement> {
 
 	/**
 	 * given requirement ids, return which of them refer to requirements having more than one versions
-	 * 
+	 *
 	 * @param requirementIds
 	 * @return
 	 */
@@ -127,17 +127,17 @@ public interface RequirementDao extends EntityDao<Requirement> {
 	 * @return
 	 */
 	List<Long> findAllRequirementsIdsByNodes(Collection<Long> nodeIds);
-	
+
 	/**
 	 * Return the id of all the descendants of param requirements
 	 * @param params
 	 * @return
 	 */
 	List<Long> findDescendantRequirementIds(Collection<Long> requirementIds);
-	
-	
-	Long findNodeIdByRemoteKey(String remoteKey);
-	
-	List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys);
+
+
+	Long findNodeIdByRemoteKey(String remoteKey, String projectName);
+
+	List<Long> findNodeIdsByRemoteKeys(Collection<String> remoteKeys, String projectName);
 
 }
