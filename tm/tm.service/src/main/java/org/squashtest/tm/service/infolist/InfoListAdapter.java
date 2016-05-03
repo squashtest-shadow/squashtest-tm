@@ -45,7 +45,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#getCreatedOn()
 	 */
-	@Override
+	
 	public Date getCreatedOn() {
 		return auditable.getCreatedOn();
 	}
@@ -54,7 +54,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#getCreatedBy()
 	 */
-	@Override
+
 	public String getCreatedBy() {
 		return auditable.getCreatedBy();
 	}
@@ -63,7 +63,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#getLastModifiedOn()
 	 */
-	@Override
+
 	public Date getLastModifiedOn() {
 		return auditable.getLastModifiedOn();
 	}
@@ -72,7 +72,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @return
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#getLastModifiedBy()
 	 */
-	@Override
+
 	public String getLastModifiedBy() {
 		return auditable.getLastModifiedBy();
 	}
@@ -113,7 +113,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @param createdBy
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#setCreatedBy(java.lang.String)
 	 */
-	@Override
+
 	public void setCreatedBy(String createdBy) {
 		auditable.setCreatedBy(createdBy);
 	}
@@ -122,7 +122,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @param createdOn
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#setCreatedOn(java.util.Date)
 	 */
-	@Override
+
 	public void setCreatedOn(Date createdOn) {
 		auditable.setCreatedOn(createdOn);
 	}
@@ -131,7 +131,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @param lastModifiedBy
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#setLastModifiedBy(java.lang.String)
 	 */
-	@Override
+
 	public void setLastModifiedBy(String lastModifiedBy) {
 		auditable.setLastModifiedBy(lastModifiedBy);
 	}
@@ -140,7 +140,7 @@ public abstract class InfoListAdapter implements AuditableMixin {
 	 * @param lastModifiedOn
 	 * @see org.squashtest.tm.domain.audit.AuditableMixin#setLastModifiedOn(java.util.Date)
 	 */
-	@Override
+
 	public void setLastModifiedOn(Date lastModifiedOn) {
 		auditable.setLastModifiedOn(lastModifiedOn);
 	}
