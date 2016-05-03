@@ -77,6 +77,7 @@ public class ExProgressProjectDto extends ExProgressAbstractDto implements HasMi
 		this.allowsUntestable = allowsUntestable;
 	}
 
+	@Override
 	public String getMilestone() {
 		return milestone;
 	}

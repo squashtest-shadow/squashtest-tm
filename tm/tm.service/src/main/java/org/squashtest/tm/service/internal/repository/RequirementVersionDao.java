@@ -34,6 +34,7 @@ import java.util.List;
  */
 public interface RequirementVersionDao extends CrudRepository<RequirementVersion, Long>, CustomRequirementVersionDao {
 
+	@Override
 	@EmptyCollectionGuard
 	List<RequirementVersion> findAll(Iterable<Long> ids);
 

@@ -84,6 +84,7 @@ public class RequirementCoverageByTestsQueryAdapter extends LegacyQueryAdapter<H
 	/**
 	 * @return the legacyQueryProvider
 	 */
+	@Override
 	public Provider<HibernateRequirementCoverageByTestsQuery> getLegacyQueryProvider() {
 		return legacyQueryProvider;
 	}

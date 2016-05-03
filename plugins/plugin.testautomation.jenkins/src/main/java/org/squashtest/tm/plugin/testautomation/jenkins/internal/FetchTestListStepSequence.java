@@ -48,16 +48,19 @@ class FetchTestListStepSequence extends HttpBasedStepSequence implements StepSeq
 
 	// ************* setters **************
 
+	@Override
 	void setClient(CloseableHttpClient client) {
 		this.client = client;
 	}
 
 
+	@Override
 	void setProject(TestAutomationProject project) {
 		this.project = project;
 	}
 
 
+	@Override
 	void setAbsoluteId(BuildAbsoluteId absoluteId) {
 		this.absoluteId = absoluteId;
 	}

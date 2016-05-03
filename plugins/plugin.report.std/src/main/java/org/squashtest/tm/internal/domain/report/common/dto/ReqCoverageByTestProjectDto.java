@@ -640,6 +640,7 @@ public class ReqCoverageByTestProjectDto implements HasMilestoneLabel{
 		return requirementStatusNumbers;
 	}
 
+	@Override
 	public String getMilestone() {
 		return milestone;
 	}

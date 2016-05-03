@@ -36,9 +36,9 @@ import org.squashtest.tm.core.foundation.lang.PrimitiveTypeUtils;
  * {@link InvocationHandler} which handles proxy calls which should modify an entity. These calls should have a
  * signature like : void changeSomeProperty(long id, SomeClass newValue) The handler then fetches the entity using the
  * given ID and sets its 'someProperty' property to 'newValue'
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class EntityModifierHandler<ENTITY> implements DynamicComponentInvocationHandler {
 	/**
@@ -58,10 +58,11 @@ public class EntityModifierHandler<ENTITY> implements DynamicComponentInvocation
 
 	/**
 	 * Tells if this handler can handle the given method.
-	 * 
+	 *
 	 * @param method
 	 * @return
 	 */
+	@Override
 	public boolean handles(Method method) {
 		return methodNameMatchesChangeMethodPattern(method) && mehtodParamsMatchChangeMethodParams(method)
 				&& methodReturnTypeMatchesChangeMethodPattern(method);

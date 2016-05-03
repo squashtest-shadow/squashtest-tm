@@ -43,6 +43,7 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 
 	private final ThreadLocal<Long> activeMilestoneIdHolder = new ThreadLocal<>();
 
+	@Override
 	public Optional<Milestone> getActiveMilestone() {
 
 		if (activeMilestoneHolder.get() == null) {
@@ -63,11 +64,13 @@ public class ActiveMilestoneHolderImpl implements ActiveMilestoneHolder {
 	}
 
 
+	@Override
 	public void setActiveMilestone(final Long milestoneId) {
 		// just set the id. They milestone will be fetched from database only when asked
 		activeMilestoneIdHolder.set(milestoneId);
 	}
 
+	@Override
 	public void clearContext() {
 		activeMilestoneHolder.remove();
 		activeMilestoneIdHolder.remove();

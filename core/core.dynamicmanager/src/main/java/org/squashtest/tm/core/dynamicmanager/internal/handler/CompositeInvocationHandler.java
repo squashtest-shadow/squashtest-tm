@@ -54,6 +54,7 @@ public class CompositeInvocationHandler implements InvocationHandler {
 	 *
 	 * {@link #equals(Object)} invocation is never delegated and performs a proxy reference check.
 	 */
+	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable { // NOSONAR : I dont choose what JDK interfaces throw
 		try {
 			return doInvoke(proxy, method, args);

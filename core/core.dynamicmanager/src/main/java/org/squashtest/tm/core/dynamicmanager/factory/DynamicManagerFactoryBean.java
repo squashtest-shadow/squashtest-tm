@@ -99,6 +99,7 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 		this.entityType = entityType;
 	}
 
+	@Override
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		List<DynamicComponentInvocationHandler> handlers = new ArrayList<>(HANDLERS_COUNT);
 

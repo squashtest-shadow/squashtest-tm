@@ -68,7 +68,7 @@ public class ExProgressTestPlanDto {
 			this.testCaseName = null;
 		} else {
 			String reference = testPlan.getReferencedTestCase().getReference();
-			if("".equals(reference)){
+			if(reference != null && reference.isEmpty()){
 				this.testCaseName = testPlan.isTestCaseDeleted() ? null : testPlan.getReferencedTestCase().getName();
 			} else {
 				this.testCaseName = testPlan.isTestCaseDeleted() ? null : reference + " - " + testPlan.getReferencedTestCase().getName();

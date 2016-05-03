@@ -24,7 +24,7 @@ import org.squashtest.tm.core.foundation.i18n.Labelled;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 abstract class BasicInput extends Labelled implements Input {
 	private String name;
@@ -32,13 +32,14 @@ abstract class BasicInput extends Labelled implements Input {
 	/**
 	 * if non null, refers to another input of the same form. The current input will be
 	 * automatically disabled if the referenced input is selected.
-	 * 
+	 *
 	 */
 	private String disabledBy;
 
 	/**
 	 * @return the name
 	 */
+	@Override
 	public String getName() {
 		return name;
 	}

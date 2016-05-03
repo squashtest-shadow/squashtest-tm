@@ -72,6 +72,7 @@ public class BTIssue implements RemoteIssue {
 	}
 
 
+	@Override
 	public String getId(){
 		return id;
 	}
@@ -81,6 +82,7 @@ public class BTIssue implements RemoteIssue {
 	}
 
 
+	@Override
 	public Category getCategory() {
 		return category;
 	}
@@ -90,6 +92,7 @@ public class BTIssue implements RemoteIssue {
 	}
 
 
+	@Override
 	public String getSummary() {
 		return summary;
 	}
@@ -98,6 +101,7 @@ public class BTIssue implements RemoteIssue {
 		this.summary = summary;
 	}
 
+	@Override
 	public BTProject getProject() {
 		return project;
 	}
@@ -106,6 +110,7 @@ public class BTIssue implements RemoteIssue {
 		this.project = project;
 	}
 
+	@Override
 	public Priority getPriority() {
 		return priority;
 	}
@@ -114,6 +119,7 @@ public class BTIssue implements RemoteIssue {
 		this.priority = priority;
 	}
 
+	@Override
 	public Version getVersion() {
 		return version;
 	}
@@ -130,6 +136,7 @@ public class BTIssue implements RemoteIssue {
 		this.reporter = reporter;
 	}
 
+	@Override
 	public User getAssignee() {
 		return assignee;
 	}
@@ -138,18 +145,22 @@ public class BTIssue implements RemoteIssue {
 		this.assignee = assignee;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
 
+	@Override
 	public void setDescription(String description) {
 		this.description = description;
 	}
 
+	@Override
 	public String getComment() {
 		return comment;
 	}
 
+	@Override
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
@@ -166,6 +177,7 @@ public class BTIssue implements RemoteIssue {
 		this.createdOn = createdOn;
 	}
 
+	@Override
 	public Status getStatus(){
 		return status;
 	}
@@ -179,10 +191,12 @@ public class BTIssue implements RemoteIssue {
 	 *
 	 * @param btName
 	 */
+	@Override
 	public void setBugtracker(String btName){
 		this.bugtracker = btName;
 	}
 
+	@Override
 	public String getBugtracker(){
 		return bugtracker;
 	}

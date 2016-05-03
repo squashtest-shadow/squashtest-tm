@@ -148,6 +148,7 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	}
 
 
+	@Override
 	public void validate(EntityReference reference){
 		// defaults : allways passes
 	}

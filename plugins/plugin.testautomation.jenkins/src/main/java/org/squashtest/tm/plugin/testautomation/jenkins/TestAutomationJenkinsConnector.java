@@ -78,6 +78,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		return CONNECTOR_KIND;
 	}
 
+	@Override
 	public boolean checkCredentials(TestAutomationServer server) {
 
 		CloseableHttpClient client = clientProvider.getClientFor(server);

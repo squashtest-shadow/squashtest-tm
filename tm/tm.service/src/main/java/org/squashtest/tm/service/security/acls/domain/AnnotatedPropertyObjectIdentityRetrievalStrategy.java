@@ -83,7 +83,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 	}
 
 	private Method getTargetProperty(Class<?> candidateClass) {
-		Method targetProperty = null;
+		Method targetProperty;
 
 		if (isMapped(candidateClass)){
 			targetProperty = identityMethodMap.get(candidateClass);
@@ -98,7 +98,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 	}
 
 	private Object getIdentityHolder(Method targetProperty, Object domainObject) {
-		Object identityHolder = null;
+		Object identityHolder;
 
 		try {
 			identityHolder = targetProperty.invoke(domainObject);
@@ -129,7 +129,7 @@ public class AnnotatedPropertyObjectIdentityRetrievalStrategy implements ObjectI
 
 		LinkedList<Class<?>> explorationQueue= new LinkedList<>();
 		Method targetProperty = null;
-		Class<?> currentClass = null;
+		Class<?> currentClass;
 
 		explorationQueue.add(candidateClass);
 

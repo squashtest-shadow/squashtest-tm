@@ -54,6 +54,7 @@ public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateE
 
 	static final String MILESTONE_IDS = "milestones";
 
+	@Override
 	@SuppressWarnings({ "rawtypes" })
 	protected void processNonStandardCriteria(Map<String, Criteria> criteria, HibernateReportQuery legacyQuery) {
 		Criteria selMode = criteria.get(CAMPAIGN_SELECTION_MODE);
@@ -108,6 +109,7 @@ public class ExecutionProgressQueryAdapter extends LegacyQueryAdapter<HibernateE
 	/**
 	 * @return the legacyQueryProvider
 	 */
+	@Override
 	protected Provider<HibernateExecutionProgressQuery> getLegacyQueryProvider() {
 		return legacyQueryProvider;
 	}

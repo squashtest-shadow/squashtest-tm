@@ -26,18 +26,18 @@ import org.apache.commons.lang3.StringUtils;
 
 /**
  * Option which contains another input.
- * 
+ *
  * This class extends OptionInput for api compatibility reason. In a perfect world it would only implement a common
  * interface.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class ContainerOption<I extends Input> extends OptionInput {
 	private I content;
 
 	/**
-	 * 
+	 *
 	 */
 	public ContainerOption() {
 		super();
@@ -62,6 +62,7 @@ public class ContainerOption<I extends Input> extends OptionInput {
 		}
 	}
 
+	@Override
 	public void setGivesAccessTo(String s) {
 		// this kinda breaks the LSP but we have no choice because of unwanted inheritance.
 		throw new IllegalArgumentException(
