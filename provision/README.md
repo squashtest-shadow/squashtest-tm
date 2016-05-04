@@ -23,6 +23,5 @@ Maven profiles
 Maven properties
 ----------------
 
-* `-Ddb.nocreate=true` : this will skip database schema creation
-* `-Ddb.nopopulate=true` : this will skip database population with test data
+* `-Ddb.emptycontent=true` : will create a database with no mock user data
 * `-Dassembly.skip=true` : this will skip platform (jar) provisioning

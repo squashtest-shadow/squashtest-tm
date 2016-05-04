@@ -116,3 +116,10 @@ syntax: regexp
 ^.*rjs\.js\.output.*/
 /luceneindexes/
 tm/tm.web/node
+\.orig\..*$
+\.orig$
+\.chg\..*$
+\.rej$
+\.conflict\~$
+.*/nb-configuration\.xml$
+.*/nbactions\.xml$

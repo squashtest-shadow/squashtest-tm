@@ -25,8 +25,8 @@
     <db.dialect>org.hibernate.dialect.H2Dialect</db.dialect>
     <db.driver>org.h2.Driver</db.driver>
 
-    <db.nocreate>false</db.nocreate>
-    <db.nopopulate>false</db.nopopulate>
+    <!-- DB content can be "false" (includes standard dev data) or "true" (no dev data)-->
+    <db.emptycontent>false</db.emptycontent>
     <db.password>sa</db.password>
     <db.resources.dir>${project.build.directory}/database-archive-resources</db.resources.dir>
     <db.url>jdbc:h2:${squashtest.rootDir}/data/squash-tm</db.url>
@@ -41,6 +41,7 @@
     <lucene.dir>${project.build.directory}/luceneindexes</lucene.dir>
 
     <master.changelog>${db.resources.dir}/sample/sample-db.changelog.xml</master.changelog>
+    <master.emptychangelog>${db.resources.dir}/global.changelog-master.xml</master.emptychangelog>
 
     <squashtest.rootDir>${project.basedir}/../tm</squashtest.rootDir>
   </properties>
@@ -120,13 +121,10 @@
         </executions>
       </plugin>
 
-      <!-- create the database -->
+      <!-- create the database with dev data-->
       <plugin>
         <groupId>org.liquibase</groupId>
         <artifactId>liquibase-maven-plugin</artifactId>
-        <configuration>
-          <skip>${db.nocreate}</skip>
-        </configuration>
         <executions>
           <execution>
             <id>create-database</id>
@@ -135,6 +133,7 @@
             </goals>
             <phase>process-resources</phase>
             <configuration>
+              <skip>${db.emptycontent}</skip>
               <dropFirst>true</dropFirst>
               <changeLogFile>${master.changelog}</changeLogFile>
               <driver>${db.driver}</driver>
@@ -226,34 +225,51 @@
         </executions>
       </plugin>
 
-      <plugin>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-maven-plugin</artifactId>
-        <configuration>
-          <skip>${db.nopopulate}</skip>
-        </configuration>
-        <executions>
-          <execution>
-            <id>populate-dev-data</id>
-            <goals>
-              <goal>update</goal>
-            </goals>
-            <!-- this phase should be after schema generation -->
-            <phase>generate-test-resources</phase>
-            <configuration>
-              <changeLogFile>${master.changelog}</changeLogFile>
-              <driver>${db.driver}</driver>
-              <url>${db.url}</url>
-              <username>${db.create.user}</username>
-              <password>${db.create.password}</password>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
     </plugins>
   </build>
 
   <profiles>
+
+    <profile>
+      <id>emptycontent</id>
+      <activation>
+        <property>
+          <name>db.emptycontent</name>
+          <value>true</value>
+        </property>
+      </activation>
+
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>no-dev-data</id>
+                <goals>
+                  <goal>update</goal>
+                </goals>
+                <!-- this phase should be after schema generation -->
+                <phase>generate-test-resources</phase>
+                <configuration>
+                  <skip>false</skip>
+                  <dropFirst>true</dropFirst>
+                  <changeLogFile>${master.emptychangelog}</changeLogFile>
+                  <driver>${db.driver}</driver>
+                  <url>${db.url}</url>
+                  <username>${db.create.user}</username>
+                  <password>${db.create.password}</password>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+
+      </build>
+
+    </profile>
+
     <profile>
       <id>mysql</id>
 
