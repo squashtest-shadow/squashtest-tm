@@ -405,15 +405,7 @@ class ImportedRequirementTree extends LibraryGraph<RequirementTarget, ImportedRe
 			return null;//NPE is better than a false information from tree
 		}
 
-//		boolean hasVersion(int versionNo){
-//			TargetStatus versionStatus = requirementVersions.get(new Integer(versionNo));
-//			if (versionStatus != null){
-//				return versionStatus.getStatus() == Existence.EXISTS;
-//			}
-//			else{
-//				return false;
-//			}
-//		}
+
 
 		void addVersion(Integer noVersion, TargetStatus status){
 			requirementVersions.put(noVersion, new RequirementVersionModel(status));

@@ -692,8 +692,7 @@ public class Model {
 				extractParametersFromSteps(processing, processed, child, steps);
 				processed.add(current);
 			}
-			// existant
-			// processing.addAll(current.getOutbounds());
+
 		}
 
 		return result;

@@ -38,7 +38,7 @@ import java.util.Map;
  * This handler will format ActionExceptions and subclasses in order to raise a popup clientside and display an
  * exception. This is a complementary system to @HandlerDomainExceptionResolver. The difference here is that in this
  * case the treatment client-side will open a generic popup and display the error text in it.
- * 
+ *
  * @author bsiri
  * @reviewed-on 2011-12-15
  */
@@ -101,7 +101,7 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 		String message = null;
 		if(key == null  && actionEx.getMessage() != null && !actionEx.getMessage().isEmpty()){
 			message = actionEx.getMessage();
-		}		
+		}
 		else if(key != null){
 			message = messageSource.getMessage(key, actionEx.messageArgs(), locale);
 		}
@@ -112,11 +112,10 @@ public class HandlerActionExceptionResolver extends AbstractHandlerExceptionReso
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {
-		// return ex instanceof ActionException;
 		return ActionException.class.isAssignableFrom(ex.getClass());
 	}
 
-	
+
 
 	/* **************** inner class ***************** */
 	private static class PlainTextView extends AbstractView {

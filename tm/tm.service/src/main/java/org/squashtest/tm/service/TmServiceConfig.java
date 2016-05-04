@@ -322,8 +322,5 @@ public class TmServiceConfig {
 		return paster;
 	}
 
-//	@Bean
-//	public static ValidatorFactory validatorFactory() {
-//		return new LocalValidatorFactoryBean();
-//	}
+
 }

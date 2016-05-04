@@ -49,9 +49,7 @@ public class SquashAccessDeniedHandler extends AccessDeniedHandlerImpl {
 
 
                 response.sendRedirect(errorPage);
-                // forward to error page.
-                //RequestDispatcher dispatcher = request.getRequestDispatcher(errorPage);
-                //dispatcher.forward(request, response);
+
             } else {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, accessDeniedException.getMessage());
             }

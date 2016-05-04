@@ -31,9 +31,9 @@ import org.squashtest.tm.core.foundation.lang.Assert;
 /**
  * Implementation of {@link MenuItem} which provides internationalized properties using the context's message source.
  * Has to be configured using Spring.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 public class InternationalizedMenuItem extends Labelled implements MenuItem, InitializingBean {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InternationalizedMenuItem.class);
@@ -48,7 +48,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 
 	/**
 	 * Tooltip is internationalized.
-	 * 
+	 *
 	 * @see org.squashtest.tm.api.widget.MenuItem#getTooltip()
 	 */
 	@Override
@@ -83,8 +83,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 	private void checkBeanState() {
 		/*
 		 * URL can now be null
-		 * 
-		Assert.propertyNotBlank(url, "url property should not be blank");
+		 *
 		 */
 		Assert.propertyNotBlank(tooltipKey, "tooltipKey property should not be null");
 		initializeAccessRule();
@@ -93,7 +92,7 @@ public class InternationalizedMenuItem extends Labelled implements MenuItem, Ini
 
 	/**
 	 * Anybody can access this widget. Override to customize.
-	 * 
+	 *
 	 * @return
 	 */
 	private void initializeAccessRule() {

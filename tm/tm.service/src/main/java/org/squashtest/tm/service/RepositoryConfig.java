@@ -130,17 +130,6 @@ public class RepositoryConfig implements TransactionManagementConfigurer{
 	  }
 
 
-
-//	@Bean(name = "squashtest.tm.persistence.hibernate.SessionFactory")
-//	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
-//	@DependsOn("entityManagerFactory")
-//	public SessionFactory sessionFactory(){
-//		HibernateJpaSessionFactoryBean fbean = new HibernateJpaSessionFactoryBean();
-//		fbean.setEntityManagerFactory(entityManagerFactory());
-//		return fbean.getObject();
-//	}
-
-
 	@Bean
 	//@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
 	@DependsOn("entityManagerFactory")

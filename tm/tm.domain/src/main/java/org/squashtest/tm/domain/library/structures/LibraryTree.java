@@ -154,8 +154,7 @@ public class  LibraryTree<IDENT, T extends TreeNode<IDENT, T>>{
 	 */
 	public void addNodes(List<TreeNodePair> unsortedFlatTree){
 
-		//we must ensure first that the data are sorted before inserting them.
-		//List<TreeNodePair> sortedFlatTree = sortData(unsortedFlatTree);
+
 
 		List<TreeNodePair> cleanPairs = cleanData(unsortedFlatTree);
 

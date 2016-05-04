@@ -183,7 +183,6 @@ public class InternationalizedWorkspaceWizard extends ContextBasedInternationali
 	@PostConstruct
 	public void checkBeanState() {
 		Assert.propertyNotBlank(nameKey, "nameKey property should not be blank");
-		//Assert.propertyNotNull(wizardMenu, "wizardMenu property should not be null");
 		Assert.propertyNotNull(displayWorkspace, "displayWorkspace property should not be null");
 	}
 }

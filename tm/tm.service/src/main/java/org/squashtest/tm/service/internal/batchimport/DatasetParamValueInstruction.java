@@ -57,12 +57,12 @@ public class DatasetParamValueInstruction extends Instruction<DatasetTarget> {
 	 */
 	@Override
 	protected LogTrain executeDelete(Facility facility) {
-		//return facility.deleteDataset(getTarget());
+
 		/*
 		 * NOOP : As for TM 1.11.0 the DATASET sheet is now split in two phases : the datasets and the parameter values
 		 * are now treated in two distinct phases. Please see Facility#ENTITIES_ORDERED_BY_INSTRUCTION_ORDER to see
 		 * how.
-		 * 
+		 *
 		 * In particular the deletion of a dataset now happens in the DATASET phase so we don't double process it in the
 		 * param value phase.
 		 */

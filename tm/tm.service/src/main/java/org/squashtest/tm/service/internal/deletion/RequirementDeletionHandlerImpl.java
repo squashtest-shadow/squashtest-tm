@@ -381,7 +381,7 @@ RequirementNodeDeletionHandler {
 	@Override
 	public OperationReport deleteNodes(List<Long> targetIds) {
 
-		//Session s = em.unwrap(Session.class);
+
 
 
 		OperationReport globalReport = new OperationReport();

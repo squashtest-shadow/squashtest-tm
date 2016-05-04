@@ -40,24 +40,21 @@ import org.squashtest.tm.domain.Identified;
 public abstract class SessionFieldBridge implements FieldBridge {
 	private static final Logger LOGGER = LoggerFactory.getLogger(SessionFieldBridge.class);
 
-	// TODO nosgi @Inject @Lazy sessionFactory instead
-	/*@Inject
-	private BeanFactory beanFactory;*/
-	
-	
+
+
 	/*
 	 * 2016-04-13
-	 * 
-	 * Note : This is not supposed to be @Inject, rather @PersistenceContext. However the later doesn't work well with @Lazy, which we really need because of 
+	 *
+	 * Note : This is not supposed to be @Inject, rather @PersistenceContext. However the later doesn't work well with @Lazy, which we really need because of
 	 * avoiding circular dependencies during the creation of the entity manager factory.
-	 * 
-	 *  Using @Inject here seems to be ok because the bean actually injected is a shared entitymanager factorybean, which is the same result of using @PersistenceContext. 
+	 *
+	 *  Using @Inject here seems to be ok because the bean actually injected is a shared entitymanager factorybean, which is the same result of using @PersistenceContext.
 	 *  But I am not 100% sure there would be no problems (like, not thread-safe instances etc) so I'm leaving here this comment.
-	 *  
+	 *
 	 *  --
-	 *  
-	 *  Note : if there are new instances of theses created everytime then maybe thread safety won't be an issue after all.  
-	 * 
+	 *
+	 *  Note : if there are new instances of theses created everytime then maybe thread safety won't be an issue after all.
+	 *
 	 */
 	@Inject
 	@Lazy
@@ -66,7 +63,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 	private Session getCurrentSession(){
 		return em.unwrap(Session.class);
 	}
-	
+
 	private SessionFactory getSessionFactory() {
 		return ((HibernateEntityManagerFactory)em.getEntityManagerFactory()).getSessionFactory();
 	}
@@ -84,7 +81,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 		Session session = null;
 		Transaction tx;
 
-		try {			
+		try {
 			session = getCurrentSession();
 		} catch (HibernateException ex) {
 			session = null;

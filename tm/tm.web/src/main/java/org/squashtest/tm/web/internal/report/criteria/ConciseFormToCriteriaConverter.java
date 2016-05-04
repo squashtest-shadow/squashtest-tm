@@ -94,8 +94,6 @@ public class ConciseFormToCriteriaConverter {
 
 	private void populateExpandedForm(Map<String, Object> conciseForm, Map<String, Object> expandedForm) {
 		for (Entry<String, Object> conciseInput : conciseForm.entrySet()) {
-			// Object expandedInput = expandedForm.get(conciseInput.getKey());
-			//
 			populateExpandedInput(conciseInput.getKey(), conciseInput.getValue(), expandedForm);
 		}
 
