@@ -505,10 +505,6 @@ define(["jquery",
 
 	}
 
-	/*
-	 * Just does what the name says.
-	 */
-
 	function _bindClickHandlerToSelectHandle() {
 		var self = this;
 		this.delegate('td.select-handle', 'click', function () {
@@ -522,9 +518,6 @@ define(["jquery",
 
 			} else if (ctrl && !shift) {
 				_toggleRowAndKeepSelectedRange.call(self, row);
-
-			} else if (!ctrl && shift) {
-				_growSelectedRangeToRow.call(self, row);
 
 			} else {
 				_growSelectedRangeToRow.call(self, row);
@@ -819,33 +812,34 @@ define(["jquery",
 				throw "table '" + this + "' : unsupported editable type '" + editableType + "'";
 		}
 
+		var processCell = function (i, cell) {
+			"use strict";
+			var row = cell.parentNode;
+			var data = self.fnGetData(row);
+			var editableConf_url = _.isString(targets[css]) ? targets[css] : targets[css]['url'];
+			var url = _resolvePlaceholders.call(self, editableConf_url, data);
+			var finalConf = $.extend(true, {
+				"url": url
+			}, baseconf);
+
+			if (!_.isString(targets[css])) {
+				var evt = targets[css]['oncomplete'];
+				finalConf.ajaxoptions = {
+					complete: function () {
+						self.trigger(evt, {
+							id: self.getODataId(row),
+							responseText: arguments[0].responseText
+						});
+					}
+				};
+			}
+
+			$(cell)[editableType](finalConf);
+		};
+
 		for (var css in targets) {
-
 			var cells = $('td.' + css, this);
-
-			$(cells).each(function (i, cell) {
-				var row = cell.parentNode;
-				var data = self.fnGetData(row);
-				var editableConf_url = _.isString(targets[css]) ? targets[css] : targets[css]['url'];
-				var url = _resolvePlaceholders.call(self, editableConf_url, data);
-				var finalConf = $.extend(true, {
-					"url": url
-				}, baseconf);
-
-				if (!_.isString(targets[css])) {
-					var evt = targets[css]['oncomplete'];
-					finalConf.ajaxoptions = {
-						complete: function () {
-							self.trigger(evt, {
-								id: self.getODataId(row),
-								responseText: arguments[0].responseText
-							});
-						}
-					};
-				}
-
-				$(cell)[editableType](finalConf);
-			});
+			$(cells).each(processCell);
 		}
 	}
 
@@ -857,8 +851,7 @@ define(["jquery",
 		$(cells).each(function (i, cell) {
 
 			var data = (cell.textContent) ? cell.textContent : cell.innerText;
-			var newhtml = statusfactory.getHtmlFor(data);
-			cell.innerHTML = newhtml;
+			cell.innerHTML = statusfactory.getHtmlFor(data);
 		});
 	}
 
@@ -885,18 +878,9 @@ define(["jquery",
 			return;
 		}
 
-		for (var i = 0, len = buttons.length; i < len; i++) {
-			var button = buttons[i];
-
-			var template = $("<a/>", {
-				'class': 'table-button',
-				'title': button.tooltip
-			});
-
-			var cells = self.find(button.tdSelector);
-
-			cells.each(function (i, cell) {
-
+		var cellProcessor = function (template) {
+			return function (i, cell) {
+				"use strict";
 				var instance = template.clone(),
 					$cell = $(cell),
 					row = $cell.parent("tr")[0],
@@ -929,14 +913,26 @@ define(["jquery",
 							primary: icon
 						}
 					});
-				}
-				else {
+				} else {
 					instance.addClass(icon);
 				}
 
 				//append
 				$cell.empty().append(instance);
+			};
+		};
+
+		for (var i = 0, len = buttons.length; i < len; i++) {
+			var button = buttons[i];
+
+			var template = $("<a/>", {
+				'class': 'table-button',
+				'title': button.tooltip
 			});
+
+			var cells = self.find(button.tdSelector);
+
+			cells.each(cellProcessor(template));
 		}
 	}
 
@@ -946,23 +942,24 @@ define(["jquery",
 		if (!icons) {
 			return;
 		}
+
+		var processCell = function (i, cell) {
+			"use strict";
+			var $cell = $(cell),
+				row = $cell.closest("tr")[0],
+				data = self.fnGetData(row);
+
+			// find value if function
+			var value = ($.isFunction(icon.value) ) ? icon.value(row, data) : icon.value;
+
+			self.drawIcon(value, $cell);
+		};
+
 		var len = icons.length;
 		for (var i = 0; i < len; i++) {
 			var icon = icons[i];
 			var cells = self.find(icon.tdSelector);
-			cells.each(function (i, cell) {
-
-				var $cell = $(cell),
-					row = $cell.closest("tr")[0],
-					data = self.fnGetData(row);
-
-				// find value if function
-				var value = ($.isFunction(icon.value) ) ? icon.value(row, data) : icon.value;
-
-				self.drawIcon(value, $cell);
-
-
-			});
+			cells.each(processCell);
 		}
 
 	}
@@ -978,23 +975,26 @@ define(["jquery",
 		if (!tooltips) {
 			return;
 		}
+
+		var processCell = function (i, cell) {
+			"use strict";
+			var $cell = $(cell),
+				row = $cell.parent("tr")[0],
+				data = self.fnGetData(row);
+
+			// find value if function
+			var value = ($.isFunction(tooltip.value) ) ? tooltip.value(row, data) : tooltip.value;
+
+			$cell.attr('title', value);
+		};
+
 		var len = tooltips.length;
 		for (var i = 0; i < len; i++) {
 
 			var tooltip = tooltips[i];
 			var cells = self.find(tooltip.tdSelector);
 
-			cells.each(function (i, cell) {
-
-				var $cell = $(cell),
-					row = $cell.parent("tr")[0],
-					data = self.fnGetData(row);
-
-				// find value if function
-				var value = ($.isFunction(tooltip.value) ) ? tooltip.value(row, data) : tooltip.value;
-
-				$cell.attr('title', value);
-			});
+			cells.each(processCell);
 		}
 	}
 
@@ -1088,8 +1088,7 @@ define(["jquery",
 
 		var deleteFunction = null;
 
-		// case 1 : delegate dialog
-		if (conf.delegate !== undefined) {
+		if (conf.delegate !== undefined) { // case 1 : delegate dialog
 			deleteFunction = function () {
 				var row = this.parentNode.parentNode;
 				var jqRow = $(row);
@@ -1116,10 +1115,8 @@ define(["jquery",
 					}
 				}
 			};
-		}
 
-		//case 2 : define a dialog
-		else {
+		} else { //case 2 : define a dialog
 			deleteFunction = function () {
 				var row = this.parentNode.parentNode;
 				var jqRow = $(row);
@@ -1166,6 +1163,22 @@ define(["jquery",
 
 		var self = this;
 
+		var cellFilter = function () {
+			// IE doesn't define the constant Node so we'll use constant
+			// value
+			// instead of Node.TEXT_NODE
+			return this.nodeType == 3;
+		};
+
+		var cellProcessor = function (index, cell) {
+			"use strict";
+			var row = cell.parentNode; // should be the tr
+			var $cell = $(cell);
+			var finalUrl = _resolvePlaceholders(linkConf.url, self.fnGetData(row));
+			var cellLink = $cell.find("a");
+			cellLink.attr('href', finalUrl);
+		};
+
 		for (var i = 0; i < linksConf.list.length; i++) {
 			var linkConf = linksConf.list[i];
 			// 1. build link
@@ -1181,22 +1194,10 @@ define(["jquery",
 
 			var cells = self.find('>tbody ' + cellSelector);
 
-			cells.contents().filter(function () {
-				// IE doesn't define the constant Node so we'll use constant
-				// value
-				// instead of Node.TEXT_NODE
-				return this.nodeType == 3;
-			}).wrap(link);
+			cells.contents().filter(cellFilter).wrap(link);
 
 			// 3. add it to cells
-			$.each(cells, function (index, cell) {
-				var row = cell.parentNode; // should be the tr
-				var $cell = $(cell);
-				var finalUrl = _resolvePlaceholders(linkConf.url, self.fnGetData(row));
-				var cellLink = $cell.find("a");
-				cellLink.attr('href', finalUrl);
-
-			});
+			$.each(cells, cellProcessor);
 
 			// 4 : if defined, configure the hooks on the hyperlinks
 			if (linkConf.beforeNavigate !== undefined) {
@@ -1317,58 +1318,59 @@ define(["jquery",
 
 		var template = $('<div><span class="small-right-arrow"></span></div>');
 
-		for (var selector in toggleSettings) {
+		var drawCallback = function (selector) {
+			"use strict";
+			return function () {
+				this.find(selector).each(function (idx, cell) {
+					var $cell = $(cell);
+					$cell.wrapInner('<span class="toggle-row-label"/>');
+					var togspan = $cell.find('span');
+					$cell.empty();
+					template.clone().append(togspan).appendTo(cell);
+				});
+			};
+		};
 
+		var clickCallback = function (loader) {
+			"use strict";
+			return function () {
+				var jqspan = $(this),
+					icon = jqspan.prev(),
+					ltr = jqspan.parents('tr').get(0);
+
+				if (!icon.hasClass('small-down-arrow')) {
+
+					var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
+						$ltr = $(ltr),
+						$newTr = $(table.fnOpen(ltr, "   ", ""));
+
+					$newTr.addClass(rowClass);
+
+					icon.removeClass('small-right-arrow').addClass('small-down-arrow');
+
+					if (typeof loader === "string") {
+						// content loader assumed to be an url
+						$newTr.load(loader);
+					} else {
+						// content loader assumed to be a function. The (table, table,...) arguments is not a typo.
+						loader.call(table, table, $ltr, $newTr);
+					}
+
+				} else {
+					table.fnClose(ltr);
+					icon.removeClass('small-down-arrow').addClass('small-right-arrow');
+				}
+			};
+		};
+
+		for (var selector in toggleSettings) {
 			// adds a draw callback. It will be then executed every time the table is reloaded
-			this.drawcallbacks.push((function (selector) {
-				return function () {
-					this.find(selector).each(function (idx, cell) {
-						var $cell = $(cell);
-						$cell.wrapInner('<span class="toggle-row-label"/>');
-						var togspan = $cell.find('span');
-						$cell.empty();
-						template.clone().append(togspan).appendTo(cell);
-					});
-				};
-			})(selector));
+			this.drawcallbacks.push(drawCallback(selector));
 
 			// click handler (executed one time only).
 			var loader = toggleSettings[selector];
 
-			this.on('click', selector + '>div> span.toggle-row-label', (function (loader) {
-				return function () {
-
-					var jqspan = $(this),
-						icon = jqspan.prev(),
-						ltr = jqspan.parents('tr').get(0);
-
-					if (!icon.hasClass('small-down-arrow')) {
-
-						var rowClass = ($(ltr).hasClass("odd")) ? "odd" : "even",
-							$ltr = $(ltr),
-							$newTr = $(table.fnOpen(ltr, "   ", ""));
-
-						$newTr.addClass(rowClass);
-
-						icon.removeClass('small-right-arrow').addClass('small-down-arrow');
-
-						if (typeof loader === "string") {
-							// content loader assumed to be an url
-							$newTr.load(loader);
-						} else {
-							// content loader assumed to be a function. The (table, table,...) arguments is not a typo.
-							loader.call(table, table, $ltr, $newTr);
-						}
-
-					} else {
-						table.fnClose(ltr);
-						icon.removeClass('small-down-arrow').addClass('small-right-arrow');
-					}
-
-
-				};
-			})(loader));
-
+			this.on('click', selector + '>div> span.toggle-row-label', clickCallback(loader));
 		}
 	}
 
