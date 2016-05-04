@@ -56,7 +56,7 @@ final class FacilityImplHelper {
 	 * The nullity regarding the Nature and Type will be handled by
 	 * the TestCaseLibraryNavigationService itself. No need to
 	 * worry about them here and now.
-	 * 
+	 *
 	 */
 	void fillNullWithDefaults(TestCase testCase) {
 
@@ -85,32 +85,32 @@ final class FacilityImplHelper {
 		}
 
 	}
-	
+
 	/*
 	 * Feat 1108 :
 	 * The nullity regarding the Nature and Type will be handled by
 	 * the TestCaseLibraryNavigationService itself. No need to
 	 * worry about them here and now.
-	 * 
+	 *
 	 */
 	void fillNullWithDefaults(RequirementVersion reqVersion) {
-		
+
 		if (reqVersion.getName() == null) {
 			reqVersion.setName("");
 		}
-		
+
 		if (reqVersion.getReference() == null) {
 			reqVersion.setReference("");
 		}
-		
+
 		if (reqVersion.getCriticality()==null){
 			reqVersion.setCriticality(RequirementCriticality.MINOR);
 		}
-		
+
 		if (reqVersion.getStatus() == null) {
 			reqVersion.setStatus(RequirementStatus.WORK_IN_PROGRESS);
 		}
-		
+
 	}
 
 	void fillNullWithDefaults(ActionTestStep step) {
@@ -148,11 +148,11 @@ final class FacilityImplHelper {
 			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
 		}
 	}
-	
+
 	void truncate(RequirementVersion reqVersion, Map<String, String> cufValues) {
 		String ref = reqVersion.getReference();
 		reqVersion.setReference(truncate(ref, RequirementVersion.MAX_REF_SIZE));
-		
+
 		for (Entry<String, String> cuf : cufValues.entrySet()) {
 			String value = cuf.getValue();
 			cuf.setValue(truncate(value, CustomFieldValue.MAX_SIZE));
@@ -178,7 +178,7 @@ final class FacilityImplHelper {
 
 	/**
 	 * Will truncate the input str if it is longer than the given cap value.
-	 * 
+	 *
 	 * @param str
 	 *            : the string to truncate
 	 * @param cap

@@ -20,79 +20,30 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.NoSuchElementException;
-import java.util.Set;
-
-import javax.inject.Inject;
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.core.foundation.lang.PathUtils;
-import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.library.LibraryNode;
-import org.squashtest.tm.domain.milestone.Milestone;
-import org.squashtest.tm.domain.requirement.NewRequirementVersionDto;
 import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementFolder;
-import org.squashtest.tm.domain.requirement.RequirementLibrary;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNodeVisitor;
-import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.ActionTestStep;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.Dataset;
-import org.squashtest.tm.domain.testcase.DatasetParamValue;
-import org.squashtest.tm.domain.testcase.Parameter;
-import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
-import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestCaseImportance;
-import org.squashtest.tm.domain.testcase.TestCaseStatus;
-import org.squashtest.tm.domain.testcase.TestStep;
+import org.squashtest.tm.domain.testcase.*;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
-import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTarget;
-import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
-import org.squashtest.tm.service.internal.library.LibraryUtils;
-import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.DatasetDao;
 import org.squashtest.tm.service.internal.repository.DatasetParamValueDao;
 import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
-import org.squashtest.tm.service.internal.repository.hibernate.HibernateRequirementLibraryNodeDao;
-import org.squashtest.tm.service.milestone.MilestoneMembershipManager;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
-import org.squashtest.tm.service.requirement.RequirementVersionManagerService;
-import org.squashtest.tm.service.testcase.CallStepManagerService;
-import org.squashtest.tm.service.testcase.DatasetModificationService;
-import org.squashtest.tm.service.testcase.ParameterModificationService;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-import org.squashtest.tm.service.testcase.TestCaseModificationService;
+import org.squashtest.tm.service.testcase.*;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+import java.util.*;
 
 /**
  * Implementation of batch import methods that will actually update the
@@ -100,11 +51,7 @@ import org.squashtest.tm.service.testcase.TestCaseModificationService;
  */
 @Component
 @Scope("prototype")
-public class FacilityImpl implements Facility {
-
-	private static final String UNEXPECTED_ERROR_WHILE_IMPORTING = "unexpected error while importing ";
-
-	private static final String EXCEL_ERR_PREFIX = "Excel import : ";
+public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
 
@@ -116,9 +63,6 @@ public class FacilityImpl implements Facility {
 
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
-
-	@Inject
-	private PrivateCustomFieldValueService cufvalueService;
 
 	@Inject
 	private CallStepManagerService callstepService;
@@ -142,34 +86,21 @@ public class FacilityImpl implements Facility {
 	private ParameterDao paramDao;
 
 	@Inject
-	private InfoListItemFinderService listItemFinderService;
-
-	@Inject
-	private CustomFieldDao cufDao;
-
-	@Inject
-	private MilestoneImportHelper milestoneHelper;
-
-	@Inject
 	private RequirementLibraryFinderService reqFinderService;
-
-	@Inject
-	private RequirementVersionManagerService requirementVersionManagerService;
-
-	@Inject
-	private MilestoneMembershipManager milestoneService;
 
 	@Inject
 	private RequirementVersionCoverageDao coverageDao;
 
 	@Inject
-	private HibernateRequirementLibraryNodeDao rlnDao;
+	private RequirementFacility requirementFacility;
 
-	private FacilityImplHelper helper = new FacilityImplHelper();
+	@Inject
+	private TestCaseFacility testCaseFacility;
 
-	private Map<String, CustomFieldInfos> cufInfosCache = new HashMap<>();
+	@Inject
+	private CustomFieldTransator customFieldTransator;
 
-	private ImportPostProcessHandler postProcessHandler;
+	private final FacilityImplHelper helper = new FacilityImplHelper();
 
 
 	// ************************ public (and nice looking) code
@@ -181,14 +112,7 @@ public class FacilityImpl implements Facility {
 	 */
 	@Override
 	public LogTrain createTestCase(TestCaseInstruction instr) {
-		LogTrain train = validator.createTestCase(instr);
-
-		if (!train.hasCriticalErrors()) {
-			instr.getTestCase().setName(instr.getTarget().getName());
-			train = createTCRoutine(train, instr);
-		}
-
-		return train;
+		return testCaseFacility.createTestCase(instr);
 	}
 
 
@@ -197,100 +121,13 @@ public class FacilityImpl implements Facility {
 	 */
 	@Override
 	public LogTrain updateTestCase(TestCaseInstruction instr) {
-		TestCaseTarget target = instr.getTarget();
-		TestCase testCase = instr.getTestCase();
-		Map<String, String> cufValues = instr.getCustomFields();
-
-		TargetStatus status = validator.getModel().getStatus(target);
-
-		LogTrain train = validator.updateTestCase(instr);
-
-		if (!train.hasCriticalErrors()) {
-
-			if (status.status == Existence.NOT_EXISTS) {
-
-				train = createTCRoutine(train, instr);
-
-			} else {
-				try {
-
-					helper.truncate(testCase, cufValues);
-					fixNatureAndType(target, testCase);
-
-					doUpdateTestcase(instr);
-
-					LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Test Case \t'" + target + "'");
-
-				} catch (Exception ex) {
-					train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-						new Object[]{ex.getClass().getName()}));
-					LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while updating " + target + " : ", ex);
-				}
-
-			}
-
-		}
-
-		return train;
-	}
-
-
-	/**
-	 * May be called either by the create test case scenario, or in an update scenario (business says that
-	 * updating a test case that dont exist implies to create it first).
-	 *
-	 * @param train
-	 * @param instruction
-	 * @return
-	 */
-	private LogTrain createTCRoutine(LogTrain train, TestCaseInstruction instruction) {
-		TestCase testCase = instruction.getTestCase();
-		Map<String, String> cufValues = instruction.getCustomFields();
-		TestCaseTarget target = instruction.getTarget();
-
-		try {
-			helper.fillNullWithDefaults(testCase);
-			helper.truncate(testCase, cufValues);
-			fixNatureAndType(target, testCase);
-
-			doCreateTestcase(instruction);
-			validator.getModel().setExists(target, testCase.getId());
-
-			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Test Case \t'" + target + "'");
-
-		} catch (Exception ex) {
-			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-				new Object[]{ex.getClass().getName()}));
-			validator.getModel().setNotExists(target);
-			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
-		}
-
-		return train;
+		return testCaseFacility.updateTestCase(instr);
 	}
 
 
 	@Override
 	public LogTrain deleteTestCase(TestCaseTarget target) {
-
-		LogTrain train = validator.deleteTestCase(target);
-
-		if (!train.hasCriticalErrors()) {
-			try {
-
-				doDeleteTestCase(target);
-				validator.getModel().setDeleted(target);
-
-				LOGGER.debug(EXCEL_ERR_PREFIX + "Deleted Test Case \t'" + target + "'");
-
-			} catch (Exception ex) {
-				train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-					new Object[]{ex.getClass().getName()}));
-
-				LOGGER.error(EXCEL_ERR_PREFIX + "unexpected error while deleting " + target + " : ", ex);
-			}
-		}
-
-		return train;
+		return testCaseFacility.deleteTestCase(target);
 	}
 
 	@Override
@@ -321,7 +158,7 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain addCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-								CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.addCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
@@ -372,7 +209,7 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain updateCallStep(TestStepTarget target, CallTestStep testStep, TestCaseTarget calledTestCase,
-								   CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
+		CallStepParamsInfo paramInfo, ActionTestStep actionStepBackup) {
 
 		LogTrain train = validator.updateCallStep(target, testStep, calledTestCase, paramInfo, actionStepBackup);
 
@@ -481,7 +318,7 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain failsafeUpdateParameterValue(DatasetTarget dataset, ParameterTarget param, String value,
-												 boolean isUpdate) {
+		boolean isUpdate) {
 
 		LogTrain train = validator.failsafeUpdateParameterValue(dataset, param, value, isUpdate);
 
@@ -552,533 +389,30 @@ public class FacilityImpl implements Facility {
 
 	@Override
 	public LogTrain createRequirementVersion(RequirementVersionInstruction instr) {
-		LogTrain train = validator.createRequirementVersion(instr);
-		if (!train.hasCriticalErrors()) {
-			//CREATE REQUIREMENT VERSION IN DB
-			createReqVersionRoutine(train, instr);
-			//Assign the create requirement strategy to postProcessHandler
-
-
-			// XXX and what if the same import file define both a creation and an update ?
-			postProcessHandler = new CreateRequirementVersionPostProcessStrategy();
-		}
-		return train;
+		return requirementFacility.createRequirementVersion(instr);
 	}
 
 	@Override
 	public LogTrain updateRequirementVersion(RequirementVersionInstruction instr) {
-		LogTrain train = validator.updateRequirementVersion(instr);
-		if (!train.hasCriticalErrors()) {
-			updateRequirementVersionRoutine(train, instr);
-
-			// XXX and what if the same import file define both a creation and an update ?
-			postProcessHandler = new UpdateRequirementVersionPostProcessStrategy();
-		}
-		return train;
+		return requirementFacility.updateRequirementVersion(instr);
 	}
 
 
 	@Override
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
-		throw new NotImplementedException("implement me - must return a Failure : Not implemented in the log train instead of throwing this exception");
+		return requirementFacility.deleteRequirementVersion(instr);
 	}
 
 	/**
 	 * for all other stuffs that need to be done afterward
-	 *
-	 * @param instructions
 	 */
 	public void postprocess(List<Instruction<?>> instructions) {
-		if (postProcessHandler != null) {
-			postProcessHandler.doPostProcess(instructions);
-		}
+		requirementFacility.postprocess(instructions);
 	}
 
 	// ************************* private (and hairy) code
 	// *********************************
 
-	private LogTrain createReqVersionRoutine(LogTrain train, RequirementVersionInstruction instruction) {
-		RequirementVersion reqVersion = instruction.getRequirementVersion();
-		Map<String, String> cufValues = instruction.getCustomFields();
-		RequirementVersionTarget target = instruction.getTarget();
-
-		try {
-			helper.fillNullWithDefaults(reqVersion);
-			helper.truncate(reqVersion, cufValues);
-			fixCategory(target, reqVersion);
-			RequirementVersion newVersion = doCreateRequirementVersion(instruction);
-
-			//update model
-			validator.getModel().addRequirement(target.getRequirement(),
-				new TargetStatus(Existence.EXISTS, newVersion.getRequirement().getId()));
-
-			validator.getModel().addRequirementVersion
-				(target, new TargetStatus(Existence.EXISTS, newVersion.getId()));
-
-			//update the instruction, needed for postProcess.
-			instruction.setRequirementVersion(newVersion);
-
-			LOGGER.debug(EXCEL_ERR_PREFIX + "Created Requirement version \t'" + target + "'");
-
-		} catch (Exception ex) {
-			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-				new Object[]{ex.getClass().getName()}));
-			validator.getModel().setNotExists(target);
-			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
-		}
-
-		return train;
-	}
-
-	/**
-	 * 1 . First create the requirement if not exist in database
-	 * 1.1 - Requirement is root (ie under a {@link RequirementLibrary})
-	 * This one is simple, just create the requirement and set the status in requirement tree
-	 * 1.2 - Requirement is under another {@link RequirementLibraryNode}
-	 * Must create all the node above the requirement that doesn't exists.
-	 * As specified in 5085 all new nodes above the requirement will be treated as folder
-	 * 2 . Create the requirement version :
-	 *
-	 * @param instruction
-	 * @return
-	 */
-	private RequirementVersion doCreateRequirementVersion(
-		RequirementVersionInstruction instruction) {
-		RequirementVersionTarget target = instruction.getTarget();
-		Long reqId = validator.getModel().getRequirementId(target);
-		if (reqId == null) {
-			return doCreateRequirementAndVersion(instruction);
-		} else {
-			return doAddingNewVersionToRequirement(instruction, reqId);
-		}
-	}
-
-	/**
-	 * In this method, we assumes that noVersion of the added requirement version is correct
-	 * It has been checked and modified if needed by validator
-	 * The proccess of creating a new version directly at required position and with correct attributes
-	 * is fairly complex, so we follow normal flow in squash TM : create a new requirement version and modify it after
-	 *
-	 * @param instruction
-	 */
-	private RequirementVersion doAddingNewVersionToRequirement(
-		RequirementVersionInstruction instruction, Long reqId) {
-
-		RequirementVersionTarget target = instruction.getTarget();
-		Requirement requirement = reqLibNavigationService.findRequirement(reqId);
-		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
-		RequirementVersion requirementVersion = instruction.getRequirementVersion();
-		requirementVersion.setVersionNumber(instruction.getTarget().getVersion());
-		//creating new version with service
-		requirementVersionManagerService.createNewVersion(reqId);
-		//and updating persisted reqVersion
-		RequirementVersion requirementVersionPersisted = requirement.getCurrentVersion();
-		reqLibNavigationService.initCUFvalues(requirementVersionPersisted, acceptableCufs);
-		bindRequirementVersionToMilestones(requirementVersionPersisted, boundMilestonesIds(instruction));
-		doUpdateRequirementCoreAttributes(requirementVersion, requirementVersionPersisted);
-		doUpdateRequirementMetadata((AuditableMixin) requirementVersion, (AuditableMixin) requirementVersionPersisted);
-		fixVersionNumber(requirement, target.getVersion());
-		return requirement.findRequirementVersion(target.getVersion());
-	}
-
-	@SuppressWarnings({"unchecked", "rawtypes"})
-	private RequirementVersion doCreateRequirementAndVersion(
-		final RequirementVersionInstruction instruction) {
-
-		//convenient references as the process is complex...
-		final RequirementVersionTarget target = instruction.getTarget();
-		String projectName = PathUtils.extractProjectName(target.getPath());
-		projectName = PathUtils.unescapePathPartSlashes(projectName);
-		RequirementVersion requirementVersion = instruction.getRequirementVersion();
-		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(instruction.getCustomFields());
-
-		//creating the dto needed for adding new requirement
-		final NewRequirementVersionDto dto = new NewRequirementVersionDto(requirementVersion, acceptableCufs);
-		dto.setName(PathUtils.unescapePathPartSlashes(dto.getName()));
-
-		//making arrays to avoid immutable problem in visitor inner class
-		final Requirement[] finalRequirement = new Requirement[1];
-		final Long[] finalParentId = new Long[1];
-
-		//now creating the visitor to requirementLibrairyNode
-		//this visitor will invoke the good method as parent can be Requirement or RequirementFolder
-		RequirementLibraryNodeVisitor visitor = new RequirementLibraryNodeVisitor() {
-
-			@Override
-			public void visit(Requirement requirement) {
-				Integer finalPosition = target.getRequirement().getOrder();
-				finalRequirement[0] = reqLibNavigationService.addRequirementToRequirement
-					(finalParentId[0], dto, boundMilestonesIds(instruction));
-				if (finalPosition != null && finalPosition > 0) {
-					reqLibNavigationService.moveNodesToRequirement(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
-				}
-			}
-
-			@Override
-			public void visit(RequirementFolder folder) {
-				Integer finalPosition = target.getRequirement().getOrder();
-				finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementFolder
-					(finalParentId[0], dto, boundMilestonesIds(instruction));
-				if (finalPosition != null && finalPosition > 0) {
-					reqLibNavigationService.moveNodesToFolder(finalParentId[0], new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
-				}
-			}
-		};
-
-		//now creating requirement with following logic :
-		//	If requirement is root requirement
-		//		-> addRequirementToRequirementLibrary
-		//	Else
-		//		If parent doesn't exist in database
-		//			-> Create it and needed hierarchy
-		//		-> Now create the imported requirement using visitor polymorphism
-		//	-> Do postCreation stuff
-		if (target.getRequirement().isRootRequirement()) {
-			Long requirementLibrairyId = validator.getModel().getProjectStatus(projectName).getRequirementLibraryId();
-
-
-			Collection<String> siblingNames = reqLibNavigationService.findNamesInLibraryStartingWith(requirementLibrairyId,
-					dto.getName());
-			renameIfNeeded(dto, siblingNames);
-
-			finalRequirement[0] = reqLibNavigationService.addRequirementToRequirementLibrary(
-				requirementLibrairyId, dto, Collections.<Long>emptyList());
-			moveNodesToLibrary(requirementLibrairyId, new Long[]{finalRequirement[0].getId()}, target.getRequirement().getOrder());
-			milestoneService.bindRequirementVersionToMilestones(finalRequirement[0].getCurrentVersion().getId(), boundMilestonesIds(instruction));
-		} else {
-			List<String> paths = PathUtils.scanPath(target.getPath());
-			String parentPath = paths.get(paths.size() - 2); //we know that path is composite of at least 3 elements
-
-				// note : the following instruction might lead to horribe result if the parent path
-				// is ambiguous due to duplicate names (which is possible for now for requirements)
-				// due to lazy business analysts
-			finalParentId[0] = reqFinderService.findNodeIdByPath(parentPath);
-
-			//if parent doesn't exist, we must create it and all needed hierarchy above
-			if (finalParentId[0] == null) {
-				finalParentId[0] = reqLibNavigationService.mkdirs(parentPath);
-			}
-
-				Collection<String> siblingNames = reqLibNavigationService.findNamesInNodeStartingWith(finalParentId[0],
-						dto.getName());
-				renameIfNeeded(dto, siblingNames);
-
-			RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(finalParentId[0]);
-			parent.accept(visitor);
-		}
-
-		return doAfterCreationProcess(finalRequirement[0], instruction, requirementVersion);
-	}
-
-	private void renameIfNeeded(NewRequirementVersionDto version, Collection<String> siblingNames) {
-		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
-		if (!newName.equals(version.getName())) {
-			version.setName(newName);
-		}
-	}
-
-
-	private void moveNodesToLibrary(Long requirementLibrairyId, Long[] longs,
-									Integer order) {
-		if (order != null && order > 0) {
-			reqLibNavigationService.moveNodesToLibrary(requirementLibrairyId, longs, order);
-		}
-
-	}
-
-
-	/**
-	 * Here we do all the needed modifications to the freshly created requirement.
-	 *
-	 * @param persistedRequirement
-	 * @param instruction
-	 * @param requirementVersion
-	 * @return the current version, needed for global post process
-	 */
-	private RequirementVersion doAfterCreationProcess(Requirement persistedRequirement, RequirementVersionInstruction instruction, RequirementVersion requirementVersion) {
-		RequirementVersionTarget target = instruction.getTarget();
-		//bind milestone for import
-		bindRequirementVersionToMilestones(persistedRequirement.getCurrentVersion(), boundMilestonesIds(instruction));
-		//updating attributes that creation process haven't set (Category... )
-		doUpdateRequirementCategory(requirementVersion, persistedRequirement.getCurrentVersion());
-		doUpdateRequirementMetadata((AuditableMixin) requirementVersion, (AuditableMixin) persistedRequirement.getCurrentVersion());
-		//setting the version number correctly as we can add version number non sequentially with import process
-		fixVersionNumber(persistedRequirement, target.getVersion());
-		return persistedRequirement.getCurrentVersion();//we have only one version in the new requirement...
-	}
-
-
-	private void doUpdateRequirementMetadata(AuditableMixin requirementVersion,
-											 AuditableMixin persistedVersion) {
-		persistedVersion.setCreatedBy(requirementVersion.getCreatedBy());
-		persistedVersion.setCreatedOn(requirementVersion.getCreatedOn());
-	}
-
-
-	private void updateRequirementVersionRoutine(LogTrain train,
-												 RequirementVersionInstruction instruction) {
-
-		RequirementVersion reqVersion = instruction.getRequirementVersion();
-		Map<String, String> cufValues = instruction.getCustomFields();
-		RequirementVersionTarget target = instruction.getTarget();
-
-
-		try {
-			helper.fillNullWithDefaults(reqVersion);
-			helper.truncate(reqVersion, cufValues);
-			fixCategory(target, reqVersion);
-			RequirementVersion newVersion = doUpdateRequirementVersion(instruction, cufValues);
-
-			//update the instruction with persisted one, needed for postProcess.
-			instruction.setRequirementVersion(newVersion);
-
-			//update model
-			validator.getModel().bindMilestonesToRequirementVersion(target, instruction.getMilestones());
-
-			LOGGER.debug(EXCEL_ERR_PREFIX + "Updated Requirement Version \t'" + target + "'");
-
-		} catch (Exception ex) {
-			train.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_UNEXPECTED_ERROR,
-				new Object[]{ex.getClass().getName()}));
-			validator.getModel().setNotExists(target);
-			LOGGER.error(EXCEL_ERR_PREFIX + UNEXPECTED_ERROR_WHILE_IMPORTING + target + " : ", ex);
-		}
-	}
-
-
-	private RequirementVersion doUpdateRequirementVersion(
-		RequirementVersionInstruction instruction, Map<String, String> cufValues) {
-
-		RequirementVersionTarget target = instruction.getTarget();
-		RequirementVersion reqVersion = instruction.getRequirementVersion();
-
-		Requirement req = reqLibNavigationService.
-			findRequirement(target.getRequirement().getId());
-
-		RequirementVersion orig = req.findRequirementVersion(target.getVersion());
-
-		doUpdateRequirementCoreAttributes(reqVersion, orig);
-		doUpdateRequirementCategory(reqVersion, orig);
-
-		//Feat 5169, unbind all milestones if cell is empty in import file.
-		//Else, bind milestones if possible
-		if (CollectionUtils.isEmpty(instruction.getMilestones())) {
-			orig.getMilestones().clear();
-		} else {
-			updateRequirementVersionToMilestones(target.isRejectedMilestone(), orig, boundMilestonesIds(instruction));
-		}
-		doUpdateCustomFields(cufValues, orig);
-		doUpdateRequirementMetadata((AuditableMixin) reqVersion, (AuditableMixin) orig);
-		moveRequirement(target.getRequirement(), req);
-		//we return the persisted RequirementVersion for post process
-		return orig;
-	}
-
-	@SuppressWarnings("rawtypes")
-	private void moveRequirement(RequirementTarget target, final Requirement req) {
-		final Integer newPosition = target.getOrder();
-		if (newPosition == null) {
-			return;
-		}
-		if (newPosition <= 0) {
-			return;
-		}
-		if (target.isRootRequirement()) {
-			reqLibNavigationService.moveNodesToLibrary(req.getLibrary().getId(), new Long[]{req.getId()}, newPosition);
-		} else {
-			List<Long> ids = rlnDao.getParentsIds(req.getId());
-			Long firstParentId = ids.get(ids.size() - 2);
-			final RequirementLibraryNode parent = reqLibNavigationService.findRequirementLibraryNodeById(firstParentId);
-
-			//creating addhoc visitor
-			RequirementLibraryNodeVisitor visitor = new RequirementLibraryNodeVisitor() {
-
-				@Override
-				public void visit(Requirement requirement) {
-					reqLibNavigationService.moveNodesToRequirement(parent.getId(), new Long[]{req.getId()}, newPosition);
-				}
-
-				@Override
-				public void visit(RequirementFolder folder) {
-					reqLibNavigationService.moveNodesToFolder(parent.getId(), new Long[]{req.getId()}, newPosition);
-				}
-			};
-			parent.accept(visitor);
-		}
-	}
-
-
-	private void doUpdateRequirementCoreAttributes(
-		RequirementVersion reqVersion, RequirementVersion orig) {
-
-		doUpdateRequirementReference(reqVersion, orig);
-		doUpdateRequirementDescription(reqVersion, orig);
-		doUpdateRequirementCriticality(reqVersion, orig);
-		doUpdateRequirementCategory(reqVersion, orig);
-	}
-
-	private void doUpdateRequirementCriticality(RequirementVersion reqVersion, RequirementVersion orig) {
-		RequirementCriticality newCriticality = reqVersion.getCriticality();
-		if (newCriticality != null && newCriticality != orig.getCriticality()) {
-			requirementVersionManagerService.changeCriticality(orig.getId(), newCriticality);
-		}
-	}
-
-
-	private void doUpdateRequirementDescription(RequirementVersion reqVersion, RequirementVersion orig) {
-		String newDescription = reqVersion.getDescription();
-		if (!StringUtils.isBlank(newDescription) && !newDescription.equals(orig.getReference())) {
-			requirementVersionManagerService.changeDescription(orig.getId(), newDescription);
-		}
-	}
-
-
-	private void doUpdateRequirementReference(RequirementVersion reqVersion, RequirementVersion orig) {
-		String newReference = reqVersion.getReference();
-		if (!StringUtils.isBlank(newReference) && !newReference.equals(orig.getReference())) {
-			requirementVersionManagerService.changeReference(orig.getId(), newReference);
-		}
-	}
-
-	private void doUpdateRequirementCategory(
-		RequirementVersion reqVersion, RequirementVersion orig) {
-		Long idOrig = orig.getId();
-
-		InfoListItem oldCategory = orig.getCategory();
-		InfoListItem newCategory = reqVersion.getCategory();
-
-		if (newCategory != null && !oldCategory.references(newCategory)) {
-			requirementVersionManagerService.changeCategory(idOrig, newCategory.getCode());
-		}
-	}
-
-	private void fixVersionNumber(Requirement requirement, Integer version) {
-		reqLibNavigationService.changeCurrentVersionNumber(requirement, version);
-	}
-
-	private void updateRequirementVersionToMilestones(boolean corruptedMilestones, RequirementVersion requirementVersionPersisted,
-													  List<Long> boundMilestonesIds) {
-		if (!corruptedMilestones) {
-			bindRequirementVersionToMilestones(requirementVersionPersisted, boundMilestonesIds);
-		}
-	}
-
-	/**
-	 * This method ensure that multiple milestone binding to several {@link RequirementVersion} of
-	 * the same {@link Requirement} is forbidden. The method in service can't prevent this for import as we are
-	 * in a unique transaction for all import lines. So the n-n relationship between milestones and requirementVersion isn't
-	 * fixed until transaction is closed and {@link MilestoneMembershipManager#bindRequirementVersionToMilestones(long, Collection)}
-	 * will let horrible things appends if this list isn't up to date
-	 */
-	private void bindRequirementVersionToMilestones(RequirementVersion requirementVersionPersisted,
-													List<Long> boundMilestonesIds) {
-		List<RequirementVersion> allVersion = requirementVersionPersisted.getRequirement().getRequirementVersions();
-		Set<Milestone> milestoneBinded = new HashSet<>();
-		Set<Long> milestoneBindedId = new HashSet<>();
-		Set<Long> checkedMilestones = new HashSet<>();
-
-		for (RequirementVersion requirementVersion : allVersion) {
-			milestoneBinded.addAll(requirementVersion.getMilestones());
-		}
-
-		for (Milestone milestone : milestoneBinded) {
-			milestoneBindedId.add(milestone.getId());
-		}
-
-		for (Long id : boundMilestonesIds) {
-			if (!milestoneBindedId.contains(id)) {
-				checkedMilestones.add(id);
-			}
-		}
-
-		if (!checkedMilestones.isEmpty()) {
-			requirementVersionPersisted.getMilestones().clear();
-			requirementVersionManagerService.bindMilestones(requirementVersionPersisted.getId(), checkedMilestones);
-		}
-	}
-
-
-	// because this time we're not toying around man, this is the real thing
-	private void doCreateTestcase(TestCaseInstruction instr) {
-		TestCase testCase = instr.getTestCase();
-		Map<String, String> cufValues = instr.getCustomFields();
-		TestCaseTarget target = instr.getTarget();
-
-		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(cufValues);
-
-		// case 1 : this test case lies at the root of the project
-		if (target.isRootTestCase()) {
-			// libraryId is never null because the checks ensured that the
-			// project exists
-			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getTestCaseLibraryId();
-
-			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
-				testCase.getName());
-			renameIfNeeded(testCase, siblingNames);
-			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder(),
-				new ArrayList<Long>());
-		}
-		// case 2 : this test case exists within a folder
-		else {
-			Long folderId = navigationService.mkdirs(target.getFolder());
-			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId,
-				testCase.getName());
-			renameIfNeeded(testCase, siblingNames);
-
-			List<Long> msids = boundMilestonesIds(instr);
-
-			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(), msids);
-		}
-
-		bindMilestones(instr, testCase);
-
-	}
-
-	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
-		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
-		if (!newName.equals(testCase.getName())) {
-			testCase.setName(newName);
-		}
-	}
-
-	private void doUpdateTestcase(TestCaseInstruction instr) {
-		TestCaseTarget target = instr.getTarget();
-		TestCase testCase = instr.getTestCase();
-		Map<String, String> cufValues = instr.getCustomFields();
-
-		TestCase orig = validator.getModel().get(target);
-		Long origId = orig.getId();
-
-		// update the test case core attributes
-
-		doUpdateTestCaseCoreAttributes(testCase, orig);
-
-		// the custom field values now
-
-		doUpdateCustomFields(cufValues, orig);
-
-		if (validator.areMilestoneValid(instr)) {
-			bindMilestones(instr, orig);
-		}
-
-		// move the test case if its index says it has to move
-		Integer order = target.getOrder();
-		if (order != null && order > -1 && order < navigationService.countSiblingsOfNode(origId)) {
-			if (target.isRootTestCase()) {
-				Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getTestCaseLibraryId();
-				navigationService.moveNodesToLibrary(libraryId, new Long[]{origId}, order);
-			} else {
-				Long folderId = navigationService.findNodeIdByPath(target.getFolder());
-				navigationService.moveNodesToFolder(folderId, new Long[]{origId}, order);
-			}
-		}
-
-	}
-
-	private void doDeleteTestCase(TestCaseTarget target) {
-		TestCase tc = validator.getModel().get(target);
-		navigationService.deleteNodes(Collections.singletonList(tc.getId()));
-	}
 
 	private void doAddActionStep(TestStepTarget target, ActionTestStep testStep, Map<String, String> cufValues) {
 
@@ -1205,70 +539,6 @@ public class FacilityImpl implements Facility {
 
 	// ******************************** support methods ***********************
 
-	private void doUpdateTestCaseCoreAttributes(TestCase testCase, TestCase orig) {
-
-		Long origId = orig.getId();
-		String newName = testCase.getName();
-
-		if (!StringUtils.isBlank(newName) && !newName.equals(orig.getName())) {
-			testcaseModificationService.rename(origId, newName);
-		}
-
-		String newRef = testCase.getReference();
-		if (!StringUtils.isBlank(newRef) && !newRef.equals(orig.getReference())) {
-			testcaseModificationService.changeReference(origId, newRef);
-		}
-
-		String newDesc = testCase.getDescription();
-		if (!StringUtils.isBlank(newDesc) && !newDesc.equals(orig.getDescription())) {
-			testcaseModificationService.changeDescription(origId, newDesc);
-		}
-
-		String newPrereq = testCase.getPrerequisite();
-		if (!StringUtils.isBlank(newPrereq) && !newPrereq.equals(orig.getPrerequisite())) {
-			testcaseModificationService.changePrerequisite(origId, newPrereq);
-		}
-
-		TestCaseImportance newImp = testCase.getImportance();
-		if (newImp != null && orig.getImportance() != newImp) {
-			testcaseModificationService.changeImportance(origId, newImp);
-		}
-
-		InfoListItem newNat = testCase.getNature();
-		if (newNat != null && !newNat.references(orig.getNature())) {
-			testcaseModificationService.changeNature(origId, newNat.getCode());
-		}
-
-		InfoListItem newType = testCase.getType();
-		if (newType != null && !newType.references(orig.getType())) {
-			testcaseModificationService.changeType(origId, newType.getCode());
-		}
-
-		TestCaseStatus newStatus = testCase.getStatus();
-		if (newStatus != null && orig.getStatus() != newStatus) {
-			testcaseModificationService.changeStatus(origId, newStatus);
-		}
-
-		Boolean newImportanceAuto = testCase.isImportanceAuto();
-		if (orig.isImportanceAuto().equals(newImportanceAuto)) {
-			testcaseModificationService.changeImportanceAuto(origId, newImportanceAuto);
-		}
-	}
-
-	private void doUpdateCustomFields(Map<String, String> cufValues, BoundEntity bindableEntity) {
-
-		List<CustomFieldValue> cufs = cufvalueService.findAllCustomFieldValues(bindableEntity);
-		Set<String> codeSet = cufValues.keySet();
-		for (CustomFieldValue v : cufs) {
-			String code = v.getCustomField().getCode();
-			String newValue = cufValues.get(code);
-			if (codeSet.contains(code)) {
-				v.setValue(newValue);
-			}
-		}
-
-	}
-
 	private Parameter findParameter(ParameterTarget param) {
 		Long testcaseId = validator.getModel().getId(param.getOwner());
 
@@ -1282,7 +552,6 @@ public class FacilityImpl implements Facility {
 	}
 
 	/**
-	 * @param dataset
 	 * @return the found Dataset or a new one (non null value)
 	 */
 	private Dataset findOrCreateDataset(DatasetTarget dataset) {
@@ -1306,11 +575,6 @@ public class FacilityImpl implements Facility {
 		}
 	}
 
-	/**
-	 * @param testStep
-	 * @param tc
-	 * @param paramInfo
-	 */
 	private void changeParameterAssignation(Long stepId, TestCaseTarget tc, CallStepParamsInfo paramInfo) {
 		Long dsId = null;
 		ParameterAssignationMode mode = paramInfo.getParamMode();
@@ -1356,232 +620,6 @@ public class FacilityImpl implements Facility {
 		return dpv;
 	}
 
-	/**
-	 * because the service identifies cufs by their id, not their code<br/>
-	 * also populates the cache (cufIdByCode), and transform the input data in a
-	 * single string or a collection of string depending on the type of the
-	 * custom field (Tags on non-tags).
-	 */
-	private Map<Long, RawValue> toAcceptableCufs(Map<String, String> origCufs) {
-
-		Map<Long, RawValue> result = new HashMap<>(origCufs.size());
-
-		for (Entry<String, String> origCuf : origCufs.entrySet()) {
-			String cufCode = origCuf.getKey();
-
-			if (!cufInfosCache.containsKey(cufCode)) {
-
-				CustomField customField = cufDao.findByCode(cufCode);
-
-				// that bit of code checks that if the custom field doesn't
-				// exist, the hashmap entry contains
-				// a dummy value for this code.
-				CustomFieldInfos infos = null;
-				if (customField != null) {
-					Long id = customField.getId();
-					InputType type = customField.getInputType();
-					infos = new CustomFieldInfos(id, type);
-				}
-
-				cufInfosCache.put(cufCode, infos);
-			}
-
-			// now add to our map the id of the custom field, except if null :
-			// the custom field
-			// does not exist and therefore wont be included.
-			CustomFieldInfos infos = cufInfosCache.get(cufCode);
-			if (infos != null) {
-				switch (infos.getType()) {
-					case TAG:
-						List<String> values = Arrays.asList(origCuf.getValue().split("\\|"));
-						result.put(infos.getId(), new RawValue(values));
-						break;
-					default:
-						result.put(infos.getId(), new RawValue(origCuf.getValue()));
-						break;
-				}
-			}
-		}
-
-		return result;
-
-	}
-
-	private void fixNatureAndType(TestCaseTarget target, TestCase testCase) {
-
-		// at this point of the process the target is assumed to be safe for
-		// use,
-		// no need to defensively check that the project exists and such
-		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
-
-		InfoListItem nature = testCase.getNature();
-		if (nature != null) {
-			if (!listItemFinderService.isNatureConsistent(projectStatus.getId(), nature.getCode())) {
-				testCase.setNature(listItemFinderService.findDefaultTestCaseNature(projectStatus.getId()));
-			}
-		}
-
-		InfoListItem type = testCase.getType();
-		if (type != null) {
-			if (!listItemFinderService.isTypeConsistent(projectStatus.getId(), type.getCode())) {
-				testCase.setType(listItemFinderService.findDefaultTestCaseType(projectStatus.getId()));
-			}
-		}
-
-	}
-
-	private void fixCategory(RequirementVersionTarget target, RequirementVersion requirementVersion) {
-		TargetStatus projectStatus = validator.getModel().getProjectStatus(target.getProject());
-
-		InfoListItem category = requirementVersion.getCategory();
-		//if category is null or inconsistent for project, setting to default project category
-		if (category == null || !listItemFinderService.isCategoryConsistent(projectStatus.getId(), category.getCode())) {
-			requirementVersion.setCategory(listItemFinderService.findDefaultRequirementCategory(projectStatus.getId()));
-		}
-	}
-
-	private static final class CustomFieldInfos {
-		private Long id;
-		private InputType type;
-
-		public Long getId() {
-			return id;
-		}
-
-		public InputType getType() {
-			return type;
-		}
-
-		public CustomFieldInfos(Long id, InputType type) {
-			super();
-			this.id = id;
-			this.type = type;
-		}
-
-	}
-
-
-	/**
-	 * Returnd the ids of the milestones to be bound as per test case instruction
-	 *
-	 * @param instr the instruction holding the names of candidate milestones
-	 * @return
-	 */
-	private List<Long> boundMilestonesIds(TestCaseInstruction instr) {
-		return boundMilestonesIds(instr.getMilestones());
-	}
-
-	/**
-	 * Returnd the ids of the milestones to be bound as per requirement version instruction
-	 *
-	 * @param instr the instruction holding the names of candidate milestones
-	 * @return
-	 */
-	private List<Long> boundMilestonesIds(RequirementVersionInstruction instr) {
-		return boundMilestonesIds(instr.getMilestones());
-	}
-
-
-	private List<Long> boundMilestonesIds(List<String> milestones) {
-		if (milestones.isEmpty()) {
-			return Collections.emptyList();
-		}
-
-		List<Milestone> ms = milestoneHelper.findBindable(milestones);
-		List<Long> msids = new ArrayList<>(ms.size());
-		for (Milestone m : ms) {
-			msids.add(m.getId());
-		}
-		return msids;
-	}
-
-
-	/**
-	 * @param instr            instruction read from import file, pointing to a TRANSIENT test case template
-	 * @param persistentSource the PERSISTENT test case
-	 */
-	private void bindMilestones(TestCaseInstruction instr, TestCase persistentSource) {
-		if (!instr.getMilestones().isEmpty()) {
-			List<Milestone> ms = milestoneHelper.findBindable(instr.getMilestones());
-			persistentSource.getMilestones().clear();
-			persistentSource.bindAllMilsetones(ms);
-		}
-		//feat 5169 if milestone cell is empty in xls import file, unbind all milestones
-		else {
-			persistentSource.getMilestones().clear();
-		}
-
-	}
-
-	private interface ImportPostProcessHandler {
-		void doPostProcess(List<Instruction<?>> instructions);
-	}
-
-
-	// TODO : this will not work as intended (see the XXX  "and what if")
-	// unless I've missed a catch, better have a unique strategy that can handle both create and update,
-	// using instruction.getImportMode() to know which case it is
-	private class CreateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
-
-		@Override
-		public void doPostProcess(List<Instruction<?>> instructions) {
-			for (Instruction<?> instruction : instructions) {
-				if (instruction instanceof RequirementVersionInstruction) {
-					RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
-					if (!rvi.isFatalError()) {
-						changeRequirementVersionStatus(rvi);
-					}
-				}
-			}
-		}
-	}
-
-	private class UpdateRequirementVersionPostProcessStrategy implements ImportPostProcessHandler {
-
-		@Override
-		public void doPostProcess(List<Instruction<?>> instructions) {
-			for (Instruction<?> instruction : instructions) {
-				if (instruction instanceof RequirementVersionInstruction) {
-					RequirementVersionInstruction rvi = (RequirementVersionInstruction) instruction;
-					if (!rvi.isFatalError()) {
-						renameRequirementVersion(rvi);
-						changeRequirementVersionStatus(rvi);
-					}
-				}
-			}
-		}
-	}
-
-	private void renameRequirementVersion(RequirementVersionInstruction rvi) {
-		String unconsistentName = rvi.getTarget().getUnconsistentName();
-		if (unconsistentName != null && !StringUtils.isEmpty(unconsistentName)) {
-			String newName = PathUtils.unescapePathPartSlashes(unconsistentName);
-			RequirementVersionTarget target = rvi.getTarget();
-			Requirement req = reqLibNavigationService.findRequirement(target.getRequirement().getId());
-			RequirementVersion orig = req.findRequirementVersion(target.getVersion());
-			orig.setName(newName);
-		}
-	}
-
-	private void changeRequirementVersionStatus(
-		RequirementVersionInstruction rvi) {
-		RequirementStatus newstatus = rvi.getTarget().getImportedRequirementStatus();
-		RequirementStatus oldStatus = rvi.getRequirementVersion().getStatus();
-
-		if (newstatus == null || newstatus == oldStatus) {
-			return;
-		}
-
-		//The only forbidden transition is from WORK_IN_PROGRESS to APPROVED,
-		// so we need to update to UNDER_REVIEW before updating to APPROVED
-		if (newstatus == RequirementStatus.APPROVED && oldStatus == RequirementStatus.WORK_IN_PROGRESS) {
-			requirementVersionManagerService.changeStatus
-				(rvi.getRequirementVersion().getId(), RequirementStatus.UNDER_REVIEW);
-		}
-
-		requirementVersionManagerService.changeStatus(rvi.getRequirementVersion().getId(), newstatus);
-	}
-
 	@Override
 	public LogTrain createCoverage(CoverageInstruction instr) {
 
@@ -1606,7 +644,12 @@ public class FacilityImpl implements Facility {
 		return train;
 	}
 
-
+	@PostConstruct
+	public void initializeFactories() {
+		this.initializeCustomFieldTransator(customFieldTransator);
+		testCaseFacility.initializeCustomFieldTransator(customFieldTransator);
+		requirementFacility.initializeCustomFieldTransator(customFieldTransator);
+	}
 
 }
 
