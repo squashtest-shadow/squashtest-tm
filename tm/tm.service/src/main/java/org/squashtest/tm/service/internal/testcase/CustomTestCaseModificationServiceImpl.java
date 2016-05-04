@@ -388,12 +388,8 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			// attach it to a test case
 			TestCase testCase = testCaseDao.findById(testCaseId);
 
-			if (position != null) {
-				try {
-					testCase.addStep(position, copyStep);
-				} catch (IndexOutOfBoundsException ex) {
-					testCase.addStep(copyStep);
-				}
+			if (position != null && position < testCase.getSteps().size()) {
+				testCase.addStep(position, copyStep);
 			} else {
 				testCase.addStep(copyStep);
 			}

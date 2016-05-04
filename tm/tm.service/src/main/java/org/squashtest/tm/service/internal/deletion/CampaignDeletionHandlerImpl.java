@@ -343,7 +343,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 			if (campaignDao.countRunningOrDoneExecutions(campaign.getId()) > 0) {
 				try {
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(campaign, "EXTENDED_DELETE"));
-				} catch (AccessDeniedException exception) {
+				} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 					lockedNodes.add(campaign.getId());
 				}
 			}
@@ -453,7 +453,7 @@ public class CampaignDeletionHandlerImpl extends AbstractNodeDeletionHandler<Cam
 				try {
 					PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(iteration, "EXTENDED_DELETE"));
 					registerIterationDeletion(iteration, iterationsToBeDeleted, deletedTargetIds);
-				} catch (AccessDeniedException exception) {
+				} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 					// Apparently, we don't wanna do anything, not even log something.
 				}
 			} else {

@@ -157,7 +157,7 @@ class HierarchyCreator{
 				summary.incrRejected();
 			}
 
-		}catch(SheetCorruptedException ex){
+		}catch(SheetCorruptedException ex){ // NOSONAR : this exception is part of the nominal use case
 			summary.incrFailures();
 		}
 

@@ -163,7 +163,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(iterationId),
 					"READ_UNASSIGNED", Iteration.class.getName());
-		} catch (AccessDeniedException ade) {
+		} catch (AccessDeniedException ade) { // NOSONAR : this exception is part of the nominal use case
 			String userLogin = userService.findCurrentUser().getLogin();
 			userFiltering = new DefaultFiltering("User.login", userLogin);
 		}
@@ -333,7 +333,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(item,
 						"EXTENDED_DELETE"));
 				doRemoveTestPlanItemFromIteration(iteration, item);
-			} catch (AccessDeniedException exception) {
+			} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 				unauhorized = true;
 			}
 

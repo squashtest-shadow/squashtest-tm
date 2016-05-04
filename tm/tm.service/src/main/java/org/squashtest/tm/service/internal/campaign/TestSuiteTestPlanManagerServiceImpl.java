@@ -141,7 +141,7 @@ public class TestSuiteTestPlanManagerServiceImpl implements TestSuiteTestPlanMan
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Arrays.asList(testSuiteId),
 					"READ_UNASSIGNED", TestSuite.class.getCanonicalName());
-		} catch (AccessDeniedException ade) {
+		} catch (AccessDeniedException ade) { // NOSONAR : this exception is part of the nominal use case
 			String userLogin = userService.findCurrentUser().getLogin();
 			userFiltering = new DefaultFiltering("User.login", userLogin);
 		}

@@ -442,7 +442,7 @@ public class ExcelTestCaseParserImpl implements ExcelTestCaseParser {
 			if (row.getCell(1) != null) {
 				text2 = row.getCell(1).getStringCellValue();
 			}
-		} catch (IllegalStateException ise) {
+		} catch (IllegalStateException ise) { // NOSONAR : this exception is part of the nominal use case
 			date2 = row.getCell(1).getDateCellValue();
 		}
 

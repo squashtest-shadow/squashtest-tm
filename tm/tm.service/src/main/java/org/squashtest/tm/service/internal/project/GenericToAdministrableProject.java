@@ -33,12 +33,12 @@ import org.squashtest.tm.exception.library.CannotDeleteProjectException;
 @Component
 @Scope("prototype")
 public class GenericToAdministrableProject implements ProjectVisitor {
-	
+
 	private AdministrableProject administrableProject ;
-	
+
 	@Inject
 	private ProjectDeletionHandler projectDeletionHandler;
-	
+
 	public AdministrableProject convertToAdministrableProject(GenericProject project){
 		project.accept(this);
 		return this.administrableProject;
@@ -52,14 +52,14 @@ public class GenericToAdministrableProject implements ProjectVisitor {
 		boolean isDeletable = true;
 		try {
 			projectDeletionHandler.checkProjectContainsOnlyFolders(project);
-		} catch (CannotDeleteProjectException e) {
+		} catch (CannotDeleteProjectException e) { // NOSONAR : this exception is part of the nominal use case
 			isDeletable = false;
 		}
 		administrableProject.setDeletable(isDeletable);
 		// add if is template
 		administrableProject.setTemplate(false);
 	}
-	
+
 	@Override
 	public void visit(ProjectTemplate projectTemplate) {
 		administrableProject = new AdministrableProject(projectTemplate);

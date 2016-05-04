@@ -237,7 +237,7 @@ public class MantisConnector implements BugTrackerConnector {
 			// ... and convert it
 			BTIssue issue = MantisEntityConverter.mantis2squashIssue(mantisIssue);
 			toReturn.add(issue);
-			} catch (BugTrackerNotFoundException ex){
+			} catch (BugTrackerNotFoundException ex){ // NOSONAR : this exception is part of the nominal use case
 				toReturn.add(MantisEntityConverter.issueNotFound(issueKey, exConverter));
 			}
 		}

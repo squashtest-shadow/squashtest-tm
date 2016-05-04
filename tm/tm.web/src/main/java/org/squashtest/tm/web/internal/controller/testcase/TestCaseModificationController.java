@@ -690,7 +690,7 @@ public class TestCaseModificationController {
 
 				}
 				// it's okay if the bugtracker fails, it should not forbid the rest to work
-				catch (BugTrackerRemoteException  | NullArgumentException  whatever) {
+				catch (BugTrackerRemoteException  | NullArgumentException  whatever) { // NOSONAR : this exception is part of the nominal use case
 				}
 			}
 			mav.addObject("issuesOwnerShipList", decoratedIssues);

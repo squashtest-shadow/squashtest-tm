@@ -98,7 +98,7 @@ public class TestCaseExecutionRunnerController {
 			model.addAttribute("projectNames", JsonHelper.serialize(project.getBugtrackerBinding().getProjectNames()));
 			model.addAttribute("isOslc", btFactory.isOslcConnector(bugtracker.getKind()));
 		}
-		catch(NoBugTrackerBindingException ex){
+		catch(NoBugTrackerBindingException ex){ // NOSONAR : this exception is part of the nominal use case
 			//well, no bugtracker then. It's fine.
 		}
 	}

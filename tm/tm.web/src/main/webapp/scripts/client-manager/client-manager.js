@@ -20,7 +20,7 @@
  */
 define([ "jquery", "squash.translator", "app/ws/squashtm.notification", "squashtable",
 		"jquery.squash.formdialog", "jquery.squash.confirmdialog" ], function($, translator, notification) {
-	"use strict;"
+	"use strict";
 
 	translator.load(['message.EmptyTableSelection']);
 

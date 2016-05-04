@@ -36,9 +36,9 @@ import org.squashtest.tm.web.internal.annotation.ApplicationComponent;
 
 /**
  * This class checks if an {@link User} matches the authenticated user. If not, creates this user.
- * 
+ *
  * @author Gregory Fouquet
- * 
+ *
  */
 @ApplicationComponent
 public class AuthenticatedMissingUserCreator implements ApplicationListener<AuthenticationSuccessEvent> {
@@ -51,7 +51,7 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 	private AdministrationService userAccountManager;
 
 	/**
-	 * 
+	 *
 	 */
 	public AuthenticatedMissingUserCreator() {
 		super();
@@ -73,7 +73,7 @@ public class AuthenticatedMissingUserCreator implements ApplicationListener<Auth
 
 		try {
 			userAccountManager.checkLoginAvailability(principal.getName());
-		} catch (LoginAlreadyExistsException ex) {
+		} catch (LoginAlreadyExistsException ex) { // NOSONAR : this exception is part of the nominal use cas
 			// user already exists -> bail out
 			return;
 		}

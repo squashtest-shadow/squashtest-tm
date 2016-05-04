@@ -136,9 +136,9 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 		try {
 			propSetter.set(value, target);
 
-		} catch (NullMandatoryValueException e) {
+		} catch (NullMandatoryValueException e) { // NOSONAR : this exception is part of the nominal use case
 			log(colDef, instruction);
-		} catch (InvalidTargetException e) {
+		} catch (InvalidTargetException e) { // NOSONAR : this exception is part of the nominal use case
 			instruction.addLogEntry(e.getStatus(), e.getErrori18nMessage(), e.getImpacti18nMessage());
 		}
 	}

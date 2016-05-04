@@ -84,7 +84,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 		ExecutionStep step;
 		try {
 			step = execution.findFirstRunnableStep();
-		} catch (ExecutionHasNoRunnableStepException e) {
+		} catch (ExecutionHasNoRunnableStepException e) { // NOSONAR : this exception is part of the nominal use case
 			step = execution.getLastStep();
 		}
 
@@ -152,7 +152,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 	/***
 	 * Method which update :<br>
 	 * * execution and item test plan status * execution data for the step, execution and item test plan
-	 * 
+	 *
 	 * @param executionStep
 	 * @param formerStepStatus
 	 */
@@ -181,7 +181,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	/***
 	 * Update the execution step lastExecutionBy and On values depending on the status
-	 * 
+	 *
 	 * @param executionStep
 	 *            the step to update
 	 */
@@ -237,7 +237,7 @@ public class ExecutionProcessingServiceImpl implements ExecutionProcessingServic
 
 	/***
 	 * Method which gets the most recent execution step which status is not at READY
-	 * 
+	 *
 	 * @param givenExecution
 	 *            the execution from which we get the steps
 	 * @return the most recent Execution Step which is not "READY"

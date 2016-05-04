@@ -69,7 +69,7 @@ public class PartyPreferenceDaoImpl implements CustomPartyPreferenceDao {
 		PartyPreference preference;
 		try {
 			preference = (PartyPreference) q.getSingleResult();
-		} catch (EmptyResultDataAccessException | NoResultException e) {
+		} catch (EmptyResultDataAccessException | NoResultException e) { // NOSONAR : this exception is part of the nominal use case
 			return null;
 		}
 		return preference;

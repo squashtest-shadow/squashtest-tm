@@ -50,10 +50,10 @@ public class TestCaseRestController {
 	private TestStepFinder testStepFinder;
 
 	/**
-	 * 
+	 *
 	 * @deprecated consider using
 	 *             {@link org.squashtest.tm.web.exception.ResourceNotFoundException}
-	 * 
+	 *
 	 */
 	@Deprecated
 	@ResponseStatus(value = HttpStatus.NOT_FOUND)
@@ -100,6 +100,8 @@ public class TestCaseRestController {
 		} catch (java.lang.RuntimeException e) {
 			if (e.getCause().getClass().equals(java.lang.reflect.InvocationTargetException.class)) {
 				throw new ResourceNotFoundException();
+			} else {
+				throw e;
 			}
 		}
 
