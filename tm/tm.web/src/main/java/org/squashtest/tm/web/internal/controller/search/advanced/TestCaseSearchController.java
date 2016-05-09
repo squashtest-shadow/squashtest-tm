@@ -124,7 +124,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params ="searchDomain=test-case")
-	public String showTestCaseSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+	public String showTestCaseSearchPageFilledWithParams(Model model,
 												 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 												 @RequestParam(required = false) Long id, Locale locale) {
 
@@ -133,7 +133,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params ="searchDomain=testcaseViaRequirement")
-	public String showTestCaseViaRequirementSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+	public String showTestCaseViaRequirementSearchPageFilledWithParams(Model model, 
 												 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 												 @RequestParam(required = false) Long id, Locale locale) {
 

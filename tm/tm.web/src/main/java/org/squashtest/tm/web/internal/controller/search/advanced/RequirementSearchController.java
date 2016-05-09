@@ -87,7 +87,7 @@ public class RequirementSearchController extends GlobalSearchController{
 
 	@RequestMapping(value = RESULTS, params = REQUIREMENT)
 	public String getRequirementSearchResultPage(Model model, @RequestParam String searchModel,
-												 @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id, Locale locale) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
 
 		initResultModel(model, searchModel, associateResultWithType, id, REQUIREMENT);
@@ -107,7 +107,7 @@ public class RequirementSearchController extends GlobalSearchController{
 
 
 	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=requirement")
-	public String showRequirementSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+	public String showRequirementSearchPageFilledWithParams(Model model,
 														 @RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
 														 @RequestParam(required = false) Long id, Locale locale) {
 

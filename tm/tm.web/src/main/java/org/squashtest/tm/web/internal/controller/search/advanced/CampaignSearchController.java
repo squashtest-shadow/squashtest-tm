@@ -104,7 +104,7 @@ public class CampaignSearchController extends GlobalSearchController{
 
 	@RequestMapping(value = RESULTS, params = CAMPAIGN)
 	public String getCampaignSearchResultPage(Model model, @RequestParam String searchModel,
-											  @RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id, Locale locale) {
+			@RequestParam(required = false) String associateResultWithType, @RequestParam(required = false) Long id) {
 
 		initResultModel(model, searchModel, associateResultWithType, id, CAMPAIGN);
 		return "campaign-search-result.html";
@@ -112,7 +112,7 @@ public class CampaignSearchController extends GlobalSearchController{
 	}
 
 	@RequestMapping(method = RequestMethod.POST, params = "searchDomain=campaign")
-	public String showCampaignSearchPageFilledWithParams(Model model, @RequestParam String searchDomain,
+	public String showCampaignSearchPageFilledWithParams(Model model,
 			@RequestParam(value = "cookieValueSelect", required = false, defaultValue = "") String cookieValueSelect,
 			@RequestParam(value = "cookieValueOpen", required = false, defaultValue = "") String[] cookieValueOpen,
 			@RequestParam String searchModel, @RequestParam(required = false) String associateResultWithType,
