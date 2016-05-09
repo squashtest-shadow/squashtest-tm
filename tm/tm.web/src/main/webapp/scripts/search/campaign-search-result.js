@@ -233,7 +233,6 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 			 * configure the comboboxes. Note that the category combos cannot 
 			 * be initialized before we know which requirements were selected.  
 			 */
-			loadCombos("assignment-combo");
 			loadCombos("status-combo");
 			
 			addModifyResultDialog.on('change', ':checkbox', function(evt){
@@ -250,13 +249,12 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 				var table = $('#campaign-search-result-table').dataTable();
 				var ids = self.getIdsOfSelectedTableRowList(table);
 				var editableIds = self.getIdsOfEditableSelectedTableRowList(table);
-				var columns = ["assignment","status"];
 				var index = 0;
 				
-				for(index=0; index<columns.length; index++){
-					if($("#"+columns[index]+"-checkbox").prop('checked')){
-						self.updateDisplayedValueInColumn(table, columns[index]);
-						var value = $("#"+columns[index]+"-combo").find('option:selected').val();
+			
+					if($("#status-checkbox").prop('checked')){
+						self.updateDisplayedValueInColumn(table, "status");
+						var value = $("#status-combo").find('option:selected').val();
 					
 							var urlPOST = routing.buildURL('iterations.testplan.changestatus', editableIds);
 							$.post(urlPOST, {
@@ -267,7 +265,7 @@ define([ "jquery", "backbone", "underscore", "app/util/StringUtil","workspace.ro
 							});
 						
 					}
-				}
+				
 			});
 			
 			addModifyResultDialog.on('confirmdialogopen',function() {

@@ -230,23 +230,23 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 
 	private Query buildQueryForSingleCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
-
-		List<String> tokens = getTokens(fieldModel);
+		AdvancedSearchSingleFieldModel model = (AdvancedSearchSingleFieldModel) fieldModel;
+		List<String> tokens = getTokens(model.getValue());
 		return tokens.isEmpty() ? null : buildLuceneSingleValueQuery(qb, fieldKey, tokens);
 
 	}
 
 	private Query buildQueryForTextCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
 
-		List<String> tokens = getTokens(fieldModel);
+		AdvancedSearchTextFieldModel model = (AdvancedSearchTextFieldModel) fieldModel;
+		List<String> tokens = getTokens(model.getValue());
 		return tokens.isEmpty() ? null : buildLuceneTextQuery(qb, fieldKey, tokens);
 	}
 
-	private List<String> getTokens(AdvancedSearchFieldModel fieldModel){
+	private List<String> getTokens(String value){
 
-		AdvancedSearchTextFieldModel textModel = (AdvancedSearchTextFieldModel) fieldModel;
-		if (textModel.getValue() != null && StringUtils.isNotBlank(textModel.getValue())) {
-			return  parseInput(textModel.getValue());
+		if (value != null && StringUtils.isNotBlank(value)) {
+			return  parseInput(value);
 		}
 
 		return Collections.emptyList();
