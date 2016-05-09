@@ -96,6 +96,11 @@ public class MilestoneFeatureConfiguration {
 	public boolean isGloballyEnabled() {
 		return globallyEnabled;
 	}
+        
+       
+        public boolean isNormalMode(){
+            return ! globallyEnabled;
+        }
 
 
 	public void setGloballyEnabled(boolean globallyEnabled) {
@@ -183,6 +188,10 @@ public class MilestoneFeatureConfiguration {
 	public boolean isEditable(){
 		return ! isLocked();
 	}
+        
+        public boolean isActiveMilestoneCreatable(){
+            return (activeMilestone != null) ? activeMilestone.isCanCreateDelete() : true;
+        }
 
 	public boolean isMilestoneDatesColumnVisible(){
 		return globallyEnabled;

@@ -149,8 +149,7 @@ public class MilestoneUIConfigurationService {
 		conf.setTotalMilestones(totalMilestones);
 
 		// if both globally and user enabled, fetch the active milestones etc
-		if (userEnabled && currentMilestone.isPresent()) { // NOSONAR redundant check, yet it expresses the business
-																// rule
+		if (userEnabled && currentMilestone.isPresent()) { // NOSONAR redundant check, yet it expresses the business rule
 
 			activeMilestone.setId(currentMilestone.get().getId());
 			activeMilestone.setLabel(currentMilestone.get().getLabel());

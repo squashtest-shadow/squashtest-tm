@@ -177,7 +177,7 @@ that page won't be editable if
         <c:if test="${ writable }">
 			<input type="button" value="${renameLabel}" title="${renameLabel}" id="rename-requirement-button" class="sq-btn"  ${disableIfSynced}/>
 		</c:if>
-		<c:if test="${ (not milestoneConf.globallyEnabled) or (creatable and milestoneConf.activeMilestone.canCreateDelete)}">
+		<c:if test="${ creatable and (milestoneConf.normalMode or milestoneConf.activeMilestoneCreatable)}">
 			<input type="button" value="${newversionLabel}" title="${newversionLabel}" id="new-version-button" class="sq-btn"  ${disableIfSynced}/>
 		</c:if>
 		<input type="button" value="<f:message key='label.print'/>" title='<f:message key='label.print'/>' id="print-requirement-version-button" class="sq-btn"/>
@@ -392,7 +392,7 @@ publish('reload.requirement.attachments');
 
 </c:if>
 <%--------------------------- New version popup -------------------------------------%>
-<c:if test="${ creatable and milestoneConf.activeMilestone.canCreateDelete}">
+<c:if test="${ creatable and (milestoneConf.normalMode or milestoneConf.activeMilestoneCreatable) }">
 	<f:message var="confirmNewVersionDialogTitle" key="requirement.new-version.confirm-dialog.title" />
 	<div id="confirm-new-version-dialog" class="not-displayed popup-dialog"
           title="${ confirmNewVersionDialogTitle }" style="font-weight:bold">
