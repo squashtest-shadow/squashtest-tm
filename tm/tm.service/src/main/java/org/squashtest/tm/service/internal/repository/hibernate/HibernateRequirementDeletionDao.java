@@ -52,7 +52,7 @@ public class HibernateRequirementDeletionDao extends HibernateDeletionDao implem
 
 
 	// note 1 : this method will be ran twice per batch : one for folder deletion, one for requirement deletion
-	// ( is is so because two distincts calls to #deleteNodes, see RequirementDeletionHandlerImpl#deleteNodes() )
+	// ( it is so because two distincts calls to #deleteNodes, see RequirementDeletionHandlerImpl#deleteNodes() )
 	// It should run fine tho, at the cost of a few useless extra queries.
 
 	// note 2 : the code below must handle the references of requirements and requirement folders to

@@ -121,14 +121,16 @@ public class RequirementVersionManagerController {
 	@ResponseBody
 	public void createNewVersion(@PathVariable long requirementId) {
 
-		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
-		if (activeMilestone.isPresent()) {
-			versionService.createNewVersion(requirementId);
-		}else{
-			ArrayList<Long> milestoneIds = new ArrayList<>();
-			milestoneIds.add(activeMilestone.get().getId());
-			versionService.createNewVersion(requirementId, milestoneIds);
-		}
+            Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
+            if (activeMilestone.isPresent()) {	
+                // milestone mode creation
+                ArrayList<Long> milestoneIds = new ArrayList<>();
+                milestoneIds.add(activeMilestone.get().getId());
+                versionService.createNewVersion(requirementId, milestoneIds);
+            }else{
+                // normal mode creation
+                versionService.createNewVersion(requirementId);
+            }
 	}
 
 

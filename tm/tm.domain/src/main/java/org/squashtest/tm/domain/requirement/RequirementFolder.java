@@ -55,7 +55,13 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Transient
 	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<>(this);
 
-	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE})
+        
+        /*
+        Note about cascading: 
+        CascadeType.PERSIST is desirable because it allows us to cascade-create a complete grape of object (useful when importing for instance)
+        CascadeType.DELETE is not desirable, because we need to call custom code for proper deletion (see the deletion services)
+        */
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE})
 	@OrderColumn(name = "CONTENT_ORDER")
 	@JoinTable(name = "RLN_RELATIONSHIP", joinColumns = @JoinColumn(name = "ANCESTOR_ID"), inverseJoinColumns = @JoinColumn(name = "DESCENDANT_ID"))
 	private List<RequirementLibraryNode> content = new ArrayList<>();
