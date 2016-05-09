@@ -18,7 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.search;
+package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +31,7 @@ public class SearchInputInterfaceModel {
 
 	private Map<String, Object> metadata = new HashMap<>();
 
-	SearchInputInterfaceModel(){
+	public SearchInputInterfaceModel() {
 
 	}
 

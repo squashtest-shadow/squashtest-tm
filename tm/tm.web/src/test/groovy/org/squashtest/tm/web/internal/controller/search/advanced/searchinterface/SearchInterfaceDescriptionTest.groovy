@@ -18,13 +18,13 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.search;
+package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
 import javax.inject.Provider
 
 import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionBuilder
+import org.squashtest.tm.web.internal.controller.search.advanced.searchinterface.SearchInterfaceDescription.OptionBuilder
 import org.squashtest.tm.web.internal.helper.InternationalizableLabelFormatter
 import org.squashtest.tm.web.internal.helper.LevelLabelFormatter
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
@@ -123,7 +123,5 @@ class SearchInterfaceDescriptionTest extends Specification {
 		bar.value == "bar"
 		bar.code == "B"
 		!bar.selected
-
 	}
-
 }

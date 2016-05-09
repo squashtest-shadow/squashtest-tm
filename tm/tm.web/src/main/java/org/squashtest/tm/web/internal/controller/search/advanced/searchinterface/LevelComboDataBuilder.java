@@ -18,10 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.web.internal.controller.search;
+package org.squashtest.tm.web.internal.controller.search.advanced.searchinterface;
 
 import org.squashtest.tm.domain.Level;
-import org.squashtest.tm.web.internal.controller.search.SearchInterfaceDescription.OptionListBuilder;
 import org.squashtest.tm.web.internal.model.builder.EnumJeditableComboDataBuilder;
 
 /**
