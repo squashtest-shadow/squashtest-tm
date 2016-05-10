@@ -77,76 +77,19 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},
 
 		confirm : function(event) {
-			this.validate();
-			this._resetForm();
-			$('#datasets-table').squashTable().refresh();
-			this.$el.formDialog("close");
-			this.trigger("newdatasetdialog.confirm");
-		},
-
-		addanother : function(event) {
-			var self = this;
-			var res = true, validationErrors = this.validateAll();
-			Forms.form(this.$el).clearState();
-
-			if (validationErrors !== null) {
-				for ( var key in validationErrors) {
-					Forms.input(this.$("input[name='add-dataset-" + key + "']")).setState("error", validationErrors[key]);
-				}
-				res = false;
-				return res;
+			var res = this.validate();			
+			if (res){
+				this.trigger("newDataset.confirm");
+				this.cleanup();
 			}
-
-			var table = $("#add-dataset-dialog-table").squashTable();
-
-			var parameters = [];
-
-			table.find('tbody tr').each(function(){
-
-				var $row = $(this);
-				var paramValue = $row.find(".add-parameter-input input").val();
-				var data = table.fnGetData(this);
-
-				// 'null' might happen if there is no parameters in the table (but still one row saying that
-				// the table is empty)
-				if (data !== null){
-					var paramId = data['entity-id'];
-					var paramData = [paramId, paramValue];
-					parameters.push(paramData);
-				}
-			});
-
-			var params = {name:$("#add-dataset-name").val(), paramValues:parameters};
-
-			$.ajax({
-				url : self.settings.basic.testCaseDatasetsUrl + '/new',
-				type : 'POST',
-				contentType : "application/json",
-				async : false,
-				data : JSON.stringify(params),
-				dataType : 'json',
-				success : function(){
-					self.cleanup();
-					res = true;
-				},
-				error : function(jqXHR, textStatus, errorThrown){
-					event.preventDefault();
-					res = false;
-				}
-			});
-
-			this.$el.addClass("not-displayed");
-			this._resetForm();
-			$('#datasets-table').squashTable().refresh();
-			this.$el.formDialog("open");
-			this.$el.formDialog("open");
-			this.trigger("newpdatasetialog.cancel");
-
-			return res;
 		},
 
-
-
+		addanother : function(event) {	
+			if (this.validate()){
+				this.cleanup();
+				$('#datasets-table').squashTable().refresh();
+			}
+		},
 
 
 		validate : function(event) {
@@ -190,13 +133,10 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 				async : false,
 				data : JSON.stringify(params),
 				dataType : 'json',
-				success : function(){
-					self.trigger("newDataset.confirm");
-					self.cleanup();
+				success : function(){	
 					res = true;
 				},
 				error : function(jqXHR, textStatus, errorThrown){
-					event.preventDefault();
 					res = false;
 				}
 			});
