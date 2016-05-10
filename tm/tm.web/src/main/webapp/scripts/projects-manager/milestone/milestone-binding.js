@@ -23,6 +23,11 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
          function(module, $, basic, routing, translator, confman ) {
 
 
+	var trans = translator.get({
+		chooseDate : "milestone.chooseDate"
+		});
+	
+	
 			basic.init();
 			var config = module.config();
 			var emptyDate = "-";
@@ -165,12 +170,8 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			
 			//config date picker
 			var dateSettings = confman.getStdDatepicker(); 
-			$("#add-milestone-end-date").editable(function(value){
-				if (value.trim() === ""){
-					$("#add-milestone-end-date").text(emptyDate);
-				} else {
+			$("#add-milestone-end-date").editable(function(value){				
 				$("#add-milestone-end-date").text(value);
-				}
 			},{
 				type : 'datepicker',
 				datepicker : dateSettings,
@@ -179,7 +180,7 @@ define([ 'module', "jquery", "squash.basicwidgets", "workspace.routing", "squash
 			});
 			
 			function emptyDatePicker(){
-				$("#add-milestone-end-date").text(emptyDate);
+				$("#add-milestone-end-date").text(translator.get("milestone.chooseDate"));
 			}
 
 			
