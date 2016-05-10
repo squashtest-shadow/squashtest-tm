@@ -90,7 +90,7 @@ class RequirementFolderMappingIT extends DbunitMappingSpecification {
 
 		cleanup :
 
-		deleteFixture folder
+		deleteFixture folder, tosave
 
 
 	}
