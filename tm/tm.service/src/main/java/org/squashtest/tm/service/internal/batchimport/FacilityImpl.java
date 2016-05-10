@@ -55,8 +55,6 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(FacilityImpl.class);
 
-	@Inject
-	private ValidationFacility validator;
 
 	@Inject
 	private TestCaseLibraryNavigationService navigationService;
@@ -97,8 +95,14 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 	@Inject
 	private TestCaseFacility testCaseFacility;
 
+        
+        // the following attributes shaddow the same attributes defined in EntityFacilitySupport
+        // here we can inject prototype-scoped instances and configure the RequirementFacility and TestCaseFacility with them.
 	@Inject
 	private CustomFieldTransator customFieldTransator;
+        
+	@Inject
+	private ValidationFacility validator;
 
 	private final FacilityImplHelper helper = new FacilityImplHelper();
 
@@ -649,6 +653,10 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		this.initializeCustomFieldTransator(customFieldTransator);
 		testCaseFacility.initializeCustomFieldTransator(customFieldTransator);
 		requirementFacility.initializeCustomFieldTransator(customFieldTransator);
+                
+                this.initializeValidator(validator);
+                testCaseFacility.initializeValidator(validator);
+                requirementFacility.initializeValidator(validator);
 	}
 
 }

@@ -29,8 +29,11 @@ import javax.inject.Inject;
 import java.util.*;
 
 /**
- * Implementors of this class usually are collaborators of "prototype" scope. They should share the same
+ * Implementors of this class usually are collaborators of "prototype" scope. They should share the same.
  * #customFieldTranslator attribute, which should be manually initialized.
+ * 
+ * Same remark for the #validator, because they need to share the same {@link Model}
+ * 
  * @author Gregory Fouquet
  * @since x.y.z  04/05/16
  */
@@ -40,15 +43,17 @@ abstract class EntityFacilitySupport {
 	static final String EXCEL_ERR_PREFIX = "Excel import : ";
 
 	@Inject
-	protected ValidationFacility validator;
-	@Inject
 	protected MilestoneImportHelper milestoneHelper;
 	@Inject
 	private CustomFieldDao cufDao;
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
 
+        
+        //manually-injected attributes        
 	private CustomFieldTransator customFieldTransator;
+        
+	protected ValidationFacility validator;
 
 	/**
 	 * Returnd the ids of the milestones to be bound as per test case instruction
@@ -101,4 +106,8 @@ abstract class EntityFacilitySupport {
 	public void initializeCustomFieldTransator(CustomFieldTransator customFieldTransator) {
 		this.customFieldTransator = customFieldTransator;
 	}
+        
+        public void initializeValidator(ValidationFacility validator){
+            this.validator = validator;
+        }
 }
