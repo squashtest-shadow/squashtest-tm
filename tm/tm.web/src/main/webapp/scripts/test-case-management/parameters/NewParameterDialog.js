@@ -44,41 +44,10 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		},
 
 		addanother : function(event) {
-			var res = true, self = this;
-			this._populateModel();
-			var validationErrors = this.model.validateAll();
-
-			Forms.form(this.$el).clearState();
-
-			if (validationErrors !== null) {
-				for ( var key in validationErrors) {
-					Forms.input(this.$("input[name='add-parameter-" + key + "']")).setState("error",
-							validationErrors[key]);
-				}
-
-				return false;
+			if (this.validate()){			
+				this.cleanup();
+				$('#parameters-table').squashTable().refresh();
 			}
-
-			$.ajax({
-				type : 'post',
-				url : self.settings.basic.testCaseUrl + "/parameters/new",
-				dataType : 'json',
-				// note : we cannot use promise api with async param. see
-				// http://bugs.jquery.com/ticket/11013#comment:40
-				async : false,
-				data : self.model.attributes,
-				error : function(jqXHR, textStatus, errorThrown) {
-					res = false;
-					event.preventDefault();
-				}
-			});
-			this.$el.addClass("not-displayed");
-			this._resetForm();
-			$('#parameters-table').squashTable().refresh();
-
-			this.trigger("newparameterdialog.cancel");
-
-			return res;
 		},
 
 		cancel : function(event) {
@@ -121,7 +90,6 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 				data : self.model.attributes,
 				error : function(jqXHR, textStatus, errorThrown) {
 					res = false;
-					event.preventDefault();
 				}
 			});
 
@@ -131,7 +99,6 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
-			this.$el.formDialog("close");
 		},
 
 		_resetForm : function() {
