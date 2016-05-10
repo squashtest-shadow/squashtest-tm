@@ -136,6 +136,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		TestCaseTarget target = instr.getTarget();
 
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(cufValues);
+                List<Long> milestoneIds = boundMilestonesIds(instr);
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {
@@ -147,7 +148,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 				testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
 			navigationService.addTestCaseToLibrary(libraryId, testCase, acceptableCufs, target.getOrder(),
-				new ArrayList<Long>());
+				milestoneIds);
 		}
 		// case 2 : this test case exists within a folder
 		else {
@@ -155,13 +156,8 @@ public class TestCaseFacility extends EntityFacilitySupport {
 			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId,
 				testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
-
-			List<Long> msids = boundMilestonesIds(instr);
-
-			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(), msids);
+			navigationService.addTestCaseToFolder(folderId, testCase, acceptableCufs, target.getOrder(), milestoneIds);
 		}
-
-		bindMilestones(instr, testCase);
 
 	}
 
@@ -169,7 +165,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 	 * @param instr            instruction read from import file, pointing to a TRANSIENT test case template
 	 * @param persistentSource the PERSISTENT test case
 	 */
-	private void bindMilestones(TestCaseInstruction instr, TestCase persistentSource) {
+	private void rebindMilestones(TestCaseInstruction instr, TestCase persistentSource) {
 		if (!instr.getMilestones().isEmpty()) {
 			List<Milestone> ms = milestoneHelper.findBindable(instr.getMilestones());
 			persistentSource.getMilestones().clear();
@@ -245,7 +241,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		doUpdateCustomFields(cufValues, orig);
 
 		if (validator.areMilestoneValid(instr)) {
-			bindMilestones(instr, orig);
+			rebindMilestones(instr, orig);
 		}
 
 		// move the test case if its index says it has to move
