@@ -21,11 +21,7 @@
 package org.squashtest.csp.core.bugtracker.internal.mantis;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.csp.core.bugtracker.core.BugTrackerNotFoundException;
@@ -282,7 +278,17 @@ public class MantisConnector implements BugTrackerConnector {
 
 		}
 
-		return new LinkedList<>(userMap.values());
+
+		List<User> users = new LinkedList<>(userMap.values());
+		Collections.sort(users, new Comparator<User>() {
+			@Override
+			public int compare(User o1, User o2) {
+				return o1.getName().compareToIgnoreCase(o2.getName());
+			}
+		});
+
+
+		return users;
 	}
 
 
