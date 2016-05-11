@@ -23,34 +23,19 @@ package org.squashtest.it.config
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
-import org.springframework.security.acls.domain.PermissionFactory
-import org.springframework.security.acls.jdbc.LookupStrategy
-import org.springframework.security.acls.model.AclCache
 import org.springframework.security.authentication.encoding.PasswordEncoder
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
-import org.squashtest.it.stub.milestone.StubActiveMilestoneHolder
-import org.squashtest.it.stub.security.StubObjectAclService
-import org.squashtest.it.stub.security.StubObjectIdentityService
-import org.squashtest.it.stub.security.StubPermissionEvaluationService
-import org.squashtest.it.stub.security.StubPermissionEvaluator
-import org.squashtest.it.stub.security.StubPermissionFactory
-import org.squashtest.it.stub.security.StubUserContextService
-import org.squashtest.it.stub.security.StubUserDetailsManager
-import org.squashtest.it.stub.user.StubAverageJoeAccountService;
-import org.squashtest.it.stub.user.StubChefAccountService
+import org.squashtest.it.stub.security.StubUserDetailsManager;
 import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
+import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
+import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
-import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
+import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl
 import org.squashtest.tm.service.security.AdministratorAuthenticationService
-import org.squashtest.tm.service.security.ObjectIdentityService
-import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.security.StubLookupStrategy
+import org.squashtest.tm.service.security.ObjectIdentityService;
 import org.squashtest.tm.service.security.UserContextService
-import org.squashtest.tm.service.security.acls.model.NullAclCache
-import org.squashtest.tm.service.security.acls.model.ObjectAclService
-import org.squashtest.tm.service.user.UserAccountService
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -59,8 +44,7 @@ import org.squashtest.tm.service.user.UserAccountService
  */
 @Configuration
 @ComponentScan(
-basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.tm.service.security",
-	"org.squashtest.it.stub.security", "org.squashtest.it.stub.validation"],
+basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.it.stub.validation"],
 excludeFilters = [
 	@ComponentScan.Filter(Configuration),
 	@ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.security\\..*", type = FilterType.REGEX),
@@ -69,76 +53,45 @@ excludeFilters = [
 )
 @EnableSpringConfigured
 class ServiceSpecConfig {
+
+	
 	@Bean
 	@Primary
 	BugTrackersService bugTrackerService() {
 		new StubBugTrackerService();
 	}
-
-	@Bean
-	AclCache aclCache() {
-		new NullAclCache();
-	}
-
-	@Bean
-	LookupStrategy lookupStrategy() {
-		new StubLookupStrategy();
-	}
-
-	@Bean(name = "squashtest.core.security.JdbcUserDetailsManager")
-	@Primary
-	SquashUserDetailsManager userDetailsManager() {
-		new StubUserDetailsManager();
-	}
-
-	@Bean(name = "squashtest.core.user.UserContextService")
-	@Primary
-	UserContextService userContextService() {
-		new StubUserContextService()
-	}
-
-	@Bean
-	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-		return new PropertySourcesPlaceholderConfigurer();
-	}
-
+	
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		new ShaPasswordEncoder()
 	}
-
-	@Bean(name = "squashtest.core.security.PermissionEvaluationService")
-	@Primary
-	PermissionEvaluationService permissionEvaluationService() {
-		new StubPermissionEvaluationService()
+	
+	@Bean
+	UserContextService userContextService(){
+		new SpringSecurityUserContextService();
 	}
-
-	@Bean(name = "squashtest.tm.service.UserAccountService")
-	@Primary
-	UserAccountService userAccountService() {
-		new StubAverageJoeAccountService()
+	
+	@Bean
+	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
+		new PropertySourcesPlaceholderConfigurer();
 	}
-
+	
+	
 	@Bean
 	AdministratorAuthenticationService administratorAuthenticationService() {
 		new AdministratorAuthenticationServiceImpl();
 	}
 
-	@Bean StubPermissionEvaluator permissionEvaluator() {
-		new StubPermissionEvaluator()
+	
+	// defined in tm.service : SecurityConfig, and tricky as shit to create a real instance
+	@Bean(name= "squashtest.core.security.JdbcUserDetailsManager")
+	SquashUserDetailsManager squashUserDetailsManager(){
+		new StubUserDetailsManager()
 	}
-
-	@Primary
-	@Bean ObjectIdentityService objectIdentityService() {
-		new StubObjectIdentityService()
+	
+	@Bean
+	ObjectIdentityService objectIdentityService(){
+		new ObjectIdentityServiceImpl()
 	}
-	@Primary
-	@Bean PermissionFactory permissionFactory(){
-		new StubPermissionFactory();
-	}
-	@Primary
-	@Bean ObjectAclService objectAclService(){
-		new StubObjectAclService();
-	}
-
+	
 }

@@ -18,30 +18,14 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.it.config
+package org.squashtest.it.stub.security
 
-import org.springframework.context.annotation.Bean
-import org.springframework.context.annotation.ComponentScan
-import org.springframework.context.annotation.Configuration
-import org.springframework.security.acls.domain.ObjectIdentityRetrievalStrategyImpl
-import org.springframework.security.acls.domain.PermissionFactory
-import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy
-import org.squashtest.it.stub.security.StubPermissionFactory
-import org.squashtest.it.stub.security.StubUserDetailsManager
+import org.springframework.security.core.context.SecurityContextHolder
 
-/**
- * @author Gregory Fouquet
- * @since 1.13.0
- */
-@Configuration
-@ComponentScan("org.squashtest.tm.service.security.acls.domain")
-class SecuritySpecConfig {
-	@Bean PermissionFactory permissionFactory() {
-		new StubPermissionFactory()
+class UserContextHelper {
+
+	static setUsername(String name){
+		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication("Joe"))
 	}
-
-	@Bean StubUserDetailsManager userDetailsManager() {
-		new StubUserDetailsManager()
-	}
-
+	
 }

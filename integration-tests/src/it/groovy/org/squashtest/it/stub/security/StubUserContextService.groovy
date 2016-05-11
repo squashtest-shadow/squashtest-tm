@@ -48,9 +48,19 @@ class StubUserContextService implements UserContextService {
 
 class StubAuthentication implements Authentication {
 
+	private String name = "StubAuthentication";
+	
+	public StubAuthentication(){
+		
+	}
+	
+	public StubAuthentication(String name){
+		this.name = name
+	}
+	
 	@Override
 	public String getName() {
-		return "StubAuthentication";
+		return name;
 	}
 
 	@Override

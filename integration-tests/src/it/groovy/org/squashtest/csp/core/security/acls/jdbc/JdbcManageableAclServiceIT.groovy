@@ -30,7 +30,7 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DatasourceDependantSpecification;
-import org.squashtest.it.config.SecuritySpecConfig
+import org.squashtest.it.config.SecuritySpecConfigDeprec
 import org.squashtest.it.stub.security.StubAuthentication
 import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.SecurityConfig
@@ -46,7 +46,7 @@ import spock.unitils.UnitilsSupport
 
 
 @UnitilsSupport
-@ContextConfiguration(classes = [SecurityConfig, SecuritySpecConfig])
+@ContextConfiguration(classes = [SecurityConfig, SecuritySpecConfigDeprec])
 @Rollback
 @Transactional
 @SkipAll

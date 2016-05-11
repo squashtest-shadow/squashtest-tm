@@ -31,7 +31,8 @@ import org.hibernate.type.LongType
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.config.DisabledSecuritySpecConfig;
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.tm.service.BugTrackerConfig
@@ -47,7 +48,7 @@ import org.squashtest.tm.service.TmServiceConfig
 @Rollback
 // inherit the same datasource and TX manager from DatasourceDependantSpecification
 @ContextHierarchy(
-	@ContextConfiguration(classes = [ServiceSpecConfig,  DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
+	@ContextConfiguration(classes = [DisabledSecuritySpecConfig, ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
 )
 abstract class DbunitServiceSpecification extends DatasourceDependantSpecification{
 

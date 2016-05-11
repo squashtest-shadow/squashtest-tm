@@ -38,7 +38,7 @@ import org.springframework.security.oauth2.provider.client.JdbcClientDetailsServ
 import org.squashtest.csp.core.bugtracker.service.BugTrackersService
 import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
 import org.squashtest.it.stub.security.StubChefContextService
-import org.squashtest.it.stub.security.StubObjectAclService
+import org.squashtest.it.stub.security.StubAclService
 import org.squashtest.it.stub.security.StubObjectIdentityService
 import org.squashtest.it.stub.security.StubPermissionEvaluator
 import org.squashtest.it.stub.security.StubPermissionFactory
@@ -152,7 +152,7 @@ class AsManagerServiceSpecConfig {
 
 	@Primary
 	@Bean ObjectAclService objectAclService(){
-		new StubObjectAclService();
+		new StubAclService();
 	}
 	@Bean
 	LookupStrategy lookupStrategy() {

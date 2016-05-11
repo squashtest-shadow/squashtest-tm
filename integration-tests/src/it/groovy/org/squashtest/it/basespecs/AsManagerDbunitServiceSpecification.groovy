@@ -55,11 +55,12 @@ import spock.lang.Specification
 @SkipAll
 abstract class AsManagerDbunitServiceSpecification extends DatasourceDependantSpecification {
 
+	/*
 	Session getSession() {
 		return em.unwrap(Session.class)
 	}
 
-	/*-------------------------------------------Private stuff-----------------------------------*/
+	//-------------------------------------------Private stuff-----------------------------------
 
 	boolean found(String tableName, String idColumnName, Long id) {
 		String sql = "select count(*) from " + tableName + " where " + idColumnName + " = :id"
@@ -117,7 +118,7 @@ abstract class AsManagerDbunitServiceSpecification extends DatasourceDependantSp
 	Object executeSQL(String query) {
 		def q = newSQLQuery(query)
 		def expr = /(?is)\s*select.*/
-		if (query ==~ expr) {
+	/*	if (query ==~ expr) {
 			return q.list()
 		} else {
 			q.update()
@@ -194,4 +195,5 @@ abstract class AsManagerDbunitServiceSpecification extends DatasourceDependantSp
 			(sourceOjbect instanceof BigInteger) ? ((BigInteger) sourceOjbect).longValue() : sourceOjbect
 		}
 	}
+	*/
 }

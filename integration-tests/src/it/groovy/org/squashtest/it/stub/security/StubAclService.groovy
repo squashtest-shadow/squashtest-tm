@@ -20,14 +20,16 @@
  */
 package org.squashtest.it.stub.security
 
+import org.springframework.security.acls.model.AlreadyExistsException;
 import org.springframework.security.acls.model.ObjectIdentity
 import org.squashtest.tm.core.foundation.collection.Filtering
 import org.squashtest.tm.core.foundation.collection.Sorting
 import org.squashtest.tm.security.acls.PermissionGroup
+import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService
 
 
-class StubObjectAclService implements ObjectAclService {
+class StubAclService implements ObjectAclService, ManageableAclService {
 
 	@Override
 	public List<PermissionGroup> findAllPermissionGroupsByNamespace(
@@ -168,5 +170,17 @@ class StubObjectAclService implements ObjectAclService {
 	public List<Object[]> retrieveUsersFromIdentityAndClass(long entityId) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public void createObjectIdentity(ObjectIdentity objectIdentity) throws AlreadyExistsException {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void removeObjectIdentity(ObjectIdentity objectIdentity) {
+		// TODO Auto-generated method stub
+		
 	}
 }
