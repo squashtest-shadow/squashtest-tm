@@ -38,6 +38,7 @@ import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.BugTrackerConfig;
 import org.squashtest.tm.service.SchedulerConfig;
 import org.squashtest.tm.service.TmServiceConfig;
+import org.springframework.transaction.annotation.Transactional;
 
 import spock.lang.Specification
 
@@ -46,6 +47,7 @@ import spock.lang.Specification
  * Subclasses should be annotated @UnitilsSupport
  */
 @Rollback
+@Transactional
 // inherit the same datasource and TX manager from DatasourceDependantSpecification
 @ContextHierarchy(
 	@ContextConfiguration(classes = [AsManagerServiceSpecConfig, DynamicServiceConfig, TmServiceConfig, BugTrackerConfig, SchedulerConfig])

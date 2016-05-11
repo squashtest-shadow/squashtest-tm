@@ -72,6 +72,8 @@ public class CustomTeamModificationServiceImpl implements CustomTeamModification
 
 	/**
 	 * @see CustomTeamModificationService#deleteTeam(long)
+         * 
+         * @param teamId the id of the team
 	 */
 	@Override
 	public void deleteTeam(long teamId) {

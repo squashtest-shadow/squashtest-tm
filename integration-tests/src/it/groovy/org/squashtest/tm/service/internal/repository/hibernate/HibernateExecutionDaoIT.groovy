@@ -157,7 +157,7 @@ class HibernateExecutionDaoIT extends DbunitDaoSpecification {
 		def res = executionDao.findAllByTestCaseId(-500L, pas)
 
 		then:
-		res*.id == [-580, -627, -718, -752, -953]
+		res*.id == [-494, -580, -627, -718, -752]
 	}
 
 
