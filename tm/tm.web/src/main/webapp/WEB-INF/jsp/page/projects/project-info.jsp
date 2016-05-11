@@ -575,17 +575,20 @@ require(["common"], function() {
 
 		
 		$tag.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
+		
+			if (!ui.duringInitialization) {
 			if (! $tag.squashTagit("validate", event, ui)){
 				return;
 			}	
 			sendBugTrackerTag($tag.squashTagit('assignedTags'));
+			}
 		});
 		
 		$.ajax({type: 'GET',
 			url: "${projectUrl}/bugtracker/projectName"}).done(
 					function(data){
 						data.forEach(function(val){
-							$tag.squashTagit("createTag", val);
+							$tag.squashTagit("createTag", val, "", true);
 						});
 						});
 	}
