@@ -30,6 +30,7 @@ import javax.inject.Provider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.importer.ImportStatus;
@@ -69,6 +70,7 @@ public abstract class ExcelBatchImporter {
 
 	}
 
+	@CacheScope
 	public ImportLog performImport(File excelFile) {
 
 		FacilityImpl impl = facilityImplProvider.get();

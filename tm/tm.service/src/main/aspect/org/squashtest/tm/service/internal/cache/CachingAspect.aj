@@ -29,6 +29,7 @@ import org.squashtest.tm.domain.customfield.CustomFieldBinding;
 import org.squashtest.tm.service.annotation.CachableType;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.annotation.CacheResult;
+import org.squashtest.tm.domain.project.Project;
 
 public aspect CachingAspect percflow(copy()){
 
@@ -69,5 +70,21 @@ return result;
 return cached;
 }
 }
+
+
+List<CustomFieldBinding> around(CacheResult anno, BoundEntity entity, Project project) : cachedMethod(anno) && if (anno.type() == CachableType.CUSTOM_FIELD) && args(entity, project){
+
+String key = entity.getBoundEntityType().toString() + project.getId().toString();
+List<CustomFieldBinding> cached = cache.get(key);
+
+if (cached == null) {
+List<CustomFieldBinding> result = proceed(anno, entity, project);
+cache.put(key, result);
+return result;
+} else {
+return cached;
+}
+}
+
 
 }

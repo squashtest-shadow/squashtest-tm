@@ -20,8 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -209,7 +214,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			project = entity.getProject();
 		}
 
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), entity.getBoundEntityType());
+		List<CustomFieldBinding> bindings = optimizedFindCustomField(entity, project);
 
 		/* **************************************************************************************************
 		 * [Issue 3808]
@@ -231,13 +236,13 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			CustomFieldValue value = binding.createNewValue();
 			value.setBoundEntity(entity);
 			customFieldValueDao.save(value);
+		}
 
-			if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
-				indexationService.reindexTestCase(entity.getBoundEntityId());
-			}
-			if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
-				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
-			}
+		if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
+			indexationService.reindexTestCase(entity.getBoundEntityId());
+		}
+		if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
+			indexationService.reindexRequirementVersion(entity.getBoundEntityId());
 		}
 
 	}
@@ -257,7 +262,7 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 			project = firstEntity.getProject();
 		}
 
-		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllForProjectAndEntity(project.getId(), firstEntity.getBoundEntityType());
+		List<CustomFieldBinding> bindings = optimizedFindCustomField(firstEntity, project);
 
 		/* **************************************************************************************************
 		 * [Issue 3808]
@@ -290,12 +295,13 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 				value.setBoundEntity(entity);
 				customFieldValueDao.save(value);
 
-				if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
-					indexationService.reindexTestCase(entity.getBoundEntityId());
-				}
-				if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
-					indexationService.reindexRequirementVersion(entity.getBoundEntityId());
-				}
+			}
+
+			if (BindableEntity.TEST_CASE == entity.getBoundEntityType()) {
+				indexationService.reindexTestCase(entity.getBoundEntityId());
+			}
+			if (BindableEntity.REQUIREMENT_VERSION == entity.getBoundEntityType()) {
+				indexationService.reindexRequirementVersion(entity.getBoundEntityId());
 			}
 		}
 
@@ -402,6 +408,12 @@ public class PrivateCustomFieldValueServiceImpl implements PrivateCustomFieldVal
 	private List<CustomFieldBinding> optimizedFindCustomField(BoundEntity entity){
 		return customFieldBindingDao.findAllForProjectAndEntity(entity
 				.getProject().getId(), entity.getBoundEntityType());
+	}
+
+	// This method is just here to use the @CacheResult annotation
+	@CacheResult(type = CachableType.CUSTOM_FIELD)
+	private List<CustomFieldBinding> optimizedFindCustomField(BoundEntity entity, Project project) {
+		return customFieldBindingDao.findAllForProjectAndEntity(project.getId(), entity.getBoundEntityType());
 	}
 
 	@Override
