@@ -39,6 +39,7 @@ import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.stub.security.UserContextHelper;
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
@@ -93,6 +94,7 @@ import spock.unitils.UnitilsSupport
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
+@DataSet("batchimport.sandbox.xml")
 public class FacilityImplIT extends DbunitServiceSpecification {
 
 
@@ -122,6 +124,8 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 		impl.validator.milestonesEnabled = true;
 
 		addMixins()
+		
+		UserContextHelper.setUsername("Bob")
 	}
 
 
@@ -133,7 +137,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should create a new test case, some attributes are specified and some are left to default"(){
 
 		given :
@@ -181,7 +184,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should not create a test case"(){
 
 		given :
@@ -203,7 +205,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should update a test case"(){
 
 		given :
@@ -250,7 +251,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should create a test case with inappropriate natures and types by using the defaults"(){
 
 		given :
@@ -290,7 +290,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should not create a test case instead of updating it"(){
 
 		given :
@@ -319,7 +318,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should create a test case with a different name because of name clash"(){
 
 		given :
@@ -355,7 +353,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should delete a test case"(){
 
 		given :
@@ -378,7 +375,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should not delete a test case because it's being called"(){
 
 		given :
@@ -400,7 +396,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 *
 	 */
 	@Unroll("should add an action step to a test case at last position because of #humanmsg")
-	@DataSet("batchimport.sandbox.xml")
 	def "should add an action step to a test case at the end"(){
 
 		given :
@@ -440,7 +435,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should insert a call step at the correct position"(){
 
 		given :
@@ -475,7 +469,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should reject a call step because of cycle"(){
 
 		given :
@@ -506,7 +499,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should update an action step"(){
 
 		given :
@@ -539,7 +531,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	@Unroll("should not update an action step because #humanmsg")
 	def "should not update an action step"(){
 		given :
@@ -569,7 +560,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should update a call step (change the called test case)"(){
 
 		given : "instead of '/Test Project-1/dossier 2/0 test case \\/ with slash', will now call '/autre project/folder/TEST B'"
@@ -604,7 +594,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 	 * See  {@link FacilityImplIT} for dataset description
 	 *
 	 */
-	@DataSet("batchimport.sandbox.xml")
 	def "should not update a call step because the target would create a cycle"(){
 
 		given : "instead of '/Test Project-1/dossier 1/test case 2', will now call '/Test Project-1/test 3'"
@@ -638,7 +627,6 @@ public class FacilityImplIT extends DbunitServiceSpecification {
 
 
 
-	@DataSet("batchimport.sandbox.xml")
 	def "should not update an action step because the target would create a cycle"(){
 
 		given : "instead of '/Test Project-1/dossier 1/test case 2', will now call '/Test Project-1/test 3'"

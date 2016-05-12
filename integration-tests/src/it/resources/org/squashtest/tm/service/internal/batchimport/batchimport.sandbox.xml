@@ -367,7 +367,7 @@
   <CALL_TEST_STEP TEST_STEP_ID="-180" CALLED_TEST_CASE_ID="-244" />
   <CORE_USER PARTY_ID="-1" LOGIN="admin" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org"
     ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2014-03-03 14:48:41.0" />
-  <CORE_USER PARTY_ID="-2" LOGIN="StubUserContextService" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org"
+  <CORE_USER PARTY_ID="-2" LOGIN="Bob" FIRST_NAME="" LAST_NAME="Squash Administrator" EMAIL="admin@squashtest.org"
     ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2014-03-03 14:48:41.0" />
   <CORE_USER PARTY_ID="-3" LOGIN="chef" FIRST_NAME="chef" LAST_NAME="Squash chef" EMAIL="chef@squashtest.org"
     ACTIVE="true" CREATED_BY="liquibase" CREATED_ON="2014-03-03 14:48:41.0" />

@@ -25,7 +25,7 @@ import org.springframework.security.core.context.SecurityContextHolder
 class UserContextHelper {
 
 	static setUsername(String name){
-		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication("Joe"))
+		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication(name))
 	}
 	
 }
