@@ -97,7 +97,7 @@ class HibernateTeamDaoIT extends DbunitDaoSpecification {
 	def "should sort the teams by size asc and looking only for those having 'ple' in their name"() {
 
 		given:
-		PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute: "Team.size", order: SortOrder.ASCENDING)
+		PagingAndSorting paging = new DefaultPagingAndSorting(sortedAttribute: "Team.members.size", order: SortOrder.ASCENDING)
 
 		and:
 		Filtering filter = new DefaultFiltering(null, "ple")

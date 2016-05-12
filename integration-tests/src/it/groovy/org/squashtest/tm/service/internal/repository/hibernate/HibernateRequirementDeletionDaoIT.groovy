@@ -73,7 +73,7 @@ class HibernateRequirementDeletionDaoIT extends DbunitDaoSpecification {
 		query.setParameter("id", 40);
 		query.setParameter("ver_id", 40);
 		query.executeUpdate();
-		entityManager.flush()
+		em.flush()
 
 		when:
 		//remove

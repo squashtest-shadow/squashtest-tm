@@ -43,27 +43,23 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService
  * @since 1.13.0
  */
 @Configuration
-@ComponentScan(
-basePackages = ["org.squashtest.tm.service.security"],
-excludeFilters = [
-	@ComponentScan.Filter(Configuration)
-]
-)
-@EnableSpringConfigured
-class DisabledSecuritySpecConfig {
-
+class DisabledAclSpecConfig {
 	
-	@Bean StubPermissionEvaluator permissionEvaluator() {
-		new StubPermissionEvaluator()
+	@Bean
+	AclCache aclCache() {
+		new NullAclCache();
 	}
 	
 	
-	@Bean(name = "squashtest.core.security.PermissionEvaluationService")
+	/*
+	 * The following implements both OjectAclService and ManageableAclService. 
+	 */
+		
 	@Primary
-	PermissionEvaluationService permissionEvaluationService() {
-		new StubPermissionEvaluationService()
+	@Bean(name = "squashtest.core.security.AclService")
+	StubAclService aclService(){
+		new StubAclService();
 	}
-
 	
 
 }

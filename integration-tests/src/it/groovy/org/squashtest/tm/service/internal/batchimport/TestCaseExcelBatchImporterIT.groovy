@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.testcase.TestCaseLibrary
 import org.squashtest.tm.domain.testcase.TestStep
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.stub.security.UserContextHelper;
 import org.squashtest.tm.service.importer.ImportLog
 import org.unitils.dbunit.annotation.DataSet
 
@@ -37,6 +38,10 @@ import spock.unitils.UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
 class TestCaseExcelBatchImporterIT extends DbunitServiceSpecification{
+	
+	def setup(){
+		UserContextHelper.setUsername("Bob")
+	}
 
 	@Inject
 	private TestCaseExcelBatchImporter importer

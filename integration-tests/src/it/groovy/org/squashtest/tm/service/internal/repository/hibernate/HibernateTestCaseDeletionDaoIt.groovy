@@ -182,6 +182,11 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		given :
 		def itemTestPlan_1 = findEntity(IterationTestPlanItem.class, -51L)
 		def execution_1 = findEntity(Execution.class, -61L)
+		
+		// force initialization their referenced test case because of session.clear below, 
+		// that might trigger a lazy initialization in the then: block
+		def itpReferId = itemTestPlan_1.referencedTestCase.id
+		def execReferId = execution_1.referencedTestCase.id
 
 		when :
 
@@ -196,8 +201,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 
 		then :
 
-		itemTestPlan_1.referencedTestCase.id == -11
-		execution_1.referencedTestCase.id == -11
+		itpReferId == -11
+		execReferId == -11
 
 		itemTestPlan_2.referencedTestCase == null
 		execution_2.referencedTestCase == null

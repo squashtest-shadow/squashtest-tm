@@ -32,6 +32,7 @@ import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.config.DisabledAclSpecConfig;
 import org.squashtest.it.config.DisabledSecuritySpecConfig;
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
@@ -40,15 +41,18 @@ import org.squashtest.tm.service.SchedulerConfig
 import org.squashtest.tm.service.TmServiceConfig
 
 /**
- * Superclass for a DB-driven DAO test. The test will populate the database using a DBUnit dataset with the same name as the test.
- * Subclasses should be annotated @UnitilsSupport
+ * <p>Superclass for a DB-driven services test. The test will populate the database using a DBUnit dataset with the same name as the test.
+ * Subclasses should be annotated @UnitilsSupport</p>
+ * 
+ * 
+ * <p>The configuration will initialize the repository and service layer, while disabling the permission evaluation and Acl management.</p>
  */
 
 @Transactional
 @Rollback
 // inherit the same datasource and TX manager from DatasourceDependantSpecification
 @ContextHierarchy(
-	@ContextConfiguration(classes = [DisabledSecuritySpecConfig, ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
+	@ContextConfiguration(classes = [DisabledSecuritySpecConfig, DisabledAclSpecConfig,  ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
 )
 abstract class DbunitServiceSpecification extends DatasourceDependantSpecification{
 
