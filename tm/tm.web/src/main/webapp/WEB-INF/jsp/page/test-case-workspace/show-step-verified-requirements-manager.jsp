@@ -132,8 +132,8 @@
 	</jsp:attribute>
 	
 	<jsp:attribute name="subPageButtons">
-		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" id="back" class="button" value="${ backButtonLabel }" onClick="document.location.href=squashtm.workspace.backurl"/>	
+		<f:message var="closeButtonLabel" key="label.Close" />
+		<input type="button" id="close" class="button" value="${ closeButtonLabel }" onClick="window.close()"/>	
 	</jsp:attribute>		
 	
 	<jsp:attribute name="tablePane">

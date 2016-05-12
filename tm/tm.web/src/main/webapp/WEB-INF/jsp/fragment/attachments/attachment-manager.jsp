@@ -39,8 +39,8 @@
 	<h2><span><f:message key="label.CurrentAttachments"/>&nbsp;:&nbsp;</span></h2>
 	</div>	
 	<div class="snap-right">
-		<f:message var="back" key="label.Back" /> 
-		<input id="back" type="button" value="${ back }" class="sq-btn" onClick="history.back();"/>
+		<f:message var="back" key="label.Close" /> 
+		<input id="back" type="button" value="${ back }" class="sq-btn" onClick="window.close();"/>
 	</div>
 	<div class="unsnap"></div>
 	

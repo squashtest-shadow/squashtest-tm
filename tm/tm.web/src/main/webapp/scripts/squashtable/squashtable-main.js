@@ -771,9 +771,17 @@ define(["jquery",
 
 			// second : what url we navigate to when clicked.
 			var url = _resolvePlaceholders.call(self, attachConf.url, data);
-
+			
 			// design the link and voila !
-			var link = '<a href="' + url + '" class="' + linkClass + '"></a>';
+			var link = '<a href="' + url + '" class="' + linkClass + '"';
+			
+			if (attachConf.target !== undefined){
+				link = link  + "target="+ attachConf.target;
+			}
+			link = link + '></a>';
+			
+
+		
 
 			$(cell).html(link);
 		});

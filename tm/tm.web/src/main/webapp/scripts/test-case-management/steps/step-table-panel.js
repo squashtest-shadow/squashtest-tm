@@ -197,6 +197,9 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 			return true;
 		});
 
+		
+
+		
 	}
 
 	function stepDropHandlerFactory(dropUrl) {
@@ -380,7 +383,9 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 						$.cookie(COOKIE_NAME, 1, {expires: 1, path: '/'});
 						var row = cell.parentNode.parentNode;
 						var stepId = table.getODataId(row);
-						document.location.href = urls.steps + stepId + "/verified-requirement-versions/manager";
+						var url = urls.steps + stepId + "/verified-requirement-versions/manager";
+						window.open(url, "_blank");
+						window.focus();
 					}
 				}
 			}]
@@ -449,7 +454,8 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 
 		if (permissions.isAttachable) {
 			squashSettings.attachments = {
-				url: urls.attachments
+				url: urls.attachments,
+				target:"_blank"
 			};
 		}
 
