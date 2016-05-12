@@ -20,23 +20,54 @@
  */
 package org.squashtest.it.stub.security
 
-import org.squashtest.tm.service.security.ObjectIdentityService
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.GrantedAuthority
 
 
-class StubObjectIdentityService implements ObjectIdentityService {
+class StubAuthentication implements Authentication {
 
+	private String name = "StubAuthentication";
+	
+	public StubAuthentication(){
+		
+	}
+	
+	public StubAuthentication(String name){
+		this.name = name
+	}
+	
 	@Override
-	public void addObjectIdentity(long projectId, Class<?> projectClass) {
-		// noop
-
+	public String getName() {
+		return name;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.squashtest.tm.service.security.ObjectIdentityService#removeObjectIdentity(long, java.lang.Class)
-	 */
 	@Override
-	public void removeObjectIdentity(long entityId, Class<?> entityType) {
-		// noop
+	public Collection<GrantedAuthority> getAuthorities() {
+		return [];
+	}
 
+	@Override
+	public Object getCredentials() {
+		return null;
+	}
+
+	@Override
+	public Object getDetails() {
+		return null;
+	}
+
+	@Override
+	public Object getPrincipal() {
+		return this;
+	}
+
+	@Override
+	public boolean isAuthenticated() {
+		return false;
+	}
+
+	@Override
+	public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
+		// NOOP
 	}
 }

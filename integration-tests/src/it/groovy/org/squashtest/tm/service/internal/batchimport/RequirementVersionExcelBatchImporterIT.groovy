@@ -20,31 +20,25 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.junit.runner.RunWith;
-import org.spockframework.runtime.Sputnik;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.runner.RunWith
+import org.spockframework.runtime.Sputnik
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.stub.security.UserContextHelper
+import org.squashtest.tm.domain.requirement.Requirement
+import org.squashtest.tm.domain.requirement.RequirementCriticality
+import org.squashtest.tm.domain.requirement.RequirementStatus
+import org.squashtest.tm.domain.requirement.RequirementVersion
+import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.importer.EntityType
+import org.squashtest.tm.service.importer.ImportLog
 import org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementExcelBatchImporter
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
-
-import spock.lang.Ignore;
-import spock.unitils.UnitilsSupport
-
+import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.it.basespecs.RequirementImportCustomDbunitServiceSpecification
-import org.squashtest.it.stub.security.UserContextHelper;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.domain.requirement.Requirement;
-import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.service.importer.EntityType;
-import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
-import org.squashtest.tm.service.customfield.CustomFieldValueFinderService;
-import org.squashtest.tm.domain.requirement.RequirementCriticality;
-import org.squashtest.tm.domain.requirement.RequirementStatus;
-import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
