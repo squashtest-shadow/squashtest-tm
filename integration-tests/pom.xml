@@ -33,6 +33,12 @@
 
   <dependencyManagement>
     <dependencies>
+      <!--  DONT COMMIT THAT ! -->
+      <dependency>
+        <groupId>org.codehaus.groovy</groupId>
+        <artifactId>groovy-all</artifactId>
+        <version>2.4.3</version>
+      </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>squash-tm-bom</artifactId>
@@ -40,12 +46,6 @@
         <type>pom</type>
         <scope>import</scope>
       </dependency>
-      <!--  DONT COMMIT THAT ! -->
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>2.4.3</version>
-      </dependency>      
     </dependencies>
   </dependencyManagement>
 
@@ -276,11 +276,11 @@
         <artifactId>maven-failsafe-plugin</artifactId>
         <configuration>
           <!-- <threadCount>1</threadCount> -->
-         <!--
-          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine>--> 
-          
-         <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
-          
+          <!--
+          <argLine>-Xmx1024m -XX:PermSize=256m -agentlib:jdwp=transport=dt_socket,server=y,address=8000,suspend=y</argLine>-->
+
+          <argLine>-Xmx1024m -XX:PermSize=256m</argLine>
+
           <!-- We can run ITs and skip unit tests with -DskipTests=true -->
           <skipTests>${skipITs}</skipTests>
         </configuration>

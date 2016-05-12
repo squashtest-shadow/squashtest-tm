@@ -20,17 +20,25 @@
  */
 package org.squashtest.tm.service.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.*
 
-import javax.inject.Inject;
+import javax.inject.Inject
 
-import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.it.basespecs.DbunitServiceSpecification;
-import org.unitils.dbunit.annotation.DataSet;
-import spock.unitils.UnitilsSupport;
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy
+import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.config.EnabledAclSpecConfig
+import org.unitils.dbunit.annotation.DataSet
+
+import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
+@ContextHierarchy([
+	// enabling the ACL management that was disabled in DbunitServiceSpecification 
+	@ContextConfiguration(name="aclcontext", classes = [EnabledAclSpecConfig], inheritLocations=false)	
+])
 class OAuth2ClientServiceIT extends DbunitServiceSpecification {
 
 	@Inject
