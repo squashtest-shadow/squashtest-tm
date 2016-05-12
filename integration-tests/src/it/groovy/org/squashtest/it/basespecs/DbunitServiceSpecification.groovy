@@ -33,7 +33,7 @@ import org.springframework.test.context.ContextConfiguration
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.config.DisabledAclSpecConfig;
-import org.squashtest.it.config.DisabledSecuritySpecConfig;
+import org.squashtest.it.config.DisabledPermissionSpecConfig;
 import org.squashtest.it.config.DynamicServiceConfig
 import org.squashtest.it.config.ServiceSpecConfig
 import org.squashtest.tm.service.BugTrackerConfig
@@ -45,15 +45,26 @@ import org.squashtest.tm.service.TmServiceConfig
  * Subclasses should be annotated @UnitilsSupport</p>
  * 
  * 
- * <p>The configuration will initialize the repository and service layer, while disabling the permission evaluation and Acl management.</p>
+ * <p>
+ * 	The following configuration initialize the repository and service layers. Also, by default the following systems are disabled : 
+ * 	<ul>
+ * 		<li>the permission system</li>
+ * 		<li>the acl management system</li>
+ * </ul>
+ * 
+ * Those features belong to separate context configuration, that may be overriden locally by test classes that need them by using 
+ * EnabledPermissionSpecConfig and EnabledAclSpecConfig. See use of @ContextHierarchy for details on how you do that (and set inheritLocations to false).
+ * </p>
  */
 
 @Transactional
 @Rollback
 // inherit the same datasource and TX manager from DatasourceDependantSpecification
-@ContextHierarchy(
-	@ContextConfiguration(classes = [DisabledSecuritySpecConfig, DisabledAclSpecConfig,  ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
-)
+@ContextHierarchy([
+	@ContextConfiguration(classes = [DisabledPermissionSpecConfig], name="permissioncontext"),
+	@ContextConfiguration(classes = [DisabledAclSpecConfig], name="aclcontext"),
+	@ContextConfiguration(classes = [ServiceSpecConfig, DynamicServiceConfig, TmServiceConfig,  BugTrackerConfig, SchedulerConfig])
+])
 abstract class DbunitServiceSpecification extends DatasourceDependantSpecification{
 
 	/**

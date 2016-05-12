@@ -20,22 +20,21 @@
  */
 package org.squashtest.it.config
 
+import javax.inject.Inject
+import javax.sql.DataSource
+
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer
+import org.springframework.security.acls.jdbc.LookupStrategy
+import org.springframework.security.acls.model.AclCache
 import org.springframework.security.authentication.encoding.PasswordEncoder
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder
-import org.squashtest.csp.core.bugtracker.service.BugTrackersService
-import org.squashtest.csp.core.bugtracker.service.StubBugTrackerService
-import org.squashtest.it.stub.security.StubUserDetailsManager;
-import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
-import org.squashtest.tm.service.internal.security.ObjectIdentityServiceImpl;
-import org.squashtest.tm.service.internal.security.SpringSecurityUserContextService
+import org.springframework.security.oauth2.provider.client.JdbcClientDetailsService;
+import org.squashtest.tm.service.SecurityConfig
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl
-import org.squashtest.tm.service.security.AdministratorAuthenticationService
-import org.squashtest.tm.service.security.ObjectIdentityService;
-import org.squashtest.tm.service.security.UserContextService
+import org.squashtest.tm.service.security.AdministratorAuthenticationService;
+import org.squashtest.tm.service.security.StubLookupStrategy
+import org.squashtest.tm.service.security.acls.model.NullAclCache
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -44,39 +43,42 @@ import org.squashtest.tm.service.security.UserContextService
  */
 @Configuration
 @ComponentScan(
-basePackages = ["org.squashtest.tm.service.internal", "org.squashtest.it.stub.validation"],
-excludeFilters = [
-	@ComponentScan.Filter(Configuration),
-	@ComponentScan.Filter(pattern = "org\\.squashtest\\.tm\\.service\\.internal\\.security\\..*", type = FilterType.REGEX),
-	@ComponentScan.Filter(pattern = ".*coercers.*", type = FilterType.REGEX)
-]
+basePackages = ["org.squashtest.tm.security.acls","org.squashtest.tm.service.security", "org.squashtest.tm.service.internal.security"]
 )
 @EnableSpringConfigured
-class ServiceSpecConfig {
-
+class EnabledAclSpecConfig {
+	
+	@Inject
+	DataSource dataSource
 	
 	@Bean
-	@Primary
-	BugTrackersService bugTrackerService() {
-		new StubBugTrackerService();
-	}
-
-	@Bean
-	UserContextService userContextService(){
-		new SpringSecurityUserContextService();
+	PasswordEncoder passwordEncoder() {
+		new ShaPasswordEncoder()
 	}
 	
 	@Bean
-	static PropertySourcesPlaceholderConfigurer placeholderConfigurer() {
-		new PropertySourcesPlaceholderConfigurer();
+	LookupStrategy lookupStrategy(){
+		new StubLookupStrategy()
 	}
-	
-
-
 	
 	@Bean
-	ObjectIdentityService objectIdentityService(){
-		new ObjectIdentityServiceImpl()
+	AclCache aclCache() {
+		new NullAclCache();
 	}
 	
+	// have to manually create an instance of SecurityConfig and selectively pick 
+	// the items we want from it
+	@Bean(name="squashtest.core.security.JdbcUserDetailsManager")
+	SquashUserDetailsManager userDetailsManager(){
+		SecurityConfig seconf = new SecurityConfig(dataSource : dataSource)		
+		SquashUserDetailsManager manag = seconf.caseInensitiveUserDetailsManager()
+		manag
+	}
+	
+	// for OAuth
+	@Bean
+	JdbcClientDetailsService jdbcClientDetailsService(){
+		new JdbcClientDetailsService(dataSource);
+	}
+
 }

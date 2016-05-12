@@ -20,11 +20,15 @@
  */
 package org.squashtest.tm.service.user
 
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.tm.domain.users.Team
 import org.squashtest.tm.domain.users.User
 import org.squashtest.tm.exception.NameAlreadyInUseException
+import org.squashtest.tm.service.SecurityConfig;
 import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.config.EnabledAclSpecConfig;
 import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
@@ -36,6 +40,10 @@ import javax.inject.Inject
  */
 @UnitilsSupport
 @Transactional
+@ContextHierarchy([
+	// enabling the ACL management that was disabled in DbunitServiceSpecification 
+	@ContextConfiguration(name="aclcontext", classes = [EnabledAclSpecConfig], inheritLocations=false)	
+])
 class TeamModificationServiceIT extends DbunitServiceSpecification {
 
 	@Inject

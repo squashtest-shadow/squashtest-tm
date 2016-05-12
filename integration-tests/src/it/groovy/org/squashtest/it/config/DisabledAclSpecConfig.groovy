@@ -20,22 +20,18 @@
  */
 package org.squashtest.it.config
 
-import javax.inject.Named;
-
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
 import org.springframework.security.acls.model.AclCache
-import org.springframework.security.acls.model.AclService;
+import org.springframework.security.acls.model.AclService
+import org.springframework.security.authentication.encoding.PasswordEncoder
+import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.squashtest.it.stub.security.StubAclService
-import org.squashtest.it.stub.security.StubPermissionEvaluationService
-import org.squashtest.it.stub.security.StubPermissionEvaluator
+import org.squashtest.it.stub.security.StubUserDetailsManager
+import org.squashtest.tm.service.internal.security.AdministratorAuthenticationServiceImpl
 import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl
-import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService
-import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
+import org.squashtest.tm.service.security.AdministratorAuthenticationService
 import org.squashtest.tm.service.security.acls.model.NullAclCache
-import org.squashtest.tm.service.security.acls.model.ObjectAclService
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -43,11 +39,24 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService
  * @since 1.13.0
  */
 @Configuration
+@ComponentScan(
+basePackages = ["org.squashtest.tm.service.security"],
+excludeFilters = [
+	@ComponentScan.Filter(Configuration),
+	@ComponentScan.Filter(classes= AclService, type=FilterType.ASSIGNABLE_TYPE)
+]
+)
+@EnableSpringConfigured
 class DisabledAclSpecConfig {
 	
 	@Bean
 	AclCache aclCache() {
 		new NullAclCache();
+	}
+	
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		new ShaPasswordEncoder()
 	}
 	
 	
@@ -61,5 +70,16 @@ class DisabledAclSpecConfig {
 		new StubAclService();
 	}
 	
+	// defined in tm.service : SecurityConfig, and tricky as shit to create a real instance
+	@Bean(name= "squashtest.core.security.JdbcUserDetailsManager")
+	SquashUserDetailsManager squashUserDetailsManager(){
+		new StubUserDetailsManager()
+	}
+	
+	@Bean
+	AdministratorAuthenticationService administratorAuthenticationService() {
+		new AdministratorAuthenticationServiceImpl();
+	}
+
 
 }

@@ -20,22 +20,14 @@
  */
 package org.squashtest.it.config
 
-import javax.inject.Named;
-
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
-import org.springframework.security.acls.model.AclCache
 import org.springframework.security.acls.model.AclService;
-import org.squashtest.it.stub.security.StubAclService
 import org.squashtest.it.stub.security.StubPermissionEvaluationService
 import org.squashtest.it.stub.security.StubPermissionEvaluator
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManager
-import org.squashtest.tm.service.internal.security.SquashUserDetailsManagerImpl
 import org.squashtest.tm.service.security.PermissionEvaluationService
-import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService
-import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService;
-import org.squashtest.tm.service.security.acls.model.NullAclCache
-import org.squashtest.tm.service.security.acls.model.ObjectAclService
+import org.squashtest.tm.service.security.acls.domain.InheritableAclsObjectIdentityRetrievalStrategy
+import org.squashtest.tm.service.security.acls.jdbc.JdbcManageableAclService;
 
 /**
  * Configuration for Service specification. Instanciates service and repo layer beans
@@ -43,14 +35,7 @@ import org.squashtest.tm.service.security.acls.model.ObjectAclService
  * @since 1.13.0
  */
 @Configuration
-@ComponentScan(
-basePackages = ["org.squashtest.tm.service.security"],
-excludeFilters = [
-	@ComponentScan.Filter(Configuration)
-]
-)
-@EnableSpringConfigured
-class DisabledSecuritySpecConfig {
+class DisabledPermissionSpecConfig {
 
 	
 	@Bean StubPermissionEvaluator permissionEvaluator() {
