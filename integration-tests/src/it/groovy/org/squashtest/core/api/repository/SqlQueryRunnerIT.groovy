@@ -22,9 +22,11 @@ package org.squashtest.core.api.repository
 
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy;
 import org.squashtest.it.basespecs.DatasourceDependantSpecification;
 import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.api.repository.SqlQueryRunner
+import org.squashtest.tm.service.internal.api.repository.HibernateSqlQueryRunner;
 import org.unitils.database.annotations.Transactional
 import org.unitils.database.util.TransactionMode
 import org.unitils.dbunit.annotation.DataSet
@@ -42,8 +44,8 @@ import javax.inject.Inject
 @Rollback
 @org.springframework.transaction.annotation.Transactional
 @Transactional(TransactionMode.DISABLED)
+@UnitilsSupport
 @DataSet("SqlQueryRunnerIT.should select all active core users.xml")
-@SkipAll
 class SqlQueryRunnerIT extends DatasourceDependantSpecification {
 	@Inject
 	SqlQueryRunner runner

@@ -32,7 +32,8 @@ import spock.lang.Ignore;
 import spock.unitils.UnitilsSupport
 
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.it.basespecs.RequirementImportCustomDbunitServiceSpecification;
+import org.squashtest.it.basespecs.RequirementImportCustomDbunitServiceSpecification
+import org.squashtest.it.stub.security.UserContextHelper;
 import org.squashtest.it.basespecs.DbunitServiceSpecification;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.domain.requirement.Requirement;
@@ -48,7 +49,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 @UnitilsSupport
 @Transactional
 @RunWith(Sputnik)
-class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbunitServiceSpecification{
+class RequirementVersionExcelBatchImporterIT extends DbunitServiceSpecification{
 
 
 	@Inject
@@ -57,6 +58,10 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 	private RequirementLibraryNavigationService navService
 	@Inject
 	private CustomFieldValueFinderService cufService
+	
+	def setup(){
+		UserContextHelper.setUsername("chef")
+	}
 
 	def importFile = {
 		fileName ->
@@ -848,7 +853,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 	}
 
 	@DataSet("RequirementExcelBatchImportIT.should update milestone binding.xml")
-	def "shouldn't update milestone binding from requirement because unknown milestone"(){
+	def "should handle unknown milestone when updating requirement"(){
 		given:
 		def reqVersionMap = [11:[11, 12, 13], 21:[21], 31:[31], 41:[41]]
 		attachRequirementVersionMap(reqVersionMap)
@@ -865,7 +870,7 @@ class RequirementVersionExcelBatchImporterIT extends RequirementImportCustomDbun
 		summary.requirementVersionWarnings == 1
 		summary.requirementVersionFailures == 0
 		milestones.size()==1
-		milestones*.label==["My milestone 2"]
+		milestones*.label==["My milestone 3"]
 
 	}
 }

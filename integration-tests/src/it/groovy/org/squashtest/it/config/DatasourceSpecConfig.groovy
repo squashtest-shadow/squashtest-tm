@@ -24,6 +24,7 @@ import javax.sql.DataSource
 import javax.validation.ValidatorFactory
 
 import org.springframework.context.annotation.Bean
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Primary;
@@ -40,6 +41,7 @@ import org.unitils.database.UnitilsDataSourceFactoryBean
 
 @Configuration
 @EnableSpringConfigured
+@ComponentScan(basePackages="org.squashtest.tm.service.internal.api.repository")
 class DatasourceSpecConfig {
 
 	@Bean

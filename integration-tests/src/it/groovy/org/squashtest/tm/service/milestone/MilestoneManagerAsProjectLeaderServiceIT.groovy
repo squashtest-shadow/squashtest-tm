@@ -20,16 +20,14 @@
  */
 package org.squashtest.tm.service.milestone
 
-import org.squashtest.it.basespecs.DbunitServiceSpecification
-import spock.lang.IgnoreRest
-
 import javax.inject.Inject
 
-import org.hibernate.exception.SQLGrammarException
+import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.AsManagerDbunitServiceSpecification;
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.stub.security.UserContextHelper
 import org.squashtest.tm.domain.milestone.Milestone
-
 import org.unitils.dbunit.annotation.DataSet
 
 import spock.lang.Unroll
@@ -37,9 +35,18 @@ import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class MilestoneManagerAsProjectLeaderServiceIT extends AsManagerDbunitServiceSpecification {
+@ContextHierarchy(
+	// using an alternate stubbing for the permission evaluation
+	@ContextConfiguration(name="permissioncontext", classes = [MilestoneTestingPermissionSpecConfig], inheritLocations=false)	
+
+)
+class MilestoneManagerAsProjectLeaderServiceIT extends DbunitServiceSpecification {
 	@Inject
 	MilestoneManagerService manager
+	
+	def setup(){
+		UserContextHelper.setUsername("chef")
+	}
 
 	/*
 	 * You're not prepared !

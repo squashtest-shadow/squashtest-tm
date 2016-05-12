@@ -334,7 +334,8 @@ public class SecurityConfig {
 		ehCache.setTimeToIdle(600);
 		ehCache.setTimeToLive(1800);
 		ehCache.setCacheManager(ehCacheManagerFactoryBean().getObject());
-
+		ehCache.setCacheName("AclCache");
+		ehCache.afterPropertiesSet();
 		return ehCache;
 	}
 

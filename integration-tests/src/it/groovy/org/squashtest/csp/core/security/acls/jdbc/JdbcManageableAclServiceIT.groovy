@@ -28,10 +28,14 @@ import org.springframework.security.acls.model.ObjectIdentity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.test.annotation.Rollback
 import org.springframework.test.context.ContextConfiguration
+import org.springframework.test.context.ContextHierarchy;
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.it.basespecs.DatasourceDependantSpecification;
+import org.squashtest.it.basespecs.DatasourceDependantSpecification
+import org.squashtest.it.basespecs.DbunitServiceSpecification
+import org.squashtest.it.config.EnabledAclSpecConfig;
 import org.squashtest.it.config.SecuritySpecConfigDeprec
 import org.squashtest.it.stub.security.StubAuthentication
+import org.squashtest.it.stub.security.UserContextHelper;
 import org.squashtest.it.utils.SkipAll
 import org.squashtest.tm.service.SecurityConfig
 import org.squashtest.tm.service.security.acls.jdbc.ManageableAclService
@@ -46,11 +50,13 @@ import spock.unitils.UnitilsSupport
 
 
 @UnitilsSupport
-@ContextConfiguration(classes = [SecurityConfig, SecuritySpecConfigDeprec])
 @Rollback
 @Transactional
-@SkipAll
-class JdbcManageableAclServiceIT extends DatasourceDependantSpecification {
+@ContextHierarchy([
+	// enabling the ACL management that was disabled in DbunitServiceSpecification 
+	@ContextConfiguration(name="aclcontext", classes = [EnabledAclSpecConfig], inheritLocations=false)	
+])
+class JdbcManageableAclServiceIT extends DbunitServiceSpecification {
 	@Inject
 	DataSource dataSource
 	@Inject
@@ -59,7 +65,7 @@ class JdbcManageableAclServiceIT extends DatasourceDependantSpecification {
 	ObjectAclService service
 
 	def setup() {
-		SecurityContextHolder.getContext().setAuthentication(new StubAuthentication())
+		UserContextHelper.setUsername("Bob")
 	}
 
 	@IgnoreRest

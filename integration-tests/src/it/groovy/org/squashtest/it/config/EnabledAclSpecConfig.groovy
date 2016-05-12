@@ -25,6 +25,7 @@ import javax.sql.DataSource
 
 import org.springframework.context.annotation.*
 import org.springframework.context.annotation.aspectj.EnableSpringConfigured
+import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.jdbc.LookupStrategy
 import org.springframework.security.acls.model.AclCache
 import org.springframework.security.authentication.encoding.PasswordEncoder
@@ -51,6 +52,11 @@ class EnabledAclSpecConfig {
 	@Inject
 	DataSource dataSource
 	
+	@Inject
+	PermissionFactory permFactory;
+	
+	SecurityConfig seconf = null // instanciated on demand later
+	
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		new ShaPasswordEncoder()
@@ -58,7 +64,7 @@ class EnabledAclSpecConfig {
 	
 	@Bean
 	LookupStrategy lookupStrategy(){
-		new StubLookupStrategy()
+		getSeconf().lookupStrategy()
 	}
 	
 	@Bean
@@ -70,9 +76,7 @@ class EnabledAclSpecConfig {
 	// the items we want from it
 	@Bean(name="squashtest.core.security.JdbcUserDetailsManager")
 	SquashUserDetailsManager userDetailsManager(){
-		SecurityConfig seconf = new SecurityConfig(dataSource : dataSource)		
-		SquashUserDetailsManager manag = seconf.caseInensitiveUserDetailsManager()
-		manag
+		getSeconf().caseInensitiveUserDetailsManager()
 	}
 	
 	// for OAuth
@@ -81,4 +85,11 @@ class EnabledAclSpecConfig {
 		new JdbcClientDetailsService(dataSource);
 	}
 
+	
+	SecurityConfig getSeconf(){
+		if (seconf == null){
+			seconf = new SecurityConfig(dataSource : dataSource, permissionFactory : permFactory)
+		}
+		seconf
+	}
 }
