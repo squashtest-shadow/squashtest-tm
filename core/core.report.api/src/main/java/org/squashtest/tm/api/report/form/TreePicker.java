@@ -25,10 +25,16 @@ import org.springframework.util.Assert;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class TreePicker extends BasicInput implements InitializingBean {
 	private NodeType pickedNodeType;
+
+	private int nodeSelectionLimit = -1;
+
+	//if true, the tree picker will accept ONLY the designed type and no folders/libraries/whatever.
+	//the js implementation is only made for CAMPAIGN and ITERATION nodes.
+	private boolean strict = false;
 
 	/**
 	 * @see org.squashtest.tm.api.report.form.Input#getType()
@@ -51,6 +57,22 @@ public class TreePicker extends BasicInput implements InitializingBean {
 	 */
 	public NodeType getPickedNodeType() {
 		return pickedNodeType;
+	}
+
+	public int getNodeSelectionLimit() {
+		return nodeSelectionLimit;
+	}
+
+	public void setNodeSelectionLimit(int nodeSelectionLimit) {
+		this.nodeSelectionLimit = nodeSelectionLimit;
+	}
+
+	public boolean isStrict() {
+		return strict;
+	}
+
+	public void setStrict(boolean strict) {
+		this.strict = strict;
 	}
 
 	/**

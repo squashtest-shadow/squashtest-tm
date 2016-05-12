@@ -22,7 +22,7 @@ define(function () {
 	"use strict";
 
 	return {
-		generate: function () {
+		generate: function (settings) {
 
 			return {
 				"types": {
@@ -40,6 +40,15 @@ define(function () {
 							"valid_children": ["campaign", "folder"]
 						}
 					}
+				},
+				conditionalselect: function (node) {
+					if(!settings.isStrict){
+						return true;
+					}	
+					if ($(node).is("[rel='campaign']")) {
+						return true;
+					}
+					return false;
 				}
 			};
 		}

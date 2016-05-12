@@ -101,7 +101,7 @@
      	  th:title="#{report.form.tree-picker.dialog.title}"
           class="rpt-tree-crit-dialog popup-dialog is-contextual not-displayed">
       <div id="rpt-tree-crit" th:id="${input.name}" class="rpt-tree-crit tree selection-tree"
-            th:attr="data-nodetype=${input.pickedNodeType}" data-nodetype="CAMPAIGN">NODES
+            th:attr="data-nodetype=${input.pickedNodeType},data-nodelimit=${input.nodeSelectionLimit},data-isstrict=${input.strict}" data-nodetype="CAMPAIGN"  data-nodelimit="1" data-isstrict="false">NODES
        </div>
        <div class="popup-dialog-buttonpane">
           <input type="button" th:value="#{label.Confirm}" data-def="mainbtn, evt=confirm"/>

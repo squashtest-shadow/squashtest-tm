@@ -66,6 +66,7 @@ define(function () {
 				},
 
 				ui: {
+                                        select_limit : settings.nodelimit ? settings.nodelimit : -1,
 					select_multiple_modifier: "ctrl",
 					select_range_modifier: "shift"
 				},

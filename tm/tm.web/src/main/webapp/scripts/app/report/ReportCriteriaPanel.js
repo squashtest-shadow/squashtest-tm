@@ -20,9 +20,9 @@
  */
 define([ "backbone", "underscore", "./ConciseFormModel", "app/util/ButtonUtil", "tree",
          "./ProjectsPickerPopup", "./SingleProjectPickerPopup", "./MilestonePickerPopup", "./TagPickerPopup",
-         "milestone-manager/milestone-activation", "app/util/StringUtil", 
+         "milestone-manager/milestone-activation", "app/util/StringUtil",
          "jeditable.datepicker", "jquery.squash.formdialog"],
-function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup, 
+function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, SingleProjectPickerPopup,
 		MilestonePickerPopup, TagPickerPopup, milestone, strutils) {
 	"use strict";
 
@@ -34,6 +34,15 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		return type.toLowerCase().replace(/_/g, "-");
 	}
 
+	function nodeLimit(domTree) {
+  		var limit = $(domTree).data("nodelimit");
+  		return parseInt(limit);
+  	}
+	  
+	function isStrictSelection(domTree) {
+  		var isStrict = $(domTree).data("isstrict");
+  		return isStrict;
+  	}
 
 	function reformatDate(sourceFormat, targetFormat) {
 		return function(date) {
@@ -76,8 +85,8 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			// add the hooks for deactivable inputs
 			this.registerDeactivableInputs();
-			
-			
+
+
 			this.render();
 		},
 
@@ -92,21 +101,21 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			this._renderProjectPickers();
 			this._renderMilestonePickers();
 			this._renderTagPickers();
-			
-			
+
+
 			// we must also handle the milestone mode
 			if (milestone.isEnabled()){
-				var chk = $("#milestones-binder"); 
+				var chk = $("#milestones-binder");
 				chk.prop('checked', true);
-				
+
 				var radiogroupName = chk.attr('name');
 				this.model.setVal(radiogroupName, chk.val());
-				
+
 				// deactivate the other options
-				var parentLi = chk.parent('li'); 
+				var parentLi = chk.parent('li');
 				parentLi.siblings().add(parentLi).find('input').prop('disabled', true);
 			}
-			
+
 			return this;
 		},
 
@@ -222,12 +231,16 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			this.$(".rpt-tree-crit").each(function(i, dom) {
 				var type = workspaceType(dom);
+				var nodelimit = nodeLimit(dom);
+				var isStrict = isStrictSelection(dom);
 				var url = config.contextPath + "/" + type + "-browser/drives";
 
 				$.get(url, "linkables", "json").done(function(data) {
 					var settings = _.clone(config);
 					settings.workspace = type;
+					settings.nodelimit = nodelimit;
 					settings.model = data;
+					settings.isStrict = isStrict;
 					settings.treeselector = "#" + dom.id;
 					treeBuilder.initLinkableTree(settings);
 				});
@@ -249,7 +262,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var self = this;
 			this.$(".project-picker").each(function(i, dom) {
 				var pickerView;
-				var strmulti = $(dom).data("multiselect"); 
+				var strmulti = $(dom).data("multiselect");
 				if ( strutils.coerceToBoolean(strmulti) === true) {
 					pickerView = new ProjectsPickerPopup({ el : dom, model: self.model });
 				} else {
@@ -258,14 +271,14 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				self.projectPickers[dom.id] = pickerView;
 			});
 		},
-		
+
 		_renderMilestonePickers : function(){
 			var self = this;
 			this.$(".milestone-picker").each(function(i, dom){
 				MilestonePickerPopup.init({
 					selector : "#"+dom.id,
 					model : self.model
-				});				
+				});
 			});
 		},
 		_renderTagPickers : function (){
@@ -274,7 +287,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 				TagPickerPopup.init({
 					selector : "#"+dom.id,
 					model : self.model
-				});				
+				});
 			});
 		},
 
@@ -414,7 +427,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var dialogId = $(target).data("idopened");
 			this.projectPickers[dialogId].open();
 		},
-		
+
 		openMilestonePicker : function(event){
 			var target = event.currentTarget;
 			var dialogId = $(target).data("idopened");
@@ -425,7 +438,7 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 			var dialogId = $(target).data("idopened");
 			$("#"+dialogId).formDialog("open");
 		},
-		
+
 
 		/**
 		 * /!\ this is a jeditable handler builder
@@ -480,51 +493,51 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			this.model.setVal(propName, val);
 		},
-		
+
 		/**
 		 * Some inputs may be deactivated when others are selected. This is what the clause data-deactivatedby is for, which
 		 * appears on the tag of such inputs.
-		 * 
-		 * This method will bind events : when the target input is selected the receiving inputs will be deactivated, and 
+		 *
+		 * This method will bind events : when the target input is selected the receiving inputs will be deactivated, and
 		 * conversely when the target input isn't selected anymore the input will be enabled again.
 		 */
 		registerDeactivableInputs : function(){
 			var self = this;
-			
+
 			var deactivableInputs = this.$el.find('[data-disabledby]');
-			
+
 			var deactivationMap = {};
-			
+
 			deactivableInputs.each(function(){
 				var $input = $(this);
 				var targetid = $input.data('disabledby');
-				
+
 				deactivationMap[targetid] = deactivationMap[targetid] || [];
 				deactivationMap[targetid].push($input);
-				
+
 			});
-			
+
 			self.config.deactivationMap = deactivationMap;
-			
+
 		},
-		
+
 		updateDeactivableInputs : function(evt){
 			var deactivationMap = this.config.deactivationMap;
-			
+
 			_.each(deactivationMap, function(deactivable, deactivatorid){
 				var $deactivator = $("#"+deactivatorid);
 				var newstate = ($deactivator.is(evt.currentTarget)) ?
 						// case "is the target" : its state is about to change
 						(! $deactivator.is(':selected')) :
 						//case "is not the target" : the state won't change
-						$deactivator.is(':selected');	
+						$deactivator.is(':selected');
 				deactivable.forEach(function(elt){
 					elt.prop('disabled', newstate);
 					elt.find('input').prop('disabled', newstate);
 				});
-					
+
 			});
-			
+
 		}
 
 	});
