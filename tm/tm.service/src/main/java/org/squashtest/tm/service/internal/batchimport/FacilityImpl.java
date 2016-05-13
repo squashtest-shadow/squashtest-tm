@@ -20,6 +20,15 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
+
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +37,15 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
-import org.squashtest.tm.domain.testcase.*;
+import org.squashtest.tm.domain.testcase.ActionTestStep;
+import org.squashtest.tm.domain.testcase.CallTestStep;
+import org.squashtest.tm.domain.testcase.Dataset;
+import org.squashtest.tm.domain.testcase.DatasetParamValue;
+import org.squashtest.tm.domain.testcase.Parameter;
+import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
+import org.squashtest.tm.domain.testcase.RequirementVersionCoverage;
+import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageInstruction;
@@ -39,11 +56,11 @@ import org.squashtest.tm.service.internal.repository.ParameterDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
-import org.squashtest.tm.service.testcase.*;
-
-import javax.annotation.PostConstruct;
-import javax.inject.Inject;
-import java.util.*;
+import org.squashtest.tm.service.testcase.CallStepManagerService;
+import org.squashtest.tm.service.testcase.DatasetModificationService;
+import org.squashtest.tm.service.testcase.ParameterModificationService;
+import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
+import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 /**
  * Implementation of batch import methods that will actually update the
@@ -426,11 +443,13 @@ public class FacilityImpl extends EntityFacilitySupport implements Facility {
 		TestCase tc = validator.getModel().get(target.getTestCase());
 		testcaseModificationService.addActionTestStep(tc.getId(), testStep, acceptableCufs);
 
-		// move it if the index was specified
+		// move it if the index was specified. Perf optim : don't move it if already in the good place
 		Integer index = target.getIndex();
-		if (index != null && index >= 0 && index < tc.getSteps().size()) {
+		if (index != null && index >= 0 && index < tc.getSteps().size()
+				&& tc.getPositionOfStep(testStep.getId()) != index) {
 			testcaseModificationService.changeTestStepsPosition(tc.getId(), index, Collections.singletonList(testStep.getId()));
 		}
+
 
 	}
 
