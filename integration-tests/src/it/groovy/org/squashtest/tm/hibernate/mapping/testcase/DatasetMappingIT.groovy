@@ -22,7 +22,7 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 
 import javax.validation.ConstraintViolationException;
-
+import org.squashtest.tm.domain.infolist.InfoListItem
 import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
 import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
@@ -35,11 +35,19 @@ class DatasetMappingIT extends DbunitMappingSpecification {
 	def "should not persist a nameless dataset"(){
 
 		given:
-		TestCase tc = new TestCase(name: "description")
-		Dataset ds = new Dataset(testCase:tc)
+                    // the nature and type might not be the correct system list items 
+                    // however it is good enough for our purposes
+                    def nat = doInTransaction {it.load(InfoListItem.class, 1l)}
+                    def type = doInTransaction {it.load(InfoListItem.class, 2L)}
+        
+                and : 
+        
+		TestCase tc = new TestCase(name: "description", nature : nat, type : type)
+                doInTransaction { it.persist tc }
+                
 		when:
+		Dataset ds = new Dataset(testCase:tc)
 		doInTransaction({ session ->
-			session.persist(tc)
 			session.persist(ds)
 		})
 
@@ -47,7 +55,7 @@ class DatasetMappingIT extends DbunitMappingSpecification {
 		thrown(ConstraintViolationException)
 		
 		cleanup : 
-		deleteFixture ds, tc
+		deleteFixture tc
 	}
 
 }
