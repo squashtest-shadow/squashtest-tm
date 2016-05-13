@@ -381,13 +381,9 @@ RequirementNodeDeletionHandler {
 	@Override
 	public OperationReport deleteNodes(List<Long> targetIds) {
 
-
-
-
 		OperationReport globalReport = new OperationReport();
 
 		TargetsSortedByAppropriatePunishment sortedTargets = sortThatMess(targetIds);
-
 
 		// rewire future orphan requirements
 		List<Long> childrenRewirableRequirements = sortedTargets.getRequirementsWithRewirableChildren();

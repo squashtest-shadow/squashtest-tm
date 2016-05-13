@@ -65,6 +65,16 @@
 	<test_case_folder/>
 	<tcln_relationship/>
 	<test_case_library_content/>
+        
+        <resource/>
+        <requirement_version/>
+        <simple_resource/>
+        
+        <requirement_library_node/>
+        <requirement/>
+        <requirement_folder/>
+        <rln_relationship/>
+        <requirement_library_content/>
 
 </dataset>
 

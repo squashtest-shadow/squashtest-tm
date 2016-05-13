@@ -108,7 +108,8 @@ abstract class DbunitServiceSpecification extends DatasourceDependantSpecificati
 		boolean found = false
 
 		try {
-			found = (em.find(entityClass, id) != null)
+                    def entity = em.find(entityClass, id)
+                    found = ( entity != null)
 		} catch (EntityNotFoundException ex) {
 			// Hibernate sometimes pukes the above exception instead of returning null when entity is part of a class hierarchy
 			found = false

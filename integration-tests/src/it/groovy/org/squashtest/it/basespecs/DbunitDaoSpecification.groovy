@@ -54,7 +54,8 @@ abstract class DbunitDaoSpecification extends DatasourceDependantSpecification {
 	}
 
 	protected boolean found(Class<?> entityClass, Long id) {
-		em.find(entityClass, id) != null
+		def entity = em.find(entityClass, id)
+                entity != null
 	}
 
 	protected Object findEntity(Class<?> entityClass, Long id) {
