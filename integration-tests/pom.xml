@@ -33,12 +33,6 @@
 
   <dependencyManagement>
     <dependencies>
-      <!--  DONT COMMIT THAT ! -->
-      <dependency>
-        <groupId>org.codehaus.groovy</groupId>
-        <artifactId>groovy-all</artifactId>
-        <version>2.4.3</version>
-      </dependency>
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>squash-tm-bom</artifactId>
@@ -422,13 +416,6 @@
         <dbunit-database.url>${it.database.url}</dbunit-database.url>
         <hibernate.dialect>org.hibernate.dialect.PostgreSQL9Dialect</hibernate.dialect>
       </properties>
-
-      <dependencies>
-        <dependency>
-          <groupId>org.ancoron.postgresql</groupId>
-          <artifactId>org.postgresql</artifactId>
-        </dependency>
-      </dependencies>
 
       <build>
         <plugins>
