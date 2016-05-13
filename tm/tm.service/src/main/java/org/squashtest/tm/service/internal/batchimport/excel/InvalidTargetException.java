@@ -24,17 +24,19 @@ import org.squashtest.tm.service.importer.ImportStatus;
 
 public class InvalidTargetException extends RuntimeException{
 
+	
+
+
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = -1667784602112693995L;
 
+	private final ImportStatus status;
 
-	private ImportStatus status ;
+	private final String errori18nMessage;
 
-	private String errori18nMessage;
-
-	private String impacti18nMessage;
+	private final String impacti18nMessage;
 
 	public InvalidTargetException(ImportStatus status, String errori18nMessage, String impacti18nMessage) {
 		super();

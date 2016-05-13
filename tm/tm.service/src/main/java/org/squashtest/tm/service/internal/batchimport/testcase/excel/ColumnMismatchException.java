@@ -29,15 +29,12 @@ import org.squashtest.tm.service.batchimport.excel.ColumnMismatch;
 public class ColumnMismatchException extends RuntimeException {
 	private static final long serialVersionUID = -6513655859400997571L;
 
-	private ColumnMismatch type ;
-	private TemplateColumn colType;
-	public ColumnMismatchException() {
-		super();
-	}
+	private final ColumnMismatch type;
+	private final TemplateColumn colType;
 
 
 	public ColumnMismatchException(ColumnMismatch type, TemplateColumn colType) {
-		this();
+		super();
 		this.type = type;
 		this.colType = colType;
 	}
@@ -45,18 +42,11 @@ public class ColumnMismatchException extends RuntimeException {
 	public ColumnMismatch getType() {
 		return type;
 	}
-	public void setType(ColumnMismatch type) {
-		this.type = type;
-	}
 
 
 	public TemplateColumn getColType() {
 		return colType;
 	}
 
-
-	public void setColType(TemplateColumn colType) {
-		this.colType = colType;
-	}
 
 }

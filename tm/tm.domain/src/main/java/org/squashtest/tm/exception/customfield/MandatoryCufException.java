@@ -25,10 +25,8 @@ import org.squashtest.tm.exception.DomainException;
 
 public class MandatoryCufException extends DomainException {
 
-	/**
-	 * TODO generate unique serialVersionUID my eclipse couldn't, thanks, mpagnon
-	 */
-	private static final long serialVersionUID = 1L;
+
+	private static final long serialVersionUID = -6101757181195458679L;
 	private String key = "message.notBlank";
 
 

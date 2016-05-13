@@ -40,6 +40,9 @@ import javax.swing.text.html.HTML;
 import javax.swing.text.html.HTML.Tag;
 import javax.swing.text.html.HTMLDocument.RunElement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import net.sf.jasperreports.engine.JRPrintHyperlink;
 import net.sf.jasperreports.engine.base.JRBasePrintHyperlink;
 import net.sf.jasperreports.engine.type.HyperlinkTypeEnum;
@@ -50,9 +53,6 @@ import net.sf.jasperreports.engine.util.JRStyledTextParser;
 import net.sf.jasperreports.engine.util.JRTextAttribute;
 import net.sf.jasperreports.engine.util.MarkupProcessor;
 import net.sf.jasperreports.engine.util.MarkupProcessorFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -224,7 +224,8 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 
 					whitespaces[i] = whitespaces[elements.indexOf(parent)];
 					if(element.getElement(0) != null &&
-							("ol".equals(element.getElement(0).getName().toLowerCase()) || "ul".equals(element.getElement(0).getName().toLowerCase()))
+ ("ol".equalsIgnoreCase((element.getElement(0).getName()))
+							|| "ul".equalsIgnoreCase(element.getElement(0).getName()))
 							)
 					{
 						chunk = "";

@@ -21,7 +21,6 @@
 package org.squashtest.tm.web.internal.controller.checkXFO;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
@@ -51,11 +50,9 @@ public class checkXFO {
                 result = true;
             }
 
-        } catch (MalformedURLException e) {
-            // nothing to do
         } catch (IOException e) {
             // nothing to do
-        }
+		}
 
         return result;
 

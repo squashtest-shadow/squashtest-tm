@@ -203,7 +203,7 @@ public class TestStepPersister extends JoinedSubclassEntityPersister {
 		Iterator joinIter = persistentClass.getJoinClosureIterator();
 		while (joinIter.hasNext()){
 			Table tab = ((Join) joinIter.next()).getTable();
-			if (tab.getName().toUpperCase().equals(NONFORMATTED_TABLE_NAME)){
+			if (tab.getName().equalsIgnoreCase(NONFORMATTED_TABLE_NAME)) {
 				formattedTableName = tab.getQualifiedName(factory.getDialect(),
 						factory.getSettings().getDefaultCatalogName(),
 						factory.getSettings().getDefaultSchemaName());

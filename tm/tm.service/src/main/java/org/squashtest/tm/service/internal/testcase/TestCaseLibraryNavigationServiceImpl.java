@@ -591,7 +591,7 @@ public class TestCaseLibraryNavigationServiceImpl
 
 			if (ids.size() > 1) {
 				for (int i = 0; i < ids.size() - 1; i++) {
-					parents.add("#TestCaseFolder-" + String.valueOf(ids.get(i)));
+					parents.add("#TestCaseFolder-" + ids.get(i));
 				}
 			}
 		}

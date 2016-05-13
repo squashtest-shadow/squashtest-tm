@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.service.batchimport.excel.MaxFileSizeExceededException;
-import org.squashtest.tm.service.batchimport.excel.MaxNumberOfLinesExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.importer.ImportLog;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
@@ -107,9 +105,7 @@ public class RequirementImportController {
 			ImportFormatFailure importFormatFailure = new ImportFormatFailure(tme);
 			mav.addObject("summary", importFormatFailure);
 		}
-		catch(MaxFileSizeExceededException | MaxNumberOfLinesExceededException mfsee){
-			mav.addObject("summary", mfsee.getMessage());
-		} finally {
+ finally {
 			if (xls != null) {
 				xls.deleteOnExit();
 			}

@@ -84,7 +84,7 @@ import org.slf4j.LoggerFactory;
 
 	private static int readFirstFolder(List<String> nameList, StringReader pathReader, int pathCharIntParam) throws IOException {
 		int pathCharInt = pathCharIntParam;
-		StringBuffer nameBuffer = new StringBuffer();
+		StringBuilder nameBuffer = new StringBuilder();
 		int slashesNumber = 1;
 		pathCharInt = pathReader.read();
 		while (pathCharInt != -1 && (char) pathCharInt == '/') {
@@ -104,11 +104,12 @@ import org.slf4j.LoggerFactory;
 	}
 
 	private static int readNextFolder(List<String> nameList, StringReader pathReader, int pathCharInt) throws IOException {
-		StringBuffer folderNameBuffer = new StringBuffer();
+		StringBuilder folderNameBuffer = new StringBuilder();
 		return readName(pathCharInt, pathReader, folderNameBuffer, nameList);
 	}
 
-	private static int readName(int pathCharIntParam, StringReader pathReader, StringBuffer folderNameBuffer, List<String> nameList) throws IOException {
+	private static int readName(int pathCharIntParam, StringReader pathReader, StringBuilder folderNameBuffer,
+			List<String> nameList) throws IOException {
 		Integer slashesNumber = 0;
 		int pathCharInt = pathCharIntParam;
 		while(pathCharInt != -1){
@@ -137,7 +138,7 @@ import org.slf4j.LoggerFactory;
 		return pathCharInt;
 	}
 
-	private static void addSlashesToBuffer(StringBuffer folderNameBuffer, int slashesToAdd) {
+	private static void addSlashesToBuffer(StringBuilder folderNameBuffer, int slashesToAdd) {
 		for (int i = 0; i < slashesToAdd; i++) {
 			folderNameBuffer.append('/');
 		}

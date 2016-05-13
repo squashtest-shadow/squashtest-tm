@@ -20,7 +20,11 @@
  */
 package org.squashtest.tm.domain.chart;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 
 /*
@@ -99,7 +103,7 @@ public class ChartSeries {
 		Iterator<Object[]> absIter = abscissa.iterator();
 		Iterator<Object> serIter = serie.iterator();
 
-		for (; absIter.hasNext(); ) {
+		while (absIter.hasNext()) {
 			Object[] abs = absIter.next();
 			Object ser = serIter.next();
 			Object[] merge = new Object[abs.length + 1];

@@ -45,7 +45,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
-import org.squashtest.tm.service.batchimport.excel.MaxFileSizeExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.batchimport.excel.WorksheetFormatStatus;
 import org.squashtest.tm.service.batchimport.excel.WorksheetMismatch;
@@ -81,7 +80,7 @@ class ExcelWorkbookParserBuilder {
 	 *             when the workbook does not match the expected template in an
 	 *             unrecoverable way.
 	 */
-	public ExcelWorkbookParser build() throws MaxFileSizeExceededException, SheetCorruptedException,
+	public ExcelWorkbookParser build() throws SheetCorruptedException,
 			TemplateMismatchException {
 
 		InputStream is = null;

@@ -531,7 +531,7 @@ public class RequirementLibraryNavigationServiceImpl extends
 				for (int i = 0; i < ids.size() - 1; i++) {
 					long currentId = ids.get(i);
 					RequirementLibraryNode currentNode = requirementLibraryNodeDao.findById(currentId);
-					parents.add(currentNode.getClass().getSimpleName() + "-" + String.valueOf(currentId));
+					parents.add(currentNode.getClass().getSimpleName() + "-" + currentId);
 				}
 			}
 		}

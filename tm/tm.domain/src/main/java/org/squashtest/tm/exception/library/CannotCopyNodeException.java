@@ -24,11 +24,13 @@ import org.squashtest.tm.core.foundation.exception.ActionException;
 
 public class CannotCopyNodeException extends ActionException {
 
+
+
 	/**
-	 *TODO my eclipse couldn't
+	 * 
 	 */
-	private static final long serialVersionUID = 1L;
-	private String nodeType;
+	private static final long serialVersionUID = 3713375466765342776L;
+	private final String nodeType;
 	
 	public CannotCopyNodeException(String nodeType){
 		super("Cannot copy node of type "+nodeType);

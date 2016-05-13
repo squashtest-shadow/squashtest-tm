@@ -20,7 +20,35 @@
  */
 package org.squashtest.tm.domain.requirement;
 
-import org.hibernate.search.annotations.*;
+import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
+import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.OrderBy;
+import javax.persistence.OrderColumn;
+import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.constraints.NotNull;
+
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.FieldBridge;
+import org.hibernate.search.annotations.Indexed;
+import org.hibernate.search.annotations.Store;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.NodeContainer;
@@ -32,13 +60,6 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NoVerifiableRequirementVersionException;
 import org.squashtest.tm.exception.requirement.CopyPasteObsoleteException;
 import org.squashtest.tm.exception.requirement.IllegalRequirementVersionCreationException;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.*;
-
-import static org.squashtest.tm.domain.requirement.RequirementStatus.APPROVED;
-import static org.squashtest.tm.domain.requirement.RequirementStatus.OBSOLETE;
 
 /**
  * Entity requirement
@@ -108,7 +129,7 @@ public class Requirement extends RequirementLibraryNode<RequirementVersion> impl
 		 * prevent the requirement from having more than
 		 * one version if this requirement is synchronized
 		 */
-		if (versions.size() >= 1 && isSynchronized()) {
+		if (!versions.isEmpty() && isSynchronized()) {
 			throw new IllegalRequirementVersionCreationException();
 		}
 		// else we can add the version normally

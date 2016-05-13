@@ -29,7 +29,12 @@ import static org.squashtest.tm.service.internal.batchimport.testcase.excel.Temp
 import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet.TEST_CASES_SHEET;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
@@ -43,7 +48,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.squashtest.tm.exception.SheetCorruptedException;
-import org.squashtest.tm.service.batchimport.excel.MaxNumberOfLinesExceededException;
 import org.squashtest.tm.service.batchimport.excel.TemplateMismatchException;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
@@ -277,7 +281,7 @@ public class ExcelWorkbookParser {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	private void processWorksheet(WorksheetDef<?> worksheetDef) throws MaxNumberOfLinesExceededException {
+	private void processWorksheet(WorksheetDef<?> worksheetDef) {
 		LOGGER.debug("Processing worksheet {}", worksheetDef.getWorksheetType());
 
 		Sheet sheet = workbook.getSheet(worksheetDef.getSheetName());
