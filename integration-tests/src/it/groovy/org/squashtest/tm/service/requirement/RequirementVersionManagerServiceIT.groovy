@@ -42,12 +42,8 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 	RequirementVersionManagerService modService;
 
 	long requirementId = -10
-	@DirtiesContext
-	def "useless test to clean context "(){
-		expect : true
-	}
 
-	@DirtiesContext
+
 	@DataSet("RequirementVersionManagerServiceIT.should successfully rename a requirement.xml")
 	def "should successfully rename a requirement"(){
 
@@ -61,7 +57,7 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 		rereq.name == "new req"
 
 	}
-	@DirtiesContext
+
 	@DataSet("RequirementVersionManagerServiceIT.should change requirement criticality.xml")
 	def "should change requirement criticality"(){
 		when:
@@ -71,7 +67,7 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 		then:
 		requirement.criticality == RequirementCriticality.CRITICAL
 	}
-	@DirtiesContext
+
 	@DataSet("RequirementVersionManagerServiceIT.should change requirement category.xml")
 	def "should change requirement category"(){
 		when:
@@ -81,7 +77,7 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 		then:
 		new ListItemReference("CAT_BUSINESS").references(requirement.category)
 	}
-	@DirtiesContext
+
 	@DataSet("RequirementVersionManagerServiceIT.should change requirement reference.xml")
 	def "should change requirement reference"(){
 		given:
@@ -101,7 +97,6 @@ class RequirementVersionManagerServiceIT extends DbunitServiceSpecification {
 	 * see comment in CustomRequirementVersionManagerService#rename(long, String)
 	 * [Feat 3611] (gfouquet 15-03-06) Apparently, from now on, we should allow duplicate names so I negated the test.
 	 */
-	@DirtiesContext
 	@DataSet("RequirementVersionManagerServiceIT.should fail to rename a requirement because duplicated name.xml")
 	def "should NOT fail to rename a requirement because duplicated name"(){
 		when :

@@ -82,6 +82,17 @@ public final class PathUtils {
 			return null;
 		}
 	}
+	
+	/**
+	 * Same as {@link #extractProjectName(String)} but unescapes the result.
+	 * Project-less paths ("/foo") return null project name.
+	 * @param path the non null path to extract the project name from.
+	 * @return the project name <strong>which might be null</strong>
+	 */
+	public static String extractUnescapedProjectName(String path) {
+		String esc = extractProjectName(path);
+		return esc == null ? null : unescapePathPartSlashes(esc);
+	}
 
 	public static List<String> extractProjectNames(List<String> pathes) {
 		Set<String> res = new HashSet<String>();

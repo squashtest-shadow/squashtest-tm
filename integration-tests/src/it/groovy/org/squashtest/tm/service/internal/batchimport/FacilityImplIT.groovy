@@ -40,6 +40,7 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.DbunitServiceSpecification
 import org.squashtest.tm.service.customfield.CustomFieldValueFinderService
+import org.squashtest.tm.service.internal.batchimport.Model.Existence;
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import org.unitils.dbunit.annotation.DataSet
 
