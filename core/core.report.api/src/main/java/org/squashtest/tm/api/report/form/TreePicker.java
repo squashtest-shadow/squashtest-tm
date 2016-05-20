@@ -36,6 +36,10 @@ public class TreePicker extends BasicInput implements InitializingBean {
 	//the js implementation is only made for CAMPAIGN and ITERATION nodes.
 	private boolean strict = false;
 
+	//allow configuration of a js tree with different type than NodeType.
+	//ie we can fetch campaign library node and select iteration in tree.
+	private String jsTreeNodeType;
+
 	/**
 	 * @see org.squashtest.tm.api.report.form.Input#getType()
 	 */
@@ -73,6 +77,17 @@ public class TreePicker extends BasicInput implements InitializingBean {
 
 	public void setStrict(boolean strict) {
 		this.strict = strict;
+	}
+
+	public String getJsTreeNodeType() {
+		if(this.jsTreeNodeType !=null ){
+			return jsTreeNodeType;
+		}
+		return pickedNodeType.name();
+	}
+
+	public void setJsTreeNodeType(String jsTreeNodeType) {
+		this.jsTreeNodeType = jsTreeNodeType;
 	}
 
 	/**

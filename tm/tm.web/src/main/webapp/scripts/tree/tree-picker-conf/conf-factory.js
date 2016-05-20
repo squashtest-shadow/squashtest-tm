@@ -36,8 +36,8 @@
  * }
  *
  */
-define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf", "./tp-campaign-it-conf", "./tp-customreport-conf"],
-	function ($, genCommon, genTC, genReq, genCamp, genCampIt, genCustomReport) {
+define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf", "./tp-campaign-conf","./tp-iteration-conf", "./tp-campaign-it-conf", "./tp-customreport-conf"],
+	function ($, genCommon, genTC, genReq, genCamp, genIt, genCampIt, genCustomReport) {
 		"use strict";
 
 		return {
@@ -54,6 +54,9 @@ define(["jquery", "./common-conf", "./tp-testcase-conf", "./tp-requirement-conf"
 						break;
 					case 'campaign'    :
 						specificConf = genCamp.generate(settings);
+						break;
+					case 'iteration'    :
+						specificConf = genIt.generate(settings);
 						break;
 					case 'campaign-it'    :
 						specificConf = genCampIt.generate(settings);

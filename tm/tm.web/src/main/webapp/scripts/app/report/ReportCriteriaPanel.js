@@ -33,6 +33,11 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 		var type = $(domTree).data("nodetype");
 		return type.toLowerCase().replace(/_/g, "-");
 	}
+	
+	function jsTreeType(domTree) {
+		var type = $(domTree).data("jstreenodetype");
+		return type.toLowerCase().replace(/_/g, "-");
+	}
 
 	function nodeLimit(domTree) {
   		var limit = $(domTree).data("nodelimit");
@@ -231,13 +236,14 @@ function(Backbone, _, FormModel, ButtonUtil, treeBuilder, ProjectsPickerPopup, S
 
 			this.$(".rpt-tree-crit").each(function(i, dom) {
 				var type = workspaceType(dom);
+				var jstype = jsTreeType(dom);
 				var nodelimit = nodeLimit(dom);
 				var isStrict = isStrictSelection(dom);
 				var url = config.contextPath + "/" + type + "-browser/drives";
 
 				$.get(url, "linkables", "json").done(function(data) {
 					var settings = _.clone(config);
-					settings.workspace = type;
+					settings.workspace = jstype;
 					settings.nodelimit = nodelimit;
 					settings.model = data;
 					settings.isStrict = isStrict;
