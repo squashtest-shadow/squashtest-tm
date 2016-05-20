@@ -20,11 +20,10 @@
  */
 package org.squashtest.tm.service.audit;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 
@@ -38,9 +37,9 @@ import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
 public interface RequirementAuditTrailService {
 	RequirementLargePropertyChange findLargePropertyChangeById(long eventId);
 	
-	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId, Paging paging);
+	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId, Pageable pageable);
 
-	PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId);
+	Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId);
 
 
 }

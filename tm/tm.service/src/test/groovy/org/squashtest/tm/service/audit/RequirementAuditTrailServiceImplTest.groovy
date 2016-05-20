@@ -64,12 +64,12 @@ class RequirementAuditTrailServiceImplTest extends Specification {
 		
 		
 		when:
-		def res = service.findAllByRequirementVersionIdOrderedByDate(10L, paging)
+		def res = service.findAllByRequirementVersionIdOrderedByDate(10L, request)
 		
 		then:
-		res.pagedItems == events
-		res.firstItemIndex == 0
-		res.totalNumberOfItems == 20L
+                // note : this test becomes more irrelevant now that Spring Data pagination API is 
+                // in use. Perhaps we should just remove that test altogether.
+		res == pageres
 		
 	}
 	

@@ -37,14 +37,13 @@ import org.apache.commons.collections.Transformer;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PageCollectionHolderWrapper;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.milestone.Milestone;
@@ -176,28 +175,25 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 
 	/**
 	 * @see org.squashtest.tm.service.requirement.CustomRequirementVersionManagerService#findAllByRequirement(long,
-	 *      org.squashtest.tm.core.foundation.collection.PagingAndSorting)
+	 *      org.springframework.data.Pageable)
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
 			+ OR_HAS_ROLE_ADMIN)
 	@Transactional(readOnly = true)
-	public PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId, PagingAndSorting pas) {
-
-		Pageable pageable = pas.toPageable();
+	public Page<RequirementVersion> findAllByRequirement(long requirementId, Pageable pageable) {
 
 		Page<RequirementVersion> page = requirementVersionDao.findAllByRequirementId(requirementId, pageable);
 
-		return new PageCollectionHolderWrapper<>(page);
+                return page;
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#requirementId, 'org.squashtest.tm.domain.requirement.Requirement', 'READ')"
 			+ OR_HAS_ROLE_ADMIN)
 	public List<RequirementVersion> findAllByRequirement(long requirementId) {
-		DefaultPagingAndSorting pas = new DefaultPagingAndSorting("versionNumber", true);
-		pas.setSortOrder(SortOrder.DESCENDING);
-		return findAllByRequirement(requirementId, pas).getPagedItems();
+                Pageable pageable = new PageRequest(0, Integer.MAX_VALUE, Sort.Direction.DESC, "versionNumber");
+		return findAllByRequirement(requirementId, pageable).getContent();
 	}
 
 	@Override

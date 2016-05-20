@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.model.datatable;
 
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
+import org.springframework.data.domain.Page;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,25 +35,34 @@ import java.util.List;
  * @param <X>
  */
 public abstract class DataTableModelBuilder<X> {
+    
 	private long currentIndex = 0;
 
+        
+        // ************* public API ****************
+        
+	public final DataTableModel buildDataModel(Page<X> page, String sEcho) {
+            currentIndex = (page.getNumber() * page.getSize()) + 1;
+            DataTableModel model = createModelFromItems(sEcho, page.getContent());
+            model.displayRowsFromTotalOf(page.getTotalElements());
+            return model;
+        }
+        
 	public final DataTableModel buildDataModel(PagedCollectionHolder<List<X>> holder, String sEcho) {
-
-		currentIndex = holder.getFirstItemIndex() + 1;
-		Collection<X> pagedItems = holder.getPagedItems();
-		DataTableModel model = createModelFromItems(sEcho, pagedItems);
-		model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
-
-		return model;
-
+            currentIndex = holder.getFirstItemIndex() + 1;
+            DataTableModel model = createModelFromItems(sEcho, holder.getPagedItems());
+            model.displayRowsFromTotalOf(holder.getTotalNumberOfItems());
+            return model;
 	}
+        
+        public final Collection<Object> buildRawModel(Page<X> page){
+            currentIndex = (page.getNumber() * page.getSize()) + 1;
+            return buildRawModel(page.getContent());
+        }
 
 	public final Collection<Object> buildRawModel(PagedCollectionHolder<List<X>> holder) {
-
-		currentIndex = holder.getFirstItemIndex() + 1;
-		Collection<X> pagedItems = holder.getPagedItems();
-
-		return buildRawModel(pagedItems);
+            currentIndex = holder.getFirstItemIndex() + 1;
+            return buildRawModel(holder.getPagedItems());
 
 	}
 
@@ -70,12 +80,14 @@ public abstract class DataTableModelBuilder<X> {
 
 
 
-
-
 	public List<Object> buildRawModel(Collection<X> pagedItems, int startIndex) {
 		currentIndex = startIndex;
 		return buildRawModel(pagedItems);
 	}
+        
+        
+        // *********** private ********************
+        
 	private DataTableModel createModelFromItems(String sEcho, Collection<X> pagedItems) {
 		DataTableModel model = new DataTableModel(sEcho);
 

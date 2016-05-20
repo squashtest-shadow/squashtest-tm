@@ -20,16 +20,16 @@
  */
 package org.squashtest.tm.web.internal.controller.audittrail;
 
-import java.util.List;
 import java.util.Locale;
 
 import javax.inject.Inject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.domain.event.ChangedProperty;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
 import org.squashtest.tm.domain.event.RequirementLargePropertyChange;
@@ -38,7 +38,7 @@ import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTablePaging;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 
 /**
  * This controller handles requests related to a requirement's audit trail (ie its collection of
@@ -61,14 +61,16 @@ public class RequirementAuditTrailController {
 	@ResponseBody
 	public DataTableModel getEventsTableModel(@PathVariable long requirementVersionId, DataTableDrawParameters drawParams,
 			Locale locale) {
-		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
-				.findAllByRequirementVersionIdOrderedByDate(requirementVersionId,
-						new DataTablePaging(drawParams));
+            
+            Pageable pageable = SpringPagination.pageable(drawParams);
+            
+            Page<RequirementAuditEvent> auditTrail = auditTrailService
+                            .findAllByRequirementVersionIdOrderedByDate(requirementVersionId, pageable);
 
-		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
-				i18nHelper);
+            RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,
+                            i18nHelper);
 
-		return builder.buildDataModel(auditTrail, drawParams.getsEcho());
+            return builder.buildDataModel(auditTrail, drawParams.getsEcho());
 	}
 	
 	@RequestMapping(value="fat-prop-change-events/{eventId}") @ResponseBody

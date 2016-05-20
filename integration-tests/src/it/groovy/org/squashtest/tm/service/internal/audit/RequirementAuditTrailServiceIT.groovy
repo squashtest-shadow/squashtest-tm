@@ -24,6 +24,9 @@ import static org.junit.Assert.*;
 
 import javax.inject.Inject;
 
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Pageable
+import org.springframework.data.domain.PageRequest
 import org.spockframework.util.NotThreadSafe;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.core.foundation.collection.Paging;
@@ -51,17 +54,15 @@ class RequirementAuditTrailServiceIT extends DbunitServiceSpecification {
 		def requirementId=-1L
 			
 		and:
-		Paging paging = Mock()
-		paging.getFirstItemIndex() >> 0
-		paging.getPageSize() >> 3
+                Pageable pageable = new PageRequest(0,3)
 		
 		when :
-		PagedCollectionHolder paged = service.findAllByRequirementVersionIdOrderedByDate(requirementId, paging);
+		Page paged = service.findAllByRequirementVersionIdOrderedByDate(requirementId, pageable);
 		
 		then :
-		paged.pagedItems.collect { it.id } == [-13l, -12L , -14L]
-		paged.firstItemIndex == 0
-		paged.totalNumberOfItems == 4
+		paged.content.collect { it.id } == [-13l, -12L , -14L]
+		paged.number == 0
+		paged.totalElements == 4
 	}
 
 }

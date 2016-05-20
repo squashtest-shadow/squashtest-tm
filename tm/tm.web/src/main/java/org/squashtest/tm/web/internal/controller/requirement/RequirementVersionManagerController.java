@@ -66,8 +66,12 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import com.google.common.base.Optional;
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 
 @Controller
 @RequestMapping("/requirements/{requirementId}/versions")
@@ -168,11 +172,11 @@ public class RequirementVersionManagerController {
 	@ResponseBody
 	public DataTableModel getRequirementVersionsTableModel(@PathVariable long requirementId,
 			DataTableDrawParameters params, final Locale locale) {
-		PagingAndSorting pas = new DataTableSorting(params, versionMapper);
+                Pageable pageable = SpringPagination.pageable(params, versionMapper);
 
-		PagedCollectionHolder<List<RequirementVersion>> holder = versionService.findAllByRequirement(requirementId, pas);
+		Page<RequirementVersion> page = versionService.findAllByRequirement(requirementId, pageable);
 
-		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(holder,
+		return new RequirementVersionDataTableModel(locale, levelFormatterProvider, i18nHelper).buildDataModel(page,
 				params.getsEcho());
 	}
 
@@ -191,8 +195,8 @@ public class RequirementVersionManagerController {
 	}
 
 	private DataTableModel getEventsTableModel(Requirement requirement){
-		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
-				.findAllByRequirementVersionIdOrderedByDate(requirement.getCurrentVersion().getId(), new DefaultPagingAndSorting());
+		Page<RequirementAuditEvent> auditTrail = auditTrailService
+				.findAllByRequirementVersionIdOrderedByDate(requirement.getCurrentVersion().getId(), SpringPaginationUtils.defaultPaging("date"));
 
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
 

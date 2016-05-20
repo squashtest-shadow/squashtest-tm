@@ -24,7 +24,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PageCollectionHolderWrapper;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.Paging;
 import org.squashtest.tm.domain.event.RequirementAuditEvent;
@@ -36,6 +35,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author Gregory Fouquet
@@ -52,40 +52,20 @@ public class RequirementAuditTrailServiceImpl implements RequirementAuditTrailSe
 
 	/**
 	 * @see org.squashtest.tm.service.audit.RequirementAuditTrailService#findAllByRequirementVersionIdOrderedByDate(long,
-	 *      org.squashtest.tm.core.foundation.collection.Paging)
+	 *      org.springframework.data.domain.Pageable)
 	 */
 	@Override
-	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(
-		long requirementVersionId, Paging paging) {
+	public Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderedByDate(
+		long requirementVersionId, Pageable pageable) {
 
-		Pageable pageRequest = new PageRequest(paging.getFirstItemIndex() / paging.getPageSize(), paging.getPageSize());
-
-		Page<RequirementAuditEvent> page = auditEventDao.findAllByRequirementVersionIdOrderByDateDesc(
-			requirementVersionId, pageRequest);
-
-		return new PageCollectionHolderWrapper<>(page);
+		return auditEventDao.findAllByRequirementVersionIdOrderByDateDesc(
+			requirementVersionId, pageable);
 	}
 
 	@Override
-	public PagedCollectionHolder<List<RequirementAuditEvent>> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId) {
-		Paging paging = new Paging() {
-
-			@Override
-			public boolean shouldDisplayAll() {
-				return true;
-			}
-
-			@Override
-			public int getPageSize() {
-				return 0;
-			}
-
-			@Override
-			public int getFirstItemIndex() {
-				return 0;
-			}
-		};
-		return findAllByRequirementVersionIdOrderedByDate(requirementVersionId, paging);
+	public Page<RequirementAuditEvent> findAllByRequirementVersionIdOrderedByDate(long requirementVersionId) {
+            Pageable pageable = new PageRequest(0, Integer.MAX_VALUE);
+            return findAllByRequirementVersionIdOrderedByDate(requirementVersionId, pageable);
 	}
 
 	/**

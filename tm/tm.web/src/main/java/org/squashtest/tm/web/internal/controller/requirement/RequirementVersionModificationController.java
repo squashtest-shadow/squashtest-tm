@@ -38,6 +38,10 @@ import javax.inject.Provider;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -50,6 +54,7 @@ import org.springframework.web.util.HtmlUtils;
 import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.SinglePageCollectionHolder;
+import org.squashtest.tm.core.foundation.collection.SpringPaginationUtils;
 import org.squashtest.tm.domain.Level;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
@@ -282,12 +287,13 @@ public class RequirementVersionModificationController {
 
 
 	private DataTableModel getEventsTableModel(RequirementVersion requirementVersion){
-		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
-				.findAllByRequirementVersionIdOrderedByDate(requirementVersion.getId(), new DefaultPagingAndSorting());
+            Pageable pageable = new PageRequest(0, SpringPaginationUtils.DEFAULT_SIZE, Direction.DESC, "date");
+            Page<RequirementAuditEvent> auditTrail = auditTrailService
+                            .findAllByRequirementVersionIdOrderedByDate(requirementVersion.getId(), pageable);
 
-		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
+            RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(LocaleContextHolder.getLocale(), i18nHelper);
 
-		return builder.buildDataModel(auditTrail, "");
+            return builder.buildDataModel(auditTrail, "");
 
 	}
 
@@ -391,8 +397,7 @@ public class RequirementVersionModificationController {
 				.getId());
 		mav.addObject("siblingVersions", versions);
 		// =================AUDIT TRAIL
-		PagedCollectionHolder<List<RequirementAuditEvent>> auditTrail = auditTrailService
-				.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
+		Page<RequirementAuditEvent> auditTrail = auditTrailService.findAllByRequirementVersionIdOrderedByDate(requirementVersionId);
 
 		RequirementAuditEventTableModelBuilder builder = new RequirementAuditEventTableModelBuilder(locale,	i18nHelper);
 

@@ -24,10 +24,10 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementCriticality;
@@ -84,8 +84,7 @@ public interface CustomRequirementVersionManagerService {
 	 * @return
 	 */
 	@Transactional(readOnly = true)
-	PagedCollectionHolder<List<RequirementVersion>> findAllByRequirement(long requirementId,
-			@NotNull PagingAndSorting pas);
+	Page<RequirementVersion> findAllByRequirement(long requirementId, @NotNull Pageable pas);
 
 	/**
 	 * Fetches all versions for the given requirement

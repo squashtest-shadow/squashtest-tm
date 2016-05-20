@@ -27,36 +27,61 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 /**
- * Transitional : this toolbox bridge the gap between our old messy API and
+ * TRANSITIONAL
+ * 
+ * his toolbox bridge the gap between our old messy API and
  * the Pageable API from Spring
  */
 public class SpringPaginationUtils {
+    
+    public static final int DEFAULT_SIZE = 50;
 
-	private SpringPaginationUtils(){
+    private SpringPaginationUtils(){
 
-	}
+    }
 
-	public static Pageable toPageable(PagingAndSorting pas){
+    public static Pageable toPageable(PagingAndSorting pas){
 
-		// 1 - pagination
-		// default for "should display all"
-		int pagenum = 0;
-		int pagesize = Integer.MAX_VALUE;
+            // 1 - pagination
+            // default for "should display all"
+            int pagenum = 0;
+            int pagesize = Integer.MAX_VALUE;
 
-		if (! pas.shouldDisplayAll()){
-			pagenum = pas.getFirstItemIndex() / pas.getPageSize();
-			pagesize = pas.getPageSize();
-		}
+            if (! pas.shouldDisplayAll()){
+                    pagenum = pas.getFirstItemIndex() / pas.getPageSize();
+                    pagesize = pas.getPageSize();
+            }
 
 
-		// 2 - sorting
-		Sort sort = null;
-		if (! StringUtils.isBlank(pas.getSortedAttribute())){
-			Direction dir = SortOrder.DESCENDING == pas.getSortOrder() ? Direction.DESC : Direction.ASC;
-			sort = new Sort(dir, pas.getSortedAttribute());
-		}
+            // 2 - sorting
+            Sort sort = null;
+            if (! StringUtils.isBlank(pas.getSortedAttribute())){
+                    Direction dir = SortOrder.DESCENDING == pas.getSortOrder() ? Direction.DESC : Direction.ASC;
+                    sort = new Sort(dir, pas.getSortedAttribute());
+            }
 
-		return new PageRequest(pagenum, pagesize, sort);
-	}
+            return new PageRequest(pagenum, pagesize, sort);
+    }
+
+    /**
+     * Returns a Pageable that will search for the DEFAULT_SIZE first items. Since no sorting directive 
+     * is specified either, this method rather means "return me DEFAULT_SIZE random items".
+     * 
+     * @return 
+     */
+    public static Pageable defaultPaging(){
+        return new PageRequest(0, DEFAULT_SIZE);
+    }
+
+    /**
+     * Returns a Pageable that will search for the DEFAULT_SIZE first items, sorted by the given 
+     * attribute ascending.
+     * 
+     * @param attribute
+     * @return 
+     */
+    public static Pageable defaultPaging(String attribute){
+        return new PageRequest(0, DEFAULT_SIZE, Direction.ASC, attribute);
+    }
 
 }

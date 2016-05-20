@@ -24,7 +24,7 @@ package org.squashtest.tm.web.internal.controller.requirement
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import javax.inject.Provider
-
+import org.springframework.data.domain.Page
 import org.springframework.ui.ExtendedModelMap
 import org.springframework.ui.Model
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
@@ -90,11 +90,12 @@ class RequirementVersionModificationControllerTest extends Specification {
 	}
 
 	def mockAuditTrailService(){
-		PagedCollectionHolder holder = Mock()
-		holder.getFirstItemIndex() >> 0
-		holder.getPagedItems() >> []
-		holder.getTotalNumberOfItems() >> 0
-		auditTrailService.findAllByRequirementVersionIdOrderedByDate(_,_)>> holder
+		Page page = Mock()
+		page.number >> 0
+                page.size >> 50
+		page.content >> []
+		page.totalElements >> 100
+		auditTrailService.findAllByRequirementVersionIdOrderedByDate(_,_)>> page
 	}
 
 	def criticalityBuilderProvider() {

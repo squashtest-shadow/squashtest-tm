@@ -28,6 +28,7 @@ import org.squashtest.tm.service.audit.RequirementAuditTrailService
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel
+import org.springframework.data.domain.Page
 
 import spock.lang.Specification
 
@@ -52,9 +53,9 @@ class RequirementAuditTrailControllerTest extends Specification {
 
 		and:
 		RequirementCreation event = Mock()
-		PagedCollectionHolder holder = Mock()
-		holder.pagedItems >> [event]
-		requirementAuditTrailService.findAllByRequirementVersionIdOrderedByDate(10L, _) >> holder
+		Page page = Mock()
+		page.content >> [event]
+		requirementAuditTrailService.findAllByRequirementVersionIdOrderedByDate(10L, _) >> page
 
 		when:
 		DataTableModel model =  controller.getEventsTableModel(10L, drawParams, locale)
