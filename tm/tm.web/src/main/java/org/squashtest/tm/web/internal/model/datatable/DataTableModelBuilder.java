@@ -42,7 +42,7 @@ public abstract class DataTableModelBuilder<X> {
         // ************* public API ****************
         
 	public final DataTableModel buildDataModel(Page<X> page, String sEcho) {
-            currentIndex = (page.getNumber() * page.getSize()) + 1;
+            currentIndex = ((long)page.getNumber() * page.getSize()) + 1L;
             DataTableModel model = createModelFromItems(sEcho, page.getContent());
             model.displayRowsFromTotalOf(page.getTotalElements());
             return model;
@@ -56,7 +56,7 @@ public abstract class DataTableModelBuilder<X> {
 	}
         
         public final Collection<Object> buildRawModel(Page<X> page){
-            currentIndex = (page.getNumber() * page.getSize()) + 1;
+            currentIndex = ((long)page.getNumber() * page.getSize()) + 1L;
             return buildRawModel(page.getContent());
         }
 

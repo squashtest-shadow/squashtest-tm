@@ -119,14 +119,16 @@ public class TestSuiteTestInventoryStatistics {
 	}
 
 	public float getPcPrevProgress() {
-		if (nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) != 0.0f) {
-			return Math.round(getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
-					new Date(), getNbTotal()) * 10000) / (float) 100;
-		} else {
-			return getPcProgress();
-		}
-
-	}
+            float nbToExecuteToDate = nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal());
+            // next line : SONAR says that's how you compare floats with 0.0f
+            if ( Float.floatToRawIntBits(nbToExecuteToDate) == 0) {
+                return getPcProgress();
+            } else {
+                return Math.round(getNbExecuted() / nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd,
+                        new Date(), getNbTotal()) * 10000) / (float) 100;
+            }
+            
+        }
 
 	public int getNbPrevToExecute() {
 		return (int) nbOfTestsToExecuteToDate(scheduledStart, scheduledEnd, new Date(), getNbTotal()) - getNbExecuted();
@@ -163,14 +165,14 @@ public class TestSuiteTestInventoryStatistics {
 	public void addNbLow(int nbLow) {
 		this.nbLow += nbLow;
 	}
-
+        
 	private float nbOfTestsToExecuteToDate(Date scheduledStart, Date scheduledEnd, Date currentDate, int nbTests) {
 
 		float result;
 
 		// if current date is before the start of the previsional schedule
 		if (scheduledStart == null || scheduledEnd == null || currentDate.before(scheduledStart)) {
-			result = 0.0f;
+			result = 0.00f;
 			// if current date is after the end of the execution schedule
 		} else if (currentDate.after(scheduledEnd)) {
 			result = nbTests;
