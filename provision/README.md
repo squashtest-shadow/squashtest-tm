@@ -24,4 +24,3 @@ Maven properties
 ----------------
 
 * `-Ddb.emptycontent=true` : will create a database with no mock user data
-* `-Dassembly.skip=true` : this will skip platform (jar) provisioning

@@ -476,13 +476,13 @@
 	@NamedQuery(name = "Project.findAllAuthorizedUsersForProject", query = "select distinct c.audit from Campaign c join c.project p where p.id in :projectIds"),
 
 	//Attachement et al
-	@NamedQuery(name = "attachment.findContentId", query = "select aContent.id from Attachment attachment join attachment.content aContent where attachment.id = :attachId"),
-	@NamedQuery(name = "attachment.removeContent", query = "delete from AttachmentContent where id = :contentId"),
 	@NamedQuery(name = "attachment.getAttachmentAndContentIdsFromList", query = "select attachment.id, content.id from AttachmentList list join list.attachments attachment join attachment.content content where list.id in (:listIds) group by attachment.id, content.id"),
 	@NamedQuery(name = "attachment.removeContents", query = "delete AttachmentContent ac where ac.id in (:contentIds)"),
 	@NamedQuery(name = "attachment.removeAttachments", query = "delete Attachment at where at.id in (:attachIds)"),
 	@NamedQuery(name = "attachment.deleteAttachmentLists", query = "delete AttachmentList al where al.id in (:listIds)"),
-
+        @NamedQuery(name = "Attachment.findAttachmentWithContent", query = "from Attachment att join fetch att.content where att.id = :id"),
+        @NamedQuery(name = "Attachment.findAllAttachments", query = "select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id"),
+     
 	//ProjectFilter
 	@NamedQuery(name = "projectFilter.findByUserLogin", query = "from ProjectFilter where userLogin = :givenUserLogin"),
 

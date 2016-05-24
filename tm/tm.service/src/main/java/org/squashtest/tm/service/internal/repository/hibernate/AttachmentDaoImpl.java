@@ -18,27 +18,31 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.attachment;
+package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.Set;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.attachment.AttachmentHolder;
+import org.squashtest.tm.domain.attachment.AttachmentContent;
+import org.squashtest.tm.service.internal.repository.CustomAttachmentDao;
 
-@Transactional(readOnly = true)
-public interface AttachmentFinderService {
-        
-	Page<Attachment> findPagedAttachments(long attachmentListId, Pageable pageable);
 
-	Page<Attachment> findPagedAttachments(AttachmentHolder attached, Pageable pageable);
+public class AttachmentDaoImpl extends HibernateEntityDao<Attachment>
+ implements CustomAttachmentDao {
 
-	Attachment findAttachment(Long attachmentId);
+   
+    @Override
+    public void removeAttachment(Long attachmentId) {
 
-	Set<Attachment> findAttachments(Long attachmentListId);
+        Attachment attachment = findById(attachmentId);
 
-	String findAttachmentShortName(Long attachmentId);
+	//[Issue 1456 problem with h2 database that will try to delete 2 times the same lob in lobs.db]
+        AttachmentContent content = attachment.getContent();
+        content.setContent(null);
+
+        flush();
+	//End [Issue 1456]
+
+        removeEntity(attachment);
+
+    }
 
 }

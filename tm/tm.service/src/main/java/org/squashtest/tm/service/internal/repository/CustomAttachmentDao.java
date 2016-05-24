@@ -18,27 +18,24 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.attachment;
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.squashtest.tm.service.internal.repository;
 
-import java.util.Set;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-import org.springframework.transaction.annotation.Transactional;
+import java.util.List;
 import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.attachment.AttachmentHolder;
 
-@Transactional(readOnly = true)
-public interface AttachmentFinderService {
+/**
+ *
+ * @author bsiri
+ */
+public interface CustomAttachmentDao {
+    	
+	//cannot override the final remove(long) method, so I add here a new one
+	void removeAttachment(Long attachmentId);
         
-	Page<Attachment> findPagedAttachments(long attachmentListId, Pageable pageable);
-
-	Page<Attachment> findPagedAttachments(AttachmentHolder attached, Pageable pageable);
-
-	Attachment findAttachment(Long attachmentId);
-
-	Set<Attachment> findAttachments(Long attachmentListId);
-
-	String findAttachmentShortName(Long attachmentId);
-
+        void removeAll(List<Attachment> attachments);
 }

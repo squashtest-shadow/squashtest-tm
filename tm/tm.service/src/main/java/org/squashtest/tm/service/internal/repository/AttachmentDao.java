@@ -20,20 +20,43 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
 import java.util.Set;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.attachment.Attachment;
 
-public interface AttachmentDao extends EntityDao<Attachment>{
-	
-	Attachment findAttachmentWithContent(Long attachmentId);
-	
-	Set<Attachment> findAllAttachments(Long attachmentListId);
-	
-	//cannot override the final remove(long) method, so I add here a new one
-	void removeAttachment(Long attachmentId);
-	
-	List<Attachment> findAllAttachmentsFiltered(Long attachmentListId, 	PagingAndSorting pas);
+public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAttachmentDao{
+
+    @UsesTheSpringJpaDsl
+    Attachment findById(long attachmentId);
+    
+    /**
+     * Returns an attachment given its ID, with payload (the blob) 
+     * initialized 
+     * 
+     * @param attachmentId
+     * @return 
+     */
+    @UsesANamedQueryInPackageInfoOrElsewhere                
+    Attachment findAttachmentWithContent(@Param("id") Long attachmentId);
+
+    /**
+     * Returns all the attachments that belong to the given AttachmentList
+     * @param attachmentListId
+     * @return 
+     */
+    @UsesANamedQueryInPackageInfoOrElsewhere
+    Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
+
+    /**
+     * Same than above, pagined version.
+     * 
+     */
+
+    @Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id") 
+    Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
 }

@@ -26,6 +26,7 @@ import javax.inject.Inject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,14 +34,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.service.attachment.AttachmentManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.controller.generic.ServiceAwareAttachmentTableModelHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.jquery.RenameModel;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
@@ -65,7 +65,7 @@ public class AttachmentManagerController {
 	private final DatatableMapper attachmentMapper = new NameBasedMapper()
 	.mapAttribute("item-id", "name" , Attachment.class)
 	.mapAttribute("hyphenated-name", "name", Attachment.class)
-	.mapAttribute("size", "size", Attachment.class)
+	.mapAttribute("size", "contentSize", Attachment.class)
 	.mapAttribute("added-on", "addedOn", Attachment.class);
 
 
@@ -91,11 +91,9 @@ public class AttachmentManagerController {
 	@ResponseBody
 	@RequestMapping(value = "/details", method = RequestMethod.GET)
 	public
-	DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId,
-											final DataTableDrawParameters params) {
-		PagingAndSorting pas = createPaging(params, attachmentMapper);
-
-		return attachmentModelHelper.findPagedAttachments(attachListId, pas, params.getsEcho());
+	DataTableModel displayAttachmentDetails(@PathVariable(ATTACH_LIST_ID) long attachListId, final DataTableDrawParameters params) {
+            Pageable pageable = SpringPagination.pageable(params, attachmentMapper);
+            return attachmentModelHelper.findPagedAttachments(attachListId, pageable, params.getsEcho());
 
 	}
 
@@ -120,14 +118,5 @@ public class AttachmentManagerController {
 		return new RenameModel(newName);
 
 	}
-
-
-	/* ******************************* private stuffs ***************************** */
-
-
-	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<String> mapper) {
-		return new DataTableSorting(params, mapper);
-	}
-
 
 }

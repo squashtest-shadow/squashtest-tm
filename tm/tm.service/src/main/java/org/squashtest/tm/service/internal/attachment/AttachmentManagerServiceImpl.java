@@ -36,10 +36,9 @@ import javax.persistence.PersistenceContext;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentContent;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
@@ -102,7 +101,7 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 		attachment.setAddedOn(new Date());
 		attachment.setName(rawAttachment.getName());
 		attachment.setSize(rawAttachment.getSizeInBytes());
-		attachmentDao.persist(attachment);
+		attachmentDao.save(attachment);
 
 
 		reindexBoundEntities(attachmentListId);
@@ -193,14 +192,12 @@ public class AttachmentManagerServiceImpl implements AttachmentManagerService {
 	}
 
 	@Override
-	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(long attachmentListId, PagingAndSorting pas) {
-		List<Attachment> atts = attachmentDao.findAllAttachmentsFiltered(attachmentListId, pas);
-		long count = attachmentDao.findAllAttachments(attachmentListId).size();
-		return new PagingBackedPagedCollectionHolder<>(pas, count, atts);
+	public Page<Attachment> findPagedAttachments(long attachmentListId, Pageable pageable) {
+		return attachmentDao.findAllAttachmentsPagined(attachmentListId, pageable);
 	}
 
 	@Override
-	public PagedCollectionHolder<List<Attachment>> findPagedAttachments(AttachmentHolder attached, PagingAndSorting pas) {
+	public Page<Attachment> findPagedAttachments(AttachmentHolder attached, Pageable pas) {
 		return findPagedAttachments(attached.getAttachmentList().getId(), pas);
 	}
 

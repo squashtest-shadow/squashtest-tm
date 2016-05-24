@@ -20,15 +20,15 @@
  */
 package org.squashtest.tm.web.internal.controller.generic;
 
-import java.util.List;
 import java.util.Set;
 
 import javax.inject.Inject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.core.foundation.collection.DefaultPagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.service.attachment.AttachmentFinderService;
@@ -47,21 +47,23 @@ public class ServiceAwareAttachmentTableModelHelper {
 	
 	
 	public DataTableModel findPagedAttachments(AttachmentHolder holder){
-		return findPagedAttachments(holder, new DefaultPagingAndSorting("Attachment.name"), "");
+            Pageable pageable = new PageRequest(0, 50, new Sort("Attachment.name"));
+            return findPagedAttachments(holder, pageable, "");
 	}
 	
-	public DataTableModel findPagedAttachments(AttachmentHolder holder, PagingAndSorting pas, String sEcho){
-		PagedCollectionHolder<List<Attachment>> attachments = attachmentFinderService.findPagedAttachments(holder, pas);
-		return new AttachmentsTableModelHelper(i18nHelper).buildDataModel(attachments, sEcho);
+	public DataTableModel findPagedAttachments(AttachmentHolder holder, Pageable pageable, String sEcho){
+            Page<Attachment> attachments = attachmentFinderService.findPagedAttachments(holder, pageable);
+            return new AttachmentsTableModelHelper(i18nHelper).buildDataModel(attachments, sEcho);
 	}
 	
 	public DataTableModel findPagedAttachments(long attachmentListId){
-		return findPagedAttachments(attachmentListId, new DefaultPagingAndSorting("Attachment.name"), "");
+            Pageable pageable = new PageRequest(0, 50, new Sort("Attachment.name"));
+            return findPagedAttachments(attachmentListId, pageable, "");
 	}
 	
-	public DataTableModel findPagedAttachments(long attachmentListId, PagingAndSorting pas, String sEcho){
-		PagedCollectionHolder<List<Attachment>> attachments = attachmentFinderService.findPagedAttachments(attachmentListId, pas);
-		return new AttachmentsTableModelHelper(i18nHelper).buildDataModel(attachments, sEcho);		
+	public DataTableModel findPagedAttachments(long attachmentListId, Pageable pageable, String sEcho){
+            Page<Attachment> attachments = attachmentFinderService.findPagedAttachments(attachmentListId, pageable);
+            return new AttachmentsTableModelHelper(i18nHelper).buildDataModel(attachments, sEcho);		
 	}
 	
 	public Set<Attachment> findAttachments(AttachmentHolder holder){

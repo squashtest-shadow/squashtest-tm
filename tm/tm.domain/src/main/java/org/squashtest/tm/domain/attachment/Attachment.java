@@ -55,7 +55,13 @@ public class Attachment {
 	private String type;
 
 	/** attachment size in bytes */
-	private Long size = 0L;
+        /*
+        * The name of the attribute slightly differs from the name of the DB column because it allows Hibernate to 
+        * desambiguate 'size' as a method of a collection (such as AttachmentList.attachments.size()) from 'size' as 
+        * a property (such as Attachment.size)
+        */
+        @Column(name = "SIZE")
+	private Long contentSize = 0L;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE, CascadeType.DETACH })
 	@JoinColumn(name = "CONTENT_ID")
@@ -156,11 +162,11 @@ public class Attachment {
 	}
 
 	public Long getSize() {
-		return size;
+		return contentSize;
 	}
 
 	public void setSize(Long size) {
-		this.size = size;
+		this.contentSize = size;
 	}
 
 	public String getFormattedSize() {
@@ -169,7 +175,7 @@ public class Attachment {
 
 	// TODO text formatting should not be the responsibility of domain object. computing size in megs is, though
 	public String getFormattedSize(Locale locale) {
-		Float megaSize = size / MEGA_BYTE;
+		Float megaSize = contentSize / MEGA_BYTE;
 		return String.format(locale, "%.2f", megaSize);
 	}
 
