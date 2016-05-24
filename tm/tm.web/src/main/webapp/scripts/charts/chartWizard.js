@@ -21,8 +21,8 @@
 define([ "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, workspace, router, WizardRouter, WizardView, WizardModel) {
 
 	$("#back-popup").confirmDialog().on('confirmdialogconfirm', function(){
-			var url = "custom-report-workspace";
-			window.location.href = squashtm.app.contextRoot + url;
+			var url = router.buildURL('custom-report-base');
+			window.location.href = url;
 			});
 		
 		$("#back").on('click', function() {

@@ -85,7 +85,7 @@ public class CustomReportWorkspaceController {
 
 	@Inject
 	protected InternationalizationHelper i18nHelper;
-	
+
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
@@ -99,9 +99,8 @@ public class CustomReportWorkspaceController {
 		Set<Long> nodeIdToOpen = new HashSet<>();
 		nodeIdToOpen.addAll(convertCookieIds(openedNodes));
 		//Every node above selected node should be opened and it should be not necessary to get ancestors.
-		//But we have corner cases liken when we create a new chart in different screen...
+		//But we have corner cases like when we create a new chart in different screen...
 		if (StringUtils.isNotBlank(elementId)) {
-			model.addAttribute("selectedNode", elementId);
 			nodeIdToOpen.addAll(findAncestorsOfselectedNode(elementId));
 		}
 
@@ -113,7 +112,7 @@ public class CustomReportWorkspaceController {
 		}
 
 		model.addAttribute("rootModel", rootNodes);
-		
+
 		Optional<Milestone> milestone = activeMilestoneHolder.getActiveMilestone();
 
 		//Active Milestone

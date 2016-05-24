@@ -192,6 +192,7 @@ requirejs.config({
         "jqplot-point-labels": "lib/jqplot/plugins/jqplot.pointLabels.min",
 //				"moment" : "lib/momentjs/moment-with-locales.min",
         "moment": "lib/momentjs/moment-with-locales.min",
+        "is": "lib/is/is.min",
         //cke
         "ckeditor": "ckeditor/ckeditor",
         "jquery.ckeditor": "ckeditor/adapters/jquery",

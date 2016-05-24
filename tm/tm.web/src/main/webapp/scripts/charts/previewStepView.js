@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory",'jquery.cookie'],
-	function($, backbone, _, Handlebars, AbstractStepView, router, chart ) {
+define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./abstractStepView", "workspace.routing", "custom-report-workspace/charts/chartFactory",'is','jquery.cookie'],
+	function($, backbone, _, Handlebars, AbstractStepView, router, chart, is ) {
 	"use strict";
 
 	var previewStepView = AbstractStepView.extend({
@@ -54,11 +54,12 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 			this.updateModel();
 
 			var targetUrl;
+			var path = this.getCookiePath();
 
 			if (this.isModify()){
-        targetUrl = router.buildURL("chart.update", parentId);
+				targetUrl = router.buildURL("chart.update", parentId);
 			} else {
-        targetUrl = router.buildURL("chart.new", parentId);
+				targetUrl = router.buildURL("chart.new", parentId);
 			}
 
 			$.ajax({
@@ -68,9 +69,9 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 				data : this.model.toJson()
 
 			}).done(function(id){
-        var nodeToSelect = "CustomReportChart-" + id;
-        $.cookie("jstree_select",nodeToSelect,{path:"/squash/custom-report-workspace"});
-				window.location.href = router.buildURL("custom-report-chart-redirect",id);
+				var nodeToSelect = "CustomReportChart-" + id;
+				$.cookie("jstree_select",nodeToSelect,{path:path});
+						window.location.href = router.buildURL("custom-report-chart-redirect",id);
 			});
 
 
@@ -80,6 +81,19 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "./
 		updateModel : function() {
 		    var name = $("#chart-name").val();
 		    this.model.set("name",name );
+		},
+		
+		/**
+		 * IE and FF add a trailing / to cookies...
+		 * Chrome don't...
+		 * So we need to put the good path to avoid two jstree_select cookies with differents path.
+		 */
+		getCookiePath : function () {
+			var path = "/squash/custom-report-workspace";
+			if(is.ie()||is.firefox()){
+				path = path + "/";
+			}
+			return path;
 		}
 
 	});
