@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
+import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -47,18 +48,18 @@ import javax.servlet.http.HttpSession;
 import java.util.List;
 
 /*
- * 
+ *
  * Warning : its job partly overlaps the one of BugTrackerContextPersistenceFilter because
  * it creates a BugtrackerContext.
- * 
- * If you really want to know the reason is that when the hook is invoked we're still in the security chain, 
- * not in the regular filter chain. So the context does not exist yet, therefore there is no place to store the 
- * credentials even if the bugtracker auto auth is a success. 
- * 
+ *
+ * If you really want to know the reason is that when the hook is invoked we're still in the security chain,
+ * not in the regular filter chain. So the context does not exist yet, therefore there is no place to store the
+ * credentials even if the bugtracker auto auth is a success.
+ *
  * This class was retro-fitted as an app listener in v1.13.0
  */
 @Component
-public class BugTrackerAutoconnectCallback implements ApplicationListener<AuthenticationSuccessEvent> {
+public class BugTrackerAutoconnectCallback implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAutoconnectCallback.class);
 
@@ -73,27 +74,29 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Authen
 
 	@Inject
 	private BugTrackerContextHolder contextHolder;
-	
+
 @Inject
 	private TaskExecutor taskExecutor;
 
 	private void onLoginSuccess(String username, String password, HttpSession session) {
 		if (taskExecutor == null) {
 			//skip if we cannot perform the operation asynchronously
-			LOGGER.info("Threadpool service not ready. Skipping autologging.");
+			LOGGER.info("BugTrackerAutoconnectCallback : Threadpool service not ready. Skipping autologging.");
 		} else if (bugTrackersLocalService == null) {
 			//skip if the required service is not up yet
-			LOGGER.info("no bugtracker available (service not ready yet). Skipping autologging.");
+			LOGGER.info("BugTrackerAutoconnectCallback : no bugtracker available (service not ready yet). Skipping autologging.");
 		} else {
 			//let's do it.
-			LOGGER.info("Autologging against known bugtrackers...");
+			LOGGER.info("BugTrackerAutoconnectCallback : Autologging against known bugtrackers...");
+			//creation of AsynchronousBugTrackerAutoconnect in this thread.
+
 			Runnable autoconnector = new AsynchronousBugTrackerAutoconnect(username, password, session);
 			taskExecutor.execute(autoconnector);
 		}
 	}
 
 	@Override
-	public void onApplicationEvent(AuthenticationSuccessEvent event) {
+	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
 		try {
 			String login = event.getAuthentication().getName();
 			String password = (String) event.getAuthentication().getCredentials();
@@ -101,7 +104,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Authen
 			onLoginSuccess(login, password, session);
 		} catch (ClassCastException ex) {
 			// Such errors should not break the app flow
-			LOGGER.warn("The following exception was caught and ignored in BT autoconnector : {}. It does not prevent Squash from working, yet it is probably a bug.", ex.getMessage(), ex);
+			LOGGER.warn("BugTrackerAutoconnectCallback : The following exception was caught and ignored in BT autoconnector : {}. It does not prevent Squash from working, yet it is probably a bug.", ex.getMessage(), ex);
 		}
 	}
 
@@ -120,6 +123,11 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Authen
 			this.username = username;
 			this.password = password;
 			this.session = session;
+			//As Spring SecurityContext is ThreadLocal by default, we must get the main thread SecurityContext
+			//and get a local reference pointing to this SecurityContext
+			//Take care that SecurityContext have been correctly created and initialized by Spring Security
+			//or you will have a race condition between spring security thread and this new thread
+			//See Issue 6085.
 			this.secContext = SecurityContextHolder.getContext();
 		}
 
@@ -128,7 +136,8 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Authen
 		public void run() {
 
 			BugTrackerContext newContext = new BugTrackerContext();
-			
+
+			//Setting the SecurityContext in the new thread with a reference to the original one.
 			SecurityContextHolder.setContext(secContext);
 			contextHolder.setContext(newContext);
 
@@ -137,16 +146,16 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Authen
 
 			for (BugTracker bugTracker : bugTrackers) {
 				try {
-					LOGGER.debug("try connexion of bug-tracker : {}", bugTracker.getName());
+					LOGGER.debug("BugTrackerAutoconnectCallback : try connexion of bug-tracker : {}", bugTracker.getName());
 					bugTrackersLocalService.setCredentials(username, password, bugTracker);
 					// if success, store the credential in context
-					LOGGER.debug("add credentials for bug-tracker : {}", bugTracker.getName());
+					LOGGER.debug("BugTrackerAutoconnectCallback : add credentials for bug-tracker : {}", bugTracker.getName());
 					AuthenticationCredentials creds = new AuthenticationCredentials(username, password);
 					newContext.setCredentials(bugTracker, creds);
 
 				} catch (BugTrackerRemoteException ex) {
-					LOGGER.info("Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", username, bugTracker.getName());
-					LOGGER.debug("Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
+					LOGGER.info("BugTrackerAutoconnectCallback : Failed to connect user '{}' to the bugtracker {} with the supplied credentials. User will have to connect manually.", username, bugTracker.getName());
+					LOGGER.debug("BugTrackerAutoconnectCallback : Bugtracker autoconnector threw this exception : {}", ex.getMessage(), ex);
 				}
 			}
 
@@ -181,7 +190,7 @@ public class BugTrackerAutoconnectCallback implements ApplicationListener<Authen
 			}
 
 			session.setAttribute(BugTrackerContextPersistenceFilter.BUG_TRACKER_CONTEXT_SESSION_KEY, newContext);
-			LOGGER.debug("BugTrackerContext stored to session");
+			LOGGER.debug("BugTrackerAutoconnectCallback : BugTrackerContext stored to session");
 		}
 
 

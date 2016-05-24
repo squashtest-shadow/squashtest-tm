@@ -94,12 +94,12 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
 		HttpSession session = ((HttpServletRequest) request).getSession(false);
 
 		if (session == null) {
-			LOGGER.info("Session was invalidated, BugTrackerContext will not be stored");
+			LOGGER.info("BugTrackerContextPersistenceFilter : Session was invalidated, BugTrackerContext will not be stored");
 			return;
 		}
 
 		storeContext(session, context);
-		LOGGER.debug("BugTrackerContext stored to session");
+		LOGGER.debug("BugTrackerContextPersistenceFilter : BugTrackerContext stored to session");
 	}
 
 	private void storeContext(HttpSession session, BugTrackerContext context) {
@@ -110,19 +110,19 @@ public final class BugTrackerContextPersistenceFilter extends OncePerRequestFilt
 	}
 
 	private BugTrackerContext loadContext(ServletRequest request) {
-		LOGGER.debug("Loading BugTrackerContext from HTTP session");
+		LOGGER.debug("BugTrackerContextPersistenceFilter : Loading BugTrackerContext from HTTP session");
 
 		HttpSession session = ((HttpServletRequest) request).getSession();
 		BugTrackerContext context = (BugTrackerContext) session.getAttribute(BUG_TRACKER_CONTEXT_SESSION_KEY);
 
 		if (context == null) {
-			LOGGER.info("No BugTrackerContext available, will create it and eagerly store it in session");
+			LOGGER.info("BugTrackerContextPersistenceFilter : No BugTrackerContext available, will create it and eagerly store it in session");
 			context = new BugTrackerContext();
 			storeContext(session, context);
 		}
 
 		if (LOGGER.isTraceEnabled()){
-			LOGGER.trace("BugTrackerContextPersistentFilter : loading context for session #{} with btcontext #{}", session.getId(),context.toString());
+			LOGGER.trace("BugTrackerContextPersistentFilter : Loading context for session #{} with btcontext #{}", session.getId(),context.toString());
 		}
 
 		return context;
