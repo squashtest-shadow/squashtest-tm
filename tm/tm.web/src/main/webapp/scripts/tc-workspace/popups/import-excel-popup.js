@@ -136,10 +136,10 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 
 	function init() {
 		$("#import-excel-dialog").tcimportDialog({
-			formats : [ "xls", "xlsx" ],
+			formats : [ "xls", "xlsx", "xlsm" ],
 			typeFormats : {
 				zip : [ "zip" ],
-				xls : [ "xls", "xlsx" ]
+				xls : [ "xls", "xlsx", "xlsm" ]
 			}
 		});
 	}

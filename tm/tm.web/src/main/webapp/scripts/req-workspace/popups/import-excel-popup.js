@@ -94,9 +94,9 @@ define([ "jquery", "tree", "handlebars", "underscore", "workspace/workspace.impo
 
 	function init() {
 		$("#import-excel-dialog").reqImportDialog({
-			formats : [ "xls", "xlsx" ],
+			formats : [ "xls", "xlsx", "xlsm" ],
 			typeFormats : {
-				xls : [ "xls", "xlsx" ]
+				xls : [ "xls", "xlsx", "xlsm" ]
 			}
 		});
 	}
