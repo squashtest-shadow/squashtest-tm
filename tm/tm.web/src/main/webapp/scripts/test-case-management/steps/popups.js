@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
-		function($, eventBus, translator) {
+define(['jquery', 'workspace.event-bus', 'squash.translator','underscore', 'jqueryui', 'jquery.squash.confirmdialog', 'jquery.squash.formdialog' ], 
+		function($, eventBus, translator, _) {
 
 
 	function _initDeleteStep(conf){
@@ -147,8 +147,9 @@ define(['jquery', 'workspace.event-bus', 'squash.translator', 'jqueryui', 'jquer
 				else{					
 					select.show();
 					$("#pick-call-step-dataset-nonavailable").hide();
-
-					$.each(json, function(idx, ds){
+					//issue 6148 ordering dataset
+					var sortDataset = _.sortBy(json,'name');
+					$.each(sortDataset, function(idx, ds){
 						var opt = $('<option value="'+ds.id+'">'+ds.name+'</option>');
 						select.append(opt);
 					});
