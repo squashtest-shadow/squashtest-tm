@@ -34,6 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.squashtest.tm.domain.Identified;
 
 @Configurable
@@ -83,7 +84,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 
 		try {
 			session = getCurrentSession();
-		} catch (HibernateException ex) {
+		} catch (InvalidDataAccessApiUsageException ex) {
 			session = null;
 		}
 
