@@ -35,7 +35,7 @@ public class CoverageTarget extends Target {
 	}
 
 	public void setReqPath(String reqPath) {
-		this.reqPath = reqPath;
+		this.reqPath = reqPath.trim();
 	}
 
 	public int getReqVersion() {
@@ -51,7 +51,7 @@ public class CoverageTarget extends Target {
 	}
 
 	public void setTcPath(String tcPath) {
-		this.tcPath = tcPath;
+		this.tcPath = tcPath.trim();
 	}
 
 	public boolean isReqPathWellFormed() {

@@ -44,12 +44,12 @@ public class RequirementTarget extends Target{
 
 	public RequirementTarget(String path) {
 		super();
-		this.path = path;
+		setPath(path);
 	}
 
 	public RequirementTarget(String path, Integer order) {
 		super();
-		this.path = path;
+		setPath(path);
 		this.order = order;
 	}
 
@@ -69,9 +69,10 @@ public class RequirementTarget extends Target{
 	}
 
 	public void setPath(String path) {
-		this.path = path;
+		//Issue 5480.
+		//We must trim the path to avoid nasty null pointer exception
+		this.path = path.trim();
 	}
-
 
 	@Override
 	public String getPath() {

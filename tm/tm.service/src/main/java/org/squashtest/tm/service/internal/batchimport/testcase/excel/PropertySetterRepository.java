@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.validation.constraints.NotNull;
 
+import org.squashtest.tm.service.internal.batchimport.RequirementTarget;
 import org.squashtest.tm.service.internal.batchimport.excel.NullPropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.PropertySetter;
 import org.squashtest.tm.service.internal.batchimport.excel.ReflectionFieldSetter;
@@ -67,9 +68,9 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 
 	private static PropertySetterRepository<?> createCoverageWorksheetRepo() {
 		PropertySetterRepository<CoverageSheetColumn> r = new PropertySetterRepository<>();
-		r.propSetterByColumn.put(CoverageSheetColumn.REQ_PATH, ReflectionFieldSetter.forField("reqPath"));
+		r.propSetterByColumn.put(CoverageSheetColumn.REQ_PATH, ReflectionMutatorSetter.forProperty("reqPath",String.class));
 		r.propSetterByColumn.put(CoverageSheetColumn.REQ_VERSION_NUM, ReflectionFieldSetter.forField("reqVersion"));
-		r.propSetterByColumn.put(CoverageSheetColumn.TC_PATH, ReflectionFieldSetter.forField("tcPath"));
+		r.propSetterByColumn.put(CoverageSheetColumn.TC_PATH, ReflectionMutatorSetter.forProperty("tcPath",String.class));
 		return r;
 	}
 
@@ -77,7 +78,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		PropertySetterRepository<RequirementSheetColumn> r = new PropertySetterRepository<>();
 
 
-		r.propSetterByColumn.put(RequirementSheetColumn.REQ_PATH, ReflectionFieldSetter.forField(PROPERTY_PATH));
+		r.propSetterByColumn.put(RequirementSheetColumn.REQ_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH, String.class));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_NUM, ReflectionFieldSetter.forOptionalField("order"));
 
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_REFERENCE, ReflectionFieldSetter.forOptionalField("reference"));
@@ -211,7 +212,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		PropertySetterRepository<TestCaseSheetColumn> r = new PropertySetterRepository<>();
 
 		// target
-		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PATH, ReflectionFieldSetter.forField(PROPERTY_PATH));
+		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PATH, ReflectionMutatorSetter.forProperty(PROPERTY_PATH,String.class));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_NUM, ReflectionFieldSetter.forOptionalField("order"));
 
 		// test case

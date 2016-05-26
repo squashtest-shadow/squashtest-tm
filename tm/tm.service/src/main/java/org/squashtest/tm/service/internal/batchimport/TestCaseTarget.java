@@ -49,12 +49,12 @@ public class TestCaseTarget extends Target {
 
 	public TestCaseTarget(String path) {
 		super();
-		this.path = path;
+		setPath(path);
 	}
 
 	public TestCaseTarget(String path, Integer order) {
 		super();
-		this.path = path;
+		setPath(path);
 		this.order = order;
 	}
 
@@ -69,7 +69,7 @@ public class TestCaseTarget extends Target {
 	}
 
 	public void setPath(String path) {
-		this.path = path;
+		this.path = path.trim();
 	}
 
 	public Integer getOrder() {
