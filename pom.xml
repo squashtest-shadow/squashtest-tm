@@ -463,7 +463,7 @@
             <exclude>tm/tm.web/scripts/**</exclude>
             <exclude>tm/tm.web/images/**</exclude>
             <exclude>tm/tm.web/styles/**</exclude>
-            
+
           </excludes>
           <mapping>
             <tag>DYNASCRIPT_STYLE</tag>
