@@ -737,6 +737,14 @@
                   <npmVersion>3.8.3</npmVersion>
                 </configuration>
               </execution>
+              <execution>
+                <!-- temporary - trying to fix release build -->
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>generate-resources</phase>
+              </execution>
             </executions>
           </plugin>
 
