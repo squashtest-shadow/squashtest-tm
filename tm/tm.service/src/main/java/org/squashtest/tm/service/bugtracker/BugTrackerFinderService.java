@@ -23,10 +23,10 @@ package org.squashtest.tm.service.bugtracker;
 import java.util.List;
 import java.util.Set;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 
 
 @Transactional(readOnly = true)
@@ -46,10 +46,10 @@ public interface BugTrackerFinderService {
 	BugTracker findById(long bugTrackerId);
 	/**
 	 * 
-	 * @param filter
+	 * @param pageable
 	 * @return sorted list of bugtrackers
 	 */
-	PagedCollectionHolder<List<BugTracker>> findSortedBugtrackers(PagingAndSorting filter);
+	Page<BugTracker> findSortedBugtrackers(Pageable pageable);
 	
 	/**
 	 * 

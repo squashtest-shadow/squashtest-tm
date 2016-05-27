@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.List;
 import java.util.Locale;
 import java.util.Set;
 
@@ -29,6 +28,8 @@ import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
@@ -45,6 +45,7 @@ import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
 import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
+import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
 
@@ -61,11 +62,11 @@ public class BugTrackerAdministrationController {
 
 
 	private DatatableMapper<String> bugtrackerMapper=new NameBasedMapper()
-	.mapAttribute("id", 	"id", BugTracker.class)
-	.mapAttribute(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, 	"name", BugTracker.class)
-	.mapAttribute("kind", 	"kind", BugTracker.class)
-	.mapAttribute("url", 	"url", BugTracker.class)
-	.mapAttribute("iframe-friendly", "iframeFriendly", BugTracker.class);
+	.map("id", 	"id")
+	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, 	"name")
+	.map("kind", 	"kind")
+	.map("url", 	"url")
+	.map("iframe-friendly", "iframeFriendly");
 
 
 
@@ -97,9 +98,9 @@ public class BugTrackerAdministrationController {
 	public
 	DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params, final Locale locale) {
 
-		PagingAndSorting filter = createPaging(params, bugtrackerMapper);
+		Pageable pageable = SpringPagination.pageable(params, bugtrackerMapper);
 
-		PagedCollectionHolder<List<BugTracker>> holder = bugTrackerManagerService.findSortedBugtrackers(filter);
+		Page<BugTracker> holder = bugTrackerManagerService.findSortedBugtrackers(pageable);
 
 
 		BugtrackerDataTableModelHelper helper = new BugtrackerDataTableModelHelper(messageSource);
@@ -108,10 +109,5 @@ public class BugTrackerAdministrationController {
 
 	}
 
-	/* ****************************** data formatters ********************************************** */
-
-	private PagingAndSorting createPaging(final DataTableDrawParameters params, final DatatableMapper<?> mapper) {
-		return new DataTableSorting(params, mapper);
-	}
 
 }

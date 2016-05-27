@@ -20,68 +20,77 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.campaign.CampaignLibraryNode;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.TestSuite;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
+import org.squashtest.tm.service.internal.bugtracker.Pair;
 
-import java.util.Collection;
-import java.util.List;
-
-public interface BugTrackerDao extends EntityDao<BugTracker> {
+public interface BugTrackerDao extends JpaRepository<BugTracker, Long> {
 
 
 	/**
 	 * @return number of all bugtrackers in squash database
 	 */
-	long countBugTrackers();
+	@NativeMethodFromJpaRepository
+	long count();
 
 	/**
 	 * @return a page of bugtrackers according to the filter
 	 */
-	List<BugTracker> findSortedBugTrackers(PagingAndSorting filter);
+	@UsesTheSpringJpaDsl
+	Page<BugTracker> findAll(Pageable pageable);
 
-	/**
-	 * checks if there is a Bugtracker of the same name in the database.<br>
-	 * If so, raises a {@linkplain org.squashtest.tm.exception.NameAlreadyInUseException}
-	 */
-	void checkNameAvailability(String name);
 
 	/**
 	 *
 	 * @return the list of distinct BugTrackers concerned by the given projects;
 	 */
-	List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	List<BugTracker> findDistinctBugTrackersForProjects(@Param("projects") List<Long> projectIds);
 
 	/**
 	 * Given its name, returns a bugtracker
 	 */
+	@UsesTheSpringJpaDsl
 	BugTracker findByName(String bugtrackerName);
 
 	/**
 	 *
 	 * @return the bugtracker bound to the campaign's project
      */
-	BugTracker findByCampaignLibraryNode(CampaignLibraryNode node);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	BugTracker findByCampaignLibraryNode(@Param("node") CampaignLibraryNode node);
 
 	/**
 	 *
 	 * @return the bugtracker bound to the excution's project
      */
-	BugTracker findByExecution(Execution execution);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	BugTracker findByExecution(@Param("execution") Execution execution);
 
 	/**
 	 *
      * @return the bugtracker bound to the iteration's project
      */
-	BugTracker findByIteration(Iteration iteration);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	BugTracker findByIteration(@Param("iteration") Iteration iteration);
 
-	BugTracker findByTestSuite(TestSuite testSuite);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	BugTracker findByTestSuite(@Param("testSuite") TestSuite testSuite);
 
-	List findAllPairsByExecutions(Collection<Execution> executions);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	List<Pair<Execution, BugTracker>> findAllPairsByExecutions(@Param("executions") Collection<Execution> executions);
 
-	BugTracker findByExecutionStep(ExecutionStep executionStep);
+	@UsesANamedQueryInPackageInfoOrElsewhere
+	BugTracker findByExecutionStep(@Param("step") ExecutionStep executionStep);
 }

@@ -499,16 +499,13 @@
 
 
 	//BugTrackersEntities
-	@NamedQuery(name = "bugtracker.count", query = "select count(bte) from BugTracker bte"),
-	@NamedQuery(name = "bugtracker.findBugTrackerByName", query = "from BugTracker where name = :name "),
-	@NamedQuery(name = "bugtracker.findDistinctBugTrackersForProjects", query = "select distinct bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),
-	@NamedQuery(name = "bugtracker.findByName", query = "from BugTracker where name = :name"),
-	@NamedQuery(name = "bugtracker.findByCampaignLibraryNode", query = "select bt from CampaignLibraryNode n join n.project p join p.bugtrackerBinding btb join btb.bugtracker bt where n = :node"),
-	@NamedQuery(name = "bugtracker.findByIteration", query = "select bt from Iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where it = :iteration"),
-	@NamedQuery(name = "bugtracker.findByTestSuite", query = "select bt from TestSuite ts join ts.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ts = :testSuite"),
-	@NamedQuery(name = "bugtracker.findByExecution", query = "select bt from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex = :execution"),
-	@NamedQuery(name = "bugtracker.findAllPairsByExecutions", query = "select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, bt) from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex in (:executions)"),
-	@NamedQuery(name = "bugtracker.findByExecutionStep", query = "select bt from ExecutionStep s join s.execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where s = :step"),
+	@NamedQuery(name = "BugTracker.findDistinctBugTrackersForProjects", query = "select distinct bt from Project p join p.bugtrackerBinding btB join btB.bugtracker bt where p.id in (:projects)"),
+	@NamedQuery(name = "BugTracker.findByCampaignLibraryNode", query = "select bt from CampaignLibraryNode n join n.project p join p.bugtrackerBinding btb join btb.bugtracker bt where n = :node"),
+	@NamedQuery(name = "BugTracker.findByIteration", query = "select bt from Iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where it = :iteration"),
+	@NamedQuery(name = "BugTracker.findByTestSuite", query = "select bt from TestSuite ts join ts.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ts = :testSuite"),
+	@NamedQuery(name = "BugTracker.findByExecution", query = "select bt from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex = :execution"),
+	@NamedQuery(name = "BugTracker.findAllPairsByExecutions", query = "select new org.squashtest.tm.service.internal.bugtracker.Pair(ex, bt) from Execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where ex in (:executions)"),
+	@NamedQuery(name = "BugTracker.findByExecutionStep", query = "select bt from ExecutionStep s join s.execution ex join ex.testPlan tp join tp.iteration it join it.campaign c join c.project p join p.bugtrackerBinding btb join btb.bugtracker bt where s = :step"),
 
 	//BugTrackerBinding
 	@NamedQuery(name = "bugTrackerBinding.findByBugtrackerId", query = "from BugTrackerBinding where bugtracker_id= :bugtrackerId"),

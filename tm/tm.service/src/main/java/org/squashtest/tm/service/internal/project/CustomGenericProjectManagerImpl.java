@@ -436,7 +436,7 @@ public class CustomGenericProjectManagerImpl implements CustomGenericProjectMana
 
 		GenericProject project = genericProjectDao.findById(projectId);
 		checkManageProjectOrAdmin(project);
-		BugTracker newBugtracker = bugTrackerDao.findById(newBugtrackerId);
+		BugTracker newBugtracker = bugTrackerDao.findOne(newBugtrackerId);
 		if (newBugtracker != null) {
 			changeBugTracker(project, newBugtracker);
 		} else {

@@ -59,7 +59,7 @@ class BugTrackerManagerServiceImplTest extends Specification  {
         service.deleteBugTrackers(bugtrackerIds)
 
         then :
-        5 * bugTrackerDao.remove(_)
+        5 * bugTrackerDao.delete(_)
         10 * genericProjectManagerService.removeBugTracker(_)
         15 * issueDao.remove(_)
 		5 * syncreqDao.deleteAllByServer(_)

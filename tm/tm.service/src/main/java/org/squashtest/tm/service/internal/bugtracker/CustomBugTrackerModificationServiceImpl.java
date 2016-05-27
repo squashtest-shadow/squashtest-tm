@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
+import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.bugtracker.CustomBugTrackerModificationService;
 import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 
@@ -41,10 +42,15 @@ public class CustomBugTrackerModificationServiceImpl implements CustomBugTracker
 	@Override
 	public void changeName(long bugtrackerId, String newName) {
 		String trimedNewName = newName.trim();
-		BugTracker bugTracker = bugTrackerDao.findById(bugtrackerId);
+		BugTracker bugTracker = bugTrackerDao.findOne(bugtrackerId);
 		if(!bugTracker.getName().equals(trimedNewName)){
-			bugTrackerDao.checkNameAvailability(trimedNewName);
-			bugTracker.setName(trimedNewName);
+			BugTracker existing = bugTrackerDao.findByName(trimedNewName);
+			if (existing == null){
+				bugTracker.setName(trimedNewName);
+			}
+			else{
+				throw new NameAlreadyInUseException(NameAlreadyInUseException.EntityType.BUG_TRACKER, trimedNewName);
+			}
 		}
 		
 	}

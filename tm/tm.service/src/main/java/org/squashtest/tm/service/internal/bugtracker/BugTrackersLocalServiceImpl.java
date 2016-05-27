@@ -145,7 +145,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 	@Override
 	public AuthenticationStatus checkAuthenticationStatus(Long bugtrackerId) {
 		AuthenticationStatus status;
-		BugTracker bugtracker = bugTrackerDao.findById(bugtrackerId);
+		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
 		if (bugtracker == null) {
 			status = AuthenticationStatus.UNDEFINED;
 		} else {
@@ -230,7 +230,7 @@ public class BugTrackersLocalServiceImpl implements BugTrackersLocalService {
 
 	@Override
 	public void setCredentials(String username, String password, Long bugtrackerId) throws BugTrackerRemoteException {
-		BugTracker bugtracker = bugTrackerDao.findById(bugtrackerId);
+		BugTracker bugtracker = bugTrackerDao.findOne(bugtrackerId);
 		remoteBugTrackersService.setCredentials(username, password, bugtracker);
 	}
 
