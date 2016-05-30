@@ -59,24 +59,6 @@ class CustomCustomFieldManagerServiceImplTest extends Specification {
 		1* customFieldDao.delete(cuf)
 	}
 
-	def "should find sorted "(){
-		given :
-		PagingAndSorting cs = Mock()
-		List<CustomField> customFields = Mock()
-		customFieldDao.findSortedCustomFields(cs)>> customFields
-
-		and:
-		def counted = 3
-		customFieldDao.count()>> counted
-
-		when:
-		PagedCollectionHolder<Collection<CustomField>> result = service.findSortedCustomFields(cs)
-
-		then:
-		result != null
-		1* customFieldDao.findSortedCustomFields(cs)
-		1* customFieldDao.count()
-	}
 
 	def "should change code to available code"() {
 		given:

@@ -29,9 +29,10 @@ import javax.inject.Inject;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.customfield.BindableEntity;
@@ -76,13 +77,11 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	private ApplicationEventPublisher eventPublisher;
 
 	/**
-	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(PagingAndSorting)
+	 * @see org.squashtest.tm.service.customfield.CustomFieldFinderService#findSortedCustomFields(Pageable)
 	 */
 	@Override
-	public PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter) {
-		List<CustomField> customFields = customFieldDao.findSortedCustomFields(filter);
-		long count = customFieldDao.count();
-		return new PagingBackedPagedCollectionHolder<>(filter, count, customFields);
+	public Page<CustomField> findSortedCustomFields(Pageable pageable) {
+            return customFieldDao.findAll(pageable);
 	}
 
 	/**

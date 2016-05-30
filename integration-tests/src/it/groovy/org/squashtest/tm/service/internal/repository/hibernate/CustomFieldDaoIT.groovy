@@ -31,11 +31,14 @@ import org.squashtest.tm.service.internal.repository.CustomFieldDao
 import org.unitils.dbunit.annotation.DataSet
 import spock.lang.Ignore
 import spock.unitils.UnitilsSupport
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.Sort
 
 import javax.inject.Inject
 
 @UnitilsSupport
-class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
+class CustomFieldDaoIT extends DbunitDaoSpecification {
 	@Inject
 	CustomFieldDao customFieldDao
 
@@ -54,49 +57,21 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateCustomFieldDaoIT.should return sorted list of cuf.xml")
 	def "should return sorted list of cuf"(){
 		when:
-		List<CustomField> list = customFieldDao.findSortedCustomFields(new InputTypeCollectionFilter())
+		Page<CustomField> list = customFieldDao.findAll(new PageRequest(1,2,new Sort("inputType")))
 
 		then:
-		list.size() == 2
-		list.get(0).inputType == InputType.DROPDOWN_LIST
-		list.get(1).inputType == InputType.PLAIN_TEXT
+		list.size == 2
+		list.content[0].inputType == InputType.DROPDOWN_LIST
+		list.content[1].inputType == InputType.PLAIN_TEXT
 
 	}
 
-	private class InputTypeCollectionFilter implements PagingAndSorting	{
-			@Override
-			String getSortedAttribute(){
-				return "inputType"
-			}
-			@Override
-			public int getFirstItemIndex() {
-				return 1;
-			}
-			@Override
-			public int getPageSize() {
-				return 2;
-			}
-			@Override
-			public SortOrder getSortOrder() {
-				return SortOrder.ASCENDING;
-			}
 
-			@Override
-			public boolean shouldDisplayAll() {
-				return false;
-			}
-			
-			org.springframework.data.domain.Pageable toPageable(){
-				return SpringPaginationUtils.toPageable(this);
-			}
-			
-	}
-
-	@Ignore("un-comment when deletion is handled")
 	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field.xml")
 	def "should delete custom field" () {
 		given:
-		CustomField cuf =  findEntity(CustomField.class, -1L)
+		CustomField cuf =  em.find(CustomField, -1L)
+                
 		when:
 		customFieldDao.delete(cuf)
 		then:
@@ -104,11 +79,10 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 		found(CustomField.class, -2L)
 	}
 
-	@Ignore("un-comment when deletion is handled")
 	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field and option.xml")
 	def "should delete custom field and options" () {
 		given:
-		CustomField cuf =  findEntity(CustomField.class, -1L)
+		CustomField cuf =  em.find(CustomField, -1L)
 		when:
 		customFieldDao.delete(cuf)
 		then:
@@ -119,21 +93,9 @@ class HibernateCustomFieldDaoIT extends DbunitDaoSpecification {
 	}
 
 
-	@Ignore("un-comment when deletion is handled")
-	@DataSet("HibernateCustomFieldDeletionDaoIT.should delete custom field and binding.xml")
-	def "should delete custom field and binding " () {
-		given:
-		CustomField cuf =  findEntity(CustomField.class, -1L)
-		when:
-		customFieldDao.delete(cuf)
-		then:
-		!found(CustomField.class, -1L)
-		!found(CustomFieldBinding.class, -1L)
-		!found(CustomFieldBinding.class, -2L)
-	}
 
 	private foundCustomFieldOption(String label){
-		entityManager.createQuery("select count(cufo) from CustomFieldOption cufo where cufo.label = :label")
+		em.createNativeQuery("select count(*) from CUSTOM_FIELD_OPTION  where label = :label")
 			.setParameter("label", label)
 			.singleResult == 1
 	}

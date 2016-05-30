@@ -25,11 +25,11 @@ import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
@@ -165,10 +165,10 @@ public interface CustomCustomFieldManagerService {
 	 * Will find all custom fields available and return them ordered according to the given parameters.
 	 * 
 	 * @param filter
-	 *            the {@link PagedCollectionHolder} that holds order and paging params.
+	 *            the {@link Page} that holds order and paging params.
 	 * @return the filtered collection of all custom field available in squash
 	 */
-	PagedCollectionHolder<List<CustomField>> findSortedCustomFields(PagingAndSorting filter);
+	Page<CustomField> findSortedCustomFields(Pageable filter);
 
 	/**
 	 * Will find the {@link SingleSelectField} of the given id

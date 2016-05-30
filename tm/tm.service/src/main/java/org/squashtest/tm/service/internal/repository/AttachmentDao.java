@@ -53,7 +53,7 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
     Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
 
     /**
-     * Same than above, pagined version.
+     * Same than above, paged version.
      * 
      */
 
