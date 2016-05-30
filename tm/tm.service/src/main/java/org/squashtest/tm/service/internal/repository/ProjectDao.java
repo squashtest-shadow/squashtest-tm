@@ -30,4 +30,6 @@ public interface ProjectDao extends CustomProjectDao, JpaRepository<Project,Long
 	Project findByName(String name);
 
 	List<Project> findByIdIn(List<Long> ids);
+
+	Project findById(Long id);
 }
