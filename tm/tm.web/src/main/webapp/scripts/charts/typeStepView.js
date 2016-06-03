@@ -34,11 +34,9 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			this.initGraphExample();
 		},
 
-	events : {
-
+		events : {
 			"change .axis-select" : "changeAxis",
 			"change .chart-type" : "changeType"
-
 		},
 
 		generate : function(){
@@ -232,7 +230,11 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 
 			var self = this;
 
-			var type = $(".chart-type").filter(":checked").attr("value");
+			//Issue 6259 In some case it appears that previous choice was ignored by the app.
+			//I have never be able to reproduce the anomaly but i saw it on QA environement.
+			//So it's fixed by ||this.model.get("type"). If model was previously updated, the value will be defined...
+			//It's a very good example of bad state management strategy (two models for one data, one in HTML one in JS...)
+			var type = $(".chart-type").filter(":checked").attr("value")||this.model.get("type")||"BAR";
 			this.showAxisByType(type);
 
 
