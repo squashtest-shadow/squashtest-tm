@@ -33,7 +33,7 @@ import spock.unitils.UnitilsSupport
 
 @UnitilsSupport
 @Transactional
-class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
+class TestAutomationServerDaoIT extends DbunitDaoSpecification {
 
 	@Inject  TestAutomationServerDao serverDao
 
@@ -42,7 +42,7 @@ class HibernateTestAutomationServerDaoIT extends DbunitDaoSpecification {
 	def "should find a server by id"(){
 
 		when :
-		def res = serverDao.findById(-1L)
+		def res = serverDao.findOne(-1L)
 
 		then :
 		res.id==-1L

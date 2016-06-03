@@ -24,8 +24,8 @@ import java.net.URL;
 import java.util.List;
 
 import org.hibernate.Session;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
@@ -72,7 +72,7 @@ public interface TestAutomationServerManagerService {
 
 	List<TestAutomationServer> findAllOrderedByName();
 
-	PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(PagingAndSorting pagingNsorting);
+	Page<TestAutomationServer> findSortedTestAutomationServers(Pageable pageable);
 
 	// *********************** Properties mutators ****************************
 

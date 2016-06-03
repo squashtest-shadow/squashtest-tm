@@ -20,69 +20,33 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
+
 import java.net.URL;
 import java.util.List;
 
-import org.hibernate.Session;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.testautomation.TestAutomationProject;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
-import org.squashtest.tm.service.internal.repository.hibernate.NonUniqueEntityException;
 
-public interface TestAutomationServerDao {
+public interface TestAutomationServerDao extends JpaRepository<TestAutomationServer, Long>, CustomTestAutomationServerDao{
 
-	/**
-	 * Will persist a new {@link TestAutomationServer}.
-	 * 
-	 * @param server
-	 *            : the server to persist
-	 * @throws NonUniqueEntityException
-	 *             if the given server happen to exist already.
-	 */
-	void persist(TestAutomationServer server);
 
 	/**
 	 * Will find all occurrences of {@link TestAutomationServer} in the database ordered by their name.
 	 * 
 	 * @return : all {@link TestAutomationServer} ordered by their name
 	 */
-	List<TestAutomationServer> findAllOrderedByName();
+        @UsesTheSpringJpaDsl
+	List<TestAutomationServer> findAllByOrderByNameAsc();
 
-	/**
-	 * Will count all occurrences of {@link TestAutomationServer} in the database
-	 * 
-	 * @return the number of {@link TestAutomationServer} in the database
-	 */
-	long countAll();
-
-	List<TestAutomationServer> findPagedServers(PagingAndSorting pas);
-
-	/**
-	 * Checks if the {@link TestAutomationServer} is bound to at least one {@link TestAutomationProject}
-	 * 
-	 * @param serverId
-	 *            : the id of the concernedTestAutomationServer
-	 * @return : true if the TestAutomationServer is bound to a TA-project
-	 */
-	boolean hasBoundProjects(long serverId);
-
-	/**
-	 * Simple find entity by id.
-	 * 
-	 * @param id
-	 *            : the id of the entity to find
-	 * @return the entity matching the given id or <code>null</code>
-	 */
-	TestAutomationServer findById(Long id);
 
 	/**
 	 * Find the {@linkplain TestAutomationServer} by it's name.
 	 * 
-	 * @param serverName
-	 *            : the name of the entity to find
+	 * @param serverName : the name of the entity to find
 	 * @return : the entity matching the given name (must be only one or database is corrupted) or <code>null</code>.
 	 */
+        @UsesTheSpringJpaDsl
 	TestAutomationServer findByName(String serverName);
 
 	/**
@@ -94,18 +58,10 @@ public interface TestAutomationServerDao {
 	 * @param login
 	 * @return
 	 */
-	TestAutomationServer findByUrlAndLogin(URL url, String login);
+        // tech note : because of the name of the property baseURL, I'd rather not rely on 
+        // the spring jpa dsl (I don't know how it will handle the case)
+        @UsesANamedQueryInPackageInfoOrElsewhere
+	TestAutomationServer findByUrlAndLogin(@Param("url") URL url, @Param("login") String login);
 
-	/**
-	 * Will delete the given {@linkplain TestAutomationServer} and dereference it from TM {@linkplain Project}s.
-	 * <p>
-	 * <b style="color:red">Warning :</b> When using this method there is a risk that your Hibernate beans are not up to
-	 * date. Use {@link Session#clear()} and {@link Session#refresh(Object)} to make sure your they are.
-	 * </p>
-	 * 
-	 * @param serverId
-	 *            the id of the {@linkplain TestAutomationServer} to delete.
-	 */
-	void deleteServer(long serverId);
 
 }

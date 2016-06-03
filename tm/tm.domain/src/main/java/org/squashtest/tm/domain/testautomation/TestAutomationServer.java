@@ -45,14 +45,11 @@ import org.squashtest.tm.domain.audit.Auditable;
 
 
 @NamedQueries({
-	@NamedQuery(name="testAutomationServer.findAllOrderedByName", query="from TestAutomationServer order by name"),
-	@NamedQuery(name="testAutomationServer.findByName", query="from TestAutomationServer where name = :serverName"),
-	@NamedQuery(name="testAutomationServer.findByUrlAndLogin", query="from TestAutomationServer where baseURL = :url and login = :login"),
-	@NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId"),
-	@NamedQuery(name="testAutomationServer.hasBoundProjects", query="select count(*) from TestAutomationProject where server.id = :serverId"),
-	@NamedQuery(name="testAutomationServer.countAll", query="select count(*) from TestAutomationServer"),
-	@NamedQuery(name="testAutomationServer.dereferenceProjects", query="update GenericProject set testAutomationServer = null where testAutomationServer.id = :serverId"),
-	@NamedQuery(name="testAutomationServer.deleteServer", query="delete from TestAutomationServer serv where serv.id = :serverId")
+    @NamedQuery(name="TestAutomationServer.findByUrlAndLogin", query="from TestAutomationServer where baseURL = :url and login = :login"),	
+    @NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId"),
+    @NamedQuery(name="testAutomationServer.hasBoundProjects", query="select count(*) from TestAutomationProject where server.id = :serverId"),
+    @NamedQuery(name="testAutomationServer.dereferenceProjects", query="update GenericProject set testAutomationServer = null where testAutomationServer.id = :serverId"),
+    @NamedQuery(name="testAutomationServer.deleteServer", query="delete from TestAutomationServer serv where serv.id = :serverId")
 })
 @Entity
 @Auditable
@@ -80,8 +77,8 @@ public class TestAutomationServer {
 	@Column
 	private URL baseURL ;
 
-	/**
-	 * The login that the TM server should use when dealing with the remote TA server.
+	/**	
+ * The login that the TM server should use when dealing with the remote TA server.
 	 */
 	@Column
 	@Size(min = 0, max = 50)

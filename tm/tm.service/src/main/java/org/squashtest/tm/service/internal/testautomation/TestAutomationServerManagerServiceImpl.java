@@ -27,11 +27,12 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.inject.Inject;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
@@ -55,7 +56,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public TestAutomationServer findById(long serverId) {
-		return serverDao.findById(serverId);
+		return serverDao.findOne(serverId);
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 		}
 
 		// else we can persist it.
-		serverDao.persist(server);
+		serverDao.save(server);
 	}
 
 	@Override
@@ -117,25 +118,21 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public List<TestAutomationServer> findAllOrderedByName() {
-		return serverDao.findAllOrderedByName();
+		return serverDao.findAllByOrderByNameAsc();
 	}
 
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
-	public PagedCollectionHolder<List<TestAutomationServer>> findSortedTestAutomationServers(
-			PagingAndSorting pagingNsorting) {
-
-		List<TestAutomationServer> sortedServers = serverDao.findPagedServers(pagingNsorting);
-		long count = serverDao.countAll();
-
-		return new PagingBackedPagedCollectionHolder<>(pagingNsorting, count, sortedServers);
+	public Page<TestAutomationServer> findSortedTestAutomationServers(
+			         Pageable pageable) {
+            return serverDao.findAll(pageable);
 	}
 
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeURL(long serverId, URL url) {
 
-		TestAutomationServer server = serverDao.findById(serverId);
+		TestAutomationServer server = serverDao.findOne(serverId);
 		checkNoConflicts(server, url);
 		server.setBaseURL(url);
 
@@ -144,7 +141,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeName(long serverId, String newName) {
-		TestAutomationServer server = serverDao.findById(serverId);
+		TestAutomationServer server = serverDao.findOne(serverId);
 		if (newName.equals(server.getName())) {
 			return;
 		}
@@ -159,7 +156,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeLogin(long serverId, String login) {
-		TestAutomationServer server = serverDao.findById(serverId);
+		TestAutomationServer server = serverDao.findOne(serverId);
 		checkNoConflicts(server, login);
 		server.setLogin(login);
 	}
@@ -167,21 +164,21 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changePassword(long serverId, String password) {
-		TestAutomationServer server = serverDao.findById(serverId);
+		TestAutomationServer server = serverDao.findOne(serverId);
 		server.setPassword(password);
 	}
 
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeDescription(long serverId, String description) {
-		TestAutomationServer server = serverDao.findById(serverId);
+		TestAutomationServer server = serverDao.findOne(serverId);
 		server.setDescription(description);
 	}
 
 	@Override
 	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
 	public void changeManualSlaveSelection(long serverId, boolean manualSlaveSelection) {
-		TestAutomationServer server = serverDao.findById(serverId);
+		TestAutomationServer server = serverDao.findOne(serverId);
 		server.setManualSlaveSelection(manualSlaveSelection);
 	}
 
