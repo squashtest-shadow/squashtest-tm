@@ -92,6 +92,7 @@ public class LibraryGraph<IDENT, T extends GraphNode<IDENT, T>> {
 
 		if (key != null) {
 
+		// YEARGH ! O(n) called everywhere ! Cant we use a hashmap ?
 			for (T node : nodes) {
 				if (node.getKey().equals(key)) {
 					toReturn = node;

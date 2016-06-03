@@ -73,6 +73,10 @@ public class LogEntry implements Comparable<LogEntry> {
 		return new Builder(ImportStatus.WARNING);
 	}
 
+	/**
+	 * @deprecated use builder api
+     */
+	@Deprecated
 	public LogEntry(Target target, ImportStatus status, String i18nError) {
 		super();
 		this.target = target;
@@ -80,16 +84,28 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.i18nError = i18nError;
 	}
 
+	/**
+	 * @deprecated use builder api
+	 */
+	@Deprecated
 	public LogEntry(Target target, ImportStatus status, String i18nError, String i18nImpact) {
 		this(target, status, i18nError);
 		this.i18nImpact = i18nImpact;
 	}
 
+	/**
+	 * @deprecated use builder api
+	 */
+	@Deprecated
 	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
 		this(target, status, i18nError);
 		this.errorArgs = errorArgs;
 	}
 
+	/**
+	 * @deprecated use builder api
+	 */
+	@Deprecated
 	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs, String i18nImpact,
 			Object[] impactArgs) {
 		this(target, status, i18nError, i18nImpact);
@@ -97,6 +113,10 @@ public class LogEntry implements Comparable<LogEntry> {
 		this.impactArgs = impactArgs;
 	}
 
+	/**
+	 * @deprecated use builder api
+	 */
+	@Deprecated
 	public LogEntry(Integer line, Target target, ImportMode mode, ImportStatus status, String i18nError,
 			String i18nImpact) {
 		this(target, status, i18nError, i18nImpact);

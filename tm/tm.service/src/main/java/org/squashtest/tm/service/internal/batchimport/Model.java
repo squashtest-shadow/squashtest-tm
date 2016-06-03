@@ -402,8 +402,6 @@ public class Model {
 	/**
 	 * Adds a step of the specified type to the model. Not to the database.
 	 *
-	 * @param target
-	 * @param type
 	 * @return the index at which the step was created
 	 */
 	public Integer addActionStep(TestStepTarget target) {
@@ -840,14 +838,13 @@ public class Model {
 	private void loadRequirement(RequirementTarget target) {
 		Long reqId;
 		if (target.isSynchronized()){
-			LOGGER.debug("ReqImport - looking for synchronized requirement key : '"+target.getRemoteKey()+"'");
+			LOGGER.debug("ReqImport - looking for synchronized requirement key : '{}'", target.getRemoteKey());
 			reqId = reqFinderService.findNodeIdByRemoteKey(target.getRemoteKey(), target.getProject());
-		}
-		else{
-			LOGGER.debug("ReqImport - looking for native requirement by path : '"+target.getPath()+"'");
+		} else {
+			LOGGER.debug("ReqImport - looking for native requirement by path : '{}", target.getPath());
 			reqId = reqFinderService.findNodeIdByPath(target.getPath());
 		}
-		LOGGER.debug("ReqImport - result find by node : " + reqId);
+		LOGGER.debug("ReqImport - result find by node : {}" + reqId);
 		//only add existing requirement in tree.
 		//New requirement will be created with good status by adding the requirement version
 		if (reqId != null) {
@@ -1086,13 +1083,13 @@ public class Model {
 	}
 
 	public void mainInitRequirements(RequirementVersionTarget target) {
-		mainInitRequirements(Arrays
-			.asList(new RequirementVersionTarget[]{target}));
+		mainInitRequirements(Arrays.asList(target));
 	}
 
 	public void mainInitRequirements(List<RequirementVersionTarget> targets) {
 
 		// ensures unicity
+		// FIXME    ^^^ change signature for Set<RVT> so that vvvvv dont create shitload of useless collections !
 		List<RequirementVersionTarget> uniqueTargets = uniqueList(targets);
 
 		// init the requirements
@@ -1112,7 +1109,7 @@ public class Model {
 		LOGGER.debug("ReqImport - Initialize targets");
 
 		// filter out the requirement version we already know of
-		List<RequirementVersionTarget> targets = new LinkedList<>();
+		List<RequirementVersionTarget> targets = new ArrayList<>(initialTargets.size());
 		for (RequirementVersionTarget target : initialTargets) {
 			if (!requirementTree.targetAlreadyLoaded(target)) {
 				targets.add(target);
@@ -1135,15 +1132,16 @@ public class Model {
 			} else {
 				Long reqId = requirementTree.getNodeId(target.getRequirement());
 				Integer versionNumber = target.getVersion();
-				Long reqVersionId = requirementVersionManagerService.
-					findReqVersionIdByRequirementAndVersionNumber(reqId, versionNumber);
+				Long reqVersionId = requirementVersionManagerService.findReqVersionIdByRequirementAndVersionNumber(reqId, versionNumber);
 				if (reqVersionId != null) {
+					// FIXME we should probably check for READ right here but i dont know what else could i write when i dont have the right
 					initExistingRequirementVersion(target, reqVersionId);
 				} else {
 					requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.NOT_EXISTS));
 				}
 				//now we init all existing requirement version in the same requirement we are trying to update or add,
 				// as we need it to make some check (milestone already used by another version...)
+				// FIXME if we dont have READ rights, this breaks ! Model probably has to be revamped becaiuse it dont seem to care for access rights.
 				Requirement req = requirementVersionManagerService.findRequirementById(reqId);
 				List<RequirementVersion> reqVersions = req.getRequirementVersions();
 				for (RequirementVersion requirementVersion : reqVersions) {
@@ -1158,6 +1156,7 @@ public class Model {
 	private void initExistingRequirementVersion(RequirementVersionTarget target, Long reqVersionId) {
 		requirementTree.addOrUpdateNode(target, new TargetStatus(Existence.EXISTS, reqVersionId));
 		//here get milestone and milestoneLocked
+		// FIXME if we dont have READ rights, this breaks ! Model probably has to be revamped becaiuse it dont seem to care for access rights.
 		Collection<Milestone> milestones = milestoneMemberFinder.findMilestonesForRequirementVersion(reqVersionId);
 		for (Milestone milestone : milestones) {
 			requirementTree.bindMilestone(target, milestone.getLabel());
@@ -1213,6 +1212,8 @@ public class Model {
 	// *************************************
 
 	private <OBJ> List<OBJ> uniqueList(Collection<OBJ> orig) {
+		// FIXME if orig is a Set or has a size of 1 maybe dont create useless collections.
+		// FIXME we always pass a list anyways so change method sgnature
 		Set<OBJ> filtered = new LinkedHashSet<>(orig);
 		return new ArrayList<>(filtered);
 	}

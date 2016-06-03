@@ -696,28 +696,32 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		return entry;
 	}
 
-	private LogEntry checkPermissionOnProject(String permission, CoverageTarget target, Target checkedTarget) {
+	private LogEntry checkPermissionOnProject(String permission, CoverageTarget coverageTarget, Target checkedTarget) {
 
 		LogEntry entry = null;
 
-		String tcPath = target.getTcPath();
+		String tcPath = coverageTarget.getTcPath();
 		Project tcProject = getProjectFromPath(tcPath);
 		Long tcLibid = tcProject.getTestCaseLibrary().getId();
 
 		if (tcLibid != null
 			&& !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME)) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
-				permission, target.getPath()});
+			entry = LogEntry.failure()
+				.forTarget(checkedTarget)
+				.withMessage(Messages.ERROR_NO_PERMISSION, permission, tcPath)
+				.build();
 		}
 
-		String reqPath = target.getReqPath();
+		String reqPath = coverageTarget.getReqPath();
 		Project reqProject = getProjectFromPath(reqPath);
 		Long reqLibid = reqProject.getRequirementLibrary().getId();
 
 		if (reqLibid != null
 			&& !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME)) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[]{
-				permission, target.getPath()});
+			entry = LogEntry.failure()
+				.forTarget(checkedTarget)
+				.withMessage(Messages.ERROR_NO_PERMISSION, permission, reqPath)
+				.build();
 		}
 
 		return entry;
@@ -1157,43 +1161,47 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) {
-		boolean requirementPathAndVersionValid = checkRequirementVersionDataValidity(target, logs);
-
-		if (requirementPathAndVersionValid) {
-			return checkRequirementVersionExist(target, logs);
-		}
-
+		if (!checkRequirementVersionPathIsValid(target, logs)) {
 		return null;
 	}
 
-	private Long checkRequirementVersionExist(CoverageTarget target, LogTrain logs) {
+		// we check we can read the requirement. this should probably be handled by Model
+		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
+		if (reqId != null && !permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_READ, reqId, Requirement.class.getName())) {
+			// the requirement exists but we're not allowed to read it
+			logs.addEntry(createLogFailure(target, Messages.ERROR_NO_PERMISSION, "READ", target.getReqPath()));
+			return null;
+		}
 
 		RequirementTarget reqTarget = new RequirementTarget(target.getReqPath());
 		RequirementVersionTarget reqVersionTarget = new RequirementVersionTarget(reqTarget, target.getReqVersion());
-		Existence reqVersionStatus = getModel().getStatus(reqVersionTarget).getStatus();
 		Existence reqStatus = getModel().getStatus(reqTarget).getStatus();
+		Existence reqVersionStatus = getModel().getStatus(reqVersionTarget).getStatus();
 
-		if (reqStatus != Existence.NOT_EXISTS) {
+		if (reqStatus == Existence.NOT_EXISTS) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
+			return null;
+		}
+
+		if (reqVersionStatus == Existence.NOT_EXISTS) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
+			return null;
+		}
+
 			if (reqVersionStatus == Existence.EXISTS) {
-				Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
-				Requirement req = reqLibNavigationService.findRequirement(reqId);
+//			Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
+			Requirement req = reqLibNavigationService.findRequirement(reqTarget.getId());
 				RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
 				if (!req.getStatus().isRequirementLinkable()) {
 					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
 				}
 				return reqVersion.getId();
-			} else if (reqVersionStatus == Existence.NOT_EXISTS) {
-				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
 			}
-		} else {
-			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
-		}
-
 
 		return null;
 	}
 
-	private boolean checkRequirementVersionDataValidity(CoverageTarget target, LogTrain logs) {
+	private boolean checkRequirementVersionPathIsValid(CoverageTarget target, LogTrain logs) {
 
 		boolean reqPathValid = target.isReqPathWellFormed();
 		boolean reqVersionValid = target.getReqVersion() > 0;
