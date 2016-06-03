@@ -20,23 +20,12 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.EXISTS;
-import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_CREATED;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Scope;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.audit.AuditableMixin;
@@ -49,12 +38,8 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
-import org.squashtest.tm.service.importer.EntityType;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.importer.LogEntry;
+import org.squashtest.tm.service.importer.*;
 import org.squashtest.tm.service.importer.LogEntry.Builder;
-import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.MilestoneImportHelper.Partition;
 import org.squashtest.tm.service.internal.batchimport.Model.Existence;
@@ -65,13 +50,23 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.CoverageTar
 import org.squashtest.tm.service.internal.repository.ProjectDao;
 import org.squashtest.tm.service.internal.repository.RequirementVersionCoverageDao;
 import org.squashtest.tm.service.internal.repository.UserDao;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService;
 import org.squashtest.tm.service.requirement.RequirementLibraryNavigationService;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.user.UserAccountService;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Model.Existence.TO_BE_CREATED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_MILESTONE;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NUM;
 
 /**
  *
@@ -798,28 +793,32 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		return entry;
 	}
 	
-	private LogEntry checkPermissionOnProject(String permission, CoverageTarget target, Target checkedTarget) {
+	private LogEntry checkPermissionOnProject(String permission, CoverageTarget coverageTarget, Target checkedTarget) {
 		
 		LogEntry entry = null;
 		
-		String tcPath = target.getTcPath();
+		String tcPath = coverageTarget.getTcPath();
 		Project tcProject = getProjectFromPath(tcPath);
 		Long tcLibid = tcProject.getTestCaseLibrary().getId();
 		
 		if ((tcLibid != null)
 				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, tcLibid, TEST_CASE_LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
-					permission, target.getPath() });
+			entry = LogEntry.failure()
+				.forTarget(checkedTarget)
+				.withMessage(Messages.ERROR_NO_PERMISSION, permission, tcPath)
+				.build();
 		}
 		
-		String reqPath = target.getReqPath();
+		String reqPath = coverageTarget.getReqPath();
 		Project reqProject = getProjectFromPath(reqPath);
 		Long reqLibid = reqProject.getRequirementLibrary().getId();
 		
 		if ((reqLibid != null)
 				&& (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, permission, reqLibid, REQUIREMENT_VERSION_LIBRARY_CLASSNAME))) {
-			entry = new LogEntry(checkedTarget, ImportStatus.FAILURE, Messages.ERROR_NO_PERMISSION, new String[] {
-					permission, target.getPath() });
+			entry = LogEntry.failure()
+				.forTarget(checkedTarget)
+				.withMessage(Messages.ERROR_NO_PERMISSION, permission, reqPath)
+				.build();
 		}
 		
 		return entry;
@@ -1017,8 +1016,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 			if (model.getStatus(reqTarget).getStatus()==Existence.NOT_EXISTS) {
 				model.addRequirement(reqTarget, new TargetStatus(TO_BE_CREATED));
 			}
-		}
-		else {
+		} else {
 			//this instruction smell bad..
 			instr.fatalError();
 		}
@@ -1116,7 +1114,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 
-
 	private void checkRequirementVersionExists(RequirementVersionTarget target,
 			LogTrain logs) {
 
@@ -1133,10 +1130,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		else if (status.getStatus()!=Existence.EXISTS || status.getId()==null) {
 			logs.addEntry(LogEntry.failure().forTarget(target).
 					withMessage(Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS).build());
-		}
-
-		else {
-			//setting the id also in the instruction target, more convenient for updating operations
+		} else {
+			//setting the id also in the instruction coverageTarget, more convenient for updating operations
 			target.getRequirement().setId(reqStatus.getId());
 		}
 	}
@@ -1230,7 +1225,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 
-
 	@Override
 	public LogTrain deleteRequirementVersion(RequirementVersionInstruction instr) {
 		throw new RuntimeException("Implement me");
@@ -1272,39 +1266,38 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 	}
 
 	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) {
-		boolean requirementPathAndVersionValid = checkRequirementVersionDataValidity(target, logs);
-
-		if (requirementPathAndVersionValid) {
-			return checkRequirementVersionExist(target, logs);
+		if (!checkRequirementVersionPathIsValid(target, logs)) {
+			return null;
 		}
-
-		return null;
-	}
-
-	private Long checkRequirementVersionExist(CoverageTarget target, LogTrain logs) {
+		;
 
 		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
 
-		if (reqId != null) {
-			Requirement req = reqLibNavigationService.findRequirement(reqId);
-			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
-			if (reqVersion != null) {
-				if (!req.getStatus().isRequirementLinkable()) {
-					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
-				}
-				return reqVersion.getId();
-			} else {
-				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
-			}
-		} else {
+		if (reqId == null) {
 			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
+			return null;
 		}
 
+		if (!permissionService.hasRoleOrPermissionOnObject(ROLE_ADMIN, PERM_READ, reqId, Requirement.class.getName())) {
+			// the requirement exists but we're not allowed to read it
+			logs.addEntry(createLogFailure(target, Messages.ERROR_NO_PERMISSION, "READ", target.getReqPath()));
+			return null;
+		}
+		Requirement req = reqLibNavigationService.findRequirement(reqId);
 
-		return null;
+		RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
+		if (reqVersion == null) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
+			return null;
+		}
+
+		if (!req.getStatus().isRequirementLinkable()) {
+			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
+		}
+		return reqVersion.getId();
 	}
 
-	private boolean checkRequirementVersionDataValidity(CoverageTarget target, LogTrain logs) {
+	private boolean checkRequirementVersionPathIsValid(CoverageTarget target, LogTrain logs) {
 
 		boolean reqPathValid = target.isReqPathWellFormed();
 		boolean reqVersionValid = target.getReqVersion() > 0;

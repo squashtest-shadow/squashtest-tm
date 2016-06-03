@@ -103,6 +103,8 @@ tm/tm.web/@lucene.dir@
 @lucene.dir@
 tm/data
 tm/tomcat-work
+tm/tm.web/node/node_modules
+tm/tm.web/node
 syntax: regexp
 ^plugins/plugin\.testautomation\.jenkins/META-INF$
 syntax: regexp
@@ -113,3 +115,4 @@ syntax: regexp
 \/bin\/
 ^.*rjs\.js\.output.*/
 /luceneindexes/
+/tm/tm.service/src/main/java/org/squashtest/tm/service/internal/batchimport/ValidationFacility.java
