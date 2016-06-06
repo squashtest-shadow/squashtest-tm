@@ -41,11 +41,11 @@ define(function(){
 		this.id = "";
 		this.scalar = "";
 		this.composite = [];
-		this.custom = null;
+		this.random = null;
 		this.typename = "";
 		
 		//1 argument constructor
-		if (arguments.length===1){
+		if (arguments.length==1){
 			var o = objectOrId;
 			if (!!o.id){
 				this.id = o.id;
@@ -56,8 +56,8 @@ define(function(){
 			if (!!o.composite){
 				this.composite = toArrayOfFieldValue(o.composite);
 			}
-			if (!!o.custom){
-				this.custom = o.custom;
+			if (!!o.random){
+				this.random = o.random;
 			}
 			if (!!o.typename){
 				this.typename = o.typename;
