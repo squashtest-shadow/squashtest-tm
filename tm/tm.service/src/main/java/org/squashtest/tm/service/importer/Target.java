@@ -22,7 +22,8 @@ package org.squashtest.tm.service.importer;
 
 
 
-public abstract class Target {
+public interface Target {
+	EntityType getType();
 
 	boolean isWellFormed(); // what is supposed to be well formed ?
 }
