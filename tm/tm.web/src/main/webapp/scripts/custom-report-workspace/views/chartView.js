@@ -56,7 +56,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				"click #refresh-btn": "refresh",
 				"click #modify-chart-button": "modifyChart",
 				"click #rename-chart-button": "rename",
-        "click #export-chart-button": "export"
+        		"click #export-chart-button": "export"
 			},
 
 			render: function () {
@@ -72,7 +72,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 							'dataType': 'json',
 							'contentType': 'application/json',
 							'url': url
-						})
+						});
 
 					}).then(function (json) {
 						self.setBaseModelAttributes(json);
@@ -337,10 +337,10 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				wreqr.trigger("renameNode");
 			},
 
-      export : function () {
-        var wreqr = squashtm.app.wreqr;
-        wreqr.trigger("exportChart");
-      },
+			export : function () {
+				var wreqr = squashtm.app.wreqr;
+				wreqr.trigger("exportChart");
+			},
 
 			getVueConf: function () {
 				return {

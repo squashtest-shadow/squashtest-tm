@@ -82,7 +82,7 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 		var ctxUrl = conf.basic.rootContext;
 		return {
 			dropUrl: tcUrl + "/steps/move",
-			attachments: ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case",
+			attachments: ctxUrl + "/attach-list/{attach-list-id}/attachments/manager?workspace=test-case&open=true",
 			steps: ctxUrl + "test-steps/",
 			callTC: ctxUrl + "/test-cases/{called-tc-id}/info",
 			pasteStep: tcUrl + "/steps",

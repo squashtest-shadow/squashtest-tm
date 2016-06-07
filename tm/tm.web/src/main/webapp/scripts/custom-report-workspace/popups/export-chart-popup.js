@@ -27,14 +27,14 @@ define(['jquery', 'tree', '../permissions-rules', 'jquery.squash.formdialog'], f
     var minWidth = $(document).width()*0.75;
 
 		var dialog = $("#export-chart-dialog").formDialog({
-      minHeight: minHeight,
-      minWidth : minWidth,
-    });
+						minHeight: minHeight,
+						minWidth : minWidth,
+		});
 
 		// Added to cancel the open if no rights
 		dialog.on('formdialogopen', function(){
-	     var str = '<img src='+$("#chart-display-area").jqplotToImageStr({})+' />';
-       $("#exported-chart").html(str);
+		var str = '<img src='+$("#chart-display-area").jqplotToImageStr({})+' />';
+			$("#exported-chart").html(str);
 		});
 
 		dialog.on('formdialogcancel', function(){

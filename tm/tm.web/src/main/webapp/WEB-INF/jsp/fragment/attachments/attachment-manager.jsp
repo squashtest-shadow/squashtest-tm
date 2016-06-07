@@ -37,13 +37,22 @@
 <div id="attachment-manager-header" class="ui-widget-header ui-corner-all ui-state-default fragment-header">
 	<div style="float: left; height: 100%;">
 	<h2><span><f:message key="label.CurrentAttachments"/>&nbsp;:&nbsp;</span></h2>
-	</div>	
+	</div>
 	<div class="snap-right">
-		<f:message var="back" key="label.Close" /> 
-		<input id="back" type="button" value="${ back }" class="sq-btn" onClick="window.close();"/>
+  <c:choose>
+      <c:when test="${openNewWindow}">
+        <f:message var="back" key="label.Close" />
+        <input id="back" type="button" value="${ back }" class="sq-btn" onClick="window.close();"/>
+      </c:when>
+      <c:otherwise>
+        <f:message var="back" key="label.Back" />
+        <input id="back" type="button" value="${ back }" class="sq-btn" onClick="history.back();"/>
+      </c:otherwise>
+  </c:choose>
+
 	</div>
 	<div class="unsnap"></div>
-	
+
 </div>
 
 
@@ -57,26 +66,26 @@
 		</div>
 		<div class="unsnap"></div>
 	</div>
-	
+
 	<%---------------------------------Attachments table ------------------------------------------------%>
-	
-	
+
+
 	<comp:toggle-panel id="attachment-table-panel" titleKey="label.CurrentAttachments"  open="true" >
-		<jsp:attribute name="panelButtons">	
+		<jsp:attribute name="panelButtons">
 			<f:message var="renameAttachment" key="label.Rename" />
 			<input type="button" value="${renameAttachment}" id="rename-attachment-button" class="sq-btn"  title="${renameAttachment}" />
 			<f:message var="removeAttachment" key="label.Delete" />
 			<input type="button" value="${removeAttachment}" id="delete-attachment-button" class="sq-btn"  title="${removeAttachment}" />
 		</jsp:attribute>
 		<jsp:attribute name="body">
-			<at:attachment-table editable="${true}" baseURL="${baseURL}" />					
+			<at:attachment-table editable="${true}" baseURL="${baseURL}" />
 		</jsp:attribute>
 	</comp:toggle-panel>
-	
-	<div class="not-displayed">		
+
+	<div class="not-displayed">
 		<at:attachment-dialogs />
 	</div>
-	
+
 	<script type="text/javascript">
 	require(["common"], function() {
 		require(["jquery", "file-upload"], function($, upload){
@@ -86,7 +95,7 @@
 					aaData : ${json:serialize(attachmentsModel.aaData)}
 				});
 			});
-		});	
+		});
 	});
 	</script>
 

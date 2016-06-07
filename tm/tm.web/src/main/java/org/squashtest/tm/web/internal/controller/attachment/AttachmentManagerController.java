@@ -77,12 +77,13 @@ public class AttachmentManagerController {
 
 	@RequestMapping(value = "/manager", method = RequestMethod.GET)
 	public ModelAndView showAttachmentManager(@PathVariable(ATTACH_LIST_ID) long attachListId,
-			@RequestParam("workspace") String workspace) {
+			@RequestParam("workspace") String workspace, @RequestParam(value = "open",required = false, defaultValue = "false") boolean openNewWindow) {
 
 		ModelAndView mav = new ModelAndView("page/attachments/attachment-manager");
 		mav.addObject("workspace", workspace);
 		mav.addObject(ATTACH_LIST_ID, attachListId);
 		mav.addObject("attachmentsModel", attachmentModelHelper.findPagedAttachments(attachListId));
+		mav.addObject("openNewWindow", openNewWindow);
 
 		return mav;
 

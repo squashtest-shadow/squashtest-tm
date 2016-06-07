@@ -27,7 +27,7 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 		initialize : function(data, wizrouter) {
 			this.tmpl = "#type-step-tpl";
 			this.model = data;
-		    data.name = "type";
+			data.name = "type";
 			this._initialize(data, wizrouter);
 			this.precalculateInfoListItemData();
 			this.reloadData();
@@ -367,34 +367,34 @@ define(["jquery", "backbone", "underscore", "handlebars", "./abstractStepView", 
 			switch (type) {
 
 			case "CUMULATIVE" :
-		    case "BAR" : axis2 = null;
+			case "BAR" : axis2 = null;
 			break;
 
-		    case "PIE" :
+			case "PIE" :
 
-		    	var entityType = axis1.column.specializedType.entityType;
-		    	measure = {};
-		    	measure.operation = "COUNT";
-		    	measure.column = _.chain(this.model.get("columnPrototypes"))
-		    	.pick(entityType)
-		    	.values()
-		    	.flatten()
-		    	.find(function(col) {return col.attributeName == "id";})
-		    	.value();
-		    	measure.label = "";
-		    	
-		    	/*
-		    	 * Issue 5988 : due to shitty specs implemented right above on one hand, 
-		    	 * and the current constraint that a same column cannot appear both as 
-		    	 * measure and axis, the following should at least help the server not crashing :
-		    	 * 
-		    	 * (note : see ambiguity in the implem of getChoosenOperation() )
-		    	 */
-		    	if (axis1.column.attributeName === "id"){
-		    		axis1.operation = "NONE";
-		    	}
+				var entityType = axis1.column.specializedType.entityType;
+				measure = {};
+				measure.operation = "COUNT";
+				measure.column = _.chain(this.model.get("columnPrototypes"))
+				.pick(entityType)
+				.values()
+				.flatten()
+				.find(function(col) {return col.attributeName == "id";})
+				.value();
+				measure.label = "";
+				
+				/*
+				* Issue 5988 : due to shitty specs implemented right above on one hand, 
+				* and the current constraint that a same column cannot appear both as 
+				* measure and axis, the following should at least help the server not crashing :
+				*
+				* (note : see ambiguity in the implem of getChoosenOperation() )
+				*/
+				if (axis1.column.attributeName === "id"){
+					axis1.operation = "NONE";
+				}
 
-		    	axis2 = null;
+				axis2 = null;
 			break;
 
 			}
