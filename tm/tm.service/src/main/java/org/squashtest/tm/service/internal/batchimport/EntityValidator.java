@@ -29,10 +29,7 @@ import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestStep;
-import org.squashtest.tm.service.importer.ImportMode;
-import org.squashtest.tm.service.importer.ImportStatus;
-import org.squashtest.tm.service.importer.LogEntry;
-import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.*;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 
@@ -469,8 +466,8 @@ class EntityValidator {
 	// ************************* private stuffs ****************************************
 
 
-	private void basicTestCaseTargetCheck(TestCaseTarget testCase, LogTrain logs, String[] fieldPathErrorArgs,
-		String tcNotFoundMessage, Target target) {
+	private <T extends Target & WithPath> void basicTestCaseTargetCheck(TestCaseTarget testCase, LogTrain logs, String[] fieldPathErrorArgs,
+		String tcNotFoundMessage, T target) {
 		// 1 - test case owner path must be supplied and and well formed
 		if (!testCase.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, fieldPathErrorArgs));

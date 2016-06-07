@@ -24,7 +24,7 @@ import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
 
-public class CoverageTarget extends Target {
+public class CoverageTarget implements Target {
 
 	private String reqPath;
 	private int reqVersion;
@@ -70,16 +70,6 @@ public class CoverageTarget extends Target {
 	@Override
 	public boolean isWellFormed() {
 		return isReqPathWellFormed() && isTcPathWellFormed();
-	}
-
-	@Override
-	public String getProject() {
-		throw new UnsupportedOperationException("coverage don't have a project. Don't use this method");
-	}
-
-	@Override
-	public String getPath() {
-		throw new UnsupportedOperationException("coverage don't have a path. Don't use this method");
 	}
 
 }

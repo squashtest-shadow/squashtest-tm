@@ -23,8 +23,9 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 
-public class ParameterTarget extends Target{
+public class ParameterTarget implements Target, WithPath {
 
 	private TestCaseTarget owner;
 	private String name;
@@ -40,7 +41,7 @@ public class ParameterTarget extends Target{
 	}
 
 
-	public ParameterTarget(TestCaseTarget owner, String name){
+	public ParameterTarget(TestCaseTarget owner, String name) {
 		this.owner = owner;
 		this.name = name;
 	}
@@ -48,12 +49,15 @@ public class ParameterTarget extends Target{
 	public TestCaseTarget getOwner() {
 		return owner;
 	}
+
 	public void setOwner(TestCaseTarget owner) {
 		this.owner = owner;
 	}
+
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
@@ -102,7 +106,7 @@ public class ParameterTarget extends Target{
 
 	@Override
 	public boolean isWellFormed() {
-		return owner.isWellFormed() && ! StringUtils.isBlank(name);
+		return owner.isWellFormed() && !StringUtils.isBlank(name);
 	}
 
 	@Override
@@ -116,7 +120,7 @@ public class ParameterTarget extends Target{
 	 */
 	@Override
 	public String getPath() {
-		return owner.getPath()+"/parameters/"+name;
+		return owner.getPath() + "/parameters/" + name;
 	}
 
 	/**
@@ -128,7 +132,7 @@ public class ParameterTarget extends Target{
 	}
 
 	@Override
-	public String toString(){
+	public String toString() {
 		return getPath();
 	}
 

@@ -23,8 +23,9 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.squashtest.tm.domain.requirement.RequirementStatus;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 
-public class RequirementVersionTarget extends Target {
+public class RequirementVersionTarget implements Target, WithPath {
 
 	private RequirementTarget requirement;
 
@@ -61,7 +62,7 @@ public class RequirementVersionTarget extends Target {
 
 	@Override
 	public boolean isWellFormed() {
-		return requirement!=null && requirement.isWellFormed();
+		return requirement != null && requirement.isWellFormed();
 	}
 
 	@Override
@@ -82,7 +83,7 @@ public class RequirementVersionTarget extends Target {
 		this.version = version;
 	}
 
-	public RequirementTarget getRequirement(){
+	public RequirementTarget getRequirement() {
 		return requirement;
 	}
 
@@ -102,10 +103,9 @@ public class RequirementVersionTarget extends Target {
 
 
 	public void setImportedRequirementStatus(
-			RequirementStatus importedRequirementStatus) {
+		RequirementStatus importedRequirementStatus) {
 		this.importedRequirementStatus = importedRequirementStatus;
 	}
-
 
 
 	public boolean isRejectedMilestone() {
@@ -113,6 +113,10 @@ public class RequirementVersionTarget extends Target {
 	}
 
 
+	/**
+	 * @deprecated not used - o be pruned in 1.15 if still unused
+	 */
+	@Deprecated
 	public void rejectedMilestone() {
 		this.rejectedMilestone = true;
 	}

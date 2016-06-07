@@ -23,8 +23,9 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 
-public class DatasetTarget extends Target {
+public class DatasetTarget implements Target, WithPath {
 	private final TestCaseTarget testCase;
 	private String name;
 

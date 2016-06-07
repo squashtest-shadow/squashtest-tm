@@ -23,8 +23,9 @@ package org.squashtest.tm.service.internal.batchimport;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 
-public class RequirementTarget extends Target{
+public class RequirementTarget implements Target, WithPath {
 
 	private String path;
 
@@ -37,7 +38,7 @@ public class RequirementTarget extends Target{
 	private String remoteKey;
 
 
-	public RequirementTarget(){
+	public RequirementTarget() {
 		super();
 	}
 
@@ -102,7 +103,7 @@ public class RequirementTarget extends Target{
 		this.remoteKey = remoteKey;
 	}
 
-	public boolean isSynchronized(){
+	public boolean isSynchronized() {
 		return this.remoteKey != null;
 	}
 

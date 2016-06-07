@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 
 import java.util.Arrays;
 
@@ -33,7 +34,7 @@ import java.util.Arrays;
  * {@link #path}<br/>
  * {@link #order}
  */
-public class TestCaseTarget extends Target {
+public class TestCaseTarget implements Target, WithPath {
 	/**
 	 * The path from the project name to the targeted test case.
 	 */

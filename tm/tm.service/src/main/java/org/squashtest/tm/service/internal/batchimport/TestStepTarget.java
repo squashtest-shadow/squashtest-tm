@@ -22,8 +22,9 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.importer.WithPath;
 
-public class TestStepTarget extends Target {
+public class TestStepTarget implements Target, WithPath {
 
 	private TestCaseTarget testCase;
 	private Integer index;
