@@ -1,6 +1,7 @@
 {
   "name": "tm.web",
   "version": "1.0.0",
+  "private": true,
   "description": "Squash TM web module\r ====================",
   "main": "r.js",
   "scripts": {
