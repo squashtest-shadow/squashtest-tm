@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.apache.commons.collections.ListUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -115,6 +116,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Override
 	public List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds) {
+		if(projectIds.isEmpty()){
+			return ListUtils.EMPTY_LIST;
+		}
 		return bugTrackerDao.findDistinctBugTrackersForProjects(projectIds);
 	}
 
