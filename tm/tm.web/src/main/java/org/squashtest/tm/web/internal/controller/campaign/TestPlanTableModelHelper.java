@@ -159,6 +159,7 @@ class TestPlanTableModelHelper extends DataTableModelBuilder<IndexedIterationTes
 		res.put("assignee-id", assigneeId);
 		res.put("assignee-login", assigneeLogin);
 		res.put("last-exec-on", DateUtils.formatIso8601DateTime(item.getLastExecutedOn()));
+		res.put("exec-exists", lastExec!=null);
 		res.put("is-tc-deleted", item.isTestCaseDeleted());
 		res.put("succesPercent", succesPercent);
 		res.put(DataTableModelConstants.DEFAULT_EMPTY_EXECUTE_HOLDER_KEY, " ");

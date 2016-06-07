@@ -99,10 +99,11 @@ define(
 				//execution date
 				var date = data['last-exec-on'],
 					iterid = _conf.iterationId,
+					execExist = data['exec-exists'],
 					tpid = data['entity-id'],
 					format = translator.get('squashtm.dateformat');
 
-				if(!!date ){
+				if(!!date && !!execExist){
 					var exTxt = dateutils.format(date, format),
 						exRef = routing.buildURL('iterations.testplan.lastexec', iterid, tpid);
 					var exLnk = $('<a>', { 'text' : exTxt, 'href' : exRef});
