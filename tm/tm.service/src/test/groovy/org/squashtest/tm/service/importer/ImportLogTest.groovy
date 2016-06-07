@@ -20,24 +20,22 @@
  */
 package org.squashtest.tm.service.importer
 
-import org.squashtest.tm.service.internal.batchimport.DatasetTarget;
-
+import org.squashtest.tm.service.internal.batchimport.DatasetTarget
 import spock.lang.Specification
+
+import static org.squashtest.tm.service.importer.EntityType.DATASET
 import static org.squashtest.tm.service.importer.ImportStatus.*
-import static org.squashtest.tm.service.importer.EntityType.*
 
 class ImportLogTest extends Specification {
 
 
 	ImportLog logs
-	Integer counter=0;
+	Integer counter = 0;
 
 
-	def setup(){
+	def setup() {
 		logs = new ImportLog()
 	}
-
-
 
 	/*
 	 * The following methods are all tests for the method #packLogs()
@@ -45,45 +43,45 @@ class ImportLogTest extends Specification {
 	 *
 	 */
 
-	def "for one imported line, should leave a single entry with status OK alone"(){
+	def "for one imported line, should leave a single entry with status OK alone"() {
 
-		given :
+		given:
 		def s11 = logentry(1, OK)
 
-		and :
+		and:
 		logs.addLogEntry s11
 
-		when :
+		when:
 		logs.packLogs()
 
-		then :
-		logs.findAllFor(DATASET).collect{ it.status.name() } == ["OK"]
+		then:
+		logs.findAllFor(DATASET).collect { it.status.name() } == ["OK"]
 
 	}
 
-	def "for one imported line, should remove multiple status OK if redudancy occured"(){
+	def "for one imported line, should remove multiple status OK if redudancy occured"() {
 
-		given :
+		given:
 		def s11 = logentry(1, OK)
 		def s12 = logentry(1, OK)
 
 
-		and :
+		and:
 		logs.addLogEntry s11
 		logs.addLogEntry s12
 
-		when :
+		when:
 		logs.packLogs()
 
-		then :
-		logs.findAllFor(DATASET).collect{ it.status.name() } == ["OK"]
+		then:
+		logs.findAllFor(DATASET).collect { it.status.name() } == ["OK"]
 
 	}
 
 
-	def "should remove all the OK statuses because there are more (non ok) statuses"(){
+	def "should remove all the OK statuses because there are more (non ok) statuses"() {
 
-		given :
+		given:
 		def s51 = logentry(5, OK)
 		def s52 = logentry(5, OK)
 		def s53 = logentry(5, OK)
@@ -92,21 +90,21 @@ class ImportLogTest extends Specification {
 		def s56 = logentry(5, WARNING)
 		def s57 = logentry(5, WARNING)
 
-		and :
-		logs.logEntriesPerType.putAll EntityType.DATASET, [ s51, s52, s53, s54, s55, s56, s57 ]
+		and:
+		logs.logEntriesPerType.putAll EntityType.DATASET, [s51, s52, s53, s54, s55, s56, s57]
 
-		when :
+		when:
 		logs.packLogs()
 
 
-		then :
-		logs.findAllFor(DATASET).collect{ it.status.name() } == ["FAILURE", "FAILURE", "WARNING", "WARNING"]
+		then:
+		logs.findAllFor(DATASET).collect { it.status.name() } == ["FAILURE", "FAILURE", "WARNING", "WARNING"]
 	}
 
 
-	def "should pack all the log entries for the dataset sheet (ie remove unecessary entries with status OK)"(){
+	def "should pack all the log entries for the dataset sheet (ie remove unecessary entries with status OK)"() {
 
-		given :
+		given:
 
 		// entry 1 : case of 1 unique OK
 		def s11 = logentry(1, OK)
@@ -134,37 +132,37 @@ class ImportLogTest extends Specification {
 		def s56 = logentry(5, WARNING)
 		def s57 = logentry(5, WARNING)
 
-		and :
+		and:
 		logs.logEntriesPerType.putAll EntityType.DATASET,
-				[s11,
-					s21, s22, s23,
-					s33,
-					s41, s42, s43,
-					s51, s52, s53, s54, s55, s56, s57
-				]
+			[s11,
+			 s21, s22, s23,
+			 s33,
+			 s41, s42, s43,
+			 s51, s52, s53, s54, s55, s56, s57
+			]
 
-		when :
+		when:
 		logs.packLogs()
 
-		then :
-		logs.findAllFor(EntityType.DATASET).collect{ it.line+" : "+it.status.name() } ==
-		["1 : OK",
-			"2 : OK",
-			"3 : FAILURE",
-			"4 : FAILURE",
-			"4 : WARNING",
-			"5 : FAILURE",
-			"5 : FAILURE",
-			"5 : WARNING",
-			"5 : WARNING",
-		]
+		then:
+		logs.findAllFor(EntityType.DATASET).collect { it.line + " : " + it.status.name() } ==
+			["1 : OK",
+			 "2 : OK",
+			 "3 : FAILURE",
+			 "4 : FAILURE",
+			 "4 : WARNING",
+			 "5 : FAILURE",
+			 "5 : FAILURE",
+			 "5 : WARNING",
+			 "5 : WARNING",
+			]
 
 
 	}
 
 
-	def logentry(Integer line, ImportStatus status){
-		return new LogEntry(line, new DatasetTarget(), null, status, (counter++).toString(), null)
+	def logentry(Integer line, ImportStatus status) {
+		return LogEntry.status(status).forTarget(new DatasetTarget()).atLine(line).withMessage("${counter++}").build();
 	}
 
 }

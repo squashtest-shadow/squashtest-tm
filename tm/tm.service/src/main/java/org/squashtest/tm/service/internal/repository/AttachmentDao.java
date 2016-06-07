@@ -33,30 +33,30 @@ public interface AttachmentDao extends JpaRepository<Attachment, Long>, CustomAt
 
     @UsesTheSpringJpaDsl
     Attachment findById(long attachmentId);
-    
+
     /**
-     * Returns an attachment given its ID, with payload (the blob) 
-     * initialized 
-     * 
-     * @param attachmentId
-     * @return 
-     */
-    @UsesANamedQueryInPackageInfoOrElsewhere                
+     * Returns an attachment given its ID, with payload (the blob)
+     * initialized
+     *
+	 * @deprecated  not used - remove in 1.15 if it's still not used
+	 */
+	@Deprecated
+    @UsesANamedQueryInPackageInfoOrElsewhere
     Attachment findAttachmentWithContent(@Param("id") Long attachmentId);
 
     /**
      * Returns all the attachments that belong to the given AttachmentList
      * @param attachmentListId
-     * @return 
+     * @return
      */
     @UsesANamedQueryInPackageInfoOrElsewhere
     Set<Attachment> findAllAttachments(@Param("id") Long attachmentListId);
 
     /**
      * Same than above, paged version.
-     * 
+     *
      */
 
-    @Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id") 
+    @Query("select Attachment from AttachmentList AttachmentList join AttachmentList.attachments Attachment where AttachmentList.id = :id")
     Page<Attachment> findAllAttachmentsPagined(@Param("id") Long attachmentListId, Pageable pageable);
 }

@@ -18,14 +18,11 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.importer;
+package org.squashtest.tm.service.importer
 
-import static org.junit.Assert.*;
+import spock.lang.Specification
+
 import static org.squashtest.tm.service.importer.ImportStatus.*
-
-import org.junit.Test;
-
-import spock.lang.Specification;
 
 /**
  * @author Gregory Fouquet
@@ -47,9 +44,10 @@ class LogEntryTest extends Specification {
 		entry.target == t
 		entry.line == 10
 		entry.i18nError == msg
-		entry.errorArgs == [ arg1, arg2 ]
+		entry.errorArgs == [arg1, arg2]
 
 	}
+
 	def "should create warning entry"() {
 		given:
 		Target t = Mock()
@@ -65,14 +63,14 @@ class LogEntryTest extends Specification {
 		entry.target == t
 		entry.line == 10
 		entry.i18nError == msg
-		entry.errorArgs == [ arg1, arg2 ]
+		entry.errorArgs == [arg1, arg2]
 
 	}
 
 
-	def "should compare nicely with each others"(){
+	def "should compare nicely with each others"() {
 
-		given :
+		given:
 		def s11 = logentry(1, OK)
 		def s12 = logentry(1, FAILURE)
 		def s13 = logentry(1, WARNING)
@@ -83,15 +81,15 @@ class LogEntryTest extends Specification {
 		def s31 = logentry(17, FAILURE)
 		def s32 = logentry(17, WARNING)
 
-		and :
+		and:
 		def randomThenSorted = [s31, s13, s21, s14, s12, s32, s11]
 
-		when :
+		when:
 		Collections.sort(randomThenSorted)
 
-		then :
+		then:
 		randomThenSorted == [s11, s12, s13, s14, s21, s31, s32] ||
-		randomThenSorted == [s11, s12, s14, s13, s21, s31, s32] // s13.comparesTo(s14) == 0 so they can be ordered either way,
+			randomThenSorted == [s11, s12, s14, s13, s21, s31, s32] // s13.comparesTo(s14) == 0 so they can be ordered either way,
 		// yet they are not equal
 
 		// upset reviewer said : LogEntry.compareTo is not correctly implemented (see comment in compareTo)
@@ -102,8 +100,8 @@ class LogEntryTest extends Specification {
 	}
 
 
-	def logentry(Integer line, ImportStatus status){
-		return new LogEntry(line, null, null, status, null, null)
+	def logentry(Integer line, ImportStatus status) {
+		return LogEntry.status(status).atLine(line).build();
 	}
 
 }

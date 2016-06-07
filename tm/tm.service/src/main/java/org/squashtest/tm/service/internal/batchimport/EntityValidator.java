@@ -20,17 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport;
 
-import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS;
-import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_DELETED;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_PATH;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_NAME;
-import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.REQ_VERSION_REFERENCE;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
-import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -47,6 +36,15 @@ import org.squashtest.tm.service.importer.Target;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetColumn;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.squashtest.tm.service.internal.batchimport.Existence.NOT_EXISTS;
+import static org.squashtest.tm.service.internal.batchimport.Existence.TO_BE_DELETED;
+import static org.squashtest.tm.service.internal.batchimport.requirement.excel.RequirementSheetColumn.*;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_NAME;
+import static org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn.TC_REFERENCE;
+
 class EntityValidator {
 
 	private final ValidationFacilitySubservicesProvider subservicesProvider;
@@ -55,7 +53,7 @@ class EntityValidator {
 		return subservicesProvider.getModel();
 	}
 
-	InfoListItemFinderService getInfoListItemService(){
+	InfoListItemFinderService getInfoListItemService() {
 		return subservicesProvider.getInfoListItemService();
 	}
 
@@ -83,7 +81,7 @@ class EntityValidator {
 		String name = testCase.getName();
 		if (StringUtils.isBlank(name)) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
-					.withMessage(Messages.ERROR_FIELD_MANDATORY, TC_NAME.header).build());
+				.withMessage(Messages.ERROR_FIELD_MANDATORY, TC_NAME.header).build());
 		}
 
 		// 2 - natures and types now
@@ -106,7 +104,7 @@ class EntityValidator {
 		// 1 - path must be supplied and and well formed
 		if (!target.isWellFormed()) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
-					.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
+				.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
 		}
 
 		// 3 - the project actually exists
@@ -114,22 +112,22 @@ class EntityValidator {
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
-						.build());
+					.build());
 			}
 		}
 
 		// 4 - name has length between 0 and 255
 		if (name != null && name.length() > LibraryNode.MAX_NAME_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, TC_NAME.header)
-					.withImpact(Messages.IMPACT_MAX_SIZE).build());
+				.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
 
 		// 5 - reference, if exists, has length between 0 and 50
 		String reference = testCase.getReference();
 		if (!StringUtils.isBlank(reference) && reference.length() > TestCase.MAX_REF_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
-					.build());
+				.withMessage(Messages.ERROR_MAX_SIZE, TC_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
+				.build());
 		}
 
 		// 6 - natures and types now
@@ -158,20 +156,20 @@ class EntityValidator {
 		// 1 - test case owner path must be supplied and and well formed
 		if (!testCase.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH,
-					new String[] { testCase.getPath() }));
+				new String[]{testCase.getPath()}));
 		}
 
 		// 2 - the test case must exist
 		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_TC_NOT_FOUND).build());
 		}
 
 		// 3 - the project actually exists
 		if (target.isWellFormed()) {
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST).build());
 			}
 		}
 
@@ -187,7 +185,7 @@ class EntityValidator {
 	}
 
 	LogTrain validateCallStep(TestStepTarget target, TestStep testStep, TestCaseTarget calledTestCase,
-			CallStepParamsInfo paramInfos, ImportMode mode) {
+		CallStepParamsInfo paramInfos, ImportMode mode) {
 
 		LogTrain logs = new LogTrain();
 
@@ -195,14 +193,13 @@ class EntityValidator {
 		// 1 - the target must exist and be valid
 		String errorMessage = checkTestCaseExists(calledTestCase);
 
-		if (errorMessage != null){
+		if (errorMessage != null) {
 			logMustExistAndBeValidCalledTest(target, mode, logs, errorMessage);
-		}
-		else{
+		} else {
 			// 2 - there must be no cyclic calls
 			if (getModel().wouldCreateCycle(target, calledTestCase)) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CYCLIC_STEP_CALLS,
-						new Object[] { target.getTestCase().getPath(), calledTestCase.getPath() }));
+					new Object[]{target.getTestCase().getPath(), calledTestCase.getPath()}));
 			}
 
 			// 3 - check a called dataset
@@ -211,16 +208,22 @@ class EntityValidator {
 
 				// 3.1 - if a dataset is specified, the name must not exceed the max limit
 				if (dsname.length() > FacilityImplHelper.STD_TRUNCATE_SIZE) {
-					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE,
-							new String[] { StepSheetColumn.TC_STEP_CALL_DATASET.name() }, Messages.IMPACT_MAX_SIZE,
-							null));
+					LogEntry entry = LogEntry.warning()
+						.forTarget(target)
+						.withMessage(Messages.ERROR_MAX_SIZE, StepSheetColumn.TC_STEP_CALL_DATASET.name())
+						.withImpact(Messages.IMPACT_MAX_SIZE).build();
+
+					logs.addEntry(entry);
 				}
 
 				// 3.2 - if a dataset is specified, it must be owned by the called test case
 				DatasetTarget dsTarget = new DatasetTarget(calledTestCase, dsname);
 				if (!getModel().doesDatasetExists(dsTarget)) {
-					logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_DATASET_NOT_FOUND_ST,
-							Messages.IMPACT_NO_CALL_DATASET));
+					logs.addEntry(LogEntry.warning()
+						.forTarget(target)
+						.withMessage(Messages.ERROR_DATASET_NOT_FOUND_ST)
+						.withImpact(Messages.IMPACT_NO_CALL_DATASET)
+						.build());
 				}
 			}
 		}
@@ -229,15 +232,14 @@ class EntityValidator {
 
 	}
 
-	private String checkTestCaseExists(TestCaseTarget calledTestCase){
+	private String checkTestCaseExists(TestCaseTarget calledTestCase) {
 
 		TargetStatus calledStatus = getModel().getStatus(calledTestCase);
 
 		String mustExistAndBeValidMessage = null;
 		if (calledStatus.status == NOT_EXISTS || calledStatus.status == TO_BE_DELETED) {
 			mustExistAndBeValidMessage = Messages.ERROR_CALLED_TC_NOT_FOUND;
-		}
-		else if (!calledTestCase.isWellFormed()) {
+		} else if (!calledTestCase.isWellFormed()) {
 			mustExistAndBeValidMessage = Messages.ERROR_CALLED_STEP_WRONG_FORMAT;
 		}
 
@@ -248,28 +250,28 @@ class EntityValidator {
 	//********************* REQUIREMENTS CHECKS **********************//
 
 	public LogTrain createRequirementVersionChecks(
-			RequirementVersionTarget target, RequirementVersion reqVersion) {
+		RequirementVersionTarget target, RequirementVersion reqVersion) {
 		LogTrain logs = new LogTrain();
-		return basicReqVersionTests(target, reqVersion,logs);
+		return basicReqVersionTests(target, reqVersion, logs);
 	}
 
 	public LogTrain updateRequirementChecks(RequirementVersionTarget target,
-			RequirementVersion reqVersion) {
+		RequirementVersion reqVersion) {
 		LogTrain logs = new LogTrain();
 		// 1 - For update checking if requirement version number value isn't empty and > 0
 		checkRequirementVersionNumber(target, logs);
 		if (logs.hasCriticalErrors()) {
 			return logs;
 		}
-		basicReqVersionTests(target, reqVersion,logs);
+		basicReqVersionTests(target, reqVersion, logs);
 		return logs;
 	}
 
 	private void checkRequirementVersionNumber(RequirementVersionTarget target, LogTrain logs) {
 		if (target.getVersion() == null || target.getVersion() < 1) {
 			logs.addEntry(LogEntry.failure().forTarget(target)
-					.withMessage(Messages.ERROR_REQUIREMENT_VERSION_INVALID)
-					.build());
+				.withMessage(Messages.ERROR_REQUIREMENT_VERSION_INVALID)
+				.build());
 		}
 	}
 
@@ -281,15 +283,15 @@ class EntityValidator {
 	 * @return
 	 */
 	private LogTrain basicReqVersionTests(RequirementVersionTarget target,
-			RequirementVersion reqVersion, LogTrain logs){
-		checkMalformedPath(target,logs);
+		RequirementVersion reqVersion, LogTrain logs) {
+		checkMalformedPath(target, logs);
 		if (logs.hasCriticalErrors()) {
 			return logs;
 		}
-		checkProjectExists(target,logs);
-		checkVersionPath(target,logs);
-		checkVersionName(target,reqVersion, logs);
-		checkVersionReference(target,reqVersion, logs);
+		checkProjectExists(target, logs);
+		checkVersionPath(target, logs);
+		checkVersionName(target, reqVersion, logs);
+		checkVersionReference(target, reqVersion, logs);
 		logs.append(checkCategoryAndFixIfNeeded(target, reqVersion));
 		return logs;
 
@@ -301,7 +303,7 @@ class EntityValidator {
 	 * @param logs
 	 */
 	private void checkVersionPath(RequirementVersionTarget target, LogTrain logs) {
-		if (!target.isWellFormed()){
+		if (!target.isWellFormed()) {
 			return;
 		}
 
@@ -319,24 +321,24 @@ class EntityValidator {
 
 		if (hasTruncate) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_MAX_SIZE, REQ_PATH.header).build());
+				.withMessage(Messages.ERROR_MAX_SIZE, REQ_PATH.header).build());
 			rebuildPathAfterTrucate(target, names);
 		}
 
 	}
 
 	private void rebuildPathAfterTrucate(RequirementVersionTarget target,
-			String[] names) {
+		String[] names) {
 		target.getRequirement().setPath(PathUtils.buildPathFromParts(names));
 	}
 
 	private void checkVersionReference(RequirementVersionTarget target,
-			RequirementVersion reqVersion, LogTrain logs) {
+		RequirementVersion reqVersion, LogTrain logs) {
 		String reference = reqVersion.getReference();
 		if (!StringUtils.isBlank(reference) && reference.length() > RequirementVersion.MAX_REF_SIZE) {
 			logs.addEntry(LogEntry.warning().forTarget(target)
-					.withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
-					.build());
+				.withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_REFERENCE.header).withImpact(Messages.IMPACT_MAX_SIZE)
+				.build());
 		}
 	}
 
@@ -345,33 +347,35 @@ class EntityValidator {
 		if (name != null && name.length() > LibraryNode.MAX_NAME_SIZE) {
 			reqVersion.setName(StringUtils.abbreviate(name, LibraryNode.MAX_NAME_SIZE));
 			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_MAX_SIZE, REQ_VERSION_NAME.header)
-					.withImpact(Messages.IMPACT_MAX_SIZE).build());
+				.withImpact(Messages.IMPACT_MAX_SIZE).build());
 		}
 	}
 
 	private void checkProjectExists(RequirementVersionTarget target,
-			LogTrain logs) {
+		LogTrain logs) {
 		if (target.isWellFormed()) {
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
 				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST)
-						.build());
+					.build());
 			}
 		}
 	}
 
 	private void checkMalformedPath(RequirementVersionTarget target,
-			LogTrain logs) {
-		if (!target.isWellFormed()|| pathHasEmptyParts(target.getPath())) {
-			logs.addEntry(LogEntry.failure().forTarget(target)
-					.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath()).build());
+		LogTrain logs) {
+		if (!target.isWellFormed() || pathHasEmptyParts(target.getPath())) {
+			logs.addEntry(LogEntry.failure()
+				.forTarget(target)
+				.withMessage(Messages.ERROR_MALFORMED_PATH, target.getPath())
+				.build());
 		}
 	}
 
 	private boolean pathHasEmptyParts(String path) {
 		String[] splits = PathUtils.splitPath(path);
 		for (String split : splits) {
-			if (split.length()==0) {
+			if (split.length() == 0) {
 				return true;
 			}
 		}
@@ -380,25 +384,32 @@ class EntityValidator {
 
 	private void logMustExistAndBeValidCalledTest(TestStepTarget target, ImportMode mode, LogTrain logs, String message) {
 		switch (mode) {
-		case CREATE:
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, message, Messages.IMPACT_CALL_AS_ACTION_STEP));
-			break;
-		case UPDATE: // do default
-		default:
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, message));
-			break;
+			case CREATE:
+				logs.addEntry(LogEntry.warning()
+					.forTarget(target)
+					.withMessage(message)
+					.withImpact(Messages.IMPACT_CALL_AS_ACTION_STEP)
+					.build());
+				break;
+			case UPDATE: // do default
+			default:
+				logs.addEntry(LogEntry.failure()
+					.forTarget(target)
+					.withMessage(message)
+					.build());
+				break;
 		}
 	}
 
 	LogTrain basicParameterChecks(ParameterTarget target) {
-		String[] fieldPathErrorArgs = new String[] { "TC_OWNER_PATH" }; // that variable is simple convenience for
+		String[] fieldPathErrorArgs = new String[]{"TC_OWNER_PATH"}; // that variable is simple convenience for
 		// logging
 		return basicParameterChecks(target, fieldPathErrorArgs, Messages.ERROR_PARAMETER_OWNER_NOT_FOUND);
 	}
 
 	public LogTrain basicParameterValueChecks(ParameterTarget target) {
 
-		String[] fieldPathErrorArgs = new String[] { "TC_PARAMETER_OWNER_PATH" }; // that variable is simple convenience
+		String[] fieldPathErrorArgs = new String[]{"TC_PARAMETER_OWNER_PATH"}; // that variable is simple convenience
 		// for
 		// logging
 		return basicParameterChecks(target, fieldPathErrorArgs, Messages.ERROR_DATASET_PARAM_OWNER_NOT_FOUND);
@@ -406,9 +417,9 @@ class EntityValidator {
 	}
 
 	private LogTrain basicParameterChecks(ParameterTarget target, String[] fieldPathErrorArgs,
-			String ownerNotFoundMessage) {
+		String ownerNotFoundMessage) {
 		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[] { "TC_PARAM_NAME" }; // that variable is simple convenience for
+		String[] fieldNameErrorArgs = new String[]{"TC_PARAM_NAME"}; // that variable is simple convenience for
 
 		// logging
 		TestCaseTarget testCase = target.getOwner();
@@ -424,21 +435,30 @@ class EntityValidator {
 	LogTrain basicDatasetCheck(DatasetTarget target) {
 
 		LogTrain logs = new LogTrain();
-		String[] fieldNameErrorArgs = new String[] { "TC_DATASET_NAME" }; // that variable is simple convenience for
+		String[] fieldNameErrorArgs = new String[]{"TC_DATASET_NAME"}; // that variable is simple convenience for
 		// logging
 
 		TestCaseTarget testCase = target.getTestCase();
 
-		basicTestCaseTargetCheck(testCase, logs,  new String[] { testCase.getPath() }, Messages.ERROR_TC_NOT_FOUND, target);
+		basicTestCaseTargetCheck(testCase, logs, new String[]{testCase.getPath()}, Messages.ERROR_TC_NOT_FOUND, target);
 
 		// 4 - name has length between 1 and 255
 		String name = target.getName();
 		if (name != null && name.length() > 255) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
-					Messages.IMPACT_MAX_SIZE, null));
+
+			logs.addEntry(
+				LogEntry.warning()
+					.forTarget(target)
+					.withMessage(Messages.ERROR_MAX_SIZE, fieldNameErrorArgs)
+					.withImpact(Messages.IMPACT_MAX_SIZE)
+					.build());
 		}
 		if (StringUtils.isBlank(name)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs));
+			logs.addEntry(
+				LogEntry.failure()
+					.forTarget(target)
+					.withMessage(Messages.ERROR_FIELD_MANDATORY, fieldNameErrorArgs)
+					.build());
 		}
 
 		return logs;
@@ -450,7 +470,7 @@ class EntityValidator {
 
 
 	private void basicTestCaseTargetCheck(TestCaseTarget testCase, LogTrain logs, String[] fieldPathErrorArgs,
-			String tcNotFoundMessage, Target target) {
+		String tcNotFoundMessage, Target target) {
 		// 1 - test case owner path must be supplied and and well formed
 		if (!testCase.isWellFormed()) {
 			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MALFORMED_PATH, fieldPathErrorArgs));
@@ -459,14 +479,14 @@ class EntityValidator {
 		// 2 - the test case must exist
 		TargetStatus tcStatus = getModel().getStatus(testCase);
 		if (tcStatus.status == TO_BE_DELETED || tcStatus.status == NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, tcNotFoundMessage));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(tcNotFoundMessage).build());
 		}
 
 		// 3 - the project actually exists
 		if (testCase.isWellFormed()) {
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() != Existence.EXISTS) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PROJECT_NOT_EXIST));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PROJECT_NOT_EXIST).build());
 			}
 		}
 	}
@@ -479,9 +499,12 @@ class EntityValidator {
 		} else {
 
 			// 4 - name has length between 1 and 255
-			if ( name.length() > 255) {
-				logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_MAX_SIZE, fieldNameErrorArgs,
-						Messages.IMPACT_MAX_SIZE, null));
+			if (name.length() > 255) {
+				logs.addEntry(LogEntry.warning()
+					.forTarget(target)
+					.withMessage(Messages.ERROR_MAX_SIZE, fieldNameErrorArgs)
+					.withImpact(Messages.IMPACT_MAX_SIZE)
+					.build());
 			}
 
 			// 5 - name does not contain forbidden characters
@@ -492,11 +515,10 @@ class EntityValidator {
 			Matcher m = p.matcher(name);
 			if (!StringUtils.isBlank(name) && !m.matches() && name.length() < 256) {
 				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE,
-						Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
+					Messages.ERROR_PARAMETER_CONTAINS_FORBIDDEN_CHARACTERS, fieldNameErrorArgs));
 			}
 		}
 	}
-
 
 
 	/*
@@ -505,32 +527,32 @@ class EntityValidator {
 	 * given project.
 	 *
 	 */
-	private LogTrain checkNatureAndTypeAndFixIfNeeded(TestCaseTarget target, TestCase testCase){
+	private LogTrain checkNatureAndTypeAndFixIfNeeded(TestCaseTarget target, TestCase testCase) {
 
 		LogTrain logs = new LogTrain();
 
-		if (target.isWellFormed()){
+		if (target.isWellFormed()) {
 
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() == Existence.EXISTS) {
 
 				// 2-1 nature, if specified, must be consistent with the natures of the target project
-				if (! natureDefinedAndConsistent(projectStatus, testCase)){
+				if (!natureDefinedAndConsistent(projectStatus, testCase)) {
 					logs.addEntry(
-							LogEntry.warning().forTarget(target)
+						LogEntry.warning().forTarget(target)
 							.withMessage(Messages.ERROR_INVALID_NATURE, target.getPath())
 							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
 							.build()
-							);
+					);
 				}
 
-				if (! typeDefinedAndConsistent(projectStatus, testCase)){
+				if (!typeDefinedAndConsistent(projectStatus, testCase)) {
 					logs.addEntry(
-							LogEntry.warning().forTarget(target)
+						LogEntry.warning().forTarget(target)
 							.withMessage(Messages.ERROR_INVALID_TYPE, target.getPath())
 							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
 							.build()
-							);
+					);
 				}
 			}
 		}
@@ -543,22 +565,22 @@ class EntityValidator {
 	 * this element is consistent with the set of natures/types available in the
 	 * given project.
 	 */
-	private LogTrain checkCategoryAndFixIfNeeded(RequirementVersionTarget target, RequirementVersion reqVersion){
+	private LogTrain checkCategoryAndFixIfNeeded(RequirementVersionTarget target, RequirementVersion reqVersion) {
 
 		LogTrain logs = new LogTrain();
 
-		if (target.isWellFormed()){
+		if (target.isWellFormed()) {
 
 			TargetStatus projectStatus = getModel().getProjectStatus(target.getProject());
 			if (projectStatus.getStatus() == Existence.EXISTS) {
 				//category, if specified, must be consistent with the categories of the target project
-				if (! categoryDefinedAndConsistent(projectStatus, reqVersion)){
+				if (!categoryDefinedAndConsistent(projectStatus, reqVersion)) {
 					logs.addEntry(
-							LogEntry.warning().forTarget(target)
+						LogEntry.warning().forTarget(target)
 							.withMessage(Messages.ERROR_INVALID_CATEGORY, target.getPath())
 							.withImpact(Messages.IMPACT_DEFAULT_VALUE)
 							.build()
-							);
+					);
 				}
 			}
 		}
@@ -574,26 +596,24 @@ class EntityValidator {
 	 */
 
 	private boolean categoryDefinedAndConsistent(TargetStatus projectStatus,
-			RequirementVersion reqVersion) {
+		RequirementVersion reqVersion) {
 		boolean isConsistent;
 		InfoListItem category = reqVersion.getCategory();
-		if (category!=null) {
+		if (category != null) {
 			isConsistent = getInfoListItemService().isCategoryConsistent(projectStatus.getId(), category.getCode());
-		}
-		else {
+		} else {
 			isConsistent = false;
 		}
 		return isConsistent;
 	}
 
-	private boolean natureDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
+	private boolean natureDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase) {
 		boolean isConsistent;
 		InfoListItem nature = testCase.getNature();
 
-		if (nature == null){
+		if (nature == null) {
 			isConsistent = true;
-		}
-		else{
+		} else {
 			isConsistent = getInfoListItemService().isNatureConsistent(projectStatus.getId(), nature.getCode());
 		}
 
@@ -601,14 +621,13 @@ class EntityValidator {
 	}
 
 
-	private boolean typeDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase){
+	private boolean typeDefinedAndConsistent(TargetStatus projectStatus, TestCase testCase) {
 		boolean isConsistent;
 		InfoListItem type = testCase.getType();
 
-		if (type == null){
+		if (type == null) {
 			isConsistent = true;
-		}
-		else{
+		} else {
 			isConsistent = getInfoListItemService().isTypeConsistent(projectStatus.getId(), type.getCode());
 		}
 

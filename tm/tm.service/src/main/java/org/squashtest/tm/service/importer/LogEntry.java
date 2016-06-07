@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.service.importer;
 
+import javax.validation.constraints.NotNull;
+
 public class LogEntry implements Comparable<LogEntry> {
 	private Integer line;
 	private Target target;
@@ -73,10 +75,19 @@ public class LogEntry implements Comparable<LogEntry> {
 		return new Builder(ImportStatus.WARNING);
 	}
 
+	public static Builder ok() {
+		return new Builder(ImportStatus.OK);
+	}
+
 	/**
-	 * @deprecated use builder api
+	 * Use this when you don't statically know what the status is. Otherwise, consider LogEntry#failure() or LogEntry#warning()
+	 * @param status
+	 * @return
      */
-	@Deprecated
+	public static Builder status(@NotNull ImportStatus status) {
+		return new Builder(status);
+	}
+
 	public LogEntry(Target target, ImportStatus status, String i18nError) {
 		super();
 		this.target = target;
@@ -88,40 +99,9 @@ public class LogEntry implements Comparable<LogEntry> {
 	 * @deprecated use builder api
 	 */
 	@Deprecated
-	public LogEntry(Target target, ImportStatus status, String i18nError, String i18nImpact) {
-		this(target, status, i18nError);
-		this.i18nImpact = i18nImpact;
-	}
-
-	/**
-	 * @deprecated use builder api
-	 */
-	@Deprecated
 	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs) {
 		this(target, status, i18nError);
 		this.errorArgs = errorArgs;
-	}
-
-	/**
-	 * @deprecated use builder api
-	 */
-	@Deprecated
-	public LogEntry(Target target, ImportStatus status, String i18nError, Object[] errorArgs, String i18nImpact,
-			Object[] impactArgs) {
-		this(target, status, i18nError, i18nImpact);
-		this.errorArgs = errorArgs;
-		this.impactArgs = impactArgs;
-	}
-
-	/**
-	 * @deprecated use builder api
-	 */
-	@Deprecated
-	public LogEntry(Integer line, Target target, ImportMode mode, ImportStatus status, String i18nError,
-			String i18nImpact) {
-		this(target, status, i18nError, i18nImpact);
-		this.mode = mode;
-		this.line = line;
 	}
 
 	public Object[] getErrorArgs() {
@@ -199,10 +179,6 @@ public class LogEntry implements Comparable<LogEntry> {
 
 	public String getI18nImpact() {
 		return i18nImpact;
-	}
-
-	public void setI18nImpact(String i18nImpact) {
-		this.i18nImpact = i18nImpact;
 	}
 
 	public void setTarget(Target target) {

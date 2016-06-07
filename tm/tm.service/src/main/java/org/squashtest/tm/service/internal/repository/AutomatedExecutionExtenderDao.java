@@ -31,7 +31,7 @@ import org.squashtest.tm.service.testautomation.AutomatedExecutionSetIdentifier;
 /**
  * @author bsiri
  * @author Gregory Fouquet
- * 
+ *
  */
 public interface AutomatedExecutionExtenderDao extends Repository<AutomatedExecutionExtender, Long>{
 
@@ -43,15 +43,19 @@ public interface AutomatedExecutionExtenderDao extends Repository<AutomatedExecu
 
 	/**
 	 * Returns the {@link AutomatedExecutionExtender}s which match the {@link AutomatedExecutionSetIdentifier}.
-	 * 
+	 *
 	 * @param projectName
-	 * 
+	 *
 	 * @return
 	 */
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndTestName(@NotNull String suiteId, @NotNull String testName,
 			@NotNull String projectName);
-	
+
+	/**
+	 * @deprecated  not used - remove in 1.15 if it's still not used
+     */
+	@Deprecated
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<AutomatedExecutionExtender> findAllBySuiteIdAndProjectId(@NotNull String suiteId, @NotNull Long projectId);
 }

@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
 
@@ -56,10 +56,12 @@ public abstract class Instruction<T extends Target> {
 	}
 
 	public void addLogEntry(ImportStatus status, String messageKey, String impactKey, Object... messageArgs) {
-		LogEntry entry = new LogEntry(target, status, messageKey);
-		entry.setLine(line);
-		entry.setErrorArgs(messageArgs);
-		entry.setI18nImpact(impactKey);
+		LogEntry entry = LogEntry.status(status)
+			.forTarget(target)
+			.atLine(line)
+			.withMessage(messageKey, messageArgs)
+			.withImpact(impactKey)
+			.build();
 		logTrain.addEntry(entry);
 	}
 
@@ -72,7 +74,7 @@ public abstract class Instruction<T extends Target> {
 
 	/**
 	 * Must "execute" I agree, but more importantly must validate.
-	 * 
+	 *
 	 * @param facility
 	 * @return
 	 */
@@ -84,20 +86,20 @@ public abstract class Instruction<T extends Target> {
 		LogTrain execLogTrain;
 
 		switch (mode) {
-		case CREATE:
-			execLogTrain = executeCreate(facility);
-			break;
+			case CREATE:
+				execLogTrain = executeCreate(facility);
+				break;
 
-		case DELETE:
-			execLogTrain = executeDelete(facility);
-			break;
+			case DELETE:
+				execLogTrain = executeDelete(facility);
+				break;
 
-		case UPDATE: // update is default mode when unspecified
-			execLogTrain = executeUpdate(facility);
-			break;
+			case UPDATE: // update is default mode when unspecified
+				execLogTrain = executeUpdate(facility);
+				break;
 
-		default:
-			throw new IllegalStateException("Unrecognized ImportMode " + mode
+			default:
+				throw new IllegalStateException("Unrecognized ImportMode " + mode
 					+ ". One must have forgotten to handle new modes");
 		}
 

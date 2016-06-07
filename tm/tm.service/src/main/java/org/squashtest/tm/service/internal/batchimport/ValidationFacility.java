@@ -1,22 +1,22 @@
 /**
- *     This file is part of the Squashtest platform.
- *     Copyright (C) 2010 - 2016 Henix, henix.fr
- *
- *     See the NOTICE file distributed with this work for additional
- *     information regarding copyright ownership.
- *
- *     This is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Lesser General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     this software is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Lesser General Public License for more details.
- *
- *     You should have received a copy of the GNU Lesser General Public License
- *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ * This file is part of the Squashtest platform.
+ * Copyright (C) 2010 - 2016 Henix, henix.fr
+ * <p>
+ * See the NOTICE file distributed with this work for additional
+ * information regarding copyright ownership.
+ * <p>
+ * This is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ * <p>
+ * this software is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 package org.squashtest.tm.service.internal.batchimport;
 
@@ -117,7 +117,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	}
 
-	private final class CreationStrategy<I extends Instruction<T> & Milestoned, T extends Target> extends MilestonesValidationStrategy<I,T> {
+	private final class CreationStrategy<I extends Instruction<T> & Milestoned, T extends Target> extends MilestonesValidationStrategy<I, T> {
 		/**
 		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
 		 */
@@ -127,7 +127,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 	}
 
-	private final class UpdateStrategy<I extends Instruction<T> & Milestoned, T extends Target> extends MilestonesValidationStrategy<I,T> {
+	private final class UpdateStrategy<I extends Instruction<T> & Milestoned, T extends Target> extends MilestonesValidationStrategy<I, T> {
 		/**
 		 * @see org.squashtest.tm.service.internal.batchimport.ValidationFacility.MilestonesValidationStrategy#logEntry()
 		 */
@@ -263,8 +263,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 					default:
 						break;
 				}
-				LogEntry logEntry = new LogEntry(target, ImportStatus.WARNING, warningMessage,
-					impactMessage);
+				LogEntry logEntry = LogEntry.warning().forTarget(target).withMessage(warningMessage).withImpact(impactMessage).build();
 				logEntries.add(logEntry);
 				fixUser = true;
 			}
@@ -288,7 +287,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 1 - does the target exist
 		if (status.getStatus() == Existence.NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_TC_NOT_FOUND).build());
 		}
 
 		// 2 - can the user actually do it ?
@@ -299,12 +298,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 3 - is the test case called by another test case ?
 		if (model.isCalled(target)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_REMOVE_CALLED_TC));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_REMOVE_CALLED_TC).build());
 		}
 
 		// 4 - milestone lock ?
 		if (model.isTestCaseLockedByMilestones(target)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 		}
 
 		return logs;
@@ -329,7 +328,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 4 - the test case must not be locked by a milestone
 		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 		}
 
 		// 5 - check the index
@@ -370,13 +369,12 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 4.2 - the user must be approved on the target test case
 		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_CALL_NOT_READABLE,
-				Messages.IMPACT_CALL_AS_ACTION_STEP));
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_CALL_NOT_READABLE).withImpact(Messages.IMPACT_CALL_AS_ACTION_STEP).build());
 		}
 
 		// 4.3 - the test case must not be locked by a milestone
 		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 		}
 
 		// 5 - check the index
@@ -408,24 +406,24 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 4 - the test case must not be locked by a milestone
 		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 		}
 
 		// 5 - the step must exist
 		boolean exists = model.stepExists(target);
 		if (!exists) {
 			if (target.getIndex() == null) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_EMPTY));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_STEPINDEX_EMPTY).build());
 			} else if (target.getIndex() < 0) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEPINDEX_NEGATIVE));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_STEPINDEX_NEGATIVE).build());
 			} else {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_STEP_NOT_EXISTS).build());
 			}
 		} else {
 			// 5 - the step must be actually an action step
 			StepType type = model.getType(target);
 			if (type != StepType.ACTION) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_AN_ACTIONSTEP));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_NOT_AN_ACTIONSTEP).build());
 			}
 		}
 
@@ -455,24 +453,24 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		// 4.2 - the user must be approved on the target test case
 		LogEntry hasntCallPermission = checkPermissionOnProject(PERM_READ, calledTestCase, target);
 		if (hasntCallPermission != null) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_CALL_NOT_READABLE));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_CALL_NOT_READABLE).build());
 
 		}
 
 		// 4.3 - the test case must not be locked by a milestone
 		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 		}
 
 		// 5 - the step must exist
 		boolean exists = model.stepExists(target);
 		if (!exists) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_STEP_NOT_EXISTS));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_STEP_NOT_EXISTS).build());
 		} else {
 			// 6 - check that this is a call step
 			StepType type = model.getType(target);
 			if (type != StepType.CALL) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_NOT_A_CALLSTEP));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_NOT_A_CALLSTEP).build());
 			}
 
 			// 7 - no call step cycles allowed
@@ -501,7 +499,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 3 - the test case must not be locked by a milestone
 		if (model.isTestCaseLockedByMilestones(target.getTestCase())) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 		}
 
 		// 4 - can that step be identified precisely ?
@@ -523,8 +521,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 2 - does it already exists ?
 		if (model.doesParameterExists(target)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.WARNING, Messages.ERROR_PARAMETER_ALREADY_EXISTS,
-				Messages.IMPACT_PARAM_UPDATED));
+			logs.addEntry(LogEntry.warning().forTarget(target).withMessage(Messages.ERROR_PARAMETER_ALREADY_EXISTS).withImpact(Messages.IMPACT_PARAM_UPDATED).build());
 		}
 
 		// 3 - is the user approved ?
@@ -546,7 +543,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 2 - does it exists ?
 		if (!model.doesParameterExists(target)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_NOT_FOUND));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PARAMETER_NOT_FOUND).build());
 		}
 
 		// 3 - is the user approved ?
@@ -566,7 +563,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 1 - does it exists ?
 		if (!model.doesParameterExists(target)) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_PARAMETER_NOT_FOUND));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_PARAMETER_NOT_FOUND).build());
 		}
 
 		// 2 - is the user approved ?
@@ -608,7 +605,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 2 - is such parameter available for this dataset ?
 			if (!model.isParamInDataset(param, dataset)) {
-				logs.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_PARAMETER_MISMATCH));
+				logs.addEntry(LogEntry.failure().forTarget(dataset).withMessage(Messages.ERROR_DATASET_PARAMETER_MISMATCH).build());
 			}
 
 			// 3 - is the user allowed to do so ?
@@ -647,7 +644,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// 2 - does the dataset exists ?
 		if (!model.doesDatasetExists(dataset)) {
-			logs.addEntry(new LogEntry(dataset, ImportStatus.FAILURE, Messages.ERROR_DATASET_NOT_FOUND));
+			logs.addEntry(LogEntry.failure().forTarget(dataset).withMessage(Messages.ERROR_DATASET_NOT_FOUND).build());
 		}
 
 		// 3 - has the user the required privilege ?
@@ -739,16 +736,28 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		LogEntry entry = null;
 
 		if (index == null) {
-			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_EMPTY, optionalImpact);
+			entry = LogEntry.status(importStatus)
+				.forTarget(target)
+				.withMessage(Messages.ERROR_STEPINDEX_EMPTY)
+				.withImpact(optionalImpact)
+				.build();
 		} else if (index < 0) {
-			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_NEGATIVE, optionalImpact);
+			entry = LogEntry.status(importStatus)
+				.forTarget(target)
+				.withMessage(Messages.ERROR_STEPINDEX_NEGATIVE)
+				.withImpact(optionalImpact)
+				.build();
 
 		} else if (!model.stepExists(target)
 			&& (!model.indexIsFirstAvailable(target) || mode != ImportMode.CREATE)) {
 			// when index doesn't match a step in the target model
 			// this error message is not needed for creation when the target
 			// index is the first one available
-			entry = new LogEntry(target, importStatus, Messages.ERROR_STEPINDEX_OVERFLOW, optionalImpact);
+			entry = LogEntry.status(importStatus)
+				.forTarget(target)
+				.withMessage(Messages.ERROR_STEPINDEX_OVERFLOW)
+				.withImpact(optionalImpact)
+				.build();
 		}
 
 		return entry;
@@ -821,7 +830,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		// if the test case doesn't exist
 		if (status.getStatus() == Existence.NOT_EXISTS) {
-			logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_TC_NOT_FOUND));
+			logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_TC_NOT_FOUND).build());
 		} else {
 
 			// 1 - basic verifications
@@ -848,7 +857,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 			// 3-3 : milestone lock ?
 			if (model.isTestCaseLockedByMilestones(target)) {
-				logs.addEntry(new LogEntry(target, ImportStatus.FAILURE, Messages.ERROR_MILESTONE_LOCKED));
+				logs.addEntry(LogEntry.failure().forTarget(target).withMessage(Messages.ERROR_MILESTONE_LOCKED).build());
 			}
 
 			// 3-4 : check audit datas
@@ -1162,8 +1171,8 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) {
 		if (!checkRequirementVersionPathIsValid(target, logs)) {
-		return null;
-	}
+			return null;
+		}
 
 		// we check we can read the requirement. this should probably be handled by Model
 		Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
@@ -1175,28 +1184,30 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 
 		RequirementTarget reqTarget = new RequirementTarget(target.getReqPath());
 		RequirementVersionTarget reqVersionTarget = new RequirementVersionTarget(reqTarget, target.getReqVersion());
+
 		Existence reqStatus = getModel().getStatus(reqTarget).getStatus();
-		Existence reqVersionStatus = getModel().getStatus(reqVersionTarget).getStatus();
 
 		if (reqStatus == Existence.NOT_EXISTS) {
 			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_NOT_EXISTS));
 			return null;
 		}
 
+		Existence reqVersionStatus = getModel().getStatus(reqVersionTarget).getStatus();
+
 		if (reqVersionStatus == Existence.NOT_EXISTS) {
 			logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_NOT_EXISTS));
 			return null;
 		}
 
-			if (reqVersionStatus == Existence.EXISTS) {
+		if (reqVersionStatus == Existence.EXISTS) {
 //			Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
 			Requirement req = reqLibNavigationService.findRequirement(reqTarget.getId());
-				RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
-				if (!req.getStatus().isRequirementLinkable()) {
-					logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
-				}
-				return reqVersion.getId();
+			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
+			if (!req.getStatus().isRequirementLinkable()) {
+				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));
 			}
+			return reqVersion.getId();
+		}
 
 		return null;
 	}

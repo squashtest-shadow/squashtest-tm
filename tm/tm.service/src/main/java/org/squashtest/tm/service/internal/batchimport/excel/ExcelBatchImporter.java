@@ -107,7 +107,7 @@ public abstract class ExcelBatchImporter {
 			LogTrain logs = instruction.execute(facility);
 
 			if (logs.hasNoErrorWhatsoever()) {
-				logs.addEntry(new LogEntry(instruction.getTarget(), ImportStatus.OK, null));
+				logs.addEntry(LogEntry.ok().forTarget(instruction.getTarget()).build());
 			}
 
 			logs.setForAll(instruction.getMode());
