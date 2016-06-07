@@ -70,11 +70,14 @@ class ValidationFacilityTest extends Specification {
 
 		facility.projectDao = projectDao
 
-		model.getStatus(_) >> status
 		model.getTestCaseCufs(_) >> Collections.emptyList()
 		model.getProjectStatus(_) >> Mock(ProjectTargetStatus)
 
 		userAccount.findCurrentUser() >> Mock(User)
+	}
+
+	def mockAnyStatus() {
+		model.getStatus(_) >> status
 	}
 
 	@Unroll
@@ -95,6 +98,7 @@ class ValidationFacilityTest extends Specification {
 		TestCaseInstruction instr = new TestCaseInstruction(target, testCase);
 
 		and:
+		mockAnyStatus()
 		status.status >> Existence.NOT_EXISTS
 
 		when:
@@ -126,6 +130,7 @@ class ValidationFacilityTest extends Specification {
 		TestCaseInstruction instr = new TestCaseInstruction(target, testCase);
 
 		and:
+		mockAnyStatus()
 		status.status >> Existence.EXISTS
 
 		when:
@@ -153,6 +158,7 @@ class ValidationFacilityTest extends Specification {
 		TestCaseInstruction instr = new TestCaseInstruction(target, testCase);
 
 		and:
+		mockAnyStatus()
 		status.status >> Existence.EXISTS
 
 		when:
@@ -181,6 +187,12 @@ class ValidationFacilityTest extends Specification {
 		requirementFinder.findRequirement(10L) >> requirement
 
 		permissionService.hasRoleOrPermissionOnObject(_, _, _, _) >> true
+
+		and:
+		status.status >> Existence.EXISTS
+		// if you dont understand, think in javascript vvvvvvvvvvvvvvvv
+		model.getStatus({ it instanceof RequirementTarget ? (it.id = 10L) || true : false }) >> status
+		model.getStatus(_) >> status
 
 		expect:
 		facility.checkRequirementVersionForCoverage(target, train)
