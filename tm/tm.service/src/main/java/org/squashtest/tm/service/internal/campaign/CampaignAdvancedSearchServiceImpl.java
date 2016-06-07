@@ -21,11 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
@@ -46,6 +42,9 @@ import org.squashtest.tm.core.foundation.collection.SortOrder;
 import org.squashtest.tm.core.foundation.collection.Sorting;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
+import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
+import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
 import org.squashtest.tm.domain.search.AdvancedSearchModel;
 import org.squashtest.tm.domain.users.PartyProjectPermissionsBean;
 import org.squashtest.tm.domain.users.User;
@@ -81,6 +80,11 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			new SortField("itpi-datasets", SortField.Type.STRING, false)};
 
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("");
+
+	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
+	private static final String ITERATION_ID_FIELD_NAME = "iteration.id";
+	private static final String CAMPAIGN_ID_FIELD_NAME = "campaign.id";
+	private static final String PROJECT_ID_FIELD_NAME = "project.id";
 
 
 	@Override
@@ -127,7 +131,8 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 		List<IterationTestPlanItem> result = Collections.emptyList();
 		int countAll = 0;
-		if (luceneQuery != null) {
+
+		if (!checkSearchModelPerimeterIsEmpty(searchModel) && luceneQuery != null) {
 			Sort sort = getExecutionSort(paging);
 
 			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class)
@@ -139,6 +144,25 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		// Please, don't return null there, it will explode everything. It did.
 		return new PagingBackedPagedCollectionHolder<>(paging, countAll, result);
 
+	}
+
+	private boolean checkSearchModelPerimeterIsEmpty(AdvancedSearchModel searchModel) {
+		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
+		return checkParamNullOrEmpty(fields.get(PROJECT_ID_FIELD_NAME))&&
+			checkParamNullOrEmpty(fields.get(CAMPAIGN_ID_FIELD_NAME))&&
+			checkParamNullOrEmpty(fields.get(ITERATION_ID_FIELD_NAME))&&
+			checkParamNullOrEmpty(fields.get(TEST_SUITE_ID_FIELD_NAME));
+	}
+
+	private boolean checkParamNullOrEmpty(AdvancedSearchFieldModel field){
+		if (field==null){
+			return true;
+		}
+		if (field.getType()!= AdvancedSearchFieldModelType.LIST){
+			return false;
+		}
+		AdvancedSearchListFieldModel listField = (AdvancedSearchListFieldModel) field;
+		return listField.getValues().size()==0;
 	}
 
 	private Sort getExecutionSort(PagingAndMultiSorting multisorting) {
