@@ -21,13 +21,13 @@
 
 --%>
 <%@ tag description="Table displaying the issues for a TestCase" body-content="empty" %>
-	
+
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>	
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 
 <%@ attribute name="interfaceDescriptor" type="java.lang.Object" required="true" description="an object holding the labels for the interface"%>
 <%@ attribute name="dataUrl" required="true" description="where the table will fetch its data" %>
@@ -35,9 +35,9 @@
 
 <c:url var="executionUrl" value="/executions/"/>
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
-<%-- 
+<%--
 	columns are :
-	
+
 		- URL  (not shown)
 		- ID
 		- owner
@@ -48,7 +48,7 @@
 
  --%>
 
-<table id="issue-table" data-def="datakeys-id=id, pre-sort=1-desc">
+<table id="issue-table" data-def="datakeys-id=id">
 	<thead>
 		<tr>
 			<th data-def="select, map=remote-id, link-new-tab={url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
@@ -58,7 +58,7 @@
 			<th data-def="map=status">${interfaceDescriptor.tableStatusHeader}</th>
 			<th data-def="map=assignee">${interfaceDescriptor.tableAssigneeHeader}</th>
 			<th data-def="map=execution, link=${executionUrl}/{execution-id}"><f:message key="test-case.issues.table.column-header.reportedin.label" /></th>
-		
+
 		</tr>
 	</thead>
 	<tbody><%-- Will be populated through ajax --%></tbody>
@@ -70,13 +70,13 @@
 require( ["common"], function(){
 		require(["jquery", "workspace.event-bus", "squashtable"], function($, eventBus){
 	$(function(){
-			
+
 			$("#issue-table").squashTable({
 				fnRowCallback : function(row, data){
 					var correctAssignee = (data["assignee"]!=="") ? data["assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
 					var td=$(row).find("td:eq(5)");
 					$(td).html(correctAssignee);
-					return row;				
+					return row;
 				},
 				<c:if test="${not empty tableEntries}">
 				'aaData' : ${json:serialize(tableEntries)},

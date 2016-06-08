@@ -21,12 +21,12 @@
 
 --%>
 <%@ tag description="Table displaying the issues for an Iteration" body-content="empty" %>
-	
+
 <%@ tag language="java" pageEncoding="utf-8"%>
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="s" uri="http://www.springframework.org/tags"%>
-<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>	
+<%@ taglib prefix="comp" tagdir="/WEB-INF/tags/component"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ taglib prefix="json" uri="http://org.squashtest.tm/taglib/json" %>
 
@@ -37,9 +37,9 @@
 
 <c:url var="tableLanguageUrl" value="/datatables/messages" />
 
-<%-- 
+<%--
 	columns are :
-	
+
 		- URL  (not shown)
 		- ID
 		- owner
@@ -50,12 +50,12 @@
 
  --%>
 
-	
-<table id="issue-table" data-def="datakeys-id=issue-id, pre-sort=1-desc">
+
+<table id="issue-table" data-def="datakeys-id=issue-id">
 	<thead>
 		<tr>
 			<th data-def="select, map=issue-id, link-new-tab={issue-url}, sWidth=2.5em, sortable">${interfaceDescriptor.tableIssueIDHeader}</th>
-			<th data-def="map=BtProject"><f:message key="bugtracker.project" /></th>
+			<th data-def="map=BtProject"><f:message key="bugtracker.project"/></th>
 			<th data-def="map=issue-summary">${interfaceDescriptor.tableSummaryHeader}</th>
 			<th data-def="map=issue-priority">${interfaceDescriptor.tablePriorityHeader}</th>
 			<th data-def="map=issue-status">${interfaceDescriptor.tableStatusHeader}</th>
@@ -72,12 +72,12 @@
 require( ["common"], function(){
 	require( ["jquery","workspace.event-bus", "squashtable"], function($, eventBus, datatable){
 		$(function(){
-	
+
 			var issueTableRowCallback = function(row, data, displayIndex) {
 				var correctAssignee = (data["issue-assignee"]!=="") ? data["issue-assignee"] : "${interfaceDescriptor.tableNoAssigneeLabel}";
 				var td=$(row).find("td:eq(5)");
 				$(td).html(correctAssignee);
-		
+
 				td =  $(row).find("td:eq(6)");
 				var linkText = $(row).find("td:eq(6)").text();
 				var link = $('<a></a>');
@@ -88,11 +88,11 @@ require( ["common"], function(){
 					var currentTab = $(".fragment-tabs").tabs("option", "active");
 					$.cookie("iteration-tab-cookie", currentTab, { expires: 1, path: '/' });
 				});
-	
+
 				return row;
 			};
-			
-		
+
+
 			$("#issue-table").squashTable({
 					'fnRowCallback' : issueTableRowCallback,
         			<c:if test="${not empty tableEntries}">
@@ -105,9 +105,9 @@ require( ["common"], function(){
 							eventBus.trigger('bugtracker.ajaxerror', xhr);
 							return false;
 						}
-					}	
+					}
 				},
-				{});			
+				{});
 		});
 	});
 });
