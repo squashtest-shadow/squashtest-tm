@@ -20,54 +20,47 @@
  */
 package org.squashtest.tm.service.internal.repository;
 
-import java.util.List;
-
-import javax.validation.constraints.NotNull;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.SingleSelectField;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
 public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 
-    	
-	@NativeMethodFromJpaRepository
-	CustomField save(CustomField customField);
-
-        
 	@UsesTheSpringJpaDsl
 	CustomField findById(long id);
-        
+
 
 	/**
-         * This is a downcast-version of #findById
+	 * This is a downcast-version of #findById
 	 * will find the {@link SingleSelectField} of the given id
 	 * @param customFieldId the id of the wanted {@link SingleSelectField}
 	 * @return the {@link SingleSelectField} or <code>null</code>
 	 */
-        @Query("select ssf from SingleSelectField ssf where id = :customFieldId")
+	@Query("select ssf from SingleSelectField ssf where id = :customFieldId")
 	SingleSelectField findSingleSelectFieldById(@Param("customFieldId") Long customFieldId);
 
 	/**
 	 * Will return the list of custom fields that can be bound to the given project and the given bindable entity (ie,
 	 * those who aren't bound yet).
-	 * 
-	 * 
+	 *
+	 *
 	 * @param projectId
 	 * @param bindableEntity
 	 * @return
 	 */
 	@UsesANamedQueryInPackageInfoOrElsewhere
 	List<CustomField> findAllBindableCustomFields(Long projectId, BindableEntity bindableEntity);
-	
-	
+
+
 	/**
 	 * returns the complementary of {@link #findAllBindableCustomFields(Long, BindableEntity)}
-	 * 
+	 *
 	 * @param projectId
 	 * @param bindableEntity
 	 * @return
@@ -78,7 +71,7 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 
 	/**
 	 * Returns the field matching the name if it exists.
-	 * 
+	 *
 	 * @param name
 	 * @return
 	 */
@@ -87,7 +80,7 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 
 	/**
 	 * Will find all custom fields and return them ordered by their name.
-	 * 
+	 *
 	 * @return the list of all existing {@link CustomField} ordered by {@link CustomField#getName()}
 	 */
 	@UsesTheSpringJpaDsl
@@ -95,32 +88,14 @@ public interface CustomFieldDao extends JpaRepository<CustomField, Long> {
 	List<CustomField> findAllByOrderByNameAsc();
 
 
-        	
-	/**
-	 * Will find all existing custom fields ordered according to the given {@link Pageable} params.
-	 * 
-	 * @param filter the {@link Pageable} param that holds order and paging requirements.
-	 * @return the list of all existing {@link CustomField} ordered according to the {@link Pageable} param
-	 */
-        @UsesTheSpringJpaDsl
-	Page<CustomField> findAll(Pageable filter);
-        
-	/**
-	 * Will count all existing custom fields
-	 * 
-	 * @return the number of custom fields
-	 */
-	@NativeMethodFromJpaRepository
-	long count();
-
 	/**
 	 * Will find the CustomField having a code value matching the parameter.
-	 * 
+	 *
 	 * @param code
 	 * @return the {@link CustomField} matching the code param.
 	 */
 	@UsesTheSpringJpaDsl
 	CustomField findByCode(@NotNull String code);
-        
-        
+
+
 }
