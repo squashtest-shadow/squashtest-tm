@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -412,7 +413,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -433,7 +434,7 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <configuration>
           <rules>
-            <banDuplicateClasses />
+            <banDuplicateClasses/>
             <findAllDuplicate>true</findAllDuplicate>
             <requireMavenVersion>
               <version>3.1.0</version>
@@ -578,6 +579,13 @@
           </execution>
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-release-plugin</artifactId>
+        <configuration>
+          <releaseProfiles>continuous-integration</releaseProfiles>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
 
@@ -598,6 +606,18 @@
             <artifactId>frontend-maven-plugin</artifactId>
             <executions>
               <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <nodeVersion>v4.4.1</nodeVersion>
+                  <npmVersion>3.8.3</npmVersion>
+                </configuration>
+              </execution>
+              <execution>
+                <!-- temporary - trying to fix release build -->
                 <id>npm install</id>
                 <goals>
                   <goal>npm</goal>
@@ -632,7 +652,8 @@
                     laxcomma=true,
                     sub=true,
                     loopfunc=true,
-                    curly=true</options>
+                    curly=true
+                  </options>
                 </configuration>
               </execution>
             </executions>
@@ -725,25 +746,6 @@
                   <goal>gulp</goal>
                 </goals>
                 <phase>prepare-package</phase>
-              </execution>
-              <execution>
-                <id>install node and npm</id>
-                <goals>
-                  <goal>install-node-and-npm</goal>
-                </goals>
-                <phase>initialize</phase>
-                <configuration>
-                  <nodeVersion>v4.4.1</nodeVersion>
-                  <npmVersion>3.8.3</npmVersion>
-                </configuration>
-              </execution>
-              <execution>
-                <!-- temporary - trying to fix release build -->
-                <id>npm install</id>
-                <goals>
-                  <goal>npm</goal>
-                </goals>
-                <phase>generate-resources</phase>
               </execution>
             </executions>
           </plugin>
