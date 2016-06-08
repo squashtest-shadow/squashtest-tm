@@ -1169,7 +1169,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 	}
 
-	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) {
+	private Long checkRequirementVersionForCoverage(CoverageTarget target, LogTrain logs) { // NOSONAR methods not extracted on purpose, ValidationFacility too huge/uncohesive to extract meaningful method names
 		if (!checkRequirementVersionPathIsValid(target, logs)) {
 			return null;
 		}
@@ -1200,7 +1200,6 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		if (reqVersionStatus == Existence.EXISTS) {
-//			Long reqId = reqFinderService.findNodeIdByPath(target.getReqPath());
 			Requirement req = reqLibNavigationService.findRequirement(reqTarget.getId());
 			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
 			if (!req.getStatus().isRequirementLinkable()) {

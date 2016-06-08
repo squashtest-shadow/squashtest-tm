@@ -382,16 +382,13 @@ class EntityValidator {
 	private void logMustExistAndBeValidCalledTest(TestStepTarget target, ImportMode mode, LogTrain logs, String message) {
 		switch (mode) {
 			case CREATE:
-				logs.addEntry(LogEntry.warning()
-					.forTarget(target)
-					.withMessage(message)
-					.withImpact(Messages.IMPACT_CALL_AS_ACTION_STEP)
+				logs.addEntry(LogEntry.warning().forTarget(target)
+					.withMessage(message).withImpact(Messages.IMPACT_CALL_AS_ACTION_STEP)
 					.build());
 				break;
 			case UPDATE: // do default
 			default:
-				logs.addEntry(LogEntry.failure()
-					.forTarget(target)
+				logs.addEntry(LogEntry.failure().forTarget(target)
 					.withMessage(message)
 					.build());
 				break;
