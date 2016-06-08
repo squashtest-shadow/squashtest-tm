@@ -1200,7 +1200,7 @@ public class ValidationFacility implements Facility, ValidationFacilitySubservic
 		}
 
 		if (reqVersionStatus == Existence.EXISTS) {
-			Requirement req = reqLibNavigationService.findRequirement(reqTarget.getId());
+			Requirement req = reqLibNavigationService.findRequirement(reqId);
 			RequirementVersion reqVersion = req.findRequirementVersion(target.getReqVersion());
 			if (!req.getStatus().isRequirementLinkable()) {
 				logs.addEntry(createLogFailure(target, Messages.ERROR_REQUIREMENT_VERSION_STATUS));

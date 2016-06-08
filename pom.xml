@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.squashtest.tm</groupId>
@@ -498,23 +499,23 @@
   </scm>
 
   <repositories>
-    <!--<repository>-->
-    <!--<snapshots>-->
-    <!--<enabled>false</enabled>-->
-    <!--</snapshots>-->
-    <!--<id>squash-release-repo</id>-->
-    <!--<url>http://repo.squashtest.org/maven2/releases</url>-->
-    <!--</repository>-->
-    <!--<repository>-->
-    <!--<releases>-->
-    <!--<enabled>false</enabled>-->
-    <!--</releases>-->
-    <!--<snapshots>-->
-    <!--<enabled>true</enabled>-->
-    <!--</snapshots>-->
-    <!--<id>squash-snapshot-repo</id>-->
-    <!--<url>http://repo.squashtest.org/maven2/snapshots</url>-->
-    <!--</repository>-->
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>squash-release-repo</id>
+      <url>http://repo.squashtest.org/maven2/releases</url>
+    </repository>
+    <repository>
+      <releases>
+        <enabled>false</enabled>
+      </releases>
+      <snapshots>
+        <enabled>true</enabled>
+      </snapshots>
+      <id>squash-snapshot-repo</id>
+      <url>http://repo.squashtest.org/maven2/snapshots</url>
+    </repository>
   </repositories>
 
   <pluginRepositories>
@@ -603,7 +604,7 @@
         </file>
       </activation>
       <build>
-        <plugins />
+        <plugins/>
       </build>
     </profile>
 
@@ -637,7 +638,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute />
+                        <execute/>
                       </action>
                     </pluginExecution>
 
@@ -651,7 +652,7 @@
                         </goals>
                       </pluginExecutionFilter>
                       <action>
-                        <execute />
+                        <execute/>
                       </action>
                     </pluginExecution>
 
