@@ -20,27 +20,13 @@
  */
 package org.squashtest.tm.service.internal.customfield;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.event.ChangeCustomFieldCodeEvent;
 import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -51,6 +37,12 @@ import org.squashtest.tm.service.customfield.CustomFieldBindingModificationServi
 import org.squashtest.tm.service.internal.repository.CustomFieldBindingDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
 
 /**
  * Implementations for (non dynamically generated) custom-field management services.
@@ -81,7 +73,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 */
 	@Override
 	public Page<CustomField> findSortedCustomFields(Pageable pageable) {
-            return customFieldDao.findAll(pageable);
+		return customFieldDao.findAll(pageable);
 	}
 
 	/**
@@ -92,10 +84,10 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		CustomField customField = customFieldDao.findById(customFieldId);
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
 		List<Long> bindingIds = new ArrayList<>();
-		for(CustomFieldBinding binding : bindings) {
+		for (CustomFieldBinding binding : bindings) {
 			bindingIds.add(binding.getId());
 		}
-		if(!bindingIds.isEmpty()){
+		if (!bindingIds.isEmpty()) {
 			customFieldBindingModificationService.removeCustomFieldBindings(bindingIds);
 		}
 		customFieldDao.delete(customField);
@@ -110,6 +102,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 			deleteCustomField(id);
 		}
 	}
+
 	/**
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#persist(org.squashtest.tm.domain.customfield.CustomField)
 	 */
@@ -172,12 +165,12 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		}
 	}
 
-	private void addDefaultValueToCustomFields(Long customFieldId,String defaulfValue){
+	private void addDefaultValueToCustomFields(Long customFieldId, String defaulfValue) {
 		List<CustomFieldBinding> bindings = customFieldBindingDao.findAllByCustomFieldIdOrderByPositionAsc(customFieldId);
-		for(CustomFieldBinding binding : bindings) {
+		for (CustomFieldBinding binding : bindings) {
 			List<CustomFieldValue> values = customFieldValueDao.findAllCustomValuesOfBinding(binding.getId());
-			for(CustomFieldValue value : values) {
-				if(value.getValue() == null || value.getValue().isEmpty()) {
+			for (CustomFieldValue value : values) {
+				if (value.getValue() == null || value.getValue().isEmpty()) {
 					value.setValue(defaulfValue);
 				}
 			}
@@ -208,7 +201,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 	 * @see org.squashtest.tm.service.customfield.CustomCustomFieldManagerService#addOption(Long, CustomFieldOption)
 	 */
 	@Override
-	public void addOption(Long customFieldId,CustomFieldOption option) {
+	public void addOption(Long customFieldId, CustomFieldOption option) {
 		SingleSelectField customField = customFieldDao.findSingleSelectFieldById(customFieldId);
 		customField.addOption(option);
 
@@ -250,7 +243,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 		checkDuplicateCode(field, code);
 		String oldCode = field.getCode();
 		field.setCode(code);
-		eventPublisher.publishEvent(new ChangeCustomFieldCodeEvent(new String[] { oldCode, code }));
+		eventPublisher.publishEvent(new ChangeCustomFieldCodeEvent(new String[]{oldCode, code}));
 
 	}
 
@@ -259,7 +252,7 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 			return;
 		}
 
-		if(customFieldDao.findByCode(newCode) != null){
+		if (customFieldDao.findByCode(newCode) != null) {
 			throw new CodeAlreadyExistsException(field.getCode(), newCode, CustomField.class);
 		}
 	}
@@ -269,7 +262,6 @@ public class CustomCustomFieldManagerServiceImpl implements CustomCustomFieldMan
 
 		return customFieldValueDao.findAllAvailableTagForEntityInProjects(BindableEntity.valueOf(boundEntityType), projectIds);
 	}
-
 
 
 }

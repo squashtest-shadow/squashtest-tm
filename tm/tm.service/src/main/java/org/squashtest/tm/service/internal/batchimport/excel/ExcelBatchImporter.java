@@ -20,28 +20,21 @@
  */
 package org.squashtest.tm.service.internal.batchimport.excel;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.inject.Provider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.importer.EntityType;
 import org.squashtest.tm.service.importer.ImportLog;
-import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
-import org.squashtest.tm.service.internal.batchimport.Facility;
-import org.squashtest.tm.service.internal.batchimport.FacilityImpl;
-import org.squashtest.tm.service.internal.batchimport.Instruction;
-import org.squashtest.tm.service.internal.batchimport.LogTrain;
-import org.squashtest.tm.service.internal.batchimport.SimulationFacility;
-import org.squashtest.tm.service.internal.batchimport.TestCaseExcelBatchImporter;
+import org.squashtest.tm.service.internal.batchimport.*;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.ExcelWorkbookParser;
+
+import javax.inject.Inject;
+import javax.inject.Provider;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public abstract class ExcelBatchImporter {

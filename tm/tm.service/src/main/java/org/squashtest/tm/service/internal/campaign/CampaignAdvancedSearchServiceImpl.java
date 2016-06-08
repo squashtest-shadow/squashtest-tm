@@ -162,7 +162,7 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 			return false;
 		}
 		AdvancedSearchListFieldModel listField = (AdvancedSearchListFieldModel) field;
-		return listField.getValues().size()==0;
+		return listField.getValues().isEmpty();
 	}
 
 	private Sort getExecutionSort(PagingAndMultiSorting multisorting) {

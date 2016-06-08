@@ -20,21 +20,11 @@
  */
 package org.squashtest.tm.service.internal.testautomation;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
-import javax.inject.Inject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.testautomation.TestAutomationServer;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
 import org.squashtest.tm.exception.testautomation.UserAndServerDefinedAlreadyException;
@@ -42,6 +32,13 @@ import org.squashtest.tm.service.internal.repository.TestAutomationProjectDao;
 import org.squashtest.tm.service.internal.repository.TestAutomationServerDao;
 import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.testautomation.TestAutomationServerManagerService;
+
+import javax.inject.Inject;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Transactional
 @Service("squashtest.tm.service.TestAutomationServerManagementService")
@@ -74,7 +71,7 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 
 		// check 2 : is there another server with the same login/URL ?
 		TestAutomationServer userRegistered = serverDao.findByUrlAndLogin(server.getBaseURL(), server.getLogin());
-		if (userRegistered != null){
+		if (userRegistered != null) {
 			throw new UserAndServerDefinedAlreadyException(server.getLogin(), server.getBaseURL());
 		}
 
@@ -124,8 +121,8 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	@Override
 	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public Page<TestAutomationServer> findSortedTestAutomationServers(
-			         Pageable pageable) {
-            return serverDao.findAll(pageable);
+		Pageable pageable) {
+		return serverDao.findAll(pageable);
 	}
 
 	@Override
@@ -183,19 +180,18 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 
-
 	// ********************** private ************************
 
-	private void checkNoConflicts(TestAutomationServer server, URL newURL){
+	private void checkNoConflicts(TestAutomationServer server, URL newURL) {
 		TestAutomationServer otherServer = serverDao.findByUrlAndLogin(newURL, server.getLogin());
-		if (otherServer != null){
+		if (otherServer != null) {
 			throw new UserAndServerDefinedAlreadyException(server.getLogin(), server.getBaseURL(), "url");
 		}
 	}
 
-	private void checkNoConflicts(TestAutomationServer server, String newLogin){
+	private void checkNoConflicts(TestAutomationServer server, String newLogin) {
 		TestAutomationServer otherServer = serverDao.findByUrlAndLogin(server.getBaseURL(), newLogin);
-		if (otherServer != null){
+		if (otherServer != null) {
 			throw new UserAndServerDefinedAlreadyException(server.getLogin(), server.getBaseURL(), "login");
 		}
 	}
