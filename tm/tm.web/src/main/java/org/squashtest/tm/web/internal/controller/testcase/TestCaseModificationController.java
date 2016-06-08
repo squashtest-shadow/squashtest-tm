@@ -254,7 +254,7 @@ public class TestCaseModificationController {
 		return mav;
 	}
 
-	@RequestMapping(value = "/edit-from-exec/{execId}", method = RequestMethod.POST, params = OPTIMIZED)
+	@RequestMapping(value = "/edit-from-exec/{execId}", method = RequestMethod.GET, params = OPTIMIZED)
 	public ModelAndView editTestCaseFromExecution(@PathVariable long testCaseId, Locale locale,
 			@PathVariable long execId,
 			@RequestParam(OPTIMIZED) boolean optimized) {
