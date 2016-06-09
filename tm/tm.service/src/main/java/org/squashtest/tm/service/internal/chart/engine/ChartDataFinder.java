@@ -80,7 +80,7 @@ import com.querydsl.core.Tuple;
  *
  * <p>
  *	These columns will be grouped on (in the group by clause). They also appear in the select clause and should of course not
- *	be subject to any aggregation. In the select clause, they will appear first, and keep the same order as in the list defined in the ChartDefinition.
+ *	be subject to any aggregation function. In the select clause, they will appear first, and keep the same order as in the list defined in the ChartDefinition.
  * </p>
  *
  * <h3>MeasureColumn</h3>
@@ -154,15 +154,26 @@ import com.querydsl.core.Tuple;
  * 	<ul>
  * 		<li><b>Root Entity</b> : This is the entity from which the query plan begins the entity traversal. The root entity is the
  * 		entity targeted by the AxisColumn.  When multiple target entities are eligible, the one with the lowest rank will be the Root entity.</li>
- * 		<li><b>Target Entities</b> : entities on which apply at least one of the MeasureColumns, AxisColumns or Filters</li>
+ * 		<li><b>Target Entities</b> : entities on which apply at least one of the MeasureColumns, AxisColumns, Filters, or Scope (see <b>Scope and ACLs</b>)</li>
  * 		<li><b>Support Entities</b> : entities that aren't Target entities but must be joined on in order to join together all
  * 			the Target entities. For example if a ChartDefinition defines Execution as Root entity and Campaign as a TargetEntity,
- * 			then IterationTestPlanItem and Iteration are Support entities. </li>
+ * 			then IterationTestPlanItem and Iteration are Support entities. 
+ *              </li>
  * 	</ul>
  * </p>
  *
- * <p>The main query is thus defined as the minimal subset of the domain that join all the Target entities together via
- * Support Entities, starting with the Root entity. All joins in this query will be inner joins (no left nor right joins).</p>
+ * <p>
+ *  The main query is thus defined as the minimal subset of the domain that join all the Target entities together via
+ *  Support Entities, starting with the Root entity. All joins in this query will be inner joins (no left nor right joins).
+ * </p>
+ * 
+ * <p>
+ *      <b>Clarification about the Scope and the Main Query (custom scopes only, TM 1.14):</b> 
+ *      As of TM 1.14 the Scope is now included in order to force a natural joins on the scoped entity. Indeed, when the user defines a query on which the 
+ *      scoped entity is neither used in a Filter, Axis or Measure, the resulting data is void because the Root Entity or Support entities are indeed out of the scope.
+ *      This decision is only half satisfactory : the definitive solution would be to actually reify and handle a Domain on which the query should innerjoin on, 
+ *      but for now this trick will avoid the main problem (ie the case of empty resultset). See more with tickets #6260 and #6275
+ * </p>
  *
  *
  * <h3>Select clause generation</h3>

@@ -60,7 +60,6 @@ import org.squashtest.tm.service.security.Authorizations;
 import org.squashtest.tm.service.security.PermissionEvaluationService;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Ops;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.Expressions;
@@ -93,8 +92,8 @@ import com.querydsl.core.types.dsl.Expressions;
  *
  * <p>
  * 		When one or several project are elected for a scope, then all test cases, campaign, requirement, executions etc must belong to that project.
- *		Note that this holds only for entities that actually appear in the main query. For example if a query only encompasses test cases, there
- *		is no point in restricting the scope for campaigns.
+ *		As of TM 1.14, a scope can be unrelated to the main query, in which case the main query will be forced to join with the 
+ *              entities from the scope. More details in the main documentation (see {@link ChartDataFinder} and issues #6260, #6275.
  * </p>
  *
  *
@@ -112,8 +111,7 @@ import com.querydsl.core.types.dsl.Expressions;
  * </p>
  *
  * <p>
- * 		It was said earlier that we apply a scope only if it is meaningful to the main query (remember : if your chart treats of campaigns only there is no point in scoping on
- * 		the campaigns). To help with the computation of that we will use a concept named SubScope. A SubScopebasically represent the three main business ensembles,
+ * 		To help with the computation of that we will use a concept named SubScope. A SubScope basically represent the three main business ensembles,
  * 		namely the business of test case-related entities, requirement-related entities and campaign-related entities.
  *
  * 		<ul>
@@ -180,12 +178,6 @@ class ScopePlanner {
 		// step 1 : test the ACLs
 		filterByACLs();
 
-		// early exit if empty
-		if (!isScopeRelevant()) {
-			addImpossibleCondition();
-			return;
-		}
-
 		// step 2 : join the main query with projects and/or libraries if some are specified
 		addExtraJoins();
 
@@ -246,39 +238,31 @@ class ScopePlanner {
 
 	private Set<String> findExtraJoinColumnNames() {
 
-		Set<SubScope> querySubscopes = findQuerySubScopes();
-
 		Set<EntityType> scopeTypes = findEntitiesFromScope();
 
 		/*
-		 * now we start to sketch the future dummy query
-		 * by registering which extra columns we need
-		 *
-		 * Note : for each subscope we do so only this
-		 * subscope is defined in both the filter and the query
+		 * start to sketch the future dummy query
+		 * by registering which extra columns we need.
 		 */
 		Set<String> fakeColnames = new HashSet<>();
 
 		for (EntityType type : scopeTypes) {
-			SubScope typeScope = toSubScope(type);
-
 			/*
-			 * if there is a match -> go add the column
+			 * add the column
 			 * don't be shy to add it regardless it already exists
 			 * in the main query or not, the query planner
 			 * will make the difference.
-			 */
-			if (querySubscopes.contains(typeScope)) {
-
-				// there is a quirk when the scopeType == ITERATION. Indeed
-				// the required column is then "ITERATION_ID" and not the regular one
-				if (type == ITERATION) {
-					fakeColnames.add("ITERATION_ID");
-				} else {
-					fakeColnames.add(typeScope.getRequiredColumn());
-				}
-
-			}
+                         *
+                         * Note : there is a quirk when the scopeType == ITERATION. Indeed
+                         * the required column is then "ITERATION_ID" and not the usual 
+                         * X_NODE.ID
+                         */
+                        if (type == ITERATION) {
+                                fakeColnames.add("ITERATION_ID");
+                        } else {
+                            SubScope typeSubscope = toSubScope(type);
+                            fakeColnames.add(typeSubscope.getJoinColumn());
+                        }
 		}
 		return fakeColnames;
 	}
@@ -529,34 +513,8 @@ class ScopePlanner {
 	}
 
 
-	// A Scope is relevant if the main query and the
-	// Scope have at least one subscope in common
-	private boolean isScopeRelevant() {
-
-		Set<SubScope> querySubscopes = findQuerySubScopes();
-
-		Set<EntityType> scopeTypes = findEntitiesFromScope();
-
-		for (EntityType type : scopeTypes) {
-			SubScope typeScope = toSubScope(type);
-			if (querySubscopes.contains(typeScope)) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
-
 	private boolean notEmpty(Collection<?> collection) {
 		return collection != null && !collection.isEmpty();
-	}
-
-	private void addImpossibleCondition() {
-		Expression<?> zero = Expressions.constant(0);
-		Expression<?> one = Expressions.constant(1);
-		Predicate impossible = Expressions.predicate(Ops.EQ, zero, one);
-		hibQuery.where(impossible);
 	}
 
 	// *********************** subscope section *************************
@@ -566,14 +524,14 @@ class ScopePlanner {
 		REQUIREMENT("REQUIREMENT_ID"), // ditto for requirement
 		CAMPAIGN("CAMPAIGN_ID");    // ditto for campaign
 
-		private String requiredColumn;
+		private String joinColumn;
 
 		SubScope(String column) {
-			this.requiredColumn = column;
+			this.joinColumn = column;
 		}
 
-		private String getRequiredColumn() {
-			return requiredColumn;
+		private String getJoinColumn() {
+			return joinColumn;
 		}
 	}
 
