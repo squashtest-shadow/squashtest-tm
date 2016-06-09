@@ -27,18 +27,23 @@ import org.hibernate.SessionFactory
 import org.squashtest.tm.domain.EntityReference;
 import org.squashtest.tm.domain.EntityType
 import org.squashtest.tm.domain.chart.AxisColumn;
+import org.squashtest.tm.domain.chart.MeasureColumn;
 import org.squashtest.tm.domain.chart.ChartQuery;
 import org.squashtest.tm.domain.chart.ColumnPrototype;
 import org.squashtest.tm.domain.chart.Filter
 import org.squashtest.tm.domain.jpql.ExtendedHibernateQuery
 import org.squashtest.tm.domain.testcase.QTestCase;
+import org.squashtest.tm.domain.requirement.QRequirement;
 import org.squashtest.tm.service.campaign.CampaignLibraryFinderService
 import org.squashtest.tm.service.internal.chart.ColumnPrototypeModification;
 import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopeUtils;
-import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.SubScope;
 import org.squashtest.tm.service.requirement.RequirementLibraryFinderService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ScopedEntities
+import org.squashtest.tm.service.internal.chart.engine.ScopePlanner.ExtraJoinColumns
+import org.squashtest.tm.domain.chart.SpecializedEntityType
+import org.squashtest.tm.domain.chart.ColumnType
 
 import spock.lang.Specification
 import spock.lang.Unroll;
@@ -82,60 +87,8 @@ class ScopePlannerTest extends Specification {
 		scopePlanner.utils = utils
 	}
 
+        // ******************* ACL check tests *********************
 
-	@Unroll("should determine the query subscopes")
-	def "should find query scopes"(){
-
-		given :
-		DetailedChartQuery q = new DetailedChartQuery(targetEntities : targets)
-
-		scopePlanner.chartQuery = q
-
-		expect :
-		scopePlanner.findQuerySubScopes() == subscopes as Set
-
-		where :
-
-		targets 					|	subscopes
-		[iet('TC'), iet('RV')]		|	[ss('TC'), ss('R')]
-		[iet('EX'), iet('ISS')]		|	[ss('C')]
-	}
-
-
-	def "should simplify, sort and aggregate references from the scope"(){
-
-		given :
-		def scope = [ref('TCL', 1), ref('TCF', 2), ref('TCF', 3), ref('TCL', 2)]
-		scopePlanner.scope = scope;
-
-		when :
-
-		def res = scopePlanner.mapScopeByType()
-
-		then :
-
-		res[et('TCL')] == [1,2]
-		res[et('TCF')] == [2,3]
-
-	}
-
-
-	def "should return the aggregate result of a lookup for multiple entries in a map"(){
-
-		given :
-		def map = [:];
-		map.put(et('TC'), [1, 2, 3])
-		map.put(et('TCF'), [4,5,6])
-		map.put(et('TCL'), [7,8,9])
-
-		when :
-		def res = scopePlanner.fetchForTypes(map, et('TC'), et('TCL'))
-
-
-		then :
-		res as Set == [1,2,3,7,8,9] as Set
-
-	}
 
 	def "should trim from the scope because of failed ACL test"(){
 		
@@ -153,105 +106,65 @@ class ScopePlannerTest extends Specification {
 		
 	}
 
-	
-	def "should declare that the scope is relevant because is can be applied to campaigns"(){
-		
-		// chart encompass test cases and campaign
-		// scope defined campaign folders and requirement library
-		// -> they have the campaign in common
+        // ********************* ScopedEntities test ***********************
+    
+	def "should build a ScopedEntities instance from the scope"(){
+
 		given :
-			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC'), iet('C')])
-			List<EntityReference> scope = [ref('CF', 10), ref('RL', 65)]
-			
-			scopePlanner.chartQuery = q
-			scopePlanner.scope = scope
-		
+		def scope = [ref('TCL', 1), ref('TCF', 2), ref('TCF', 3), ref('TCL', 2)]
+
 		when :
-			def res = scopePlanner.isScopeRelevant()
-		
-		then :
-			res == true
-		
-	}
-	
-	def "should declare a scope irrelevant because the Scope and the content of the query are disjoint"(){
-		
-		// chart encompass test cases 
-		// scope defined campaign folders
-		// -> they have nothing in common
-		given :
-			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC')])
-			List<EntityReference> scope = [ref('CF', 10)]
-			
-			scopePlanner.chartQuery = q
-			scopePlanner.scope = scope
-		
-		when :
-			def res = scopePlanner.isScopeRelevant()		
+
+		def res = new ScopedEntities(scope)
 
 		then :
-			res == false
-		
+
+		res[et('TCL')] == [1,2]
+		res[et('TCF')] == [2,3]
+
 	}
-	
-	def "should decalre a scope irrelevant because the scope is empty"(){
-		
-		// chart encompass test cases
-		// scope is empty
-		// -> they have nothing in common
+
+
+	def "ScopedEntities should return all the ids for given entity types"(){
+
 		given :
-			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC')])
-			List<EntityReference> scope = []
-			
-			scopePlanner.chartQuery = q
-			scopePlanner.scope = scope
-		
+		def scopedEntities = new ScopedEntities();
+                
+                def tTC = et('TC')
+                def tTCF = et('TCF')
+                def tTCL = et('TCL')
+        
+                and :
+		scopedEntities.put(tTC, [1, 2, 3])
+		scopedEntities.put(tTCF, [4,5,6])
+		scopedEntities.put(tTCL, [7,8,9])
+
 		when :
-			def res = scopePlanner.isScopeRelevant()		
+		def res = scopedEntities.getIds(tTC, tTCL)
+
 
 		then :
-			res == false
-		
+		res as Set == [1,2,3,7,8,9] as Set
+
 	}
-	
-	def "should add an impossible condition to a query in order to make it return no data"(){
-		
-		given :
-			def tc = QTestCase.testCase
-			ExtendedHibernateQuery hibQuery = new ExtendedHibernateQuery().select(tc.id).from(tc)
-		
-			scopePlanner.hibQuery = hibQuery
-			
-		when :
-			scopePlanner.addImpossibleCondition()
-			
-		then :
-			scopePlanner.hibQuery.toString() == 
-"""select testCase.id
-from TestCase testCase
-where ?1 = ?2"""	
-		
-		
-	}
-	
-	
-	def "should find which extra columns should be joined on for the purposes of the Scope"(){
-		
-		given :
-			DetailedChartQuery q = new DetailedChartQuery(targetEntities : [iet('TC'), iet('RV')])
-			List<EntityReference> scope = [ref('RL', 132)]
-		
-			scopePlanner.chartQuery = q
-			scopePlanner.scope = scope
-			
-		when :
-			def extraColumns = scopePlanner.findExtraJoinColumnNames()
-		
-		then :
-			extraColumns == ['REQUIREMENT_ID']as Set
-		
-	}
-	
+
+        
+        @Unroll("should find which extra columns a scope spans across")
+        def "should find which extra columns the Scope span across"(){
+            
+            expect :
+                new ScopedEntities(scope).getExtraJoinColumns() == extraJoins
+            
+            where :
+            
+            scope                                   |   extraJoins
+                [ref('P', 1l)]                      |   ["TEST_CASE_ID", "REQUIREMENT_ID", "CAMPAIGN_ID"] as Set
+                [ref('TC', 1l), ref('R', 1l)]       |   ["TEST_CASE_ID", "REQUIREMENT_ID"] as Set
+                [ref('R', 1l), ref('RL', 1l)]       |   ["REQUIREMENT_ID"] as Set
+                [ref('CL', 1L), ref('CF', 1L)]      |   ["CAMPAIGN_ID"] as Set
+                [ref('TCF', 1L), ref('IT', 1L)]     |   ["TEST_CASE_ID", "ITERATION_ID"] as Set
+        }
+        
 	
 	def "should create a mock query for the purpose of extending the main query with required joins"(){
 		
@@ -276,11 +189,43 @@ where ?1 = ?2"""
 			dummy.measures.collect{it.column} as Set == [fakeReqidProto, fakeCidProto] as Set
 		
 	}
+      
+        def "should generate the required extra joins between the main query and the scope"(){
+            
+   		given : "scope"
+                    
+                    scopePlanner.scope = [ref('TCL', 10L), ref('TCF', 15L)]
+			
+		and : "chart query"                        
+                        scopePlanner.chartQuery = mockQuery(EntityType.REQUIREMENT, EntityType.REQUIREMENT)       
+        
+                and : "scope columns"
+			def scopeProto = Mock(ColumnPrototype)
+                        scopeProto.specializedType >> new SpecializedEntityType(entityType:EntityType.TEST_CASE)
+			utils.findColumnPrototype('TEST_CASE_ID') >> scopeProto
+			
+		
+                and : "(the corresponding main query)"
+			def r = QRequirement.requirement
+			def testquery = new ExtendedHibernateQuery()
+			testquery.from(r).select(r.id)
+                        scopePlanner.hibQuery = testquery
+		when :
+			scopePlanner.addExtraJoins()
+                
+		then :
+        System.out.println(testquery.toString())
+        testquery.toString() == """select requirement.id
+from Requirement requirement
+  inner join requirement.versions as requirementVersion
+  inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
+  inner join requirementVersionCoverage.verifyingTestCase as testCase"""
+        }
 	
 	def "should generate where clauses testing that a test case belongs to a library or a folder"(){
 		
 		given :
-			def refmap = [:]
+			def refmap = new ScopedEntities()
 			refmap.put(et('TCL') , [10])
 			refmap.put(et('TCF'),  [15])
 			
@@ -301,8 +246,25 @@ where testCasePathEdge.ancestorId = ?2 and testCase.id = testCasePathEdge.descen
 		
 		
 	}
+        
 
 	// **************** test utils ************************
+        
+        def mockQuery(axType, meaType){
+            def saxType = new SpecializedEntityType(entityType : axType)
+            def smeaType = new SpecializedEntityType(entityType : meaType)
+        
+            // axis
+            def mainAxisProto = new ColumnPrototype(specializedType : saxType)
+            def mainAxis = new AxisColumn(column : mainAxisProto)
+            
+            // measure
+            def mainMeasureProto = new ColumnPrototype(specializedType : smeaType)
+            def mainMeasure = new MeasureColumn(column : mainMeasureProto)
+            
+
+            new DetailedChartQuery(axis : [mainAxis], measures : [mainMeasure])
+        }
 
 	def ref(entityname, id){
 		EntityType type = EntityType.valueOf(expand(entityname));
@@ -322,14 +284,5 @@ where testCasePathEdge.ancestorId = ?2 and testCase.id = testCasePathEdge.descen
 		return EntityType.valueOf(expand(name))
 	}
 
-	// stands for InternalEntityType
-	def iet(name){
-		return InternalEntityType.valueOf(expand(name))
-	}
-
-	// stands for SubScope
-	def ss(name){
-		return SubScope.valueOf(expand(name))
-	}
 
 }

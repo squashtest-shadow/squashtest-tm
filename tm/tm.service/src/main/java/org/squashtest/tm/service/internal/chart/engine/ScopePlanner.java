@@ -92,7 +92,7 @@ import com.querydsl.core.types.dsl.Expressions;
  *
  * <p>
  * 		When one or several project are elected for a scope, then all test cases, campaign, requirement, executions etc must belong to that project.
- *		As of TM 1.14, a scope can be unrelated to the main query, in which case the main query will be forced to join with the 
+ *		As of TM 1.14, the main query will be forced to join with the 
  *              entities from the scope. More details in the main documentation (see {@link ChartDataFinder} and issues #6260, #6275.
  * </p>
  *
@@ -100,30 +100,14 @@ import com.querydsl.core.types.dsl.Expressions;
  * <h3> How is this done </h3>
  *
  * <p>
- * 		Depending on the content of the scope the main query may be appended with additional joins and/or subqueries, and additional where clauses will be added. The optional
- * 	join queries ensure that some key entities will be present in the main query (they will be joined on) because some useful tests will be applied on them by the "where" clauses.
+ * Depending on the content of the scope the main query may be appended with additional joins and/or subqueries, and additional where clauses will be added. The optional
+ * join queries ensure that some key entities will be present in the main query (they will be joined on) because some useful tests will be applied on them by the "where" clauses.
  *
  * For example, if the Scope says that "elements must belong to CampaignFolder 15" and the main query only treat the Execution, in order to test whether this execution belong to
  * that folder we must then append to the main query all required joins from Execution to Campaign because there are no other way to test the ancestry of the Executions.
  *
  * 		In a second phase, when this is done, some "where" clauses will be added. In our example, the "where" clause would test that the campaign (to which belong the executions)
  * 	is itself a child or grandchild of CampaignFolder 15.
- * </p>
- *
- * <p>
- * 		To help with the computation of that we will use a concept named SubScope. A SubScope basically represent the three main business ensembles,
- * 		namely the business of test case-related entities, requirement-related entities and campaign-related entities.
- *
- * 		<ul>
- * 			<li>test case scope : test case library, test case folders, test cases</li>
- * 			<li>requirement scope : requirement library, requirement folders requirement, requirement version</li>
- * 			<li>campaign scope : campaign library, campaign folders, campaigns, iteration, testplan, execution, issues</li>
- * 		</ul>
- *
- * 		A scope may define entity references that fall in one of those three subscope (scope Project is equivalent to all three subscopes at once). Also, a chart may define measures,
- * 		filters or axes that also belong to these subscopes. The Scope will apply to the chart only if the entities of the chart and of the scoped entity belong to the same subscopes.
- *
- *
  * </p>
  *
  * @author bsiri
@@ -174,6 +158,8 @@ class ScopePlanner {
 	// *********************** main method **********************************
 
 	protected void appendScope() {
+            
+            if (! scope.isEmpty()){
 
 		// step 1 : test the ACLs
 		filterByACLs();
@@ -183,6 +169,7 @@ class ScopePlanner {
 
 		// step 3 : add the filters
 		addWhereClauses();
+            }
 
 	}
 
@@ -219,14 +206,15 @@ class ScopePlanner {
 	 */
 	private void addExtraJoins() {
 
-		Set<String> fakeColnames = findExtraJoinColumnNames();
+                ScopedEntities scopedEntities = new ScopedEntities(scope);
+		Set<String> extraJoins = scopedEntities.getExtraJoinColumns();
 
-		if (fakeColnames.isEmpty()) {
+		if (extraJoins.isEmpty()) {
 			return;
 		}
 
 		// now we can create the dummy query
-		ChartQuery dummy = createDummyQuery(fakeColnames);
+		ChartQuery dummy = createDummyQuery(extraJoins);
 		DetailedChartQuery detailDummy = new DetailedChartQuery(dummy);
 
 		// ... and then run it in a QueryPlanner
@@ -234,39 +222,6 @@ class ScopePlanner {
 		planner.appendToQuery(hibQuery);
 		planner.modifyQuery();
 	}
-
-
-	private Set<String> findExtraJoinColumnNames() {
-
-		Set<EntityType> scopeTypes = findEntitiesFromScope();
-
-		/*
-		 * start to sketch the future dummy query
-		 * by registering which extra columns we need.
-		 */
-		Set<String> fakeColnames = new HashSet<>();
-
-		for (EntityType type : scopeTypes) {
-			/*
-			 * add the column
-			 * don't be shy to add it regardless it already exists
-			 * in the main query or not, the query planner
-			 * will make the difference.
-                         *
-                         * Note : there is a quirk when the scopeType == ITERATION. Indeed
-                         * the required column is then "ITERATION_ID" and not the usual 
-                         * X_NODE.ID
-                         */
-                        if (type == ITERATION) {
-                                fakeColnames.add("ITERATION_ID");
-                        } else {
-                            SubScope typeSubscope = toSubScope(type);
-                            fakeColnames.add(typeSubscope.getJoinColumn());
-                        }
-		}
-		return fakeColnames;
-	}
-
 
 	/*
 	 *	The goal here is to create a Query with as little detail as possible, we just add what
@@ -310,7 +265,7 @@ class ScopePlanner {
 	 * 1/ where entity.project.id in (....)
 	 * 2/ where exists (select 1 from TestCasePathEdge edge where edge.ancestorId in (...) and edge.descendantId = entity.id)
 	 *
-	 *  All the conditions will be or'ed together within the same subscope, and and'ed together between subscopes.
+	 *  All the conditions will be or'ed together within the same entity realm, and and'ed together between the different realms.
 	 *
 	 *  For example :
 	 *  where (
@@ -329,49 +284,43 @@ class ScopePlanner {
 
 		BooleanBuilder generalCondition = new BooleanBuilder();
 
-		Map<EntityType, Collection<Long>> refmap = mapScopeByType();
-		Set<SubScope> subscopes = findQuerySubScopes();
+		ScopedEntities scopedEntities = new ScopedEntities(scope);
 
-		if (subscopes.contains(SubScope.TEST_CASE)) {
-			BooleanBuilder testcaseClause = whereClauseForTestcases(refmap);
-			generalCondition.and(testcaseClause);
-		}
+		BooleanBuilder testcaseClause = whereClauseForTestcases(scopedEntities);
+		generalCondition.and(testcaseClause);
 
-		if (subscopes.contains(SubScope.REQUIREMENT)) {
-			BooleanBuilder requirementClause = whereClauseForRequirements(refmap);
-			generalCondition.and(requirementClause);
-		}
+		BooleanBuilder requirementClause = whereClauseForRequirements(scopedEntities);
+		generalCondition.and(requirementClause);
+		
 
-		if (subscopes.contains(SubScope.CAMPAIGN)) {
-			BooleanBuilder campaignClause = whereClauseForCampaigns(refmap);
-			generalCondition.and(campaignClause);
-		}
+		BooleanBuilder campaignClause = whereClauseForCampaigns(scopedEntities);
+		generalCondition.and(campaignClause);
 
 		hibQuery.where(generalCondition);
 
 	}
 
 
-	private BooleanBuilder whereClauseForTestcases(Map<EntityType, Collection<Long>> refmap) {
+	private BooleanBuilder whereClauseForTestcases(ScopedEntities refmap) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 		Collection<Long> ids;
 		QTestCase testCase = QTestCase.testCase;
 
 		// project
-		ids = refmap.get(PROJECT);
+		ids = refmap.getIds(PROJECT);
 		if (notEmpty(ids)) {
 			builder.or(testCase.project.id.in(ids));
 		}
 
 		// library
-		ids = refmap.get(TEST_CASE_LIBRARY);
+		ids = refmap.getIds(TEST_CASE_LIBRARY);
 		if (notEmpty(ids)) {
 			builder.or(testCase.project.testCaseLibrary.id.in(ids));
 		}
 
 		// test case and test case folders
-		ids = fetchForTypes(refmap, TEST_CASE, TEST_CASE_FOLDER);
+		ids = refmap.getIds(TEST_CASE, TEST_CASE_FOLDER);
 		if (notEmpty(ids)) {
 			QTestCasePathEdge edge = QTestCasePathEdge.testCasePathEdge;
 
@@ -390,26 +339,26 @@ class ScopePlanner {
 
 	}
 
-	private BooleanBuilder whereClauseForRequirements(Map<EntityType, Collection<Long>> refmap) {
+	private BooleanBuilder whereClauseForRequirements(ScopedEntities refmap) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 		Collection<Long> ids;
 		QRequirement requirement = QRequirement.requirement;
 
 		// project
-		ids = refmap.get(PROJECT);
+		ids = refmap.getIds(PROJECT);
 		if (notEmpty(ids)) {
 			builder.or(requirement.project.id.in(ids));
 		}
 
 		// library
-		ids = refmap.get(REQUIREMENT_LIBRARY);
+		ids = refmap.getIds(REQUIREMENT_LIBRARY);
 		if (notEmpty(ids)) {
 			builder.or(requirement.project.requirementLibrary.id.in(ids));
 		}
 
 		// requirement and requirement folders
-		ids = fetchForTypes(refmap, REQUIREMENT, REQUIREMENT_FOLDER);
+		ids = refmap.getIds(REQUIREMENT, REQUIREMENT_FOLDER);
 		if (notEmpty(ids)) {
 			QRequirementPathEdge edge = QRequirementPathEdge.requirementPathEdge;
 
@@ -429,7 +378,7 @@ class ScopePlanner {
 	}
 
 
-	private BooleanBuilder whereClauseForCampaigns(Map<EntityType, Collection<Long>> refmap) {
+	private BooleanBuilder whereClauseForCampaigns(ScopedEntities refmap) {
 
 		BooleanBuilder builder = new BooleanBuilder();
 		Collection<Long> ids;
@@ -437,19 +386,19 @@ class ScopePlanner {
 		QIteration iteration = QIteration.iteration;
 
 		// project
-		ids = refmap.get(PROJECT);
+		ids = refmap.getIds(PROJECT);
 		if (notEmpty(ids)) {
 			builder.or(campaign.project.id.in(ids));
 		}
 
 		// library
-		ids = refmap.get(CAMPAIGN_LIBRARY);
+		ids = refmap.getIds(CAMPAIGN_LIBRARY);
 		if (notEmpty(ids)) {
 			builder.or(campaign.project.requirementLibrary.id.in(ids));
 		}
 
 		// requirement and requirement folders
-		ids = fetchForTypes(refmap, CAMPAIGN, CAMPAIGN_FOLDER);
+		ids = refmap.getIds(CAMPAIGN, CAMPAIGN_FOLDER);
 		if (notEmpty(ids)) {
 			QCampaignPathEdge edge = QCampaignPathEdge.campaignPathEdge;
 
@@ -465,7 +414,7 @@ class ScopePlanner {
 		}
 
 		// and also, iterations
-		ids = fetchForTypes(refmap, ITERATION);
+		ids = refmap.getIds(ITERATION);
 		if (notEmpty(ids)) {
 			builder.or(iteration.id.in(ids));
 		}
@@ -478,145 +427,115 @@ class ScopePlanner {
 	// ************************ utilities ******************************
 
 
-	/*
-	 * This method transform a list of item that pair an id with a type,
-	 * into a map that map a type to a list of id.
-	 */
-	private Map<EntityType, Collection<Long>> mapScopeByType() {
-
-		Map<EntityType, Collection<Long>> map = new EnumMap<>(EntityType.class);
-
-		for (EntityReference ref : scope) {
-			EntityType type = ref.getType();
-			Collection<Long> list = map.get(type);
-			if (list == null) {
-				list = new ArrayList<>();
-				map.put(type, list);
-			}
-			list.add(ref.getId());
-		}
-
-		return map;
-
-
-	}
-
-	private Collection<Long> fetchForTypes(Map<EntityType, Collection<Long>> map, EntityType... types) {
-		Collection<Long> result = new ArrayList<>();
-		for (EntityType type : types) {
-			Collection<Long> ids = map.get(type);
-			if (ids != null) {
-				result.addAll(ids);
-			}
-		}
-		return result;
-	}
-
 
 	private boolean notEmpty(Collection<?> collection) {
 		return collection != null && !collection.isEmpty();
 	}
 
-	// *********************** subscope section *************************
+	// *********************** ExtraJoinColumns class *************************
 
-	private enum SubScope {
-		TEST_CASE("TEST_CASE_ID"), // TEST_CASE_ID or whichever column that makes sure that table TEST_CASE will be joined on
-		REQUIREMENT("REQUIREMENT_ID"), // ditto for requirement
-		CAMPAIGN("CAMPAIGN_ID");    // ditto for campaign
+        // those are the name of some column protototypes
+        private enum ExtraJoinColumns{
+            TEST_CASE_ID,
+            REQUIREMENT_ID,
+            CAMPAIGN_ID,
+            ITERATION_ID;
+            
+            static String forType(EntityType type){
+                ExtraJoinColumns column = null;
+ 		switch (type) {
+                    case REQUIREMENT_LIBRARY:
+                    case REQUIREMENT_FOLDER:
+                    case REQUIREMENT:
+                    case REQUIREMENT_VERSION :
+                        column = REQUIREMENT_ID;
+                        break;
+                        
+                    case TEST_CASE_LIBRARY:
+                    case TEST_CASE_FOLDER:
+                    case TEST_CASE:
+                        column = TEST_CASE_ID;
+                        break;
+                        
+                    case CAMPAIGN_LIBRARY:
+                    case CAMPAIGN_FOLDER:
+                    case CAMPAIGN:
+                        column = CAMPAIGN_ID;
+                        break;
 
-		private String joinColumn;
-
-		SubScope(String column) {
-			this.joinColumn = column;
+                    case ITERATION:
+                        column = ITERATION_ID;
+                        break;
+                    default:
+                            throw new IllegalArgumentException(type.toString() + " is not legal as a chart perimeter.");
 		}
-
-		private String getJoinColumn() {
-			return joinColumn;
-		}
-	}
-
-
-	private SubScope toSubScope(EntityType type) {
-		SubScope subscope;
-		switch (type) {
-			case REQUIREMENT_LIBRARY:
-			case REQUIREMENT_FOLDER:
-			case REQUIREMENT:
-				subscope = SubScope.REQUIREMENT;
-				break;
-			case TEST_CASE_LIBRARY:
-			case TEST_CASE_FOLDER:
-			case TEST_CASE:
-				subscope = SubScope.TEST_CASE;
-				break;
-			case CAMPAIGN_LIBRARY:
-			case CAMPAIGN_FOLDER:
-			case CAMPAIGN:
-			case ITERATION:
-				subscope = SubScope.CAMPAIGN;
-				break;
-			default:
-				throw new IllegalArgumentException(type.toString() + " is not legal as a chart perimeter.");
-		}
-
-		return subscope;
-	}
-
-	private Set<SubScope> findQuerySubScopes() {
-
-		Set<SubScope> subScopes = new HashSet<>();
-
-		Set<InternalEntityType> targets = chartQuery.getTargetEntities();
-
-		for (InternalEntityType type : targets) {
-			switch (type) {
-
-				case REQUIREMENT:
-				case REQUIREMENT_VERSION:
-					subScopes.add(SubScope.REQUIREMENT);
-					break;
-
-				case TEST_CASE:
-					subScopes.add(SubScope.TEST_CASE);
-					break;
-
-				case CAMPAIGN:
-				case ITERATION:
-				case ITEM_TEST_PLAN:
-				case EXECUTION:
-				case ISSUE:
-					subScopes.add(SubScope.CAMPAIGN);
-					break;
-
-				// default is probably nothing related : User, Milestone etc
-				default:
-					break;
+                return column.toString();
+            }
+            
+        }
+        
+                
+        // ************************* class ScopeEntities ***************************
+        
+        /*
+         * This simple class presents the useful data we need to extract from the 
+         * raw Scope definition in a more convenient way.
+         *
+         * It basically puts together each EntityType in the scope and all the 
+         * ids that were selected for it.
+         */
+        private static final class ScopedEntities extends EnumMap<EntityType, Collection<Long>>{
+            
+            ScopedEntities(){
+                super(EntityType.class);
+            }
+            
+            ScopedEntities(List<EntityReference> scope) {
+                super(EntityType.class);
+  		for (EntityReference ref : scope) {
+			EntityType type = ref.getType();
+			Collection<Long> list = this.get(type);
+			if (list == null) {
+				list = new ArrayList<>();
+				this.put(type, list);
 			}
-
+			list.add(ref.getId());
+		}              
+            }
+            
+            Collection<Long> getIds(EntityType... types) {
+		Collection<Long> result = new ArrayList<>();
+		for (EntityType type : types) {
+			Collection<Long> ids = this.get(type);
+			if (ids != null) {
+				result.addAll(ids);
+			}
 		}
+		return result;
+            }
+            
+            private Set<String> getExtraJoinColumns(){
+                Set<String> extraJoins = new HashSet<>();
+                for (EntityType type : keySet()){
+                    
+                    // special : if the type is Project -> return joins columns for test cases, 
+                    // requirements and campaigns
+                    if (type == PROJECT){
+                        extraJoins.add(ExtraJoinColumns.TEST_CASE_ID.toString());
+                        extraJoins.add(ExtraJoinColumns.REQUIREMENT_ID.toString());
+                        extraJoins.add(ExtraJoinColumns.CAMPAIGN_ID.toString());
+                    }
+                    // else, find which one we need for that type
+                    else{
+                        extraJoins.add(ExtraJoinColumns.forType(type));
+                    }
+                }
+                return extraJoins;
+            }
+            
+        }
 
-		return subScopes;
-	}
-
-
-	/*
-	 *  find which entity types were defined in the scope
-	 *  Also, if the type "PROJECT" is present, we will replace it
-	 *  explicitly by TEST_CASE_LIBRARY, REQUIREMENT_LIBRARY
-	 *  and CAMPAIGN_LIBRARY instead (it makes things easier
-	 *  later on).
-	 */
-	private Set<EntityType> findEntitiesFromScope() {
-		Set<EntityType> scopeTypes = new HashSet<>(mapScopeByType().keySet());
-		if (scopeTypes.contains(PROJECT)) {
-			scopeTypes.remove(PROJECT);
-			scopeTypes.addAll(Arrays.asList(TEST_CASE_LIBRARY, REQUIREMENT_LIBRARY, CAMPAIGN_LIBRARY));
-		}
-		return scopeTypes;
-	}
-
-
-	// ****************** internal util class *****************************
+	// ****************** class ScopeUtils *****************************
 
 	// this class exists because it is too close to the DB
 	// so we'll need to mock it in the tests. That's also why
@@ -642,8 +561,8 @@ class ScopePlanner {
 
 		private static final String READ = Authorizations.READ;
 		private static final String ROLE_ADMIN = Authorizations.ROLE_ADMIN;
-		private PermissionEvaluationService permissionService;
-		private EntityManager em;
+		private final PermissionEvaluationService permissionService;
+		private final EntityManager em;
 
 		ScopeUtils(EntityManager entityManager, PermissionEvaluationService permService) {
 			super();
