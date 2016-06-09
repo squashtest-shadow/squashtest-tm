@@ -115,6 +115,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	@Inject
 	private HibernateObjectDao genericDao;
+
 	@PersistenceContext
 	private EntityManager em;
 
@@ -243,14 +244,16 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
-			cleanSomeCache(RequirementLibraryNode.class);
+			//cleanSomeCache(RequirementLibraryNode.class);
+			em.flush();
 		}
 
 	}
 
 	private <T> void cleanSomeCache(Class<T> c) {
 
-		em.unwrap(Session.class).flush();
+//		em.unwrap(Session.class).flush();
+		em.flush();
 		Collection<Object> entities = new ArrayList<>();
 		for (Object obj : em.unwrap(Session.class).getStatistics().getEntityKeys()) {
 			EntityKey key = (EntityKey) obj;
@@ -258,11 +261,11 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 			if (!c.isAssignableFrom(entity.getClass())) {
 				entities.add(entity);
 			}
-
 		}
 
 		genericDao.clearFromCache(entities);
-		em.unwrap(Session.class).flush();
+		em.flush();
+//		em.unwrap(Session.class).flush();
 	}
 
 	@Override
@@ -274,7 +277,8 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		batchRequirement++;
 		if (batchRequirement % 10 == 0) {
-			cleanSomeCache(TestCaseLibraryNode.class);
+			//cleanSomeCache(TestCaseLibraryNode.class);
+			em.flush();
 		}
 	}
 
