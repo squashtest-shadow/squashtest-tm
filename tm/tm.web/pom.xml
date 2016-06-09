@@ -739,6 +739,25 @@
             <artifactId>frontend-maven-plugin</artifactId>
             <executions>
               <execution>
+                <id>install node and npm</id>
+                <goals>
+                  <goal>install-node-and-npm</goal>
+                </goals>
+                <phase>initialize</phase>
+                <configuration>
+                  <nodeVersion>v4.4.1</nodeVersion>
+                  <npmVersion>3.8.3</npmVersion>
+                </configuration>
+              </execution>
+              <execution>
+                <!-- temporary - trying to fix release build -->
+                <id>npm install</id>
+                <goals>
+                  <goal>npm</goal>
+                </goals>
+                <phase>generate-resources</phase>
+              </execution>
+              <execution>
                 <id>gulp build</id>
                 <goals>
                   <goal>gulp</goal>
