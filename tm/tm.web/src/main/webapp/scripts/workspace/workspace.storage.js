@@ -18,6 +18,9 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["./Storage"], function (Storage) {
+define(["workspace/Storage"], function (Storage) {
+	//           ^^^^ Funky, innit ? Thanks to "path" directive for this file in commons.js, its logical path is scripts 
+	// root instead of its physical location. So lookup of "Storage" in "." fails
+	"use strict";
 	return new Storage(localStorage);
 });
