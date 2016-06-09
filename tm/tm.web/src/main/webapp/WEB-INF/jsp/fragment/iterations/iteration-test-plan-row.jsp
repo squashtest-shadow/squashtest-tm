@@ -47,25 +47,26 @@
 <f:message var="labelNodata" key="squashtm.nodata" />
 <f:message var="labelNone" key="label.None" />
 
-<%-- 
+<%--
 
-Note : below we define colspan and width for the columns of the nested table, that must match the columns of 
+Note : below we define colspan and width for the columns of the nested table, that must match the columns of
 the host test plan table. Please refer to iteration-test-plan-panel.tag to check those definitions.
 
-We can set totalColspan arbitrarily high to be sure that this td will be as long as one row whatever the actual 
-number of columns. 
+We can set totalColspan arbitrarily high to be sure that this td will be as long as one row whatever the actual
+number of columns.
 --%>
 
-<c:set var="totalColspan" value="26"/> 
+<c:set var="totalColspan" value="26"/>
 
 
 
-<td colspan="${totalColspan}"> 
+<td colspan="${totalColspan}">
 	<table class="executions-table" id="item-test-plan-${testPlanItem.id}">
       <thead>
         <tr class="executions-table-header">
           <th></th>
           <th class="tp-row-dataset width-tenperc"></th>
+          <th class="width-tenperc"></th>
           <th class="width-tenperc"></th>
           <th class="width-tenperc"></th>
           <th class="width-tenperc"></th>
@@ -93,6 +94,7 @@ number of columns.
 				<td>
                     <f:message key="execution.execution-status.${execution.executionStatus}" />
 				</td>
+				<td></td>
 				<td>
 					<span>
 					<c:choose>
@@ -132,17 +134,17 @@ number of columns.
 					<strong>
 						<a class="button new-exec" style="font-size:0.8em;" id="new-exec-${ testPlanItem.id }"  data-new-exec="${ newExecutionUrl }">
 							<f:message key="execution.iteration-test-plan-row.new" />
-						</a> 
-						<c:if test="${testPlanItem.automated}"> 
+						</a>
+						<c:if test="${testPlanItem.automated}">
 						<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${ testPlanItem.id }"  data-tpi-id="${ testPlanItem.id }">
 							<f:message key="execution.iteration-test-plan-row.new.auto" />
 						</a>
 						</c:if>
 					</strong>
 				</td>
-				
+
 			</tr>
-			
+
 		</c:if>
     </tbody>
 	</table>
