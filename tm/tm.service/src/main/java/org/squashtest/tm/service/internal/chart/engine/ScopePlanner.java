@@ -92,8 +92,31 @@ import com.querydsl.core.types.dsl.Expressions;
  *
  * <p>
  * 		When one or several project are elected for a scope, then all test cases, campaign, requirement, executions etc must belong to that project.
- *		As of TM 1.14, the main query will be forced to join with the 
- *              entities from the scope. More details in the main documentation (see {@link ChartDataFinder} and issues #6260, #6275.
+ *              When the user selected specifically folders and alike in a custom scope, the content will be restricted only to those folders.
+ * </p>
+ * 
+ * <h3>Details on the semantic of a scope</h3>
+ * 
+ * <p>
+ * 
+ *      
+ * 
+ *	As of TM 1.14 the following rules apply : 
+ * 
+ *      <h4>A - custom scope (traumatic approach)</h4>
+ *      When a custom scope is defined the main query <b>will be required</b> to join with any entities in order to honor the scope. 
+ *      For example, if the user selected a test cases folder as a scope, and his chart is aimed for requirements, the implicit semantic 
+ *      of his chart is "chart on requirements verified by test cases from this folder". In that sense, this approach is said to be "traumatic"
+ *      because the semantic of the chart has been altered by the inclusion of the scope.
+ * 
+ *      <h4>B - project scope (gentle approach)</h4>
+ *      When the scope is a project, the main query will join with the scope <b>only when relevant</b>. For example, if the user 
+ *      selected a project as a scope, and his chart is aimed for requirements, the implicit semantic of his chart is "chart on requirements 
+ *      that belong to this project". Note that, as opposed to the above, those requirements do not have to be verified at all. In that sense, 
+ *      this approach is said to be "gentle".
+ * 
+ *      <br/>
+ *       More details in the main documentation (see {@link ChartDataFinder} and issues #6260, #6275.
  * </p>
  *
  *
@@ -106,8 +129,8 @@ import com.querydsl.core.types.dsl.Expressions;
  * For example, if the Scope says that "elements must belong to CampaignFolder 15" and the main query only treat the Execution, in order to test whether this execution belong to
  * that folder we must then append to the main query all required joins from Execution to Campaign because there are no other way to test the ancestry of the Executions.
  *
- * 		In a second phase, when this is done, some "where" clauses will be added. In our example, the "where" clause would test that the campaign (to which belong the executions)
- * 	is itself a child or grandchild of CampaignFolder 15.
+ * In a second phase, when this is done, some "where" clauses will be added. In our example, the "where" clause would test that the campaign (to which belong the executions)
+ * is itself a child or grandchild of CampaignFolder 15.
  * </p>
  *
  * @author bsiri
@@ -131,6 +154,8 @@ class ScopePlanner {
 	private ExtendedHibernateQuery<?> hibQuery;
 
 	private ScopeUtils utils;    // created with @PostContruct
+        
+        private Set<JoinableColumns> extraJoins;   // computed later in the process
 
 	// ************************ build the tool ******************************
 
@@ -164,7 +189,14 @@ class ScopePlanner {
 		// step 1 : test the ACLs
 		filterByACLs();
 
-		// step 2 : join the main query with projects and/or libraries if some are specified
+                // step 2.a : find which join columns must be used.
+                prepareExtraJoins();
+                
+                if (extraJoins.isEmpty()){
+                    return;
+                }
+                
+		// step 2.b : join the main query with projects and/or libraries if some are specified
 		addExtraJoins();
 
 		// step 3 : add the filters
@@ -192,8 +224,48 @@ class ScopePlanner {
 	}
 
 
-	// *********************** step 2 ***********************
+	// *********************** step 2.a ***********************
 
+        private void prepareExtraJoins(){
+            
+            ScopedEntities scopedEntities = new ScopedEntitiesImpl(scope);                
+            QueriedEntities queriedEntities = new QueriedEntitiesImpl(chartQuery);
+
+            deduceExtraJoins(scopedEntities, queriedEntities);           
+        }
+        
+        /*
+         * This will determine which columns are actually included in the final query in order to add 
+         * the scope. See rules on the class-level javadoc: "Details on the semantic of a scope"
+         */
+        private void deduceExtraJoins(ScopedEntities scopedEntities, QueriedEntities queriedEntities){
+            
+            this.extraJoins = new HashSet<>();
+            
+            Set<JoinableColumns> requiredColumns = scopedEntities.getRequiredJoinColumns();
+            
+            for (JoinableColumns scopeColumn : requiredColumns){
+                
+                // case B - project scope
+                if (scopeColumn == JoinableColumns.POSSIBLE_COLUMNS_ONLY){
+                    
+                    // this is the "gentle" approach : joins columns are selected only with 
+                    // those deemed acceptable by the query
+                    Set<JoinableColumns> queriedColumns = queriedEntities.getPossibleJoinColumns();
+                    for (JoinableColumns queryColumn : queriedColumns){
+                        extraJoins.add(queryColumn);
+                    }
+                }
+                // case A - custom scope
+                // this is the "traumatic" approach: we don't ask the query for permission
+                else{
+                    extraJoins.add(scopeColumn);
+                }
+            }
+                    
+        }
+        
+        // *********************** step 2.b ***********************
 
 	/*
 	 * In order to extend the main query we will create a dummy query, that will be merged
@@ -206,31 +278,26 @@ class ScopePlanner {
 	 */
 	private void addExtraJoins() {
 
-                ScopedEntities scopedEntities = new ScopedEntities(scope);
-		Set<String> extraJoins = scopedEntities.getExtraJoinColumns();
-
-		if (extraJoins.isEmpty()) {
-			return;
-		}
-
-		// now we can create the dummy query
+		// create the dummy query
 		ChartQuery dummy = createDummyQuery(extraJoins);
 		DetailedChartQuery detailDummy = new DetailedChartQuery(dummy);
 
 		// ... and then run it in a QueryPlanner
-		QueryPlanner planner = new QueryPlanner(detailDummy);
-		planner.appendToQuery(hibQuery);
-		planner.modifyQuery();
+		appendScopeToQuery(detailDummy);
 	}
+        
+
+
+        
 
 	/*
-	 *	The goal here is to create a Query with as little detail as possible, we just add what
-	 * a QueryPlanner would need to add some join clauses to an existing query.
+	 * The goal here is to create a Query with as little detail as possible, we just add what
+	 * a QueryPlanner would need to add the join clauses to an existing query.
 	 *
 	 * For that we forge that Query using the same axis than the HibernateQuery we want to extend,
 	 * and fake measure columns that exists only to make the QueryPlanner join on them.
 	 */
-	private ChartQuery createDummyQuery(Set<String> fakeMeasureColLabels) {
+	private ChartQuery createDummyQuery(Set<JoinableColumns> fakeMeasureColLabels) {
 
 		ChartQuery dummy = new ChartQuery();
 
@@ -239,8 +306,8 @@ class ScopePlanner {
 
 		// now the dummy measures
 		List<MeasureColumn> fakeMeasures = new ArrayList<>();
-		for (String fakeMeasure : fakeMeasureColLabels) {
-			ColumnPrototype mProto = utils.findColumnPrototype(fakeMeasure);
+		for (JoinableColumns fakeMeasure : fakeMeasureColLabels) {
+			ColumnPrototype mProto = utils.findColumnPrototype(fakeMeasure.toString());
 			MeasureColumn meas = new MeasureColumn();
 			meas.setColumn(mProto);
 			fakeMeasures.add(meas);
@@ -253,6 +320,12 @@ class ScopePlanner {
 		return dummy;
 	}
 
+        
+        private void appendScopeToQuery(DetailedChartQuery extraQuery){
+            QueryPlanner planner = new QueryPlanner(extraQuery);
+            planner.appendToQuery(hibQuery);
+            planner.modifyQuery();         
+        }
 
 	// *********************** step 3 ***********************
 
@@ -284,17 +357,23 @@ class ScopePlanner {
 
 		BooleanBuilder generalCondition = new BooleanBuilder();
 
-		ScopedEntities scopedEntities = new ScopedEntities(scope);
+		ScopedEntities scopedEntities = new ScopedEntitiesImpl(scope);
+                
+                if (extraJoins.contains(JoinableColumns.TEST_CASE_ID)){
+                    BooleanBuilder testcaseClause = whereClauseForTestcases(scopedEntities);
+                    generalCondition.and(testcaseClause);
+                }
 
-		BooleanBuilder testcaseClause = whereClauseForTestcases(scopedEntities);
-		generalCondition.and(testcaseClause);
-
-		BooleanBuilder requirementClause = whereClauseForRequirements(scopedEntities);
-		generalCondition.and(requirementClause);
+                if (extraJoins.contains(JoinableColumns.REQUIREMENT_ID)){
+                    BooleanBuilder requirementClause = whereClauseForRequirements(scopedEntities);
+                    generalCondition.and(requirementClause);
+                }
 		
-
-		BooleanBuilder campaignClause = whereClauseForCampaigns(scopedEntities);
-		generalCondition.and(campaignClause);
+                if (extraJoins.contains(JoinableColumns.CAMPAIGN_ID) || 
+                    extraJoins.contains(JoinableColumns.ITERATION_ID)){
+                    BooleanBuilder campaignClause = whereClauseForCampaigns(scopedEntities);
+                    generalCondition.and(campaignClause);
+                }
 
 		hibQuery.where(generalCondition);
 
@@ -432,22 +511,31 @@ class ScopePlanner {
 		return collection != null && !collection.isEmpty();
 	}
 
-	// *********************** ExtraJoinColumns class *************************
+	// *********************** JoinableColumns class *************************
 
-        // those are the name of some column protototypes
-        private enum ExtraJoinColumns{
+        // most of those are the name of some column protototypes
+        // see last one for the only exception.
+        private enum JoinableColumns{
             TEST_CASE_ID,
             REQUIREMENT_ID,
             CAMPAIGN_ID,
-            ITERATION_ID;
+            ITERATION_ID,
             
-            static String forType(EntityType type){
-                ExtraJoinColumns column = null;
+            /*
+             * the value POSSIBLE_COLUMNS_ONLY is only used when the scope is of type PROJECT :
+             * it means that only columns compatible with the query will be added, and thus we will 
+             * not force unrelated columns (see javadoc at the class-level)
+             */
+            POSSIBLE_COLUMNS_ONLY;    
+            
+            // that method is used for Entities defined in the scope
+            // it is defined only for elements a scope can be made of
+            static JoinableColumns forScopedType(EntityType type){
+                JoinableColumns column = null;
  		switch (type) {
                     case REQUIREMENT_LIBRARY:
                     case REQUIREMENT_FOLDER:
                     case REQUIREMENT:
-                    case REQUIREMENT_VERSION :
                         column = REQUIREMENT_ID;
                         break;
                         
@@ -466,16 +554,58 @@ class ScopePlanner {
                     case ITERATION:
                         column = ITERATION_ID;
                         break;
+                        
+                    case PROJECT:
+                        column = POSSIBLE_COLUMNS_ONLY;
+                        break;
+                        
                     default:
                             throw new IllegalArgumentException(type.toString() + " is not legal as a chart perimeter.");
 		}
-                return column.toString();
+                return column;
+            }
+            
+            // that method is used for Entities defined in the query
+            // it is defined only for elements a query can be made of           
+            static JoinableColumns forQueriedType(InternalEntityType type){
+                JoinableColumns column;
+                switch(type){
+                    case REQUIREMENT:
+                    case REQUIREMENT_VERSION:
+                        column = REQUIREMENT_ID;
+                        break;
+
+                    case TEST_CASE:
+                        column = TEST_CASE_ID;
+                        break;
+
+                    case CAMPAIGN:
+                    case ITERATION:
+                    case ITEM_TEST_PLAN:
+                    case EXECUTION:
+                    case ISSUE:
+                        column = CAMPAIGN_ID;
+                        break;
+
+                    // default is probably nothing related : User, Milestone etc
+                    default:
+                        column = null; 
+                        break;
+                                    
+                }
+                return column;
             }
             
         }
         
                 
         // ************************* class ScopeEntities ***************************
+        
+        // interface allows us easier mock in test
+        private static interface ScopedEntities{
+            Collection<Long> getIds(EntityType... types);
+            Set<JoinableColumns> getRequiredJoinColumns();
+        }
         
         /*
          * This simple class presents the useful data we need to extract from the 
@@ -484,13 +614,13 @@ class ScopePlanner {
          * It basically puts together each EntityType in the scope and all the 
          * ids that were selected for it.
          */
-        private static final class ScopedEntities extends EnumMap<EntityType, Collection<Long>>{
+        private static final class ScopedEntitiesImpl extends EnumMap<EntityType, Collection<Long>> implements ScopedEntities{
             
-            ScopedEntities(){
+            ScopedEntitiesImpl(){
                 super(EntityType.class);
             }
             
-            ScopedEntities(List<EntityReference> scope) {
+            ScopedEntitiesImpl(List<EntityReference> scope) {
                 super(EntityType.class);
   		for (EntityReference ref : scope) {
 			EntityType type = ref.getType();
@@ -503,7 +633,8 @@ class ScopePlanner {
 		}              
             }
             
-            Collection<Long> getIds(EntityType... types) {
+            @Override
+            public Collection<Long> getIds(EntityType... types) {
 		Collection<Long> result = new ArrayList<>();
 		for (EntityType type : types) {
 			Collection<Long> ids = this.get(type);
@@ -514,26 +645,61 @@ class ScopePlanner {
 		return result;
             }
             
-            private Set<String> getExtraJoinColumns(){
-                Set<String> extraJoins = new HashSet<>();
+            /*
+             * returns which columns the scope is required to join on
+             */
+            @Override
+            public Set<JoinableColumns> getRequiredJoinColumns(){
+                Set<JoinableColumns> extraJoins = new HashSet<>();
                 for (EntityType type : keySet()){
-                    
-                    // special : if the type is Project -> return joins columns for test cases, 
-                    // requirements and campaigns
-                    if (type == PROJECT){
-                        extraJoins.add(ExtraJoinColumns.TEST_CASE_ID.toString());
-                        extraJoins.add(ExtraJoinColumns.REQUIREMENT_ID.toString());
-                        extraJoins.add(ExtraJoinColumns.CAMPAIGN_ID.toString());
-                    }
-                    // else, find which one we need for that type
-                    else{
-                        extraJoins.add(ExtraJoinColumns.forType(type));
-                    }
+                     extraJoins.add(JoinableColumns.forScopedType(type));
                 }
                 return extraJoins;
             }
             
         }
+        
+        
+        // ****************** class QueryEntities **************************
+        
+        // interface will make testing easier
+        private static interface QueriedEntities{
+            Set<JoinableColumns> getPossibleJoinColumns();
+        }
+        
+        
+        // Performs the same job than ScopeEntities but for the chart query.
+        // Note that it is relevant for the join columns only. 
+        
+        private static final class QueriedEntitiesImpl implements QueriedEntities {
+            
+            private DetailedChartQuery query;
+           
+            QueriedEntitiesImpl(DetailedChartQuery query){
+                super();
+                this.query = query;
+            }
+            
+            
+            /*
+             * Returns the columns on which the query can be joined on 
+             */
+            @Override
+            public Set<JoinableColumns> getPossibleJoinColumns(){
+                Set<JoinableColumns> possibles = new HashSet<>();
+                Set<InternalEntityType> types = query.getTargetEntities();
+                
+                for (InternalEntityType type : types){
+                    JoinableColumns column = JoinableColumns.forQueriedType(type);
+                    if (column != null){
+                        possibles.add(column);
+                    }
+                }
+                return possibles;               
+            }
+            
+        }
+        
 
 	// ****************** class ScopeUtils *****************************
 
@@ -601,5 +767,6 @@ class ScopePlanner {
 
 
 	}
-
+        
+        
 }
