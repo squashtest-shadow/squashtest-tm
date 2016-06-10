@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -35,7 +36,8 @@ public class RequirementImportLogHelper extends ImportLogHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(RequirementImportLogHelper.class);
 
-	private static final Map<String, EntityType> ENTITY_BY_TAB = new HashMap<>();
+	//linked hashmap is used here because we need to preserve order to present logs tabs in the same order than in the template.
+	private static final Map<String, EntityType> ENTITY_BY_TAB = new LinkedHashMap<>();
 
 	static {
 		ENTITY_BY_TAB.put("REQUIREMENT", EntityType.REQUIREMENT_VERSION);

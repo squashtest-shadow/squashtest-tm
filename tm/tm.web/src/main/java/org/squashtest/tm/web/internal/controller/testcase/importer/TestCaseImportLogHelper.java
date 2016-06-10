@@ -21,6 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase.importer;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -35,7 +36,7 @@ public class TestCaseImportLogHelper extends ImportLogHelper {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TestCaseImportLogHelper.class);
 
-	private static final Map<String, EntityType> ENTITY_BY_TAB = new HashMap<>();
+	private static final Map<String, EntityType> ENTITY_BY_TAB = new LinkedHashMap<>();
 
 	static {
 		ENTITY_BY_TAB.put("TEST CASE", EntityType.TEST_CASE);
