@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.controller.testcase;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,8 @@ import org.squashtest.tm.web.internal.model.builder.DriveNodeBuilder;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Provider;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -73,6 +76,14 @@ public class TestCaseWorkspaceController extends WorkspaceController<TestCaseLib
 	@Override
 	protected void populateModel(Model model, Locale locale) {
 		List<TestCaseLibrary> libraries = workspaceService.findAllImportableLibraries();
+		Collections.sort(libraries, new Comparator<TestCaseLibrary>() {
+			@Override
+			public int compare(TestCaseLibrary o1, TestCaseLibrary o2) {
+				String name1 = o1.getProject().getName();
+				String name2 = o2.getProject().getName();
+				return  name1.compareTo(name2);
+			}
+		});
 		model.addAttribute("editableLibraries", libraries);
 	}
 
