@@ -26,7 +26,7 @@ import org.squashtest.tm.domain.customreport.CustomReportLibraryNode;
 @Component
 public class NameResolver {
 
-	final String copySuffix = "-copy-";
+	final String copySuffix = "-Copie";
 
 	void resolveNewName(CustomReportLibraryNode node, CustomReportLibraryNode target) {
 		if (target.childNameAlreadyUsed(node.getName())) {
