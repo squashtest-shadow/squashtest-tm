@@ -45,6 +45,8 @@ public final class PathUtils {
 
 	private static final String SPLIT = "(?<!\\\\)/";
 
+	private static final String CORRECT_MUTLTIPLE_SLASHE = 	"(?<!\\\\)\\/+";
+
 	/**
 	 * a well formed path starts with a slash, doesn't end with a slash (we consider only test cases here so they don't
 	 * end with a slash), and contains at least two elements (the project name and element name in case it's at the root
@@ -70,6 +72,10 @@ public final class PathUtils {
 
 	public static boolean isPathWellFormed(String path) {
 		return WELL_FORMED_PATH.matcher(path).matches();
+	}
+
+	public static String cleanMultipleSlashes(String path) {
+		return path.replaceAll(CORRECT_MUTLTIPLE_SLASHE,"/");
 	}
 
 	/**

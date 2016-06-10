@@ -70,7 +70,10 @@ public class TestCaseTarget implements Target, WithPath {
 	}
 
 	public void setPath(String path) {
-		this.path = path.trim();
+		//Issue 5480.
+		//We must trim the path to avoid nasty null pointer exception
+		String sanitizedPath = path.trim();
+		this.path = PathUtils.cleanMultipleSlashes(sanitizedPath);
 	}
 
 	public Integer getOrder() {

@@ -72,7 +72,8 @@ public class RequirementTarget implements Target, WithPath {
 	public void setPath(String path) {
 		//Issue 5480.
 		//We must trim the path to avoid nasty null pointer exception
-		this.path = path.trim();
+		String sanitizedPath = path.trim();
+		this.path = PathUtils.cleanMultipleSlashes(sanitizedPath);
 	}
 
 	@Override

@@ -146,4 +146,19 @@ class PathUtilsTest extends Specification {
 		"//bob/robert/toto/"  | ["/bob", "/bob/robert", "/bob/robert/toto"]       | ", with extra slashes before"
 		"/bob/ro\\/bert/toto" | ["/bob", "/bob/ro\\/bert", "/bob/ro\\/bert/toto"] | ", with names having a '/' inside"
 	}
+
+	def "should replace multiple slashes"(){
+
+		expect:
+		resultPath == PathUtils.cleanMultipleSlashes(path);
+
+		where:
+		path 										|| resultPath
+		"project1/dossier/tc01"						|| "project1/dossier/tc01"
+		"project1/doss\\/ier/tc01"					|| "project1/doss\\/ier/tc01"
+		"project1/dossier////tc01"					|| "project1/dossier/tc01"
+		"project1////dossier////tc01"				|| "project1/dossier/tc01"
+		"project1////dossier////dossier2/tc01"		|| "project1/dossier/dossier2/tc01"
+		"project1\\/////dossier\\/////dossier2/tc01"|| "project1\\//dossier\\//dossier2/tc01"
+	}
 }

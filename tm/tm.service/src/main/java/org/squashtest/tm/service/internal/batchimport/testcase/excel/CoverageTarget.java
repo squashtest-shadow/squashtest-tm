@@ -35,7 +35,8 @@ public class CoverageTarget implements Target {
 	}
 
 	public void setReqPath(String reqPath) {
-		this.reqPath = reqPath.trim();
+		String sanitizedPath = reqPath.trim();
+		this.reqPath = PathUtils.cleanMultipleSlashes(sanitizedPath);
 	}
 
 	public int getReqVersion() {
@@ -51,7 +52,8 @@ public class CoverageTarget implements Target {
 	}
 
 	public void setTcPath(String tcPath) {
-		this.tcPath = tcPath.trim();
+		String sanitizedPath = tcPath.trim();
+		this.tcPath = PathUtils.cleanMultipleSlashes(sanitizedPath);
 	}
 
 	public boolean isReqPathWellFormed() {
