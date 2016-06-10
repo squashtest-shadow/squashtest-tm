@@ -65,7 +65,7 @@ class CRLNCopierTest extends Specification {
 		CustomReportLibraryNode target = Mock()
 		target.childNameAlreadyUsed('name1') >> true
 		target.childNameAlreadyUsed('name2') >> true
-		target.childNameAlreadyUsed('name2-copy-1') >> true
+		target.childNameAlreadyUsed('name2-Copie1') >> true
 
 		CustomReportLibraryNode origin = new CustomReportLibraryNode()
 		origin.setEntity(new CustomReportFolder())
@@ -83,8 +83,8 @@ class CRLNCopierTest extends Specification {
 		resolver.resolveNewName(origin2,target)
 
 		then:
-		origin.getName().equals("name1-copy-1")
-		origin2.getName().equals("name2-copy-2")
+		origin.getName().equals("name1-Copie1")
+		origin2.getName().equals("name2-Copie2")
 	}
 
 	def "should copy a single node"(){
