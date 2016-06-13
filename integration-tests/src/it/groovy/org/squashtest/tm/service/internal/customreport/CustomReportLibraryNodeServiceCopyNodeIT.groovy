@@ -215,8 +215,8 @@ class CustomReportLibraryNodeServiceCopyNodeIT extends DbunitServiceSpecificatio
 		CustomReportFolder baseFolder = baseFolderNode.getEntity()
 
 		//checking root baseFolder attributes
-		baseFolderNode.getName().equals("folder2-copy-1")
-		baseFolder.getName().equals("folder2-copy-1")
+		baseFolderNode.getName().equals("folder2-Copie1")
+		baseFolder.getName().equals("folder2-Copie1")
 
 		//checking hierarchy
 		List<CustomReportLibraryNode> copiedChildrens = baseFolderNode.getChildren()
