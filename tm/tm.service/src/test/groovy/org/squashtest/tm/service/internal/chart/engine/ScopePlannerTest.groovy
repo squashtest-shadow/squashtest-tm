@@ -219,20 +219,20 @@ class ScopePlannerTest extends Specification {
         
         given :
             ScopedEntities scoped = Mock(ScopedEntities)
-            scoped.getRequiredJoinColumns() >> requiredColumns
+            scoped.getRequiredJoinColumns() >> scopeRequiredColumns
             
             QueriedEntities queried = Mock(QueriedEntities)
-            queried.getPossibleJoinColumns() >> possibleColumns
+            queried.getPossibleJoinColumns() >> queryPossibleColumns
         
         when :
             scopePlanner.deduceExtraJoins(scoped, queried)
             
         then : 
-            scopePlanner.extraJoins == deducedColumns as Set
+            scopePlanner.extraJoins == finalColumns as Set
         
         where :
         
-            requiredColumns                 |   possibleColumns                 |   deducedColumns
+            scopeRequiredColumns                 |   queryPossibleColumns       |   finalColumns
             // first dataset is the "gentle" scenario : the columns from the query win
             [POSSIBLE_COLUMNS_ONLY]         |   [TEST_CASE_ID, CAMPAIGN_ID]     |   [TEST_CASE_ID, CAMPAIGN_ID]
             // second dataset is the "traumatic" scenario : the columns from the scope win
@@ -242,106 +242,124 @@ class ScopePlannerTest extends Specification {
         
     }
 
-    // ********************* Mock query tests ******************************
-/*
+    // ********************* Extra joins inclusion test ******************************
+
     def "should create a mock query for the purpose of extending the main query with required joins"(){
 
             given :
                     def axis = Mock(AxisColumn)
                     DetailedChartQuery q = new DetailedChartQuery(axis : [axis])
-
                     scopePlanner.chartQuery = q
-                    def fakeColumns = ['REQUIREMENT_ID', 'CAMPAIGN_ID']
-
+                    
             and :
-                    def fakeReqidProto = Mock(ColumnPrototype)
-                    def fakeCidProto = Mock(ColumnPrototype)
-                    utils.findColumnPrototype('REQUIREMENT_ID') >> fakeReqidProto
-                    utils.findColumnPrototype('CAMPAIGN_ID') >> fakeCidProto
+                    def joinableColumns = [REQUIREMENT_ID, CAMPAIGN_ID]
+                    def reqidProto = mockProto('REQUIREMENT_ID', null)
+                    def cidProto = mockProto('CAMPAIGN_ID', null)
 
             when :
-                    ChartQuery dummy = scopePlanner.createDummyQuery(fakeColumns as Set)
+                    ChartQuery dummy = scopePlanner.createDummyQuery(joinableColumns as Set)
 
             then :	
                     dummy.axis == [ axis]
-                    dummy.measures.collect{it.column} as Set == [fakeReqidProto, fakeCidProto] as Set
+                    dummy.measures.collect{it.column} as Set == [reqidProto, cidProto] as Set
 
     }
 
+ 
     def "should generate the required extra joins between the main query and the scope"(){
 
-            given : "scope"
+        given : "the extra query"
+            def extraQuery = mockQuery('R', 'TC')
 
-                scopePlanner.scope = [ref('TCL', 10L), ref('TCF', 15L)]
+        and : "the main hibernate query"
+            def r = QRequirement.requirement
+            def testquery = new ExtendedHibernateQuery()
+            testquery.from(r).select(r.id)
+            scopePlanner.hibQuery = testquery
 
-            and : "chart query"                        
-                    scopePlanner.chartQuery = mockQuery(EntityType.REQUIREMENT, EntityType.REQUIREMENT)       
+        when :
+            scopePlanner.appendScopeToQuery(extraQuery)
 
-            and : "scope columns"
-                    def scopeProto = Mock(ColumnPrototype)
-                    scopeProto.specializedType >> new SpecializedEntityType(entityType:EntityType.TEST_CASE)
-                    utils.findColumnPrototype('TEST_CASE_ID') >> scopeProto
-
-
-            and : "(the corresponding main query)"
-                    def r = QRequirement.requirement
-                    def testquery = new ExtendedHibernateQuery()
-                    testquery.from(r).select(r.id)
-                    scopePlanner.hibQuery = testquery
-            when :
-                    scopePlanner.addExtraJoins()
-
-            then :
-    System.out.println(testquery.toString())
-    testquery.toString() == """select requirement.id
+        then :
+            System.out.println(testquery.toString())
+            testquery.toString() == """select requirement.id
 from Requirement requirement
-inner join requirement.versions as requirementVersion
-inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
-inner join requirementVersionCoverage.verifyingTestCase as testCase"""
+  inner join requirement.versions as requirementVersion
+  inner join requirementVersion.requirementVersionCoverages as requirementVersionCoverage
+  inner join requirementVersionCoverage.verifyingTestCase as testCase"""
     }
 
-    def "should generate where clauses testing that a test case belongs to a library or a folder"(){
 
-            given :
-                    def refmap = new ScopedEntitiesImpl()
-                    refmap.put(et('TCL') , [10])
-                    refmap.put(et('TCF'),  [15])
+    // ***************** where clauses inclusion test *******************
+    
+    def "should include where clauses testing that a test case belongs to a library or a folder"(){
 
-            and :
-                    def tc = QTestCase.testCase
-                    def testquery = new ExtendedHibernateQuery()
-                    testquery.from(tc).select(tc.id)
+        given :
+            def refmap = new ScopedEntitiesImpl()
+            refmap.put(et('TCL') , [10])
+            refmap.put(et('TCF'),  [15])
 
-            when :
-                    def builder = scopePlanner.whereClauseForTestcases(refmap)
-                    testquery.where(builder)
-            then :
-                    testquery.toString() == """select testCase.id
+        when :
+            def tc = QTestCase.testCase
+            def hibQuery = new ExtendedHibernateQuery()
+            hibQuery.from(tc).select(tc.id)
+            
+            def builder = scopePlanner.whereClauseForTestcases(refmap)
+            hibQuery.where(builder)
+
+        then :
+            hibQuery.toString() == """select testCase.id
 from TestCase testCase
 where testCase.project.testCaseLibrary.id = ?1 or exists (select 1
 from TestCasePathEdge testCasePathEdge
 where testCasePathEdge.ancestorId = ?2 and testCase.id = testCasePathEdge.descendantId)"""
 
-
     }
-*/
+    
+    def "project scope case : should incorporate where clauses for test cases but not for campaigns nor requirements"(){
+        
+        given :
+            scopePlanner.scope = [ref('PROJECT', 1L)]
+            scopePlanner.extraJoins = [TEST_CASE_ID]
+        
+        and :
+            def tc = QTestCase.testCase
+            def testquery = new ExtendedHibernateQuery()
+            testquery.from(tc).select(tc.id)
+            scopePlanner.hibQuery = testquery
+        
+        when :
+            scopePlanner.addWhereClauses()
+        
+        then :
+            scopePlanner.hibQuery.toString() == """select testCase.id
+from TestCase testCase
+where testCase.project.id = ?1"""
+            
+    }
+
 
     // **************** test utils ************************
 
     def mockQuery(axType, meaType){
-        def saxType = new SpecializedEntityType(entityType : axType)
-        def smeaType = new SpecializedEntityType(entityType : meaType)
+          
+        def root = iet(axType)
+        def measure = iet(meaType)
+        def target = [root, measure]
 
-        // axis
-        def mainAxisProto = new ColumnPrototype(specializedType : saxType)
-        def mainAxis = new AxisColumn(column : mainAxisProto)
-
-        // measure
-        def mainMeasureProto = new ColumnPrototype(specializedType : smeaType)
-        def mainMeasure = new MeasureColumn(column : mainMeasureProto)
-
-
-        new DetailedChartQuery(axis : [mainAxis], measures : [mainMeasure])
+        new DetailedChartQuery(rootEntity : root, measuredEntity : measure, targetEntities : target)
+        
+    }
+    
+    def mockProto(colname, spectype){
+        def proto = Mock(ColumnPrototype)
+        if (colname != null){
+            utils.findColumnPrototype(colname) >> proto
+        }
+        if (spectype != null){
+            proto.specializedType >> new SpecializedEntityType(entityType : spectype)
+        }
+        proto
     }
 
     def ref(entityname, id){
