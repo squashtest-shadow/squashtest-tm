@@ -19,28 +19,27 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 	define(['module', "jquery","workspace.routing", "./execution-helper"], function(module, $, routing, execHelper) {
-		
+
 		$("#back-to-exec").click(backToExec);
 		var config = module.config();
-	
-		
+
+
 		var isIEO = config.isIEO;
-		
-		
+
+
 		function backToExec() {
-		
+
 			$.ajax({
 			method: 'POST',
 			url : routing.buildURL('execution.update-from-tc', config.execId),
 			}).success(function(id){
-				var runnerUrl = routing.buildURL('executions.runner', id); 
-				
+				var runnerUrl = routing.buildURL('executions.runner', id);
 				execHelper.start(runnerUrl, isIEO);
 				window.close();
 			});
-			
+
 		}
-		
+
 
 			});
 

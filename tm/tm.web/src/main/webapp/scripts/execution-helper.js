@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /* TODO move that file in a folder */
-	define([], function() {	
-		
+	define([], function() {
+
 		var dryRunStart = function(runnerUrl) {
 			return $.ajax({
 				url : runnerUrl,
@@ -30,7 +30,7 @@
 				}
 			});
 		};
-		
+
 		var startResumeClassic = function(runnerUrl) {
 			var data = {
 				'optimized' : 'false'
@@ -40,27 +40,29 @@
 				features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
 			};
 			$.open(runnerUrl, data, winDef);
+
 		};
-		
+
 		var startResumeIEO = function(runnerUrl) {
 			var data = {
 				'optimized' : 'true'
 			};
 			var winDef = {};
-			$.open(runnerUrl, data, winDef);
+			runnerUrl = runnerUrl + "?optimized=true";
+      window.open(runnerUrl);
 		};
-		
-		
-		
+
+
+
 	return {
-	
+
 		start : function(runnerUrl, isIEO){
 			if (isIEO){
-				dryRunStart(runnerUrl).done(startResumeIEO(runnerUrl));			
-			} 
+				dryRunStart(runnerUrl).done(startResumeIEO(runnerUrl));
+			}
 			else {
 			dryRunStart(runnerUrl).done(startResumeClassic(runnerUrl));
 			}}
-		
+
 	};
 	});
