@@ -37,6 +37,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
+import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Any;
 import org.hibernate.annotations.AnyMetaDef;
@@ -79,6 +80,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	 * Use {@link CustomReportLibraryNode#renameNode(String)} method which take care of all constraints relative to node name.
 	 */
 	@Column
+	@Size(min = 0,max = TreeLibraryNode.MAX_NAME_SIZE)
 	private String name;
 
 	@JoinTable(name="CRLN_RELATIONSHIP",
