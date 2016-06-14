@@ -94,6 +94,11 @@
 			exclude: ["common"]
 		},
 		{
+			name: "chart-wizard",
+			include: ["chart/chartWizard", "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", "chart/wizardRouter", "chart/wizardView", "chart/chartWizardModel"],
+			exclude: ["common"]
+		},
+		{
 			name: "custom-field-manager",
 			include: ["custom-field-manager/CustomFieldsTableView", "app/ws/squashtm.workspace"],
 			exclude: ["common"]

@@ -358,10 +358,6 @@ requirejs.config({
             deps: ["jquery"],
             exports: "jQuery.cookie"
         },
-        "handlebars": {
-            deps: ["jquery"],
-            exports: "Handlebars"
-        },
         "underscore": {
             exports: "_"
         },
