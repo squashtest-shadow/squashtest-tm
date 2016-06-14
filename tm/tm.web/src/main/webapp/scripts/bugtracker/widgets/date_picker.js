@@ -19,9 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 /*
- * As of Squash TM 1.8 the date format can come in two flavor :
- * 1 - datepicker format : the legacy one. The property of the conf object is rendering.inputType.meta['date-format']. Now deprecated.
- * 2 - java format : the prefered one. The property of the conf object is rendering.inputType.meta['format'].
+ * As of Squash TM 1.14 the date format suppports only one flavor :
+ * java format : the prefered one. The property of the conf object is rendering.inputType.configuration['format'].
  *  
  */
 define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateutils", "squash.translator", "jqueryui"], 
@@ -34,7 +33,7 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 			rendering : {
 				inputType : {
 					name : "date_picker",
-					meta : { 'date-format' : "yy-mm-dd" }
+					configuration : { 'format' : "yyyy-MM-dd" }
 				}
 				
 			}
@@ -85,28 +84,13 @@ define(["jquery", "../domain/FieldValue", "squash.configmanager", "squash.dateut
 		},
 		
 		formatDate : function(date){
-
-			var jsformat = this.options.rendering.inputType.meta['date-format'],		// the datepicker format (deprecated)
-				javaformat = this.options.rendering.inputType.meta['format'];			// the java format
-			
-			if (!! javaformat){
-				return dateutils.format(date, javaformat);
-			}
-			else{
-				return $.datepicker.formatDate(jsformat, date);
-			}
+			var javaformat = this.options.rendering.inputType.configuration['format'];// the java format			
+			return dateutils.format(date, javaformat);			
 		},
 		
 		parseDate : function(strdate){
-			var jsformat = this.options.rendering.inputType.meta['date-format'],		// the datepicker format (deprecated)
-				javaformat = this.options.rendering.inputType.meta['format'];			// the java format
-			
-			if (!! javaformat ){
-				return dateutils.parse(strdate, javaformat);
-			}
-			else{
-				return $.datepicker.parseDate(jsformat, strdate);
-			}
+			var javaformat = this.options.rendering.inputType.configuration['format'];// the java format
+			return dateutils.parse(strdate, javaformat);
 		},
 		
 		validate : function(){

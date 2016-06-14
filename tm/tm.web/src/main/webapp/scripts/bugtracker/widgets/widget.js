@@ -56,17 +56,16 @@ define(["jquery", "../domain/DelegateCommand"], function($, DelegateCommand){
 					original : "unknown",
 					dataType : null,
 					fieldSchemeSelector : false,
-					meta : {}
+					configuration : {}
 				},
 				required : false
 			},
 			_delegateurl : ""//used internally, you are not supposed to care about that one. But if you really want to know, WidgetFactory in advanced-field-view.js sets it 
-							//when the widget instance is created.
+					//when the widget instance is created.
 		},
 		
 		_create : function(){
 			//whatever you need. You will find the arguments in this.options
-			var field = this.options;
 			if (! this.canEdit()){
 				this.disable();
 			}

@@ -23,7 +23,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 	//expects 'this' to be the widget instance
 	function configureAutocomplete(){
 		
-		var command = this.options.rendering.inputType.meta.onchange;
+		var command = this.options.rendering.inputType.configuration.onchange;
 		
 		if (!!command){
 			
@@ -31,20 +31,19 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 			
 			var autoconf = {
 				source : function(search, callback){
-					var values = self.sendDelegateCommand( {command : command, argument : search.term}, 
-								function(res){
-									proposal = new FieldValue(res);	//sort of "cast as" FieldValue
-									callback(proposal.getName().split(/,\s*/));
-								}, 
-								function(xhr){
-									//nothing, we don't want the widget to fail
-								});				
+					self.sendDelegateCommand( {command : command, argument : search.term}, 
+                                            function(res){
+                                                    proposal = new FieldValue(res);	//sort of "cast as" FieldValue
+                                                    callback(proposal.getName().split(/,\s*/));
+                                            }, 
+                                            function(xhr){
+                                                //nothing, we don't want the widget to fail
+                                        });				
 				}
 			};
 			
 			this.element.autocomplete(autoconf);
 			
-			var toto=1;
 		}
 		
 	}
@@ -55,7 +54,7 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 			rendering : {
 				inputType : {
 					name : "checkbox",
-					meta : {}
+					configuration : {}
 				}
 				
 			}
@@ -65,9 +64,9 @@ define(["jquery", "../domain/FieldValue", "jqueryui"], function($, FieldValue){
 			
 			this._super();
 			
-			var meta = this.options.rendering.inputType.meta;
+			var configuration = this.options.rendering.inputType.configuration;
 			
-			if (!!meta.onchange){
+			if (!!configuration.onchange){
 				configureAutocomplete.call(this);
 			}
 		},
