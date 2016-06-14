@@ -95,7 +95,7 @@
 		},
 		{
 			name: "chart-wizard",
-			include: ["chart/chartWizard", "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", "chart/wizardRouter", "chart/wizardView", "chart/chartWizardModel"],
+			include: ["chart/chartWizard"],
 			exclude: ["common"]
 		},
 		{

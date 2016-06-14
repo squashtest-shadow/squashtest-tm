@@ -20,7 +20,8 @@
  */
 define([ "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing", "./wizardRouter", "./wizardView", "./chartWizardModel" ], function($, Backbone, workspace, router, WizardRouter, WizardView, WizardModel) {
 
-	$("#back-popup").confirmDialog().on('confirmdialogconfirm', function(){
+	function init() {
+		$("#back-popup").confirmDialog().on('confirmdialogconfirm', function(){
 			var url = router.buildURL('custom-report-base');
 			window.location.href = url;
 			});
@@ -31,27 +32,31 @@ define([ "jquery", "backbone", "app/ws/squashtm.workspace", "workspace.routing",
 		
 		workspace.init();
 		
-	$.ajax({
-		url: router.buildURL('chart.wizard.data')	
-	}).done(function(data){
-		
-		data.parentId = squashtm.chart.parentId;
-		data.defaultProject = squashtm.chart.defaultProject;
-		data.chartDef = JSON.parse(squashtm.chart.chartDef);
-		
-		var model = new WizardModel(data);
-		
-		var wizardView = new WizardView ({
-			model: model
+		$.ajax({
+			url: router.buildURL('chart.wizard.data')	
+		}).done(function(data){
+			
+			data.parentId = squashtm.chart.parentId;
+			data.defaultProject = squashtm.chart.defaultProject;
+			data.chartDef = JSON.parse(squashtm.chart.chartDef);
+			
+			var model = new WizardModel(data);
+			
+			var wizardView = new WizardView ({
+				model: model
+			});
+			
+			new WizardRouter({
+				wizardView : wizardView
+			});
+			
+			Backbone.history.start();
 		});
-		
-		new WizardRouter({
-			wizardView : wizardView
-		});
-		
-		Backbone.history.start();
-	});
-
+	}
+	
+	return {
+		init : init
+	};
 
 });
  
