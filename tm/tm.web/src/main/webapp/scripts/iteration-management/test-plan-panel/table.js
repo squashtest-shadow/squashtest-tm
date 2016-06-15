@@ -62,7 +62,7 @@ define(
 		'squash.configmanager', 'workspace.routing',
 		'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
 	function ($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing) {
-
+		"use strict";
 		// ****************** TABLE CONFIGURATION **************
 
 		function _rowCallbackReadFeatures($row, data, _conf) {
@@ -154,7 +154,7 @@ define(
 				listWithUnassignedUsers[property] = dataProperty;
 			}
 
-			listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
+			var listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
 
 			assigneeElt.addClass('cursor-arrow');
 			assigneeElt.editable(
@@ -173,7 +173,7 @@ define(
 				dsurl = _conf.testplanUrl + data['entity-id'];
 
 			if (dsInfos.available.length > 0) {
-				jeditData = confman.toJeditableSelectFormat(dsInfos.available);
+				var jeditData = confman.toJeditableSelectFormat(dsInfos.available);
 				$dsspan.addClass('cursor-arrow');
 				$dsspan.editable(dsurl, {
 					type: 'select',
@@ -302,11 +302,11 @@ define(
 					var tpiId = data['entity-id'];
 					tpiIds.push(tpiId);
 
-					var url = squashtm.app.contextRoot + "/automated-suites/new";
+					var url = window.squashtm.app.contextRoot + "/automated-suites/new";
 
 					var formParams = {};
-					var ent = squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-					formParams[ent] = squashtm.page.identity.resid;
+					var ent = window.squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+					formParams[ent] = window.squashtm.page.identity.resid;
 					formParams.testPlanItemsIds = tpiIds;
 
 					$.ajax({
@@ -316,7 +316,7 @@ define(
 						data: formParams,
 						contentType: "application/x-www-form-urlencoded;charset=UTF-8"
 					}).done(function (suite) {
-						squashtm.context.autosuiteOverview.start(suite);
+						window.squashtm.context.autosuiteOverview.start(suite);
 					});
 					return false;
 
@@ -462,12 +462,12 @@ define(
 										var tpiId = $(this).data('tpi-id');
 
 										var formParams = {};
-										var idPrmName = squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-										formParams[idPrmName] = squashtm.page.identity.resid;
+										var idPrmName = window.squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+										formParams[idPrmName] = window.squashtm.page.identity.resid;
 										formParams.testPlanItemsIds = [tpiId];
 
 
-										var url = squashtm.app.contextRoot + "/automated-suites/new";
+										var url = window.squashtm.app.contextRoot + "/automated-suites/new";
 										$.ajax({
 											url: url,
 											dataType: 'json',
@@ -475,7 +475,7 @@ define(
 											data: formParams,
 											contentType: "application/x-www-form-urlencoded;charset=UTF-8"
 										}).done(function (suite) {
-											squashtm.context.autosuiteOverview.start(suite);
+											window.squashtm.context.autosuiteOverview.start(suite);
 										});
 
 										return false;

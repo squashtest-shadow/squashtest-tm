@@ -55,7 +55,7 @@ define(
 		'workspace.routing',
 		'jeditable.datepicker', 'squashtable', 'jeditable', 'jquery.squash.buttonmenu'],
 	function ($, translator, execrunner, smode, fmode, dateutils, statusfactory, autosuitedialog, confman, routing) {
-
+		"use strict";
 		// ****************** TABLE CONFIGURATION **************
 
 		function _rowCallbackReadFeatures($row, data, _conf) {
@@ -137,7 +137,7 @@ define(
 				listWithUnassignedUsers[property] = dataProperty;
 			}
 
-			listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
+			var listWithAllUsers = JSON.stringify(listWithUnassignedUsers);
 
 			assigneeElt.editable(assigneeurl, {
 				type: 'select',
@@ -279,11 +279,11 @@ define(
 					var tpiId = data['entity-id'];
 					tpiIds.push(tpiId);
 
-					var url = squashtm.app.contextRoot + "/automated-suites/new";
+					var url = window.squashtm.app.contextRoot + "/automated-suites/new";
 
 					var formParams = {};
-					var ent = squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
-					formParams[ent] = squashtm.page.identity.resid;
+					var ent = window.squashtm.page.identity.restype === "iterations" ? "iterationId" : "testSuiteId";
+					formParams[ent] = window.squashtm.page.identity.resid;
 					formParams.testPlanItemsIds = tpiIds;
 
 					$.ajax({
@@ -293,7 +293,7 @@ define(
 						data: formParams,
 						contentType: "application/x-www-form-urlencoded;charset=UTF-8"
 					}).done(function (suite) {
-						squashtm.context.autosuiteOverview.start(suite);
+						window.squashtm.context.autosuiteOverview.start(suite);
 					});
 					return false;
 				}
@@ -447,7 +447,7 @@ define(
 									var tpiIds = [];
 									var tpiId = $(this).data('tpi-id');
 									tpiIds.push(tpiId);
-									var url = squashtm.app.contextRoot + "/automated-suites/new";
+									var url = window.squashtm.app.contextRoot + "/automated-suites/new";
 									$.ajax({
 										url: url,
 										dataType: 'json',
@@ -457,7 +457,7 @@ define(
 										},
 										contentType: "application/x-www-form-urlencoded;charset=UTF-8"
 									}).done(function (suite) {
-										squashtm.context.autosuiteOverview.start(suite);
+										window.squashtm.context.autosuiteOverview.start(suite);
 									});
 									return false;
 								});
