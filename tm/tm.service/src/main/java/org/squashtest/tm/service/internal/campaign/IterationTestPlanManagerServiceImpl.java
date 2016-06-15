@@ -30,6 +30,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
@@ -91,7 +93,6 @@ import com.google.common.base.Optional;
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
 public class IterationTestPlanManagerServiceImpl implements IterationTestPlanManagerService {
-
 
 	@Inject
 	private TestCaseLibraryDao testCaseLibraryDao;
@@ -206,8 +207,8 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		Dataset ds = datasetId!=null ? datasetDao.findById(datasetId) : null;
 
 		IterationTestPlanItem itp = new IterationTestPlanItem(testCase, ds);
-		iteration.addTestPlan(itp);
 		iterationTestPlanDao.save(itp);
+		iteration.addTestPlan(itp);
 
 		// and frack the reindexation
 	}
