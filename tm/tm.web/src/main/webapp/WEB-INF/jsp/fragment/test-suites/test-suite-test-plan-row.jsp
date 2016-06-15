@@ -47,18 +47,18 @@
 <f:message var="labelNodata" key="squashtm.nodata" />
 <f:message var="labelNone" key="label.None" />
 
-<%-- 
+<%--
 
-Note : below we define colspan and width for the columns of the nested table, that must match the columns of 
+Note : below we define colspan and width for the columns of the nested table, that must match the columns of
 the host test plan table. Please refer to iteration-test-plan-panel.tag to check those definitions.
 
-We can set totalColspan arbitrarily high to be sure that this td will be as long as one row whatever the actual 
-number of columns. 
+We can set totalColspan arbitrarily high to be sure that this td will be as long as one row whatever the actual
+number of columns.
 --%>
 
-<c:set var="totalColspan" value="26"/> 
+<c:set var="totalColspan" value="26"/>
 
-<td colspan="${totalColspan}"> 
+<td colspan="${totalColspan}">
 	<table class="executions-table" id="item-test-plan-${testPlanItem.id}">
       <thead>
         <tr class="executions-table-header">
@@ -84,7 +84,7 @@ number of columns.
                 <td class="tp-row-dataset">
                   <span >
                         <c:out value="${(execution.datasetLabel == null) ? labelNodata :
-                                        (fn:length(execution.datasetLabel) == 0) ? labelNone : 
+                                        (fn:length(execution.datasetLabel) == 0) ? labelNone :
                                         execution.datasetLabel}" />
                   </span>
                 </td>
@@ -116,7 +116,7 @@ number of columns.
 				<td></td>
 				<td style="text-align:center;">
                     <authz:authorized hasRole="ROLE_ADMIN" hasPermission="EXECUTE" domainObject="${ execution }">
-						<a id="delete-execution-table-button-${execution.id}" 
+						<a id="delete-execution-table-button-${execution.id}"
 							class="delete-execution-table-button" title='<f:message key="label.removeExecution"/>' ></a>
 					</authz:authorized>
 				</td>
@@ -127,12 +127,12 @@ number of columns.
 		<!-- ---------------------------------------------ROW NEW EXECUTION -->
 		<c:if test="${ executable && !testPlanItem.testCaseDeleted }">
 			<tr>
-				<td colspan="${totalColspan }" style="color:white; font-style=normal"> 
+				<td colspan="${totalColspan }" style="color:white; font-style:normal;">
 					<a id="new-exec-${testPlanItem.id}" style="font-size:0.8em;" class="button new-exec"  data-new-exec="${newExecutionUrl}">
-						<f:message key="execution.iteration-test-plan-row.new" /> 
-					</a> 
-								
-					<c:if test="${ testPlanItem.automated}"> 
+						<f:message key="execution.iteration-test-plan-row.new" />
+					</a>
+
+					<c:if test="${ testPlanItem.automated}">
 							<a	class="button new-auto-exec" style="font-size:0.8em;" id="new-auto-exec-${testPlanItem.id}"	 data-tpi-id="${ testPlanItem.id }">
 								<f:message	key="execution.iteration-test-plan-row.new.auto" />
 							</a>
