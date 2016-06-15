@@ -95,7 +95,7 @@
 		},
 		{
 			name: "chart-wizard",
-			include: ["chart/chartWizard"],
+			include: ["charts/chartWizard"],
 			exclude: ["common"]
 		},
 		{
