@@ -44,7 +44,7 @@
 <f:message var="okLabel"          key="label.Ok" />
 <f:message var="cancelLabel"      key="label.Cancel" />
 <f:message var="closeLabel"       key="label.Close" />
- 
+
 <f:message var="assignLabel"      key="label.Assign" />
 <f:message var="confirmLabel"     key="label.Confirm" />
 <f:message var="reorderLabel"     key="label.Reorder" />
@@ -106,8 +106,8 @@
       </c:if>
     </div>
   </c:if>
-  
-  
+
+
 </div>
 
 
@@ -115,10 +115,10 @@
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
-    
-    As per stupid specification, instead of the normal conditions the milestone dates column 
-    must be displayed if the feature is globally-enabled but not user-enabled 
-    
+
+    As per stupid specification, instead of the normal conditions the milestone dates column
+    must be displayed if the feature is globally-enabled but not user-enabled
+
     for f*** sakes
    --%>
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
@@ -134,30 +134,30 @@
       <tr>
         <th class="no-user-select"
           data-def="map=entity-index, select, sortable, center, sClass=drag-handle, sWidth=2.5em">#</th>
-        <th class="no-user-select tp-th-filter tp-th-project-name" 
+        <th class="no-user-select tp-th-filter tp-th-project-name"
             data-def="map=project-name, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
           <f:message key="label.Location" />
         </th>
           <th class="no-user-select" data-def="sortable, map=milestone-dates, tooltip-target=milestone-labels ${milestoneVisibility}">
             <f:message key="label.Milestone"/>
-          </th>          
+          </th>
         <th class="no-user-select tp-th-filter tp-th-exec-mode"
           data-def="map=exec-mode, sortable, center, visible=${campaign.project.testAutomationEnabled}, sClass=exec-mode">
           <f:message key="label.Mode" />
         </th>
-        <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}" 
-          data-def="map=reference, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
+        <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"
+          data-def="map=reference, sortable, link=${testCaseUrl}">
           <f:message key="label.Reference.short" />
         </th>
         <th class="no-user-select tp-th-filter tp-th-name" data-def="map=tc-name, sortable, link-cookie=workspace-prefs={tc-id}">
           <f:message key="label.TestCase.short" />
-        </th>        
+        </th>
         <th class="no-user-select tp-th-filter tp-th-importance" title="${tooltipImportance}" data-def="map=importance, sortable">
           <f:message key="label.Importance.short" />
         </th>
         <th class="no-user-select tp-th-filter tp-th-dataset" data-def="map=dataset.selected.name, sortable, sWidth=10%, sClass=dataset-combo">
             <f:message key="label.Dataset" />
-          </th>        
+          </th>
         <th class="no-user-select tp-th-filter tp-th-assignee"
           data-def="map=assigned-user, sortable, sWidth=10%, sClass=assignee-combo">
           <f:message key="test-case.user.combo.label" />
@@ -203,7 +203,7 @@
       <input type="button" value="${closeLabel}" data-def="evt=cancel" />
     </div>
   </div>
-  
+
   <script id="delete-dialog-tpl" type="text/x-handlebars-template">
   <div id="{{dialogId}}" class="not-displayed popup-dialog" title="<f:message key='dialog.remove-testcase-associations.title'/>">
 
