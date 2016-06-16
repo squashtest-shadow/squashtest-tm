@@ -20,27 +20,6 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import java.text.ParseException;
-import java.util.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.Size;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +28,11 @@ import org.squashtest.tm.domain.Identified;
 import org.squashtest.tm.exception.customfield.BindableEntityMismatchException;
 import org.squashtest.tm.exception.customfield.MandatoryCufException;
 import org.squashtest.tm.exception.customfield.WrongCufDateFormatException;
+
+import javax.persistence.*;
+import javax.validation.constraints.Size;
+import java.text.ParseException;
+import java.util.Date;
 
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
@@ -68,7 +52,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	@Enumerated(EnumType.STRING)
 	protected BindableEntity boundEntityType;
 
-	@ManyToOne(cascade=CascadeType.DETACH)
+	@ManyToOne(cascade = CascadeType.DETACH)
 	@JoinColumn(name = "CFB_ID")
 	protected CustomFieldBinding binding;
 
@@ -102,7 +86,7 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	}
 
 	@Override
-	public void setValue(String value){
+	public void setValue(String value) {
 		doSetValue(value);
 	}
 
@@ -130,7 +114,8 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	public CustomField getCustomField() {
 		return doGetCustomField();
 	}
-	private CustomField doGetCustomField(){
+
+	private CustomField doGetCustomField() {
 		if (binding != null) {
 			return binding.getCustomField();
 		}
@@ -157,12 +142,11 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	private void doSetBoundEntityType(BindableEntity entityType) {
 		if (entityType != binding.getBoundEntity()) {
 			throw new BindableEntityMismatchException("attempted to bind '" + entityType
-					+ "' while expected '" + binding.getBoundEntity() + "'");
+				+ "' while expected '" + binding.getBoundEntity() + "'");
 		}
 
 		this.boundEntityType = entityType;
 	}
-
 
 
 	public CustomFieldValue copy() {

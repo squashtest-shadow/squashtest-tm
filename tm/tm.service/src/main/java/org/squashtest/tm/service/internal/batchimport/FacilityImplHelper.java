@@ -137,6 +137,7 @@ final class FacilityImplHelper {
 		}
 	}
 
+	// truncate what ? data from database ? strings ? which ones ?
 	void truncate(TestCase testCase, Map<String, String> cufValues) {
 		String name = testCase.getName();
 		testCase.setName(truncate(name, LibraryNode.MAX_NAME_SIZE));

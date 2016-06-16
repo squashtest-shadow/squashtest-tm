@@ -20,14 +20,14 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldVisitor;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+
+import java.util.List;
 
 /**
  * That class represents a "value" that aren't attached to any specific custom field value. They can hold either a single value or a multi value,
@@ -79,11 +79,11 @@ public class RawValue implements DenormalizedFieldVisitor {
 	public void setValueFor(CustomFieldValue field){
 		if (MultiValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
 			setValueFor((MultiValuedCustomFieldValue) field);
-		}
-		else if (SingleValuedCustomFieldValue.class.isAssignableFrom(field.getClass())){
+
+		} else if (SingleValuedCustomFieldValue.class.isAssignableFrom(field.getClass())) {
 			setValueFor((SingleValuedCustomFieldValue)field);
-		}
-		else {
+
+		} else {
 			logError(field);
 			// and nothing more : the custom fields aren't assigned.
 		}
@@ -107,11 +107,9 @@ public class RawValue implements DenormalizedFieldVisitor {
 		boolean isEmpty = false;
 		if (value == null && (values == null || values.isEmpty())){
 			isEmpty= true;
-		}
-		else if (value != null && StringUtils.isBlank(value)){
+		} else if (value != null && StringUtils.isBlank(value)) {
 			isEmpty = true;
-		}
-		else if (values != null && values.isEmpty()){
+		} else if (values != null && values.isEmpty()) {
 			isEmpty =  true;
 		}
 
@@ -126,8 +124,7 @@ public class RawValue implements DenormalizedFieldVisitor {
 		String debugvalue = "<null>";
 		if (value != null){
 			debugvalue = value;
-		}
-		else if (values != null){
+		} else if (values != null) {
 			StringBuilder builder = new StringBuilder();
 			for (String v : values){
 				builder.append(v).append(", ");

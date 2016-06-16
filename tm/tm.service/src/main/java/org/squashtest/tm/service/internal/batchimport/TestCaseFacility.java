@@ -61,9 +61,6 @@ public class TestCaseFacility extends EntityFacilitySupport {
 	@Inject
 	private TestCaseModificationService testcaseModificationService;
 
-	@Inject
-	private PrivateCustomFieldValueService cufvalueService;
-
 	private final FacilityImplHelper helper = new FacilityImplHelper();
 
 	public LogTrain createTestCase(TestCaseInstruction instr) {

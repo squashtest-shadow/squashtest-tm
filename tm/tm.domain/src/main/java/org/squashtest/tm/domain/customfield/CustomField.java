@@ -20,26 +20,6 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import java.text.ParseException;
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.DiscriminatorColumn;
-import javax.persistence.DiscriminatorType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
-
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
@@ -48,13 +28,20 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
+import java.text.ParseException;
+import java.util.Date;
+
 /**
  * @author Gregory Fouquet
  */
 
-@NamedQueries({ @NamedQuery(name = "CustomField.findAllOrderedByName", query = "from CustomField cf order by cf.name"),
+@NamedQueries({@NamedQuery(name = "CustomField.findAllOrderedByName", query = "from CustomField cf order by cf.name"),
 	@NamedQuery(name = "CustomField.countCustomFields", query = "select count(*) from CustomField"),
-	@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?1") })
+	@NamedQuery(name = "CustomField.findByCode", query = "from CustomField where code = ?1")})
 @Entity
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "FIELD_TYPE", discriminatorType = DiscriminatorType.STRING)

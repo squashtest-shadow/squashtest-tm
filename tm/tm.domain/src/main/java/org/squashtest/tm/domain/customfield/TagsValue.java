@@ -20,22 +20,15 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-
-import javax.persistence.CollectionTable;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OrderColumn;
 
 @Entity
 @DiscriminatorValue("TAG")
 public class TagsValue extends CustomFieldValue implements MultiValuedCustomFieldValue, CustomFieldVisitor {
-
-
 
 	@ElementCollection
 	@CollectionTable(name = "CUSTOM_FIELD_VALUE_OPTION", joinColumns = @JoinColumn(name = "CFV_ID"))
@@ -47,11 +40,11 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 		return selectedOptions;
 	}
 
-	public void addCUFieldValueOption(CustomFieldValueOption cufVO){
+	public void addCUFieldValueOption(CustomFieldValueOption cufVO) {
 		selectedOptions.add(cufVO);
 	}
 
-	public void removeCUFValueOption(CustomFieldValueOption cufVO){
+	public void removeCUFValueOption(CustomFieldValueOption cufVO) {
 		selectedOptions.remove(cufVO);
 	}
 
@@ -59,35 +52,37 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	@Override
 	public void setValues(List<String> values) {
 		selectedOptions.clear();
-		for (String option : values){
+		for (String option : values) {
 			selectedOptions.add(new CustomFieldValueOption(option));
 		}
 
 		// now update the available options at the custom field level
 		getCustomField().accept(this);
+		// ^^^ si tout ce qu'on veut faire c'est un downcast, autant downcaster dans la mesure où le type de custom field
+		// est obligatoirement MuliValueWhatever. On peut même encapsuler le downcast dans un `@Override MultiWhatever getCustomField()`
+		// (types de retour covariants autorisés depuis java 5)
 	}
 
 	@Override
 	public List<String> getValues() {
 		List<String> result = new ArrayList<>(selectedOptions.size());
-		for (CustomFieldValueOption option : selectedOptions){
+		for (CustomFieldValueOption option : selectedOptions) {
 			result.add(option.getLabel());
 		}
 		return result;
 	}
 
 
-
 	@Override
-	public String getValue(){
+	public String getValue() {
 		String result = "";
-		if (! selectedOptions.isEmpty()){
+		if (!selectedOptions.isEmpty()) {
 			StringBuilder builder = new StringBuilder();
-			for (CustomFieldValueOption option : selectedOptions){
+			for (CustomFieldValueOption option : selectedOptions) {
 				builder.append(option.getLabel()).append(MultiSelectField.SEPARATOR);
 			}
 			int lastidx = builder.lastIndexOf(MultiSelectField.SEPARATOR);
-			result = builder.substring(0,lastidx);
+			result = builder.substring(0, lastidx);
 		}
 		return result;
 	}
@@ -98,16 +93,16 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	 */
 	@Override
 	@Deprecated
-	public void setValue(String value){
-		setValues(Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));
+	public void setValue(String value) {
+		setValues(value == null ? Collections.<String>emptyList() : Arrays.asList(value.split(MultiSelectField.SEPARATOR_EXPR)));
 	}
 
 	@Override
-	public CustomFieldValue copy(){
+	public CustomFieldValue copy() {
 		TagsValue copy = new TagsValue();
 		copy.setBinding(getBinding());
 
-		for (CustomFieldValueOption option : selectedOptions){
+		for (CustomFieldValueOption option : selectedOptions) {
 			copy.addCUFieldValueOption(option.copy());
 		}
 
@@ -143,7 +138,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 	// should have been called "updateAvailableOptions"
 	@Override
 	public void visit(MultiSelectField multiselect) {
-		for (CustomFieldValueOption option : selectedOptions){
+		for (CustomFieldValueOption option : selectedOptions) {
 			multiselect.addOption(option.getLabel());
 		}
 	}

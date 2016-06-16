@@ -20,37 +20,17 @@
  */
 package org.squashtest.tm.domain.customfield;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.validation.constraints.NotNull;
-
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.domain.project.Project;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.*;
+
 /**
  * Defines the binding of a {@link CustomField} to instances of {@link BindableEntity}s contained in a {@link Project}
- * 
+ *
  * @author Gregory Fouquet
- * 
  */
 @Entity
 public class CustomFieldBinding {
@@ -60,7 +40,7 @@ public class CustomFieldBinding {
 	@SequenceGenerator(name = "custom_field_binding_cfb_id_seq", sequenceName = "custom_field_binding_cfb_id_seq")
 	private Long id;
 
-	@ManyToOne(fetch=FetchType.EAGER, optional=false, targetEntity=CustomField.class, cascade=CascadeType.DETACH)
+	@ManyToOne(fetch = FetchType.EAGER, optional = false, targetEntity = CustomField.class, cascade = CascadeType.DETACH)
 	@JoinColumn(name = "CF_ID", updatable = false)
 	@NotNull
 	private CustomField customField;
@@ -82,7 +62,7 @@ public class CustomFieldBinding {
 
 
 	@Column
-	private int position=0;
+	private int position = 0;
 
 
 	/**
@@ -92,7 +72,7 @@ public class CustomFieldBinding {
 		return renderingLocations;
 	}
 
-	public Set<RenderingLocation> copyRenderingLocations(){
+	public Set<RenderingLocation> copyRenderingLocations() {
 		Set<RenderingLocation> copy = new HashSet<>(5);
 		copy.addAll(renderingLocations);
 		return copy;
@@ -130,11 +110,11 @@ public class CustomFieldBinding {
 		this.renderingLocations = renderingLocations;
 	}
 
-	public void addRenderingLocation(RenderingLocation location){
+	public void addRenderingLocation(RenderingLocation location) {
 		this.renderingLocations.add(location);
 	}
 
-	public void removeRenderingLocation(RenderingLocation location){
+	public void removeRenderingLocation(RenderingLocation location) {
 		this.renderingLocations.remove(location);
 	}
 
@@ -146,13 +126,18 @@ public class CustomFieldBinding {
 		this.position = position;
 	}
 
-	public CustomFieldValue createNewValue(){
+	public CustomFieldValue createNewValue() {
 
 		CustomFieldValue value;
-		switch(customField.getInputType()){
-		case RICH_TEXT : value = new RichTextValue(); break;
-		case TAG : value =  new TagsValue(); break;
-		default : value = new CustomFieldValue();
+		switch (customField.getInputType()) {
+			case RICH_TEXT:
+				value = new RichTextValue();
+				break;
+			case TAG:
+				value = new TagsValue();
+				break;
+			default:
+				value = new CustomFieldValue();
 		}
 		value.setBinding(this);
 		value.setValue(customField.getDefaultValue());
@@ -160,45 +145,44 @@ public class CustomFieldBinding {
 	}
 
 
-
 	// ******************* static inner classes, publicly available for once ******************
 
 	/**
 	 * In case you wonder : NOT THREAD SAFE !
-	 * @author bsiri
 	 *
+	 * @author bsiri
 	 */
-	public static class PositionAwareBindingList extends LinkedList<CustomFieldBinding>{
+	public static class PositionAwareBindingList extends LinkedList<CustomFieldBinding> {
 
 		/**
-		 * 
+		 *
 		 */
 		private static final long serialVersionUID = 1L;
 
-		public PositionAwareBindingList(Collection<CustomFieldBinding> items){
+		public PositionAwareBindingList(Collection<CustomFieldBinding> items) {
 			super(items);
 		}
 
-		public void reorderItems(List<Long> itemIds, int newIndex){
+		public void reorderItems(List<Long> itemIds, int newIndex) {
 			moveCarelessly(itemIds, newIndex);
 			reindex();
 		}
 
-		private void moveCarelessly(List<Long> ids, int newIndex){
+		private void moveCarelessly(List<Long> ids, int newIndex) {
 
 			Set<Long> targetIds = new HashSet<>(ids);
 			LinkedList<CustomFieldBinding> removed = new LinkedList<>();
 
 			ListIterator<CustomFieldBinding> iterator = this.listIterator();
 
-			while (iterator.hasNext()){
+			while (iterator.hasNext()) {
 
 				CustomFieldBinding binding = iterator.next();
 				Long id = binding.getId();
 
 				//if the id matches, the current binding moves from the current list to the list of removed binding
 				//then remove the id from the target id set
-				if (targetIds.contains(id)){
+				if (targetIds.contains(id)) {
 					removed.add(binding);
 					iterator.remove();
 					targetIds.remove(id);
@@ -210,9 +194,9 @@ public class CustomFieldBinding {
 			this.addAll(newIndex, removed);
 		}
 
-		private void reindex(){
-			int position=1;
-			for (CustomFieldBinding binding : this){
+		private void reindex() {
+			int position = 1;
+			for (CustomFieldBinding binding : this) {
 				binding.setPosition(position++);
 			}
 		}
