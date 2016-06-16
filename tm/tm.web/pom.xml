@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -36,6 +37,11 @@
     <wro4j.css.outputDir>${project.build.directory}/styles</wro4j.css.outputDir>
     <wro4j.inputDir>${smartsprites.outputDir}</wro4j.inputDir>
     <wro4j.skip>false</wro4j.skip>
+
+    <skipITs>false</skipITs>
+
+    <!-- frontent plugin config - should speed up build in most common cases -->
+    <npm.skip>false</npm.skip>
   </properties>
 
   <dependencyManagement>
@@ -412,7 +418,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore />
+                    <ignore/>
                   </action>
                 </pluginExecution>
               </pluginExecutions>
@@ -433,7 +439,7 @@
         <artifactId>maven-enforcer-plugin</artifactId>
         <configuration>
           <rules>
-            <banDuplicateClasses />
+            <banDuplicateClasses/>
             <findAllDuplicate>true</findAllDuplicate>
             <requireMavenVersion>
               <version>3.1.0</version>
@@ -651,7 +657,8 @@
                     laxcomma=true,
                     sub=true,
                     loopfunc=true,
-                    curly=true</options>
+                    curly=true
+                  </options>
                 </configuration>
               </execution>
             </executions>
@@ -747,15 +754,18 @@
                 <configuration>
                   <nodeVersion>v4.4.1</nodeVersion>
                   <npmVersion>3.8.3</npmVersion>
+                  <skip>${npm.skip}</skip>
                 </configuration>
               </execution>
               <execution>
-                <!-- temporary - trying to fix release build -->
                 <id>npm install</id>
                 <goals>
                   <goal>npm</goal>
                 </goals>
                 <phase>generate-resources</phase>
+                <configuration>
+                  <skip>${npm.skip}</skip>
+                </configuration>
               </execution>
               <execution>
                 <id>gulp build</id>
@@ -773,6 +783,7 @@
           </plugin>
 
           <plugin>
+            <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <groupId>com.github.bringking</groupId>
             <artifactId>requirejs-maven-plugin</artifactId>
