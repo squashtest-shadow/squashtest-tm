@@ -34,6 +34,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.OrderColumn;
 
+import org.apache.commons.lang3.StringUtils;
 import org.squashtest.tm.domain.customfield.CustomFieldOption;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
@@ -104,16 +105,7 @@ public class DenormalizedMultiSelectField extends DenormalizedFieldValue {
 
 	@Override
 	public String getValue(){
-		String result = "";
-		if (! selectedOptions.isEmpty()){
-			StringBuilder builder = new StringBuilder();
-			for (CustomFieldValueOption option : selectedOptions){
-				builder.append(option.getLabel()).append(MultiSelectField.SEPARATOR);
-			}
-			int lastidx = builder.lastIndexOf(MultiSelectField.SEPARATOR);
-			result = builder.substring(0,lastidx);
-		}
-		return result;
+		return selectedOptions.isEmpty() ? "" : StringUtils.join(getValues(), MultiSelectField.SEPARATOR);
 	}
 
 	/**

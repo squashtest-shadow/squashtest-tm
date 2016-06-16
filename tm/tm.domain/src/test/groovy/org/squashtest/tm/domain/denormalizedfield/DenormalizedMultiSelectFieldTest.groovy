@@ -29,9 +29,11 @@
  *
  *     Avertissement : ce programme est protégé par la loi relative au droit d'auteur et par les conventions internationales. Toute reproduction ou distribution partielle ou totale du logiciel, par quelque moyen que ce soit, est strictement interdite.
  */
-package org.squashtest.tm.domain.customfield
+package org.squashtest.tm.domain.denormalizedfield
 
-import spock.lang.Issue
+import org.squashtest.tm.domain.customfield.CustomFieldBinding
+import org.squashtest.tm.domain.customfield.MultiSelectField
+import org.squashtest.tm.domain.customfield.TagsValue
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -39,36 +41,15 @@ import spock.lang.Unroll
  * @author Gregory Fouquet
  * @since x.y.z  16/06/16
  */
-class TagsValueTest extends Specification {
-	@Unroll
-	@Issue("#6299 - setting to null issues a NPE")
-	def "should set values to #values from string representation '#strRep'"() {
-		given:
-		TagsValue value = new TagsValue(binding: new CustomFieldBinding(customField: new MultiSelectField()))
-
-		when:
-		value.setValue(strRep)
-
-		then:
-		value.values == values
-
-		where:
-		strRep                | values
-		""                    | [""]
-		null                  | []                               // rem : that the #6299 bugfix. not sure nulls should be valid values, though
-		"the batman|| |robin" | ["the batman", "", " ", "robin"] // rem : blanks are kept
-		"the batman|robin|"   | ["the batman", "robin"]          // rem : EXCEPT WHEN THEY'RE LAST WFT
-		"the batman|robin| "  | ["the batman", "robin", " "]     // rem : BUT NOT-EMPTIES ARE KEPT WFT
-		" the batman "        | [" the batman "]                 // rem : not trimmed
-	}
+class DenormalizedMultiSelectFieldTest extends Specification {
 
 	/**
 	 * this test was created before refactoring, expectations are inferred from actual behaviour, which smells of bugs
-     */
+	 */
 	@Unroll
 	def "should get string representation '#strRep' from values #values"() {
 		given:
-		TagsValue value = new TagsValue(binding: new CustomFieldBinding(customField: new MultiSelectField()))
+		def value = new DenormalizedMultiSelectField(new TagsValue(binding: new CustomFieldBinding(customField: new MultiSelectField())), 10L, DenormalizedFieldHolderType.EXECUTION)
 
 		when:
 		value.setValues(values)

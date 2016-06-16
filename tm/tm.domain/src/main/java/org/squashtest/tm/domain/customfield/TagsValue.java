@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import org.apache.commons.lang3.StringUtils;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -75,16 +77,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 
 	@Override
 	public String getValue() {
-		String result = "";
-		if (!selectedOptions.isEmpty()) {
-			StringBuilder builder = new StringBuilder();
-			for (CustomFieldValueOption option : selectedOptions) {
-				builder.append(option.getLabel()).append(MultiSelectField.SEPARATOR);
-			}
-			int lastidx = builder.lastIndexOf(MultiSelectField.SEPARATOR);
-			result = builder.substring(0, lastidx);
-		}
-		return result;
+		return selectedOptions.isEmpty() ? "" : StringUtils.join(getValues(), MultiSelectField.SEPARATOR);
 	}
 
 	/**
