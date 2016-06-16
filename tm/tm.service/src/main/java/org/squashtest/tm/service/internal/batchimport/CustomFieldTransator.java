@@ -29,10 +29,7 @@ import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueSer
 import org.squashtest.tm.service.internal.repository.CustomFieldDao;
 
 import javax.inject.Inject;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author Gregory Fouquet
@@ -43,25 +40,29 @@ import java.util.Map;
 class CustomFieldTransator {
 	private final Map<String, CustomFieldInfos> cufInfosCache = new HashMap<>();
 	@Inject
-	private CustomFieldDao cufDao;
+	private CustomFieldDao customFieldDao;
 	@Inject
 	private PrivateCustomFieldValueService cufvalueService;
+
 	/**
 	 * because the service identifies cufs by their id, not their code<br/>
 	 * also populates the cache (cufIdByCode), and transform the input data in a
 	 * single string or a collection of string depending on the type of the
 	 * custom field (Tags on non-tags).
+	 *
+	 * @param valueByCode string representation of the custom field values mapped by the custom field code
+	 * @return RawValue representation of the CF values mapped by the CF id
 	 */
-	protected final Map<Long, RawValue> toAcceptableCufs(Map<String, String> origCufs) {
+	protected final Map<Long, RawValue> toAcceptableCufs(Map<String, String> valueByCode) {
 
-		Map<Long, RawValue> result = new HashMap<>(origCufs.size());
+		Map<Long, RawValue> result = new HashMap<>(valueByCode.size());
 
-		for (Map.Entry<String, String> origCuf : origCufs.entrySet()) {
-			String cufCode = origCuf.getKey();
+		for (Map.Entry<String, String> entry : valueByCode.entrySet()) {
+			String requestedCode = entry.getKey();
 
-			if (!cufInfosCache.containsKey(cufCode)) {
+			if (!cufInfosCache.containsKey(requestedCode)) {
 
-				CustomField customField = cufDao.findByCode(cufCode);
+				CustomField customField = customFieldDao.findByCode(requestedCode);
 
 				// that bit of code checks that if the custom field doesn't
 				// exist, the hashmap entry contains
@@ -73,21 +74,22 @@ class CustomFieldTransator {
 					infos = new CustomFieldInfos(id, type);
 				}
 
-				cufInfosCache.put(cufCode, infos);
+				cufInfosCache.put(requestedCode, infos);
 			}
 
 			// now add to our map the id of the custom field, except if null :
 			// the custom field
 			// does not exist and therefore wont be included.
-			CustomFieldInfos infos = cufInfosCache.get(cufCode);
+			CustomFieldInfos infos = cufInfosCache.get(requestedCode);
 			if (infos != null) {
+				String requestedValue = entry.getValue();
 				switch (infos.getType()) {
 					case TAG:
-						List<String> values = Arrays.asList(origCuf.getValue().split("\\|"));
+						List<String> values = requestedValue == null ? Collections.<String>emptyList() : Arrays.asList(requestedValue.split("\\|"));
 						result.put(infos.getId(), new RawValue(values));
 						break;
 					default:
-						result.put(infos.getId(), new RawValue(origCuf.getValue()));
+						result.put(infos.getId(), new RawValue(requestedValue));
 						break;
 				}
 			}

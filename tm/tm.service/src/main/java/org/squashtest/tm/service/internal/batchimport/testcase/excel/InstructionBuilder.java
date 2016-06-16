@@ -174,7 +174,7 @@ public abstract class InstructionBuilder<COL extends Enum<COL> & TemplateColumn,
 	 * Returns the asked cell
 	 *
 	 * @param row
-	 * @param col
+	 * @param colDef
 	 * @return the cell or null when the cell does not exist
 	 */
 	protected final Cell getCell(Row row, ColumnDef colDef) {
