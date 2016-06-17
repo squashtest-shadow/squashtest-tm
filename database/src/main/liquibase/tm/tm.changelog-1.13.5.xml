@@ -37,13 +37,16 @@
   <changeSet id="tm-1.13.5-issue-6291" author="jthebault">
     <comment>Delete orphan lines in cuf values. Only for cuf values bind to a removed execution.</comment>
     <sql>
-      DELETE FROM CUSTOM_FIELD_VALUE cfv2
-      WHERE cfv2.cfv_id IN (
-      SELECT cfv.cfv_id FROM CUSTOM_FIELD_VALUE cfv
-      LEFT JOIN EXECUTION exec
-      ON exec.execution_id = cfv.bound_entity_id
-      WHERE cfv.bound_entity_type = 'EXECUTION'
-      AND exec.execution_id IS NULL
+      DELETE FROM CUSTOM_FIELD_VALUE
+      WHERE cfv_id IN (
+        SELECT implicit.cfv_id FROM (
+          SELECT cfv.cfv_id
+          FROM CUSTOM_FIELD_VALUE cfv
+          LEFT JOIN EXECUTION exec
+          ON exec.execution_id = cfv.bound_entity_id
+          WHERE cfv.bound_entity_type = 'EXECUTION'
+          AND exec.execution_id IS NULL
+      ) implicit
       );
     </sql>
   </changeSet>
