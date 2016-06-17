@@ -61,6 +61,7 @@ import org.squashtest.tm.service.campaign.CustomIterationModificationService;
 import org.squashtest.tm.service.campaign.IterationStatisticsService;
 import org.squashtest.tm.service.deletion.OperationReport;
 import org.squashtest.tm.service.deletion.SuppressionPreviewReport;
+import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForArray;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForList;
 import org.squashtest.tm.service.internal.campaign.coercers.TestSuiteToIterationCoercerForUniqueId;
@@ -122,6 +123,9 @@ IterationTestPlanManager {
 
 	@Inject
 	private IterationStatisticsService statisticsService;
+
+	@Inject
+	private ExecutionModificationService executionModificationService;
 
 
 
@@ -425,8 +429,8 @@ IterationTestPlanManager {
 
 		int order = exec.getExecutionOrder();
 		IterationTestPlanItem itpi = exec.getTestPlan();
-		itpi.removeExecution(exec);
-		executionDao.remove(exec);
+		executionModificationService.deleteExecution(exec);
+
 		Execution execution = createExec(itpi);
 		itpi.addExecutionAtPos(execution, order);
 		operationsAfterAddingExec(itpi, execution);
