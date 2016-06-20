@@ -131,6 +131,11 @@ define(
 
 			// Add to AssignableUsers a possible non assigned admin who did an iteration
 			var listWithUnassignedUsers = JSON.parse(_conf.jsonAssignableUsers);
+			//Issue 6319. The use strict broke the property assigniation in ""
+			if(listWithUnassignedUsers === ""){
+				listWithUnassignedUsers = {};
+			}
+
 			var property = data['assignee-id'];
 			var dataProperty = data['assignee-login'];
 			if (listWithUnassignedUsers[property] === undefined) {
