@@ -179,7 +179,7 @@ define(["jquery", "./lib/jquery.staticCustomfield", "./lib/jquery.jeditableCusto
 					var def = defMap[code];
 
 					var cufselts;
-					if (def.itype === "TAG") {
+					if (def.itype === "TAG" || def.inputType.enumName === "TAG") {
 						cufselts = table.find('td.custom-field-' + code + '>span>ul, td.denormalized-field-' + code + '>span>ul');
 					}
 					else {
