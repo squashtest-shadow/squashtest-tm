@@ -141,7 +141,7 @@ public class ExecutionStep implements AttachmentHolder, IssueDetector, TestStepV
 		}
 	}
 
-	private void fillParameterMap(Dataset dataset){
+	public void fillParameterMap(Dataset dataset){
 		if(dataset != null){
 			for(DatasetParamValue param : dataset.getParameterValues()){
 				String key = param.getParameter().getName();

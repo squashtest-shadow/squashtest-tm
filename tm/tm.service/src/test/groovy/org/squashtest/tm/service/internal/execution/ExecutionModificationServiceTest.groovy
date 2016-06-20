@@ -23,6 +23,7 @@ package org.squashtest.tm.service.internal.execution
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.campaign.Iteration
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
 import org.squashtest.tm.domain.execution.ExecutionStep
 import org.squashtest.tm.domain.infolist.InfoList
@@ -270,6 +271,8 @@ public class ExecutionModificationServiceTest extends Specification {
 		TestCase testCase = createMockedTc(actionSteps)
 
 		Execution execution = new Execution()
+		IterationTestPlanItem itpi = Mock()
+		execution.testPlan = itpi
 		execution.referencedTestCase = testCase
 
 
