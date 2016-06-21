@@ -44,7 +44,7 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		},
 
 		addanother : function(event) {
-			if (this.validate()){			
+			if (this.validate()){
 				this.cleanup();
 				$('#parameters-table').squashTable().refresh();
 			}
@@ -52,11 +52,12 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 
 		cancel : function(event) {
 			this.cleanup();
+			this.$el.formDialog("close");
 			this.trigger("newparameterdialog.cancel");
 		},
 
 		confirm : function(event) {
-			if (this.validate()){			
+			if (this.validate()){
 				this._resetForm();
 				$('#parameters-table').squashTable().refresh();
 				this.$el.formDialog("close");
