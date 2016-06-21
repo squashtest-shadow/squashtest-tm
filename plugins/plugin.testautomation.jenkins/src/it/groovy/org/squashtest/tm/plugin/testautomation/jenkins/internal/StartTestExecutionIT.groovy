@@ -23,7 +23,7 @@ package org.squashtest.tm.plugin.testautomation.jenkins.internal
 import org.apache.http.client.HttpClient
 import org.apache.http.impl.client.HttpClients
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory
 import org.squashtest.tm.core.foundation.lang.Couple
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender
 import org.squashtest.tm.domain.testautomation.AutomatedTest
@@ -31,8 +31,6 @@ import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.CallbackURL
 import org.squashtest.tm.plugin.testautomation.jenkins.internal.net.HttpClientProvider
-import org.squashtest.tm.plugin.testautomation.jenkins.internal.tasks.StepEventListener
-
 import spock.lang.Specification
 
 /**
@@ -49,7 +47,6 @@ class StartTestExecutionIT extends Specification {
 	}
 
 
-
 	def mockHttpClientProvider(httpClient) {
 		HttpClientProvider res = Mock()
 		res.getClientFor(_) >> httpClient
@@ -64,13 +61,14 @@ class StartTestExecutionIT extends Specification {
 		manager.setMaxTotal(25);
 
 		HttpClient client = HttpClients.custom()
-				.setConnectionManager(manager).build();
+			.setConnectionManager(manager).build();
 //		client.getParams().setAuthenticationPreemptive(true);
 
 
 		and:
 		TestAutomationServer server = Mock()
-		server.baseURL >> new URL("http://localhost:${stubTaServer.webapp.port}/stub-ta-server")
+		def stubPort = System.getProperty("stubTaServer.webapp.port")
+		server.baseURL >> new URL("http://localhost:${stubPort}/stub-ta-server")
 		project.server >> server
 
 		and:
@@ -84,14 +82,14 @@ class StartTestExecutionIT extends Specification {
 		test.fullName >> "fancy test"
 
 		buildDef.parameterizedExecutions >> [
-			new Couple(exec, [batman:"leatherpants"])
+			new Couple(exec, [batman: "leatherpants"])
 		]
 
 		and:
 		// this initializes CallbackURL.instance. I wouldn't go so far as to call CallbackURL filthy, but it's definitely dirty
 		new CallbackURL().setURL("http://127.0.0.1/squashtm")
 
-		and :
+		and:
 		HttpClientProvider provider = mockHttpClientProvider(client)
 
 		when:

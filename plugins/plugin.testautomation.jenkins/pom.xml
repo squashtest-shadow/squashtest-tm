@@ -12,10 +12,10 @@
   <description>Squash TM Connector for Squash TA on Jenkins</description>
 
   <properties>
-    <generated-test-sources.directory>${project.build.directory}/generated-test-sources</generated-test-sources.directory>
     <squash.dependencies.version>${project.version}</squash.dependencies.version>
     <stubTaServer.webapp.path>target/${project.artifactId}-${project.version}</stubTaServer.webapp.path>
     <stubTaServer.webapp.port>9292</stubTaServer.webapp.port>
+    <skipITs>false</skipITs>
   </properties>
 
   <dependencyManagement>
@@ -123,46 +123,18 @@
     </pluginManagement>
 
     <plugins>
-      <!--
-			This invocation of maven-resources-plugin is useful because it allows for resources filtering.
-			In this case we need to process the port of the stub TA server
-		-->
-      <plugin>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>add-its</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>generate-test-sources</phase>
-            <configuration>
-              <outputDirectory>${generated-test-sources.directory}</outputDirectory>
-              <resources>
-                <resource>
-                  <directory>src/it/groovy</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <executions>
-          <!-- Adds more source directories to the pom -->
           <execution>
             <id>add-integration-test-source</id>
             <goals>
               <goal>add-test-source</goal>
             </goals>
-            <phase>generate-test-sources</phase>
             <configuration>
               <sources>
-                <source>${generated-test-sources.directory}</source>
+                <source>src/it/groovy</source>
               </sources>
             </configuration>
           </execution>
@@ -214,6 +186,11 @@
               <goal>verify</goal>
             </goals>
             <phase>integration-test</phase>
+            <configuration>
+              <systemPropertyVariables>
+                <stubTaServer.webapp.port>${stubTaServer.webapp.port}</stubTaServer.webapp.port>
+              </systemPropertyVariables>
+            </configuration>
           </execution>
         </executions>
       </plugin>
