@@ -43,7 +43,7 @@
 			// nested dependencies.
 			include: [
 				// shimmed
-				"jqueryui", "datatables", "handlebars", "underscore", "backbone", "ckeditor", "jquery.ckeditor",
+				"jqueryui", "datatables", "underscore", "backbone", "ckeditor", "jquery.ckeditor",
 				"jeditable", "jeditable.ckeditor", "jeditable.datepicker", "jeditable.simpleJEditable",
 				"jeditable.selectJEditable", "jstree", "jform", "jquery.generateId", "jquery.hotkeys",
 				"jquery.timepicker", "jquery.squash", "jquery.squash.fragmenttabs",
@@ -96,7 +96,7 @@
 		{
 			name: "chart-wizard",
 			include: ["charts/chartWizard"],
-			exclude: ["common"]
+			exclude: ["common","handlebars"]
 		},
 		{
 			name: "custom-field-manager",
