@@ -35,6 +35,8 @@ import org.squashtest.tm.domain.testcase.TestCaseImportance
 import org.squashtest.tm.domain.testcase.TestCaseStatus
 import org.squashtest.tm.service.advancedsearch.IndexationService
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager
+import org.squashtest.tm.service.execution.ExecutionModificationService
+import org.squashtest.tm.service.execution.ExecutionProcessingService
 import org.squashtest.tm.service.internal.campaign.CustomIterationModificationServiceImpl
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService
 import org.squashtest.tm.service.internal.repository.*
@@ -64,6 +66,8 @@ public class ExecutionModificationServiceTest extends Specification {
 	TestCaseCyclicCallChecker checker = Mock()
 	PrivateDenormalizedFieldValueService denormalizedFieldValueService = Mock()
 	PrivateDenormalizedFieldValueService privateDenormalizedFieldValueService = Mock()
+	ExecutionProcessingService executionProcessingService = Mock()
+
 
 	def setup(){
 		service.executionDao = execDao
@@ -75,6 +79,7 @@ public class ExecutionModificationServiceTest extends Specification {
 		executionStepModifHelper.executionStepDao = execStepDao
 		executionStepModifHelper.attachmentDao = attachmentDao
 		executionStepModifHelper.privateDenormalizedFieldValueService = privateDenormalizedFieldValueService
+		executionStepModifHelper.executionProcessingService = executionProcessingService
 
 		procservice.executionDao = execDao
 		procservice.executionStepDao = execStepDao

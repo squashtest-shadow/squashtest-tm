@@ -170,7 +170,7 @@ public class ExecutionProcessingController {
 
 	@RequestMapping(value = "/step/{stepId}", method = RequestMethod.POST, params = "executionStatus")
 	@ResponseBody
-	public void updateExecutionMode(@RequestParam String executionStatus, @PathVariable long stepId) {
+	public void updateExecutionStatus(@RequestParam String executionStatus, @PathVariable long stepId) {
 		ExecutionStatus status = ExecutionStatus.valueOf(executionStatus);
 		executionProcService.changeExecutionStepStatus(stepId, status);
 	}

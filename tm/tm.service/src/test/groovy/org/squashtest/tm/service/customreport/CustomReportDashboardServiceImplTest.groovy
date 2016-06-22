@@ -25,7 +25,6 @@ import org.squashtest.tm.domain.users.PartyPreference
 import org.squashtest.tm.domain.users.preferences.HomeContentValues
 import org.squashtest.tm.service.internal.customreport.CustomReportDashboardServiceImpl
 import org.squashtest.tm.service.internal.repository.CustomReportLibraryNodeDao
-import org.squashtest.tm.service.internal.security.AclPermissionEvaluationService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.service.user.PartyPreferenceService
 import spock.lang.Specification

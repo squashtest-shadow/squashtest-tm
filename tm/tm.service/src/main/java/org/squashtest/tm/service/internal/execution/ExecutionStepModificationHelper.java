@@ -45,6 +45,8 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
+import org.squashtest.tm.service.execution.ExecutionModificationService;
+import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -68,6 +70,10 @@ public class ExecutionStepModificationHelper {
 	@Inject
 	private PrivateDenormalizedFieldValueService privateDenormalizedFieldValueService;
 
+	@Inject
+	private ExecutionProcessingService executionProcessingService;
+
+
 	public long doUpdateStep(List<ExecutionStep> toBeUpdated, Execution execution) {
 
 		long firstModifiedIndex = -1;
@@ -87,7 +93,7 @@ public class ExecutionStepModificationHelper {
 				execStep.fillParameterMap(dataset);
 			}
 			step.accept(execStep);
-			execStep.setExecutionStatus(ExecutionStatus.READY);
+			executionProcessingService.changeExecutionStepStatus(execStep.getId(),ExecutionStatus.READY);
 
 			privateDenormalizedFieldValueService.deleteAllDenormalizedFieldValues(execStep);
 			privateDenormalizedFieldValueService.createAllDenormalizedFieldValues(step, execStep);

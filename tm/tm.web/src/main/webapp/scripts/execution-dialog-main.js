@@ -147,7 +147,8 @@ define(['module',
 		$("#edit-tc").on('click', function(){
 			var url = routing.buildURL('teststeps.fromExec', config.basic.stepId, false);
 			localStorage.setItem("squashtm.execModification.index", config.basic.index);
-			window.open(url);
+			var newWindow = window.open(url);
+			newWindow.opener = window.opener;
 			window.close();
 		});
 
@@ -215,13 +216,13 @@ define(['module',
 
 			var conf = {
 				url : config.urls.bugtracker
-			}
+			};
 
 			bugtracker.load(conf);
 
 			//issue 3083 : propagate the information to the parent context
 			eventBus.onContextual('context.bug-reported', function(event, json){
-				window.opener.squashtm.workspace.eventBus.trigger(event, json )
+				window.opener.squashtm.workspace.eventBus.trigger(event, json );
 			});
 
 		}

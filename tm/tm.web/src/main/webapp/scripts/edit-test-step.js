@@ -43,6 +43,7 @@ require([ "common" ], function(common) {
 					}).done(function(result){
 				
 						var index;
+						var newWindow;
 						
 						if (result >= 0){
 							 index = result;	
@@ -53,7 +54,7 @@ require([ "common" ], function(common) {
 						
 						if(isIEO){
 							url = routing.buildURL('executions.runner', fromExec) + "/" + index + "?optimized=" +  isIEO; 
-								window.open(url);
+								newWindow = window.open(url);
 							
 						} else {
 						
@@ -62,9 +63,10 @@ require([ "common" ], function(common) {
 								features : "height=690, width=810, resizable, scrollbars, dialog, alwaysRaised"
 							};
 						
-						window.open(url, winDef.name, winDef.features);
+						newWindow = window.open(url, winDef.name, winDef.features);
 						}
 						
+						newWindow.opener = window.opener;
 						window.close();
 					});
 					

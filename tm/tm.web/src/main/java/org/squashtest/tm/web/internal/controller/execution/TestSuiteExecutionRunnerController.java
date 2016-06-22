@@ -397,8 +397,8 @@ public class TestSuiteExecutionRunnerController {
 	 */
 	@RequestMapping(value = RequestMappingPattern.STEP, method = RequestMethod.POST, params = "executionStatus")
 	@ResponseBody
-	public void changeExecutionMode(@RequestParam String executionStatus, @PathVariable long stepId) {
-		executionProcessingController.updateExecutionMode(executionStatus, stepId);
+	public void changeExecutionStatus(@RequestParam String executionStatus, @PathVariable long stepId) {
+		executionProcessingController.updateExecutionStatus(executionStatus, stepId);
 	}
 
 	@RequestMapping(value = RequestMappingPattern.INDEXED_STEP + "/general", method = RequestMethod.GET)
