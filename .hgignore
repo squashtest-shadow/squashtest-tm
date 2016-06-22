@@ -123,3 +123,4 @@ tm/tm.web/node
 \.conflict\~$
 .*/nb-configuration\.xml$
 .*/nbactions\.xml$
+.*/META-INF/context.xml
