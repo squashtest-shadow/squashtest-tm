@@ -20,6 +20,8 @@
     <!-- frontent plugin config - should speed up build in most common cases -->
     <npm.skip>false</npm.skip>
 
+    <provied.scope>provided</provied.scope>
+
     <rjs.javascript.optimizedDir>${rjs.outputDirectory}/scripts</rjs.javascript.optimizedDir>
     <rjs.optimizer>none</rjs.optimizer>
     <rjs.outputDirectory>${project.build.directory}/rjs</rjs.outputDirectory>
@@ -320,24 +322,6 @@
       <groupId>xml-resolver</groupId>
       <artifactId>xml-resolver</artifactId>
     </dependency>
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-tomcat</artifactId>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-core</artifactId>
-      <version>8.0.23</version>
-      <scope>provided</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.tomcat.embed</groupId>
-      <artifactId>tomcat-embed-jasper</artifactId>
-      <scope>provided</scope>
-    </dependency>
 
     <dependency>
       <groupId>${project.groupId}</groupId>
@@ -352,6 +336,24 @@
       <version>${project.version}</version>
       <type>pom</type>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-tomcat</artifactId>
+      <scope>${appserver.scope}</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>8.0.23</version>
+      <scope>${appserver.scope}</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <scope>${appserver.scope}</scope>
     </dependency>
 
   </dependencies>
@@ -726,6 +728,19 @@
       </activation>
       <properties>
         <node.executable>node</node.executable>
+      </properties>
+    </profile>
+
+    <profile>
+      <id>intellij</id>
+      <activation>
+        <file>
+          <exists>tm.web.iml</exists>
+        </file>
+      </activation>
+      <properties>
+        <!-- intellij requires that appserver has a runtime scope to start the app -->
+        <appserver.scope>runtime</appserver.scope>
       </properties>
     </profile>
 
