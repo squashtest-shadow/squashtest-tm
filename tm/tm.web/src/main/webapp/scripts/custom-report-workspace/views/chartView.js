@@ -344,10 +344,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 
 			getVueConf: function () {
 				return {
-					animate: true,
-					title: {
-						show: false
-					}
+					animate: true
 				};
 			}
 
