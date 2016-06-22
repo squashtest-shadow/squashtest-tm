@@ -12,10 +12,10 @@
   <description>Squash TM Connector for Squash TA on Jenkins</description>
 
   <properties>
+    <skipITs>false</skipITs>
     <squash.dependencies.version>${project.version}</squash.dependencies.version>
     <stubTaServer.webapp.path>target/${project.artifactId}-${project.version}</stubTaServer.webapp.path>
     <stubTaServer.webapp.port>9292</stubTaServer.webapp.port>
-    <skipITs>false</skipITs>
   </properties>
 
   <dependencyManagement>
