@@ -1712,25 +1712,25 @@ background-color:#969696;
 /* ---------------- test case importance and status icon-----------------*/
 
 .test-case-importance-VERY_HIGH {
-background-image: url("../images/Icon_Tree_TestCase_map.png"); 
+background-image: url("../images/Icon_Tree_TestCase_map.png"); /* @meta {"sprite": {"skip": true}} */
 background-position : -240px -0px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-HIGH {
-background-image: url("../images/Icon_Tree_TestCase_map.png"); 
+background-image: url("../images/Icon_Tree_TestCase_map.png"); /* @meta {"sprite": {"skip": true}} */
 background-position : -240px -16px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-MEDIUM {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 background-position : -240px -32px ;
 width: 24px;
 height: 16px;
 }
 .test-case-importance-LOW {
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 background-position : -240px -48px ;
 width: 24px;
 height: 16px;
@@ -1740,31 +1740,31 @@ height: 16px;
 
 
 .test-case-status-WORK_IN_PROGRESS{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 background-position : -129px -48px ;
 width: 24px;
 height: 16px;
 }
 .test-case-status-UNDER_REVIEW{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 width: 24px;
 height: 16px;
 }
 
 .test-case-status-APPROVED{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 background-position : -177px -0px ;
 width: 24px;
 height: 16px;
 }
 .test-case-status-OBSOLETE{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 width: 24px;
 height: 16px;
 }
 
 .test-case-status-TO_BE_UPDATED{
-background-image: url("../images/Icon_Tree_TestCase_map.png");  
+background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
 background-position : -225px -0px ;
 width: 24px;
 height: 16px;
