@@ -138,7 +138,7 @@ public class TestCaseSearchController extends GlobalSearchController {
 												 @RequestParam(required = false) Long id, Locale locale) {
 
 		model.addAttribute(SEARCH_MODEL, searchModel);
-		return showTestCaseSearchPage(model, associateResultWithType, id, locale);
+		return showTestCaseViaRequirementSearchPage(model, associateResultWithType, id, locale);
 	}
 
 
