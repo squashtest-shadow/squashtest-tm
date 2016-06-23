@@ -74,21 +74,21 @@
 </s:url>
 
 <layout:info-page-layout titleKey="workspace.project.info.title" isSubPaged="true" main="project-page">
-	<jsp:attribute name="head">	
-		<comp:sq-css name="squash.grey.css" />	
+	<jsp:attribute name="head">
+		<comp:sq-css name="squash.grey.css" />
 	</jsp:attribute>
 
 	<jsp:attribute name="titlePane">
-		<h2 class="admin"><f:message key="label.administration" /></h2>	
+		<h2 class="admin"><f:message key="label.administration" /></h2>
 	</jsp:attribute>
 	<jsp:attribute name="subPageTitle">
 		<h2><f:message key="workspace.project.info.title" /></h2>
 	</jsp:attribute>
-	
+
 	<jsp:attribute name="subPageButtons">
 		<f:message var="backButtonLabel" key="label.Back" />
 		<f:message var="backButtonLabel" key="label.Back" />
-		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>	
+		<input type="button" class="button" value="${backButtonLabel}" onClick="history.back();"/>
 	</jsp:attribute>
 	<jsp:attribute name="informationContent">
 	<c:choose>
@@ -115,14 +115,14 @@
 			<div class="unsnap"></div>
 
 		</div>
-	
+
 		<%---INFO + Toolbar ---------------------%>
 			<div id="project-toolbar" class="toolbar-class ui-corner-all">
-				
+
 				<div class="snap-left">
 					<comp:general-information-panel auditableEntity="${adminproject.project}" entityUrl="${ projectUrl }" />
 				</div>
-				
+
 				<div class="toolbar-button-panel">
 <sec:authorize access="hasRole('ROLE_TM_PROJECT_MANAGER') or hasRole('ROLE_ADMIN')">
 <c:if test="${ adminproject.template }">
@@ -143,18 +143,18 @@
 </sec:authorize>
 <sec:authorize access="hasRole('ROLE_ADMIN')">
     				<f:message var="delete" key='project.button.delete.label' />
- 		
+
  					<%-------------------------- Trash appear but too much padding.   ------------------------%>
     				<button id="delete-project-button" ${ delete }  class="sq-btn"  title="<f:message key='project.button.deleteproject.label' />" >
         			   <span class="ui-icon ui-icon-trash">-</span>&nbsp;<f:message key="label.Delete" />
       				</button>
 
-</sec:authorize>						
+</sec:authorize>
 				</div>
 				<div class="unsnap"></div>
 			</div>
 			<%-------------------------------------------------------------END INFO + Toolbar ---------------%>
-			
+
 			<%------------------------------------------------ BODY -----------------------------------------------%>
 			<csst:jq-tab>
 			<div class="fragment-tabs fragment-body">
@@ -166,15 +166,15 @@
 			    <li><a href="${milestoneManagerURL}"><f:message key="tabs.label.milestone"/></a></li>
 				</c:if>
 				<li><a href="${pluginsManagerURL}"><f:message key="tabs.label.plugins"/></a></li>
-			
+
 			</ul>
-		
+
 			<%----------------------------------- INFORMATION PANEL -----------------------------------------------%>
 			<div id="main-informations">
-			
+
             <comp:toggle-panel id="project-info-panel"
 				titleKey="project.info.panel.title" open="true">
-	
+
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
@@ -195,15 +195,15 @@
 			</comp:toggle-panel>
 			<%-----------------------------------END INFORMATION PANEL -----------------------------------------------%>
 					<%----------------------------------- BUGTRACKER PANEL -----------------------------------------------%>
-			
+
 		<c:if test="${!bugtrackersListEmpty}">
 			<comp:toggle-panel id="project-bugtracker-panel"
-					titleKey="label.Bugtracker" 
+					titleKey="label.Bugtracker"
 					open="true" >
 				<jsp:attribute name="body">
-			
+
 					<div id="project-bugtracker-table" class="display-table">
-						
+
 						<div class="display-table-row">
 							<label for="project-bugtracker" class="display-table-cell">
 								<f:message key="label.Bugtracker" />
@@ -215,15 +215,15 @@
 											<f:message key="project.bugtracker.name.undefined" />
 										</c:when>
 										<c:otherwise>
-											${ adminproject.project.bugtrackerBinding.bugtracker.name }			 			
+											${ adminproject.project.bugtrackerBinding.bugtracker.name }
 										</c:otherwise>
 									</c:choose>
 								</div>
-						
-								
+
+
 								<span id="project-bugtracker"/>
 
-								
+
 							</div>
 						</div>
 						<c:if test="${ ! adminproject.template }">
@@ -236,19 +236,6 @@
 							</label>
 
 <ul id="project-bugtracker-project-name"  class="tagprop tagit ui-widget ui-widget-content squash-tagit" style="margin:0;line-height:normal;" value="">
-
-					
-	
-								<!-- 
-								<c:choose>
-									<c:when test="${ adminproject.project.bugtrackerConnected }">
-							
-									</c:when>
-									<c:otherwise>${ adminproject.project.name }</c:otherwise>
-								</c:choose>
-								
-								 -->
-							
 						</div>
 						</c:if>
 					</div>
@@ -261,7 +248,7 @@
 			<f:message key="title.RemovePermission" var="removeButtonTitle" />
 			<comp:toggle-panel id="project-users-panel"
 				titleKey="label.Permissions" open="true">
-	
+
 				<jsp:attribute name="panelButtons">
         <button id="add-permission-button" title="${addButtonTitle}" class="sq-icon-btn btn-sm">
           <span class="ui-icon ui-icon-plus squared-icons">+</span>
@@ -269,7 +256,7 @@
           <span class="ui-icon ui-icon-minus squared-icons">-</span>
         </button>
 				</jsp:attribute>
-				
+
 				<jsp:attribute name="body">
 					<table id="user-permissions-table">
 						<thead>
@@ -295,36 +282,36 @@
 				</jsp:attribute>
 			</comp:toggle-panel>
 			<%-----------------------------------END USERS PANEL -----------------------------------------------%>
-			
-			
+
+
 			<%----------------------------------------EXEC OPTIONS PANEL----------------------------------------------------%>
 			<f:message var="active" key="label.active" />
 			<f:message var="inactive" key="label.inactive" />
 			<comp:toggle-panel id="exec-option-panel" titleKey="label.execution.option" open="true">
 				<jsp:attribute name="body">
-				
+
 				<div id="project-exec-option-table" class="display-table">
 						<div class="display-table-row">
-							<div class="display-table-cell">  
+							<div class="display-table-cell">
 								<label for="toggle-EXECUTION-checkbox" class="display-table-cell" style="vertical-align:bottom">
 									<f:message key="label.execution.modification" />
 								</label>
 							</div>
-				
-							<div class="display-table-cell">                  		
-	                  			<input id="toggle-EXECUTION-checkbox" type="checkbox" 
+
+							<div class="display-table-cell">
+	                  			<input id="toggle-EXECUTION-checkbox" type="checkbox"
 	                  				data-def="width=35, on_label=${inactive}, off_label=${active}, checked=${!allowTcModifDuringExec}" style="display: none;"/>
 	                  		</div>
 						</div>
-				
+
 				</div>
 				</jsp:attribute>
 		    </comp:toggle-panel>
-			
-			
+
+
 			<%----------------------------------------END EXEC OPTIONS PANEL----------------------------------------------------%>
-			
-			
+
+
 			<%----------------------------------------STATUS----------------------------------------------------%>
 			<f:message var="statusAllowedLabel" key="label.status.options.allowed" />
 			<f:message var="statusForbiddenLabel" key="label.status.options.forbidden" />
@@ -332,31 +319,31 @@
 				<jsp:attribute name="body">
 					<div id="project-description-table" class="display-table">
 						<div class="display-table-row">
-							<div class="display-table-cell" style="vertical-align: middle">  
+							<div class="display-table-cell" style="vertical-align: middle">
 								<label for="toggle-UNTESTABLE-checkbox" class="display-table-cell">
 									<f:message key="label.status.options.optional" />
 								</label>
 							</div>
-							<div class="display-table-cell" style="vertical-align: middle">  
+							<div class="display-table-cell" style="vertical-align: middle">
 								<span class="display-table-cell exec-status-label exec-status-untestable">
 									<f:message key="execution.execution-status.UNTESTABLE" />
 								</span>
 							</div>
-							<div class="display-table-cell" >                  		
-	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox" 
+							<div class="display-table-cell" >
+	                  			<input id="toggle-UNTESTABLE-checkbox" type="checkbox"
 	                  				data-def="width=35, on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['UNTESTABLE']}" style="display: none;"/>
 	                  		</div>
 						</div>
 						<div class="display-table-row">
-							<div class="display-table-cell">  
+							<div class="display-table-cell">
 							</div>
-							<div class="display-table-cell" style="vertical-align: middle">  
+							<div class="display-table-cell" style="vertical-align: middle">
 								<span class="display-table-cell exec-status-label exec-status-settled">
 									<f:message key="execution.execution-status.SETTLED" />
 								</span>
 							</div>
-							<div class="display-table-cell" style="vertical-align: middle">                  		
-	                  			<input id="toggle-SETTLED-checkbox" type="checkbox" 
+							<div class="display-table-cell" style="vertical-align: middle">
+	                  			<input id="toggle-SETTLED-checkbox" type="checkbox"
 	                  				data-def="width=35,on_label=${statusAllowedLabel}, off_label=${statusForbiddenLabel}, checked=${allowedStatuses['SETTLED']}" style="display: none;"/>
 	                  		</div>
 						</div>
@@ -367,33 +354,33 @@
 			<%------------------------------ TEST AUTOMATION PROJECT -------------------------------------------%>
 
 			<pc:automation-panel
-				project="${adminproject.project}" 
+				project="${adminproject.project}"
 				availableTAServers="${availableTAServers}"/>
-			
-			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>					
+
+			<%----------------------------- /TEST AUTOMATION PROJECT -------------------------------------------%>
 			<%----------------------------- ATTACHMENT -------------------------------------------%>
-			
+
 			<at:attachment-bloc editable="${ true }"  workspaceName="administration" attachListId="${adminproject.project.attachmentList.id}" attachmentSet="${attachments}"/>
 			<%----------------------------- /ATTACHMENT -------------------------------------------%>
-			
-			</div> <%-- /div#main-informations --%>		
-				
+
+			</div> <%-- /div#main-informations --%>
+
 			</div>	<%-- /div#project-administration-content --%>
 			</csst:jq-tab>
 		<%---------------------------------------------------------------END  BODY -----------------------------------------------%>
-		
+
 		<%----------------------------------- add User Popup-----------------------------------------------%>
 		<div id="add-permission-dialog" class="popup-dialog not-displayed" title="<f:message key='title.AddPermission' />">
-		
+
 			<input type="hidden" id="source-status"></input>
-			
+
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
-			
+
 			<div data-def="state=normal" class="display-table">
 				<div class="display-table-row">
-					<span class="display-table-cell"> <f:message key="party.label" /></span> 
+					<span class="display-table-cell"> <f:message key="party.label" /></span>
 					<div class="display-table-cell"><input id="party-input"/></div>
 				</div>
 				<div class="display-table-row">
@@ -409,54 +396,54 @@
 					</div>
 				</div>
 			</div>
-		
+
 			<div data-def="state=allbound"><span><f:message key="message.AllUsersAlreadyLinkedToProject"/></span></div>
-		
+
 			<div data-def="state=noselect"><span><f:message key="error.permissions.noUserSelected"/></span></div>
-			
+
 			<div class="popup-dialog-buttonpane">
 				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
 				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
 				<input type="button" value="${closeLabel}"  data-def="state=allbound noselect, mainbtn=allbound noselect, evt=cancel"/>
 			</div>
-		
+
 		</div>
 
 		<%----------------------------------- /add User Popup-----------------------------------------------%>
-		
+
 		<%----------------------------------- remove User Popup-----------------------------------------------%>
-		
-		
-		<f:message var="removeuserTitle" key="tooltips.permissions.remove" />	
+
+
+		<f:message var="removeuserTitle" key="tooltips.permissions.remove" />
 		<div id="remove-permission-dialog" class="popup-dialog not-displayed" title="${removeuserTitle}">
-			
+
 		<f:message key="message.permissions.remove.teamOrUser.first"/>
-		
+
 		<div class="popup-dialog-buttonpane">
 				<input type="button" value="${confirmLabel}" data-def="state=normal, mainbtn=normal, evt=confirm"/>
 				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
 		</div>
-		
+
 		</div>
-		
+
 		<%----------------------------------- /remove User Popup-----------------------------------------------%>
-		
+
 		<%------------------------------------replace status popup ------------------------------------------%>
 
 		<div id="replace-status-dialog" class="popup-dialog not-displayed" title="<f:message key="label.status.options.popup.label"/>">
-		
+
 			<!--  warning message template -->
 			<div class="replace-status-warning-template not-displayed"><f:message key="label.status.options.popup.text"/></div>
-				
+
 			<div data-def="state=loading">
 				<comp:waiting-pane/>
 			</div>
-		
-			
+
+
 			<div data-def="state=normal" class="display-table">
 				<!--  message actually displayed -->
 				<div class="display-table-row replace-status-warning">
-					
+
 				</div>
 				<div class="display-table-row">
 					<f:message key="label.Status"/>
@@ -464,7 +451,7 @@
 					</select>
 				</div>
 			</div>
-			
+
 			<div class="popup-dialog-buttonpane">
 				<input type="button" value="${confirmLabel }" data-def="state=normal, mainbtn=normal, evt=confirm"/>
 				<input type="button" value="${cancelLabel}" data-def="state=normal loading, mainbtn=loading, evt=cancel" />
@@ -473,7 +460,7 @@
 		</div>
 
 		<%-----------------------------------/replace status popup ------------------------------------------%>
-	
+
 	</jsp:attribute>
 </layout:info-page-layout>
 
@@ -504,86 +491,86 @@
 
 
 var squashtm = squashtm || {};
-squashtm.app = squashtm.app || {} ;	 
-squashtm.app.messages = squashtm.app.messages || {} ;	 
-squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' />"; 
+squashtm.app = squashtm.app || {} ;
+squashtm.app.messages = squashtm.app.messages || {} ;
+squashtm.app.messages["message.notBlank"] =  "<f:message key='message.notBlank' />";
 
 require(["common"], function() {
 
-	require(["jquery", "projects-manager","squash.configmanager", "jquery.squash.fragmenttabs", "squash.attributeparser", 
+	require(["jquery", "projects-manager","squash.configmanager", "jquery.squash.fragmenttabs", "squash.attributeparser",
 	         "project/ProjectToolbar", "jquery.squash.oneshotdialog", "app/ws/squashtm.notification", "squash.translator",
-	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton", 
-	         "app/ws/squashtm.workspace", "jquery.squash.formdialog",  "jquery.squash.tagit"], 
+	         "squashtable", "jquery.squash.formdialog", "jquery.switchButton",
+	         "app/ws/squashtm.workspace", "jquery.squash.formdialog",  "jquery.squash.tagit"],
 	         function($, projectsManager, confman, Frag, attrparser, ProjectToolbar, oneshot, notification, translator){
 
 
-	
+
 	function clickProjectBackButton(){
 		document.location.href = "${projectsUrl}";
 	}
 
 
 	function projectBugTrackerCallBack (value) {
-		
+
 		<c:if test="${ ! adminproject.template }">
-			  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){								        	 
+			  if(value != "<f:message key='project.bugtracker.name.undefined'/>"){
 	        	 $("#project-bugtracker-project-name-row").show();
 	        	 initBugTrackerTag();
 
 		     }else{
-	        	 $("#project-bugtracker-project-name-row").hide();	
+	        	 $("#project-bugtracker-project-name-row").hide();
 	         }
-	      </c:if> 
+	      </c:if>
 	}
 
 	function initBugtrackerProjectEditable(){
-	
+
 	$('#project-bugtracker').editable( "${projectUrl}", {
-	      type: 'select',  
+	      type: 'select',
 	      placeholder: '<f:message key="rich-edit.placeholder" />',
 	      submit: '<f:message key="rich-edit.button.ok.label" />',
-	      cancel: '<f:message key="label.Cancel" />',  
-	      onblur : function() {},            
+	      cancel: '<f:message key="label.Cancel" />',
+	      onblur : function() {},
 	      callback : function(value, settings){projectBugTrackerCallBack(value);},
 	      data : JSON.stringify(${bugtrackersList}),
 	      indicator : '<span class="processing-indicator" />'
 	    }).addClass("editable");
-	
+
 	}
-	
+
 	function initBugTrackerTag(){
 		var tagconf = confman.getStdTagit();
-		var $tag = $("#project-bugtracker-project-name"); 
-		
+		var $tag = $("#project-bugtracker-project-name");
+
 		tagconf.validate = function(){
 			var assignedTags = $tag.squashTagit('assignedTags');
 			//need at least one project name
 			return assignedTags.length > 0 ? true : false;
 		}
-	
+
 		$tag.squashTagit(tagconf).sortable({
 			stop: function() {
 				sendBugTrackerTag($tag.squashTagit('assignedTags'));
 				}
 		});
-	
-		$tag.on('squashtagitbeforetagremoved', function(event, ui){ 
+
+		$tag.on('squashtagitbeforetagremoved', function(event, ui){
 			var assignedTags = $tag.squashTagit('assignedTags');
 			//don't remove if there is only one
-			return assignedTags.length > 1 ? true : false; 
+			return assignedTags.length > 1 ? true : false;
 		});
 
-		
+
 		$tag.on('squashtagitaftertagadded squashtagitaftertagremoved', function(event, ui){
-		
+
 			if (!ui.duringInitialization) {
 			if (! $tag.squashTagit("validate", event, ui)){
 				return;
-			}	
+			}
 			sendBugTrackerTag($tag.squashTagit('assignedTags'));
 			}
 		});
-		
+
 		$.ajax({type: 'GET',
 			url: "${projectUrl}/bugtracker/projectName"}).done(
 					function(data){
@@ -592,7 +579,7 @@ require(["common"], function() {
 						});
 						});
 	}
-	
+
 	function sendBugTrackerTag(tags){
 		$.ajax({type: 'POST',
 			url: "${projectUrl}",
@@ -600,37 +587,37 @@ require(["common"], function() {
 				values:tags}
 	});
 
-		
+
 	}
-	
+
 	$(function() {
 
-		 		init(projectsManager, Frag);	
+		 		init(projectsManager, Frag);
 		 		configureActivation("UNTESTABLE");
 		 		configureActivation("SETTLED");
 		 		configureActivation("EXECUTION");
-		 		
+
 		 		$("#toggle-EXECUTION-checkbox").change(function(){
 		 			toogleExec();
-		 		}); 
-		 		
+		 		});
+
 		 		$("#toggle-UNTESTABLE-checkbox").change(function(){
 		 			toggleStatusActivation("UNTESTABLE");
-		 		}); 
+		 		});
 		 		$("#toggle-SETTLED-checkbox").change(function(){
 		 			toggleStatusActivation("SETTLED");
-		 		}); 
-		 		
+		 		});
+
 		 		initBugtrackerProjectEditable();
 		 		if (${adminproject.project.bugtrackerConnected}) {
 		 		initBugTrackerTag();
 		 		}
 		 		new ProjectToolbar();
 	});
-	
+
 	function toogleExec(){
 		var shouldActivate = ! $("#toggle-EXECUTION-checkbox").prop('checked');
-	
+
 			$.ajax({
 				type: 'POST',
 				url: "${projectUrl}",
@@ -638,39 +625,39 @@ require(["common"], function() {
 					value : shouldActivate
 				}
 			});
-		
+
 	}
-	
+
 	function refreshTableAndPopup(){
-		$("#user-permissions-table").squashTable().refresh();		
+		$("#user-permissions-table").squashTable().refresh();
 	}
-	
+
 	function configureActivation(status){
 
 		var activCbx = $("#toggle-"+status+"-checkbox"),
 			activConf = attrparser.parse(activCbx.data('def'));
 		activConf.checked = activConf.checked == 'true';
 		activCbx.switchButton(activConf);
-		
+
 		//a bit of css tweak now
 		activCbx.siblings('.switch-button-background').css({position : 'relative',   top : '5px'});
-	
-		
+
+
 	}
-	
+
 	// status popup
-	var statuspopup = $("#replace-status-dialog"); 
+	var statuspopup = $("#replace-status-dialog");
 	statuspopup.formDialog();
-	
+
 	statuspopup.on('formdialogopen', function(){
-		
+
 		statuspopup.formDialog('setState', 'normal');
 		var removedstatus = statuspopup.data('removed-status'),
 			statusname = $(".exec-status-label.exec-status-"+removedstatus.toLowerCase()).text();
-		
+
 		var txt = statuspopup.find('.replace-status-warning-template').text().replace('{0}',statusname);
 		statuspopup.find('.replace-status-warning').text(txt);
-			
+
 		$.getJSON("${projectUrl}/execution-status/"+removedstatus).done(function(json){
 				$("#status-input").empty();
 				$.each(json, function(key){
@@ -681,7 +668,7 @@ require(["common"], function() {
 			statuspopup.formDialog('setState', "normal");
 		});
 	});
-	
+
 	statuspopup.on('formdialogcancel', function(){
 		var removedstatus = statuspopup.data('removed-status');
 		 $("#toggle-"+removedstatus+"-checkbox").switchButton({
@@ -690,7 +677,7 @@ require(["common"], function() {
 		$("#status-input").html("");
 		statuspopup.formDialog('close');
 	});
-	
+
 	statuspopup.on('formdialogconfirm', function(){
 		var target = $("#status-input").val();
 		var source = $("#source-status").val();
@@ -707,7 +694,7 @@ require(["common"], function() {
 			}
 		});
 	});
-	
+
 	function toggleStatusActivation(status){
 		var shouldActivate = $("#toggle-"+status+"-checkbox").prop('checked');
 		if (shouldActivate){
@@ -728,19 +715,19 @@ require(["common"], function() {
 						}
 				 }
 			});
-			
+
 
 		}
-			
-	}	
-	
+
+	}
+
 	function activateStatus(status){
 		$.ajax({
 			type: 'POST',
 			 url: "${projectUrl}/enable-execution-status/"+status,
 		});
 	}
-	
+
 	function deactivateStatus(status){
 		$.ajax({
 			type: 'POST',
@@ -749,28 +736,28 @@ require(["common"], function() {
 	}
 
 	function init(projectsManager, Frag){
-		
-		
+
+
 		// back button
 		$("#back").click(clickProjectBackButton);
-		
+
 
 		// rename popup
 		var renameDialog = $("#rename-project-dialog"),
 			nameHeader = $('#project-name-header');
 		renameDialog.formDialog();
-		
+
 		renameDialog.on('formdialogopen', function(){
 			var name = $.trim(nameHeader.text());
-			$("#rename-project-input").val(name);			
+			$("#rename-project-input").val(name);
 		});
-		
+
 		renameDialog.on('formdialogconfirm', function(){
 			var name = $("#rename-project-input").val();
             $.ajax({
               url : "${projectUrl}",
               type : 'POST',
-              data : {newName : name }       
+              data : {newName : name }
             })
             .success(function(){
             	nameHeader.text(name);
@@ -784,15 +771,15 @@ require(["common"], function() {
 			renameDialog.formDialog('open');
 		});
 
-		
+
 		// permissions popup
-		var permpopup = $("#add-permission-dialog"); 
+		var permpopup = $("#add-permission-dialog");
 		permpopup.formDialog();
-		
+
 		permpopup.on('formdialogopen', function(){
-			
+
 			permpopup.formDialog('setState', 'loading');
-			
+
 			$.getJSON("${permissionPopupUrl}").done(function(json){
 				if (json.length === 0){
 					permpopup.formDialog('setState', "allbound");
@@ -806,13 +793,13 @@ require(["common"], function() {
 				}
 			});
 		});
-		
+
 		permpopup.on('formdialogconfirm', function(){
-			
+
 			var partyname = $("#party-input").val();
 			var permission = $("#permission-input").val();
 			var validselection = $.grep(permpopup.data('source'), function(e){ return (e.label === partyname);});
-				
+
 			if (validselection.length === 1){
 				var partyId = validselection[0].id;
 				var url = squashtm.app.contextRoot+"/generic-projects/${adminproject.project.id}/parties/"+partyId+"/permissions/"+permission+"/";
@@ -828,30 +815,30 @@ require(["common"], function() {
 			}else{
 				permpopup.formDialog('setState', 'noselect');
 			}
-			
+
 		});
-		
+
 		permpopup.on('formdialogcancel', function(){
 			permpopup.formDialog('close');
 		});
-		
+
 		// permission mgt
 		$("#add-permission-button").on('click', function(){
 			permpopup.formDialog('open');
 		});
 
-		var permremovepopup = $("#remove-permission-dialog"); 
+		var permremovepopup = $("#remove-permission-dialog");
 		permremovepopup.formDialog();
-		
+
 		permremovepopup.on('formdialogopen', function(){
-			
+
 			permpopup.formDialog('setState', 'loading');
-			
+
 			$.getJSON("${permissionPopupUrl}").done(function(json){
 				if (json.length === 0){
 					permpopup.formDialog('setState', "allbound");
 				}
-				else{ 
+				else{
 					permpopup.data('source', json);
 					$("#party-input").autocomplete({
 						source : json
@@ -860,12 +847,12 @@ require(["common"], function() {
 				}
 			});
 		});
-		
+
 		permremovepopup.on('formdialogconfirm', function(){
 			var table = $("#user-permissions-table");
-			var ids = table.squashTable().getSelectedIds() ; 		
+			var ids = table.squashTable().getSelectedIds() ;
 		for(key in ids) {
-			val = ids[key]; 
+			val = ids[key];
 			$.ajax({
 				type : 'delete',
 				dataType : "json",
@@ -875,15 +862,15 @@ require(["common"], function() {
 				table.squashTable().refresh();
 			});
 		}
-		
+
 			$(this).formDialog('close');
-				
+
 		});
-		
+
 		permremovepopup.on('formdialogcancel', function(){
 			permremovepopup.formDialog('close');
 		});
-						
+
 		$("#remove-permission-button").on('click', function(){
 			var hasPermission = ($("#user-permissions-table").squashTable().getSelectedIds().length > 0);
 			if (hasPermission) {
@@ -892,7 +879,7 @@ require(["common"], function() {
 			 else {
 				 notification.showError(translator.get('message.NoMemberSelected'));
 			}
-			
+
 		});
 
 		//user permissions table
@@ -908,29 +895,29 @@ require(["common"], function() {
 				deleteTooltip : '<f:message key="tooltips.permissions.remove"/>'
 			}
 		};
-		
-		projectsManager.projectInfo.initUserPermissions(permSettings);
-				
 
-		Frag.init();								
+		projectsManager.projectInfo.initUserPermissions(permSettings);
+
+
+		Frag.init();
 	}
-	
-	
+
+
 	<sec:authorize access=" hasRole('ROLE_ADMIN')">
 	$(function() {
 		function deleteProject(){
-		<c:if test="${adminproject.deletable}">	
+		<c:if test="${adminproject.deletable}">
 			oneshot.show('dialog.delete-project.title',
 			"<div class='display-table-row'><div class='display-table-cell warning-cell'><div class='generic-error-signal'></div></div><div class='display-table-cell'><f:message key='message.project.remove.first'/><span class='red-warning-message'> <f:message key='message.project.remove.second'/> </span><f:message key='message.project.remove.third'/><span class='bold-warning-message'> <f:message key='message.project.remove.fourth'/> </span></div></div>"
 			).done(function(){
 				requestProjectDeletion().done(deleteProjectSuccess);
 			});
 			</c:if>
-			<c:if test="${!adminproject.deletable}">	
+			<c:if test="${!adminproject.deletable}">
 				$.squash.openMessage("<f:message key='popup.title.info'/>","<f:message key='project.delete.cannot.exception'/>");
 			</c:if>
 		}
-		
+
 		function requestProjectDeletion(){
 			return $.ajax({
 				type : 'delete',
@@ -938,12 +925,12 @@ require(["common"], function() {
 				url : "${ projectUrl }"
 			});
 		}
-	
+
 		function deleteProjectSuccess(data){
 			clickProjectBackButton();
 		}
-		
-		$('#delete-project-button').click(deleteProject);		
+
+		$('#delete-project-button').click(deleteProject);
 	});
 	</sec:authorize>
 });
