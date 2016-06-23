@@ -61,15 +61,6 @@ import org.hibernate.annotations.Formula;
 import org.hibernate.annotations.Immutable;
 import org.hibernate.annotations.Persister;
 import org.hibernate.annotations.Type;
-import org.hibernate.search.annotations.Analyze;
-import org.hibernate.search.annotations.ClassBridge;
-import org.hibernate.search.annotations.ClassBridges;
-import org.hibernate.search.annotations.Field;
-import org.hibernate.search.annotations.FieldBridge;
-import org.hibernate.search.annotations.Indexed;
-import org.hibernate.search.annotations.IndexedEmbedded;
-import org.hibernate.search.annotations.Parameter;
-import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
@@ -112,15 +103,7 @@ import org.squashtest.tm.infrastructure.hibernate.ReadOnlyCollectionPersister;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
 
 @Auditable
-@Indexed
 @Entity
-@ClassBridges({
-	@ClassBridge(name = "attachments", store = Store.YES, analyze = Analyze.NO, impl = ExecutionAttachmentBridge.class),
-	@ClassBridge(name = "cufs", store = Store.YES, impl = CUFBridge.class, params = {
-		@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "ALL") }),
-		@ClassBridge(name = "cufs", store = Store.YES, analyze = Analyze.NO, impl = CUFBridge.class, params = {
-			@Parameter(name = "type", value = "execution"), @Parameter(name = "inputType", value = "DROPDOWN_LIST") }) })
-
 /*
  *  the following annotation is a trick, see same thing in class documentation in RequirementLibraryNode
  */
@@ -153,38 +136,29 @@ DenormalizedFieldHolder, BoundEntity {
 
 	// Not Null & Column missed comparing to requirementStatus
 	@Enumerated(EnumType.STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
-	@FieldBridge(impl = LevelEnumBridge.class)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Enumerated(EnumType.STRING)
 	protected TestCaseExecutionMode executionMode = TestCaseExecutionMode.MANUAL;
 
 	@Lob
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	private String description;
 
 	@Lob
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	private String prerequisite = "";
 
 	@NotNull
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String reference = "";
 
 	@Lob
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Type(type="org.hibernate.type.StringClobType")
 	@Column(name = "TC_DESCRIPTION")
 	private String tcdescription;
 
 	@Enumerated(EnumType.STRING)
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Basic(optional = false)
-	@FieldBridge(impl = LevelEnumBridge.class)
 	private TestCaseImportance importance = LOW;
 
 	@Embedded
@@ -196,16 +170,13 @@ DenormalizedFieldHolder, BoundEntity {
 	@Enumerated(EnumType.STRING)
 	@Basic(optional = false)
 	@Column(name = "TC_STATUS")
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@NotBlank
 	@Size(min = 0, max = 255)
 	private String name;
 
 	@Column
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String datasetLabel;
 
 	// TODO rename as testPlanItem
@@ -227,11 +198,9 @@ DenormalizedFieldHolder, BoundEntity {
 	private Integer executionOrder;
 
 	@Column(insertable = false)
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String lastExecutedBy;
 
 	@Column(insertable = false)
-	@Field(analyze = Analyze.NO, store = Store.YES)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lastExecutedOn;
 
@@ -250,7 +219,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH,CascadeType.REMOVE })
 	@JoinColumn(name = "ISSUE_LIST_ID")
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	private IssueList issueList = new IssueList();
 
 
@@ -556,7 +524,6 @@ DenormalizedFieldHolder, BoundEntity {
 
 	/* ***************** Bugged implementation *********************** */
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
 	@Override
 	public Project getProject() {
 		return testPlan.getProject();
@@ -794,7 +761,7 @@ DenormalizedFieldHolder, BoundEntity {
 		return testPlan.getIteration();
 	}
 
-	@IndexedEmbedded(includeEmbeddedObjectId = true)
+        
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}
