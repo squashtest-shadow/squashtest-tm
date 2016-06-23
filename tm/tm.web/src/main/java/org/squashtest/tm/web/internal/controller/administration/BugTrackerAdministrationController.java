@@ -20,12 +20,6 @@
  */
 package org.squashtest.tm.web.internal.controller.administration;
 
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.Valid;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -37,17 +31,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.service.bugtracker.BugTrackerManagerService;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper;
 import org.squashtest.tm.web.internal.model.datatable.DataTableDrawParameters;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModel;
 import org.squashtest.tm.web.internal.model.datatable.DataTableModelConstants;
-import org.squashtest.tm.web.internal.model.datatable.DataTableSorting;
 import org.squashtest.tm.web.internal.model.datatable.SpringPagination;
 import org.squashtest.tm.web.internal.model.viewmapper.DatatableMapper;
 import org.squashtest.tm.web.internal.model.viewmapper.NameBasedMapper;
+
+import javax.inject.Inject;
+import javax.validation.Valid;
+import java.util.Locale;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/administration/bugtrackers")
@@ -60,20 +57,17 @@ public class BugTrackerAdministrationController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(BugTrackerAdministrationController.class);
 
 
-
-	private DatatableMapper<String> bugtrackerMapper=new NameBasedMapper()
-	.map("id", 	"id")
-	.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, 	"name")
-	.map("kind", 	"kind")
-	.map("url", 	"url")
-	.map("iframe-friendly", "iframeFriendly");
-
+	private DatatableMapper<String> bugtrackerMapper = new NameBasedMapper()
+		.map("id", "id")
+		.map(DataTableModelConstants.DEFAULT_ENTITY_NAME_KEY, "name")
+		.map("kind", "kind")
+		.map("url", "url")
+		.map("iframe-friendly", "iframeFriendly");
 
 
 	@ResponseBody
 	@RequestMapping(method = RequestMethod.POST)
-	public
-	void createBugTracker(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
+	public void createBugTracker(@Valid @ModelAttribute("add-bugtracker") BugTracker bugtracker) {
 
 		LOGGER.info("name " + bugtracker.getName());
 		LOGGER.info("kind " + bugtracker.getKind());
@@ -95,8 +89,7 @@ public class BugTrackerAdministrationController {
 
 	@ResponseBody
 	@RequestMapping(value = "/list", params = RequestParams.S_ECHO_PARAM)
-	public
-	DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params, final Locale locale) {
+	public DataTableModel getBugtrackerTableModel(final DataTableDrawParameters params, final Locale locale) {
 
 		Pageable pageable = SpringPagination.pageable(params, bugtrackerMapper);
 
@@ -105,7 +98,7 @@ public class BugTrackerAdministrationController {
 
 		BugtrackerDataTableModelHelper helper = new BugtrackerDataTableModelHelper(messageSource);
 		helper.setLocale(locale);
-		return helper.buildDataModel(holder,  params.getsEcho());
+		return helper.buildDataModel(holder, params.getsEcho());
 
 	}
 

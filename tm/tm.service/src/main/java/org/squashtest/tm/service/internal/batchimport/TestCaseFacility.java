@@ -35,13 +35,15 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 import org.squashtest.tm.service.importer.ImportStatus;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
-import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.LibraryUtils;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 import org.squashtest.tm.service.testcase.TestCaseModificationService;
 
 import javax.inject.Inject;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author Gregory Fouquet
@@ -133,7 +135,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		TestCaseTarget target = instr.getTarget();
 
 		Map<Long, RawValue> acceptableCufs = toAcceptableCufs(cufValues);
-                List<Long> milestoneIds = boundMilestonesIds(instr);
+		List<Long> milestoneIds = boundMilestonesIds(instr);
 
 		// case 1 : this test case lies at the root of the project
 		if (target.isRootTestCase()) {

@@ -20,19 +20,7 @@
  */
 package org.squashtest.tm.service.internal.campaign;
 
-import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.google.common.base.Optional;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -43,18 +31,7 @@ import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.security.acls.model.ObjectIdentityRetrievalStrategy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.squashtest.tm.core.foundation.collection.ColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultColumnFiltering;
-import org.squashtest.tm.core.foundation.collection.DefaultFiltering;
-import org.squashtest.tm.core.foundation.collection.DelegatePagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.Filtering;
-import org.squashtest.tm.core.foundation.collection.MultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Paging;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.Pagings;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.IdentifiersOrderComparator;
 import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
@@ -72,13 +49,7 @@ import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.campaign.IterationTestPlanManagerService;
 import org.squashtest.tm.service.internal.library.LibrarySelectionStrategy;
-import org.squashtest.tm.service.internal.repository.DatasetDao;
-import org.squashtest.tm.service.internal.repository.IterationDao;
-import org.squashtest.tm.service.internal.repository.IterationTestPlanDao;
-import org.squashtest.tm.service.internal.repository.LibraryNodeDao;
-import org.squashtest.tm.service.internal.repository.TestCaseDao;
-import org.squashtest.tm.service.internal.repository.TestCaseLibraryDao;
-import org.squashtest.tm.service.internal.repository.UserDao;
+import org.squashtest.tm.service.internal.repository.*;
 import org.squashtest.tm.service.internal.testcase.TestCaseNodeWalker;
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder;
 import org.squashtest.tm.service.project.ProjectFilterModificationService;
@@ -88,7 +59,10 @@ import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.security.acls.model.ObjectAclService;
 import org.squashtest.tm.service.user.UserAccountService;
 
-import com.google.common.base.Optional;
+import javax.inject.Inject;
+import java.util.*;
+
+import static org.squashtest.tm.service.security.Authorizations.OR_HAS_ROLE_ADMIN;
 
 @Service("squashtest.tm.service.IterationTestPlanManagerService")
 @Transactional
@@ -150,27 +124,27 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	public List<TestCaseLibrary> findLinkableTestCaseLibraries() {
 		ProjectFilter pf = projectFilterModificationService.findProjectFilterByUserLogin();
 		return pf.getActivated() ? libraryStrategy.getSpecificLibraries(pf.getProjects()) : testCaseLibraryDao
-				.findAll();
+			.findAll();
 
 	}
 
 	@Override
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findAssignedTestPlan(long iterationId,
-			PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
+		PagingAndMultiSorting sorting, ColumnFiltering columnFiltering) {
 
 		// configure the filter, in case the test plan must be restricted to what the user can see.
 		Filtering userFiltering = DefaultFiltering.NO_FILTERING;
 
 		try {
 			PermissionsUtils.checkPermission(permissionEvaluationService, Collections.singletonList(iterationId),
-					"READ_UNASSIGNED", Iteration.class.getName());
+				"READ_UNASSIGNED", Iteration.class.getName());
 		} catch (AccessDeniedException ade) { // NOSONAR : this exception is part of the nominal use case
 			String userLogin = userService.findCurrentUser().getLogin();
 			userFiltering = new DefaultFiltering("User.login", userLogin);
 		}
 
 		List<IndexedIterationTestPlanItem> indexedItems = iterationDao.findIndexedTestPlan(iterationId, sorting,
-				userFiltering, columnFiltering);
+			userFiltering, columnFiltering);
 		long testPlanSize = iterationDao.countTestPlans(iterationId, userFiltering, columnFiltering);
 
 		return new PagingBackedPagedCollectionHolder<>(sorting, testPlanSize,
@@ -188,7 +162,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void addTestCasesToIteration(final List<Long> objectsIds, long iterationId) {
 
 		Iteration iteration = iterationDao.findById(iterationId);
@@ -198,13 +172,13 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void addTestCaseToIteration(Long testcaseId, Long datasetId, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 
 		TestCase testCase = testCaseDao.findById(testcaseId);
 
-		Dataset ds = datasetId!=null ? datasetDao.findById(datasetId) : null;
+		Dataset ds = datasetId != null ? datasetDao.findById(datasetId) : null;
 
 		IterationTestPlanItem itp = new IterationTestPlanItem(testCase, ds);
 		iterationTestPlanDao.save(itp);
@@ -262,7 +236,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void addTestPlanToIteration(List<IterationTestPlanItem> testPlan, long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		for (IterationTestPlanItem itp : testPlan) {
@@ -273,7 +247,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void changeTestPlanPosition(long iterationId, int newPosition, List<Long> itemIds) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		List<IterationTestPlanItem> items = iterationTestPlanDao.findAllByIdIn(itemIds);
@@ -283,7 +257,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void reorderTestPlan(long iterationId, MultiSorting newSorting) {
 
 		Paging noPaging = Pagings.NO_PAGING;
@@ -301,7 +275,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public boolean removeTestPlansFromIteration(List<Long> testPlanIds, long iterationId) {
 		Iteration it = iterationDao.findById(iterationId);
 
@@ -332,7 +306,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		} else {
 			try {
 				PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(item,
-						"EXTENDED_DELETE"));
+					"EXTENDED_DELETE"));
 				doRemoveTestPlanItemFromIteration(iteration, item);
 			} catch (AccessDeniedException exception) { // NOSONAR : this exception is part of the nominal use case
 				unauhorized = true;
@@ -357,7 +331,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'LINK') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public boolean removeTestPlanFromIteration(long testPlanItemId) {
 		IterationTestPlanItem item = iterationTestPlanDao.findById(testPlanItemId);
 		Iteration iteration = item.getIteration();
@@ -369,7 +343,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public List<TestCase> findPlannedTestCases(Long iterationId) {
 		Iteration iteration = iterationDao.findById(iterationId);
 		return iteration.getPlannedTestCase();
@@ -403,11 +377,11 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#iterationId, 'org.squashtest.tm.domain.campaign.Iteration', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public PagedCollectionHolder<List<IndexedIterationTestPlanItem>> findTestPlan(long iterationId,
-			PagingAndSorting filter) {
+		PagingAndSorting filter) {
 		List<IndexedIterationTestPlanItem> testPlan = iterationDao.findIndexedTestPlan(iterationId, filter,
-				DefaultFiltering.NO_FILTERING, DefaultColumnFiltering.NO_FILTERING);
+			DefaultFiltering.NO_FILTERING, DefaultColumnFiltering.NO_FILTERING);
 		long count = iterationDao.countTestPlans(iterationId, DefaultFiltering.NO_FILTERING);
 		return new PagingBackedPagedCollectionHolder<>(filter, count, testPlan);
 	}
@@ -439,7 +413,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 	 */
 	@Override
 	@PreAuthorize("hasPermission(#testPlanItemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void assignUserToTestPlanItem(long testPlanItemId, long userId) {
 		User user = userId == 0 ? null : userDao.findById(userId);
 
@@ -470,7 +444,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#itemTestPlanId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'READ') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public IterationTestPlanItem findTestPlanItem(long itemTestPlanId) {
 		return iterationTestPlanDao.findById(itemTestPlanId);
 	}
@@ -496,7 +470,7 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 		String login = UserContextHolder.getUsername();
 		User user = userDao.findUserByLogin(login);
 		Date date = new Date();
-		for(IterationTestPlanItem item : testPlanItems){
+		for (IterationTestPlanItem item : testPlanItems) {
 			item.setExecutionStatus(status);
 			arbitraryUpdateMetadata(item, user, date);
 		}
@@ -539,19 +513,18 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	@Override
 	@PreAuthorize("hasPermission(#itemId, 'org.squashtest.tm.domain.campaign.IterationTestPlanItem', 'WRITE') "
-			+ OR_HAS_ROLE_ADMIN)
+		+ OR_HAS_ROLE_ADMIN)
 	public void changeDataset(long itemId, Long datasetId) {
 		IterationTestPlanItem item = iterationTestPlanDao.findById(itemId);
 
-		if (datasetId == null){
+		if (datasetId == null) {
 			item.setReferencedDataset(null);
-		}
-		else if (! item.isTestCaseDeleted()){
+		} else if (!item.isTestCaseDeleted()) {
 			TestCase tc = item.getReferencedTestCase();
 			Dataset ds = datasetDao.findById(datasetId);
-			if (! ds.getTestCase().equals(tc)){
-				throw new IllegalArgumentException("dataset [id:'"+ds.getId()+"', name:'"+ds.getName()+
-						"'] doesn't belong to test case [id:'"+tc.getId()+"', name:'"+tc.getName()+"']");
+			if (!ds.getTestCase().equals(tc)) {
+				throw new IllegalArgumentException("dataset [id:'" + ds.getId() + "', name:'" + ds.getName() +
+					"'] doesn't belong to test case [id:'" + tc.getId() + "', name:'" + tc.getName() + "']");
 			}
 			item.setReferencedDataset(ds);
 		}

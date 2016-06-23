@@ -20,16 +20,6 @@
  */
 package org.squashtest.tm.service.internal.bugtracker;
 
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
-import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
-
 import org.apache.commons.collections.ListUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -37,7 +27,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.domain.bugtracker.BugTrackerBinding;
 import org.squashtest.tm.domain.bugtracker.Issue;
 import org.squashtest.tm.exception.NameAlreadyInUseException;
@@ -50,6 +39,15 @@ import org.squashtest.tm.service.internal.repository.BugTrackerDao;
 import org.squashtest.tm.service.internal.repository.IssueDao;
 import org.squashtest.tm.service.internal.repository.RequirementSyncExtenderDao;
 import org.squashtest.tm.service.project.GenericProjectManagerService;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN;
+import static org.squashtest.tm.service.security.Authorizations.HAS_ROLE_ADMIN_OR_PROJECT_MANAGER;
 
 @Service("squashtest.tm.service.BugTrackerManagerService")
 public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, BugTrackerSystemManager {
@@ -78,10 +76,9 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 	public void addBugTracker(BugTracker bugTracker) {
 		String name = bugTracker.getName();
 		BugTracker existing = bugTrackerDao.findByName(name);
-		if (existing == null){
-		bugTrackerDao.save(bugTracker);
-		}
-		else{
+		if (existing == null) {
+			bugTrackerDao.save(bugTracker);
+		} else {
 			throw new NameAlreadyInUseException(NameAlreadyInUseException.EntityType.BUG_TRACKER, name);
 		}
 	}
@@ -116,7 +113,7 @@ public class BugTrackerManagerServiceImpl implements BugTrackerManagerService, B
 
 	@Override
 	public List<BugTracker> findDistinctBugTrackersForProjects(List<Long> projectIds) {
-		if(projectIds.isEmpty()){
+		if (projectIds.isEmpty()) {
 			return ListUtils.EMPTY_LIST;
 		}
 		return bugTrackerDao.findDistinctBugTrackersForProjects(projectIds);

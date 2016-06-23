@@ -20,23 +20,11 @@
  */
 package org.squashtest.tm.service.internal.execution;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import javax.inject.Inject;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Predicate;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.attachment.Attachment;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.CustomFieldVisitor;
-import org.squashtest.tm.domain.customfield.MultiSelectField;
-import org.squashtest.tm.domain.customfield.RichTextField;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
 import org.squashtest.tm.domain.execution.Execution;
@@ -45,12 +33,16 @@ import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.denormalizedfield.DenormalizedFieldValueManager;
-import org.squashtest.tm.service.execution.ExecutionModificationService;
 import org.squashtest.tm.service.execution.ExecutionProcessingService;
 import org.squashtest.tm.service.internal.denormalizedField.PrivateDenormalizedFieldValueService;
 import org.squashtest.tm.service.internal.repository.AttachmentDao;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
 import org.squashtest.tm.service.internal.repository.ExecutionStepDao;
+
+import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class ExecutionStepModificationHelper {
@@ -89,11 +81,11 @@ public class ExecutionStepModificationHelper {
 			firstModifiedIndex = firstModifiedIndex < 0 ? execution.getStepIndex(execStep.getId()) : firstModifiedIndex;
 
 			Dataset dataset = execution.getTestPlan().getReferencedDataset();
-			if(dataset != null){
+			if (dataset != null) {
 				execStep.fillParameterMap(dataset);
 			}
 			step.accept(execStep);
-			executionProcessingService.changeExecutionStepStatus(execStep.getId(),ExecutionStatus.READY);
+			executionProcessingService.changeExecutionStepStatus(execStep.getId(), ExecutionStatus.READY);
 
 			privateDenormalizedFieldValueService.deleteAllDenormalizedFieldValues(execStep);
 			privateDenormalizedFieldValueService.createAllDenormalizedFieldValues(step, execStep);
@@ -130,7 +122,7 @@ public class ExecutionStepModificationHelper {
 
 	private boolean isStepEqual(ExecutionStep eStep, ActionTestStep aStep) {
 		return actionStepExist(aStep) && sameAction(eStep, aStep) && sameResult(eStep, aStep)
-				&& sameAttach(eStep, aStep) && sameCufs(eStep, aStep);
+			&& sameAttach(eStep, aStep) && sameCufs(eStep, aStep);
 	}
 
 	private boolean sameCufs(ExecutionStep eStep, ActionTestStep aStep) {
@@ -138,7 +130,7 @@ public class ExecutionStepModificationHelper {
 		List<DenormalizedFieldValue> denormalizedFieldValues = denormalizedFieldValueManager.findAllForEntity(eStep);
 
 		List<CustomFieldValue> originalValues = customFieldValueDao.findAllCustomValues(aStep.getId(),
-				BindableEntity.TEST_STEP);
+			BindableEntity.TEST_STEP);
 
 		// different number of CUF
 		if (originalValues.size() != denormalizedFieldValues.size()) {
@@ -160,7 +152,7 @@ public class ExecutionStepModificationHelper {
 
 	private boolean hasChanged(final DenormalizedFieldValue denormVal, final CustomFieldValue origVal) {
 
-		final boolean[] hasChanged = { false };
+		final boolean[] hasChanged = {false};
 
 		origVal.getCustomField().accept(new CustomFieldVisitor() {
 
