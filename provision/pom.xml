@@ -105,19 +105,6 @@
             </configuration>
           </execution>
 
-          <execution>
-            <id>generate-config-resources</id>
-            <goals>
-              <goal>process</goal>
-            </goals>
-            <phase>generate-resources</phase>
-            <configuration>
-              <resourceBundles>
-                <resourceBundle>org.squashtest.tm:squash-tm-config:${project.version}</resourceBundle>
-              </resourceBundles>
-              <outputDirectory>${config.resources.dir}</outputDirectory>
-            </configuration>
-          </execution>
         </executions>
       </plugin>
 
