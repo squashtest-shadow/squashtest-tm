@@ -80,13 +80,13 @@ public class TestAutomationServerManagerServiceImpl implements TestAutomationSer
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public boolean hasBoundProjects(long serverId) {
 		return serverDao.hasBoundProjects(serverId);
 	}
 
 	@Override
-	@PreAuthorize(Authorizations.HAS_ROLE_ADMIN)
+	@PreAuthorize(HAS_ROLE_ADMIN_OR_PROJECT_MANAGER)
 	public boolean hasExecutedTests(long serverId) {
 		Collection<Long> projectIds = projectDao.findHostedProjectIds(serverId);
 		return projectDao.haveExecutedTestsByIds(projectIds);
