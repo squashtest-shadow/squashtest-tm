@@ -39,7 +39,7 @@ import java.util.Set;
  * Created by jthebault on 13/06/2016.
  */
 @ControllerAdvice
-public class HandlerTransactionSystemException extends AbstractHandlerExceptionResolver {
+public class HandlerTransactionSystemExceptionResolver extends AbstractHandlerExceptionResolver {
 
 	@Override
 	@ExceptionHandler(value = {TransactionSystemException.class})
