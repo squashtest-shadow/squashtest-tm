@@ -27,6 +27,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
+import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.annotation.EmptyCollectionGuard;
 
 
@@ -54,4 +55,5 @@ public interface IterationTestPlanDao extends JpaRepository<IterationTestPlanIte
 	@EmptyCollectionGuard
 	List<IterationTestPlanItem> findAllByIdsOrderedBySuiteTestPlan(@Param("testPlanIds") List<Long> testPlanIds, @Param("suiteId") long testSuiteId);
 
+	List<IterationTestPlanItem> findByReferencedTestCase(TestCase referencedTestCase);
 }

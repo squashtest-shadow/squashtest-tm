@@ -56,5 +56,5 @@ public interface IterationTestPlanFinder {
 	 */
 	List<User> findAssignableUserForTestPlan(long iterationId);
 
-
+	List<IterationTestPlanItem> findByReferencedTestCase (TestCase referencedTestCase);
 }

@@ -35,6 +35,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.ListUtils;
 import org.apache.commons.collections.Predicate;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.lang3.StringUtils;
@@ -52,6 +53,7 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting;
 import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
 import org.squashtest.tm.core.foundation.lang.Couple;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.BoundEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.RawValue;
@@ -75,8 +77,10 @@ import org.squashtest.tm.exception.DuplicateNameException;
 import org.squashtest.tm.exception.InconsistentInfoListItemException;
 import org.squashtest.tm.exception.UnallowedTestAssociationException;
 import org.squashtest.tm.exception.testautomation.MalformedScriptPathException;
+import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
+import org.squashtest.tm.service.campaign.IterationTestPlanFinder;
 import org.squashtest.tm.service.infolist.InfoListItemFinderService;
 import org.squashtest.tm.service.internal.customfield.PrivateCustomFieldValueService;
 import org.squashtest.tm.service.internal.library.NodeManagementService;
@@ -151,6 +155,12 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
 
+	@Inject
+	private IterationTestPlanFinder iterationTestPlanFinder;
+
+	@Inject
+	private IndexationService indexationService;
+
 
 	/* *************** TestCase section ***************************** */
 
@@ -158,6 +168,23 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
 		testCaseManagementService.renameNode(testCaseId, newName);
+	}
+
+	@Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public void changeReference(long testCaseId, String reference) {
+		TestCase testCase = testCaseDao.findById(testCaseId);
+		testCase.setReference(reference);
+		reindexItpisReferencingTestCase(testCase);
+	}
+
+	private void reindexItpisReferencingTestCase(TestCase testCase) {
+		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);
+		List<Long> itpiIds = new ArrayList();
+		for (IterationTestPlanItem itpi : itpis) {
+			itpiIds.add(itpi.getId());
+		}
+		indexationService.batchReindexItpi(itpiIds);
 	}
 
 	@Override

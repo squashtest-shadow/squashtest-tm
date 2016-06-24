@@ -32,16 +32,9 @@ import org.squashtest.tm.domain.testcase.TestCaseStatus;
 @Transactional
 @DynamicManager(name="squashtest.tm.service.TestCaseModificationService", entity = TestCase.class)
 public interface TestCaseModificationService extends CustomTestCaseModificationService, TestCaseFinder {
-	/**
-	 * 
-	 */
-	static final String TEST_CASE_IS_WRITABLE = "hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN;
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeDescription(long testCaseId, String newDescription);
-
-	@PreAuthorize(TEST_CASE_IS_WRITABLE)
-	void changeReference(long testCaseId, String reference);
 
 	@PreAuthorize(TEST_CASE_IS_WRITABLE)
 	void changeImportance(long testCaseId, TestCaseImportance importance);
@@ -51,7 +44,5 @@ public interface TestCaseModificationService extends CustomTestCaseModificationS
 
 	@PreAuthorize("hasPermission(#arg0, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	void changePrerequisite(long testCaseId, String newPrerequisite);
-
-
 
 }

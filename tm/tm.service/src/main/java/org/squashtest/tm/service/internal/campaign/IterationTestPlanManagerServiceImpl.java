@@ -428,6 +428,11 @@ public class IterationTestPlanManagerServiceImpl implements IterationTestPlanMan
 
 	}
 
+	@Override
+	public List<IterationTestPlanItem> findByReferencedTestCase(TestCase referencedTestCase) {
+		return iterationTestPlanDao.findByReferencedTestCase(referencedTestCase);
+	}
+
 	/**
 	 *
 	 * @see org.squashtest.tm.service.campaign.IterationTestPlanManagerService#assignUserToTestPlanItem(long, long)

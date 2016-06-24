@@ -57,6 +57,7 @@ import org.squashtest.tm.domain.library.IndexModel;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
+import org.squashtest.tm.service.campaign.IndexedIterationTestPlanItem;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 import org.squashtest.tm.service.internal.library.AdvancedSearchIndexingMonitor;
 
@@ -207,6 +208,11 @@ public class IndexationServiceImpl implements IndexationService {
 	public void batchReindexReqVersion(Collection<Long> reqVersionIdsToIndex) {
 		batchReindex(RequirementVersion.class, reqVersionIdsToIndex);
 
+	}
+
+	@Override
+	public void batchReindexItpi(Collection<Long> itpisIdsToIndex) {
+		batchReindex(IterationTestPlanItem.class,itpisIdsToIndex);
 	}
 
 	// Batched versions

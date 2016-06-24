@@ -59,4 +59,6 @@ public interface IndexationService {
 
 	void batchReindexReqVersion(Collection<Long> reqVersionIdsToIndex);
 
+	void batchReindexItpi(Collection<Long> itpisIdsToIndex);
+
 }
