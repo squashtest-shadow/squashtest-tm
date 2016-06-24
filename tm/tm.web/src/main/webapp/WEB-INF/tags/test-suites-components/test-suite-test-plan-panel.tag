@@ -139,10 +139,10 @@
   <%--
     Because the filtering/sorting system might not like that a column may be defined or not,
     the column must always be present. It may, however, be displayed or not.
-    
-    As per stupid specification, instead of the normal conditions the milestone dates column 
-    must be displayed if the feature is globally-enabled but not user-enabled 
-    
+
+    As per stupid specification, instead of the normal conditions the milestone dates column
+    must be displayed if the feature is globally-enabled but not user-enabled
+
     for f*** sakes
    --%>
  <c:set var="milestoneVisibility" value="${(milestoneConf.globallyEnabled and not milestoneConf.userEnabled) ? '' : ', invisible'}"/>
@@ -161,9 +161,9 @@
             <f:message key="label.Milestone"/>
           </th>
           <th title=<f:message key="label.Mode" /> class="no-user-select tp-th-filter tp-th-exec-mode"
-            data-def="map=exec-mode, sortable, center, visible=${testSuite.project.testAutomationEnabled}, sClass=exec-mode, sWidth=5%">   
+            data-def="map=exec-mode, sortable, center, visible=${testSuite.project.testAutomationEnabled}, sClass=exec-mode, sWidth=5%">
             <f:message key="label.Mode" />
-          </th>          
+          </th>
           <th class="no-user-select tp-th-filter tp-th-reference" title="${tooltipReference}"  data-def="map=reference, sortable, link=${workspaceUrl}, link-cookie=workspace-prefs={tc-id}">
             <f:message key="label.Reference.short" />
           </th>
@@ -178,6 +178,9 @@
           </th>
           <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
+          </th>
+          <th class="no-user-select tp-th-succesPercent" data-def="map=succesPercent, sWidth=10%">
+            <f:message key="iteration.executions.table.column-header.succesPercent.label" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-assignee"
             data-def="map=assignee-login, sortable, sWidth=10%, sClass=assignee-combo">
@@ -217,22 +220,22 @@
 
     <div id="ts-test-plan-delete-dialog" class="not-displayed popup-dialog"
       title="<f:message key="dialog.remove-testcase-testsuite-associations.title" />">
-      
+
       <comp:notification-pane type="warning">
         <jsp:attribute name="htmlcontent">
           <span data-def="state=single-tp" >
             <f:message key="dialog.remove-testcase-testsuite-association.message" />
             <br/>
-            <f:message key="message.permissions.confirm"/>          
+            <f:message key="message.permissions.confirm"/>
           </span>
           <span data-def="state=multiple-tp">
             <f:message key="dialog.remove-testcase-testsuite-associations.message" />
             <br/>
-            <f:message key="message.permissions.confirm"/>          
+            <f:message key="message.permissions.confirm"/>
           </span>
-        </jsp:attribute>      
+        </jsp:attribute>
       </comp:notification-pane>
-      
+
       <div class="popup-dialog-buttonpane">
         <input type="button" value="${removeLabel}"
           data-def="state=single-tp multiple-tp, mainbtn=single-tp multiple-tp, evt=confirm" />
@@ -324,7 +327,7 @@ require(["common"], function(){
 			};
 			tsInit.initTestPlanPanel(conf);
 		});
-	});		
+	});
 });
 </script>
 
