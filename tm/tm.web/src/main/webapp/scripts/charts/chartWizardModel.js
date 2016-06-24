@@ -31,14 +31,14 @@ return Backbone.Model.extend({
 		if (chartDef !== null){
 
 		this.set({
-			updateId : chartDef.id,
-			name : chartDef.name,
-			type : chartDef.type,
-            axis: chartDef.axis,
-            owner : chartDef.owner,
-            scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
-            projectsScope : chartDef.projectScope,
-            scopeEntity : self.getScopeEntity(chartDef.scope),
+                    updateId : chartDef.id,
+                    name : chartDef.name,
+                    type : chartDef.type,
+                    axis: chartDef.axis,
+                    owner : chartDef.owner,
+                    scope : _.map(chartDef.scope, function(val){ val.type = val.type.replace("LIBRARY", "LIBRARIE");return val;}),
+                    projectsScope : chartDef.projectScope,
+                    scopeEntity : self.getScopeEntity(chartDef.scope),
 		    measures : chartDef.measures,
 		    operations : self.getOperations(chartDef),
 		    filters : self.getFilters(chartDef),

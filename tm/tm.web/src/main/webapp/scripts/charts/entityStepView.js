@@ -53,7 +53,7 @@ define(["jquery", "backbone", "underscore", "app/squash.handlebars.helpers", "wo
 
 			initPerimeter: function () {
 				var scope = this.model.get("scopeEntity") || "default";
-				if (scope == "default") {
+				if (scope === "default") {
 					this.writeDefaultPerimeter();
 				} else {
 					this.writePerimeter(scope);

@@ -57,6 +57,8 @@ import org.squashtest.tm.web.internal.model.json.JsonMilestone;
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode;
 
 import com.google.common.base.Optional;
+import org.squashtest.tm.web.internal.model.builder.JsonProjectBuilder;
+import org.squashtest.tm.web.internal.model.json.JsonProject;
 
 /**
  * This controller is dedicated to the initial page of Custom Reports
@@ -88,6 +90,9 @@ public class CustomReportWorkspaceController {
 
 	@Inject
 	private ActiveMilestoneHolder activeMilestoneHolder;
+        
+        @Inject
+        private JsonProjectBuilder jsonProjectBuilder;
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String showWorkspace(Model model, Locale locale,
@@ -117,17 +122,21 @@ public class CustomReportWorkspaceController {
 
 		//Active Milestone
 		if (milestone.isPresent()){
-			JsonMilestone jsMilestone =
-					new JsonMilestone(
-							milestone.get().getId(),
-							milestone.get().getLabel(),
-							milestone.get().getStatus(),
-							milestone.get().getRange(),
-							milestone.get().getEndDate(),
-							milestone.get().getOwner().getLogin()
-							);
+			JsonMilestone jsMilestone = 
+                            new JsonMilestone(
+                                milestone.get().getId(),
+                                milestone.get().getLabel(),
+                                milestone.get().getStatus(),
+                                milestone.get().getRange(),
+                                milestone.get().getEndDate(),
+                                milestone.get().getOwner().getLogin()
+                            );
 			model.addAttribute("activeMilestone", jsMilestone);
 		}
+                
+                // json projects
+                Collection<JsonProject> projects = jsonProjectBuilder.getExtendedReadableProjects();
+                model.addAttribute("projects", projects);
 
 		//defaults lists and enums levels
 		model.addAttribute("defaultInfoLists", i18nLevelEnumInfolistHelper.getInternationalizedDefaultList(locale));

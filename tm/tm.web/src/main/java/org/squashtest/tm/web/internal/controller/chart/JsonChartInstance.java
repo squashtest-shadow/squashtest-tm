@@ -68,6 +68,8 @@ public class JsonChartInstance {
 
 	private Map<String, List<Object>> series = new HashMap<>();
 
+        private List<String> projectScope = new ArrayList<>();
+        
 	private List<JsonEntityReference> scope = new ArrayList<>();
 
 	public JsonChartInstance() {
@@ -95,6 +97,8 @@ public class JsonChartInstance {
 		for (EntityReference ref : def.getScope()) {
 			scope.add(new JsonEntityReference(ref,def));
 		}
+                
+                this.projectScope = instance.getDefinition().getProjectScope();
 
 		ChartSeries series = instance.getSeries();
 
@@ -212,6 +216,14 @@ public class JsonChartInstance {
 		this.scope = scope;
 	}
 
+        public List<String> getProjectScope() {
+            return projectScope;
+        }
+
+        public void setProjectScope(List<String> projectScope) {
+            this.projectScope = projectScope;
+        }
+        
 	public static final class JsonMeasureColumn{
 
 		private String label;

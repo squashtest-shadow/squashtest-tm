@@ -94,11 +94,7 @@
 						th:text="#{chart.label.perimeter}">perimetre</span>
 					</label>
 					<div id="chart-perimeter" class="display-table-cell">
-						{{#if customPerimeter}}
-							&nbsp;&nbsp;<span th:text="#{workspace.custom-report.chart.multi-perimeter}">perimetre custom</span>
-						{{else}}
-							&nbsp;&nbsp;{{projectName}}
-						{{/if}}
+						{{perimeterMessage}}
 					</div>
 				</div>
 				<div class="display-table-row">&nbsp;</div>
