@@ -250,8 +250,7 @@
     <%-- ============================== THE DIALOGS ========================= --%>
 
 
-    <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog"
-      title="<f:message key="dialog.unbind-ta-project.tooltip" />">
+    <div id="iter-test-plan-delete-dialog" class="not-displayed popup-dialog" title="<f:message key="label.Unbind" />">
 
       <comp:notification-pane type="warning">
         <jsp:attribute name="htmlcontent">
