@@ -151,7 +151,7 @@ class ScopePlannerTest extends Specification {
     def "ScopedEntities should return all the ids for given entity types"(){
 
             given :
-            def scopedEntities = new ScopedEntitiesImpl();
+            def scopedEntities = new ScopedEntitiesImpl([]);
 
             def tTC = et('TC')
             def tTCF = et('TCF')
@@ -192,46 +192,46 @@ class ScopePlannerTest extends Specification {
 
     @Unroll("should build a QueriedEntities from the chart and extract the possible join columns")
     def "should build a QueriedEntities from the chart and extract the possible join columns" (){
-            
+
         given :
             DetailedChartQuery detail = Mock(DetailedChartQuery)
             detail.getTargetEntities() >> targetEntities
-        
+
         when :
             def queried = new QueriedEntitiesImpl(detail)
-        
+
         then :
             queried.getPossibleJoinColumns() == possibleColumns as Set
-        
+
         where :
             targetEntities                  |   possibleColumns
             [iet('TC'), iet('C')]           |   [TEST_CASE_ID, CAMPAIGN_ID]
             [iet('R')]                      |   [REQUIREMENT_ID]
             [iet('ISS'), iet('EX')]         |   [CAMPAIGN_ID]
             [iet('RV')]                     |   [REQUIREMENT_ID]
-        
+
     }
 
     // ****************** Extra joins computation tests ********************
 
     @Unroll("should deduce the extra joins given the required (from scope) and possible joins (from query)")
     def "should deduce the extra joins given the required (from scope) and possible joins (from query)"(){
-        
+
         given :
             ScopedEntities scoped = Mock(ScopedEntities)
             scoped.getRequiredJoinColumns() >> scopeRequiredColumns
-            
+
             QueriedEntities queried = Mock(QueriedEntities)
             queried.getPossibleJoinColumns() >> queryPossibleColumns
-        
+
         when :
             scopePlanner.deduceExtraJoins(scoped, queried)
-            
-        then : 
+
+        then :
             scopePlanner.extraJoins == finalColumns as Set
-        
+
         where :
-        
+
             scopeRequiredColumns                 |   queryPossibleColumns       |   finalColumns
             // first dataset is the "gentle" scenario : the columns from the query win
             [POSSIBLE_COLUMNS_ONLY]         |   [TEST_CASE_ID, CAMPAIGN_ID]     |   [TEST_CASE_ID, CAMPAIGN_ID]
@@ -239,7 +239,7 @@ class ScopePlannerTest extends Specification {
             [TEST_CASE_ID]                  |   [REQUIREMENT_ID]                |   [TEST_CASE_ID]
             // mixed case
             [POSSIBLE_COLUMNS_ONLY, TEST_CASE_ID]|[REQUIREMENT_ID]              |   [REQUIREMENT_ID, TEST_CASE_ID]
-        
+
     }
 
     // ********************* Extra joins inclusion test ******************************
@@ -250,7 +250,7 @@ class ScopePlannerTest extends Specification {
                     def axis = Mock(AxisColumn)
                     DetailedChartQuery q = new DetailedChartQuery(axis : [axis])
                     scopePlanner.chartQuery = q
-                    
+
             and :
                     def joinableColumns = [REQUIREMENT_ID, CAMPAIGN_ID]
                     def reqidProto = mockProto('REQUIREMENT_ID', null)
@@ -259,13 +259,13 @@ class ScopePlannerTest extends Specification {
             when :
                     ChartQuery dummy = scopePlanner.createDummyQuery(joinableColumns as Set)
 
-            then :	
+            then :
                     dummy.axis == [ axis]
                     dummy.measures.collect{it.column} as Set == [reqidProto, cidProto] as Set
 
     }
 
- 
+
     def "should generate the required extra joins between the main query and the scope"(){
 
         given : "the extra query"
@@ -291,11 +291,11 @@ from Requirement requirement
 
 
     // ***************** where clauses inclusion test *******************
-    
+
     def "should include where clauses testing that a test case belongs to a library or a folder"(){
 
         given :
-            def refmap = new ScopedEntitiesImpl()
+            def refmap = new ScopedEntitiesImpl([])
             refmap.put(et('TCL') , [10])
             refmap.put(et('TCF'),  [15])
 
@@ -303,7 +303,7 @@ from Requirement requirement
             def tc = QTestCase.testCase
             def hibQuery = new ExtendedHibernateQuery()
             hibQuery.from(tc).select(tc.id)
-            
+
             def builder = scopePlanner.whereClauseForTestcases(refmap)
             hibQuery.where(builder)
 
@@ -315,42 +315,42 @@ from TestCasePathEdge testCasePathEdge
 where testCasePathEdge.ancestorId = ?2 and testCase.id = testCasePathEdge.descendantId)"""
 
     }
-    
+
     def "project scope case : should incorporate where clauses for test cases but not for campaigns nor requirements"(){
-        
+
         given :
             scopePlanner.scope = [ref('PROJECT', 1L)]
             scopePlanner.extraJoins = [TEST_CASE_ID]
-        
+
         and :
             def tc = QTestCase.testCase
             def testquery = new ExtendedHibernateQuery()
             testquery.from(tc).select(tc.id)
             scopePlanner.hibQuery = testquery
-        
+
         when :
             scopePlanner.addWhereClauses()
-        
+
         then :
             scopePlanner.hibQuery.toString() == """select testCase.id
 from TestCase testCase
 where testCase.project.id = ?1"""
-            
+
     }
 
 
     // **************** test utils ************************
 
     def mockQuery(axType, meaType){
-          
+
         def root = iet(axType)
         def measure = iet(meaType)
         def target = [root, measure]
 
         new DetailedChartQuery(rootEntity : root, measuredEntity : measure, targetEntities : target)
-        
+
     }
-    
+
     def mockProto(colname, spectype){
         def proto = Mock(ColumnPrototype)
         if (colname != null){
@@ -379,7 +379,7 @@ where testCase.project.id = ?1"""
     def et(name){
             return EntityType.valueOf(expand(name))
     }
-    
+
     // stands for InternalEntityType
     def iet(name){
         return InternalEntityType.valueOf(expand(name))
