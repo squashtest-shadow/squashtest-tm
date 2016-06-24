@@ -67,7 +67,7 @@ class TestCasesWorkspaceControllerTest extends NodeBuildingSpecification {
 		library.project >> project
 		service.findAllLibraries() >> [library]
 		service.findAllImportableLibraries() >> [library]
-		projFinder.findAllReadable() >> []
+                projBuilder.getExtendedReadableProjects() >> []
 		def model = Mock(Model)
 
 		when:
