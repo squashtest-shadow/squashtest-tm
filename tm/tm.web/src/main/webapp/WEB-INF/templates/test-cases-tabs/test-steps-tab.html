@@ -220,7 +220,8 @@
 							rootContext : /*[[@{/}]]*/"/squash",
 							totalRows : /*[[${#lists.size(testCase.steps)}]]*/57,
 							tableData : /*[[${stepsData}]]*/[],
-							cufDefinitions : /*[[${cufDefinitions}]]*/[],
+                                                        // todo : once we use Thymeleaf 3 we will remove the chabby JSON.parse trick below)
+							cufDefinitions : JSON.parse(/*[[${#workspace.cufdefSerializer(cufDefinitions)}]]*/[])
 					},
 
 					language : {

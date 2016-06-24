@@ -44,7 +44,9 @@
 			nextId : /*[[ ${testStepView.nextStep}? ${testStepView.nextStep.id} : -1 ]]*/-1,
 			writable : /*[[ ${writable} ]]*/true,
 			localizedDateFormat : /*[[ #{squashtm.dateformatShort.datepicker} ]]*/"dd/mm/yy",
-			cufDefinitions : /*[[${cufDefinitions}]]*/[],
+                        // todo : once we use Thymeleaf 3 we will remove the indirect call to jackson + JSON.parse
+                        // note : we use jacksonSerializer instead of cufdefSerializer because those are actually 
+                        cufDefinitions : JSON.parse(/*[[${#workspace.jacksonSerializer(cufDefinitions)}]]*/[])
 
 		},
 		menuBarConf: {

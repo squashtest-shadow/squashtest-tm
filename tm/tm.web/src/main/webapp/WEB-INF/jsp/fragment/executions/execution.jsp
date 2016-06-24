@@ -72,7 +72,7 @@
 					hasBugtracker : ${execution.project.bugtrackerConnected},
     				stepstable : {
     					colDefs : ${stepsAoColumnDefs},
-    					cufDefs : ${ json:marshall(stepsCufDefinitions) }
+    					cufDefs : ${json:serializeCustomfields(stepsCufDefinitions)}
     				},
     				cufs : {
     					normal : ${json:marshall(executionCufValues)},

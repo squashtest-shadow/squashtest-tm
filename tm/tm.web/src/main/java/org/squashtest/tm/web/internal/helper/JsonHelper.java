@@ -21,13 +21,21 @@
 package org.squashtest.tm.web.internal.helper;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
 import org.springframework.stereotype.Component;
 
 import javax.inject.Inject;
 import java.io.IOException;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 @Component
 public final class JsonHelper {
@@ -49,6 +57,23 @@ public final class JsonHelper {
 			throw new JsonMarshallerException(e);
 		}
 	}
+        
+        
+        // temporary fix for issue 6305
+        public static String serializeCustomfields(Collection<CustomFieldModel> cufs) throws JsonMarshallerException{
+            	try {
+                    ObjectWriter writer = INSTANCE.objectMapper.writer();
+                    TypeFactory tf = INSTANCE.objectMapper.getTypeFactory();
+                    Type type = ParameterizedTypeImpl.make(Collection.class, new Type[]{CustomFieldModel.class}, null);
+
+                    JavaType zetype = tf.constructType(type);
+                    writer = writer.forType(zetype);
+
+                    return writer.writeValueAsString(cufs);
+		} catch (IOException e) {
+			throw new JsonMarshallerException(e);
+		}
+        }
 
 	public static Map<String, Object> deserialize(String json) throws
 		IOException {
@@ -56,6 +81,7 @@ public final class JsonHelper {
 		};
 		return INSTANCE.objectMapper.readValue(json, typeRef);
 	}
+        
 
 	/**
 	 * alias for {@link #serialize(Object)}

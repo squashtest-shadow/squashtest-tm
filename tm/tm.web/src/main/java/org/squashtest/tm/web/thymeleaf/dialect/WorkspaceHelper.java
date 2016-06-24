@@ -42,7 +42,15 @@ import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
+import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
 
 
 
@@ -106,12 +114,13 @@ public class WorkspaceHelper {
 		return wizardManager.findAllByWorkspace(type);
 	}
 	
+        
+        public String jacksonSerializer(Object toSerialize){
+            return JsonHelper.serialize(toSerialize);
+        }
 	
-	public String jacksonSerializer(Object toSerialize) throws JsonProcessingException{
-		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-		ObjectMapper jackson = wac.getBean(ObjectMapper.class);
-		
-		return jackson.writer().writeValueAsString(toSerialize);
+	public String cufdefSerializer(Collection<CustomFieldModel> toSerialize) throws JsonProcessingException{
+            return JsonHelper.serializeCustomfields(toSerialize);
 	}
 
 
