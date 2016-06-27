@@ -20,13 +20,6 @@
  */
 package org.squashtest.tm.web.internal.helper;
 
-import java.net.URL;
-import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-import javax.servlet.jsp.tagext.SimpleTagSupport;
-
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
@@ -46,11 +39,17 @@ import org.squashtest.tm.web.internal.export.ExportPluginManager;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
+import javax.servlet.ServletContext;
+import javax.servlet.jsp.tagext.SimpleTagSupport;
+import java.net.URL;
+import java.util.Collection;
+import java.util.List;
+
 /**
  * Warning : strongly tied to Spring
- * 
+ *
  * @author bsiri
- * 
+ *
  */
 public class WorkspaceHelper extends SimpleTagSupport {
 
@@ -91,7 +90,7 @@ public class WorkspaceHelper extends SimpleTagSupport {
 	}
 
 
-	public static Collection<WorkspaceWizard> getWizardPlugins(ServletContext context, String workspaceName){
+	public static Collection<WorkspaceWizard> getWizardPlugins(ServletContext context, String workspaceName) {
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(context);
 		WorkspaceWizardManager wizardManager = wac.getBean(WorkspaceWizardManager.class);
 

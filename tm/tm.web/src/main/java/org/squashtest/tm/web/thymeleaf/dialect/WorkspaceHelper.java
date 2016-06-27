@@ -20,43 +20,26 @@
  */
 package org.squashtest.tm.web.thymeleaf.dialect;
 
-import java.util.Collection;
-import java.util.List;
-
-import javax.servlet.ServletContext;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.api.export.ExportPlugin;
 import org.squashtest.tm.api.wizard.WorkspaceWizard;
 import org.squashtest.tm.api.workspace.WorkspaceType;
-import org.squashtest.tm.domain.IdentifiedUtil;
-import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.projectfilter.ProjectFilter;
-import org.squashtest.tm.service.bugtracker.BugTrackerFinderService;
-import org.squashtest.tm.service.project.ProjectFilterModificationService;
-import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.export.ExportPluginManager;
+import org.squashtest.tm.web.internal.helper.JsonHelper;
+import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
 import org.squashtest.tm.web.internal.model.jquery.FilterModel;
 import org.squashtest.tm.web.internal.wizard.WorkspaceWizardManager;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import org.squashtest.tm.web.internal.helper.JsonHelper;
-import org.squashtest.tm.web.internal.model.customfield.CustomFieldModel;
-import sun.reflect.generics.reflectiveObjects.ParameterizedTypeImpl;
-
+import javax.servlet.ServletContext;
+import java.util.Collection;
 
 
 /**
  * Workspace helper, as an expression extension for thymeleaf
- * 
+ *
  * @author bsiri
  *
  */
@@ -64,38 +47,21 @@ public class WorkspaceHelper {
 
 	private final ServletContext servletContext;
 
-	public WorkspaceHelper(final ServletContext servletContext){
+	public WorkspaceHelper(final ServletContext servletContext) {
 		super();
 		this.servletContext = servletContext;
 	}
 
-	public Collection<BugTracker> visibleBugtrackers(){
-
-		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-
-		ProjectFinder projectFinder = wac.getBean(ProjectFinder.class);
-		BugTrackerFinderService bugtrackerService = wac.getBean(BugTrackerFinderService.class);
-
-		List<Project> projects = projectFinder.findAllReadable();
-		List<Long> projectsIds = IdentifiedUtil.extractIds(projects);
-
-		return bugtrackerService.findDistinctBugTrackersForProjects(projectsIds);
-
+	public Collection<BugTracker> visibleBugtrackers() {
+		return org.squashtest.tm.web.internal.helper.WorkspaceHelper.getVisibleBugtrackers(servletContext);
 	}
 
 
-	public FilterModel projectFilter(){
-		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
-		ProjectFilterModificationService service = wac.getBean(ProjectFilterModificationService.class);
-
-		ProjectFilter filter = service.findProjectFilterByUserLogin();
-		List<Project> allProjects = service.getAllProjects();
-
-		return new FilterModel(filter, allProjects);
-
+	public FilterModel projectFilter() {
+		return org.squashtest.tm.web.internal.helper.WorkspaceHelper.getProjectFilter(servletContext);
 	}
 
-	public  Collection<ExportPlugin> exportPlugins(String workspaceName) {
+	public Collection<ExportPlugin> exportPlugins(String workspaceName) {
 
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 		WorkspaceType workspace = WorkspaceType.valueOf(workspaceName);
@@ -105,22 +71,21 @@ public class WorkspaceHelper {
 	}
 
 
-
-	public Collection<WorkspaceWizard> wizardPlugins(String workspaceName){
+	public Collection<WorkspaceWizard> wizardPlugins(String workspaceName) {
 		WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(servletContext);
 		WorkspaceWizardManager wizardManager = wac.getBean(WorkspaceWizardManager.class);
 
 		WorkspaceType type = WorkspaceType.valueOf(workspaceName);
 		return wizardManager.findAllByWorkspace(type);
 	}
-	
-        
-        public String jacksonSerializer(Object toSerialize){
-            return JsonHelper.serialize(toSerialize);
-        }
-	
-	public String cufdefSerializer(Collection<CustomFieldModel> toSerialize) throws JsonProcessingException{
-            return JsonHelper.serializeCustomfields(toSerialize);
+
+
+	public String jacksonSerializer(Object toSerialize) {
+		return JsonHelper.serialize(toSerialize);
+	}
+
+	public String cufdefSerializer(Collection<CustomFieldModel> toSerialize) throws JsonProcessingException {
+		return JsonHelper.serializeCustomfields(toSerialize);
 	}
 
 
