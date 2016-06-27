@@ -57,7 +57,7 @@ public class CampaignSearchInterfaceDescription extends SearchInterfaceDescripti
 				.internationalize("label.reference", locale), TEXTFIELDREFERENCE);
 		panel.addField(referenceField);
 
-		SearchInputFieldModel labelField = new SearchInputFieldModel("label",
+		SearchInputFieldModel labelField = new SearchInputFieldModel("referencedTestCase.name",
 				getMessageSource().internationalize("label.Label", locale), TEXTFIELD);
 		panel.addField(labelField);
 

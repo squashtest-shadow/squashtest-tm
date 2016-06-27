@@ -112,7 +112,10 @@ public class IterationTestPlanItem implements HasExecutionStatus, Identified {
 	@FieldBridge(impl = LevelEnumBridge.class)
 	private ExecutionStatus executionStatus = ExecutionStatus.READY;
 
-	@Field(analyze = Analyze.NO, store = Store.YES)
+        // FIXME it seems this field isn't really used after all
+        // please use getTestCase.getName() instead
+        // better yet, ditch the attribute and column if one day 
+        // we have time for non-essential codebase cleaning ...
 	private String label = "";
 
 	@FieldBridge(impl = UserLoginBridgeAdaptor.class)

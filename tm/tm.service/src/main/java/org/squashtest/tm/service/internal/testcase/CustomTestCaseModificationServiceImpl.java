@@ -167,16 +167,29 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void rename(long testCaseId, String newName) throws DuplicateNameException {
-		testCaseManagementService.renameNode(testCaseId, newName);
+            TestCase testCase = testCaseDao.findById(testCaseId);
+            testCaseManagementService.renameNode(testCaseId, newName);
+            // [Issue 6337] sorry ma, they forced me to
+            reindexItpisReferencingTestCase(testCase);
 	}
 
 	@Override
 	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
 	public void changeReference(long testCaseId, String reference) {
-		TestCase testCase = testCaseDao.findById(testCaseId);
-		testCase.setReference(reference);
-		reindexItpisReferencingTestCase(testCase);
+            TestCase testCase = testCaseDao.findById(testCaseId);
+            testCase.setReference(reference);
+            // [Issue 6337] sorry ma, they forced me to
+            reindexItpisReferencingTestCase(testCase);
 	}
+        
+        @Override
+	@PreAuthorize("hasPermission(#testCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE')" + OR_HAS_ROLE_ADMIN)
+	public void changeImportance(long testCaseId, TestCaseImportance importance){
+            TestCase testCase = testCaseDao.findById(testCaseId);
+            testCase.setImportance(importance);
+            // [Issue 6337] sorry ma, they forced me to
+            reindexItpisReferencingTestCase(testCase);          
+        }
 
 	private void reindexItpisReferencingTestCase(TestCase testCase) {
 		List<IterationTestPlanItem> itpis = iterationTestPlanFinder.findByReferencedTestCase(testCase);

@@ -32,6 +32,7 @@ import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
 import org.squashtest.tm.domain.testcase.ActionTestStep;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.domain.testcase.TestStep;
 import org.squashtest.tm.service.annotation.Id;
 import org.squashtest.tm.service.annotation.PreventConcurrent;
@@ -52,6 +53,8 @@ public interface CustomTestCaseModificationService extends CustomTestCaseFinder 
 	void rename(long testCaseId, String newName);
 
 	void changeReference(long testCaseId, String reference);
+        	
+        void changeImportance(long testCaseId, TestCaseImportance importance);
 
 	@PreventConcurrent(entityType=TestCase.class)
 	ActionTestStep addActionTestStep(@Id long parentTestCaseId, ActionTestStep newTestStep);
