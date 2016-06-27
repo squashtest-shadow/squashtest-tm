@@ -71,7 +71,7 @@
             model="${verifyingTestCaseModel}" 
             requirementVersion="${requirementVersion}" 
             batchRemoveButtonId="none"
-            milestoneConf="${milestoneConf}" droppable="true"/>
+            milestoneConf="${milestoneConf}"/>
         
     <div id="add-summary-dialog" class="not-displayed" title="<f:message key='requirement-version.verifying-test-case.add-summary-dialog.title' />">
       <ul><li>summary message here</li></ul>

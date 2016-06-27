@@ -152,7 +152,7 @@
 
   <div class="std-margin-top">
 
-    <table id="iteration-test-plans-table" class="jstree-drop test-plan-table unstyled-table"
+    <table id="iteration-test-plans-table" class="test-plan-table unstyled-table"
       data-def="ajaxsource=${tableModelUrl}"  data-entity-id="${iteration.id}" data-entity-type="iteration">
       <thead>
         <tr>

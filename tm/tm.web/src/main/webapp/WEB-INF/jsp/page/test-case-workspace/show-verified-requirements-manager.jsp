@@ -150,8 +150,7 @@
         verifiedRequirementsTableUrl="${ verifiedRequirementsUrl }" 
         verifiedRequirementsUrl="${verifiedRequirementsUrl }" 
         containerId="contextual-content"
-        milestoneConf="${milestoneConf}"
-        droppable="true"/>
+        milestoneConf="${milestoneConf}"/>
         
       <div id="add-summary-dialog" class="not-displayed" title="<f:message key='test-case.verified-requirement-version.add-summary-dialog.title' />">
       <ul><li>summary message here</li></ul>

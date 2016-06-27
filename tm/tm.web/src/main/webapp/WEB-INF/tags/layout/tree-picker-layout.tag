@@ -98,7 +98,7 @@ it will insert sub-page-layout.tag between the top template and this one." %>
 					<jsp:invoke fragment="tableTitlePane" />
 				</div>
 				
-				<div id="table-pane" class="fragment-body">
+				<div id="table-pane" class="fragment-body jstree-drop">
 					<jsp:invoke fragment="tablePane" />
 				</div>
 			</div>

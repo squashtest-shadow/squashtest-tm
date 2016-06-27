@@ -32,7 +32,6 @@
 <%@ attribute name="linkable" required="true" description=" boolean that says if the concerned test case is viewed by a user who has LINK rights on this entity" %>
 <%@ attribute name="includeIndirectlyVerified" required="true" description="boolean that says if the table must include indirectly verified requirements" %>
 <%@ attribute name="milestoneConf"  required="true" description="an instance of MilestoneFeatureConfiguration"  type="java.lang.Object"%>
-<%@ attribute name="droppable" required="false" description="can drop tree nodes in the table, default is false"  type="java.lang.Boolean"%>
 
 
 <s:url var="tableLanguageUrl" value="/datatables/messages" />
@@ -76,7 +75,7 @@
 		</script>
 
 
-<table id="verified-requirements-table" class="unstyled-table ${(not empty droppable and droppable) ? 'jstree-drop' : ''}"
+<table id="verified-requirements-table" class="unstyled-table"
 data-def='datakeys-id=entity-id ,ajaxsource=${ verifiedRequirementsTableUrl }'>
 	<thead>
 		<tr>
