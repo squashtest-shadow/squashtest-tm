@@ -38,25 +38,25 @@ class AbstractLibraryNavigationServiceTest extends Specification {
 
 	private AbstractLibraryNavigationService<TestCaseLibrary, TestCaseFolder, TestCaseLibraryNode>	service = new TestCaseLibraryNavigationServiceImpl()
 	private PasteStrategy<TestCaseFolder, TestCaseLibraryNode> pasteToFolderStrategy = Mock()
-	
+
 	def setup(){
 		def provider = Mock(Provider)
 		provider.get() >> pasteToFolderStrategy
 		service.pasteToTestCaseFolderStrategyProvider = provider
 	}
 
-	
+
 	def "should use paste strategy"(){
 		given :
 			Long destinationId = 2l
 			Long[] sourceNodeIds = [1L]
-			
-		when :	
+
+		when :
 		def result = service.copyNodesToFolder(2l, sourceNodeIds)
-	
+
 		then :
 		1*pasteToFolderStrategy.pasteNodes(destinationId, Arrays.asList(sourceNodeIds))
-		
+
 	}
-		
+
 }

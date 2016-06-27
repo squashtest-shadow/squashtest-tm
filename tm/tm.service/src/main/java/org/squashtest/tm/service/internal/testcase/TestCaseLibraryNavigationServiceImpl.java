@@ -152,7 +152,6 @@ public class TestCaseLibraryNavigationServiceImpl
 	@Inject
 	private PathService pathService;
 
-
 	@Inject
 	private MilestoneMembershipManager milestoneService;
 
@@ -630,21 +629,21 @@ public class TestCaseLibraryNavigationServiceImpl
 	}
 
 	/*
-	 * 12/04/16 : about Nature and Type, and ListItemReferences : 
-	 * 	
-	 * cannot use services 
+	 * 12/04/16 : about Nature and Type, and ListItemReferences :
+	 *
+	 * cannot use services
 	 * 	- infoListItemService.isNatureConsistent
-	 * 	- infoListItemService.isTypeConsistent 
+	 * 	- infoListItemService.isTypeConsistent
 	 *  - infoListItemService.findReference
-	 * 
-	 * anymore because this would trigger here an autoflush / persist  
+	 *
+	 * anymore because this would trigger here an autoflush / persist
 	 * before we have a chance to replace the ListItemReference by actual entities
 	 */
 	private void replaceInfoListReferences(TestCase testCase) {
 
 		InfoList projectNatures = testCase.getProject().getTestCaseNatures();
 		InfoList projectTypes = testCase.getProject().getTestCaseTypes();
-		
+
 		InfoListItem nature = testCase.getNature();
 
 		// if no nature set -> use the default item configured for the project
