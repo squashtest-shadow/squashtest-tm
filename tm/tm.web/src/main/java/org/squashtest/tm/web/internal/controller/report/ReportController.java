@@ -151,7 +151,6 @@ public class ReportController {
 	 * @param index
 	 * @param viewIndex
 	 * @param format
-	 * @param data
 	 * @return
 	 * @throws JsonParseException
 	 * @throws JsonMappingException

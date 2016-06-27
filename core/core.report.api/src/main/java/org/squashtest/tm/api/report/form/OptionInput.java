@@ -81,6 +81,10 @@ public class OptionInput extends Labelled {
 		return name;
 	}
 
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	/**
 	 * @param defaultChecked
 	 *            the defaultChecked to set
@@ -103,7 +107,5 @@ public class OptionInput extends Labelled {
 	public void setDisabledBy(String disabledBy) {
 		this.disabledBy = disabledBy;
 	}
-
-
 
 }

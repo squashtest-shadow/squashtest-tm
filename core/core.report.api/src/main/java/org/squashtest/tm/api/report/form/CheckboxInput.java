@@ -22,9 +22,10 @@ package org.squashtest.tm.api.report.form;
 
 /**
  * @author Gregory
- * 
+ *
  */
-public class CheckboxInput extends BasicInput {
+public class CheckboxInput extends OptionInput implements Input {
+
 	/**
 	 * @see org.squashtest.tm.api.report.form.Input#getType()
 	 */
