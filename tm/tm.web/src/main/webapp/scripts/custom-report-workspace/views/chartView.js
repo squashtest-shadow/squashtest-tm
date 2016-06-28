@@ -18,8 +18,8 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dateutils", 
-        "workspace.projects", "workspace.routing", "../charts/chartFactory"],
+define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dateutils",
+		"workspace.projects", "workspace.routing", "../charts/chartFactory"],
 	function (_, Backbone, translator, Handlebars, dateutils, projects, urlBuilder, chartFactory) {
 		"use strict";
 
@@ -57,7 +57,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				"click #refresh-btn": "refresh",
 				"click #modify-chart-button": "modifyChart",
 				"click #rename-chart-button": "rename",
-        		"click #export-chart-button": "export"
+				"click #export-chart-button": "export"
 			},
 
 			render: function () {
@@ -76,13 +76,13 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 						});
 
 					}).then(function (json) {
-						self.setBaseModelAttributes(json);
-						self.loadI18n();
-						self.setPerimeterMessage(json);
-						self.template();
-						self.activeChart = chartFactory.buildChart("#chart-display-area", json, self.getVueConf(), self.model.get("entityOperation"));
-						$(window).bind('resize.chart', self.redraw);
-					});
+					self.setBaseModelAttributes(json);
+					self.loadI18n();
+					self.setPerimeterMessage(json);
+					self.template();
+					self.activeChart = chartFactory.buildChart("#chart-display-area", json, self.getVueConf(), self.model.get("entityOperation"));
+					$(window).bind('resize.chart', self.redraw);
+				});
 			},
 
 			refresh: function () {
@@ -94,33 +94,34 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 			 * Set a boolean in model so Handlebar can handle fancy specification rules on perimeter
 			 */
 			setPerimeterMessage: function (json) {
-                            var projectScope = json.projectScope,
-                                scope = json.scope;
-                            
-                            // extract the type of perimeter
-                            var extractor = new RegExp('(PROJECT|TEST_CASE|REQUIREMENT|CAMPAIGN)');
-                            var etype = extractor.exec(scope[0].entityType)[0],
-                                entityNames = translator.get('wizard.perimeter.'+etype);
-                            
-                            // now build the message                            
-                            var msg = "";
-                            
-                            // type 1 : the default perimeter                            
-                            if (etype === "PROJECT"){
-                                var projectName = projects.findProject(projectScope[0]).name;
-                                msg = translator.get('label.project').toLowerCase()+" "+projectName; 
-                            }
-                            // type 2 : custom perimeter with all nodes from the same project
-                            else if (projectScope.length === 1){
-                                var projectName = projects.findProject(projectScope[0]).name;
-                                msg = translator.get('wizard.perimeter.msg.custom.singleproject', entityNames, projectName);
-                            } 
-                            // type 3 : multiple selection from multiple projects
-                            else {
-                                msg = translator.get('wizard.perimeter.msg.custom.multiproject', entityNames);
-                            }
-                            
-                            this.model.set('perimeterMessage', msg);
+				var projectScope = json.projectScope,
+					scope = json.scope;
+
+				// extract the type of perimeter
+				var extractor = new RegExp('(PROJECT|TEST_CASE|REQUIREMENT|CAMPAIGN)');
+				var etype = extractor.exec(scope[0].entityType)[0],
+					entityNames = translator.get('wizard.perimeter.' + etype);
+
+				// now build the message
+				var msg = "";
+				var projectName;
+
+				// type 1 : the default perimeter
+				if (etype === "PROJECT") {
+					projectName = projects.findProject(projectScope[0]).name;
+					msg = translator.get('label.project').toLowerCase() + " " + projectName;
+				}
+				// type 2 : custom perimeter with all nodes from the same project
+				else if (projectScope.length === 1) {
+					projectName = projects.findProject(projectScope[0]).name;
+					msg = translator.get('wizard.perimeter.msg.custom.singleproject', entityNames, projectName);
+				}
+				// type 3 : multiple selection from multiple projects
+				else {
+					msg = translator.get('wizard.perimeter.msg.custom.multiproject', entityNames);
+				}
+
+				this.model.set('perimeterMessage', msg);
 			},
 
 			initListenerOnWindowResize: function () {
@@ -356,7 +357,7 @@ define(["underscore", "backbone", "squash.translator", "handlebars", "squash.dat
 				wreqr.trigger("renameNode");
 			},
 
-			export : function () {
+			export: function () {
 				var wreqr = squashtm.app.wreqr;
 				wreqr.trigger("exportChart");
 			},
