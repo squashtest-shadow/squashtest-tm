@@ -1747,6 +1747,7 @@ height: 16px;
 }
 .test-case-status-UNDER_REVIEW{
 background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
+background-position : -153px -0px ;
 width: 24px;
 height: 16px;
 }
@@ -1759,6 +1760,7 @@ height: 16px;
 }
 .test-case-status-OBSOLETE{
 background-image: url("../images/Icon_Tree_TestCase_map.png");  /* @meta {"sprite": {"skip": true}} */
+background-position : -201px -0px ;
 width: 24px;
 height: 16px;
 }
