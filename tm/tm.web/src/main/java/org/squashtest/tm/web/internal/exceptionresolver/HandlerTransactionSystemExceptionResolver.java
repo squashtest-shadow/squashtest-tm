@@ -66,6 +66,11 @@ public class HandlerTransactionSystemExceptionResolver extends AbstractHandlerEx
 	}
 
 	private boolean exceptionIsHandled(Exception ex) {
-		return ex.getCause().getCause() instanceof ConstraintViolationException;
+		Throwable rootCause = ex.getCause() != null && ex.getCause().getCause() != null ? ex.getCause().getCause() : null;
+		if (rootCause == null) {
+			return false;
+		}
+
+		return rootCause instanceof ConstraintViolationException;
 	}
 }
