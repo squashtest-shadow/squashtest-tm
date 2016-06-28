@@ -98,6 +98,8 @@ import org.squashtest.tm.service.testcase.TestCaseImportanceManagerService;
 import org.squashtest.tm.service.testcase.TestCaseLibraryNavigationService;
 
 import com.google.common.base.Optional;
+import java.util.LinkedList;
+import java.util.Queue;
 
 /**
  * @author Gregory Fouquet
@@ -634,7 +636,7 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			milestoneIds.add(activeMilestone.get().getId());
 		}
 
-
+                // copy the core attributes
 		TestCase orig = testCaseDao.findById(originalTcId);
 		TestCase newTC = orig.createCopy();
 
@@ -653,7 +655,17 @@ public class CustomTestCaseModificationServiceImpl implements CustomTestCaseModi
 			libraryService.addTestCaseToFolder(folder.getId(), newTC, null);
 		}
 
-		customFieldValuesService.copyCustomFieldValues(orig, newTC);
+                // copy custom fields
+		customFieldValuesService.copyCustomFieldValuesContent(orig, newTC);
+                Queue<ActionTestStep> origSteps = new LinkedList<>(orig.getActionSteps());
+                Queue<ActionTestStep> newSteps = new LinkedList<>(newTC.getActionSteps());
+                while(! origSteps.isEmpty()){
+                    ActionTestStep oStep = origSteps.remove();
+                    ActionTestStep nStep = newSteps.remove();
+                    customFieldValuesService.copyCustomFieldValuesContent(oStep, nStep);
+                }
+                
+                // manage the milestones
 		milestoneService.bindTestCaseToMilestones(newTC.getId(), milestoneIds);
 		milestoneService.unbindTestCaseFromMilestones(originalTcId, milestoneIds);
 
