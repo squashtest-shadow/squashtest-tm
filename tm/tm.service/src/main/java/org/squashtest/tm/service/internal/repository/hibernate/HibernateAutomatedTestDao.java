@@ -26,13 +26,12 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.testautomation.AutomatedExecutionExtender;
 import org.squashtest.tm.domain.testautomation.AutomatedTest;
@@ -56,7 +55,7 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return persisted;
 		}
 		else{
-			em.unwrap(Session.class).persist(newTest);
+			em.persist(newTest);
 			return newTest;
 		}
 	}
@@ -88,16 +87,15 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Override
 	public void pruneOrphans(){
-		Session session = em.unwrap(Session.class);
 
-		Collection<AutomatedTest> orphans = session.getNamedQuery("automatedTest.findOrphans").list();
+		Collection<AutomatedTest> orphans = em.createNamedQuery("automatedTest.findOrphans").getResultList();
 
 		if (orphans.isEmpty()){
 			return;
 		}
 
-		Query q = session.getNamedQuery("automatedTest.bulkDelete");
-		q.setParameterList("tests", orphans);
+		Query q = em.createNamedQuery("automatedTest.bulkDelete");
+		q.setParameter("tests", orphans);
 		q.executeUpdate();
 
 	}
@@ -105,15 +103,14 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 
 	@Override
 	public long countReferences(long testId) {
-		Session session = em.unwrap(Session.class);
 
-		Query qCountTC = session.getNamedQuery("automatedTest.countReferencesByTestCases");
+		Query qCountTC = em.createNamedQuery("automatedTest.countReferencesByTestCases");
 		qCountTC.setParameter("autoTestId", testId);
-		long countTC = (Long)qCountTC.uniqueResult();
+		long countTC = (Long)qCountTC.getSingleResult();
 
-		Query qCountExt = session.getNamedQuery("automatedTest.countReferencesByExecutions");
+		Query qCountExt = em.createNamedQuery("automatedTest.countReferencesByExecutions");
 		qCountExt.setParameter("autoTestId", testId);
-		long countExt = (Long)qCountExt.uniqueResult();
+		long countExt = (Long)qCountExt.getSingleResult();
 
 		return countTC + countExt;
 	}
@@ -131,9 +128,9 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return Collections.emptyList();
 		}
 
-		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findByTestCase");
+		Query query = em.createNamedQuery("automatedTest.findByTestCase");
 		query.setParameter("testCaseIds", testCaseIds);
-		return query.list();
+		return query.getResultList();
 	}
 
 	@Override
@@ -161,9 +158,9 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return Collections.emptyList();
 		}
 
-		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findAllByExtenderIds");
-		query.setParameterList("extenderIds", extenderIds, LongType.INSTANCE);
-		return query.list();
+		Query query = em.createNamedQuery("automatedTest.findAllByExtenderIds");
+		query.setParameter("extenderIds", extenderIds);
+		return query.getResultList();
 
 	}
 
@@ -174,9 +171,9 @@ public class HibernateAutomatedTestDao implements AutomatedTestDao {
 			return Collections.emptyList();
 		}
 
-		Query query = em.unwrap(Session.class).getNamedQuery("automatedTest.findAllByExtenders");
-		query.setParameterList("extenders", extenders);
-		return query.list();
+		Query query = em.createNamedQuery("automatedTest.findAllByExtenders");
+		query.setParameter("extenders", extenders);
+		return query.getResultList();
 
 	}
 

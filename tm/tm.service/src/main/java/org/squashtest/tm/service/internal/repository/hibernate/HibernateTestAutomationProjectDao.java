@@ -111,10 +111,10 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 		if (! projectIds.isEmpty()){
 			dereferenceAutomatedExecutionExtender(projectIds);
 			dereferenceTestCases(projectIds);
-			em.unwrap(Session.class).flush();
+			em.flush();
 			deleteAutomatedTests(projectIds);
 			deleteTestAutomationProjects(projectIds);
-			em.unwrap(Session.class).flush();
+			em.flush();
 		}
 	}
 
