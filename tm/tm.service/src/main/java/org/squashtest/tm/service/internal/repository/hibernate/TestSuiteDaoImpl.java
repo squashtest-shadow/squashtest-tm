@@ -154,6 +154,7 @@ public class TestSuiteDaoImpl extends HibernateEntityDao<TestSuite> implements C
 				if (clause == null) {
 					clause = clausesByValues.get(VDFC_DEFAULT_KEY);
 				}
+				hqlbuilder.append(clause);
 			}
 		}
 
