@@ -20,21 +20,18 @@
  */
 package org.squashtest.tm.service.testautomation
 
-import javax.inject.Inject
-
-import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
+import org.springframework.orm.jpa.JpaSystemException
 import org.springframework.transaction.annotation.Transactional
+import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.project.GenericProject
 import org.squashtest.tm.domain.testautomation.TestAutomationProject
 import org.squashtest.tm.domain.testautomation.TestAutomationServer
-import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.unitils.dbunit.annotation.DataSet
-import org.squashtest.tm.service.testautomation.TestAutomationProjectManagerService
-
-import spock.lang.Specification
 import spock.unitils.UnitilsSupport
+
+import javax.inject.Inject
 
 @NotThreadSafe
 @UnitilsSupport
@@ -89,11 +86,11 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 
 		when :
 		service.persist(project)
-		session.flush()
+		em.flush()
 
 
 		then :
-		thrown ConstraintViolationException
+		thrown JpaSystemException
 	}
 
 
