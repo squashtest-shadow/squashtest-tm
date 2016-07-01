@@ -20,9 +20,8 @@
  */
 package org.squashtest.tm.service.statistics.campaign
 import javax.persistence.EntityManager
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.squashtest.tm.service.internal.campaign.CampaignStatisticsServiceImpl;
 import static org.squashtest.tm.domain.execution.ExecutionStatus.*;
 import spock.lang.Specification
@@ -32,9 +31,6 @@ class CampaignStatisticsServiceImplTest extends Specification {
 
 	CampaignStatisticsServiceImpl service = new CampaignStatisticsServiceImpl()
 	EntityManager em = Mock()
-
-	def sessionMocks = []
-
 
 	def setup(){
 		service.em = em
@@ -56,8 +52,6 @@ class CampaignStatisticsServiceImplTest extends Specification {
 			[3l, "robert", SUCCESS, 8l] as Object[]
 		])
 
-		em.unwrap(_) >>> sessionMocks
-
 		when :
 		List<IterationTestInventoryStatistics> res = service.gatherCampaignTestInventoryStatistics([1l])
 
@@ -77,12 +71,8 @@ class CampaignStatisticsServiceImplTest extends Specification {
 
 
 	def addMockQuery(result){
-		Session session = Mock()
 		Query q = Mock()
-
-		q.list() >> result
-		session.getNamedQuery(_) >> q
-
-		sessionMocks << session
+		em.createNamedQuery(_) >> q
+		q.getResultList() >> result
 	}
 }

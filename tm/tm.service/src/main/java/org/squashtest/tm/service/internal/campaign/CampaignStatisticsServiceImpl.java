@@ -33,10 +33,8 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.type.LongType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -238,17 +236,15 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		CampaignProgressionStatistics progression = new CampaignProgressionStatistics();
 
-		Session session = em.unwrap(Session.class);
-
-		Query query = session.getNamedQuery("CampaignStatistics.findScheduledIterations");
-		query.setParameter("id", campaignId, LongType.INSTANCE);
-		List<ScheduledIteration> scheduledIterations = query.list();
+		Query query = em.createNamedQuery("CampaignStatistics.findScheduledIterations");
+		query.setParameter("id", campaignId);
+		List<ScheduledIteration> scheduledIterations = query.getResultList();
 
 		//TODO : have the db do the job for me
-		Query requery = session.getNamedQuery("CampaignStatistics.findExecutionsHistory");
-		requery.setParameter("id", campaignId, LongType.INSTANCE);
-		requery.setParameterList("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
-		List<Date> executionHistory = requery.list();
+		Query requery = em.createNamedQuery("CampaignStatistics.findExecutionsHistory");
+		requery.setParameter("id", campaignId);
+		requery.setParameter("nonterminalStatuses", ExecutionStatus.getNonTerminatedStatusSet());
+		List<Date> executionHistory = requery.getResultList();
 
 		try{
 
@@ -277,11 +273,9 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherCampaignTestInventoryStatistics(long campaignId) {
 
-		Query query = em.unwrap(Session.class).getNamedQuery("CampaignStatistics.testinventory");
+		Query query = em.createNamedQuery("CampaignStatistics.testinventory");
 		query.setParameter("id", campaignId);
-		List<Object[]> tuples = query.list();
-
-
+		List<Object[]> tuples = query.getResultList();
 		return processIterationTestInventory(tuples);
 	}
 
@@ -292,11 +286,11 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 	@Override
 	@PreAuthorize(PERM_CAN_READ_CAMPAIGN + OR_HAS_ROLE_ADMIN)
 	public List<IterationTestInventoryStatistics> gatherMilestoneTestInventoryStatistics() {
-		Query query = em.unwrap(Session.class).getNamedQuery("CampaignStatistics.testinventorybymilestone");
+		Query query = em.createNamedQuery("CampaignStatistics.testinventorybymilestone");
 		Optional<Milestone> activeMilestone = activeMilestoneHolder.getActiveMilestone();
 		Long milestoneId = activeMilestone.get().getId();
 		query.setParameter("id", milestoneId);
-		List<Object[]> tuples = query.list();
+		List<Object[]> tuples = query.getResultList();
 
 		return processIterationTestInventory(tuples);
 	}
@@ -310,9 +304,9 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 
 		List<Object[]> tuples = Collections.emptyList();
 		if (!campaignIds.isEmpty()) {
-		Query query = em.unwrap(Session.class).getNamedQuery("CampaignFolderStatistics.testinventory");
-		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
-			tuples = query.list();
+		Query query = em.createNamedQuery("CampaignFolderStatistics.testinventory");
+		query.setParameter("campaignIds", campaignIds);
+			tuples = query.getResultList();
 		}
 		return processCampaignTestInventory(tuples);
 	}
@@ -333,9 +327,9 @@ public class CampaignStatisticsServiceImpl implements CampaignStatisticsService{
 		List<Object[]> res = Collections.emptyList();
 
 		if (!campaignIds.isEmpty()) {
-		Query query = em.unwrap(Session.class).getNamedQuery(queryName);
-		query.setParameterList("campaignIds", campaignIds, LongType.INSTANCE);
-			res = query.list();
+		Query query = em.createNamedQuery(queryName);
+		query.setParameter("campaignIds", campaignIds);
+			res = query.getResultList();
 		}
 
 		return res;

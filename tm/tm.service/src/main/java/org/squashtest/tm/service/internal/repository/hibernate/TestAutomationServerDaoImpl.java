@@ -53,9 +53,9 @@ public class TestAutomationServerDaoImpl implements CustomTestAutomationServerDa
         @Override
 	public void deleteServer(long serverId) {
 		dereferenceProjects(serverId);
-		em.unwrap(Session.class).flush();
+		em.flush();
 		deleteServerById(serverId);
-		em.unwrap(Session.class).flush();
+		em.flush();
 	}
 
 	// ***************** private stuffs ***************
