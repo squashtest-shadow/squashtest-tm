@@ -135,9 +135,8 @@ public class CustomReportLibraryNodeServiceImpl implements
 		}
 		CustomReportLibraryNode newNode = new CustomReportLibraryNodeBuilder(parentNode, entity).build();
 		customReportLibraryNodeDao.save(newNode);
-		Session session = em.unwrap(Session.class);
-		session.flush();
-		session.clear();//needed to force hibernate to reload the persisted entities...
+		em.flush();
+		em.clear();//needed to force hibernate to reload the persisted entities...
 		return customReportLibraryNodeDao.findOne(newNode.getId());
 	}
 
