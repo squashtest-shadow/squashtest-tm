@@ -51,7 +51,7 @@
     <!--
       This POM should only declare plugin mgt and plugins.
       It should not declare dependency mgt (they should be in squash-tm-bom)
-      It should not declare dependencies
+      It should not declare dependencies 
     -->
     <pluginManagement>
       <plugins>
