@@ -47,7 +47,7 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	 */
 	@Override
 	public void persist(TestAutomationProject newProject) {
-		em.unwrap(Session.class).persist(newProject);
+		em.persist(newProject);
 	}
 
 	/**

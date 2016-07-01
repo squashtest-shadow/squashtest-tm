@@ -28,9 +28,9 @@ import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+
 import org.hibernate.type.LongType;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.service.internal.repository.CustomDatasetDao;
@@ -44,10 +44,9 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Dataset> findOwnDatasetsByTestCase(Long testCaseId) {
-
-		Query query = em.unwrap(Session.class).getNamedQuery("Dataset.findOwnDatasetsByTestCase");
+		Query query = em.createNamedQuery("Dataset.findOwnDatasetsByTestCase");
 		query.setParameter("testCaseId", testCaseId);
-		return query.list();
+		return query.getResultList();
 	}
 
 
@@ -56,9 +55,9 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 	@Override
 	public List<Dataset> findOwnDatasetsByTestCases(List<Long> testCaseIds) {
 		if (!testCaseIds.isEmpty()) {
-			Query query = em.unwrap(Session.class).getNamedQuery("Dataset.findOwnDatasetsByTestCases");
-			query.setParameterList("testCaseIds", testCaseIds);
-			return query.list();
+			Query query = em.createNamedQuery("Dataset.findOwnDatasetsByTestCases");
+			query.setParameter("testCaseIds", testCaseIds);
+			return query.getResultList();
 		} else {
 			return Collections.emptyList();
 		}
@@ -68,10 +67,10 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 	@Override
 	public List<Dataset> findImmediateDelegateDatasets(Long testCaseId) {
 
-		Query q = em.unwrap(Session.class).getNamedQuery("Dataset.findTestCasesThatInheritParameters");
+		Query q = em.createNamedQuery("Dataset.findTestCasesThatInheritParameters");
 		q.setParameter("srcIds", LongType.INSTANCE);
 
-		List<Long> tcids = q.list();
+		List<Long> tcids = q.getResultList();
 
 		return findOwnDatasetsByTestCases(tcids);
 	}
@@ -84,14 +83,14 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 		List<Long> srcTc = new LinkedList<>();
 		List<Long> destTc;
 
-		Query next = em.unwrap(Session.class).getNamedQuery("dataset.findTestCasesThatInheritParameters");
+		Query next = em.createNamedQuery("dataset.findTestCasesThatInheritParameters");
 
 		srcTc.add(testCaseId);
 
 		while(! srcTc.isEmpty()){
 
-			next.setParameterList("srcIds", srcTc, LongType.INSTANCE);
-			destTc = next.list();
+			next.setParameter("srcIds", srcTc);
+			destTc = next.getResultList();
 
 			if (! destTc.isEmpty()){
 				allDatasets.addAll( findOwnDatasetsByTestCases(destTc) );
@@ -118,11 +117,11 @@ public class DatasetDaoImpl extends HibernateEntityDao<Dataset> implements Custo
 
 	@Override
 	public void removeDatasetFromTestPlanItems(Long datasetId) {
-		Query query = em.unwrap(Session.class).getNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
+		Query query = em.createNamedQuery("dataset.removeDatasetFromItsIterationTestPlanItems");
 		query.setParameter("datasetId", datasetId);
 		query.executeUpdate();
 
-		Query query2 = em.unwrap(Session.class).getNamedQuery("dataset.removeDatasetFromItsCampaignTestPlanItems");
+		Query query2 = em.createNamedQuery("dataset.removeDatasetFromItsCampaignTestPlanItems");
 		query2.setParameter("datasetId", datasetId);
 		query2.executeUpdate();
 	}
