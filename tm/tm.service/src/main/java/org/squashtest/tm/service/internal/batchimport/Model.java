@@ -37,11 +37,11 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.type.LongType;
 import org.slf4j.Logger;
@@ -563,12 +563,12 @@ public class Model {
 		}
 
 
-		Query q = getCurrentSession().getNamedQuery(
+		Query q = em.createNamedQuery(
 			"testStep.findIdByTestCaseAndPosition");
 		q.setParameter(":tcId", tcId);
 		q.setParameter("position", index);
 
-		return (Long) q.uniqueResult();
+		return (Long) q.getSingleResult();
 
 	}
 
@@ -586,12 +586,12 @@ public class Model {
 			return null;
 		}
 
-		Query q = getCurrentSession().getNamedQuery(
-			"testStep.findByTestCaseAndPosition");
-		q.setParameter("tcId", tcId);
-		q.setParameter("position", index);
+		Query query = em.createNamedQuery("testStep.findByTestCaseAndPosition");
 
-		return (TestStep) q.uniqueResult();
+		query.setParameter("tcId", tcId);
+		query.setParameter("position", index);
+
+		return (TestStep) query.getSingleResult();
 
 	}
 
@@ -1251,19 +1251,19 @@ public class Model {
 	@SuppressWarnings("unchecked")
 	private List<Project> loadProjects(List<String> names) {
 		List <String> unescapedNames = PathUtils.unescapePathPartSlashes(names);
-		Query q = getCurrentSession().getNamedQuery(
+		Query q = em.createNamedQuery(
 			"Project.findAllByName");
-		q.setParameterList("names", unescapedNames);
-		return q.list();
+		q.setParameter("names", unescapedNames);
+		return q.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
 	private List<InternalStepModel> loadStepsModel(Long tcId) {
-		Query query = getCurrentSession().getNamedQuery(
+		Query query = em.createNamedQuery(
 			"testStep.findBasicInfosByTcId");
-		query.setParameter("tcId", tcId, LongType.INSTANCE);
+		query.setParameter("tcId", tcId);
 
-		List<Object[]> stepdata = query.list();
+		List<Object[]> stepdata = query.getResultList();
 
 		List<InternalStepModel> steps = new ArrayList<>(
 			stepdata.size());
@@ -1311,10 +1311,6 @@ public class Model {
 			currentNode.setKey(new NamedReference(id, path));
 		}
 
-	}
-
-	private Session getCurrentSession(){
-		return em.unwrap(Session.class);
 	}
 
 	// ************************ internal types for TestCase Management

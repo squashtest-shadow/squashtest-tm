@@ -20,8 +20,6 @@
  */
 package org.squashtest.tm.service.internal.batchimport
 
-import org.hibernate.Query
-import org.hibernate.Session
 import org.squashtest.tm.domain.NamedReference
 import org.squashtest.tm.domain.customfield.BindableEntity
 import org.squashtest.tm.domain.customfield.CustomField
@@ -39,6 +37,7 @@ import org.squashtest.tm.service.testcase.TestCaseLibraryFinderService
 import spock.lang.Specification
 
 import javax.persistence.EntityManager
+import javax.persistence.Query
 
 import static org.squashtest.tm.service.internal.batchimport.Existence.*
 
@@ -668,11 +667,8 @@ public class ModelTest extends Specification{
 
 	def mockSessionQuery(queryResults){
 		Query q = Mock(Query)
-		Session s = Mock(Session)
-
-		q.list() >> queryResults
-		s.getNamedQuery(_) >> q
-		em.unwrap(_) >> s
+		em.createNamedQuery(_) >> q
+		q.getResultList() >> queryResults
 	}
 
 	def targets(String... paths){
