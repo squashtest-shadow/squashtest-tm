@@ -25,9 +25,9 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.Example;
 import org.hibernate.criterion.Restrictions;
@@ -79,10 +79,9 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	}
 	@Override
 	public Collection<Long> findAllByTMProject(long tmProjectId) {
-		Session session = em.unwrap(Session.class);
-		Query query = session.getNamedQuery("testAutomationProject.findAllByTMPRoject");
+		Query query = em.createNamedQuery("testAutomationProject.findAllByTMPRoject");
 		query.setParameter("tmProjectId", tmProjectId);
-		return query.list();
+		return query.getResultList();
 	}
 
 
@@ -98,9 +97,9 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 			return false;
 		}
 
-		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationProject.haveExecutedTestsByIds");
-		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
-		int count = ((Long) q.iterate().next()).intValue();
+		Query q = em.createNamedQuery("testAutomationProject.haveExecutedTestsByIds");
+		q.setParameter(ParameterNames.PROJECT_IDS, projectIds);
+		Long count = (Long) q.getSingleResult();
 		return count > 0;
 	}
 
@@ -134,10 +133,9 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<TestAutomationProject> findAllHostedProjects(long serverId) {
-		Session session = em.unwrap(Session.class);
-		Query query = session.getNamedQuery("testAutomationServer.findAllHostedProjects");
+		Query query = em.createNamedQuery("testAutomationServer.findAllHostedProjects");
 		query.setParameter(ParameterNames.SERVER_ID, serverId);
-		return query.list();
+		return query.getResultList();
 	}
 
 	/**
@@ -146,35 +144,35 @@ public class HibernateTestAutomationProjectDao implements TestAutomationProjectD
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<Long> findHostedProjectIds(long serverId) {
-		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationProject.findHostedProjectIds");
+		Query q = em.createNamedQuery("testAutomationProject.findHostedProjectIds");
 		q.setParameter(ParameterNames.SERVER_ID, serverId);
-		return q.list();
+		return q.getResultList();
 	}
 
 	// ************************ private stuffs **********************************
 
 	private void dereferenceAutomatedExecutionExtender(Collection<Long> projectIds) {
-		Query q = em.unwrap(Session.class).getNamedQuery(
+		Query q = em.createNamedQuery(
 				"testAutomationProject.dereferenceAutomatedExecutionExtender");
-		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
+		q.setParameter(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
 	private void dereferenceTestCases(Collection<Long> projectIds) {
-		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationProject.dereferenceTestCases");
-		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
+		Query q = em.createNamedQuery("testAutomationProject.dereferenceTestCases");
+		q.setParameter(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
 	private void deleteAutomatedTests(Collection<Long> projectIds) {
-		Query q = em.unwrap(Session.class).getNamedQuery("testAutomationProject.deleteAutomatedTests");
-		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
+		Query q = em.createNamedQuery("testAutomationProject.deleteAutomatedTests");
+		q.setParameter(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
 	private void deleteTestAutomationProjects(Collection<Long> projectIds) {
-		Query q = em.unwrap(Session.class).getNamedQuery("testAutmationProject.delete");
-		q.setParameterList(ParameterNames.PROJECT_IDS, projectIds);
+		Query q = em.createNamedQuery("testAutmationProject.delete");
+		q.setParameter(ParameterNames.PROJECT_IDS, projectIds);
 		q.executeUpdate();
 	}
 
