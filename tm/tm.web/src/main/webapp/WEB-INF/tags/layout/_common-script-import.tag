@@ -35,14 +35,8 @@ require.baseUrl = "${pageContext.servletContext.contextPath}/scripts";
 	squashtm.app = {
 		contextRoot: "${pageContext.servletContext.contextPath}",
 		locale : "<f:message key='squashtm.locale'/>",
-		ckeditorLanguage: "<f:message key='rich-edit.language.value' />",
-		menuBarConf: {
-    	}, 
-    	notificationConf: {
-  			infoTitle: "<f:message key='popup.title.info' />", 
-  			errorTitle: "<f:message key='popup.title.error' />"
-  		}
-	};
+		ckeditorLanguage: "<f:message key='rich-edit.language.value' />"
+    	};
 	
 <lay:_common-lang/>
 	

@@ -22,10 +22,11 @@
  * COntroller for the login page
  */
 require([ "common" ], function() {
-	require([ "jquery", "app/pubsub", "app/ws/squashtm.notification", "jqueryui", "jquery.squash.squashbutton" ],
-			function($, ps, WTF) {
+	require([ "jquery", "app/pubsub", "app/ws/squashtm.notification", "app/ws/squashtm.ajaxspinner", "jqueryui", "jquery.squash.squashbutton" ],
+			function($, ps, notification, spinner) {
 				ps.subscribe("load.notification", function() {
-					WTF.init(squashtm.app.notificationConf);
+                                        spinner.init();
+					notification.init();
 				});
 
 				ps.subscribe("load.loginForm", function() {

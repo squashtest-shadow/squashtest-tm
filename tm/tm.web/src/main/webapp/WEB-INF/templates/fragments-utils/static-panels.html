@@ -32,6 +32,7 @@
   3/ custom-please-wait : same than large please wait but with some customization. Accepts as argument height : string, represents the height (don't forget the unit).
   4/ warning-pane : will render some text as it would in the generic-warning-dialog. Accepts as argument txtcontent : string, the text to display in  
   5/ error-pane   : will render some text as it would in the generic-error-dialog. Accepts as argument txtcontent : string, the text to display in  
+  6/ info-pane! will render some text as it would be in the generic-info-dialog. Accepts as argument txtcontent : string, the text to display in
  -->
 
 </div>
@@ -67,5 +68,14 @@
           <div class="generic-error-signal"></div>
         </div>               
       <div class="generic-error-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
+    </div>
+</div> 
+
+<div th:fragment="info-pane">
+   <div class="display-table-row">
+        <div class="display-table-cell warning-cell">
+          <div class="generic-info-signal"></div>
+        </div>               
+      <div class="generic-info-main display-table-cell" style="padding-top:20px" th:text="${txtcontent}"></div>
     </div>
 </div> 

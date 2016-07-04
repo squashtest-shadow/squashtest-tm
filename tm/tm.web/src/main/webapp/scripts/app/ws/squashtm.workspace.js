@@ -19,13 +19,14 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "app/pubsub", "app/ws/squashtm.navbar", "project-filter/ProjectFilter",
-		"app/ws/squashtm.notification", "squash.session-pinger", "workspace.breadcrumb" ], 
-		function($, ps, NavBar, ProjectFilter, WTF, SSP) {
+		"app/ws/squashtm.notification", "app/ws/squashtm.ajaxspinner", "squash.session-pinger", "workspace.breadcrumb" ], 
+		function($, ps, NavBar, ProjectFilter, notification, spinner, SSP) {
 
 	ps.subscribe("load.navBar", NavBar.init);
 	ps.subscribe("load.projectFilter", ProjectFilter.init);
 	ps.subscribe("load.notification", function() {
-		WTF.init(squashtm.app.notificationConf);
+            spinner.init();
+            notification.init();
 	});
 
 	/* session ping */

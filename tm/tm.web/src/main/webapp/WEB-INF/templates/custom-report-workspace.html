@@ -41,36 +41,31 @@
     	var pathname = window.location.pathname;
     	squashtm.app = {
     		locale : /*[[#{squashtm.locale}]]*/ 'fr',
-    	  contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
-			  menuBarConf: {
-	    	},
-	    	notificationConf: {
-    			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info',
-    			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
-    		},
-    		customReportWorkspaceConf : {
-          tree : {
-            model : /*[[${ rootModel }]]*/ '',
-            workspace : "custom-report",
-            treeselector : "#tree",
-            selectedNode : /*[[${selectedNode}]]*/[]
-          },
-          treemenu: {
-              wizards: /*[[${ wizards }]]*/ '',
-          },
-          toggleWS : {
-            expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
-            collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
-            workspace : pathname
-          },
-          activeMilestone : /*[[${activeMilestone}]]*/{}
-			},
-			defaultInfoList : /*[[${defaultInfoLists}]]*/{},
-			testCaseImportance : /*[[${testCaseImportance}]]*/{},
-			testCaseStatus : /*[[${testCaseStatus}]]*/{},
-			requirementStatus : /*[[${requirementStatus}]]*/{},
-			requirementCriticality : /*[[${requirementCriticality}]]*/{},
-			executionStatus : /*[[${executionStatus}]]*/{}
+                contextRoot : /*[[ @{/} ]]*/"http://localhost:8080/squash",
+			
+            customReportWorkspaceConf : {
+                  tree : {
+                    model : /*[[${ rootModel }]]*/ '',
+                    workspace : "custom-report",
+                    treeselector : "#tree",
+                    selectedNode : /*[[${selectedNode}]]*/[]
+                  },
+                  treemenu: {
+                      wizards: /*[[${ wizards }]]*/ '',
+                  },
+                  toggleWS : {
+                    expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+                    collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<',
+                    workspace : pathname
+                  },
+                  activeMilestone : /*[[${activeMilestone}]]*/{}
+            },
+            defaultInfoList : /*[[${defaultInfoLists}]]*/{},
+            testCaseImportance : /*[[${testCaseImportance}]]*/{},
+            testCaseStatus : /*[[${testCaseStatus}]]*/{},
+            requirementStatus : /*[[${requirementStatus}]]*/{},
+            requirementCriticality : /*[[${requirementCriticality}]]*/{},
+            executionStatus : /*[[${executionStatus}]]*/{}
     	};
 
     	squashtm.workspace = squashtm.workspace || {};

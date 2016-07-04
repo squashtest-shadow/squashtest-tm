@@ -131,7 +131,12 @@
         <div id="generic-warning-dialog" class="not-displayed popup-dialog" th:title="#{label.warning}">
           <div th:include="fragments-utils/static-panels :: warning-pane"></div>
           <input type="button" th:value="#{label.Ok}"/>
-        </div>
+        </div>          
+
+        <div id="generic-info-dialog" class="not-displayed popup-dialog" th:title="#{popup.title.info}">
+          <div th:include="fragments-utils/static-panels :: info-pane"></div>
+          <input type="button" th:value="#{label.Ok}"/>
+        </div>          
 
       <script type="text/javascript" >
       publish("load.notification");

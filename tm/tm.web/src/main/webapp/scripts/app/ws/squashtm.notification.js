@@ -23,72 +23,18 @@
  */
 var squashtm = squashtm || {};
 
-define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($, ps,
-		translator, Forms) {
+define([ "jquery", "app/lnf/Forms", "jquery.squash.messagedialog" ], function($,  Forms) {
 
-	var _config = translator.get({
-		errorTitle : "popup.title.error",
-		infoTitle : "popup.title.info"
-	});
-
-	var _spinner = "#ajax-processing-indicator";
 	var _widgetsInitialized = false;
-	var _spinnerInitialized = false;
 
-	function initWidgets() {
-		if (!_widgetsInitialized) {
-			_widgetsInitialized = true;
-			$(".unstyled-notification-pane").addClass("notification-pane").removeClass("unstyled-notification-pane");
-			$(_spinner).addClass("not-processing").removeClass("processing");
-			$("#generic-error-dialog").messageDialog();
-			$("#generic-warning-dialog").messageDialog();
-		}
+	function init() {
+            if (!_widgetsInitialized) {
+                    _widgetsInitialized = true;
+                    $("#generic-error-dialog").messageDialog();
+                    $("#generic-warning-dialog").messageDialog();
+                    $("#generic-info-dialog").messageDialog();
+            }
 	}
-
-	
-	function initSpinner() {
-
-		if (_spinnerInitialized){
-			return;
-		}
-		
-		_spinnerInitialized = true;
-		
-		var $doc = $(document);
-
-		/*
-		 * Does not work with narrowed down selectors. see http://bugs.jquery.com/ticket/6161
-		 */
-		$doc.on('ajaxError', function(event, request, settings, ex) {
-
-			// nothing to notify if the request was aborted, or was treated elsewhere
-			if (request.status === 0 || request.errorIsHandled === true) {
-				return;
-			}
-
-			// Check if we get an Unauthorized access response, then
-			// redirect to login page
-			else if (401 == request.status) {
-				window.parent.location.reload();
-			} else {
-				try {
-					handleJsonResponseError(request);
-				} catch (wtf) {
-					handleGenericResponseError(request);
-				}
-			}
-		});
-
-		$.ajaxPrefilter(function(options, _, jqXHR) {
-			$(_spinner).addClass("processing").removeClass("not-processing");
-
-			jqXHR.always(function() {
-				$(_spinner).removeClass("processing").addClass("not-processing");
-			});
-		});
-
-	}
-
 
 	// TODO : see if we can factor some logic with getErrorMessage
 	function handleJsonResponseError(request) {
@@ -208,8 +154,10 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		$('#generic-error-notification-area').fadeIn('slow').delay(20000).fadeOut('slow');
 	}
 
-	function displayInformationNotification(message) {
-		$.squash.openMessage(_config.infoTitle, message);
+	function showInfo(message) {
+		var dialog = $("#generic-info-dialog"); 
+		dialog.find('.generic-info-main').html(message);
+		dialog.messageDialog('open');
 	}
 	
 	function showError(message){
@@ -224,10 +172,6 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 		dialog.messageDialog('open');
 	}
 
-	function init() {
-		initWidgets();
-		initSpinner();
-	}
 
 	
 	function handleUnknownTypeError(xhr) {
@@ -245,7 +189,7 @@ define([ "jquery", "app/pubsub", "squash.translator", "app/lnf/Forms", "jquery.s
 	
 	squashtm.notification = {
 		init : init,
-		showInfo : displayInformationNotification,
+		showInfo : showInfo,
 		showError : showError,
 		showWarning : showWarning,
 		getErrorMessage : getErrorMessage,

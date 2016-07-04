@@ -59,39 +59,24 @@
   			cancelLabel : /*[[ #{label.Cancel} ]]*/'Annuler',
   		},
 		campaignWorkspaceConf: {
-				tree : {
-					model : /*[[${ rootModel }]]*/ '',
-					workspace : "campaign",
-					treeselector : "#tree",
-					selectedNode : /*[[${selectedNode}]]*/[],
-					state : {  opened    : true },
-  					openedNode : /*[[${openedNode}]]*/[]
-				},
-				treemenu: {
-  					wizards: /*[[${ wizards }]]*/ '',
-  					state : {  opened    : true },
-  					openedNode : /*[[${openedNode}]]*/[]
-				},
-				toggleWS : {
-					expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
-					collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
-				}
-			},
-  		menuBarConf : {
-  			boxSelector : "#menu-toggle-filter-ckbox",
-  			url : /*[[ @{/global-filter/filter-status} ]]*/'/global-filter/filter-status',
-  			linkSelector : "#menu-project-filter-link",
-  			enabledTxt : /*[[ #{workspace.menubar.filter.enabled.label} ]]*/'Actif',
-  			disabledTxt : /*[[ #{workspace.menubar.filter.disabled.label} ]]*/'Inactif',
-  			enabledCallbacks : [ function() {
-  				$("div.tree-filter-reminder-div > span").removeClass(
-  						"not-displayed");
-  			} ]
-  		},
-    	notificationConf: {
-  			infoTitle: /*[[ #{popup.title.info} ]]*/ 'Info',
-  			errorTitle: /*[[ #{popup.title.error} ]]*/ 'Erreur'
-  		},
+                        tree : {
+                                model : /*[[${ rootModel }]]*/ '',
+                                workspace : "campaign",
+                                treeselector : "#tree",
+                                selectedNode : /*[[${selectedNode}]]*/[],
+                                state : {  opened    : true },
+                                openedNode : /*[[${openedNode}]]*/[]
+                        },
+                        treemenu: {
+                                wizards: /*[[${ wizards }]]*/ '',
+                                state : {  opened    : true },
+                                openedNode : /*[[${openedNode}]]*/[]
+                        },
+                        toggleWS : {
+                                expandSidebarLabel: /*[[ #{report.workspace.togglebutton.expand.label} ]]*/ '>>',
+                                collapseSidebarLabel: /*[[ #{report.workspace.togglebutton.normal.label} ]]*/ '<<'
+                        }
+                },
   		searchFormModel : /*[[ ${formModel} ]]*/ {}
   	};
 

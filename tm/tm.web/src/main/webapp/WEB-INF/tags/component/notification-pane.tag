@@ -26,7 +26,7 @@ description="a pane that renders like the generic warning or error dialogs, for 
 <%@ taglib prefix="f" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %> 
   
-<%@ attribute name="type" type="java.lang.String" description="choose either 'warning' or 'error'. Default is 'warning'." %>
+<%@ attribute name="type" type="java.lang.String" description="choose either 'warning', 'info' or 'error'. Default is 'warning'." %>
 <%@ attribute name="txtcontent" type="java.lang.String" description="a message to display in, defaults to empty string" %>
 <%@ attribute name="htmlcontent" fragment="true" description="html content. Will replace the txt content div if specified." %>
 

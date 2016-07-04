@@ -51,29 +51,21 @@
       confirmLabel: /*[[ #{label.Confirm} ]]*/ 'Confirmer',
       cancelLabel: /*[[ #{label.Cancel} ]]*/ 'Annuler',
     },
-    menuBarConf: {
-        boxSelector: "#menu-toggle-filter-ckbox",
-        url: /*[[ @{/global-filter/filter-status} ]]*/ '/global-filter/filter-status',
-        linkSelector: "#menu-project-filter-link",
-        enabledTxt: /*[[ #{workspace.menubar.filter.enabled.label} ]]*/ 'Actif',
-        disabledTxt: /*[[ #{workspace.menubar.filter.disabled.label} ]]*/ 'Inactif',
-        enabledCallbacks: [ function(){ $("div.tree-filter-reminder-div > span").removeClass("not-displayed");} ]
-      },
-  	campaignWorkspaceConf: {
-				tree : {
-					model : /*[[${ rootModel }]]*/ '',
-					workspace : "campaign",
-					treeselector : "#tp-dialog-tree",
-					selectedNode : /*[[${selectedNode}]]*/[],
-					state : {  opened    : true },
-  					openedNode : /*[[${openedNode}]]*/[]
-				},
-				treemenu: {
-  					wizards: /*[[${ wizards }]]*/ '',
-  					state : {  opened    : true },
-  					openedNode : /*[[${openedNode}]]*/[]
-				}
-			},
+    campaignWorkspaceConf: {
+            tree : {
+                    model : /*[[${ rootModel }]]*/ '',
+                    workspace : "campaign",
+                    treeselector : "#tp-dialog-tree",
+                    selectedNode : /*[[${selectedNode}]]*/[],
+                    state : {  opened    : true },
+                    openedNode : /*[[${openedNode}]]*/[]
+            },
+            treemenu: {
+                    wizards: /*[[${ wizards }]]*/ '',
+                    state : {  opened    : true },
+                    openedNode : /*[[${openedNode}]]*/[]
+            }
+    },
      campaignSearchResultConf: {
     	 messages : {
     		 nonEditableTooltip : /*[[ #{tooltips.nonEditable}]]*/ 'non editable'

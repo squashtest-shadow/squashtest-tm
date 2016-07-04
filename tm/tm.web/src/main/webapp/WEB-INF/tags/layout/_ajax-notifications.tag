@@ -54,3 +54,11 @@
   </div>
   <input type="button" value="${okLabel}"/>  
 </div>
+
+  <f:message var="infoTitle" key="popup.title.info" />
+ <div id="generic-info-dialog" class="not-displayed popup-dialog" title="${infoTitle}">
+  <div>
+    <comp:notification-pane type="info"/>
+  </div>
+  <input type="button" value="${okLabel}"/>  
+</div> 

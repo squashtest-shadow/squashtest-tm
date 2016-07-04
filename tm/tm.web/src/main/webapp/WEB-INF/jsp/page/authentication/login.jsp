@@ -38,11 +38,7 @@
 	var squashtm = {};
 	squashtm.app = {
 		locale : "<f:message key='squashtm.locale'/>",
-		contextRoot : "${pageContext.servletContext.contextPath}",
-		notificationConf : {
-			infoTitle : "<f:message key='popup.title.info' />",
-			errorTitle : "<f:message key='popup.title.error' />"
-		}
+		contextRoot : "${pageContext.servletContext.contextPath}"
 	};
 </script>
 <script src="<c:url value='/scripts/pubsub-boot.js' />"></script>

@@ -1326,6 +1326,14 @@ div.information-panel p {
 	height : 64px;
 }
 
+
+.generic-info-signal {
+	background-image : url('../images/messagebox_info.png');  /** sprite-ref: sprites-icons; */
+	background-repeat : no-repeat;
+	width : 72px;
+	height : 64px;
+}
+
 .generic-question-signal, .delete-node-dialog-warning {
 	background-image : url('../images/messagebox_confirm.png');  /** sprite-ref: sprites-icons; */
 	background-repeat : no-repeat;
