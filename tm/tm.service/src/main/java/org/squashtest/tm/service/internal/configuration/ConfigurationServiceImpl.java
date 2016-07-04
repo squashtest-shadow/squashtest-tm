@@ -71,7 +71,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		sqlQuery.setParameter(1, key);
 		try {
 			return sqlQuery.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {
+		} catch (EmptyResultDataAccessException e) {//NOSONAR we will not log or cast each time an optional prop isn't in db
 			return null;
 		}
 	}
