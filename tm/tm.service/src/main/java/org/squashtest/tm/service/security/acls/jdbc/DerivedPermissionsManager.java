@@ -20,25 +20,18 @@
  */
 package org.squashtest.tm.service.security.acls.jdbc;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.math.BigInteger;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.type.LongType;
-import org.hibernate.type.StringType;
 import org.springframework.security.acls.model.ObjectIdentity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.security.acls.CustomPermission;
-import org.squashtest.tm.service.internal.repository.hibernate.SqLIdResultTransformer;
 
 @Service
 @Transactional
@@ -196,21 +189,21 @@ class DerivedPermissionsManager {
 
 	private boolean doesExist(ObjectIdentity identity) {
 
-		Query query = em.unwrap(Session.class).createSQLQuery(CHECK_OBJECT_IDENTITY_EXISTENCE);
-		query.setParameter("id", identity.getIdentifier(), LongType.INSTANCE);
+		Query query = em.createNativeQuery(CHECK_OBJECT_IDENTITY_EXISTENCE);
+		query.setParameter("id", identity.getIdentifier());
 		query.setParameter("class", identity.getType());
 
-		List<?> result = query.list();
+		List<?> result = query.getResultList();
 		return !result.isEmpty();
 	}
 
 
 	private boolean doesExist(long partyId) {
 
-		Query query = em.unwrap(Session.class).createSQLQuery(CHECK_PARTY_EXISTENCE);
-		query.setParameter("id", partyId, LongType.INSTANCE);
+		Query query = em.createNativeQuery(CHECK_PARTY_EXISTENCE);
+		query.setParameter("id", partyId);
 
-		List<?> result = query.list();
+		List<?> result = query.getResultList();
 		return !result.isEmpty();
 	}
 
@@ -218,23 +211,20 @@ class DerivedPermissionsManager {
 	// will find all members of a team given its id. It the id actually refers to a user, that user id will be the only result.
 	private Collection<Long> findMembers(long partyId) {
 
-		Query query = em.unwrap(Session.class).createSQLQuery(FIND_TEAM_MEMBERS_OR_USER);
-		query.setParameter("id", partyId, LongType.INSTANCE);
-		query.setResultTransformer(new SqLIdResultTransformer());
-		return query.list();
-
+		Query query = em.createNativeQuery(FIND_TEAM_MEMBERS_OR_USER);
+		query.setParameter("id", partyId);
+		return executeRequestAndConvertIds(query);
 	}
 
 	// will find all the users
 	private Collection<Long> findUsers(ObjectIdentity identity) {
 
 		// first find the parties managing that thing
-		Query query = em.unwrap(Session.class).createSQLQuery(FIND_PARTIES_USING_IDENTITY);
-		query.setParameter("id", identity.getIdentifier(), LongType.INSTANCE);
-		query.setParameter("class", identity.getType(), StringType.INSTANCE);
-		query.setResultTransformer(new SqLIdResultTransformer());
+		Query query = em.createNativeQuery(FIND_PARTIES_USING_IDENTITY);
+		query.setParameter("id", identity.getIdentifier());
+		query.setParameter("class", identity.getType());
 
-		Collection<Long> partyIds = query.list();
+		Collection<Long> partyIds = executeRequestAndConvertIds(query);
 
 		// then find the corresponding users
 		Collection<Long> userIds = new HashSet<>();
@@ -247,15 +237,14 @@ class DerivedPermissionsManager {
 	}
 
 	private Collection<Long> findAllUsers() {
-		Query query = em.unwrap(Session.class).createSQLQuery(FIND_ALL_USERS);
-		query.setResultTransformer(new SqLIdResultTransformer());
-		return query.list();
+		Query query = em.createNativeQuery(FIND_ALL_USERS);
+		return executeRequestAndConvertIds(query);
 	}
 
 	private void removeProjectManagerAuthorities(Collection<Long> ids) {
 		if (!ids.isEmpty()) {
-			Query query = em.unwrap(Session.class).createSQLQuery(REMOVE_CORE_PARTY_MANAGER_AUTHORITY);
-			query.setParameterList("ids", ids, LongType.INSTANCE);
+			Query query = em.createNativeQuery(REMOVE_CORE_PARTY_MANAGER_AUTHORITY);
+			query.setParameter("ids", ids);
 			query.executeUpdate();
 		}
 	}
@@ -267,19 +256,18 @@ class DerivedPermissionsManager {
 			Collection<Long> buffer;
 
 			// first, get users directly managing anything
-			Query query = em.unwrap(Session.class).createSQLQuery(RETAIN_USERS_MANAGING_ANYTHING);
-			query.setParameterList("ids", ids, LongType.INSTANCE);
-			query.setResultTransformer(new SqLIdResultTransformer());
+			Query query = em.createNativeQuery(RETAIN_USERS_MANAGING_ANYTHING);
+			query.setParameter("ids", ids);
 
-			buffer = query.list();
+
+			buffer = executeRequestAndConvertIds(query);
 			userIds.addAll(buffer);
 
 			// second, get users managing through teams or project leaders (which sounds quite silly I agree)
-			query = em.unwrap(Session.class).createSQLQuery(RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
-			query.setParameterList("ids", ids, LongType.INSTANCE);
-			query.setResultTransformer(new SqLIdResultTransformer());
+			query = em.createNativeQuery(RETAIN_MEMBERS_OF_TEAMS_MANAGING_ANYTHING);
+			query.setParameter("ids", ids);
 
-			buffer = query.list();
+			buffer = executeRequestAndConvertIds(query);
 			userIds.addAll(buffer);
 
 			return userIds;
@@ -291,8 +279,8 @@ class DerivedPermissionsManager {
 	private void grantProjectManagerAuthorities(Collection<Long> ids) {
 		Query query;
 		for (Long id : ids) {
-			query = em.unwrap(Session.class).createSQLQuery(INSERT_CORE_PARTY_MANAGER_AUTHORITY);
-			query.setParameter("id", id, LongType.INSTANCE);
+			query = em.createNativeQuery(INSERT_CORE_PARTY_MANAGER_AUTHORITY);
+			query.setParameter("id", id);
 			query.executeUpdate();
 		}
 
@@ -300,7 +288,16 @@ class DerivedPermissionsManager {
 	}
 
 	private void flush() {
-		em.unwrap(Session.class).flush();
+		em.flush();
+	}
+
+	private List<Long> executeRequestAndConvertIds(Query query){
+		List<BigInteger> bigIntIds = query.getResultList();
+		List<Long> longsIds = new ArrayList<>();
+		for (BigInteger bigIntId : bigIntIds) {
+			longsIds.add(bigIntId.longValue());
+		}
+		return longsIds;
 	}
 
 }
