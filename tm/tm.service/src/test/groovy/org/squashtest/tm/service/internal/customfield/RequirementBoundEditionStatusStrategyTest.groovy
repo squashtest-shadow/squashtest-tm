@@ -42,28 +42,28 @@ class RequirementBoundEditionStatusStrategyTest extends Specification {
 	PermissionEvaluationService permService = Mock()
 	EntityManager em = Mock()
 	Session session = Mock()
-	
+
 	def setup() {
 		em.unwrap(_) >> session
 		strategy.em = em
 		use(ReflectionCategory) {
 			ValueEditionStatusHelper.set field: "permissionEvaluator", of: strategy, to: permService
 		}
-	} 
-	
+	}
+
 	@Unroll
 	def "CF values should be editable : #expected when requirement is modifiable : #modif and user has perm : #perm"() {
 		given:
 		permService.hasRoleOrPermissionOnObject("ROLE_ADMIN", "WRITE", 0, RequirementVersion.name) >> perm
-		
+
 		and:
 		RequirementVersion ver = Mock()
-		session.load(RequirementVersion, 0) >> ver
+		em.getReference(RequirementVersion, 0) >> ver
 		ver.isModifiable() >> modif
-		 
+
 		expect:
 		strategy.isEditable(0, BindableEntity.REQUIREMENT_VERSION) == expected
-		
+
 		where:
 		perm  | modif | expected
 		true  | true  | true

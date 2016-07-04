@@ -64,7 +64,7 @@ class CustomRequirementVersionManagerServiceImplTest extends Specification {
 		service.createNewVersion(10L)
 
 		then:
-		1 * currentSession.persist(newVersion)
+		1 * em.persist(newVersion)
 
 	}
 

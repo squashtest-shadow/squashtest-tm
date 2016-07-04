@@ -115,7 +115,7 @@ public class CustomRequirementVersionManagerServiceImpl implements CustomRequire
 		RequirementVersion previousVersion = req.getCurrentVersion();
 
 		req.increaseVersion();
-		em.unwrap(Session.class).persist(req.getCurrentVersion());
+		em.persist(req.getCurrentVersion());
 		RequirementVersion newVersion = req.getCurrentVersion();
 		indexationService.reindexRequirementVersions(req.getRequirementVersions());
 		customFieldValueService.copyCustomFieldValues(previousVersion, newVersion);
