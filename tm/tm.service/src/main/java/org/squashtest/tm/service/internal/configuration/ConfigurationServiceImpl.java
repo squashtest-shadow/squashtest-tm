@@ -22,12 +22,12 @@ package org.squashtest.tm.service.internal.configuration;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
 @Service("squashtest.core.configuration.ConfigurationService")
@@ -35,34 +35,28 @@ import org.squashtest.tm.service.configuration.ConfigurationService;
 public class ConfigurationServiceImpl implements ConfigurationService {
 
 	// TODO make these named queries
-	private static final String INSERT_KEY_SQL = "insert into CORE_CONFIG (STR_KEY, VALUE) values (?, ?)";
-	private static final String FIND_VALUE_BY_KEY_SQL = "select VALUE from CORE_CONFIG where STR_KEY = ?";
-	private static final String UPDATE_KEY_SQL = "update CORE_CONFIG set VALUE = ? where STR_KEY = ?";
+	private static final String INSERT_KEY_SQL = "insert into CORE_CONFIG (STR_KEY, VALUE) values (?1, ?2)";
+	private static final String FIND_VALUE_BY_KEY_SQL = "select VALUE from CORE_CONFIG where STR_KEY = ?1";
+	private static final String UPDATE_KEY_SQL = "update CORE_CONFIG set VALUE = ?1 where STR_KEY = ?2";
 
 	@PersistenceContext
 	private EntityManager em;
 
 	@Override
 	public void createNewConfiguration(String key, String value) {
-		Session session = currentSession();
-		Query sqlQuery = session.createSQLQuery(INSERT_KEY_SQL);
-		sqlQuery.setString(0, key);
-		sqlQuery.setString(1, value);
+		Query sqlQuery = em.createNativeQuery(INSERT_KEY_SQL);
+		sqlQuery.setParameter(1, key);
+		sqlQuery.setParameter(2, value);
 		sqlQuery.executeUpdate();
 	}
 
 	@Override
 	public void updateConfiguration(String key, String value) {
-		Session session = currentSession();
-		Query sqlQuery = session.createSQLQuery(UPDATE_KEY_SQL);
-		sqlQuery.setString(0, value);
-		sqlQuery.setString(1, key);
+		Query sqlQuery = em.createNativeQuery(UPDATE_KEY_SQL);
+		sqlQuery.setParameter(1, value);
+		sqlQuery.setParameter(2, key);
 		sqlQuery.executeUpdate();
 
-	}
-
-	private Session currentSession() throws HibernateException {
-		return em.unwrap(Session.class);
 	}
 
 	@Override
@@ -73,10 +67,13 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 	}
 
 	private Object findValue(String key) throws HibernateException {
-		Session session = currentSession();
-		Query sqlQuery = session.createSQLQuery(FIND_VALUE_BY_KEY_SQL);
-		sqlQuery.setParameter(0, key);
-		return sqlQuery.uniqueResult();
+		Query sqlQuery = em.createNativeQuery(FIND_VALUE_BY_KEY_SQL);
+		sqlQuery.setParameter(1, key);
+		try {
+			return sqlQuery.getSingleResult();
+		} catch (EmptyResultDataAccessException e) {
+			return null;
+		}
 	}
 
 	/**
