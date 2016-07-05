@@ -22,7 +22,7 @@ package org.squashtest.tm.service.testautomation
 
 import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
-import org.springframework.orm.jpa.JpaSystemException
+import javax.persistence.PersistenceException
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.project.GenericProject
@@ -85,21 +85,21 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 		project.setTmProject(tmproject)
 
 		when :
-		service.persist(project)
+		em.persist(project)
 		em.flush()
 
 
 		then :
-		thrown JpaSystemException
+		thrown PersistenceException
 	}
 
 
 
 	def getServer(id){
-		return getSession().load(TestAutomationServer.class, id)
+		return em.getReference(TestAutomationServer.class, id)
 	}
 
 	def getProject(id){
-		return getSession().load(GenericProject.class, id)
+		return em.getReference(GenericProject.class, id)
 	}
 }
