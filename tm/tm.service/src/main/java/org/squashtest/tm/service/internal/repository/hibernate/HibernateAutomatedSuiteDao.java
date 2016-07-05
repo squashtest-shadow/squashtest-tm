@@ -30,9 +30,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.hibernate.type.StringType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.execution.ExecutionStatus;
@@ -46,27 +45,23 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	@PersistenceContext
 	private EntityManager em;
 
-	protected Session currentSession() {
-		return em.unwrap(Session.class);
-	}
-
 
 	@Override
 	public void delete(String id) {
 		AutomatedSuite suite = findById(id);
-		currentSession().delete(suite);
+		em.remove(suite);
 	}
 
 
 	@Override
 	public void delete(AutomatedSuite suite) {
-		currentSession().delete(suite);
+		em.remove(suite);
 	}
 
 	@Override
 	public AutomatedSuite createNewSuite() {
 		AutomatedSuite suite = new AutomatedSuite();
-		currentSession().persist(suite);
+		em.persist(suite);
 		return suite;
 	}
 
@@ -78,8 +73,8 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<AutomatedSuite> findAll() {
-		Query query = currentSession().getNamedQuery("automatedSuite.findAll");
-		return query.list();
+		Query query = em.createNamedQuery("automatedSuite.findAll");
+		return query.getResultList();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -88,18 +83,18 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 		if (ids.isEmpty()) {
 			return Collections.emptyList();
 		} else {
-			Query query = currentSession().getNamedQuery("automatedSuite.findAllById");
-			query.setParameterList("suiteIds", ids, StringType.INSTANCE);
-			return query.list();
+			Query query = em.createNamedQuery("automatedSuite.findAllById");
+			query.setParameter("suiteIds", ids);
+			return query.getResultList();
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<AutomatedExecutionExtender> findAllExtenders(String suiteId) {
-		Query query = currentSession().getNamedQuery("automatedSuite.findAllExtenders");
-		query.setString("suiteId", suiteId);
-		return query.list();
+		Query query = em.createNamedQuery("automatedSuite.findAllExtenders");
+		query.setParameter("suiteId", suiteId);
+		return query.getResultList();
 	}
 
 	@Override
@@ -122,13 +117,13 @@ public class HibernateAutomatedSuiteDao implements AutomatedSuiteDao {
 	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(final String suiteId,
 			final Collection<ExecutionStatus> statusList) {
 
-		Query query = currentSession().getNamedQuery("automatedSuite.findAllExtendersHavingStatus");
+		Query query = em.createNamedQuery("automatedSuite.findAllExtendersHavingStatus");
 
-		query.setString("suiteId", suiteId);
+		query.setParameter("suiteId", suiteId);
 
-		query.setParameterList("statusList", statusList);
+		query.setParameter("statusList", statusList);
 
-		return query.list();
+		return query.getResultList();
 	}
 
 	public Collection<AutomatedExecutionExtender> findAllExtendersByStatus(String suiteId,

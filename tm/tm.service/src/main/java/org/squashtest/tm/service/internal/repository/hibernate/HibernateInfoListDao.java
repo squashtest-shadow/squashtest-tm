@@ -24,9 +24,9 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -39,22 +39,22 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	@PersistenceContext
 	private EntityManager em;
 
-	protected Session getSession() {
-		return em.unwrap(Session.class);
-	}
-
 	@Override
 	public InfoList findByCode(String code) {
-		Query query = currentSession().getNamedQuery("infoList.findByCode");
+		Query query = em.createNamedQuery("infoList.findByCode");
 		query.setParameter("code", code);
-		return (InfoList) query.uniqueResult();
+		try {
+			return (InfoList) query.getSingleResult();
+		} catch (EmptyResultDataAccessException e) {//NOSONAR this method is used with null checks in business rules. We need null and no log...
+			return null;
+		}
 	}
 
 	@Override
 	public boolean isUsedByOneOrMoreProject(long infoListId) {
-		Query query = currentSession().getNamedQuery("infoList.findProjectUsingInfoList");
+		Query query = em.createNamedQuery("infoList.findProjectUsingInfoList");
 		query.setParameter("id", infoListId);
-		return !query.list().isEmpty();
+		return !query.getResultList().isEmpty();
 	}
 
 	@Override
@@ -68,7 +68,7 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 	}
 
 	private void execUpdateQuery(long infoListId, String queryName, Object defaultParam) {
-		Query query = currentSession().getNamedQuery(queryName);
+		Query query = em.createNamedQuery(queryName);
 		query.setParameter("default", defaultParam);
 		query.setParameter("id", infoListId);
 		query.executeUpdate();
