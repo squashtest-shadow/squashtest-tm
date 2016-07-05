@@ -162,8 +162,8 @@ public class ProjectDeletionHandlerImpl implements ProjectDeletionHandler {
 		CustomReportLibraryNode node = crlnDao.findNodeFromEntity(customReportLibrary);
 		node.setLibrary(null);
 		node.setEntity(null);
-		em.unwrap(Session.class).delete(node);
-		em.unwrap(Session.class).flush();
+		em.remove(node);
+		em.flush();
 	}
 
 	private void removeACLsForProjectAndLibraries(GenericProject project) {
