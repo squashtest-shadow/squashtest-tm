@@ -33,10 +33,8 @@ import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.type.LongType;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.BoundEntity;
@@ -82,16 +80,13 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	public List<BoundEntity> findAllForBinding(CustomFieldBinding customFieldBinding) {
 		BindableEntity boundType = customFieldBinding.getBoundEntity();
 		String queryName = BOUND_ENTITIES_IN_PROJECT_QUERY.get(boundType);
-		Query q = currentSession().getNamedQuery(queryName);
+		Query q = em.createNamedQuery(queryName);
 		q.setParameter(ParameterNames.PROJECT_ID, customFieldBinding.getBoundProject().getId());
 
-		return q.list();
+		return q.getResultList();
 	}
 
 
-	private Session currentSession() {
-		return em.unwrap(Session.class);
-	}
 
 	@Override
 	public BoundEntity findBoundEntity(CustomFieldValue customFieldValue) {
@@ -102,18 +97,18 @@ public class HibernateBoundEntityDao implements BoundEntityDao {
 	public BoundEntity findBoundEntity(Long boundEntityId, BindableEntity entityType) {
 
 		Class<?> entityClass = entityType.getReferencedClass();
-		return (BoundEntity) currentSession().load(entityClass, boundEntityId);
+		return (BoundEntity) em.getReference(entityClass, boundEntityId);
 
 	}
 
 	@Override
 	public boolean hasCustomField(Long boundEntityId, BindableEntity entityType) {
 
-		Query query = currentSession().getNamedQuery("BoundEntityDao.hasCustomFields");
-		query.setParameter("boundEntityId", boundEntityId, LongType.INSTANCE);
+		Query query = em.createNamedQuery("BoundEntityDao.hasCustomFields");
+		query.setParameter("boundEntityId", boundEntityId);
 		query.setParameter("boundEntityType", entityType);
 
-		return (Long)query.uniqueResult() != 0;
+		return (Long)query.getSingleResult() != 0;
 
 	}
 
