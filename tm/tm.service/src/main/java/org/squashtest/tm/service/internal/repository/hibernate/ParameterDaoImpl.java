@@ -20,14 +20,13 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.type.LongType;
+
 import org.squashtest.tm.domain.testcase.Parameter;
 import org.squashtest.tm.service.internal.repository.CustomParameterDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -49,7 +48,7 @@ public class ParameterDaoImpl implements CustomParameterDao {
 		List<Long> srcTc = new LinkedList<>();
 		List<Long> destTc;
 
-		Query next = em.unwrap(Session.class).getNamedQuery("parameter.findTestCasesThatDelegatesParameters");
+		Query next = em.createNamedQuery("parameter.findTestCasesThatDelegatesParameters");
 
 		srcTc.add(testcaseId);
 
@@ -57,8 +56,8 @@ public class ParameterDaoImpl implements CustomParameterDao {
 
 			allParameters.addAll(findTestCaseParameters(srcTc));
 
-			next.setParameterList("srcIds", srcTc, LongType.INSTANCE);
-			destTc = next.list();
+			next.setParameter("srcIds", srcTc);
+			destTc = next.getResultList();
 
 			exploredTc.addAll(srcTc);
 			srcTc = destTc;
@@ -75,9 +74,9 @@ public class ParameterDaoImpl implements CustomParameterDao {
 	// duplicate here because of the inheritance between the interfaces is what it is
 	private List<Parameter> findTestCaseParameters(List<Long> testcaseIds) {
 
-		Query query = em.unwrap(Session.class).getNamedQuery("Parameter.findOwnParametersByTestCases");
-		query.setParameterList("testCaseIds", testcaseIds);
-		return query.list();
+		Query query = em.createNamedQuery("Parameter.findOwnParametersByTestCases");
+		query.setParameter("testCaseIds", testcaseIds);
+		return query.getResultList();
 	}
 
 }
