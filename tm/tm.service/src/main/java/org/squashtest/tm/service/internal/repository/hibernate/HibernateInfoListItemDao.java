@@ -20,13 +20,15 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.hibernate.Query;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
 import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
+
+import javax.persistence.Query;
 
 @Repository
 public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> implements InfoListItemDao {
@@ -36,13 +38,13 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public SystemListItem getSystemRequirementCategory() {
-		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemRequirementCategory")
-				.uniqueResult();
+		return (SystemListItem) em.createNamedQuery("systemListItem.getSystemRequirementCategory")
+				.getSingleResult();
 	}
 
 	@Override
 	public SystemListItem getSystemTestCaseNature() {
-		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemTestCaseNature").uniqueResult();
+		return (SystemListItem) em.createNamedQuery("systemListItem.getSystemTestCaseNature").getSingleResult();
 	}
 
 	@Override
@@ -52,9 +54,13 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public InfoListItem findByCode(String code) {
-		Query q = currentSession().getNamedQuery("infoListItem.findByCode");
+		Query q = em.createNamedQuery("infoListItem.findByCode");
 		q.setParameter("code", code);
-		return (InfoListItem) q.uniqueResult();
+		try {
+			return (InfoListItem) q.getSingleResult();
+		} catch (EmptyResultDataAccessException e) {//NOSONAR some null checks in calling code
+			return null;
+		}
 	}
 
 	@Override
@@ -64,47 +70,47 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public InfoListItem findDefaultRequirementCategory(long projectId) {
-		Query q = currentSession().getNamedQuery("infoListItem.findDefaultRequirementCategoryForProject");
+		Query q = em.createNamedQuery("infoListItem.findDefaultRequirementCategoryForProject");
 		q.setParameter(PROJECT_ID, projectId);
-		return (InfoListItem) q.uniqueResult();
+		return (InfoListItem) q.getSingleResult();
 	}
 
 	@Override
 	public InfoListItem findDefaultTestCaseNature(long projectId) {
-		Query q = currentSession().getNamedQuery("infoListItem.findDefaultTestCaseNatureForProject");
+		Query q = em.createNamedQuery("infoListItem.findDefaultTestCaseNatureForProject");
 		q.setParameter(PROJECT_ID, projectId);
-		return (InfoListItem) q.uniqueResult();
+		return (InfoListItem) q.getSingleResult();
 	}
 
 	@Override
 	public InfoListItem findDefaultTestCaseType(long projectId) {
-		Query q = currentSession().getNamedQuery("infoListItem.findDefaultTestCaseTypeForProject");
+		Query q = em.createNamedQuery("infoListItem.findDefaultTestCaseTypeForProject");
 		q.setParameter(PROJECT_ID, projectId);
-		return (InfoListItem) q.uniqueResult();
+		return (InfoListItem) q.getSingleResult();
 	}
 
 	@Override
 	public boolean isCategoryConsistent(long projectId, String itemCode) {
-		Query q = currentSession().getNamedQuery("infoListItem.foundCategoryInProject");
+		Query q = em.createNamedQuery("infoListItem.foundCategoryInProject");
 		q.setParameter(PROJECT_ID, projectId);
 		q.setParameter(ITEM_CODE, itemCode);
-		return (Long) q.uniqueResult() == 1;
+		return (Long) q.getSingleResult() == 1;
 	}
 
 	@Override
 	public boolean isNatureConsistent(long projectId, String itemCode) {
-		Query q = currentSession().getNamedQuery("infoListItem.foundNatureInProject");
+		Query q = em.createNamedQuery("infoListItem.foundNatureInProject");
 		q.setParameter(PROJECT_ID, projectId);
 		q.setParameter(ITEM_CODE, itemCode);
-		return (Long) q.uniqueResult() == 1;
+		return (Long) q.getSingleResult() == 1;
 	}
 
 	@Override
 	public boolean isTypeConsistent(long projectId, String itemCode) {
-		Query q = currentSession().getNamedQuery("infoListItem.foundTypeInProject");
+		Query q = em.createNamedQuery("infoListItem.foundTypeInProject");
 		q.setParameter(PROJECT_ID, projectId);
 		q.setParameter(ITEM_CODE, itemCode);
-		return (Long) q.uniqueResult() == 1;
+		return (Long) q.getSingleResult() == 1;
 	}
 
 	@Override
@@ -119,7 +125,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	}
 
 	private void execUpdateQuery(long infoListId, String queryName, InfoListItem defaultParam) {
-		Query query = currentSession().getNamedQuery(queryName);
+		Query query = em.createNamedQuery(queryName);
 		query.setParameter("default", defaultParam);
 		query.setParameter("id", infoListId);
 		query.executeUpdate();
@@ -128,9 +134,9 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public boolean isUsed(long infoListItemId) {
-		Query q = currentSession().getNamedQuery("infoListItem.isUsed");
+		Query q = em.createNamedQuery("infoListItem.isUsed");
 		q.setParameter("id", infoListItemId);
-		return (Long) q.uniqueResult() > 0;
+		return (Long) q.getSingleResult() > 0;
 	}
 
 	@Override
