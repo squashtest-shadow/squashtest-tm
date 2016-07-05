@@ -51,15 +51,15 @@ public abstract class HibernateDao<ENTITY_TYPE> implements GenericDao<ENTITY_TYP
 	}
 
 	/*
-	 * Note : it is fine that all dao here share the same entity manager 
-	 * because we only have one DB (one persistence unit). If we did we would have to 
-	 * deambiguate and make sure that each dao gets the correct entity manager that handle 
-	 * the domain class they must deal with.  
+	 * Note : it is fine that all dao here share the same entity manager
+	 * because we only have one DB (one persistence unit). If we did we would have to
+	 * deambiguate and make sure that each dao gets the correct entity manager that handle
+	 * the domain class they must deal with.
 	 */
 	@PersistenceContext
-	private EntityManager em;
+	protected EntityManager em;
 
-	// transitional method, replace underlying code by direct uses of the 
+	// transitional method, replace underlying code by direct uses of the
 	// EntityManager when possible.
 	protected /*final*/ Session currentSession() {
 		return em.unwrap(Session.class);
