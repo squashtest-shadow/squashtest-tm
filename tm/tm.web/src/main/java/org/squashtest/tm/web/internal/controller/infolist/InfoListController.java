@@ -71,27 +71,27 @@ public class InfoListController {
 	@Inject
 	private InfoListItemController itemsController;
 
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-label",
-			JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = {"id=info-list-label",
+		JEditablePostParams.VALUE})
 	@ResponseBody
-	public String changeLabel(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String label) {
+	public String changeLabel(@PathVariable long infoListId, @RequestParam(JEditablePostParams.VALUE) String label) {
 		infoListManager.changeLabel(infoListId, label);
 		return label;
 	}
 
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-code",
-			JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = {"id=info-list-code",
+		JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeCode(@PathVariable Long infoListId, @RequestParam(JEditablePostParams.VALUE) String code) {
 		infoListManager.changeCode(infoListId, code);
 		return HtmlUtils.htmlEscape(code);
 	}
 
-	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = { "id=info-list-description",
-			JEditablePostParams.VALUE })
+	@RequestMapping(value = "/{infoListId}", method = RequestMethod.POST, params = {"id=info-list-description",
+		JEditablePostParams.VALUE})
 	@ResponseBody
 	public String changeDescription(@PathVariable Long infoListId,
-			@RequestParam(JEditablePostParams.VALUE) String description) {
+		@RequestParam(JEditablePostParams.VALUE) String description) {
 		infoListManager.changeDescription(infoListId, description);
 		return HtmlUtils.htmlEscape(description);
 	}
@@ -113,7 +113,7 @@ public class InfoListController {
 	 */
 	@RequestMapping(value = "{id}/items/label/{label}", method = RequestMethod.GET, produces = ContentTypes.APPLICATION_JSON, params = "format=exists")
 	@ResponseBody
-	public Map<String, Object> doesLabelExist(@PathVariable long id,  @PathVariable String label) {
+	public Map<String, Object> doesLabelExist(@PathVariable long id, @PathVariable String label) {
 		InfoList list = infoListManager.findById(id);
 
 		InfoListItem found = null;
@@ -184,20 +184,19 @@ public class InfoListController {
 		throw new ResourceNotFoundException();
 	}
 
-	@RequestMapping(value = "/{infoListId}/items/positions", method = RequestMethod.POST, params = { "itemIds[]",
-	"newIndex" })
+	@RequestMapping(value = "/{infoListId}/items/positions", method = RequestMethod.POST, params = {"itemIds[]",
+		"newIndex"})
 	@ResponseBody
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	public void changeOptionsPositions(@PathVariable long infoListId, @RequestParam int newIndex,
-			@RequestParam("itemIds[]") List<Long> itemsIds) {
+		@RequestParam("itemIds[]") List<Long> itemsIds) {
 		infoListManager.changeItemsPositions(infoListId, newIndex, itemsIds);
 	}
 
 	@ResponseBody
 	@ResponseStatus(HttpStatus.CREATED)
 	@RequestMapping(value = "/{infoListId}/items", method = RequestMethod.POST)
-	public
-	void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("new-info-list-item") UserListItem item) {
+	public void addInfoListItem(@PathVariable long infoListId, @Valid @ModelAttribute("new-info-list-item") UserListItem item) {
 		infoListItemManager.addInfoListItem(infoListId, item);
 	}
 

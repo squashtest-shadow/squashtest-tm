@@ -22,7 +22,6 @@ package org.squashtest.tm.service.testautomation
 
 import org.hibernate.exception.ConstraintViolationException
 import org.spockframework.util.NotThreadSafe
-import javax.persistence.PersistenceException
 import org.springframework.transaction.annotation.Transactional
 import org.squashtest.it.basespecs.DbunitServiceSpecification
 import org.squashtest.tm.domain.project.GenericProject
@@ -32,6 +31,8 @@ import org.unitils.dbunit.annotation.DataSet
 import spock.unitils.UnitilsSupport
 
 import javax.inject.Inject
+import javax.persistence.FlushModeType
+import javax.persistence.PersistenceException
 
 @NotThreadSafe
 @UnitilsSupport
@@ -41,18 +42,31 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 	@Inject
 	TestAutomationProjectManagerService service
 
-	@DataSet("TestAutomationService.sandbox.xml")
-	def "should persist a new TestAutomationProject"(){
+	FlushModeType prevFlushMode
 
-		given :
+	def setup() {
+		prevFlushMode = em.getFlushMode()
+		em.setFlushMode(FlushModeType.COMMIT)
+	}
+
+	def cleanup() {
+		em.setFlushMode(prevFlushMode)
+	}
+
+	@DataSet("TestAutomationService.sandbox.xml")
+	def "should persist a new TestAutomationProject"() {
+
+		given:
 		def server = getServer(-1L)
-		def project = new TestAutomationProject("roberto5","Project Roberto 5" , server)
+		def project = new TestAutomationProject("roberto5", "Project Roberto 5", server)
 		def tmproject = getProject(-1L)
 		project.setTmProject(tmproject)
 
-		when :
+		when:
 		service.persist(project)
-		then :
+		em.flush()
+
+		then:
 		project.id != null
 		project.label == "Project Roberto 5"
 		project.jobName == "roberto5"
@@ -61,45 +75,43 @@ public class TestAutomationProjectManagerServiceIT extends DbunitServiceSpecific
 
 
 	@DataSet("TestAutomationService.sandbox.xml")
-	def "should say that a project label is ok"(){
-		given :
-		def server  = getServer(-2L)
-		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
+	def "should say that a project label is ok"() {
+		given:
+		def server = getServer(-2L)
+		def project = new TestAutomationProject("whatever", "Project Mike 2", server)
 		def tmproject = getProject(-1L)
 		project.setTmProject(tmproject)
 
-		when :
+		when:
 		service.persist(project)
-		session.flush()
+		em.flush()
 
-		then :
-		notThrown ConstraintViolationException
+		then:
+		notThrown PersistenceException
 	}
 
 	@DataSet("TestAutomationService.sandbox.xml")
-	def "should say that a project label is not unique"(){
-		given :
-		def server  = getServer(-2L)
-		def project = new TestAutomationProject("whatever","Project Mike 2",  server)
+	def "should say that a project label is not unique"() {
+		given:
+		def server = getServer(-2L)
+		def project = new TestAutomationProject("whatever", "Project Mike 2", server)
 		def tmproject = getProject(-2L)
 		project.setTmProject(tmproject)
 
-		when :
-		em.persist(project)
+		when:
+		service.persist(project)
 		em.flush()
 
-
-		then :
-		thrown PersistenceException
+		then:
+		def ex = thrown PersistenceException
+		ex.cause instanceof ConstraintViolationException
 	}
 
-
-
-	def getServer(id){
+	def getServer(id) {
 		return em.getReference(TestAutomationServer.class, id)
 	}
 
-	def getProject(id){
+	def getProject(id) {
 		return em.getReference(GenericProject.class, id)
 	}
 }

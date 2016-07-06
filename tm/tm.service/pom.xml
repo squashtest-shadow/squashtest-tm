@@ -218,15 +218,20 @@
         <artifactId>aspectj-maven-plugin</artifactId>
         <configuration>
           <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
-          <source>${java.version}</source>
-          <target>${java.version}</target>
-          <complianceLevel>${java.version}</complianceLevel>
-          <!-- PreventConcurrentAspect must not be weaved, otherwise it cannot 
-						be ordered before @Transactional and @PreAuthorize, which is needed for it 
-						to properly work -->
-          <excludes>
-            <exclude>**/PreventConcurrentAspect.java</exclude>
-          </excludes>
+          <verbose>${verbose.compiler}</verbose>
+          <!-- every aspect which should be weaved has to be declared in this file -->
+          <xmlConfigured>weaved-aspects.xml</xmlConfigured>
+          <sources>
+            <source>
+              <basedir>src/main/java</basedir>
+              <includes>
+                <include>**/*.java</include>
+              </includes>
+              <excludes>
+                <exclude>**/PreventConcurrentAspect.java</exclude>
+              </excludes>
+            </source>
+          </sources>
           <aspectLibraries>
             <aspectLibrary>
               <groupId>org.squashtest.tm</groupId>

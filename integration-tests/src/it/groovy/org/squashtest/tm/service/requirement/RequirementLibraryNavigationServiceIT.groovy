@@ -54,12 +54,6 @@ class RequirementLibraryNavigationServiceIT extends DbunitServiceSpecification {
 	private RequirementNodeDeletionHandler deletionHandler
 
 
-	def setup() {
-		// we deactivate auditor because it breaks tests when run in batch. Auditor opens a second tx which cannot see the requirement which is not yet committed but to be audited.
-		org.squashtest.tm.service.internal.event.RequirementCreationEventPublisherAspect.aspectOf().setAuditor(null)
-	}
-
-
 	def linkReqToVersion(long reqId, long currentVersionId, Long[] versionIds) {
 		Requirement req = findEntity(Requirement.class, reqId)
 		RequirementVersion current = findEntity(RequirementVersion.class, currentVersionId)

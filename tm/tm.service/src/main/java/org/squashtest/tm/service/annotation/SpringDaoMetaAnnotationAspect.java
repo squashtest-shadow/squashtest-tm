@@ -18,16 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-
 package org.squashtest.tm.service.annotation;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.Set;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -36,6 +27,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.core.Ordered;
+
+import java.util.*;
 
 /**
  * <p>This aspect will handle the following meta annotations :
@@ -74,27 +67,27 @@ import org.springframework.core.Ordered;
  *
  */
 @Aspect
-public class SpringDaoMetaAnnotationAspect implements Ordered{
+public class SpringDaoMetaAnnotationAspect implements Ordered {
 
 	@Override
 	public int getOrder() {
-		return Ordered.LOWEST_PRECEDENCE-1;
+		return Ordered.LOWEST_PRECEDENCE - 1;
 	}
 
 
-	@Pointcut(value="call(@org.squashtest.tm.service.annotation.EmptyCollectionGuard * org.springframework.data.repository.Repository+.*(..))")
-	public void callEmptyCollectionGuard(){
+	@Pointcut(value = "call(@org.squashtest.tm.service.annotation.EmptyCollectionGuard * org.springframework.data.repository.Repository+.*(..))")
+	public void callEmptyCollectionGuard() {
 
 	}
 
-	// NOSONAR yes I know I throw a Throwable but that's usual stuff with reflection
-	@Around(value="callEmptyCollectionGuard()")
-	public Object guardAgainstEmptyness(ProceedingJoinPoint pjp) throws Throwable{
+	// NOSONAR yes I know I throw a Throwable but that's usual stuff with reflection <insert more bitching here>
+	@Around(value = "callEmptyCollectionGuard()")
+	public Object guardAgainstEmptyness(ProceedingJoinPoint pjp) throws Throwable {
 		Object[] args = pjp.getArgs();
 
 		// abort if one argument is an empty collection
-		for (Object arg : args){
-			if (isEmptyIterable(arg)){
+		for (Object arg : args) {
+			if (isEmptyIterable(arg)) {
 				return abortQuery(pjp);
 			}
 		}
@@ -112,11 +105,10 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 		Class<?> returnType = findReturnType(pjp);
 
 
-		if (returnType == null){
+		if (returnType == null) {
 			// damn, could not find what it is ! trying dumb luck now
 			result = null;
-		}
-		else if (isCollectionType(returnType)) {
+		} else if (isCollectionType(returnType)) {
 			// for collections
 			result = newEmptyCollection(returnType);
 		} else if (returnType.isPrimitive()) {
@@ -130,29 +122,25 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 		return result;
 	}
 
-	private Class<?> findReturnType(ProceedingJoinPoint pjp){
+	private Class<?> findReturnType(ProceedingJoinPoint pjp) {
 		Signature sig = pjp.getSignature();
-		if (MethodSignature.class.isAssignableFrom(sig.getClass())){
+		if (MethodSignature.class.isAssignableFrom(sig.getClass())) {
 			return ((MethodSignature) pjp.getSignature()).getReturnType();
-		}
-		else{
+		} else {
 			return null;
 		}
 	}
 
-	private Object newEmptyCollection(Class<?> returnType){
+	private Object newEmptyCollection(Class<?> returnType) {
 		Object res;
 
-		if (isList(returnType)){
+		if (isList(returnType)) {
 			res = new ArrayList<>();
-		}
-		else if (isSet(returnType)){
+		} else if (isSet(returnType)) {
 			res = new HashSet<>();
-		}
-		else if (isQueue(returnType)){
+		} else if (isQueue(returnType)) {
 			res = new LinkedList<>();
-		}
-		else{
+		} else {
 			throw new UnsupportedReturnTypeException(returnType);
 		}
 
@@ -181,9 +169,9 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 		return res;
 	}
 
-	private boolean isEmptyIterable(Object arg){
+	private boolean isEmptyIterable(Object arg) {
 		return arg != null &&
-				Iterable.class.isAssignableFrom(arg.getClass()) &&
+			Iterable.class.isAssignableFrom(arg.getClass()) &&
 			!((Iterable) arg).iterator().hasNext();
 	}
 
@@ -191,26 +179,26 @@ public class SpringDaoMetaAnnotationAspect implements Ordered{
 		return Collection.class.isAssignableFrom(paramType);
 	}
 
-	private boolean isList(Class<?> paramType){
+	private boolean isList(Class<?> paramType) {
 		return List.class.isAssignableFrom(paramType);
 	}
 
-	private boolean isSet(Class<?> paramType){
+	private boolean isSet(Class<?> paramType) {
 		return Set.class.isAssignableFrom(paramType);
 	}
 
 
-	private boolean isQueue(Class<?> paramType){
+	private boolean isQueue(Class<?> paramType) {
 		return Queue.class.isAssignableFrom(paramType);
 	}
 
 
-	public static final class UnsupportedReturnTypeException extends RuntimeException{
+	public static final class UnsupportedReturnTypeException extends RuntimeException {
 		public UnsupportedReturnTypeException(Class<?> returnType) {
-			super("Class '"+returnType+"' is not supported by the dao empty arguments guard. "
-					+ "Details : attempted to execute a Spring dynamic Dao with an empty "
-					+ "collection as parameter. Tried then to return an empty result, "
-					+ "but cannot find a suitable value for the expected return type '"+returnType+"'");
+			super("Class '" + returnType + "' is not supported by the dao empty arguments guard. "
+				+ "Details : attempted to execute a Spring dynamic Dao with an empty "
+				+ "collection as parameter. Tried then to return an empty result, "
+				+ "but cannot find a suitable value for the expected return type '" + returnType + "'");
 		}
 	}
 
