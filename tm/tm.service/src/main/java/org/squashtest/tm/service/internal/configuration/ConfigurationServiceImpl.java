@@ -21,13 +21,13 @@
 package org.squashtest.tm.service.internal.configuration;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.squashtest.tm.service.configuration.ConfigurationService;
 
 @Service("squashtest.core.configuration.ConfigurationService")
@@ -71,7 +71,7 @@ public class ConfigurationServiceImpl implements ConfigurationService {
 		sqlQuery.setParameter(1, key);
 		try {
 			return sqlQuery.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {//NOSONAR we will not log or cast each time an optional prop isn't in db
+		} catch (NoResultException e) {//NOSONAR we will not log or cast each time an optional prop isn't in db
 			return null;
 		}
 	}
