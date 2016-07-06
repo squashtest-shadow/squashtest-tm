@@ -20,18 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoList;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.SystemInfoListCode;
 import org.squashtest.tm.service.internal.repository.InfoListDao;
+
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.List;
 
 @Repository
 public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implements InfoListDao {
@@ -45,7 +44,7 @@ public class HibernateInfoListDao extends HibernateEntityDao<InfoList> implement
 		query.setParameter("code", code);
 		try {
 			return (InfoList) query.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {//NOSONAR this method is used with null checks in business rules. We need null and no log...
+		} catch (NoResultException e) {//NOSONAR this method is used with null checks in business rules. We need null and no log...
 			return null;
 		}
 	}

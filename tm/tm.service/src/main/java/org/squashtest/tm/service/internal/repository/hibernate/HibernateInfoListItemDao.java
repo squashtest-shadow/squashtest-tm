@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.infolist.ListItemReference;
@@ -28,6 +27,7 @@ import org.squashtest.tm.domain.infolist.SystemInfoListItemCode;
 import org.squashtest.tm.domain.infolist.SystemListItem;
 import org.squashtest.tm.service.internal.repository.InfoListItemDao;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 @Repository
@@ -39,7 +39,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 	@Override
 	public SystemListItem getSystemRequirementCategory() {
 		return (SystemListItem) em.createNamedQuery("systemListItem.getSystemRequirementCategory")
-				.getSingleResult();
+			.getSingleResult();
 	}
 
 	@Override
@@ -58,7 +58,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 		q.setParameter("code", code);
 		try {
 			return (InfoListItem) q.getSingleResult();
-		} catch (EmptyResultDataAccessException e) {//NOSONAR some null checks in calling code
+		} catch (NoResultException e) {//NOSONAR some null checks in calling code
 			return null;
 		}
 	}

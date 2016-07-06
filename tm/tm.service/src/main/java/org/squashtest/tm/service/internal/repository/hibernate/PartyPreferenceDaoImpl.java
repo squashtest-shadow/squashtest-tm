@@ -20,19 +20,17 @@
  */
 package org.squashtest.tm.service.internal.repository.hibernate;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import org.squashtest.tm.domain.users.Party;
+import org.squashtest.tm.domain.users.PartyPreference;
+import org.squashtest.tm.service.internal.repository.CustomPartyPreferenceDao;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.squashtest.tm.domain.users.Party;
-import org.squashtest.tm.domain.users.PartyPreference;
-import org.squashtest.tm.service.internal.repository.CustomPartyPreferenceDao;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PartyPreferenceDaoImpl implements CustomPartyPreferenceDao {
 
@@ -46,30 +44,30 @@ public class PartyPreferenceDaoImpl implements CustomPartyPreferenceDao {
 
 	@Override
 	public Map<String, String> findAllPreferencesForParty(long partyId) {
-		Map<String,String> result = new HashMap<>();
+		Map<String, String> result = new HashMap<>();
 		Query q = em.createNamedQuery("partyPreference.findAllForParty");
-		q.setParameter("partyId",partyId);
+		q.setParameter("partyId", partyId);
 		List<PartyPreference> prefs = q.getResultList();
 		for (PartyPreference pref : prefs) {
-			result.put(pref.getPreferenceKey(),pref.getPreferenceValue());
+			result.put(pref.getPreferenceKey(), pref.getPreferenceValue());
 		}
 		return result;
 	}
 
 	@Override
 	public PartyPreference findByPartyAndPreferenceKey(Party party, String preferenceKey) {
-		return findByPartyAndPreferenceKey(party.getId(),preferenceKey);
+		return findByPartyAndPreferenceKey(party.getId(), preferenceKey);
 	}
 
 	@Override
 	public PartyPreference findByPartyAndPreferenceKey(long partyId, String preferenceKey) {
 		Query q = em.createNamedQuery("partyPreference.findByPartyAndKey");
-		q.setParameter("partyId",partyId);
-		q.setParameter("preferenceKey",preferenceKey);
+		q.setParameter("partyId", partyId);
+		q.setParameter("preferenceKey", preferenceKey);
 		PartyPreference preference;
 		try {
 			preference = (PartyPreference) q.getSingleResult();
-		} catch (EmptyResultDataAccessException | NoResultException e) { // NOSONAR : this exception is part of the nominal use case
+		} catch (NoResultException e) { // NOSONAR : this exception is part of the nominal use case
 			return null;
 		}
 		return preference;
