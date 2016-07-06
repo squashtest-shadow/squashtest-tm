@@ -26,7 +26,7 @@
     <!-- Spring Aspects -->
     <aspect name="org.springframework.beans.factory.aspectj.AbstractInterfaceDrivenDependencyInjectionAspect"/>
     <aspect name="org.springframework.beans.factory.aspectj.AnnotationBeanConfigurerAspect"/>
-    <aspect name="org.springframework.transaction.aspectj.AnnotationTransactionAspect"/>
+    <!--<aspect name="org.springframework.transaction.aspectj.AnnotationTransactionAspect"/>-->
     <!-- TM Service aspects -->
     <aspect name="org.squashtest.tm.service.cache.CachingAspect" />
     <aspect name="org.squashtest.tm.service.annotation.SpringDaoMetaAnnotationAspect" />

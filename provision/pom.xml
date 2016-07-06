@@ -16,8 +16,6 @@
   <properties>
     <assembly.skip>false</assembly.skip>
 
-    <config.resources.dir>${project.build.directory}/config-archive-resources</config.resources.dir>
-    <cxf.version>2.3.3</cxf.version>
     <db.create.password>sa</db.create.password>
     <db.create.user>sa</db.create.user>
 
@@ -158,54 +156,6 @@
           <execution>
             <goals>
               <goal>transform</goal>
-            </goals>
-            <phase>process-resources</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-resources-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>copy-config-resources</id>
-            <goals>
-              <goal>copy-resources</goal>
-            </goals>
-            <phase>process-resources</phase>
-            <configuration>
-              <resources>
-                <resource>
-                  <directory>${config.resources.dir}</directory>
-                  <filtering>true</filtering>
-                </resource>
-              </resources>
-              <outputDirectory>${project.build.directory}/config</outputDirectory>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>com.google.code.maven-config-processor-plugin</groupId>
-        <artifactId>maven-config-processor-plugin</artifactId>
-        <version>1.9</version>
-        <configuration>
-          <transformations>
-            <transformation>
-              <type>properties</type>
-              <input>target/config/services/org.squashtest.csp.core.datasource.jdbc.config.properties</input>
-              <output>config/services/org.squashtest.csp.core.datasource.jdbc.config.properties</output>
-              <config>${project.basedir}/src/tools/changeprop-processing.xml</config>
-            </transformation>
-          </transformations>
-        </configuration>
-        <executions>
-          <execution>
-            <id>fix-db-config-pathes</id>
-            <goals>
-              <goal>process</goal>
             </goals>
             <phase>process-resources</phase>
           </execution>
