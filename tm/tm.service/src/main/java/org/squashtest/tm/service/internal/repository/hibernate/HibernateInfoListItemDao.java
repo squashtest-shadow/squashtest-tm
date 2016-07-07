@@ -49,7 +49,7 @@ public class HibernateInfoListItemDao extends HibernateEntityDao<InfoListItem> i
 
 	@Override
 	public SystemListItem getSystemTestCaseType() {
-		return (SystemListItem) currentSession().getNamedQuery("systemListItem.getSystemTestCaseType").uniqueResult();
+		return (SystemListItem) em.createNamedQuery("systemListItem.getSystemTestCaseType").getSingleResult();
 	}
 
 	@Override
