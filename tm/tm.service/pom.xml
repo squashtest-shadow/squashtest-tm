@@ -223,7 +223,7 @@
           <xmlConfigured>weaved-aspects.xml</xmlConfigured>
           <sources>
             <source>
-              <basedir>src/main/java</basedir>
+              <basedir>${project.basedir}/src/main/java</basedir>
               <includes>
                 <include>**/*.java</include>
               </includes>
