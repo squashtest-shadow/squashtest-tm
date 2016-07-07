@@ -21,25 +21,15 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
-import java.util.*;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.hibernate.Session;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
@@ -53,33 +43,39 @@ import org.squashtest.tm.service.internal.advancedsearch.AdvancedSearchServiceIm
 import org.squashtest.tm.service.project.ProjectManagerService;
 import org.squashtest.tm.service.project.ProjectsPermissionManagementService;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+
 @Service("squashtest.tm.service.CampaignAdvancedSearchService")
 public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
-		CampaignAdvancedSearchService {
+	CampaignAdvancedSearchService {
 
 	@Inject
 	protected ProjectManagerService projectFinder;
 
 	@PersistenceContext
-	private EntityManager em;
+	private EntityManager entityManager;
 
 	@Inject
 	private ProjectsPermissionManagementService projectsPermissionManagementService;
 
 
-	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[] {
-			new SortField("project.name", SortField.Type.STRING, false),
-			new SortField("campaign-name", SortField.Type.STRING, false),
-			new SortField("iteration-name", SortField.Type.STRING, false),
-			new SortField("itpi-id", SortField.Type.STRING, false),
-			new SortField("itpi-label", SortField.Type.STRING, false),
-			new SortField("itpi-mode", SortField.Type.STRING, false),
-			new SortField("itpi-status", SortField.Type.STRING, false),
-			new SortField("itpi-executed-by", SortField.Type.STRING, false),
-			new SortField("itpi-executed-on", SortField.Type.STRING, false),
-			new SortField("itpi-datasets", SortField.Type.STRING, false)};
+	private static final SortField[] DEFAULT_SORT_EXECUTION = new SortField[]{
+		new SortField("project.name", SortField.Type.STRING, false),
+		new SortField("campaign-name", SortField.Type.STRING, false),
+		new SortField("iteration-name", SortField.Type.STRING, false),
+		new SortField("itpi-id", SortField.Type.STRING, false),
+		new SortField("itpi-label", SortField.Type.STRING, false),
+		new SortField("itpi-mode", SortField.Type.STRING, false),
+		new SortField("itpi-status", SortField.Type.STRING, false),
+		new SortField("itpi-executed-by", SortField.Type.STRING, false),
+		new SortField("itpi-executed-on", SortField.Type.STRING, false),
+		new SortField("itpi-datasets", SortField.Type.STRING, false)};
 
-	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("");
+	// FIXME This list which contains sweet FA is used to decide when a field should be processed as a numeric field or a text field. Looks like horseshit to me.
+	private static final List<String> LONG_SORTABLE_FIELDS = Collections.singletonList("");
 
 	private static final String TEST_SUITE_ID_FIELD_NAME = "testSuites.id";
 	private static final String ITERATION_ID_FIELD_NAME = "iteration.id";
@@ -98,33 +94,32 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return findUsersWhoCanAccessProject(projectIds);
 	}
 
-	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds){
-	List<String> list = new ArrayList<>();
+	private List<String> findUsersWhoCanAccessProject(List<Long> projectIds) {
+		List<String> list = new ArrayList<>();
 
-	List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<>();
+		List<PartyProjectPermissionsBean> findPartyPermissionBeanByProject = new ArrayList<>();
 
-	for (Long projectId : projectIds) {
-		findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
+		for (Long projectId : projectIds) {
+			findPartyPermissionBeanByProject.addAll(projectsPermissionManagementService
 				.findPartyPermissionsBeanByProject(projectId));
-	}
+		}
 
-	for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
-		if (partyProjectPermissionsBean.isUser()) {
+		for (PartyProjectPermissionsBean partyProjectPermissionsBean : findPartyPermissionBeanByProject) {
+			if (partyProjectPermissionsBean.isUser()) {
 
 				User user = (User) partyProjectPermissionsBean.getParty();
 				list.add(user.getLogin());
+			}
 		}
-	}
-	return list;
+		return list;
 	}
 
 	@Override
 	public PagedCollectionHolder<List<IterationTestPlanItem>> searchForIterationTestPlanItem(AdvancedSearchModel searchModel,
-			PagingAndMultiSorting paging, Locale locale) {
+		PagingAndMultiSorting paging, Locale locale) {
 
 
-		Session session = em.unwrap(Session.class);
-		FullTextSession ftSession = Search.getFullTextSession(session);
+		FullTextEntityManager ftSession = Search.getFullTextEntityManager(entityManager);
 
 		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(IterationTestPlanItem.class).get();
 		Query luceneQuery = buildLuceneQuery(qb, searchModel);
@@ -135,10 +130,14 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		if (!checkSearchModelPerimeterIsEmpty(searchModel) && luceneQuery != null) {
 			Sort sort = getExecutionSort(paging);
 
-			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class)
-					.setSort(sort);
-			countAll = hibQuery.list().size();
-			result = hibQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).list();
+			FullTextQuery fullTextQuery = ftSession.createFullTextQuery(luceneQuery, IterationTestPlanItem.class).setSort(sort);
+
+			// FIXME The 2 lines below seem to
+			// FIXME 1. fetch all the data
+			// FIXME 2. fetch the paged data
+			// FIXME Looks like horseshit to me
+			countAll = fullTextQuery.getResultList().size();
+			result = fullTextQuery.setFirstResult(paging.getFirstItemIndex()).setMaxResults(paging.getPageSize()).getResultList();
 		}
 
 		// Please, don't return null there, it will explode everything. It did.
@@ -148,17 +147,17 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 
 	private boolean checkSearchModelPerimeterIsEmpty(AdvancedSearchModel searchModel) {
 		Map<String, AdvancedSearchFieldModel> fields = searchModel.getFields();
-		return checkParamNullOrEmpty(fields.get(PROJECT_ID_FIELD_NAME))&&
-			checkParamNullOrEmpty(fields.get(CAMPAIGN_ID_FIELD_NAME))&&
-			checkParamNullOrEmpty(fields.get(ITERATION_ID_FIELD_NAME))&&
+		return checkParamNullOrEmpty(fields.get(PROJECT_ID_FIELD_NAME)) &&
+			checkParamNullOrEmpty(fields.get(CAMPAIGN_ID_FIELD_NAME)) &&
+			checkParamNullOrEmpty(fields.get(ITERATION_ID_FIELD_NAME)) &&
 			checkParamNullOrEmpty(fields.get(TEST_SUITE_ID_FIELD_NAME));
 	}
 
-	private boolean checkParamNullOrEmpty(AdvancedSearchFieldModel field){
-		if (field==null){
+	private boolean checkParamNullOrEmpty(AdvancedSearchFieldModel field) {
+		if (field == null) {
 			return true;
 		}
-		if (field.getType()!= AdvancedSearchFieldModelType.LIST){
+		if (field.getType() != AdvancedSearchFieldModelType.LIST) {
 			return false;
 		}
 		AdvancedSearchListFieldModel listField = (AdvancedSearchListFieldModel) field;
@@ -207,4 +206,4 @@ public class CampaignAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl
 		return result;
 	}
 
-	}
+}

@@ -79,7 +79,7 @@ class CustomFieldTransatorTest extends Specification {
 		where:
 		strVal                | rawVal
 		""                    | [""]
-		null                  | []                                // rem : nulls should be accepted cos we dont know how to coerce'em until the actual CF is fetched
+		null                  | []                                // rem : nulls should be accepted cos we dont know how to coerce'entityManager until the actual CF is fetched
 		"the batman|| |robin" | ["the batman", "", " ", "robin"]    // rem : blanks are kept
 		"the batman|robin|"   | ["the batman", "robin"]            // rem : EXCEPT WHEN THEY'RE LAST WFT
 		"the batman|robin| "  | ["the batman", "robin", " "]        // rem : BUT NOT-EMPTIES ARE KEPT WFT
