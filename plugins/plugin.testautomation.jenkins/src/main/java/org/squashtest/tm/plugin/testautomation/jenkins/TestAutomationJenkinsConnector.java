@@ -104,7 +104,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 
 		try {
 			return jsonParser.readJobListFromJson(response);
-		} catch (UnreadableResponseException ex) {
+		} catch (UnreadableResponseException ex) {// NOSONAR (GRF) call stack broken on purpose, i guess
 			throw new UnreadableResponseException("Test automation - jenkins : server '" + server
 				+ "' returned malformed response : ", ex.getCause()); // NOSONAR (GRF) call stack broken on purpose, i guess
 		}
@@ -122,7 +122,7 @@ public class TestAutomationJenkinsConnector implements TestAutomationConnector {
 		}
 
 		// if the file isn't available we regenerate the file
-		catch (Exception ex) {
+		catch (Exception ex) {// NOSONAR the exception is handled
 
 			CloseableHttpClient client = clientProvider.getClientFor(project.getServer());
 

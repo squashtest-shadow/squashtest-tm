@@ -119,7 +119,7 @@ public class WorksheetFormatStatus {
 	/**
 	 * Will store the column mismatch.
 	 *
-	 * @param type
+	 * @param mismatchType
 	 * @param colType
 	 */
 	public void addMismatch(ColumnMismatch mismatchType, TemplateColumn colType) {

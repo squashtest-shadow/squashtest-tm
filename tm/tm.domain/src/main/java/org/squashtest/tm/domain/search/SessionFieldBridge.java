@@ -84,25 +84,21 @@ public abstract class SessionFieldBridge implements FieldBridge {
 
 		try {
 			session = getCurrentSession();
-		} catch (InvalidDataAccessApiUsageException ex) {
+		} catch (InvalidDataAccessApiUsageException ex) {// NOSONAR, we create the session just after if we have not session
 			session = null;
 		}
 
 		if (session == null) {
 			session = getSessionFactory().openSession();
 			tx = session.beginTransaction();
-			try {
-				writeFieldToDocument(name, session, value, document, luceneOptions);
-			} catch (HibernateException ex) {
-				// ugly hack in order to be able to run integration tests
-			}
+			writeFieldToDocument(name, session, value, document, luceneOptions);
 			tx.commit();
 			session.close();
 		} else {
 			writeFieldToDocument(name, session, value, document, luceneOptions);
 		}
 
-		if (LOGGER.isDebugEnabled()) {
+		if (LOGGER.isTraceEnabled()) {
 			long end = System.nanoTime();
 			int timeInMilliSec = Math.round((end - start) / 1000000f);
 			LOGGER.trace(this.getClass().getSimpleName() + ".set(..) took {} ms for entity {}", timeInMilliSec,

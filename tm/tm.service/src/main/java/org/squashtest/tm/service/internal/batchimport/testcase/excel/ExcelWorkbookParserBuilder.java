@@ -191,16 +191,11 @@ class ExcelWorkbookParserBuilder {
 		for (int iCell = 0; iCell < headerRow.getLastCellNum(); iCell++) {
 			Cell cell = headerRow.getCell(iCell);
 
-			if (cell != null) {
+			if (cell != null && cell.getCellType() == Cell.CELL_TYPE_STRING) {
 				try {
 					String header = cell.getStringCellValue();
 					wd.addColumnDef(header, iCell);
-				} catch (IllegalStateException e) {
-					// seems this cell aint a string cell...
-					LOGGER.trace(
-							"We expected a string cell, but it was not. Not an error case so we silently skip it. Exception message : {}",
-							e.getMessage());
-				} catch (ColumnMismatchException cme) {
+				} catch (ColumnMismatchException cme) {// NOSONAR this is not an error case, we log it in report
 					worksheetFormatStatus.addMismatch(cme.getType(), cme.getColType());
 				}
 			}
