@@ -46,7 +46,7 @@ abstract class DbunitDaoSpecification extends DatasourceDependantSpecification {
 
 
 	/**
-	 * @deprecated use em instead
+	 * @deprecated use entityManager instead
      */
 	@Deprecated
 	protected Session getSession() {
