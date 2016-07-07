@@ -54,7 +54,7 @@
       <artifactId>mysql-connector-java</artifactId>
     </dependency>
     <dependency>
-      <groupId>postgresql</groupId>
+      <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
     </dependency>
 
@@ -460,23 +460,23 @@
       <build>
         <plugins>
           <!-- Create and populate a database integration tests -->
-          <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>aspectj-maven-plugin</artifactId>
-            <configuration>
-              <showWeaveInfo>${verbose.compiler}</showWeaveInfo>
-              <source>${java.version}</source>
-              <target>${java.version}</target>
-              <complianceLevel>${java.version}</complianceLevel>
-              <aspectLibraries>
-                <aspectLibrary>
-                  <!-- For @Configurable. Not sure we need it in this module -->
-                  <groupId>org.springframework</groupId>
-                  <artifactId>org.springframework.aspects</artifactId>
-                </aspectLibrary>
-              </aspectLibraries>
-            </configuration>
-          </plugin>
+          <!--<plugin>-->
+            <!--<groupId>org.codehaus.mojo</groupId>-->
+            <!--<artifactId>aspectj-maven-plugin</artifactId>-->
+            <!--<configuration>-->
+              <!--<showWeaveInfo>${verbose.compiler}</showWeaveInfo>-->
+              <!--<source>${java.version}</source>-->
+              <!--<target>${java.version}</target>-->
+              <!--<complianceLevel>${java.version}</complianceLevel>-->
+              <!--<aspectLibraries>-->
+                <!--<aspectLibrary>-->
+                  <!--&lt;!&ndash; For @Configurable. Not sure we need it in this module &ndash;&gt;-->
+                  <!--<groupId>org.springframework</groupId>-->
+                  <!--<artifactId>org.springframework.aspects</artifactId>-->
+                <!--</aspectLibrary>-->
+              <!--</aspectLibraries>-->
+            <!--</configuration>-->
+          <!--</plugin>-->
 
           <plugin>
             <groupId>org.liquibase</groupId>

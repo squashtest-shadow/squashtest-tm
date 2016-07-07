@@ -25,12 +25,13 @@
   </modules>
 
   <properties>
-    <!-- aspectj version syncd w/ spring boot version -->
+    <!-- aspectj version - should be syncd w/ spring boot version -->
+    <!-- yet we're stuck at 1.8.5 - won't compile with newer versions -->
     <aspectj.version>1.8.5</aspectj.version>
     <groovy-eclipse-batch.version>2.4.3-01</groovy-eclipse-batch.version>
     <groovy-eclipse-compiler.version>2.9.2-01</groovy-eclipse-compiler.version>
     <!-- groovy version syncd w/ spring boot version -->
-    <groovy.version>2.4.6</groovy.version>
+    <groovy.version>2.4.7</groovy.version>
 
     <jasperreports.version>6.1.1</jasperreports.version>
     <java.version>1.7</java.version>
@@ -41,8 +42,8 @@
     <maven-surefire-plugin.version>2.18.1</maven-surefire-plugin.version>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <spring-boot-maven-plugin.version>1.3.3.RELEASE</spring-boot-maven-plugin.version>
-    <spring.boot.version>1.3.3.RELEASE</spring.boot.version>
+    <spring-boot-maven-plugin.version>1.3.6.RELEASE</spring-boot-maven-plugin.version>
+    <spring.boot.version>1.3.6.RELEASE</spring.boot.version>
 
     <verbose.compiler>false</verbose.compiler>
     <wro4j.version>1.7.8</wro4j.version>
