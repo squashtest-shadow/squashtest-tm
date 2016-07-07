@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -245,6 +246,9 @@ public class RequirementExcelExporter {
 	}
 
 	private String removeHtml(String html) {
+		if(StringUtils.isBlank(html)){
+			return "";
+		}
 		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
 	}
 

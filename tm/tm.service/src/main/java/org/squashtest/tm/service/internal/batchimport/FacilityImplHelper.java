@@ -68,6 +68,10 @@ final class FacilityImplHelper {
 			testCase.setReference("");
 		}
 
+		if (testCase.getDescription() == null) {
+			testCase.setDescription("");
+		}
+
 		if (testCase.getPrerequisite() == null) {
 			testCase.setPrerequisite("");
 		}
@@ -101,6 +105,10 @@ final class FacilityImplHelper {
 
 		if (reqVersion.getReference() == null) {
 			reqVersion.setReference("");
+		}
+
+		if (reqVersion.getDescription() == null) {
+			reqVersion.setDescription("");
 		}
 
 		if (reqVersion.getCriticality()==null){

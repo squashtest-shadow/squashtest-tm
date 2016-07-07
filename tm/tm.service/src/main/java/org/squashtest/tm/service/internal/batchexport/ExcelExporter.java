@@ -33,6 +33,7 @@ import java.util.Map;
 import javax.inject.Inject;
 
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -68,9 +69,9 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseShe
 @Component
 @Scope("prototype")
 class ExcelExporter {
-	
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(ExcelExporter.class);
-	
+
 	private static final String DS_SHEET = TemplateWorksheet.DATASETS_SHEET.sheetName;
 	private static final String PRM_SHEET = TemplateWorksheet.PARAMETERS_SHEET.sheetName;
 	private static final String ST_SHEET = TemplateWorksheet.STEPS_SHEET.sheetName;
@@ -203,6 +204,9 @@ class ExcelExporter {
 	}
 
 	private String removeHtml(String html) {
+		if(StringUtils.isBlank(html)){
+			return "";
+		}
 		return html.replaceAll("(?s)<[^>]*>(\\s*<[^>]*>)*", "");
 	}
 
