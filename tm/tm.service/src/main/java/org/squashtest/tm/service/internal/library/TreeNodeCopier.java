@@ -36,6 +36,7 @@ import org.hibernate.Session;
 import org.hibernate.engine.spi.EntityKey;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.campaign.Campaign;
 import org.squashtest.tm.domain.campaign.CampaignFolder;
 import org.squashtest.tm.domain.campaign.Iteration;
@@ -160,14 +161,14 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 	@SuppressWarnings({"unchecked", "rawtypes"})
 	public void visit(Folder source, FolderDao dao) {
 		Folder<?> copyFolder = (Folder<?>) source.createCopy();
-		persistCopy(copyFolder, dao, LibraryNode.MAX_NAME_SIZE);
+		persistCopy(copyFolder, dao, Sizes.NAME_MAX);
 
 	}
 
 	@Override
 	public void visit(Campaign source) {
 		Campaign copyCampaign = source.createCopy();
-		persistCopy(copyCampaign, campaignDao, LibraryNode.MAX_NAME_SIZE);
+		persistCopy(copyCampaign, campaignDao, Sizes.NAME_MAX);
 		copyCustomFields(source, copyCampaign);
 
 	}
@@ -226,7 +227,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 		//create copies for requirement versions and remember version's sources
 		SortedMap<RequirementVersion, RequirementVersion> previousVersionsCopiesBySources = source
 			.addPreviousVersionsCopiesToCopy(copyRequirement);
-		persistCopy(copyRequirement, requirementDao, LibraryNode.MAX_NAME_SIZE);
+		persistCopy(copyRequirement, requirementDao, Sizes.NAME_MAX);
 		//copy custom fields and requirement-version coverages for Current Version
 		copyCustomFields(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
 		copyRequirementVersionCoverages(source.getCurrentVersion(), copyRequirement.getCurrentVersion());
@@ -369,7 +370,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	@SuppressWarnings("unchecked")
 	private void persistTestCase(TestCase testCase) {
-		renameIfNeeded(testCase, LibraryNode.MAX_NAME_SIZE);
+		renameIfNeeded(testCase, Sizes.NAME_MAX);
 		testCaseDao.persistTestCaseAndSteps(testCase);
 		((NodeContainer<TestCase>) destination).addContent(testCase);
 		this.copy = testCase;
@@ -377,7 +378,7 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	@SuppressWarnings("unchecked")
 	private void persitIteration(Iteration copyParam) {
-		renameIfNeeded(copyParam, Iteration.MAX_NAME_SIZE);
+		renameIfNeeded(copyParam, Sizes.NAME_MAX);
 		iterationDao.persistIterationAndTestPlan(copyParam);
 		((NodeContainer<Iteration>) destination).addContent(copyParam);
 		this.copy = copyParam;

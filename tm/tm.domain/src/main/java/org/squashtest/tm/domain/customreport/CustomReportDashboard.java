@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.Auditable;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
@@ -54,7 +55,7 @@ public class CustomReportDashboard implements TreeEntity {
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Size(max = Sizes.NAME_MAX)
 	@Column
 	private String name;
 

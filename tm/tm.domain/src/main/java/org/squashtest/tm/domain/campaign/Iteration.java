@@ -50,6 +50,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -74,7 +75,6 @@ import org.squashtest.tm.security.annotation.AclConstrainedObject;
 @Entity
 public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, TreeNode, Copiable, Identified,
 	BoundEntity, MilestoneMember {
-	public static final int MAX_NAME_SIZE = 255;
 	private static final String ITERATION_ID = "ITERATION_ID";
 	public static final int MAX_REF_SIZE = 50;
 
@@ -89,12 +89,12 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	private String description;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Size(max = Sizes.NAME_MAX)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String name;
 
 	@NotNull
-	@Size(min = 0, max = MAX_REF_SIZE)
+	@Size(max = MAX_REF_SIZE)
 	private String reference = "";
 
 	@Embedded

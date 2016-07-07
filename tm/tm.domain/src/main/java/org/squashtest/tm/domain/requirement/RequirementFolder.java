@@ -38,10 +38,7 @@ import javax.validation.constraints.NotNull;
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException;
 import org.squashtest.tm.domain.audit.AuditableMixin;
-import org.squashtest.tm.domain.library.Folder;
-import org.squashtest.tm.domain.library.FolderSupport;
-import org.squashtest.tm.domain.library.NodeContainerVisitor;
-import org.squashtest.tm.domain.library.NodeVisitor;
+import org.squashtest.tm.domain.library.*;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.resource.SimpleResource;
 
@@ -55,9 +52,9 @@ public class RequirementFolder extends RequirementLibraryNode<SimpleResource> im
 	@Transient
 	private final FolderSupport<RequirementLibraryNode, RequirementFolder> folderSupport = new FolderSupport<>(this);
 
-        
+
         /*
-        Note about cascading: 
+        Note about cascading:
         CascadeType.PERSIST is desirable because it allows us to cascade-create a complete grape of object (useful when importing for instance)
         CascadeType.DELETE is not desirable, because we need to call custom code for proper deletion (see the deletion services)
         */

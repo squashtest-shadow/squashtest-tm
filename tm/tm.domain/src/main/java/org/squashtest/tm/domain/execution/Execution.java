@@ -64,6 +64,7 @@ import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.Attachment;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
@@ -173,7 +174,7 @@ DenormalizedFieldHolder, BoundEntity {
 	private TestCaseStatus status = TestCaseStatus.WORK_IN_PROGRESS;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(max = Sizes.NAME_MAX)
 	private String name;
 
 	@Column
@@ -761,7 +762,7 @@ DenormalizedFieldHolder, BoundEntity {
 		return testPlan.getIteration();
 	}
 
-        
+
 	public Campaign getCampaign() {
 		return getIteration().getCampaign();
 	}

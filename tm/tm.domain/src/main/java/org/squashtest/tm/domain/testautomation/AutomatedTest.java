@@ -20,6 +20,8 @@
  */
 package org.squashtest.tm.domain.testautomation;
 
+import org.squashtest.tm.domain.Sizes;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -53,7 +55,7 @@ public class AutomatedTest {
 	@JoinColumn(name="PROJECT_ID")
 	private TestAutomationProject project;
 
-	@Size(min = 0, max = 255)
+	@Size(max = Sizes.NAME_MAX)
 	private String name;
 
 	protected AutomatedTest() {

@@ -55,6 +55,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.csp.core.bugtracker.domain.BugTracker;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
@@ -94,11 +95,11 @@ public abstract class GenericProject implements Identified, AttachmentHolder {
 	@Type(type = "org.hibernate.type.StringClobType")
 	private String description;
 
-	@Size(min = 0, max = 255)
+	@Size(max = Sizes.LABEL_MAX)
 	private String label;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(max = Sizes.NAME_MAX)
 	@Field(analyze = Analyze.NO, store = Store.YES)
 	private String name;
 

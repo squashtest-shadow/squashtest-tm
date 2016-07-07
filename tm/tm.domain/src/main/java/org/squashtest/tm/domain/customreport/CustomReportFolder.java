@@ -34,6 +34,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.tree.TreeEntity;
 import org.squashtest.tm.security.annotation.AclConstrainedObject;
@@ -48,7 +49,7 @@ public class CustomReportFolder implements TreeEntity {
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Size(max = Sizes.NAME_MAX)
 	@Column
 	private String name;
 

@@ -41,6 +41,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
 
 /**
@@ -50,7 +51,7 @@ import org.squashtest.tm.domain.chart.SpecializedEntityType.EntityRole;
  * 		<li>it is a referential data that will "instanciated" in a {@link ChartDefinition} (the "Prototype" part)</li>
  * 	</ul>
  * </p>
- * 
+ *
  * <p>
  * 	<b>Taxonomy :</b> ColumnPrototypes comes in three varieties :
  * 	<ul>
@@ -80,7 +81,7 @@ public class ColumnPrototype {
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(max = Sizes.LABEL_MAX)
 	private String label;
 
 	@Embedded
@@ -145,7 +146,7 @@ public class ColumnPrototype {
 
 	/**
 	 * May be null : ColumnPrototypes having {@link ColumnType#ATTRIBUTE} have no subqueries for instance.
-	 * 
+	 *
 	 * @return
 	 */
 	public ChartQuery getSubQuery(){

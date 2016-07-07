@@ -41,11 +41,12 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 
 @Entity
 @Table(uniqueConstraints={@UniqueConstraint(columnNames={"NAME","TEST_CASE_ID"})})
 public class Dataset implements Identified {
-	public static final int MAX_NAME_SIZE = 255;
+	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 	@Id
 	@Column(name = "DATASET_ID")
 	@GeneratedValue(strategy = GenerationType.AUTO, generator = "dataset_dataset_id_seq")

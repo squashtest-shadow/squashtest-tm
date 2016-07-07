@@ -24,10 +24,10 @@ import org.hibernate.annotations.Type;
 import org.hibernate.search.annotations.*;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.audit.Auditable;
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode;
 import org.squashtest.tm.domain.search.UpperCasedStringBridge;
 
 import javax.persistence.*;
@@ -51,7 +51,7 @@ public abstract class Resource implements AttachmentHolder, Identified {
 	private Long id;
 
 	@NotBlank
-	@Size(min = 0, max = RequirementLibraryNode.MAX_NAME_SIZE)
+	@Size(max = Sizes.NAME_MAX)
 	@Fields({
 		@Field,
 		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),

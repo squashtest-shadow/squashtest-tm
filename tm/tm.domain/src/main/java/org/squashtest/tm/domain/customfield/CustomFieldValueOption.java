@@ -25,13 +25,14 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Sizes;
 
 @Embeddable
 public class CustomFieldValueOption {
 	public static final int MAX_SIZE = 255;
 
 	@NotBlank
-	@Size(min = 0, max = MAX_SIZE)
+	@Size(max = Sizes.LABEL_MAX)
 	@Pattern(regexp = CustomField.OPTION_REGEXP)
 	private String label;
 

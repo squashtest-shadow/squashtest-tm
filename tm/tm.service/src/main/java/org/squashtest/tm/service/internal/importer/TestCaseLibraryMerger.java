@@ -25,6 +25,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.testcase.TestCaseFolder;
@@ -353,7 +354,7 @@ class TestCaseLibraryMerger {
 
 	private static String generateUniqueName(List<String> pickedNames, String baseName) {
 		String copyToken = "-import";
-		return LibraryUtils.generateUniqueName(pickedNames, baseName, copyToken, LibraryNode.MAX_NAME_SIZE);
+		return LibraryUtils.generateUniqueName(pickedNames, baseName, copyToken, Sizes.NAME_MAX);
 	}
 
 	private static TestCaseLibraryNode getByName(Collection<TestCaseLibraryNode> hayStack, String needle) {

@@ -35,11 +35,6 @@ public final class LibraryUtils {
 	/**
 	 * Will generate a unique name assuming that there is a clash with the given copiesNames.
 	 *
-	 * @param copiesNames
-	 * @param sourceName
-	 * @param token
-	 * @param maxNameSize
-	 * @return
 	 */
 	public static String generateUniqueName(List<String> copiesNames, String sourceName, String token, int maxNameSize) {
 		TokenHelper helper = new SimpleTokenHelper(token);
@@ -68,7 +63,7 @@ public final class LibraryUtils {
 	}
 
 
-	private static interface TokenHelper{
+	private interface TokenHelper{
 		String getTokenRegexp();
 		String buildResult(int index, String baseName);
 	}
@@ -76,7 +71,7 @@ public final class LibraryUtils {
 	private static class SimpleTokenHelper implements TokenHelper{
 		private String token;
 
-		public SimpleTokenHelper(String token){
+		private SimpleTokenHelper(String token){
 			this.token = token;
 		}
 

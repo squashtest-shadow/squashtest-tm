@@ -46,6 +46,7 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.Type;
 import org.hibernate.validator.constraints.NotBlank;
 import org.squashtest.tm.domain.Identified;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.exception.DuplicateNameException;
 
 @Entity
@@ -55,7 +56,7 @@ public class Parameter implements Identified {
 	private static final String PARAM_REGEXP = "[A-Za-z0-9_-]{1,255}";
 	public static final String NAME_REGEXP = "^" + PARAM_REGEXP + "$";
 	public static final int MIN_NAME_SIZE = 1;
-	public static final int MAX_NAME_SIZE = 255;
+	public static final int MAX_NAME_SIZE = Sizes.NAME_MAX;
 
 	public static final String USAGE_PREFIX = "${";
 	public static final String USAGE_SUFFIX = "}";
@@ -151,9 +152,9 @@ public class Parameter implements Identified {
 	/**
 	 * This method set the test case of this parameter with the given test case and add this to the given test case's
 	 * parameters list.
-	 * 
+	 *
 	 * @see TestCase#addParameter(Parameter)
-	 * 
+	 *
 	 * @param testCase
 	 */
 	public void setTestCase(@NotNull TestCase testCase) {
@@ -168,7 +169,7 @@ public class Parameter implements Identified {
 
 	/**
 	 * Returns {@link Parameter#USAGE_PREFIX} + {@link Parameter#name} + {@link Parameter#USAGE_SUFFIX}
-	 * 
+	 *
 	 * @return
 	 */
 	public String getParamStringAsUsedInStep() {
@@ -185,7 +186,7 @@ public class Parameter implements Identified {
 
 	/**
 	 * Returns {@link Parameter#USAGE_PREFIX} + p + {@link Parameter#USAGE_SUFFIX}
-	 * 
+	 *
 	 * @param parameterName
 	 * @return
 	 */

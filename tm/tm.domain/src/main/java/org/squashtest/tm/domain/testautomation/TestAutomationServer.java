@@ -45,7 +45,7 @@ import org.squashtest.tm.domain.audit.Auditable;
 
 
 @NamedQueries({
-    @NamedQuery(name="TestAutomationServer.findByUrlAndLogin", query="from TestAutomationServer where baseURL = :url and login = :login"),	
+    @NamedQuery(name="TestAutomationServer.findByUrlAndLogin", query="from TestAutomationServer where baseURL = :url and login = :login"),
     @NamedQuery(name="testAutomationServer.findAllHostedProjects", query="select p from TestAutomationProject p join p.server s where s.id = :serverId"),
     @NamedQuery(name="testAutomationServer.hasBoundProjects", query="select count(*) from TestAutomationProject where server.id = :serverId"),
     @NamedQuery(name="testAutomationServer.dereferenceProjects", query="update GenericProject set testAutomationServer = null where testAutomationServer.id = :serverId"),
@@ -77,7 +77,7 @@ public class TestAutomationServer {
 	@Column
 	private URL baseURL ;
 
-	/**	
+	/**
  * The login that the TM server should use when dealing with the remote TA server.
 	 */
 	@Column
@@ -90,7 +90,7 @@ public class TestAutomationServer {
 	 */
 	//TODO : eeer... clear password in the database ?
 	@Column
-	@Size(min = 0, max = 255)
+	@Size(max = 255)
 	private String password;
 
 

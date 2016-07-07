@@ -35,8 +35,6 @@ import org.squashtest.tm.exception.NameAlreadyInUseException;
  *
  */
 public interface TreeLibraryNode extends TreeVisitable, Identified {
-	final int MAX_NAME_SIZE = 255;
-
 	String getName ();
 
 	/**

@@ -45,6 +45,7 @@ import org.hibernate.search.annotations.Store;
 import org.hibernate.search.annotations.TokenFilterDef;
 import org.hibernate.search.annotations.TokenizerDef;
 import org.hibernate.validator.constraints.NotBlank;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.attachment.AttachmentHolder;
 import org.squashtest.tm.domain.attachment.AttachmentList;
 import org.squashtest.tm.domain.project.Project;
@@ -71,12 +72,12 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 		@Field,
 		@Field(name = "label", analyze = Analyze.NO, store = Store.YES),
 		@Field(name = "labelUpperCased", analyze = Analyze.NO, store = Store.YES, bridge = @FieldBridge(impl = UpperCasedStringBridge.class)), })
-	@Size(min = 0, max = MAX_NAME_SIZE)
+	@Size(max = Sizes.LABEL_MAX)
 	private String name;
 
 	@Lob
 	@Type(type = "org.hibernate.type.StringClobType")
-	@Field(analyzer = @Analyzer(definition = "htmlStrip") )
+	@Field(analyzer = @Analyzer(definition = "htmlStrip"))
 	private String description;
 
 	@OneToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH, CascadeType.REMOVE }, fetch = FetchType.LAZY)
@@ -117,7 +118,6 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	/**
 	 * Notifies this object it is now a resource of the given project.
 	 *
-	 * @param project
 	 */
 	@Override
 	public void notifyAssociatedWithProject(Project project) {
@@ -137,7 +137,6 @@ public abstract class GenericLibraryNode implements LibraryNode, AttachmentHolde
 	 * in order to implement a better, accurate hashcode and equals. Now that Squash has only one classloader, that shouldn't
 	 * be a problem right ?
 	 *
-	 * @return
 	 */
 	protected abstract Class<? extends GenericLibraryNode> getGenericNodeClass();
 

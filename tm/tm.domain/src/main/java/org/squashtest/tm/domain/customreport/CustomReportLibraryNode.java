@@ -45,6 +45,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.IndexColumn;
 import org.hibernate.annotations.MetaValue;
 import org.hibernate.annotations.Table;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.chart.ChartDefinition;
 import org.squashtest.tm.domain.requirement.Requirement;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -80,7 +81,7 @@ public class CustomReportLibraryNode  implements TreeLibraryNode {
 	 * Use {@link CustomReportLibraryNode#renameNode(String)} method which take care of all constraints relative to node name.
 	 */
 	@Column
-	@Size(min = 0,max = TreeLibraryNode.MAX_NAME_SIZE)
+	@Size(max = Sizes.NAME_MAX)
 	private String name;
 
 	@JoinTable(name="CRLN_RELATIONSHIP",

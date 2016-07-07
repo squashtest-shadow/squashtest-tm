@@ -35,6 +35,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.exception.ActionException;
 import org.squashtest.tm.domain.EntityType;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.library.LibraryNode;
 import org.squashtest.tm.domain.library.NodeContainer;
@@ -630,7 +631,7 @@ RequirementNodeDeletionHandler {
 			String name = child.getName();
 
 			while (!newParent.isContentNameAvailable(name)) {
-				name = LibraryUtils.generateNonClashingName(name, newParent.getContentNames(), LibraryNode.MAX_NAME_SIZE);
+				name = LibraryUtils.generateNonClashingName(name, newParent.getContentNames(), Sizes.NAME_MAX);
 				needsRenaming = true;
 			}
 

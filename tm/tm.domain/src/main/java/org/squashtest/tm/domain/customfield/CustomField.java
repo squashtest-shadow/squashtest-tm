@@ -26,6 +26,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 import javax.persistence.*;
@@ -62,11 +63,11 @@ public class CustomField {
 	protected Long id;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = Sizes.NAME_MAX)
 	protected String name;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(min = 0, max = Sizes.LABEL_MAX)
 	protected String label = "";
 
 	protected boolean optional = true;

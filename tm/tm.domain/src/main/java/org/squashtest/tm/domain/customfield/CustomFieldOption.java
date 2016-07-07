@@ -26,6 +26,7 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotBlank;
 import org.springframework.util.DigestUtils;
+import org.squashtest.tm.domain.Sizes;
 
 /**
  * Defines an option which can be selected among a list and set as a custom field's value.
@@ -35,7 +36,7 @@ import org.springframework.util.DigestUtils;
 @Embeddable
 public class CustomFieldOption {
 	@NotBlank
-	@Size(max = 255)
+	@Size(max = Sizes.LABEL_MAX)
 	private String label;
 
 	@NotBlank

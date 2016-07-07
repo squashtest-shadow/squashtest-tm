@@ -32,7 +32,6 @@ import org.squashtest.tm.domain.project.ProjectResource;
  *
  */
 public interface LibraryNode extends Copiable, Identified, AttachmentHolder, TreeNode, ProjectResource<Project>  {
-	final int MAX_NAME_SIZE = 255;
 	/**
 	 * @return Name of this node.
 	 */
@@ -55,11 +54,11 @@ public interface LibraryNode extends Copiable, Identified, AttachmentHolder, Tre
 	void setDescription(String newDescription);
 
 	String getDescription();
-	
+
 	/**
 	 * Notifies this resource now belongs to the given project. {@link getProject()} should
 	 * return this project afterwards.
-	 * 
+	 *
 	 * @param project
 	 *            should not be <code>null</code>
 	 */

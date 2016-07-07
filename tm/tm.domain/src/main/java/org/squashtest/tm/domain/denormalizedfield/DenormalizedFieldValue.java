@@ -53,6 +53,7 @@ import org.hibernate.validator.constraints.NotBlank;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
@@ -99,7 +100,7 @@ public class DenormalizedFieldValue {
 	protected InputType inputType;
 
 	@NotBlank
-	@Size(min = 0, max = 255)
+	@Size(max = Sizes.LABEL_MAX)
 	protected String label = "";
 
 	protected int position;
@@ -123,7 +124,7 @@ public class DenormalizedFieldValue {
 
 	/**
 	 * Copies the attributes of the given customFieldValue and it's associated customField and customFieldBinding
-	 * 
+	 *
 	 * @param customFieldValue
 	 *            : must be bound to it's customField
 	 * @param denormalizedFieldHolderId
@@ -186,7 +187,7 @@ public class DenormalizedFieldValue {
 	/**
 	 * Return the value as a Date or <code>null</code> if the input type is not Date-picker and if the parsing can't be
 	 * done.
-	 * 
+	 *
 	 * @return a {@link Date} or <code>null</code> in case of ParseException and wrong input-type
 	 */
 	public Date getValueAsDate() {

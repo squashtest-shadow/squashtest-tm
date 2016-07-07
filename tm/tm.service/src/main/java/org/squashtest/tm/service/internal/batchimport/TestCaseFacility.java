@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.LibraryNode;
@@ -177,9 +178,8 @@ public class TestCaseFacility extends EntityFacilitySupport {
 
 	}
 
-
 	private void renameIfNeeded(TestCase testCase, Collection<String> siblingNames) {
-		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
+		String newName = LibraryUtils.generateNonClashingName(testCase.getName(), siblingNames, Sizes.NAME_MAX);
 		if (!newName.equals(testCase.getName())) {
 			testCase.setName(newName);
 		}

@@ -52,7 +52,7 @@ public class DatasetParamValue implements Identified {
 	private Dataset dataset;
 
 	@NotNull
-	@Size(min = 0, max = 255)
+	@Size(max = 255)
 	private String paramValue = "";
 
 	public DatasetParamValue() {

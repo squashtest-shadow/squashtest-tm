@@ -33,8 +33,6 @@ import org.squashtest.tm.domain.project.Project;
  */
 public interface TreeEntity extends Identified{
 
-	final int MAX_NAME_SIZE = 255;
-
 	/**
 	 * @return Name of this node.
 	 */

@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.PathUtils;
+import org.squashtest.tm.domain.Sizes;
 import org.squashtest.tm.domain.audit.AuditableMixin;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
@@ -270,7 +271,7 @@ class RequirementFacility extends EntityFacilitySupport {
 	}
 
 	private void renameIfNeeded(NewRequirementVersionDto version, Collection<String> siblingNames) {
-		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, LibraryNode.MAX_NAME_SIZE);
+		String newName = LibraryUtils.generateNonClashingName(version.getName(), siblingNames, Sizes.NAME_MAX);
 		if (!newName.equals(version.getName())) {
 			version.setName(newName);
 		}
