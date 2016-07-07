@@ -253,7 +253,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 	private <T> void cleanSomeCache(Class<T> c) {
 
-//		em.unwrap(Session.class).flush();
 		em.flush();
 		Collection<Object> entities = new ArrayList<>();
 		for (Object obj : em.unwrap(Session.class).getStatistics().getEntityKeys()) {
@@ -266,7 +265,6 @@ public class TreeNodeCopier implements NodeVisitor, PasteOperation {
 
 		genericDao.clearFromCache(entities);
 		em.flush();
-//		em.unwrap(Session.class).flush();
 	}
 
 	@Override

@@ -20,34 +20,17 @@
  */
 package org.squashtest.tm.service.internal.testcase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.hibernate.Session;
-import org.hibernate.search.FullTextSession;
-import org.hibernate.search.Search;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
 import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.PagingAndMultiSorting;
-import org.squashtest.tm.core.foundation.collection.PagingBackedPagedCollectionHolder;
-import org.squashtest.tm.core.foundation.collection.SortOrder;
-import org.squashtest.tm.core.foundation.collection.Sorting;
+import org.squashtest.tm.core.foundation.collection.*;
 import org.squashtest.tm.domain.IdentifiedUtil;
 import org.squashtest.tm.domain.project.Project;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
@@ -64,13 +47,18 @@ import org.squashtest.tm.service.requirement.RequirementVersionAdvancedSearchSer
 import org.squashtest.tm.service.testcase.TestCaseAdvancedSearchService;
 import org.squashtest.tm.service.testcase.VerifyingTestCaseManagerService;
 
+import javax.inject.Inject;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+
 @Service("squashtest.tm.service.TestCaseAdvancedSearchService")
 public class TestCaseAdvancedSearchServiceImpl extends AdvancedSearchServiceImpl implements
-TestCaseAdvancedSearchService {
+	TestCaseAdvancedSearchService {
 
 
 	@PersistenceContext
-	protected EntityManager em;
+	protected EntityManager entityManager;
 
 	@Inject
 	private ProjectDao projectDao;
@@ -90,13 +78,13 @@ TestCaseAdvancedSearchService {
 	@Inject
 	private MessageSource source;
 
-	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[] {
+	private static final SortField[] DEFAULT_SORT_TESTCASES = new SortField[]{
 		new SortField("project.name", SortField.Type.STRING, false),
 		new SortField("reference", SortField.Type.STRING, false), new SortField("importance", SortField.Type.STRING, false),
-		new SortField("label", SortField.Type.STRING, false) };
+		new SortField("label", SortField.Type.STRING, false)};
 
 	private static final List<String> LONG_SORTABLE_FIELDS = Arrays.asList("requirements", "steps", "id", "iterations",
-			"attachments");
+		"attachments");
 
 	private static final String FAKE_TC_ID = "-9000";
 
@@ -137,9 +125,9 @@ TestCaseAdvancedSearchService {
 	 *
 	 * I don't know what to do about it.
 	 */
-	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextSession ftSession, Locale locale){
+	protected Query searchTestCasesQuery(AdvancedSearchModel model, FullTextEntityManager ftem, Locale locale) {
 
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
+		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
 
 		/*
@@ -157,7 +145,7 @@ TestCaseAdvancedSearchService {
 		Query luceneQuery = buildCoreLuceneQuery(qb, model);
 
 		// now add the test-cases specific milestones criteria
-		if (shouldSearchByMilestones(modelCopy)){
+		if (shouldSearchByMilestones(modelCopy)) {
 			luceneQuery = addAggregatedMilestonesCriteria(luceneQuery, qb, modelCopy, locale);
 		}
 
@@ -170,14 +158,13 @@ TestCaseAdvancedSearchService {
 	@Override
 	public List<TestCase> searchForTestCases(AdvancedSearchModel model, Locale locale) {
 
-		Session session = em.unwrap(Session.class);
-		FullTextSession ftSession = Search.getFullTextSession(session);
+		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
 
-		Query luceneQuery = searchTestCasesQuery(model, ftSession, locale);
+		Query luceneQuery = searchTestCasesQuery(model, ftem, locale);
 
-		org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class);
+		FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class);
 
-		return hibQuery.list();
+		return hibQuery.getResultList();
 
 	}
 
@@ -189,7 +176,7 @@ TestCaseAdvancedSearchService {
 		// Get testcases from found requirements
 		for (RequirementVersion requirement : requirements) {
 			List<TestCase> verifiedTestCases = verifyingTestCaseManagerService.findAllByRequirementVersion(requirement
-					.getId());
+				.getId());
 			testCases.addAll(verifiedTestCases);
 		}
 
@@ -228,10 +215,9 @@ TestCaseAdvancedSearchService {
 
 			if (LONG_SORTABLE_FIELDS.contains(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, SortField.Type.LONG, isReverse);
-			}
-			else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
+			} else if ("nature".equals(fieldName) || "type".equals(fieldName)) {
 				sortFieldArray[i] = new SortField(fieldName, new InfoListItemComparatorSource(source,
-						locale), isReverse);
+					locale), isReverse);
 			} else {
 				sortFieldArray[i] = new SortField(fieldName, SortField.Type.STRING, isReverse);
 			}
@@ -252,76 +238,67 @@ TestCaseAdvancedSearchService {
 
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCasesThroughRequirementModel(AdvancedSearchModel model,
-			PagingAndMultiSorting sorting, Locale locale) {
+		PagingAndMultiSorting sorting, Locale locale) {
 
 		List<TestCase> testcases = searchForTestCasesThroughRequirementModel(model, locale);
 
-		Session session = em.unwrap(Session.class);
+		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
 
-		FullTextSession ftSession = Search.getFullTextSession(session);
-
-		QueryBuilder qb = ftSession.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
+		QueryBuilder qb = ftem.getSearchFactory().buildQueryBuilder().forEntity(TestCase.class).get();
 
 		Query luceneQuery = super.buildLuceneQuery(qb, testcases);
 
-		List<TestCase> result = Collections.emptyList();
-		int countAll = 0;
-		if (luceneQuery != null) {
-			Sort sort = getTestCaseSort(sorting);
-			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
-
-			countAll = hibQuery.list().size();
-
-			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
-		}
-		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
+		return fetchPagedResults(ftem, luceneQuery, sorting);
 	}
 
 	@Override
 	public PagedCollectionHolder<List<TestCase>> searchForTestCases(AdvancedSearchModel model,
-			PagingAndMultiSorting sorting, Locale locale) {
+		PagingAndMultiSorting sorting, Locale locale) {
 
-		Session session = em.unwrap(Session.class);
-		FullTextSession ftSession = Search.getFullTextSession(session);
+		FullTextEntityManager ftem = Search.getFullTextEntityManager(entityManager);
 
-		Query luceneQuery = searchTestCasesQuery(model, ftSession, locale);
+		Query luceneQuery = searchTestCasesQuery(model, ftem, locale);
 
+		return fetchPagedResults(ftem, luceneQuery, sorting);
+	}
+
+	private PagedCollectionHolder<List<TestCase>> fetchPagedResults(FullTextEntityManager ftem, Query luceneQuery, PagingAndMultiSorting sorting) {
 		List<TestCase> result = Collections.emptyList();
 		int countAll = 0;
 		if (luceneQuery != null) {
 			Sort sort = getTestCaseSort(sorting);
-			org.hibernate.Query hibQuery = ftSession.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
-			countAll = hibQuery.list().size();
+			FullTextQuery hibQuery = ftem.createFullTextQuery(luceneQuery, TestCase.class).setSort(sort);
 
-			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).list();
+			// FIXME count + paged query if possible
+			countAll = hibQuery.getResultList().size();
+			result = hibQuery.setFirstResult(sorting.getFirstItemIndex()).setMaxResults(sorting.getPageSize()).getResultList();
 		}
 		return new PagingBackedPagedCollectionHolder<>(sorting, countAll, result);
 	}
 
-	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale){
+	public Query addAggregatedMilestonesCriteria(Query mainQuery, QueryBuilder qb, AdvancedSearchModel modelCopy, Locale locale) {
 
 		// find the milestones
 		addMilestoneFilter(modelCopy);
 
-		List<String> strMilestoneIds = ((AdvancedSearchListFieldModel)modelCopy.getFields().get("milestones.id")).getValues();
+		List<String> strMilestoneIds = ((AdvancedSearchListFieldModel) modelCopy.getFields().get("milestones.id")).getValues();
 
 		// now find the test cases
 		Collection<Long> milestoneIds = new ArrayList<>(strMilestoneIds.size());
-		for (String str : strMilestoneIds){
+		for (String str : strMilestoneIds) {
 			milestoneIds.add(Long.valueOf(str));
 		}
 
 
-
 		List<Long> lTestcaseIds = testCaseDao.findAllTestCasesLibraryNodeForMilestone(milestoneIds);
 		List<String> testcaseIds = new ArrayList<>(lTestcaseIds.size());
-		for (Long l : lTestcaseIds){
+		for (Long l : lTestcaseIds) {
 			testcaseIds.add(l.toString());
 		}
 
 		//if no tc are found then use fake id so the lucene query will not find anything
 
-		if (testcaseIds.isEmpty()){
+		if (testcaseIds.isEmpty()) {
 			testcaseIds.add(FAKE_TC_ID);
 		}
 
@@ -332,7 +309,7 @@ TestCaseAdvancedSearchService {
 
 	}
 
-	public boolean shouldSearchByMilestones(AdvancedSearchModel model){
+	public boolean shouldSearchByMilestones(AdvancedSearchModel model) {
 		boolean enabled = getFeatureManager().isEnabled(Feature.MILESTONE);
 
 		AdvancedSearchSingleFieldModel searchByMilestone = (AdvancedSearchSingleFieldModel) model.getFields().get("searchByMilestone");
@@ -340,7 +317,6 @@ TestCaseAdvancedSearchService {
 
 		return enabled && hasCriteria;
 	}
-
 
 
 }
