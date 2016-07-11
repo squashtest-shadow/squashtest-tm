@@ -118,7 +118,7 @@ public class HibernateTestCaseDeletionDao extends HibernateDeletionDao implement
 		if (!testCaseIds.isEmpty()) {
 			return executeSelectNamedQuery("testCase.findAllAttachmentLists", TEST_CASES_IDS, testCaseIds);
 		}
-		return Collections.emptyList();
+		return new ArrayList<>();
 	}
 
 	@Override
