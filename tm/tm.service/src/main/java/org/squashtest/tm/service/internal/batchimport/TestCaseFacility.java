@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.core.foundation.lang.PathUtils;
 import org.squashtest.tm.domain.customfield.RawValue;
 import org.squashtest.tm.domain.infolist.InfoListItem;
 import org.squashtest.tm.domain.library.LibraryNode;
@@ -143,7 +144,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 			// libraryId is never null because the checks ensured that the
 			// project exists
 			Long libraryId = validator.getModel().getProjectStatus(target.getProject()).getTestCaseLibraryId();
-
+			unescapeTCName(testCase);
 			Collection<String> siblingNames = navigationService.findNamesInLibraryStartingWith(libraryId,
 				testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
@@ -153,6 +154,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		// case 2 : this test case exists within a folder
 		else {
 			Long folderId = navigationService.mkdirs(target.getFolder());
+			unescapeTCName(testCase);
 			Collection<String> siblingNames = navigationService.findNamesInFolderStartingWith(folderId,
 				testCase.getName());
 			renameIfNeeded(testCase, siblingNames);
@@ -160,6 +162,7 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		}
 
 	}
+
 
 	/**
 	 * @param instr            instruction read from import file, pointing to a TRANSIENT test case template
@@ -183,6 +186,11 @@ public class TestCaseFacility extends EntityFacilitySupport {
 		if (!newName.equals(testCase.getName())) {
 			testCase.setName(newName);
 		}
+	}
+
+
+	private void unescapeTCName(TestCase testCase) {
+		testCase.setName(PathUtils.unescapePathPartSlashes(testCase.getName()));
 	}
 
 	public LogTrain updateTestCase(TestCaseInstruction instr) {
