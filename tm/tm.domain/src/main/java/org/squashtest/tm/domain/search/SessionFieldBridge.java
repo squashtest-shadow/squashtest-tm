@@ -84,7 +84,7 @@ public abstract class SessionFieldBridge implements FieldBridge {
 
 		try {
 			session = getCurrentSession();
-		} catch (InvalidDataAccessApiUsageException ex) {// NOSONAR, we create the session just after if we have not session
+		} catch (InvalidDataAccessApiUsageException | IllegalStateException ex) { //NOSONAR, we create the session just after if we have not session
 			session = null;
 		}
 
