@@ -344,16 +344,16 @@
     </dependency>
 
     <dependency>
-    <groupId>org.apache.tomcat.embed</groupId>
-    <artifactId>tomcat-embed-core</artifactId>
-    <version>8.0.36</version>
-    <scope>${appserver.scope}</scope>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-core</artifactId>
+      <version>8.0.36</version>
+      <scope>${appserver.scope}</scope>
     </dependency>
 
     <dependency>
-    <groupId>org.apache.tomcat.embed</groupId>
-    <artifactId>tomcat-embed-jasper</artifactId>
-    <scope>${appserver.scope}</scope>
+      <groupId>org.apache.tomcat.embed</groupId>
+      <artifactId>tomcat-embed-jasper</artifactId>
+      <scope>${appserver.scope}</scope>
     </dependency>
 
   </dependencies>

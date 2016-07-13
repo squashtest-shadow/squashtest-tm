@@ -276,7 +276,7 @@
 								<th style="border:none;"></th>
 								<th class="status-color-untestable std-border light-border" colspan="3" ><f:message key="label.Synthesis"/></th>
 								<th style="border:none;"></th>
-								<th class="status-color-untestable std-border light-border" colspan="${allowsSettled? (allowsUntestable? 13 : 12) : (allowsUntestable? 12 : 11)}"><f:message key="label.ExecutionProgress"/> </th>
+								<th class="status-color-untestable std-border light-border" colspan="${allowsSettled? (allowsUntestable? 12 : 11) : (allowsUntestable? 11 : 10)}"><f:message key="label.ExecutionProgress"/> </th>
 								<th style="border:none;"></th>
 								<th class="status-color-untestable std-border light-border" colspan="4"><f:message key="label.NeverExecuted"/></th>
 							</tr>
@@ -290,7 +290,7 @@
 								<th title="${ToExecuteLabel}" class="status-color-ready std-border light-border"><f:message key="shortLabel.Ready"/></th>
 								<th title="${RunningLabel}" class="status-color-running std-border light-border"><f:message key="shortLabel.Running"/></th>															    								
 								<th title="${SuccessLabel}" class="status-color-success std-border light-border"><f:message key="shortLabel.Success"/></th>
-								<th class="${allowsSettled ? 'status-color-settled' : 'not-displayed' }" title="${SettledLabel}"><f:message key="shortLabel.Settled"/></th>
+								<th title="${SettledLabel}" class="${allowsSettled ? 'status-color-settled' : 'not-displayed' } std-border light-border" ><f:message key="shortLabel.Settled"/></th>
 								<th title="${FailureLabel}" class="status-color-failure std-border light-border"><f:message key="shortLabel.Failure"/></th>
 								<th title="${BlockedLabel}" class="status-color-blocked std-border light-border"><f:message key="shortLabel.Blocked"/></th>								
 								<th class="${allowsUntestable ? 'status-color-untestable std-border light-border' : 'not-displayed' }" title="${NonExecutableLabel}"><f:message key="shortLabel.NonExecutable"/></th>
@@ -298,7 +298,7 @@
 								<th title="${ProgressLabel}" class="std-border light-border" ><f:message key="shortLabel.ExecutionProgress"/></th>								
 								<th title="${SuccessRateLabel}" class="std-border light-border" ><f:message key="shortLabel.SuccessRate"/></th>
 								<th title="${FailureRateLabel}" class="std-border light-border" ><f:message key="shortLabel.FailureRate"/></th>
-								<th title="${ProgressVsPrevLabel}" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
+								<th title="${ProgressVsPrevLabel}" class="std-border light-border" style="width:8%"><f:message key="shortLabel.ExecutionProgressComparedToPrev"/></th>
 								<th style="border:none;"></th>								
 								<th title="${VeryHighLabel}"  class="std-border light-border"><f:message key="shortLabel.VeryHigh"/></th>
 								<th title="${HighLabel}"  class="std-border light-border"><f:message key="shortLabel.High"/></th>
