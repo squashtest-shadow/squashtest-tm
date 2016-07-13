@@ -37,6 +37,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderColumn;
 import javax.persistence.PrimaryKeyJoinColumn;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -61,8 +62,11 @@ public class Campaign extends CampaignLibraryNode implements NodeContainer<Itera
 	public static final int MAX_REF_SIZE = 50;
 
 	@Embedded
+	@Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
+	
 	@Embedded
+	@Valid
 	private final ActualTimePeriod actualPeriod = new ActualTimePeriod();
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })

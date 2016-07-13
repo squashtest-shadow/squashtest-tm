@@ -18,44 +18,33 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.campaign;
+package org.squashtest.tm.validation.constraint;
 
-import java.util.Date;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
-import org.squashtest.tm.validation.constraint.IsScheduledPeriodValid;
+import org.squashtest.tm.validation.validator.ActualTimePeriodIsActualPeriodValidValidator;
 
 /**
- * Embeddable value for a scheduled (i.e. user defined) date period.
- * 
- * @author Gregory Fouquet
- * 
+ * This constraint ensures that actual start date and actual end date are consistent.
+ * @author Alix Pierre
+ * @author Johan Lor
+ *
  */
-@Embeddable
-@IsScheduledPeriodValid
-public class ScheduledTimePeriod {
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date scheduledStartDate;
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Constraint(validatedBy = ActualTimePeriodIsActualPeriodValidValidator.class)
+public @interface IsActualPeriodValid {
+	String message() default "{org.squashtest.tm.validation.constraint.invalidperiod}";
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date scheduledEndDate;
+	Class<?>[] groups() default {};
 
-	public void setScheduledStartDate(Date startDate) {
-		this.scheduledStartDate = startDate;
-	}
+	Class<? extends Payload>[] payload() default {};
 
-	public Date getScheduledStartDate() {
-		return scheduledStartDate;
-	}
 
-	public void setScheduledEndDate(Date endDate) {
-		this.scheduledEndDate = endDate;
-	}
-
-	public Date getScheduledEndDate() {
-		return scheduledEndDate;
-	}
 }

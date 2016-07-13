@@ -243,51 +243,50 @@
 
 
       <%--------------------------- Planning section ------------------------------------%>
+      
       <comp:toggle-panel id="datepicker-panel" titleKey="label.Planning" open="true">
         <jsp:attribute name="panelButtons">
 				<c:if test="${writable}">
 				<input id="iteration-planning-button" class="sq-btn" type="button" role="button" value="${iterationPlanningButton}" />
 				</c:if>
-			</jsp:attribute>
+		</jsp:attribute>
         <jsp:attribute name="body">
 	<div class="datepicker-panel">
 		<table class="datepicker-table">
 			<tr>
 				<td class="datepicker-table-col">
-					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_start.label" url="${campaignPlanningUrl}"
-                    datePickerId="scheduled-start" paramName="scheduledStart" isContextual="true"
-                    initialDate="${campaign.scheduledStartDate.time}" editable="${ writable }">	
-					</comp:datepicker>
+					<div class="datepicker-col-scheduled">
+						<comp:datepickers-pair />
+					</div>
 				</td>
 				<td class="datepicker-table-col">
-					<comp:datepicker-auto datePickerId="actual-start" url="${campaignPlanningUrl}"
-                    fmtLabel="dialog.label.campaign.actual_start.label" paramName="actualStart"
-                    autosetParamName="setActualStartAuto" isAuto="${campaign.actualStartAuto}"
-                    initialDate="${campaign.actualStartDate.time}" isContextual="true" editable="${ writable }">
-					</comp:datepicker-auto>
-				</td>
-			</tr>
-			<tr>
-				<td class="datepicker-table-col">
-					<comp:datepicker fmtLabel="dialog.label.campaign.scheduled_end.label" url="${campaignPlanningUrl}"
-                    datePickerId="scheduled-end" paramName="scheduledEnd" isContextual="true"
-                    initialDate="${campaign.scheduledEndDate.time}" editable="${ writable }">	
-					</comp:datepicker>				
-				</td>
-				<td class="datepicker-table-col">
-					<comp:datepicker-auto datePickerId="actual-end" url="${campaignPlanningUrl}"
-                    fmtLabel="dialog.label.campaign.actual_end.label" paramName="actualEnd"
-                    autosetParamName="setActualEndAuto" isAuto="${campaign.actualEndAuto}"
-                    initialDate="${campaign.actualEndDate.time}" isContextual="true" editable="${ writable }">
-					</comp:datepicker-auto>
+					<table>
+						<tr>
+							<td class="datepicker-table-col">
+								<comp:datepicker-auto datePickerId="actual-start" url="${campaignPlanningUrl}"
+			                    fmtLabel="dialog.label.campaign.actual_start.label" paramName="actualStart"
+			                    autosetParamName="setActualStartAuto" isAuto="${campaign.actualStartAuto}"
+			                    initialDate="${campaign.actualStartDate.time}" isContextual="true" editable="${ writable }">
+								</comp:datepicker-auto>
+							</td>
+						</tr>
+						<tr>
+							<td class="datepicker-table-col">
+								<comp:datepicker-auto datePickerId="actual-end" url="${campaignPlanningUrl}"
+			                    fmtLabel="dialog.label.campaign.actual_end.label" paramName="actualEnd"
+			                    autosetParamName="setActualEndAuto" isAuto="${campaign.actualEndAuto}"
+			                    initialDate="${campaign.actualEndDate.time}" isContextual="true" editable="${ writable }">
+								</comp:datepicker-auto>
+							</td>
+						</tr>
+					</table>
 				</td>
 			</tr>
 		</table>
 	</div>
 	</jsp:attribute>
       </comp:toggle-panel>
-
-
+      
 
       <div id="iteration-planning-popup" class="popup-dialog not-displayed" title="${iterationPlanningTitle}"
         data-def="dateformat=${dateformat}, campaignId=${campaign.id}">
@@ -373,6 +372,16 @@
 	require(["common"], function(){
 		require(["campaign-management"], function(manager){
 			
+			var scheduledStartDate = "${(campaign.scheduledStartDate != null) ? campaign.scheduledStartDate.time : ''}";
+			var scheduledEndDate = "${(campaign.scheduledEndDate != null) ? campaign.scheduledEndDate.time : ''}";
+			
+			if(!!scheduledStartDate) {
+				scheduledStartDate = parseInt(scheduledStartDate);
+			}
+			if(!!scheduledEndDate) {
+				scheduledEndDate = parseInt(scheduledEndDate);
+			}
+
 			var conf = {
 				data : {
 					campaignId : ${campaign.id},
@@ -381,7 +390,10 @@
 					cufValuesUrl : "${customFieldsValuesURL}",
 					assignableUsers : ${ json:serialize(assignableUsers)},
 					weights	: ${ json:serialize(weights)},
-					modes : ${ json:serialize(modes)}
+					modes : ${ json:serialize(modes)},
+					planningUrl: '${campaignPlanningUrl}',
+					initialScheduledStartDate: "${campaign.scheduledStartDate.time}",
+					initialScheduledEndDate: "${campaign.scheduledEndDate.time}"
 				},
 				features : {
 					editable : ${writable},
@@ -391,7 +403,8 @@
 					hasBugtracker : ${campaign.project.bugtrackerConnected},
 					hasCUF : ${hasCUF}
 				}
-			}		
+			};
+			
 			manager.init(conf);		
 		});
 	});

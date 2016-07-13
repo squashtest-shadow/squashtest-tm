@@ -323,8 +323,8 @@ function dpa_postDate() {
 		success : function(strDate) {
 			me.postDateSuccess(strDate, callback);
 		},
-		error : function() {
-			me.postDateFailed();
+		error : function(xhr) {
+			me.postDateFailed(xhr);
 		},
 
 		dataType : "text",
@@ -351,8 +351,10 @@ function dpa_postDateSuccess(strDate, callback) {
 	}
 }
 
-function dpa_postDateFailed(/* add params later if needed */) {
-	alert("Error in posting the date");
+function dpa_postDateFailed(/* add params later if needed */xhr) {
+	xhr.errorIsHandled = true;
+	squashtm.notification.showXhrInDialog(xhr);
+	this.cancelEditMode();
 }
 
 function dpa_postState() {
@@ -372,8 +374,8 @@ function dpa_postState() {
 		success : function(strDate) {
 			me.postStateSuccess(strDate, callback);
 		},
-		error : function() {
-			me.postStateFailed();
+		error : function(xhr) {
+			me.postStateFailed(xhr);
 		},
 		dataType : "text",
 		url : url
@@ -396,9 +398,11 @@ function dpa_postStateSuccess(strDate, callback) {
 
 }
 
-function dpa_postStateFailed() {
-	alert("error while posting state");
-
+function dpa_postStateFailed(xhr) {
+	/*alert("error while posting state");*/
+	xhr.errorIsHandled = true;
+	squashtm.notification.showXhrInDialog(xhr);
+	this.cancelEditMode();
 }
 function dpa_refreshAutoDate(newDateToPut) {
 	var checkbx = this.controls.checkbx;

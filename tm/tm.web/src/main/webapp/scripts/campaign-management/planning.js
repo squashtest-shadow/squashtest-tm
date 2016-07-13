@@ -19,8 +19,8 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager',
-        'squash.dateutils', 'jquery.squash.formdialog', 'jeditable.datepicker'],
-		        function($, attrparser, handlebars, confman, dateutils) {
+        'squash.dateutils', "squash.translator", 'jquery.squash.formdialog', 'jeditable.datepicker'],
+		        function($, attrparser, handlebars, confman, dateutils, translator) {
 	"use strict";
 
   // registers an iterationplanning dialog as a jq widget
@@ -170,17 +170,62 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 			commitThenClose : function(){
 				var url = window.squashtm.app.contextRoot + '/campaigns/'+this.options.campaignId+'/iterations/planning',
 					self = this;
-
+				
+				var dateFormat = this.options.dateformat;
+				var allPeriodsConsistent = true;
+				
+				var scheduledTimePeriodValidator = function(key, value) {
+					// Value can be null or undefined
+					if(!value) {
+						return null;
+					}
+					var scheduledEnd = value.scheduledEndDate;
+					var scheduledStart = value.scheduledStartDate;
+					
+					// Check validity of the dates
+					if(!!scheduledEnd) {
+						scheduledEnd = dateutils.parse(scheduledEnd);
+						if(scheduledEnd.getTime() <= 0) {
+							scheduledEnd = undefined;
+							value.scheduledEndDate = null;
+						}
+					}
+					if(!!scheduledStart) {
+						scheduledStart = dateutils.parse(scheduledStart);
+						if(scheduledStart.getTime() <= 0) {
+							scheduledStart = undefined;
+							value.scheduledStartDate = null;
+						}
+					}
+					
+					if(!! scheduledStart && !! scheduledEnd) {
+						// Check consistency of the time Period
+						if(scheduledStart > scheduledEnd) {
+							// We reset scheduledStart & scheduledEnd
+							value.scheduledEndDate = self.options._savemodel[key].scheduledEndDate;
+							value.scheduledStartDate = self.options._savemodel[key].scheduledStartDate;
+							// Notification of the error
+							squashtm.notification.showError(translator.get("message.exception.planning.notConsistentPeriods"));
+							allPeriodsConsistent = false;
+						}
+					}
+					return value;
+				}
+				
 				$.ajax({
 					url : url,
 					async : false,		// we don't want the user to interact with the system while the request is being processed
 					type : "POST",
 					contentType : 'application/json',
-					data : JSON.stringify(self.options.model)
+					data : JSON.stringify(self.options.model, scheduledTimePeriodValidator)
 				})
 				.done(function(){
 					self.options._savemodel = self.options.model;
-					self.close();
+					if(allPeriodsConsistent) {
+						self.close();
+					} else {
+						self._loadThenOpen();
+					}
 				});
 			},
 

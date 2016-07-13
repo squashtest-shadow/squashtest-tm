@@ -39,6 +39,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.OrderColumn;
 import javax.persistence.SequenceGenerator;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -97,7 +98,7 @@ public class Iteration implements AttachmentHolder, NodeContainer<TestSuite>, Tr
 	@Size(max = MAX_REF_SIZE)
 	private String reference = "";
 
-	@Embedded
+	@Embedded @Valid
 	private ScheduledTimePeriod scheduledPeriod = new ScheduledTimePeriod();
 
 	@Embedded

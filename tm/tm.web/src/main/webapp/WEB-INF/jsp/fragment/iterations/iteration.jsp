@@ -265,39 +265,37 @@
         <jsp:attribute name="body">
 			<div class="datepicker-panel">
 			<table class="datepicker-table">
-			<tr>
-				<td class="datepicker-table-col">
-					<comp:datepicker fmtLabel="dialog.label.iteration.scheduled_start.label" url="${iterationPlanningUrl}"
-                    datePickerId="scheduled-start" paramName="scheduledStart" isContextual="true"
-                    initialDate="${iteration.scheduledStartDate.time}" editable="${ writable }">	
-					</comp:datepicker>
-				</td>
-				<td class="datepicker-table-col">
-	
-					<comp:datepicker-auto datePickerId="actual-start" url="${iterationPlanningUrl}"
-                    fmtLabel="dialog.label.iteration.actual_start.label" paramName="actualStart"
-                    autosetParamName="setActualStartAuto" isAuto="${iteration.actualStartAuto}"
-                    initialDate="${iteration.actualStartDate.time}" isContextual="true" editable="${ writable }"
-                    jsVarName="actualStart">
-					</comp:datepicker-auto>
-				</td>
-			</tr>
-			<tr>
-				<td class="datepicker-table-col">
-					<comp:datepicker fmtLabel="dialog.label.iteration.scheduled_end.label" url="${iterationPlanningUrl}"
-                    datePickerId="scheduled-end" paramName="scheduledEnd" isContextual="true"
-                    initialDate="${iteration.scheduledEndDate.time}" editable="${ writable }">	
-					</comp:datepicker>				
-				</td>
-				<td class="datepicker-table-col">
-					<comp:datepicker-auto datePickerId="actual-end" url="${iterationPlanningUrl}"
-                    fmtLabel="dialog.label.iteration.actual_end.label" paramName="actualEnd"
-                    autosetParamName="setActualEndAuto" isAuto="${iteration.actualEndAuto}"
-                    initialDate="${iteration.actualEndDate.time}" isContextual="true" editable="${ writable }"
-                    jsVarName="actualEnd">
-					</comp:datepicker-auto>
-				</td>
-			</tr>
+				<tr>
+					<td class="datepicker-table-col">
+						<div class="datepicker-col-scheduled">
+							<comp:datepickers-pair />
+						</div>
+					</td>
+					<td class="datepicker-table-col">
+						<table>
+							<tr>
+								<td class="datepicker-table-col">
+									<comp:datepicker-auto datePickerId="actual-start" url="${iterationPlanningUrl}"
+				                    fmtLabel="dialog.label.iteration.actual_start.label" paramName="actualStart"
+				                    autosetParamName="setActualStartAuto" isAuto="${iteration.actualStartAuto}"
+				                    initialDate="${iteration.actualStartDate.time}" isContextual="true" editable="${ writable }"
+				                    jsVarName="actualStart">
+									</comp:datepicker-auto>
+								</td>
+							</tr>
+							<tr>
+								<td class="datepicker-table-col">
+									<comp:datepicker-auto datePickerId="actual-end" url="${iterationPlanningUrl}"
+				                    fmtLabel="dialog.label.iteration.actual_end.label" paramName="actualEnd"
+				                    autosetParamName="setActualEndAuto" isAuto="${iteration.actualEndAuto}"
+				                    initialDate="${iteration.actualEndDate.time}" isContextual="true" editable="${ writable }"
+				                    jsVarName="actualEnd">
+									</comp:datepicker-auto>
+								</td>
+							</tr>
+						</table>
+					</td>
+				</tr>
 			</table>
 			</div>
 			</jsp:attribute>
@@ -386,7 +384,21 @@
 	publish("reload.iteration");
 	if (!squashtm.page.isFullPage) {
 		require(["common"], function() {
-			require(["iteration-page"], function() {/*noop*/});
+			require(["iteration-page"], function() {
+				require(["datepicker/datepickers-pair"], function(datePickers) {
+					var conf = {
+						data : {
+							planningUrl : "${iterationPlanningUrl}",
+							initialScheduledStartDate :	"${iteration.scheduledStartDate.time}",
+							initialScheduledEndDate :	"${iteration.scheduledEndDate.time}"
+						},
+						features : {
+							editable : ${writable}
+						}
+					};
+					datePickers.init(conf);
+				});
+			});
 		});
 	}
 </script>

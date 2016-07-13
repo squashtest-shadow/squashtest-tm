@@ -36,8 +36,6 @@
 
 <f:message var="squashlocale" key="squashtm.locale" />
 
-<comp:datepicker-manager locale="${squashlocale}" />
-
 <s:url var="testSuiteUrl" value="/test-suites/{testSuiteId}">
   <s:param name="testSuiteId" value="${testSuite.id}" />
 </s:url>

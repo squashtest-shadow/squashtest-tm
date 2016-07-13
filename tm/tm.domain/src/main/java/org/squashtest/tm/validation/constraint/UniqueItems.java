@@ -43,7 +43,7 @@ import org.squashtest.tm.validation.validator.UniqueListItemsValidator;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = UniqueListItemsValidator.class)
 public @interface UniqueItems {
-	String message() default "{org.squashtest.tm.service.validation.constraint.UniqueItems}";
+	String message() default "{org.squashtest.tm.validation.constraint.UniqueItems}";
 
 	Class<?>[] groups() default {};
 

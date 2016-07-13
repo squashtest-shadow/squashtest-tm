@@ -36,15 +36,16 @@
  */
 define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.squash.fragmenttabs",
         "bugtracker/bugtracker-panel", "workspace.event-bus",  "squash.translator",
-        "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "./test-plan-panel",
-        "custom-field-values", "squash.configmanager",
-        "jqueryui", "jquery.squash.formdialog"],
+        "dashboard/campaigns-dashboard/campaigns-dashboard-main", "./planning", "datepicker/datepickers-pair",
+        "./test-plan-panel", "custom-field-values", "squash.configmanager", "jqueryui", "jquery.squash.formdialog"],
         function($, basicwidg, contentHandlers, Frag, bugtrackerPanel, eventBus, translator,
-        dashboard, planning, testplan, cufvalues, confman){
+        dashboard, planning, datePickers, testplan, cufvalues, confman){
 
 
 	function init(conf){
 
+		initTranslator();
+		
 		basicwidg.init();
 
 		initTabs(conf);
@@ -59,6 +60,8 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 		initPlanning(conf);
 
+		initDatePickers(conf);
+		
 		initDashboard(conf);
 
 		initTestplan(conf);
@@ -67,6 +70,22 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 
 	}
 	
+	// Load all the needed message properties to the cache
+	function initTranslator() {
+		var messages = {
+				// Properties for datepickers-pair
+				"datePicker-period-notConsistent" : "message.exception.timePeriodNotConsistent",
+				"dateFormatShort"				  : "squashtm.dateformatShort" ,
+				"dateFormatShort-datePicker"	  : "squashtm.dateformatShort.datepicker",
+				// Properties for bugtracker-panel
+				"bugtracker-timeout"			  : "message.bugtracker.unavailable.timeout",
+				// Properties for campaigns-dashboard-main
+				"dashboard-test-cases-search"	  : "dashboard.test-cases.search",
+				// Properties for planning
+				"planning-notConsistent-periods"  : "message.exception.planning.notConsistentPeriods"
+		};
+		translator.load(messages);
+	}
 	// initialize the description bloc (not just the attribute)
 	function initDescription(conf){
 		if (conf.features.writable){
@@ -129,6 +148,12 @@ define(["jquery", "squash.basicwidgets", "contextual-content-handlers", "jquery.
 	function initPlanning(conf){
 		if (conf.features.writable){
 			planning.init(conf);
+		}
+	}
+	
+	function initDatePickers(conf) {
+		if(conf.features.writable) {
+			datePickers.init(conf);
 		}
 	}
 

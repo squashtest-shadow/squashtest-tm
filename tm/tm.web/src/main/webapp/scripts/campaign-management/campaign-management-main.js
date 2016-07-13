@@ -40,6 +40,9 @@
  *	linkable : can one add more test cases to the test plan ?
  *  hasBugtracker : boolean, says if the campaign can access the bugtracker,
  *  hasCUF : boolean, says if the campaign has CUFs to load
+ *  planningUrl: url to post to when changing a date,
+ *	initialScheduledStartDate: the initial scheduled start date time of the campaign in milliseconds,
+ *	initialScheduledEndDate: the initial scheduled end date time of the campaign in milliseconds
  * }
  * }
  */

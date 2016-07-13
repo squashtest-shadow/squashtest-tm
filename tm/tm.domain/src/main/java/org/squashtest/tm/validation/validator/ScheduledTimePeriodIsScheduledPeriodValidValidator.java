@@ -18,44 +18,41 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.campaign;
+package org.squashtest.tm.validation.validator;
 
-import java.util.Date;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import org.squashtest.tm.domain.campaign.ScheduledTimePeriod;
 import org.squashtest.tm.validation.constraint.IsScheduledPeriodValid;
 
 /**
- * Embeddable value for a scheduled (i.e. user defined) date period.
- * 
- * @author Gregory Fouquet
- * 
+ * @author Alix Pierre
+ * @author Johan Lor
+ *
  */
-@Embeddable
-@IsScheduledPeriodValid
-public class ScheduledTimePeriod {
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date scheduledStartDate;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date scheduledEndDate;
+public class ScheduledTimePeriodIsScheduledPeriodValidValidator implements ConstraintValidator<IsScheduledPeriodValid, ScheduledTimePeriod>{
 
-	public void setScheduledStartDate(Date startDate) {
-		this.scheduledStartDate = startDate;
+	@Override
+	public void initialize(IsScheduledPeriodValid constraintAnnotation) {
+		// NOOP
+		
 	}
 
-	public Date getScheduledStartDate() {
-		return scheduledStartDate;
+	/**
+	 * @see javax.validation.ConstraintValidator#isValid(java.lang.Object, javax.validation.ConstraintValidatorContext)
+	 */
+	@Override
+	public boolean isValid(ScheduledTimePeriod scheduledTimePeriod, ConstraintValidatorContext context) {
+		
+		boolean result = true;
+		if(scheduledTimePeriod.getScheduledStartDate() != null && scheduledTimePeriod.getScheduledEndDate() !=null) {
+			if(scheduledTimePeriod.getScheduledStartDate().getTime() > scheduledTimePeriod.getScheduledEndDate().getTime()) {
+				result = false;
+			}
+		}
+		return result;
 	}
 
-	public void setScheduledEndDate(Date endDate) {
-		this.scheduledEndDate = endDate;
-	}
-
-	public Date getScheduledEndDate() {
-		return scheduledEndDate;
-	}
 }

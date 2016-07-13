@@ -27,6 +27,8 @@ import javax.persistence.Embeddable;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.squashtest.tm.validation.constraint.IsActualPeriodValid;
+
 /**
  * Embeddable value for an actual date period. Actual date periods have a manual / computed flag. This class only holds
  * data, the client of this class is responsible for the computation of dates.
@@ -35,6 +37,7 @@ import javax.persistence.TemporalType;
  * 
  */
 @Embeddable
+@IsActualPeriodValid
 public class ActualTimePeriod {
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date actualStartDate;

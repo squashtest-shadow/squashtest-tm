@@ -78,7 +78,7 @@ function SquashDatePicker(controls, params) {
 	// pseudo constructors
 	this.initialize = dp_initialize;
 
-	this.initialize();
+	this.initialize(params);
 
 }
 
@@ -91,10 +91,23 @@ function dp_initialize(options) {
 	$(this.controls.datelabel).addClass("editable");
 	var me = this;
 
-	$(this.controls.datepick).datepicker("option", "onClose", function() {
+	$(this.controls.datepick).datepicker("option", "onClose", function(submittedDateText) {
 		// the following check happens to prevent a weird recursion
 		if (!$(this).hasClass("date-hidden")) {
-			me.inputAndExitEditMode();
+			
+			// Check validity of submitted date if a validator exists
+			if(!!options.validator) {
+				if (options.validator.isValid(submittedDateText)) {
+					me.inputAndExitEditMode();
+				}
+				else{
+					me.cancelEditMode();
+					squashtm.notification.showError(options.validator.errorMessage);
+					return false;
+				}
+			} else {
+				me.inputAndExitEditMode();
+			}
 		}
 	});
 
@@ -105,7 +118,7 @@ function dp_initialize(options) {
 	// initialize the date
 	var newDate;
 
-	if (this.params.initialDate.length > 0) {
+	if (/*!!this.params.initialDate*/this.params.initialDate.length > 0) {
 		newDate = parseInt(this.params.initialDate,10);
 	} else {
 		newDate = -1;
@@ -187,7 +200,8 @@ function dp_setDate(iDate) {
 	var datepick = this.controls.datepick;
 	var datelabel = this.controls.datelabel;
 
-	if (iDate >= 0) {
+	// While calling cancelEditMode, iDate = null if formerState is null
+	if (!!iDate && iDate >= 0) {
 
 		var myDate = new Date();
 
@@ -245,8 +259,8 @@ function dp_postDate() {
 			success : function(strDate) {
 				me.postDateSuccess(strDate, callback);
 			},
-			error : function() {
-				me.postDateFailed();
+			error : function(xhr) {
+				me.postDateFailed(xhr);
 			},
 
 			dataType : "text",
@@ -277,6 +291,8 @@ function dp_postDateSuccess(strDate, callback) {
 	}
 }
 
-function dp_postDateFailed(/* add params later if needed */) {
-	alert("Error in posting the date");
+function dp_postDateFailed(/* add params later if needed */xhr) {
+	xhr.errorIsHandled = true;
+	squashtm.notification.showXhrInDialog(xhr);
+	this.cancelEditMode();
 }

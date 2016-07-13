@@ -58,13 +58,14 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
             <script type="text/javascript">
           //TODO remove this javascript. Init in js file instead.
             require(["common"], function() {
-              require(["jquery", "jquery.squash.datepicker"], function() {
+              require(["jquery", "squash.configmanager", "jquery.squash.datepicker"], function($, confman) {
                  var myDatePicker;
                 
                   var controls ={
                     datepick : $('#${datePickerId}'),
                     datelabel : $('#${datePickerId}-label')
                   };
+                  
                   
                   var params ={
                     paramName : "${paramName}",
@@ -74,9 +75,9 @@ the data. Prototype is : function my_function(strParamName, iDate)"%>
                     <c:if test="${not empty updateFunction}">,updateFunction : ${updateFunction} </c:if>
                     <c:if test="${not empty postCallback}">,callback : ${postCallback}</c:if>
                   };
-                  myDatePicker = new SquashDatePicker(controls, params);
+                  myDatePicker = new SquashDatePicker(controls, params);  
               });
-            }); 
+            });  
             </script>
 	</c:if>
 	
