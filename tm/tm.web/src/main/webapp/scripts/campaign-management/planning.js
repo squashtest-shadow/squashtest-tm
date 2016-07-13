@@ -210,7 +210,7 @@ define(['jquery', 'squash.attributeparser',	'handlebars', 'squash.configmanager'
 						}
 					}
 					return value;
-				}
+				};
 				
 				$.ajax({
 					url : url,

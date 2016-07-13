@@ -57,7 +57,7 @@ define(["jquery", "squash.translator", 'squash.dateutils', "jquery.squash.datepi
 						var txtEndDate = $('#scheduled-end-label').text();
 						var result = true;
 
-						if(txtSubmittedStartDate != "" && txtEndDate != "-") {
+						if(txtSubmittedStartDate !== "" && txtEndDate !== "-") {
 							var endDate = dateutils.parse(txtEndDate, dateFormatShort);
 							var startDate = dateutils.parse(txtSubmittedStartDate, dateFormatShort);
 
@@ -66,13 +66,13 @@ define(["jquery", "squash.translator", 'squash.dateutils', "jquery.squash.datepi
 						return result;
 					},
 					errorMessage : translator.get('message.exception.timePeriodNotConsistent')
-			}
+			};
 			var endValidator = {
 					isValid : function(txtSubmittedEndDate) {
 						var txtStartDate = $('#scheduled-start-label').text();
 						var result = true;
 
-						if(txtSubmittedEndDate != "" && txtStartDate != "-") {
+						if(txtSubmittedEndDate !== "" && txtStartDate !== "-") {
 							var endDate = dateutils.parse(txtSubmittedEndDate, dateFormatShort);
 							var startDate = dateutils.parse(txtStartDate, dateFormatShort);
 
@@ -81,7 +81,7 @@ define(["jquery", "squash.translator", 'squash.dateutils', "jquery.squash.datepi
 						return result;
 					},
 					errorMessage : translator.get('message.exception.timePeriodNotConsistent')
-			}
+			};
 			startParams.validator = startValidator;
 			endParams.validator = endValidator;
 			
@@ -89,5 +89,5 @@ define(["jquery", "squash.translator", 'squash.dateutils', "jquery.squash.datepi
 			myEndDatePicker = new SquashDatePicker(endControls, endParams);
 
 		}
-	}
+	};
 });
