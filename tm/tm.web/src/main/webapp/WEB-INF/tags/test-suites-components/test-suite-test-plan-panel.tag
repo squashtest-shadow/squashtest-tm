@@ -179,7 +179,7 @@
           <th class="no-user-select tp-th-filter tp-th-status" data-def="map=status, sortable, sWidth=10%, sClass=status-display status-combo">
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
-          <th class="no-user-select tp-th-succesPercent" data-def="map=succesPercent, sWidth=10%">
+          <th class="no-user-select tp-th-succesPercent" data-def="map=succesPercent, sWidth=6%, center">
             <f:message key="iteration.executions.table.column-header.succesPercent.label" />
           </th>
           <th class="no-user-select tp-th-filter tp-th-assignee"

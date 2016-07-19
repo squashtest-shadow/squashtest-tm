@@ -209,7 +209,7 @@
             <f:message key="iteration.executions.table.column-header.status.label" />
           </th>
 
-          <th class="no-user-select tp-th-succesPercent" data-def="map=succesPercent, sWidth=10%">
+          <th class="no-user-select tp-th-succesPercent" data-def="map=succesPercent, sWidth=6%, center">
             <f:message key="iteration.executions.table.column-header.succesPercent.label" />
           </th>
 
