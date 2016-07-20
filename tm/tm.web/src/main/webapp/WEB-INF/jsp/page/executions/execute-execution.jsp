@@ -62,7 +62,10 @@
 		<head>
 			<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
             <c:set var="stIndex" value="${executionStep.executionStepOrder}" />
-			<title> #${stIndex + 1 } - ${execution.name} (${stIndex + 1 }/${totalSteps})</title>
+			<title> #${stIndex + 1 } - ${execution.name} 
+				<c:if test="${execution.datasetLabel != null && execution.datasetLabel != ''}">- ${execution.datasetLabel}</c:if>
+					(${stIndex + 1 }/${totalSteps})
+			</title>
 			
 			<layout:common-head />
 			<layout:_common-script-import highlightedWorkspace=""/>
