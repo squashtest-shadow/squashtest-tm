@@ -24,7 +24,7 @@ import org.squashtest.tm.core.foundation.i18n.Internationalizable;
 
 /**
  * The type of the input shown when rendering a custom field.
- * 
+ *
  * @author Gregory Fouquet
  */
 public enum InputType implements Internationalizable {
@@ -33,7 +33,8 @@ public enum InputType implements Internationalizable {
 	DROPDOWN_LIST,
 	RICH_TEXT,
 	DATE_PICKER,
-	TAG;
+	TAG,
+	NUMERIC;
 
 	/**
 	 * @see org.squashtest.tm.core.foundation.i18n.Internationalizable#getI18nKey()

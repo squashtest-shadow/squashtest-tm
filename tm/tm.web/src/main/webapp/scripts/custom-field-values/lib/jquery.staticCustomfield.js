@@ -55,6 +55,22 @@ define(["jquery", "./cuf-values-utils", "underscore", "squash.configmanager"], f
 			}
 	
 		},
+
+		'NUMERIC' : {
+			_build : function(elt, def){
+				
+			},
+			_set : function(elt, def, value){
+				elt.text(value);
+			},
+			_get : function(elt, def){
+				return elt.text();
+			},
+			_destroy : function(elt, def){
+				
+			}
+	
+		},
 		
 		'CHECKBOX' : {
 			_build : function(elt, def){

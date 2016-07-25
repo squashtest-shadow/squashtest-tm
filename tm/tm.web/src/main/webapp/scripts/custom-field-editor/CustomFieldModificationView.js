@@ -272,11 +272,12 @@ define([ "jquery", "./NewCustomFieldOptionDialog", "backbone", "underscore",
 				this.makeSimpleJEditable("cuf-label");
 				this.makeSimpleJEditable("cuf-code");
 
-				if (this.inputType === "PLAIN_TEXT") {
+				if (this.inputType === "PLAIN_TEXT" || this.inputType === "NUMERIC") {
 					this.makeDefaultSimpleJEditable();
 					$("#cuf-default-value").click(
 							self.disableOptionalChange);
-				} else if (this.inputType === "CHECKBOX") {
+				} 
+				else if (this.inputType === "CHECKBOX") {
 					this.makeDefaultSelectJEditable();
 					$("#cuf-default-value").click(
 							self.disableOptionalChange);

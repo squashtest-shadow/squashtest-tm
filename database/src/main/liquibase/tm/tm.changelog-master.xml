@@ -57,4 +57,5 @@
         <include file="tm.changelog-1.13.5.xml" relativeToChangelogFile="true" />
         <include file="tm.changelog-1.14.0.xml" relativeToChangelogFile="true" />
         <include file="tm.changelog-1.14.1.xml" relativeToChangelogFile="true" />
+        <include file="tm.changelog-1.15.0.xml" relativeToChangelogFile="true" />
 </databaseChangeLog>

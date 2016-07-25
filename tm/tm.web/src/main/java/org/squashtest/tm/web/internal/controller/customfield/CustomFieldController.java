@@ -99,7 +99,7 @@ public class CustomFieldController {
 	@ResponseBody
 	public void createNew(@RequestBody NewCustomField field) {
 		if (LOGGER.isDebugEnabled()) {
-			LOGGER.debug("Will create cutsom field {}", ToStringBuilder.reflectionToString(field));
+			LOGGER.debug("Will create custom field {}", ToStringBuilder.reflectionToString(field));
 		}
 		customFieldManager.persist(field.createTransientEntity());
 	}

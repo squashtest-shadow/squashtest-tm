@@ -31,6 +31,7 @@ import org.squashtest.tm.exception.customfield.WrongCufDateFormatException;
 
 import javax.persistence.*;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -179,5 +180,9 @@ public class CustomFieldValue implements Identified, SingleValuedCustomFieldValu
 	@Override
 	public RawValue asRawValue() {
 		return new RawValue(value);
+	}
+
+	public void accept(CustomFieldValueVisitor visitor) {
+		visitor.visit(this);
 	}
 }

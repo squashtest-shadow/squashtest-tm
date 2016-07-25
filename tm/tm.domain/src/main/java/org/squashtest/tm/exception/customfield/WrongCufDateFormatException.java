@@ -22,15 +22,10 @@ package org.squashtest.tm.exception.customfield;
 
 
 public class WrongCufDateFormatException extends RuntimeException {
-
-
 	/**
 	 * TODO
 	 */
 	private static final long serialVersionUID = 1L;
-
-
-
 
 	public WrongCufDateFormatException(Exception cause) {
 		super("Wrong format for datepicker custom field value", cause);

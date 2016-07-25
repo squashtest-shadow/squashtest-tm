@@ -349,6 +349,7 @@ define(
 				case "CHECKBOX" : initAsCheckbox(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "RICH_TEXT" : initAsRichtext(this, cufDefinition, idOrURLOrPostfunction); break;
 				case "TAG" : initAsTag(this, cufDefinition, idOrURLOrPostfunction); break;
+				case "NUMERIC" : initAsPlainText(this, cufDefinition, idOrURLOrPostfunction); break;
 				default : throw "don't know cuf type "+type;
 				
 				}

@@ -61,6 +61,27 @@ define([ "jquery", "underscore", "ckeditor",  "squash.configmanager", "./cuf-val
 			}
 				
 		},
+
+		'NUMERIC' : {
+			_build : function(elt, def){
+				var content = elt.text();
+				var input = $('<input type="text" value="'+content+'" />');
+				elt.empty();
+				elt.append(input);
+			},
+			_set : function(elt, def, value){
+				elt.find('input').val(value);
+			},
+			_get : function(elt, def){
+				return elt.find('input').val();
+			},
+			_destroy : function(elt, def){
+				var content = elt.find('input').val();
+				elt.empty();
+				elt.text(content);
+			}
+				
+		},
 		
 		'CHECKBOX' : {
 			_build : function(elt, def){

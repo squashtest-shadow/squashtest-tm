@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -30,14 +31,7 @@ import javax.inject.Inject;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldBinding;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.CustomFieldValueOption;
-import org.squashtest.tm.domain.customfield.MultiValuedCustomFieldValue;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.customfield.TagsValue;
+import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
 
@@ -128,27 +122,46 @@ public class CustomFieldJsonConverter {
 	@SuppressWarnings("unchecked")
 	public CustomFieldValueModel toJson(CustomFieldValue value) {
 
-		// TODO expression below is either false or can be rewritten as an instanceof
-		if (MultiValuedCustomFieldValue.class.isAssignableFrom(value.getClass())) {
-			return toJson((TagsValue) value);
-		} else {
-			CustomFieldValueModel model = createStdCustomFieldValues(value);
-			model.setValue(value.getValue());
+		final CustomFieldValueModel model = createStdCustomFieldValues(value);
 
-			return model;
-		}
+		CustomFieldValueVisitor visitor = new CustomFieldValueVisitor() {
+			@Override
+			public void visit(CustomFieldValue customFieldValue) {
+				model.setValue(customFieldValue.getValue());
+			}
+
+			@Override
+			public void visit(NumericValue customFieldValue) {
+				Locale locale = LocaleContextHolder.getLocale();
+				DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(locale);
+				char decimalSeparator = formatter.getDecimalFormatSymbols().getDecimalSeparator();
+				String unformatedValue = customFieldValue.getValue();
+				String formatedValue = unformatedValue.replace('.',decimalSeparator);
+				model.setValue(formatedValue);
+			}
+
+			@Override
+			public void visit(RichTextValue customFieldValue) {
+				model.setValue(customFieldValue.getValue());
+			}
+
+			@Override
+			public void visit(TagsValue customFieldValue) {
+				toJson(customFieldValue,model);
+			}
+		};
+
+		value.accept(visitor);
+		return model;
+
 	}
 
-	public CustomFieldValueModel toJson(TagsValue value) {
-
-		CustomFieldValueModel model = createStdCustomFieldValues(value);
-
+	private void toJson(TagsValue value,CustomFieldValueModel model) {
 		List<String> options = new ArrayList<>(value.getSelectedOptions().size());
 		for (CustomFieldValueOption option : value.getSelectedOptions()) {
 			options.add(option.getLabel());
 		}
 		model.setOptionValues(options);
-		return model;
 	}
 
 

@@ -20,6 +20,7 @@
  */
 package org.squashtest.tm.domain.customfield;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.annotations.NamedQueries;
 import org.hibernate.annotations.NamedQuery;
 import org.hibernate.validator.constraints.NotBlank;
@@ -27,12 +28,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.Sizes;
+import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 import org.squashtest.tm.validation.constraint.HasDefaultAsRequired;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.Date;
 
@@ -148,6 +151,19 @@ public class CustomField {
 				DateUtils.parseIso8601Date(defaultValue);
 			} catch (ParseException e) {
 				dValue = "";
+			}
+		}
+
+		if (this.inputType == InputType.NUMERIC && StringUtils.isBlank(dValue)){
+			dValue = "";
+		}
+
+		if (this.inputType == InputType.NUMERIC && StringUtils.isNotBlank(dValue)) {
+			try {
+				dValue = dValue.replace(",",".");
+				new BigDecimal(defaultValue);
+			} catch (NumberFormatException e) {
+				throw new WrongCufNumericFormatException(e);
 			}
 		}
 

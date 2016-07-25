@@ -136,4 +136,8 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 		}
 	}
 
+	public void accept(CustomFieldValueVisitor visitor) {
+		visitor.visit(this);
+	}
+
 }

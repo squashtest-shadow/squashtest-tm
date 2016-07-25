@@ -59,4 +59,8 @@ public class RichTextValue extends CustomFieldValue {
 		return copy;
 	}
 
+	public void accept(CustomFieldValueVisitor visitor) {
+		visitor.visit(this);
+	}
+
 }
