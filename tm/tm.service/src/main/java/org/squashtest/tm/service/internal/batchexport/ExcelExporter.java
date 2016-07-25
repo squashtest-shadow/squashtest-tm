@@ -46,6 +46,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
 import org.squashtest.tm.service.internal.batchexport.ExportModel.CoverageModel;
@@ -61,6 +62,7 @@ import org.squashtest.tm.service.internal.batchimport.testcase.excel.StepSheetCo
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateColumn;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TemplateWorksheet;
 import org.squashtest.tm.service.internal.batchimport.testcase.excel.TestCaseSheetColumn;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
 /**
  * @author bsiri
@@ -426,6 +428,9 @@ class ExcelExporter {
 
 			Cell c = r.createCell(idx);
 			String value = nullSafeValue(cuf);
+			if (cuf.getType().equals(InputType.NUMERIC)){
+				value = NumericCufHelper.formatNumericCuf(value);
+			}
 			c.setCellValue(value);
 		}
 	}

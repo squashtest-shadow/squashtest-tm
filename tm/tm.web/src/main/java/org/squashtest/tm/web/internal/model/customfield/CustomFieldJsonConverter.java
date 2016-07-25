@@ -28,12 +28,14 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
 @Component
 public class CustomFieldJsonConverter {
@@ -132,11 +134,7 @@ public class CustomFieldJsonConverter {
 
 			@Override
 			public void visit(NumericValue customFieldValue) {
-				Locale locale = LocaleContextHolder.getLocale();
-				DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(locale);
-				char decimalSeparator = formatter.getDecimalFormatSymbols().getDecimalSeparator();
-				String unformatedValue = customFieldValue.getValue();
-				String formatedValue = unformatedValue.replace('.',decimalSeparator);
+				String formatedValue = NumericCufHelper.formatNumericCuf(customFieldValue.getValue());
 				model.setValue(formatedValue);
 			}
 
@@ -155,6 +153,8 @@ public class CustomFieldJsonConverter {
 		return model;
 
 	}
+
+
 
 	private void toJson(TagsValue value,CustomFieldValueModel model) {
 		List<String> options = new ArrayList<>(value.getSelectedOptions().size());

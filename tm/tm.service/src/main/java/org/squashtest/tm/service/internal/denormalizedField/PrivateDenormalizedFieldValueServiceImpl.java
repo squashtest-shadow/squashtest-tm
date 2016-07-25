@@ -31,17 +31,8 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.Transformer;
 import org.apache.commons.collections.map.MultiValueMap;
 import org.springframework.stereotype.Service;
-import org.squashtest.tm.domain.customfield.BindableEntity;
-import org.squashtest.tm.domain.customfield.BoundEntity;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.RawValue;
-import org.squashtest.tm.domain.customfield.RenderingLocation;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolder;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldHolderType;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedRichValue;
-import org.squashtest.tm.domain.denormalizedfield.DenormalizedSingleSelectField;
+import org.squashtest.tm.domain.customfield.*;
+import org.squashtest.tm.domain.denormalizedfield.*;
 import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.execution.ExecutionStep;
 import org.squashtest.tm.service.internal.repository.CustomFieldValueDao;
@@ -50,7 +41,7 @@ import org.squashtest.tm.service.internal.repository.DenormalizedFieldValueDelet
 import org.squashtest.tm.service.internal.repository.ExecutionDao;
 
 /**
- * 
+ *
  * @author mpagnon
  *
  */
@@ -125,6 +116,11 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 			case TAG :
 				dfv = new DenormalizedMultiSelectField(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 				break;
+			case NUMERIC:
+				NumericValue numericValueValue = (NumericValue) cfv;//NOSONAR if cuf is numeric we can safely downcast to numeric value
+				dfv = new DenormalizedNumericValue(numericValueValue, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				break;
+
 			default :
 				dfv = new DenormalizedFieldValue(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 			}

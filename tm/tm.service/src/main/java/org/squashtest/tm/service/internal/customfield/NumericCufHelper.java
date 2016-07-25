@@ -18,18 +18,27 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.domain.customfield;
+package org.squashtest.tm.service.internal.customfield;
+
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.context.i18n.LocaleContextHolder;
+
+import java.text.DecimalFormat;
+import java.util.Locale;
 
 /**
- * Created by jthebault on 21/07/2016.
+ * Created by jthebault on 25/07/2016.
  */
-public interface CustomFieldValueVisitor {
+public class NumericCufHelper {
 
-	void visit(CustomFieldValue customFieldValue);
+	public static String formatNumericCuf(String unformatedValue) {
+		if(StringUtils.isBlank(unformatedValue)){
+			return "";
+		}
+		Locale locale = LocaleContextHolder.getLocale();
+		DecimalFormat formatter = (DecimalFormat) DecimalFormat.getInstance(locale);
+		char decimalSeparator = formatter.getDecimalFormatSymbols().getDecimalSeparator();
+		return unformatedValue.replace('.',decimalSeparator);
+	}
 
-	void visit(NumericValue customFieldValue);
-
-	void visit(RichTextValue customFieldValue);
-
-	void visit(TagsValue customFieldValue);
 }

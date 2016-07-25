@@ -39,5 +39,10 @@
     <addColumn tableName="CUSTOM_FIELD_VALUE">
       <column name="NUMERIC_VALUE" type="DECIMAL" remarks="a column to persist numeric cuf" />
     </addColumn>
+    <addColumn tableName="DENORMALIZED_FIELD_VALUE">
+      <column name="NUMERIC_VALUE" type="DECIMAL" remarks="a column to persist denormalized numeric cuf" />
+    </addColumn>
   </changeSet>
+
+
 </databaseChangeLog>

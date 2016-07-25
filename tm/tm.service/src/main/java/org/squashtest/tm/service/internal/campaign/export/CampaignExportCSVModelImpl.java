@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -46,6 +47,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
 @Component
 @Scope("prototype")
@@ -302,6 +304,9 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			Collection<CustomFieldValue> tcValues = (Collection<CustomFieldValue>) tcCUFValues.get(testCase.getId());
 			for (CustomField model : tcCUFModel) {
 				String strValue = getValue(tcValues, model);
+				if (model.getInputType().equals(InputType.NUMERIC)){
+					strValue = NumericCufHelper.formatNumericCuf(strValue);
+				}
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
@@ -320,6 +325,9 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			Collection<CustomFieldValue> iValues = (Collection<CustomFieldValue>) iterCUFValues.get(iteration.getId());
 			for (CustomField model : iterCUFModel) {
 				String strValue = getValue(iValues, model);
+				if (model.getInputType().equals(InputType.NUMERIC)){
+					strValue = NumericCufHelper.formatNumericCuf(strValue);
+				}
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
@@ -346,6 +354,9 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			// ensure that the CUF values are processed in the correct order
 			for (CustomField model : campCUFModel) {
 				String strValue = getValue(cValues, model);
+				if (model.getInputType().equals(InputType.NUMERIC)){
+					strValue = NumericCufHelper.formatNumericCuf(strValue);
+				}
 				dataCells.add(new CellImpl(strValue));
 			}
 		}
@@ -362,7 +373,11 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 
 			if (values != null) {
 				for (CustomFieldValue value : values) {
-					if (value.getBinding().getCustomField().getCode().equals(model.getCode())) {
+					CustomField customField = value.getBinding().getCustomField();
+					if (customField.getCode().equals(model.getCode())) {
+						if (customField.getInputType().equals(InputType.NUMERIC)){
+							return NumericCufHelper.formatNumericCuf(value.getValue());
+						}
 						return value.getValue();
 					}
 				}

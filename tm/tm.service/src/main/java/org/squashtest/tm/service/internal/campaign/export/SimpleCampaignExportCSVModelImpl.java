@@ -38,6 +38,7 @@ import org.squashtest.tm.domain.campaign.Iteration;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem;
 import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
+import org.squashtest.tm.domain.customfield.InputType;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.domain.users.User;
@@ -46,6 +47,7 @@ import org.squashtest.tm.service.customfield.CustomFieldHelper;
 import org.squashtest.tm.service.customfield.CustomFieldHelperService;
 import org.squashtest.tm.service.feature.FeatureManager;
 import org.squashtest.tm.service.feature.FeatureManager.Feature;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
 @Component
 @Scope("prototype")
@@ -375,7 +377,11 @@ public class SimpleCampaignExportCSVModelImpl implements WritableCampaignCSVMode
 
 			if (values != null) {
 				for (CustomFieldValue value : values) {
-					if (value.getBinding().getCustomField().getCode().equals(model.getCode())) {
+					CustomField customField = value.getBinding().getCustomField();
+					if (customField.getCode().equals(model.getCode())) {
+						if (customField.getInputType().equals(InputType.NUMERIC)){
+							return NumericCufHelper.formatNumericCuf(value.getValue());
+						}
 						return value.getValue();
 					}
 				}
