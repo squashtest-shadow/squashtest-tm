@@ -56,6 +56,7 @@ import org.squashtest.tm.domain.customfield.SingleSelectField;
 import org.squashtest.tm.domain.project.GenericProject;
 import org.squashtest.tm.exception.DomainException;
 import org.squashtest.tm.service.customfield.CustomFieldManagerService;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 import org.squashtest.tm.service.project.ProjectFinder;
 import org.squashtest.tm.web.internal.controller.RequestParams;
 import org.squashtest.tm.web.internal.helper.JEditablePostParams;
@@ -79,6 +80,7 @@ public class CustomFieldController {
 	private static final Logger LOGGER = LoggerFactory.getLogger(CustomFieldController.class);
 
 	private static final String CUSTOM_FIELD = "customField";
+	private static final String NUMERIC_CUSTOM_FIELD_VALUE = "numericCustomFieldValue";
 
 	@Inject
 	private CustomFieldManagerService customFieldManager;
@@ -116,11 +118,17 @@ public class CustomFieldController {
 	public String showCustomFieldModificationPage(@PathVariable Long customFieldId, Model model) {
 		CustomField customField = customFieldManager.findById(customFieldId);
 
-		if (customField.getInputType() == InputType.DROPDOWN_LIST) {
-			SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
-			model.addAttribute(CUSTOM_FIELD, cuf);
-		} else {
-			model.addAttribute(CUSTOM_FIELD, customField);
+		switch (customField.getInputType()){
+			case DROPDOWN_LIST:
+				SingleSelectField cuf = customFieldManager.findSingleSelectFieldById(customFieldId);
+				model.addAttribute(CUSTOM_FIELD, cuf);
+				break;
+			case NUMERIC:
+				model.addAttribute(CUSTOM_FIELD, customField);
+				model.addAttribute(NUMERIC_CUSTOM_FIELD_VALUE, NumericCufHelper.formatNumericCuf(customField.getDefaultValue()));
+				break;
+			default:
+				model.addAttribute(CUSTOM_FIELD, customField);
 		}
 
 		return "custom-field-modification.html";
@@ -161,7 +169,7 @@ public class CustomFieldController {
 	 *
 	 * @param customFieldId
 	 *            the id of the concerned custom field
-	 * @param label
+	 * @param code
 	 *            the new code
 	 * @return
 	 */
@@ -273,7 +281,7 @@ public class CustomFieldController {
 	 *
 	 * @param customFieldId
 	 *            : the id of the concerned custom-field
-	 * @param optionCode
+	 * @param optionLabel
 	 *            : the label of the concerned custom-field's option
 	 * @param newCode
 	 *            : the new code for the concerned custom-field's option

@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldVisitor;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
 
 import java.util.List;
 
@@ -83,7 +84,7 @@ public class RawValue implements DenormalizedFieldVisitor {
 		} else if (SingleValuedCustomFieldValue.class.isAssignableFrom(field.getClass())) {
 			setValueFor((SingleValuedCustomFieldValue)field);
 
-		} else {
+		}  else {
 			logError(field);
 			// and nothing more : the custom fields aren't assigned.
 		}

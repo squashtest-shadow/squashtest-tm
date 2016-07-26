@@ -35,6 +35,7 @@ import org.springframework.stereotype.Component;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedFieldValue;
 import org.squashtest.tm.domain.denormalizedfield.DenormalizedMultiSelectField;
+import org.squashtest.tm.domain.denormalizedfield.DenormalizedNumericValue;
 import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
 @Component
@@ -224,7 +225,11 @@ public class CustomFieldJsonConverter {
 		// TODO expression below is either false or can be rewritten as an instanceof
 		if (DenormalizedMultiSelectField.class.isAssignableFrom(value.getClass())) {
 			model.setOptionValues(((DenormalizedMultiSelectField) value).getValues());
-		} else {
+		}
+		else if (DenormalizedNumericValue.class.isAssignableFrom(value.getClass())) {
+			model.setValue(NumericCufHelper.formatNumericCuf(value.getValue()));
+		}
+		else {
 			model.setValue(value.getValue());
 		}
 

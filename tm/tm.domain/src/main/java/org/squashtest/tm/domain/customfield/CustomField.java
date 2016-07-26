@@ -154,19 +154,6 @@ public class CustomField {
 			}
 		}
 
-		if (this.inputType == InputType.NUMERIC && StringUtils.isBlank(dValue)){
-			dValue = "";
-		}
-
-		if (this.inputType == InputType.NUMERIC && StringUtils.isNotBlank(dValue)) {
-			try {
-				dValue = dValue.replace(",",".");
-				new BigDecimal(defaultValue);
-			} catch (NumberFormatException e) {
-				throw new WrongCufNumericFormatException(e);
-			}
-		}
-
 		this.defaultValue = dValue;
 	}
 

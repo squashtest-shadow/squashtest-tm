@@ -20,16 +20,11 @@
  */
 package org.squashtest.tm.web.internal.controller.customfield;
 
-import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldOption;
-import org.squashtest.tm.domain.customfield.InputType;
-import org.squashtest.tm.domain.customfield.MultiSelectField;
-import org.squashtest.tm.domain.customfield.RichTextField;
-import org.squashtest.tm.domain.customfield.SingleSelectField;
+import org.squashtest.tm.domain.customfield.*;
 
 /**
  * @author Gregory Fouquet
- * 
+ *
  */
 public class NewCustomField extends CustomField {
 	private InputType inputType;
@@ -51,6 +46,9 @@ public class NewCustomField extends CustomField {
 		case TAG :
 			res = createTag();
 			break;
+		case NUMERIC:
+			res = createNumeric();
+			break;
 		default:
 			res = new CustomField(inputType);
 		}
@@ -61,6 +59,10 @@ public class NewCustomField extends CustomField {
 		res.setDefaultValue(getDefaultValue());
 
 		return res;
+	}
+
+	private CustomField createNumeric() {
+		return new NumericField();
 	}
 
 	private CustomField createSingleSelectField() {

@@ -21,42 +21,36 @@
 package org.squashtest.tm.domain.customfield;
 
 import org.apache.commons.lang3.StringUtils;
-import org.squashtest.tm.exception.customfield.MandatoryCufException;
+import org.hibernate.annotations.Type;
 import org.squashtest.tm.exception.customfield.WrongCufNumericFormatException;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import java.math.BigDecimal;
 
-/**
- * Created by jthebault on 20/07/2016.
- */
 @Entity
 @DiscriminatorValue("NUM")
-public class NumericValue extends CustomFieldValue {
+public class NumericField extends CustomField {
 
-	private BigDecimal numericValue;
+	private BigDecimal numericDefaultValue;
+
+	public NumericField() {
+		super(InputType.NUMERIC);
+	}
 
 	@Override
-	public void setValue(String value){
-		CustomField field = getCustomField();
-		BigDecimal numericValue;
-		if (field != null && !field.isOptional() && StringUtils.isBlank(value)){
-			throw new MandatoryCufException(this);
-		}
-
-		if (field != null && field.isOptional() && StringUtils.isBlank(value)){
-			this.numericValue  = null;
-			this.value = "";
-		}
-		else {
+	public void setDefaultValue(String defaultValue) {
+		if (StringUtils.isBlank(defaultValue)){
+			this.defaultValue  = defaultValue;
+			this.numericDefaultValue = null;
+		} else {
 			try {
 				//reformating the "," separator to a "." so whe can handle the two main forms of numeric separators
-				value = value.replace(",",".");
-				numericValue = new BigDecimal(value);
-				this.numericValue  = numericValue;
+				defaultValue = defaultValue.replace(",",".");
+				this.numericDefaultValue = new BigDecimal(defaultValue);
 				//we also persist the value as a string, some operations like export will be a lot easier
-				this.value = numericValue.toString();
+				this.defaultValue = this.numericDefaultValue.toString();
 			} catch (NumberFormatException nfe) {
 				throw new WrongCufNumericFormatException(nfe);
 			}
@@ -64,28 +58,8 @@ public class NumericValue extends CustomFieldValue {
 	}
 
 	@Override
-	public String getValue(){
-		return numericValue  != null ? numericValue.toString()  : "";
+	public String getDefaultValue() {
+		return numericDefaultValue  != null ? numericDefaultValue.toString()  : "";
 	}
 
-	@Override
-	public CustomFieldValue copy(){
-		CustomFieldValue copy = new NumericValue();
-		copy.setBinding(getBinding());
-		copy.setValue(getValue());
-		return copy;
-	}
-
-	public void accept(CustomFieldValueVisitor visitor) {
-		visitor.visit(this);
-	}
-
-	public BigDecimal getNumericValue() {
-		return numericValue;
-	}
-
-	@Override
-	public RawValue asRawValue() {
-		return new RawValue(value);
-	}
 }

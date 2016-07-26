@@ -177,7 +177,7 @@
                       class="display-table-cell" th:text="${customField.defaultValue}">false</div>
 
                     <div th:if="${customField.inputType.name() == 'NUMERIC'}" id="cuf-default-value"
-                         class="display-table-cell" th:text="${customField.defaultValue}">false</div>
+                         class="display-table-cell" th:text="${numericCustomFieldValue}">false</div>
 
                     <div th:if="${customField.inputType.name() == 'RICH_TEXT'}" id="cuf-default-value"
                       class="display-table-cell" th:utext="${customField.defaultValue}">false</div>
