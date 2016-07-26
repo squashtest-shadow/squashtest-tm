@@ -121,7 +121,24 @@ public enum CustomFieldError {
 		public String getUpdateImpact() {
 			return Messages.IMPACT_NO_CHANGE;
 		}
-	};
+	},
+	UNPARSABLE_NUMBER {
+		@Override
+		public String getErrorMessage() {
+			return Messages.ERROR_UNPARSABLE_NUMBER;
+		}
+
+		@Override
+		public String getCreateImpact() {
+			return Messages.IMPACT_DEFAULT_VALUE;
+		}
+
+		@Override
+		public String getUpdateImpact() {
+			return Messages.IMPACT_NO_CHANGE;
+		}
+	}
+	;
 
 	public abstract String getErrorMessage();
 

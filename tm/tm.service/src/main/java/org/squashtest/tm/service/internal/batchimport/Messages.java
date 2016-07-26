@@ -34,6 +34,7 @@ public final class Messages {
 	public static final String ERROR_UNPARSABLE_DATE = "message.import.log.error.field.wrongDateFormat";
 	public static final String ERROR_UNPARSABLE_OPTION = "message.import.log.error.listField.wrongValueForListField";
 	public static final String ERROR_UNPARSABLE_INTEGER = "message.import.log.error.field.notInteger";
+	public static final String ERROR_UNPARSABLE_NUMBER = "message.import.log.error.field.notNumber";
 	public static final String ERROR_GENERIC_UNPARSABLE = "message.import.log.error.cannotParse";
 	public static final String ERROR_FUNKY_CELL_TYPE = "message.import.log.error.unexpectedCellType";
 
@@ -98,8 +99,8 @@ public final class Messages {
 	public static final String IMPACT_COLUMN_IGNORED = "message.import.log.impact.columnIgnored";
 	public static final String IMPACT_VALUE_IGNORED = "message.import.log.impact.valueIgnored";
 	public static final String IMPACT_VERSION_NUMBER_MODIFIED = "message.import.log.impact.versionModified";
-	
-	// XXX perhaps "Binded" might be a globish word but definitely not english. Use "Bound" instead. 
+
+	// XXX perhaps "Binded" might be a globish word but definitely not english. Use "Bound" instead.
 	public static final String IMPACT_MILESTONE_NOT_BINDED = "message.import.log.impact.milestone.notBinded";
 	public static final String IMPACT_REQ_RENAMED = "message.import.log.impact.requirement.reqRenamed";
 	public static final String IMPACT_COVERAGE_FAILURE = "message.import.log.impact.line.ignored";

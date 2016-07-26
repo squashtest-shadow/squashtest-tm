@@ -27,6 +27,7 @@ import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
 
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -162,6 +163,20 @@ class CustomFieldValidator {
 
 			case TAG:
 				// nothing to check
+				break;
+
+			case NUMERIC:
+				if (StringUtils.isBlank(inputValue)){
+					error = CustomFieldError.UNPARSABLE_NUMBER;
+				}
+				else {
+					try {
+						inputValue = inputValue.replace(",",".");
+						new BigDecimal(inputValue);
+					} catch (NumberFormatException e) {
+						error = CustomFieldError.UNPARSABLE_NUMBER;
+					}
+				}
 				break;
 
 			default:
