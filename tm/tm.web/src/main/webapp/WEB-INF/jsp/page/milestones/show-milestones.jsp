@@ -196,7 +196,7 @@
           <tr>
             <td><label for="add-milestone-label"><f:message
               key="label.Label" /></label></td>
-            <td><input id="add-milestone-label" type="text" size="30" maxlength="30"/>
+            <td><input id="add-milestone-label" type="text" size="30" maxlength="30" data-def="maininput"/>
             <comp:error-message forField="label" /></td>
           </tr>
         

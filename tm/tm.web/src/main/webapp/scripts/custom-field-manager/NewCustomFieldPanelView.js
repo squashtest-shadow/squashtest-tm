@@ -124,6 +124,10 @@ define(
 				});
 				this.$("input:checkbox[name='optional']").get()[0].checked = model.get("optional");
 				this.$("select[name='inputType']").val(model.get("inputType"));
+				
+				if(this.$el.data().formDialog !== undefined) {
+					this.$el.formDialog("focusMainInput");
+				}
 			},
 
 			render : function() {

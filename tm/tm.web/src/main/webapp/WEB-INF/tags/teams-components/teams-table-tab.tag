@@ -77,7 +77,7 @@
         <label class="control-label" for="add-team-name"><f:message key="label.Name" /></label>
       </td>
       <td class="controls">
-        <input id="add-team-name" name="add-team-name" type="text" size="50" maxlength="50"
+        <input id="add-team-name" name="add-team-name" type="text" size="50" maxlength="50" data-def="maininput"
         style="display: block;" /><%-- inlined style as quickfix for issue #2206 --%>
         <comp:error-message forField="name" />
       </td>

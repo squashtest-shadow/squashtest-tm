@@ -100,6 +100,10 @@ define([ "jquery", "backbone", "app/lnf/Forms", 'workspace.event-bus',
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
+			
+			if(this.$el.data().formDialog !== undefined) {
+				this.$el.formDialog("focusMainInput");
+			}
 		},
 
 		_resetForm : function() {

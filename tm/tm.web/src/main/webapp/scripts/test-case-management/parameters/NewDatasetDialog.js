@@ -85,7 +85,7 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		},
 
 		addanother : function(event) {	
-			if (this.validate()){
+			if (this.validate()) {
 				this.cleanup();
 				$('#datasets-table').squashTable().refresh();
 			}
@@ -155,9 +155,15 @@ define([ "jquery", "backbone", "underscore", "app/lnf/Forms", "app/util/StringUt
 		cleanup : function() {
 			this.$el.addClass("not-displayed");
 			this._resetForm();
+			
+			if(this.$el.data().formDialog !== undefined) {
+				this.$el.formDialog("focusMainInput");
+			}
 		},
 
 		_resetForm : function() {
+			// ? parameters text fields disappear from $textFields
+			this.$textFields = this.$el.find("input:text");
 			this.$textFields.val("");
 			Forms.form(this.$el).clearState();
 		},

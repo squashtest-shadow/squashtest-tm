@@ -116,7 +116,8 @@
  *	- mainbtn[=<state-id>] : for buttons. If set, pressing <ENTER> inside the dialog will trigger 'click' on that button if the popup is in that
  *						current state. the <state-id> is optional : if left blank, the button will be triggered if the popup is in the default
  *						state.
- *
+ *  - maininput : an input defined as maininput will get the focus back when the cleanup function is called. This is used for dialogs that enable
+ *  					'add-another' feature and are not closed but only cleaned-up. A maininput must be unique in a dialog.
  *	- error-pane : a div defined as an error-pane will be turned into a jquery.squash.popuperror. It will be used and shown when the method showError
  *					is invoked (see API), instead of the default one.
  *
@@ -141,6 +142,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 			_state : "default",
 			_richeditors : {},
 			_mainBtns : {},
+			_maininput : undefined,
 			_errorPane : undefined
 		},
 
@@ -316,9 +318,28 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 				$(this).text('');
 			});
 
+			this.focusMainInput();
+			
 			this._trigger('cleanup');
 		},
-
+		
+		focusMainInput : function() {
+			var maininput = this.options._maininput;
+			if(maininput !== undefined) {
+				if(maininput.data().ckeditorInstance !== undefined) {
+					// if the main input is a rich editor
+					var ckeditorInstance = CKEDITOR.instances[maininput.attr('id')];
+					// setData is asynchronous
+					ckeditorInstance.setData("", function() {
+						ckeditorInstance.focus();
+					});
+				} else {
+					// if it is a basic input
+					maininput.focus();
+				}
+			}
+		},
+		
 		_createButtons : function() {
 
 			// ripped from jquery-ui 1.8.13. It might change some day, be careful.
@@ -390,7 +411,7 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 		}
 
 	});
-
+	
 	$.squash.formDialog.domconf = {
 		'nocleanup': function($elt, value){
 			this.options.nocleanup = true;
@@ -413,6 +434,12 @@ define([ 'jquery', "underscore", 'squash.attributeparser', 'squash.configmanager
 				for (var i=0, len = values.length; i<len;i++){
 					this.options._mainBtns[values[i]] = $elt;
 				}
+			}
+		},
+		
+		'maininput' : function($elt, value) {
+			if(value === true) {
+				this.options._maininput = $elt;
 			}
 		},
 

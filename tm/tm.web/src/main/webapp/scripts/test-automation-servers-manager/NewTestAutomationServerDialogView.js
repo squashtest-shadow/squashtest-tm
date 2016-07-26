@@ -70,6 +70,10 @@ define([ "jquery", "underscore", "backbone", "handlebars", "app/lnf/Forms", "./N
 
 			this.resetCKE();
 
+			if(this.$el.data().formDialog !== undefined) {
+				this.$el.formDialog("focusMainInput");
+			}
+			
 			return this;
 		},
 

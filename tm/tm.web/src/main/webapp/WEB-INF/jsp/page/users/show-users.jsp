@@ -164,7 +164,7 @@
         <table id="add-user-table">
           <tr> 
             <td><label  for="add-user-login"><f:message key="label.Login" /></label></td>
-            <td><input type="text" id="add-user-login" size="30"/></td>
+            <td><input type="text" id="add-user-login" size="30" data-def="maininput"/></td>
           </tr>
           <tr><td> <comp:error-message forField="user-login" /> </td>
           </tr>

@@ -156,7 +156,7 @@
           </label>
         </td>
         <td class="controls">
-          <input id="add-project-from-template-name" name="add-project-from-template-name" type="text" size="50" maxlength="255" data-prop="name" data-object="jsonProjectFromTemplate"/>
+          <input id="add-project-from-template-name" name="add-project-from-template-name" type="text" size="50" maxlength="255" data-prop="name" data-object="jsonProjectFromTemplate" data-def="maininput"/>
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>
@@ -244,7 +244,7 @@
           </label>
         </td>
         <td class="controls">
-          <input id="add-template-from-project-name" name="add-template-from-project-name" type="text" size="50" maxlength="255" data-prop="name" data-object="jsonTemplateFromProject"/>
+          <input id="add-template-from-project-name" name="add-template-from-project-name" type="text" size="50" maxlength="255" data-prop="name" data-object="jsonTemplateFromProject" data-def="maininput"/>
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>
@@ -318,7 +318,7 @@
           </label>
         </td>
         <td class="controls">
-          <input id="add-template-name" name="add-template-name" type="text" size="50" maxlength="255" data-prop="name" data-object="projectTemplate"/>
+          <input id="add-template-name" name="add-template-name" type="text" size="50" maxlength="255" data-prop="name" data-object="projectTemplate" data-def="maininput"/>
           <span class="help-inline">&nbsp;</span>
         </td>
       </tr>

@@ -314,11 +314,14 @@
     th:title="#{title.infoList.item.add}">
     <table class="form-horizontal">
       <tr class="control-group">
-        <td><label class="control-label" for="new-info-list-item-label"
-          th:text="#{label.item}">New option</label></td>
-        <td class="controls"><input id="new-info-list-item-label"
-          name="new-info-list-item-label" type="text" value=""
-          maxlength="255" size="50" /> <span class="help-inline">&nbsp;</span>
+        <td>
+        	<label class="control-label" for="new-info-list-item-label"
+          			th:text="#{label.item}">New option</label>
+		</td>
+        <td class="controls">
+        	<input id="new-info-list-item-label" name="new-info-list-item-label" 
+        			type="text" value="" maxlength="255" size="50" data-def="maininput"/>
+        	<span class="help-inline">&nbsp;</span>
         </td>
       </tr>
       <tr class="control-group">

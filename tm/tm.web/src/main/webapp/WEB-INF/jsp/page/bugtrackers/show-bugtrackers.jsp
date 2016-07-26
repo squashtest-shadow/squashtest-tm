@@ -116,7 +116,7 @@
           <tr>
             <td><label for="add-bugtracker-name"><f:message
               key="label.Name" /></label></td>
-            <td><input id="add-bugtracker-name" type="text" size="50" />
+            <td><input id="add-bugtracker-name" type="text" size="50" data-def="maininput"/>
             <comp:error-message forField="name" /></td>
           </tr>
           <tr>

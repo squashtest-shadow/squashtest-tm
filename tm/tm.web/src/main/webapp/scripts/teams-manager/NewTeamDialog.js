@@ -133,6 +133,10 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms",
 			this.$textAreas.val("");
 			this.$errorMessages.text("");
 			Forms.form(this.$el).clearState();
+			
+			if(this.$el.data().formDialog !== undefined) {
+				this.$el.formDialog("focusMainInput");
+			}
 		},
 
 		show : function() {

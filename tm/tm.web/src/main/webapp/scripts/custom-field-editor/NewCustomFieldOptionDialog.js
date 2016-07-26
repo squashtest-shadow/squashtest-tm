@@ -105,6 +105,9 @@ define([ "jquery", "backbone", "handlebars", "app/lnf/Forms", "app/ws/squashtm.n
 			this.$textFields.val("");
 		//	this.$errorMessages.text("");
 			Forms.form(this.$el).clearState();
+			if(this.$el.data().formDialog !== undefined) {
+				this.$el.formDialog("focusMainInput");
+			}
 		},
 		 
 		cleanup : function() {

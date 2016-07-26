@@ -496,12 +496,13 @@ define(["jquery", "squashtable/squashtable.collapser", "custom-field-values", "w
 	function addTestStepSuccessAnother(response) {
 		CKEDITOR.instances["add-test-step-action"].setData("");
 		CKEDITOR.instances["add-test-step-result"].setData("");
-
+		
 		var dialog = $("#add-test-step-dialog");
 		dialog.data("cuf-values-support").reset();
 		eventBus.trigger("testStepsTable.stepAdded");
 		refresh();
 		addedTestStepId = response;
+		dialog.formDialog("focusMainInput");
 	}
 
 	function readAddStepParams() {
