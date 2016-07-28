@@ -29,4 +29,6 @@ public interface CustomFieldVisitor {
 	void visit(RichTextField richField);
 
 	void visit(MultiSelectField multiselect);
+
+	void visit(NumericField numericField);
 }

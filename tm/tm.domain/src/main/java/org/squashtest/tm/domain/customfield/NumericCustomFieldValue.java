@@ -33,7 +33,7 @@ import java.math.BigDecimal;
  */
 @Entity
 @DiscriminatorValue("NUM")
-public class NumericValue extends CustomFieldValue {
+public class NumericCustomFieldValue extends CustomFieldValue {
 
 	private BigDecimal numericValue;
 
@@ -52,11 +52,10 @@ public class NumericValue extends CustomFieldValue {
 		else {
 			try {
 				//reformating the "," separator to a "." so whe can handle the two main forms of numeric separators
-				value = value.replace(",",".");
-				numericValue = new BigDecimal(value);
-				this.numericValue  = numericValue;
+				String formattedValue = value.replace(",",".");
+				this.numericValue  = new BigDecimal(formattedValue);
 				//we also persist the value as a string, some operations like export will be a lot easier
-				this.value = numericValue.toString();
+				this.value = this.numericValue.toString();
 			} catch (NumberFormatException nfe) {
 				throw new WrongCufNumericFormatException(nfe);
 			}
@@ -70,12 +69,13 @@ public class NumericValue extends CustomFieldValue {
 
 	@Override
 	public CustomFieldValue copy(){
-		CustomFieldValue copy = new NumericValue();
+		CustomFieldValue copy = new NumericCustomFieldValue();
 		copy.setBinding(getBinding());
 		copy.setValue(getValue());
 		return copy;
 	}
 
+	@Override
 	public void accept(CustomFieldValueVisitor visitor) {
 		visitor.visit(this);
 	}

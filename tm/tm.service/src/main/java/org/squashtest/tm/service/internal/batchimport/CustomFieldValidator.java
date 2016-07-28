@@ -22,12 +22,13 @@ package org.squashtest.tm.service.internal.batchimport;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.routines.BigDecimalValidator;
 import org.squashtest.tm.core.foundation.lang.DateUtils;
 import org.squashtest.tm.domain.customfield.*;
 import org.squashtest.tm.service.importer.LogEntry;
 import org.squashtest.tm.service.importer.Target;
+import org.squashtest.tm.service.internal.customfield.NumericCufHelper;
 
-import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -170,20 +171,24 @@ class CustomFieldValidator {
 					error = CustomFieldError.UNPARSABLE_NUMBER;
 				}
 				else {
-					try {
-						inputValue = inputValue.replace(",",".");
-						new BigDecimal(inputValue);
-					} catch (NumberFormatException e) {
-						error = CustomFieldError.UNPARSABLE_NUMBER;
-					}
+					error = validateNumericCustomField(inputValue);
 				}
 				break;
-
 			default:
 				error = CustomFieldError.UNKNOWN_CUF_TYPE;
 				break;
 		}
 		return error;
+	}
+
+	private CustomFieldError validateNumericCustomField(String inputValue) {
+		String formattedInputValue = NumericCufHelper.formatInputNumericCufValue(inputValue);
+		BigDecimalValidator validator = BigDecimalValidator.getInstance();
+		boolean valid = validator.isValid(formattedInputValue);
+		if (!valid){
+            return CustomFieldError.UNPARSABLE_NUMBER;
+        }
+		return null;
 	}
 
 	private void registerOptions(CustomField cuf) {

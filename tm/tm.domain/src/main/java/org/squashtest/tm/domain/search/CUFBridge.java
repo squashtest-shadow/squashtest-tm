@@ -22,6 +22,7 @@ package org.squashtest.tm.domain.search;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.Field;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 import org.squashtest.tm.domain.customfield.BindableEntity;
 import org.squashtest.tm.domain.customfield.CustomFieldValue;
 import org.squashtest.tm.domain.customfield.InputType;
+import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
 import org.squashtest.tm.domain.requirement.RequirementVersion;
 import org.squashtest.tm.domain.testcase.TestCase;
 
@@ -124,7 +126,13 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 			}
 
 			// TODO use the correct API
-			if (val != null) {
+			if (val != null && inputType == InputType.NUMERIC) {
+				NumericCustomFieldValue numericCustomFieldValue = (NumericCustomFieldValue) cufValue;//NOSONAR it's a numeric cuf, cast is safe
+				Double doubleValue = numericCustomFieldValue.getNumericValue().doubleValue();
+				Field field = new DoubleField(code, doubleValue, luceneOptions.getStore());
+				//field.setBoost(luceneOptions.getBoost());
+				document.add(field);
+			} else if (val != null) {
 				Field field = new Field(code, val, luceneOptions.getStore(), luceneOptions.getIndex(),
 					luceneOptions.getTermVector());
 				field.setBoost(luceneOptions.getBoost());

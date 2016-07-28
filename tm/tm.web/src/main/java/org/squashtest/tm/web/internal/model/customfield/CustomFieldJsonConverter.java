@@ -20,7 +20,6 @@
  */
 package org.squashtest.tm.web.internal.model.customfield;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -28,7 +27,6 @@ import java.util.Locale;
 
 import javax.inject.Inject;
 
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Component;
@@ -134,8 +132,8 @@ public class CustomFieldJsonConverter {
 			}
 
 			@Override
-			public void visit(NumericValue customFieldValue) {
-				String formatedValue = NumericCufHelper.formatNumericCuf(customFieldValue.getValue());
+			public void visit(NumericCustomFieldValue customFieldValue) {
+				String formatedValue = NumericCufHelper.formatOutputNumericCufValue(customFieldValue.getValue());
 				model.setValue(formatedValue);
 			}
 
@@ -227,7 +225,7 @@ public class CustomFieldJsonConverter {
 			model.setOptionValues(((DenormalizedMultiSelectField) value).getValues());
 		}
 		else if (DenormalizedNumericValue.class.isAssignableFrom(value.getClass())) {
-			model.setValue(NumericCufHelper.formatNumericCuf(value.getValue()));
+			model.setValue(NumericCufHelper.formatOutputNumericCufValue(value.getValue()));
 		}
 		else {
 			model.setValue(value.getValue());

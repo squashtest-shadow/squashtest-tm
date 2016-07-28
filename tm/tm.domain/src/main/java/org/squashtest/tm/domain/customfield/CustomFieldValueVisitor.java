@@ -27,7 +27,7 @@ public interface CustomFieldValueVisitor {
 
 	void visit(CustomFieldValue customFieldValue);
 
-	void visit(NumericValue customFieldValue);
+	void visit(NumericCustomFieldValue customFieldValue);
 
 	void visit(RichTextValue customFieldValue);
 

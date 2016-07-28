@@ -33,6 +33,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrMatcher;
 import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.lucene.document.DateTools;
+import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.Query;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -48,16 +49,8 @@ import org.squashtest.tm.domain.customfield.CustomField;
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
 import org.squashtest.tm.domain.project.Project;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchFieldModelType;
-import org.squashtest.tm.domain.search.AdvancedSearchListFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchModel;
-import org.squashtest.tm.domain.search.AdvancedSearchRangeFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchSingleFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel;
+import org.squashtest.tm.domain.search.*;
 import org.squashtest.tm.domain.search.AdvancedSearchTagsFieldModel.Operation;
-import org.squashtest.tm.domain.search.AdvancedSearchTextFieldModel;
-import org.squashtest.tm.domain.search.AdvancedSearchTimeIntervalFieldModel;
 import org.squashtest.tm.domain.testcase.TestCase;
 import org.squashtest.tm.service.advancedsearch.AdvancedSearchService;
 import org.squashtest.tm.service.customfield.CustomFieldBindingFinderService;
@@ -145,6 +138,12 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 
 		return query;
+	}
+
+	private Query buildLuceneNumericRangeQuery(QueryBuilder qb, String fieldKey, Double minValue, Double maxValue) {
+		return qb.bool()
+				.must(NumericRangeQuery.newDoubleRange(fieldKey,minValue,maxValue,true,true))
+				.createQuery();
 	}
 
 	protected Query buildLuceneValueInListQuery(QueryBuilder qb, String fieldName, List<String> values, boolean isTag) {
@@ -281,6 +280,15 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 
 		return null;
 	}
+
+	private Query buildQueryForNumericRangeCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel, QueryBuilder qb) {
+		AdvancedSearchNumericRangeFieldModel rangeModel = (AdvancedSearchNumericRangeFieldModel) fieldModel;
+		if (rangeModel.getMinValue() != null || rangeModel.getMaxValue() != null) {
+			return buildLuceneNumericRangeQuery(qb, fieldKey, rangeModel.getMinValueAsDouble(), rangeModel.getMaxValueAsDouble());
+		}
+		return null;
+	}
+
 
 
 
@@ -533,6 +541,9 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 			case RANGE:
 				query = buildQueryForRangeCriterium(fieldKey, fieldModel, qb);
 				break;
+			case NUMERIC_RANGE:
+				query = buildQueryForNumericRangeCriterium(fieldKey, fieldModel, qb);
+				break;
 			case TIME_INTERVAL:
 				query = buildQueryForTimeIntervalCriterium(fieldKey, fieldModel, qb);
 				break;
@@ -547,6 +558,7 @@ public class AdvancedSearchServiceImpl implements AdvancedSearchService {
 		}
 		return query;
 	}
+
 
 	private Query buildQueryForTimeIntervalCriterium(String fieldKey, AdvancedSearchFieldModel fieldModel,
 			QueryBuilder qb) {

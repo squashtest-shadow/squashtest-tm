@@ -21,8 +21,7 @@
 package org.squashtest.tm.domain.denormalizedfield;
 
 import org.squashtest.tm.domain.customfield.CustomField;
-import org.squashtest.tm.domain.customfield.CustomFieldValue;
-import org.squashtest.tm.domain.customfield.NumericValue;
+import org.squashtest.tm.domain.customfield.NumericCustomFieldValue;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -41,7 +40,7 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 		super();
 	}
 
-	public DenormalizedNumericValue(NumericValue customFieldValue, Long denormalizedFieldHolderId,
+	public DenormalizedNumericValue(NumericCustomFieldValue customFieldValue, Long denormalizedFieldHolderId,
 									DenormalizedFieldHolderType denormalizedFieldHolderType) {
 
 		this.customFieldValue = customFieldValue;
@@ -57,5 +56,11 @@ public class DenormalizedNumericValue extends DenormalizedFieldValue {
 		this.denormalizedFieldHolderType = denormalizedFieldHolderType;
 	}
 
+	public BigDecimal getNumericValue() {
+		return numericValue;
+	}
 
+	public void setNumericValue(BigDecimal numericValue) {
+		this.numericValue = numericValue;
+	}
 }

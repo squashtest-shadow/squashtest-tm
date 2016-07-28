@@ -559,7 +559,7 @@ public class CampaignExportCSVFullModelImpl implements WritableCampaignCSVModel 
 					CustomField customField = value.getBinding().getCustomField();
 					if (customField.getCode().equals(model.getCode())) {
 						if (customField.getInputType().equals(InputType.NUMERIC)){
-							return NumericCufHelper.formatNumericCuf(value.getValue());
+							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 						}
 						return value.getValue();
 					}

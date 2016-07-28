@@ -117,8 +117,8 @@ public class PrivateDenormalizedFieldValueServiceImpl implements PrivateDenormal
 				dfv = new DenormalizedMultiSelectField(cfv, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 				break;
 			case NUMERIC:
-				NumericValue numericValueValue = (NumericValue) cfv;//NOSONAR if cuf is numeric we can safely downcast to numeric value
-				dfv = new DenormalizedNumericValue(numericValueValue, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
+				NumericCustomFieldValue numericValueCustomFieldValue = (NumericCustomFieldValue) cfv;//NOSONAR if cuf is numeric we can safely downcast to numeric value
+				dfv = new DenormalizedNumericValue(numericValueCustomFieldValue, entity.getDenormalizedFieldHolderId(), entity.getDenormalizedFieldHolderType());
 				break;
 
 			default :

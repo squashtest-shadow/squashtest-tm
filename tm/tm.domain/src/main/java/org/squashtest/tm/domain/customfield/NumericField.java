@@ -47,8 +47,8 @@ public class NumericField extends CustomField {
 		} else {
 			try {
 				//reformating the "," separator to a "." so whe can handle the two main forms of numeric separators
-				defaultValue = defaultValue.replace(",",".");
-				this.numericDefaultValue = new BigDecimal(defaultValue);
+				String formattedDefaultValue = defaultValue.replace(",",".");
+				this.numericDefaultValue = new BigDecimal(formattedDefaultValue);
 				//we also persist the value as a string, some operations like export will be a lot easier
 				this.defaultValue = this.numericDefaultValue.toString();
 			} catch (NumberFormatException nfe) {

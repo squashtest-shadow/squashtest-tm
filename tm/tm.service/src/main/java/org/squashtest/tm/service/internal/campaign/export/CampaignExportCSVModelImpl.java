@@ -305,7 +305,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			for (CustomField model : tcCUFModel) {
 				String strValue = getValue(tcValues, model);
 				if (model.getInputType().equals(InputType.NUMERIC)){
-					strValue = NumericCufHelper.formatNumericCuf(strValue);
+					strValue = NumericCufHelper.formatOutputNumericCufValue(strValue);
 				}
 				dataCells.add(new CellImpl(strValue));
 			}
@@ -326,7 +326,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			for (CustomField model : iterCUFModel) {
 				String strValue = getValue(iValues, model);
 				if (model.getInputType().equals(InputType.NUMERIC)){
-					strValue = NumericCufHelper.formatNumericCuf(strValue);
+					strValue = NumericCufHelper.formatOutputNumericCufValue(strValue);
 				}
 				dataCells.add(new CellImpl(strValue));
 			}
@@ -355,7 +355,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 			for (CustomField model : campCUFModel) {
 				String strValue = getValue(cValues, model);
 				if (model.getInputType().equals(InputType.NUMERIC)){
-					strValue = NumericCufHelper.formatNumericCuf(strValue);
+					strValue = NumericCufHelper.formatOutputNumericCufValue(strValue);
 				}
 				dataCells.add(new CellImpl(strValue));
 			}
@@ -376,7 +376,7 @@ public class CampaignExportCSVModelImpl implements WritableCampaignCSVModel {
 					CustomField customField = value.getBinding().getCustomField();
 					if (customField.getCode().equals(model.getCode())) {
 						if (customField.getInputType().equals(InputType.NUMERIC)){
-							return NumericCufHelper.formatNumericCuf(value.getValue());
+							return NumericCufHelper.formatOutputNumericCufValue(value.getValue());
 						}
 						return value.getValue();
 					}

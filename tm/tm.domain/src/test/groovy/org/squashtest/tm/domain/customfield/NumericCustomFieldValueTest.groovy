@@ -27,12 +27,12 @@ import spock.lang.Unroll
 /**
  * Created by jthebault on 26/07/2016.
  */
-class NumericValueTest extends Specification{
+class NumericCustomFieldValueTest extends Specification{
 
 	@Unroll
 	def "should reject invalid numbers" (){
 		given:
-		NumericValue numericValue = new NumericValue();
+		NumericCustomFieldValue numericValue = new NumericCustomFieldValue();
 
 		when:
 		numericValue.setValue(value);
@@ -52,7 +52,7 @@ class NumericValueTest extends Specification{
 	@Unroll
 	def "should accept valid numbers" (){
 		given:
-		NumericValue numericValue = new NumericValue();
+		NumericCustomFieldValue numericValue = new NumericCustomFieldValue();
 
 		when:
 		numericValue.setValue(value);
@@ -75,7 +75,7 @@ class NumericValueTest extends Specification{
 	@Unroll
 	def "should convert decimal separator" (){
 		given:
-		NumericValue numericValue = new NumericValue();
+		NumericCustomFieldValue numericValue = new NumericCustomFieldValue();
 
 		when:
 		numericValue.setValue(value);

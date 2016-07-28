@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translator", "app/ws/squashtm.notification", "underscore", "workspace.projects",
-         "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget",
+         "squash.configmanager", "./SearchDateWidget", "./SearchRangeWidget","./SearchNumericRangeWidget",
 		"./SearchExistsWidget","./SearchMultiAutocompleteWidget", "./SearchMultiSelectWidget", "./SearchMultiSelectProjectWidget",  "./SearchCheckboxWidget",
 		"./SearchComboMultiselectWidget", "./SearchRadioWidget", "./SearchTagsWidget", "./SearchMultiCascadeFlatWidget", "./SearchDateCustomFieldWidget",
 		"jquery.squash", "jqueryui", "jquery.squash.togglepanel", "squashtable",
@@ -214,6 +214,9 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 							case "tags":
 								self.makeTagsField(tableid, field.id, field.title, field.possibleValues, searchModel[field.id]);
 								break;
+							case "numericrange":
+								self.makeNumericRangeField(tableid, field.id, field.title, searchModel[field.id]);
+								break;
 						}
 
 					}
@@ -301,6 +304,15 @@ define([ "jquery", "backbone", "app/squash.handlebars.helpers", "squash.translat
 
 			$fieldDom.searchRangeWidget();
 			$fieldDom.searchRangeWidget("fieldvalue", enteredValue);
+
+		},
+
+		makeNumericRangeField : function(tableId, fieldId, fieldTitle, enteredValue) {
+			var context = {"text-range-id": fieldId, "text-range-title": fieldTitle};
+			var $fieldDom = this._appendFieldDom(tableId, fieldId, this._compileTemplate("#numeric-range-template", context));
+
+			$fieldDom.searchNumericRangeWidget();
+			$fieldDom.searchNumericRangeWidget("fieldvalue", enteredValue);
 
 		},
 

@@ -163,20 +163,23 @@ public class ExecutionStepModificationHelper {
 			}
 
 			@Override
-			public void visit(MultiSelectField multiselect) {
+			public void visit(MultiSelectField multiSelect) {
 				testValChange();
 			}
 
 			@Override
 			public void visit(RichTextField richField) {
 				testValChange();
+			}
 
+			@Override
+			public void visit(NumericField numericField) {
+				testValChange();
 			}
 
 			@Override
 			public void visit(CustomField standardValue) {
 				testValChange();
-
 			}
 
 			@Override

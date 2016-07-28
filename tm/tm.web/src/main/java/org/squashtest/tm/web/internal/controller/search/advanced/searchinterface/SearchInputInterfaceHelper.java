@@ -181,6 +181,10 @@ public class SearchInputInterfaceHelper {
 				model.getFields().add(convertToSearchInputFieldModel(customField));
 				break;
 
+			case NUMERIC:
+				model.getFields().add(createNumericRangeField(customField));
+				break;
+
 			case CHECKBOX:
 				model.getFields().add(createCheckBoxField(customField, locale));
 				break;
@@ -223,6 +227,15 @@ public class SearchInputInterfaceHelper {
 
 		model.setPossibleValues(possibleValues);
 		model.setInputType(COMBOMULTISELECT);
+		model.setTitle(customField.getLabel());
+		model.setId(customField.getCode());
+		model.setIgnoreBridge(true);
+		return model;
+	}
+
+	private SearchInputFieldModel createNumericRangeField (CustomField customField) {
+		SearchInputFieldModel model = new SearchInputFieldModel();
+		model.setInputType(SearchInterfaceDescription.NUMERICRANGE);
 		model.setTitle(customField.getLabel());
 		model.setId(customField.getCode());
 		model.setIgnoreBridge(true);

@@ -127,6 +127,11 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 		throw new IllegalArgumentException("a TAG custom field value cannot represent a Rich Text field");
 	}
 
+	@Override
+	public void visit(NumericField numericField) {
+		throw new IllegalArgumentException("a TAG custom field value cannot represent a Numeric custom field");
+	}
+
 
 	// should have been called "updateAvailableOptions"
 	@Override
@@ -136,6 +141,7 @@ public class TagsValue extends CustomFieldValue implements MultiValuedCustomFiel
 		}
 	}
 
+	@Override
 	public void accept(CustomFieldValueVisitor visitor) {
 		visitor.visit(this);
 	}

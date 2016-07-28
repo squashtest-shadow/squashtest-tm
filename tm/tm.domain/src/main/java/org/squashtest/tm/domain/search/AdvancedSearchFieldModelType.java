@@ -27,6 +27,7 @@ public enum AdvancedSearchFieldModelType {
 	TEXT,
 	TIME_INTERVAL,
 	RANGE,
+	NUMERIC_RANGE,
 	TAGS,
 	CF_TIME_INTERVAL;
 	// @formatter:on

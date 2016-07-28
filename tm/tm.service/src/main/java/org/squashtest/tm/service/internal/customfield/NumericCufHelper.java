@@ -31,7 +31,19 @@ import java.util.Locale;
  */
 public class NumericCufHelper {
 
-	public static String formatNumericCuf(String unformatedValue) {
+	/**
+	 * Utility class with only static methods...
+	 */
+	private NumericCufHelper() {
+	}
+
+	/**
+	 * Method to format a String reprsenting a number to the same string with good locale decimal separator.
+	 * For example : Use it after a .toString() on a BigDecimal.
+	 * @param unformatedValue
+	 * @return
+     */
+	public static String formatOutputNumericCufValue(String unformatedValue) {
 		if(StringUtils.isBlank(unformatedValue)){
 			return "";
 		}
@@ -41,4 +53,12 @@ public class NumericCufHelper {
 		return unformatedValue.replace('.',decimalSeparator);
 	}
 
+	/**
+	 * Replace the decimal separator , by a .
+	 * @param unformatedValue
+	 * @return
+     */
+	public static String formatInputNumericCufValue(String unformatedValue) {
+		return unformatedValue.replace(",",".");
+	}
 }

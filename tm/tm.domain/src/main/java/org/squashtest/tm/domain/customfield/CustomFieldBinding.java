@@ -137,7 +137,7 @@ public class CustomFieldBinding {
 				value = new TagsValue();
 				break;
 			case NUMERIC:
-				value = new NumericValue();
+				value = new NumericCustomFieldValue();
 				break;
 			default:
 				value = new CustomFieldValue();

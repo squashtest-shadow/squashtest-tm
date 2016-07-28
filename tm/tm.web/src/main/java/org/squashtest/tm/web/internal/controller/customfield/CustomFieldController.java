@@ -125,7 +125,7 @@ public class CustomFieldController {
 				break;
 			case NUMERIC:
 				model.addAttribute(CUSTOM_FIELD, customField);
-				model.addAttribute(NUMERIC_CUSTOM_FIELD_VALUE, NumericCufHelper.formatNumericCuf(customField.getDefaultValue()));
+				model.addAttribute(NUMERIC_CUSTOM_FIELD_VALUE, NumericCufHelper.formatOutputNumericCufValue(customField.getDefaultValue()));
 				break;
 			default:
 				model.addAttribute(CUSTOM_FIELD, customField);

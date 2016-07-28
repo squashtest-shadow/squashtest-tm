@@ -294,7 +294,7 @@
                     </div>
                 </script>
 
-                <script id="range-template" type="text/x-handlebars-template">
+       <script id="range-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">
 					<div id="{{text-range-id}}" class="search-input" style="display:inline">
 						<div class="search-line" data-widgetname="Range">
@@ -308,6 +308,21 @@
 					</div>
 				</div>
 				</script>
+
+        <script id="numeric-range-template" type="text/x-handlebars-template">
+          <div class="display-search-table-row">
+            <div id="{{text-range-id}}" class="search-input" style="display:inline">
+              <div class="search-line" data-widgetname="NumericRange">
+                <input type="checkbox"></input>
+                <span>{{text-range-title}}</span>
+                <span th:text="#{search.testcase.between.label}"></span>
+                <input class="small-search-input" type="text"></input>
+                <span th:text="#{search.testcase.and.label}"></span>
+                <input class="small-search-input" type="text"></input>
+              </div>
+            </div>
+          </div>
+        </script>
 
               <script id="exists-template" type="text/x-handlebars-template">
 				<div class="display-search-table-row">

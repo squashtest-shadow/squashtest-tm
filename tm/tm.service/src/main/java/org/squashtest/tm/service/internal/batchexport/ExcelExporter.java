@@ -429,7 +429,7 @@ class ExcelExporter {
 			Cell c = r.createCell(idx);
 			String value = nullSafeValue(cuf);
 			if (cuf.getType().equals(InputType.NUMERIC)){
-				value = NumericCufHelper.formatNumericCuf(value);
+				value = NumericCufHelper.formatOutputNumericCufValue(value);
 			}
 			c.setCellValue(value);
 		}

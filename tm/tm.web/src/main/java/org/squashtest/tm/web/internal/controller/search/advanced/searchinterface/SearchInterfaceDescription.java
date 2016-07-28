@@ -215,6 +215,9 @@ public abstract class SearchInterfaceDescription {
 	protected static final String TEXTFIELDREFERENCE = "textfieldreference";
 	protected static final String TEXTAREA = "textarea";
 	protected static final String RANGE = "range";
+	//we need a specific input type for "true" numeric value,
+	//because with the range type above, some padding is applied to index and queries
+	protected static final String NUMERICRANGE = "numericrange";
 	protected static final String EXISTS = "exists";
 	protected static final String DATE = "date";
 	protected static final String MULTISELECT = "multiselect";

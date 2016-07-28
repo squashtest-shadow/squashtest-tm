@@ -50,6 +50,11 @@
     </dependency>
 
     <dependency>
+      <groupId>commons-validator</groupId>
+      <artifactId>commons-validator</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>core.api</artifactId>
       <version>${project.version}</version>
