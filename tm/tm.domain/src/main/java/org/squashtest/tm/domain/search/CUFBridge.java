@@ -130,7 +130,6 @@ public class CUFBridge extends SessionFieldBridge implements ParameterizedBridge
 				NumericCustomFieldValue numericCustomFieldValue = (NumericCustomFieldValue) cufValue;//NOSONAR it's a numeric cuf, cast is safe
 				Double doubleValue = numericCustomFieldValue.getNumericValue().doubleValue();
 				Field field = new DoubleField(code, doubleValue, luceneOptions.getStore());
-				//field.setBoost(luceneOptions.getBoost());
 				document.add(field);
 			} else if (val != null) {
 				Field field = new Field(code, val, luceneOptions.getStore(), luceneOptions.getIndex(),
