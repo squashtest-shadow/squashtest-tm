@@ -18,30 +18,65 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-define(function () {
+define(["workspace.event-bus"], function(eventBus) {
 	"use strict";
 	return {
-		generate: function () {
-
+		generate : function() {
+			console.log("appel de la fonction");
+			
 			return {
-				"types": {
-					"max_depth": -2, // unlimited without check
-					"max_children": -2, // unlimited w/o check
-					"valid_children": ["drive"],
-					"types": {
-						"test-case": {
-							"valid_children": 'none'
+				
+				"types" : {
+					"max_depth" : -2, // unlimited without check
+					"max_children" : -2, // unlimited w/o check
+					"valid_children" : [ "drive" ],
+
+					"types" : {
+						"test-case" : {
+							"valid_children" : 'none'
 						},
-						"folder": {
-							"valid_children": ["test-case", "folder"]
+						"folder" : {
+							"valid_children" : [ "test-case", "folder" ]
 						},
-						"drive": {
-							"valid_children": ["test-case", "folder"]
+						"drive" : {
+							"valid_children" : [ "test-case", "folder" ]
 						}
+
 					}
+
+				},
+				
+				"dnd" : {
+					drop_finish : function(data) {
+						console.log('dropping');
+						console.log(data);
+						var node = data.o.treeNode();
+						var calledid = [node.getResId()];
+						var callerid = this.get_selected().treeNode().getResId();
+
+						var param = {
+							'called-test-case' : calledid
+						};
+
+						var url = squashtm.app.contextRoot + "test-cases/" + callerid
+								+ "/called-test-cases";
+
+						$.post(url, param).success(function() {
+							eventBus.trigger('call-test-case', {
+								callerId : callerid,
+								calledId : calledid
+							});
+						});
+
+					}
+
 				}
+
+				
 			};
 		}
+
+		
 
 	};
 });

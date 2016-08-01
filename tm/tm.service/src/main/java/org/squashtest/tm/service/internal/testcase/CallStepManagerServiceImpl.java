@@ -35,9 +35,14 @@ import org.squashtest.tm.domain.testcase.CallTestStep;
 import org.squashtest.tm.domain.testcase.Dataset;
 import org.squashtest.tm.domain.testcase.ParameterAssignationMode;
 import org.squashtest.tm.domain.testcase.TestCase;
+import org.squashtest.tm.domain.testcase.TestCaseLibraryNode;
 import org.squashtest.tm.exception.CyclicStepCallException;
 import org.squashtest.tm.service.internal.repository.TestCaseDao;
+import org.squashtest.tm.service.internal.repository.TestCaseLibraryNodeDao;
 import org.squashtest.tm.service.internal.repository.TestStepDao;
+import org.squashtest.tm.service.security.PermissionEvaluationService;
+import org.squashtest.tm.service.security.PermissionsUtils;
+import org.squashtest.tm.service.security.SecurityCheckableObject;
 import org.squashtest.tm.service.testcase.CallStepManagerService;
 import org.squashtest.tm.service.testcase.DatasetModificationService;
 import org.squashtest.tm.service.testcase.TestCaseCyclicCallChecker;
@@ -52,6 +57,9 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private TestStepDao testStepDao;
+	
+	@Inject
+	private TestCaseLibraryNodeDao testCaseLibraryNodeDao;
 
 	@Inject
 	private TestCaseCallTreeFinder callTreeFinder;
@@ -61,6 +69,9 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 
 	@Inject
 	private DatasetModificationService datasetModificationService;
+	
+	@Inject
+	private PermissionEvaluationService permissionEvaluationService;
 
 	@Override
 	@PreAuthorize("(hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') "
@@ -86,6 +97,43 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		 */
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 	}
+	
+	
+	
+	@Override
+	@PreAuthorize("hasPermission(#parentTestCaseId, 'org.squashtest.tm.domain.testcase.TestCase' , 'WRITE') " 
+			
+			+ OR_HAS_ROLE_ADMIN)
+	public void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds) {
+		
+		TestCase parentTestCase = testCaseDao.findById(parentTestCaseId);
+		
+		List<TestCaseLibraryNode> nodes = testCaseLibraryNodeDao.findAllByIds(calledTestCaseIds);
+		
+		// check READ on each of those nodes
+		// Throws AccessDenied if cannot read one of them
+		for (TestCaseLibraryNode node : nodes){
+			PermissionsUtils.checkPermission(permissionEvaluationService, new SecurityCheckableObject(node, "READ"));
+		}
+		
+		List<TestCase> testCases = new TestCaseNodeWalker().walk(nodes);
+		
+		for (TestCase testCase : testCases) {
+
+			checkAddCallTestStep(parentTestCaseId, testCase.getId());
+			
+			TestCase calledTestCase = testCaseDao.findById(testCase.getId());
+			
+			CallTestStep newStep = new CallTestStep();
+			newStep.setCalledTestCase(calledTestCase);
+			testStepDao.persist(newStep);
+
+			parentTestCase. addStep(newStep);
+			
+			testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
+		}
+		
+	}
 
 	@Override
 	public void addCallTestStep(long parentTestCaseId, long calledTestCaseId,
@@ -106,6 +154,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		testCaseImportanceManagerService.changeImportanceIfCallStepAddedToTestCases(calledTestCase, parentTestCase);
 
 	}
+	
+	
 
 	private void checkAddCallTestStep(long parentTestCaseId, long calledTestCaseId){
 		if (parentTestCaseId == calledTestCaseId) {
@@ -238,6 +288,8 @@ public class CallStepManagerServiceImpl implements CallStepManagerService, TestC
 		datasetModificationService.cascadeDatasetsUpdate(callerId);
 
 	}
+
+	
 
 
 

@@ -19,7 +19,7 @@
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
 // This module / function creates  the common conf which is common between some trees (at this time, ws and search trees)
-define(["jquery"], function ($) {
+define(["jquery", 'workspace.event-bus'], function ($, eventBus) {
 
 	"use strict";
 	/**
@@ -50,6 +50,7 @@ define(["jquery"], function ($) {
 				"select_range_modifier": "shift",
 				"select_prev_on_delete": false
 			},
+
 
 			"hotkeys": {
 				"del": function () {

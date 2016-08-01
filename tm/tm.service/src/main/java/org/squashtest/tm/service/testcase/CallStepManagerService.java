@@ -49,6 +49,15 @@ public interface CallStepManagerService {
 
 
 	/**
+	 * Will call a bunch of test cases. The call steps will be appended at the end of the test script.
+	 * 
+	 * @param parentTestCaseId
+	 * @param calledTestCaseIds
+	 */
+	void addCallTestSteps(long parentTestCaseId, List<Long> calledTestCaseIds);
+	
+	
+	/**
 	 * Says how the given call step should handle the parameters of the called test case.
 	 * 
 	 * @param callStepId

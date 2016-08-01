@@ -39,9 +39,8 @@
 
 <c:set var="resourceName" value="test-case" />
 
-<s:url var="postCallStepUrl" value="/test-cases/{id}/call/{index}">
+<s:url var="postCallStepUrl" value="/test-cases/{id}/called-test-cases">
 	<s:param name="id" value="${testCase.id}"/>
-	<s:param name="index" value="${stepIndex}"/>
 </s:url>
 
 
@@ -69,7 +68,7 @@
 					return;
 				}
 				
-				var param = {'called-test-case' : calledId[0]};
+				var param = {'called-test-case' : calledId};
 				
 				<%-- 
 					we need that post to be a json just to trigger business exception handlers server side (if an exception occurs).
