@@ -12,6 +12,5 @@
   <description>This modules contains dependencies-grouping modules</description>
   <modules>
     <module>spock-test-dependencies</module>
-    <module>hibernate-dependencies</module>
   </modules>
 </project>
