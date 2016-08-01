@@ -31,6 +31,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.acls.domain.PermissionFactory;
 import org.springframework.security.acls.model.Permission;
 import org.springframework.security.core.Authentication;
@@ -69,6 +70,7 @@ public class AclPermissionEvaluationService implements PermissionEvaluationServi
 	private UserContextService userContextService;
 
 	@Inject
+	@Lazy
 	private AffirmativeBasedCompositePermissionEvaluator permissionEvaluator;
 
 	@Inject
