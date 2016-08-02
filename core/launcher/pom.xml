@@ -3,12 +3,12 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-csp-core</artifactId>
+    <artifactId>squash-tm-core</artifactId>
     <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
   <groupId>org.squashtest.tm</groupId>
-  <artifactId>squashtest-csp-launcher</artifactId>
-  <name>squashtest-csp-launcher</name>
+  <artifactId>squash-tm-launcher</artifactId>
+  <name>squash-tm-launcher</name>
   <description>Squashtest CSP easy launcher</description>
 
   <build>
@@ -22,7 +22,7 @@
           <archive>
             <manifest>
               <addClasspath>true</addClasspath>
-              <mainClass>org.squashtest.csp.launcher.ihm.Starter</mainClass>
+              <mainClass>org.squashtest.tm.launcher.ihm.Starter</mainClass>
             </manifest>
           </archive>
         </configuration>

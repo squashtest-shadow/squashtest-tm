@@ -8,9 +8,9 @@
   </parent>
 
   <groupId>org.squashtest.tm</groupId>
-  <artifactId>squashtest-csp-core</artifactId>
+  <artifactId>squash-tm-core</artifactId>
   <packaging>pom</packaging>
-  <name>squashtest-csp-core</name>
+  <name>squash-tm-core</name>
   <description>Core components of Squash TM (webapp core, api...)</description>
 
   <modules>

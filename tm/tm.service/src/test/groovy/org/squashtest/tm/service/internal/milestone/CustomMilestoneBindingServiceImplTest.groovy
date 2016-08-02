@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.service.internal.milestone
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.milestone.Milestone
 import org.squashtest.tm.domain.milestone.MilestoneRange;
 import org.squashtest.tm.domain.project.GenericProject

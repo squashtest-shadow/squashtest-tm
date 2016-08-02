@@ -8,7 +8,7 @@
   </parent>
 
   <groupId>org.squashtest.tm</groupId>
-  <artifactId>squashtest-csp-provision</artifactId>
+  <artifactId>squash-tm-provision</artifactId>
   <packaging>pom</packaging>
   <name>squash-tm-provision</name>
   <description>Provisions a database for running Squash TM at dev stage</description>

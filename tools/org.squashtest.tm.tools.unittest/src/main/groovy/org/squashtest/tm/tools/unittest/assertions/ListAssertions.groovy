@@ -18,29 +18,25 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tools.unittest.hibernate
+package org.squashtest.tm.tools.unittest.assertions
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
+/**
+ * This helper class declares various methods on List objects which can be used as assertions in unit tests. 
+ * 
+ * @author Gregory Fouquet
+ *
+ */
+class ListAssertions {
+	/**
+	* declares an idsEquals(List) method Collection objects which collects the id property of collection items and checks they exactly match the given list of id.
+	* @return
+	*/
+   static def declareIdsEqual() {
+	   Collection.metaClass.idsEqual { List expected ->
+		   def ids = delegate.collect { it.id }
+		   assert ids == expected
+		   return true
+	   }
+   }
 
-class HibernateOperationCategory {
-	static def doInSession(SessionFactory sf, def closure) {
-		Session s = sf.openSession()
-		Transaction tx = s.beginTransaction()
-		def res
-		
-		try {
-			res = closure(s)
-			s.flush()
-			tx.commit()
-		} catch (RuntimeException ex) {
-			tx?.rollback()
-			throw ex
-		} finally {
-			s?.close()
-		}
-		
-		return res
-	}
 }

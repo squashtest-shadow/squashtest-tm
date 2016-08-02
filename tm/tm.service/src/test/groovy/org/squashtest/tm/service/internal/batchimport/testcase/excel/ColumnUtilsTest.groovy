@@ -18,14 +18,7 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.service.internal.batchimport.testcase.excel;
-
-import org.apache.poi.ss.formula.EvaluationCache;
-import org.codehaus.jackson.map.util.EnumValues;
-import org.hibernate.type.EnumType;
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.service.internal.customfield.DefaultEditionStatusStrategy;
-import org.squashtest.tm.service.internal.user.UserAccountServiceImpl;
+package org.squashtest.tm.service.internal.batchimport.testcase.excel
 
 import spock.lang.Specification;
 import spock.lang.Unroll;

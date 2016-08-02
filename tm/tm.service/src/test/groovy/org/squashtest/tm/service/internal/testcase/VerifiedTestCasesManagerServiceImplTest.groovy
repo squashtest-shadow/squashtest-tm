@@ -20,8 +20,8 @@
  */
 package org.squashtest.tm.service.internal.testcase
 
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.projectfilter.ProjectFilter
 import org.squashtest.tm.domain.requirement.Requirement
 import org.squashtest.tm.domain.requirement.RequirementStatus

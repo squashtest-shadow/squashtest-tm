@@ -20,14 +20,9 @@
  */
 package org.squashtest.tm.domain.testcase;
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.SystemListItem;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.library.GenericLibraryNode
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.testcase.TestCase
-import org.squashtest.tm.domain.testcase.TestCaseFolder
 import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.DuplicateNameException;
 

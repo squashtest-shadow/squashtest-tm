@@ -21,8 +21,8 @@
 package org.squashtest.tm.service.requirement
 
 import com.google.common.base.Optional
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.core.foundation.collection.PagedCollectionHolder
 import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.domain.requirement.Requirement
@@ -49,7 +49,6 @@ import org.squashtest.tm.service.internal.requirement.VerifiedRequirementsManage
 import org.squashtest.tm.service.internal.testcase.TestCaseCallTreeFinder
 import org.squashtest.tm.service.internal.testcase.TestCaseImportanceManagerServiceImpl
 import org.squashtest.tm.service.milestone.ActiveMilestoneHolder
-import org.squashtest.tm.service.milestone.MilestoneManagerService
 import org.squashtest.tm.service.security.PermissionEvaluationService
 
 import spock.lang.Specification

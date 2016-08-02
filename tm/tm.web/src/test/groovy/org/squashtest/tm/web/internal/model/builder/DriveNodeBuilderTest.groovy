@@ -26,7 +26,7 @@ import javax.inject.Provider
 
 import org.apache.commons.collections.MultiMap
 import org.apache.commons.collections.map.MultiValueMap
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.library.Library
 import org.squashtest.tm.domain.milestone.Milestone;
 import org.squashtest.tm.domain.milestone.MilestoneStatus;
@@ -41,8 +41,6 @@ import org.squashtest.tm.service.security.PermissionEvaluationService
 import org.squashtest.tm.web.internal.i18n.InternationalizationHelper
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode
 import org.squashtest.tm.web.internal.model.jstree.JsTreeNode.State
-
-import spock.lang.Specification
 import spock.lang.Unroll
 
 class DriveNodeBuilderTest extends NodeBuildingSpecification {

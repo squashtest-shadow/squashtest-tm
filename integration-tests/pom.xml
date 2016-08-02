@@ -106,7 +106,7 @@
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

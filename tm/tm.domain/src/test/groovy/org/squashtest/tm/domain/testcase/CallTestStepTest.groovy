@@ -20,11 +20,7 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory;
-import org.squashtest.tm.domain.testcase.CallTestStep;
-import org.squashtest.tm.domain.testcase.TestCase;
-import org.squashtest.tm.domain.testcase.TestStep;
-
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import spock.lang.Specification;
 
 class CallTestStepTest extends Specification {

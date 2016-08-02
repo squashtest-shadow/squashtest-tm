@@ -20,17 +20,11 @@
  */
 package org.squashtest.tm.domain.testcase
 
-import static org.squashtest.tm.domain.testcase.TestCaseType.*
-
 import java.lang.reflect.Modifier
 
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.InfoList
-import org.squashtest.tm.domain.infolist.InfoListItem
-import org.squashtest.tm.domain.infolist.SystemListItem
-import org.squashtest.tm.domain.project.Project
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.testautomation.AutomatedTest
 import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.UnknownEntityException

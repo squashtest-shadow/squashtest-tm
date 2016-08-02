@@ -22,7 +22,7 @@ package test.hibernate.hql
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory;
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory;
 
 import spock.lang.Specification;
 

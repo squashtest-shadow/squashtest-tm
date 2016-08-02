@@ -21,7 +21,7 @@
 package org.squashtest.tm.service.internal.campaign;
 
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.campaign.Iteration
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.testcase.Dataset

@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
-    <artifactId>squashtest-csp-core</artifactId>
+    <artifactId>squash-tm-core</artifactId>
     <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
   <artifactId>core.dynamicmanager</artifactId>
@@ -54,7 +54,7 @@
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
-      <artifactId>org.squashtest.csp.tools.unittest</artifactId>
+      <artifactId>org.squashtest.tm.tools.unittest</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
     </dependency>

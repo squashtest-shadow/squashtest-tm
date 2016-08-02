@@ -18,25 +18,28 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tools.unittest.assertions
-
+package org.squashtest.tm.tools.unittest.reflection
 /**
- * This helper class declares various methods on List objects which can be used as assertions in unit tests. 
- * 
- * @author Gregory Fouquet
- *
+ * Category which defines a tiny DSL to set private properties of an object.
+ * Usage: 
+ * use(ReflectionCategory) {
+ * 	TargetClass.set field: "fieldName", of: targetObject, to: newValue
+ * 	TargetClass.get field: "fieldName", of: targetObject
+ * }
+ * @param clazz
+ * @param args
+ * @return
  */
-class ListAssertions {
-	/**
-	* declares an idsEquals(List) method Collection objects which collects the id property of collection items and checks they exactly match the given list of id.
-	* @return
-	*/
-   static def declareIdsEqual() {
-	   Collection.metaClass.idsEqual { List expected ->
-		   def ids = delegate.collect { it.id }
-		   assert ids == expected
-		   return true
-	   }
-   }
+class ReflectionCategory {
+	static def set(Class<?> clazz, def args) {
+		def field = clazz.getDeclaredField(args['field'])
+		field.accessible = true
+		field.set args['of'], args['to']
+	}
 
+	static def get(Class<?> clazz, def args) {
+		def field = clazz.getDeclaredField(args['field'])
+		field.accessible = true
+		field.get args['of']
+	}
 }

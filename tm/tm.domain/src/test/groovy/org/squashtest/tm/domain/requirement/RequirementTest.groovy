@@ -22,15 +22,8 @@ package org.squashtest.tm.domain.requirement
 
 import static org.squashtest.tm.domain.requirement.RequirementStatus.*
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
-import org.squashtest.tm.domain.infolist.InfoList;
-import org.squashtest.tm.domain.infolist.InfoListItem;
-import org.squashtest.tm.domain.infolist.SystemListItem;
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementCriticality
-import org.squashtest.tm.domain.requirement.RequirementStatus
-import org.squashtest.tm.domain.requirement.RequirementVersion
 import org.squashtest.tm.domain.testcase.TestCase
 import org.squashtest.tm.domain.testutils.MockFactory;
 import org.squashtest.tm.exception.DuplicateNameException;

@@ -20,12 +20,9 @@
  */
 package org.squashtest.tm.domain.requirement
 
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.Attachment
 import org.squashtest.tm.domain.project.Project
-import org.squashtest.tm.domain.requirement.Requirement
-import org.squashtest.tm.domain.requirement.RequirementFolder
-import org.squashtest.tm.domain.requirement.RequirementLibraryNode
 import org.squashtest.tm.exception.DuplicateNameException;
 
 import spock.lang.Specification

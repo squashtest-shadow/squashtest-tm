@@ -18,28 +18,29 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.csp.tools.unittest.reflection
-/**
- * Category which defines a tiny DSL to set private properties of an object.
- * Usage: 
- * use(ReflectionCategory) {
- * 	TargetClass.set field: "fieldName", of: targetObject, to: newValue
- * 	TargetClass.get field: "fieldName", of: targetObject
- * }
- * @param clazz
- * @param args
- * @return
- */
-class ReflectionCategory {
-	static def set(Class<?> clazz, def args) {
-		def field = clazz.getDeclaredField(args['field'])
-		field.accessible = true
-		field.set args['of'], args['to']
-	}
+package org.squashtest.tm.tools.unittest.hibernate
 
-	static def get(Class<?> clazz, def args) {
-		def field = clazz.getDeclaredField(args['field'])
-		field.accessible = true
-		field.get args['of']
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+
+class HibernateOperationCategory {
+	static def doInSession(SessionFactory sf, def closure) {
+		Session s = sf.openSession()
+		Transaction tx = s.beginTransaction()
+		def res
+		
+		try {
+			res = closure(s)
+			s.flush()
+			tx.commit()
+		} catch (RuntimeException ex) {
+			tx?.rollback()
+			throw ex
+		} finally {
+			s?.close()
+		}
+		
+		return res
 	}
 }

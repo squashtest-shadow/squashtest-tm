@@ -21,7 +21,7 @@
 package org.squashtest.tm.web.internal.controller.testcase
 
 import org.springframework.context.MessageSource
-import org.squashtest.csp.tools.unittest.reflection.ReflectionCategory
+import org.squashtest.tm.tools.unittest.reflection.ReflectionCategory
 import org.squashtest.tm.domain.attachment.AttachmentList
 import org.squashtest.tm.domain.testcase.*
 import org.squashtest.tm.web.internal.controller.testcase.steps.TestStepsTableModelBuilder
