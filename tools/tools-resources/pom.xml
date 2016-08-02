@@ -9,7 +9,7 @@
   <groupId>org.squashtest.tm</groupId>
   <artifactId>squashtest-tools-resources</artifactId>
   <packaging>jar</packaging>
-  <name>Squashtest - Tools - Tools resources bundle</name>
+
   <description>Resources needed by Squash's dev / build tools</description>
   <build>
     <plugins>

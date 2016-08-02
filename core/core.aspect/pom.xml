@@ -10,7 +10,8 @@
   <artifactId>core.aspect</artifactId>
   <packaging>jar</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>Squash TM core aspect library</description>
+
+  <description>Library of apects which can potentially be applied on any other Squash TM module</description>
 
   <dependencyManagement>
     <dependencies>

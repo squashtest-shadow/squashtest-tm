@@ -10,7 +10,7 @@
   <artifactId>squash-tm-tm</artifactId>
   <packaging>pom</packaging>
   <name>squash-tm-tm</name>
-  <description>Umbrella project for the CSP Test Management module</description>
+  <description>This module builds the Squash TM webapp</description>
 
   <modules>
     <module>tm.domain</module>

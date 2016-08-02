@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -10,10 +11,16 @@
   <artifactId>squashtest-tm-database</artifactId>
   <packaging>jar</packaging>
   <name>squashtest-tm-database</name>
-  <description>Squash TM - Database definition</description>
+
+  <description>
+    Squash TM database definition script. This module produces a jar which is to be used as a "remote
+    resource" by poms which need to provision / update a database model (if confised, search for
+    "maven-remote-resource-plugin")
+  </description>
 
   <properties>
-    <incremental.updates.changelog>src/main/liquibase/global.changelog-incremental-updates.xml</incremental.updates.changelog>
+    <incremental.updates.changelog>src/main/liquibase/global.changelog-incremental-updates.xml
+    </incremental.updates.changelog>
     <master.changelog>src/main/liquibase/global.changelog-master.xml</master.changelog>
     <migration-test.changelog>src/test/liquibase/global.changelog-migration-test.xml</migration-test.changelog>
   </properties>

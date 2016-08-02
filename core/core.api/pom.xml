@@ -10,7 +10,8 @@
   <artifactId>core.api</artifactId>
   <packaging>jar</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>API offering entry points to Squash core webapp which can be used by plugins</description>
+
+  <description>API offering entry points to Squash TM webapp which can be used by plugins</description>
 
   <properties>
     <!--<sonar.java.coveragePlugin>cobertura</sonar.java.coveragePlugin>-->

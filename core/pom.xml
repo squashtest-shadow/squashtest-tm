@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -11,7 +12,8 @@
   <artifactId>squash-tm-core</artifactId>
   <packaging>pom</packaging>
   <name>squash-tm-core</name>
-  <description>Core components of Squash TM (webapp core, api...)</description>
+
+  <description>This module regroups Squash TM APIs / SPIs and low level, transversal utilities</description>
 
   <modules>
     <module>core.foundation</module>

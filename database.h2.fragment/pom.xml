@@ -10,7 +10,8 @@
 
   <artifactId>database.h2.fragment</artifactId>
   <name>${project.groupId}.${project.artifactId}</name>
-  <description>H2 fragment - triggers</description>
+
+  <description>Implementation of H2 triggers required by Squash TM</description>
 
   <properties>
     <bundle.hostname>org.h2</bundle.hostname>

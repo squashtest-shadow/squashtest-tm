@@ -7,7 +7,7 @@
     <version>1.15.0.IT2-SNAPSHOT</version>
   </parent>
   <artifactId>org.squashtest.tm.tools.unittest</artifactId>
-  <name>Squashtest CSP - Tools module - Unit tests library</name>
+
   <description>Library  of classes used for unit-testing other Squashtest components</description>
 
   <dependencyManagement>

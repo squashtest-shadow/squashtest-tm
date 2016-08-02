@@ -10,7 +10,7 @@
   <!-- No parent because it would trigger maven-remote-resources-plugin:resource -->
   <artifactId>squashtest-license-resources</artifactId>
   <packaging>jar</packaging>
-  <name>Squashtest - Tools - License resources bundle</name>
+
   <description>Squash licence and copyright files which should be included in distributed artifacts</description>
 
   <build>
