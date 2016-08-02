@@ -17,5 +17,6 @@
     <module>license-resources</module>
     <module>tools-resources</module>
     <module>tools.annotation.processor</module>
+    <module>spock-test-dependencies</module>
   </modules>
 </project>

@@ -15,7 +15,6 @@
     <module>bom</module>
     <!-- tools are used by the actual app, we build it early -->
     <module>tools</module>
-    <module>dependencies</module>
     <module>database.h2.fragment</module>
     <module>database</module>
     <module>core</module>
