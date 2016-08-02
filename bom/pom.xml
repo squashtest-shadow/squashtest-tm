@@ -219,12 +219,6 @@
       </dependency>
 
       <dependency>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-configuration-processor</artifactId>
-        <optional>true</optional>
-      </dependency>
-
-      <dependency>
         <!-- This is useful for IDEs to generate some metadata. Do not remove -->
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-configuration-processor</artifactId>

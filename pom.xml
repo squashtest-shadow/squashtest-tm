@@ -11,11 +11,10 @@
   <description>Squash Test Manager - Test repository management application</description>
 
   <modules>
-    <!-- bom is used almost everywhere, we build it first -->
+    <!-- bom is used almost everywhere, we build it early -->
     <module>bom</module>
-    <!-- tools is a parent-pom dep so it needs to build first -->
+    <!-- tools are used by the actual app, we build it early -->
     <module>tools</module>
-    <module>parent-pom</module>
     <module>dependencies</module>
     <module>database.h2.fragment</module>
     <module>database</module>
@@ -312,6 +311,7 @@
           <artifactId>maven-enforcer-plugin</artifactId>
           <version>1.4.1</version>
         </plugin>
+
       </plugins>
     </pluginManagement>
 

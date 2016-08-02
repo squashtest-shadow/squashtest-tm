@@ -29,6 +29,8 @@
 
     <hibernate.sql.verbosity>INFO</hibernate.sql.verbosity>
     <squashtest.rootDir>${project.build.directory}</squashtest.rootDir>
+
+    <skipITs>false</skipITs>
   </properties>
 
   <dependencyManagement>
