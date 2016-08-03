@@ -23,7 +23,7 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution
@@ -44,21 +44,21 @@ class RequirementVersionCoverageMappingIT extends DbunitMappingSpecification {
 
 
 	def "should add a Requirement Version verified by a TestCase"() {
-		
+
 		given :
 		def someItem = doInTransaction{
 			it.get(InfoListItem, 1l)
 		}
-		
+
 		and:
-		
+
 		TestCase tc = new TestCase(name: "link", nature:someItem, type : someItem)
 		Requirement r = new Requirement(new RequirementVersion(name: "link", category:someItem))
 		RequirementVersionCoverage rvc = new RequirementVersionCoverage(r.currentVersion,tc)
-		
+
 		and :
 		persistFixture r, tc, rvc
-		
+
 		when :
 		TestCase res = doInTransaction ({
 			it.createQuery("from TestCase tc left join fetch tc.requirementVersionCoverages where tc.id = " + tc.id).uniqueResult()

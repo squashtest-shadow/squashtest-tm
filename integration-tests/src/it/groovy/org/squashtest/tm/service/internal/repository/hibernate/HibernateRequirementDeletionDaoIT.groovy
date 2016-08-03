@@ -25,8 +25,8 @@ import javax.persistence.Query
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.assertions.ListAssertions
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.assertions.ListAssertions
 import org.squashtest.it.basespecs.DbunitDaoSpecification
 import org.squashtest.tm.service.internal.repository.AttachmentListDao
 import org.squashtest.tm.service.internal.repository.RequirementDao

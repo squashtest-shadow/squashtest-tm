@@ -20,7 +20,7 @@
  */
 package org.squashtest.tm.hibernate.mapping.campaign
 
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.Iteration
 
@@ -33,7 +33,7 @@ class IterationMappingIT extends DbunitMappingSpecification {
 
 		when:
 		def res = doInTransaction {
-			it.get(Iteration, iteration.id) 
+			it.get(Iteration, iteration.id)
 		}
 
 		then:
@@ -76,7 +76,7 @@ class IterationMappingIT extends DbunitMappingSpecification {
 		def res = doInTransaction {
 				it.get(Iteration, iteration.id)
 			}
-		
+
 
 		then:
 		res.scheduledPeriod != null

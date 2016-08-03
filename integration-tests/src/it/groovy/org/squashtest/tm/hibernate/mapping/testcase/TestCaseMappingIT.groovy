@@ -23,7 +23,7 @@ package org.squashtest.tm.hibernate.mapping.testcase
 
 import org.hibernate.JDBCException
 import org.hibernate.SessionFactory
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.domain.campaign.IterationTestPlanItem
 import org.squashtest.tm.domain.execution.Execution

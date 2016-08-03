@@ -14,8 +14,7 @@
   <description>This module defines the preferred dependencies and their version to be used throughout the project. To declare a
     dependency, another module should :
     1. include this artefact in the dependencyManagement section with the "import" scope
-    2. declare the required dependency in the dependencies section **without** a version number
-  </description>
+    2. declare the required dependency in the dependencies section **without** a version number</description>
 
   <properties>
     <!-- jasperreports.version defined in parent pom because it's used in plugin mgt -->

@@ -30,8 +30,8 @@ import org.squashtest.tm.core.foundation.collection.PagingAndSorting
 import org.squashtest.tm.core.foundation.collection.SortOrder
 import org.squashtest.tm.service.internal.repository.RequirementVersionDao
 import org.squashtest.tm.service.internal.repository.RequirementDeletionDao
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
-import org.squashtest.csp.tools.unittest.assertions.ListAssertions
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.assertions.ListAssertions
 import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.unitils.dbunit.annotation.DataSet
 
@@ -62,7 +62,7 @@ class HibernateRequirementVersionDaoIT extends DbunitDaoSpecification {
 	@DataSet("HibernateTestCaseDaoIT.should count versions of requirement.xml")
 	def "should find versions of requirement"() {
 		given:
-		
+
 		PageRequest pr = new PageRequest(1, 1, Direction.ASC, "versionNumber")
 
 		when:

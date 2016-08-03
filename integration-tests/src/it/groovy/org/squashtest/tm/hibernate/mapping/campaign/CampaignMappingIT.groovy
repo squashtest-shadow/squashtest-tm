@@ -21,7 +21,7 @@
 package org.squashtest.tm.hibernate.mapping.campaign
 
 import org.hibernate.Hibernate
-import org.squashtest.csp.tools.unittest.hibernate.HibernateOperationCategory
+import org.squashtest.tm.tools.unittest.hibernate.HibernateOperationCategory
 import org.squashtest.it.basespecs.DbunitMappingSpecification;
 import org.squashtest.tm.core.foundation.exception.NullArgumentException
 import org.squashtest.tm.domain.campaign.Campaign
@@ -47,7 +47,7 @@ class CampaignMappingIT extends DbunitMappingSpecification {
 			Hibernate.initialize(loadedCamp.iterations)
 			return loadedCamp.iterations
 		}
-		
+
 
 		then:
 		loadedIters[0].name == "it1"
@@ -58,7 +58,7 @@ class CampaignMappingIT extends DbunitMappingSpecification {
 		deleteFixture it2
 		deleteFixture campaign
 	}
-	
+
 	def "should not add null iteration top campaign"() {
 		given:
 		Campaign campaign = new Campaign()

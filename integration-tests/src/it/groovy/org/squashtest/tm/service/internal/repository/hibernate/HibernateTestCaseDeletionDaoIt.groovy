@@ -22,7 +22,7 @@ package org.squashtest.tm.service.internal.repository.hibernate
 
 import org.spockframework.util.NotThreadSafe
 import org.springframework.transaction.annotation.Transactional
-import org.squashtest.csp.tools.unittest.assertions.CollectionAssertions
+import org.squashtest.tm.tools.unittest.assertions.CollectionAssertions
 import org.squashtest.it.basespecs.DbunitDaoSpecification;
 import org.squashtest.tm.domain.campaign.Campaign
 import org.squashtest.tm.domain.campaign.Iteration
@@ -182,8 +182,8 @@ class HibernateTestCaseDeletionDaoIT extends DbunitDaoSpecification{
 		given :
 		def itemTestPlan_1 = findEntity(IterationTestPlanItem.class, -51L)
 		def execution_1 = findEntity(Execution.class, -61L)
-		
-		// force initialization their referenced test case because of session.clear below, 
+
+		// force initialization their referenced test case because of session.clear below,
 		// that might trigger a lazy initialization in the then: block
 		def itpReferId = itemTestPlan_1.referencedTestCase.id
 		def execReferId = execution_1.referencedTestCase.id
