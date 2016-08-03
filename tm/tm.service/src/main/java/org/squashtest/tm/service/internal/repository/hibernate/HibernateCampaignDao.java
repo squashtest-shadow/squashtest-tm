@@ -46,6 +46,7 @@ import org.squashtest.tm.domain.execution.Execution;
 import org.squashtest.tm.domain.testcase.TestCaseExecutionMode;
 import org.squashtest.tm.domain.testcase.TestCaseImportance;
 import org.squashtest.tm.service.campaign.IndexedCampaignTestPlanItem;
+import org.squashtest.tm.service.internal.foundation.collection.JpaPagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.PagingUtils;
 import org.squashtest.tm.service.internal.foundation.collection.SortingUtils;
 import org.squashtest.tm.service.internal.repository.CampaignDao;
@@ -171,17 +172,10 @@ public class HibernateCampaignDao extends HibernateEntityDao<Campaign> implement
 
 	@Override
 	public List<CampaignTestPlanItem> findAllTestPlanByIdFiltered(final long campaignId, final PagingAndSorting filter) {
-
-		SetQueryParametersCallback callback = new SetQueryParametersCallback() {
-
-			@Override
-			public void setQueryParameters(Query query) {
-				query.setParameter(ParameterNames.CAMPAIGN_ID, campaignId);
-			}
-
-		};
-
-		return executeListNamedQuery("campaign.findTestPlanFiltered", callback, filter);
+		javax.persistence.Query q = entityManager.createNamedQuery("campaign.findTestPlanFiltered")
+			.setParameter(ParameterNames.CAMPAIGN_ID, campaignId);
+		JpaPagingUtils.addPaging(q, filter);
+		return q.getResultList();
 
 	}
 

@@ -75,7 +75,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 	/*
 	 * Same problem here. See definition of coverage.sizeclass in the CASE WHEN.
 	 */
-	private static final String SQL_BOUND_TCS_STATISTICS = 
+	private static final String SQL_BOUND_TCS_STATISTICS =
 			"Select coverage.sizeclass, count(coverage.sizeclass) as count "
 			+ "From "
 			+ "(Select case "
@@ -86,7 +86,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 			+ "From REQUIREMENT req "
 			+ "Left Outer Join REQUIREMENT_VERSION_COVERAGE cov on req.current_version_id = cov.verified_req_version_id "
 			+ "Where req.rln_id in (:requirementIds) "
-			+ "Group By req.rln_id) as coverage " 
+			+ "Group By req.rln_id) as coverage "
 			+ "Group By coverage.sizeclass";
 
 	@PersistenceContext
@@ -134,7 +134,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 //			return new TestCaseImportanceStatistics();
 //		}
 //
-//		Query query = em.createNamedQuery(
+//		Query query = entityManager.createNamedQuery(
 //				"TestCaseStatistics.importanceStatistics");
 //		query.setParameter("testCaseIds", testCaseIds);
 //
@@ -178,7 +178,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 //			return new TestCaseStatusesStatistics();
 //		}
 //
-//		Query query = em.createNamedQuery(
+//		Query query = entityManager.createNamedQuery(
 //				"TestCaseStatistics.statusesStatistics");
 //		query.setParameter("testCaseIds", testCaseIds);
 //
@@ -223,7 +223,7 @@ public class RequirementStatisticsServiceImpl implements RequirementStatisticsSe
 //			return new TestCaseSizeStatistics();
 //		}
 //
-//		Query query = em.createNativeQuery(SQL_SIZE_STATISTICS);
+//		Query query = entityManager.createNativeQuery(SQL_SIZE_STATISTICS);
 //		query.setParameter("testCaseIds", testCaseIds);
 //
 //		List<Object[]> tuples = query.getResultList();

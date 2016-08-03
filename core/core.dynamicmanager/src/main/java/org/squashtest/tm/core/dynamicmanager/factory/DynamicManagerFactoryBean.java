@@ -103,22 +103,19 @@ public class DynamicManagerFactoryBean<MANAGER, ENTITY> extends AbstractDynamicC
 	protected List<DynamicComponentInvocationHandler> createInvocationHandlers() {
 		List<DynamicComponentInvocationHandler> handlers = new ArrayList<>(HANDLERS_COUNT);
 
-		handlers.add(new PersistEntityHandler<>(entityType, em));
-		handlers.add(new EntityModifierHandler<>(em, entityType));
-		handlers.add(new FindAllByIdsHandler<>(entityType, em));
-		handlers.add(new FindByIdHandler(em));
-		handlers.add(new EntityFinderNamedQueryHandler<>(entityType, em));
-		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<>(entityType, em));
-		handlers.add(new ArbitraryQueryHandler<>(entityType, em));
+		handlers.add(new PersistEntityHandler<>(entityType, entityManager));
+		handlers.add(new EntityModifierHandler<>(entityManager, entityType));
+		handlers.add(new FindAllByIdsHandler<>(entityType, entityManager));
+		handlers.add(new FindByIdHandler(entityManager));
+		handlers.add(new EntityFinderNamedQueryHandler<>(entityType, entityManager));
+		handlers.add(new ListOfEntitiesFinderNamedQueryHandler<>(entityType, entityManager));
+		handlers.add(new ArbitraryQueryHandler<>(entityType, entityManager));
 
 		return handlers;
 	}
 
-	/**
-	 * @param sessionFactory the sessionFactory to set
-	 */
-	public void setEntityManager(EntityManager em){
-		this.em = em;
+	public void setEntityManager(EntityManager entityManager){
+		this.entityManager = entityManager;
 	}
 
 }

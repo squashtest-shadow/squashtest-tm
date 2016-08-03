@@ -18,34 +18,37 @@
  *     You should have received a copy of the GNU Lesser General Public License
  *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
  */
-package org.squashtest.tm.core.dynamicmanager.internal.handler;
+/**
+ * This file is part of the Squash TM management services for SaaS / Squash On Demand (saas.management.fragment) project.
+ * Copyright (C) 2015 - 2016 Henix, henix.fr - All Rights Reserved
+ * <p>
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * Proprietary and confidential
+ * <p>
+ * (C)Henix. Tous droits réservés.
+ * <p>
+ * Avertissement : ce programme est protégé par la loi relative au droit d'auteur et par les conventions internationales. Toute reproduction ou distribution partielle ou totale du logiciel, par quelque moyen que ce soit, est strictement interdite.
+ */
+package org.squashtest.tm.service.internal.foundation.collection;
 
-import org.hibernate.Criteria;
 import org.squashtest.tm.core.foundation.collection.Paging;
 
 import javax.persistence.Query;
 
 /**
- * Utility clas for paging queries.
- *
+ * Utility class for paging JPA queries.
  * @author Gregory Fouquet
- *
+ * @since x.y.z  04/08/16
  */
-final class PagingUtils {
-	private PagingUtils() {
+public class JpaPagingUtils {
+	private JpaPagingUtils() {
 		super();
 	}
 
 	public static void addPaging(Query query, Paging paging) {
-		if (! paging.shouldDisplayAll()){
+		if (!paging.shouldDisplayAll()) {
 			query.setMaxResults(paging.getPageSize());
 			query.setFirstResult(paging.getFirstItemIndex());
-		}
-	}
-	public static void addPaging(Criteria criteria, Paging paging) {
-		if (! paging.shouldDisplayAll()){
-			criteria.setMaxResults(paging.getPageSize());
-			criteria.setFirstResult(paging.getFirstItemIndex());
 		}
 	}
 }

@@ -34,7 +34,7 @@ public class HibernateBugTrackerBindingDao extends HibernateEntityDao<BugTracker
     @SuppressWarnings("unchecked")
     @Override
     public List<BugTrackerBinding> findByBugtrackerId(Long id) {
-        Query query = em.createNamedQuery("bugTrackerBinding.findByBugtrackerId");
+        Query query = entityManager.createNamedQuery("bugTrackerBinding.findByBugtrackerId");
         query.setParameter("bugtrackerId", id);
         return query.getResultList();
     }

@@ -67,7 +67,7 @@ public final class BugTrackerControllerHelper {
 	 * Will build a string that shows all steps before the bugged step + the bugged step itself.<br>
 	 * The string will look like this : <br/>
 	 * <br>
-	 * <em>
+	 * <entityManager>
 	 * 	=============================================<br>
 	 *  |    Step 1/N<br>
 	 *  =============================================<br>
@@ -82,7 +82,7 @@ public final class BugTrackerControllerHelper {
 	 * 	|    Step 2/N<br>
 	 * 	=============================================<br>
 	 * 	...<br>
-	 * 	<br></em>
+	 * 	<br></entityManager>
 	 *
 	 * @param buggedStep
 	 *            the bugged step where the issue will be declared
@@ -124,10 +124,10 @@ public final class BugTrackerControllerHelper {
 	/**
 	 * Will build a default description String that will look like this : <br/>
 	 * <br/>
-	 * <em># Test Case : [Reference] test case name <br/>
+	 * <entityManager># Test Case : [Reference] test case name <br/>
 	 * # Execution : execution link <br/>
 	 * <br/>
-	 * # Issue description :<br/></em>
+	 * # Issue description :<br/></entityManager>
 	 *
 	 * @param execution
 	 *            an execution where the issue will be declared
@@ -145,11 +145,11 @@ public final class BugTrackerControllerHelper {
 	/**
 	 * Will build a default description String that will look like this : <br/>
 	 * <br/>
-	 * <em># Test Case : [Reference] test case name <br/>
+	 * <entityManager># Test Case : [Reference] test case name <br/>
 	 * # Execution : execution link <br/>
 	 * # Concerned Step : step n�/total step nb<br/>
 	 * <br/>
-	 * # Issue description :<br/></em>
+	 * # Issue description :<br/></entityManager>
 	 *
 	 * @param step
 	 *            an execution step where the issue will be declared

@@ -90,7 +90,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_DESCRIPTION,
 			ReflectionFieldSetter.forOptionalField("description"));
 
-		// createdOn and createdBy field name is not known, we use mutators to set'em
+		// createdOn and createdBy field name is not known, we use mutators to set'entityManager
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_ON,
 			ReflectionMutatorSetter.forOptionalProperty("createdOn"));
 		r.propSetterByColumn.put(RequirementSheetColumn.REQ_VERSION_CREATED_BY,
@@ -227,7 +227,7 @@ final class PropertySetterRepository<COL extends Enum<COL> & TemplateColumn> {
 			ReflectionFieldSetter.forOptionalField("description"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_PRE_REQUISITE,
 			ReflectionFieldSetter.forOptionalField("prerequisite"));
-		// createdOn and createdBy field name is not known, we use mutators to set'em
+		// createdOn and createdBy field name is not known, we use mutators to set'entityManager
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_ON,
 			ReflectionMutatorSetter.forOptionalProperty("createdOn"));
 		r.propSetterByColumn.put(TestCaseSheetColumn.TC_CREATED_BY,

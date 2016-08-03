@@ -60,6 +60,7 @@ import com.querydsl.jpa.hibernate.HibernateQueryFactory;
 /*
  * COMMENTING COLUMN PROTOTYPE HANDLING BECAUSE OUT OF SCOPE OF 1.13
  * RE-ACTIVATE WHEN DEV OF 1.14 BEGINS
+ * AND MIGRATE THAT SHIT TO JPA WHILE YOURE AT IT
  */
 //@Service
 public class ColumnPrototypeModification implements ApplicationListener<ColumnPrototypeEvent> {

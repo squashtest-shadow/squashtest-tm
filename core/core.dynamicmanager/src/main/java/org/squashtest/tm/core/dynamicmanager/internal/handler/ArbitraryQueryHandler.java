@@ -20,20 +20,18 @@
  */
 package org.squashtest.tm.core.dynamicmanager.internal.handler;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.persistence.EntityManager;
-
 import org.hibernate.HibernateException;
-import org.hibernate.Query;
-import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.squashtest.tm.core.dynamicmanager.annotation.QueryParam;
 import org.squashtest.tm.core.foundation.collection.Paging;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
+import java.util.Collection;
+import java.util.Collections;
 
 /**
  * Executes arbitrary queries, using named parameters if any. <h3>
@@ -122,7 +120,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 
 	private Query findQuery(Method method) {
 		String queryName = entityType.getSimpleName() + "." + method.getName();
-		return  em.unwrap(Session.class).getNamedQuery(queryName);
+		return em.createNamedQuery(queryName);
 	}
 
 	private QueryParam findQueryParam(Annotation[] paramAnnotations) {
@@ -218,9 +216,9 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 			query.executeUpdate();
 			result = null;
 		} else if (isCollectionType(returnType)) {
-			result =  query.list();
+			result = query.getResultList();
 		} else {
-			result = query.uniqueResult();
+			result = query.getSingleResult();
 		}
 
 		return result;
@@ -256,7 +254,7 @@ public class ArbitraryQueryHandler<ENTITY> implements DynamicComponentInvocation
 		if (argument.isEmpty()) {
 			throw new EmptyCollectionException();
 		}
-		query.setParameterList(paramName.value(), argument);
+		query.setParameter(paramName.value(), argument);
 	}
 
 	private void setAsScalar(Query query, Object arg, Annotation[] paramAnnotations) {

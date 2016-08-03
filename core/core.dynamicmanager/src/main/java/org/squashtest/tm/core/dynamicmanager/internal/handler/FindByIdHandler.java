@@ -27,32 +27,24 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.Session;
 import org.springframework.core.annotation.AnnotationUtils;
 
 /**
  * {@link DynamicComponentInvocationHandler} which handles <code>@Entity findById(long id)</code> or <code>@Entity findById(Serializable id)</code> method. Fetches an entity using its id.
  * @author Gregory Fouquet
- * 
+ *
  */
 public class FindByIdHandler implements DynamicComponentInvocationHandler {
 	private final EntityManager em;
 
-	/**
-	 * @param entityType
-	 * @param em
-	 */
 	public FindByIdHandler(@NotNull EntityManager em) {
 		super();
 		this.em = em;
 	}
 
-	/**
-	 * Performs an entity fetch using {@link #entityType} and the first arg as the entity id. 
-	 */
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) {
-		return  em.unwrap(Session.class).load(method.getReturnType(), (Serializable) args[0]);
+		return  em.getReference(method.getReturnType(), (Serializable) args[0]);
 	}
 
 	/**

@@ -38,7 +38,6 @@ import org.squashtest.tm.domain.project.GenericLibrary;
 import org.squashtest.tm.service.advancedsearch.IndexationService;
 import org.squashtest.tm.service.annotation.CacheScope;
 import org.squashtest.tm.service.internal.repository.EntityDao;
-import org.squashtest.tm.service.internal.repository.GenericDao;
 
 /**
  * Careful : As of Squash TM 1.5.0 this object becomes stateful, in layman words you need one instance per operation. <br/>
@@ -87,7 +86,6 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private Provider<NextLayerFeeder> nextLayerFeederOperationFactory;
 	private PasteOperation firstOperation;
 	private PasteOperation nextsOperation;
-	private GenericDao<Object> genericDao;
 	private EntityDao<CONTAINER> containerDao;
 	private EntityDao<NODE> nodeDao;
 
@@ -95,11 +93,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private IndexationService indexationService;
 
 	@PersistenceContext
-	private EntityManager em;
-
-	public void setGenericDao(GenericDao<Object> genericDao) {
-		this.genericDao = genericDao;
-	}
+	private EntityManager entityManager;
 
 	public <R extends EntityDao<CONTAINER>> void setContainerDao(R containerDao) {
 		this.containerDao = containerDao;
@@ -265,7 +259,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 
 	private void reindexAfterCopy() {
 		//Flushing session now, as reindex will clear the HibernateSession when FullTextSession will be cleared.
-		em.unwrap(Session.class).flush();
+		entityManager.unwrap(Session.class).flush();
 		indexationService.batchReindexTc(new ArrayList<>(tcIdsToIndex));
 		indexationService.batchReindexReqVersion(new ArrayList<>(reqVersionIdsToIndex));
 	}
@@ -279,7 +273,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 	private void removeProcessedNodesFromCache() {
 
 		// if we cont flush and then evict, some entities might not be persisted
-		genericDao.flush();
+		entityManager.flush();
 
 		Collection<TreeNode> nextNodes = new HashSet<>();
 		for (NodePairing nextPairing : nextLayer){
@@ -292,10 +286,12 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 		 *  Now we evict what we can. Note that the collection toEvict is of generic type Object because not all nodes are TreeNode :
 		 *  indeed a TestCaseLibrary is not a TreeNode.
 		 */
+		Session session = entityManager.unwrap(Session.class);
 		for (NodePairing processed : sourceLayer){
 			Collection<Object> toEvict = new HashSet<>();
 			toEvict.add(processed.getContainer());
 			toEvict.addAll(processed.getNewContent());
+
 
 			for (Object evi : toEvict){
 				/*
@@ -305,7 +301,7 @@ public class PasteStrategy<CONTAINER extends NodeContainer<NODE>, NODE extends T
 				 */
 				if (! nextNodes.contains(evi) &&
 						!GenericLibrary.class.isAssignableFrom(evi.getClass())){
-					genericDao.clearFromCache(evi);
+					session.evict(evi);
 				}
 			}
 		}

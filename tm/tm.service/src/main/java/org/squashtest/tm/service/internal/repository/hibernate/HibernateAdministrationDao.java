@@ -24,19 +24,24 @@ import org.springframework.stereotype.Repository;
 import org.squashtest.tm.domain.AdministrationStatistics;
 import org.squashtest.tm.service.internal.repository.AdministrationDao;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 
 /**
  * Dao for no specific workspace.
- * 
+ *
  * @author mpagnon
- * 
+ *
  */
 @Repository
-public class HibernateAdministrationDao extends HibernateDao<Object> implements AdministrationDao{
+public class HibernateAdministrationDao implements AdministrationDao {
+	@PersistenceContext
+	EntityManager entityManager;
 
 	@Override
 	public AdministrationStatistics findAdministrationStatistics() {
-		Object[] result =	executeEntityNamedQuery("administration.findAdministrationStatistics");
+		Object[] result = (Object[]) entityManager.createNamedQuery("administration.findAdministrationStatistics").getSingleResult();
 		return new AdministrationStatistics(result);
 	}
 

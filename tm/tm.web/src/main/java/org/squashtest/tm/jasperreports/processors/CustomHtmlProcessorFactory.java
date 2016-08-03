@@ -57,7 +57,7 @@ import net.sf.jasperreports.engine.util.MarkupProcessorFactory;
 
 /**
  * As a solution to issue https://ci.squashtest.org/mantis/view.php?id=2293 this implementation
- * will handle &lt;strong&gt; and &lt;em&gt; instead of their obsolete versions. This implementation must
+ * will handle &lt;strong&gt; and &lt;entityManager&gt; instead of their obsolete versions. This implementation must
  * be supplied in Jasper Report configuration, like
  * net.sf.jasperreports.markup.processor.factory.html=org.squashtest.tm.web.internal.controller.report.CustomHtmlProcessorFactory
  *
@@ -86,7 +86,7 @@ public class CustomHtmlProcessorFactory extends JEditorPaneHtmlMarkupProcessor i
 
 		Map<Attribute, Object> attributes = super.getAttributes(attrSet);
 
-		//checks for attributes WEIGHT and POSTURE. If they were not set, checks whether some HTML.Tag named "strong" of "em" exists in the
+		//checks for attributes WEIGHT and POSTURE. If they were not set, checks whether some HTML.Tag named "strong" of "entityManager" exists in the
 		//attribute set.
 
 		if (! attributes.containsKey(TextAttribute.WEIGHT) &&
