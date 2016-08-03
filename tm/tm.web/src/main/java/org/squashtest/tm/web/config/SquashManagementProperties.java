@@ -24,6 +24,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
+ * This class receive configuration properties from the "squash.management" namespace, which are used to configure the
+ * "management" channel / url namespace.
+ *
  * @author Gregory Fouquet
  * @since 1.13.0
  */

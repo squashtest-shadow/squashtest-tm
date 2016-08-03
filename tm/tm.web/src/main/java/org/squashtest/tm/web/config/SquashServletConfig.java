@@ -57,7 +57,7 @@ import org.thymeleaf.templateresolver.TemplateResolver;
 import com.fasterxml.jackson.datatype.hibernate4.Hibernate4Module;
 
 /**
- * Servlet context config (mostly). Not in SquashServletInitializer becauses it delays the servlet context initialization for
+ * Servlet context config (mostly). Not in SquashServletInitializer because it delays the servlet context initialization for
  * too long.
  *
  * @author Gregory Fouquet

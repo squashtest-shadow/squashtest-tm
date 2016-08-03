@@ -26,7 +26,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 
-// TODO consider using spring cace abstraction (@Cacheable)
+// NOTE : This cannot be replaced with Spring Cache / JCache because the cache is bound to a cflow (see @CacheScope)
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface CacheResult {

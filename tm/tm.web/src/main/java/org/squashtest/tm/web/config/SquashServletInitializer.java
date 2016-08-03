@@ -26,7 +26,10 @@ import org.springframework.context.annotation.Configuration;
 import org.squashtest.tm.SquashTm;
 
 /**
- * This class replaces the web deployment descriptor (web.xml). It should not be tampered with.
+ * This class replaces the web deployment descriptor (web.xml). It should not be tampered with !
+ * We want the Servlet Context initialized as soon as possible. When it requires too many dependencies, its
+ * initialization is delayed by Spring. When it's delayed too long, ServletContextAware beans don't get notified and the
+ * app fails to start / bootstrap correctly
  *
  *
  *

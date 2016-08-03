@@ -91,11 +91,11 @@ public class WebMvcConfig extends WebMvcConfigurerAdapter {
 		ndc.setIncludeClientInfo(true);
 		registry.addWebRequestInterceptor(ndc);
 
-		// OSIV		
+		// OSIV
 		OpenEntityManagerInViewInterceptor osiv = new OpenEntityManagerInViewInterceptor();
 		osiv.setEntityManagerFactory(emf);
 		registry.addWebRequestInterceptor(osiv);
-		
+
 		registry.addInterceptor(milestoneInterceptor);
 
 		// #sec in thymeleaf
