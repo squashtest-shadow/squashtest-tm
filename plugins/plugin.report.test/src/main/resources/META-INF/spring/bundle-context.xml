@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2016 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+	
+	
+	<context:annotation-config />
+		
+		<context:property-placeholder/>
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+		<list>
+		<value>file:${bundles.configuration.location}\lang\plugin.report.test\messages</value>
+        <value>classpath:i18n/messages</value>
+        </list>
+        </property>
+		  <property name="cacheSeconds" value="60" /> 
+	</bean>
+	
+	<bean name="squash.tm.plugin.report.test" class="org.squashtest.tm.api.report.ReportPlugin">
+		<property name="report" ref="testReport" />
+	</bean>
+
+	<bean name="testReport" class="org.squashtest.tm.api.report.BasicReport">
+		<property name="category" value="EXECUTION_PHASE" />
+		<property name="type" value="PROGRESS_FOLLOWUP" />
+		<property name="labelKey" value="test.report.label" />
+		<property name="descriptionKey" value="test.report.description" />
+		<property name="views">
+			<list>
+				<bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
+					<property name="labelKey" value="test.view.one.label" />
+					<property name="formats" value="html,pdf" />
+					<property name="springView" ref="springView" />
+				</bean>
+				<bean class="org.squashtest.tm.api.report.jasperreports.JasperReportsView">
+					<property name="labelKey" value="test.view.two.label" />
+					<property name="formats" value="html,xls" />
+				</bean>
+			</list>
+		</property>
+		<property name="form">
+			<list>
+				<bean class="org.squashtest.tm.api.report.form.TextInput">
+					<property name="name" value="text" />
+					<property name="labelKey" value="test.report.form.text" />
+				</bean> 
+				<bean class="org.squashtest.tm.api.report.form.DateInput">
+					<property name="name" value="date" />
+					<property name="labelKey" value="test.report.form.date" />
+				</bean> 
+ 				<bean class="org.squashtest.tm.api.report.form.CheckboxInput">
+					<property name="name" value="checkbox" />
+					<property name="labelKey" value="test.report.form.checkbox" />
+				</bean> 
+				<bean class="org.squashtest.tm.api.report.form.RadioButtonsGroup">
+					<property name="name" value="radio-group" />
+					<property name="labelKey" value="test.report.form.radioGroup" />
+					<property name="options">
+						<list>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="COOL" />
+								<property name="labelKey" value="test.report.form.radioGroup.cool" />
+							</bean>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="YAY" />
+								<property name="labelKey" value="test.report.form.radioGroup.yay" />
+								<property name="defaultSelected" value="true" />
+							</bean>
+						</list>
+					</property>
+				</bean> 
+				<bean class="org.squashtest.tm.api.report.form.DropdownList">
+					<property name="name" value="dropdown" />
+					<property name="labelKey" value="test.report.form.dropdown" />
+					<property name="options">
+						<list>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="LEATHERPANTS" />
+								<property name="labelKey" value="test.report.form.dropdown.leatherpants" />
+							</bean>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="SPANDEX" />
+								<property name="labelKey" value="test.report.form.dropdown.spandex" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+				<bean class="org.squashtest.tm.api.report.form.CheckboxesGroup">
+					<property name="name" value="checkboxes-group" />
+					<property name="labelKey" value="test.report.form.checkboxesGroup" />
+					<property name="options">
+						<list>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="BATARANG" />
+								<property name="labelKey" value="test.report.form.dropdown.batarang" />
+							</bean>
+							<bean class="org.squashtest.tm.api.report.form.OptionInput">
+								<property name="value" value="WEB_SHOOTER" />
+								<property name="labelKey" value="test.report.form.dropdown.webshooter" />
+							</bean>
+						</list>
+					</property>
+				</bean>
+			</list>
+		</property>
+	</bean>
+	
+	<bean name="springView" class="org.squashtest.tm.api.report.jasperreports.JasperReportsView" />
+</beans>

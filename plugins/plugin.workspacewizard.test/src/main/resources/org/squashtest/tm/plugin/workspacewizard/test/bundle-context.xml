@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+        This file is part of the Squashtest platform.
+        Copyright (C) 2010 - 2016 Henix, henix.fr
+
+        See the NOTICE file distributed with this work for additional
+        information regarding copyright ownership.
+
+        This is free software: you can redistribute it and/or modify
+        it under the terms of the GNU Lesser General Public License as published by
+        the Free Software Foundation, either version 3 of the License, or
+        (at your option) any later version.
+
+        this software is distributed in the hope that it will be useful,
+        but WITHOUT ANY WARRANTY; without even the implied warranty of
+        MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+        GNU Lesser General Public License for more details.
+
+        You should have received a copy of the GNU Lesser General Public License
+        along with this software.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+  	http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd
+	http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd">
+
+	<!--  ========================= wizards ============================ -->
+
+	<bean id="squashtm.test.campaign.creator" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
+		<property name="displayWorkspace" value="CAMPAIGN_WORKSPACE" />
+		<property name="nameKey" value="campaign.creator.name"/>
+		<property name="wizardMenu" ref="campaign.creator.menu"/>
+	</bean>
+
+	<bean id="squashtm.test.campaign.dateupdater" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
+		<property name="displayWorkspace" value="CAMPAIGN_WORKSPACE" />
+		<property name="nameKey" value="campaign.dateupdater.name"/>
+		<property name="wizardMenu" ref="campaign.dateupdater.menu"/>
+	</bean>
+
+
+	<bean id="squashtm.test.requirement.test-case.manager" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
+		<property name="displayWorkspace" value="REQUIREMENT_WORKSPACE" />
+		<property name="nameKey" value="requirement.test-case.manager.name"/>
+		<property name="wizardMenu" ref="requirement.test-case.manager.menu"/>
+	</bean>
+
+	<bean id="squashtm.test.requirement.versions.manager" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
+		<property name="displayWorkspace" value="REQUIREMENT_WORKSPACE" />
+		<property name="nameKey" value="requirement.versions.manager.name"/>
+		<property name="wizardMenu" ref="requirement.versions.manager.menu"/>
+	</bean>
+
+	<bean id="squashtm.test.test-cases.creator" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
+		<property name="displayWorkspace" value="TEST_CASE_WORKSPACE" />
+		<property name="nameKey" value="test-cases.creator.name"/>
+		<property name="wizardMenu" ref="test-cases.creator.menu"/>
+	</bean>
+
+	<bean id="squashtm.test.test-steps.manager" class="org.squashtest.tm.api.wizard.InternationalizedWorkspaceWizard">
+		<property name="displayWorkspace" value="TEST_CASE_WORKSPACE" />
+		<property name="nameKey" value="test-steps.manager.name"/>
+		<property name="wizardMenu" ref="test-steps.manager.menu"/>
+	</bean>
+
+	<!-- ===================== menus =================================== -->
+
+	<bean id="campaign.creator.menu" class="org.squashtest.tm.api.widget.InternationalizedMenuItem">
+		<property name="labelKey" value="campaign.creator.label"/>
+		<property name="tooltipKey" value="campaign.creator.tooltip"/>
+		<property name="url" value="/api/campaign-workspace/wizards/campaign-creator" />
+	</bean>
+
+	<bean id="campaign.dateupdater.menu" class="org.squashtest.tm.api.widget.InternationalizedMenuItem">
+		<property name="labelKey" value="campaign.dateupdater.label"/>
+		<property name="tooltipKey" value="campaign.dateupdater.tooltip"/>
+		<property name="url" value="/api/campaign-workspace/wizards/campaign-date-updater" />
+	</bean>
+
+	<bean id="requirement.test-case.manager.menu" class="org.squashtest.tm.api.widget.InternationalizedMenuItem">
+		<property name="labelKey" value="requirement.test-case.manager.label"/>
+		<property name="tooltipKey" value="requirement.test-case.manager.tooltip"/>
+		<property name="url" value="/api/requirement-workspace/wizards/test-case-manager" />
+	</bean>
+
+	<bean id="requirement.versions.manager.menu" class="org.squashtest.tm.api.widget.InternationalizedMenuItem">
+		<property name="labelKey" value="requirement.versions.manager.label"/>
+		<property name="tooltipKey" value="requirement.versions.manager.tooltip"/>
+		<property name="url" value="/api/requirement-workspace/wizards/version-manager" />
+	</bean>
+
+	<bean id="test-cases.creator.menu" class="org.squashtest.tm.api.widget.InternationalizedMenuItem">
+		<property name="labelKey" value="test-cases.creator.label"/>
+		<property name="tooltipKey" value="test-cases.creator.tooltip"/>
+		<property name="url" value="/api/test-case-workspace/wizards/test-case-creator" />
+	</bean>
+
+	<bean id="test-steps.manager.menu" class="org.squashtest.tm.api.widget.InternationalizedMenuItem">
+		<property name="labelKey" value="test-steps.manager.label"/>
+		<property name="tooltipKey" value="test-steps.manager.tooltip"/>
+		<property name="url" value="/api/test-case-workspace/wizards/test-steps-manager" />
+	</bean>
+
+
+</beans>

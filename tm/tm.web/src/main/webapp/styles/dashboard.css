@@ -1,0 +1,62 @@
+/**
+ *     This file is part of the Squashtest platform.
+ *     Copyright (C) 2010 - 2016 Henix, henix.fr
+ *
+ *     See the NOTICE file distributed with this work for additional
+ *     information regarding copyright ownership.
+ *
+ *     This is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Lesser General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     this software is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Lesser General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Lesser General Public License
+ *     along with this software.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+	.dashboard-workspace-screen {
+ 		min-width : 98% !important;
+   		min-height: 90% !important;
+   		overflow: auto;
+   		position: absolute;
+  	}
+  	.dashboard-grid {
+ 		min-width : 98%;
+   		min-height: 90%;
+  	}
+  	.dashboard-graph {
+  		background-color: white;
+  		position: absolute;
+  	}
+  	.delete-chart-button{
+  		position: absolute;
+  		min-width: 20px;
+    	min-height: 20px;
+    	background-position: top left;
+    	background-repeat: no-repeat;
+    	z-index: 20;
+    	top: 3px;
+    	right: -1px;
+    	opacity: 0;
+  	}
+  	.gs-w:hover .delete-chart-button{
+    	opacity: 1;
+  	}
+
+  	.jqplot-table-legend { width: auto; margin: auto; padding: inherit;}
+	.jqplot-target-wrapper{ width: 95%; height: 600px; margin: auto;}
+	.jqplot-title{ margin-top: 10px;}
+	.jqplot-yaxis {
+  		margin-left:5px !important;
+	}
+	.jqplot-xaxis {
+  		margin-bottom:5px !important;
+	}
+	.jqplot-point-label{
+		font-size: 12px;
+	}
