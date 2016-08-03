@@ -159,7 +159,6 @@
       <artifactId>spring-security-oauth2</artifactId>
     </dependency>
 
-    <!--======= SQUASHTEST MODULES ======== -->
     <dependency>
       <groupId>org.squashtest.tm</groupId>
       <artifactId>tm.domain</artifactId>
@@ -210,6 +209,8 @@
         </configuration>
         <dependencies>
           <dependency>
+            <!-- This dependency triggers DynamicManager anotations processing through APT -->
+            <!-- TODO assess if we really need this in tm.domain -->
             <groupId>org.squashtest.tm</groupId>
             <artifactId>tools.annotation.processor</artifactId>
             <version>${project.version}</version>

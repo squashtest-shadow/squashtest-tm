@@ -797,7 +797,6 @@
 
           <plugin>
             <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
-            <!-- r.js optimization. can be skipped with -Drequirejs.optimize.skip=true -->
             <groupId>com.github.bringking</groupId>
             <artifactId>requirejs-maven-plugin</artifactId>
             <executions>
@@ -857,47 +856,5 @@
       </build>
     </profile>
 
-    <profile>
-      <id>jasmine</id>
-      <activation>
-        <activeByDefault>false</activeByDefault>
-      </activation>
-      <build>
-        <plugins>
-          <plugin>
-            <groupId>com.github.searls</groupId>
-            <artifactId>jasmine-maven-plugin</artifactId>
-            <version>2.0-alpha-01</version>
-            <configuration>
-              <!-- <debug>true</debug> -->
-              <specRunnerTemplate>REQUIRE_JS</specRunnerTemplate>
-              <jsSrcDir>${project.basedir}/src/main/webapp/scripts</jsSrcDir>
-              <jsTestSrcDir>${project.basedir}/src/test/javascript</jsTestSrcDir>
-              <webDriverClassName>${jasmine.webdriver.classname}</webDriverClassName>
-              <preloadSources>
-                <source>scripts/require.js</source>
-                <source>scripts/sinon.js</source>
-                <source>scripts/lib/jquery/jquery-2.1.1.js</source>
-                <source>scripts/lib/underscore/underscore-1.4.4.js</source>
-                <source>scripts/lib/backbone/backbone-1.0.0.js</source>
-              </preloadSources>
-              <specIncludes>
-                <include>spec/*</include>
-              </specIncludes>
-            </configuration>
-            <executions>
-              <execution>
-                <id>js-tests</id>
-                <goals>
-                  <goal>test</goal>
-                </goals>
-                <phase>test</phase>
-              </execution>
-            </executions>
-
-          </plugin>
-        </plugins>
-      </build>
-    </profile>
   </profiles>
 </project>

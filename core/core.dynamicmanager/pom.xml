@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.squashtest.tm</groupId>
@@ -11,9 +10,7 @@
   <packaging>jar</packaging>
   <name>${project.groupId}.${project.artifactId}</name>
 
-  <description>
-    This module contains the annotation to be used to define a dynamic manager and these managers' implementation
-  </description>
+  <description>This module contains the annotation to be used to define a dynamic manager and these managers' implementation</description>
 
   <properties />
 
@@ -35,7 +32,6 @@
       <groupId>org.apache.commons</groupId>
       <artifactId>commons-lang3</artifactId>
     </dependency>
-    <!-- ====== /DEPENDENCY POMS ====== -->
 
     <dependency>
       <groupId>org.squashtest.tm</groupId>
@@ -75,6 +71,7 @@
 
   <build>
     <testSourceDirectory>src/test/groovy</testSourceDirectory>
+
     <resources>
       <resource>
         <filtering>true</filtering>
@@ -95,12 +92,10 @@
         <artifactId>maven-compiler-plugin</artifactId>
       </plugin>
 
-      <!-- ====== SPOCK TESTS ====== -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
       </plugin>
-      <!-- ====== /SPOCK TESTS ====== -->
     </plugins>
   </build>
   <url>http://www.squashtest.org</url>
